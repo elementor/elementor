@@ -1,95 +1,94 @@
 {
-  "name": "elementor/elementor",
-  "description": "WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.",
-  "type": "project",
-  "license": "GNU General Public License v3.0",
-  "minimum-stability": "stable",
-  "require": {
-    "php": ">=7.4",
-    "elementor/wp-one-package": "1.0.66"
-  },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://composer.elementor.com",
-      "only": [
-        "elementor/wp-one-package"
-      ]
-    }
-  ],
-  "autoload": {
-    "classmap": [
-      "vendor_prefixed/"
-    ]
-  },
-  "require-dev": {
-    "squizlabs/php_codesniffer": "^3.10.2",
-    "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
-    "wp-coding-standards/wpcs": "^3.1.0",
-    "elementor/elementor-editor-testing": "0.0.3",
-    "justinrainbow/json-schema": "^5.2",
-    "phpunit/phpunit": "^9",
-    "yoast/phpunit-polyfills": "^1.0",
-    "thor-juhasz/phpunit-coverage-check": "^0.3.0",
-    "spatie/phpunit-snapshot-assertions": "^4.2",
-    "humbug/php-scoper": "0.17.5",
-    "twig/twig": "3.11.3",
-    "wordpress/mcp-adapter": "^0.5.0",
-    "mixpanel/mixpanel-php": "^2.11"
-  },
-  "scripts": {
-    "lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
-    "format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
-    "test": "phpunit",
-    "test:install": "bash ./bin/install-wp-tests-local.sh",
-    "phpunit:local": "bash ./bin/phpunit-local.sh",
-    "coverage": "composer run coverage:test && composer run coverage:check",
-    "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
-    "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
-    "php-scoper": [
-      "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
-    ],
-    "post-install-cmd": [
-      "@php composer run php-scoper",
-      "@php composer dump-autoload"
-    ],
-    "post-update-cmd": [
-      "@php composer run php-scoper",
-      "@php composer dump-autoload"
-    ]
-  },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
+    "name": "elementor/elementor",
+    "description": "WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.",
+    "type": "project",
+    "license": "GNU General Public License v3.0",
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.4",
+        "elementor/wp-one-package": "1.0.67"
     },
-    "platform": {
-      "php": "7.4"
-    },
-    "policy": {
-      "advisories": {
-        "ignore-id": {
-          "PKSA-8zx5-v2nz-58pb": "CVE-2026-49981 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders for a cached template) - we don't enable sandbox.",
-          "PKSA-sjvz-tbbr-vwth": "CVE-2026-46628 (spaceless filter implicitly marks output as safe) - we only render our twig templates and don't allow users to upload their own templates. Our templates do not use the spaceless filter.",
-          "PKSA-h8hf-ytnd-5t9q": "CVE-2026-46633 (PHP code injection via {% use %} template name) - template names passed to Twig are hardcoded. No user can inject twig source.",
-          "PKSA-wwb1-81rc-pd65": "CVE-2026-47730 (XSS in profiler HtmlDumper via unescaped template/profile names) - we don't use Twig's profiler/HtmlDumper.",
-          "PKSA-kvv6-36cr-fkzb": "CVE-2026-46627 (sandbox does not protect against resource exhaustion) - we don't enable sandbox.",
-          "PKSA-n14z-jjjg-g8vd": "CVE-2026-46635 (sandbox property allowlist bypass via the column filter) - we don't enable sandbox.",
-          "PKSA-3mcc-k66d-pydb": "CVE-2026-46638 ({% sandbox %}{% include %} skips checkSecurity on cached templates) - we don't enable sandbox.",
-          "PKSA-gw7n-z4yx-7xjt": "CVE-2026-24425 (possible sandbox bypass when using a source policy) - we don't configure a SourcePolicy and don't enable sandbox.",
-          "PKSA-dpx1-78wg-1kqs": "CVE-2026-47732 (sandbox __toString() policy bypasses via unguarded coercion) - we don't enable sandbox.",
-          "PKSA-21g2-dzjv-sky5": "CVE-2026-46634 (template_from_string() escapes SourcePolicy-driven sandbox) - we don't call template_from_string() and don't configure a SourcePolicy or sandbox.",
-          "PKSA-fbvq-z33h-r2np": "CVE-2026-48808 (sandbox property allowlist bypass via the column filter under SourcePolicyInterface) - we don't enable sandbox.",
-          "PKSA-g9zw-qxh8-pq8w": "CVE-2026-48805 (sandbox state regression in deprecated internal wrappers in src/Resources/core.php) - we don't enable sandbox.",
-          "PKSA-yd6k-t2gh-1m43": "CVE-2026-46636 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders) - we don't enable sandbox.",
-          "PKSA-1tmc-rt7x-12w6": "CVE-2026-48806 (sandbox __toString() policy bypass via dynamic mapping keys) - we don't enable sandbox.",
-          "PKSA-xx6c-6d96-db2w": "CVE-2026-48807 (sandbox __toString() policy bypass via Traversable in join/replace and in/not in operators) - we don't enable sandbox."
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.elementor.com",
+            "only": [
+                "elementor/wp-one-package"
+            ]
         }
-      }
-    }
-  },
-  "authors": [
-    {
-      "name": "Elementor team"
-    }
-  ]
+    ],
+    "autoload": {
+        "classmap": [
+            "vendor_prefixed/"
+        ]
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.10.2",
+        "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
+        "wp-coding-standards/wpcs": "^3.1.0",
+        "elementor/elementor-editor-testing": "0.0.3",
+        "justinrainbow/json-schema": "^5.2",
+        "phpunit/phpunit": "^9",
+        "yoast/phpunit-polyfills": "^1.0",
+        "thor-juhasz/phpunit-coverage-check": "^0.3.0",
+        "spatie/phpunit-snapshot-assertions": "^4.2",
+        "humbug/php-scoper": "0.17.5",
+        "twig/twig": "3.11.3",
+        "wordpress/mcp-adapter": "^0.5.0"
+    },
+    "scripts": {
+        "lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
+        "format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
+        "test": "phpunit",
+        "test:install": "bash ./bin/install-wp-tests-local.sh",
+        "phpunit:local": "bash ./bin/phpunit-local.sh",
+        "coverage": "composer run coverage:test && composer run coverage:check",
+        "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
+        "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
+        "php-scoper": [
+            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
+        ],
+        "post-install-cmd": [
+            "@php composer run php-scoper",
+            "@php composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "@php composer run php-scoper",
+            "@php composer dump-autoload"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "7.4"
+        },
+        "policy": {
+            "advisories": {
+                "ignore-id": {
+                    "PKSA-8zx5-v2nz-58pb": "CVE-2026-49981 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders for a cached template) - we don't enable sandbox.",
+                    "PKSA-sjvz-tbbr-vwth": "CVE-2026-46628 (spaceless filter implicitly marks output as safe) - we only render our twig templates and don't allow users to upload their own templates. Our templates do not use the spaceless filter.",
+                    "PKSA-h8hf-ytnd-5t9q": "CVE-2026-46633 (PHP code injection via {% use %} template name) - template names passed to Twig are hardcoded. No user can inject twig source.",
+                    "PKSA-wwb1-81rc-pd65": "CVE-2026-47730 (XSS in profiler HtmlDumper via unescaped template/profile names) - we don't use Twig's profiler/HtmlDumper.",
+                    "PKSA-kvv6-36cr-fkzb": "CVE-2026-46627 (sandbox does not protect against resource exhaustion) - we don't enable sandbox.",
+                    "PKSA-n14z-jjjg-g8vd": "CVE-2026-46635 (sandbox property allowlist bypass via the column filter) - we don't enable sandbox.",
+                    "PKSA-3mcc-k66d-pydb": "CVE-2026-46638 ({% sandbox %}{% include %} skips checkSecurity on cached templates) - we don't enable sandbox.",
+                    "PKSA-gw7n-z4yx-7xjt": "CVE-2026-24425 (possible sandbox bypass when using a source policy) - we don't configure a SourcePolicy and don't enable sandbox.",
+                    "PKSA-dpx1-78wg-1kqs": "CVE-2026-47732 (sandbox __toString() policy bypasses via unguarded coercion) - we don't enable sandbox.",
+                    "PKSA-21g2-dzjv-sky5": "CVE-2026-46634 (template_from_string() escapes SourcePolicy-driven sandbox) - we don't call template_from_string() and don't configure a SourcePolicy or sandbox.",
+                    "PKSA-fbvq-z33h-r2np": "CVE-2026-48808 (sandbox property allowlist bypass via the column filter under SourcePolicyInterface) - we don't enable sandbox.",
+                    "PKSA-g9zw-qxh8-pq8w": "CVE-2026-48805 (sandbox state regression in deprecated internal wrappers in src/Resources/core.php) - we don't enable sandbox.",
+                    "PKSA-yd6k-t2gh-1m43": "CVE-2026-46636 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders) - we don't enable sandbox.",
+                    "PKSA-1tmc-rt7x-12w6": "CVE-2026-48806 (sandbox __toString() policy bypass via dynamic mapping keys) - we don't enable sandbox.",
+                    "PKSA-xx6c-6d96-db2w": "CVE-2026-48807 (sandbox __toString() policy bypass via Traversable in join/replace and in/not in operators) - we don't enable sandbox."
+                }
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "Elementor team"
+        }
+    ]
 }

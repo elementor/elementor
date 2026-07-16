@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5aedd9403d191e0dd5ee69c649dc1dff",
+    "content-hash": "a7bf428af11096380a4f06aa29d4522c",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,10 +39,10 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.66",
+            "version": "1.0.67",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.66"
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.67"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -69,7 +69,7 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "time": "2026-06-24T10:34:47+00:00"
+            "time": "2026-07-15T06:45:13+00:00"
         }
     ],
     "packages-dev": [
@@ -631,55 +631,6 @@
                 "source": "https://github.com/jsonrainbow/json-schema/tree/5.3.4"
             },
             "time": "2026-05-04T18:54:58+00:00"
-        },
-        {
-            "name": "mixpanel/mixpanel-php",
-            "version": "2.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mixpanel/mixpanel-php.git",
-                "reference": "4b0fafacf2129eff5d50721e129b07f0c32687e7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mixpanel/mixpanel-php/zipball/4b0fafacf2129eff5d50721e129b07f0c32687e7",
-                "reference": "4b0fafacf2129eff5d50721e129b07f0c32687e7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.0"
-            },
-            "require-dev": {
-                "phpdocumentor/phpdocumentor": "2.9.*",
-                "phpunit/phpunit": "5.6.*"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/Mixpanel.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Mixpanel <dev@mixpanel.com>",
-                    "homepage": "https://mixpanel.com/"
-                }
-            ],
-            "description": "The Official PHP library for Mixpanel",
-            "homepage": "https://mixpanel.com/help/reference/php",
-            "keywords": [
-                "mixpanel",
-                "mixpanel php"
-            ],
-            "support": {
-                "issues": "https://github.com/mixpanel/mixpanel-php/issues",
-                "source": "https://github.com/mixpanel/mixpanel-php/tree/2.11.0"
-            },
-            "time": "2023-04-11T23:03:57+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1406,25 +1357,25 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.6.35",
+            "version": "9.6.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0edba2f3a0c48df3553cb9b640810b30df60302b"
+                "reference": "b36f02317466907a230d3aa1d34467041271ef4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0edba2f3a0c48df3553cb9b640810b30df60302b",
-                "reference": "0edba2f3a0c48df3553cb9b640810b30df60302b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b36f02317466907a230d3aa1d34467041271ef4a",
+                "reference": "b36f02317466907a230d3aa1d34467041271ef4a",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.5.0 || ^2",
                 "ext-dom": "*",
-                "ext-filter": "*",
                 "ext-json": "*",
                 "ext-libxml": "*",
                 "ext-mbstring": "*",
+                "ext-xml": "*",
                 "ext-xmlwriter": "*",
                 "myclabs/deep-copy": "^1.13.4",
                 "phar-io/manifest": "^2.0.4",
@@ -1489,15 +1440,31 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.35"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.34"
             },
             "funding": [
                 {
-                    "url": "https://phpunit.de/sponsoring.html",
-                    "type": "other"
+                    "url": "https://phpunit.de/sponsors.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/sebastianbergmann",
+                    "type": "github"
+                },
+                {
+                    "url": "https://liberapay.com/sebastianbergmann",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
+                    "type": "thanks_dev"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpunit/phpunit",
+                    "type": "tidelift"
                 }
             ],
-            "time": "2026-07-06T14:48:07+00:00"
+            "time": "2026-01-27T05:45:00+00:00"
         },
         {
             "name": "psr/container",
