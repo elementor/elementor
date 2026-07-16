@@ -83,7 +83,7 @@ class Module extends BaseModule {
 				'source' => 'server',
 			];
 
-			Server_Events_Client::track( $event_name, array_merge( $context, $properties ) );
+			Server_Events_Client::track( $event_name, array_merge( $properties, $context ) );
 		} catch ( \Throwable $e ) {
 			return;
 		}
