@@ -13,6 +13,23 @@ on:
         default: true
         description: Dry run — validate everything but do not push commits or create tag.
 
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'Version to release (e.g. 4.1.0-beta1 or 4.0.11)'
+      dry_run:
+        required: false
+        type: boolean
+        default: true
+        description: Dry run — validate everything but do not push commits or create tag.
+    secrets:
+      MAINTAIN_USERNAME:
+        required: true
+      MAINTAIN_EMAIL:
+        required: true
+
 jobs:
   release-tag-creation:
     runs-on: ubuntu-24.04
