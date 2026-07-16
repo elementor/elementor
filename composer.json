@@ -34,7 +34,8 @@
         "spatie/phpunit-snapshot-assertions": "^4.2",
         "humbug/php-scoper": "0.17.5",
         "twig/twig": "3.11.3",
-        "wordpress/mcp-adapter": "^0.5.0"
+        "wordpress/mcp-adapter": "^0.5.0",
+        "mixpanel/mixpanel-php": "^2.11"
     },
     "scripts": {
         "lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
