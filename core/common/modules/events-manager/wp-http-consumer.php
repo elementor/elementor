@@ -2,7 +2,7 @@
 
 namespace Elementor\Core\Common\Modules\EventsManager;
 
-use ConsumerStrategies_AbstractConsumer;
+use ElementorDeps\ConsumerStrategies_AbstractConsumer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

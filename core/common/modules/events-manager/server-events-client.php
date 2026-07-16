@@ -2,7 +2,7 @@
 
 namespace Elementor\Core\Common\Modules\EventsManager;
 
-use Mixpanel;
+use ElementorDeps\Mixpanel;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,9 +13,9 @@ class Server_Events_Client {
 	const HOST = 'api-eu.mixpanel.com';
 
 	public static function track( string $event_name, array $properties = [] ): bool {
-		// Guard against the SDK's global (non-namespaced) class colliding with another
-		// plugin/theme bundling an incompatible copy of the same legacy library.
-		if ( ! class_exists( 'Mixpanel' ) ) {
+		// The SDK is bundled via php-scoper (see php-scoper/mixpanel-inc.php), so this is only
+		// a defensive guard in case the prefixed dependency is ever missing from the build.
+		if ( ! class_exists( Mixpanel::class ) ) {
 			return false;
 		}
 
