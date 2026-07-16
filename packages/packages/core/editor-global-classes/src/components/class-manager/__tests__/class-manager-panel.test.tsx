@@ -45,13 +45,7 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
 jest.mock( '../start-sync-to-v3-modal', () => ( {
-	StartSyncToV3Modal: ( {
-		onConfirm,
-		externalOpen,
-	}: {
-		onConfirm?: () => void;
-		externalOpen?: boolean;
-	} ) =>
+	StartSyncToV3Modal: ( { onConfirm, externalOpen }: { onConfirm?: () => void; externalOpen?: boolean } ) =>
 		externalOpen ? (
 			<button type="button" onClick={ onConfirm }>
 				Confirm sync
