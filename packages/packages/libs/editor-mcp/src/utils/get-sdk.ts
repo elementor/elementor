@@ -1,25 +1,30 @@
-import { AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { AngieMcpSdk, isAngiePluginAvailable } from '@elementor-external/angie-sdk';
 export { getAngieIframe, MessageEventType } from '@elementor-external/angie-sdk';
 
 let sdk: AngieMcpSdk;
 
+const LEGACY_ANGIE_WAIT_RETRY_COUNT = 3;
+const LEGACY_ANGIE_WAIT_RETRY_DELAY_MS = 10_000;
+
 class RetriableAngieSDK extends AngieMcpSdk {
 	public async waitForReady(): Promise< void > {
-		let retryCount = 3;
+		let retryCount = LEGACY_ANGIE_WAIT_RETRY_COUNT;
 		while ( retryCount > 0 ) {
 			try {
 				await super.waitForReady();
 				return;
 			} catch {
 				retryCount--;
-				await sleep();
+				if ( retryCount === 0 ) {
+					throw new Error( 'Angie SDK failed to become ready after retries' );
+				}
+				await sleep( LEGACY_ANGIE_WAIT_RETRY_DELAY_MS );
 			}
 		}
-		return new Promise( () => {} ); // never resolves
 	}
 }
 
-const sleep = ( ms = 10_000 ) =>
+const sleep = ( ms: number ) =>
 	new Promise( ( resolve ) => {
 		setTimeout( resolve, ms );
 	} );
@@ -31,7 +36,7 @@ export const getSDK = () => {
 		return {} as unknown as AngieMcpSdk;
 	}
 	if ( ! sdk ) {
-		sdk = new RetriableAngieSDK();
+		sdk = isAngiePluginAvailable() ? new AngieMcpSdk() : new RetriableAngieSDK();
 	}
 	return sdk;
 };
