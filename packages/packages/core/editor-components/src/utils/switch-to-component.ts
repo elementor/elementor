@@ -13,18 +13,17 @@ export async function switchToComponent(
 
 	invalidateDocumentData( componentId );
 
-	await Promise.all( [
-		switchToDocument( componentId, {
-			selector,
-			mode: 'autosave',
-			setAsInitial: false,
-			shouldScroll: false,
-		} ),
-		// The component's elements are always re-fetched on switch (via invalidateDocumentData above),
-		// but overridable props have their own cache guard, so they need an explicit forced refresh here -
-		// otherwise edits made by other users during the session would stay stale.
-		loadComponentsOverridableProps( [ componentId ], { force: true } ),
-	] );
+	await switchToDocument( componentId, {
+		selector,
+		mode: 'autosave',
+		setAsInitial: false,
+		shouldScroll: false,
+	} );
+
+	// The component's elements are always re-fetched on switch (via invalidateDocumentData above),
+	// but overridable props have their own cache guard, so they need an explicit forced refresh here -
+	// otherwise edits made by other users during the session would stay stale.
+	await loadComponentsOverridableProps( [ componentId ], { force: true } );
 
 	const currentDocumentContainer = getCurrentDocumentContainer();
 	const topLevelElement = currentDocumentContainer?.children?.[ 0 ];
