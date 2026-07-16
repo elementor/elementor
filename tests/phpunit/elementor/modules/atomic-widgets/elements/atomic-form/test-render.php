@@ -30,7 +30,10 @@ class Test_Atomic_Form_Render extends Elementor_Test_Base {
 		$expected_tool_description = Webmcp_Utils::build_tool_description( 'Contact Form' );
 
 		$this->assertStringContainsString( 'toolname="' . $expected_tool_name . '"', $rendered_output );
-		$this->assertStringContainsString( 'tooldescription="' . $expected_tool_description . '"', $rendered_output );
+		$this->assertStringContainsString(
+			'tooldescription="' . str_replace( ' ', '&#x20;', $expected_tool_description ) . '"',
+			$rendered_output
+		);
 	}
 
 	public function test_render_frontend_includes_webmcp_autosubmit_when_enabled(): void {
