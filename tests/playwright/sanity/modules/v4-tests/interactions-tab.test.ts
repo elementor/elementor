@@ -129,12 +129,19 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( scrollOnOption ).toBeVisible();
 			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 
-			await page.keyboard.press( 'Escape' );
+			// Close the menu by re-selecting the current value (avoids Escape, which can also
+			// dismiss the outer interaction popover via its own document-level key handler).
+			await pageOption( /page load/i ).click();
+			await page.waitForFunction(
+				() => ! document.querySelector( '.MuiPopover-paper .MuiModal-root' ),
+				{ timeout: 3000 },
+			);
 
 			await expect( popover.locator( '[aria-label="Relative To control"]' ) ).toHaveCount( 0 );
 			await expect( popover.locator( '[aria-label="Start control"]' ) ).toHaveCount( 0 );
 			await expect( popover.locator( '[aria-label="End control"]' ) ).toHaveCount( 0 );
 
+			await expect( popover ).toBeVisible();
 			await triggerSelect.click();
 			await pageOption( /scroll into view/i ).click();
 
