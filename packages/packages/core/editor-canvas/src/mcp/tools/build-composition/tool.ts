@@ -45,10 +45,7 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 			style: z
 				.record(
 					z.string().describe( 'configuration-id' ),
-					z.record(
-						z.string().describe( 'CSS property name' ),
-						z.string().describe( 'CSS value' )
-					)
+					z.record( z.string().describe( 'CSS property name' ), z.string().describe( 'CSS value' ) )
 				)
 				.optional()
 				.describe(
@@ -80,20 +77,17 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 			}
 
 			try {
-				const { data } = await httpService().post< HttpResponse< BuildCompositionResponse > >(
-					MCP_PROXY_URL,
-					{
-						tool: 'build-composition',
-						input: {
-							post_id: document.id,
-							xml_structure: xmlStructure,
-							element_config: elementConfig ?? {},
-							style: style ?? {},
-							parent_id: parentId ?? 'document',
-							dry_run: dryRun ?? false,
-						},
-					}
-				);
+				const { data } = await httpService().post< HttpResponse< BuildCompositionResponse > >( MCP_PROXY_URL, {
+					tool: 'build-composition',
+					input: {
+						post_id: document.id,
+						xml_structure: xmlStructure,
+						element_config: elementConfig ?? {},
+						style: style ?? {},
+						parent_id: parentId ?? 'document',
+						dry_run: dryRun ?? false,
+					},
+				} );
 
 				if ( ! dryRun ) {
 					await reloadCurrentDocument();
