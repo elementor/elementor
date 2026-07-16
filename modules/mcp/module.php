@@ -3,9 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
-use Elementor\Plugin;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_wp_abilities_api';
 
 	public function get_name() {
 		return 'mcp';
@@ -21,18 +18,7 @@ class Module extends BaseModule {
 
 	public static function is_active() {
 		return class_exists( McpAdapter::class ) &&
-			function_exists( 'wp_register_ability' ) &&
-			Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => __( 'Elementor MCP WP Abilities API', 'elementor' ),
-			'description' => __( 'Enable Elementor MCP WP Abilities API. Requirements: 1. WordPress 7.0 or higher. 2. Create an application password for your agent user. 3. Add to your MCP config: {url: "https://<your-site-url>/wp-json/elementor/mcp", headers: {Authorization: "Basic <base64(user:application-password)>"}}', 'elementor' ),
-			'hidden' => true,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-		];
+			function_exists( 'wp_register_ability' );
 	}
 
 	public function __construct() {
