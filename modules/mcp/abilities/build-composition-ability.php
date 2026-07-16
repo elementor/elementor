@@ -124,6 +124,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $config_error;
 		}
 
+		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
+		$class_error = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
+		if ( $class_error ) {
+			return $class_error;
+		}
+
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
 		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ) );
 		if ( $style_result['error'] ) {
