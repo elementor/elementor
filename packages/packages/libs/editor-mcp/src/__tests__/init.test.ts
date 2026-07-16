@@ -24,6 +24,10 @@ jest.mock( '../utils/get-sdk', () => ( {
 	getSDK: jest.fn(),
 } ) );
 
+jest.mock( '../utils/is-angie-available', () => ( {
+	isAngieAvailable: jest.fn( () => false ),
+} ) );
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type InitModule = typeof import('../init');
 
