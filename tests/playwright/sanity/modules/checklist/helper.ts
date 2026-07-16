@@ -95,7 +95,7 @@ export class ChecklistHelper {
 		await this.toggleChecklistItem( itemId, context, true );
 
 		const markAsButton = this.page.locator( this.getStepContentSelector( itemId, selectors.markAsButton ) ),
-			buttonText = await markAsButton.textContent();
+			buttonText = await markAsButton.innerText();
 
 		await this.page.locator( this.getStepContentSelector( itemId, selectors.markAsButton ) ).click();
 		await this.page
@@ -115,7 +115,7 @@ export class ChecklistHelper {
 			await this.toggleChecklist( context, true );
 		}
 
-		const progress = await this.page.locator( selectors.progressBarPercentage ).textContent();
+		const progress = await this.page.locator( selectors.progressBarPercentage ).innerText();
 
 		return +progress.replace( '%', '' );
 	}
@@ -140,8 +140,6 @@ export class ChecklistHelper {
 	}
 
 	async enableChecklistVisibilityPreference() {
-		// Wp-lite-env's docker-compose "run" splits the command on whitespace instead of invoking a shell,
-		// so the PHP passed to `wp eval` must be a single whitespace-free token (no surrounding quotes either).
 		await wpCli(
 			'wp eval update_user_meta(1,"elementor_preferences",array_merge((array)get_user_meta(1,"elementor_preferences",true),array("show_launchpad_checklist"=>"yes")));',
 		);
@@ -188,7 +186,7 @@ export class ChecklistHelper {
 		return proStepIds.includes( stepId );
 	}
 
-	returnDataMockAllDoneMessage( isCompleted ) {
+	returnDataMockAllDoneMessage( isCompleted: boolean ) {
 		return {
 			data: [
 				{
