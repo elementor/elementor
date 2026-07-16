@@ -133,7 +133,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
-		$persisted = $persister->persist( $document, $subtrees, $parent_id );
+		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id );
 		if ( is_wp_error( $persisted ) ) {
 			return $persisted;
 		}

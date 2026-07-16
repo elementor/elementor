@@ -27,7 +27,7 @@ class Composition_Persister {
 	 * @param string   $parent_id Parent element id ("document" for root).
 	 * @return array{tree: array, root_ids: string[]}|\WP_Error
 	 */
-	public function persist( Document $document, array $subtrees, string $parent_id ) {
+	public function insert_and_save( Document $document, array $subtrees, string $parent_id ) {
 		$tree = $document->get_elements_data();
 		$tree = is_array( $tree ) ? $tree : [];
 		$root_ids = [];

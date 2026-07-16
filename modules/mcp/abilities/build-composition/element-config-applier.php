@@ -58,11 +58,10 @@ class Element_Config_Applier {
 			$validation_error = $this->validate_settings( $node['settings'], $schema );
 			if ( $validation_error ) {
 				$errors[] = sprintf(
-					'[%s] Settings validation failed on element type "%s": %s. Available properties are: %s. See elementor://widgets/schema/%s.',
+					'[%s] Settings validation failed on element type "%s": %s. See elementor://widgets/schema/%s.',
 					$config_id,
 					$tag,
 					$validation_error,
-					implode( ', ', Prop_Canonicalizer::available_prop_names( $schema ) ),
 					$tag
 				);
 			}
@@ -88,6 +87,7 @@ class Element_Config_Applier {
 		string $config_id,
 		array &$errors
 	): array {
+		// Precompute the alias map once; resolve every incoming key against it.
 		$alias_map = Prop_Canonicalizer::build_alias_map( $schema );
 		$resolved = [];
 
@@ -149,6 +149,11 @@ class Element_Config_Applier {
 		return $result->is_valid() ? null : $result->errors()->to_string();
 	}
 
+	/**
+	 * When the schema slot is a single (non-union) Prop_Type, force LLM-adjusted values
+	 * into that concrete $$type envelope so loosely typed payloads get coerced correctly.
+	 * Unions stay ambiguous and return null.
+	 */
 	private function resolve_force_key( ?Prop_Type $prop_type ): ?string {
 		if ( ! $prop_type || $prop_type instanceof Union_Prop_Type ) {
 			return null;
