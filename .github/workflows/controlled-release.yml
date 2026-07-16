@@ -7,262 +7,211 @@ on:
         required: true
         type: string
         description: 'Version to release (e.g. 4.2.3 or 4.2.0-beta1)'
-      source_repo:
-        required: true
-        type: choice
-        description: 'Source repository to release from'
-        options:
-          - elementor/elementor
-          - elementor/elementor-pro
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish)'
 
 permissions:
   contents: write
   id-token: write
 
-env:
-  RELEASE_VERSION: ${{ inputs.version }}
-  SOURCE_REPO: ${{ inputs.source_repo }}
-  ZIP_NAME: elementor-${{ inputs.version }}.zip
-
 jobs:
   # ── Job 1 ────────────────────────────────────────────────────────────────
-  # Finds the last build artifact on the release branch, patches the version
-  # strings inside the plugin files to the real release version, rezips it,
-  # and re-uploads with a 90-day retention so Job 2 can use it.
-  # Reviewers see a full summary before deciding to approve.
+  # Dry-run: validates version, shows what tag will be created, writes
+  # a summary for the reviewer. Nothing is pushed.
   # ─────────────────────────────────────────────────────────────────────────
-  prepare:
-    name: Prepare RC artifact
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-
-    outputs:
-      artifact-id: ${{ steps.reupload.outputs.artifact-id }}
-      source-run-url: ${{ steps.find-artifact.outputs.run-url }}
-      source-commit: ${{ steps.find-artifact.outputs.commit-sha }}
-      source-artifact-name: ${{ steps.find-artifact.outputs.artifact-name }}
-      release-branch: ${{ steps.derive-branch.outputs.branch }}
-
-    steps:
-      - name: Derive release branch from version
-        id: derive-branch
-        env:
-          VERSION: ${{ env.RELEASE_VERSION }}
-        run: |
-          # 4.2.3 → 4.2 | 4.2.0-beta1 → 4.2
-          BRANCH=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+')
-          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
-          echo "Release branch: ${BRANCH}"
-
-      - name: Find latest build artifact on release branch
-        id: find-artifact
-        env:
-          GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPO: ${{ env.SOURCE_REPO }}
-          BRANCH: ${{ steps.derive-branch.outputs.branch }}
-        run: |
-          echo "Searching for latest successful build run on ${REPO}@${BRANCH}..."
-
-          RUN_JSON=$(gh run list \
-            --repo "$REPO" \
-            --branch "$BRANCH" \
-            --workflow "build.yml" \
-            --status success \
-            --limit 1 \
-            --json databaseId,headSha,url \
-            --jq '.[0]')
-
-          if [ -z "$RUN_JSON" ] || [ "$RUN_JSON" = "null" ]; then
-            echo "::error::No successful build run found on branch ${BRANCH} in ${REPO}"
-            exit 1
-          fi
-
-          RUN_ID=$(echo "$RUN_JSON" | jq -r '.databaseId')
-          COMMIT_SHA=$(echo "$RUN_JSON" | jq -r '.headSha')
-          RUN_URL=$(echo "$RUN_JSON" | jq -r '.url')
-
-          echo "Found run ${RUN_ID} at commit ${COMMIT_SHA}"
-
-          # Find the artifact uploaded by that run (name pattern: elementor-*)
-          ARTIFACT_JSON=$(gh api \
-            "repos/${REPO}/actions/runs/${RUN_ID}/artifacts" \
-            --jq '.artifacts[] | select(.name | startswith("elementor-")) | {id: .id, name: .name}' \
-            | head -1)
-
-          if [ -z "$ARTIFACT_JSON" ]; then
-            echo "::error::No elementor-* artifact found in run ${RUN_ID}"
-            exit 1
-          fi
-
-          ARTIFACT_ID=$(echo "$ARTIFACT_JSON" | jq -r '.id')
-          ARTIFACT_NAME=$(echo "$ARTIFACT_JSON" | jq -r '.name')
-
-          echo "Artifact: ${ARTIFACT_NAME} (id: ${ARTIFACT_ID})"
-
-          echo "run-id=${RUN_ID}"           >> "$GITHUB_OUTPUT"
-          echo "run-url=${RUN_URL}"         >> "$GITHUB_OUTPUT"
-          echo "commit-sha=${COMMIT_SHA}"   >> "$GITHUB_OUTPUT"
-          echo "artifact-id=${ARTIFACT_ID}" >> "$GITHUB_OUTPUT"
-          echo "artifact-name=${ARTIFACT_NAME}" >> "$GITHUB_OUTPUT"
-
-      - name: Download source artifact
-        env:
-          GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPO: ${{ env.SOURCE_REPO }}
-          ARTIFACT_ID: ${{ steps.find-artifact.outputs.artifact-id }}
-          ARTIFACT_NAME: ${{ steps.find-artifact.outputs.artifact-name }}
-        run: |
-          mkdir -p artifact-download
-          gh api \
-            "repos/${REPO}/actions/artifacts/${ARTIFACT_ID}/zip" \
-            > artifact-download/source.zip
-          cd artifact-download && unzip -q source.zip -d plugin
-          echo "Downloaded and extracted ${ARTIFACT_NAME}"
-
-      - name: Patch version strings in plugin files
-        env:
-          VERSION: ${{ env.RELEASE_VERSION }}
-        run: |
-          PLUGIN_DIR="artifact-download/plugin"
-
-          # Detect which plugin we're dealing with
-          if [ -f "${PLUGIN_DIR}/elementor.php" ]; then
-            MAIN_FILE="${PLUGIN_DIR}/elementor.php"
-          elif [ -f "${PLUGIN_DIR}/elementor-pro.php" ]; then
-            MAIN_FILE="${PLUGIN_DIR}/elementor-pro.php"
-          else
-            echo "::error::Could not find main plugin file (elementor.php or elementor-pro.php)"
-            exit 1
-          fi
-
-          echo "Patching version to ${VERSION} in ${MAIN_FILE}"
-
-          # Patch "Version: x.x.x" header
-          sed -i -E "s/Version: [0-9]+\.[0-9]+\.[0-9]+.*/Version: ${VERSION}/" "$MAIN_FILE"
-
-          # Patch ELEMENTOR_VERSION or ELEMENTOR_PRO_VERSION constant
-          sed -i -E "s/(ELEMENTOR(_PRO)?_VERSION', ')[^']+/\1${VERSION}/" "$MAIN_FILE"
-
-          # Patch readme.txt stable tag (only for elementor, not pro)
-          if [ -f "${PLUGIN_DIR}/readme.txt" ]; then
-            sed -i -E "s/Stable tag: [0-9]+\.[0-9]+\.[0-9]+.*/Stable tag: ${VERSION}/" \
-              "${PLUGIN_DIR}/readme.txt"
-          fi
-
-          echo "Version patch complete."
-          grep -E "Version:|ELEMENTOR.*VERSION" "$MAIN_FILE" | head -5
-
-      - name: Repackage as release zip
-        env:
-          VERSION: ${{ env.RELEASE_VERSION }}
-          ZIP_NAME: ${{ env.ZIP_NAME }}
-        run: |
-          cd artifact-download/plugin
-
-          # The uploaded artifact is the plugin folder contents.
-          # Wrap in a folder named "elementor" as WordPress expects.
-          mkdir -p "../../repackaged/elementor"
-          cp -r . "../../repackaged/elementor/"
-
-          cd ../../repackaged
-          zip -qr "../${ZIP_NAME}" elementor/
-          echo "Created ${ZIP_NAME}"
-          ls -lh "../${ZIP_NAME}"
-
-      - name: Upload RC artifact (90-day retention)
-        id: reupload
-        uses: actions/upload-artifact@v4
-        with:
-          name: elementor-${{ env.RELEASE_VERSION }}
-          path: ${{ env.ZIP_NAME }}
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Write job summary for reviewer
-        env:
-          VERSION: ${{ env.RELEASE_VERSION }}
-          REPO: ${{ env.SOURCE_REPO }}
-          BRANCH: ${{ steps.derive-branch.outputs.branch }}
-          SOURCE_RUN_URL: ${{ steps.find-artifact.outputs.run-url }}
-          SOURCE_COMMIT: ${{ steps.find-artifact.outputs.commit-sha }}
-          SOURCE_ARTIFACT: ${{ steps.find-artifact.outputs.artifact-name }}
-          ZIP_NAME: ${{ env.ZIP_NAME }}
-        run: |
-          {
-            echo "## Release Candidate — Review before approving"
-            echo ""
-            echo "| Field | Value |"
-            echo "| --- | --- |"
-            echo "| **Release version** | \`${VERSION}\` |"
-            echo "| **Source repo** | \`${REPO}\` |"
-            echo "| **Release branch** | \`${BRANCH}\` |"
-            echo "| **Source build** | [${SOURCE_ARTIFACT}](${SOURCE_RUN_URL}) |"
-            echo "| **Built from commit** | \`${SOURCE_COMMIT}\` |"
-            echo "| **RC zip** | \`${ZIP_NAME}\` |"
-            echo ""
-            echo "> ⚠️ Review the source build run and commit above before approving."
-            echo "> The RC zip has been patched to version \`${VERSION}\` and is attached to this run."
-            echo "> Approving will push the Git tag and publish the release."
-          } >> "$GITHUB_STEP_SUMMARY"
+  validate:
+    name: Validate (Dry Run)
+    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
+    with:
+      version: ${{ inputs.version }}
+      dry_run: true
+    secrets:
+      MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+      MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
 
   # ── Job 2 ────────────────────────────────────────────────────────────────
-  # Pauses for human approval via the `release-approval` GitHub Environment.
-  # After approval: checks out the source repo, calls release-tag-creation
-  # (which bumps version files and pushes the Git tag), then creates the
-  # GitHub Release and attaches the RC zip.
+  # Approval gate. Reviewer reads the dry-run summary from Job 1 and clicks
+  # Approve in the GitHub Actions UI (Settings → Environments → release-approval).
+  # environment: cannot be placed on a `uses:` job — this intermediate job
+  # holds the gate so Job 3 can use a reusable workflow cleanly.
   # ─────────────────────────────────────────────────────────────────────────
-  release:
-    name: Release (Live)
-    needs: prepare
+  approve:
+    name: Await Approval
+    needs: validate
     environment: release-approval
     runs-on: ubuntu-24.04
+    steps:
+      - name: Approval received
+        run: echo "Release of ${{ inputs.version }} approved. Proceeding."
+
+  # ── Job 3 ────────────────────────────────────────────────────────────────
+  # Pushes the version bump commit and the Git tag.
+  # ─────────────────────────────────────────────────────────────────────────
+  tag:
+    name: Create Release Tag
+    needs: approve
+    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
+    with:
+      version: ${{ inputs.version }}
+      dry_run: false
+    secrets:
+      MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+      MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+
+  # ── Job 4 ────────────────────────────────────────────────────────────────
+  # Builds the plugin from the tagged commit and publishes the release.
+  # Version strings are already correct — the tag job bumped them.
+  # ─────────────────────────────────────────────────────────────────────────
+  publish:
+    name: Build & Publish
+    needs: tag
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
 
     steps:
-      - name: Checkout source repo at release branch
+      - name: Checkout tagged commit
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.SOURCE_REPO }}
-          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: ${{ inputs.version }}
           fetch-depth: 0
-          ref: ${{ needs.prepare.outputs.release-branch }}
 
-      - name: Download RC zip
-        uses: actions/download-artifact@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          artifact-ids: ${{ needs.prepare.outputs.artifact-id }}
-          github-token: ${{ secrets.MAINTAIN_TOKEN }}
+          node-version: 24.15.0
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
 
-      - name: Verify zip is present
-        env:
-          ZIP_NAME: ${{ env.ZIP_NAME }}
-        run: |
-          ls -lh "${ZIP_NAME}"
-          echo "RC zip verified."
+      - name: Install dependencies
+        uses: ./.github/workflows/install-dependencies
 
-      - name: Release tag creation — live
-        id: tag-creation
-        uses: elementor/elementor-editor-github-actions/actions/release-tag-creation@main
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
         with:
-          version: ${{ env.RELEASE_VERSION }}
-          dry_run: 'false'
-          maintain_username: ${{ secrets.MAINTAIN_USERNAME }}
-          maintain_email: ${{ secrets.MAINTAIN_EMAIL }}
-
-      - name: Create GitHub Release and attach zip
+          PACKAGE_VERSION: ${{ inputs.version }}
+          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
         env:
-          GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          VERSION: ${{ env.RELEASE_VERSION }}
-          REPO: ${{ env.SOURCE_REPO }}
-          ZIP_NAME: ${{ env.ZIP_NAME }}
-        run: |
-          gh release create "${VERSION}" \
-            --repo "${REPO}" \
-            --title "${VERSION}" \
-            --notes "Release ${VERSION}" \
-            --target "${{ needs.prepare.outputs.release-branch }}" \
-            "${ZIP_NAME}"
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
-          echo "GitHub Release created: ${VERSION}"
+      - name: Get release name
+        uses: ./.github/workflows/get-release-name
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+
+      - name: Check changelog is updated
+        if: ${{ !inputs.prerelease }}
+        uses: ./.github/workflows/verify-version-changelog
+        with:
+          VERSION: ${{ inputs.version }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          files: elementor-*.zip
+          prerelease: ${{ inputs.prerelease }}
+
+      - name: Validate build files
+        if: github.repository_owner == 'elementor'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
+          PACKAGE_VERSION: ${{ inputs.version }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+
+      # - name: Publish to WordPress.org SVN
+      #   if: github.repository_owner == 'elementor' && !inputs.prerelease
+      #   env:
+      #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      #     CHANNEL: ga
+      #     PACKAGE_VERSION: ${{ inputs.version }}
+      #   run: |
+      #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+
+      # - name: Prepare Slack release announcement
+      #   id: prepare_slack_announcement
+      #   env:
+      #     CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
+      #     RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }}
+      #     RELEASE_VERSION: ${{ inputs.version }}
+      #     RELEASED_BY: ${{ github.actor }}
+      #     SLACK_RELEASE_ANNOUNCEMENT_COPY: ${{ vars.SLACK_RELEASE_ANNOUNCEMENT_COPY }}
+      #   run: |
+      #     if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
+      #       echo "SLACK_RELEASE_ANNOUNCEMENT_COPY repository variable is not set."
+      #       exit 1
+      #     fi
+
+      #     PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
+      #       --arg channel "$CHANNEL" \
+      #       --arg release_url "$RELEASE_URL" \
+      #       --arg released_by "$RELEASED_BY" \
+      #       --arg version "$RELEASE_VERSION" \
+      #       '
+      #       def apply_announcement_tokens($text; $product_display_name; $distribution_note):
+      #         $text
+      #         | gsub("\\{product_display_name\\}"; $product_display_name)
+      #         | gsub("\\{version\\}"; $version)
+      #         | gsub("\\{released_by\\}"; $released_by)
+      #         | gsub("\\{release_url\\}"; $release_url)
+      #         | gsub("\\{distribution_note\\}"; $distribution_note);
+
+      #       . as $copy |
+      #       ($copy.distribution_notes[$channel] // "") as $channel_note |
+      #       (if $channel_note == "" then "" else "\n\n" + $channel_note end) as $distribution_note |
+      #       {
+      #         blocks: [
+      #           {
+      #             type: "section",
+      #             text: {
+      #               type: "mrkdwn",
+      #               text: (
+      #                 $copy.opening_line + "\n\n" +
+      #                 apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note)
+      #               )
+      #             }
+      #           },
+      #           { type: "divider" },
+      #           {
+      #             type: "section",
+      #             text: {
+      #               type: "mrkdwn",
+      #               text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note)
+      #             },
+      #             accessory: {
+      #               type: "button",
+      #               text: {
+      #                 type: "plain_text",
+      #                 text: $copy.action_button_label,
+      #                 emoji: true
+      #               },
+      #               value: "open-release",
+      #               url: $release_url,
+      #               action_id: "button-action"
+      #             }
+      #           }
+      #         ]
+      #       }
+      #       ')
+
+      #     {
+      #       echo 'payload<<EOF'
+      #       echo "$PAYLOAD"
+      #       echo 'EOF'
+      #     } >> "$GITHUB_OUTPUT"
+
+      # - name: Post to Slack
+      #   uses: ./.github/workflows/post-to-slack
+      #   with:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      #     SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      #     PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
