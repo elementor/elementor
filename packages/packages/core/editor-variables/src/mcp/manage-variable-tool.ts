@@ -3,6 +3,7 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { isProActive } from '@elementor/utils';
 
+import { service } from '../service';
 import { MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
@@ -77,6 +78,8 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 				tool: TOOL_NAME,
 				input: params,
 			} );
+
+			await service.load();
 
 			return { status: 'ok' };
 		},

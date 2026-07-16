@@ -2,6 +2,7 @@
 import { httpService } from '@elementor/http-client';
 import { isProActive } from '@elementor/utils';
 
+import { service } from '../../service';
 import { initManageVariableTool } from '../manage-variable-tool';
 
 jest.mock( '@elementor/http-client', () => ( {
@@ -11,6 +12,12 @@ jest.mock( '@elementor/http-client', () => ( {
 jest.mock( '@elementor/utils', () => ( {
 	...jest.requireActual( '@elementor/utils' ),
 	isProActive: jest.fn( () => true ),
+} ) );
+
+jest.mock( '../../service', () => ( {
+	service: {
+		load: jest.fn().mockResolvedValue( {} ),
+	},
 } ) );
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
@@ -46,6 +53,7 @@ describe( 'manage-variable-tool (thin proxy wrapper)', () => {
 		};
 		( httpService as jest.Mock ).mockReturnValue( httpMock );
 		( isProActive as jest.Mock ).mockReturnValue( true );
+		jest.mocked( service.load ).mockClear();
 	} );
 
 	it( 'proxies create action to mcp-proxy POST with tool name and input', async () => {
@@ -67,6 +75,7 @@ describe( 'manage-variable-tool (thin proxy wrapper)', () => {
 				value: '#000',
 			},
 		} );
+		expect( service.load ).toHaveBeenCalledTimes( 1 );
 		expect( result ).toEqual( { status: 'ok' } );
 	} );
 
@@ -89,9 +98,10 @@ describe( 'manage-variable-tool (thin proxy wrapper)', () => {
 				input: expect.objectContaining( { action: 'delete', id: 'abc' } ),
 			} )
 		);
+		expect( service.load ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'propagates server errors from the proxy', async () => {
+	it( 'does not reload variables when the proxy fails', async () => {
 		httpMock.post.mockRejectedValueOnce( new Error( 'duplicated label' ) );
 
 		const { registeredTool } = createMockRegistry();
@@ -99,6 +109,7 @@ describe( 'manage-variable-tool (thin proxy wrapper)', () => {
 		await expect(
 			registeredTool.handler( { action: 'create', type: 'global-color-variable', label: 'brand', value: '#000' } )
 		).rejects.toThrow( 'duplicated label' );
+		expect( service.load ).not.toHaveBeenCalled();
 	} );
 
 	it( 'fetches the guide resource from mcp-proxy GET', async () => {

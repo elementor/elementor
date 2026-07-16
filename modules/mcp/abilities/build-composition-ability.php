@@ -10,6 +10,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
@@ -199,6 +201,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'default' => (object) [],
 					'description' => 'Record mapping configuration-id → raw CSS declarations (property → value strings; no selectors). Keys MUST match configuration-id attributes in xml_structure. Server converts to native styles; unconvertible declarations become the element custom CSS.',
 				],
+				'classes' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Record mapping configuration-id → list of existing global class labels to attach to that element. Create classes first via elementor/manage-classes.',
+					'additionalProperties' => [
+						'type' => 'array',
+						'items' => [ 'type' => 'string' ],
+					],
+				],
 				'parent_id' => [
 					'type' => 'string',
 					'default' => self::DEFAULT_PARENT_ID,
@@ -321,5 +332,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	private function create_global_classes_repository(): Global_Classes_Repository {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		return Global_Classes_Repository::make( $kit );
 	}
 }

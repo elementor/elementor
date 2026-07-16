@@ -63,9 +63,9 @@ class Get_Globals_Ability extends Abstract_Ability {
 		$variables_payload = $variables_service->load();
 
 		return [
-			'global_classes' => $classes_payload,
+			'global_classes' => (object) $classes_payload,
 			'variables' => [
-				'variables' => $variables_payload['data'] ?? [],
+				'variables' => (object) ( $variables_payload['data'] ?? [] ),
 				'total' => isset( $variables_payload['data'] ) ? count( $variables_payload['data'] ) : 0,
 				'watermark' => $variables_payload['watermark'] ?? null,
 			],
