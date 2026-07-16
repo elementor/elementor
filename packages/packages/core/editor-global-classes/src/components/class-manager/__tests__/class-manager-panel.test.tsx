@@ -15,6 +15,7 @@ import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
+import { loadExistingClasses } from '../../../load-existing-classes';
 import { slice } from '../../../store';
 import { ClassManagerPanelEmbedded } from '../class-manager-panel';
 
@@ -43,9 +44,25 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
-jest.mock( '../start-sync-to-v3-modal' );
+jest.mock( '../start-sync-to-v3-modal', () => ( {
+	StartSyncToV3Modal: ( {
+		onConfirm,
+		externalOpen,
+	}: {
+		onConfirm?: () => void;
+		externalOpen?: boolean;
+	} ) =>
+		externalOpen ? (
+			<button type="button" onClick={ onConfirm }>
+				Confirm sync
+			</button>
+		) : null,
+} ) );
 
 jest.mock( '../../../api' );
+jest.mock( '../../../load-existing-classes', () => ( {
+	loadExistingClasses: jest.fn().mockResolvedValue( undefined ),
+} ) );
 
 jest.mock( '@elementor/editor-current-user', () => ( {
 	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
@@ -75,6 +92,7 @@ describe( 'ClassManagerPanel', () => {
 	} );
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		__registerSlice( slice );
 
 		store = __createStore();
@@ -571,6 +589,75 @@ describe( 'ClassManagerPanel', () => {
 				classId: 'class-2',
 				action: 'unsync',
 			} );
+		} );
+
+		expect( loadExistingClasses ).toHaveBeenCalledWith( [ 'class-2' ] );
+	} );
+
+	it( 'should load existing class before enabling sync when class is not in store', async () => {
+		// Arrange
+		const unloadedClass = createMockStyleDefinition( { id: 'class-3', label: 'Class 3' } );
+
+		jest.mocked( loadExistingClasses ).mockImplementation( async () => {
+			act( () => {
+				__dispatch(
+					slice.actions.mergeExistingClasses( {
+						preview: { [ unloadedClass.id ]: unloadedClass },
+						frontend: { [ unloadedClass.id ]: unloadedClass },
+					} )
+				);
+			} );
+		} );
+
+		act( () => {
+			__dispatch(
+				slice.actions.load( {
+					frontend: { items: {}, order: [ unloadedClass.id ] },
+					preview: { items: {}, order: [ unloadedClass.id ] },
+					classLabels: { [ unloadedClass.id ]: unloadedClass.label },
+				} )
+			);
+		} );
+
+		// Act
+		renderWithStore(
+			<ThemeProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+				</QueryClientProvider>
+			</ThemeProvider>,
+			store
+		);
+
+		const [ classItem ] = screen.getAllByRole( 'listitem' );
+
+		fireEvent.click( within( classItem ).getByRole( 'button', { name: 'More actions' } ) );
+
+		const startSyncButton = screen.getByRole( 'menuitem', { name: /Sync to Global Fonts/i } );
+
+		fireEvent.click( startSyncButton );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Confirm sync' } ) ).toBeInTheDocument();
+		} );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Confirm sync' } ) );
+
+		// Assert
+		await waitFor( () => {
+			expect( loadExistingClasses ).toHaveBeenCalledWith( [ unloadedClass.id ] );
+		} );
+
+		const updatedClass = store.getState().globalClasses.data.items[ unloadedClass.id ];
+
+		expect( updatedClass ).toMatchObject( {
+			id: unloadedClass.id,
+			label: unloadedClass.label,
+			type: 'class',
+			sync_to_v3: true,
+			variants: unloadedClass.variants,
 		} );
 	} );
 } );
