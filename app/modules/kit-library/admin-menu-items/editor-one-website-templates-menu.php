@@ -36,7 +36,7 @@ class Editor_One_Website_Templates_Menu implements Menu_Item_Interface {
 		$app = Plugin::$instance->app;
 
 		if ( $app ) {
-			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
+			$return_to = rawurlencode( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ) );
 			return add_query_arg(
 				[
 					'return_to' => $return_to,
