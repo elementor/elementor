@@ -59,14 +59,28 @@ const id = 'global-classes-manager';
 export type ClassManagerPanelEmbeddedProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
+	isActive?: boolean;
 };
 
+<<<<<<< HEAD
 export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
 	return (
 		<ClassManagerPanelRoot
 			embedded
 			onRequestClose={ onRequestClose }
 			onExposeCloseAttempt={ onExposeCloseAttempt }
+=======
+export function ClassManagerPanelEmbedded( {
+	onRequestClose,
+	onExposeCloseAttempt,
+	isActive,
+}: ClassManagerPanelEmbeddedProps ) {
+	return (
+		<ClassManagerPanelContent
+			onRequestClose={ onRequestClose }
+			onExposeCloseAttempt={ onExposeCloseAttempt }
+			isActive={ isActive }
+>>>>>>> f4e4f16c00 (Fix: Inconsistent dirty document check between Design System tabs [ED-24099] (#35927))
 		/>
 	);
 }
@@ -96,13 +110,22 @@ type ClassManagerPanelRootProps = {
 	embedded?: boolean;
 	onRequestClose?: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
+	isActive?: boolean;
 };
 
+<<<<<<< HEAD
 function ClassManagerPanelRoot( {
 	embedded = false,
 	onRequestClose,
 	onExposeCloseAttempt,
 }: ClassManagerPanelRootProps = {} ) {
+=======
+function ClassManagerPanelContent( {
+	onRequestClose,
+	onExposeCloseAttempt,
+	isActive = true,
+}: ClassManagerPanelContentProps ) {
+>>>>>>> f4e4f16c00 (Fix: Inconsistent dirty document check between Design System tabs [ED-24099] (#35927))
 	const isDirty = useDirtyState();
 	const { close: closeStandalonePanel } = usePanelActions();
 	const closePanel = useMemo(
@@ -243,6 +266,71 @@ function ClassManagerPanelRoot( {
 
 	const dialogs = (
 		<>
+<<<<<<< HEAD
+=======
+			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
+				<SearchAndFilterProvider>
+					<Stack
+						direction="column"
+						sx={ {
+							height: '100%',
+							width: '100%',
+							flex: 1,
+							minHeight: 0,
+							overflow: 'hidden',
+						} }
+					>
+						<Box px={ 2 } pb={ 1 }>
+							<Stack
+								direction="row"
+								alignItems="center"
+								justifyContent="space-between"
+								gap={ 0.5 }
+								sx={ { pb: 0.5 } }
+							>
+								<Box sx={ { flexGrow: 1, minWidth: 0 } }>
+									<ClassManagerSearch />
+								</Box>
+								<CssClassFilter />
+								<TotalCssClassCounter />
+							</Stack>
+							<ActiveFilters />
+						</Box>
+						<Divider />
+						<Box
+							ref={ setScrollElement }
+							px={ 2 }
+							sx={ {
+								flexGrow: 1,
+								overflowY: 'auto',
+								minHeight: 0,
+							} }
+						>
+							<GlobalClassesList
+								disabled={ isPublishing }
+								scrollElement={ scrollElement }
+								onStopSyncRequest={ handleStopSyncRequest }
+								onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
+							/>
+						</Box>
+						<PanelFooter>
+							<Button
+								fullWidth
+								size="small"
+								color="global"
+								variant="contained"
+								onClick={ publish }
+								disabled={ ! isDirty }
+								loading={ isPublishing }
+							>
+								{ __( 'Save changes', 'elementor' ) }
+							</Button>
+						</PanelFooter>
+					</Stack>
+				</SearchAndFilterProvider>
+			</ErrorBoundary>
+			{ isActive && <ClassManagerIntroduction /> }
+>>>>>>> f4e4f16c00 (Fix: Inconsistent dirty document check between Design System tabs [ED-24099] (#35927))
 			{ startSyncConfirmation && (
 				<StartSyncToV3Modal
 					externalOpen

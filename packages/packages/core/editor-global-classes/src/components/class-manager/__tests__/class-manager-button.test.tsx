@@ -1,13 +1,8 @@
 import * as React from 'react';
 import { createMockTrackingModule, mockTracking, renderWithQuery } from 'test-utils';
-import {
-	__useActiveDocument as useActiveDocument,
-	__useActiveDocumentActions as useActiveDocumentActions,
-} from '@elementor/editor-documents';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
-jest.mock( '@elementor/editor-documents' );
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	...jest.requireActual( '@elementor/editor-styles-repository' ),
 	useUserStylesCapability: jest.fn( () => ( {
@@ -25,6 +20,7 @@ import { ClassManagerButton } from '../class-manager-button';
 import { usePanelActions } from '../class-manager-panel';
 
 describe( 'ClassManagerButton', () => {
+<<<<<<< HEAD
 	const unsavedChangesMessage = 'You have unsaved changes';
 
 	it( 'should navigate to the panel on click when the document is pristine', () => {
@@ -41,12 +37,25 @@ describe( 'ClassManagerButton', () => {
 			save: jest.fn(),
 		} as never );
 
+=======
+	let dispatchEventSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy.mockRestore();
+	} );
+
+	it( 'should navigate to the panel on click', () => {
+>>>>>>> f4e4f16c00 (Fix: Inconsistent dirty document check between Design System tabs [ED-24099] (#35927))
 		// Act.
 		renderWithQuery( <ClassManagerButton /> );
-
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
 
 		// Assert.
+<<<<<<< HEAD
 		expect( openPanel ).toHaveBeenCalled();
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerOpened',
@@ -69,12 +78,24 @@ describe( 'ClassManagerButton', () => {
 			save,
 		} as never );
 
+=======
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'elementor/toggle-design-system',
+				detail: { tab: 'classes' },
+			} )
+		);
+	} );
+
+	it( 'should track classManagerOpened event on click', () => {
+>>>>>>> f4e4f16c00 (Fix: Inconsistent dirty document check between Design System tabs [ED-24099] (#35927))
 		// Act.
 		renderWithQuery( <ClassManagerButton /> );
 
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
 
 		// Assert.
+<<<<<<< HEAD
 		expect( screen.getByText( unsavedChangesMessage ) ).toBeInTheDocument();
 
 		// Act.
@@ -120,6 +141,8 @@ describe( 'ClassManagerButton', () => {
 
 		expect( save ).toHaveBeenCalled();
 		expect( openPanel ).toHaveBeenCalled();
+=======
+>>>>>>> f4e4f16c00 (Fix: Inconsistent dirty document check between Design System tabs [ED-24099] (#35927))
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerOpened',
 			source: 'style-panel',
