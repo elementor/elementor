@@ -1,0 +1,1 @@
+Returns the available dynamic tags. To bind a property to a dynamic source, set its value to { "$$type": "dynamic", "value": { "name": <tag name>, "settings": { ... } } } using a tag whose name appears here, and populate "settings" per the tag entry's schema.
