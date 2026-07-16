@@ -429,4 +429,22 @@ class Test_Widget_Render_Markdown extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '<div', $md );
 		$this->assertStringNotContainsString( '<span', $md );
 	}
+
+	public function test_third_party_widget_converts_rendered_html_to_markdown() {
+		require_once ELEMENTOR_PATH . 'tests/phpunit/elementor/includes/base/mock/mock-widget.php';
+
+		$widget = new \Elementor\Tests\Phpunit\Includes\Base\Mock\Mock_Widget(
+			[
+				'settings' => [],
+				'id' => 'third-party-widget',
+				'elType' => 'widget',
+				'widgetType' => 'mock-widget',
+			],
+			[]
+		);
+
+		$md = $widget->render_markdown();
+
+		$this->assertSame( 'render', $md );
+	}
 }

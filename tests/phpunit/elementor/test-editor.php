@@ -42,6 +42,57 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 		$this->assertInstanceOf( '\Elementor\Core\Editor\Editor', $this->elementor()->editor );
 	}
 
+	public function test_is_editor_request__returns_true_for_elementor_action() {
+		// Arrange
+		$_REQUEST['action'] = 'elementor';
+		$editor = $this->elementor()->editor;
+
+		// Act
+		$result = $editor->is_editor_request();
+
+		// Cleanup
+		unset( $_REQUEST['action'] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_editor_request__remains_true_when_edit_mode_is_disabled() {
+		// Arrange
+		$_REQUEST['action'] = 'elementor';
+		$editor = $this->elementor()->editor;
+		$editor->set_edit_mode( false );
+
+		// Act
+		$result = $editor->is_editor_request();
+
+		// Cleanup
+		unset( $_REQUEST['action'] );
+		$editor->set_edit_mode( null );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_edit_mode__returns_false_when_edit_mode_is_disabled() {
+		// Arrange
+		$_REQUEST['action'] = 'elementor';
+		$editor = $this->elementor()->editor;
+		$post_id = $GLOBALS['post'];
+		$editor->set_post_id( $post_id );
+		$editor->set_edit_mode( false );
+
+		// Act
+		$result = $editor->is_edit_mode( $post_id );
+
+		// Cleanup
+		unset( $_REQUEST['action'] );
+		$editor->set_edit_mode( null );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
 	/*
 	public function test_enqueueScripts() {
 		ini_set( 'memory_limit', '85M' );
