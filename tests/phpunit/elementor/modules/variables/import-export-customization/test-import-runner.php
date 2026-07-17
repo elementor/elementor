@@ -87,6 +87,21 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertEquals( 'Primary Font', $collection->get( 'e-gv-456' )->label() );
 	}
 
+	public function test_import__preserves_sync_to_v3_flag() {
+		// Act.
+		( new Import_Runner() )->import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+		], [] );
+
+		// Assert.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertTrue( $collection->get( 'e-gv-synced' )->sync_to_v3() );
+		$this->assertFalse( $collection->get( 'e-gv-unsynced' )->sync_to_v3() );
+	}
+
 	public function test_import__invalid_data_missing_required_fields() {
 		// Assert - Variable::from_array() throws InvalidArgumentException on missing fields.
 		$this->expectException( \InvalidArgumentException::class );

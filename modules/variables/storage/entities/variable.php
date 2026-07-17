@@ -82,6 +82,10 @@ class Variable {
 		$this->data['value'] = $value;
 	}
 
+	public function sync_to_v3(): bool {
+		return ! empty( $this->data['sync_to_v3'] );
+	}
+
 	public function type() {
 		return $this->data['type'];
 	}

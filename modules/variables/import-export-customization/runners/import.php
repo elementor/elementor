@@ -154,6 +154,7 @@ class Import extends Import_Runner_Base {
 				'label' => $new_label,
 				'value' => $variable->value(),
 				'order' => $existing->get_next_order(),
+				'sync_to_v3' => $variable->sync_to_v3(),
 			] );
 
 			$existing->add_variable( $new_variable );
