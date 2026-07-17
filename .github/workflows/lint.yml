@@ -84,8 +84,10 @@ jobs:
         run: |
           vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
       - name: Twig safety check
+        if: ${{ !cancelled() }}
         run: composer run check-twig-safety
       - name: Composer audit
+        if: ${{ !cancelled() }}
         run: composer audit --locked --abandoned=report
       - name: Setup PHP 7.4 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
