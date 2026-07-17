@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - '**/*.php'
+      - '**/*.twig'
       - '.github/workflows/lint-php-changes-only.yml'
   merge_group:
 
@@ -20,8 +21,9 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      any_changed: ${{ steps.changed-php-files.outputs.any_changed }}
-      all_changed_files: ${{ steps.changed-php-files.outputs.all_changed_files }}
+      any_php_changed: ${{ steps.changed-php-files.outputs.any_changed }}
+      all_changed_php_files: ${{ steps.changed-php-files.outputs.all_changed_files }}
+      any_twig_changed: ${{ steps.changed-twig-files.outputs.any_changed }}
     steps:
       - name: Get all changed PHP files
         id: changed-php-files
@@ -29,11 +31,17 @@ jobs:
         with:
           files: |
             **.php
+      - name: Get all changed Twig files
+        id: changed-twig-files
+        uses: tj-actions/changed-files@v47
+        with:
+          files: |
+            **.twig
 
   PHP-Linter:
     runs-on: ubuntu-22.04
     needs: ['php-file-diff']
-    if: ${{ needs.php-file-diff.outputs.any_changed == 'true' || github.event.pull_request.title == null }}
+    if: ${{ needs.php-file-diff.outputs.any_php_changed == 'true' || needs.php-file-diff.outputs.any_twig_changed == 'true' || github.event.pull_request.title == null }}
     steps:
       - name: Mask GitHub token
         run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
@@ -49,8 +57,9 @@ jobs:
         run: |
           composer install
       - name: Run PHP Linter
+        if: ${{ needs.php-file-diff.outputs.any_php_changed == 'true' || github.event.pull_request.title == null }}
         env:
-          PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
+          PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_php_files }}
         run: |
           #composer lint $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
           vendor/bin/phpcs --extensions=php --standard=./ruleset.xml --warning-severity=0 $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')

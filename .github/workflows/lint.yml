@@ -37,6 +37,7 @@ jobs:
         with:
           PATTERNS: |
             **/*.php
+            **/*.twig
             ruleset.xml
             .github/**/*.yml
             composer.+(json|lock)

@@ -105,13 +105,13 @@ check "PKSA-gw7n-z4yx-7xjt, PKSA-21g2-dzjv-sky5, PKSA-fbvq-z33h-r2np" \
 
 check "PKSA-sjvz-tbbr-vwth" \
 	"Twig 'spaceless' filter/tag must not be used in templates" \
-	'\{%[[:space:]]*spaceless|\bspaceless\(' \
+	'\|[[:space:]]*spaceless\b|\{%[[:space:]]*apply[[:space:]]+spaceless\b|\{%[[:space:]]*spaceless\b|\b(twig_)?spaceless\(' \
 	twig php
 
-check "PKSA-h8hf-ytnd-5t9q" \
-	"Twig {% use %} must only reference hardcoded, quoted template names" \
-	'\{%[[:space:]]*use[[:space:]]+[a-zA-Z_][a-zA-Z0-9_]*[[:space:]]*%\}' \
-	twig
+# Note: PKSA-h8hf-ytnd-5t9q ({% use %} PHP code injection) does not need a
+# pattern check here. Twig 3's UseTokenParser hard-requires the operand to be
+# a ConstantExpression - any dynamic form (bare identifier, concat, variable)
+# already throws a SyntaxError at parse time in the vendored Twig 3.11.3.
 
 check "PKSA-wwb1-81rc-pd65" \
 	"Twig profiler/HtmlDumper must not be used" \
