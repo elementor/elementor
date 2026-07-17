@@ -425,33 +425,38 @@ def _is_pro(fv_names):
     return any("pro" in (v or "").lower() for v in fv_names)
 
 
-# ── Step 1: Extract anchor ticket from PR title ────────────────────────────────
-match = re.search(r'\[?(' + JIRA_PROJECT + r'-\d+)\]?', PR_TITLE)
-if not match:
-    print(f"No Jira ticket in PR title: '{PR_TITLE}' — skipping.", file=sys.stderr)
-    sys.exit(0)
+# ── Step 1 & 2: Determine fix version ────────────────────────────────────────
+# FIXED_VERSION env var bypasses PR title parsing (used by run-all-versions.py)
+FIXED_VERSION = os.environ.get("FIXED_VERSION", "").strip()
 
-ticket = match.group(1)
-print(f"Anchor ticket: {ticket}", file=sys.stderr)
+if FIXED_VERSION:
+    fix_version = FIXED_VERSION
+    print(f"FIXED_VERSION mode: {fix_version}", file=sys.stderr)
+else:
+    match = re.search(r'\[?(' + JIRA_PROJECT + r'-\d+)\]?', PR_TITLE)
+    if not match:
+        print(f"No Jira ticket in PR title: '{PR_TITLE}' — skipping.", file=sys.stderr)
+        sys.exit(0)
 
+    ticket = match.group(1)
+    print(f"Anchor ticket: {ticket}", file=sys.stderr)
 
-# ── Step 2: Get fixVersion from anchor ticket ─────────────────────────────────
-issue_data = jira_get(f"/rest/api/3/issue/{ticket}", {"fields": "fixVersions,issuetype,summary"})
-fields = issue_data.get("fields", {})
-fix_versions = [v["name"] for v in (fields.get("fixVersions") or [])]
+    issue_data = jira_get(f"/rest/api/3/issue/{ticket}", {"fields": "fixVersions,issuetype,summary"})
+    fields = issue_data.get("fields", {})
+    fix_versions = [v["name"] for v in (fields.get("fixVersions") or [])]
 
-if not fix_versions:
-    print(f"{ticket} has no fixVersion — skipping.", file=sys.stderr)
-    sys.exit(0)
+    if not fix_versions:
+        print(f"{ticket} has no fixVersion — skipping.", file=sys.stderr)
+        sys.exit(0)
 
-versioned = [(version_tuple(v), v) for v in fix_versions if version_tuple(v)]
-if not versioned:
-    print(f"{ticket} fixVersions={fix_versions} — no recognizable version, skipping.", file=sys.stderr)
-    sys.exit(0)
+    versioned = [(version_tuple(v), v) for v in fix_versions if version_tuple(v)]
+    if not versioned:
+        print(f"{ticket} fixVersions={fix_versions} — no recognizable version, skipping.", file=sys.stderr)
+        sys.exit(0)
 
-versioned.sort(key=lambda t: t[0])
-fix_version = extract_version_number(versioned[0][1])
-print(f"fixVersion: {fix_version}", file=sys.stderr)
+    versioned.sort(key=lambda t: t[0])
+    fix_version = extract_version_number(versioned[0][1])
+    print(f"fixVersion: {fix_version}", file=sys.stderr)
 
 
 # ── Step 3: Find all matching Jira versions (free + pro, all betas) ───────────

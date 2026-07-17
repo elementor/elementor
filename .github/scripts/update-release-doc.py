@@ -457,7 +457,10 @@ if FIXED_VERSION:
     issue_type    = "Epic"   # not used in scan-all mode
     issue_summary = ""
     status_name   = ""
-    print(f"FIXED_VERSION mode: {fix_version}", file=sys.stderr)
+    fix_versions  = []       # no anchor ticket in scan-all mode; updated after step 3
+    _fv_parts_early = fix_version.split(".")
+    _is_patch_anchor = len(_fv_parts_early) == 3 and _fv_parts_early[2].isdigit() and int(_fv_parts_early[2]) > 0
+    print(f"FIXED_VERSION mode: {fix_version}  patch={_is_patch_anchor}", file=sys.stderr)
 else:
     match = re.search(r'\[?(ED-\d+)\]?', PR_TITLE)
     if not match:
@@ -512,6 +515,8 @@ except Exception:
 
 phase = determine_phase(matching_versions)
 print(f"Querying versions: {matching_version_names}  phase: {phase}", file=sys.stderr)
+if FIXED_VERSION:
+    fix_versions = matching_version_names  # use all matched versions for tier (no anchor ticket in scan-all mode)
 
 # Build Jira version links (Core / Pro), preferring GA over beta within each tier
 def _jira_version_links(versions):
@@ -540,6 +545,11 @@ def _jira_version_links(versions):
 # (anchor may be in one tier but the release ships both Free & Pro).
 _is_patch_release_early = _is_patch_anchor  # reuse the flag computed above
 _anchor_tier = get_tier(fix_versions) if _is_patch_release_early else get_tier(matching_version_names)
+# FIXED_TIER env var: overrides tier detection (used by run-all-versions.py for patch releases)
+_FIXED_TIER = os.environ.get("FIXED_TIER", "").strip()
+if _FIXED_TIER:
+    _anchor_tier = _FIXED_TIER
+    print(f"FIXED_TIER override: {_anchor_tier}", file=sys.stderr)
 
 # Filter Jira version links to match the page tier
 _tier_filtered_versions = [
@@ -757,11 +767,11 @@ for issue in main_issues:
         "has_rovo_desc":  bool(rovo_paras),
     }
 
-# Enrich the merged PR's ticket with PR summary bullets
-if ticket in rows:
+# Enrich the merged PR's ticket with PR summary bullets (PR-triggered runs only)
+if not FIXED_VERSION and ticket in rows:
     if pr_description:
         rows[ticket]["description"] = pr_description
-elif not is_excluded(issue_summary, fields.get("labels", [])):
+elif not FIXED_VERSION and not is_excluded(issue_summary, fields.get("labels", [])):
     # Only force-add the anchor ticket if it isn't excluded (e.g. promotional or
     # internal-only). Excluded anchor tickets are silently dropped — the run still
     # updates the page but the ticket itself doesn't appear in Release Content.
@@ -1429,6 +1439,10 @@ if existing:
         sys.exit(1)
 
 else:
+    # Don't create a new page if there are no issues yet — avoids empty placeholder pages
+    if not sorted_rows and not internal_issues:
+        print(f"No issues found for {fix_version} ({_anchor_tier}) — skipping page creation.", file=sys.stderr)
+        sys.exit(0)
     page_state   = phase_to_page_state(phase)
     _new_top     = ('<p>&nbsp;</p>\n'
                     '<p><em>This page is managed automatically. Do not edit manually.</em></p>\n'
@@ -1447,6 +1461,23 @@ else:
         new_id = resp.get("id", "?")
         print(f"✅ Created: https://elementor.atlassian.net/wiki/spaces/{CONF_SPACE}/pages/{new_id}", file=sys.stderr)
         conf_set_page_status(new_id, page_state)
+        # Move new page above "Past Releases" folder if it exists under the parent
+        try:
+            siblings = conf_get(f"/rest/api/content/{CONF_PARENT}/child/page?limit=50")
+            past_releases = next(
+                (c for c in siblings.get("results", [])
+                 if "past releases" in c.get("title", "").lower()), None
+            )
+            if past_releases:
+                mv_status, _ = conf_request(
+                    "PUT", f"/rest/api/content/{new_id}/move/before/{past_releases['id']}"
+                )
+                if mv_status in (200, 204):
+                    print(f"  Moved above Past Releases", file=sys.stderr)
+                else:
+                    print(f"  Warning: move API returned {mv_status}", file=sys.stderr)
+        except Exception as e:
+            print(f"  Warning: could not reorder page — {e}", file=sys.stderr)
     else:
         print(f"❌ Create failed (status {status})", file=sys.stderr)
         sys.exit(1)
