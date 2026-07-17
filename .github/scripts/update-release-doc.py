@@ -448,47 +448,53 @@ def is_internal_stakeholder(summary, labels):
     return any(kw.lower() in s for kw in EXCLUDE_KEYWORDS)
 
 
-# ── Step 1: Extract Jira ticket from PR title ─────────────────────────────────
-match = re.search(r'\[?(ED-\d+)\]?', PR_TITLE)
-if not match:
-    print(f"No Jira ticket in PR title: '{PR_TITLE}' — skipping.", file=sys.stderr)
-    sys.exit(0)
+# ── Step 1 & 2: Determine fix version ────────────────────────────────────────
+# FIXED_VERSION env var bypasses PR title parsing (used by run-all-versions.py)
+FIXED_VERSION = os.environ.get("FIXED_VERSION", "").strip()
 
-ticket = match.group(1)
-print(f"PR #{PR_NUMBER}: {ticket}", file=sys.stderr)
+if FIXED_VERSION:
+    fix_version   = FIXED_VERSION
+    issue_type    = "Epic"   # not used in scan-all mode
+    issue_summary = ""
+    status_name   = ""
+    print(f"FIXED_VERSION mode: {fix_version}", file=sys.stderr)
+else:
+    match = re.search(r'\[?(ED-\d+)\]?', PR_TITLE)
+    if not match:
+        print(f"No Jira ticket in PR title: '{PR_TITLE}' — skipping.", file=sys.stderr)
+        sys.exit(0)
 
+    ticket = match.group(1)
+    print(f"PR #{PR_NUMBER}: {ticket}", file=sys.stderr)
 
-# ── Step 2: Get fixVersion for this ticket ────────────────────────────────────
-issue_data = jira_get(f"/rest/api/3/issue/{ticket}",
-                      {"fields": "fixVersions,issuetype,summary,parent,status,labels,"
-                                 "description,customfield_10127,customfield_10459,customfield_19347"})
-fields = issue_data.get("fields", {})
-fix_versions = [v["name"] for v in (fields.get("fixVersions") or [])]
+    issue_data = jira_get(f"/rest/api/3/issue/{ticket}",
+                          {"fields": "fixVersions,issuetype,summary,parent,status,labels,"
+                                     "description,customfield_10127,customfield_10459,customfield_19347"})
+    fields = issue_data.get("fields", {})
+    fix_versions = [v["name"] for v in (fields.get("fixVersions") or [])]
 
-if not fix_versions:
-    print(f"{ticket} has no fixVersion — skipping.", file=sys.stderr)
-    sys.exit(0)
+    if not fix_versions:
+        print(f"{ticket} has no fixVersion — skipping.", file=sys.stderr)
+        sys.exit(0)
 
-versioned = [(version_tuple(v), v) for v in fix_versions if version_tuple(v)]
-if not versioned:
-    print(f"{ticket} fixVersions={fix_versions} — no recognizable version, skipping.", file=sys.stderr)
-    sys.exit(0)
+    versioned = [(version_tuple(v), v) for v in fix_versions if version_tuple(v)]
+    if not versioned:
+        print(f"{ticket} fixVersions={fix_versions} — no recognizable version, skipping.", file=sys.stderr)
+        sys.exit(0)
 
-# When ticket is in multiple versions (e.g. backport), pick the earliest release
-versioned.sort(key=lambda t: t[0])
-fix_version_jira = versioned[0][1]
-fix_version      = versioned[0][0]  # already a clean (major, minor, patch) tuple — convert back
-fix_version      = extract_version_number(fix_version_jira)  # clean "4.1.5" for page title
-issue_type    = (fields.get("issuetype") or {}).get("name", "")
-issue_summary = (fields.get("summary") or "").strip()
-status_name   = (fields.get("status") or {}).get("name", "")
-print(f"fixVersion: {fix_version}  type: {issue_type}  status: {status_name}", file=sys.stderr)
+    versioned.sort(key=lambda t: t[0])
+    fix_version_jira = versioned[0][1]
+    fix_version      = extract_version_number(fix_version_jira)
+    issue_type    = (fields.get("issuetype") or {}).get("name", "")
+    issue_summary = (fields.get("summary") or "").strip()
+    status_name   = (fields.get("status") or {}).get("name", "")
+    print(f"fixVersion: {fix_version}  type: {issue_type}  status: {status_name}", file=sys.stderr)
 
-_fv_parts_early = fix_version.split(".")
-_is_patch_anchor = len(_fv_parts_early) == 3 and _fv_parts_early[2].isdigit() and int(_fv_parts_early[2]) > 0
-if issue_type not in USER_FACING_TYPES and not _is_patch_anchor:
-    print(f"Issue type '{issue_type}' is not user-facing — skipping.", file=sys.stderr)
-    sys.exit(0)
+    _fv_parts_early = fix_version.split(".")
+    _is_patch_anchor = len(_fv_parts_early) == 3 and _fv_parts_early[2].isdigit() and int(_fv_parts_early[2]) > 0
+    if issue_type not in USER_FACING_TYPES and not _is_patch_anchor:
+        print(f"Issue type '{issue_type}' is not user-facing — skipping.", file=sys.stderr)
+        sys.exit(0)
 
 
 # ── Step 3: Find ALL Jira versions matching this number (free + pro) ──────────

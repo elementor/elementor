@@ -1,9 +1,17 @@
 name: Release Doc Generator
 
 on:
+  # Scheduled: runs twice daily, processes ALL active Jira versions
+  schedule:
+    - cron: '0 8,16 * * *'  # 8am and 4pm UTC
+
+  # PR-triggered: runs on each merge to main, processes only the PR's version
   pull_request:
     types: [closed]
     branches: [main]
+
+  # Manual trigger (for testing or on-demand regeneration)
+  workflow_dispatch:
 
 concurrency:
   group: release-doc-${{ github.repository }}
@@ -11,7 +19,14 @@ concurrency:
 
 jobs:
   update-release-doc:
-    if: github.event.pull_request.merged == true && startsWith(github.repository, 'elementor/')
+    # For PR trigger: only run on merged PRs, only in elementor org repos
+    # For schedule/manual: always run
+    if: >
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.merged == true &&
+       startsWith(github.repository, 'elementor/'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +35,18 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Update release doc
+      - name: Update release doc (scheduled — all active versions)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          CONFLUENCE_PARENT_PAGE_ID: "471075795"
+          CONFLUENCE_SPACE_KEY: "RDDEP"
+        run: python .github/scripts/run-all-versions.py
+
+      - name: Update release doc (PR merge — single version)
+        if: github.event_name == 'pull_request'
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
