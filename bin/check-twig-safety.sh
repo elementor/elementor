@@ -3,6 +3,10 @@
 # Guards the assumptions behind composer.json's config.policy.advisories.ignore-id
 # list for Twig.
 #
+# Matches are confirmed against comment-stripped file contents (see
+# strip-comments.php) so docblocks/comments that merely mention one of these
+# APIs by name (e.g. to explain why the code is safe) don't false-positive.
+#
 # If a change trips one of these checks, either remove the usage or, if it's
 # genuinely needed, re-evaluate composer.json's ignore-id list (and the CVEs
 # behind it) before relaxing this script.
@@ -39,14 +43,13 @@ has_extension() {
 	return 1
 }
 
-check() {
-	local advisories="$1"
-	local description="$2"
-	local pattern="$3"
-	shift 3
+# Candidate files: a cheap raw grep (no comment-stripping) over the relevant
+# extensions, just to narrow down which files are worth the (more expensive)
+# comment-aware check below.
+candidate_files() {
+	local pattern="$1"
+	shift
 	local extensions=("$@")
-
-	local matches=""
 
 	if [ "${#FILES[@]}" -eq 0 ]; then
 		local includes=()
@@ -54,26 +57,40 @@ check() {
 		for ext in "${extensions[@]}"; do
 			includes+=(--include="*.${ext}")
 		done
-		matches=$(grep -rnEI "${EXCLUDES[@]}" "${includes[@]}" -e "${pattern}" . 2>/dev/null || true)
+		grep -rlEI "${EXCLUDES[@]}" "${includes[@]}" -e "${pattern}" . 2>/dev/null | sed 's#^\./##' || true
 	else
-		local targets=()
 		local f
 		for f in "${FILES[@]}"; do
 			if [ -f "${f}" ] && has_extension "${f}" "${extensions[@]}"; then
-				targets+=("${f}")
+				printf '%s\n' "${f}"
 			fi
 		done
-		if [ "${#targets[@]}" -gt 0 ]; then
-			matches=$(grep -nEI -e "${pattern}" "${targets[@]}" 2>/dev/null || true)
-		fi
 	fi
+}
 
-	if [ -n "${matches}" ]; then
-		echo "::error::Forbidden Twig usage detected (${advisories} - ${description})"
-		echo "${matches}"
-		echo
-		failures=$((failures + 1))
-	fi
+check() {
+	local advisories="$1"
+	local description="$2"
+	local pattern="$3"
+	shift 3
+	local extensions=("$@")
+
+	local file
+	while IFS= read -r file; do
+		[ -n "${file}" ] || continue
+
+		local match
+		match=$(php bin/strip-comments.php "${file}" | grep -nE -e "${pattern}" || true)
+
+		if [ -n "${match}" ]; then
+			echo "::error::Forbidden Twig usage detected (${advisories} - ${description})"
+			while IFS= read -r line; do
+				echo "${file}:${line}"
+			done <<< "${match}"
+			echo
+			failures=$((failures + 1))
+		fi
+	done < <(candidate_files "${pattern}" "${extensions[@]}")
 }
 
 check "PKSA-8zx5-v2nz-58pb, PKSA-kvv6-36cr-fkzb, PKSA-n14z-jjjg-g8vd, PKSA-3mcc-k66d-pydb, PKSA-dpx1-78wg-1kqs, PKSA-g9zw-qxh8-pq8w, PKSA-yd6k-t2gh-1m43, PKSA-1tmc-rt7x-12w6, PKSA-xx6c-6d96-db2w" \
