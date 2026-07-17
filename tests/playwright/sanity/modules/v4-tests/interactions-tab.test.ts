@@ -6,7 +6,7 @@ import { timeouts } from '../../../config/timeouts';
 function waitForNestedSelectMenuToClose( page: Page ) {
 	return page.waitForFunction(
 		() => ! document.querySelector( '.MuiPopover-paper .MuiModal-root' ),
-		{ timeout: 3000 },
+		{ timeout: timeouts.action },
 	);
 }
 
