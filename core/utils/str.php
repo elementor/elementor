@@ -16,7 +16,7 @@ class Str {
 	 * @return string - IDN encoded URL ( e.g. `http://é.com` will be encoded to `http://xn--9ca.com` ).
 	 */
 	public static function encode_idn_url( $url ) {
-		return preg_replace_callback( '/(https?:\/\/)(.+)/', function ( $matches ) {
+		return preg_replace_callback( '/(https?:\/\/)([^\/?#]+)/', function ( $matches ) {
 			// WP >= 6.2-alpha
 			if ( class_exists( '\WpOrg\Requests\IdnaEncoder' ) ) {
 				$class = \WpOrg\Requests\IdnaEncoder::class;
