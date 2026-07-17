@@ -1,19 +1,12 @@
-import { Schema } from '@elementor/editor-props';
-import { getElementorConfig } from '@elementor/editor-v1-adapters';
+import { httpService } from '@elementor/http-client';
 
 import { DYNAMIC_TAGS_URI, initDynamicTagsResource } from '../dynamic-tags-resource';
 
-jest.mock( '@elementor/editor-props', () => ( {
-	Schema: {
-		propTypeToJsonSchema: jest.fn( () => ( { mocked: true } ) ),
-	},
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	getElementorConfig: jest.fn(),
-} ) );
-
-const mockedGetElementorConfig = getElementorConfig as jest.MockedFunction< typeof getElementorConfig >;
+const mockedHttpService = httpService as jest.MockedFunction< typeof httpService >;
 
 type ResourceHandler = ( uri: URL ) => Promise< { contents: { text: string }[] } >;
 
@@ -34,52 +27,49 @@ describe( 'dynamic-tags-resource', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns a flat tag list with categories and omits the fallback setting', async () => {
+	it( 'returns the flat tag list fetched from the server', async () => {
 		// Arrange
-		mockedGetElementorConfig.mockReturnValue( {
-			atomicDynamicTags: {
-				tags: {
-					'post-custom-field': {
+		const post = jest.fn().mockResolvedValue( {
+			data: {
+				data: [
+					{
 						name: 'post-custom-field',
 						label: 'Post Custom Field',
-						group: 'post',
 						categories: [ 'text', 'url' ],
-						props_schema: {
-							key: { kind: 'string', key: 'string' },
-							before: { kind: 'string', key: 'string' },
-							fallback: { kind: 'string', key: 'string' },
-						},
+						settings: { key: { mocked: true }, before: { mocked: true } },
 					},
-				},
-				groups: { post: { title: 'Post' } },
+				],
 			},
-		} as never );
+		} );
+		mockedHttpService.mockReturnValue( { post } as never );
 
 		// Act
 		const catalog = await readCatalog();
 
 		// Assert
-		expect( Array.isArray( catalog ) ).toBe( true );
-		expect( catalog ).toHaveLength( 1 );
-		expect( catalog[ 0 ] ).toMatchObject( {
-			name: 'post-custom-field',
-			label: 'Post Custom Field',
-			categories: [ 'text', 'url' ],
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			tool: 'list-dynamic-tags',
+			input: {},
 		} );
-		expect( catalog[ 0 ] ).not.toHaveProperty( 'group' );
-		expect( Object.keys( catalog[ 0 ].settings ) ).toEqual( [ 'key', 'before' ] );
-		expect( catalog[ 0 ].settings ).not.toHaveProperty( 'fallback' );
+		expect( catalog ).toEqual( [
+			{
+				name: 'post-custom-field',
+				label: 'Post Custom Field',
+				categories: [ 'text', 'url' ],
+				settings: { key: { mocked: true }, before: { mocked: true } },
+			},
+		] );
 	} );
 
-	it( 'returns an empty list when dynamic tags are unavailable', async () => {
+	it( 'returns an empty list when the server returns no data', async () => {
 		// Arrange
-		mockedGetElementorConfig.mockReturnValue( {} as never );
+		const post = jest.fn().mockResolvedValue( { data: {} } );
+		mockedHttpService.mockReturnValue( { post } as never );
 
 		// Act
 		const catalog = await readCatalog();
 
 		// Assert
 		expect( catalog ).toEqual( [] );
-		expect( Schema.propTypeToJsonSchema ).not.toHaveBeenCalled();
 	} );
 } );

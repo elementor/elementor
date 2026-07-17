@@ -11,6 +11,11 @@ import {
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
+import {
+	collectEmptyMessageErrors,
+	collectFormAncestorErrors,
+	collectSubmitButtonErrors,
+} from '../form-structure/utils';
 import { doUpdateElementProperty, UnsupportedPropertyError } from '../mcp/utils/do-update-element-property';
 import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
@@ -304,6 +309,12 @@ export class CompositionBuilder {
 			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
 		}
 
+		const formErrors = [
+			...collectFormAncestorErrors( this.xml ),
+			...collectSubmitButtonErrors( this.xml ),
+			...collectEmptyMessageErrors( this.xml ),
+		];
+
 		const children = Array.from( this.xml.children );
 		for ( const childNode of children ) {
 			const modelTree = this.buildModelTree( childNode, widgetsCache );
@@ -342,6 +353,7 @@ export class CompositionBuilder {
 		return {
 			configErrors,
 			styleErrors,
+			formErrors,
 			skippedProps,
 			rootContainers: [ ...this.rootContainers ],
 		};

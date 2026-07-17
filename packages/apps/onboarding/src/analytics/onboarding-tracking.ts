@@ -159,31 +159,37 @@ export function trackExperienceSelected( isActive: boolean, level: string ): voi
 	} );
 }
 
-export function trackThemeSuggested( isActive: boolean, theme: string ): void {
-	trackEvent( isActive, OnboardingEventName.THEME_SUGGESTED, {
-		interaction_type: 'exposure',
-		target_type: 'chip',
-		target_name: 'recommended',
-		interaction_result: 'theme_recommended',
-		target_value: THEME_VALUE_MAP[ theme ] ?? theme,
-		target_location: 'onboarding',
-		location_l1: 'select_theme',
-		location_l2: STEP_NUMBERS.theme_selection,
-		interaction_description: 'user got a recommendation for a certain theme',
-	} );
-}
+export type ThemeSelectedSource = 'theme_selection' | 'site_features';
 
-export function trackThemeSelected( isActive: boolean, theme: string ): void {
+export function trackThemeSelected( isActive: boolean, theme: string, source: ThemeSelectedSource ): void {
+	const isSiteFeatures = source === 'site_features';
+
 	trackEvent( isActive, OnboardingEventName.THEME_SELECTED, {
 		interaction_type: 'click',
 		target_type: 'button',
-		target_name: 'continue_with_this_theme',
+		target_name: isSiteFeatures ? 'continue_with_free' : 'continue_with_hello',
 		interaction_result: 'theme_installed',
 		target_value: THEME_VALUE_MAP[ theme ] ?? theme,
 		target_location: 'onboarding',
-		location_l1: 'select_theme',
-		location_l2: STEP_NUMBERS.theme_selection,
-		interaction_description: 'user installed a certain theme',
+		location_l1: isSiteFeatures ? 'pro_features' : 'select_theme',
+		location_l2: isSiteFeatures ? STEP_NUMBERS.site_features : STEP_NUMBERS.theme_selection,
+		interaction_description: isSiteFeatures
+			? 'user installed hello theme on pro features step'
+			: 'user installed a certain theme',
+	} );
+}
+
+export function trackThemeUnselected( isActive: boolean ): void {
+	trackEvent( isActive, OnboardingEventName.THEME_UNSELECTED, {
+		interaction_type: 'click',
+		target_type: 'button',
+		target_name: 'hello_theme',
+		interaction_result: 'theme_install_skipped',
+		target_value: 'hello_theme',
+		target_location: 'onboarding',
+		location_l1: 'pro_features',
+		location_l2: STEP_NUMBERS.site_features,
+		interaction_description: 'user unselected hello theme box and continued',
 	} );
 }
 
@@ -323,18 +329,18 @@ export function trackSummary( isActive: boolean, snapshot: ObSummarySnapshot ): 
 			),
 		},
 		{
-			key: 'theme_recommended',
-			value: ( (): string => {
-				const raw = snapshot.themeRecommended ?? snapshot.choices.theme_selection ?? 'none';
-				return raw === 'none' || ! raw ? 'none' : THEME_VALUE_MAP[ raw ] ?? raw;
-			} )(),
-		},
-		{
 			key: 'theme_installed',
-			value:
-				snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined
-					? THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
-					: 'none',
+			value: ( (): string => {
+				if ( snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined ) {
+					return THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection;
+				}
+
+				if ( ( snapshot.choices.site_features ?? [] ).includes( 'hello_theme' ) ) {
+					return 'hello';
+				}
+
+				return 'none';
+			} )(),
 		},
 		{
 			key: 'pro_features',

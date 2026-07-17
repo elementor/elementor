@@ -87,6 +87,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				const {
 					configErrors,
+					formErrors,
 					skippedProps: builderSkippedProps,
 					rootContainers: generatedRootContainers,
 				} = await compositionBuilder.build( targetContainer );
@@ -109,6 +110,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
+				}
+
+				if ( formErrors.length ) {
+					errors.push( ...formErrors.map( ( msg ) => new Error( msg ) ) );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );

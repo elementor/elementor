@@ -22,6 +22,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
+	use Concerns\Has_Json_Schema_Meta;
 
 	protected Prop_Type $item_type;
 
@@ -122,5 +123,27 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	public function to_json_schema(): array {
+		$schema = $this->with_json_schema_meta( [] );
+
+		$schema['type'] = 'object';
+
+		$value_schema = [ 'type' => 'array' ];
+
+		if ( $this->get_item_type() ) {
+			$value_schema['items'] = $this->get_item_type()->to_json_schema();
+		}
+
+		$schema['properties'] = [
+			'$$type' => [
+				'type' => 'string',
+				'const' => static::get_key(),
+			],
+			'value' => $value_schema,
+		];
+
+		return $schema;
 	}
 }
