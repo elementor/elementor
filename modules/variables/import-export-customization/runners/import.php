@@ -129,6 +129,7 @@ class Import extends Import_Runner_Base {
 				if ( $type_matches ) {
 					$existing_var = $existing->get( $existing_entry['id'] );
 					$existing_var->set_value( $variable->value() );
+					$existing_var->set_sync_to_v3( $variable->sync_to_v3() );
 
 					$result['replaced'][] = [
 						'import_entry' => $import_entry,
