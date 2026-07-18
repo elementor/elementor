@@ -44,4 +44,4 @@ export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/error
 export { useCanvasDocument } from './hooks/use-canvas-document';
 export { useEscapeOnCanvas } from './hooks/use-escape-on-canvas';
 export { doAfterRender } from './utils/after-render';
-export { ELEMENT_ADDED_EVENT, type ElementAddedEvent } from './mcp/tools/build-composition/tool';
+export { ELEMENT_ADDED_EVENT, type ElementAddedEvent } from './sync/element-added-event';
