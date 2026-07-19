@@ -5,10 +5,23 @@ import { stringPropTypeUtil } from './string';
 
 const htmlV3ValueSchema = z.object( {
 	content: stringPropTypeUtil.schema.nullable(),
-	children: z.array( z.unknown() ),
+	children: z.array( z.unknown() ).default( [] ),
 } );
 
-export const htmlV3PropTypeUtil = createPropUtils( 'html-v3', htmlV3ValueSchema );
+const baseHtmlV3PropTypeUtil = createPropUtils( 'html-v3', htmlV3ValueSchema );
+
+export const htmlV3PropTypeUtil = {
+	...baseHtmlV3PropTypeUtil,
+	extract( prop: unknown ): HtmlV3Value | null {
+		if ( ! baseHtmlV3PropTypeUtil.isValid( prop ) ) {
+			return null;
+		}
+
+		const parsed = htmlV3ValueSchema.safeParse( ( prop as HtmlV3PropValue ).value );
+
+		return parsed.success ? parsed.data : null;
+	},
+};
 
 export type HtmlV3PropValue = z.infer< typeof htmlV3PropTypeUtil.schema >;
 

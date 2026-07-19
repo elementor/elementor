@@ -22,6 +22,15 @@ describe( 'isInlineEditingAllowed', () => {
 		).toBe( true );
 	} );
 
+	it( 'should allow inline editing for html-v3 prop values without persisted children', () => {
+		expect(
+			isInlineEditingAllowed( {
+				rawValue: { $$type: 'html-v3', value: { content: { $$type: 'string', value: 'Hello' } } },
+				propTypeFromSchema: null,
+			} )
+		).toBe( true );
+	} );
+
 	it( 'should allow inline editing for string prop values', () => {
 		expect(
 			isInlineEditingAllowed( {

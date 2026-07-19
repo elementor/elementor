@@ -20,10 +20,23 @@ const childElementSchema: z.ZodType< ChildElement > = z.lazy( () =>
 
 const htmlV2ValueSchema = z.object( {
 	content: z.string().nullable(),
-	children: z.array( childElementSchema ),
+	children: z.array( childElementSchema ).default( [] ),
 } );
 
-export const htmlV2PropTypeUtil = createPropUtils( 'html-v2', htmlV2ValueSchema );
+const baseHtmlV2PropTypeUtil = createPropUtils( 'html-v2', htmlV2ValueSchema );
+
+export const htmlV2PropTypeUtil = {
+	...baseHtmlV2PropTypeUtil,
+	extract( prop: unknown ): HtmlV2Value | null {
+		if ( ! baseHtmlV2PropTypeUtil.isValid( prop ) ) {
+			return null;
+		}
+
+		const parsed = htmlV2ValueSchema.safeParse( ( prop as HtmlV2PropValue ).value );
+
+		return parsed.success ? parsed.data : null;
+	},
+};
 
 export type HtmlV2PropValue = z.infer< typeof htmlV2PropTypeUtil.schema >;
 
