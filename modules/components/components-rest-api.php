@@ -335,7 +335,8 @@ class Components_REST_API {
 			// In version 4.0.1, we fixed this by running the align_overridable_props_with_elements method after the migration.
 			$document_version = $document->get_elementor_version();
 			$overridable_props_migration_fix_version = '4.0.1';
-			$should_align_overridable_props = version_compare( $document_version, $overridable_props_migration_fix_version, '<=' );
+			$should_align_overridable_props = ! empty( $document_version )
+				&& version_compare( $document_version, $overridable_props_migration_fix_version, '<=' );
 			if ( $should_align_overridable_props ) {
 				$document->align_overridable_props_with_elements();
 			}

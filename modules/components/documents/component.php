@@ -164,6 +164,9 @@ class Component extends Document {
 		$updated_overridable_props = $this->get_overridable_props();
 
 		foreach ( $updated_overridable_props->props as $prop ) {
+			if ( ! array_key_exists( $prop->override_key, $overridable_props_map ) ) {
+				continue;
+			}
 
 			$new_origin_value = $overridable_props_map[ $prop->override_key ];
 
@@ -193,7 +196,7 @@ class Component extends Document {
 						if ( ! $this->is_override_prop( $override ) ) {
 							throw new \Exception( 'Invalid override value' );
 						}
-						$overridable_props_map[ $override_key ] = $override['value']['override_value'];
+						$overridable_props_map[ $override_key ] = $override['value']['override_value'] ?? null;
 					}
 				}
 
@@ -211,7 +214,7 @@ class Component extends Document {
 				}
 			}
 
-			if ( is_array( $element['elements'] ) ) {
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
 				$overridable_props_map = $this->get_elements_origin_values_map( $element['elements'], $overridable_props_map );
 			}
 		}

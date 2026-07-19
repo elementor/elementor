@@ -27,12 +27,10 @@
               "content": {
                 "$$type": "string",
                 "value": "Component 2 Heading"
-              },
-              "children": []
+              }
             }
           }
         },
-        "elements": [],
         "widgetType": "e-heading",
         "styles": {
           "component-2-heading-local-class-id": {
@@ -60,9 +58,7 @@
             ]
           }
         },
-        "editor_settings": [],
-        "version": "0.0",
-        "interactions": []
+        "version": "0.0"
       },
       {
         "id": "component-2-image-id",
@@ -83,14 +79,12 @@
                   "id": {
                     "$$type": "image-attachment-id",
                     "value": 150
-                  },
-                  "url": null
+                  }
                 }
               }
             }
           }
         },
-        "elements": [],
         "widgetType": "e-image",
         "styles": {
           "component-2-image-local-class-id": {
@@ -117,9 +111,7 @@
             ]
           }
         },
-        "editor_settings": [],
-        "version": "0.0",
-        "interactions": []
+        "version": "0.0"
       }
     ],
     "isInner": false,
@@ -157,8 +149,6 @@
         ]
       }
     },
-    "editor_settings": [],
-    "version": "0.0",
-    "interactions": []
+    "version": "0.0"
   }
 ]

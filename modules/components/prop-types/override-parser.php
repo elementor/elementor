@@ -16,7 +16,9 @@ abstract class Override_Parser {
 	 * @param array{override_key: string, override_value: ?array, schema_source: array} $value
 	 */
 	public function validate( $value ): bool {
-		[ 'override_key' => $override_key, 'override_value' => $override_value, 'schema_source' => $schema_source ] = $value;
+		$override_key = $value['override_key'] ?? '';
+		$override_value = $value['override_value'] ?? null;
+		$schema_source = $value['schema_source'] ?? [];
 
 		if ( ! isset( $schema_source['type'] ) || $schema_source['type'] !== $this->get_override_type() ) {
 			return false;

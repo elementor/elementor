@@ -2,14 +2,12 @@
   {
     "id": "11bb4c3",
     "elType": "e-flexbox",
-    "settings": {},
     "isInner": false,
     "elements": [
       {
         "id": "07ac447",
         "elType": "widget",
         "widgetType": "e-button",
-        "elements": [],
         "settings": {
           "text": {
             "$$type": "overridable",
@@ -21,8 +19,7 @@
                   "content": {
                     "$$type": "string",
                     "value": "Click here"
-                  },
-                  "children": []
+                  }
                 }
               }
             }

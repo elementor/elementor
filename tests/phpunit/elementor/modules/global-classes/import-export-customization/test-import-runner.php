@@ -125,15 +125,6 @@ class Test_Import_Runner extends Elementor_Test_Base {
 							'state' => null,
 						],
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
-								'value' => [
-									'color' => [
-										'$$type' => 'color',
-										'value' => '',
-									],
-								],
-							],
 							'display' => [
 								'$$type' => 'string',
 								'value' => 'block',

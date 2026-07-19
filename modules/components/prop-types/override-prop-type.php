@@ -19,9 +19,13 @@ class Override_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
+		if ( ! array_key_exists( 'override_value', $value ) ) {
+			$value['override_value'] = null;
+		}
+
 		$required_fields = [
 			'override_key' => 'is_string',
-			'override_value' => fn( $value ) => is_null( $value ) || is_array( $value ),
+			'override_value' => fn( $field_value ) => is_null( $field_value ) || is_array( $field_value ),
 			'schema_source' => 'is_array',
 		];
 

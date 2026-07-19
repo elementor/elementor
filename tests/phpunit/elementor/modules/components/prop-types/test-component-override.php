@@ -97,6 +97,23 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_validate__passes_when_override_value_key_is_missing() {
+		// Arrange
+		$component_override = Override_Prop_Type::make();
+
+		// Act
+		$result = $component_override->validate( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-1',
+				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
 	public function invalid_structure_data_provider() {
 		return [
 			'non-array value' => [ 'not-an-array' ],
@@ -110,10 +127,6 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 			],
 			'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ] 
 		] ],
-			`missing override_value` => [ [ 
-				'value' => [ 'override_key' => 'prop-uuid-1' ],
-				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ] 
-			] ],
 		'missing schema_source' => [ [ 
 			'override_key' => 'prop-uuid-1',
 			'override_value' => [

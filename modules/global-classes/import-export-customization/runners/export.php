@@ -57,15 +57,24 @@ class Export extends Export_Runner_Base {
 		$repository = Global_Classes_Repository::make( $kit );
 		$labels_by_id = [];
 		$files = [];
+		$parser = Global_Classes_Parser::make();
 
 		$skip_migration = true;
 		$repository->each_item(
-			static function ( array $class_data ) use ( &$files, &$labels_by_id ) {
+			function ( array $class_data ) use ( &$files, &$labels_by_id, $parser ) {
 				if ( empty( $class_data['id'] ) || ! is_string( $class_data['id'] ) ) {
 					return;
 				}
 
 				$class_id = $class_data['id'];
+				$item_result = $parser->parse_items( [ $class_id => $class_data ] );
+
+				if ( ! $item_result->is_valid() ) {
+					return;
+				}
+
+				$sanitized_items = $item_result->unwrap();
+				$class_data = $sanitized_items[ $class_id ];
 
 				$files[] = [
 					'path' => Import_Export_Customization::FILE_NAME . '/' . $class_id . '.json',

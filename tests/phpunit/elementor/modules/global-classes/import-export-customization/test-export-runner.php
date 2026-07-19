@@ -81,10 +81,6 @@ class Test_Export_Runner extends Elementor_Test_Base {
 						'state' => null,
 					],
 					'props' => [
-						'color' => [
-							'$$type' => 'color',
-							'value' => '',
-						],
 						'padding' => [
 							'$$type' => 'size',
 							'value' => [
@@ -93,6 +89,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 							],
 						],
 					],
+					'custom_css' => null,
 				],
 			],
 		];

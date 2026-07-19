@@ -27,8 +27,7 @@
               "content": {
                 "$$type": "string",
                 "value": "Component 2 Button"
-              },
-              "children": []
+              }
             }
           },
           "link": {
@@ -37,15 +36,10 @@
               "destination": {
                 "$$type": "url",
                 "value": "#inner-link"
-              },
-              "label": {
-                "$$type": "string",
-                "value": ""
               }
             }
           }
         },
-        "elements": [],
         "widgetType": "e-button",
         "styles": {
           "component-1-button-local-class-id": {
@@ -82,9 +76,7 @@
             ]
           }
         },
-        "editor_settings": [],
-        "version": "0.0",
-        "interactions": []
+        "version": "0.0"
       }
     ],
     "isInner": false,
@@ -122,8 +114,6 @@
         ]
       }
     },
-    "editor_settings": [],
-    "version": "0.0",
-    "interactions": []
+    "version": "0.0"
   }
 ]

@@ -2,14 +2,12 @@
   {
     "id": "fbdf748",
     "elType": "e-div-block",
-    "settings": {},
     "isInner": false,
     "elements": [
       {
         "id": "26bf8a5",
         "elType": "widget",
         "widgetType": "e-heading",
-        "elements": [],
         "settings": {
           "title": {
             "$$type": "overridable",
@@ -21,8 +19,7 @@
                   "content": {
                     "$$type": "string",
                     "value": "This is a title"
-                  },
-                  "children": []
+                  }
                 }
               }
             }
@@ -33,7 +30,6 @@
         "id": "7006e19",
         "elType": "widget",
         "widgetType": "e-heading",
-        "elements": [],
         "settings": {
           "title": {
             "$$type": "overridable",
@@ -45,8 +41,7 @@
                   "content": {
                     "$$type": "string",
                     "value": "This is a subtitle"
-                  },
-                  "children": []
+                  }
                 }
               }
             }
@@ -60,14 +55,12 @@
       {
         "id": "312086c",
         "elType": "e-flexbox",
-        "settings": {},
         "isInner": false,
         "elements": [
           {
             "id": "9e67369",
             "elType": "widget",
             "widgetType": "e-component",
-            "elements": [],
             "settings": {
               "component_instance": {
                 "$$type": "component-instance",
@@ -87,7 +80,6 @@
                             "$$type": "override",
                             "value": {
                               "override_key": "prop-2",
-                              "override_value": null,
                               "schema_source": {
                                 "type": "component",
                                 "id": 2222
@@ -104,7 +96,6 @@
                             "$$type": "override",
                             "value": {
                               "override_key": "prop-3",
-                              "override_value": null,
                               "schema_source": {
                                 "type": "component",
                                 "id": 2222
@@ -121,7 +112,6 @@
                             "$$type": "override",
                             "value": {
                               "override_key": "prop-4",
-                              "override_value": null,
                               "schema_source": {
                                 "type": "component",
                                 "id": 2222
@@ -173,7 +163,6 @@
             "id": "6ab307c",
             "elType": "widget",
             "widgetType": "e-component",
-            "elements": [],
             "settings": {
               "component_instance": {
                 "$$type": "component-instance",
@@ -193,7 +182,6 @@
                             "$$type": "override",
                             "value": {
                               "override_key": "prop-2",
-                              "override_value": null,
                               "schema_source": {
                                 "type": "component",
                                 "id": 2222
@@ -210,7 +198,6 @@
                             "$$type": "override",
                             "value": {
                               "override_key": "prop-3",
-                              "override_value": null,
                               "schema_source": {
                                 "type": "component",
                                 "id": 2222
@@ -227,7 +214,6 @@
                             "$$type": "override",
                             "value": {
                               "override_key": "prop-4",
-                              "override_value": null,
                               "schema_source": {
                                 "type": "component",
                                 "id": 2222

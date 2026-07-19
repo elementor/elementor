@@ -16,8 +16,7 @@
               "id": {
                 "$$type": "image-attachment-id",
                 "value": 3249
-              },
-              "url": null
+              }
             }
           }
         }
@@ -37,8 +36,7 @@
           "content": {
             "$$type": "string",
             "value": "This is a title"
-          },
-          "children": []
+          }
         }
       },
       "groupId": "group-1"
@@ -60,8 +58,7 @@
               "content": {
                 "$$type": "string",
                 "value": "Learn more"
-              },
-              "children": []
+              }
             }
           },
           "schema_source": {
@@ -89,7 +86,6 @@
         "$$type": "override",
         "value": {
           "override_key": "prop-1",
-          "override_value": null,
           "schema_source": {
             "type": "component",
             "id": 2222

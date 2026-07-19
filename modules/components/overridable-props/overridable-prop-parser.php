@@ -5,7 +5,6 @@ namespace Elementor\Modules\Components\OverridableProps;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Core\Utils\Api\Parse_Result;
-use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -50,6 +49,17 @@ class Overridable_Prop_Parser {
 		}
 
 		$origin_value = $this->get_final_origin_value( $prop );
+
+		if (
+			isset( $prop['originValue']['$$type'] ) &&
+			Override_Prop_Type::get_key() === $prop['originValue']['$$type']
+		) {
+			if ( ! Override_Prop_Type::make()->validate( $prop['originValue'] ) ) {
+				$result->errors()->add( 'originValue', 'invalid' );
+			}
+
+			return $result;
+		}
 
 		if ( ! empty( $origin_value ) ) {
 			$origin_value_prop_type = $this->get_origin_prop_type( $prop );
@@ -114,28 +124,31 @@ class Overridable_Prop_Parser {
 			isset( $prop['originValue']['$$type'] ) &&
 			Override_Prop_Type::get_key() === $prop['originValue']['$$type']
 		) {
-			return $prop['originValue']['value']['override_value'];
+			return $prop['originValue']['value']['override_value'] ?? null;
 		}
 
 		return $prop['originValue'];
 	}
 
 	private function get_sanitized_origin_value( array $prop ) {
+		if ( empty( $prop['originValue'] ) ) {
+			return null;
+		}
+
+		if (
+			isset( $prop['originValue']['$$type'] ) &&
+			Override_Prop_Type::get_key() === $prop['originValue']['$$type']
+		) {
+			return Override_Prop_Type::make()->sanitize( $prop['originValue'] );
+		}
+
 		$origin_value = $this->get_final_origin_value( $prop );
 		$origin_prop_type = $this->get_origin_prop_type( $prop );
 
-		if ( ! empty( $origin_value ) ) {
-			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
-
-			if ( Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
-				$raw_origin_value = $prop['originValue'];
-				$raw_origin_value['value']['override_value'] = $sanitized_value;
-				return $raw_origin_value;
-			}
-
-			return $sanitized_value;
+		if ( empty( $origin_value ) ) {
+			return null;
 		}
 
-		return null;
+		return $origin_prop_type->sanitize( $origin_value );
 	}
 }

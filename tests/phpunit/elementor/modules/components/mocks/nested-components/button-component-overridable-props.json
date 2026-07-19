@@ -13,8 +13,7 @@
           "content": {
             "$$type": "string",
             "value": "Click here"
-          },
-          "children": []
+          }
         }
       },
       "groupId": "group-0"

@@ -70,7 +70,9 @@ class Component_Override_Parser extends Override_Parser {
 	}
 
 	public function sanitize( $value ) {
-		['override_key' => $override_key, 'override_value' => $override_value, 'schema_source' => $schema_source] = $value;
+		$override_key = $value['override_key'] ?? '';
+		$override_value = $value['override_value'] ?? null;
+		$schema_source = $value['schema_source'] ?? [];
 
 		$sanitized_override_key = sanitize_key( $override_key );
 		$sanitized_schema_source = [
@@ -90,11 +92,16 @@ class Component_Override_Parser extends Override_Parser {
 
 			$prop_type = $this->get_overridable_prop_type( $matching_overridable_prop );
 
-			return [
+			$sanitized = [
 				'override_key' => $sanitized_override_key,
-				'override_value' => null === $override_value ? null : $prop_type->sanitize( $override_value ),
 				'schema_source' => $sanitized_schema_source,
 			];
+
+			if ( null !== $override_value ) {
+				$sanitized['override_value'] = $prop_type->sanitize( $override_value );
+			}
+
+			return $sanitized;
 		} catch ( \Exception $e ) {
 			return null;
 		}

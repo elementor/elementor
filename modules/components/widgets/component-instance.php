@@ -97,7 +97,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		$overrides = [];
 
 		foreach ( $overrides_array as $override ) {
-			$overrides[ $override['override_key'] ] = $override['override_value'];
+			$overrides[ $override['override_key'] ] = $override['override_value'] ?? null;
 		}
 
 		return $overrides;
