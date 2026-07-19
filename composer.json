@@ -6,7 +6,9 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.67"
+        "automattic/jetpack-autoloader": "^5",
+        "elementor/wp-one-package": "1.0.67",
+        "wordpress/mcp-adapter": "^0.5.0"
     },
     "repositories": [
         {
@@ -34,7 +36,6 @@
         "spatie/phpunit-snapshot-assertions": "^4.2",
         "humbug/php-scoper": "0.17.5",
         "twig/twig": "3.11.3",
-        "wordpress/mcp-adapter": "^0.5.0",
         "mixpanel/mixpanel-php": "^2.11"
     },
     "scripts": {
@@ -62,7 +63,8 @@
     },
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "automattic/jetpack-autoloader": true
         },
         "platform": {
             "php": "7.4"
