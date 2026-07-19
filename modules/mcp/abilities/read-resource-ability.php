@@ -98,6 +98,14 @@ class Read_Resource_Ability extends Abstract_Ability {
 				'execute' => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
 				'mimeType' => 'text/plain',
 			],
+			Global_Classes_Resource_Ability::URI => [
+				'execute' => fn() => ( new Global_Classes_Resource_Ability() )->execute(),
+				'mimeType' => 'application/json',
+			],
+			Global_Variables_Resource_Ability::URI => [
+				'execute' => fn() => ( new Global_Variables_Resource_Ability() )->execute(),
+				'mimeType' => 'application/json',
+			],
 		];
 	}
 }
