@@ -2,6 +2,7 @@ import { type APIRequestContext, type Page, Response, type TestInfo } from '@pla
 import ApiRequests from '../assets/api-requests';
 import { wpCli } from '../assets/wp-cli';
 import { timeouts } from '../config/timeouts';
+import topBarSelectors from '../selectors/top-bar-selectors';
 import { ElementorType, WindowType } from '../types/types';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
@@ -211,13 +212,15 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageName(): Promise<void> {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		const topbarLocator = this.page.locator( '#elementor-editor-wrapper-v2' );
+
+		await topbarLocator.locator( `button[${ topBarSelectors.pageSettings.attribute }="${ topBarSelectors.pageSettings.attributeValue }"]` ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
 		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
 
-		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
-		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await topbarLocator.locator( `button[${ topBarSelectors.saveOptions.attribute }="${ topBarSelectors.saveOptions.attributeValue }"]` ).click();
+		await this.page.getByRole( 'menuitem', { name: 'Save Draft' } ).click();
 		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
