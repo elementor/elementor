@@ -56,14 +56,11 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Abilities\List_Pages_Ability() )->register();
 		( new Abilities\Get_Structure_Ability() )->register();
 		( new Abilities\Update_Settings_Ability() )->register();
 		( new Abilities\Create_Page_Ability() )->register();
 		( new Abilities\Get_Globals_Ability() )->register();
-		( new Abilities\Create_Element_Ability() )->register();
 		( new Abilities\Style_Best_Practices_Ability() )->register();
-		( new Abilities\List_Variables_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Classes_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
@@ -90,12 +87,10 @@ class Module extends BaseModule {
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
 			[
-				'elementor/list-pages',
 				'elementor/get-page-structure',
 				'elementor/update-page-settings',
 				'elementor/create-page',
 				'elementor/get-globals',
-				'elementor/create-element',
 				'elementor/manage-global-variable',
 				'elementor/manage-classes',
 				'elementor/list-widgets',
@@ -106,7 +101,6 @@ class Module extends BaseModule {
 			],
 			[
 				'elementor/style-best-practices',
-				'elementor/list-variables',
 				'elementor/manage-global-variable-guide',
 			],
 			[]
