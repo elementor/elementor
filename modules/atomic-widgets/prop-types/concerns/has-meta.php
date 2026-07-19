@@ -53,4 +53,10 @@ trait Has_Meta {
 	public function get_meta_item( $key, $default_value = null ) {
 		return array_key_exists( $key, $this->meta ) ? $this->meta[ $key ] : $default_value;
 	}
+
+	public function get_aliases(): array {
+		$aliases = $this->meta['aliases'] ?? [];
+
+		return is_array( $aliases ) ? $aliases : [];
+	}
 }

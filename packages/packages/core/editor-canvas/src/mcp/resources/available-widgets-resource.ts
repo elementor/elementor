@@ -1,37 +1,42 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type AvailableWidget, getAvailableWidgets } from '../utils/element-data-util';
+const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
 export const AVAILABLE_WIDGETS_URI = 'elementor://context/available-widgets';
 export const AVAILABLE_WIDGETS_URI_V4 = 'elementor://context/available-widgets/v4';
 
+type WidgetSummary = {
+	type: string;
+	version: 'v3' | 'v4';
+	description?: string;
+};
+
+const fetchWidgets = async ( version?: WidgetSummary[ 'version' ] ): Promise< WidgetSummary[] > => {
+	const { data } = await httpService().post< HttpResponse< WidgetSummary[] > >( MCP_PROXY_URL, {
+		tool: 'list-widgets',
+		input: version ? { version } : {},
+	} );
+
+	return data.data ?? [];
+};
+
+const buildContents = async ( uri: string, version?: WidgetSummary[ 'version' ] ) => {
+	const widgets = await fetchWidgets( version );
+
+	return {
+		contents: [
+			{
+				uri,
+				mimeType: 'application/json',
+				text: JSON.stringify( widgets, null, 2 ),
+			},
+		],
+	};
+};
+
 export const initAvailableWidgetsResource = ( reg: MCPRegistryEntry ) => {
-	const { resource, sendResourceUpdated } = reg;
-
-	const buildContents = ( uri: string, filterFunction: ( x: AvailableWidget ) => boolean = () => true ) => {
-		const widgets = getAvailableWidgets().filter( filterFunction );
-		return {
-			contents: [
-				{
-					uri,
-					mimeType: 'application/json',
-					text: JSON.stringify( widgets, null, 2 ),
-				},
-			],
-		};
-	};
-
-	const notifyResourcesUpdated = () => {
-		sendResourceUpdated( {
-			uri: AVAILABLE_WIDGETS_URI,
-			...buildContents( AVAILABLE_WIDGETS_URI ),
-		} );
-		sendResourceUpdated( {
-			uri: AVAILABLE_WIDGETS_URI_V4,
-			...buildContents( AVAILABLE_WIDGETS_URI_V4, ( w: AvailableWidget ) => w.version === 'v4' ),
-		} );
-	};
+	const { resource } = reg;
 
 	resource(
 		'available-widgets-v4',
@@ -39,7 +44,7 @@ export const initAvailableWidgetsResource = ( reg: MCPRegistryEntry ) => {
 		{
 			description: 'All registered v4 version widgets',
 		},
-		async () => buildContents( AVAILABLE_WIDGETS_URI_V4, ( w ) => w.version === 'v4' )
+		async () => buildContents( AVAILABLE_WIDGETS_URI_V4, 'v4' )
 	);
 
 	resource(
@@ -50,18 +55,4 @@ export const initAvailableWidgetsResource = ( reg: MCPRegistryEntry ) => {
 		},
 		async () => buildContents( AVAILABLE_WIDGETS_URI )
 	);
-
-	const eventName = v1ReadyEvent().name;
-
-	const onV1Ready = () => {
-		const widgets = getAvailableWidgets();
-		if ( widgets.length === 0 ) {
-			return;
-		}
-		window.removeEventListener( eventName, onV1Ready );
-		notifyResourcesUpdated();
-	};
-
-	window.addEventListener( eventName, onV1Ready );
-	onV1Ready();
 };

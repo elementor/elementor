@@ -16,11 +16,11 @@ class AngiePromotion {
 	const ANGIE_GUIDE_AUTO_SHOWN_OPTION = 'elementor_angie_guide_auto_shown';
 
 	public static function init() {
-		if ( ! self::should_display_promotion() ) {
-			return;
-		}
-
 		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			if ( ! self::should_display_promotion() ) {
+				return $settings;
+			}
+
 			$settings = self::register_for_new_site( $settings );
 			$settings = self::register_for_existing_site( $settings );
 

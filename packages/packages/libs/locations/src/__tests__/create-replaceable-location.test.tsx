@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { createReplaceableLocation } from '../create-replaceable-location';
 
@@ -129,6 +129,36 @@ describe( 'createReplaceableLocation', () => {
 		// Assert.
 		expect( screen.queryByText( 'The number is: -1' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Children' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should replace the component when it is injected after the Slot has already mounted', () => {
+		// Arrange.
+		const { inject, Slot } = createReplaceableLocation< { text: string; number: number } >();
+
+		render(
+			<Slot text="The number is" number={ 1 }>
+				<div>Children</div>
+			</Slot>
+		);
+
+		expect( screen.getByText( 'Children' ) ).toBeInTheDocument();
+
+		// Act.
+		act( () => {
+			inject( {
+				id: 'test-1',
+				component: ( { text, number } ) => (
+					<div>
+						{ text }: { number }
+					</div>
+				),
+				condition: ( { number } ) => number > 0,
+			} );
+		} );
+
+		// Assert.
+		expect( screen.getByText( 'The number is: 1' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Children' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should replace the component if the condition is empty', () => {

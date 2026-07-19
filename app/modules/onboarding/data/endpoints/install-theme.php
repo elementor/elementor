@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Install_Theme extends Endpoint_Base {
 
-	const ALLOWED_THEMES = [ 'hello-elementor', 'hello-biz' ];
+	const ALLOWED_THEMES = [ 'hello-elementor' ];
 
 	public function get_name(): string {
 		return 'install-theme';
