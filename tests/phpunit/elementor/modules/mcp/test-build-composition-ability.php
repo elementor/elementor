@@ -563,9 +563,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	private function normalize_snapshot( string $html ): string {
 		$html = preg_replace( '/e-[a-f0-9]+-[a-f0-9]{4}\b/', 'e-{STYLE}', $html );
-		$html = preg_replace( '/elementor-element-[a-f0-9]{6,8}/', 'elementor-element-{ID}', $html );
-		$html = preg_replace( '/data-id="[a-f0-9]{6,8}"/', 'data-id="{ID}"', $html );
-		$html = preg_replace( '/data-interaction-id="[a-f0-9]{6,8}"/', 'data-interaction-id="{ID}"', $html );
+		$html = preg_replace( '/elementor-element-[a-f0-9]{4,8}/', 'elementor-element-{ID}', $html );
+		$html = preg_replace( '/data-id="[a-f0-9]{4,8}"/', 'data-id="{ID}"', $html );
+		$html = preg_replace( '/data-interaction-id="[a-f0-9]{4,8}"/', 'data-interaction-id="{ID}"', $html );
 
 		return $html;
 	}
