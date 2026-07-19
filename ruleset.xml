@@ -14,6 +14,7 @@
 	<exclude-pattern>vendor_prefixed/</exclude-pattern>
 	<exclude-pattern>tmp/</exclude-pattern>
 	<exclude-pattern>build/</exclude-pattern>
+	<exclude-pattern>bin/strip-comments.php</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>assets/js/packages/</exclude-pattern>

@@ -227,6 +227,9 @@
     ],
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"
+    ],
+    "*.{php,twig}": [
+      "bash bin/check-twig-safety.sh"
     ]
   }
 }
