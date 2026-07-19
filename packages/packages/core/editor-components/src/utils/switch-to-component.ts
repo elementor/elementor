@@ -2,6 +2,8 @@ import { invalidateDocumentData, switchToDocument } from '@elementor/editor-docu
 import { getCurrentDocumentContainer, selectElement } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
+import { loadComponentsOverridableProps } from '../store/actions/load-components-overridable-props';
+
 export async function switchToComponent(
 	componentId: number,
 	componentInstanceId?: string | null,
@@ -17,6 +19,11 @@ export async function switchToComponent(
 		setAsInitial: false,
 		shouldScroll: false,
 	} );
+
+	// The component's elements are always re-fetched on switch (via invalidateDocumentData above),
+	// but overridable props have their own cache guard, so they need an explicit forced refresh here -
+	// otherwise edits made by other users during the session would stay stale.
+	await loadComponentsOverridableProps( [ componentId ], { force: true } );
 
 	const currentDocumentContainer = getCurrentDocumentContainer();
 	const topLevelElement = currentDocumentContainer?.children?.[ 0 ];

@@ -29,6 +29,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -419,11 +420,19 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$context['form_state'] = 'default';
 
+		if ( ! $this->is_webmcp_enabled() ) {
+			return $context;
+		}
+
 		$form_name = (string) ( $this->get_atomic_settings()['form-name'] ?? '' );
 		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
 		$context['webmcp_tool_description'] = Webmcp_Utils::build_tool_description( $form_name );
 
 		return $context;
+	}
+
+	private function is_webmcp_enabled(): bool {
+		return ! Plugin::$instance->editor->is_edit_mode();
 	}
 
 	public static function is_instance_form( $instance ): bool {
