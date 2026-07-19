@@ -211,8 +211,10 @@ class Test_Manage_Classes_Ability extends Elementor_Test_Base {
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
 		$this->assertFalse( $permission() );
 
-		$this->act_as_admin();
 		get_role( 'administrator' )->add_cap( Add_Capabilities::UPDATE_CLASS );
+		$this->act_as_admin();
 		$this->assertTrue( $permission() );
+
+		get_role( 'administrator' )->remove_cap( Add_Capabilities::UPDATE_CLASS );
 	}
 }

@@ -55,7 +55,7 @@ class Class_Applier {
 						'[%s] Unknown global class label "%s". Available labels: %s',
 						$config_id,
 						$label,
-						implode( ', ', array_keys( $id_by_label ) ) ?: '(none)'
+						! empty( $id_by_label ) ? implode( ', ', array_keys( $id_by_label ) ) : '(none)'
 					);
 					continue;
 				}
