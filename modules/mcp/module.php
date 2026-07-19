@@ -66,7 +66,6 @@ class Module extends BaseModule {
 		( new Abilities\List_Variables_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
-		( new Abilities\List_Widgets_Ability() )->register();
 		( new Abilities\Get_Widget_Schema_Ability() )->register();
 		( new Abilities\List_Widget_Schemas_Ability() )->register();
 		( new Abilities\List_Dynamic_Tags_Ability() )->register();
@@ -96,7 +95,6 @@ class Module extends BaseModule {
 				'elementor/get-globals',
 				'elementor/create-element',
 				'elementor/manage-global-variable',
-				'elementor/list-widgets',
 				'elementor/get-widget-schema',
 				'elementor/list-widget-schemas',
 				'elementor/list-dynamic-tags',

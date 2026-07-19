@@ -13,17 +13,20 @@ const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
 type WidgetSummary = {
 	type: string;
-	version: 'v3' | 'v4';
 	description?: string;
 };
 
+type WidgetSummaryResponse = {
+	widgets: WidgetSummary[];
+};
+
 const listWidgetTypes = async (): Promise< string[] > => {
-	const { data } = await httpService().post< HttpResponse< WidgetSummary[] > >( MCP_PROXY_URL, {
-		tool: 'list-widgets',
-		input: {},
+	const { data } = await httpService().post< HttpResponse< WidgetSummaryResponse > >( MCP_PROXY_URL, {
+		tool: 'list-widget-schemas',
+		input: { summary: true },
 	} );
 
-	return ( data.data ?? [] ).map( ( widget ) => widget.type );
+	return ( data.data?.widgets ?? [] ).map( ( widget ) => widget.type );
 };
 
 const fetchWidgetSchema = async ( widgetType: string ): Promise< Record< string, unknown > > => {

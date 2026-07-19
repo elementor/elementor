@@ -10,7 +10,6 @@ use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Variables_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Widgets_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
@@ -30,7 +29,6 @@ class Mcp_Proxy_REST_API {
 		$this->tools = [
 			'create-element' => fn( array $input ) => ( new Create_Element_Ability() )->execute( $input ),
 			'manage-global-variable' => fn( array $input ) => ( new Manage_Variable_Ability() )->execute( $input ),
-			'list-widgets' => fn( array $input ) => ( new List_Widgets_Ability() )->execute( $input ),
 			'get-widget-schema' => fn( array $input ) => ( new Get_Widget_Schema_Ability() )->execute( $input ),
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
