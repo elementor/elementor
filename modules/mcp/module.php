@@ -56,14 +56,11 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Abilities\List_Pages_Ability() )->register();
 		( new Abilities\Get_Structure_Ability() )->register();
 		( new Abilities\Update_Settings_Ability() )->register();
 		( new Abilities\Create_Page_Ability() )->register();
 		( new Abilities\Get_Globals_Ability() )->register();
-		( new Abilities\Create_Element_Ability() )->register();
 		( new Abilities\Style_Best_Practices_Ability() )->register();
-		( new Abilities\List_Variables_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
 		( new Abilities\List_Widgets_Ability() )->register();
@@ -71,6 +68,8 @@ class Module extends BaseModule {
 		( new Abilities\List_Widget_Schemas_Ability() )->register();
 		( new Abilities\List_Dynamic_Tags_Ability() )->register();
 		( new Abilities\Build_Composition_Ability() )->register();
+		( new Abilities\List_Resources_Ability() )->register();
+		( new Abilities\Read_Resource_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -89,22 +88,21 @@ class Module extends BaseModule {
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
 			[
-				'elementor/list-pages',
 				'elementor/get-page-structure',
 				'elementor/update-page-settings',
 				'elementor/create-page',
 				'elementor/get-globals',
-				'elementor/create-element',
 				'elementor/manage-global-variable',
 				'elementor/list-widgets',
 				'elementor/get-widget-schema',
 				'elementor/list-widget-schemas',
 				'elementor/list-dynamic-tags',
 				'elementor/build-composition',
+				'elementor/list-resources',
+				'elementor/read-resource',
 			],
 			[
 				'elementor/style-best-practices',
-				'elementor/list-variables',
 				'elementor/manage-global-variable-guide',
 			],
 			[]
