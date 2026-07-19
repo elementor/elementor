@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -121,6 +122,11 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$duplicate_error = $this->assert_label_available( $label );
 		if ( $duplicate_error ) {
 			return $duplicate_error;
+		}
+
+		$limit_error = $this->assert_within_class_limit();
+		if ( $limit_error ) {
+			return $limit_error;
 		}
 
 		$class_item = $this->build_class_item( $this->generate_class_id(), $label, $css );
@@ -310,6 +316,28 @@ class Manage_Classes_Ability extends Abstract_Ability {
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				);
 			}
+		}
+
+		return null;
+	}
+
+	private function assert_within_class_limit(): ?\WP_Error {
+		$current_count = count( $this->get_repository()->all_labels() );
+
+		if ( $current_count >= Global_Classes_REST_API::MAX_ITEMS ) {
+			return new \WP_Error(
+				'global_classes_limit_exceeded',
+				sprintf(
+					/* translators: %d: Maximum allowed items. */
+					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
+					Global_Classes_REST_API::MAX_ITEMS
+				),
+				[
+					'status' => \WP_Http::BAD_REQUEST,
+					'current_count' => $current_count + 1,
+					'max_allowed' => Global_Classes_REST_API::MAX_ITEMS,
+				]
+			);
 		}
 
 		return null;

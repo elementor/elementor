@@ -3,12 +3,19 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { isProActive } from '@elementor/utils';
 
-import { service } from '../service';
+import { applyLocalMutation } from '../service';
+import { type TVariable } from '../storage';
 import { MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-global-variable';
+
+type ManageVariableResponse = {
+	status: string;
+	variable?: TVariable & { id: string };
+	watermark?: number;
+};
 
 const VARIABLE_TYPES = {
 	COLOR: 'global-color-variable',
@@ -74,12 +81,16 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
-			await httpService().post( MCP_PROXY_URL, {
+			const { data } = await httpService().post< HttpResponse< ManageVariableResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
 				input: params,
 			} );
 
-			await service.load();
+			const payload = data.data;
+
+			if ( payload.variable && typeof payload.watermark === 'number' ) {
+				applyLocalMutation( params.action, payload.variable, payload.watermark );
+			}
 
 			return { status: 'ok' };
 		},

@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -91,6 +92,33 @@ class Test_Manage_Classes_Ability extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'duplicated_label', $result->get_error_code() );
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function test_create__rejects_when_max_classes_limit_reached() {
+		// Arrange
+		$max_items = Global_Classes_REST_API::MAX_ITEMS;
+		$labels_at_limit = [];
+		for ( $i = 0; $i < $max_items; $i++ ) {
+			$labels_at_limit[ "g-existing-{$i}" ] = "class-{$i}";
+		}
+
+		$repository = $this->createMock( Global_Classes_Repository::class );
+		$repository->method( 'all_labels' )->willReturn( $labels_at_limit );
+		$repository->method( 'get_order' )->willReturn( array_keys( $labels_at_limit ) );
+		$repository->expects( $this->never() )->method( 'apply_changes' );
+
+		// Act
+		$result = $this->make_ability( $repository )->execute( [
+			'action' => 'create',
+			'label' => 'new-class',
+			'css' => [ 'color' => '#000000' ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'global_classes_limit_exceeded', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertSame( $max_items, $result->get_error_data()['max_allowed'] );
 	}
 
 	public function test_update__requires_id_label_and_css() {

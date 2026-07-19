@@ -1,12 +1,21 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { httpService } from '@elementor/http-client';
+import { type StyleDefinition } from '@elementor/editor-styles';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
+import { __dispatch as dispatch } from '@elementor/store';
 
-import { loadCurrentDocumentClasses } from '../load-document-classes';
+import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+import { slice } from '../store';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-classes';
+
+type ManageClassesResponse = {
+	status: string;
+	class?: StyleDefinition;
+	order?: string[];
+};
 
 export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
@@ -41,12 +50,34 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
-			await httpService().post( MCP_PROXY_URL, {
+			const { data } = await httpService().post< HttpResponse< ManageClassesResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
 				input: params,
 			} );
 
-			await loadCurrentDocumentClasses();
+			const payload = data.data;
+			const { create, update, delete: del } = globalClassesStylesProvider.actions;
+
+			switch ( params.action ) {
+				case 'create':
+					if ( payload.class && create ) {
+						create( payload.class.label, payload.class.variants, payload.class.id );
+					}
+					break;
+				case 'update':
+					if ( payload.class && update ) {
+						update( payload.class );
+					}
+					break;
+				case 'delete':
+					if ( params.id && del ) {
+						del( params.id );
+					}
+					break;
+			}
+
+			dispatch( slice.actions.reset( { context: 'frontend' } ) );
+			window.dispatchEvent( new CustomEvent( 'classes:updated', { detail: { context: 'frontend' } } ) );
 
 			return { status: 'ok' };
 		},
