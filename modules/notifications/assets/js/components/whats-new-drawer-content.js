@@ -54,7 +54,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 		<>
 			{ featuredItems.map( ( item, index ) => (
 				<WhatsNewItem
-					key={ index }
+					key={ item.id }
 					item={ item }
 					itemIndex={ index }
 					itemsLength={ featuredItems.length }
@@ -80,7 +80,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 					}
 					{ alsoNewItems.map( ( item, index ) => (
 						<WhatsNewItemCollapsed
-							key={ index }
+							key={ item.id }
 							item={ item }
 							itemIndex={ index }
 							isNew={ initialHasUnread && ! seenItemIds.has( item.id ) }
@@ -92,7 +92,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 			) }
 			{ regularItems.map( ( item, itemIndex ) => (
 				<WhatsNewItem
-					key={ itemIndex }
+					key={ item.id }
 					item={ item }
 					itemIndex={ itemIndex }
 					itemsLength={ regularItems.length }
