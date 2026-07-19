@@ -160,4 +160,57 @@ class Test_Empty_Values_Filter extends TestCase {
 			],
 		];
 	}
+
+	/**
+	 * @dataProvider set_or_unset_provider
+	 */
+	public function test_set_or_unset( array $initial_data, string $key, $value, array $expected ): void {
+		// Act.
+		Empty_Values_Filter::set_or_unset( $initial_data, $key, $value );
+
+		// Assert.
+		$this->assertSame( $expected, $initial_data );
+	}
+
+	public function set_or_unset_provider(): array {
+		return [
+			'omits empty settings array' => [
+				[ 'id' => 'abc123', 'settings' => [] ],
+				'settings',
+				[],
+				[ 'id' => 'abc123' ],
+			],
+			'omits empty editor_settings array' => [
+				[ 'id' => 'abc123', 'editor_settings' => [] ],
+				'editor_settings',
+				[],
+				[ 'id' => 'abc123' ],
+			],
+			'omits empty interactions array' => [
+				[ 'id' => 'abc123', 'interactions' => [] ],
+				'interactions',
+				[],
+				[ 'id' => 'abc123' ],
+			],
+			'omits empty styles array' => [
+				[ 'id' => 'abc123', 'styles' => [] ],
+				'styles',
+				[],
+				[ 'id' => 'abc123' ],
+			],
+			'keeps non-empty settings object' => [
+				[ 'id' => 'abc123' ],
+				'settings',
+				[
+					'number_prop' => [ '$$type' => 'number', 'value' => 0 ],
+				],
+				[
+					'id' => 'abc123',
+					'settings' => [
+						'number_prop' => [ '$$type' => 'number', 'value' => 0 ],
+					],
+				],
+			],
+		];
+	}
 }

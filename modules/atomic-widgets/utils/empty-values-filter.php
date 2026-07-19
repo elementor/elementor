@@ -51,6 +51,16 @@ class Empty_Values_Filter {
 		return self::is_nullish( $value ) || self::is_nullish_array( $value ) || self::is_nullish_object( $value );
 	}
 
+	public static function set_or_unset( array &$data, string $key, $value ): void {
+		if ( self::is_empty( $value ) ) {
+			unset( $data[ $key ] );
+
+			return;
+		}
+
+		$data[ $key ] = $value;
+	}
+
 	private static function is_transformable( $value ): bool {
 		return is_array( $value )
 			&& array_key_exists( '$$type', $value )

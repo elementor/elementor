@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Empty_Values_Filter;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -229,16 +230,23 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data );
-		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
+		$this->set_persisted_value_or_unset( $data, 'settings', $this->parse_atomic_settings( $data['settings'] ?? [] ) );
+		$this->set_persisted_value_or_unset( $data, 'styles', $this->parse_atomic_styles( $data ) );
+		$this->set_persisted_value_or_unset( $data, 'editor_settings', $this->parse_editor_settings( $data['editor_settings'] ?? [] ) );
 
 		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
-			$data['interactions'] = $this->transform_interactions_for_save( $data['interactions'] );
+			$interactions = $this->transform_interactions_for_save( $data['interactions'] );
 		} else {
-			$data['interactions'] = [];
+			$interactions = [];
 		}
+
+		$this->set_persisted_value_or_unset( $data, 'interactions', $interactions );
+
 		return $data;
+	}
+
+	private function set_persisted_value_or_unset( array &$data, string $key, $value ): void {
+		Empty_Values_Filter::set_or_unset( $data, $key, $value );
 	}
 
 	private function transform_interactions_for_save( $interactions ) {
