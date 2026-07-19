@@ -34,11 +34,7 @@ class Html_V2_Prop_Type extends Object_Prop_Type {
 			return false;
 		}
 
-		if ( ! array_key_exists( 'children', $value ) ) {
-			return false;
-		}
-
-		if ( ! is_array( $value['children'] ) ) {
+		if ( array_key_exists( 'children', $value ) && ! is_array( $value['children'] ) ) {
 			return false;
 		}
 
@@ -50,7 +46,9 @@ class Html_V2_Prop_Type extends Object_Prop_Type {
 			$value['content'] = $this->sanitize_html_content( $value['content'] );
 		}
 
-		$value['children'] = $this->sanitize_children( $value['children'] );
+		if ( array_key_exists( 'children', $value ) && is_array( $value['children'] ) ) {
+			$value['children'] = $this->sanitize_children( $value['children'] );
+		}
 
 		return $value;
 	}

@@ -2,8 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\Parsers;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Empty_Values_Filter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -67,7 +68,12 @@ class Props_Parser {
 				continue;
 			}
 
-			$sanitized[ $key ] = $prop_type->sanitize( $props[ $key ] );
+			$sanitized_value = $prop_type->sanitize( $props[ $key ] );
+			$filtered = Empty_Values_Filter::filter( $sanitized_value );
+
+			if ( null !== $filtered ) {
+				$sanitized[ $key ] = $filtered;
+			}
 		}
 
 		return Parse_Result::make()->wrap( $sanitized );

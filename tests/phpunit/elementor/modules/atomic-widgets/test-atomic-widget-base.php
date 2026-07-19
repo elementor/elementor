@@ -898,6 +898,34 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
+	public function test_get_data_for_save__removes_empty_settings_props() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'empty_string' => String_Prop_Type::make()->default( '' ),
+				'number_prop' => Number_Prop_Type::make()->default( 0 ),
+				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'valid_string' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'empty_string' => [ '$$type' => 'string', 'value' => '' ],
+				'number_prop' => [ '$$type' => 'number', 'value' => 0 ],
+				'boolean_prop' => [ '$$type' => 'boolean', 'value' => false ],
+				'valid_string' => [ '$$type' => 'string', 'value' => 'saved' ],
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'number_prop' => [ '$$type' => 'number', 'value' => 0 ],
+			'boolean_prop' => [ '$$type' => 'boolean', 'value' => false ],
+			'valid_string' => [ '$$type' => 'string', 'value' => 'saved' ],
+		], $data_for_save['settings'] );
+	}
+
 	public function test_get_data_for_save__throws_on_settings_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
