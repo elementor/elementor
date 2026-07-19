@@ -23,37 +23,21 @@ const SIZE = 'tiny';
 const toChipsOption = ( val: string, options: ChipsOption[] ): ChipsOption =>
 	options.find( ( opt ) => opt.value === val ) ?? { label: val, value: val };
 
-const optionValue = ( option: ChipsOption | string ): string => {
-	if ( 'string' === typeof option ) {
-		return option;
-	}
-
-	return 'string' === typeof option?.value ? option.value : '';
-};
-
-const optionLabel = ( option: ChipsOption | string ): string => {
-	if ( 'string' === typeof option ) {
-		return option;
-	}
-
-	if ( 'string' === typeof option?.label ) {
-		return option.label;
-	}
-
-	return optionValue( option );
-};
-
 export const ChipsControl = createControl( ( { options, freeChips }: ChipsControlProps ) => {
 	const { value, setValue, disabled } = useBoundProp( stringArrayPropTypeUtil );
 
 	const selectedValues: string[] = ( value || [] )
 		.map( ( item ) => stringPropTypeUtil.extract( item ) )
-		.filter( ( val ): val is string => 'string' === typeof val );
+		.filter( ( val ): val is string => val !== null );
 
 	const selectedOptions = selectedValues.map( ( val ) => toChipsOption( val, options ) );
 
 	const handleChange = ( _: SyntheticEvent, newValue: ( ChipsOption | string )[] ) => {
-		setValue( newValue.map( ( option ) => stringPropTypeUtil.create( optionValue( option ) ) ) );
+		setValue(
+			newValue.map( ( option ) =>
+				stringPropTypeUtil.create( typeof option === 'string' ? option : option.value )
+			)
+		);
 	};
 
 	return (
@@ -68,11 +52,15 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 				filterSelectedOptions
 				onChange={ handleChange }
 				options={ options }
-				getOptionLabel={ optionLabel }
-				isOptionEqualToValue={ ( option, val ) => optionValue( option ) === optionValue( val ) }
+				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
+				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
 				renderInput={ ( params ) => <TextField { ...params } /> }
 				renderTags={ ( tagValues, getTagProps ) => (
-					<ChipsList getLabel={ optionLabel } getTagProps={ getTagProps } values={ tagValues } />
+					<ChipsList
+						getLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
+						getTagProps={ getTagProps }
+						values={ tagValues }
+					/>
 				) }
 			/>
 		</ControlActions>
