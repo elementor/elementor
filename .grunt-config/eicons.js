@@ -17,6 +17,7 @@ class Eicons {
 			'pinterest',
 			'share-arrow',
 			'twitter',
+			'x-twitter',
 			'zoom-in-bold',
 			'zoom-out-bold',
 		];
