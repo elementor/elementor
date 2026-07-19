@@ -7,9 +7,11 @@ use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widgets_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
+use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
 
@@ -32,6 +34,8 @@ class Mcp_Proxy_REST_API {
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
 			'build-composition' => fn( array $input ) => ( new Build_Composition_Ability() )->execute( $input ),
+			'list-resources' => fn( array $input ) => ( new List_Resources_Ability() )->execute( $input ),
+			'read-resource' => fn( array $input ) => ( new Read_Resource_Ability() )->execute( $input ),
 		];
 
 		$this->resources = [
