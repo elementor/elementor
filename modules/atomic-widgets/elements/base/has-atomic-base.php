@@ -241,6 +241,7 @@ trait Has_Atomic_Base {
 		}
 
 		$this->set_persisted_value_or_unset( $data, 'interactions', $interactions );
+		$this->set_persisted_value_or_unset( $data, 'elements', $data['elements'] ?? [] );
 
 		return $data;
 	}

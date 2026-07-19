@@ -656,6 +656,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
 		$this->assertArrayNotHasKey( 'interactions', $data_for_save );
+		$this->assertArrayNotHasKey( 'elements', $data_for_save );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {

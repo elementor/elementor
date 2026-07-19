@@ -73,6 +73,6 @@ class Test_Pro_Promotion_Data_Preservation extends Elementor_Test_Base {
 
 		// Assert.
 		$saved = $document->get_elements_data();
-		$this->assertSame( [], $saved[0]['elements'] );
+		$this->assertEmpty( $saved[0]['elements'] ?? [] );
 	}
 }
