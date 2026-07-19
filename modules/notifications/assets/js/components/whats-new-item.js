@@ -84,7 +84,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, feature
 						variant="contained"
 						size="small"
 						color="promotion"
-						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : () => {} }
+						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : undefined }
 					>
 						{ item.cta }
 					</Button>

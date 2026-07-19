@@ -9,7 +9,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen, setIsOp
 
 	const handleToggle = () => {
 		if ( ! expanded && isNew && onSeen ) {
-			onSeen();
+			onSeen( item.id );
 		}
 		setExpanded( ! expanded );
 	};
@@ -116,7 +116,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen, setIsOp
 								variant="contained"
 								size="small"
 								color="promotion"
-								onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : undefined }
+								onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen?.( false ) : undefined }
 							>
 								{ item.cta }
 							</Button>

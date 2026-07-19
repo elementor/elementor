@@ -24,7 +24,7 @@ export const editorAppBarLink = () => {
 		id: 'app-bar-menu-item-whats-new',
 		priority: 10,
 		useProps: () => {
-			const [ unreadCount, setUnreadCount ] = useState( parseInt( elementorNotifications.unread_count, 10 ) || 0 );
+			const [ unreadCount, setUnreadCount ] = useState( parseInt( window.elementorNotifications?.unread_count, 10 ) || 0 );
 
 			useEffect( () => {
 				const handler = () => setUnreadCount( ( prev ) => Math.max( 0, prev - 1 ) );
