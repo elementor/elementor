@@ -157,6 +157,10 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			return;
 		}
 
+		if ( editor.isFocused ) {
+			return;
+		}
+
 		const currentContent = editor.getHTML();
 
 		if ( currentContent !== value ) {
