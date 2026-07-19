@@ -5,7 +5,8 @@
 # Triggers:
 #   push to main (packages/** paths) — automatic build, version suffix = run number, dist-tag = "build"
 #   workflow_call                    — called by other workflows (e.g. one-click-release); permission check is the caller's responsibility
-#   workflow_dispatch                — manual run from the GitHub Actions UI; restricted to permitted users in config.json
+#   workflow_dispatch                — manual run from the GitHub Actions UI; restricted to users listed in the
+#                                      DEPLOYMENT_PERMITTED_USERS repository variable
 #
 # Inputs (workflow_call / workflow_dispatch):
 #   version        — base semver (e.g. 1.2.3). Omit to read from package.json.
@@ -100,7 +101,7 @@ jobs:
         uses: ./.github/workflows/permissions
         with:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED_USERS }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
 
       - name: Install Node.js

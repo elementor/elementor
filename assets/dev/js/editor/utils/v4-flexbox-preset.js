@@ -176,7 +176,7 @@ function createFlexboxElement( target, model, options ) {
 	const created = $e.run( 'document/elements/create', {
 		container: resolvedTarget ?? target,
 		model,
-		...options,
+		options,
 	} );
 
 	const resolvedCreated = resolveContainer( created );
