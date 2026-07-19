@@ -14,10 +14,21 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen, setIsOp
 		setExpanded( ! expanded );
 	};
 
+	const handleKeyDown = ( event ) => {
+		if ( 'Enter' === event.key || ' ' === event.key ) {
+			event.preventDefault();
+			handleToggle();
+		}
+	};
+
 	return (
 		<Box>
 			<Box
+				role="button"
+				tabIndex={ 0 }
+				aria-expanded={ expanded }
 				onClick={ handleToggle }
+				onKeyDown={ handleKeyDown }
 				sx={ {
 					position: 'relative',
 					display: 'flex',
