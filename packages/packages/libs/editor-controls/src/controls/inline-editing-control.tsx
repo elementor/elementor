@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
+import { type ComponentProps, useCallback } from 'react';
 import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
 
 import { useBoundProp } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-
-const CHILDREN_PARSE_DEBOUNCE_MS = 300;
 
 export const InlineEditingControl = createControl(
 	( {
@@ -24,34 +21,18 @@ export const InlineEditingControl = createControl(
 		const { value, setValue, placeholder } = useBoundProp( htmlV3PropTypeUtil );
 		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
 
-		const debouncedParse = useMemo(
-			() =>
-				debounce( ( html: string ) => {
-					const parsed = parseHtmlChildren( html );
-
-					setValue( {
-						content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
-						children: parsed.children,
-					} );
-				}, CHILDREN_PARSE_DEBOUNCE_MS ),
-			[ setValue ]
-		);
-
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
 				const html = ( newValue ?? '' ) as string;
+				const parsed = parseHtmlChildren( html );
 
 				setValue( {
-					content: html ? stringPropTypeUtil.create( html ) : null,
-					children: value?.children ?? [],
+					content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
+					children: parsed.children,
 				} );
-
-				debouncedParse( html );
 			},
-			[ setValue, value?.children, debouncedParse ]
+			[ setValue ]
 		);
-
-		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );
 
 		return (
 			<ControlActions>
