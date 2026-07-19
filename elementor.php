@@ -65,6 +65,9 @@ if ( file_exists( $deprecation_func_file ) ) {
 	}
 }
 
+require_once ELEMENTOR_MODULES_PATH . '/mcp/mcp-adapter-loader.php';
+\Elementor\Modules\Mcp\Mcp_Adapter_Loader::preload();
+
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
 } elseif ( ! version_compare( get_bloginfo( 'version' ), ELEMENTOR_MINIMUM_WP_VERSION, '>=' ) ) {
