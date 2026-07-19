@@ -17,7 +17,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns the Elementor element tree (widgets, containers, and nested content) for a single post or page ID. Use after list-pages when you need the live JSON structure to reason about layout, widget types, or to plan edits. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns the Elementor element tree (widgets, containers, and nested content) for a single post or page ID. Provide the post ID (ask the user if unknown). Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
