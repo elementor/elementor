@@ -13,13 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Overridable_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		[ 'override_key' => $override_key, 'origin_value' => $origin_value ] = $value;
+		$override_key = $value['override_key'] ?? null;
+		$origin_value = $value['origin_value'] ?? null;
 
 		$result = $origin_value;
 
 		$overrides = Render_Context::get( static::class )['overrides'] ?? [];
 
-		if ( isset( $overrides[ $override_key ] ) ) {
+		if ( null !== $override_key && isset( $overrides[ $override_key ] ) ) {
 			$matching_override_value = $overrides[ $override_key ];
 
 			if ( $this->is_origin_value_override( $origin_value ) ) {
@@ -32,8 +33,10 @@ class Overridable_Transformer extends Transformer_Base {
 		return $result;
 	}
 
-	private function is_origin_value_override( array $origin_value ): bool {
-		return isset( $origin_value['$$type'] ) && Override_Prop_Type::get_key() === $origin_value['$$type'];
+	private function is_origin_value_override( $origin_value ): bool {
+		return is_array( $origin_value )
+			&& isset( $origin_value['$$type'] )
+			&& Override_Prop_Type::get_key() === $origin_value['$$type'];
 	}
 
 	private function transform_overridable_override( array $inner_override, array $outer_override_value, Props_Resolver_Context $context ): ?array {

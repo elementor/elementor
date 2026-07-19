@@ -19,7 +19,7 @@ export const componentOverridableTransformer = createTransformer(
 			return overrideValue;
 		}
 
-		return value.origin_value;
+		return value.origin_value ?? null;
 	}
 );
 
@@ -30,6 +30,10 @@ function transformOverride(
 	},
 	overrideValue: PropValue
 ) {
+	if ( ! value.origin_value ) {
+		return null;
+	}
+
 	const transformer = settingsTransformersRegistry.get( 'override' );
 
 	if ( ! transformer ) {
@@ -49,6 +53,6 @@ function transformOverride(
 	};
 }
 
-function isOriginValueOverride( originValue: TransformablePropValue< string > ): boolean {
-	return originValue.$$type === 'override';
+function isOriginValueOverride( originValue: TransformablePropValue< string > | null | undefined ): boolean {
+	return originValue?.$$type === 'override';
 }

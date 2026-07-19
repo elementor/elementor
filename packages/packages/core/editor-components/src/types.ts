@@ -89,7 +89,7 @@ export type ExtendedWindow = Window & {
 
 export type ComponentOverridable = {
 	override_key: string;
-	origin_value: TransformablePropValue< string >;
+	origin_value?: TransformablePropValue< string > | null;
 };
 
 export type ComponentRenderContext = RenderContext< {

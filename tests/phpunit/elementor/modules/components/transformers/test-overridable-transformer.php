@@ -212,6 +212,56 @@ class Test_Overridable_Transformer extends Elementor_Test_Base {
         $this->assertEquals( $original_value, $result );
     }
 
+    public function test_overridable_transformer_returns_null_when_origin_value_key_is_missing_and_no_matching_override() {
+        // Arrange.
+        // `origin_value` can be stripped by `Empty_Values_Filter` when the component's own
+        // default value is empty (e.g. no default image was set on an overridable image prop).
+        $transformer = new Overridable_Transformer();
+
+        $value = [
+            'override_key' => 'my-override-key',
+        ];
+
+        $context = [ 'overrides' => [] ];
+
+        // Act.
+        Render_Context::push( Overridable_Transformer::class, $context );
+        $result = $transformer->transform( $value, Props_Resolver_Context::make() );
+        Render_Context::pop( Overridable_Transformer::class );
+
+        // Assert.
+        $this->assertNull( $result );
+    }
+
+    public function test_overridable_transformer_returns_override_value_when_origin_value_key_is_missing_and_matching_override_is_found() {
+        // Arrange.
+        $transformer = new Overridable_Transformer();
+
+        $value = [
+            'override_key' => 'my-override-key',
+        ];
+
+        $override_value = [
+            '$$type' => 'image',
+            'value' => [
+                'src' => [
+                    '$$type' => 'image-attachment-id',
+                    'value' => 123,
+                ],
+            ],
+        ];
+
+        $context = [ 'overrides' => [ 'my-override-key' => $override_value ] ];
+
+        // Act.
+        Render_Context::push( Overridable_Transformer::class, $context );
+        $result = $transformer->transform( $value, Props_Resolver_Context::make() );
+        Render_Context::pop( Overridable_Transformer::class );
+
+        // Assert.
+        $this->assertEquals( $override_value, $result );
+    }
+
     public function test_overridable_transformer_handles_override_original_value_when_matching_override_not_found() {
         // Arrange.
         $transformer = new Overridable_Transformer();

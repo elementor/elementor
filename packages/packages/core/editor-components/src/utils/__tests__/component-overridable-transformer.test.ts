@@ -106,6 +106,41 @@ describe( 'componentOverridableTransformer', () => {
 		} );
 	} );
 
+	it( 'should return null when origin_value is missing and no matching override exists', () => {
+		// Arrange
+		// `origin_value` can be missing/null when the component's own default value is
+		// empty (e.g. no default image was set on an overridable image prop).
+		const value: ComponentOverridable = {
+			override_key: TEST_OVERRIDE_KEY,
+			origin_value: null,
+		};
+		const options: TransformerOptions = { ...TEST_OPTIONS, renderContext: { overrides: {} } };
+
+		// Act
+		const result = componentOverridableTransformer( value, options );
+
+		// Assert
+		expect( result ).toBeNull();
+	} );
+
+	it( 'should return the override value when origin_value is missing and a matching override exists', () => {
+		// Arrange
+		const value: ComponentOverridable = {
+			override_key: TEST_OVERRIDE_KEY,
+			origin_value: null,
+		};
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: { overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE } },
+		};
+
+		// Act
+		const result = componentOverridableTransformer( value, options );
+
+		// Assert
+		expect( result ).toEqual( TEST_OVERRIDE_VALUE );
+	} );
+
 	it( 'should handle multiple overrides in context and select correct one', () => {
 		// Arrange
 		const FIRST_OVERRIDE_KEY = 'first-key';
