@@ -2,6 +2,8 @@
 
 Welcome to the Elementor GitHub repository!
 
+> This fork includes minor documentation improvements for clarity and readability.
+
 **Elementor is the most advanced front-end drag-and-drop website builder. Create high-end, pixel-perfect websites at record speeds. Build any theme, any page, and any design with no code.**
 
 <br>
