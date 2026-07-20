@@ -40,6 +40,6 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 
 		$classes_payload = Global_Classes_Repository::make( $kit )->all_labels();
 
-		return wp_json_encode( $classes_payload );
+		return wp_json_encode( (object) $classes_payload );
 	}
 }

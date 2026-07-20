@@ -6,6 +6,10 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\GlobalClasses\Global_Class_Post;
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -416,6 +420,65 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'h1', implode( ' ', $result['warnings'] ) );
 	}
 
+	public function test_execute__attaches_global_classes_by_label_before_local_styles() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$class_id = $this->given_kit_global_class( 'hero-heading', '#111111' );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'classes' => [
+				'h1' => [ 'hero-heading' ],
+			],
+			'style' => [
+				'h1' => [ 'font-size' => '2rem' ],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$heading = $elements[0] ?? null;
+		$this->assertNotNull( $heading );
+
+		$class_values = $heading['settings']['classes']['value'] ?? [];
+		$this->assertContains( $class_id, $class_values );
+		$this->assertSame( $class_id, $class_values[0] );
+		$this->assertNotEmpty( $heading['styles'] ?? [] );
+	}
+
+	public function test_execute__rejects_unknown_global_class_label() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'classes' => [
+				'h1' => [ 'missing-class' ],
+			],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_unknown_global_class', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'missing-class', $result->get_error_message() );
+		$this->assertStringContainsString( 'Available labels', $result->get_error_message() );
+	}
+
 	public function test_execute__resolves_global_variable_label_to_id_in_saved_tree() {
 		// Arrange
 		$this->act_as_admin();
@@ -449,6 +512,38 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( $variable_id, $color_prop['value'] ?? null );
 	}
 
+	private function given_kit_global_class( string $label, string $color ): string {
+		( new Global_Class_Post_Type() )->register_post_type();
+
+		$class_id = 'g-testcls';
+		$data = [
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => [
+							'$$type' => 'color',
+							'value' => $color,
+						],
+					],
+					'custom_css' => null,
+				],
+			],
+		];
+
+		Global_Class_Post::create( $class_id, $label, $data );
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		Global_Classes_Order::make( $kit )->set_order( [ $class_id ] );
+		Global_Classes_Labels::make( $kit )->set_labels( [ $class_id => $label ] );
+
+		return $class_id;
+	}
+
 	private function given_kit_color_variable( string $label, string $value ): string {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$service = new Variables_Service( new Variables_Repository( $kit ), new Batch_Processor() );
@@ -468,9 +563,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	private function normalize_snapshot( string $html ): string {
 		$html = preg_replace( '/e-[a-f0-9]+-[a-f0-9]{4}\b/', 'e-{STYLE}', $html );
-		$html = preg_replace( '/elementor-element-[a-f0-9]{6,8}/', 'elementor-element-{ID}', $html );
-		$html = preg_replace( '/data-id="[a-f0-9]{6,8}"/', 'data-id="{ID}"', $html );
-		$html = preg_replace( '/data-interaction-id="[a-f0-9]{6,8}"/', 'data-interaction-id="{ID}"', $html );
+		$html = preg_replace( '/elementor-element-[a-f0-9]+/', 'elementor-element-{ID}', $html );
+		$html = preg_replace( '/data-id="[a-f0-9]+"/', 'data-id="{ID}"', $html );
+		$html = preg_replace( '/data-interaction-id="[a-f0-9]+"/', 'data-interaction-id="{ID}"', $html );
 
 		return $html;
 	}
