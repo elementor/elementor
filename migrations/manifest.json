@@ -52,6 +52,16 @@
       "fromType": "string",
       "toType": "font-family",
       "path": "operations/string-to-font-family.json"
+    },
+    "border-radius-legacy-to-border-radius": {
+      "fromType": "border-radius-legacy",
+      "toType": "border-radius",
+      "path": "operations/border-radius-legacy-to-border-radius.json"
+    },
+    "border-width-legacy-to-border-width": {
+      "fromType": "border-width-legacy",
+      "toType": "border-width",
+      "path": "operations/border-width-legacy-to-border-width.json"
     }
   }
 }

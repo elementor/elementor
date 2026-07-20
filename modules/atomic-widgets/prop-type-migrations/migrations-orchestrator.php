@@ -7,6 +7,8 @@ use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Component_Override_Parser;
@@ -22,6 +24,12 @@ class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 	const MIGRATIONS_URL = 'https://editor.elementor.com/v1/migrations/';
 	const BUNDLED_MIGRATIONS_DIRECTORY = 'migrations/';
+
+	private const BORDER_RADIUS_LEGACY_TYPE = 'border-radius-legacy';
+	private const BORDER_WIDTH_LEGACY_TYPE = 'border-width-legacy';
+
+	private const BORDER_RADIUS_PHYSICAL_KEYS = [ 'top-left', 'top-right', 'bottom-right', 'bottom-left' ];
+	private const BORDER_WIDTH_PHYSICAL_KEYS = [ 'top', 'right', 'bottom', 'left' ];
 
 	private static ?self $instance = null;
 
@@ -229,6 +237,8 @@ class Migrations_Orchestrator {
 			return false;
 		}
 
+		$this->maybe_retag_legacy_border_prop_types( $value );
+
 		$actual_prop_type = $prop_type;
 
 		if ( $prop_type instanceof Union_Prop_Type ) {
@@ -332,6 +342,31 @@ class Migrations_Orchestrator {
 		}
 
 		return $this->migrate_prop( $data['override_value'], $prop_type );
+	}
+
+	private function maybe_retag_legacy_border_prop_types( array &$value ): void {
+		if ( ! is_array( $value['value'] ) ) {
+			return;
+		}
+
+		if ( Border_Radius_Prop_Type::get_key() === $value['$$type'] && $this->has_any_key( $value['value'], self::BORDER_RADIUS_PHYSICAL_KEYS ) ) {
+			$value['$$type'] = self::BORDER_RADIUS_LEGACY_TYPE;
+			return;
+		}
+
+		if ( Border_Width_Prop_Type::get_key() === $value['$$type'] && $this->has_any_key( $value['value'], self::BORDER_WIDTH_PHYSICAL_KEYS ) ) {
+			$value['$$type'] = self::BORDER_WIDTH_LEGACY_TYPE;
+		}
+	}
+
+	private function has_any_key( array $data, array $keys ): bool {
+		foreach ( $keys as $key ) {
+			if ( array_key_exists( $key, $data ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function execute_prop_migration( $prop_value, array $migrations, string $direction ) {

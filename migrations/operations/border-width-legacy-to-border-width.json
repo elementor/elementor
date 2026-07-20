@@ -1,0 +1,44 @@
+{
+  "up": [
+    {
+      "op": { "fn": "set", "path": "value.top", "key": "block-start" },
+      "condition": { "fn": "exists", "path": "value.top" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.right", "key": "inline-end" },
+      "condition": { "fn": "exists", "path": "value.right" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.bottom", "key": "block-end" },
+      "condition": { "fn": "exists", "path": "value.bottom" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.left", "key": "inline-start" },
+      "condition": { "fn": "exists", "path": "value.left" }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "border-width" }
+    }
+  ],
+  "down": [
+    {
+      "op": { "fn": "set", "path": "value.block-start", "key": "top" },
+      "condition": { "fn": "exists", "path": "value.block-start" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.inline-end", "key": "right" },
+      "condition": { "fn": "exists", "path": "value.inline-end" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.block-end", "key": "bottom" },
+      "condition": { "fn": "exists", "path": "value.block-end" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.inline-start", "key": "left" },
+      "condition": { "fn": "exists", "path": "value.inline-start" }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "border-width-legacy" }
+    }
+  ]
+}
