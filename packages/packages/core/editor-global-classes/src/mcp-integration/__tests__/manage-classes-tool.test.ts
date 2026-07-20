@@ -70,9 +70,9 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		};
 		( httpService as jest.Mock ).mockReturnValue( httpMock );
 		mockDispatch.mockClear();
-		jest.mocked( globalClassesStylesProvider.actions.create ).mockClear();
-		jest.mocked( globalClassesStylesProvider.actions.update ).mockClear();
-		jest.mocked( globalClassesStylesProvider.actions.delete ).mockClear();
+		( globalClassesStylesProvider.actions.create as jest.Mock ).mockClear();
+		( globalClassesStylesProvider.actions.update as jest.Mock ).mockClear();
+		( globalClassesStylesProvider.actions.delete as jest.Mock ).mockClear();
 		jest.mocked( slice.actions.reset ).mockClear();
 		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
 	} );
@@ -98,11 +98,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 				css: { color: '#000000' },
 			},
 		} );
-		expect( globalClassesStylesProvider.actions.create ).toHaveBeenCalledWith(
-			'hero-heading',
-			[],
-			'g-new123'
-		);
+		expect( globalClassesStylesProvider.actions.create ).toHaveBeenCalledWith( 'hero-heading', [], 'g-new123' );
 		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
 		expect( dispatchEventSpy ).toHaveBeenCalledWith(
 			expect.objectContaining( {
