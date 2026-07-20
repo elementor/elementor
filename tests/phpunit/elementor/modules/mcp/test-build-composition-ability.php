@@ -7,6 +7,7 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -309,6 +310,20 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				[ '$$type', 'PropValue envelope' ],
 			],
 		];
+	}
+
+	public function test_linkable_widget_types__derived_from_schemas() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act — detection reads the registered widget schemas (a widget is linkable iff its
+		// atomic props schema exposes a `link` prop), so the prompt allowlist can never drift.
+		$linkable = Widget_Context_Helper::get_linkable_widget_types();
+
+		// Assert
+		$this->assertContains( 'e-button', $linkable );
+		$this->assertContains( 'e-heading', $linkable );
+		$this->assertNotContains( 'e-divider', $linkable );
 	}
 
 	public function test_execute__skips_unsupported_prop_and_warns() {

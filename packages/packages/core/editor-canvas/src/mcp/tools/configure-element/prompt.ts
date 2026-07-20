@@ -2,12 +2,13 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
-import { LINKABLE_WIDGET_TYPES_LIST } from '../../utils/linkable-widget-types';
+import { getLinkableWidgetTypes } from '../../utils/element-data-util';
 
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
 export const generatePrompt = () => {
 	const configureElementToolPrompt = toolPrompts( 'configure-element' );
+	const linkableWidgetTypes = getLinkableWidgetTypes().join( ', ' );
 
 	configureElementToolPrompt.description( `
 Configure an existing element on the page.
@@ -120,10 +121,8 @@ V4 only: If MCP fails, give manual steps using V4 UI.
 V4 Editor structure:
 Panel tabs: General (→ Settings section: ID, Tag, and Link only on linkable widgets), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
-Note: \`link\` is supported ONLY on these types: ${ LINKABLE_WIDGET_TYPES_LIST }. Do NOT send \`link\` to any other widget — it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
+Note: \`link\` is supported ONLY on these types: ${ linkableWidgetTypes }. Do NOT send \`link\` to any other widget — it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
 ` );
 
 	return configureElementToolPrompt.prompt();
 };
-
-export const CONFIGURE_ELEMENT_GUIDE_TEXT = generatePrompt();
