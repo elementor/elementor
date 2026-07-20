@@ -540,8 +540,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				'id' => 'parent-container',
 				'settings' => [],
 				'elements' => [
-					[ 'elType' => 'e-heading', 'id' => 'child-1', 'settings' => [], 'elements' => [] ],
-					[ 'elType' => 'e-heading', 'id' => 'child-2', 'settings' => [], 'elements' => [] ],
+					[ 'elType' => 'e-flexbox', 'id' => 'child-1', 'settings' => [], 'elements' => [] ],
+					[ 'elType' => 'e-flexbox', 'id' => 'child-2', 'settings' => [], 'elements' => [] ],
 				],
 			],
 		] );
