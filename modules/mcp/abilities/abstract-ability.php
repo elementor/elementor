@@ -19,4 +19,8 @@ abstract class Abstract_Ability {
 		$definition['execute_callback'] = [ $this, 'execute' ];
 		wp_register_ability( $this->get_ability_id(), $definition );
 	}
+
+	protected static function default_permission_callback(): callable {
+		return fn() => current_user_can( 'edit_posts' );
+	}
 }

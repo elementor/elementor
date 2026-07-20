@@ -33,7 +33,7 @@ class Global_Variables_Resource_Ability extends Abstract_Ability {
 					'description' => __( 'Variables list, total count, and watermark from the active kit.', 'elementor' ),
 				],
 			],
-			fn() => current_user_can( 'edit_posts' )
+			self::default_permission_callback()
 		);
 	}
 

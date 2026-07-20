@@ -31,7 +31,7 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 					'description' => __( 'Global class definitions and order from the active kit.', 'elementor' ),
 				],
 			],
-			fn() => current_user_can( 'edit_posts' )
+			self::default_permission_callback()
 		);
 	}
 
