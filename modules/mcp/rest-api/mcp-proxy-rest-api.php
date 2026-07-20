@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\RestApi;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
@@ -37,6 +38,7 @@ class Mcp_Proxy_REST_API {
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
 			'build-composition' => fn( array $input ) => ( new Build_Composition_Ability() )->execute( $input ),
+			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
 			'manage-elements' => fn( array $input ) => ( new Manage_Elements_Ability() )->execute( $input ),
 			'list-resources' => fn( array $input ) => ( new List_Resources_Ability() )->execute( $input ),
 			'read-resource' => fn( array $input ) => ( new Read_Resource_Ability() )->execute( $input ),
