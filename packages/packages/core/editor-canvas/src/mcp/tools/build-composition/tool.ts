@@ -17,6 +17,7 @@ type BuildCompositionResponse = {
 	resolved_xml: string;
 	llm_instructions: string;
 	warnings?: string[];
+	removed_element_ids?: string[];
 };
 
 export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
@@ -58,6 +59,12 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 				.string()
 				.optional()
 				.describe( "ID of the parent container. Omit or pass 'document' to insert at document root." ),
+			mode: z
+				.enum( [ 'append', 'replace_children' ] )
+				.optional()
+				.describe(
+					"'append' (default) inserts under parentId; 'replace_children' removes existing direct children of parentId first, then inserts."
+				),
 			dryRun: z
 				.boolean()
 				.optional()
@@ -70,8 +77,9 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 			resolvedXml: z.string(),
 			llmInstructions: z.string(),
 			warnings: z.array( z.string() ).optional(),
+			removedElementIds: z.array( z.string() ).optional(),
 		},
-		handler: async ( { xmlStructure, elementConfig, style, parentId, dryRun } ) => {
+		handler: async ( { xmlStructure, elementConfig, style, parentId, mode, dryRun } ) => {
 			const document = getCurrentDocument();
 
 			if ( ! document?.id ) {
@@ -87,6 +95,7 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 						element_config: elementConfig ?? {},
 						style: style ?? {},
 						parent_id: parentId ?? 'document',
+						mode: mode ?? 'append',
 						dry_run: dryRun ?? false,
 					},
 				} );
@@ -111,6 +120,7 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 					resolvedXml: data.data.resolved_xml,
 					llmInstructions: data.data.llm_instructions,
 					warnings: data.data.warnings,
+					removedElementIds: data.data.removed_element_ids,
 				};
 			} catch ( error ) {
 				throw new Error( getMcpErrorMessage( error, 'build-composition' ) );
