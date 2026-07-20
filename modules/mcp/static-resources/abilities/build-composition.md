@@ -1,7 +1,7 @@
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Check FIRST for reusable classes
 - [elementor://global-variables] - Design tokens for styling: use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
-- [elementor/list-widgets?version=v4] - Available v4 widgets
+- [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
