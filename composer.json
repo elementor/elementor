@@ -6,7 +6,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.67"
+        "elementor/wp-one-package": "1.0.68"
     },
     "repositories": [
         {
@@ -40,6 +40,7 @@
     "scripts": {
         "lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
         "format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
+        "check-twig-safety": "bash bin/check-twig-safety.sh",
         "test": "phpunit",
         "test:install": "bash ./bin/install-wp-tests-local.sh",
         "phpunit:local": "bash ./bin/phpunit-local.sh",
