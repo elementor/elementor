@@ -360,53 +360,22 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
-= 4.1.5 - 2026-07-14 =
+= 4.2.0 - 2026-07-20 =
 
-* Fix: AI features may not initialize correctly when opening the editor
-
-= 4.1.4 - 2026-06-21 =
-
-* Fix: Improved code security enforcement in query handling
-
-= 4.1.3 - 2026-06-10 =
-
-* Fix: Cloud Library screenshot errors could prevent users from saving templates locally
-
-= 4.1.2 - 2026-06-08 =
-
-* Tweak: Improved Global Classes usage tracking for safer deletion - Atomic Editor
-* Fix: Image with Lightbox inherits default button styles - Atomic Editor
-* Fix: Image settings are not saved when using Insert from URL - Atomic Editor
-* Fix: Media attachments may be requested too many times in the Editor - Atomic Editor
-* Fix: Pages using Global Classes may fail to publish or show missing styles on the live site - Atomic Editor
-* Fix: Editor context may not sync correctly when navigating between documents
-
-= 4.1.1 - 2026-05-27 =
-
-* Security Fix: Improved code security enforcement in content handling
-* Security Fix: Improved code security enforcement in template handling
-* Fix: Hiding one filter prevents other filters from being applied - Atomic Editor
-
-= 4.1.0 - 2026-05-26 =
-
-* New: Introducing the Design System panel for managing Variables and Classes in one place - Atomic Editor
-* New: Introducing Angie in the Editor to help generate and modify Atomic layouts, Components, Forms, Classes, and Variables - Atomic Editor
-* New: Introducing Markdown rendering as an Alpha experiment to improve how content is structured for AI systems
-* Tweak: Added import and export for Variables and Classes from the Design System panel - Atomic Editor
-* Tweak: Increased the Class limit to 1000 - Atomic Editor
-* Tweak: Added duplicate support for Variables in the Variables Manager - Atomic Editor
-* Tweak: Added duplicate support for Classes in the Class field - Atomic Editor
-* Tweak: Added support for Variables in additional style controls, including Effects, Filters, and Box Shadow - Atomic Editor
-* Tweak: Added multi-select support to Direction control in Interactions - Atomic Editor
-* Tweak: Added Interaction actions to the History panel - Atomic Editor
-* Tweak: Added support for negative Box Shadow values - Atomic Editor
-* Tweak: Improved reordering of Component properties with full drag-and-drop support - Atomic Editor
-* Tweak: Updated Position and Z-index control visibility and behavior - Atomic Editor
-* Tweak: Updated the minimum required WordPress version to 6.8
-* Tweak: Added the External URL option to Image control - Atomic Editor
-* Fix: Slide Interactions can be applied without selecting a direction - Atomic Editor
-* Fix: Undo does not work as expected for individual Class properties - Atomic Editor
-* Fix: Font family values persist on Global Classes after deletion - Atomic Editor
+* New: Introducing Grid for building advanced row and column layouts - Atomic Editor
+* Tweak: Improved Angie layout, composition, and design system creation from prompts and images - Atomic Editor
+* Tweak: Added dynamic tag support for AI-generated element properties
+* Fix: VideoPress URLs do not display on the frontend when used in Background Video and Lightbox dynamic tags ([#24467](https://github.com/elementor/elementor/issues/24467))
+* Fix: Grid containers can cause slower Editor performance on complex pages
+* Fix: Filters do not work as expected in Website Templates
+* Fix: The Save as Template button is unreachable when the modal does not fit the browser viewport
+* Fix: AI-related Editor features show a console error when required services are not available yet
+* Fix: Missing classes can affect the editing panel when they are still applied to elements - Atomic Editor
+* Fix: Unsaved Class changes are not detected when switching between Design System tabs - Atomic Editor
+* Fix: Custom Font names with spaces or special characters do not work in the Font Family control - Atomic Editor
+* Fix: The drop indicator is missing when dragging Atomic elements inside row Containers - Atomic Editor
+* Fix: Global Classes can be shared across multiple Kits instead of being separated per Kit - Atomic Editor
+* Fix: Angie cannot update text in some Atomic elements - Atomic Editor
 
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
