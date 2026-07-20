@@ -139,6 +139,12 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Avoid SVG widgets unless assets are pre-uploaded
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
+# MODE
+Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's id — one call replaces its children. Default `'append'` keeps existing content.
+- `append` (default): Insert new elements as children of `parent_id`, preserving existing children.
+- `replace_children`: Remove all direct children of `parent_id` first, then insert new elements. The response includes `removed_element_ids` listing what was removed.
+- When `parent_id: 'document'` + `mode: 'replace_children'`, all top-level elements are removed — use this to redesign the whole page.
+
 # PARAMETERS
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
@@ -146,6 +152,7 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **parent_id**: ID of the parent container (omit to insert at document root)
+- **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting
 
 # EXAMPLE
