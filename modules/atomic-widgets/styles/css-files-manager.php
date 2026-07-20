@@ -2,61 +2,156 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
+
 class CSS_Files_Manager {
 	const DEFAULT_CSS_DIR = 'elementor/css/';
 	const FILE_EXTENSION = '.css';
 	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
 
-	public function get( string $handle, string $media, callable $get_css, bool $is_valid_cache ): ?Style_File {
-		$filesystem = $this->get_filesystem();
-		$path = $this->get_path( $handle );
+	private Cache_Validity $cache_validity;
 
-		if ( $is_valid_cache ) {
-			if ( ! $filesystem->exists( $path ) ) {
+	public function __construct( ?Cache_Validity $cache_validity = null ) {
+		$this->cache_validity = $cache_validity ?? new Cache_Validity();
+	}
+
+	/**
+	 * Return the CSS file to enqueue for a given breakpoint, generating it on demand.
+	 *
+	 * Cache validity is stored on the breakpoint leaf under `$cache_path` with a
+	 * `should_exist` meta flag, so a subsequent request can tell:
+	 *   - "no file because CSS was legitimately empty" (`should_exist=false`)  from
+	 *   - "file went missing after we generated it"   (`should_exist=true`, but file gone).
+	 *
+	 * The manager regenerates when the cache is invalid or when a should-be-present file
+	 * cannot be found on disk. On a hard write failure it deliberately leaves the leaf
+	 * invalid so the next request retries instead of getting stuck.
+	 *
+	 * @param string        $handle
+	 * @param string        $media
+	 * @param callable      $get_css
+	 * @param array<string> $cache_path Cache-validity leaf path for this breakpoint.
+	 * @return Style_File|null
+	 */
+	public function get( string $handle, string $media, callable $get_css, array $cache_path ): ?Style_File {
+		$path = $this->get_path( $handle );
+		$is_cache_valid = $this->cache_validity->is_valid( $cache_path );
+		$should_exist = $this->get_should_exist_meta( $cache_path );
+
+		if ( $is_cache_valid ) {
+			if ( false === $should_exist ) {
 				return null;
 			}
 
-			// Return the existing file
-			return Style_File::create(
-				$this->sanitize_handle( $handle ),
-				$this->get_filesystem_path( $this->get_path( $handle ) ),
-				$this->get_url( $handle ),
-				$media,
-			);
+			if ( $this->has_non_empty_file( $path ) ) {
+				return $this->create_style_file( $handle, $path, $media );
+			}
+
 		}
 
 		$css = $get_css();
 
 		if ( empty( $css ) ) {
+			// Nothing to serve for this breakpoint; purge any stale file and record the state
+			// so we don't try to regenerate on every subsequent request.
+			$this->delete_if_exists( $path );
+			$this->cache_validity->validate( $cache_path, [ 'should_exist' => false ] );
+
 			return null;
 		}
 
 		$filesystem_path = $this->get_filesystem_path( $path );
 
-		$is_created = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
-
-		if ( false === $is_created ) {
+		if ( ! $this->write_atomically( $filesystem_path, $css ) ) {
+			// Hard write failure: leave the cache invalid so the next request retries.
 			return null;
 		}
 
+		$this->cache_validity->validate( $cache_path, [ 'should_exist' => true ] );
+
+		return $this->create_style_file( $handle, $path, $media );
+	}
+
+	public function delete( string $handle ): void {
+		$this->delete_if_exists( $this->get_path( $handle ) );
+	}
+
+	private function get_should_exist_meta( array $cache_path ): ?bool {
+		$meta = $this->cache_validity->get_meta( $cache_path );
+
+		if ( ! is_array( $meta ) || ! array_key_exists( 'should_exist', $meta ) ) {
+			return null;
+		}
+
+		return (bool) $meta['should_exist'];
+	}
+
+	private function create_style_file( string $handle, string $path, string $media ): Style_File {
 		return Style_File::create(
 			$this->sanitize_handle( $handle ),
-			$filesystem_path,
+			$this->get_filesystem_path( $path ),
 			$this->get_url( $handle ),
 			$media
 		);
 	}
 
-	public function delete( string $handle ): void {
+	private function has_non_empty_file( string $path ): bool {
 		$filesystem = $this->get_filesystem();
-		$path = $this->get_path( $handle );
+
+		if ( ! $filesystem->exists( $path ) ) {
+			return false;
+		}
+
+		$size = $filesystem->size( $path );
+
+		// `size()` may return false on filesystems that don't support it; treat that as
+		// "we don't know" and fall back to trusting the existence check.
+		if ( false === $size ) {
+			return true;
+		}
+
+		return $size > 0;
+	}
+
+	private function delete_if_exists( string $path ): void {
+		$filesystem = $this->get_filesystem();
 
 		if ( ! $filesystem->exists( $path ) ) {
 			return;
 		}
 
 		$filesystem->delete( $path );
+	}
+
+	/**
+	 * Write to a temp file first and then move it into place. The move step is atomic on
+	 * POSIX filesystems, so the public URL cannot serve a partial or zero-byte asset while a
+	 * concurrent render is in progress. If the atomic move is not supported by the current
+	 * filesystem adapter, fall back to a direct write.
+	 */
+	private function write_atomically( string $filesystem_path, string $css ): bool {
+		$filesystem = $this->get_filesystem();
+
+		$tmp_path = $filesystem_path . '.tmp-' . wp_generate_password( 8, false, false );
+
+		$is_written = $filesystem->put_contents( $tmp_path, $css, self::PERMISSIONS );
+
+		if ( false === $is_written ) {
+			return false;
+		}
+
+		if ( ! method_exists( $filesystem, 'move' ) || ! $filesystem->move( $tmp_path, $filesystem_path, true ) ) {
+			$fallback = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
+
+			if ( $filesystem->exists( $tmp_path ) ) {
+				$filesystem->delete( $tmp_path );
+			}
+
+			return false !== $fallback;
+		}
+
+		return true;
 	}
 
 	private function get_filesystem(): \WP_Filesystem_Base {
