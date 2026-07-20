@@ -28,9 +28,7 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 				),
 		},
 		outputSchema: {
-			elements: z
-				.array( z.any() )
-				.describe( 'Root-level Elementor elements for the document.' ),
+			elements: z.array( z.any() ).describe( 'Root-level Elementor elements for the document.' ),
 		},
 		handler: async ( { postId } ) => {
 			const resolvedPostId = postId ?? getCurrentDocument()?.id;
