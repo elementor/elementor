@@ -1,7 +1,9 @@
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { AxiosError, type HttpResponse, httpService } from '@elementor/http-client';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
+
+import { getMcpErrorMessage } from '../../utils/get-mcp-error-message';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
@@ -49,23 +51,8 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 					elements: data.data.elements,
 				};
 			} catch ( error ) {
-				throw new Error( getErrorMessage( error ) );
+				throw new Error( getMcpErrorMessage( error, 'get-page-structure' ) );
 			}
 		},
 	} );
 };
-
-function getErrorMessage( error: unknown ): string {
-	if ( error instanceof AxiosError ) {
-		const data = error.response?.data as { message?: string; code?: string } | undefined;
-		if ( data?.message ) {
-			return data.code ? `${ data.code }: ${ data.message }` : data.message;
-		}
-	}
-
-	if ( error instanceof Error ) {
-		return error.message;
-	}
-
-	return 'get-page-structure failed with an unknown error.';
-}
