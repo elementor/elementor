@@ -1,7 +1,7 @@
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
-- [elementor://global-variables] - Design tokens from the active kit; check before styling with variables
-- [elementor/list-widgets?version=v4] - Available v4 widgets
+- [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
+- [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
