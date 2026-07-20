@@ -3,6 +3,14 @@
 namespace Elementor\Modules\GlobalClasses\ImportExportUtils;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+<<<<<<< HEAD
+=======
+use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
+>>>>>>> fd94f19945 (Fix: Sync flags during export-import [ED-24900] (#36560))
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
@@ -90,6 +98,7 @@ class Import_Utils {
 		$added_classes_labels = [];
 		$modified_classes = [];
 		$deleted_classes = [];
+		$touched_sync_items = [];
 
 		$previous_order = $classes_repository->get_order();
 		$order_set = array_flip( $previous_order );
@@ -163,6 +172,7 @@ class Import_Utils {
 				$existing_id = $label_to_id_map[ strtolower( $import_entry['label'] ) ];
 				self::replace_existing_class( $existing_id, $sanitized_item );
 
+				$touched_sync_items[ $existing_id ] = [ 'sync_to_v3' => ! empty( $sanitized_item['sync_to_v3'] ) ];
 				$modified_classes[] = $existing_id;
 				$result['replaced'][] = [
 					'import_entry' => $import_entry,
@@ -189,6 +199,7 @@ class Import_Utils {
 			}
 
 			self::create_new_class( $sanitized_item );
+			$touched_sync_items[ $new_id ] = [ 'sync_to_v3' => ! empty( $sanitized_item['sync_to_v3'] ) ];
 			$order_set[ $new_id ] = true;
 			$added_classes_order[] = $new_id;
 			$added_classes_labels[ $new_id ] = $sanitized_item['label'];
@@ -218,6 +229,8 @@ class Import_Utils {
 		if ( $has_changes ) {
 			$new_order = array_merge( $added_classes_order, $previous_order );
 			$classes_repository->update_order_and_labels( $new_order, $added_classes_labels );
+
+			Global_Classes_Sync_Map::make( $active_kit )->apply_changes( $touched_sync_items, $deleted_classes );
 
 			$changes = [
 				'added' => $added_classes_order,
