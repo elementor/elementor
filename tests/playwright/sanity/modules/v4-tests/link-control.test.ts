@@ -52,7 +52,8 @@ const testData = [
 
 test.describe( 'Link control tests @v4-tests', () => {
 	// TODO: to be fixed in ED-24960
-	test.skip( 'Link sanitization tests', async ( { page, apiRequests }, testInfo ) => {		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	test.skip( 'Link sanitization tests', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		let buttonId;
 
