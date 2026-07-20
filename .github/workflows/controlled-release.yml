@@ -62,18 +62,36 @@ jobs:
       MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
 
   # ── Job 4 ────────────────────────────────────────────────────────────────
+  # Runs immediately after the tag is pushed (no gate) so the reviewer can
+  # see a link to the created tag in the run summary before deciding
+  # whether to approve Job 5.
+  # ─────────────────────────────────────────────────────────────────────────
+  tag-summary:
+    name: Tag Created
+    needs: tag
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Write tag summary
+        run: |
+          {
+            echo "### 🏷️ Tag created: \`${{ inputs.version }}\`"
+            echo ""
+            echo "[View tag](https://github.com/${{ github.repository }}/tree/${{ inputs.version }})"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 5 ────────────────────────────────────────────────────────────────
   # Approval gate. Reviewer confirms the tag/version bump before build & release.
   # ─────────────────────────────────────────────────────────────────────────
   approve-publish:
     name: Await Approval (Publish Release)
-    needs: tag
+    needs: tag-summary
     environment: release-approval
     runs-on: ubuntu-22.04
     steps:
       - name: Approval received
         run: echo "Publish of ${{ inputs.version }} approved. Proceeding."
 
-  # ── Job 5 ────────────────────────────────────────────────────────────────
+  # ── Job 6 ────────────────────────────────────────────────────────────────
   # Rollback: runs only if the publish approval was rejected. Deletes the
   # tag (and optionally the version-bump commit) created by Job 3.
   # ─────────────────────────────────────────────────────────────────────────
@@ -92,8 +110,15 @@ jobs:
       - name: Delete remote tag
         run: |
           git push origin --delete "${{ inputs.version }}" || echo "Tag already absent"
+      - name: Write deletion summary
+        run: |
+          {
+            echo "### 🗑️ Tag \`${{ inputs.version }}\` deleted"
+            echo ""
+            echo "Publish approval was rejected, so the tag has been removed from the repository."
+          } >> "$GITHUB_STEP_SUMMARY"
 
-  # ── Job 5 ────────────────────────────────────────────────────────────────
+  # ── Job 7 ────────────────────────────────────────────────────────────────
   # Builds the plugin from the tagged commit and publishes the release.
   # Version strings are already correct — the tag job bumped them.
   # ─────────────────────────────────────────────────────────────────────────
