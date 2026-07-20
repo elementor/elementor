@@ -38,21 +38,21 @@ jobs:
   # environment: cannot be placed on a `uses:` job — this intermediate job
   # holds the gate so Job 3 can use a reusable workflow cleanly.
   # ─────────────────────────────────────────────────────────────────────────
-  approve:
-    name: Await Approval
+  approve-tag:
+    name: Await Approval (Create Tag)
     needs: validate
     environment: release-approval
     runs-on: ubuntu-24.04
     steps:
       - name: Approval received
-        run: echo "Release of ${{ inputs.version }} approved. Proceeding."
+        run: echo "Tag creation for ${{ inputs.version }} approved. Proceeding."
 
   # ── Job 3 ────────────────────────────────────────────────────────────────
   # Pushes the version bump commit and the Git tag.
   # ─────────────────────────────────────────────────────────────────────────
   tag:
     name: Create Release Tag
-    needs: approve
+    needs: approve-tag
     uses: davseve/elementor/.github/workflows/release-tag-creation.yml@split-release-process
     with:
       version: ${{ inputs.version }}
@@ -62,12 +62,44 @@ jobs:
       MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
 
   # ── Job 4 ────────────────────────────────────────────────────────────────
+  # Approval gate. Reviewer confirms the tag/version bump before build & release.
+  # ─────────────────────────────────────────────────────────────────────────
+  approve-publish:
+    name: Await Approval (Publish Release)
+    needs: tag
+    environment: release-approval
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Approval received
+        run: echo "Publish of ${{ inputs.version }} approved. Proceeding."
+
+  # ── Job 5 ────────────────────────────────────────────────────────────────
+  # Rollback: runs only if the publish approval was rejected. Deletes the
+  # tag (and optionally the version-bump commit) created by Job 3.
+  # ─────────────────────────────────────────────────────────────────────────
+  cleanup-tag:
+    name: Rollback Tag (Rejected)
+    needs: approve-publish
+    if: always() && needs.approve-publish.result == 'failure'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Delete remote tag
+        run: |
+          git push origin --delete "${{ inputs.version }}" || echo "Tag already absent"
+
+  # ── Job 5 ────────────────────────────────────────────────────────────────
   # Builds the plugin from the tagged commit and publishes the release.
   # Version strings are already correct — the tag job bumped them.
   # ─────────────────────────────────────────────────────────────────────────
   publish:
     name: Build & Publish
-    needs: tag
+    needs: approve-publish
     runs-on: ubuntu-22.04
     permissions:
       contents: write
