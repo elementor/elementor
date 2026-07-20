@@ -33,6 +33,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	const CONFIGURATION_ID_ATTRIBUTE = Xml_Parser::CONFIGURATION_ID_ATTRIBUTE;
 	const DEFAULT_PARENT_ID = 'document';
+	const MODE_APPEND = 'append';
+	const MODE_REPLACE_CHILDREN = 'replace_children';
 
 	private ?Document_Mutator $mutator;
 
@@ -73,6 +75,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$post_id = (int) $input['post_id'];
 		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
 		$dry_run = ! empty( $input['dry_run'] );
+		$mode = $input['mode'] ?? self::MODE_APPEND;
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return new \WP_Error(
@@ -137,18 +140,18 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $style_result['warnings'] );
+			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $style_result['warnings'], $mode, [] );
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
-		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id );
+		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
 			return $persisted;
 		}
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $style_result['warnings'] );
+		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $style_result['warnings'], $mode, $persisted['removed_ids'] );
 	}
 
 	private function get_ability_description(): string {
@@ -179,6 +182,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'llm_instructions' => [
 					'type' => 'string',
 					'description' => 'Next-step instructions for the LLM.',
+				],
+				'removed_element_ids' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'string' ],
+					'description' => 'Element IDs removed when mode is replace_children (empty when none existed).',
 				],
 			],
 		];
@@ -226,6 +234,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'default' => false,
 					'description' => 'If true, validate and return resolved tree without persisting.',
 				],
+				'mode' => [
+					'type' => 'string',
+					'enum' => [ self::MODE_APPEND, self::MODE_REPLACE_CHILDREN ],
+					'default' => self::MODE_APPEND,
+					'description' => 'append (default) inserts under parent_id; replace_children removes existing direct children of parent_id first, then inserts.',
+				],
 			],
 		];
 	}
@@ -243,6 +257,21 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return new \WP_Error(
 				'invalid_input',
 				__( 'xml_structure is required and must be a string.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		$mode = $input['mode'] ?? self::MODE_APPEND;
+		$valid_modes = [ self::MODE_APPEND, self::MODE_REPLACE_CHILDREN ];
+		if ( ! in_array( $mode, $valid_modes, true ) ) {
+			return new \WP_Error(
+				'invalid_input',
+				sprintf(
+					/* translators: 1: Provided mode value, 2: List of valid modes */
+					__( 'Invalid mode "%1$s". Must be one of: %2$s', 'elementor' ),
+					$mode,
+					implode( ', ', $valid_modes )
+				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
@@ -271,7 +300,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
-		array $warnings
+		array $warnings,
+		string $mode,
+		array $removed_ids
 	): array {
 		$post = get_post( $post_id );
 
@@ -287,6 +318,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
+		}
+
+		if ( self::MODE_REPLACE_CHILDREN === $mode ) {
+			$response['removed_element_ids'] = $removed_ids;
 		}
 
 		return $response;
