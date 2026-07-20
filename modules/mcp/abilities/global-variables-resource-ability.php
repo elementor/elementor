@@ -50,7 +50,7 @@ class Global_Variables_Resource_Ability extends Abstract_Ability {
 		$data = $variables_payload['data'] ?? [];
 
 		return wp_json_encode( [
-			'variables' => $data,
+			'variables' => (object) $data,
 			'total' => count( $data ),
 			'watermark' => $variables_payload['watermark'] ?? null,
 		] );
