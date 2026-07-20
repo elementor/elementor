@@ -121,154 +121,16 @@ jobs:
   # ── Job 7 ────────────────────────────────────────────────────────────────
   # Builds the plugin from the tagged commit and publishes the release.
   # Version strings are already correct — the tag job bumped them.
+  # Delegates to publish-release.yml, which can also be run standalone
+  # (workflow_dispatch) against an existing tag if this step ever fails
+  # and needs a retry without repeating the tag-creation/approval gates.
   # ─────────────────────────────────────────────────────────────────────────
   publish:
     name: Build & Publish
     needs: approve-publish
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout tagged commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.version }}
-          fetch-depth: 0
-
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org/'
-
-      - name: Install dependencies
-        uses: ./.github/workflows/install-dependencies
-
-      - name: Build plugin
-        uses: ./.github/workflows/build-plugin
-        with:
-          PACKAGE_VERSION: ${{ inputs.version }}
-          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
-        env:
-          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
-
-      - name: Get release name
-        uses: ./.github/workflows/get-release-name
-        with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
-          PLUGIN_NAME: ${{ github.event.repository.name }}
-
-      - name: Check changelog is updated
-        if: ${{ !inputs.prerelease }}
-        uses: ./.github/workflows/verify-version-changelog
-        with:
-          VERSION: ${{ inputs.version }}
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.version }}
-          name: ${{ inputs.version }}
-          files: elementor-*.zip
-          prerelease: ${{ inputs.prerelease }}
-
-      - name: Validate build files
-        if: github.repository_owner == 'elementor'
-        env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
-          PACKAGE_VERSION: ${{ inputs.version }}
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
-
-      # - name: Publish to WordPress.org SVN
-      #   if: github.repository_owner == 'elementor' && !inputs.prerelease
-      #   env:
-      #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-      #     CHANNEL: ga
-      #     PACKAGE_VERSION: ${{ inputs.version }}
-      #   run: |
-      #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-
-      # - name: Prepare Slack release announcement
-      #   id: prepare_slack_announcement
-      #   env:
-      #     CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
-      #     RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }}
-      #     RELEASE_VERSION: ${{ inputs.version }}
-      #     RELEASED_BY: ${{ github.actor }}
-      #     SLACK_RELEASE_ANNOUNCEMENT_COPY: ${{ vars.SLACK_RELEASE_ANNOUNCEMENT_COPY }}
-      #   run: |
-      #     if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
-      #       echo "SLACK_RELEASE_ANNOUNCEMENT_COPY repository variable is not set."
-      #       exit 1
-      #     fi
-
-      #     PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
-      #       --arg channel "$CHANNEL" \
-      #       --arg release_url "$RELEASE_URL" \
-      #       --arg released_by "$RELEASED_BY" \
-      #       --arg version "$RELEASE_VERSION" \
-      #       '
-      #       def apply_announcement_tokens($text; $product_display_name; $distribution_note):
-      #         $text
-      #         | gsub("\\{product_display_name\\}"; $product_display_name)
-      #         | gsub("\\{version\\}"; $version)
-      #         | gsub("\\{released_by\\}"; $released_by)
-      #         | gsub("\\{release_url\\}"; $release_url)
-      #         | gsub("\\{distribution_note\\}"; $distribution_note);
-
-      #       . as $copy |
-      #       ($copy.distribution_notes[$channel] // "") as $channel_note |
-      #       (if $channel_note == "" then "" else "\n\n" + $channel_note end) as $distribution_note |
-      #       {
-      #         blocks: [
-      #           {
-      #             type: "section",
-      #             text: {
-      #               type: "mrkdwn",
-      #               text: (
-      #                 $copy.opening_line + "\n\n" +
-      #                 apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note)
-      #               )
-      #             }
-      #           },
-      #           { type: "divider" },
-      #           {
-      #             type: "section",
-      #             text: {
-      #               type: "mrkdwn",
-      #               text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note)
-      #             },
-      #             accessory: {
-      #               type: "button",
-      #               text: {
-      #                 type: "plain_text",
-      #                 text: $copy.action_button_label,
-      #                 emoji: true
-      #               },
-      #               value: "open-release",
-      #               url: $release_url,
-      #               action_id: "button-action"
-      #             }
-      #           }
-      #         ]
-      #       }
-      #       ')
-
-      #     {
-      #       echo 'payload<<EOF'
-      #       echo "$PAYLOAD"
-      #       echo 'EOF'
-      #     } >> "$GITHUB_OUTPUT"
-
-      # - name: Post to Slack
-      #   uses: ./.github/workflows/post-to-slack
-      #   with:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      #     SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-      #     PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
+    uses: davseve/elementor/.github/workflows/publish-release.yml@split-release-process
+    with:
+      version: ${{ inputs.version }}
+      prerelease: ${{ inputs.prerelease }}
+    secrets:
+      MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
