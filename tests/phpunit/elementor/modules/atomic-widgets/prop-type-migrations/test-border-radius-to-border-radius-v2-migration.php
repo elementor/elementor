@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @group prop-type-migrations
  */
-class Test_Border_Radius_Legacy_Migration extends TestCase {
+class Test_Border_Radius_To_Border_Radius_V2_Migration extends TestCase {
 
 	private array $migration;
 
 	public function setUp(): void {
-		$path = dirname( __DIR__, 6 ) . '/migrations/operations/border-radius-legacy-to-border-radius.json';
+		$path = dirname( __DIR__, 6 ) . '/migrations/operations/border-radius-to-border-radius-v2.json';
 		$this->migration = json_decode( file_get_contents( $path ), true );
 	}
 
@@ -29,7 +29,7 @@ class Test_Border_Radius_Legacy_Migration extends TestCase {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
 
 		// Assert
-		$this->assertSame( 'border-radius', $result['$$type'] );
+		$this->assertSame( 'border-radius-v2', $result['$$type'] );
 		$this->assertArrayHasKey( 'start-start', $result['value'] );
 		$this->assertArrayHasKey( 'start-end', $result['value'] );
 		$this->assertArrayHasKey( 'end-end', $result['value'] );
@@ -44,7 +44,7 @@ class Test_Border_Radius_Legacy_Migration extends TestCase {
 	public function test_up__renames_only_existing_corners() {
 		// Arrange
 		$data = [
-			'$$type' => 'border-radius-legacy',
+			'$$type' => 'border-radius',
 			'value' => [
 				'top-left' => $this->make_size( 8 ),
 			],
@@ -54,7 +54,7 @@ class Test_Border_Radius_Legacy_Migration extends TestCase {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
 
 		// Assert
-		$this->assertSame( 'border-radius', $result['$$type'] );
+		$this->assertSame( 'border-radius-v2', $result['$$type'] );
 		$this->assertSame( 8, $result['value']['start-start']['value']['size'] );
 		$this->assertArrayNotHasKey( 'start-end', $result['value'] );
 	}
@@ -67,7 +67,7 @@ class Test_Border_Radius_Legacy_Migration extends TestCase {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'down' );
 
 		// Assert
-		$this->assertSame( 'border-radius-legacy', $result['$$type'] );
+		$this->assertSame( 'border-radius', $result['$$type'] );
 		$this->assertSame( 10, $result['value']['top-left']['value']['size'] );
 		$this->assertSame( 20, $result['value']['top-right']['value']['size'] );
 		$this->assertSame( 30, $result['value']['bottom-right']['value']['size'] );
@@ -98,7 +98,7 @@ class Test_Border_Radius_Legacy_Migration extends TestCase {
 
 	private function make_legacy_border_radius_data(): array {
 		return [
-			'$$type' => 'border-radius-legacy',
+			'$$type' => 'border-radius',
 			'value' => [
 				'top-left' => $this->make_size( 10 ),
 				'top-right' => $this->make_size( 20 ),
@@ -110,7 +110,7 @@ class Test_Border_Radius_Legacy_Migration extends TestCase {
 
 	private function make_logical_border_radius_data(): array {
 		return [
-			'$$type' => 'border-radius',
+			'$$type' => 'border-radius-v2',
 			'value' => [
 				'start-start' => $this->make_size( 10 ),
 				'start-end' => $this->make_size( 20 ),

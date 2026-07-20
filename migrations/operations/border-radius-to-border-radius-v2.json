@@ -17,7 +17,7 @@
       "condition": { "fn": "exists", "path": "value.bottom-left" }
     },
     {
-      "op": { "fn": "set", "path": "$$type", "value": "border-radius" }
+      "op": { "fn": "set", "path": "$$type", "value": "border-radius-v2" }
     }
   ],
   "down": [
@@ -38,7 +38,7 @@
       "condition": { "fn": "exists", "path": "value.end-start" }
     },
     {
-      "op": { "fn": "set", "path": "$$type", "value": "border-radius-legacy" }
+      "op": { "fn": "set", "path": "$$type", "value": "border-radius" }
     }
   ]
 }

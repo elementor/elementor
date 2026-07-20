@@ -53,15 +53,15 @@
       "toType": "font-family",
       "path": "operations/string-to-font-family.json"
     },
-    "border-radius-legacy-to-border-radius": {
-      "fromType": "border-radius-legacy",
-      "toType": "border-radius",
-      "path": "operations/border-radius-legacy-to-border-radius.json"
+    "border-radius-to-border-radius-v2": {
+      "fromType": "border-radius",
+      "toType": "border-radius-v2",
+      "path": "operations/border-radius-to-border-radius-v2.json"
     },
-    "border-width-legacy-to-border-width": {
-      "fromType": "border-width-legacy",
-      "toType": "border-width",
-      "path": "operations/border-width-legacy-to-border-width.json"
+    "border-width-to-border-width-v2": {
+      "fromType": "border-width",
+      "toType": "border-width-v2",
+      "path": "operations/border-width-to-border-width-v2.json"
     }
   }
 }

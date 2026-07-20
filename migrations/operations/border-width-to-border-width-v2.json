@@ -17,7 +17,7 @@
       "condition": { "fn": "exists", "path": "value.left" }
     },
     {
-      "op": { "fn": "set", "path": "$$type", "value": "border-width" }
+      "op": { "fn": "set", "path": "$$type", "value": "border-width-v2" }
     }
   ],
   "down": [
@@ -38,7 +38,7 @@
       "condition": { "fn": "exists", "path": "value.inline-start" }
     },
     {
-      "op": { "fn": "set", "path": "$$type", "value": "border-width-legacy" }
+      "op": { "fn": "set", "path": "$$type", "value": "border-width" }
     }
   ]
 }

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Border_Width_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'border-width';
+		return 'border-width-v2';
 	}
 
 	protected function define_shape(): array {

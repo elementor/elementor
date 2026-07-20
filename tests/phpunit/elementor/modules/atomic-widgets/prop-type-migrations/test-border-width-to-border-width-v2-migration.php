@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @group prop-type-migrations
  */
-class Test_Border_Width_Legacy_Migration extends TestCase {
+class Test_Border_Width_To_Border_Width_V2_Migration extends TestCase {
 
 	private array $migration;
 
 	public function setUp(): void {
-		$path = dirname( __DIR__, 6 ) . '/migrations/operations/border-width-legacy-to-border-width.json';
+		$path = dirname( __DIR__, 6 ) . '/migrations/operations/border-width-to-border-width-v2.json';
 		$this->migration = json_decode( file_get_contents( $path ), true );
 	}
 
@@ -29,7 +29,7 @@ class Test_Border_Width_Legacy_Migration extends TestCase {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
 
 		// Assert
-		$this->assertSame( 'border-width', $result['$$type'] );
+		$this->assertSame( 'border-width-v2', $result['$$type'] );
 		$this->assertArrayHasKey( 'block-start', $result['value'] );
 		$this->assertArrayHasKey( 'inline-end', $result['value'] );
 		$this->assertArrayHasKey( 'block-end', $result['value'] );
@@ -44,7 +44,7 @@ class Test_Border_Width_Legacy_Migration extends TestCase {
 	public function test_up__renames_only_existing_sides() {
 		// Arrange
 		$data = [
-			'$$type' => 'border-width-legacy',
+			'$$type' => 'border-width',
 			'value' => [
 				'top' => $this->make_size( 2 ),
 			],
@@ -54,7 +54,7 @@ class Test_Border_Width_Legacy_Migration extends TestCase {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
 
 		// Assert
-		$this->assertSame( 'border-width', $result['$$type'] );
+		$this->assertSame( 'border-width-v2', $result['$$type'] );
 		$this->assertSame( 2, $result['value']['block-start']['value']['size'] );
 		$this->assertArrayNotHasKey( 'inline-end', $result['value'] );
 	}
@@ -67,7 +67,7 @@ class Test_Border_Width_Legacy_Migration extends TestCase {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'down' );
 
 		// Assert
-		$this->assertSame( 'border-width-legacy', $result['$$type'] );
+		$this->assertSame( 'border-width', $result['$$type'] );
 		$this->assertSame( 1, $result['value']['top']['value']['size'] );
 		$this->assertSame( 2, $result['value']['right']['value']['size'] );
 		$this->assertSame( 3, $result['value']['bottom']['value']['size'] );
@@ -98,7 +98,7 @@ class Test_Border_Width_Legacy_Migration extends TestCase {
 
 	private function make_legacy_border_width_data(): array {
 		return [
-			'$$type' => 'border-width-legacy',
+			'$$type' => 'border-width',
 			'value' => [
 				'top' => $this->make_size( 1 ),
 				'right' => $this->make_size( 2 ),
@@ -110,7 +110,7 @@ class Test_Border_Width_Legacy_Migration extends TestCase {
 
 	private function make_logical_border_width_data(): array {
 		return [
-			'$$type' => 'border-width',
+			'$$type' => 'border-width-v2',
 			'value' => [
 				'block-start' => $this->make_size( 1 ),
 				'inline-end' => $this->make_size( 2 ),

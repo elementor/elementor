@@ -72,7 +72,7 @@ class Test_Border_Logical_Properties_Orchestrator extends Elementor_Test_Base {
 		// Assert
 		$this->assertTrue( $save_callback_called );
 		$border_radius = $global_classes_data['items'][0]['variants'][0]['props']['border-radius'];
-		$this->assertSame( 'border-radius', $border_radius['$$type'] );
+		$this->assertSame( 'border-radius-v2', $border_radius['$$type'] );
 		$this->assertSame( 10, $border_radius['value']['start-start']['value']['size'] );
 		$this->assertSame( 20, $border_radius['value']['start-end']['value']['size'] );
 		$this->assertArrayNotHasKey( 'top-left', $border_radius['value'] );
@@ -120,7 +120,7 @@ class Test_Border_Logical_Properties_Orchestrator extends Elementor_Test_Base {
 		// Assert
 		$this->assertTrue( $save_callback_called );
 		$border_width = $global_classes_data['items'][0]['variants'][0]['props']['border-width'];
-		$this->assertSame( 'border-width', $border_width['$$type'] );
+		$this->assertSame( 'border-width-v2', $border_width['$$type'] );
 		$this->assertSame( 1, $border_width['value']['block-start']['value']['size'] );
 		$this->assertSame( 4, $border_width['value']['inline-start']['value']['size'] );
 		$this->assertArrayNotHasKey( 'top', $border_width['value'] );
@@ -143,7 +143,7 @@ class Test_Border_Logical_Properties_Orchestrator extends Elementor_Test_Base {
 							],
 							'props' => [
 								'border-radius' => [
-									'$$type' => 'border-radius',
+									'$$type' => 'border-radius-v2',
 									'value' => [
 										'start-start' => $this->make_size( 5 ),
 									],
