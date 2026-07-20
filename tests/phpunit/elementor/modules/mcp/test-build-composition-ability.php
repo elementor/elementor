@@ -569,7 +569,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertNotNull( $parent );
 		$this->assertSame( 'parent-container', $parent['id'] );
 		$this->assertCount( 1, $parent['elements'] );
-		$this->assertSame( 'e-paragraph', $parent['elements'][0]['elType'] );
+		$this->assertSame( 'widget', $parent['elements'][0]['elType'] );
+		$this->assertSame( 'e-paragraph', $parent['elements'][0]['widgetType'] );
 	}
 
 	public function test_execute__mode_replace_children_with_empty_parent_behaves_as_append() {
@@ -636,7 +637,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
 		$this->assertCount( 1, $elements );
-		$this->assertSame( 'e-heading', $elements[0]['elType'] );
+		$this->assertSame( 'widget', $elements[0]['elType'] );
+		$this->assertSame( 'e-heading', $elements[0]['widgetType'] );
 	}
 
 	public function test_execute__mode_replace_children_with_nonexistent_parent_returns_error() {
@@ -694,5 +696,15 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	private function given_document_with_elements( int $post_id, array $elements ): void {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$document->save( [ 'elements' => $elements ] );
+
+		$this->clear_document_cache( $post_id );
+	}
+
+	private function clear_document_cache( int $post_id ): void {
+		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
+		$reflection->setAccessible( true );
+		$documents = $reflection->getValue( Plugin::$instance->documents );
+		unset( $documents[ $post_id ] );
+		$reflection->setValue( Plugin::$instance->documents, $documents );
 	}
 }

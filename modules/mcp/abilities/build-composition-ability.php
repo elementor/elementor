@@ -250,7 +250,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return new \WP_Error(
 				'invalid_input',
 				sprintf(
-					__( 'Invalid mode "%s". Must be one of: %s', 'elementor' ),
+					/* translators: 1: Provided mode value, 2: List of valid modes */
+					__( 'Invalid mode "%1$s". Must be one of: %2$s', 'elementor' ),
 					$mode,
 					implode( ', ', $valid_modes )
 				),
