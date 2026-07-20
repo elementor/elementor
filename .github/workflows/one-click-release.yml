@@ -108,6 +108,16 @@ jobs:
         uses: ./.github/workflows/verify-version-changelog
         with:
           VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+      - name: Get Release Body
+        id: get_release_body
+        run: |
+          CHANGES=$(node ./.github/scripts/get-changelog-section.js ${{ env.RELEASE_NAME }})
+          echo "CHANGES: $CHANGES"
+          {
+            echo "CHANGES<<EOF"
+            echo "$CHANGES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
       - name: Create GitHub release
         if: github.event.inputs.dry_run == 'false'
         uses: softprops/action-gh-release@v1
@@ -115,6 +125,7 @@ jobs:
           tag_name: ${{ env.PACKAGE_VERSION }}
           target_commitish: ${{ env.CLEAN_REF }}
           files: elementor-*.zip
+          body: ${{ steps.get_release_body.outputs.CHANGES }}
       - name: Validate Build Files
         if: github.repository_owner == 'elementor'
         env:
