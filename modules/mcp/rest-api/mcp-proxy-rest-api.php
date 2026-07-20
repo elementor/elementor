@@ -6,10 +6,11 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
+use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
+use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Widgets_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
@@ -29,7 +30,6 @@ class Mcp_Proxy_REST_API {
 	public function __construct() {
 		$this->tools = [
 			'manage-global-variable' => fn( array $input ) => ( new Manage_Variable_Ability() )->execute( $input ),
-			'list-widgets' => fn( array $input ) => ( new List_Widgets_Ability() )->execute( $input ),
 			'get-widget-schema' => fn( array $input ) => ( new Get_Widget_Schema_Ability() )->execute( $input ),
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
@@ -41,6 +41,8 @@ class Mcp_Proxy_REST_API {
 		$this->resources = [
 			Style_Best_Practices_Ability::URI => fn() => ( new Style_Best_Practices_Ability() )->execute(),
 			Manage_Variable_Guide_Ability::URI => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
+			Global_Classes_Resource_Ability::URI => fn() => ( new Global_Classes_Resource_Ability() )->execute(),
+			Global_Variables_Resource_Ability::URI => fn() => ( new Global_Variables_Resource_Ability() )->execute(),
 		];
 	}
 
