@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Modules\MarkdownRender;
 
 use Elementor\Modules\MarkdownRender\Module;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
@@ -70,6 +71,148 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue( $result );
+	}
+
+	public function test_rendering_markdown_flag_defaults_to_false() {
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_rendering_markdown_flag_can_be_toggled() {
+		Module::set_rendering_markdown( true );
+		$this->assertTrue( Module::is_rendering_markdown() );
+		Module::set_rendering_markdown( false );
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_rendering_markdown_flag_resets_after_render_exception() {
+		$post = $this->factory()->create_and_get_default_post();
+		$document = $this->getMockBuilder( \Elementor\Core\Base\Document::class )
+			->disableOriginalConstructor()
+			->onlyMethods( [ 'get_main_id', 'get_elements_data' ] )
+			->getMock();
+
+		$document->method( 'get_main_id' )->willReturn( $post->ID );
+		$document->method( 'get_elements_data' )->willReturn( [
+			[
+				'id' => 'abc123',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [
+					'title' => 'Hello',
+				],
+			],
+		] );
+
+		add_filter(
+			'elementor/markdown/document_output',
+			static function () {
+				throw new \RuntimeException( 'markdown render failed' );
+			}
+		);
+
+		$renderer = new \Elementor\Modules\MarkdownRender\Markdown_Renderer();
+
+		try {
+			$renderer->render( $document );
+			$this->fail( 'Expected RuntimeException was not thrown.' );
+		} catch ( \RuntimeException $exception ) {
+			$this->assertSame( 'markdown render failed', $exception->getMessage() );
+		} finally {
+			remove_all_filters( 'elementor/markdown/document_output' );
+		}
+
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_render_elements_data_renders_nested_widgets() {
+		$renderer = new \Elementor\Modules\MarkdownRender\Markdown_Renderer();
+		$elements_data = [
+			[
+				'id' => 'heading-1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [
+					'title' => 'Nested Heading',
+					'header_size' => 'h2',
+				],
+			],
+		];
+
+		$markdown = $renderer->render_elements_data( $elements_data );
+
+		$this->assertStringContainsString( '## Nested Heading', $markdown );
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_nested_widget_render_markdown_delegates_to_children() {
+		$nested_tabs = Plugin::$instance->widgets_manager->get_widget_types( 'nested-tabs' );
+
+		if ( ! $nested_tabs ) {
+			$this->markTestSkipped( 'Nested tabs widget not available' );
+		}
+
+		$element = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'nested-tabs-1',
+			'elType' => 'widget',
+			'widgetType' => 'nested-tabs',
+			'settings' => [
+				'tabs' => [
+					[ 'tab_title' => 'Tab 1' ],
+				],
+			],
+			'elements' => [
+				[
+					'id' => 'tab-container-1',
+					'elType' => 'container',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => 'tab-heading-1',
+							'elType' => 'widget',
+							'widgetType' => 'heading',
+							'settings' => [
+								'title' => 'Tab Content',
+								'header_size' => 'h3',
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		if ( ! $element ) {
+			$this->markTestSkipped( 'Nested tabs element could not be created' );
+		}
+
+		$markdown = $element->render_markdown();
+
+		$this->assertStringContainsString( '### Tab Content', $markdown );
+	}
+
+	public function test_execute_while_rendering_markdown_resets_flag_after_exception() {
+		try {
+			Module::execute_while_rendering_markdown( static function () {
+				throw new \RuntimeException( 'markdown render failed' );
+			} );
+			$this->fail( 'Expected RuntimeException was not thrown.' );
+		} catch ( \RuntimeException $exception ) {
+			$this->assertSame( 'markdown render failed', $exception->getMessage() );
+		}
+
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_execute_while_rendering_markdown_preserves_existing_flag_state() {
+		Module::set_rendering_markdown( true );
+
+		$result = Module::execute_while_rendering_markdown( static function () {
+			return Module::is_rendering_markdown();
+		} );
+
+		$this->assertTrue( $result );
+		$this->assertTrue( Module::is_rendering_markdown() );
+
+		Module::set_rendering_markdown( false );
 	}
 
 	public function test_cache_invalidation_hooks_are_registered() {

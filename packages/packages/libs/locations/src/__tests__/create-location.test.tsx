@@ -223,21 +223,34 @@ describe( 'createLocation', () => {
 		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
-	it( 'should render a component injected after the Slot has mounted', () => {
+	it( 'should render a component injected after the Slot has already mounted (e.g. by a plugin loaded later)', () => {
 		// Arrange.
 		const { inject, Slot } = createLocation();
 
+		inject( {
+			id: 'test-1',
+			component: () => <div data-testid="element">First div</div>,
+		} );
+
+		// Act.
 		render( <Slot /> );
 
-		expect( screen.queryByText( 'Late injection' ) ).not.toBeInTheDocument();
+		// eslint-disable-next-line testing-library/no-test-id-queries
+		expect( screen.getAllByTestId( 'element' ) ).toHaveLength( 1 );
 
-		// Act — inject after mount.
 		act( () => {
-			inject( { id: 'test-late', component: () => <div>Late injection</div> } );
+			inject( {
+				id: 'test-2',
+				component: () => <div data-testid="element">Second div</div>,
+			} );
 		} );
 
 		// Assert.
-		expect( screen.getByText( 'Late injection' ) ).toBeInTheDocument();
+		// eslint-disable-next-line testing-library/no-test-id-queries
+		const elements = screen.getAllByTestId( 'element' );
+
+		expect( elements ).toHaveLength( 2 );
+		expect( elements[ 1 ].innerHTML ).toBe( 'Second div' );
 	} );
 
 	it( 'should pass the props from Slot to the injected component', () => {

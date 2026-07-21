@@ -8,8 +8,12 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
-import { GridOutlineOverlay } from './grid-outline';
+import { GridEmptyCellPositioner, GridOutlineOverlay } from './grid-outline';
 import { OutlineOverlay } from './outline-overlay';
+
+const hasGridStyleDisplay = ( element: HTMLElement ): boolean => {
+	return element.computedStyleMap().get( 'display' )?.toString() === 'grid';
+};
 
 const ELEMENTS_DATA_ATTR = 'atomic';
 
@@ -19,8 +23,12 @@ const overlayRegistry: ElementOverlayConfig[] = [
 		shouldRender: () => true,
 	},
 	{
+		component: GridEmptyCellPositioner,
+		shouldRender: ( { element } ) => hasGridStyleDisplay( element ),
+	},
+	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element, isSelected } ) => isSelected && element.dataset.eType === 'e-grid',
+		shouldRender: ( { isSelected, element } ) => isSelected && hasGridStyleDisplay( element ),
 	},
 ];
 
@@ -37,18 +45,19 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( { id, domElement, isGlobal } ) => {
+	return elements.map( ( { id, domElement, isGlobal, widgetType } ) => {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element: domElement, isSelected } ) && (
+				shouldRender( { id, element: domElement, isSelected, widgetType } ) && (
 					<Overlay
 						key={ `${ id }-${ index }` }
 						id={ id }
 						element={ domElement }
 						isSelected={ isSelected }
 						isGlobal={ isGlobal }
+						widgetType={ widgetType }
 					/>
 				)
 		);
@@ -59,18 +68,20 @@ type ElementData = {
 	id: string;
 	domElement: HTMLElement;
 	isGlobal: boolean;
+	widgetType: string | undefined;
 };
 
-function useElementsDom() {
+function useElementsDom(): ElementData[] {
 	return useListenTo(
 		[ windowEvent( 'elementor/editor/element-rendered' ), windowEvent( 'elementor/editor/element-destroyed' ) ],
-		() => {
+		(): ElementData[] => {
 			return getElements()
 				.filter( ( el ) => isV4Element( el.view?.el?.dataset ) )
 				.map( ( element ) => ( {
 					id: element.id,
 					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
 					isGlobal: element.model.get( 'isGlobal' ) ?? false,
+					widgetType: element.model.get( 'widgetType' ),
 				} ) )
 				.filter( ( item ): item is ElementData => !! item.domElement );
 		}

@@ -50,7 +50,7 @@ export interface OnboardingChoices {
 	site_features: string[];
 }
 
-export type ThemeSlug = 'hello-elementor' | 'hello-biz';
+export type ThemeSlug = 'hello-elementor';
 
 export interface OnboardingConfig {
 	version: string;
@@ -62,6 +62,7 @@ export interface OnboardingConfig {
 	steps: Step[];
 	isConnected: boolean;
 	shouldShowProInstallScreen: boolean;
+	isHelloThemeActive?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;

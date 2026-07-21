@@ -20,9 +20,15 @@ const defaults: FloatingPanelDefaults = {
 	height: 480,
 	minWidth: 240,
 	minHeight: 320,
+	corner: 'block-start-inline-start',
 };
 
-const startPosition = { insetInlineStart: 400, insetBlockStart: 120 };
+const startPosition = {
+	insetInlineStart: 400,
+	insetInlineEnd: 0,
+	insetBlockStart: 120,
+	insetBlockEnd: 0,
+};
 
 let sidePanelElement: HTMLElement;
 
@@ -92,7 +98,9 @@ describe( 'useFloatingPanelDrag', () => {
 		// Assert.
 		expect( selectPosition( __getState(), PANEL_ID ) ).toEqual( {
 			insetInlineStart: 450,
+			insetInlineEnd: 0,
 			insetBlockStart: 150,
+			insetBlockEnd: 0,
 		} );
 		expect( target.setPointerCapture ).toHaveBeenCalledWith( POINTER_ID );
 	} );
@@ -117,7 +125,9 @@ describe( 'useFloatingPanelDrag', () => {
 		// Assert.
 		expect( selectPosition( __getState(), PANEL_ID ) ).toEqual( {
 			insetInlineStart: SIDE_PANEL_WIDTH_PX,
+			insetInlineEnd: 0,
 			insetBlockStart: APP_BAR_HEIGHT_PX,
+			insetBlockEnd: 0,
 		} );
 	} );
 

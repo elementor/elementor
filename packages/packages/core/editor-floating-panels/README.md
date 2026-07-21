@@ -9,12 +9,15 @@ The panes are persisted and survive reloads. The state stores open/closed, posit
 ```ts
 import {
 	createFloatingPanel,
+	init,
 	registerFloatingPanel,
 
 	FloatingPanelBody,
 	FloatingPanelFooter,
 	FloatingPanelHeader,
 } from '@elementor/editor-floating-panels';
+
+init();
 
 const myPanel = createFloatingPanel( {
 	id: 'my-panel',
@@ -28,6 +31,11 @@ const myPanel = createFloatingPanel( {
 		height: 480,
 		minWidth: 240,
 		minHeight: 320,
+		corner: 'block-start-inline-start',
+		initialPosition: {
+			insetBlockStart: 80,
+			insetInlineStart: 200
+		},
 	},
 } );
 
@@ -74,10 +82,36 @@ Programmatic sizing via `setSize` from `useFloatingPanelActions` works regardles
 | `height` | Initial panel height (in pixels). |
 | `minWidth` | Minimum width the panel can be resized to. |
 | `minHeight` | Minimum height the panel can be resized to. |
-| `initialPosition` (optional) | Initial position, expressed as logical insets `{ insetInlineStart, insetBlockStart }`. Used only when no persisted position exists. Defaults to `{ insetInlineStart: 24, insetBlockStart: 80 }`. |
+| `corner` (optional) | Viewport corner anchor. One of `block-start-inline-start`, `block-start-inline-end`, `block-end-inline-start`, `block-end-inline-end`. Default: `block-start-inline-start`. |
+| `initialPosition` (optional) | Offsets on the two insets that match `corner`. Used only when no persisted position exists. Other keys are ignored. |
 
 Sizes use physical names (`width`/`height`) because Elementor renders in horizontal writing mode only. Position uses logical inset names because it is direction-sensitive (e.g. RTL).
 
-When persisted state exists, the persisted `position` and `size` override `initialPosition`, `width`, and `height`. The resize minimums (`minWidth`/`minHeight`) are always derived from `defaults`.
+`LogicalPosition` stores all four insets (`insetInlineStart`, `insetInlineEnd`, `insetBlockStart`, `insetBlockEnd`). Only the pair matching `corner` is used for rendering and interaction; inactive insets are `0`.
 
-Call `init()` once during editor bootstrap to register the slice, sync persisted state, and mount the host into the editor's top location.
+| `corner` | Active insets | Default `initialPosition` |
+| --- | --- | --- |
+| `block-start-inline-start` | `insetInlineStart`, `insetBlockStart` | `{ insetInlineStart: 24, insetBlockStart: 80 }` |
+| `block-start-inline-end` | `insetInlineEnd`, `insetBlockStart` | `{ insetInlineEnd: 24, insetBlockStart: 80 }` |
+| `block-end-inline-start` | `insetInlineStart`, `insetBlockEnd` | `{ insetInlineStart: 24, insetBlockEnd: 80 }` |
+| `block-end-inline-end` | `insetInlineEnd`, `insetBlockEnd` | `{ insetInlineEnd: 24, insetBlockEnd: 80 }` |
+
+Example for bottom-right anchoring:
+
+```ts
+defaults: {
+	width: 360,
+	height: 600,
+	minWidth: 280,
+	minHeight: 400,
+	corner: 'block-end-inline-end',
+	initialPosition: {
+		insetBlockEnd: 80,
+		insetInlineEnd: 24
+	},
+}
+```
+
+When persisted state exists, the persisted `position`, `corner`, and `size` override `initialPosition`, `corner`, `width`, and `height`. The resize minimums (`minWidth`/`minHeight`) are always derived from `defaults`.
+
+Call `init()` once during editor bootstrap, **before** any `createFloatingPanel` call, to register the slice, sync persisted state, and mount the host into the editor's top location.

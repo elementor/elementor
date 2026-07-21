@@ -18,9 +18,7 @@ use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
-use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
-use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
 use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
@@ -40,7 +38,7 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro();
+		return ! Utils::has_pro() || ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -49,6 +47,15 @@ class Module extends Base_Module {
 
 	public function __construct() {
 		parent::__construct();
+
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
+		if ( Utils::has_pro() ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+			$this->register_atomic_promotions();
+
+			return;
+		}
 
 		add_action( 'admin_init', function () {
 			$this->handle_external_redirects();
@@ -83,12 +90,6 @@ class Module extends Base_Module {
 			new Conversion_Banner();
 		}
 
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
-
-		if ( Utils::has_pro() ) {
-			return;
-		}
-
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
@@ -98,19 +99,7 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 
-		// Add Ally promo
-		Ally_Dashboard_Widget::init();
-
 		$this->register_atomic_promotions();
-	}
-
-	/**
-	 * Get Ally Scanner URL
-	 *
-	 * @return string
-	 */
-	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://go.elementor.com/acc-checker-dashboard-plg' );
 	}
 
 	private function handle_external_redirects() {
@@ -119,7 +108,7 @@ class Module extends Base_Module {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $page ) {
+		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
 			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
@@ -292,8 +281,6 @@ class Module extends Base_Module {
 					2
 				);
 			}
-
-			( new Birthday_Easter_Egg_Promotion() )->register();
 		} );
 
 		( new Atomic_Form_Widget_Promotion() )->register();

@@ -19,9 +19,15 @@ const defaults: FloatingPanelDefaults = {
 	height: 480,
 	minWidth: 240,
 	minHeight: 320,
+	corner: 'block-start-inline-start',
 };
 
-const startPosition = { insetInlineStart: 400, insetBlockStart: 120 };
+const startPosition = {
+	insetInlineStart: 400,
+	insetInlineEnd: 0,
+	insetBlockStart: 120,
+	insetBlockEnd: 0,
+};
 const startSize = { inlineSize: 320, blockSize: 480 };
 
 let sidePanelElement: HTMLElement;
@@ -118,7 +124,9 @@ describe( 'usePanelResizeInteraction', () => {
 		// Assert.
 		expect( selectPosition( __getState(), PANEL_ID ) ).toEqual( {
 			insetInlineStart: 360,
+			insetInlineEnd: 0,
 			insetBlockStart: 120,
+			insetBlockEnd: 0,
 		} );
 		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( { inlineSize: 360, blockSize: 480 } );
 	} );

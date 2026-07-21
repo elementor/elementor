@@ -1,6 +1,7 @@
 import { type PointerEvent as ReactPointerEvent, useCallback, useRef } from 'react';
 
-import { type LogicalPosition, type LogicalSize } from '../types';
+import { type LogicalPosition } from '../types';
+import { activePositionChanged, getDragBounds, type PanelCorner } from '../utils/corner-position';
 import { isRtl } from '../utils/direction';
 import { applyDragDelta, type DragBounds, physicalToLogicalDelta } from '../utils/drag-math';
 import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../utils/viewport-bounds';
@@ -12,38 +13,42 @@ type DragSession = {
 	startClientX: number;
 	startClientY: number;
 	startPosition: LogicalPosition;
+	lastDispatchedPosition: LogicalPosition;
 	bounds: DragBounds;
+	corner: PanelCorner;
 	isRtl: boolean;
 };
 
-function getDragBounds( size: LogicalSize | undefined ): DragBounds {
-	return {
-		minInlineStart: getSidePanelInlineSize(),
-		maxInlineStart: window.innerWidth - ( size?.inlineSize ?? 0 ),
-		minBlockStart: APP_BAR_HEIGHT_PX,
-		maxBlockStart: window.innerHeight - ( size?.blockSize ?? 0 ),
-	};
-}
-
 export function useFloatingPanelDrag( id: string ) {
 	const sessionRef = useRef< DragSession | null >( null );
-	const { position, size } = useFloatingPanelStatus( id );
+	const { corner, position, size } = useFloatingPanelStatus( id );
 	const { setPosition } = useFloatingPanelActions( id );
 
 	const onPointerDown = useCallback(
 		( event: ReactPointerEvent< HTMLElement > ) => {
+			if ( ! corner || ! position || ! size ) {
+				return;
+			}
+
 			event.currentTarget.setPointerCapture( event.pointerId );
 
 			sessionRef.current = {
 				pointerId: event.pointerId,
 				startClientX: event.clientX,
 				startClientY: event.clientY,
-				startPosition: position ?? { insetInlineStart: 0, insetBlockStart: 0 },
-				bounds: getDragBounds( size ),
+				startPosition: position,
+				lastDispatchedPosition: position,
+				bounds: getDragBounds(
+					size,
+					{ width: window.innerWidth, height: window.innerHeight },
+					getSidePanelInlineSize(),
+					APP_BAR_HEIGHT_PX
+				),
+				corner,
 				isRtl: isRtl(),
 			};
 		},
-		[ position, size ]
+		[ corner, position, size ]
 	);
 
 	const onPointerMove = useCallback(
@@ -56,8 +61,12 @@ export function useFloatingPanelDrag( id: string ) {
 
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
 			const logical = physicalToLogicalDelta( physical, session.isRtl );
+			const nextPosition = applyDragDelta( session.corner, session.startPosition, logical, session.bounds );
 
-			setPosition( applyDragDelta( session.startPosition, logical, session.bounds ) );
+			if ( activePositionChanged( session.corner, session.lastDispatchedPosition, nextPosition ) ) {
+				setPosition( nextPosition );
+				session.lastDispatchedPosition = nextPosition;
+			}
 		},
 		[ setPosition ]
 	);

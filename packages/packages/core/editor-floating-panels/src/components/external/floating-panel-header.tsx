@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type ComponentType } from 'react';
 import { XIcon } from '@elementor/icons';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
@@ -13,7 +14,7 @@ import DragHandle from '../internal/drag-handle';
 type Props = {
 	panelId: string;
 	title: string;
-	icon?: React.ComponentType;
+	icon?: ComponentType;
 	actions?: FloatingPanelHeaderAction[];
 };
 

@@ -11,4 +11,5 @@ export type {
 	FloatingPanelState,
 	LogicalPosition,
 	LogicalSize,
+	PanelCorner,
 } from './types';

@@ -7,9 +7,15 @@ import { type FloatingPanelDefaults, type FloatingPanelState } from '../types';
 
 const persisted: FloatingPanelState = {
 	isOpen: true,
-	position: { insetInlineStart: 24, insetBlockStart: 80 },
-	size: { inlineSize: 320, blockSize: 480 },
 	zIndex: 1,
+	size: { inlineSize: 320, blockSize: 480 },
+	corner: 'block-start-inline-start',
+	position: {
+		insetBlockStart: 80,
+		insetBlockEnd: 0,
+		insetInlineStart: 24,
+		insetInlineEnd: 0,
+	},
 };
 
 const defaults: FloatingPanelDefaults = {
@@ -101,6 +107,51 @@ describe( 'sync', () => {
 
 		// Assert.
 		expect( writeSpy ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'merges store updates with preloaded panels not yet registered', () => {
+		// Arrange.
+		const panelB: FloatingPanelState = {
+			...persisted,
+			isOpen: false,
+			zIndex: 2,
+		};
+		const storage = createMemoryStorage( encodePersistedState( { a: persisted, b: panelB } ) );
+		sync( storage );
+
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.open( 'a' ) );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert.
+		const written = JSON.parse( storage.snapshot() as string );
+		expect( written.a.isOpen ).toBe( true );
+		expect( written.b ).toEqual( panelB );
+	} );
+
+	it( 'calling sync() twice cancels pending debounce from the first session', () => {
+		// Arrange.
+		const storage = createMemoryStorage();
+		const writeSpy = jest.spyOn( storage, 'write' );
+
+		// Act.
+		sync( storage );
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		sync( storage );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert — stale timer from the first session must not write.
+		expect( writeSpy ).not.toHaveBeenCalled();
+
+		// Act — change after re-sync schedules persistence for the active session.
+		__dispatch( slice.actions.open( 'a' ) );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert — only the final state is written once.
+		expect( writeSpy ).toHaveBeenCalledTimes( 1 );
+		const written = JSON.parse( storage.snapshot() as string );
+		expect( written.a.isOpen ).toBe( true );
 	} );
 } );
 

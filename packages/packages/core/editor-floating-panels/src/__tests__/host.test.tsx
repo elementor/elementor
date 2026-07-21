@@ -41,6 +41,7 @@ describe( 'FloatingPanelsHost', () => {
 					height: 300,
 					minWidth: 100,
 					minHeight: 100,
+					corner: 'block-start-inline-start',
 				},
 			} )
 		);
@@ -78,6 +79,7 @@ describe( 'FloatingPanelsHost', () => {
 					height: 300,
 					minWidth: 100,
 					minHeight: 100,
+					corner: 'block-start-inline-start',
 				},
 			} )
 		);

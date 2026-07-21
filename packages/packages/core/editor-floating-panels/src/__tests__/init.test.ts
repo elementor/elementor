@@ -24,6 +24,8 @@ jest.mock( '@elementor/store', () => {
 import { init } from '../init';
 import { sync } from '../sync';
 
+const mockSync = sync as jest.MockedFunction< typeof sync >;
+
 describe( 'init', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
@@ -40,6 +42,16 @@ describe( 'init', () => {
 				id: 'floating-panels',
 			} )
 		);
-		expect( sync ).toHaveBeenCalled();
+		expect( mockSync ).toHaveBeenCalled();
+	} );
+
+	it( 'calls sync before registerSlice', () => {
+		// Act.
+		init();
+
+		// Assert.
+		expect( mockSync.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			mockRegisterSlice.mock.invocationCallOrder[ 0 ]
+		);
 	} );
 } );

@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Widget_Nested_Base extends Widget_Base {
 
+	public function render_markdown(): string {
+		return \Elementor\Element_Base::render_markdown();
+	}
+
 	/**
 	 * Get default children elements structure.
 	 *

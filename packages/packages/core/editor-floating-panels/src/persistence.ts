@@ -1,6 +1,13 @@
-import { type FloatingPanelState } from './types';
+import { type FloatingPanelState, type PanelCorner } from './types';
 
 export const PERSISTENCE_STORAGE_KEY = 'elementor_floating_panels_state';
+
+const VALID_PANEL_CORNERS = new Set< PanelCorner >( [
+	'block-start-inline-start',
+	'block-start-inline-end',
+	'block-end-inline-start',
+	'block-end-inline-end',
+] );
 
 type PersistedState = Record< string, FloatingPanelState >;
 
@@ -57,9 +64,13 @@ function isPanelState( value: unknown ): value is FloatingPanelState {
 	return (
 		typeof v.isOpen === 'boolean' &&
 		typeof v.zIndex === 'number' &&
+		typeof v.corner === 'string' &&
+		VALID_PANEL_CORNERS.has( v.corner as PanelCorner ) &&
 		typeof size.inlineSize === 'number' &&
 		typeof size.blockSize === 'number' &&
 		typeof position.insetInlineStart === 'number' &&
-		typeof position.insetBlockStart === 'number'
+		typeof position.insetInlineEnd === 'number' &&
+		typeof position.insetBlockStart === 'number' &&
+		typeof position.insetBlockEnd === 'number'
 	);
 }

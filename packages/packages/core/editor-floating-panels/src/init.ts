@@ -6,7 +6,9 @@ import { slice } from './store/slice';
 import { sync } from './sync';
 
 export function init() {
-	__registerSlice( slice );
-	injectIntoTop( { id: 'floating-panels', component: FloatingPanelsHost } );
 	sync();
+
+	__registerSlice( slice );
+
+	injectIntoTop( { id: 'floating-panels', component: FloatingPanelsHost } );
 }

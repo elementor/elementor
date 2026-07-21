@@ -1,0 +1,25 @@
+<div class="elementor-element elementor-element-{ID} e-con e-atomic-element e-flexbox-base e-{STYLE} " data-id="{ID}" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="{ID}">
+    <div class="elementor-element elementor-element-{ID} e-con e-atomic-element e-flexbox-base " data-id="{ID}" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="{ID}">
+    			<p class="e-paragraph-base" data-interaction-id="{ID}">Breaking News</p>
+					<h2 data-interaction-id="{ID}" class="e-heading-base">Daily Herald</h2>
+		<div class="elementor-element elementor-element-{ID} e-con e-atomic-element e-flexbox-base " data-id="{ID}" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="{ID}">
+    			<p class="e-paragraph-base" data-interaction-id="{ID}">Type your paragraph here</p>
+					<p class="e-paragraph-base" data-interaction-id="{ID}">Type your paragraph here</p>
+		
+</div>
+
+</div>
+<div class="elementor-element elementor-element-{ID} e-con e-atomic-element e-flexbox-base " data-id="{ID}" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="{ID}">
+    			<img class="e-image-base " data-interaction-id="{ID}" src="https://example.com/post-image.jpg" alt=""/>		<div class="elementor-element elementor-element-{ID} e-con e-atomic-element e-flexbox-base " data-id="{ID}" data-element_type="e-flexbox" data-e-type="e-flexbox" data-interaction-id="{ID}">
+    			<p class="e-paragraph-base" data-interaction-id="{ID}">Type your paragraph here</p>
+					<h2 data-interaction-id="{ID}" class="e-heading-base">This is a title</h2>
+					
+<hr class="e-{STYLE} e-divider-base" data-interaction-id="{ID}"   />
+					<p class="e-paragraph-base" data-interaction-id="{ID}">Type your paragraph here</p>
+		
+</div>
+
+</div>
+
+</div>
+

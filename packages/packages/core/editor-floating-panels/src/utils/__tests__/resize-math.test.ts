@@ -76,7 +76,7 @@ describe( 'applyBlockEndResize', () => {
 describe( 'applyInlineStartResize', () => {
 	it( 'moves the start inward and grows the width while anchoring the inline-end edge', () => {
 		// Arrange — start edge at 500, width 320 => inline-end anchored at 820.
-		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 		const size = { inlineSize: 320, blockSize: 480 };
 
 		// Act — drag the start edge 100px toward the start (negative inline delta).
@@ -90,7 +90,7 @@ describe( 'applyInlineStartResize', () => {
 
 	it( 'clamps the start to the side-panel minimum', () => {
 		// Arrange — inline-end anchored at 820.
-		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 		const size = { inlineSize: 320, blockSize: 480 };
 
 		// Act — drag far past the side panel.
@@ -103,7 +103,7 @@ describe( 'applyInlineStartResize', () => {
 
 	it( 'clamps the width to the minimum when shrinking (start cannot pass the min-width line)', () => {
 		// Arrange — inline-end anchored at 820, min width 240 => max start 580.
-		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 		const size = { inlineSize: 320, blockSize: 480 };
 
 		// Act — drag the start edge toward the end (positive inline delta).
@@ -118,7 +118,7 @@ describe( 'applyInlineStartResize', () => {
 describe( 'applyBlockStartResize', () => {
 	it( 'moves block-start upward and grows height while anchoring block-end', () => {
 		// Arrange — block-start at 200, height 480 => block-end anchored at 680.
-		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 		const size = { inlineSize: 320, blockSize: 480 };
 
 		// Act — drag 50px upward (negative block delta).
@@ -132,7 +132,7 @@ describe( 'applyBlockStartResize', () => {
 
 	it( 'clamps block-start to minBlockStart (app bar)', () => {
 		// Arrange — block-end anchored at 680.
-		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 		const size = { inlineSize: 320, blockSize: 480 };
 
 		// Act — drag far above the app bar.
@@ -145,7 +145,7 @@ describe( 'applyBlockStartResize', () => {
 
 	it( 'clamps height to minBlockSize when shrinking', () => {
 		// Arrange — block-end anchored at 680, min height 320 => max block-start 360.
-		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 		const size = { inlineSize: 320, blockSize: 480 };
 
 		// Act — drag downward (positive block delta).
@@ -158,7 +158,7 @@ describe( 'applyBlockStartResize', () => {
 } );
 
 describe( 'applyResize', () => {
-	const position = { insetInlineStart: 500, insetBlockStart: 200 };
+	const position = { insetInlineStart: 500, insetInlineEnd: 0, insetBlockStart: 200, insetBlockEnd: 0 };
 	const size = { inlineSize: 320, blockSize: 480 };
 
 	it( 'delegates inline-end resizing without moving the panel', () => {

@@ -25,7 +25,7 @@ export function AtomicPromotionMedia( { image, animationData } ) {
 
 	if ( animationData ) {
 		return (
-			<Box sx={ { height: ANIMATION_HEIGHT, width: '100%', overflow: 'hidden' } }>
+			<Box sx={ { height: ANIMATION_HEIGHT, width: '100%', overflow: 'hidden' } } data-testid="e-atomic-form-animation">
 				<Lottie
 					animationData={ animationData }
 					loop={ true }

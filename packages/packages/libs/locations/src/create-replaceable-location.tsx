@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react';
 
 import {
 	createGetInjections,
+	createSubscription,
 	createUseInjections,
 	DEFAULT_PRIORITY,
 	flushInjectionsFns,
@@ -20,20 +21,16 @@ type ReplaceableInjectionsMap< TProps extends object = AnyProps > = Map< Id, Rep
 
 export function createReplaceableLocation< TProps extends object = AnyProps >(): ReplaceableLocation< TProps > {
 	const injections: ReplaceableInjectionsMap< TProps > = new Map();
-	const listeners = new Set< () => void >();
-
-	const subscribe = ( listener: () => void ) => {
-		listeners.add( listener );
-		return () => listeners.delete( listener );
-	};
-
-	const notify = () => listeners.forEach( ( l ) => l() );
+	const { subscribe, notify } = createSubscription();
 
 	const getInjections = createGetInjections( injections );
 	const useInjections = createUseInjections( getInjections, subscribe );
 	const Slot = createReplaceable( useInjections );
 	const inject = createRegister( injections, notify );
 
+	// Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
+	// `notify()` is called too, so any mounted `Slot` (and its cached snapshot) reflects the flush,
+	// which matters for test isolation between test cases.
 	flushInjectionsFns.push( () => {
 		injections.clear();
 		notify();

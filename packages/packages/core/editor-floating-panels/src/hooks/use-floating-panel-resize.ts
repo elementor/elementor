@@ -3,6 +3,12 @@ import { __useSelector as useSelector } from '@elementor/store';
 
 import { type GlobalState, selectMinSize } from '../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../types';
+import {
+	activePositionChanged,
+	fromStartAnchoredPosition,
+	type PanelCorner,
+	toStartAnchoredPosition,
+} from '../utils/corner-position';
 import { isRtl } from '../utils/direction';
 import { physicalToLogicalDelta } from '../utils/drag-math';
 import { applyResize, type ResizeBounds, type ResizeDirection } from '../utils/resize-math';
@@ -17,16 +23,27 @@ type ResizeSession = {
 	startClientY: number;
 	startPosition: LogicalPosition;
 	startSize: LogicalSize;
+	lastPosition: LogicalPosition;
+	lastSize: LogicalSize;
 	bounds: ResizeBounds;
+	corner: PanelCorner;
 	isRtl: boolean;
 };
 
-function getResizeBounds( position: LogicalPosition, minSize: LogicalSize ): ResizeBounds {
+function getResizeBounds(
+	corner: PanelCorner,
+	position: LogicalPosition,
+	currentSize: LogicalSize,
+	minSize: LogicalSize
+): ResizeBounds {
+	const viewport = { width: window.innerWidth, height: window.innerHeight };
+	const startAnchored = toStartAnchoredPosition( corner, position, currentSize, viewport );
+
 	return {
-		minInlineSize: minSize.inlineSize,
-		maxInlineSize: window.innerWidth - position.insetInlineStart,
 		minBlockSize: minSize.blockSize,
-		maxBlockSize: window.innerHeight - position.insetBlockStart,
+		maxBlockSize: window.innerHeight - startAnchored.insetBlockStart,
+		minInlineSize: minSize.inlineSize,
+		maxInlineSize: window.innerWidth - startAnchored.insetInlineStart,
 		minInlineStart: getSidePanelInlineSize(),
 		minBlockStart: APP_BAR_HEIGHT_PX,
 	};
@@ -41,13 +58,13 @@ type ResizeHandlePointerHandlers = {
 
 export function usePanelResizeInteraction( id: string ) {
 	const sessionRef = useRef< ResizeSession | null >( null );
-	const { position, size } = useFloatingPanelStatus( id );
+	const { corner, position, size } = useFloatingPanelStatus( id );
 	const minSize = useSelector( ( state: GlobalState ) => selectMinSize( state, id ) );
 	const { setPosition, setSize } = useFloatingPanelActions( id );
 
 	const onPointerDown = useCallback(
 		( direction: ResizeDirection, event: ReactPointerEvent< HTMLElement > ) => {
-			if ( ! position || ! size || ! minSize ) {
+			if ( ! corner || ! position || ! size || ! minSize ) {
 				return;
 			}
 
@@ -60,11 +77,14 @@ export function usePanelResizeInteraction( id: string ) {
 				startClientY: event.clientY,
 				startPosition: position,
 				startSize: size,
-				bounds: getResizeBounds( position, minSize ),
+				lastPosition: position,
+				lastSize: size,
+				bounds: getResizeBounds( corner, position, size, minSize ),
+				corner,
 				isRtl: isRtl(),
 			};
 		},
-		[ minSize, position, size ]
+		[ corner, position, size, minSize ]
 	);
 
 	const onPointerMove = useCallback(
@@ -77,29 +97,44 @@ export function usePanelResizeInteraction( id: string ) {
 
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
 			const logical = physicalToLogicalDelta( physical, session.isRtl );
+			const viewport = { width: window.innerWidth, height: window.innerHeight };
+			const startAnchoredPosition = toStartAnchoredPosition(
+				session.corner,
+				session.startPosition,
+				session.startSize,
+				viewport
+			);
+			const resizeInput = { ...session.startPosition, ...startAnchoredPosition };
 			const next = applyResize(
 				session.direction,
-				session.startPosition,
+				resizeInput,
 				session.startSize,
 				logical.inlineDelta,
 				logical.blockDelta,
 				session.bounds
 			);
+			const nextPosition = fromStartAnchoredPosition(
+				session.corner,
+				{
+					insetBlockStart: next.position.insetBlockStart,
+					insetInlineStart: next.position.insetInlineStart,
+				},
+				next.size,
+				viewport
+			);
 
-			const positionChanged =
-				next.position.insetInlineStart !== session.startPosition.insetInlineStart ||
-				next.position.insetBlockStart !== session.startPosition.insetBlockStart;
-
-			if ( positionChanged ) {
-				setPosition( next.position );
+			if ( activePositionChanged( session.corner, session.lastPosition, nextPosition ) ) {
+				setPosition( nextPosition );
+				session.lastPosition = nextPosition;
 			}
 
 			const sizeChanged =
-				next.size.inlineSize !== session.startSize.inlineSize ||
-				next.size.blockSize !== session.startSize.blockSize;
+				next.size.inlineSize !== session.lastSize.inlineSize ||
+				next.size.blockSize !== session.lastSize.blockSize;
 
 			if ( sizeChanged ) {
 				setSize( next.size );
+				session.lastSize = next.size;
 			}
 		},
 		[ setPosition, setSize ]

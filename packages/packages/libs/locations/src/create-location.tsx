@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
 	createGetInjections,
+	createSubscription,
 	createUseInjections,
 	DEFAULT_PRIORITY,
 	flushInjectionsFns,
@@ -10,24 +11,19 @@ import {
 import { type AnyProps, type Id, type InjectArgs, type Injection, type Location } from './types';
 
 type InjectionsMap< TProps extends object = AnyProps > = Map< Id, Injection< TProps > >;
-type Listener = () => void;
 
 export function createLocation< TProps extends object = AnyProps >(): Location< TProps > {
 	const injections: InjectionsMap< TProps > = new Map();
-	const listeners = new Set< Listener >();
-
-	const subscribe = ( listener: Listener ) => {
-		listeners.add( listener );
-		return () => listeners.delete( listener );
-	};
-
-	const notify = () => listeners.forEach( ( l ) => l() );
+	const { subscribe, notify } = createSubscription();
 
 	const getInjections = createGetInjections( injections );
 	const useInjections = createUseInjections( getInjections, subscribe );
 	const Slot = createSlot( useInjections );
 	const inject = createInject( injections, notify );
 
+	// Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
+	// `notify()` is called too, so any mounted `Slot` (and its cached snapshot) reflects the flush,
+	// which matters for test isolation between test cases.
 	flushInjectionsFns.push( () => {
 		injections.clear();
 		notify();
@@ -55,7 +51,7 @@ function createSlot< TProps extends object = AnyProps >( useInjections: Location
 	};
 }
 
-function createInject< TProps extends object = AnyProps >( injections: InjectionsMap< TProps >, notify: Listener ) {
+function createInject< TProps extends object = AnyProps >( injections: InjectionsMap< TProps >, notify: () => void ) {
 	return ( { component, id, options = {} }: InjectArgs< TProps > ) => {
 		if ( injections.has( id ) && ! options?.overwrite ) {
 			// eslint-disable-next-line no-console

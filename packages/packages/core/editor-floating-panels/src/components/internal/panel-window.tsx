@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type ReactNode } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
@@ -6,6 +7,7 @@ import { Box, Fade, Paper } from '@elementor/ui';
 import { usePanelResizeInteraction } from '../../hooks/use-floating-panel-resize';
 import { type GlobalState, selectIsResizable } from '../../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../../types';
+import { type PanelCorner, positionToCssInsets } from '../../utils/corner-position';
 import { type ResizeCorner, type ResizeEdge } from '../../utils/resize-math';
 import CornerResizeHandle from './corner-resize-handle';
 import ResizeHandle from './resize-handle';
@@ -24,13 +26,14 @@ const RESIZE_CORNERS: ResizeCorner[] = [
 
 type Props = {
 	panelId: string;
+	corner: PanelCorner;
 	position: LogicalPosition;
 	size: LogicalSize;
 	title?: string;
 	zIndex: number;
 	visible: boolean;
 	onFocus: () => void;
-	children: React.ReactNode;
+	children: ReactNode;
 };
 
 function PanelResizeHandles( { panelId }: { panelId: string } ) {
@@ -48,7 +51,17 @@ function PanelResizeHandles( { panelId }: { panelId: string } ) {
 	);
 }
 
-export default function PanelWindow( { panelId, position, size, title, zIndex, visible, onFocus, children }: Props ) {
+export default function PanelWindow( {
+	panelId,
+	corner,
+	position,
+	size,
+	title,
+	zIndex,
+	visible,
+	onFocus,
+	children,
+}: Props ) {
 	const isResizable = useSelector( ( state: GlobalState ) => selectIsResizable( state, panelId ) );
 
 	return (
@@ -59,16 +72,18 @@ export default function PanelWindow( { panelId, position, size, title, zIndex, v
 				elevation={ 0 }
 				aria-label={ title || panelId }
 				aria-hidden={ ! visible }
+				inert={ ! visible ? '' : undefined }
 				onMouseDown={ onFocus }
+				onFocusCapture={ onFocus }
 				sx={ {
 					position: 'fixed',
-					insetInlineStart: `${ position.insetInlineStart }px`,
-					insetBlockStart: `${ position.insetBlockStart }px`,
+					...positionToCssInsets( corner, position ),
 					inlineSize: `${ size.inlineSize }px`,
 					blockSize: `${ size.blockSize }px`,
 					zIndex,
 					display: 'flex',
 					flexDirection: 'column',
+					pointerEvents: visible ? 'auto' : 'none',
 					bgcolor: 'var(--e-a-bg-default)',
 					color: 'var(--e-a-color-txt)',
 					border: 'var(--e-a-border)',

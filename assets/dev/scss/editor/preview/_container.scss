@@ -289,8 +289,58 @@
 	}
 }
 
-.e-grid-base > .elementor-empty-view > .elementor-first-add {
-	opacity: 0;
+.e-grid-base {
+
+	> .elementor-empty-view.elementor-empty-view {
+
+		> .elementor-first-add {
+			opacity: 0;
+		}
+	}
+
+	&:has( > .elementor-element ) > .elementor-empty-view.elementor-empty-view {
+		position: absolute;
+		grid-row: var( --e-grid-empty-cell-row, 1 ) / span 1;
+		grid-column: var( --e-grid-empty-cell-col, 1 ) / span 1;
+		visibility: var( --e-grid-empty-cell-visibility, visible );
+		inset: 0;
+		width: auto;
+		height: auto;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.elementor-element:has( > .elementor-widget-placeholder.e-dragging-top ),
+	.elementor-element:has( > .elementor-widget-placeholder.e-dragging-bottom ),
+	.elementor-element > :has( > .elementor-widget-placeholder.e-dragging-top ),
+	.elementor-element > :has( > .elementor-widget-placeholder.e-dragging-bottom ) {
+		position: relative;
+	}
+
+	.elementor-element {
+
+		.elementor-widget-placeholder {
+			--size: 10px;
+
+			&.e-dragging-top,
+			&.e-dragging-bottom {
+				position: absolute;
+				width: 100%;
+				height: var( --size );
+				inset-inline: 0;
+				z-index: $editor-layer;
+				animation: placeholder-widget 500ms;
+			}
+
+			&.e-dragging-top {
+				inset-block-start: 0;
+			}
+
+			&.e-dragging-bottom {
+				inset-block-end: 0;
+			}
+		}
+	}
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.

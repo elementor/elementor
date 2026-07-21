@@ -3,8 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Plugin;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_wp_abilities_api';
 
 	public function get_name() {
 		return 'mcp';
@@ -20,22 +18,13 @@ class Module extends BaseModule {
 
 	public static function is_active() {
 		return class_exists( McpAdapter::class ) &&
-			function_exists( 'wp_register_ability' ) &&
-			Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => __( 'Elementor MCP WP Abilities API', 'elementor' ),
-			'description' => __( 'Enable Elementor MCP WP Abilities API. Requirements: 1. WordPress 7.0 or higher. 2. Create an application password for your agent user. 3. Add to your MCP config: {url: "https://<your-site-url>/wp-json/elementor/mcp", headers: {Authorization: "Basic <base64(user:application-password)>"}}', 'elementor' ),
-			'hidden' => true,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-		];
+			function_exists( 'wp_register_ability' );
 	}
 
 	public function __construct() {
 		parent::__construct();
+
+		( new Mcp_Proxy_REST_API() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
@@ -67,11 +56,21 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Abilities\List_Pages_Ability() )->register();
 		( new Abilities\Get_Structure_Ability() )->register();
 		( new Abilities\Update_Settings_Ability() )->register();
 		( new Abilities\Create_Page_Ability() )->register();
-		( new Abilities\Get_Globals_Ability() )->register();
+		( new Abilities\Style_Best_Practices_Ability() )->register();
+		( new Abilities\Manage_Variable_Ability() )->register();
+		( new Abilities\Manage_Classes_Ability() )->register();
+		( new Abilities\Manage_Variable_Guide_Ability() )->register();
+		( new Abilities\Get_Widget_Schema_Ability() )->register();
+		( new Abilities\List_Widget_Schemas_Ability() )->register();
+		( new Abilities\List_Dynamic_Tags_Ability() )->register();
+		( new Abilities\Build_Composition_Ability() )->register();
+		( new Abilities\Global_Classes_Resource_Ability() )->register();
+		( new Abilities\Global_Variables_Resource_Ability() )->register();
+		( new Abilities\List_Resources_Ability() )->register();
+		( new Abilities\Read_Resource_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -90,13 +89,24 @@ class Module extends BaseModule {
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
 			[
-				'elementor/list-pages',
 				'elementor/get-page-structure',
 				'elementor/update-page-settings',
 				'elementor/create-page',
-				'elementor/get-globals',
+				'elementor/manage-global-variable',
+				'elementor/manage-classes',
+				'elementor/get-widget-schema',
+				'elementor/list-widget-schemas',
+				'elementor/list-dynamic-tags',
+				'elementor/build-composition',
+				'elementor/list-resources',
+				'elementor/read-resource',
 			],
-			[],
+			[
+				'elementor/style-best-practices',
+				'elementor/manage-global-variable-guide',
+				'elementor/global-classes-resource',
+				'elementor/global-variables-resource',
+			],
 			[]
 		);
 

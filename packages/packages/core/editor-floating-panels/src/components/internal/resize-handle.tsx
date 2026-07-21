@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type PointerEventHandler } from 'react';
 import { Box } from '@elementor/ui';
 
 import { type ResizeEdge } from '../../utils/resize-math';
@@ -38,10 +39,10 @@ const EDGE_SX: Record< ResizeEdge, object > = {
 
 type Props = {
 	edge: ResizeEdge;
-	onPointerDown: React.PointerEventHandler< HTMLElement >;
-	onPointerMove: React.PointerEventHandler< HTMLElement >;
-	onPointerUp: React.PointerEventHandler< HTMLElement >;
-	onPointerCancel: React.PointerEventHandler< HTMLElement >;
+	onPointerDown: PointerEventHandler< HTMLElement >;
+	onPointerMove: PointerEventHandler< HTMLElement >;
+	onPointerUp: PointerEventHandler< HTMLElement >;
+	onPointerCancel: PointerEventHandler< HTMLElement >;
 };
 
 export default function ResizeHandle( { edge, onPointerDown, onPointerMove, onPointerUp, onPointerCancel }: Props ) {

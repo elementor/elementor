@@ -1,0 +1,131 @@
+name: Remove stale branches
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        type: boolean
+        description: 'Preview only (no stale comments or branch deletions)'
+        required: false
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: read
+  actions: read
+
+jobs:
+  remove-stale-branches:
+    name: Remove Stale Branches
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Build exempt branches regex
+        id: pr-list
+        run: |
+          set -euo pipefail
+
+          pr_branches=$(gh pr list --repo "${{ github.repository }}" --state open --limit 1000 \
+            --json headRefName -q '.[].headRefName' \
+            | while IFS= read -r branch; do
+                [ -n "$branch" ] && printf '%s\n' "$branch" | sed 's/[][\\.^$*+?()|{}]/\\&/g'
+              done \
+            | paste -sd '|' -)
+
+          version_branch_pattern='main|master|[0-9]+(\.[0-9]+)+([._-].*)?'
+
+          if [ -n "$pr_branches" ]; then
+            exempt_branches_regex="^(${version_branch_pattern}|${pr_branches})$"
+          else
+            exempt_branches_regex="^(${version_branch_pattern})$"
+          fi
+
+          echo "exempt_branches_regex=${exempt_branches_regex}" >> "$GITHUB_ENV"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Remove stale branches except PR branches
+        uses: fpicalausa/remove-stale-branches@v1.6.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+          exempt-branches-regex: ${{ env.exempt_branches_regex }}
+          exempt-protected-branches: true
+          stale-branch-message: "@{author} Your branch [{branchName}]({branchUrl}) hasn't been updated in the last {daysBeforeBranchStale} days and is marked as stale. It will be removed in {daysBeforeBranchDelete} days.\r\nIf you want to keep this branch around, delete this comment or add new commits to this branch."
+          default-recipient: "elementorbot"
+          days-before-branch-stale: ${{ vars.DAYS_BEFORE_BRANCH_STALE || '90' }}
+          days-before-branch-delete: ${{ vars.DAYS_BEFORE_STALE_BRANCH_DELETE || '7' }}
+          operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN || '10' }}
+          ignore-unknown-authors: true
+
+      - name: Publish stale branch job summary
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          JOB_ID="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" \
+            --jq '.jobs[] | select(.name == "Remove Stale Branches") | .id')"
+
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/${JOB_ID}/logs" > job-logs.zip
+          unzip -p job-logs.zip '*Remove stale branches except PR branches*' > action.log 2>/dev/null || true
+
+          PARSED="$(mktemp)"
+          if [ -s action.log ]; then
+            awk '
+              function flush() {
+                if (branch == "") return
+                if (detail == "") detail = "see workflow logs"
+                printf "%s\t%s\t%s\n", bucket, branch, detail
+                branch = bucket = detail = ""
+              }
+              /##\[group\]/ {
+                flush()
+                header = $0
+                sub(/^.*##\[group\]/, "", header)
+                if (sub(/^❌ branch /, "", header)) { bucket = "deleted"; branch = header }
+                else if (sub(/^✏ branch /, "", header)) { bucket = "marked_stale"; branch = header }
+                else if (sub(/^😐 branch /, "", header)) { bucket = "kept_stale"; branch = header }
+                else if (sub(/^✅ branch /, "", header)) { bucket = "skipped"; branch = header }
+                next
+              }
+              /##\[endgroup\]/ { flush(); next }
+              bucket != "" && $0 !~ /##\[/ {
+                line = $0
+                sub(/^[^Z]*Z /, "", line)
+                if (line ~ /^-> /) detail = substr(line, 4)
+                else if (bucket == "skipped" && detail == "") detail = line
+              }
+              END { flush() }
+            ' action.log > "${PARSED}"
+          fi
+
+          DELETED_COUNT=$(awk -F '\t' '$1 == "deleted" { c++ } END { print c + 0 }' "${PARSED}")
+          MARKED_STALE_COUNT=$(awk -F '\t' '$1 == "marked_stale" { c++ } END { print c + 0 }' "${PARSED}")
+          KEPT_STALE_COUNT=$(awk -F '\t' '$1 == "kept_stale" { c++ } END { print c + 0 }' "${PARSED}")
+          SKIPPED_COUNT=$(awk -F '\t' '$1 == "skipped" { c++ } END { print c + 0 }' "${PARSED}")
+
+          {
+            echo "## Stale branch cleanup"
+            echo ""
+            echo "- **Repository:** ${GITHUB_REPOSITORY}"
+            echo "- **Run ID:** ${GITHUB_RUN_ID}"
+            echo "- **Dry run:** ${DRY_RUN}"
+            echo "- **Deleted:** ${DELETED_COUNT}"
+            echo "- **Marked stale:** ${MARKED_STALE_COUNT}"
+            echo "- **Kept stale:** ${KEPT_STALE_COUNT}"
+            echo "- **Skipped:** ${SKIPPED_COUNT}"
+            echo ""
+            if [ ! -s action.log ]; then
+              echo "_Could not parse action logs. Expand the **Remove stale branches except PR branches** step for details._"
+            else
+              echo "_Parsed from action step logs. Expand that step for full per-branch output._"
+              echo ""
+              echo "| Action | Branch | Detail |"
+              echo "| --- | --- | --- |"
+              awk -F '\t' '$1 != "skipped" { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${PARSED}"
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"

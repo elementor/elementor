@@ -2,6 +2,15 @@
 export * from './types';
 export type * from './sync/types';
 
+// children dependencies (schema-driven settings <-> children sync)
+export {
+	bindSettingsReconcile,
+	type ChildDependenciesConfig,
+	type ChildDependencyRule,
+	evaluateWhen,
+	reconcileInitialChildren,
+} from './children-dependencies';
+
 // hooks
 export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
@@ -46,6 +55,7 @@ export { moveElement, type MoveElementParams } from './sync/move-element';
 export { moveElements } from './sync/move-elements';
 export { removeElements } from './sync/remove-elements';
 export { replaceElement } from './sync/replace-element';
+export { resolveInsertIndex } from './sync/resolve-insert-index';
 export { updateElementEditorSettings } from './sync/update-element-editor-settings';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
 

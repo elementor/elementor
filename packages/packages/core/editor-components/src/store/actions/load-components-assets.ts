@@ -6,6 +6,10 @@ import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/g
 import { loadComponentsOverridableProps } from './load-components-overridable-props';
 
 export async function loadComponentsAssets( elements: V1ElementData[] ) {
+	if ( ! elements.length ) {
+		return;
+	}
+
 	const documents = await getComponentDocuments( { elements, isRecursive: false } );
 
 	updateDocumentState( documents );
