@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Context_Helper {
 
-	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes' ];
+	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes', 'display-conditions' ];
 
 	const LINK_PROP_KEY = 'link';
 
