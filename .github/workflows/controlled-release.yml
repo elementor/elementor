@@ -62,21 +62,21 @@ jobs:
       MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
 
   # ── Job 4 ────────────────────────────────────────────────────────────────
-  # Runs immediately after the tag is pushed (no gate) so the reviewer can
-  # see a link to the created tag in the run summary before deciding
-  # whether to approve Job 5.
+  # Runs immediately after the draft release is created (no gate) so the
+  # reviewer can see a link to the draft release before deciding whether
+  # to approve Job 5.
   # ─────────────────────────────────────────────────────────────────────────
-  tag-summary:
-    name: Tag Created
-    needs: tag
+  release-summary:
+    name: Release Drafted
+    needs: build-draft
     runs-on: ubuntu-24.04
     steps:
-      - name: Write tag summary
+      - name: Write release summary
         run: |
           {
-            echo "### 🏷️ Tag created: \`${{ inputs.version }}\`"
+            echo "### 📦 Draft release created: \`${{ inputs.version }}\`"
             echo ""
-            echo "[View tag](https://github.com/${{ github.repository }}/tree/${{ inputs.version }})"
+            echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ── Job 5 ────────────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   approve-publish:
     name: Await Approval (Publish Release)
-    needs: tag-summary
+    needs: release-summary
     environment: release-approval
     runs-on: ubuntu-22.04
     steps:
@@ -107,9 +107,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Delete remote tag
         run: |
           git push origin --delete "${{ inputs.version }}" || echo "Tag already absent"
+
+      - name: Delete draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete "${{ inputs.version }}" --yes || echo "Release already absent"
+
       - name: Write deletion summary
         run: |
           {
@@ -119,14 +126,25 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ── Job 7 ────────────────────────────────────────────────────────────────
-  # Builds the plugin from the tagged commit and publishes the release.
-  # Version strings are already correct — the tag job bumped them.
-  # Delegates to publish-release.yml, which can also be run standalone
-  # (workflow_dispatch) against an existing tag if this step ever fails
-  # and needs a retry without repeating the tag-creation/approval gates.
+  # Builds the plugin from the tagged commit and creates a draft release so
+  # the reviewer can inspect the actual built artifact before approving.
+  # ─────────────────────────────────────────────────────────────────────────
+  build-draft:
+    name: Build & Draft Release
+    needs: tag
+    uses: davseve/elementor/.github/workflows/build-draft-release.yml@split-release-process
+    with:
+      version: ${{ inputs.version }}
+      prerelease: ${{ inputs.prerelease }}
+    secrets:
+      MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+
+  # ── Job 8 ────────────────────────────────────────────────────────────────
+  # Undrafts the release and publishes it (SVN, Slack). Delegates to
+  # publish-release.yml, runnable standalone against an existing draft.
   # ─────────────────────────────────────────────────────────────────────────
   publish:
-    name: Build & Publish
+    name: Publish Release
     needs: approve-publish
     uses: davseve/elementor/.github/workflows/publish-release.yml@split-release-process
     with:

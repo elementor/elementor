@@ -1,0 +1,96 @@
+name: Build & Draft Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'Existing tag/version to build and draft (e.g. 4.2.3)'
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish)'
+
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      MIXPANEL_TOKEN:
+        required: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Builds the plugin from an existing tagged commit and creates a DRAFT
+  # GitHub release with the build artifact attached. Assumes the tag already
+  # exists (created by release-tag-creation). Safe to re-run on its own if a
+  # previous build attempt failed — re-running just recreates the draft.
+  # ─────────────────────────────────────────────────────────────────────────
+  build-and-draft:
+    name: Build & Draft Release
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        uses: ./.github/workflows/install-dependencies
+
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ inputs.version }}
+          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
+        env:
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+
+      # Do we need this step? the release version is a s the passed input.
+      - name: Get release name
+        uses: ./.github/workflows/get-release-name
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+
+      - name: Check changelog is updated
+        if: ${{ !inputs.prerelease }}
+        uses: ./.github/workflows/verify-version-changelog
+        with:
+          VERSION: ${{ inputs.version }}
+
+      - name: Validate build files
+        if: github.repository_owner == 'elementor'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
+          PACKAGE_VERSION: ${{ inputs.version }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+
+      - name: Create draft GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          files: elementor-*.zip
+          prerelease: ${{ inputs.prerelease }}
+          draft: true
