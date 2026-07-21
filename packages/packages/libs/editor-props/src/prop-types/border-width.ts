@@ -4,7 +4,7 @@ import { createPropUtils } from '../utils/create-prop-utils';
 import { unknownChildrenSchema } from './utils';
 
 export const borderWidthPropTypeUtil = createPropUtils(
-	'border-width',
+	'border-width-v2',
 	z.strictObject( {
 		'block-start': unknownChildrenSchema,
 		'block-end': unknownChildrenSchema,

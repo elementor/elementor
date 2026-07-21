@@ -29,7 +29,7 @@ class Test_Object_Side_Merge_Converter extends TestCase {
 
 		$this->assertTrue( $converted );
 		$this->assertSame(
-			[ '$$type' => 'border-width', 'value' => [ 'block-start' => $this->size( 2 ) ] ],
+			[ '$$type' => 'border-width-v2', 'value' => [ 'block-start' => $this->size( 2 ) ] ],
 			$prop_value
 		);
 		$this->assertTrue( Border_Width_Prop_Type::make()->validate( $prop_value ) );
@@ -48,7 +48,7 @@ class Test_Object_Side_Merge_Converter extends TestCase {
 		// Assert.
 		$this->assertSame(
 			[
-				'$$type' => 'border-width',
+				'$$type' => 'border-width-v2',
 				'value' => [
 					'block-start' => $this->size( 2 ),
 					'inline-end' => $this->size( 3 ),
@@ -70,7 +70,7 @@ class Test_Object_Side_Merge_Converter extends TestCase {
 		// Assert: every side seeded from 1px, the named side overridden to 2px (faithful cascade).
 		$this->assertSame(
 			[
-				'$$type' => 'border-width',
+				'$$type' => 'border-width-v2',
 				'value' => [
 					'block-start' => $this->size( 2 ),
 					'inline-end' => $this->size( 1 ),
@@ -87,7 +87,7 @@ class Test_Object_Side_Merge_Converter extends TestCase {
 		$converter = new Object_Side_Merge_Converter(
 			'border-top-left-radius',
 			'border-radius',
-			'border-radius',
+			Border_Radius_Prop_Type::get_key(),
 			'start-start',
 			self::RADIUS_KEYS,
 			Border_Radius_Prop_Type::class
@@ -101,7 +101,7 @@ class Test_Object_Side_Merge_Converter extends TestCase {
 		$prop_value = $context->get_prop( 'border-radius' );
 
 		$this->assertSame(
-			[ '$$type' => 'border-radius', 'value' => [ 'start-start' => $this->size( 10 ) ] ],
+			[ '$$type' => 'border-radius-v2', 'value' => [ 'start-start' => $this->size( 10 ) ] ],
 			$prop_value
 		);
 		$this->assertTrue( Border_Radius_Prop_Type::make()->validate( $prop_value ) );
@@ -125,7 +125,7 @@ class Test_Object_Side_Merge_Converter extends TestCase {
 		return new Object_Side_Merge_Converter(
 			$property,
 			'border-width',
-			'border-width',
+			Border_Width_Prop_Type::get_key(),
 			$side_key,
 			self::WIDTH_KEYS,
 			Border_Width_Prop_Type::class
