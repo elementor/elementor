@@ -48,7 +48,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 	const featuredItems = items.filter( ( item ) => item.featured );
 	const alsoNewItems = featuredItems.length > 0 ? items.filter( ( item ) => ! item.featured ) : [];
 	const regularItems = featuredItems.length > 0 ? [] : items;
-	const listLabel = featuredItems[ 0 ]?.listLabel ?? null;
+	const listLabel = alsoNewItems[ 0 ]?.listLabel ?? null;
 
 	return (
 		<>
