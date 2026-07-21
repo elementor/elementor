@@ -28,8 +28,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manage_Elements_Ability extends Abstract_Ability {
 
-	const DOCUMENT_ROOT = 'document';
-
 	private ?Document_Mutator $mutator;
 
 	public function __construct( ?Document_Mutator $mutator = null ) {
@@ -43,7 +41,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial PropValue settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index.', 'elementor' ),
+			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial PropValue settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -73,7 +71,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				'properties' => [
 					'action' => [
 						'type' => 'string',
-						'enum' => [ 'update', 'delete', 'move' ],
+						'enum' => [ 'update', 'delete', 'move', 'duplicate' ],
 					],
 					'post_id' => [ 'type' => 'integer' ],
 					'element_id' => [ 'type' => 'string' ],
@@ -138,6 +136,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $this->handle_delete( $document, $element_id );
 			case 'move':
 				return $this->handle_move( $document, $element_id, $input );
+			case 'duplicate':
+				return $this->handle_duplicate( $document, $element_id );
 			default:
 				return $this->bad_request( sprintf(
 					/* translators: %s: action name */
@@ -150,6 +150,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	private function handle_delete( Document $document, string $element_id ) {
 		$tree = $this->get_tree( $document );
 		$new_tree = $this->get_mutator()->remove( $tree, $element_id );
+
+		if ( is_wp_error( $new_tree ) ) {
+			return $this->to_public_error( $new_tree );
+		}
+
+		return $this->save_and_respond( $document, $new_tree, $element_id, [] );
+	}
+
+	private function handle_duplicate( Document $document, string $element_id ) {
+		$tree = $this->get_tree( $document );
+		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
 
 		if ( is_wp_error( $new_tree ) ) {
 			return $this->to_public_error( $new_tree );
@@ -188,11 +199,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$tree = $this->get_tree( $document );
 
-		if ( null === $this->find_node_ref( $tree, $element_id ) ) {
+		if ( null === $this->get_mutator()->find_by_id( $tree, $element_id ) ) {
 			return $this->not_found( __( 'Element not found.', 'elementor' ) );
 		}
 
-		$index = $this->build_index( $tree, $element_id );
+		$index = $this->get_mutator()->build_ref_index( $tree, $element_id );
 		if ( empty( $index ) ) {
 			return $this->not_found( __( 'Element not found.', 'elementor' ) );
 		}
@@ -250,14 +261,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function save_and_respond( Document $document, array $tree, string $element_id, array $warnings ) {
-		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
-			wp_update_post( [
-				'ID' => $document->get_main_id(),
-				'post_status' => 'draft',
-			] );
-		}
-
-		$save_result = $document->save( [ 'elements' => $tree ] );
+		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
 
 		if ( is_wp_error( $save_result ) ) {
 			return $save_result;
@@ -308,37 +312,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$tree = $document->get_elements_data();
 
 		return is_array( $tree ) ? $tree : [];
-	}
-
-	/**
-	 * Locate a node by id and return a by-reference index [ $element_id => &$node ] so appliers can mutate in place.
-	 */
-	private function build_index( array &$tree, string $element_id ): array {
-		$index = [];
-		$this->walk_for_index( $tree, $element_id, $index );
-
-		return $index;
-	}
-
-	private function walk_for_index( array &$tree, string $element_id, array &$index ): bool {
-		foreach ( $tree as $i => &$node ) {
-			if ( isset( $node['id'] ) && $node['id'] === $element_id ) {
-				$index[ $element_id ] = &$node;
-				return true;
-			}
-			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
-				if ( $this->walk_for_index( $node['elements'], $element_id, $index ) ) {
-					return true;
-				}
-			}
-		}
-		unset( $node );
-
-		return false;
-	}
-
-	private function find_node_ref( array $tree, string $element_id ): ?array {
-		return $this->get_mutator()->find_by_id( $tree, $element_id );
 	}
 
 	private function to_public_error( \WP_Error $error ): \WP_Error {
