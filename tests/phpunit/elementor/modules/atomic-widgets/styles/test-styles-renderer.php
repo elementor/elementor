@@ -1146,7 +1146,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 							'border-radius' => [
-								'$$type' => 'border-radius',
+								'$$type' => 'border-radius-v2',
 								'value' => [
 									'start-start' => [
 										'$$type' => 'size',
@@ -1173,7 +1173,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 							'border-width' => [
-								'$$type' => 'border-width',
+								'$$type' => 'border-width-v2',
 								'value' => [
 									'block-start' => [
 										'$$type' => 'size',
