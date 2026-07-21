@@ -111,7 +111,7 @@ jobs:
       - name: Get Release Body
         id: get_release_body
         run: |
-          CHANGES=$(node ./.github/scripts/get-changelog-section.js ${{ env.RELEASE_NAME }})
+          CHANGES=$(node ./.github/scripts/get-changelog-section.js ${{ env.CLEAN_PACKAGE_VERSION }})
           echo "CHANGES: $CHANGES"
           {
             echo "CHANGES<<EOF"
