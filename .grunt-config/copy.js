@@ -63,9 +63,12 @@ const getBuildFiles = [
 	// Conflict with above rule.
 	'core/files/assets/**',
 	'vendor/autoload.php',
+	'vendor/autoload_packages.php',
 	'vendor/composer/**',
 	'vendor/elementor/wp-one-package/**',
 	'vendor/elementor/wp-notifications-package/**',
+	'vendor/jetpack-autoloader/**',
+	'vendor/wordpress/**',
 ];
 
 const copy = {
