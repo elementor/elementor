@@ -29,13 +29,16 @@ class Element_Config_Applier {
 	 * @param array<string, array&>               $config_id_index Index of subtree refs.
 	 * @param array<string, array<string, mixed>> $element_config  Per-config-id settings.
 	 * @param array<string, array>                $widget_configs  Resolved type configs.
+	 *
+	 * @return array{ error: ?\WP_Error, warnings: string[] }
 	 */
-	public function apply( array $config_id_index, array $element_config, array $widget_configs ): ?\WP_Error {
+	public function apply( array $config_id_index, array $element_config, array $widget_configs ): array {
 		$transformers = array_merge(
 			Llm_Prop_Value_Adjuster::create_global_variable_transformers( $this->variables_service ),
 			[ Dynamic_Prop_Type::get_key() => Dynamic_Tag_Llm_Resolver::make() ]
 		);
 		$errors = [];
+		$warnings = [];
 
 		foreach ( $element_config as $config_id => $settings ) {
 			if ( ! isset( $config_id_index[ $config_id ] ) || ! is_array( $settings ) ) {
@@ -51,7 +54,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$resolved = $this->resolve_settings_against_schema( $settings, $schema, $transformers, $tag, $config_id, $errors );
+			$resolved = $this->resolve_settings_against_schema( $settings, $schema, $transformers, $tag, $config_id, $errors, $warnings );
 
 			$node['settings'] = array_merge( $node['settings'] ?? [], $resolved );
 
@@ -68,15 +71,18 @@ class Element_Config_Applier {
 		}
 		unset( $node );
 
-		if ( empty( $errors ) ) {
-			return null;
-		}
+		$error = empty( $errors )
+			? null
+			: new \WP_Error(
+				'elementor_invalid_settings',
+				implode( ' ', $errors ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 
-		return new \WP_Error(
-			'elementor_invalid_settings',
-			implode( ' ', $errors ),
-			[ 'status' => \WP_Http::BAD_REQUEST ]
-		);
+		return [
+			'error' => $error,
+			'warnings' => $warnings,
+		];
 	}
 
 	private function resolve_settings_against_schema(
@@ -85,7 +91,8 @@ class Element_Config_Applier {
 		array $transformers,
 		string $element_type,
 		string $config_id,
-		array &$errors
+		array &$errors,
+		array &$warnings
 	): array {
 		// Precompute the alias map once; resolve every incoming key against it.
 		$alias_map = Prop_Canonicalizer::build_alias_map( $schema );
@@ -95,8 +102,9 @@ class Element_Config_Applier {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
 
 			if ( null === $canonical ) {
-				$errors[] = sprintf(
-					'[%s] Property "%s" does not exist on element type "%s". Available properties are: %s',
+				// Skip unknown keys instead of failing so one stray prop can't discard a valid composition.
+				$warnings[] = sprintf(
+					'[%s] Property "%s" is not supported on element type "%s" and was skipped. Available properties are: %s',
 					$config_id,
 					$name,
 					$element_type,
