@@ -15,12 +15,15 @@ class Events_Proxy_REST_API {
 	const API_UPSTREAM_HOST = 'https://api-eu.mixpanel.com';
 	const LIBS_UPSTREAM_HOST = 'https://cdn.mxpnl.com/libs';
 
-	const REQUEST_TIMEOUT = 5;
+	const REQUEST_TIMEOUT = 3;
 	const MAX_BODY_BYTES = 10 * MB_IN_BYTES;
 
 	const FORWARDED_REQUEST_HEADERS = [ 'content-type', 'authorization', 'content-encoding' ];
 
 	const RAW_RESPONSE_HEADER = 'X-Elementor-Raw-Proxy-Response';
+
+	const ASYNC_DISPATCH_PATHS = [ 'track', 'engage', 'groups', 'record' ];
+	const ASYNC_DISPATCH_SUCCESS_BODY = '1';
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
@@ -28,11 +31,6 @@ class Events_Proxy_REST_API {
 		add_filter( 'rest_pre_serve_request', [ $this, 'maybe_serve_raw_response' ], 10, 2 );
 	}
 
-	/**
-	 * The SDK cannot attach a WP REST nonce, so logged-in Editor sessions would otherwise be rejected by
-	 * WordPress' cookie-auth nonce check before routing even happens. This filter runs very early (priority 0)
-	 * and only short-circuits that check for this proxy's own routes; every other route is unaffected.
-	 */
 	public function bypass_nonce_check_for_own_routes( $result ) {
 		if ( $this->is_own_route_request() ) {
 			return true;
@@ -79,13 +77,13 @@ class Events_Proxy_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/api/(?P<path>.+)', [
 			'methods' => \WP_REST_Server::ALLMETHODS,
 			'callback' => fn( \WP_REST_Request $request ) => $this->proxy_api_request( $request ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/libs/(?P<file>[\w\-.]+)', [
 			'methods' => 'GET',
 			'callback' => fn( \WP_REST_Request $request ) => $this->proxy_libs_request( $request ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 		] );
 	}
 
@@ -101,7 +99,11 @@ class Events_Proxy_REST_API {
 			$url = add_query_arg( $query, $url );
 		}
 
-		return $this->forward_request( $url, $request );
+		return $this->forward_request( $url, $request, $this->is_fire_and_forget_path( $path ) );
+	}
+
+	private function is_fire_and_forget_path( string $path ): bool {
+		return in_array( strtok( $path, '/' ), self::ASYNC_DISPATCH_PATHS, true );
 	}
 
 	private function proxy_libs_request( \WP_REST_Request $request ) {
@@ -111,7 +113,7 @@ class Events_Proxy_REST_API {
 		return $this->forward_request( $url, $request );
 	}
 
-	private function forward_request( string $url, \WP_REST_Request $request ) {
+	private function forward_request( string $url, \WP_REST_Request $request, bool $async = false ) {
 		$body = $request->get_body();
 
 		if ( strlen( $body ) > self::MAX_BODY_BYTES ) {
@@ -127,6 +129,14 @@ class Events_Proxy_REST_API {
 
 		if ( ! empty( $body ) ) {
 			$args['body'] = $body;
+		}
+
+		if ( $async ) {
+			$args['blocking'] = false;
+
+			wp_remote_request( $url, $args );
+
+			return $this->build_raw_response( self::ASYNC_DISPATCH_SUCCESS_BODY, 200, 'text/plain' );
 		}
 
 		$response = wp_remote_request( $url, $args );
