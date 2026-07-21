@@ -67,6 +67,18 @@ class List_Resources_Ability extends Abstract_Ability {
 				'description' => 'Detailed guide for using the manage-global-variable tool. Covers available types, naming rules, value rules, and operation examples.',
 				'mimeType' => 'text/plain',
 			],
+			[
+				'uri' => Global_Classes_Resource_Ability::URI,
+				'name' => 'Global Classes',
+				'description' => 'Reusable CSS classes from the active kit; check FIRST before adding inline styles.',
+				'mimeType' => 'application/json',
+			],
+			[
+				'uri' => Global_Variables_Resource_Ability::URI,
+				'name' => 'Global Variables',
+				'description' => 'Design tokens (colors, fonts, sizes) from the active kit; check before styling with variables.',
+				'mimeType' => 'application/json',
+			],
 		];
 	}
 }

@@ -1,15 +1,16 @@
 # RESOURCES (Read before use)
-- [elementor://global-classes] - Check FIRST for reusable classes
-- [elementor://global-variables] - Design tokens for styling: use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
-- [elementor/list-widgets?version=v4] - Available v4 widgets
+- [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
+- [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
+- [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
 
 # WORKFLOW
-1. Check/create global variables via "elementor/manage-global-variable" tool
-2. Build composition (THIS TOOL) - minimal inline styles
-3. Use returned element IDs for subsequent configuration changes
+1. Check/create global variables via `elementor/manage-global-variable`
+2. Check/create global classes via `elementor/manage-classes`
+3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+4. Use returned element IDs for subsequent configuration changes
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
@@ -26,17 +27,18 @@ Some elements have internal tree structures (nesting). When using these elements
 - `allowed_parents` lists which element types this element can be placed inside
 
 # CONFIGURATION
-- Map configuration-id → element_config (props) + style (raw CSS declarations)
+- Map configuration-id → element_config (props) + style (raw CSS declarations) + classes (global class labels)
 - element_config PropValues require `$$type` matching schema
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type); unknown keys are rejected with a list of valid keys**
 - style is raw CSS (property → value strings); the server converts it to native styles
+- classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
 - NO LINKS in configuration
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
-## VARIABLE USAGE
-Read [elementor://global-variables] before styling. Use variable **labels** from that list — not internal ids.
+## GLOBAL VARIABLES
+Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
 
 **In `style` (raw CSS):** reference by label only:
 - `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
@@ -44,10 +46,18 @@ Read [elementor://global-variables] before styling. Use variable **labels** from
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
 
-**In `element_config` (PropValues):** when the widget schema allows a global-variable type, send the label or id as the value:
+**In `element_config` (PropValues):** when the widget schema allows a global-variable type, send the label as the value:
 - `{ "$$type": "global-color-variable", "value": "wc26-gold" }`
 - `{ "$$type": "global-font-variable", "value": "font-heading" }`
 - `{ "$$type": "global-size-variable", "value": "spacing-lg" }`
+
+## GLOBAL CLASSES
+Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
+
+**In `classes` (reference-only):** attach existing global classes by label:
+- Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)
+- Create or update classes with `elementor/manage-classes` before referencing them here
+- Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
 # DYNAMIC TAGS
 - A value can be made dynamic wherever its schema exposes a `"$$type": "dynamic"` variant. This may be the property root OR a NESTED field (e.g. an image's `src`, not the whole `image`).
@@ -124,16 +134,25 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Generous padding on CTAs: min 1rem 2.5rem
 
 # HARD CONSTRAINTS
-- Variables ONLY from [elementor://global-variables]; reference labels in CSS as `var(--label)` — the `e-gv-` prefix is internal only and must not appear in `style` or `element_config`
+- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` and in `element_config` as the `value` — the `e-gv-` prefix is internal only
+- Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
 - Avoid SVG widgets unless assets are pre-uploaded
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
+
+# MODE
+Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's id — one call replaces its children. Default `'append'` keeps existing content.
+- `append` (default): Insert new elements as children of `parent_id`, preserving existing children.
+- `replace_children`: Remove all direct children of `parent_id` first, then insert new elements. The response includes `removed_element_ids` listing what was removed.
+- When `parent_id: 'document'` + `mode: 'replace_children'`, all top-level elements are removed — use this to redesign the whole page.
 
 # PARAMETERS
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
 - **element_config**: configuration-id → widget PropValues
-- **style**: configuration-id → raw CSS declarations (property → value strings; no selectors)
+- **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
+- **classes**: configuration-id → list of existing global class **labels** to attach
 - **parent_id**: ID of the parent container (omit to insert at document root)
+- **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting
 
 # EXAMPLE
