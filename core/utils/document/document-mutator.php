@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Utils\Document;
 
+use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -10,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Document_Mutator {
+
+	const DOCUMENT_ROOT = 'document';
 
 	/** @var \Elementor\Elements_Manager */
 	private $element_manager;
@@ -27,6 +30,36 @@ class Document_Mutator {
 			Plugin::$instance->elements_manager,
 			Plugin::$instance->widgets_manager
 		);
+	}
+
+	/**
+	 * Locate a node by id and return a by-reference index [ $id => &$node ]
+	 * so callers can mutate the tree in place.
+	 *
+	 * @return array<string, array&>
+	 */
+	public function build_ref_index( array &$tree, string $id ): array {
+		$index = [];
+		$this->walk_for_ref_index( $tree, $id, $index );
+
+		return $index;
+	}
+
+	private function walk_for_ref_index( array &$tree, string $id, array &$index ): bool {
+		foreach ( $tree as &$node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				$index[ $id ] = &$node;
+				return true;
+			}
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				if ( $this->walk_for_ref_index( $node['elements'], $id, $index ) ) {
+					return true;
+				}
+			}
+		}
+		unset( $node );
+
+		return false;
 	}
 
 	public function find_by_id( array $tree, string $id ): ?array {
@@ -120,6 +153,45 @@ class Document_Mutator {
 	}
 
 	/**
+	 * Duplicate an element in place, inserting the clone right after the source
+	 * inside the same parent. All ids in the clone are regenerated.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public function duplicate( array $tree, string $id ) {
+		$location = $this->locate_parent_and_index( $tree, $id );
+
+		if ( null === $location ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		[ $parent_id, $index, $node ] = $location;
+
+		return $this->insert_subtree( $tree, $parent_id, $index + 1, $node );
+	}
+
+	/**
+	 * Save an elements tree to a document, downgrading `publish` to `draft`
+	 * first so no live changes leak out.
+	 *
+	 * @return true|int|\WP_Error
+	 */
+	public function save_as_draft( Document $document, array $elements ) {
+		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_status' => 'draft',
+			] );
+		}
+
+		return $document->save( [ 'elements' => $elements ] );
+	}
+
+	/**
 	 * @return array|\WP_Error
 	 */
 	public function patch_settings( array $tree, string $id, array $partial_settings ) {
@@ -171,6 +243,26 @@ class Document_Mutator {
 		}
 
 		return $element;
+	}
+
+	/**
+	 * @return array{0: string, 1: int, 2: array}|null [ parent_id, index, node ] or null when not found.
+	 */
+	private function locate_parent_and_index( array $tree, string $id, string $parent_id = self::DOCUMENT_ROOT ): ?array {
+		foreach ( $tree as $i => $node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				return [ $parent_id, $i, $node ];
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$found = $this->locate_parent_and_index( $node['elements'], $id, (string) ( $node['id'] ?? '' ) );
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private function splice_into( array $children, ?int $index, array $element ): array {

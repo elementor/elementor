@@ -121,10 +121,29 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'element_id' => $root_id,
 		] );
 
-		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
-		$this->assertSame( 'ok', $result['status'] );
+		$this->assertNoErrors( $result );
 
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
+	}
+
+	public function test_duplicate__clones_element_after_source_with_new_ids() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'action' => 'duplicate',
+			'post_id' => $post_id,
+			'element_id' => $container_id,
+		] );
+
+		$this->assertNoErrors( $result );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertCount( 2, $elements );
+		$this->assertSame( $container_id, $elements[0]['id'] );
+		$this->assertNotSame( $container_id, $elements[1]['id'] );
+		$this->assertNotSame( $heading_id, $elements[1]['elements'][0]['id'] ?? null );
 	}
 
 	public function test_move__reparents_element_to_document_root_at_index() {
@@ -140,8 +159,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'index' => 0,
 		] );
 
-		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
-		$this->assertSame( 'ok', $result['status'] );
+		$this->assertNoErrors( $result );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
 		$this->assertSame( $heading_id, $elements[0]['id'] );
@@ -184,8 +202,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
-		$this->assertSame( 'ok', $result['status'] );
+		$this->assertNoErrors( $result );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node );
@@ -225,8 +242,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'classes' => [ 'hero-heading' ],
 		] );
 
-		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
-		$this->assertSame( 'ok', $result['status'] );
+		$this->assertNoErrors( $result );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node );
@@ -250,6 +266,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertWPError( $result );
 		$this->assertSame( 'elementor_unknown_global_class', $result->get_error_code() );
+	}
+
+	private function assertNoErrors( $result ): void {
+		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertSame( 'ok', $result['status'] );
 	}
 
 	private function create_real_document(): int {
