@@ -75,12 +75,6 @@ class Widgets_Manager {
 	 * @since 2.0.0
 	 * @access private
 	 */
-	private function ensure_widget_types_initialized(): void {
-		if ( is_null( $this->_widget_types ) || ! isset( $this->_widget_types['heading'] ) ) {
-			$this->init_widgets();
-		}
-	}
-
 	private function init_widgets() {
 		$build_widgets_filename = [
 			'common-base',
@@ -264,7 +258,9 @@ class Widgets_Manager {
 	 * @access public
 	 */
 	public function register( Widget_Base $widget_instance ) {
-		$this->ensure_widget_types_initialized();
+		if ( is_null( $this->_widget_types ) ) {
+			$this->init_widgets();
+		}
 
 		/**
 		 * Should widget be registered.
@@ -357,7 +353,9 @@ class Widgets_Manager {
 	 * @return Widget_Base|Widget_Base[]|null Registered widget types.
 	 */
 	public function get_widget_types( $widget_name = null ) {
-		$this->ensure_widget_types_initialized();
+		if ( is_null( $this->_widget_types ) ) {
+			$this->init_widgets();
+		}
 
 		if ( null !== $widget_name ) {
 			return isset( $this->_widget_types[ $widget_name ] ) ? $this->_widget_types[ $widget_name ] : null;
