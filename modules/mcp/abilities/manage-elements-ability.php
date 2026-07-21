@@ -223,17 +223,19 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$widget_configs = [ $tag => $widget_config ];
 
 		$variables_service = $this->create_variables_service();
+		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
 			$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
-			$config_error = $config_applier->apply(
+			$config_result = $config_applier->apply(
 				$index,
 				[ $element_id => $settings ],
 				$widget_configs
 			);
-			if ( $config_error ) {
-				return $config_error;
+			if ( $config_result['error'] ) {
+				return $config_result['error'];
 			}
+			$warnings = array_merge( $warnings, $config_result['warnings'] );
 		}
 
 		if ( ! empty( $classes ) ) {
@@ -247,14 +249,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		$warnings = [];
 		if ( ! empty( $style ) ) {
 			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
 			$style_result = $style_applier->apply( $index, [ $element_id => $style ] );
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}
-			$warnings = $style_result['warnings'];
+			$warnings = array_merge( $warnings, $style_result['warnings'] );
 		}
 
 		return $this->save_and_respond( $document, $tree, $element_id, $warnings );

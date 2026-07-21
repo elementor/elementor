@@ -209,7 +209,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'New Title', $node['settings']['title']['value']['content']['value'] );
 	}
 
-	public function test_update__rejects_unknown_prop_with_bad_request() {
+	public function test_update__skips_unknown_prop_with_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -223,9 +223,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertNoErrors( $result );
+		$this->assertNotEmpty( $result['warnings'] );
+		$this->assertStringContainsString( 'nonexistent_prop', $result['warnings'][0] );
+		$this->assertStringContainsString( 'skipped', $result['warnings'][0] );
 	}
 
 	public function test_update__applies_style_and_attaches_global_class_by_label() {
