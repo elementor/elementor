@@ -30,6 +30,8 @@ const useWhatsNewLinkProps = () => {
 		title: __( "What's New", 'elementor' ),
 		icon: () => <IconWithBadge count={ unreadCount } />,
 		onClick: () => {
+			editorOnButtonClicked( 'right' );
+
 			elementorCommon.eventsManager.dispatchEvent(
 				elementorCommon.eventsManager.config.names.topBar.whatsNew,
 				{
@@ -39,8 +41,6 @@ const useWhatsNewLinkProps = () => {
 					element: elementorCommon.eventsManager.config.elements.buttonIcon,
 				},
 			);
-
-			editorOnButtonClicked( 'right' );
 		},
 	};
 };
