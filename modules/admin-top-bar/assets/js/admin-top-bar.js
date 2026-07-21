@@ -42,7 +42,7 @@ export default function AdminTopBar() {
 					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
 					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
 					{ BarButtonNotification
-						? <BarButtonNotification>{ __( 'What\'s New', 'elementor' ) }</BarButtonNotification>
+						? <BarButtonNotification defaultIsRead={ ! elementorNotifications?.is_unread }>{ __( 'What\'s New', 'elementor' ) }</BarButtonNotification>
 						: ''
 					}
 				</div>

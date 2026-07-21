@@ -78,8 +78,7 @@ class Module extends BaseModule {
 
 	private function get_app_js_config(): array {
 		return [
-			'is_unread'    => Options::has_unread_notifications(),
-			'unread_count' => Options::get_unread_count(),
+			'is_unread' => Options::has_unread_notifications(),
 		];
 	}
 
