@@ -1,22 +1,16 @@
 import { register } from '@elementor/frontend-handlers';
 import { refreshTree } from '@elementor/alpinejs';
+import { setEditorState } from './editor-background-video-state';
 import { CONTROLS_ELEMENT_TYPE, PAUSE_ELEMENT_TYPE, PLAY_ELEMENT_TYPE } from './background-video-handler';
 
 register( {
 	elementType: 'e-background-video',
 	id: 'e-background-video-preview-handler',
-	callback: ( { element, listenToChildren } ) => {
-		const syncPreview = () => {
-			refreshTree( element );
-		};
+	callback: ( { element, settings, listenToChildren } ) => {
+		const elementId = element.dataset.id;
 
-		const observer = new MutationObserver( syncPreview );
-
-		observer.observe( element, {
-			attributes: true,
-			attributeFilter: [ 'data-e-settings' ],
-			subtree: true,
-		} );
+		setEditorState( elementId, settings.state || 'playing' );
+		refreshTree( element );
 
 		listenToChildren( [ PLAY_ELEMENT_TYPE, PAUSE_ELEMENT_TYPE, CONTROLS_ELEMENT_TYPE ] )
 			.render( ( event ) => {
@@ -27,11 +21,7 @@ register( {
 					return;
 				}
 
-				syncPreview();
+				refreshTree( element );
 			} );
-
-		return () => {
-			observer.disconnect();
-		};
 	},
 } );

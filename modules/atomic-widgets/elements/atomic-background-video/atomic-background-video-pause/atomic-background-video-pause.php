@@ -7,7 +7,9 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
@@ -94,7 +96,9 @@ class Atomic_Background_Video_Pause extends Atomic_Element_Base {
 							'justify-content' => String_Prop_Type::generate( 'center' ),
 							'cursor' => String_Prop_Type::generate( 'pointer' ),
 							'border-style' => String_Prop_Type::generate( 'none' ),
-							'background' => String_Prop_Type::generate( 'transparent' ),
+							'background' => Background_Prop_Type::generate( [
+								'color' => Color_Prop_Type::generate( 'transparent' ),
+							] ),
 							'padding' => Size_Prop_Type::generate( [
 								'size' => 8,
 								'unit' => 'px',

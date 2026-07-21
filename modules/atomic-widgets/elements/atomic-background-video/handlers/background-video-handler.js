@@ -4,18 +4,14 @@ import { isEditorPreview } from './editor-background-video-state';
 
 const PLAYING_CLASS = 'e--playing';
 const PAUSED_CLASS = 'e--paused';
+// Functional state classes on the root element that drive play/pause button visibility via CSS.
+// The root re-renders (client-side twig) on every settings change and always carries the correct
+// class, so button visibility survives the editor tearing down and re-creating the child DOM nodes.
+const ROOT_PLAYING_CLASS = 'e-background-video--playing';
+const ROOT_PAUSED_CLASS = 'e-background-video--paused';
 const PLAY_ELEMENT_TYPE = 'e-background-video-play';
 const PAUSE_ELEMENT_TYPE = 'e-background-video-pause';
 const CONTROLS_ELEMENT_TYPE = 'e-background-video-controls';
-const HIDDEN_CLASS = 'e-background-video__button--hidden';
-
-function getSettingsFromElement( element ) {
-	try {
-		return JSON.parse( element.dataset.eSettings || '{}' );
-	} catch {
-		return {};
-	}
-}
 
 function applyVideoSettings( video, settings ) {
 	if ( ! video ) {
@@ -35,71 +31,6 @@ function applyVideoSettings( video, settings ) {
 	}
 }
 
-function getPreviewState( element, video ) {
-	if ( isEditorPreview() ) {
-		const settings = getSettingsFromElement( element );
-
-		return settings.state || 'playing';
-	}
-
-	return video && ! video.paused ? 'playing' : 'paused';
-}
-
-function updateButtonVisibility( element, video ) {
-	const previewState = getPreviewState( element, video );
-	const playButton = element.querySelector( `[data-e-type="${ PLAY_ELEMENT_TYPE }"]` );
-	const pauseButton = element.querySelector( `[data-e-type="${ PAUSE_ELEMENT_TYPE }"]` );
-	const controlsWrapper = element.querySelector( `[data-e-type="${ CONTROLS_ELEMENT_TYPE }"]` );
-
-	if ( playButton ) {
-		playButton.classList.toggle( HIDDEN_CLASS, 'paused' !== previewState );
-		playButton.hidden = 'paused' !== previewState;
-	}
-
-	if ( pauseButton ) {
-		pauseButton.classList.toggle( HIDDEN_CLASS, 'playing' !== previewState );
-		pauseButton.hidden = 'playing' !== previewState;
-	}
-
-	if ( controlsWrapper ) {
-		controlsWrapper.classList.toggle( PLAYING_CLASS, 'playing' === previewState );
-		controlsWrapper.classList.toggle( PAUSED_CLASS, 'paused' === previewState );
-	}
-}
-
-function bindPlayPauseButtons( element, video, signal ) {
-	const playButton = element.querySelector( `[data-e-type="${ PLAY_ELEMENT_TYPE }"]` );
-	const pauseButton = element.querySelector( `[data-e-type="${ PAUSE_ELEMENT_TYPE }"]` );
-
-	const onPlayClick = ( event ) => {
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( video ) {
-			video.play().catch( () => {} );
-		}
-	};
-
-	const onPauseClick = ( event ) => {
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( video ) {
-			video.pause();
-		}
-	};
-
-	playButton?.addEventListener( 'click', onPlayClick, { signal } );
-	pauseButton?.addEventListener( 'click', onPauseClick, { signal } );
-
-	if ( video ) {
-		const onPlaybackChange = () => updateButtonVisibility( element, video );
-
-		video.addEventListener( 'play', onPlaybackChange, { signal } );
-		video.addEventListener( 'pause', onPlaybackChange, { signal } );
-	}
-}
-
 register( {
 	elementType: 'e-background-video',
 	id: 'e-background-video-handler',
@@ -108,21 +39,80 @@ register( {
 		const video = element.querySelector( '.e-background-video__media' );
 
 		applyVideoSettings( video, settings );
-		updateButtonVisibility( element, video );
-		bindPlayPauseButtons( element, video, signal );
 
 		Alpine.data( `eBackgroundVideo${ elementId }`, () => ( {
+			isPlaying: video ? ! video.paused : false,
+			isEditor: isEditorPreview(),
+			editorState: settings.state || 'playing',
+
+			get previewState() {
+				if ( this.isEditor ) {
+					return this.editorState;
+				}
+
+				return this.isPlaying ? 'playing' : 'paused';
+			},
+			get showPlayButton() {
+				return 'paused' === this.previewState;
+			},
+			get showPauseButton() {
+				return 'playing' === this.previewState;
+			},
+			play() {
+				if ( ! video ) {
+					return;
+				}
+
+				video.play().catch( () => {} );
+			},
+			pause() {
+				if ( ! video ) {
+					return;
+				}
+
+				video.pause();
+			},
 			init() {
-				updateButtonVisibility( element, video );
+				if ( video ) {
+					video.addEventListener( 'play', () => {
+						this.isPlaying = true;
+					}, { signal } );
+					video.addEventListener( 'pause', () => {
+						this.isPlaying = false;
+					}, { signal } );
+				}
+			},
+			rootState: {
+				':class'() {
+					// In the editor the state is design-time and rendered onto the root by twig on
+					// every re-render; let that class stand rather than fighting it with a possibly
+					// stale Alpine value. On the frontend, drive it from real playback.
+					if ( this.isEditor ) {
+						return {};
+					}
+
+					return {
+						[ ROOT_PLAYING_CLASS ]: this.isPlaying,
+						[ ROOT_PAUSED_CLASS ]: ! this.isPlaying,
+					};
+				},
 			},
 			controlsWrapper: {
 				':class'() {
-					const previewState = getPreviewState( element, video );
-
 					return {
-						[ PLAYING_CLASS ]: 'playing' === previewState,
-						[ PAUSED_CLASS ]: 'paused' === previewState,
+						[ PLAYING_CLASS ]: 'playing' === this.previewState,
+						[ PAUSED_CLASS ]: 'paused' === this.previewState,
 					};
+				},
+			},
+			playButton: {
+				'@click'() {
+					this.play();
+				},
+			},
+			pauseButton: {
+				'@click'() {
+					this.pause();
 				},
 			},
 		} ) );

@@ -1,4 +1,5 @@
-{% set classes = ['e-background-video', 'e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+{% set state_class = settings.state == 'paused' ? 'e-background-video--paused' : 'e-background-video--playing' %}
+{% set classes = ['e-background-video', state_class, 'e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
 <div class="{{ classes }} {{ editor_classes | default('') }}"
 	data-id="{{ id }}"
 	data-element_type="{{ type }}"
@@ -6,8 +7,8 @@
 	data-interaction-id="{{ interaction_id }}"
 	data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 	x-data="eBackgroundVideo{{ id }}"
-	x-init="init()"
-	data-e-settings="{{ e_settings | json_encode | e('html_attr') }}"
+	x-bind="rootState"
+	data-e-settings="{{ settings | json_encode | e('html_attr') }}"
 	{% if settings._cssid is defined and settings._cssid is not empty %}
 		id="{{ settings._cssid | e('html_attr') }}"
 	{% endif %}

@@ -509,11 +509,11 @@ class Module extends BaseModule {
 			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
 			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
-			'.e-background-video__content { position: relative; z-index: 1; flex: 1; pointer-events: none; }',
-			'.e-background-video__content > * { pointer-events: auto; }',
-			'.e-background-video__controls { z-index: 2; pointer-events: auto; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1; }',
+			'.e-background-video__controls { z-index: 2; }',
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
-			'.e-background-video__button--hidden { display: none; }',
+			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
+			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

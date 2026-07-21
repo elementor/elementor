@@ -90,7 +90,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 			'loop' => Boolean_Prop_Type::make()->default( true ),
 			'show_controls' => Boolean_Prop_Type::make()->default( true ),
 			'state' => String_Prop_Type::make()
-				->default( null )
+				->default( 'playing' )
 				->enum( [ 'playing', 'paused' ] )
 				->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -170,12 +170,35 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
+		$content = Atomic_Background_Video_Content::generate()
+			->editor_settings( [
+				'title' => esc_html__( 'Content Area', 'elementor' ),
+			] )
+			->build();
+
+		$controls = Atomic_Background_Video_Controls::generate()
+			->editor_settings( [
+				'title' => esc_html__( 'Controls', 'elementor' ),
+			] )
+			->children( [
+				Atomic_Background_Video_Play::generate()
+					->hydrate_default_children( true )
+					->editor_settings( [
+						'title' => esc_html__( 'Play Button', 'elementor' ),
+					] )
+					->build(),
+				Atomic_Background_Video_Pause::generate()
+					->hydrate_default_children( true )
+					->editor_settings( [
+						'title' => esc_html__( 'Pause Button', 'elementor' ),
+					] )
+					->build(),
+			] )
+			->build();
+
 		return [
-			Atomic_Background_Video_Content::generate()
-				->editor_settings( [
-					'title' => esc_html__( 'Content Area', 'elementor' ),
-				] )
-				->build(),
+			$content,
+			$controls,
 		];
 	}
 
@@ -260,18 +283,8 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 			$video_timings .= ',' . $video_end_time;
 		}
 
-		$e_settings = [
-			'autoplay' => $settings['autoplay'] ?? true,
-			'mute' => $settings['mute'] ?? true,
-			'loop' => $settings['loop'] ?? true,
-			'state' => $settings['state'] ?? 'playing',
-			'start_time' => $video_start_time,
-			'end_time' => $video_end_time,
-		];
-
 		return array_merge( $this->build_base_template_context(), [
 			'video_timings' => $video_timings,
-			'e_settings' => $e_settings,
 		] );
 	}
 

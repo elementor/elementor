@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -87,16 +88,20 @@ class Atomic_Background_Video_Controls extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
+							'width' => Size_Prop_Type::generate( [
+								'size' => 'auto',
+								'unit' => 'custom',
+							] ),
 							'position' => String_Prop_Type::generate( 'absolute' ),
-							'bottom' => Size_Prop_Type::generate( [
+							'inset-block-end' => Size_Prop_Type::generate( [
 								'size' => 20,
 								'unit' => 'px',
 							] ),
-							'right' => Size_Prop_Type::generate( [
+							'inset-inline-end' => Size_Prop_Type::generate( [
 								'size' => 20,
 								'unit' => 'px',
 							] ),
-							'z-index' => String_Prop_Type::generate( '2' ),
+							'z-index' => Number_Prop_Type::generate( 2 ),
 							'gap' => Size_Prop_Type::generate( [
 								'size' => 8,
 								'unit' => 'px',

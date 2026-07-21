@@ -7,6 +7,8 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -78,12 +80,19 @@ class Atomic_Background_Video_Content extends Atomic_Element_Base {
 							'display' => String_Prop_Type::generate( 'flex' ),
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
-							'z-index' => String_Prop_Type::generate( '1' ),
+							'z-index' => Number_Prop_Type::generate( 1 ),
 							'width' => Size_Prop_Type::generate( [
 								'size' => 100,
 								'unit' => '%',
 							] ),
-							'flex-grow' => String_Prop_Type::generate( '1' ),
+							'flex' => Flex_Prop_Type::generate( [
+								'flexGrow' => Number_Prop_Type::generate( 1 ),
+								'flexShrink' => Number_Prop_Type::generate( 1 ),
+								'flexBasis' => Size_Prop_Type::generate( [
+									'size' => 0,
+									'unit' => 'px',
+								] ),
+							] ),
 						] )
 				),
 		];
