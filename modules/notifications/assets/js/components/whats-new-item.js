@@ -1,12 +1,10 @@
-import { Box, Button, Chip, Divider, Link, Typography } from '@elementor/ui';
+import { Box, Button, Divider, Link, Typography } from '@elementor/ui';
 import { WhatsNewItemTopicLine } from './whats-new-item-topic-line';
 import { WrapperWithLink } from './wrapper-with-link';
 import { WhatsNewItemMedia } from './whats-new-item-media';
 import { WhatsNewItemChips } from './whats-new-item-chips';
 
-export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, featured = false } ) => {
-	const hasMedia = item.imageSrc || item.gifSrc || item.youtubeEmbedId;
-
+export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 	return (
 		<Box
 			key={ itemIndex }
@@ -14,7 +12,6 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, feature
 			flexDirection="column"
 			sx={ {
 				pt: 2,
-				...( featured && { px: 1 } ),
 			} }
 		>
 			{ ( item.topic || item.date ) && (
@@ -25,26 +22,18 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, feature
 			) }
 			<WrapperWithLink link={ item.link }>
 				<Typography
-					variant={ featured ? 'h6' : 'subtitle1' }
-					sx={ { pb: 2 } }
+					variant="subtitle1"
+					sx={ {
+						pb: 2,
+					} }
 				>
 					{ item.title }
 				</Typography>
 			</WrapperWithLink>
-			<Box sx={ { position: 'relative' } }>
-				<WhatsNewItemMedia item={ item } />
-				{ featured && item.chipPlan && hasMedia && (
-					<Chip
-						label={ item.chipPlan }
-						color="promotion"
-						size="small"
-						sx={ { position: 'absolute', top: 8, insetInlineStart: 8 } }
-					/>
-				) }
-			</Box>
+			<WhatsNewItemMedia item={ item } />
 
 			<WhatsNewItemChips
-				chipPlan={ featured && hasMedia ? null : item.chipPlan }
+				chipPlan={ item.chipPlan }
 				chipTags={ item.chipTags }
 				itemIndex={ itemIndex }
 			/>
@@ -84,7 +73,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, feature
 						variant="contained"
 						size="small"
 						color="promotion"
-						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : undefined }
+						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : () => {} }
 					>
 						{ item.cta }
 					</Button>
@@ -106,5 +95,4 @@ WhatsNewItem.propTypes = {
 	itemIndex: PropTypes.number.isRequired,
 	itemsLength: PropTypes.number.isRequired,
 	setIsOpen: PropTypes.func.isRequired,
-	featured: PropTypes.bool,
 };

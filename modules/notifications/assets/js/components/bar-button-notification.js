@@ -1,22 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { WhatsNew } from './whats-new';
 import { Badge } from '@elementor/ui';
 
-export const BarButtonNotification = ( { children } ) => {
+export const BarButtonNotification = ( props ) => {
+	const { defaultIsRead } = props;
+
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ unreadCount, setUnreadCount ] = useState( parseInt( window.elementorNotifications?.unread_count, 10 ) || 0 );
+	const [ isRead, setIsRead ] = useState( defaultIsRead );
 
-	useEffect( () => {
-		const handler = () => setUnreadCount( ( prev ) => Math.max( 0, prev - 1 ) );
-		window.addEventListener( 'e-notification-item-seen', handler );
-		return () => window.removeEventListener( 'e-notification-item-seen', handler );
-	}, [] );
-
-	const handleOpen = ( event ) => {
-		event.preventDefault();
-		setIsOpen( true );
-	};
-
+	// TODO: This is a temporary solution until we have a proper admin bar component.
 	return (
 		<>
 			<button
@@ -25,25 +17,32 @@ export const BarButtonNotification = ( { children } ) => {
 					backgroundColor: 'transparent',
 					border: 'none',
 				} }
-				onClick={ handleOpen }
+				onClick={ ( event ) => {
+					event.preventDefault();
+
+					setIsOpen( true );
+				} }
 			>
 				<Badge
 					color="primary"
-					badgeContent={ unreadCount }
-					invisible={ 0 === unreadCount }
-					sx={ { mx: 0.5 } }
+					variant="dot"
+					invisible={ isRead }
+					sx={ {
+						mx: 0.5,
+					} }
 				>
 					<i className="e-admin-top-bar__bar-button-icon eicon-speakerphone"></i>
 				</Badge>
 				<span className="e-admin-top-bar__bar-button-title">
-					{ children }
+					{ props.children }
 				</span>
 			</button>
-			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } />
+			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } setIsRead={ setIsRead } />
 		</>
 	);
 };
 
 BarButtonNotification.propTypes = {
-	children: PropTypes.node.isRequired,
+	defaultIsRead: PropTypes.bool,
+	children: PropTypes.any.isRequired,
 };
