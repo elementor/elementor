@@ -54,7 +54,7 @@ class Composition_Persister {
 			$root_ids[] = $this->find_last_root_id( $tree, $parent_id );
 		}
 
-		$save_result = $this->save_to_draft( $document, $tree );
+		$save_result = $this->mutator->save_as_draft( $document, $tree );
 		if ( is_wp_error( $save_result ) ) {
 			return $save_result;
 		}
@@ -175,16 +175,5 @@ class Composition_Persister {
 				$this->apply_ids_recursive( $child, $child_subtrees[ $index ] );
 			}
 		}
-	}
-
-	private function save_to_draft( Document $document, array $elements ) {
-		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
-			wp_update_post( [
-				'ID' => $document->get_main_id(),
-				'post_status' => 'draft',
-			] );
-		}
-
-		return $document->save( [ 'elements' => $elements ] );
 	}
 }
