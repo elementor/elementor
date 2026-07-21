@@ -37,19 +37,10 @@ jest.mock( '../../../utils/convert-css-to-atomic', () => ( {
 	convertCssToAtomic: jest.fn().mockResolvedValue( { props: {}, customCss: '' } ),
 } ) );
 
-jest.mock( '../../../utils/do-update-element-property', () => {
-	class MockUnsupportedPropertyError extends Error {
-		public readonly elementType: string;
-		public readonly propertyName: string;
-		constructor( elementType: string, propertyName: string ) {
-			super( `Property "${ propertyName }" does not exist on element type "${ elementType }".` );
-			this.name = 'UnsupportedPropertyError';
-			this.elementType = elementType;
-			this.propertyName = propertyName;
-		}
-	}
-	return { UnsupportedPropertyError: MockUnsupportedPropertyError, doUpdateElementProperty: jest.fn() };
-} );
+jest.mock( '../../../utils/do-update-element-property', () => ( {
+	...jest.requireActual( '../../../utils/do-update-element-property' ),
+	doUpdateElementProperty: jest.fn(),
+} ) );
 
 const ELEMENT_ID = 'el-1';
 const ELEMENT_TYPE = 'e-youtube';

@@ -320,8 +320,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		// Act — detection reads the registered widget schemas (a widget is linkable iff its
-		// atomic props schema exposes a `link` prop), so the prompt allowlist can never drift.
+		// Act
 		$linkable = Widget_Context_Helper::get_linkable_widget_types();
 
 		// Assert
@@ -337,7 +336,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$ability = new Build_Composition_Ability();
 
-		// Act — `link` is not a prop on e-divider; it must be skipped, not fail the build.
+		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<e-divider configuration-id="d1"/>',

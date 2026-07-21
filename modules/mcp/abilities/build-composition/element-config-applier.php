@@ -102,8 +102,7 @@ class Element_Config_Applier {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
 
 			if ( null === $canonical ) {
-				// An unknown key (e.g. a `link` on a widget with no link prop) is skipped rather
-				// than failing the whole build, so one stray prop can't discard a valid composition.
+				// Skip unknown keys instead of failing so one stray prop can't discard a valid composition.
 				$warnings[] = sprintf(
 					'[%s] Property "%s" is not supported on element type "%s" and was skipped. Available properties are: %s',
 					$config_id,
