@@ -33,4 +33,16 @@ class Key_Value_Prop_Type extends Object_Prop_Type {
 		}
 		return $value;
 	}
+
+	public function should_persist( $value ): bool {
+		if ( ! is_array( $value['value'] ?? null ) ) {
+			return false;
+		}
+
+		$inner = $value['value'];
+		$key = $inner['key']['value'] ?? '';
+		$inner_value = $inner['value']['value'] ?? '';
+
+		return '' !== $key || '' !== $inner_value;
+	}
 }
