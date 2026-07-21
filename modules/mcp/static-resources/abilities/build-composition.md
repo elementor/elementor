@@ -29,11 +29,11 @@ Some elements have internal tree structures (nesting). When using these elements
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (raw CSS declarations) + classes (global class labels)
 - element_config PropValues require `$$type` matching schema
-- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
+- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type); unknown keys are rejected with a list of valid keys**
 - style is raw CSS (property → value strings); the server converts it to native styles
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
-- LINKS: a `link` prop is supported ONLY on these widgets: {{LINKABLE_WIDGETS}}. On any other widget a `link` is skipped and reported in `warnings` (the composition still builds) — to link a non-linkable element, wrap it in a linkable container. Link PropValue shape: `{ "$$type": "link", "value": { "destination": { "$$type": "url", "value": "https://example.com" }, "isTargetBlank": { "$$type": "boolean", "value": true }, "tag": { "$$type": "string", "value": "a" } } }`
+- NO LINKS in configuration
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 

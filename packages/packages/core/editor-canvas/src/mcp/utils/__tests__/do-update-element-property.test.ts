@@ -8,7 +8,7 @@ import { Schema } from '@elementor/editor-props';
 import { getStylesSchema, getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
-import { doUpdateElementProperty, UnsupportedPropertyError } from '../do-update-element-property';
+import { doUpdateElementProperty } from '../do-update-element-property';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	createElementStyle: jest.fn(),
@@ -106,32 +106,6 @@ describe( 'doUpdateElementProperty', () => {
 		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, propertyValue );
 		expect( updateElementSettings ).not.toHaveBeenCalled();
 		expect( __privateRunCommandSync ).not.toHaveBeenCalled();
-	} );
-
-	it( 'throws UnsupportedPropertyError when the property is not in the element schema', () => {
-		// Arrange
-		const propertyName = 'link';
-
-		// Act
-		let thrown: unknown;
-		try {
-			doUpdateElementProperty( {
-				elementId: ELEMENT_ID,
-				elementType: ELEMENT_TYPE,
-				propertyName,
-				propertyValue: { $$type: 'link', value: {} },
-			} );
-		} catch ( error ) {
-			thrown = error;
-		}
-
-		// Assert
-		expect( thrown ).toBeInstanceOf( UnsupportedPropertyError );
-		expect( ( thrown as UnsupportedPropertyError ).propertyName ).toBe( propertyName );
-		expect( ( thrown as UnsupportedPropertyError ).elementType ).toBe( ELEMENT_TYPE );
-		expect( ( thrown as Error ).message ).toContain( 'does not exist on element type' );
-		expect( Schema.validatePropValue ).not.toHaveBeenCalled();
-		expect( updateElementSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'updates settings when Schema.validatePropValue reports valid PropValue', () => {

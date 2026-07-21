@@ -11,7 +11,6 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -305,6 +304,10 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	public function settings_validation_cases(): array {
 		return [
+			'unknown prop' => [
+				[ 'nonexistent_prop' => [ '$$type' => 'string', 'value' => 'x' ] ],
+				[ 'nonexistent_prop', 'does not exist', 'Available properties', 'e-heading' ],
+			],
 			'scalar instead of envelope' => [
 				[ 'tag' => 'h2' ],
 				[ '$$type', 'PropValue envelope', 'elementor://widgets/schema' ],
@@ -314,54 +317,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				[ '$$type', 'PropValue envelope' ],
 			],
 		];
-	}
-
-	public function test_linkable_widget_types__derived_from_schemas() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$linkable = Widget_Context_Helper::get_linkable_widget_types();
-
-		// Assert
-		$this->assertContains( 'e-button', $linkable );
-		$this->assertContains( 'e-heading', $linkable );
-		$this->assertNotContains( 'e-divider', $linkable );
-	}
-
-	public function test_execute__skips_unsupported_prop_and_warns() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-
-		$ability = new Build_Composition_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<e-divider configuration-id="d1"/>',
-			'element_config' => [
-				'd1' => [
-					'link' => [
-						'$$type' => 'link',
-						'value' => [
-							'destination' => [ '$$type' => 'url', 'value' => 'https://example.com' ],
-						],
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
-		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['root_element_ids'] );
-		$this->assertNotEmpty( $result['warnings'] );
-
-		$warnings = implode( ' ', $result['warnings'] );
-		$this->assertStringContainsString( 'link', $warnings );
-		$this->assertStringContainsString( 'skipped', $warnings );
-		$this->assertStringContainsString( 'e-divider', $warnings );
 	}
 
 	/**
