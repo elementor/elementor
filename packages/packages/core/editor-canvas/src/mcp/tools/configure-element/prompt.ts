@@ -2,13 +2,11 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
-import { getLinkableWidgetTypes } from '../../utils/element-data-util';
 
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
 export const generatePrompt = () => {
 	const configureElementToolPrompt = toolPrompts( 'configure-element' );
-	const linkableWidgetTypes = getLinkableWidgetTypes().join( ', ' );
 
 	configureElementToolPrompt.description( `
 Configure an existing element on the page.
@@ -119,9 +117,9 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 V4 only: If MCP fails, give manual steps using V4 UI.
 
 V4 Editor structure:
-Panel tabs: General (→ Settings section: ID, Tag, and Link only on linkable widgets), Style, Interactions.
+Panel tabs: General (→ Settings section: ID, Tag, and Link where the widget supports it), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
-Note: \`link\` is supported ONLY on these types: ${ linkableWidgetTypes }. Do NOT send \`link\` to any other widget — it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
+Note: \`link\` is valid only when the element's PropType schema (which you must already have) includes a \`link\` property. Sending \`link\` to a widget whose schema lacks it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
 ` );
 
 	return configureElementToolPrompt.prompt();

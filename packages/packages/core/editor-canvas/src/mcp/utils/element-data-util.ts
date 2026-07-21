@@ -31,19 +31,6 @@ export function getWidgetVersion( config: V1ElementConfig | undefined ): string 
 	return config?.atomic_props_schema ? 'v4' : 'v3';
 }
 
-const LINK_PROP_KEY = 'link';
-
-export function getLinkableWidgetTypes(): string[] {
-	const cache = getWidgetsCache() ?? {};
-
-	return Object.keys( cache )
-		.filter( ( widgetType ) => {
-			const schema = cache[ widgetType ]?.atomic_props_schema;
-			return isWidgetAvailableForLLM( cache[ widgetType ] ) && !! schema && LINK_PROP_KEY in schema;
-		} )
-		.sort();
-}
-
 export function getAvailableWidgets(): AvailableWidget[] {
 	const cache = getWidgetsCache() ?? {};
 
