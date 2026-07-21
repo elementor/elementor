@@ -229,16 +229,47 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data );
-		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
-		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
-			$data['interactions'] = $this->transform_interactions_for_save( $data['interactions'] );
-		} else {
-			$data['interactions'] = [];
-		}
+		$this->set_data_field_for_save(
+			$data,
+			'settings',
+			$this->parse_atomic_settings( $data['settings'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'styles',
+			$this->parse_atomic_styles( $data )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'editor_settings',
+			$this->parse_editor_settings( $data['editor_settings'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'interactions',
+			$this->transform_interactions_for_save( $data['interactions'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'elements',
+			$data['elements'] ?? []
+		);
+
 		return $data;
+	}
+
+	private function set_data_field_for_save( array &$data, string $key, $value ): void {
+		if ( ! empty( $value ) ) {
+			$data[ $key ] = $value;
+			return;
+		}
+
+		unset( $data[ $key ] );
 	}
 
 	private function transform_interactions_for_save( $interactions ) {

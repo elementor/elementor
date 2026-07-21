@@ -45,12 +45,30 @@ class Html_V2_Prop_Type extends Object_Prop_Type {
 		return true;
 	}
 
+	public function should_persist( $value ): bool {
+		if ( ! is_array( $value['value'] ?? null ) ) {
+			return false;
+		}
+
+		$inner = $value['value'];
+
+		if ( ! empty( $inner['children'] ) ) {
+			return true;
+		}
+
+		$content = $inner['content'] ?? null;
+
+		return is_string( $content ) && '' !== $content;
+	}
+
 	public function sanitize_value( $value ) {
 		if ( is_string( $value['content'] ) ) {
 			$value['content'] = $this->sanitize_html_content( $value['content'] );
 		}
 
-		$value['children'] = $this->sanitize_children( $value['children'] );
+		$value['children'] = isset( $value['children'] ) && is_array( $value['children'] )
+			? $this->sanitize_children( $value['children'] )
+			: [];
 
 		return $value;
 	}

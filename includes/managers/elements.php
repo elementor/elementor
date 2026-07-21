@@ -162,6 +162,10 @@ class Elements_Manager {
 	 * @return bool Whether the element type was registered.
 	 */
 	public function register_element_type( Element_Base $element ) {
+		if ( is_null( $this->_element_types ) ) {
+			$this->init_elements();
+		}
+
 		$this->_element_types[ $element->get_name() ] = $element;
 
 		return true;
