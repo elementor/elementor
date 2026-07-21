@@ -13,6 +13,7 @@ use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
+use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
@@ -38,6 +39,7 @@ class Mcp_Proxy_REST_API {
 			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
 			'build-composition' => fn( array $input ) => ( new Build_Composition_Ability() )->execute( $input ),
 			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
+			'manage-elements' => fn( array $input ) => ( new Manage_Elements_Ability() )->execute( $input ),
 			'list-resources' => fn( array $input ) => ( new List_Resources_Ability() )->execute( $input ),
 			'read-resource' => fn( array $input ) => ( new Read_Resource_Ability() )->execute( $input ),
 		];
