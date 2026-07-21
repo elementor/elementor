@@ -5,6 +5,7 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
+use Elementor\Core\Common\Modules\EventsManager\RestApi\Events_Proxy_REST_API;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
@@ -20,6 +21,12 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'editor_events';
 	const DEFAULT_SESSION_RECORDING_PERCENT = 0;
 	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
+
+	public function __construct() {
+		parent::__construct();
+
+		( new Events_Proxy_REST_API() )->register_hooks();
+	}
 
 	public function get_name() {
 		return 'events-manager';
@@ -56,6 +63,8 @@ class Module extends BaseModule {
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
+			'proxy_api_host' => rest_url( Events_Proxy_REST_API::API_NAMESPACE . '/' . Events_Proxy_REST_API::API_BASE . '/api' ),
+			'proxy_lib_base_path' => rest_url( Events_Proxy_REST_API::API_NAMESPACE . '/' . Events_Proxy_REST_API::API_BASE . '/libs/' ),
 			'flags_enabled' => $is_flags_enabled,
 			'user_id' => self::get_user_id(),
 			'session_recording_percent' => $session_recording_percent,
