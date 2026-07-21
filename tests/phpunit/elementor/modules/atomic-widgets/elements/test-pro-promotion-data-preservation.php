@@ -29,21 +29,10 @@ class Test_Pro_Promotion_Data_Preservation extends Elementor_Test_Base {
 	public function tearDown(): void {
 		Plugin::$instance->elements_manager->unregister_element_type( Atomic_Form_Promotion::get_type() );
 
-		$this->reset_elements_manager_types();
-
 		remove_all_filters( 'elementor/document/save/data' );
 		remove_all_filters( 'elementor/atomic/form/email_action_count' );
 
 		parent::tearDown();
-	}
-
-	private function reset_elements_manager_types(): void {
-		$reflection = new \ReflectionClass( Plugin::$instance->elements_manager );
-		$property = $reflection->getProperty( '_element_types' );
-		$property->setAccessible( true );
-		$property->setValue( Plugin::$instance->elements_manager, null );
-
-		Plugin::$instance->elements_manager->get_element_types();
 	}
 
 	public function test_form_children_and_settings_are_restored_across_a_save() {
@@ -97,6 +86,6 @@ class Test_Pro_Promotion_Data_Preservation extends Elementor_Test_Base {
 
 		// Assert.
 		$saved = $document->get_elements_data();
-		$this->assertArrayNotHasKey( 'elements', $saved[0] );
+		$this->assertSame( [], $saved[0]['elements'] );
 	}
 }

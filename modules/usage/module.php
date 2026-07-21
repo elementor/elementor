@@ -488,16 +488,20 @@ class Module extends BaseModule {
 	 */
 	private function get_calculator_registry(): Element_Usage_Calculator_Registry {
 		static $registry = null;
+		static $atomic_was_active = null;
 
-		if ( null === $registry ) {
+		$atomic_is_active = Atomic_Widgets_Module::is_active();
+
+		if ( null === $registry || $atomic_was_active !== $atomic_is_active ) {
 			$calculators = [];
 
-			if ( Atomic_Widgets_Module::is_active() ) {
+			if ( $atomic_is_active ) {
 				$calculators[] = new Atomic_Element_Usage_Calculator();
 			}
 
 			$registry = new Element_Usage_Calculator_Registry( $calculators );
 			$registry->set_fallback( new Legacy_Element_Usage_Calculator() );
+			$atomic_was_active = $atomic_is_active;
 		}
 
 		return $registry;

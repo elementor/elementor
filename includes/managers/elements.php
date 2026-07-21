@@ -162,9 +162,7 @@ class Elements_Manager {
 	 * @return bool Whether the element type was registered.
 	 */
 	public function register_element_type( Element_Base $element ) {
-		if ( is_null( $this->_element_types ) ) {
-			$this->init_elements();
-		}
+		$this->ensure_element_types_initialized();
 
 		$this->_element_types[ $element->get_name() ] = $element;
 
@@ -208,9 +206,7 @@ class Elements_Manager {
 	 *                             types, or null if element does not exist.
 	 */
 	public function get_element_types( $element_name = null ) {
-		if ( is_null( $this->_element_types ) ) {
-			$this->init_elements();
-		}
+		$this->ensure_element_types_initialized();
 
 		if ( null !== $element_name ) {
 			return isset( $this->_element_types[ $element_name ] ) ? $this->_element_types[ $element_name ] : null;
@@ -262,6 +258,12 @@ class Elements_Manager {
 	 * @since 2.0.0
 	 * @access private
 	 */
+	private function ensure_element_types_initialized(): void {
+		if ( is_null( $this->_element_types ) || ! isset( $this->_element_types['section'] ) ) {
+			$this->init_elements();
+		}
+	}
+
 	private function init_elements() {
 		$this->_element_types = [];
 

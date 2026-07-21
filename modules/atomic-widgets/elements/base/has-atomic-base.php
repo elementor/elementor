@@ -254,12 +254,6 @@ trait Has_Atomic_Base {
 			$this->transform_interactions_for_save( $data['interactions'] ?? [] )
 		);
 
-		$this->set_data_field_for_save(
-			$data,
-			'elements',
-			$data['elements'] ?? []
-		);
-
 		return $data;
 	}
 
