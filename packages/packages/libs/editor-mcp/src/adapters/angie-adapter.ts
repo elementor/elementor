@@ -1,7 +1,6 @@
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 
 import { type getRegisteredMcpServers as _getRegisteredMcpServers } from '../mcp-registry';
-import { isLegacyAngieAvailable } from '../utils/is-angie-available';
 import { toMCPTitle } from '../utils/to-mcp-title';
 import { type IMcpRegistrationAdapter } from './types';
 
@@ -14,10 +13,7 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	) {}
 
 	async activate(): Promise< void > {
-		if ( isLegacyAngieAvailable() ) {
-			await this.sdk.waitForReady();
-		}
-
+		await this.sdk.waitForReady();
 		await this.registerEntries( this.getRegisteredMcpServers(), MAX_RETRIES );
 	}
 

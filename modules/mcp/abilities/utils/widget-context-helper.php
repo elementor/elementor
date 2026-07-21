@@ -16,7 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Context_Helper {
 
-	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes' ];
+	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes', 'display-conditions' ];
+
+	const LINK_PROP_KEY = 'link';
 
 	const EXCLUDED_WIDGET_TITLE = 'Component';
 
@@ -56,6 +58,26 @@ class Widget_Context_Helper {
 		$instance = Atomic_Elements_Utils::get_element_instance( $widget_type );
 
 		return $instance ? $instance->get_config() : null;
+	}
+
+	/**
+	 * LLM-eligible widget types whose atomic props schema exposes a `link` prop.
+	 * Derived from the registered widget schemas so the list can never drift.
+	 *
+	 * @return string[]
+	 */
+	public static function get_linkable_widget_types(): array {
+		$linkable = [];
+
+		foreach ( self::get_llm_eligible_widgets() as $widget_type => $config ) {
+			if ( isset( $config['atomic_props_schema'][ self::LINK_PROP_KEY ] ) ) {
+				$linkable[] = $widget_type;
+			}
+		}
+
+		sort( $linkable );
+
+		return $linkable;
 	}
 
 	public static function is_widget_eligible_for_llm( array $config ): bool {
