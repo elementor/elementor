@@ -15,7 +15,7 @@ jest.mock( '@elementor/query', () => {
 		QueryClient: jest.fn().mockImplementation( () => ( {} ) ),
 		QueryClientProvider,
 	};
-} );
+}, { virtual: true } );
 
 jest.mock( 'elementor/modules/notifications/assets/js/components/whats-new-top-bar', () => ( {
 	WhatsNewTopBar: () => <div />,
