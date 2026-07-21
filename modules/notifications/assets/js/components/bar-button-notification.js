@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { WhatsNew } from './whats-new';
 import { Badge } from '@elementor/ui';
 
-export const BarButtonNotification = ( props ) => {
+export const BarButtonNotification = ( { children } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ unreadCount, setUnreadCount ] = useState( parseInt( window.elementorNotifications?.unread_count, 10 ) || 0 );
 
@@ -36,7 +36,7 @@ export const BarButtonNotification = ( props ) => {
 					<i className="e-admin-top-bar__bar-button-icon eicon-speakerphone"></i>
 				</Badge>
 				<span className="e-admin-top-bar__bar-button-title">
-					{ props.children }
+					{ children }
 				</span>
 			</button>
 			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } />
@@ -45,5 +45,5 @@ export const BarButtonNotification = ( props ) => {
 };
 
 BarButtonNotification.propTypes = {
-	children: PropTypes.any.isRequired,
+	children: PropTypes.node.isRequired,
 };
