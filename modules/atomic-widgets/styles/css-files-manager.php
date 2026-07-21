@@ -47,7 +47,6 @@ class CSS_Files_Manager {
 			if ( $this->has_non_empty_file( $path ) ) {
 				return $this->create_style_file( $handle, $path, $media );
 			}
-
 		}
 
 		$css = $get_css();
