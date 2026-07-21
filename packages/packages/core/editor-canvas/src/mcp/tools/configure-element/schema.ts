@@ -36,10 +36,4 @@ export const outputSchema = {
 		.describe(
 			'Whether the configuration change was successful, only if propertyName and propertyValue are provided'
 		),
-	warnings: z
-		.string()
-		.describe(
-			'Non-fatal notices. Present when some props were skipped because they are not in the element schema (e.g. a "link" on a widget with no link prop). Other changes were still applied.'
-		)
-		.optional(),
 };

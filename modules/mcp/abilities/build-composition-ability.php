@@ -19,7 +19,6 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -123,9 +122,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$variables_service = $this->create_variables_service();
 
 		$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
-		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
-		if ( $config_result['error'] ) {
-			return $config_result['error'];
+		$config_error = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
+		if ( $config_error ) {
+			return $config_error;
 		}
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
@@ -140,10 +139,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $style_result['error'];
 		}
 
-		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'] );
-
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $style_result['warnings'], $mode, [] );
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
@@ -154,14 +151,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $style_result['warnings'], $mode, $persisted['removed_ids'] );
 	}
 
 	private function get_ability_description(): string {
-		$prompt = Prompt_Loader::load( 'build-composition' );
-		$linkable_widgets = implode( ', ', Widget_Context_Helper::get_linkable_widget_types() );
-
-		return str_replace( '{{LINKABLE_WIDGETS}}', $linkable_widgets, $prompt );
+		return Prompt_Loader::load( 'build-composition' );
 	}
 
 	private function get_output_schema(): array {
@@ -188,11 +182,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'llm_instructions' => [
 					'type' => 'string',
 					'description' => 'Next-step instructions for the LLM.',
-				],
-				'warnings' => [
-					'type' => 'array',
-					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices, e.g. props skipped because the target widget does not support them, or CSS that fell back to custom_css. The composition was still built.',
 				],
 				'removed_element_ids' => [
 					'type' => 'array',
