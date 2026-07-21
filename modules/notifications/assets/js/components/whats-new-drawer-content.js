@@ -46,9 +46,8 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 	}
 
 	const featuredItems = items.filter( ( item ) => item.featured );
-	const alsoNewItems = featuredItems.length > 0 ? items.filter( ( item ) => ! item.featured ) : [];
-	const regularItems = featuredItems.length > 0 ? [] : items;
-	const listLabel = alsoNewItems[ 0 ]?.listLabel ?? null;
+	const nonFeaturedItems = items.filter( ( item ) => ! item.featured );
+	const listLabel = items.find( ( item ) => item.listLabel )?.listLabel ?? null;
 
 	return (
 		<>
@@ -62,7 +61,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 					featured={ true }
 				/>
 			) ) }
-			{ alsoNewItems.length > 0 && (
+			{ featuredItems.length > 0 && nonFeaturedItems.length > 0 && (
 				<>
 					{ listLabel
 						? (
@@ -78,7 +77,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 						)
 						: <Divider sx={ { my: 1.5 } } />
 					}
-					{ alsoNewItems.map( ( item, index ) => (
+					{ nonFeaturedItems.map( ( item, index ) => (
 						<WhatsNewItemCollapsed
 							key={ item.id }
 							item={ item }
@@ -90,12 +89,12 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 					) ) }
 				</>
 			) }
-			{ regularItems.map( ( item, itemIndex ) => (
+			{ 0 === featuredItems.length && nonFeaturedItems.map( ( item, itemIndex ) => (
 				<WhatsNewItem
 					key={ item.id }
 					item={ item }
 					itemIndex={ itemIndex }
-					itemsLength={ regularItems.length }
+					itemsLength={ nonFeaturedItems.length }
 					setIsOpen={ setIsOpen }
 				/>
 			) ) }
