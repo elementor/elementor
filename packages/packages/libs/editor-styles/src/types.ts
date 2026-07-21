@@ -9,6 +9,14 @@ export type ClassState =
 	| {
 			name: 'disabled';
 			value: 'e--disabled';
+	  }
+	| {
+			name: 'playing';
+			value: 'e--playing';
+	  }
+	| {
+			name: 'paused';
+			value: 'e--paused';
 	  };
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';

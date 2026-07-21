@@ -113,6 +113,11 @@ use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Content\Atomic_Background_Video_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Controls\Atomic_Background_Video_Controls;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
@@ -143,6 +148,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_BACKGROUND_VIDEO = 'e_background_video';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
@@ -246,6 +252,15 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_BACKGROUND_VIDEO,
+			'title' => esc_html__( 'Background Video', 'elementor' ),
+			'description' => esc_html__( 'Enable the Background Video element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
 		$migrations_affecting_features = [];
@@ -309,6 +324,14 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tab() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BACKGROUND_VIDEO ) ) {
+			$elements_manager->register_element_type( new Atomic_Background_Video() );
+			$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
+			$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
+			$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
+			$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
+		}
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
@@ -484,6 +507,13 @@ class Module extends BaseModule {
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
+			'.e-background-video { position: relative; overflow: hidden; }',
+			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1; pointer-events: none; }',
+			'.e-background-video__content > * { pointer-events: auto; }',
+			'.e-background-video__controls { z-index: 2; pointer-events: auto; }',
+			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
+			'.e-background-video__button--hidden { display: none; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
