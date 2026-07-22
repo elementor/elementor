@@ -148,7 +148,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const EXPERIMENT_BACKGROUND_VIDEO = 'e_background_video';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
@@ -253,15 +252,6 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_BACKGROUND_VIDEO,
-			'title' => esc_html__( 'Background Video', 'elementor' ),
-			'description' => esc_html__( 'Enable the Background Video element.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
 		$migrations_affecting_features = [];
@@ -313,10 +303,6 @@ class Module extends BaseModule {
 	 * re-append its config last in the initial document's widget list that seeds the editor cache.
 	 */
 	private function move_background_video_to_panel_end( $settings ) {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BACKGROUND_VIDEO ) ) {
-			return $settings;
-		}
-
 		$type = Atomic_Background_Video::get_element_type();
 
 		if ( empty( $settings['initial_document']['widgets'][ $type ] ) ) {
@@ -356,13 +342,11 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BACKGROUND_VIDEO ) ) {
-			$elements_manager->register_element_type( new Atomic_Background_Video() );
-			$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
-			$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
-			$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
-			$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
-		}
+		$elements_manager->register_element_type( new Atomic_Background_Video() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
