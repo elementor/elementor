@@ -41,7 +41,7 @@ class Test_Key_Value_Prop_Type extends TestCase {
 		$this->assertTrue( $result );
 	}
 
-	public function test_should_persist__true_when_value_is_set() {
+	public function test_should_persist__false_when_only_value_is_set() {
 		// Arrange.
 		$prop_type = Key_Value_Prop_Type::make();
 
@@ -52,7 +52,7 @@ class Test_Key_Value_Prop_Type extends TestCase {
 		] ) );
 
 		// Assert.
-		$this->assertTrue( $result );
+		$this->assertFalse( $result );
 	}
 
 	public function test_sanitize__removes_empty_key_value_prop() {

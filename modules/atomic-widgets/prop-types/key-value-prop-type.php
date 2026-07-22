@@ -41,8 +41,7 @@ class Key_Value_Prop_Type extends Object_Prop_Type {
 
 		$inner = $value['value'];
 		$key = $inner['key']['value'] ?? '';
-		$inner_value = $inner['value']['value'] ?? '';
 
-		return '' !== $key || '' !== $inner_value;
+		return '' !== $key;
 	}
 }

@@ -4,7 +4,7 @@
   "license": "GPL-3.0-or-later",
   "engines": {
     "node": ">=24.15.0",
-    "npm": ">=11.12.1"
+    "npm": ">=11.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.6.0",
