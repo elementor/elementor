@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     '<cssProp>'    => '<value>',
  *     ...
  *     '__custom_css' => '<decoded raw>',   // only if present
- *     '__variants'   => [ <non-desktop variants raw> ],  // only if present
+ *     '__variants'   => [ { meta, <cssProp>: <value>, __custom_css? }, ... ],
  *   ]
  */
 class Local_Style_Serializer {
@@ -52,10 +52,31 @@ class Local_Style_Serializer {
 		}
 
 		if ( ! empty( $other_variants ) ) {
-			$projected['__variants'] = $other_variants;
+			$projected['__variants'] = array_map(
+				[ self::class, 'serialize_variant' ],
+				$other_variants
+			);
 		}
 
 		return $projected;
+	}
+
+	private static function serialize_variant( array $variant ): array {
+		$serialized = [
+			'meta' => $variant['meta'] ?? [],
+		];
+
+		foreach ( Style_Props_To_Css::to_map( $variant['props'] ?? [] ) as $prop => $value ) {
+			$serialized[ $prop ] = (string) $value;
+		}
+
+		$custom_css = Utils::decode_string( $variant['custom_css']['raw'] ?? '', '' );
+
+		if ( '' !== $custom_css ) {
+			$serialized['__custom_css'] = $custom_css;
+		}
+
+		return $serialized;
 	}
 
 	private static function find_local_style( array $styles ): ?array {

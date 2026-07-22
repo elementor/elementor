@@ -345,7 +345,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		$this->assertSame( 'container1', $root['id'] );
 		$this->assertSame(
-			[ 'padding' => [ '$$type' => 'size', 'value' => '20px' ] ],
+			[ 'padding' => '20px' ],
 			$root['settings']
 		);
 		$this->assertSame( 's-abc', $root['styles']['__style_id'] );
@@ -355,7 +355,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$child = $root['elements'][0];
 		$this->assertSame( 'widget1', $child['id'] );
 		$this->assertSame(
-			[ 'title' => [ '$$type' => 'string', 'value' => 'Hello' ] ],
+			[ 'title' => 'Hello' ],
 			$child['settings']
 		);
 		$this->assertSame( [], $child['styles'] );
@@ -401,7 +401,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$node = $result['elements'][0];
 		$this->assertSame(
-			[ 'classes' => [ '$$type' => 'classes', 'value' => [ 'g-abc' ] ] ],
+			[ 'classes' => [ 'g-abc' ] ],
 			$node['settings']
 		);
 		$this->assertSame( [], $node['styles'] );

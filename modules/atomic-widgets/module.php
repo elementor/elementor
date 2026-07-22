@@ -9,6 +9,11 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Ajax\Render_Element_Action;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Envelope_Serializers_Registry;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Envelope_Values_Serializer;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Resolvers\Dynamic_Envelope_Serializer;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Resolvers\Html_V3_Envelope_Serializer;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Resolvers\Identity_Envelope_Serializer;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
@@ -469,6 +474,26 @@ class Module extends BaseModule {
 		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
 
 		return $resolver;
+	}
+
+	public function get_settings_envelope_values_serializer(): Envelope_Values_Serializer {
+		static $serializer = null;
+
+		if ( null !== $serializer ) {
+			return $serializer;
+		}
+
+		$registry = new Envelope_Serializers_Registry();
+
+		do_action( 'elementor/atomic-widgets/settings-envelope-serializers/register', $registry );
+
+		$serializer = new Envelope_Values_Serializer( $registry );
+
+		$registry->register_fallback( new Identity_Envelope_Serializer() );
+		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Envelope_Serializer( $serializer ) );
+		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Envelope_Serializer( $serializer ) );
+
+		return $serializer;
 	}
 
 	public static function is_active(): bool {
