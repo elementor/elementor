@@ -111,7 +111,7 @@ class Events_Proxy_REST_API {
 		return $this->forward_request( $url, $request, false );
 	}
 
-	private function forward_request( string|bool $url, \WP_REST_Request $request, bool $async = true ): \WP_REST_Response {
+	private function forward_request( string $url, \WP_REST_Request $request, bool $async = true ): \WP_REST_Response {
 		$body = $request->get_body();
 
 		if ( strlen( $body ) > self::MAX_BODY_BYTES ) {
