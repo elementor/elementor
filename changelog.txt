@@ -1,5 +1,22 @@
 == Changelog ==
 
+= 4.2.12 - 2026-07-20 =
+
+* New: Introducing Grid for building advanced row and column layouts - Atomic Editor
+* Tweak: Improved Angie layout, composition, and design system creation from prompts and images - Atomic Editor
+* Tweak: Added dynamic tag support for AI-generated element properties
+* Fix: VideoPress URLs do not display on the frontend when used in Background Video and Lightbox dynamic tags ([#24467](https://github.com/elementor/elementor/issues/24467))
+* Fix: Grid containers can cause slower Editor performance on complex pages
+* Fix: Filters do not work as expected in Website Templates
+* Fix: The Save as Template button is unreachable when the modal does not fit the browser viewport
+* Fix: AI-related Editor features show a console error when required services are not available yet
+* Fix: Missing classes can affect the editing panel when they are still applied to elements - Atomic Editor
+* Fix: Unsaved Class changes are not detected when switching between Design System tabs - Atomic Editor
+* Fix: Custom Font names with spaces or special characters do not work in the Font Family control - Atomic Editor
+* Fix: The drop indicator is missing when dragging Atomic elements inside row Containers - Atomic Editor
+* Fix: Global Classes can be shared across multiple Kits instead of being separated per Kit - Atomic Editor
+* Fix: Angie cannot update text in some Atomic elements - Atomic Editor
+
 = 4.2.0 - 2026-07-20 =
 
 * New: Introducing Grid for building advanced row and column layouts - Atomic Editor
