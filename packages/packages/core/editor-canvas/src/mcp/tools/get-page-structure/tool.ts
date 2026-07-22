@@ -17,8 +17,9 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: 'get-page-structure',
 		description:
-			'Returns the Elementor element tree (widgets, containers, and nested content) for a post or page. ' +
-			'If no postId is provided, uses the currently open document. Only works for posts saved with Elementor.',
+			'Returns a lean Elementor element tree skeleton (id, elType, widgetType, nested elements) for a post or page. ' +
+			'If no postId is provided, uses the currently open document. Optionally scope to a subtree with elementId. ' +
+			"Set includeContent=true (requires elementId) to also return each node's settings and styles.",
 		schema: {
 			postId: z
 				.number()
@@ -26,11 +27,25 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 				.describe(
 					'WordPress post ID of the Elementor document. If omitted, uses the currently open document.'
 				),
+			elementId: z
+				.string()
+				.optional()
+				.describe( 'If provided, returns only the subtree rooted at that element id.' ),
+			includeContent: z
+				.boolean()
+				.optional()
+				.describe(
+					"If true, includes each node's settings and styles (same shape build-composition accepts as input). Requires elementId."
+				),
 		},
 		outputSchema: {
-			elements: z.array( z.any() ).describe( 'Root-level Elementor elements for the document.' ),
+			elements: z
+				.array( z.any() )
+				.describe(
+					'Skeleton of Elementor elements (id, elType, widgetType, nested elements). When includeContent is true, each node also includes settings and styles.'
+				),
 		},
-		handler: async ( { postId } ) => {
+		handler: async ( { postId, elementId, includeContent } ) => {
 			const resolvedPostId = postId ?? getCurrentDocument()?.id;
 
 			if ( ! resolvedPostId ) {
@@ -42,6 +57,8 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 					tool: 'get-page-structure',
 					input: {
 						post_id: resolvedPostId,
+						...( elementId ? { element_id: elementId } : {} ),
+						...( includeContent ? { include_content: true } : {} ),
 					},
 				} );
 

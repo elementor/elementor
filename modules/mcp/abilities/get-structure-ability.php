@@ -2,7 +2,11 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,14 +21,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns the Elementor element tree (widgets, containers, and nested content) for a single post or page ID. Provide the post ID or Post URL (ask the user if unknown). Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Root-level Elementor elements for the document.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, nested elements). When include_content is true, each node also includes settings and styles.',
 					],
 				],
 			],
@@ -46,6 +50,15 @@ class Get_Structure_Ability extends Abstract_Ability {
 						'type' => 'integer',
 						'description' => 'WordPress post ID of the Elementor document.',
 					],
+					'element_id' => [
+						'type' => 'string',
+						'description' => 'Optional. If provided, returns only the subtree rooted at that element id.',
+					],
+					'include_content' => [
+						'type' => 'boolean',
+						'default' => false,
+						'description' => 'If true, includes each node\'s settings and styles (in the same shape build-composition accepts as input). Requires element_id.',
+					],
 				],
 			]
 		);
@@ -63,10 +76,81 @@ class Get_Structure_Ability extends Abstract_Ability {
 		}
 
 		$elements = $document->get_elements_data();
+		$elements = is_array( $elements ) ? $elements : [];
+
+		$element_id = isset( $input['element_id'] ) ? (string) $input['element_id'] : '';
+		$include_content = ! empty( $input['include_content'] );
+
+		if ( $include_content && '' === $element_id ) {
+			return new \WP_Error(
+				'invalid_input',
+				__( 'include_content requires element_id.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		if ( '' !== $element_id ) {
+			$subtree = Utils::find_element_recursive( $elements, $element_id );
+
+			if ( ! $subtree ) {
+				return new \WP_Error(
+					'element_not_found',
+					__( 'Element not found in this document.', 'elementor' ),
+					[ 'status' => \WP_Http::NOT_FOUND ]
+				);
+			}
+
+			$elements = [ $subtree ];
+		}
 
 		return [
-			'elements' => is_array( $elements ) ? $elements : [],
+			'elements' => $this->prune_elements( $elements, $include_content ),
 		];
+	}
+
+	private function prune_elements( array $elements, bool $include_content = false ): array {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content ) {
+			$skeleton = [
+				'id' => $node['id'] ?? null,
+				'elType' => $node['elType'] ?? null,
+			];
+
+			if ( isset( $node['widgetType'] ) ) {
+				$skeleton['widgetType'] = $node['widgetType'];
+			}
+
+			if ( ! empty( $node['elements'] ) ) {
+				$skeleton['elements'] = $node['elements'];
+			}
+
+			if ( $include_content ) {
+				$settings = $node['settings'] ?? [];
+				$props_schema = $this->resolve_props_schema( $node );
+
+				if ( is_array( $settings ) && $props_schema ) {
+					$settings = Atomic_Widgets_Module::instance()
+						->get_settings_envelope_values_serializer()
+						->serialize_map( $settings, $props_schema );
+				}
+
+				$skeleton['settings'] = $settings ?: (object) [];
+				$skeleton['styles']   = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
+			}
+
+			return $skeleton;
+		} );
+	}
+
+	private function resolve_props_schema( array $node ): ?array {
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		$config = Widget_Context_Helper::get_widget_config( (string) $type );
+
+		return $config['atomic_props_schema'] ?? null;
 	}
 
 	private function resolve_post_id( $input ) {
