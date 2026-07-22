@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -113,25 +114,20 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	}
 
 	private function handle_bulk( array $operations ) {
+		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
-		$results_by_index = [];
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) ) {
-				$results_by_index[ $index ] = $this->operation_error(
-					$index,
-					'',
-					'invalid_input',
-					__( 'Invalid operation.', 'elementor' )
-				);
+				$results->add_error( $index, '', 'invalid_input', __( 'Invalid operation.', 'elementor' ) );
 				continue;
 			}
 
 			$translated = $this->translate_operation( $operation );
 
 			if ( is_wp_error( $translated ) ) {
-				$results_by_index[ $index ] = $this->operation_error(
+				$results->add_error(
 					$index,
 					$operation['action'] ?? '',
 					$translated->get_error_code(),
@@ -151,10 +147,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				$batch_result = $this->get_service()->process_batch( $batch_operations, true );
 				$watermark = $batch_result['watermark'] ?? null;
 
-				foreach ( $batch_result['results'] as $batch_index => $result ) {
-					$original_index = $index_map[ $batch_index ];
-					$results_by_index[ $original_index ] = $result;
-				}
+				$this->merge_batch_results( $batch_result['results'], $index_map, $results );
 			} catch ( FatalError $e ) {
 				return new \WP_Error(
 					'unexpected_server_error',
@@ -166,7 +159,13 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			$this->clear_cache();
 		}
 
-		return $this->build_response( $results_by_index, $watermark );
+		$response = $results->to_array();
+
+		if ( null !== $watermark ) {
+			$response['watermark'] = $watermark;
+		}
+
+		return $response;
 	}
 
 	private function translate_operation( array $operation ) {
@@ -174,11 +173,53 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 		switch ( $action ) {
 			case 'create':
-				return $this->translate_create_operation( $operation );
+				$type = $operation['type'] ?? '';
+				$label = $operation['label'] ?? '';
+				$value = $operation['value'] ?? '';
+
+				if ( '' === $type || '' === $label || '' === $value ) {
+					return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
+				}
+
+				return [
+					'type' => 'create',
+					'variable' => [
+						'type' => $type,
+						'label' => $label,
+						'value' => $value,
+					],
+				];
+
 			case 'update':
-				return $this->translate_update_operation( $operation );
+				$id = $operation['id'] ?? '';
+				$label = $operation['label'] ?? '';
+				$value = $operation['value'] ?? '';
+
+				if ( '' === $id || '' === $label || '' === $value ) {
+					return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
+				}
+
+				return [
+					'type' => 'update',
+					'id' => $id,
+					'variable' => [
+						'label' => $label,
+						'value' => $value,
+					],
+				];
+
 			case 'delete':
-				return $this->translate_delete_operation( $operation );
+				$id = $operation['id'] ?? '';
+
+				if ( '' === $id ) {
+					return $this->bad_request( __( 'Delete requires id.', 'elementor' ) );
+				}
+
+				return [
+					'type' => 'delete',
+					'id' => $id,
+				];
+
 			default:
 				return $this->bad_request( sprintf(
 					/* translators: %s: action name */
@@ -188,99 +229,22 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		}
 	}
 
-	private function translate_create_operation( array $operation ) {
-		$type = $operation['type'] ?? '';
-		$label = $operation['label'] ?? '';
-		$value = $operation['value'] ?? '';
+	private function merge_batch_results( array $batch_results, array $index_map, Bulk_Operations_Result $results ): void {
+		foreach ( $batch_results as $batch_index => $result ) {
+			$original_index = $index_map[ $batch_index ];
 
-		if ( '' === $type || '' === $label || '' === $value ) {
-			return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
-		}
-
-		return [
-			'type' => 'create',
-			'variable' => [
-				'type' => $type,
-				'label' => $label,
-				'value' => $value,
-			],
-		];
-	}
-
-	private function translate_update_operation( array $operation ) {
-		$id = $operation['id'] ?? '';
-		$label = $operation['label'] ?? '';
-		$value = $operation['value'] ?? '';
-
-		if ( '' === $id || '' === $label || '' === $value ) {
-			return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
-		}
-
-		return [
-			'type' => 'update',
-			'id' => $id,
-			'variable' => [
-				'label' => $label,
-				'value' => $value,
-			],
-		];
-	}
-
-	private function translate_delete_operation( array $operation ) {
-		$id = $operation['id'] ?? '';
-
-		if ( '' === $id ) {
-			return $this->bad_request( __( 'Delete requires id.', 'elementor' ) );
-		}
-
-		return [
-			'type' => 'delete',
-			'id' => $id,
-		];
-	}
-
-	private function build_response( array $results_by_index, ?int $watermark ): array {
-		ksort( $results_by_index );
-
-		$results = array_values( $results_by_index );
-		$ok_count = 0;
-		$error_count = 0;
-
-		foreach ( $results as $result ) {
 			if ( 'ok' === ( $result['status'] ?? '' ) ) {
-				$ok_count++;
+				$extra = array_diff_key( $result, array_flip( [ 'index', 'status' ] ) );
+				$results->add_success( $original_index, $result['action'] ?? '', $extra );
 			} else {
-				$error_count++;
+				$results->add_error(
+					$original_index,
+					$result['action'] ?? '',
+					$result['code'] ?? 'unknown_error',
+					$result['message'] ?? ''
+				);
 			}
 		}
-
-		$status = 'ok';
-		if ( $ok_count > 0 && $error_count > 0 ) {
-			$status = 'partial_error';
-		} elseif ( 0 === $ok_count ) {
-			$status = 'error';
-		}
-
-		$response = [
-			'status' => $status,
-			'results' => $results,
-		];
-
-		if ( null !== $watermark ) {
-			$response['watermark'] = $watermark;
-		}
-
-		return $response;
-	}
-
-	private function operation_error( int $index, string $action, string $code, string $message ): array {
-		return [
-			'index' => $index,
-			'action' => $action,
-			'status' => 'error',
-			'code' => $code,
-			'message' => $message,
-		];
 	}
 
 	private function bad_request( string $message ): \WP_Error {

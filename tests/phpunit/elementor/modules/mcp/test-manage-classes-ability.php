@@ -145,11 +145,11 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$this->assertNotEmpty( $result['order'] );
 	}
 
-	public function test_create__maps_duplicated_label_to_per_operation_error() {
+	public function test_create__auto_renames_duplicated_label_with_dup_prefix() {
 		$repository = $this->createMock( Global_Classes_Repository::class );
 		$repository->method( 'all_labels' )->willReturn( [ 'g-existing' => 'hero-heading' ] );
 		$repository->method( 'get_order' )->willReturn( [ 'g-existing' ] );
-		$repository->expects( $this->never() )->method( 'apply_changes' );
+		$repository->expects( $this->once() )->method( 'apply_changes' );
 
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
@@ -159,11 +159,14 @@ class Test_Manage_Classes_Ability extends TestCase {
 			],
 		] ) );
 
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'duplicated_label', $result['results'][0]['code'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'DUP_hero-heading', $result['results'][0]['label'] );
+		$this->assertSame( 'hero-heading', $result['results'][0]['modified_label']['original'] );
+		$this->assertSame( 'DUP_hero-heading', $result['results'][0]['modified_label']['modified'] );
 	}
 
-	public function test_bulk__returns_partial_error_for_duplicate_label_in_batch() {
+	public function test_bulk__auto_renames_duplicate_label_in_batch() {
 		$repository = $this->createMock( Global_Classes_Repository::class );
 		$repository->method( 'all_labels' )->willReturn( [] );
 		$repository->method( 'get_order' )->willReturn( [] );
@@ -182,10 +185,15 @@ class Test_Manage_Classes_Ability extends TestCase {
 			],
 		] ) );
 
-		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['status'] );
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
-		$this->assertSame( 'error', $result['results'][1]['status'] );
-		$this->assertSame( 'duplicated_label', $result['results'][1]['code'] );
+		$this->assertSame( 'hero-heading', $result['results'][0]['label'] );
+		$this->assertArrayNotHasKey( 'modified_label', $result['results'][0] );
+
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertSame( 'DUP_hero-heading', $result['results'][1]['label'] );
+		$this->assertSame( 'hero-heading', $result['results'][1]['modified_label']['original'] );
+		$this->assertSame( 'DUP_hero-heading', $result['results'][1]['modified_label']['modified'] );
 	}
 
 	public function test_create__rejects_when_max_classes_limit_reached() {
