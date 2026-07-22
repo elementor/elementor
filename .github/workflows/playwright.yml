@@ -1,6 +1,12 @@
 name: Playwright
 
 on:
+  workflow_call:
+    inputs:
+      build_artifact_name:
+        type: string
+        required: false
+        default: ''
   merge_group:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
@@ -78,25 +84,37 @@ jobs:
       (github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
       github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch'
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_call' && inputs.build_artifact_name == '')
     name: Playwright build artifact
     uses: ./.github/workflows/build.yml
     with:
       job_name: Playwright build artifact
 
+  prepare-caller-build:
+    name: Prepare build from caller
+    if: github.event_name == 'workflow_call' && inputs.build_artifact_name != ''
+    runs-on: ubuntu-22.04
+    outputs:
+      artifact_name: ${{ inputs.build_artifact_name }}
+    steps:
+      - run: echo "Using caller build artifact ${{ inputs.build_artifact_name }}"
+
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [build-plugin, get-php-version]
+    needs: [build-plugin, prepare-caller-build, get-php-version]
     permissions:
       contents: read
       id-token: write
     if: |
-      github.event.inputs.tag == '' &&
+      (github.event.inputs.tag == '' || github.event.inputs.tag == null) &&
+      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success') &&
       ((github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
       github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch')
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'workflow_call')
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
