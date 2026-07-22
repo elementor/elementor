@@ -142,8 +142,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 						->set_exclusive( true )
 						->set_convert_options( true )
 						->set_size( 'tiny' )
-						->set_full_width( true )
-						->set_meta( [ 'topDivider' => true ] ),
+						->set_full_width( true ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
@@ -168,6 +167,12 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
 							'overflow' => String_Prop_Type::generate( 'hidden' ),
+							// The root is a full-bleed video background; content spacing belongs to the
+							// content area, so override the inherited `.e-con` container padding to 0.
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
 							'height' => Size_Prop_Type::generate( [
 								'size' => 400,
 								'unit' => 'px',

@@ -81,6 +81,12 @@ class Atomic_Background_Video_Content extends Atomic_Element_Base {
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
 							'z-index' => Number_Prop_Type::generate( 1 ),
+							// Symmetric padding so the first-add target and any dropped content get even
+							// breathing room on all sides (overrides the asymmetric `.e-con` default).
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 10,
+								'unit' => 'px',
+							] ),
 							'width' => Size_Prop_Type::generate( [
 								'size' => 100,
 								'unit' => '%',
