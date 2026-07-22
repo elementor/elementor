@@ -8,14 +8,22 @@ on:
         required: false
         default: ''
 
+permissions:
+  contents: read
+
 jobs:
   get-php-version:
     name: Calculate PHP Version
+    permissions:
+      contents: read
     uses: ./.github/workflows/calculate_php_version.yml
 
   build-plugin:
     if: inputs.build_artifact_name == ''
     name: Playwright build artifact
+    permissions:
+      contents: read
+      pull-requests: write
     uses: ./.github/workflows/build.yml
     with:
       job_name: Playwright build artifact
@@ -24,6 +32,8 @@ jobs:
     name: Prepare build from caller
     if: inputs.build_artifact_name != ''
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     outputs:
       artifact_name: ${{ inputs.build_artifact_name }}
     steps:
