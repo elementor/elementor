@@ -42,11 +42,9 @@ Scalars and objects only — match the widget schema shape without envelopes:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
 - **boolean**: plain boolean (`true`)
-- **size**: plain CSS size string (`"16px"`, `"2rem"`)
 - **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }`
-- **global-*-variable** (when schema allows): plain label string (`"wc26-gold"`)
 
 ## GLOBAL VARIABLES
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
@@ -56,11 +54,6 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
-
-**In `element_config`:** when the widget schema allows a global-variable type, send the **label** as a plain string:
-- `"wc26-gold"` (color variable)
-- `"font-heading"` (font variable)
-- `"spacing-lg"` (size variable)
 
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
@@ -145,7 +138,7 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Generous padding on CTAs: min 1rem 2.5rem
 
 # HARD CONSTRAINTS
-- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` and in `element_config` as plain label strings — the `e-gv-` prefix is internal only
+- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
 - Avoid SVG widgets unless assets are pre-uploaded
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)

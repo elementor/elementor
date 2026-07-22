@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
@@ -348,7 +348,7 @@ class Transform_Property_Converter extends Property_Converter_Base {
 	}
 
 	private function move_size( string $token ): ?array {
-		$parsed = Size_Plain_Resolver::parse( $token );
+		$parsed = Size_Value_Parser::parse( $token );
 
 		if ( null === $parsed || ! in_array( $parsed['unit'], self::MOVE_UNITS, true ) ) {
 			return null;
@@ -358,7 +358,7 @@ class Transform_Property_Converter extends Property_Converter_Base {
 	}
 
 	private function rotate_size( string $token ): ?array {
-		$parsed = Size_Plain_Resolver::parse( $token );
+		$parsed = Size_Value_Parser::parse( $token );
 
 		if ( null === $parsed || ! in_array( $parsed['unit'], self::ROTATE_UNITS, true ) ) {
 			return null;

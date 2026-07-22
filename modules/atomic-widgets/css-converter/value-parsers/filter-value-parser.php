@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Conversion is all-or-nothing per declaration: a single unsupported function or unparsable argument
  * declines the entire value. Single-argument functions (blur/brightness/contrast/saturate/hue-rotate/
- * grayscale/invert/sepia) reuse Size_Plain_Resolver; drop-shadow expands to xAxis/yAxis/blur/color.
+ * grayscale/invert/sepia) reuse Size_Value_Parser; drop-shadow expands to xAxis/yAxis/blur/color.
  */
 class Filter_Value_Parser {
 	const DROP_SHADOW = 'drop-shadow';
@@ -159,7 +159,7 @@ class Filter_Value_Parser {
 	}
 
 	private static function parse_single_size( string $group, string $args ): ?array {
-		$size = Size_Plain_Resolver::parse( $args );
+		$size = Size_Value_Parser::parse( $args );
 
 		if ( null === $size ) {
 			return null;
@@ -181,7 +181,7 @@ class Filter_Value_Parser {
 		$color = null;
 
 		foreach ( $tokens as $token ) {
-			$size = Size_Plain_Resolver::parse( $token );
+			$size = Size_Value_Parser::parse( $token );
 
 			if ( null !== $size ) {
 				$sizes[] = $size;

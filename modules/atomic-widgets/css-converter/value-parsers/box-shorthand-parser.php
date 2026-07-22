@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers;
 
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -38,7 +36,7 @@ class Box_Shorthand_Parser {
 		$sizes = [];
 
 		foreach ( $tokens as $token ) {
-			$parsed = Size_Plain_Resolver::parse( $token );
+			$parsed = Size_Value_Parser::parse( $token );
 
 			if ( null === $parsed ) {
 				return null;

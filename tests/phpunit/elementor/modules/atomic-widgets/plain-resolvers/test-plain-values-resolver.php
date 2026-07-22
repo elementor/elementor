@@ -7,14 +7,12 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Identity_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
@@ -69,7 +67,6 @@ class Test_Plain_Values_Resolver extends TestCase {
 		$registry->register_fallback( new Identity_Plain_Resolver() );
 		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
 		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
-		$registry->register( Size_Prop_Type::get_key(), new Size_Plain_Resolver() );
 
 		return $registry;
 	}
@@ -101,21 +98,6 @@ class Test_Plain_Values_Resolver extends TestCase {
 				'value' => 42,
 			],
 			$resolver->resolve( 42, Number_Prop_Type::make() )
-		);
-	}
-
-	public function test_resolve__leaf_size_type_from_plain_string() {
-		$resolver = new Plain_Values_Resolver( $this->make_registry() );
-
-		$this->assertSame(
-			[
-				'$$type' => 'size',
-				'value' => [
-					'size' => 16,
-					'unit' => 'px',
-				],
-			],
-			$resolver->resolve( '16px', Size_Prop_Type::make() )
 		);
 	}
 

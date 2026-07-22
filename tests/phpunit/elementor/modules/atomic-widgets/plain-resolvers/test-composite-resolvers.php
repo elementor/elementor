@@ -7,15 +7,12 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Global_Variable_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\Services\Variables_Service;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,36 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Composite_Resolvers extends TestCase {
-
-	public function test_global_variable_resolver__resolves_label_to_id() {
-		$variables_service = $this->createMock( Variables_Service::class );
-		$variables_service->method( 'find_by_label_or_id' )->with( 'Primary' )->willReturn( [ 'id' => 'var-123' ] );
-
-		$resolver = new Global_Variable_Plain_Resolver( $variables_service, Color_Variable_Prop_Type::get_key() );
-
-		$this->assertSame(
-			[
-				'$$type' => 'global-color-variable',
-				'value' => 'var-123',
-			],
-			$resolver->resolve( 'Primary' )
-		);
-	}
-
-	public function test_global_variable_resolver__falls_back_to_input_when_not_found() {
-		$variables_service = $this->createMock( Variables_Service::class );
-		$variables_service->method( 'find_by_label_or_id' )->willReturn( null );
-
-		$resolver = new Global_Variable_Plain_Resolver( $variables_service, Color_Variable_Prop_Type::get_key() );
-
-		$this->assertSame(
-			[
-				'$$type' => 'global-color-variable',
-				'value' => 'unknown-id',
-			],
-			$resolver->resolve( 'unknown-id' )
-		);
-	}
 
 	public function test_dynamic_resolver__builds_dynamic_envelope_from_plain_input() {
 		$module = Dynamic_Tags_Module::fresh();

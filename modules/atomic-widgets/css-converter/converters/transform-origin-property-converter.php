@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
@@ -143,7 +143,7 @@ class Transform_Origin_Property_Converter extends Property_Converter_Base {
 	}
 
 	private function xy_size( string $token ): ?array {
-		$parsed = Size_Plain_Resolver::parse( $token );
+		$parsed = Size_Value_Parser::parse( $token );
 
 		if ( null === $parsed || ! in_array( $parsed['unit'], self::XY_UNITS, true ) ) {
 			return null;
@@ -153,7 +153,7 @@ class Transform_Origin_Property_Converter extends Property_Converter_Base {
 	}
 
 	private function parse_z( string $token ): ?array {
-		$parsed = Size_Plain_Resolver::parse( $token );
+		$parsed = Size_Value_Parser::parse( $token );
 
 		if ( null === $parsed || ! in_array( $parsed['unit'], self::Z_UNITS, true ) ) {
 			return null;

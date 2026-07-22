@@ -1,5 +1,4 @@
 # directories
-.worktrees/
 coverage-report/
 node_modules/
 .sass-cache/
