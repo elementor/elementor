@@ -139,4 +139,10 @@ class Atomic_Background_Video_Pause extends Atomic_Element_Base {
 			'elementor/elements/atomic-background-video-pause' => __DIR__ . '/atomic-background-video-pause.html.twig',
 		];
 	}
+
+	protected function build_template_context(): array {
+		return array_merge( $this->build_base_template_context(), [
+			'initial_attributes' => $this->define_initial_attributes(),
+		] );
+	}
 }

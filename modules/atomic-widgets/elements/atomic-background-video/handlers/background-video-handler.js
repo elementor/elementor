@@ -1,6 +1,6 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-import { isEditorPreview } from './editor-background-video-state';
+import { getEditorState, isEditorPreview } from './editor-background-video-state';
 
 const PLAYING_CLASS = 'e--playing';
 const PAUSED_CLASS = 'e--paused';
@@ -31,6 +31,35 @@ function applyVideoSettings( video, settings ) {
 	}
 }
 
+// Enforces the user-defined end_time boundary during playback. Browsers apply the `#t=start,end`
+// media fragment inconsistently, and with `loop` enabled they typically ignore the end boundary,
+// so we mirror the legacy background-video behavior and clamp playback in JS.
+function enforceEndTime( video, settings, signal ) {
+	if ( ! video ) {
+		return;
+	}
+
+	const endTime = Number( settings.end_time );
+	const startTime = Number( settings.start_time ) || 0;
+
+	if ( ! endTime || endTime <= startTime ) {
+		return;
+	}
+
+	video.addEventListener( 'timeupdate', () => {
+		if ( video.currentTime < endTime ) {
+			return;
+		}
+
+		if ( settings.loop ) {
+			video.currentTime = startTime;
+			return;
+		}
+
+		video.pause();
+	}, { signal } );
+}
+
 register( {
 	elementType: 'e-background-video',
 	id: 'e-background-video-handler',
@@ -39,11 +68,14 @@ register( {
 		const video = element.querySelector( '.e-background-video__media' );
 
 		applyVideoSettings( video, settings );
+		enforceEndTime( video, settings, signal );
 
 		Alpine.data( `eBackgroundVideo${ elementId }`, () => ( {
 			isPlaying: video ? ! video.paused : false,
 			isEditor: isEditorPreview(),
-			editorState: settings.state || 'playing',
+			get editorState() {
+				return getEditorState( elementId, settings.state || 'playing' );
+			},
 
 			get previewState() {
 				if ( this.isEditor ) {
