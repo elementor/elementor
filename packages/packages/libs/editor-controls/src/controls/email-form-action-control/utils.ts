@@ -9,6 +9,15 @@ export function isValidEmail( email: string ): boolean {
 	return z.string().email().safeParse( email ).success;
 }
 
+// Matches a single bracket-wrapped token, e.g. `[email]` (form field mention shortcode) or the
+// legacy `[field id="email"]` shortcode, so recipient chips can hold a dynamic value instead of
+// a literal address.
+const FORM_FIELD_SHORTCODE_PATTERN = /^\[[^[\]]+]$/;
+
+export function isFormFieldShortcode( value: string ): boolean {
+	return FORM_FIELD_SHORTCODE_PATTERN.test( value );
+}
+
 export const shouldShowMentionsInfo = (): boolean => {
 	if ( ! hasProInstalled() ) {
 		return true;
