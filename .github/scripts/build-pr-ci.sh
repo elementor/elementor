@@ -17,6 +17,7 @@ else
 fi
 
 npm run build:ci
+npx grunt copy
 mv build elementor
 
 zip -r $PLUGIN_ZIP_FILENAME elementor
