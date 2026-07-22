@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +21,10 @@ class Llm_Guidance_Builder {
 		];
 
 		$default_styles = self::collect_default_styles( $config['base_styles'] ?? [] );
-		$default_settings = $config['base_settings'] ?? [];
+		$default_settings = self::collect_default_settings(
+			$config['base_settings'] ?? [],
+			$config['atomic_props_schema'] ?? []
+		);
 
 		$instructions = array_filter( [
 			! empty( $default_styles ) ? self::DEFAULT_STYLES_INSTRUCTION : null,
@@ -64,6 +68,16 @@ class Llm_Guidance_Builder {
 		}
 
 		return Style_Props_To_Css::to_map( $default_styles );
+	}
+
+	private static function collect_default_settings( array $base_settings, array $props_schema ): array {
+		if ( empty( $base_settings ) || empty( $props_schema ) ) {
+			return $base_settings;
+		}
+
+		return Atomic_Widgets_Module::instance()
+			->get_settings_envelope_values_serializer()
+			->serialize_map( $base_settings, $props_schema );
 	}
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {
