@@ -8,6 +8,11 @@ on:
         required: false
         default: ''
   workflow_dispatch:
+    inputs:
+      fail_fast:
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   get-php-version:
