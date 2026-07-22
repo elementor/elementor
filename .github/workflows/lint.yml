@@ -1,10 +1,6 @@
 name: Lint
 
 on:
-  pull_request:
-    branches:
-      - 'main'
-      - '[0-9].[0-9][0-9]'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -86,9 +82,6 @@ jobs:
       - name: Twig safety check
         if: ${{ !cancelled() }}
         run: composer run check-twig-safety
-      - name: Composer audit
-        if: ${{ !cancelled() }}
-        run: composer audit --locked --abandoned=report
       - name: Setup PHP 7.4 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
         with:

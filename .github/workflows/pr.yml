@@ -1,0 +1,554 @@
+name: PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+      - '[0-9].[0-9][0-9]'
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  detect-changes:
+    name: Detect changes
+    runs-on: ubuntu-22.04
+    if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      js: ${{ steps.filter.outputs.js }}
+      php: ${{ steps.filter.outputs.php }}
+      playwright: ${{ steps.filter.outputs.playwright }}
+      build: ${{ steps.filter.outputs.build }}
+      composer: ${{ steps.filter.outputs.composer }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            js:
+              - '**/*.{js,ts,jsx,tsx,json}'
+              - 'package*.json'
+              - '.github/**'
+            php:
+              - '**/*.php'
+              - '**/*.twig'
+              - 'ruleset.xml'
+              - 'composer.json'
+              - 'composer.lock'
+              - '.github/**'
+            composer:
+              - 'composer.json'
+              - 'composer.lock'
+            playwright:
+              - '**'
+              - '!**.md'
+              - '!**.txt'
+              - '!bin/**'
+              - '!.gitignore'
+              - '!docs/**'
+            build:
+              - '**'
+              - '!**.md'
+              - '!**.txt'
+              - '!bin/**'
+              - '!.gitignore'
+              - '!docs/**'
+
+  install:
+    name: Install dependencies
+    runs-on: ubuntu-22.04
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Restore dependency cache
+        uses: actions/cache@v5
+        id: deps-cache
+        with:
+          path: |
+            node_modules
+            vendor
+          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+      - name: Install dependencies
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: |
+          npm run install:ci
+          npm run composer:no-dev
+      - name: Upload dependencies artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: deps
+          path: |
+            node_modules
+            vendor
+          if-no-files-found: error
+          retention-days: 1
+
+  build:
+    name: Build plugin
+    runs-on: ubuntu-22.04
+    needs: install
+    if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Cache turbo build setup
+        uses: actions/cache@v5
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: deps
+          path: .
+      - name: Set ENV variables
+        run: |
+          DATE_VERSION=$(date '+%Y%m%d.%H%M')
+          VERSION=$(node -p "require('./package.json').version")
+
+          PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
+          PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
+          PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
+
+          echo "DATE_VERSION=$DATE_VERSION" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
+          echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          BUILD_SCRIPT_PATH: './.github/scripts/build-pr-ci.sh'
+        env:
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+      - uses: actions/upload-artifact@v7
+        id: upload-artifact
+        with:
+          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+          path: elementor
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 3
+      - name: Find existing comment on PR (Elementor repo)
+        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        uses: peter-evans/find-comment@v4
+        id: find
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Elementor Build'
+      - name: Comment build info on PR (Elementor repo)
+        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## Elementor Build
+            Last updated at: ${{ env.DATE_VERSION }}
+            Version: ${{ env.PACKAGE_VERSION }}
+
+            ✅ Elementor build is ready for download.
+
+            You can download the latest build from the link below:
+
+            🔗 [${{ env.PLUGIN_ZIP_FILENAME }}](https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }})
+
+            The build is available for 3 days.
+
+          edit-mode: replace
+      - name: Print artifact info once PR is non Elementor repo
+        if: !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        run: |
+          echo "Artifact info:"
+          echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
+          echo "  Path: elementor"
+          echo "  Size: $(du -sh elementor | cut -f1)"
+          echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}"
+
+  lint-js:
+    name: Lint JS
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.js == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: deps
+          path: .
+      - name: Run Lint
+        run: npm run lint
+
+  lint-php:
+    name: Lint PHP
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.php == 'true'
+    steps:
+      - name: Mask GitHub token
+        run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: deps
+          path: .
+      - name: Install PHP lint dependencies
+        run: |
+          composer install
+          composer require php-parallel-lint/php-parallel-lint
+      - name: Run Lint
+        run: |
+          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+      - name: Twig safety check
+        if: ${{ !cancelled() }}
+        run: composer run check-twig-safety
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Run PHP Syntax Lint 7.4
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+      - name: Setup PHP 8.0
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Run PHP Syntax Lint 8.0
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Run PHP Syntax Lint 8.1
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+
+  jest:
+    name: Jest
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.js == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: deps
+          path: .
+      - name: Run Jest
+        run: npm run test
+
+  js-qunit:
+    name: QUnit
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.js == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: deps
+          path: .
+      - name: Build tools
+        run: npm run build:tools
+      - name: Run QUnit
+        run: npm run test:qunit
+
+  phpunit:
+    name: PHPUnit
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.php == 'true'
+    uses: ./.github/workflows/phpunit-runner.yml
+    with:
+      job_name: PHPUnit (PR)
+      wordpress_versions: '["latest", "6.9", "6.8"]'
+      php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
+
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
+  playwright:
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
+    runs-on: ubuntu-22.04
+    needs: [build, lint-js, lint-php, jest, js-qunit, phpunit, get-php-version, detect-changes]
+    permissions:
+      contents: read
+      id-token: write
+    if: |
+      !failure() && !cancelled() &&
+      needs.build.result == 'success' &&
+      (needs.lint-js.result == 'success' || needs.lint-js.result == 'skipped') &&
+      (needs.lint-php.result == 'success' || needs.lint-php.result == 'skipped') &&
+      (needs.jest.result == 'success' || needs.jest.result == 'skipped') &&
+      (needs.js-qunit.result == 'success' || needs.js-qunit.result == 'skipped') &&
+      (needs.phpunit.result == 'success' || needs.phpunit.result == 'skipped') &&
+      needs.get-php-version.result == 'success' &&
+      needs.detect-changes.outputs.playwright == 'true' &&
+      !github.event.pull_request.draft
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        shardTotal: [17]
+        include:
+          - shardIndex: "elements-regression-core"
+          - shardIndex: "elements-regression-atomic"
+          - shardIndex: "plugin_tester_section_1"
+          - shardIndex: "plugin_tester_section_2"
+          - shardIndex: "plugin_tester_container_1"
+          - shardIndex: "plugin_tester_container_2"
+          - shardIndex: "import_export_customization"
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: deps
+          path: .
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: ./build
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+          echo "PHP version set to:"
+          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
+      - name: Install WordPress environment
+        run: npm run start-local-server
+      - name: Setup test data
+        run: npm run test:setup:playwright
+      - name: WordPress debug information
+        run: |
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Resolve browser configuration
+        env:
+          FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
+        run: |
+          if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=all" >> $GITHUB_ENV
+          else
+            echo "BROWSER=chromium" >> $GITHUB_ENV
+          fi
+      - name: Install playwright/test
+        run: |
+          if [ "$FULL_BROWSER_COMPAT" = "true" ] && [ "$BROWSER" = "all" ]; then
+            npx playwright install --with-deps chromium firefox webkit
+          else
+            npx playwright install --with-deps chromium
+          fi
+      - name: Run Playwright tests
+        if: ${{
+          matrix.shardIndex != 'elements-regression-core' &&
+          matrix.shardIndex != 'elements-regression-atomic' &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_container_') &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_section_') &&
+          matrix.shardIndex != 'import_export_customization'
+          }}
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
+      - name: Run Playwright Plugin Container tests
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
+          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG
+      - name: Run Playwright Plugin Section tests
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
+          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG
+      - name: Run import export customization tests
+        if: ${{ matrix.shardIndex == 'import_export_customization' }}
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG
+      - name: Run core element regression tests
+        if: ${{ matrix.shardIndex == 'elements-regression-core' }}
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright:elements-regression:core -- $PROJECT_ARG
+      - name: Run atomic element regression tests
+        if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
+      - uses: actions/upload-artifact@v7
+        name: Upload Allure result
+        if: always()
+        with:
+          name: allure-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          path: allure-results
+          if-no-files-found: ignore
+          retention-days: 1
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 2
+
+  summarize:
+    name: Summarize PR checks
+    runs-on: ubuntu-22.04
+    needs: [detect-changes, install, build, lint-js, lint-php, jest, js-qunit, phpunit, get-php-version, playwright]
+    if: |
+      always() && (
+        needs.install.result == 'failure' ||
+        needs.build.result == 'failure' ||
+        needs.lint-js.result == 'failure' ||
+        needs.lint-php.result == 'failure' ||
+        needs.jest.result == 'failure' ||
+        needs.js-qunit.result == 'failure' ||
+        needs.phpunit.result == 'failure' ||
+        needs.get-php-version.result == 'failure' ||
+        needs.playwright.result == 'failure'
+      )
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Find existing summary comment
+        uses: peter-evans/find-comment@v4
+        id: find
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pr-ci-summary -->'
+      - name: Post PR CI summary
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            <!-- pr-ci-summary -->
+            ## PR CI summary
+
+            | Job | Status |
+            | --- | --- |
+            | Install dependencies | [${{ needs.install.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Build plugin | [${{ needs.build.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Lint JS | [${{ needs.lint-js.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Lint PHP | [${{ needs.lint-php.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Jest | [${{ needs.jest.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | QUnit | [${{ needs.js-qunit.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | PHPUnit | [${{ needs.phpunit.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Calculate PHP version | [${{ needs.get-php-version.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Playwright | [${{ needs.playwright.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+
+            [View workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          edit-mode: replace

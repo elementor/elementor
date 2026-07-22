@@ -1,14 +1,9 @@
 name: Lighthouse
 
 on:
-  pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
+  workflow_run:
+    workflows: ["PR"]
+    types: [completed]
   push:
     branches:
       - 'main'
@@ -21,9 +16,67 @@ on:
       - 'docs/**'
   merge_group:
 
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
 jobs:
+  resolve-pr-context:
+    if: github.event_name == 'workflow_run'
+    runs-on: ubuntu-22.04
+    outputs:
+      should_run: ${{ steps.resolve.outputs.should_run }}
+      build_run_id: ${{ steps.resolve.outputs.build_run_id }}
+      artifact_name: ${{ steps.resolve.outputs.artifact_name }}
+    steps:
+      - name: Resolve PR workflow context
+        id: resolve
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            if (run.conclusion !== 'success' || run.event !== 'pull_request') {
+              core.setOutput('should_run', 'false');
+              return;
+            }
+
+            const prs = run.pull_requests || [];
+            if (!prs.length) {
+              core.setOutput('should_run', 'false');
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prs[0].number,
+            });
+
+            const hasRunTestsLabel = pr.labels.some((label) => label.name === 'run-tests');
+            if (!hasRunTestsLabel) {
+              core.setOutput('should_run', 'false');
+              return;
+            }
+
+            const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run.id,
+            });
+
+            const pluginArtifact = artifacts.find((artifact) => artifact.name.startsWith('elementor-'));
+            if (!pluginArtifact) {
+              core.setFailed('No elementor artifact found in PR workflow run');
+              return;
+            }
+
+            core.setOutput('should_run', 'true');
+            core.setOutput('build_run_id', String(run.id));
+            core.setOutput('artifact_name', pluginArtifact.name);
+
   build-plugin-lh:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    if: github.event_name == 'push' || github.event_name == 'merge_group'
     name: Lighthouse build artifact
     uses: ./.github/workflows/build.yml
     with:
@@ -32,12 +85,16 @@ jobs:
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4
     runs-on: ubuntu-latest
-    needs: [build-plugin-lh]
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    needs: [resolve-pr-context, build-plugin-lh]
+    if: |
+      always() && (
+        (github.event_name == 'workflow_run' && needs.resolve-pr-context.result == 'success' && needs.resolve-pr-context.outputs.should_run == 'true') ||
+        ((github.event_name == 'push' || github.event_name == 'merge_group') && needs.build-plugin-lh.result == 'success')
+      )
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
-      
+
       - name: Remove package.json
         run: rm -f package*.json
 
@@ -46,7 +103,17 @@ jobs:
         with:
           node-version: 24.15.0
 
-      - name: Download build artifact
+      - name: Download build artifact from PR workflow
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ needs.resolve-pr-context.outputs.build_run_id }}
+          name: ${{ needs.resolve-pr-context.outputs.artifact_name }}
+          path: ./elementor
+
+      - name: Download build artifact from Lighthouse build
+        if: github.event_name != 'workflow_run'
         uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
@@ -101,7 +168,7 @@ jobs:
 
   lighthouse:
     needs: lighthouse_test
-    if: ${{ always() }} # Will be run even if 'Lighthouse' matrix will be skipped
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Lighthouse - Test Results
     steps:
