@@ -76,7 +76,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: npm
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
         with:
@@ -96,15 +95,6 @@ jobs:
         run: |
           npm run install:ci
           npm run composer:no-dev
-      - name: Upload dependencies artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: deps
-          path: |
-            node_modules
-            vendor
-          if-no-files-found: error
-          retention-days: 1
 
   build:
     name: Build plugin
@@ -127,12 +117,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: npm
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v8
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
         with:
-          name: deps
-          path: .
+          path: |
+            node_modules
+            vendor
+          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
       - name: Set ENV variables
         run: |
           DATE_VERSION=$(date '+%Y%m%d.%H%M')
@@ -210,12 +202,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: npm
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v8
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
         with:
-          name: deps
-          path: .
+          path: |
+            node_modules
+            vendor
+          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
       - name: Run Lint
         run: npm run lint
 
@@ -235,11 +229,14 @@ jobs:
           php-version: '7.4'
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v8
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
         with:
-          name: deps
-          path: .
+          path: |
+            node_modules
+            vendor
+          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
       - name: Install PHP lint dependencies
         run: |
           composer install
@@ -296,12 +293,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: npm
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v8
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
         with:
-          name: deps
-          path: .
+          path: |
+            node_modules
+            vendor
+          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
       - name: Run Jest
         run: npm run test
 
@@ -317,12 +316,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: npm
-      - name: Download dependencies artifact
-        uses: actions/download-artifact@v8
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
         with:
-          name: deps
-          path: .
+          path: |
+            node_modules
+            vendor
+          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
       - name: Build tools
         run: npm run build:tools
       - name: Run QUnit
