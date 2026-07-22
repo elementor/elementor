@@ -15,7 +15,7 @@
     "build:packages": "turbo build",
     "build:tools": "turbo build --filter='./packages/packages/tools/*'",
     "build:ci": "turbo build --concurrency 1 && npx grunt webpack:production",
-    "build:pr": "npm run build:ci && npx grunt copy && mv build elementor",
+    "build:pr": "npm run build && mv build elementor",
     "install": "npm ci --ignore-scripts --no-audit && composer install",
     "install:ci": "npm ci --ignore-scripts --no-audit",
     "composer:no-dev": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload",
