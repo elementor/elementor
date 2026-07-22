@@ -529,6 +529,11 @@ class Module extends BaseModule {
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
 			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
+			// No state pinned (editor "States" unselected): hide both buttons. The two `:not` guards lift
+			// specificity above the atomic base style so `display: none` wins. On the frontend Alpine always
+			// sets one of the state classes from real playback, so exactly one button shows there.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

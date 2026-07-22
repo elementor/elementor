@@ -74,6 +74,18 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		// The States control is design-time only and directly tied to the controls. A prop dependency
+		// describes when the control is *shown* (the editor hides it when the dependency is not met),
+		// so show States only while Show Controls is on; the value is preserved when hidden (no reset).
+		$state_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'eq',
+				'path' => [ 'show_controls' ],
+				'value' => true,
+				'effect' => 'hide',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'source' => Video_Src_Prop_Type::make()->alias( 'video', 'src' ),
@@ -90,8 +102,8 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 			'loop' => Boolean_Prop_Type::make()->default( true ),
 			'show_controls' => Boolean_Prop_Type::make()->default( true ),
 			'state' => String_Prop_Type::make()
-				->default( 'playing' )
 				->enum( [ 'playing', 'paused' ] )
+				->set_dependencies( $state_dependencies )
 				->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];

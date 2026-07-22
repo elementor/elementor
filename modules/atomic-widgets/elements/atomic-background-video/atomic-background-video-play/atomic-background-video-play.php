@@ -3,17 +3,16 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -27,7 +26,7 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'Play button for the Background Video element. Drop any element inside to replace the default icon.';
+	public static $widget_description = 'Play button for the Background Video element. Drop any element inside to replace the default label.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -103,32 +102,20 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 								'size' => 8,
 								'unit' => 'px',
 							] ),
-							'width' => Size_Prop_Type::generate( [
-								'size' => 40,
-								'unit' => 'px',
-							] ),
-							'height' => Size_Prop_Type::generate( [
-								'size' => 40,
-								'unit' => 'px',
-							] ),
 						] )
 				),
 		];
 	}
 
 	protected function define_default_children() {
-		$icon_url = plugins_url(
-			'modules/atomic-widgets/elements/atomic-background-video/assets/play-icon.svg',
-			ELEMENTOR__FILE__
-		);
-
 		return [
-			Atomic_Svg::generate()
+			Atomic_Paragraph::generate()
 				->settings( [
-					'svg' => Svg_Src_Prop_Type::generate( [
-						'id' => null,
-						'url' => Url_Prop_Type::generate( $icon_url ),
+					'paragraph' => Html_V3_Prop_Type::generate( [
+						'content'  => String_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
+						'children' => [],
 					] ),
+					'tag' => String_Prop_Type::generate( 'span' ),
 				] )
 				->build(),
 		];
