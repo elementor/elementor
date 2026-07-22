@@ -48,6 +48,10 @@ class Unknown_Prop_Type implements Prop_Type {
 		return null;
 	}
 
+	public function should_persist( $value ): bool {
+		return true;
+	}
+
 	public function to_json_schema(): array {
 		return [];
 	}
