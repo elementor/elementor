@@ -7,30 +7,6 @@ on:
         type: string
         required: false
         default: ''
-      browser:
-        type: string
-        required: false
-        default: 'chromium'
-      environment:
-        type: string
-        required: false
-        default: 'production'
-      fail_fast:
-        type: boolean
-        required: false
-        default: false
-      repeat_each:
-        type: string
-        required: false
-        default: ''
-      run_mode:
-        type: string
-        required: false
-        default: 'standard'
-      tag:
-        type: string
-        required: false
-        default: ''
   merge_group:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
@@ -140,7 +116,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'workflow_call')
     strategy:
-      fail-fast: ${{ inputs.fail_fast || false }}
+      fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
         shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         shardTotal: [17]
@@ -182,14 +158,14 @@ jobs:
           unzip hello-elementor
 
       - name: Install staging plugins
-        if: ${{ inputs.environment == 'staging' }}
+        if: ${{ github.event.inputs.environment == 'staging' }}
         uses: ./.github/actions/install-staging-plugins
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
 
       - name: Add staging plugins to config
-        if: ${{ inputs.environment == 'staging' }}
+        if: ${{ github.event.inputs.environment == 'staging' }}
         run: |
           jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
@@ -203,24 +179,24 @@ jobs:
         run: |
           npm run start-local-server
       - name: Update wordpress to nightly build
-        if: ${{ github.event_name == 'schedule' || inputs.run_mode == 'nightly' }}
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Update WordPress database
-        if: ${{ github.event_name == 'schedule' || inputs.run_mode == 'nightly' }}
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update-db"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update-db"
       - name: Export WordPress major version
-        if: ${{ github.event_name == 'schedule' || inputs.run_mode == 'nightly' }}
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
         run: |
           WP_VER=$(npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version" 2>&1 | grep -oE '^[0-9]+' | head -1)
           echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: Activate staging environment
-        if: ${{ inputs.environment == 'staging' }}
+        if: ${{ github.event.inputs.environment == 'staging' }}
         run: |
           for port in 8888 8889; do
             npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
@@ -234,7 +210,7 @@ jobs:
       - name: Resolve browser configuration
         env:
           FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
-          BROWSER_INPUT: ${{ inputs.browser || 'chromium' }}
+          BROWSER_INPUT: ${{ github.event.inputs.browser || 'chromium' }}
         run: |
           if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
             echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
@@ -361,14 +337,14 @@ jobs:
           unzip hello-elementor
 
       - name: Install staging plugins
-        if: ${{ inputs.environment == 'staging' }}
+        if: ${{ github.event.inputs.environment == 'staging' }}
         uses: ./.github/actions/install-staging-plugins
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
 
       - name: Add staging plugins to config
-        if: ${{ inputs.environment == 'staging' }}
+        if: ${{ github.event.inputs.environment == 'staging' }}
         run: |
           jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
@@ -384,7 +360,7 @@ jobs:
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: Activate staging environment
-        if: ${{ inputs.environment == 'staging' }}
+        if: ${{ github.event.inputs.environment == 'staging' }}
         run: |
           for port in 8888 8889; do
             npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
@@ -398,7 +374,7 @@ jobs:
       - name: Resolve browser configuration
         env:
           FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
-          BROWSER_INPUT: ${{ inputs.browser || 'chromium' }}
+          BROWSER_INPUT: ${{ github.event.inputs.browser || 'chromium' }}
         run: |
           if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
             echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
@@ -420,8 +396,8 @@ jobs:
           fi
       - name: Run Playwright tests
         env:
-          REPEAT_EACH: ${{ inputs.repeat_each }}
-          TEST_TAG: ${{ inputs.tag }}
+          REPEAT_EACH: ${{ github.event.inputs.repeat_each }}
+          TEST_TAG: ${{ github.event.inputs.tag }}
         run: |
           PROJECT_ARG=""
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
