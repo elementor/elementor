@@ -9,7 +9,12 @@ on:
         default: ''
 
 jobs:
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
   test:
+    needs: get-php-version
     runs-on: ubuntu-22.04
     steps:
-      - run: echo "reusable ok"
+      - run: echo "reusable ok ${{ needs.get-php-version.outputs.php_version }}"
