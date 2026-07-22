@@ -407,6 +407,61 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( [], $node['styles'] );
 	}
 
+	public function test_execute__serializes_realistic_local_style_id_with_e_prefix() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$style_id = 'e-widget1-abc1234';
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'styles' => [
+					$style_id => [
+						'id' => $style_id,
+						'type' => 'class',
+						'label' => 'local',
+						'variants' => [
+							[
+								'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+								'props' => [
+									'color' => [ '$$type' => 'color', 'value' => '#123456' ],
+								],
+								'custom_css' => null,
+							],
+						],
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'widget1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$styles = $result['elements'][0]['styles'];
+		$this->assertSame( $style_id, $styles['__style_id'] );
+		$this->assertSame( '#123456', $styles['color'] );
+	}
+
 	public function test_execute__attaches_other_variants_under_double_underscore_variants() {
 		// Arrange
 		$this->act_as_admin();

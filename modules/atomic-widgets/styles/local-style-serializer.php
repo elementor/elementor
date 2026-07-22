@@ -10,12 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Projects an element's stored `styles` map into a flat, LLM/consumer-friendly
- * shape by picking the local style (`type=class`, id prefixed `s-`) and its
- * desktop / no-state variant.
+ * shape by picking its local style entry and the desktop / no-state variant.
  *
  * Output shape:
  *   [
- *     '__style_id'   => 's-abc',
+ *     '__style_id'   => 'e-widget1-abc1234',
  *     '<cssProp>'    => '<value>',
  *     ...
  *     '__custom_css' => '<decoded raw>',   // only if present
@@ -24,9 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Local_Style_Serializer {
 
-	const LOCAL_STYLE_ID_PREFIX = 's-';
-	const LOCAL_STYLE_TYPE      = 'class';
-	const DESKTOP_BREAKPOINT    = 'desktop';
+	const DESKTOP_BREAKPOINT = 'desktop';
 
 	public static function serialize( array $styles ): array {
 		$local_style = self::find_local_style( $styles );
@@ -62,39 +59,42 @@ class Local_Style_Serializer {
 	}
 
 	private static function find_local_style( array $styles ): ?array {
-		foreach ( $styles as $style_id => $style_def ) {
-			$is_local = is_array( $style_def )
-				&& ( $style_def['type'] ?? null ) === self::LOCAL_STYLE_TYPE
-				&& str_starts_with( (string) $style_id, self::LOCAL_STYLE_ID_PREFIX );
-
-			if ( $is_local ) {
-				return $style_def;
-			}
+		if ( empty( $styles ) ) {
+			return null;
 		}
 
-		return null;
+		$local_style = reset( $styles );
+
+		return is_array( $local_style ) ? $local_style : null;
 	}
 
 	/**
 	 * @return array{0: array|null, 1: array<int, array>}
 	 */
 	private static function split_variants( array $variants ): array {
-		$desktop_variant = null;
-		$other_variants  = [];
+		$desktop_index = self::find_desktop_variant_index( $variants );
 
-		foreach ( $variants as $variant ) {
-			$meta        = $variant['meta'] ?? [];
+		if ( null === $desktop_index ) {
+			return [ null, $variants ];
+		}
+
+		$desktop_variant = $variants[ $desktop_index ];
+		unset( $variants[ $desktop_index ] );
+
+		return [ $desktop_variant, array_values( $variants ) ];
+	}
+
+	private static function find_desktop_variant_index( array $variants ): ?int {
+		foreach ( $variants as $index => $variant ) {
+			$meta = $variant['meta'] ?? [];
 			$is_desktop  = ( $meta['breakpoint'] ?? self::DESKTOP_BREAKPOINT ) === self::DESKTOP_BREAKPOINT;
 			$is_no_state = null === ( $meta['state'] ?? null );
 
-			if ( $is_desktop && $is_no_state && null === $desktop_variant ) {
-				$desktop_variant = $variant;
-				continue;
+			if ( $is_desktop && $is_no_state ) {
+				return $index;
 			}
-
-			$other_variants[] = $variant;
 		}
 
-		return [ $desktop_variant, $other_variants ];
+		return null;
 	}
 }
