@@ -36,7 +36,7 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 				'body' => wp_json_encode( [
 					'mixpanel' => [
 						[
-							'apiHost' => 'api-eu.mixpanel.com',
+							'apiHost' => 'https://api-eu.mixpanel.com',
 							'libHost' => 'https://cdn.mxpnl.com/libs',
 						],
 					],
@@ -201,7 +201,7 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 
 		$this->seed_remote_mixpanel_config( [
 			[
-				'apiHost' => 'custom.mixpanel.example',
+				'apiHost' => 'https://custom.mixpanel.example',
 				'libHost' => 'https://custom-cdn.example/libs',
 			],
 		] );
@@ -249,11 +249,13 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 
 		$request_sent = false;
 
-		add_filter( 'pre_http_request', function ( $preempt ) use ( &$request_sent ) {
-			$request_sent = true;
+		add_filter( 'pre_http_request', function ( $preempt, $args, $url ) use ( &$request_sent ) {
+			if ( false === strpos( $url, 'assets.elementor.com' ) ) {
+				$request_sent = true;
+			}
 
 			return $preempt;
-		} );
+		}, 10, 3 );
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/events/api/track' );
 		$request->set_body( str_repeat( 'a', 10 * MB_IN_BYTES + 1 ) );
