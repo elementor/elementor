@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { type KeyboardEvent, type SyntheticEvent, useMemo, useState } from 'react';
 import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { Autocomplete, Grid, TextField } from '@elementor/ui';
+import { InfoAlert } from '@elementor/editor-ui';
+import { Autocomplete, Grid, Stack, TextField } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ChipsList } from '../../components/chips-list';
@@ -9,7 +11,7 @@ import { ControlFormLabel } from '../../components/control-form-label';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 import { type Suggestion } from '../../hooks/use-form-field-suggestions';
-import { CHIP_TRIGGER_KEYS, isFormFieldShortcode, isValidEmail } from './utils';
+import { CHIP_TRIGGER_KEYS, isFormFieldShortcode, isValidEmail, shouldShowMentionsInfo } from './utils';
 
 const isValidRecipient = ( address: string ) => isValidEmail( address ) || isFormFieldShortcode( address );
 
@@ -114,12 +116,17 @@ type EmailChipsFieldProps = {
 };
 
 export const EmailChipsField = ( { fieldLabel, placeholder, suggestions }: EmailChipsFieldProps ) => (
-	<Grid container direction="column" gap={ 0.5 }>
-		<Grid item>
-			<ControlFormLabel>{ fieldLabel }</ControlFormLabel>
+	<Stack gap={ 0.5 }>
+		<Grid container direction="column" gap={ 0.5 }>
+			<Grid item>
+				<ControlFormLabel>{ fieldLabel }</ControlFormLabel>
+			</Grid>
+			<Grid item>
+				<EmailChipsControl placeholder={ placeholder } suggestions={ suggestions } />
+			</Grid>
 		</Grid>
-		<Grid item>
-			<EmailChipsControl placeholder={ placeholder } suggestions={ suggestions } />
-		</Grid>
-	</Grid>
+		{ shouldShowMentionsInfo() && (
+			<InfoAlert>{ __( 'Type an email field name to insert its submitted value.', 'elementor' ) }</InfoAlert>
+		) }
+	</Stack>
 );
