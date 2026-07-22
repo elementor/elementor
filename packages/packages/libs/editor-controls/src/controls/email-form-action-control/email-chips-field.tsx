@@ -1,21 +1,46 @@
 import * as React from 'react';
-import { type KeyboardEvent, type SyntheticEvent, useState } from 'react';
+import { type KeyboardEvent, type SyntheticEvent, useMemo, useState } from 'react';
 import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { Autocomplete, Grid, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ChipsList } from '../../components/chips-list';
 import { ControlFormLabel } from '../../components/control-form-label';
+<<<<<<< HEAD
 import { CHIP_TRIGGER_KEYS, isValidEmail } from './utils';
+=======
+import ControlActions from '../../control-actions/control-actions';
+import { createControl } from '../../create-control';
+import { type Suggestion } from '../../hooks/use-form-field-suggestions';
+import { createMentionPattern } from '../mention-text-area-control';
+import { CHIP_TRIGGER_KEYS, isFormFieldShortcode, isValidEmail } from './utils';
+
+const isValidRecipient = ( address: string ) => isValidEmail( address ) || isFormFieldShortcode( address );
+
+function resolveMention( raw: string, suggestions: Suggestion[] ): string {
+	if ( ! raw.startsWith( '@' ) ) {
+		return raw;
+	}
+
+	const match = suggestions.find( ( suggestion ) => createMentionPattern( suggestion.value, 'start' ).test( raw ) );
+
+	return match ? `[${ match.value }]` : raw;
+}
+>>>>>>> 6dcc25be56 (Internal: Support dynamic mentions [ED-24834] (#36613))
 
 // type EmailChip = { label: string; value: string };
 
 type EmailChipsFieldProps = {
 	fieldLabel: string;
 	placeholder?: string;
+	suggestions?: Suggestion[];
 };
 
+<<<<<<< HEAD
 export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldProps ) => {
+=======
+export const EmailChipsControl = createControl( ( { placeholder, suggestions = [] }: EmailChipsControlProps ) => {
+>>>>>>> 6dcc25be56 (Internal: Support dynamic mentions [ED-24834] (#36613))
 	const { value, setValue, disabled } = useBoundProp( stringArrayPropTypeUtil );
 	const [ inputValue, setInputValue ] = useState( '' );
 
@@ -25,10 +50,15 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 		.map( ( item ) => stringPropTypeUtil.extract( item ) )
 		.filter( ( val ): val is string => val !== null );
 
-	const tryAddChip = ( raw: string ) => {
-		const address = raw.trim();
+	const suggestionOptions = useMemo(
+		() => suggestions.map( ( suggestion ) => `[${ suggestion.value }]` ),
+		[ suggestions ]
+	);
 
-		if ( ! address || selectedValues.includes( address ) || ! isValidEmail( address ) ) {
+	const tryAddChip = ( raw: string ) => {
+		const address = resolveMention( raw.trim(), suggestions );
+
+		if ( ! address || selectedValues.includes( address ) || ! isValidRecipient( address ) ) {
 			return;
 		}
 
@@ -40,9 +70,9 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 		const updated = [];
 
 		for ( const entry of newValue ) {
-			const address = entry.trim();
+			const address = resolveMention( entry.trim(), suggestions );
 
-			if ( ! address || ! isValidEmail( address ) ) {
+			if ( ! address || ! isValidRecipient( address ) ) {
 				continue;
 			}
 
@@ -68,6 +98,7 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 	};
 
 	return (
+<<<<<<< HEAD
 		<Grid container direction="column" gap={ 0.5 }>
 			<Grid item>
 				<ControlFormLabel>{ fieldLabel }</ControlFormLabel>
@@ -102,3 +133,57 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 		</Grid>
 	);
 };
+=======
+		<ControlActions>
+			<Autocomplete
+				fullWidth
+				multiple
+				freeSolo
+				size="tiny"
+				disabled={ disabled }
+				inputValue={ inputValue }
+				onInputChange={ ( _, val, reason ) => {
+					if ( reason !== 'reset' ) {
+						setInputValue( val );
+					}
+				} }
+				value={ selectedValues }
+				onChange={ handleChange }
+				options={ suggestionOptions }
+				filterOptions={ ( options, state ) => {
+					const query = state.inputValue.trim().replace( /^@/, '' ).toLowerCase();
+
+					return query ? options.filter( ( option ) => option.toLowerCase().includes( query ) ) : options;
+				} }
+				filterSelectedOptions
+				onBlur={ handleBlur }
+				getOptionLabel={ ( option ) => option }
+				isOptionEqualToValue={ ( option, val ) => option === val }
+				renderInput={ ( params ) => (
+					<TextField { ...params } placeholder={ placeholder } onKeyDown={ handleKeyDown } />
+				) }
+				renderTags={ ( tagValues, getTagProps ) => (
+					<ChipsList getLabel={ ( option ) => option } getTagProps={ getTagProps } values={ tagValues } />
+				) }
+			/>
+		</ControlActions>
+	);
+} );
+
+type EmailChipsFieldProps = {
+	fieldLabel: string;
+	placeholder?: string;
+	suggestions?: Suggestion[];
+};
+
+export const EmailChipsField = ( { fieldLabel, placeholder, suggestions }: EmailChipsFieldProps ) => (
+	<Grid container direction="column" gap={ 0.5 }>
+		<Grid item>
+			<ControlFormLabel>{ fieldLabel }</ControlFormLabel>
+		</Grid>
+		<Grid item>
+			<EmailChipsControl placeholder={ placeholder } suggestions={ suggestions } />
+		</Grid>
+	</Grid>
+);
+>>>>>>> 6dcc25be56 (Internal: Support dynamic mentions [ED-24834] (#36613))
