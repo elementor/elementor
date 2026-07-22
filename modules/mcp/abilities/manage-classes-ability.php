@@ -28,6 +28,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	const CLASS_TYPE = 'class';
 	const DESKTOP_BREAKPOINT = 'desktop';
+	const MAX_BATCH_SIZE = 50;
 
 	private ?Global_Classes_Repository $repository;
 	private ?Css_Converter $css_converter;
@@ -44,14 +45,14 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Classes', 'elementor' ),
-			__( 'Manage V4 global CSS classes on the active kit. Create, update, or delete a single class using raw CSS declarations.', 'elementor' ),
+			__( 'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations).', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status' ],
+				'required' => [ 'status', 'results', 'order' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
-					'class' => [ 'type' => 'object' ],
+					'results' => [ 'type' => 'array' ],
 					'order' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
@@ -68,23 +69,27 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 			[
 				'type' => 'object',
-				'required' => [ 'action' ],
+				'required' => [ 'operations' ],
 				'properties' => [
-					'action' => [
-						'type' => 'string',
-						'enum' => [ 'create', 'update', 'delete' ],
-					],
-					'id' => [
-						'type' => 'string',
-						'description' => 'Class id — required for update/delete.',
-					],
-					'label' => [
-						'type' => 'string',
-						'description' => 'Class label (lowercase, dash-separated) — required for create/update.',
-					],
-					'css' => [
-						'type' => 'object',
-						'description' => 'Raw CSS declarations (property → value) — required for create/update.',
+					'operations' => [
+						'type' => 'array',
+						'description' => 'Bulk operations (1–50). Each item requires action; create/update need label and css, update/delete need id.',
+						'items' => [
+							'type' => 'object',
+							'required' => [ 'action' ],
+							'properties' => [
+								'action' => [
+									'type' => 'string',
+									'enum' => [ 'create', 'update', 'delete' ],
+								],
+								'id' => [ 'type' => 'string' ],
+								'label' => [ 'type' => 'string' ],
+								'css' => [
+									'type' => 'object',
+									'description' => 'Raw CSS declarations (property → value).',
+								],
+							],
+						],
 					],
 				],
 			]
@@ -93,145 +98,416 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
-		$action = $input['action'] ?? '';
+		$operations = $input['operations'] ?? null;
 
-		switch ( $action ) {
-			case 'create':
-				return $this->handle_create( $input );
-			case 'update':
-				return $this->handle_update( $input );
-			case 'delete':
-				return $this->handle_delete( $input );
-			default:
-				return $this->bad_request( sprintf(
-					/* translators: %s: action name */
-					__( 'Unknown action: %s.', 'elementor' ),
-					$action
-				) );
+		if ( ! is_array( $operations ) ) {
+			return $this->bad_request( __( 'operations array is required.', 'elementor' ) );
 		}
+
+		if ( empty( $operations ) ) {
+			return $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+		}
+
+		if ( count( $operations ) > self::MAX_BATCH_SIZE ) {
+			return new \WP_Error(
+				'batch_size_exceeded',
+				sprintf(
+					/* translators: %d: maximum operations per request */
+					__( 'Maximum %d operations per request.', 'elementor' ),
+					self::MAX_BATCH_SIZE
+				),
+				[
+					'status' => \WP_Http::BAD_REQUEST,
+					'max_allowed' => self::MAX_BATCH_SIZE,
+				]
+			);
+		}
+
+		return $this->handle_bulk( $operations );
 	}
 
-	private function handle_create( array $input ) {
-		$label = $input['label'] ?? '';
-		$css = $this->as_map( $input['css'] ?? [] );
+	private function handle_bulk( array $operations ): array {
+		$labels = $this->get_repository()->all_labels();
+		$original_order = $this->get_repository()->get_order();
+		$order = $original_order;
+		$existing_items = [];
+		$touched_items = [];
+		$added = [];
+		$modified = [];
+		$deleted = [];
+		$deleted_set = [];
+		$pending_labels = [];
+		$results_by_index = [];
+		$reserved_ids = array_keys( $labels );
+
+		foreach ( $operations as $index => $operation ) {
+			if ( ! is_array( $operation ) ) {
+				$results_by_index[ $index ] = $this->operation_error(
+					$index,
+					'',
+					'invalid_input',
+					__( 'Invalid operation.', 'elementor' )
+				);
+				continue;
+			}
+
+			$action = $operation['action'] ?? '';
+
+			switch ( $action ) {
+				case 'create':
+					$this->apply_create_operation(
+						$index,
+						$operation,
+						$labels,
+						$order,
+						$touched_items,
+						$added,
+						$deleted_set,
+						$pending_labels,
+						$reserved_ids,
+						$results_by_index
+					);
+					break;
+				case 'update':
+					$this->apply_update_operation(
+						$index,
+						$operation,
+						$labels,
+						$order,
+						$existing_items,
+						$touched_items,
+						$modified,
+						$deleted_set,
+						$pending_labels,
+						$results_by_index
+					);
+					break;
+				case 'delete':
+					$this->apply_delete_operation(
+						$index,
+						$operation,
+						$labels,
+						$order,
+						$deleted,
+						$deleted_set,
+						$pending_labels,
+						$results_by_index
+					);
+					break;
+				default:
+					$results_by_index[ $index ] = $this->operation_error(
+						$index,
+						$action,
+						'invalid_input',
+						sprintf(
+							/* translators: %s: action name */
+							__( 'Unknown action: %s.', 'elementor' ),
+							$action
+						)
+					);
+			}
+		}
+
+		if ( ! empty( $added ) || ! empty( $modified ) || ! empty( $deleted ) ) {
+			$this->get_repository()->apply_changes(
+				$touched_items,
+				[
+					'added' => $added,
+					'deleted' => $deleted,
+					'modified' => $modified,
+					'order' => $order !== $original_order,
+				],
+				$order
+			);
+
+			$this->clear_cache();
+		}
+
+		return $this->build_response( $results_by_index, $order );
+	}
+
+	private function apply_create_operation(
+		int $index,
+		array $operation,
+		array &$labels,
+		array &$order,
+		array &$touched_items,
+		array &$added,
+		array $deleted_set,
+		array &$pending_labels,
+		array &$reserved_ids,
+		array &$results_by_index
+	): void {
+		$label = $operation['label'] ?? '';
+		$css = $this->as_map( $operation['css'] ?? [] );
 
 		if ( '' === $label || empty( $css ) ) {
-			return $this->bad_request( __( 'Create requires label and css.', 'elementor' ) );
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'create',
+				'invalid_input',
+				__( 'Create requires label and css.', 'elementor' )
+			);
+
+			return;
 		}
 
-		$duplicate_error = $this->assert_label_available( $label );
-		if ( $duplicate_error ) {
-			return $duplicate_error;
+		if ( $this->is_label_taken( $label, $labels, $pending_labels ) ) {
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'create',
+				'duplicated_label',
+				__( 'Global class label already exists', 'elementor' )
+			);
+
+			return;
 		}
 
-		$limit_error = $this->assert_within_class_limit();
-		if ( $limit_error ) {
-			return $limit_error;
+		$active_count = $this->count_active_classes( $order, $deleted_set );
+
+		if ( $active_count >= Global_Classes_REST_API::MAX_ITEMS ) {
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'create',
+				'global_classes_limit_exceeded',
+				sprintf(
+					/* translators: %d: Maximum allowed items. */
+					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
+					Global_Classes_REST_API::MAX_ITEMS
+				)
+			);
+
+			return;
 		}
 
-		$class_item = $this->build_class_item( $this->generate_class_id(), $label, $css );
+		$class_id = Utils::generate_id( 'g-', $reserved_ids );
+		$reserved_ids[] = $class_id;
+
+		$class_item = $this->build_class_item( $class_id, $label, $css );
+
 		if ( is_wp_error( $class_item ) ) {
-			return $class_item;
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'create',
+				$class_item->get_error_code(),
+				$class_item->get_error_message()
+			);
+
+			return;
 		}
 
-		$class_id = $class_item['id'];
-		$order = $this->get_repository()->get_order();
-		$new_order = array_merge( $order, [ $class_id ] );
+		$labels[ $class_id ] = $label;
+		$pending_labels[ $label ] = $class_id;
+		$touched_items[ $class_id ] = $class_item;
+		$added[] = $class_id;
+		$order[] = $class_id;
 
-		$this->get_repository()->apply_changes(
-			[ $class_id => $class_item ],
-			[
-				'added' => [ $class_id ],
-				'deleted' => [],
-				'modified' => [],
-				'order' => count( $new_order ) !== count( $order ),
-			],
-			$new_order
-		);
-
-		$this->clear_cache();
-
-		return $this->ok( $class_item, $new_order );
+		$results_by_index[ $index ] = [
+			'index' => $index,
+			'action' => 'create',
+			'status' => 'ok',
+			'id' => $class_id,
+			'label' => $label,
+		];
 	}
 
-	private function handle_update( array $input ) {
-		$id = $input['id'] ?? '';
-		$label = $input['label'] ?? '';
-		$css = $this->as_map( $input['css'] ?? [] );
+	private function apply_update_operation(
+		int $index,
+		array $operation,
+		array &$labels,
+		array $order,
+		array &$existing_items,
+		array &$touched_items,
+		array &$modified,
+		array $deleted_set,
+		array &$pending_labels,
+		array &$results_by_index
+	): void {
+		$id = $operation['id'] ?? '';
+		$label = $operation['label'] ?? '';
+		$css = $this->as_map( $operation['css'] ?? [] );
 
 		if ( '' === $id || '' === $label || empty( $css ) ) {
-			return $this->bad_request( __( 'Update requires id, label, and css.', 'elementor' ) );
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'update',
+				'invalid_input',
+				__( 'Update requires id, label, and css.', 'elementor' )
+			);
+
+			return;
 		}
 
-		$existing = $this->get_repository()->get( $id );
-		if ( ! $existing ) {
-			return $this->not_found( __( 'Global class not found', 'elementor' ) );
+		if ( ! in_array( $id, $order, true ) || isset( $deleted_set[ $id ] ) ) {
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'update',
+				'class_not_found',
+				__( 'Global class not found', 'elementor' )
+			);
+
+			return;
 		}
 
-		$duplicate_error = $this->assert_label_available( $label, $id );
-		if ( $duplicate_error ) {
-			return $duplicate_error;
+		if ( $this->is_label_taken( $label, $labels, $pending_labels, $id ) ) {
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'update',
+				'duplicated_label',
+				__( 'Global class label already exists', 'elementor' )
+			);
+
+			return;
+		}
+
+		if ( ! isset( $existing_items[ $id ] ) ) {
+			$existing_items[ $id ] = $this->get_repository()->get( $id );
+		}
+
+		if ( ! $existing_items[ $id ] ) {
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'update',
+				'class_not_found',
+				__( 'Global class not found', 'elementor' )
+			);
+
+			return;
 		}
 
 		$class_item = $this->build_class_item( $id, $label, $css );
+
 		if ( is_wp_error( $class_item ) ) {
-			return $class_item;
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'update',
+				$class_item->get_error_code(),
+				$class_item->get_error_message()
+			);
+
+			return;
 		}
 
-		$order = $this->get_repository()->get_order();
+		$labels[ $id ] = $label;
+		$pending_labels[ $label ] = $id;
+		$touched_items[ $id ] = $class_item;
 
-		$this->get_repository()->apply_changes(
-			[ $id => $class_item ],
-			[
-				'added' => [],
-				'deleted' => [],
-				'modified' => [ $id ],
-				'order' => false,
-			],
-			$order
-		);
+		if ( ! in_array( $id, $modified, true ) ) {
+			$modified[] = $id;
+		}
 
-		$this->clear_cache();
-
-		return $this->ok( $class_item, $order );
+		$results_by_index[ $index ] = [
+			'index' => $index,
+			'action' => 'update',
+			'status' => 'ok',
+			'id' => $id,
+			'label' => $label,
+		];
 	}
 
-	private function handle_delete( array $input ) {
-		$id = $input['id'] ?? '';
+	private function apply_delete_operation(
+		int $index,
+		array $operation,
+		array &$labels,
+		array &$order,
+		array &$deleted,
+		array &$deleted_set,
+		array &$pending_labels,
+		array &$results_by_index
+	): void {
+		$id = $operation['id'] ?? '';
 
 		if ( '' === $id ) {
-			return $this->bad_request( __( 'Delete requires id.', 'elementor' ) );
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'delete',
+				'invalid_input',
+				__( 'Delete requires id.', 'elementor' )
+			);
+
+			return;
 		}
 
-		$order = $this->get_repository()->get_order();
-		if ( ! in_array( $id, $order, true ) ) {
-			return $this->not_found( __( 'Global class not found', 'elementor' ) );
+		if ( ! in_array( $id, $order, true ) || isset( $deleted_set[ $id ] ) ) {
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'delete',
+				'class_not_found',
+				__( 'Global class not found', 'elementor' )
+			);
+
+			return;
 		}
 
 		$existing = $this->get_repository()->get( $id );
+
 		if ( ! $existing ) {
-			return $this->not_found( __( 'Global class not found', 'elementor' ) );
+			$results_by_index[ $index ] = $this->operation_error(
+				$index,
+				'delete',
+				'class_not_found',
+				__( 'Global class not found', 'elementor' )
+			);
+
+			return;
 		}
 
-		$new_order = array_values( array_filter( $order, fn( $class_id ) => $class_id !== $id ) );
+		$label = $labels[ $id ] ?? ( $existing['label'] ?? '' );
+		$deleted[] = $id;
+		$deleted_set[ $id ] = true;
+		$order = array_values( array_filter( $order, fn( $class_id ) => $class_id !== $id ) );
+		unset( $labels[ $id ] );
 
-		$this->get_repository()->apply_changes(
-			[],
-			[
-				'added' => [],
-				'deleted' => [ $id ],
-				'modified' => [],
-				'order' => count( $new_order ) !== count( $order ),
-			],
-			$new_order
-		);
+		if ( '' !== $label ) {
+			unset( $pending_labels[ $label ] );
+		}
 
-		$this->clear_cache();
-
-		return $this->ok( $existing, $new_order );
+		$results_by_index[ $index ] = [
+			'index' => $index,
+			'action' => 'delete',
+			'status' => 'ok',
+			'id' => $id,
+			'label' => $label,
+		];
 	}
 
-	private function build_class_item( string $id, string $label, array $css ) {
+	private function count_active_classes( array $order, array $deleted_set ): int {
+		$count = 0;
+
+		foreach ( $order as $class_id ) {
+			if ( ! isset( $deleted_set[ $class_id ] ) ) {
+				$count++;
+			}
+		}
+
+		return $count;
+	}
+
+	private function is_label_taken( string $label, array $labels, array $pending_labels, ?string $except_id = null ): bool {
+		foreach ( $labels as $id => $existing_label ) {
+			if ( null !== $except_id && $id === $except_id ) {
+				continue;
+			}
+
+			if ( $existing_label === $label ) {
+				return true;
+			}
+		}
+
+		foreach ( $pending_labels as $pending_label => $pending_id ) {
+			if ( null !== $except_id && $pending_id === $except_id ) {
+				continue;
+			}
+
+			if ( $pending_label === $label ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected function build_class_item( string $id, string $label, array $css ) {
 		$variant = $this->convert_css_to_variant( $css );
 		if ( is_wp_error( $variant ) ) {
 			return $variant;
@@ -299,60 +575,43 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function generate_class_id(): string {
-		return Utils::generate_id( 'g-', array_keys( $this->get_repository()->all_labels() ) );
-	}
+	private function build_response( array $results_by_index, array $order ): array {
+		ksort( $results_by_index );
 
-	private function assert_label_available( string $label, ?string $except_id = null ): ?\WP_Error {
-		foreach ( $this->get_repository()->all_labels() as $id => $existing_label ) {
-			if ( null !== $except_id && $id === $except_id ) {
-				continue;
-			}
+		$results = array_values( $results_by_index );
+		$ok_count = 0;
+		$error_count = 0;
 
-			if ( $existing_label === $label ) {
-				return new \WP_Error(
-					'duplicated_label',
-					__( 'Global class label already exists', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
+		foreach ( $results as $result ) {
+			if ( 'ok' === ( $result['status'] ?? '' ) ) {
+				$ok_count++;
+			} else {
+				$error_count++;
 			}
 		}
 
-		return null;
-	}
-
-	private function assert_within_class_limit(): ?\WP_Error {
-		$current_count = count( $this->get_repository()->all_labels() );
-
-		if ( $current_count >= Global_Classes_REST_API::MAX_ITEMS ) {
-			return new \WP_Error(
-				'global_classes_limit_exceeded',
-				sprintf(
-					/* translators: %d: Maximum allowed items. */
-					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
-					Global_Classes_REST_API::MAX_ITEMS
-				),
-				[
-					'status' => \WP_Http::BAD_REQUEST,
-					'current_count' => $current_count + 1,
-					'max_allowed' => Global_Classes_REST_API::MAX_ITEMS,
-				]
-			);
+		$status = 'ok';
+		if ( $ok_count > 0 && $error_count > 0 ) {
+			$status = 'partial_error';
+		} elseif ( 0 === $ok_count ) {
+			$status = 'error';
 		}
 
-		return null;
-	}
-
-	private function ok( array $class, array $order ): array {
 		return [
-			'status' => 'ok',
-			'class' => $class,
+			'status' => $status,
+			'results' => $results,
 			'order' => $order,
 		];
 	}
 
-	private function not_found( string $message ): \WP_Error {
-		return new \WP_Error( 'class_not_found', $message, [ 'status' => \WP_Http::NOT_FOUND ] );
+	private function operation_error( int $index, string $action, string $code, string $message ): array {
+		return [
+			'index' => $index,
+			'action' => $action,
+			'status' => 'error',
+			'code' => $code,
+			'message' => $message,
+		];
 	}
 
 	private function bad_request( string $message ): \WP_Error {
@@ -360,6 +619,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	}
 
 	private function clear_cache(): void {
+		if ( ! class_exists( Plugin::class ) || ! isset( Plugin::$instance ) ) {
+			return;
+		}
+
 		Plugin::$instance->files_manager->clear_cache();
 	}
 
