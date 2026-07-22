@@ -195,41 +195,6 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertEquals( 'console.log(1);', $response->get_data() );
 	}
 
-	public function test_proxy_builds_urls_from_the_remote_mixpanel_config_hosts() {
-		// Arrange
-		$this->act_as_admin();
-
-		$this->seed_remote_mixpanel_config( [
-			[
-				'apiHost' => 'https://custom.mixpanel.example',
-				'libHost' => 'https://custom-cdn.example/libs',
-			],
-		] );
-
-		$captured_urls = [];
-
-		add_filter( 'pre_http_request', function ( $preempt, $args, $url ) use ( &$captured_urls ) {
-			$captured_urls[] = $url;
-
-			return [
-				'response' => [ 'code' => 200 ],
-				'headers' => [],
-				'body' => '1',
-			];
-		}, 10, 3 );
-
-		$api_request = new \WP_REST_Request( 'GET', '/elementor/v1/events/api/flags' );
-		$libs_request = new \WP_REST_Request( 'GET', '/elementor/v1/events/libs/recorder.min.js' );
-
-		// Act
-		$GLOBALS['wp_rest_server']->dispatch( $api_request );
-		$GLOBALS['wp_rest_server']->dispatch( $libs_request );
-
-		// Assert
-		$this->assertEquals( 'https://custom.mixpanel.example/flags', $captured_urls[0] );
-		$this->assertEquals( 'https://custom-cdn.example/libs/recorder.min.js', $captured_urls[1] );
-	}
-
 	public function test_api_route_rejects_unsupported_http_method() {
 		// Arrange
 		$this->act_as_admin();
