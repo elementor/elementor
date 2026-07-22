@@ -152,13 +152,13 @@ class Module extends BaseModule {
 		return $editor_assets_api->get_assets_data();
 	}
 
-	public static function get_mixpanel_api_host(): bool|string {
+	public static function get_mixpanel_api_host() {
 		$mixpanel_config = self::get_remote_mixpanel_config();
 
 		return wp_http_validate_url( $mixpanel_config[0]['apiHost'] ?? static::API_UPSTREAM_HOST );
 	}
 
-	public static function get_mixpanel_lib_host(): bool|string {
+	public static function get_mixpanel_lib_host() {
 		$mixpanel_config = self::get_remote_mixpanel_config();
 
 		return wp_http_validate_url( $mixpanel_config[0]['libHost'] ?? static::LIBS_UPSTREAM_HOST );
