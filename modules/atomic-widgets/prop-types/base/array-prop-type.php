@@ -91,12 +91,23 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function should_persist( $value ): bool {
+		return ! empty( $value['value'] );
+	}
+
 	public function sanitize_value( $value ) {
 		$prop_type = $this->get_item_type();
+		$result = [];
 
-		return array_map( function ( $item ) use ( $prop_type ) {
-			return $prop_type->sanitize( $item );
-		}, $value );
+		foreach ( $value as $item ) {
+			$sanitized_value = $prop_type->sanitize( $item );
+
+			if ( $prop_type->should_persist( $sanitized_value ) ) {
+				$result[] = $sanitized_value;
+			}
+		}
+
+		return $result;
 	}
 
 	public function jsonSerialize(): array {
