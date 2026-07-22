@@ -37,7 +37,8 @@ jobs:
       contents: read
       id-token: write
     if: |
-      needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success'
+      always() &&
+      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
     strategy:
       fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
