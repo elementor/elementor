@@ -182,6 +182,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
@@ -299,6 +300,36 @@ class Module extends BaseModule {
 		$settings['supported_size_units'] = Size_Constants::all_supported_units();
 
 		$settings['size_units'] = Size_Constants::grouped_units();
+
+		return $settings;
+	}
+
+	/**
+	 * Background Video is a container element, so core lists it among the atomic *elements*, which
+	 * always precede the atomic *widgets* in the widgets panel — `Document::get_config()` builds the
+	 * panel list as `array_merge( $elements_config, $widget_types_config )`, and the panel renders
+	 * tiles in that insertion order (there is no per-tile ordering field). The spec requires the tile
+	 * at the very bottom of the Atomic Elements section, after Divider and Video (both widgets), so we
+	 * re-append its config last in the initial document's widget list that seeds the editor cache.
+	 */
+	private function move_background_video_to_panel_end( $settings ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BACKGROUND_VIDEO ) ) {
+			return $settings;
+		}
+
+		$type = Atomic_Background_Video::get_element_type();
+
+		if ( empty( $settings['initial_document']['widgets'][ $type ] ) ) {
+			return $settings;
+		}
+
+		$widgets = $settings['initial_document']['widgets'];
+		$config = $widgets[ $type ];
+
+		unset( $widgets[ $type ] );
+		$widgets[ $type ] = $config;
+
+		$settings['initial_document']['widgets'] = $widgets;
 
 		return $settings;
 	}

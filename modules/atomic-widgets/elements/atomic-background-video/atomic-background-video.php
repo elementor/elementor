@@ -156,7 +156,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
 							'overflow' => String_Prop_Type::generate( 'hidden' ),
-							'min-height' => Size_Prop_Type::generate( [
+							'height' => Size_Prop_Type::generate( [
 								'size' => 400,
 								'unit' => 'px',
 							] ),
