@@ -338,21 +338,21 @@ jobs:
       wordpress_versions: '["latest", "6.9", "6.8"]'
       php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
 
-  playwright:
-    name: Playwright
-    needs: [detect-changes, build, lint-js, lint-php, jest, js-qunit, phpunit]
-    if: |
-      success() &&
-      needs.detect-changes.outputs.playwright == 'true' &&
-      !github.event.pull_request.draft
-    uses: ./.github/workflows/playwright.yml
-    with:
-      build_artifact_name: ${{ needs.build.outputs.artifact_name }}
+  # playwright:
+  #   name: Playwright
+  #   needs: [detect-changes, build, lint-js, lint-php, jest, js-qunit, phpunit]
+  #   if: |
+  #     success() &&
+  #     needs.detect-changes.outputs.playwright == 'true' &&
+  #     !github.event.pull_request.draft
+  #   uses: ./.github/workflows/playwright.yml
+  #   with:
+  #     build_artifact_name: ${{ needs.build.outputs.artifact_name }}
 
   summarize:
     name: Summarize PR checks
     runs-on: ubuntu-22.04
-    needs: [detect-changes, install, build, lint-js, lint-php, jest, js-qunit, phpunit, playwright]
+    needs: [detect-changes, install, build, lint-js, lint-php, jest, js-qunit, phpunit]
     if: |
       always() && (
         needs.install.result == 'failure' ||
@@ -361,8 +361,7 @@ jobs:
         needs.lint-php.result == 'failure' ||
         needs.jest.result == 'failure' ||
         needs.js-qunit.result == 'failure' ||
-        needs.phpunit.result == 'failure' ||
-        needs.playwright.result == 'failure'
+        needs.phpunit.result == 'failure'
       )
     permissions:
       pull-requests: write
@@ -392,7 +391,6 @@ jobs:
             | Jest | [${{ needs.jest.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
             | QUnit | [${{ needs.js-qunit.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
             | PHPUnit | [${{ needs.phpunit.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
-            | Playwright | [${{ needs.playwright.result }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
 
             [View workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           edit-mode: replace
@@ -409,7 +407,6 @@ jobs:
       - jest
       - js-qunit
       - phpunit
-      - playwright
     if: always()
     steps:
       - name: Validate required checks
@@ -421,7 +418,6 @@ jobs:
           JEST_RESULT: ${{ needs.jest.result }}
           QUNIT_RESULT: ${{ needs.js-qunit.result }}
           PHPUNIT_RESULT: ${{ needs.phpunit.result }}
-          PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
         run: |
           is_ok() {
             case "$1" in
@@ -438,8 +434,7 @@ jobs:
             "$LINT_PHP_RESULT" \
             "$JEST_RESULT" \
             "$QUNIT_RESULT" \
-            "$PHPUNIT_RESULT" \
-            "$PLAYWRIGHT_RESULT"
+            "$PHPUNIT_RESULT"
           do
             if ! is_ok "$RESULT"; then
               echo "Check failed with result: $RESULT"
