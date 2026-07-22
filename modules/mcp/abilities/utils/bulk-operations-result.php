@@ -44,9 +44,9 @@ class Bulk_Operations_Result {
 
 		foreach ( $results as $result ) {
 			if ( 'ok' === ( $result['status'] ?? '' ) ) {
-				$ok_count++;
+				++$ok_count;
 			} else {
-				$error_count++;
+				++$error_count;
 			}
 		}
 

@@ -297,7 +297,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		];
 		$intents['deleted_ids'][] = $id;
 
-		$results->add_success( $index, 'delete', [ 'id' => $id, 'label' => $label ] );
+		$results->add_success( $index, 'delete', [
+			'id' => $id,
+			'label' => $label,
+		] );
 	}
 
 	private function build_touched_items( array $intents, array $all_labels, Bulk_Operations_Result $results ): array {
@@ -365,7 +368,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				] );
 			} else {
 				$pending_labels[] = $label;
-				$results->add_success( $index, 'create', [ 'id' => $intent['id'], 'label' => $label ] );
+				$results->add_success( $index, 'create', [
+					'id' => $intent['id'],
+					'label' => $label,
+				] );
 			}
 		}
 
@@ -401,7 +407,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				if ( $label !== $current_label ) {
 					$pending_labels[] = $label;
 				}
-				$results->add_success( $index, 'update', [ 'id' => $intent['id'], 'label' => $label ] );
+				$results->add_success( $index, 'update', [
+					'id' => $intent['id'],
+					'label' => $label,
+				] );
 			}
 		}
 	}
