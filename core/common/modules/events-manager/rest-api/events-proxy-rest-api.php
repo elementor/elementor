@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Common\Modules\EventsManager\RestApi;
 
+use Elementor\Core\Common\Modules\EventsManager\Module;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,9 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Events_Proxy_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'events';
-
-	const API_UPSTREAM_HOST = 'https://api-eu.mixpanel.com';
-	const LIBS_UPSTREAM_HOST = 'https://cdn.mxpnl.com/libs';
 
 	const REQUEST_TIMEOUT = 3;
 	const MAX_BODY_BYTES = 10 * MB_IN_BYTES;
@@ -62,7 +60,7 @@ class Events_Proxy_REST_API {
 			}
 		}
 
-		echo $result->get_data(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- raw upstream body, must be sent byte-for-byte.
+		Utils::print_unescaped_internal_string( $result->get_data() );
 
 		return true;
 	}
@@ -75,7 +73,7 @@ class Events_Proxy_REST_API {
 
 	private function register_routes() {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/api/(?P<path>.+)', [
-			'methods' => \WP_REST_Server::ALLMETHODS,
+			'methods' => [ 'GET', 'POST' ],
 			'callback' => fn( \WP_REST_Request $request ) => $this->proxy_api_request( $request ),
 			'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 		] );
@@ -93,7 +91,7 @@ class Events_Proxy_REST_API {
 
 		unset( $query['rest_route'] );
 
-		$url = self::API_UPSTREAM_HOST . '/' . $path;
+		$url = Module::get_mixpanel_api_host() . '/' . $path;
 
 		if ( ! empty( $query ) ) {
 			$url = add_query_arg( $query, $url );
@@ -108,12 +106,12 @@ class Events_Proxy_REST_API {
 
 	private function proxy_libs_request( \WP_REST_Request $request ) {
 		$file = (string) $request->get_param( 'file' );
-		$url = self::LIBS_UPSTREAM_HOST . '/' . $file;
+		$url = Module::get_mixpanel_lib_host() . '/' . $file;
 
-		return $this->forward_request( $url, $request );
+		return $this->forward_request( $url, $request, false );
 	}
 
-	private function forward_request( string $url, \WP_REST_Request $request, bool $async = false ) {
+	private function forward_request( string $url, \WP_REST_Request $request, bool $async = true ) {
 		$body = $request->get_body();
 
 		if ( strlen( $body ) > self::MAX_BODY_BYTES ) {

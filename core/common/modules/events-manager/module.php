@@ -148,6 +148,19 @@ class Module extends BaseModule {
 
 		return $editor_assets_api->get_assets_data();
 	}
+
+	public static function get_mixpanel_api_host(): string {
+		$mixpanel_config = self::get_remote_mixpanel_config();
+
+		return $mixpanel_config[0]['apiHost'];
+	}
+
+	public static function get_mixpanel_lib_host(): string {
+		$mixpanel_config = self::get_remote_mixpanel_config();
+
+		return $mixpanel_config[0]['libHost'];
+	}
+
 	private static function get_user_id() {
 		$user_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
 

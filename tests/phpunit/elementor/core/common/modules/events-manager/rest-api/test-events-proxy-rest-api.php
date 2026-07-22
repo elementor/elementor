@@ -20,6 +20,36 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 		( new Events_Proxy_REST_API() )->register_hooks();
 
 		do_action( 'rest_api_init' );
+
+		// Registered at a high priority so it always has final say over the per-test upstream
+		// mocks below, which don't discriminate by URL and would otherwise also swallow this
+		// unrelated remote-config fetch that Module::get_mixpanel_api_host()/get_mixpanel_lib_host()
+		// trigger on demand.
+		add_filter( 'pre_http_request', function ( $preempt, $args, $url ) {
+			if ( false === strpos( $url, 'assets.elementor.com' ) ) {
+				return $preempt;
+			}
+
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => wp_json_encode( [
+					'mixpanel' => [
+						[
+							'apiHost' => 'api-eu.mixpanel.com',
+							'libHost' => 'https://cdn.mxpnl.com/libs',
+						],
+					],
+				] ),
+			];
+		}, 20, 3 );
+	}
+
+	private function seed_remote_mixpanel_config( array $config ): void {
+		update_option( '_elementor_mixpanel_config', [
+			'timeout' => current_time( 'timestamp' ) + HOUR_IN_SECONDS,
+			'value' => wp_json_encode( $config ),
+		] );
 	}
 
 	public function test_registers_the_api_and_libs_routes() {
@@ -165,6 +195,54 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertEquals( 'console.log(1);', $response->get_data() );
 	}
 
+	public function test_proxy_builds_urls_from_the_remote_mixpanel_config_hosts() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->seed_remote_mixpanel_config( [
+			[
+				'apiHost' => 'custom.mixpanel.example',
+				'libHost' => 'https://custom-cdn.example/libs',
+			],
+		] );
+
+		$captured_urls = [];
+
+		add_filter( 'pre_http_request', function ( $preempt, $args, $url ) use ( &$captured_urls ) {
+			$captured_urls[] = $url;
+
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => '1',
+			];
+		}, 10, 3 );
+
+		$api_request = new \WP_REST_Request( 'GET', '/elementor/v1/events/api/flags' );
+		$libs_request = new \WP_REST_Request( 'GET', '/elementor/v1/events/libs/recorder.min.js' );
+
+		// Act
+		$GLOBALS['wp_rest_server']->dispatch( $api_request );
+		$GLOBALS['wp_rest_server']->dispatch( $libs_request );
+
+		// Assert
+		$this->assertEquals( 'https://custom.mixpanel.example/flags', $captured_urls[0] );
+		$this->assertEquals( 'https://custom-cdn.example/libs/recorder.min.js', $captured_urls[1] );
+	}
+
+	public function test_api_route_rejects_unsupported_http_method() {
+		// Arrange
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'DELETE', '/elementor/v1/events/api/track' );
+
+		// Act
+		$response = $GLOBALS['wp_rest_server']->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 404, $response->get_status() );
+	}
+
 	public function test_oversized_body_is_rejected_with_413_before_forwarding() {
 		// Arrange
 		$this->act_as_admin();
@@ -216,7 +294,7 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 		$existing_error = new \WP_Error( 'rest_cookie_invalid_nonce', 'Cookie check failed' );
 
 		// Act
-		$_SERVER['REQUEST_URI'] = '/wp-json/elementor/v1/events-proxy/api/track';
+		$_SERVER['REQUEST_URI'] = '/wp-json/elementor/v1/events/api/track';
 		$own_route_result = $proxy->bypass_nonce_check_for_own_routes( $existing_error );
 
 		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/posts';
