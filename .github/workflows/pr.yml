@@ -76,6 +76,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
+          package-manager-cache: false
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
         with:
@@ -88,6 +89,7 @@ jobs:
         with:
           path: |
             node_modules
+            packages/node_modules
             vendor
           key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
       - name: Install dependencies
@@ -117,11 +119,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
+          package-manager-cache: false
       - name: Restore dependency cache
         uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
+            packages/node_modules
             vendor
           key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
@@ -202,14 +206,18 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
+          package-manager-cache: false
       - name: Restore dependency cache
         uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
+            packages/node_modules
             vendor
           key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
+      - name: Build tools
+        run: npm run build:tools
       - name: Run Lint
         run: npm run lint
 
@@ -234,6 +242,7 @@ jobs:
         with:
           path: |
             node_modules
+            packages/node_modules
             vendor
           key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
@@ -293,11 +302,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
+          package-manager-cache: false
       - name: Restore dependency cache
         uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
+            packages/node_modules
             vendor
           key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
@@ -316,11 +327,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
+          package-manager-cache: false
       - name: Restore dependency cache
         uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
+            packages/node_modules
             vendor
           key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
