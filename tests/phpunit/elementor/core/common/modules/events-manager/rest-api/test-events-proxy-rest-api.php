@@ -131,7 +131,7 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertEquals( 'data=abc', $captured['args']['body'] );
 		$this->assertEquals( 'application/x-www-form-urlencoded', $captured['args']['headers']['content-type'] );
 		$this->assertEquals( 'Basic abc123', $captured['args']['headers']['authorization'] );
-		$this->assertArrayNotHasKey( 'blocking', $captured['args'] );
+		$this->assertTrue( $captured['args']['blocking'] );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( '1', $response->get_data() );
 	}
