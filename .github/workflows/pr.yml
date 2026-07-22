@@ -345,7 +345,7 @@ jobs:
       success() &&
       needs.detect-changes.outputs.playwright == 'true' &&
       !github.event.pull_request.draft
-    uses: ./.github/workflows/playwright.yml
+    uses: ./.github/workflows/playwright-test-reusable.yml
     with:
       build_artifact_name: ${{ needs.build.outputs.artifact_name }}
 

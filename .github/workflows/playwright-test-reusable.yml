@@ -1,0 +1,15 @@
+name: Playwright Test Reusable
+
+on:
+  workflow_call:
+    inputs:
+      build_artifact_name:
+        type: string
+        required: false
+        default: ''
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "reusable ok"
