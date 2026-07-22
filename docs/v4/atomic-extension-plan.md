@@ -98,6 +98,45 @@ create/edit, and ends with verification steps. Note: `.claude/` is currently in
 - Link the hub from `docs/README.md`.
 - One-line pointer in `AGENTS.md` so agents find the guides.
 
+## Deliverable 4 — Delivery infrastructure (separate repo)
+
+Docs are delivered through a dedicated docs repo (e.g. `elementor/dev-docs`) built on
+**[docs-mcp-server](https://github.com/arabold/docs-mcp-server)** (open source), which
+indexes documentation into a local SQLite store (vector + full-text search) and exposes
+it to AI clients over an MCP HTTP/SSE endpoint, with a web UI for job management.
+
+Validated capabilities (from the project docs):
+
+- **Manual control** — local sources indexed via the `file://` scheme, gated by an
+  explicit allowlist (`DOCS_MCP_SCRAPER_SECURITY_FILE_ACCESS_ALLOWED_ROOTS`); full CLI
+  lifecycle (`scrape` / `refresh` / `list` / `remove`, `--version` per-version indexing)
+  plus a web UI (port 6280) to submit, monitor, and delete jobs.
+- **Private sources** — private GitHub repos via `GITHUB_TOKEN` / `GH_TOKEN`; also npm,
+  PyPI, websites, ZIPs. Network access is allowlist-controlled.
+- **llms.txt** — scrapes auto-probe `llms.txt` at the docs subpath and site root, use
+  its links as crawl seeds, prefer `.md` URL variants, and send `Accept: text/markdown`.
+- **Easy MCP exposure** — clients (Claude Code, Cursor, Copilot, Windsurf) connect with
+  one config block to `http://<host>:6280/sse`; the server supports `--read-only` and
+  OAuth2/OIDC (`DOCS_MCP_AUTH_ENABLED`, `DOCS_MCP_AUTH_ISSUER_URL`).
+- **Embeddings optional** — OpenAI, Ollama (fully local), Gemini, or Azure.
+
+Pipeline in the docs repo:
+
+1. **Authoring** — curated markdown guides (hand-edited, PR-reviewed).
+2. **Website** — Docusaurus (or Starlight) builds the site, with an llms.txt plugin
+   emitting `llms.txt`, `llms-full.txt`, and per-page raw `.md`.
+3. **Indexing** — CI runs `scrape` on the first deploy (from scratch), `refresh` on
+   subsequent deploys; aggregation adds scrape jobs over other sources into the same
+   index: this repo, private repos (via `GITHUB_TOKEN`), published `@elementor/*` npm
+   packages, developers.elementor.com.
+4. **Exposure** — one hosted read-only docs-mcp-server instance as the shared MCP
+   endpoint; developers can alternatively run it locally (`npx
+   @arabold/docs-mcp-server`) against the public site's `llms.txt`.
+
+Division of labor: **this repo** keeps the source-of-truth extension guides next to the
+code (plus the in-product MCP resource); **the docs repo** aggregates, builds the
+website, and runs the index/MCP layer.
+
 ## Follow-up (recommended, not in this round)
 
 - **Facades:** a thin PHP registration helper wrapping the hook strings behind named
