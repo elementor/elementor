@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolv
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -57,6 +58,60 @@ class Composite_Envelope_Resolver extends Plain_Resolver_Base {
 class Composite_Null_Resolver extends Plain_Resolver_Base {
 	public function resolve( $plain_value ) {
 		return null;
+	}
+}
+
+class Test_Url_Like_Plain_Prop_Type extends Plain_Prop_Type {
+	public static function get_key(): string {
+		return 'test-url';
+	}
+
+	protected function validate_value( $value ): bool {
+		return is_string( $value );
+	}
+
+	protected function sanitize_value( $value ) {
+		return $value;
+	}
+}
+
+class Test_Id_Object_Prop_Type extends Object_Prop_Type {
+	public static function get_key(): string {
+		return 'test-id-object';
+	}
+
+	protected function define_shape(): array {
+		return [
+			'id' => Number_Prop_Type::make(),
+			'label' => String_Prop_Type::make(),
+		];
+	}
+}
+
+class Test_Dynamic_Like_Resolver extends Plain_Resolver_Base {
+	public function resolve( $plain_value ) {
+		if ( ! is_array( $plain_value ) || ! isset( $plain_value['name'] ) ) {
+			return null;
+		}
+
+		return [
+			'$$type' => 'test-dynamic',
+			'value' => [ 'name' => $plain_value['name'] ],
+		];
+	}
+}
+
+class Test_Dynamic_Like_Plain_Prop_Type extends Plain_Prop_Type {
+	public static function get_key(): string {
+		return 'test-dynamic';
+	}
+
+	protected function validate_value( $value ): bool {
+		return is_array( $value );
+	}
+
+	protected function sanitize_value( $value ) {
+		return $value;
 	}
 }
 
@@ -226,5 +281,72 @@ class Test_Plain_Values_Resolver extends TestCase {
 		$resolver = new Plain_Values_Resolver( $empty_registry );
 
 		$this->assertNull( $resolver->resolve( 'test', String_Prop_Type::make() ) );
+	}
+
+	public function test_resolve__object_returns_null_when_input_shares_no_shape_keys() {
+		$resolver = new Plain_Values_Resolver( $this->make_registry() );
+
+		$this->assertNull(
+			$resolver->resolve(
+				[ 'name' => 'foreign', 'settings' => [] ],
+				Test_Object_Prop_Type::make()
+			)
+		);
+	}
+
+	public function test_resolve__union_falls_through_to_dynamic_when_object_shape_has_no_matching_keys() {
+		$registry = $this->make_registry();
+		$registry->register( Test_Dynamic_Like_Plain_Prop_Type::get_key(), new Test_Dynamic_Like_Resolver() );
+		$resolver = new Plain_Values_Resolver( $registry );
+
+		$prop_type = Union_Prop_Type::make()
+			->add_prop_type( Test_Id_Object_Prop_Type::make() )
+			->add_prop_type( Test_Dynamic_Like_Plain_Prop_Type::make() );
+
+		$this->assertSame(
+			[
+				'$$type' => 'test-dynamic',
+				'value' => [ 'name' => 'my-tag' ],
+			],
+			$resolver->resolve( [ 'name' => 'my-tag' ], $prop_type )
+		);
+	}
+
+	public function test_resolve__union_declines_plain_prop_type_variant_when_input_is_non_scalar() {
+		$registry = $this->make_registry();
+		$registry->register( Test_Dynamic_Like_Plain_Prop_Type::get_key(), new Test_Dynamic_Like_Resolver() );
+		$resolver = new Plain_Values_Resolver( $registry );
+
+		$prop_type = Union_Prop_Type::make()
+			->add_prop_type( Test_Url_Like_Plain_Prop_Type::make() )
+			->add_prop_type( Test_Dynamic_Like_Plain_Prop_Type::make() );
+
+		$this->assertSame(
+			[
+				'$$type' => 'test-dynamic',
+				'value' => [ 'name' => 'my-tag' ],
+			],
+			$resolver->resolve( [ 'name' => 'my-tag' ], $prop_type )
+		);
+	}
+
+	public function test_resolve__unregistered_plain_prop_type_accepts_scalar_via_fallback() {
+		$resolver = new Plain_Values_Resolver( $this->make_registry() );
+
+		$this->assertSame(
+			[ '$$type' => 'test-url', 'value' => 'https://example.com' ],
+			$resolver->resolve( 'https://example.com', Test_Url_Like_Plain_Prop_Type::make() )
+		);
+	}
+
+	public function test_resolve__unregistered_plain_prop_type_rejects_non_scalar() {
+		$resolver = new Plain_Values_Resolver( $this->make_registry() );
+
+		$this->assertNull(
+			$resolver->resolve(
+				[ 'name' => 'my-tag' ],
+				Test_Url_Like_Plain_Prop_Type::make()
+			)
+		);
 	}
 }

@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PlainResolvers;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -112,9 +113,15 @@ class Plain_Values_Resolver {
 			return null;
 		}
 
+		$shape = $prop_type->get_shape();
+
+		if ( empty( array_intersect_key( $plain_value, $shape ) ) ) {
+			return null;
+		}
+
 		$converted = [];
 
-		foreach ( $prop_type->get_shape() as $key => $field_prop_type ) {
+		foreach ( $shape as $key => $field_prop_type ) {
 			if ( ! array_key_exists( $key, $plain_value ) ) {
 				continue;
 			}
@@ -165,6 +172,10 @@ class Plain_Values_Resolver {
 	}
 
 	private function resolve_with_fallback( $plain_value, Prop_Type $prop_type ) {
+		if ( $prop_type instanceof Plain_Prop_Type && ! is_scalar( $plain_value ) ) {
+			return null;
+		}
+
 		$resolver = $this->registry->get( $prop_type::get_key() );
 
 		if ( ! ( $resolver instanceof Plain_Resolver_Base ) ) {
