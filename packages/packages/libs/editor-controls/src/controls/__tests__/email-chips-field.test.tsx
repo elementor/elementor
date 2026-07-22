@@ -222,7 +222,11 @@ describe( 'EmailChipsField form-field shortcodes', () => {
 describe( 'EmailChipsField @ mentions', () => {
 	it( 'should convert a matching @mention into a shortcode chip on blur', () => {
 		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
-		const { setValue } = renderRecipientField( { fieldBind: 'to', fieldValue: wrapStringArray( [] ), suggestions } );
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'to',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
 		const input = screen.getByRole( 'combobox' );
 
 		fireEvent.change( input, { target: { value: '@email' } } );
@@ -249,7 +253,11 @@ describe( 'EmailChipsField @ mentions', () => {
 
 	it( 'should not treat a real email address containing "@" as a mention', () => {
 		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
-		const { setValue } = renderRecipientField( { fieldBind: 'bcc', fieldValue: wrapStringArray( [] ), suggestions } );
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'bcc',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
 		const input = screen.getByRole( 'combobox' );
 
 		fireEvent.change( input, { target: { value: 'admin@example.com' } } );
@@ -264,7 +272,11 @@ describe( 'EmailChipsField @ mentions', () => {
 
 	it( 'should drop an @mention with no matching suggestion', () => {
 		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
-		const { setValue } = renderRecipientField( { fieldBind: 'to', fieldValue: wrapStringArray( [] ), suggestions } );
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'to',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
 		const input = screen.getByRole( 'combobox' );
 
 		fireEvent.change( input, { target: { value: '@unknown' } } );
