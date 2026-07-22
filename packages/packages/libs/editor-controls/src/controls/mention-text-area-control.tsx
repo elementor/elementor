@@ -81,9 +81,9 @@ const MentionWrapper = styled( 'div' )( ( { theme } ) => ( {
 	},
 } ) );
 
-type TriggerPosition = 'start' | 'auto';
+export type TriggerPosition = 'start' | 'auto';
 
-function createMentionPattern( value: string, triggerPosition: TriggerPosition ): RegExp {
+export function createMentionPattern( value: string, triggerPosition: TriggerPosition ): RegExp {
 	const escaped = value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
 	const prefix = 'start' === triggerPosition ? '^' : '';
 

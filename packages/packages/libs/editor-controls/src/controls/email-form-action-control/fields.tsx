@@ -18,11 +18,18 @@ export const SendToField = ( { placeholder }: { placeholder?: string } ) => {
 
 	return (
 		<PropKeyProvider bind="to">
-			<EmailChipsField
-				fieldLabel={ __( 'Send to', 'elementor' ) }
-				placeholder={ placeholder }
-				suggestions={ suggestions }
-			/>
+			<Stack gap={ 0.5 }>
+				<EmailChipsField
+					fieldLabel={ __( 'Send to', 'elementor' ) }
+					placeholder={ placeholder }
+					suggestions={ suggestions }
+				/>
+				{ shouldShowMentionsInfo() && (
+					<InfoAlert>
+						{ __( 'Type @ or an email field name to insert its submitted value.', 'elementor' ) }
+					</InfoAlert>
+				) }
+			</Stack>
 		</PropKeyProvider>
 	);
 };

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { type KeyboardEvent, type SyntheticEvent, useMemo, useState } from 'react';
 import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { InfoAlert } from '@elementor/editor-ui';
-import { Autocomplete, Grid, Stack, TextField } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { Autocomplete, Grid, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ChipsList } from '../../components/chips-list';
@@ -11,9 +9,20 @@ import { ControlFormLabel } from '../../components/control-form-label';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 import { type Suggestion } from '../../hooks/use-form-field-suggestions';
-import { CHIP_TRIGGER_KEYS, isFormFieldShortcode, isValidEmail, shouldShowMentionsInfo } from './utils';
+import { createMentionPattern } from '../mention-text-area-control';
+import { CHIP_TRIGGER_KEYS, isFormFieldShortcode, isValidEmail } from './utils';
 
 const isValidRecipient = ( address: string ) => isValidEmail( address ) || isFormFieldShortcode( address );
+
+function resolveMention( raw: string, suggestions: Suggestion[] ): string {
+	if ( ! raw.startsWith( '@' ) ) {
+		return raw;
+	}
+
+	const match = suggestions.find( ( suggestion ) => createMentionPattern( suggestion.value, 'start' ).test( raw ) );
+
+	return match ? `[${ match.value }]` : raw;
+}
 
 type EmailChipsControlProps = {
 	placeholder?: string;
@@ -36,7 +45,7 @@ export const EmailChipsControl = createControl( ( { placeholder, suggestions = [
 	);
 
 	const tryAddChip = ( raw: string ) => {
-		const address = raw.trim();
+		const address = resolveMention( raw.trim(), suggestions );
 
 		if ( ! address || selectedValues.includes( address ) || ! isValidRecipient( address ) ) {
 			return;
@@ -50,7 +59,7 @@ export const EmailChipsControl = createControl( ( { placeholder, suggestions = [
 		const updated = [];
 
 		for ( const entry of newValue ) {
-			const address = entry.trim();
+			const address = resolveMention( entry.trim(), suggestions );
 
 			if ( ! address || ! isValidRecipient( address ) ) {
 				continue;
@@ -94,6 +103,11 @@ export const EmailChipsControl = createControl( ( { placeholder, suggestions = [
 				value={ selectedValues }
 				onChange={ handleChange }
 				options={ suggestionOptions }
+				filterOptions={ ( options, state ) => {
+					const query = state.inputValue.trim().replace( /^@/, '' ).toLowerCase();
+
+					return query ? options.filter( ( option ) => option.toLowerCase().includes( query ) ) : options;
+				} }
 				filterSelectedOptions
 				onBlur={ handleBlur }
 				getOptionLabel={ ( option ) => option }
@@ -116,17 +130,12 @@ type EmailChipsFieldProps = {
 };
 
 export const EmailChipsField = ( { fieldLabel, placeholder, suggestions }: EmailChipsFieldProps ) => (
-	<Stack gap={ 0.5 }>
-		<Grid container direction="column" gap={ 0.5 }>
-			<Grid item>
-				<ControlFormLabel>{ fieldLabel }</ControlFormLabel>
-			</Grid>
-			<Grid item>
-				<EmailChipsControl placeholder={ placeholder } suggestions={ suggestions } />
-			</Grid>
+	<Grid container direction="column" gap={ 0.5 }>
+		<Grid item>
+			<ControlFormLabel>{ fieldLabel }</ControlFormLabel>
 		</Grid>
-		{ shouldShowMentionsInfo() && (
-			<InfoAlert>{ __( 'Type an email field name to insert its submitted value.', 'elementor' ) }</InfoAlert>
-		) }
-	</Stack>
+		<Grid item>
+			<EmailChipsControl placeholder={ placeholder } suggestions={ suggestions } />
+		</Grid>
+	</Grid>
 );

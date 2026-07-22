@@ -218,3 +218,58 @@ describe( 'EmailChipsField form-field shortcodes', () => {
 		expect( setValue ).toHaveBeenCalledWith( { to: wrapStringArray( [ '[email]' ] ) }, {}, { bind: 'to' } );
 	} );
 } );
+
+describe( 'EmailChipsField @ mentions', () => {
+	it( 'should convert a matching @mention into a shortcode chip on blur', () => {
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( { fieldBind: 'to', fieldValue: wrapStringArray( [] ), suggestions } );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: '@email' } } );
+		fireEvent.blur( input );
+
+		expect( setValue ).toHaveBeenCalledWith( { to: wrapStringArray( [ '[email]' ] ) }, {}, { bind: 'to' } );
+	} );
+
+	it( 'should filter suggestions in the dropdown when typing an @mention query', () => {
+		const suggestions: Suggestion[] = [
+			{ label: 'email', value: 'email' },
+			{ label: 'name', value: 'name' },
+		];
+		renderRecipientField( { fieldBind: 'cc', fieldValue: wrapStringArray( [] ), suggestions } );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: '@ema' } } );
+
+		const listbox = screen.getByRole( 'listbox' );
+
+		expect( within( listbox ).getByText( '[email]' ) ).toBeInTheDocument();
+		expect( within( listbox ).queryByText( '[name]' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should not treat a real email address containing "@" as a mention', () => {
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( { fieldBind: 'bcc', fieldValue: wrapStringArray( [] ), suggestions } );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: 'admin@example.com' } } );
+		fireEvent.blur( input );
+
+		expect( setValue ).toHaveBeenCalledWith(
+			{ bcc: wrapStringArray( [ 'admin@example.com' ] ) },
+			{},
+			{ bind: 'bcc' }
+		);
+	} );
+
+	it( 'should drop an @mention with no matching suggestion', () => {
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( { fieldBind: 'to', fieldValue: wrapStringArray( [] ), suggestions } );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: '@unknown' } } );
+		fireEvent.blur( input );
+
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+} );
