@@ -98,10 +98,14 @@ create/edit, and ends with verification steps. Note: `.claude/` is currently in
 - Link the hub from `docs/README.md`.
 - One-line pointer in `AGENTS.md` so agents find the guides.
 
-## Deliverable 4 — Delivery infrastructure (separate repo)
+## Deliverable 4 — Delivery infrastructure (existing docs repo)
 
-Docs are delivered through a dedicated docs repo (e.g. `elementor/dev-docs`) built on
-**[docs-mcp-server](https://github.com/arabold/docs-mcp-server)** (open source), which
+Docs are delivered through the existing docs repo —
+**[elementor/elementor-developers-docs](https://github.com/elementor/elementor-developers-docs)**
+(VuePress 1.9.7, markdown in `src/`, GitHub Actions deploy to
+developers.elementor.com/docs/) — with
+**[docs-mcp-server](https://github.com/arabold/docs-mcp-server)** (open source) as the
+AI index/exposure layer. docs-mcp-server
 indexes documentation into a local SQLite store (vector + full-text search) and exposes
 it to AI clients over an MCP HTTP/SSE endpoint, with a web UI for job management.
 
@@ -122,20 +126,26 @@ Validated capabilities (from the project docs):
 
 Pipeline in the docs repo:
 
-1. **Authoring** — curated markdown guides (hand-edited, PR-reviewed).
-2. **Website** — Docusaurus (or Starlight) builds the site, with an llms.txt plugin
-   emitting `llms.txt`, `llms-full.txt`, and per-page raw `.md`.
-3. **Indexing** — CI runs `scrape` on the first deploy (from scratch), `refresh` on
-   subsequent deploys; aggregation adds scrape jobs over other sources into the same
-   index: this repo, private repos (via `GITHUB_TOKEN`), published `@elementor/*` npm
-   packages, developers.elementor.com.
+1. **Authoring** — the atomic/V4 guides from this plan are published as a new section
+   in `elementor-developers-docs` `src/` (hand-edited, PR-reviewed — full manual
+   control; the site currently has no V4 coverage).
+2. **llms.txt** — developers.elementor.com serves no `llms.txt` today, and VuePress 1.x
+   has no ready-made plugin for it. Add a small pre-build script that generates
+   `llms.txt` + `llms-full.txt` from `src/**/*.md` and copies raw `.md` files into the
+   build output. (Optional follow-up: migrate the site to VitePress/Docusaurus, which
+   have native llms.txt plugins.)
+3. **Indexing** — CI runs docs-mcp-server `scrape` on the first deploy (from scratch),
+   `refresh` on subsequent deploys; aggregation adds scrape jobs over other sources
+   into the same index: this repo, private repos (via `GITHUB_TOKEN`), published
+   `@elementor/*` npm packages.
 4. **Exposure** — one hosted read-only docs-mcp-server instance as the shared MCP
    endpoint; developers can alternatively run it locally (`npx
    @arabold/docs-mcp-server`) against the public site's `llms.txt`.
 
 Division of labor: **this repo** keeps the source-of-truth extension guides next to the
-code (plus the in-product MCP resource); **the docs repo** aggregates, builds the
-website, and runs the index/MCP layer.
+code (plus the in-product MCP resource); **elementor-developers-docs** publishes the
+website and llms.txt; **docs-mcp-server** aggregates all sources and exposes them over
+MCP.
 
 ## Follow-up (recommended, not in this round)
 
