@@ -22,6 +22,9 @@ class Module extends BaseModule {
 	const DEFAULT_SESSION_RECORDING_PERCENT = 0;
 	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
 
+	const API_UPSTREAM_HOST = 'https://api-eu.mixpanel.com';
+	const LIBS_UPSTREAM_HOST = 'https://cdn.mxpnl.com/libs';
+
 	public function __construct() {
 		parent::__construct();
 
@@ -149,16 +152,16 @@ class Module extends BaseModule {
 		return $editor_assets_api->get_assets_data();
 	}
 
-	public static function get_mixpanel_api_host(): string {
+	public static function get_mixpanel_api_host(): bool|string {
 		$mixpanel_config = self::get_remote_mixpanel_config();
 
-		return $mixpanel_config[0]['apiHost'];
+		return wp_http_validate_url( $mixpanel_config[0]['apiHost'] ?? static::API_UPSTREAM_HOST );
 	}
 
-	public static function get_mixpanel_lib_host(): string {
+	public static function get_mixpanel_lib_host(): bool|string {
 		$mixpanel_config = self::get_remote_mixpanel_config();
 
-		return $mixpanel_config[0]['libHost'];
+		return wp_http_validate_url( $mixpanel_config[0]['libHost'] ?? static::LIBS_UPSTREAM_HOST );
 	}
 
 	private static function get_user_id() {

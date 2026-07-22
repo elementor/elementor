@@ -111,7 +111,7 @@ class Events_Proxy_REST_API {
 		return $this->forward_request( $url, $request, false );
 	}
 
-	private function forward_request( string $url, \WP_REST_Request $request, bool $async = true ) {
+	private function forward_request( string|bool $url, \WP_REST_Request $request, bool $async = true ): \WP_REST_Response {
 		$body = $request->get_body();
 
 		if ( strlen( $body ) > self::MAX_BODY_BYTES ) {
@@ -132,12 +132,12 @@ class Events_Proxy_REST_API {
 		if ( $async ) {
 			$args['blocking'] = false;
 
-			wp_remote_request( $url, $args );
+			wp_safe_remote_request( $url, $args );
 
 			return $this->build_raw_response( self::ASYNC_DISPATCH_SUCCESS_BODY, 200, 'text/plain' );
 		}
 
-		$response = wp_remote_request( $url, $args );
+		$response = wp_safe_remote_request( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return $this->build_raw_response( '', 502 );
