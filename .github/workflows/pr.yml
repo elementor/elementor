@@ -91,7 +91,7 @@ jobs:
             node_modules
             packages/node_modules
             vendor
-          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
       - name: Install dependencies
         if: steps.deps-cache.outputs.cache-hit != 'true'
         run: |
@@ -127,7 +127,7 @@ jobs:
             node_modules
             packages/node_modules
             vendor
-          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
       - name: Set ENV variables
         run: |
@@ -214,7 +214,7 @@ jobs:
             node_modules
             packages/node_modules
             vendor
-          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
       - name: Build tools
         run: npm run build:tools
@@ -244,7 +244,7 @@ jobs:
             node_modules
             packages/node_modules
             vendor
-          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
       - name: Install PHP lint dependencies
         run: |
@@ -310,7 +310,7 @@ jobs:
             node_modules
             packages/node_modules
             vendor
-          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
       - name: Run Jest
         run: npm run test
@@ -335,7 +335,7 @@ jobs:
             node_modules
             packages/node_modules
             vendor
-          key: deps-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
           fail-on-cache-miss: true
       - name: Build tools
         run: npm run build:tools
