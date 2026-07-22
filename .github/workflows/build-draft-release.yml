@@ -27,18 +27,9 @@ on:
         required: false
 
 jobs:
-  # ─────────────────────────────────────────────────────────────────────────
-  # Builds the plugin from an existing tagged commit and creates a DRAFT
-  # GitHub release with the build artifact attached. Assumes the tag already
-  # exists (created by release-tag-creation). Safe to re-run on its own if a
-  # previous build attempt failed — re-running just recreates the draft.
-  # ─────────────────────────────────────────────────────────────────────────
-  build-and-draft:
-    name: Build & Draft Release
+  build-job:
+    name: Build Plugin
     runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout tagged commit
         uses: actions/checkout@v4
@@ -56,6 +47,12 @@ jobs:
       - name: Install dependencies
         uses: ./.github/workflows/install-dependencies
 
+      - name: Verify version changelog
+        if: ${{ !inputs.prerelease }}
+        uses: ./.github/workflows/verify-version-changelog
+        with:
+          VERSION: ${{ inputs.version }}
+
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -64,33 +61,58 @@ jobs:
         env:
           MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
-      # Do we need this step? the release version is a s the passed input.
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-zip
+          path: elementor-*.zip
+          retention-days: 1
+
+  validate-job:
+    name: Validate Build
+    needs: build-job
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-zip
+
       - name: Get release name
         uses: ./.github/workflows/get-release-name
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
 
-      - name: Check changelog is updated
-        if: ${{ !inputs.prerelease }}
-        uses: ./.github/workflows/verify-version-changelog
-        with:
-          VERSION: ${{ inputs.version }}
-
       - name: Validate build files
         if: github.repository_owner == 'elementor'
         env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
-          PACKAGE_VERSION: ${{ inputs.version }}
+            PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+            CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
+            PACKAGE_VERSION: ${{ inputs.version }}
         run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+            bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+
+  draft-job:
+    name: Create Draft Release
+    needs: validate-job
+    runs-on: ubuntu-22.04
+    permissions:
+        contents: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+            name: plugin-zip
 
       - name: Create draft GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ inputs.version }}
-          name: ${{ inputs.version }}
-          files: elementor-*.zip
-          prerelease: ${{ inputs.prerelease }}
-          draft: true
+            tag_name: ${{ inputs.version }}
+            name: ${{ inputs.version }}
+            files: elementor-*.zip
+            prerelease: ${{ inputs.prerelease }}
+            draft: true
