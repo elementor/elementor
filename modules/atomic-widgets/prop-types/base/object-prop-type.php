@@ -117,6 +117,10 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function should_persist( $value ): bool {
+		return ! empty( $value['value'] );
+	}
+
 	public function sanitize_value( $value ) {
 		foreach ( $this->get_shape() as $key => $prop_type ) {
 			if ( ! isset( $value[ $key ] ) ) {
@@ -124,6 +128,11 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			}
 
 			$sanitized_value = $prop_type->sanitize( $value[ $key ] );
+
+			if ( ! $prop_type->should_persist( $sanitized_value ) ) {
+				unset( $value[ $key ] );
+				continue;
+			}
 
 			$value[ $key ] = $sanitized_value;
 		}
