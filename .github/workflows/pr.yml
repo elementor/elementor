@@ -14,6 +14,8 @@ concurrency:
 permissions:
   contents: read
   pull-requests: write
+  id-token: write
+  actions: read
 
 jobs:
   detect-changes:
@@ -343,14 +345,9 @@ jobs:
       success() &&
       needs.detect-changes.outputs.playwright == 'true' &&
       !github.event.pull_request.draft
-    permissions:
-      contents: read
-      id-token: write
-      actions: read
     uses: ./.github/workflows/playwright.yml
     with:
       build_artifact_name: ${{ needs.build.outputs.artifact_name }}
-    secrets: inherit
 
   summarize:
     name: Summarize PR checks
