@@ -340,6 +340,11 @@ jobs:
 
   playwright:
     name: Playwright
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+      actions: read
     needs: [detect-changes, build, lint-js, lint-php, jest, js-qunit, phpunit]
     if: |
       success() &&
