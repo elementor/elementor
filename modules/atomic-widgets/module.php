@@ -13,11 +13,9 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Global_Variable_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Identity_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
@@ -84,7 +82,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Position_Offset_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
@@ -151,10 +148,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
-use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -211,7 +204,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
-		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry, $variables_service ) => $this->register_settings_resolvers( $registry, $variables_service ), 10, 2 );
+		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
@@ -452,51 +445,28 @@ class Module extends BaseModule {
 		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Export_Transformer() );
 	}
 
-	private function register_settings_resolvers( Plain_Resolvers_Registry $registry, ?Variables_Service $variables_service = null ): void {
+	private function register_settings_resolvers( Plain_Resolvers_Registry $registry ): void {
 		$registry->register_fallback( new Identity_Plain_Resolver() );
 		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
 		$registry->register( Boolean_Prop_Type::get_key(), new Boolean_Plain_Resolver() );
 		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
-		$registry->register( Color_Prop_Type::get_key(), new String_Plain_Resolver() );
-		$registry->register( Size_Prop_Type::get_key(), new Size_Plain_Resolver() );
-
-		if ( ! $variables_service ) {
-			return;
-		}
-
-		$registry->register(
-			Color_Variable_Prop_Type::get_key(),
-			new Global_Variable_Plain_Resolver( $variables_service, Color_Variable_Prop_Type::get_key() )
-		);
-		$registry->register(
-			Font_Variable_Prop_Type::get_key(),
-			new Global_Variable_Plain_Resolver( $variables_service, Font_Variable_Prop_Type::get_key() )
-		);
-		$registry->register(
-			Size_Variable_Prop_Type::get_key(),
-			new Global_Variable_Plain_Resolver( $variables_service, Size_Variable_Prop_Type::get_key() )
-		);
 	}
 
-	public function get_settings_plain_values_resolver( ?Variables_Service $variables_service = null ): Plain_Values_Resolver {
-		static $cache = [];
+	public function get_settings_plain_values_resolver(): Plain_Values_Resolver {
+		static $resolver = null;
 
-		$cache_key = $variables_service ? spl_object_hash( $variables_service ) : 'none';
-
-		if ( isset( $cache[ $cache_key ] ) ) {
-			return $cache[ $cache_key ];
+		if ( null !== $resolver ) {
+			return $resolver;
 		}
 
 		$registry = new Plain_Resolvers_Registry();
 
-		do_action( 'elementor/atomic-widgets/settings-resolvers/register', $registry, $variables_service );
+		do_action( 'elementor/atomic-widgets/settings-resolvers/register', $registry );
 
 		$resolver = new Plain_Values_Resolver( $registry );
 
 		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
 		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
-
-		$cache[ $cache_key ] = $resolver;
 
 		return $resolver;
 	}

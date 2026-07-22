@@ -226,7 +226,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$plain_values_resolver = AtomicWidgetsModule::instance()->get_settings_plain_values_resolver( $variables_service );
+			$plain_values_resolver = AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 			$config_applier = new Element_Config_Applier( $type_resolver, $plain_values_resolver );
 			$config_result = $config_applier->apply(
 				$index,
