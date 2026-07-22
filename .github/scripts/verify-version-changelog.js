@@ -2,22 +2,23 @@
 
 const fs = require('fs');
 const { VERSION } = process.env;
+const {
+	assertValidVersion,
+	getVersionHeaderPattern,
+	getVersionSectionPattern,
+} = require('./changelog-utils');
 
 const CHANGELOG_FILES = ['changelog.txt', 'readme.txt'];
 
-const escapeVersionForRegex = (version) => version.replace(/\./g, '\\.');
-
-const getVersionHeaderPattern = (version) =>
-	new RegExp(`^= ${escapeVersionForRegex(version)} - \\d{4}-\\d{2}-\\d{2} =\\s*$`, 'm');
-
-const getVersionSectionPattern = (version) =>
-	new RegExp(
-		`^= ${escapeVersionForRegex(version)} - \\d{4}-\\d{2}-\\d{2} =\\s*\\n+([\\s\\S]*?)(?=^= \\d+\\.\\d+\\.\\d+ - \\d{4}-\\d{2}-\\d{2} =|(?![\\s\\S]))`,
-		'm'
-	);
-
 if (!VERSION) {
 	console.error('missing VERSION env var');
+	process.exit(1);
+}
+
+try {
+	assertValidVersion(VERSION);
+} catch (err) {
+	console.error(err.message);
 	process.exit(1);
 }
 

@@ -63,14 +63,36 @@ class Html_V3_Prop_Type extends Object_Prop_Type {
 		return is_string( $content['value'] );
 	}
 
+	public function should_persist( $value ): bool {
+		if ( ! is_array( $value['value'] ?? null ) ) {
+			return false;
+		}
+
+		$inner = $value['value'];
+
+		if ( ! empty( $inner['children'] ) ) {
+			return true;
+		}
+
+		$content = $inner['content'] ?? null;
+
+		if ( ! is_array( $content ) ) {
+			return false;
+		}
+
+		$content_value = $content['value'] ?? null;
+
+		return is_string( $content_value ) && '' !== $content_value;
+	}
+
 	public function sanitize_value( $value ) {
 		if ( is_array( $value['content'] ) && is_string( $value['content']['value'] ?? null ) ) {
 			$value['content']['value'] = $this->sanitize_html_content( $value['content']['value'] );
 		}
 
-		if ( isset( $value['children'] ) && is_array( $value['children'] ) ) {
-			$value['children'] = $this->sanitize_children( $value['children'] );
-		}
+		$value['children'] = isset( $value['children'] ) && is_array( $value['children'] )
+			? $this->sanitize_children( $value['children'] )
+			: [];
 
 		return $value;
 	}

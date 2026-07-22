@@ -102,13 +102,11 @@ class Element_Config_Applier {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
 
 			if ( null === $canonical ) {
-				// Skip unknown keys instead of failing so one stray prop can't discard a valid composition.
 				$warnings[] = sprintf(
-					'[%s] Property "%s" is not supported on element type "%s" and was skipped. Available properties are: %s',
+					'[%s] Property "%s" is not supported on element type "%s" and was skipped.',
 					$config_id,
 					$name,
-					$element_type,
-					implode( ', ', Prop_Canonicalizer::available_prop_names( $schema ) )
+					$element_type
 				);
 				continue;
 			}
