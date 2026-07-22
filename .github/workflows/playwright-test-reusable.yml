@@ -13,8 +13,24 @@ jobs:
     name: Calculate PHP Version
     uses: ./.github/workflows/calculate_php_version.yml
 
+  build-plugin:
+    if: github.event_name == 'workflow_call' && inputs.build_artifact_name == ''
+    name: Playwright build artifact
+    uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
+
+  prepare-caller-build:
+    if: github.event_name == 'workflow_call' && inputs.build_artifact_name != ''
+    runs-on: ubuntu-22.04
+    outputs:
+      artifact_name: ${{ inputs.build_artifact_name }}
+    steps:
+      - run: echo "Using caller build artifact ${{ inputs.build_artifact_name }}"
+
   test:
-    needs: get-php-version
+    needs: [build-plugin, prepare-caller-build, get-php-version]
+    if: needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success'
     runs-on: ubuntu-22.04
     steps:
-      - run: echo "reusable ok ${{ needs.get-php-version.outputs.php_version }}"
+      - run: echo "reusable ok"
