@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -86,7 +86,7 @@ class Flex_Property_Converter extends Property_Converter_Base {
 			if ( null === $grow ) {
 				return null;
 			}
-			$basis = Size_Value_Parser::parse( $tokens[1] );
+			$basis = Size_Plain_Resolver::parse( $tokens[1] );
 			if ( null === $basis ) {
 				return null;
 			}
@@ -122,6 +122,6 @@ class Flex_Property_Converter extends Property_Converter_Base {
 			return self::AUTO_BASIS;
 		}
 
-		return Size_Value_Parser::parse( $token );
+		return Size_Plain_Resolver::parse( $token );
 	}
 }

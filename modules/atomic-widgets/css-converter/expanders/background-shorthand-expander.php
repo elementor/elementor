@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Expanders;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
 use Elementor\Modules\AtomicWidgets\CssConverter\Shorthand_Expander_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -231,12 +231,12 @@ class Background_Shorthand_Expander extends Shorthand_Expander_Base {
 
 	private function is_size_token( string $token ): bool {
 		return in_array( strtolower( $token ), self::SIZE_KEYWORDS, true )
-			|| null !== Size_Value_Parser::parse( $token );
+			|| null !== Size_Plain_Resolver::parse( $token );
 	}
 
 	private function is_position_token( string $lower ): bool {
 		return in_array( $lower, self::POSITION_KEYWORDS, true )
-			|| null !== Size_Value_Parser::parse( $lower );
+			|| null !== Size_Plain_Resolver::parse( $lower );
 	}
 
 	/**

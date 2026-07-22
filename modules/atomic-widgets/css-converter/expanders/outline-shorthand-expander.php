@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Expanders;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Shorthand_Expander_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -100,7 +100,7 @@ class Outline_Shorthand_Expander extends Shorthand_Expander_Base {
 			return 'style';
 		}
 
-		if ( in_array( $lower, self::WIDTH_KEYWORDS, true ) || null !== Size_Value_Parser::parse( $token ) ) {
+		if ( in_array( $lower, self::WIDTH_KEYWORDS, true ) || null !== Size_Plain_Resolver::parse( $token ) ) {
 			return 'width';
 		}
 

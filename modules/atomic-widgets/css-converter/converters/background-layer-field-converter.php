@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
@@ -160,8 +160,8 @@ class Background_Layer_Field_Converter extends Property_Converter_Base {
 			return null;
 		}
 
-		$first = Size_Value_Parser::parse( $parts[0] );
-		$second = Size_Value_Parser::parse( $parts[1] );
+		$first = Size_Plain_Resolver::parse( $parts[0] );
+		$second = Size_Plain_Resolver::parse( $parts[1] );
 
 		if ( null === $first || null === $second ) {
 			return null;

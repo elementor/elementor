@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Selection_Size_Prop_Type;
@@ -137,7 +137,7 @@ class Transition_Property_Converter extends Property_Converter_Base {
 
 	private function find_first_time( array $tokens ): ?array {
 		foreach ( $tokens as $token ) {
-			$parsed = Size_Value_Parser::parse( $token );
+			$parsed = Size_Plain_Resolver::parse( $token );
 
 			if ( null !== $parsed && in_array( $parsed['unit'], self::TIME_UNITS, true ) ) {
 				return $parsed;

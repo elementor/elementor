@@ -3,9 +3,10 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
-use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\Mcp\Abilities\Dynamic_Tag_Llm_Resolver;
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -78,7 +79,7 @@ class List_Dynamic_Tags_Ability extends Abstract_Ability {
 				continue;
 			}
 
-			$settings[ $key ] = $prop_type->to_json_schema();
+			$settings[ $key ] = Plain_Llm_Schema_Converter::convert( $prop_type->to_json_schema() );
 		}
 
 		return (object) $settings;

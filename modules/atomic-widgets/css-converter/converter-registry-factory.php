@@ -41,7 +41,7 @@ class Converter_Registry_Factory {
 	/**
 	 * Every Style_Schema property whose value is a single Size leaf (the schema prop is a Size_Prop_Type,
 	 * or a Union with a Size member like `gap` — a size PropValue validates against the union). All are
-	 * handled uniformly by Size_Property_Converter + Size_Value_Parser; per-property unit sets are not
+	 * handled uniformly by Size_Property_Converter + Size_Plain_Resolver; per-property unit sets are not
 	 * enforced here because Size_Prop_Type::validate accepts any all_supported_units() unit.
 	 */
 	const SIZE_PROPERTIES = [

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -164,7 +165,8 @@ class Widget_Context_Helper {
 
 	private static function apply_llm_schema_filters( array $properties ): array {
 		foreach ( $properties as $key => $schema ) {
-			$properties[ $key ] = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+			$filtered = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+			$properties[ $key ] = Plain_Llm_Schema_Converter::convert( $filtered );
 		}
 
 		return $properties;

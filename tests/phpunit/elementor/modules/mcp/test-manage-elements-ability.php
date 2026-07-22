@@ -193,11 +193,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'element_id' => $heading_id,
 			'settings' => [
 				'title' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => [ '$$type' => 'string', 'value' => 'New Title' ],
-						'children' => [],
-					],
+					'content' => 'New Title',
+					'children' => [],
 				],
 			],
 		] );
@@ -219,7 +216,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'element_id' => $heading_id,
 			'settings' => [
-				'nonexistent_prop' => [ '$$type' => 'string', 'value' => 'x' ],
+				'nonexistent_prop' => 'x',
 			],
 		] );
 

@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -103,7 +103,7 @@ class Box_Shadow_Property_Converter extends Property_Converter_Base {
 				continue;
 			}
 
-			$size = Size_Value_Parser::parse( $token );
+			$size = Size_Plain_Resolver::parse( $token );
 
 			if ( null !== $size ) {
 				$lengths[] = $size;

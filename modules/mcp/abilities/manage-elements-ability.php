@@ -41,7 +41,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial PropValue settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -77,7 +77,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'element_id' => [ 'type' => 'string' ],
 					'settings' => [
 						'type' => 'object',
-						'description' => 'update only: partial PropValue map merged onto existing settings.',
+						'description' => 'update only: partial plain settings map merged onto existing settings (same plain format as build-composition element_config; no $$type envelopes).',
 					],
 					'style' => [
 						'type' => 'object',
@@ -226,7 +226,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
+			$plain_values_resolver = AtomicWidgetsModule::instance()->get_settings_plain_values_resolver( $variables_service );
+			$config_applier = new Element_Config_Applier( $type_resolver, $plain_values_resolver );
 			$config_result = $config_applier->apply(
 				$index,
 				[ $element_id => $settings ],

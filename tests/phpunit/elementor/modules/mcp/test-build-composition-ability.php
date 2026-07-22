@@ -11,6 +11,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -105,43 +106,28 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'element_config' => [
 				'newspaper-title' => [
 					'title' => [
-						'$$type' => 'html-v3',
-						'value' => [
-							'content' => [ '$$type' => 'string', 'value' => 'Daily Herald' ],
-							'children' => [],
-						],
+						'content' => 'Daily Herald',
+						'children' => [],
 					],
 				],
 				'post-title-heading' => [
 					'title' => [
-						'$$type' => 'dynamic',
-						'value' => [
-							'name' => 'post-excerpt',
-							'settings' => [ 'length' => '55' ],
-						],
+						'name' => 'post-excerpt',
+						'settings' => [ 'length' => '55' ],
 					],
 				],
 			'masthead-eyebrow' => [
 				'paragraph' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => [ '$$type' => 'string', 'value' => 'Breaking News' ],
-						'children' => [],
-					],
+					'content' => 'Breaking News',
+					'children' => [],
 				],
 			],
 			'post-image' => [
 				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'url' => [ '$$type' => 'url', 'value' => 'https://example.com/post-image.jpg' ],
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'full' ],
+					'src' => [
+						'url' => 'https://example.com/post-image.jpg',
 					],
+					'size' => 'full',
 				],
 			],
 		],
@@ -304,15 +290,35 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	public function settings_validation_cases(): array {
 		return [
-			'scalar instead of envelope' => [
-				[ 'tag' => 'h2' ],
-				[ '$$type', 'PropValue envelope', 'elementor://widgets/schema' ],
+			'invalid tag enum' => [
+				[ 'tag' => 'h99' ],
+				[ 'tag', 'elementor://widgets/schema' ],
 			],
-			'wrong scalar type' => [
-				[ 'title' => 12345 ],
-				[ '$$type', 'PropValue envelope' ],
+			'unresolvable title type' => [
+				[
+					'title' => [
+						'content' => [ 'not', 'a', 'string' ],
+						'children' => [],
+					],
+				],
+				[ 'title', 'invalid_value' ],
 			],
 		];
+	}
+
+	public function test_linkable_widget_types__derived_from_schemas() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_real_document();
+		Plugin::$instance->elements_manager->unregister_element_type( 'container' );
+
+		// Act
+		$linkable = Widget_Context_Helper::get_linkable_widget_types();
+
+		// Assert
+		$this->assertContains( 'e-button', $linkable );
+		$this->assertContains( 'e-heading', $linkable );
+		$this->assertNotContains( 'e-divider', $linkable );
 	}
 
 	public function test_execute__skips_unsupported_prop_and_warns() {
@@ -329,10 +335,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'element_config' => [
 				'd1' => [
 					'link' => [
-						'$$type' => 'link',
-						'value' => [
-							'destination' => [ '$$type' => 'url', 'value' => 'https://example.com' ],
-						],
+						'destination' => 'https://example.com',
 					],
 				],
 			],
@@ -378,10 +381,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'element_config' => [
 				'h1' => [
-					'title' => [
-						'$$type' => 'dynamic',
-						'value' => $title_value,
-					],
+					'title' => $title_value,
 				],
 			],
 		] );

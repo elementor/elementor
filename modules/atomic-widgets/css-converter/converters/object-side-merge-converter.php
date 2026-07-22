@@ -6,7 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
 
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Variables\Services\Variables_Service;
 
@@ -90,7 +90,7 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 
 	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$value = trim( $rule['value'] );
-		$leaf  = Size_Value_Parser::parse( $value );
+		$leaf  = Size_Plain_Resolver::parse( $value );
 
 		if ( null === $leaf ) {
 			return false;

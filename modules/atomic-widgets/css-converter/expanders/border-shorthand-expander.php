@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Expanders;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
 use Elementor\Modules\AtomicWidgets\CssConverter\Shorthand_Expander_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
-use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -140,7 +140,7 @@ class Border_Shorthand_Expander extends Shorthand_Expander_Base {
 			return self::ROLE_STYLE;
 		}
 
-		if ( in_array( $lower, self::WIDTH_KEYWORDS, true ) || null !== Size_Value_Parser::parse( $token ) ) {
+		if ( in_array( $lower, self::WIDTH_KEYWORDS, true ) || null !== Size_Plain_Resolver::parse( $token ) ) {
 			return self::ROLE_WIDTH;
 		}
 
