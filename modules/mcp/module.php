@@ -67,6 +67,7 @@ class Module extends BaseModule {
 		( new Abilities\List_Widget_Schemas_Ability() )->register();
 		( new Abilities\List_Dynamic_Tags_Ability() )->register();
 		( new Abilities\Build_Composition_Ability() )->register();
+		( new Abilities\Manage_Elements_Ability() )->register();
 		( new Abilities\Global_Classes_Resource_Ability() )->register();
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
@@ -98,6 +99,7 @@ class Module extends BaseModule {
 				'elementor/list-widget-schemas',
 				'elementor/list-dynamic-tags',
 				'elementor/build-composition',
+				'elementor/manage-elements',
 				'elementor/list-resources',
 				'elementor/read-resource',
 			],
