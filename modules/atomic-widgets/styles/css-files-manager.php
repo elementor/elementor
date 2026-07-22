@@ -17,21 +17,16 @@ class CSS_Files_Manager {
 	}
 
 	/**
-	 * Return the CSS file to enqueue for a given breakpoint, generating it on demand.
+	 * Return the CSS file to enqueue for the given cache path, generating it on demand.
 	 *
-	 * Cache validity is stored on the breakpoint leaf under `$cache_path` with a
-	 * `should_exist` meta flag, so a subsequent request can tell:
-	 *   - "no file because CSS was legitimately empty" (`should_exist=false`)  from
-	 *   - "file went missing after we generated it"   (`should_exist=true`, but file gone).
-	 *
-	 * The manager regenerates when the cache is invalid or when a should-be-present file
-	 * cannot be found on disk. On a hard write failure it deliberately leaves the leaf
-	 * invalid so the next request retries instead of getting stuck.
+	 * The `should_exist` meta flag distinguishes an intentionally empty file from one
+	 * that went missing after being generated, and cache is regenerated whenever it's
+	 * invalid or the expected file can't be found on disk.
 	 *
 	 * @param string        $handle
 	 * @param string        $media
 	 * @param callable      $get_css
-	 * @param array<string> $cache_path Cache-validity leaf path for this breakpoint.
+	 * @param array<string> $cache_path Cache-validity leaf path.
 	 * @return Style_File|null
 	 */
 	public function get( string $handle, string $media, callable $get_css, array $cache_path ): ?Style_File {
@@ -52,7 +47,7 @@ class CSS_Files_Manager {
 		$css = $get_css();
 
 		if ( empty( $css ) ) {
-			// Nothing to serve for this breakpoint; purge any stale file and record the state
+			// Nothing to serve for this path; purge any stale file and record the state
 			// so we don't try to regenerate on every subsequent request.
 			$this->delete_if_exists( $path );
 			$this->cache_validity->validate( $cache_path, [ 'should_exist' => false ] );
