@@ -1,7 +1,7 @@
 name: Playground PR Preview Deployments
 on:
   workflow_run:
-    workflows: ["Build"]
+    workflows: ["PR"]
     types: [completed]
 permissions:
   contents: read
@@ -51,7 +51,7 @@ jobs:
             });
             const hit = artifacts.find(a => a.name.startsWith('elementor-'));
             if (!hit) {
-              core.setFailed('No elementor artifact found in resolved Build workflow run');
+              core.setFailed('No elementor artifact found in resolved PR workflow run');
               return;
             }
             const dl = await github.rest.actions.downloadArtifact({

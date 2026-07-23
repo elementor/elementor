@@ -1,0 +1,538 @@
+name: PR
+
+on:
+  pull_request:
+    types: [labeled, opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+      - '[0-9].[0-9][0-9]'
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+  actions: read
+  statuses: write
+
+jobs:
+  set-pending-playwright-on-draft:
+    name: Set Pending Playwright Status on Draft
+    if: github.event.pull_request.draft == true
+    runs-on: ubuntu-22.04
+    permissions:
+      statuses: write
+    steps:
+      - name: Set pending Playwright commit status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: 'pending',
+              context: 'Playwright - Test Results',
+              description: 'Waiting for PR to be marked as Ready for Review to run tests',
+            })
+
+  detect-changes:
+    name: Detect changes
+    runs-on: ubuntu-22.04
+    if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      js: ${{ steps.filter.outputs.js }}
+      php: ${{ steps.filter.outputs.php }}
+      playwright: ${{ steps.filter.outputs.playwright }}
+      build: ${{ steps.filter.outputs.build }}
+      composer: ${{ steps.filter.outputs.composer }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            js:
+              - '**/*.{js,ts,jsx,tsx,json}'
+              - 'package*.json'
+              - '.github/**'
+            php:
+              - '**/*.php'
+              - '**/*.twig'
+              - 'ruleset.xml'
+              - 'composer.json'
+              - 'composer.lock'
+              - '.github/**'
+            composer:
+              - 'composer.json'
+              - 'composer.lock'
+            playwright:
+              - '**'
+              - '!**.md'
+              - '!**.txt'
+              - '!bin/**'
+              - '!.gitignore'
+              - '!docs/**'
+            build:
+              - '**'
+              - '!**.md'
+              - '!**.txt'
+              - '!bin/**'
+              - '!.gitignore'
+              - '!docs/**'
+
+  install:
+    name: Install dependencies
+    runs-on: ubuntu-22.04
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Restore dependency cache
+        uses: actions/cache@v5
+        id: deps-cache
+        with:
+          path: |
+            node_modules
+            packages/node_modules
+            vendor
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+      - name: Install dependencies
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: |
+          npm run install:ci
+          npm run composer:no-dev
+
+  build:
+    name: Build plugin
+    runs-on: ubuntu-22.04
+    needs: install
+    if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Cache turbo build setup
+        uses: actions/cache@v5
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            node_modules
+            packages/node_modules
+            vendor
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
+      - name: Set ENV variables
+        run: |
+          DATE_VERSION=$(date '+%Y%m%d.%H%M')
+          VERSION=$(node -p "require('./package.json').version")
+
+          PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
+          PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
+          PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
+
+          echo "DATE_VERSION=$DATE_VERSION" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
+          echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
+      - name: Build plugin
+        run: npm run build:pr
+      - uses: actions/upload-artifact@v7
+        id: upload-artifact
+        with:
+          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+          path: elementor
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 3
+      - name: Find existing comment on PR (Elementor repo)
+        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        uses: peter-evans/find-comment@v4
+        id: find
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Elementor Build'
+      - name: Comment build info on PR (Elementor repo)
+        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## Elementor Build
+            Last updated at: ${{ env.DATE_VERSION }}
+            Version: ${{ env.PACKAGE_VERSION }}
+
+            ✅ Elementor build is ready for download.
+
+            You can download the latest build from the link below:
+
+            🔗 [${{ env.PLUGIN_ZIP_FILENAME }}](https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }})
+
+            The build is available for 3 days.
+
+          edit-mode: replace
+      - name: Print artifact info once PR is non Elementor repo
+        if: ${{ !startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') }}
+        run: |
+          echo "Artifact info:"
+          echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
+          echo "  Path: elementor"
+          echo "  Size: $(du -sh elementor | cut -f1)"
+          echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}"
+
+  lint-js:
+    name: Lint JS
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.js == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            node_modules
+            packages/node_modules
+            vendor
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
+      - name: Build tools
+        run: npm run build:tools
+      - name: Run Lint
+        run: npm run lint
+
+  lint-php:
+    name: Lint PHP
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.php == 'true'
+    steps:
+      - name: Mask GitHub token
+        run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            node_modules
+            packages/node_modules
+            vendor
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
+      - name: Install PHP lint dependencies
+        run: |
+          composer install
+          composer require php-parallel-lint/php-parallel-lint
+      - name: Run Lint
+        run: |
+          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+      - name: Twig safety check
+        if: ${{ !cancelled() }}
+        run: composer run check-twig-safety
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Run PHP Syntax Lint 7.4
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+      - name: Setup PHP 8.0
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Run PHP Syntax Lint 8.0
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
+      - name: Run PHP Syntax Lint 8.1
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+
+  jest:
+    name: Jest
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.js == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            node_modules
+            packages/node_modules
+            vendor
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
+      - name: Run Jest
+        run: npm run test
+
+  js-qunit:
+    name: QUnit
+    runs-on: ubuntu-22.04
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.js == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            node_modules
+            packages/node_modules
+            vendor
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
+          fail-on-cache-miss: true
+      - name: Build tools
+        run: npm run build:tools
+      - name: Run QUnit
+        run: npm run test:qunit
+
+  phpunit:
+    name: PHPUnit
+    needs: [install, detect-changes]
+    if: needs.detect-changes.outputs.php == 'true'
+    uses: ./.github/workflows/phpunit-runner.yml
+    with:
+      job_name: PHPUnit (PR)
+      wordpress_versions: '["latest", "6.9", "6.8"]'
+      php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
+
+  playwright:
+    name: Playwright
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+      actions: read
+    needs: [detect-changes, build, lint-js, lint-php, jest, js-qunit, phpunit]
+    if: |
+      success() &&
+      (
+        needs.detect-changes.outputs.playwright == 'true' ||
+        contains(github.event.pull_request.labels.*.name, 'run-tests') ||
+        contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+      ) &&
+      !github.event.pull_request.draft
+    uses: ./.github/workflows/playwright-suite.yml
+    with:
+      build_artifact_name: ${{ needs.build.outputs.artifact_name }}
+
+  summarize:
+    name: Summarize PR checks
+    runs-on: ubuntu-22.04
+    needs: [detect-changes, install, build, lint-js, lint-php, jest, js-qunit, phpunit, playwright]
+    if: |
+      always() && (
+        needs.install.result == 'failure' ||
+        needs.build.result == 'failure' ||
+        needs.lint-js.result == 'failure' ||
+        needs.lint-php.result == 'failure' ||
+        needs.jest.result == 'failure' ||
+        needs.js-qunit.result == 'failure' ||
+        needs.phpunit.result == 'failure' ||
+        needs.playwright.result == 'failure'
+      )
+    permissions:
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Build summary table
+        id: summary-table
+        uses: actions/github-script@v7
+        env:
+          INSTALL_RESULT: ${{ needs.install.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          LINT_JS_RESULT: ${{ needs.lint-js.result }}
+          LINT_PHP_RESULT: ${{ needs.lint-php.result }}
+          JEST_RESULT: ${{ needs.jest.result }}
+          QUNIT_RESULT: ${{ needs.js-qunit.result }}
+          PHPUNIT_RESULT: ${{ needs.phpunit.result }}
+          PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+        with:
+          script: |
+            const { data } = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+
+            const jobUrl = (name) => {
+              const job = data.jobs.find(
+                (entry) => entry.name === name || entry.name.startsWith(`${name} /`)
+              );
+              return job?.html_url ?? `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            };
+
+            const rows = [
+              ['Install dependencies', process.env.INSTALL_RESULT, jobUrl('Install dependencies')],
+              ['Build plugin', process.env.BUILD_RESULT, jobUrl('Build plugin')],
+              ['Lint JS', process.env.LINT_JS_RESULT, jobUrl('Lint JS')],
+              ['Lint PHP', process.env.LINT_PHP_RESULT, jobUrl('Lint PHP')],
+              ['Jest', process.env.JEST_RESULT, jobUrl('Jest')],
+              ['QUnit', process.env.QUNIT_RESULT, jobUrl('QUnit')],
+              ['PHPUnit', process.env.PHPUNIT_RESULT, jobUrl('PHPUnit')],
+              ['Playwright', process.env.PLAYWRIGHT_RESULT, jobUrl('Playwright')],
+            ];
+
+            const table = [
+              '| Job | Status |',
+              '| --- | --- |',
+              ...rows.map(([name, result, url]) => `| ${name} | [${result}](${url}) |`),
+            ].join('\n');
+
+            core.setOutput('table', table);
+      - name: Find existing summary comment
+        uses: peter-evans/find-comment@v4
+        id: find
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pr-ci-summary -->'
+      - name: Post PR CI summary
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            <!-- pr-ci-summary -->
+            ## PR CI summary
+
+            ${{ steps.summary-table.outputs.table }}
+
+            [View workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          edit-mode: replace
+
+  validate:
+    name: Pull Request Validations
+    runs-on: ubuntu-22.04
+    needs:
+      - detect-changes
+      - install
+      - build
+      - lint-js
+      - lint-php
+      - jest
+      - js-qunit
+      - phpunit
+      - playwright
+    if: always()
+    steps:
+      - name: Validate required checks
+        env:
+          INSTALL_RESULT: ${{ needs.install.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          LINT_JS_RESULT: ${{ needs.lint-js.result }}
+          LINT_PHP_RESULT: ${{ needs.lint-php.result }}
+          JEST_RESULT: ${{ needs.jest.result }}
+          QUNIT_RESULT: ${{ needs.js-qunit.result }}
+          PHPUNIT_RESULT: ${{ needs.phpunit.result }}
+          PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+          PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
+        run: |
+          is_ok() {
+            case "$1" in
+              success|skipped) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          FAILED=0
+          for RESULT in \
+            "$INSTALL_RESULT" \
+            "$BUILD_RESULT" \
+            "$LINT_JS_RESULT" \
+            "$LINT_PHP_RESULT" \
+            "$JEST_RESULT" \
+            "$QUNIT_RESULT" \
+            "$PHPUNIT_RESULT"
+          do
+            if ! is_ok "$RESULT"; then
+              echo "Check failed with result: $RESULT"
+              FAILED=1
+            fi
+          done
+
+          if [ "$PLAYWRIGHT_REQUIRED" = "true" ]; then
+            if ! is_ok "$PLAYWRIGHT_RESULT"; then
+              echo "Playwright check failed with result: $PLAYWRIGHT_RESULT"
+              FAILED=1
+            fi
+          fi
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo "::error::One or more PR checks failed"
+            exit 1
+          fi
+
+          echo "All PR checks passed"
