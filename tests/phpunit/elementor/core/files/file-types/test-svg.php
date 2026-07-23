@@ -86,4 +86,33 @@ class Test_Svg extends Elementor_Test_Base {
 			[ 'javascri&#10;pt:alert(origin)', false ],
 		];
 	}
+
+	public function test_sanitizer__preserves_filter_primitives_and_animations() {
+        $svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">'
+            . '<g filter="url(#f0)"><path d="M10 10 H100 V100 H10 Z" fill="#F09EBA"/></g>'
+            . '<rect x="0" y="0" width="10" height="10"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="2s"repeatCount="indefinite"/></rect>'
+            . '<defs><filter id="f0" x="0" y="0" width="120" height="120" filterUnits="userSpaceOnUse">'
+            . '<feFlood flood-opacity="0" result="bg"/>'
+            . '<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>'
+            . '<feOffset dy="4"/>'
+            . '<feGaussianBlur stdDeviation="2"/>'
+            . '<feComposite in2="hardAlpha" operator="out"/>'
+            . '<feBlend mode="normal" in2="bg" result="shadow"/>'
+            . '</filter></defs></svg>';
+
+        $sanitized = $svg_handler->sanitizer( $svg );
+
+        $this->assertStringContainsString( '<feFlood', $sanitized );
+        $this->assertStringContainsString( '<feColorMatrix', $sanitized );
+        $this->assertStringContainsString( '<feOffset', $sanitized );
+        $this->assertStringContainsString( '<feGaussianBlur', $sanitized );
+        $this->assertStringContainsString( '<feComposite', $sanitized );
+        $this->assertStringContainsString( '<feBlend', $sanitized );
+
+        $this->assertStringContainsString( 'stdDeviation', $sanitized );
+
+        $this->assertStringContainsString( '<animateTransform', $sanitized );
+    }
 }
