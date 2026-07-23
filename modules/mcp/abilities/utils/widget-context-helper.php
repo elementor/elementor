@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Dynamic_Schema_Hoister;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
@@ -136,9 +137,12 @@ class Widget_Context_Helper {
 
 		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
 
+		$hoisted = Dynamic_Schema_Hoister::hoist( $properties );
+
 		return self::filter_nulls( [
 			'type' => 'object',
-			'properties' => $properties,
+			'properties' => $hoisted['properties'],
+			'$defs' => empty( $hoisted['defs'] ) ? null : $hoisted['defs'],
 			'description' => self::get_description( $config ),
 			'llm_guidance' => Llm_Guidance_Builder::build( $config, $widget_type, $parents_index ),
 		] );
