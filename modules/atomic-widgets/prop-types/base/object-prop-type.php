@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Object_Prop_Type implements Transformable_Prop_Type {
+abstract class Object_Prop_Type extends Transformable_Prop_Type {
 	// Backward compatibility, do not change to "const". Keep name in uppercase.
 	// phpcs:ignore
 	static $KIND = 'object';
@@ -142,8 +142,8 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		$default = $this->get_default();
-
-		return [
+	
+		return array_merge( parent::jsonSerialize(), [
 			// phpcs:ignore
 			'kind' => static::$KIND,
 			'key' => static::get_key(),
@@ -153,7 +153,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			'shape' => (object) $this->get_shape(),
 			'dependencies' => $this->get_dependencies(),
 			'initial_value' => $this->get_initial_value(),
-		];
+		] );
 	}
 
 	/**
