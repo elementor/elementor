@@ -47,7 +47,7 @@ export const WhatsNew = ( props ) => {
 							anchor={ anchorPosition }
 							open={ isOpen }
 							onClose={ () => setIsOpen( false ) }
-							hideBackdrop
+							BackdropProps={ { invisible: true } }
 							ModalProps={ {
 								style: {
 									// Above the WordPress Admin Top Bar.
