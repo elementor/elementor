@@ -77,6 +77,8 @@ jobs:
             echo "### 📦 Draft release created: \`${{ inputs.version }}\`"
             echo ""
             echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
+            echo ""
+            echo "> Before approving: I executed custom core with the build that was created by this action."
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ── Job 5 ────────────────────────────────────────────────────────────────
