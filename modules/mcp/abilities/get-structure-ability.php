@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -145,6 +146,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$type = $node['widgetType'] ?? $node['elType'] ?? null;
 
 		if ( ! $type ) {
+			return null;
+		}
+
+		$instance = Atomic_Elements_Utils::get_element_instance( $type );
+
+		if ( ! Atomic_Elements_Utils::is_atomic_element( $instance ) ) {
 			return null;
 		}
 
