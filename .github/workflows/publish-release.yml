@@ -12,6 +12,14 @@ on:
         type: boolean
         default: false
         description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish)'
+      channel:
+        required: false
+        type: choice
+        options:
+          - stable
+          - beta
+        default: 'stable'
+        description: 'Release channel. Controls the beta→dev cascade and the npm dist-tag.'
 
   workflow_call:
     inputs:
@@ -22,9 +30,35 @@ on:
         required: false
         type: boolean
         default: false
+      channel:
+        required: false
+        type: string
+        default: 'stable'
     secrets:
       MIXPANEL_TOKEN:
         required: false
+      SVN_USERNAME:
+        required: false
+      SVN_PASSWORD:
+        required: false
+      SLACK_TOKEN:
+        required: false
+      SLACK_CHANNEL_RELEASE:
+        required: false
+      NPMJS_CLOUD_DEVOPS_TOKEN:
+        required: false
+      MAINTAIN_TOKEN:
+        required: false
+    outputs:
+      CLEAN_PACKAGE_VERSION:
+        description: 'Base semver version with no channel suffix, e.g. 4.2.0'
+        value: ${{ jobs.publish.outputs.CLEAN_PACKAGE_VERSION }}
+      VERSION_SUFFIX:
+        description: 'Channel suffix, e.g. beta1. Empty for stable.'
+        value: ${{ jobs.publish.outputs.VERSION_SUFFIX }}
+      NPM_TAG:
+        description: 'npm dist-tag: latest for stable, the channel name otherwise.'
+        value: ${{ jobs.publish.outputs.NPM_TAG }}
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────
@@ -38,6 +72,11 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+
+    outputs:
+      CLEAN_PACKAGE_VERSION: ${{ steps.output-data.outputs.CLEAN_PACKAGE_VERSION }}
+      VERSION_SUFFIX: ${{ steps.output-data.outputs.VERSION_SUFFIX }}
+      NPM_TAG: ${{ steps.output-data.outputs.NPM_TAG }}
 
     steps:
     - name: Checkout repository
@@ -66,92 +105,143 @@ jobs:
         prerelease: ${{ inputs.prerelease }}
         draft: false
 
-      # - name: Publish to WordPress.org SVN
-      #   if: github.repository_owner == 'elementor' && !inputs.prerelease
-      #   env:
-      #     PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-      #     CHANNEL: ga
-      #     PACKAGE_VERSION: ${{ inputs.version }}
-      #   run: |
-      #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+    - name: Publish to WordPress.org SVN
+      if: github.repository_owner == 'elementor'
+      env:
+        PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
+        PACKAGE_VERSION: ${{ inputs.version }}
+      run: |
+        bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
 
-      # - name: Prepare Slack release announcement
-      #   id: prepare_slack_announcement
-      #   env:
-      #     CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
-      #     RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }}
-      #     RELEASE_VERSION: ${{ inputs.version }}
-      #     RELEASED_BY: ${{ github.actor }}
-      #     SLACK_RELEASE_ANNOUNCEMENT_COPY: ${{ vars.SLACK_RELEASE_ANNOUNCEMENT_COPY }}
-      #   run: |
-      #     if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
-      #       echo "SLACK_RELEASE_ANNOUNCEMENT_COPY repository variable is not set."
-      #       exit 1
-      #     fi
+    - name: Release Dev From Beta
+      if: inputs.channel == 'beta'
+      uses: ./.github/workflows/release-dev-from-beta
+      with:
+        BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+        PLUGIN_NAME: ${{ github.event.repository.name }}
+        REPOSITORY_OWNER: ${{ github.repository_owner }}
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        DRY_RUN: 'false'
+        PACKAGE_VERSION: ${{ inputs.version }}
 
-      #     PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
-      #       --arg channel "$CHANNEL" \
-      #       --arg release_url "$RELEASE_URL" \
-      #       --arg released_by "$RELEASED_BY" \
-      #       --arg version "$RELEASE_VERSION" \
-      #       '
-      #       def apply_announcement_tokens($text; $product_display_name; $distribution_note):
-      #         $text
-      #         | gsub("\\{product_display_name\\}"; $product_display_name)
-      #         | gsub("\\{version\\}"; $version)
-      #         | gsub("\\{released_by\\}"; $released_by)
-      #         | gsub("\\{release_url\\}"; $release_url)
-      #         | gsub("\\{distribution_note\\}"; $distribution_note);
+    - name: Prepare Slack release announcement
+      id: prepare_slack_announcement
+      env:
+        CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
+        RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}
+        RELEASE_VERSION: ${{ env.RELEASE_NAME }}
+        RELEASED_BY: ${{ github.actor }}
+        SLACK_RELEASE_ANNOUNCEMENT_COPY: ${{ vars.SLACK_RELEASE_ANNOUNCEMENT_COPY }}
+      run: |
+        if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
+          echo "SLACK_RELEASE_ANNOUNCEMENT_COPY organization variable is not set."
+          exit 1
+        fi
 
-      #       . as $copy |
-      #       ($copy.distribution_notes[$channel] // "") as $channel_note |
-      #       (if $channel_note == "" then "" else "\n\n" + $channel_note end) as $distribution_note |
-      #       {
-      #         blocks: [
-      #           {
-      #             type: "section",
-      #             text: {
-      #               type: "mrkdwn",
-      #               text: (
-      #                 $copy.opening_line + "\n\n" +
-      #                 apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note)
-      #               )
-      #             }
-      #           },
-      #           { type: "divider" },
-      #           {
-      #             type: "section",
-      #             text: {
-      #               type: "mrkdwn",
-      #               text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note)
-      #             },
-      #             accessory: {
-      #               type: "button",
-      #               text: {
-      #                 type: "plain_text",
-      #                 text: $copy.action_button_label,
-      #                 emoji: true
-      #               },
-      #               value: "open-release",
-      #               url: $release_url,
-      #               action_id: "button-action"
-      #             }
-      #           }
-      #         ]
-      #       }
-      #       ')
+        PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
+          --arg channel "$CHANNEL" \
+          --arg release_url "$RELEASE_URL" \
+          --arg released_by "$RELEASED_BY" \
+          --arg version "$RELEASE_VERSION" \
+          '
+          def apply_announcement_tokens($text; $product_display_name; $distribution_note):
+            $text
+            | gsub("\\{product_display_name\\}"; $product_display_name)
+            | gsub("\\{version\\}"; $version)
+            | gsub("\\{released_by\\}"; $released_by)
+            | gsub("\\{release_url\\}"; $release_url)
+            | gsub("\\{distribution_note\\}"; $distribution_note);
 
-      #     {
-      #       echo 'payload<<EOF'
-      #       echo "$PAYLOAD"
-      #       echo 'EOF'
-      #     } >> "$GITHUB_OUTPUT"
+          . as $copy |
+          ($copy.distribution_notes[$channel] // "") as $channel_note |
+          (if $channel_note == "" then "" else "\n\n" + $channel_note end) as $distribution_note |
+          {
+            blocks: [
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: (
+                    $copy.opening_line + "\n\n" +
+                    apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note)
+                  )
+                }
+              },
+              { type: "divider" },
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note)
+                },
+                accessory: {
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: $copy.action_button_label,
+                    emoji: true
+                  },
+                  value: "open-release",
+                  url: $release_url,
+                  action_id: "button-action"
+                }
+              }
+            ]
+          }
+          ')
 
-      # - name: Post to Slack
-      #   uses: ./.github/workflows/post-to-slack
-      #   with:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      #     SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-      #     PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
+        {
+          echo 'payload<<EOF'
+          echo "$PAYLOAD"
+          echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Post to Slack
+      uses: ./.github/workflows/post-to-slack
+      with:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+        PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
+
+    - name: Output Package Data for Next Job
+      id: output-data
+      env:
+        PACKAGE_VERSION: ${{ env.RELEASE_NAME }}
+      run: |
+        # env.RELEASE_NAME is the already-tagged, already-built version
+        # (e.g. "4.2.0" or "4.2.0-beta1") — split it into a base semver and
+        # an optional channel suffix, the same shape one-click-release.yml
+        # produces, so the downstream publish-packages.yml call is a drop-in.
+        CLEAN_PACKAGE_VERSION="${PACKAGE_VERSION%%-*}"
+
+        if [ "${{ inputs.channel }}" == "beta" ]; then
+          VERSION_SUFFIX="${PACKAGE_VERSION#${CLEAN_PACKAGE_VERSION}-}"
+          NPM_TAG="beta"
+        else
+          VERSION_SUFFIX=""
+          NPM_TAG="latest"
+        fi
+
+        echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}" >> $GITHUB_OUTPUT
+        echo "VERSION_SUFFIX=${VERSION_SUFFIX}" >> $GITHUB_OUTPUT
+        echo "NPM_TAG=${NPM_TAG}" >> $GITHUB_OUTPUT
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Publishes the packages/ workspace to npm under the same channel as the
+  # plugin release (beta → "beta" dist-tag, stable → "latest").
+  # ─────────────────────────────────────────────────────────────────────────
+  publish-packages:
+    name: Publish Packages
+    needs: publish
+    uses: ./.github/workflows/publish-packages.yml
+    with:
+      version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
+      version_suffix: ${{ needs.publish.outputs.VERSION_SUFFIX }}
+      tag: ${{ needs.publish.outputs.NPM_TAG }}
+    secrets:
+      NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

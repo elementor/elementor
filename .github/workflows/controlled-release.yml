@@ -184,10 +184,17 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   publish:
     name: Publish Release
-    needs: approve-publish
+    needs: [approve-publish, tag]
     uses: davseve/elementor/.github/workflows/publish-release.yml@split-release-process
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
+      channel: ${{ needs.tag.outputs.channel }}
     secrets:
       MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      SLACK_CHANNEL_RELEASE: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
