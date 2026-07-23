@@ -90,6 +90,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 
 		if ( 'image' === mediaType ) {
+			if ( this.ui.promotions.length ) {
+				this.ui.promotions.hide();
+			}
 			if ( attachmentId ) {
 				const dismissPromotionEventName = this.getDismissPromotionEventName();
 				const handleHints = ( attachment ) => {
@@ -102,14 +105,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 					}
 				};
 				wp.media.attachment( attachmentId ).fetch().then( handleHints );
-			} else {
-				// eslint-disable-next-line capitalized-comments
-				// this.ui.warnings.hide();
-
-				// eslint-disable-next-line no-lonely-if
-				if ( this.ui.promotions.length ) {
-					this.ui.promotions.hide();
-				}
 			}
 		}
 	},
