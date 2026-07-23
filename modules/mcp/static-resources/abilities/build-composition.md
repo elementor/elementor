@@ -33,7 +33,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - style is raw CSS (property → value strings); the server converts it to native styles
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
-- LINKS: a `link` prop is supported ONLY on these widgets: {{LINKABLE_WIDGETS}}. On any other widget a `link` is skipped and reported in `warnings` (the composition still builds) — to link a non-linkable element, wrap it in a linkable container. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
+- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
