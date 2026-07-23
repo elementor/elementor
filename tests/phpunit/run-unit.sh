@@ -59,4 +59,4 @@ trap 'rm -f "$config"' EXIT
 	echo '</phpunit>'
 } > "$config"
 
-exec "$root/vendor/bin/phpunit" -c "$config" ${passthrough[@]+"${passthrough[@]}"}
+exec "$root/vendor/bin/phpunit" -c "$config" "${passthrough[@]}"
