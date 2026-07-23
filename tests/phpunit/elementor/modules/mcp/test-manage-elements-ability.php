@@ -229,6 +229,30 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $result['warnings'][0] );
 	}
 
+	public function test_update__unhandled_style_declaration_warns_with_declaration_and_url_hint() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'action' => 'update',
+			'post_id' => $post_id,
+			'element_id' => $heading_id,
+			'style' => [
+				'background' => 'url(/wp-content/uploads/x.png) center/cover no-repeat',
+			],
+		] );
+
+		$this->assertNoErrors( $result );
+		$this->assertNotEmpty( $result['warnings'] ?? [] );
+
+		$warning = $result['warnings'][0];
+		$this->assertStringContainsString( 'background:', $warning );
+		$this->assertStringContainsString( 'url(', $warning );
+		$this->assertStringContainsString( 'URLs must be absolute', $warning );
+		$this->assertStringContainsString( 'elementor://widgets/schema/', $warning );
+	}
+
 	public function test_update__applies_style_and_attaches_global_class_by_label() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
