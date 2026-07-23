@@ -40,58 +40,31 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout tagged commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.version }}
-          fetch-depth: 0
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.version }}
+        fetch-depth: 0
 
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org/'
+    - name: Download built release asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release download "${{ inputs.version }}" --pattern 'elementor-*.zip' --clobber
 
-      - name: Install dependencies
-        uses: ./.github/workflows/install-dependencies
+    - name: Get release name
+      uses: ./.github/workflows/get-release-name
+      with:
+        BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
+        PLUGIN_NAME: ${{ github.event.repository.name }}
 
-      - name: Build plugin
-        uses: ./.github/workflows/build-plugin
-        with:
-          PACKAGE_VERSION: ${{ inputs.version }}
-          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
-        env:
-          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
-
-      - name: Get release name
-        uses: ./.github/workflows/get-release-name
-        with:
-          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
-          PLUGIN_NAME: ${{ github.event.repository.name }}
-
-      - name: Check changelog is updated
-        if: ${{ !inputs.prerelease }}
-        uses: ./.github/workflows/verify-version-changelog
-        with:
-          VERSION: ${{ inputs.version }}
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.version }}
-          name: ${{ inputs.version }}
-          files: elementor-*.zip
-          prerelease: ${{ inputs.prerelease }}
-
-      - name: Validate build files
-        if: github.repository_owner == 'elementor'
-        env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
-          PACKAGE_VERSION: ${{ inputs.version }}
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+    - name: Publish GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ inputs.version }}
+        name: ${{ inputs.version }}
+        files: elementor-*.zip
+        prerelease: ${{ inputs.prerelease }}
+        draft: false
 
       # - name: Publish to WordPress.org SVN
       #   if: github.repository_owner == 'elementor' && !inputs.prerelease
