@@ -17,7 +17,7 @@ This tool supports v4 elements only.
 - Containers: "e-flexbox", "e-div-block", "e-tabs"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
-- Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other envelope — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
+- Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
@@ -28,7 +28,7 @@ Some elements have internal tree structures (nesting). When using these elements
 
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (raw CSS declarations) + classes (global class labels)
-- **element_config uses plain values** — do NOT send `$$type` / `value` PropValue envelopes. The server converts plain JSON to native settings.
+- **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
 - style is raw CSS (property → value strings); the server converts it to native styles
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
@@ -37,8 +37,8 @@ Some elements have internal tree structures (nesting). When using these elements
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
-## PLAIN element_config FORMAT
-Scalars and objects only — match the widget schema shape without envelopes:
+## element_config FORMAT
+Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
 - **boolean**: plain boolean (`true`)

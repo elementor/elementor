@@ -288,7 +288,7 @@ class Test_Plain_Values_Resolver extends TestCase {
 
 		$this->assertNull(
 			$resolver->resolve(
-				[ 'name' => 'foreign', 'settings' => [] ],
+				[ 'settings' => [], 'group' => 'post' ],
 				Test_Object_Prop_Type::make()
 			)
 		);

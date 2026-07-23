@@ -4,6 +4,10 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Dynamic_Tag_Llm_Resolver;
 use PHPUnit\Framework\TestCase;
@@ -198,6 +202,40 @@ class Test_Dynamic_Tag_Llm_Resolver extends TestCase {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'optional_field', $resolved['value']['settings'] );
+	}
+
+	public function test_resolve__uses_settings_resolver_callback_for_plain_values() {
+		// Arrange
+		$this->given_tags( [
+			'my-tag' => [
+				'name' => 'my-tag',
+				'label' => 'My Tag',
+				'group' => 'test',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'title' => String_Prop_Type::make(),
+					'count' => Number_Prop_Type::make(),
+				],
+			],
+		] );
+
+		$registry = new Plain_Resolvers_Registry();
+		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
+		$walker = new Plain_Values_Resolver( $registry );
+		$settings_resolver = fn( $value, $prop_type ) => $walker->resolve( $value, $prop_type );
+
+		// Act
+		$resolved = Dynamic_Tag_Llm_Resolver::resolve( [
+			'name' => 'my-tag',
+			'settings' => [
+				'title' => 'Hello',
+				'count' => 'not-a-number',
+			],
+		], $settings_resolver );
+
+		// Assert
+		$this->assertSame( 'Hello', $resolved['value']['settings']['title']['value'] ?? null );
+		$this->assertArrayNotHasKey( 'count', $resolved['value']['settings'] );
 	}
 
 	public function test_make__returns_callable_transformer() {

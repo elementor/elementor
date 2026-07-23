@@ -397,10 +397,40 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'unknown tag name' => [
 				[ 'name' => 'ghost-tag', 'settings' => [] ],
 			],
-			'settings shape mismatch' => [
-				[ 'name' => 'post-excerpt', 'settings' => [ 'length' => [ 'not', 'a', 'string' ] ] ],
-			],
 		];
+	}
+
+	public function test_execute__skips_invalid_dynamic_setting_and_builds() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$this->given_dynamic_tags( [
+			'post-excerpt' => [
+				'name' => 'post-excerpt',
+				'label' => 'Post Excerpt',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'length' => String_Prop_Type::make()->default( '55' ),
+				],
+			],
+		] );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [
+					'title' => [
+						'name' => 'post-excerpt',
+						'settings' => [ 'length' => [ 'not', 'a', 'string' ] ],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
 	}
 
 	public function test_execute__rejects_non_object_style_block() {

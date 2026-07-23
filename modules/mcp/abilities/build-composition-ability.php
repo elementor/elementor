@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
@@ -120,9 +121,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();
-		$plain_values_resolver = AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
-
-		$config_applier = new Element_Config_Applier( $type_resolver, $plain_values_resolver );
+		$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
 		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
@@ -374,6 +373,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function create_plain_values_resolver(): Plain_Values_Resolver {
+		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
 	private function is_variables_active(): bool {

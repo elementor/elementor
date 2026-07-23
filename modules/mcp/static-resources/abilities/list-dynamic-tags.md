@@ -1,1 +1,1 @@
-Returns the available dynamic tags. To bind a property to a dynamic source, set its value to a plain object `{ "name": "<tag name>", "settings": { ... } }` using a tag whose name appears here. Populate `settings` with plain values per the tag entry's schema (no `$$type` envelopes). Do not send `group`.
+Returns the available dynamic tags. To bind a property to a dynamic source, set its value to `{ "name": "<tag name>", "settings": { ... } }` using a tag whose name appears here. Populate `settings` with plain values per the tag entry's schema. Do not send `group`.

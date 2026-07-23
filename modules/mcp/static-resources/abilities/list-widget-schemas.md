@@ -4,4 +4,4 @@ Default mode: Returns a map of widget_type to JSON Schema. Prefer elementor/get-
 
 With summary=true: Returns { widgets: [{ type, description }, ...] } for widget discovery. Use this mode first to discover which widget types exist before fetching full schemas or building compositions.
 
-Values in the returned schemas are **plain** — no `$$type` / `value` envelopes. Send settings in `build-composition.element_config` and `manage-elements.settings` using this plain shape directly.
+Values in the returned schemas are plain JSON. Send settings in `build-composition.element_config` and `manage-elements.settings` using this shape directly.
