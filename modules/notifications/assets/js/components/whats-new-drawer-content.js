@@ -45,8 +45,9 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 		);
 	}
 
+	const isImageOnly = ( item ) => ! item.title && ! item.description && ( item.imageSrc || item.gifSrc || item.youtubeEmbedId );
 	const featuredItems = items.filter( ( item ) => item.featured );
-	const nonFeaturedItems = items.filter( ( item ) => ! item.featured );
+	const nonFeaturedItems = items.filter( ( item ) => ! item.featured && ! isImageOnly( item ) );
 	const listLabel = items.find( ( item ) => item.listLabel )?.listLabel ?? null;
 
 	return (

@@ -6,6 +6,30 @@ import { WhatsNewItemChips } from './whats-new-item-chips';
 
 export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, featured = false } ) => {
 	const hasMedia = item.imageSrc || item.gifSrc || item.youtubeEmbedId;
+	const isImageOnly = ! item.title && ! item.description && hasMedia;
+
+	if ( isImageOnly ) {
+		return (
+			<Box
+				key={ itemIndex }
+				display="flex"
+				flexDirection="column"
+				sx={ {
+					pt: 2,
+					...( featured && { px: 1 } ),
+				} }
+			>
+				<WhatsNewItemMedia item={ item } />
+				{ itemIndex !== itemsLength - 1 && (
+					<Divider
+						sx={ {
+							my: 1,
+						} }
+					/>
+				) }
+			</Box>
+		);
+	}
 
 	return (
 		<Box
