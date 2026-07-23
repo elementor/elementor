@@ -12,8 +12,10 @@ use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
+use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -28,6 +30,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	const CLASS_TYPE = 'class';
 	const DESKTOP_BREAKPOINT = 'desktop';
+	const MAX_BATCH_SIZE = 50;
 
 	private ?Global_Classes_Repository $repository;
 	private ?Css_Converter $css_converter;
@@ -44,14 +47,14 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Classes', 'elementor' ),
-			__( 'Manage V4 global CSS classes on the active kit. Create, update, or delete a single class using raw CSS declarations.', 'elementor' ),
+			__( 'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status' ],
+				'required' => [ 'status', 'results', 'order' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
-					'class' => [ 'type' => 'object' ],
+					'results' => [ 'type' => 'array' ],
 					'order' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
@@ -68,23 +71,27 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 			[
 				'type' => 'object',
-				'required' => [ 'action' ],
+				'required' => [ 'operations' ],
 				'properties' => [
-					'action' => [
-						'type' => 'string',
-						'enum' => [ 'create', 'update', 'delete' ],
-					],
-					'id' => [
-						'type' => 'string',
-						'description' => 'Class id — required for update/delete.',
-					],
-					'label' => [
-						'type' => 'string',
-						'description' => 'Class label (lowercase, dash-separated) — required for create/update.',
-					],
-					'css' => [
-						'type' => 'object',
-						'description' => 'Raw CSS declarations (property → value) — required for create/update.',
+					'operations' => [
+						'type' => 'array',
+						'description' => 'Bulk operations (1–50). Each item requires action; create/update need label and css, update/delete need id.',
+						'items' => [
+							'type' => 'object',
+							'required' => [ 'action' ],
+							'properties' => [
+								'action' => [
+									'type' => 'string',
+									'enum' => [ 'create', 'update', 'delete' ],
+								],
+								'id' => [ 'type' => 'string' ],
+								'label' => [ 'type' => 'string' ],
+								'css' => [
+									'type' => 'object',
+									'description' => 'Raw CSS declarations (property → value).',
+								],
+							],
+						],
 					],
 				],
 			]
@@ -93,145 +100,358 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
-		$action = $input['action'] ?? '';
+		$operations = $input['operations'] ?? null;
 
-		switch ( $action ) {
-			case 'create':
-				return $this->handle_create( $input );
-			case 'update':
-				return $this->handle_update( $input );
-			case 'delete':
-				return $this->handle_delete( $input );
-			default:
-				return $this->bad_request( sprintf(
-					/* translators: %s: action name */
-					__( 'Unknown action: %s.', 'elementor' ),
-					$action
-				) );
+		if ( ! is_array( $operations ) ) {
+			return $this->bad_request( __( 'operations array is required.', 'elementor' ) );
 		}
+
+		if ( empty( $operations ) ) {
+			return $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+		}
+
+		if ( count( $operations ) > self::MAX_BATCH_SIZE ) {
+			return new \WP_Error(
+				'batch_size_exceeded',
+				sprintf(
+					/* translators: %d: maximum operations per request */
+					__( 'Maximum %d operations per request.', 'elementor' ),
+					self::MAX_BATCH_SIZE
+				),
+				[
+					'status' => \WP_Http::BAD_REQUEST,
+					'max_allowed' => self::MAX_BATCH_SIZE,
+				]
+			);
+		}
+
+		return $this->handle_bulk( $operations );
 	}
 
-	private function handle_create( array $input ) {
-		$label = $input['label'] ?? '';
-		$css = $this->as_map( $input['css'] ?? [] );
+	private function handle_bulk( array $operations ): array {
+		$results = new Bulk_Operations_Result();
+		$repo = $this->get_repository();
+		$all_labels = $repo->all_labels();
+		$current_order = $repo->get_order();
+
+		$intents = $this->translate_operations( $operations, $all_labels, $current_order, $results );
+
+		$touched_items = $this->build_touched_items( $intents, $all_labels, $results );
+
+		$this->handle_duplicated_labels( $intents, $touched_items, $all_labels, $results );
+
+		$this->enforce_max_items( $intents, $touched_items, $all_labels, $results );
+
+		$added_ids = array_values( array_intersect( $intents['added_ids'], array_keys( $touched_items ) ) );
+		$modified_ids = array_values( array_intersect( $intents['modified_ids'], array_keys( $touched_items ) ) );
+		$deleted_ids = $intents['deleted_ids'];
+
+		$new_order = $this->compute_new_order( $current_order, $added_ids, $deleted_ids );
+
+		if ( ! empty( $added_ids ) || ! empty( $modified_ids ) || ! empty( $deleted_ids ) ) {
+			$repo->apply_changes(
+				$touched_items,
+				[
+					'added' => $added_ids,
+					'deleted' => $deleted_ids,
+					'modified' => $modified_ids,
+					'order' => $new_order !== $current_order,
+				],
+				$new_order
+			);
+
+			$this->clear_cache();
+		}
+
+		return $results->to_array() + [ 'order' => $new_order ];
+	}
+
+	private function translate_operations( array $operations, array $all_labels, array $current_order, Bulk_Operations_Result $results ): array {
+		$intents = [
+			'creates' => [],
+			'updates' => [],
+			'deletes' => [],
+			'added_ids' => [],
+			'modified_ids' => [],
+			'deleted_ids' => [],
+		];
+
+		$reserved_ids = array_keys( $all_labels );
+		$deleted_set = [];
+
+		foreach ( $operations as $index => $operation ) {
+			if ( ! is_array( $operation ) ) {
+				$results->add_error( $index, '', 'invalid_input', __( 'Invalid operation.', 'elementor' ) );
+				continue;
+			}
+
+			$action = $operation['action'] ?? '';
+
+			switch ( $action ) {
+				case 'create':
+					$this->translate_create( $index, $operation, $intents, $reserved_ids, $results );
+					break;
+
+				case 'update':
+					$this->translate_update( $index, $operation, $intents, $all_labels, $current_order, $deleted_set, $results );
+					break;
+
+				case 'delete':
+					$this->translate_delete( $index, $operation, $intents, $all_labels, $current_order, $deleted_set, $results );
+					break;
+
+				default:
+					$results->add_error(
+						$index,
+						$action,
+						'invalid_input',
+						sprintf(
+							/* translators: %s: action name */
+							__( 'Unknown action: %s.', 'elementor' ),
+							$action
+						)
+					);
+			}
+		}
+
+		return $intents;
+	}
+
+	private function translate_create( int $index, array $operation, array &$intents, array &$reserved_ids, Bulk_Operations_Result $results ): void {
+		$label = $operation['label'] ?? '';
+		$css = $this->as_map( $operation['css'] ?? [] );
 
 		if ( '' === $label || empty( $css ) ) {
-			return $this->bad_request( __( 'Create requires label and css.', 'elementor' ) );
+			$results->add_error( $index, 'create', 'invalid_input', __( 'Create requires label and css.', 'elementor' ) );
+			return;
 		}
 
-		$duplicate_error = $this->assert_label_available( $label );
-		if ( $duplicate_error ) {
-			return $duplicate_error;
-		}
+		$class_id = Utils::generate_id( 'g-', $reserved_ids );
+		$reserved_ids[] = $class_id;
 
-		$limit_error = $this->assert_within_class_limit();
-		if ( $limit_error ) {
-			return $limit_error;
-		}
-
-		$class_item = $this->build_class_item( $this->generate_class_id(), $label, $css );
-		if ( is_wp_error( $class_item ) ) {
-			return $class_item;
-		}
-
-		$class_id = $class_item['id'];
-		$order = $this->get_repository()->get_order();
-		$new_order = array_merge( $order, [ $class_id ] );
-
-		$this->get_repository()->apply_changes(
-			[ $class_id => $class_item ],
-			[
-				'added' => [ $class_id ],
-				'deleted' => [],
-				'modified' => [],
-				'order' => count( $new_order ) !== count( $order ),
-			],
-			$new_order
-		);
-
-		$this->clear_cache();
-
-		return $this->ok( $class_item, $new_order );
+		$intents['creates'][ $index ] = [
+			'id' => $class_id,
+			'label' => $label,
+			'css' => $css,
+		];
+		$intents['added_ids'][] = $class_id;
 	}
 
-	private function handle_update( array $input ) {
-		$id = $input['id'] ?? '';
-		$label = $input['label'] ?? '';
-		$css = $this->as_map( $input['css'] ?? [] );
+	private function translate_update( int $index, array $operation, array &$intents, array $all_labels, array $current_order, array $deleted_set, Bulk_Operations_Result $results ): void {
+		$id = $operation['id'] ?? '';
+		$label = $operation['label'] ?? '';
+		$css = $this->as_map( $operation['css'] ?? [] );
 
 		if ( '' === $id || '' === $label || empty( $css ) ) {
-			return $this->bad_request( __( 'Update requires id, label, and css.', 'elementor' ) );
+			$results->add_error( $index, 'update', 'invalid_input', __( 'Update requires id, label, and css.', 'elementor' ) );
+			return;
+		}
+
+		if ( ! in_array( $id, $current_order, true ) || isset( $deleted_set[ $id ] ) ) {
+			$results->add_error( $index, 'update', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+			return;
 		}
 
 		$existing = $this->get_repository()->get( $id );
 		if ( ! $existing ) {
-			return $this->not_found( __( 'Global class not found', 'elementor' ) );
+			$results->add_error( $index, 'update', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+			return;
 		}
 
-		$duplicate_error = $this->assert_label_available( $label, $id );
-		if ( $duplicate_error ) {
-			return $duplicate_error;
+		$intents['updates'][ $index ] = [
+			'id' => $id,
+			'label' => $label,
+			'css' => $css,
+		];
+
+		if ( ! in_array( $id, $intents['modified_ids'], true ) ) {
+			$intents['modified_ids'][] = $id;
 		}
-
-		$class_item = $this->build_class_item( $id, $label, $css );
-		if ( is_wp_error( $class_item ) ) {
-			return $class_item;
-		}
-
-		$order = $this->get_repository()->get_order();
-
-		$this->get_repository()->apply_changes(
-			[ $id => $class_item ],
-			[
-				'added' => [],
-				'deleted' => [],
-				'modified' => [ $id ],
-				'order' => false,
-			],
-			$order
-		);
-
-		$this->clear_cache();
-
-		return $this->ok( $class_item, $order );
 	}
 
-	private function handle_delete( array $input ) {
-		$id = $input['id'] ?? '';
+	private function translate_delete( int $index, array $operation, array &$intents, array $all_labels, array $current_order, array &$deleted_set, Bulk_Operations_Result $results ): void {
+		$id = $operation['id'] ?? '';
 
 		if ( '' === $id ) {
-			return $this->bad_request( __( 'Delete requires id.', 'elementor' ) );
+			$results->add_error( $index, 'delete', 'invalid_input', __( 'Delete requires id.', 'elementor' ) );
+			return;
 		}
 
-		$order = $this->get_repository()->get_order();
-		if ( ! in_array( $id, $order, true ) ) {
-			return $this->not_found( __( 'Global class not found', 'elementor' ) );
+		if ( ! in_array( $id, $current_order, true ) || isset( $deleted_set[ $id ] ) ) {
+			$results->add_error( $index, 'delete', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+			return;
 		}
 
 		$existing = $this->get_repository()->get( $id );
 		if ( ! $existing ) {
-			return $this->not_found( __( 'Global class not found', 'elementor' ) );
+			$results->add_error( $index, 'delete', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+			return;
 		}
 
-		$new_order = array_values( array_filter( $order, fn( $class_id ) => $class_id !== $id ) );
+		$label = $all_labels[ $id ] ?? ( $existing['label'] ?? '' );
+		$deleted_set[ $id ] = true;
 
-		$this->get_repository()->apply_changes(
-			[],
-			[
-				'added' => [],
-				'deleted' => [ $id ],
-				'modified' => [],
-				'order' => count( $new_order ) !== count( $order ),
-			],
-			$new_order
-		);
+		$intents['deletes'][ $index ] = [
+			'id' => $id,
+			'label' => $label,
+		];
+		$intents['deleted_ids'][] = $id;
 
-		$this->clear_cache();
-
-		return $this->ok( $existing, $new_order );
+		$results->add_success( $index, 'delete', [
+			'id' => $id,
+			'label' => $label,
+		] );
 	}
 
-	private function build_class_item( string $id, string $label, array $css ) {
+	private function build_touched_items( array $intents, array $all_labels, Bulk_Operations_Result $results ): array {
+		$touched_items = [];
+
+		foreach ( $intents['creates'] as $index => $intent ) {
+			$class_item = $this->build_class_item( $intent['id'], $intent['label'], $intent['css'] );
+
+			if ( is_wp_error( $class_item ) ) {
+				$results->add_error( $index, 'create', $class_item->get_error_code(), $class_item->get_error_message() );
+				continue;
+			}
+
+			$touched_items[ $intent['id'] ] = $class_item;
+		}
+
+		foreach ( $intents['updates'] as $index => $intent ) {
+			$class_item = $this->build_class_item( $intent['id'], $intent['label'], $intent['css'] );
+
+			if ( is_wp_error( $class_item ) ) {
+				$results->add_error( $index, 'update', $class_item->get_error_code(), $class_item->get_error_message() );
+				continue;
+			}
+
+			$touched_items[ $intent['id'] ] = $class_item;
+		}
+
+		return $touched_items;
+	}
+
+	private function handle_duplicated_labels( array $intents, array &$touched_items, array $all_labels, Bulk_Operations_Result $results ): void {
+		$deleted_ids = $intents['deleted_ids'];
+		$existing_labels = [];
+
+		foreach ( $all_labels as $id => $label ) {
+			if ( ! in_array( $id, $deleted_ids, true ) ) {
+				$existing_labels[] = $label;
+			}
+		}
+
+		$pending_labels = [];
+
+		foreach ( $intents['creates'] as $index => $intent ) {
+			if ( ! isset( $touched_items[ $intent['id'] ] ) ) {
+				continue;
+			}
+
+			$label = $intent['label'];
+			$is_duplicate = in_array( $label, $existing_labels, true ) || in_array( $label, $pending_labels, true );
+
+			if ( $is_duplicate ) {
+				$all_existing = array_merge( $existing_labels, $pending_labels );
+				$new_label = Global_Classes_Labels::generate_unique_label( $label, $all_existing );
+
+				$touched_items[ $intent['id'] ]['label'] = $new_label;
+				$pending_labels[] = $new_label;
+
+				$results->add_success( $index, 'create', [
+					'id' => $intent['id'],
+					'label' => $new_label,
+					'modified_label' => [
+						'original' => $label,
+						'modified' => $new_label,
+					],
+				] );
+			} else {
+				$pending_labels[] = $label;
+				$results->add_success( $index, 'create', [
+					'id' => $intent['id'],
+					'label' => $label,
+				] );
+			}
+		}
+
+		foreach ( $intents['updates'] as $index => $intent ) {
+			if ( ! isset( $touched_items[ $intent['id'] ] ) ) {
+				continue;
+			}
+
+			$label = $intent['label'];
+			$current_label = $all_labels[ $intent['id'] ] ?? '';
+
+			$is_duplicate = false;
+			if ( $label !== $current_label ) {
+				$is_duplicate = in_array( $label, $existing_labels, true ) || in_array( $label, $pending_labels, true );
+			}
+
+			if ( $is_duplicate ) {
+				$all_existing = array_merge( $existing_labels, $pending_labels );
+				$new_label = Global_Classes_Labels::generate_unique_label( $label, $all_existing );
+
+				$touched_items[ $intent['id'] ]['label'] = $new_label;
+				$pending_labels[] = $new_label;
+
+				$results->add_success( $index, 'update', [
+					'id' => $intent['id'],
+					'label' => $new_label,
+					'modified_label' => [
+						'original' => $label,
+						'modified' => $new_label,
+					],
+				] );
+			} else {
+				if ( $label !== $current_label ) {
+					$pending_labels[] = $label;
+				}
+				$results->add_success( $index, 'update', [
+					'id' => $intent['id'],
+					'label' => $label,
+				] );
+			}
+		}
+	}
+
+	private function enforce_max_items( array $intents, array &$touched_items, array $all_labels, Bulk_Operations_Result $results ): void {
+		$deleted_count = count( $intents['deleted_ids'] );
+		$existing_count = count( $all_labels ) - $deleted_count;
+		$added_count = count( array_intersect( $intents['added_ids'], array_keys( $touched_items ) ) );
+
+		$total_count = $existing_count + $added_count;
+
+		if ( $total_count <= Global_Classes_REST_API::MAX_ITEMS ) {
+			return;
+		}
+
+		$overflow = $total_count - Global_Classes_REST_API::MAX_ITEMS;
+		$error_message = sprintf(
+			/* translators: %d: Maximum allowed items. */
+			__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
+			Global_Classes_REST_API::MAX_ITEMS
+		);
+
+		$creates_to_reject = array_slice( $intents['creates'], -$overflow, $overflow, true );
+
+		foreach ( $creates_to_reject as $index => $intent ) {
+			if ( isset( $touched_items[ $intent['id'] ] ) ) {
+				unset( $touched_items[ $intent['id'] ] );
+
+				$results->add_error( $index, 'create', 'global_classes_limit_exceeded', $error_message );
+			}
+		}
+	}
+
+	private function compute_new_order( array $current_order, array $added_ids, array $deleted_ids ): array {
+		$new_order = array_filter( $current_order, fn( $id ) => ! in_array( $id, $deleted_ids, true ) );
+		$new_order = array_values( $new_order );
+
+		return array_merge( $new_order, $added_ids );
+	}
+
+	protected function build_class_item( string $id, string $label, array $css ) {
 		$variant = $this->convert_css_to_variant( $css );
 		if ( is_wp_error( $variant ) ) {
 			return $variant;
@@ -299,67 +519,15 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function generate_class_id(): string {
-		return Utils::generate_id( 'g-', array_keys( $this->get_repository()->all_labels() ) );
-	}
-
-	private function assert_label_available( string $label, ?string $except_id = null ): ?\WP_Error {
-		foreach ( $this->get_repository()->all_labels() as $id => $existing_label ) {
-			if ( null !== $except_id && $id === $except_id ) {
-				continue;
-			}
-
-			if ( $existing_label === $label ) {
-				return new \WP_Error(
-					'duplicated_label',
-					__( 'Global class label already exists', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-		}
-
-		return null;
-	}
-
-	private function assert_within_class_limit(): ?\WP_Error {
-		$current_count = count( $this->get_repository()->all_labels() );
-
-		if ( $current_count >= Global_Classes_REST_API::MAX_ITEMS ) {
-			return new \WP_Error(
-				'global_classes_limit_exceeded',
-				sprintf(
-					/* translators: %d: Maximum allowed items. */
-					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
-					Global_Classes_REST_API::MAX_ITEMS
-				),
-				[
-					'status' => \WP_Http::BAD_REQUEST,
-					'current_count' => $current_count + 1,
-					'max_allowed' => Global_Classes_REST_API::MAX_ITEMS,
-				]
-			);
-		}
-
-		return null;
-	}
-
-	private function ok( array $class, array $order ): array {
-		return [
-			'status' => 'ok',
-			'class' => $class,
-			'order' => $order,
-		];
-	}
-
-	private function not_found( string $message ): \WP_Error {
-		return new \WP_Error( 'class_not_found', $message, [ 'status' => \WP_Http::NOT_FOUND ] );
-	}
-
 	private function bad_request( string $message ): \WP_Error {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
 	}
 
 	private function clear_cache(): void {
+		if ( ! class_exists( Plugin::class ) || ! isset( Plugin::$instance ) ) {
+			return;
+		}
+
 		Plugin::$instance->files_manager->clear_cache();
 	}
 
