@@ -95,6 +95,11 @@ jobs:
   validate-job:
     name: Validate Build
     needs: build-job
+    # build-job's own success isn't enough to satisfy the implicit success()
+    # check once an earlier job in the chain (changelog-check) was skipped —
+    # GitHub applies the skip to every job downstream of the skip point
+    # unless each one explicitly overrides it with always().
+    if: always() && needs.build-job.result == 'success'
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
@@ -123,6 +128,7 @@ jobs:
   draft-job:
     name: Create Draft Release
     needs: validate-job
+    if: always() && needs.validate-job.result == 'success'
     runs-on: ubuntu-22.04
     permissions:
       contents: write
