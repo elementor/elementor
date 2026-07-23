@@ -78,7 +78,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'element_id' => [ 'type' => 'string' ],
 					'settings' => [
 						'type' => 'object',
-						'description' => 'update only: partial plain settings map merged onto existing settings (same plain format as build-composition element_config; no $$type envelopes).',
+						'description' => 'update only: partial plain settings map merged onto existing settings.',
 					],
 					'style' => [
 						'type' => 'object',
@@ -87,7 +87,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'classes' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
-						'description' => 'update only: global class labels to attach (prepended to existing).',
+						'description' => 'update only: global class labels to attach (prepended to ex Fisting).',
 					],
 					'new_parent_id' => [
 						'type' => 'string',
