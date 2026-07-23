@@ -136,8 +136,45 @@ jobs:
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
+      channel: ${{ needs.tag.outputs.channel }}
     secrets:
       MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+
+  # ── Job 7b ───────────────────────────────────────────────────────────────
+  # Rollback: runs only if build-draft failed outright (build/validate/draft
+  # error, not a rejection). No draft release exists yet in this failure
+  # path, so only the tag needs removing — unlike cleanup-tag, which also
+  # deletes a draft release created after a successful build.
+  # ─────────────────────────────────────────────────────────────────────────
+  cleanup-tag-on-build-failure:
+    name: Rollback Tag (Build Failed)
+    needs: build-draft
+    if: always() && needs.build-draft.result == 'failure'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete remote tag
+        run: |
+          git push origin --delete "${{ inputs.version }}" || echo "Tag already absent"
+
+      - name: Delete draft release (if partially created)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete "${{ inputs.version }}" --yes || echo "Release already absent"
+
+      - name: Write deletion summary
+        run: |
+          {
+            echo "### 🗑️ Tag \`${{ inputs.version }}\` deleted"
+            echo ""
+            echo "Build & Draft Release failed, so the tag has been removed from the repository."
+          } >> "$GITHUB_STEP_SUMMARY"
 
   # ── Job 8 ────────────────────────────────────────────────────────────────
   # Undrafts the release and publishes it (SVN, Slack). Delegates to

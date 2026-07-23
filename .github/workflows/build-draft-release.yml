@@ -12,6 +12,11 @@ on:
         type: boolean
         default: false
         description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish)'
+      channel:
+        required: false
+        type: string
+        default: 'stable'
+        description: 'Release channel: stable or beta. Standalone runs default to stable (changelog checked).'
 
   workflow_call:
     inputs:
@@ -22,13 +27,38 @@ on:
         required: false
         type: boolean
         default: false
+      channel:
+        required: false
+        type: string
+        default: 'stable'
     secrets:
       MIXPANEL_TOKEN:
         required: false
 
 jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Quick check verifies a changelog entry exists for this version. Skipped for beta-channel
+  # releases. Runs against the already-created tag (the source of truth),
+  # ─────────────────────────────────────────────────────────────────────────
+  changelog-check:
+    name: Verify Version Changelog
+    if: ${{ inputs.channel == 'stable' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+
+      - name: Verify version changelog
+        uses: ./.github/workflows/verify-version-changelog
+        with:
+          VERSION: ${{ inputs.version }}
+
   build-job:
     name: Build Plugin
+    needs: changelog-check
+    if: always() && (needs.changelog-check.result == 'success' || needs.changelog-check.result == 'skipped')
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout tagged commit
@@ -46,12 +76,6 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/workflows/install-dependencies
-
-      - name: Verify version changelog
-        if: ${{ !inputs.prerelease }}
-        uses: ./.github/workflows/verify-version-changelog
-        with:
-          VERSION: ${{ inputs.version }}
 
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
@@ -90,29 +114,29 @@ jobs:
       - name: Validate build files
         if: github.repository_owner == 'elementor'
         env:
-            PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-            CHANNEL: ${{ inputs.prerelease == true && 'beta' || 'ga' }}
-            PACKAGE_VERSION: ${{ inputs.version }}
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
+          PACKAGE_VERSION: ${{ inputs.version }}
         run: |
-            bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
 
   draft-job:
     name: Create Draft Release
     needs: validate-job
     runs-on: ubuntu-22.04
     permissions:
-        contents: write
+      contents: write
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-            name: plugin-zip
+          name: plugin-zip
 
       - name: Create draft GitHub release
         uses: softprops/action-gh-release@v1
         with:
-            tag_name: ${{ inputs.version }}
-            name: ${{ inputs.version }}
-            files: elementor-*.zip
-            prerelease: ${{ inputs.prerelease }}
-            draft: true
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          files: elementor-*.zip
+          prerelease: ${{ inputs.prerelease }}
+          draft: true
