@@ -345,6 +345,72 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$tag->cleanup();
 	}
 
+	public function test_add_atomic_dynamic_tags_to_editor_settings__preserves_select_control_groups() {
+		// Arrange.
+		$tag = $this->make_mock_tag( [
+			'name' => 'acf-like',
+			'title' => 'ACF Like',
+			'categories' => [ 'text' ],
+			'register_controls' => function ( Tag $tag ) {
+				$tag->add_control(
+					'key',
+					[
+						'type' => 'select',
+						'label' => 'Key',
+						'groups' => [
+							[
+								'label' => 'Group A',
+								'options' => [
+									'field_1:name' => 'Name',
+								],
+							],
+							[
+								'label' => 'Group B',
+								'options' => [
+									'field_2:email' => 'Email',
+								],
+							],
+						],
+						'default' => '',
+					]
+				);
+			},
+		] );
+
+		Plugin::$instance->dynamic_tags->register( $tag );
+
+		$tags = Plugin::$instance->dynamic_tags->get_tags_config();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
+
+		$decoded_tags = json_decode( wp_json_encode( $settings['atomicDynamicTags']['tags'] ), true );
+		$key_control_props = $decoded_tags['acf-like']['atomic_controls'][0]['value']['items'][0]['value']['props'];
+
+		// Assert.
+		$this->assertEmpty( $key_control_props['options'] );
+		$this->assertEquals(
+			[
+				[
+					'label' => 'Group A',
+					'options' => [
+						[ 'value' => 'field_1:name', 'label' => 'Name' ],
+					],
+				],
+				[
+					'label' => 'Group B',
+					'options' => [
+						[ 'value' => 'field_2:email', 'label' => 'Email' ],
+					],
+				],
+			],
+			$key_control_props['groups']
+		);
+
+		// Cleanup.
+		$tag->cleanup();
+	}
+
 	public function test_add_dynamic_prop_type__skips_non_prop_types() {
 		// Act.
 		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
