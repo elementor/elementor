@@ -5,7 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\PlainResolvers;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolver_Base;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Identity_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
@@ -125,7 +125,7 @@ class Test_Plain_Values_Resolver extends TestCase {
 
 	private function make_registry(): Plain_Resolvers_Registry {
 		$registry = new Plain_Resolvers_Registry();
-		$registry->register_fallback( new Identity_Plain_Resolver() );
+		$registry->register_fallback( new Passthrough_Plain_Resolver() );
 		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
 		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
 

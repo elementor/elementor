@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PlainResolvers;
 
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Identity_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use PHPUnit\Framework\TestCase;
@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Leaf_Resolvers extends TestCase {
 
-	public function test_identity_resolver__returns_value_as_is() {
-		$resolver = new Identity_Plain_Resolver();
+	public function test_passthrough_resolver__returns_value_as_is() {
+		$resolver = new Passthrough_Plain_Resolver();
 
 		$this->assertSame( 'test', $resolver->resolve( 'test' ) );
 		$this->assertSame( 123, $resolver->resolve( 123 ) );
