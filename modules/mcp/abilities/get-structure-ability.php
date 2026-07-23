@@ -134,7 +134,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 						->serialize_map( $settings, $props_schema );
 				}
 
-				$skeleton['settings'] = $settings ?: (object) [];
+				$skeleton['settings'] = $settings ? $settings : (object) [];
 				$skeleton['styles']   = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 			}
 
