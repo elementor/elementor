@@ -20,6 +20,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -157,7 +158,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	private function get_ability_description(): string {
-		return Prompt_Loader::load( 'build-composition' );
+		$prompt = Prompt_Loader::load( 'build-composition' );
+		$linkable_widgets = implode( ', ', Widget_Context_Helper::get_linkable_widget_types() );
+
+		return str_replace( '{{LINKABLE_WIDGETS}}', $linkable_widgets, $prompt );
 	}
 
 	private function get_output_schema(): array {

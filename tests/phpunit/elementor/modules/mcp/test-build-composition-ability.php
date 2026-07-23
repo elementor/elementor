@@ -301,7 +301,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 						'children' => [],
 					],
 				],
-				[ 'title', 'invalid_value' ],
+				[ 'title', 'could not be resolved' ],
 			],
 		];
 	}
@@ -310,15 +310,22 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$this->create_real_document();
+		$container = Plugin::$instance->elements_manager->get_element_types( 'container' );
 		Plugin::$instance->elements_manager->unregister_element_type( 'container' );
 
-		// Act
-		$linkable = Widget_Context_Helper::get_linkable_widget_types();
+		try {
+			// Act
+			$linkable = Widget_Context_Helper::get_linkable_widget_types();
 
-		// Assert
-		$this->assertContains( 'e-button', $linkable );
-		$this->assertContains( 'e-heading', $linkable );
-		$this->assertNotContains( 'e-divider', $linkable );
+			// Assert
+			$this->assertContains( 'e-button', $linkable );
+			$this->assertContains( 'e-heading', $linkable );
+			$this->assertNotContains( 'e-divider', $linkable );
+		} finally {
+			if ( $container ) {
+				Plugin::$instance->elements_manager->register_element_type( $container );
+			}
+		}
 	}
 
 	public function test_execute__skips_unsupported_prop_and_warns() {

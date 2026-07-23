@@ -62,6 +62,9 @@ class Composite_Null_Resolver extends Plain_Resolver_Base {
 }
 
 class Test_Url_Like_Plain_Prop_Type extends Plain_Prop_Type {
+	// phpcs:ignore
+	static $KIND = 'string';
+
 	public static function get_key(): string {
 		return 'test-url';
 	}
@@ -102,6 +105,9 @@ class Test_Dynamic_Like_Resolver extends Plain_Resolver_Base {
 }
 
 class Test_Dynamic_Like_Plain_Prop_Type extends Plain_Prop_Type {
+	// phpcs:ignore
+	static $KIND = 'object';
+
 	public static function get_key(): string {
 		return 'test-dynamic';
 	}
