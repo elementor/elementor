@@ -257,6 +257,13 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
+		$this->flush_runtime_cache();
+	}
+
+	private function flush_runtime_cache(): void {
+		if ( function_exists( 'wp_cache_flush_runtime' ) ) {
+			wp_cache_flush_runtime();
+		}
 	}
 
 	private function get_service(): Variables_Service {
