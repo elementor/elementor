@@ -2,7 +2,10 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -122,12 +125,39 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
-				$skeleton['settings'] = $node['settings'] ?? (object) [];
+				$settings = $node['settings'] ?? [];
+				$props_schema = $this->resolve_props_schema( $node );
+
+				if ( is_array( $settings ) && $props_schema ) {
+					$settings = Atomic_Widgets_Module::instance()
+						->get_settings_envelope_values_serializer()
+						->serialize_map( $settings, $props_schema );
+				}
+
+				$skeleton['settings'] = $settings ? $settings : (object) [];
 				$skeleton['styles']   = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 			}
 
 			return $skeleton;
 		} );
+	}
+
+	private function resolve_props_schema( array $node ): ?array {
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		$instance = Atomic_Elements_Utils::get_element_instance( $type );
+
+		if ( ! Atomic_Elements_Utils::is_atomic_element( $instance ) ) {
+			return null;
+		}
+
+		$config = Widget_Context_Helper::get_widget_config( (string) $type );
+
+		return $config['atomic_props_schema'] ?? null;
 	}
 
 	private function resolve_post_id( $input ) {

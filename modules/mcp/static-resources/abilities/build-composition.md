@@ -17,7 +17,7 @@ This tool supports v4 elements only.
 - Containers: "e-flexbox", "e-div-block", "e-tabs"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
-- Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other envelope — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
+- Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
@@ -28,14 +28,23 @@ Some elements have internal tree structures (nesting). When using these elements
 
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (raw CSS declarations) + classes (global class labels)
-- element_config PropValues require `$$type` matching schema
+- **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
 - style is raw CSS (property → value strings); the server converts it to native styles
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
-- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Link PropValue shape: `{ "$$type": "link", "value": { "destination": { "$$type": "url", "value": "https://example.com" }, "isTargetBlank": { "$$type": "boolean", "value": true }, "tag": { "$$type": "string", "value": "a" } } }`
+- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
+
+## element_config FORMAT
+Match the widget schema shape:
+- **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
+- **number**: plain number (`42`)
+- **boolean**: plain boolean (`true`)
+- **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
+- **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
+- **image**: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }`
 
 ## GLOBAL VARIABLES
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
@@ -46,11 +55,6 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
 
-**In `element_config` (PropValues):** when the widget schema allows a global-variable type, send the label as the value:
-- `{ "$$type": "global-color-variable", "value": "wc26-gold" }`
-- `{ "$$type": "global-font-variable", "value": "font-heading" }`
-- `{ "$$type": "global-size-variable", "value": "spacing-lg" }`
-
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
 
@@ -60,11 +64,11 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
 # DYNAMIC TAGS
-- A value can be made dynamic wherever its schema exposes a `"$$type": "dynamic"` variant. This may be the property root OR a NESTED field (e.g. an image's `src`, not the whole `image`).
-- Put the dynamic object EXACTLY at that node, in place of the static variant. The variant's `name` lists the allowed tags; read [elementor://dynamic-tags] for each tag's settings schema.
-- Provide at that node: `{ "$$type": "dynamic", "value": { "name": "<allowed tag>", "settings": { ... } } }`
-- Example (image): `{ "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }`
-- Do NOT send `group` (it is resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
+- A value can be made dynamic wherever the widget schema allows a dynamic variant (often a union on the prop or a nested field such as an image's `src`).
+- Put the plain dynamic object at that node, in place of the static variant. Read [elementor://dynamic-tags] for allowed tag names and each tag's settings schema.
+- Plain dynamic shape: `{ "name": "<allowed tag>", "settings": { ... } }`
+- Example (image `src`): `"image": { "src": { "name": "<image tag>", "settings": { ... } }, "size": "full" }`
+- Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
@@ -134,7 +138,7 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Generous padding on CTAs: min 1rem 2.5rem
 
 # HARD CONSTRAINTS
-- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` and in `element_config` as the `value` — the `e-gv-` prefix is internal only
+- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
 - Avoid SVG widgets unless assets are pre-uploaded
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
@@ -148,7 +152,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 # PARAMETERS
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
-- **element_config**: configuration-id → widget PropValues
+- **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT)
 - **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **parent_id**: ID of the parent container (omit to insert at document root)
@@ -162,8 +166,10 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   "post_id": 123,
   "xml_structure": "<e-flexbox configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-flexbox>",
   "element_config": {
-    "Main Section": { "tag": { "$$type": "string", "value": "section" } },
-    "Section Title": { "tag": { "$$type": "string", "value": "h2" } }
+    "Section Title": {
+      "tag": "h2",
+      "title": { "content": "Welcome", "children": [] }
+    }
   },
   "style": {
     "Main Section": {

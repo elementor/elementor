@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
@@ -41,7 +42,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial PropValue settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -77,7 +78,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'element_id' => [ 'type' => 'string' ],
 					'settings' => [
 						'type' => 'object',
-						'description' => 'update only: partial PropValue map merged onto existing settings.',
+						'description' => 'update only: partial plain settings map merged onto existing settings.',
 					],
 					'style' => [
 						'type' => 'object',
@@ -86,7 +87,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'classes' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
-						'description' => 'update only: global class labels to attach (prepended to existing).',
+						'description' => 'update only: global class labels to attach (prepended to ex Fisting).',
 					],
 					'new_parent_id' => [
 						'type' => 'string',
@@ -226,7 +227,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
+			$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
 			$config_result = $config_applier->apply(
 				$index,
 				[ $element_id => $settings ],
@@ -379,6 +380,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function create_plain_values_resolver(): Plain_Values_Resolver {
+		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
 	private function is_variables_active(): bool {

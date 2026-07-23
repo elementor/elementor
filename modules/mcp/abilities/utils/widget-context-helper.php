@@ -3,6 +3,9 @@
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Dynamic_Schema_Hoister;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -134,9 +137,12 @@ class Widget_Context_Helper {
 
 		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
 
+		$hoisted = Dynamic_Schema_Hoister::hoist( $properties );
+
 		return self::filter_nulls( [
 			'type' => 'object',
-			'properties' => $properties,
+			'properties' => $hoisted['properties'],
+			'$defs' => empty( $hoisted['defs'] ) ? null : $hoisted['defs'],
 			'description' => self::get_description( $config ),
 			'llm_guidance' => Llm_Guidance_Builder::build( $config, $widget_type, $parents_index ),
 		] );
@@ -164,10 +170,20 @@ class Widget_Context_Helper {
 
 	private static function apply_llm_schema_filters( array $properties ): array {
 		foreach ( $properties as $key => $schema ) {
-			$properties[ $key ] = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+			$properties[ $key ] = self::to_plain_llm_schema_from_json( $schema );
 		}
 
 		return $properties;
+	}
+
+	public static function to_plain_llm_schema( Transformable_Prop_Type $prop_type ): array {
+		return self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
+	}
+
+	private static function to_plain_llm_schema_from_json( array $schema ): array {
+		$filtered = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+
+		return Plain_Llm_Schema_Converter::convert( $filtered );
 	}
 
 	private static function is_prop_key_configurable( string $key, Prop_Type $prop_type ): bool {

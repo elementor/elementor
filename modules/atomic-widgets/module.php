@@ -7,7 +7,21 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Ajax\Render_Element_Action;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Envelope_Serializers_Registry;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Envelope_Values_Serializer;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Resolvers\Dynamic_Envelope_Serializer;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Resolvers\Html_V3_Envelope_Serializer;
+use Elementor\Modules\AtomicWidgets\EnvelopeSerializers\Resolvers\Identity_Envelope_Serializer;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Identity_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
@@ -135,6 +149,9 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Trans
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -192,6 +209,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
@@ -430,6 +448,52 @@ class Module extends BaseModule {
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
 		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Export_Transformer() );
+	}
+
+	private function register_settings_resolvers( Plain_Resolvers_Registry $registry ): void {
+		$registry->register_fallback( new Identity_Plain_Resolver() );
+		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
+		$registry->register( Boolean_Prop_Type::get_key(), new Boolean_Plain_Resolver() );
+		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
+	}
+
+	public function get_settings_plain_values_resolver(): Plain_Values_Resolver {
+		static $resolver = null;
+
+		if ( null !== $resolver ) {
+			return $resolver;
+		}
+
+		$registry = new Plain_Resolvers_Registry();
+
+		do_action( 'elementor/atomic-widgets/settings-resolvers/register', $registry );
+
+		$resolver = new Plain_Values_Resolver( $registry );
+
+		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
+		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
+
+		return $resolver;
+	}
+
+	public function get_settings_envelope_values_serializer(): Envelope_Values_Serializer {
+		static $serializer = null;
+
+		if ( null !== $serializer ) {
+			return $serializer;
+		}
+
+		$registry = new Envelope_Serializers_Registry();
+
+		do_action( 'elementor/atomic-widgets/settings-envelope-serializers/register', $registry );
+
+		$serializer = new Envelope_Values_Serializer( $registry );
+
+		$registry->register_fallback( new Identity_Envelope_Serializer() );
+		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Envelope_Serializer( $serializer ) );
+		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Envelope_Serializer( $serializer ) );
+
+		return $serializer;
 	}
 
 	public static function is_active(): bool {
