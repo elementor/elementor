@@ -294,8 +294,14 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$elements = [
 			[
 				'id' => 'container1',
-				'elType' => 'container',
-				'settings' => [ 'padding' => [ '$$type' => 'size', 'value' => '20px' ] ],
+				'elType' => 'widget',
+				'widgetType' => 'e-flexbox',
+				'settings' => [
+					'tag' => [
+						'$$type' => 'string',
+						'value' => 'section',
+					],
+				],
 				'styles' => [
 					's-abc' => [
 						'id' => 's-abc',
@@ -317,7 +323,18 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 						'id' => 'widget1',
 						'elType' => 'widget',
 						'widgetType' => 'e-heading',
-						'settings' => [ 'title' => [ '$$type' => 'string', 'value' => 'Hello' ] ],
+						'settings' => [
+							'title' => [
+								'$$type' => 'html-v3',
+								'value' => [
+									'content' => [
+										'$$type' => 'string',
+										'value' => 'Hello',
+									],
+									'children' => [],
+								],
+							],
+						],
 						'styles' => [],
 						'elements' => [],
 					],
@@ -347,7 +364,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		$this->assertSame( 'container1', $root['id'] );
 		$this->assertSame(
-			[ 'padding' => '20px' ],
+			[ 'tag' => 'section' ],
 			$root['settings']
 		);
 		$this->assertSame( 's-abc', $root['styles']['__style_id'] );
@@ -357,7 +374,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$child = $root['elements'][0];
 		$this->assertSame( 'widget1', $child['id'] );
 		$this->assertSame(
-			[ 'title' => 'Hello' ],
+			[ 'title' => [ 'content' => 'Hello', 'children' => [] ] ],
 			$child['settings']
 		);
 		$this->assertSame( [], $child['styles'] );
@@ -520,6 +537,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( '__custom_css', $styles );
 		$this->assertCount( 1, $styles['__variants'] );
 		$this->assertSame( 'mobile', $styles['__variants'][0]['meta']['breakpoint'] );
+		$this->assertSame( '#000', $styles['__variants'][0]['color'] );
 	}
 
 	public function test_execute__includes_editor_settings_title_in_skeleton() {
