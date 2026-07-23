@@ -290,13 +290,13 @@ class Module extends BaseModule {
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
-		$widgets_manager->register( new Atomic_Image() );
 		$widgets_manager->register( new Atomic_Paragraph() );
-		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
+		$widgets_manager->register( new Atomic_Image() );
+		$widgets_manager->register( new Atomic_Svg() );
+		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
-		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
