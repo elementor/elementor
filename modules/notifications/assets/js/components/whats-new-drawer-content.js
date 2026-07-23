@@ -4,6 +4,7 @@ import { getNotifications } from '../api';
 import { Box, Divider, LinearProgress, Typography } from '@elementor/ui';
 import { WhatsNewItem } from './whats-new-item';
 import { WhatsNewItemCollapsed } from './whats-new-item-collapsed';
+import { isImageOnly } from './is-image-only';
 
 export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initialHasUnread } ) => {
 	const { isPending, error, data: items } = useQuery( {
@@ -45,7 +46,6 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 		);
 	}
 
-	const isImageOnly = ( item ) => ! item.title && ! item.description && ( item.imageSrc || item.gifSrc || item.youtubeEmbedId );
 	const featuredItems = items.filter( ( item ) => item.featured );
 	const nonFeaturedItems = items.filter( ( item ) => ! item.featured && ! isImageOnly( item ) );
 	const listLabel = items.find( ( item ) => item.listLabel )?.listLabel ?? null;
