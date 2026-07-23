@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
+use Elementor\Core\Files\CSS\Base as CSS_Base;
+use Elementor\Core\Files\CSS\Post as CSS_Post;
 use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
@@ -331,5 +333,191 @@ class Test_Base extends Elementor_Test_Base {
 		$this->assertSame( [ 'registered-handle' ], $method->invoke( $css ) );
 
 		wp_deregister_style( 'registered-handle' );
+	}
+
+	/**
+	 * ED-24903: `write()` should write CSS via a tmp-file + atomic rename so the public
+	 * URL never serves a zero-byte or partial asset. On success no `.tmp-*` sibling is left
+	 * behind.
+	 */
+	public function test_write__uses_atomic_rename_and_leaves_no_tmp_sibling() {
+		$dir       = $this->make_isolated_tmp_dir();
+		$target    = $dir . '/atomic-write-target.css';
+		$content   = ".elementor-999 { color: rebeccapurple; }";
+
+		$css = $this->build_css_mock( [
+			'use_external_file' => true,
+			'get_path'          => $target,
+			'get_content'       => $content,
+		] );
+
+		$css->write();
+
+		$this->assertFileExists( $target );
+		$this->assertSame( $content, file_get_contents( $target ) );
+		$this->assertSame( [], glob( $dir . '/*.tmp-*' ), 'No tmp sibling should remain after a successful atomic write.' );
+
+		$this->cleanup_isolated_tmp_dir( $dir );
+	}
+
+	/**
+	 * ED-24903: `write()` must be a no-op when the site is on the inline print method, so
+	 * inline installs are strictly unaffected.
+	 */
+	public function test_write__is_a_noop_when_not_using_external_file() {
+		$dir    = $this->make_isolated_tmp_dir();
+		$target = $dir . '/noop-target.css';
+
+		$css = $this->build_css_mock( [
+			'use_external_file' => false,
+			'get_path'          => $target,
+			'get_content'       => 'body {}',
+		] );
+
+		$css->write();
+
+		$this->assertFileDoesNotExist( $target );
+		$this->assertSame( [], glob( $dir . '/*.tmp-*' ) );
+
+		$this->cleanup_isolated_tmp_dir( $dir );
+	}
+
+	/**
+	 * ED-24903: reader-side self-heal helper returns `false` for inline installs.
+	 */
+	public function test_is_external_file_missing_or_empty__returns_false_when_inline_print_method() {
+		$css = $this->build_css_mock( [
+			'use_external_file' => false,
+			'get_path'          => '/definitely-does-not-exist/foo.css',
+			'get_content'       => '',
+		] );
+
+		$this->assertFalse( $this->invoke_missing_or_empty( $css, [ 'status' => 'file' ] ) );
+	}
+
+	/**
+	 * ED-24903: reader-side self-heal helper returns `false` unless the meta explicitly
+	 * says `CSS_STATUS_FILE`. Legit-empty CSS (`empty`), inline meta, and un-generated
+	 * meta must not trigger a regeneration.
+	 */
+	public function test_is_external_file_missing_or_empty__returns_false_when_status_not_file() {
+		$css = $this->build_css_mock( [
+			'use_external_file' => true,
+			'get_path'          => '/definitely-does-not-exist/foo.css',
+			'get_content'       => '',
+		] );
+
+		$this->assertFalse( $this->invoke_missing_or_empty( $css, [ 'status' => '' ] ) );
+		$this->assertFalse( $this->invoke_missing_or_empty( $css, [ 'status' => CSS_Base::CSS_STATUS_EMPTY ] ) );
+		$this->assertFalse( $this->invoke_missing_or_empty( $css, [ 'status' => CSS_Base::CSS_STATUS_INLINE ] ) );
+	}
+
+	/**
+	 * ED-24903: reader-side self-heal helper returns `true` when meta says CSS_STATUS_FILE
+	 * but the file is missing from disk. This is the exact 10 July occurrence.
+	 */
+	public function test_is_external_file_missing_or_empty__returns_true_when_file_missing() {
+		$dir    = $this->make_isolated_tmp_dir();
+		$target = $dir . '/never-created.css';
+
+		$css = $this->build_css_mock( [
+			'use_external_file' => true,
+			'get_path'          => $target,
+			'get_content'       => '',
+		] );
+
+		$this->assertTrue( $this->invoke_missing_or_empty( $css, [ 'status' => CSS_Base::CSS_STATUS_FILE ] ) );
+
+		$this->cleanup_isolated_tmp_dir( $dir );
+	}
+
+	/**
+	 * ED-24903: reader-side self-heal helper returns `true` when the file exists but is
+	 * zero bytes (the concurrent-write / truncated-by-host-cleanup case).
+	 */
+	public function test_is_external_file_missing_or_empty__returns_true_when_file_zero_bytes() {
+		$dir    = $this->make_isolated_tmp_dir();
+		$target = $dir . '/empty.css';
+		touch( $target );
+
+		$css = $this->build_css_mock( [
+			'use_external_file' => true,
+			'get_path'          => $target,
+			'get_content'       => '',
+		] );
+
+		$this->assertTrue( $this->invoke_missing_or_empty( $css, [ 'status' => CSS_Base::CSS_STATUS_FILE ] ) );
+
+		$this->cleanup_isolated_tmp_dir( $dir );
+	}
+
+	/**
+	 * ED-24903: healthy sites must not trigger a regeneration on every enqueue. When the
+	 * meta and disk agree on a non-empty file, the helper returns `false`.
+	 */
+	public function test_is_external_file_missing_or_empty__returns_false_when_file_healthy() {
+		$dir    = $this->make_isolated_tmp_dir();
+		$target = $dir . '/healthy.css';
+		file_put_contents( $target, '.elementor-1 { color: red; }' );
+
+		$css = $this->build_css_mock( [
+			'use_external_file' => true,
+			'get_path'          => $target,
+			'get_content'       => '',
+		] );
+
+		$this->assertFalse( $this->invoke_missing_or_empty( $css, [ 'status' => CSS_Base::CSS_STATUS_FILE ] ) );
+
+		$this->cleanup_isolated_tmp_dir( $dir );
+	}
+
+	/**
+	 * Build a mock `Core\Files\CSS\Post` with the three methods that the write()/self-heal
+	 * paths depend on stubbed to controllable values, so we can test file behaviour without
+	 * booting the full document/element stack.
+	 *
+	 * @param array{use_external_file: bool, get_path: string, get_content: string} $stubs
+	 * @return \Elementor\Core\Files\CSS\Post
+	 */
+	private function build_css_mock( array $stubs ) {
+		$css = $this->getMockBuilder( CSS_Post::class )
+			->setConstructorArgs( [ 0 ] )
+			->onlyMethods( [ 'use_external_file', 'get_path', 'get_content' ] )
+			->getMock();
+
+		$css->method( 'use_external_file' )->willReturn( $stubs['use_external_file'] );
+		$css->method( 'get_path' )->willReturn( $stubs['get_path'] );
+		$css->method( 'get_content' )->willReturn( $stubs['get_content'] );
+
+		return $css;
+	}
+
+	/**
+	 * Invoke the protected `is_external_file_missing_or_empty()` helper via reflection.
+	 */
+	private function invoke_missing_or_empty( $css, array $meta ) {
+		$method = new \ReflectionMethod( $css, 'is_external_file_missing_or_empty' );
+		$method->setAccessible( true );
+
+		return $method->invoke( $css, $meta );
+	}
+
+	private function make_isolated_tmp_dir() {
+		$dir = sys_get_temp_dir() . '/elementor-ed24903-' . wp_generate_password( 8, false, false );
+		wp_mkdir_p( $dir );
+
+		return $dir;
+	}
+
+	private function cleanup_isolated_tmp_dir( $dir ) {
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+
+		foreach ( glob( $dir . '/*' ) as $file ) {
+			@unlink( $file );
+		}
+
+		@rmdir( $dir );
 	}
 }

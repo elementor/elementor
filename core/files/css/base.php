@@ -159,12 +159,52 @@ abstract class Base extends Base_File {
 	}
 
 	/**
+	 * Write the generated CSS to disk.
+	 *
+	 * Overrides {@see Base_File::write()} to perform an atomic write-then-rename instead of
+	 * a direct `file_put_contents()` on the final path. Because `rename()` is atomic on POSIX
+	 * filesystems, an anonymous request or a downstream page-cache snapshot cannot capture a
+	 * zero-byte or half-written state while regeneration is in flight. This directly closes
+	 * the concurrent-write race documented in ED-24903.
+	 *
+	 * On unusual filesystems where the atomic move fails (some symlinked/overlay setups, or
+	 * a `wp_upload_dir()` that is not writable in the same way as the temp sibling), the
+	 * method transparently falls back to the previous behaviour: a direct write to the final
+	 * path plus a cleanup of the tmp file. That fallback is byte-for-byte the pre-fix
+	 * behaviour, so no site regresses.
+	 *
 	 * @since 2.1.0
 	 * @access public
 	 */
 	public function write() {
-		if ( $this->use_external_file() ) {
-			parent::write();
+		if ( ! $this->use_external_file() ) {
+			return;
+		}
+
+		$path    = $this->get_path();
+		$content = $this->get_content();
+
+		// The tmp file lives next to the target so `rename()` is a single-inode swap on the
+		// same filesystem. The random suffix avoids collisions between concurrent renders of
+		// the same file.
+		$tmp_path = $path . '.tmp-' . wp_generate_password( 8, false, false );
+
+		$bytes = @file_put_contents( $tmp_path, $content );
+
+		if ( false === $bytes ) {
+			return;
+		}
+
+		if ( @rename( $tmp_path, $path ) ) {
+			return;
+		}
+
+		// Rename failed: fall back to a direct write (the pre-ED-24903 behaviour) and clean
+		// up the tmp file so we don't leave `.tmp-*` siblings around.
+		@file_put_contents( $path, $content );
+
+		if ( file_exists( $tmp_path ) ) {
+			@unlink( $tmp_path );
 		}
 	}
 
@@ -229,8 +269,11 @@ abstract class Base extends Base_File {
 		 */
 		do_action( 'elementor/css-file/before_enqueue', $this );
 
-		// First time after clear cache and etc.
-		if ( '' === $meta['status'] || $this->is_update_required() ) {
+		// First time after clear cache, when an update is explicitly required, or when the
+		// meta says an external CSS file should exist but the file on disk is missing or
+		// zero-byte (ED-24903: repairs stale meta that references a broken/purged file so
+		// the next request self-heals instead of emitting a `<link>` to an empty asset).
+		if ( '' === $meta['status'] || $this->is_update_required() || $this->is_external_file_missing_or_empty( $meta ) ) {
 			$this->update();
 
 			$meta = $this->get_meta();
@@ -696,6 +739,47 @@ abstract class Base extends Base_File {
 	 */
 	protected function is_update_required() {
 		return false;
+	}
+
+	/**
+	 * Whether the meta says an external CSS file should be present, but the file on disk is
+	 * missing or zero-byte.
+	 *
+	 * Guarded by {@see self::use_external_file()} so inline installs are never affected, and
+	 * gated on `meta['status'] === CSS_STATUS_FILE` so healthy sites (and legit empty CSS,
+	 * i.e. `CSS_STATUS_EMPTY`) short-circuit before the filesystem stat. In practice this
+	 * costs one `stat()` per external-file enqueue when the meta claims a file exists.
+	 *
+	 * Introduced for ED-24903 to close the reader-side of the "cache says file, file is
+	 * missing/empty" failure mode. A `true` return in {@see self::enqueue()} triggers a
+	 * regeneration before the `<link>` is emitted, so the next anonymous request self-heals
+	 * instead of serving an empty asset.
+	 *
+	 * @since 4.3.0
+	 * @access protected
+	 *
+	 * @param array $meta The current CSS file meta. Passed in rather than re-fetched to
+	 *                    keep the fast path of {@see self::enqueue()} free of extra option
+	 *                    reads.
+	 *
+	 * @return bool True when a regeneration is needed to repair a broken/empty on-disk file.
+	 */
+	protected function is_external_file_missing_or_empty( array $meta ) {
+		if ( ! $this->use_external_file() ) {
+			return false;
+		}
+
+		if ( empty( $meta['status'] ) || self::CSS_STATUS_FILE !== $meta['status'] ) {
+			return false;
+		}
+
+		$path = $this->get_path();
+
+		if ( ! file_exists( $path ) ) {
+			return true;
+		}
+
+		return 0 === (int) @filesize( $path );
 	}
 
 	/**
