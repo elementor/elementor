@@ -251,7 +251,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( ! empty( $style ) ) {
 			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-			$style_result = $style_applier->apply( $index, [ $element_id => $style ] );
+			$style_result = $style_applier->apply( $index, [ $element_id => $style ], [ $element_id => $tag ] );
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}
