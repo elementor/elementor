@@ -2,8 +2,8 @@ import { createTransformer } from '@elementor/editor-canvas';
 import {
 	imageAttachmentIdPropType,
 	isTransformable,
-	type PropType,
 	type Props,
+	type PropType,
 	svgSrcPropTypeUtil,
 	urlPropTypeUtil,
 } from '@elementor/editor-props';
@@ -41,6 +41,8 @@ export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propT
  * Tags from the image category resolve into an attachment object (`{ id, url }`).
  * When such a tag is bound to an SVG prop, the result is wrapped back into an `svg-src` value,
  * so it will be resolved again by the SVG transformer and rendered as inline SVG markup.
+ * @param dynamicValue
+ * @param propType
  */
 function maybeWrapAsSvgSrc( dynamicValue: unknown, propType?: PropType ) {
 	if ( ! isSvgSrcProp( propType ) || ! isImageTagValue( dynamicValue ) ) {

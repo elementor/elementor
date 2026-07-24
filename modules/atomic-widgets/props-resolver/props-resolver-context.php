@@ -17,6 +17,8 @@ class Props_Resolver_Context {
 	/**
 	 * The prop type as it is defined in the schema, before resolving a union into
 	 * the specific prop type that matches the value.
+	 *
+	 * @var Prop_Type|null
 	 */
 	private ?Prop_Type $schema_prop_type = null;
 
