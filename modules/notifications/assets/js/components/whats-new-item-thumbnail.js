@@ -11,7 +11,7 @@ export const WhatsNewItemThumbnail = ( { imageSrc, title, link } ) => {
 			<WrapperWithLink link={ link }>
 				<img
 					src={ imageSrc }
-					alt={ title }
+					alt={ title || '' }
 					style={ { maxWidth: '100%' } }
 				/>
 			</WrapperWithLink>
@@ -21,6 +21,6 @@ export const WhatsNewItemThumbnail = ( { imageSrc, title, link } ) => {
 
 WhatsNewItemThumbnail.propTypes = {
 	imageSrc: PropTypes.string.isRequired,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.string,
 	link: PropTypes.string,
 };

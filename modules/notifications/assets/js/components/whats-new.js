@@ -47,6 +47,7 @@ export const WhatsNew = ( props ) => {
 							anchor={ anchorPosition }
 							open={ isOpen }
 							onClose={ () => setIsOpen( false ) }
+							BackdropProps={ { invisible: true } }
 							ModalProps={ {
 								style: {
 									// Above the WordPress Admin Top Bar.
@@ -56,7 +57,7 @@ export const WhatsNew = ( props ) => {
 						>
 							<Box
 								sx={ {
-									width: 320,
+									width: 360,
 									backgroundColor: 'background.default',
 								} }
 								role="presentation"
