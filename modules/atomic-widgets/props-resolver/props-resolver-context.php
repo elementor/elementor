@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +13,12 @@ class Props_Resolver_Context {
 	private ?string $key = null;
 
 	private ?Transformable_Prop_Type $prop_type;
+
+	/**
+	 * The prop type as it is defined in the schema, before resolving a union into
+	 * the specific prop type that matches the value.
+	 */
+	private ?Prop_Type $schema_prop_type = null;
 
 	private bool $disabled = false;
 
@@ -35,6 +42,16 @@ class Props_Resolver_Context {
 		$this->prop_type = $prop_type;
 
 		return $this;
+	}
+
+	public function set_schema_prop_type( ?Prop_Type $prop_type ): self {
+		$this->schema_prop_type = $prop_type;
+
+		return $this;
+	}
+
+	public function get_schema_prop_type(): ?Prop_Type {
+		return $this->schema_prop_type;
 	}
 
 	public function get_key(): ?string {

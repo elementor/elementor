@@ -61,7 +61,11 @@ class Dynamic_Prop_Types_Mapping extends Prop_Types_Schema_Extender {
 		}
 
 		if ( $prop_type instanceof Svg_Src_Prop_Type ) {
-			return [ V1_Dynamic_Tags_Module::SVG_CATEGORY ];
+			// SVGs are stored as attachments in the media library, so image tags are supported as well.
+			return [
+				V1_Dynamic_Tags_Module::SVG_CATEGORY,
+				V1_Dynamic_Tags_Module::IMAGE_CATEGORY,
+			];
 		}
 
 		if ( $prop_type instanceof Image_Src_Prop_Type ) {
