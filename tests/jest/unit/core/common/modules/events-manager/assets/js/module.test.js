@@ -1,4 +1,11 @@
 const mockTrack = jest.fn();
+const mockInit = jest.fn( ( token, config ) => {
+	if ( config.loaded ) {
+		config.loaded( mockMixpanelInstance );
+	}
+
+	return mockMixpanelInstance;
+} );
 const mockMixpanelInstance = {
 	isInitialized: true,
 	get_distinct_id: () => 'test-id',
@@ -11,13 +18,7 @@ const mockMixpanelInstance = {
 jest.mock( 'mixpanel-browser', () => ( {
 	__esModule: true,
 	default: {
-		init: jest.fn( ( token, config ) => {
-			if ( config.loaded ) {
-				config.loaded( mockMixpanelInstance );
-			}
-
-			return mockMixpanelInstance;
-		} ),
+		init: mockInit,
 	},
 	Mixpanel: {},
 } ) );
@@ -26,6 +27,7 @@ describe( 'Events Manager module', () => {
 	beforeEach( () => {
 		jest.resetModules();
 		mockTrack.mockReset();
+		mockInit.mockClear();
 
 		window.elementorCommon = {
 			config: {
@@ -37,6 +39,8 @@ describe( 'Events Manager module', () => {
 					site_key: 'key',
 					elementor_version: '3.0',
 					site_language: 'en',
+					proxy_api_host: 'https://example.com/wp-json/elementor/v1/events-proxy/api',
+					proxy_lib_base_path: 'https://example.com/wp-json/elementor/v1/events-proxy/libs/',
 				},
 				library_connect: {
 					user_roles: [ 'administrator' ],
@@ -95,6 +99,24 @@ describe( 'Events Manager module', () => {
 			eventsManager.dispatchEvent( 'test_event', { foo: 'bar' } );
 
 			expect( mockTrack ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	test( 'onInit points mixpanel at the events-proxy endpoints instead of the vendor domains', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			eventsManager.onInit();
+
+			expect( mockInit ).toHaveBeenCalledWith(
+				undefined,
+				expect.objectContaining( {
+					api_host: 'https://example.com/wp-json/elementor/v1/events-proxy/api',
+					lib_base_path: 'https://example.com/wp-json/elementor/v1/events-proxy/libs/',
+				} ),
+				'elementor-builder-editor',
+			);
 		} );
 	} );
 

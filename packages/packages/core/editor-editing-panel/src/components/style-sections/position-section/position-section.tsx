@@ -6,6 +6,7 @@ import { styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../../contexts/style-context';
+import { useInheritedValues } from '../../../contexts/styles-inheritance-context';
 import { useStylesField } from '../../../hooks/use-styles-field';
 import { useStylesFields } from '../../../hooks/use-styles-fields';
 import { PanelDivider } from '../../panel-divider';
@@ -38,6 +39,10 @@ const DEPENDENT_PROP_NAMES: Array< keyof DependentValues > = [
 
 export const PositionSection = () => {
 	const { value: position } = useStylesField< StringPropValue >( 'position', withHistoryLabel( POSITION_LABEL ) );
+	const inheritedPosition = useInheritedValues( [ 'position' ] ).position as StringPropValue | null;
+	const resolvedPosition = position ?? inheritedPosition ?? null;
+	const isPositionUnsetOrStatic = ! resolvedPosition || resolvedPosition.value === POSITION_STATIC;
+
 	const positionPrevRef = useRef( position );
 	const { values: dependentValues, setValues: setDependentValues } =
 		useStylesFields< DependentValues >( DEPENDENT_PROP_NAMES );
@@ -55,19 +60,19 @@ export const PositionSection = () => {
 			clearHistory();
 		}
 
-		if ( ( ! position || position?.value === POSITION_STATIC ) && dependentValues?.[ 'z-index' ] ) {
+		if ( isPositionUnsetOrStatic && dependentValues?.[ 'z-index' ] ) {
 			setDependentValues( { 'z-index': null }, withHistoryLabel( DIMENSIONS_LABEL ) );
 		}
 
 		positionPrevRef.current = position;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ position?.value ] );
+	}, [ position?.value, isPositionUnsetOrStatic ] );
 
 	return (
 		<StyledSectionContent>
 			<PositionField />
 			<DimensionsField />
-			<ZIndexField disabled={ ! position || position?.value === POSITION_STATIC } />
+			<ZIndexField disabled={ isPositionUnsetOrStatic } />
 			<PanelDivider />
 			<OffsetField />
 		</StyledSectionContent>
