@@ -6,6 +6,8 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Plugin;
 use Exception;
@@ -81,7 +83,35 @@ class Render_Props_Resolver extends Props_Resolver {
 
 		$transformed = $this->transform( $value, $key, $prop_type );
 
+		if ( Dynamic_Prop_Type::is_dynamic_prop_value( $value ) ) {
+			$transformed = $this->wrap_dynamic_url( $transformed, $prop_type );
+		}
+
 		return $this->resolve_item( $transformed, $key, $prop_type, $depth + 1 );
+	}
+
+	/**
+	 * Dynamic tags of the URL category resolve into a plain string, while the image & SVG
+	 * props expect an `{ id, url }` structure. Wrapping the string back into the prop type
+	 * it is bound to lets the matching transformer resolve it into a usable src.
+	 */
+	private function wrap_dynamic_url( $value, Prop_Type $prop_type ) {
+		if ( ! is_string( $value ) || '' === $value || ! ( $prop_type instanceof Union_Prop_Type ) ) {
+			return $value;
+		}
+
+		$src_prop_type_keys = [ Image_Src_Prop_Type::get_key(), Svg_Src_Prop_Type::get_key() ];
+
+		foreach ( $src_prop_type_keys as $src_prop_type_key ) {
+			if ( $prop_type->get_prop_type( $src_prop_type_key ) ) {
+				return [
+					'$$type' => $src_prop_type_key,
+					'value' => [ 'url' => $value ],
+				];
+			}
+		}
+
+		return $value;
 	}
 
 	private function get_validated_value( Prop_Type $prop_type, $prop_value ) {

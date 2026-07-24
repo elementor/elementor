@@ -1,5 +1,5 @@
 import { createTransformer } from '@elementor/editor-canvas';
-import { isTransformable, type Props } from '@elementor/editor-props';
+import { isTransformable, type Props, type PropType } from '@elementor/editor-props';
 
 import { DynamicTagsManagerNotFoundError } from './errors';
 import { isDynamicTagSupported } from './utils';
@@ -9,6 +9,8 @@ type Dynamic = {
 	settings?: Props;
 };
 
+const SRC_PROP_TYPE_KEYS = [ 'image-src', 'svg-src' ];
+
 export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType, renderContext } ) => {
 	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
 		return propType?.default ?? null;
@@ -16,8 +18,29 @@ export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propT
 
 	const renderPostId = ( renderContext as { currentPostId?: number } | undefined )?.currentPostId;
 
-	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ), renderPostId );
+	const dynamicValue = getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ), renderPostId );
+
+	if ( dynamicValue instanceof Promise ) {
+		return dynamicValue.then( ( resolved ) => wrapDynamicUrl( resolved, propType ) );
+	}
+
+	return wrapDynamicUrl( dynamicValue, propType );
 } );
+
+/**
+ * Dynamic tags of the URL category resolve into a plain string, while the image & SVG props
+ * expect an `{ id, url }` structure. Wrapping the string back into the prop type it is bound
+ * to lets the matching transformer resolve it into a usable src.
+ */
+function wrapDynamicUrl( value: unknown, propType?: PropType ) {
+	if ( typeof value !== 'string' || ! value || propType?.kind !== 'union' ) {
+		return value;
+	}
+
+	const srcPropTypeKey = SRC_PROP_TYPE_KEYS.find( ( key ) => key in propType.prop_types );
+
+	return srcPropTypeKey ? { $$type: srcPropTypeKey, value: { url: value } } : value;
+}
 
 // Temporary naive transformation until we'll have a `backendTransformer` that
 // will replace the `dynamicTransformer` client implementation.
