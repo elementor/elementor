@@ -946,9 +946,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			}
 
 			if ( $lazyload ) {
-				$image_html = '<img class="swiper-slide-image swiper-lazy" data-src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+				$image_html = wp_get_attachment_image($attachment['id'], $settings["thumbnail_size"], '', array('class' => 'swiper-slide-image', "loading" => "lazy"));
 			} else {
-				$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+				$image_html = wp_get_attachment_image($attachment['id'], $settings["thumbnail_size"], '', array('class' => 'swiper-slide-image'));
 			}
 
 			$link_tag = '';
