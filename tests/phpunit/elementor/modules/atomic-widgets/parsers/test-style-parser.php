@@ -161,7 +161,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
 				[
 					'meta' => [
 						'state' => null,
-						'breakpoint' => null,
+						'breakpoint' => [ 'desktop' ],
 					],
 					'props' => [],
 				],
@@ -173,6 +173,57 @@ class Test_Style_Parser extends Elementor_Test_Base {
 
         // Assert.
         $this->assert_parse_result_invalid ( $result, [ 'meta.breakpoint' ] );
+	}
+
+	public function test_parse__missing_meta_breakpoint_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+					],
+					'props' => [],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+
+		// Assert.
+		$this->assert_parse_result_invalid( $result, [ 'meta.breakpoint' ] );
+	}
+
+	public function test_parse__null_meta_breakpoint_is_valid_and_normalized_to_desktop() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => null,
+					],
+					'props' => [],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertCount( 0, $result->errors()->all() );
+		$this->assertEquals( 'desktop', $parsed['variants'][0]['meta']['breakpoint'] );
+		$this->assertNull( $parsed['variants'][0]['meta']['state'] );
 	}
 
 	public function test_parse__validates_and_sanitizes() {
