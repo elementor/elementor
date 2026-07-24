@@ -522,7 +522,7 @@ function () {
       });
       var currentBreakpoint = 0;
       breakpoints.some(function (breakpoint) {
-        if (innerWidth < breakpoint) {
+        if (innerWidth <= breakpoint) {
           currentBreakpoint = breakpoint;
           return true;
         }
@@ -535,12 +535,21 @@ function () {
     key: "getCurrentDeviceSetting",
     value: function getCurrentDeviceSetting(settingKey) {
       var currentBreakpoint = this.getCurrentBreakpoint();
+      var value;
 
       if (currentBreakpoint) {
-        return this.settings.breakpoints[currentBreakpoint][settingKey];
+        var breakpointSettings = this.settings.breakpoints[currentBreakpoint];
+
+        if (breakpointSettings && undefined !== breakpointSettings[settingKey]) {
+          value = breakpointSettings[settingKey];
+        }
       }
 
-      return this.settings[settingKey];
+      if (undefined === value) {
+        value = this.settings[settingKey];
+      }
+
+      return value;
     }
   }, {
     key: "getActiveItems",
@@ -750,10 +759,12 @@ function () {
   }, {
     key: "calculateImageSize",
     value: function calculateImageSize(image, index) {
+      var width = image.width,
+          height = image.height;
       this.imagesData[index] = {
-        width: image.width,
-        height: image.height,
-        ratio: image.width / image.height
+        width: width || 1,
+        height: height || 1,
+        ratio: width > 0 && height > 0 ? width / height : 1
       };
     }
   }, {
@@ -1001,15 +1012,7 @@ function (_BaseGalleryType) {
     value: function getDefaultSettings() {
       return {
         idealRowHeight: 200,
-        lastRow: 'auto',
-        breakpoints: {
-          1024: {
-            idealRowHeight: 150
-          },
-          768: {
-            idealRowHeight: 100
-          }
-        }
+        lastRow: 'auto'
       };
     }
   }, {
