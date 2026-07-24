@@ -31,6 +31,8 @@ export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propT
  * Dynamic tags of the URL category resolve into a plain string, while the image & SVG props
  * expect an `{ id, url }` structure. Wrapping the string back into the prop type it is bound
  * to lets the matching transformer resolve it into a usable src.
+ * @param value
+ * @param propType
  */
 function wrapDynamicUrl( value: unknown, propType?: PropType ) {
 	if ( typeof value !== 'string' || ! value || propType?.kind !== 'union' ) {
