@@ -26,10 +26,6 @@ class Settings_Agents extends Tab_Base {
 		return 'eicon-ai';
 	}
 
-	public function get_help_url() {
-		return 'https://go.elementor.com/global-agents/';
-	}
-
 	public function register_controls() {
 		$this->flatten_agents_settings_for_controls();
 
