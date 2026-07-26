@@ -2,8 +2,10 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Plain_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
+use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -20,14 +22,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings, styles, and interactions in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When include_content is true, each node also includes settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When include_content is true, each node also includes settings, styles, and interactions.',
 					],
 				],
 			],
@@ -56,7 +58,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each node\'s settings and styles (in the same shape build-composition accepts as input). Requires element_id.',
+						'description' => 'If true, includes each node\'s settings, styles, and interactions (in the same shape build-composition accepts as input). Requires element_id.',
 					],
 				],
 			]
@@ -129,12 +131,38 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
-				$skeleton['settings'] = $node['settings'] ?? (object) [];
-				$skeleton['styles']   = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
+				$skeleton['settings']     = $node['settings'] ?? (object) [];
+				$skeleton['styles']       = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
+				$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 			}
 
 			return $skeleton;
 		} );
+	}
+
+	private function normalize_interactions( $interactions ): array {
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			$interactions = ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) ? $decoded : [];
+		}
+
+		if ( ! is_array( $interactions ) || empty( $interactions['items'] ) ) {
+			return [];
+		}
+
+		$resolver = Plain_Props_Resolver::make();
+		$prop_type = Interaction_Item_Prop_Type::make();
+		$plain = [];
+
+		foreach ( $interactions['items'] as $item ) {
+			$serialized = $resolver->resolve_value( $item, $prop_type );
+
+			if ( is_array( $serialized ) && ! empty( $serialized ) ) {
+				$plain[] = $serialized;
+			}
+		}
+
+		return $plain;
 	}
 
 	private function resolve_post_id( $input ) {

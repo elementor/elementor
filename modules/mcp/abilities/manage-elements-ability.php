@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -42,7 +43,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -88,6 +89,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
 						'description' => 'update only: global class labels to attach (prepended to ex Fisting).',
+					],
+					'interactions' => [
+						'type' => 'array',
+						'items' => [ 'type' => 'object' ],
+						'description' => 'update only: array of interaction items in the native Interaction_Item shape. Replaces existing interactions on the element. Read elementor://interactions/schema for the full shape.',
 					],
 					'new_parent_id' => [
 						'type' => 'string',
@@ -192,10 +198,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$settings = $this->as_map( $input['settings'] ?? [] );
 		$style = $this->as_map( $input['style'] ?? [] );
 		$classes = $input['classes'] ?? null;
+		$interactions = $input['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes );
+		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes ) || null !== $interactions;
 		if ( ! $has_change ) {
-			return $this->bad_request( __( 'update requires at least one of settings, style, or classes.', 'elementor' ) );
+			return $this->bad_request( __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
 		}
 
 		$tree = $this->get_tree( $document );
@@ -257,6 +264,18 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
+		}
+
+		if ( null !== $interactions ) {
+			if ( ! is_array( $interactions ) ) {
+				return $this->bad_request( __( 'interactions must be an array of interaction items.', 'elementor' ) );
+			}
+			$interactions_applier = new Interactions_Applier( null, $this->create_plain_values_resolver() );
+			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+			if ( $interactions_result['error'] ) {
+				return $interactions_result['error'];
+			}
+			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
 		}
 
 		return $this->save_and_respond( $document, $tree, $element_id, $warnings );
