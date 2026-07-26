@@ -141,7 +141,7 @@ Same `minimum_installation_version: 4.0.0` pattern exists for `e_atomic_elements
 |--------|----------------------|
 | **Opt-in** | Enables experiment flags only — no automatic data migration from the opt-in handler itself. Existing pages are unchanged; new atomic elements/classes/variables become available. BC migrations (`e_bc_migrations`) may upgrade prop shapes on next document load (see [backward-compatibility.md](../migration/backward-compatibility.md)). |
 | **Opt-out** | Disables v4 experiments. Per opt-out terms: atomic element content, global classes, and variables **will not render** on the frontend while features are off. Data remains in the database (meta/kit JSON) but is inaccessible to the v4 editor surfaces. Containers stay in their current state. |
-| **Re opt-in** | Data remains in DB; re-enabling experiments should restore editor access to existing atomic content (no cleanup migration runs on opt-out). TBD — confirm edge cases with v4 team. |
+| **Re opt-in** | `opt_in_v4()` and `opt_out_v4()` are pure flag toggles (`update_option()` on each feature's option key) with no data read/write of their own — confirmed in `opt-in.php`, neither method touches post meta, kit JSON, or component/global-class storage. Re-enabling the bundle simply flips the same flags back to active; stored atomic content, classes, and variables become renderable/editable again exactly as they were before opt-out. There is no cleanup, snapshot, or migration step tied to the toggle itself in either direction. |
 
 Opt-in does not delete post meta.
 
