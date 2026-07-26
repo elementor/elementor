@@ -1,39 +1,9 @@
 /* eslint-disable testing-library/render-result-naming-convention */
-import { createDomRenderer } from '../create-dom-renderer';
-
-const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
-	'a',
-	'article',
-	'aside',
-	'button',
-	'form',
-	'div',
-	'footer',
-	'h1',
-	'h2',
-	'h3',
-	'h4',
-	'h5',
-	'h6',
-	'header',
-	'main',
-	'nav',
-	'p',
-	'section',
-	'span',
-];
-
-type ElementorCommonWindow = typeof globalThis & {
-	elementorCommon?: {
-		config?: {
-			allowedHTMLWrapperTags?: string[];
-		};
-	};
-};
+import { createDomRenderer, DEFAULT_ALLOWED_HTML_WRAPPER_TAGS } from '../create-dom-renderer';
 
 describe( 'createDomRenderer', () => {
 	afterEach( () => {
-		delete ( globalThis as ElementorCommonWindow ).elementorCommon;
+		delete window.elementorCommon;
 	} );
 
 	it.each( [
@@ -106,7 +76,7 @@ describe( 'createDomRenderer', () => {
 
 	it( 'should validate a tag added via localized config', async () => {
 		// Arrange.
-		( globalThis as ElementorCommonWindow ).elementorCommon = {
+		window.elementorCommon = {
 			config: {
 				allowedHTMLWrapperTags: [ ...DEFAULT_ALLOWED_HTML_WRAPPER_TAGS, 'custom-tag' ],
 			},

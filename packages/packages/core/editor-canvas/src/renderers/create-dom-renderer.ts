@@ -5,7 +5,7 @@ export type DomRenderer = {
 	render: TwingEnvironment[ 'render' ];
 };
 
-const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
+export const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
 	'a',
 	'article',
 	'aside',
@@ -27,14 +27,6 @@ const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
 	'span',
 ] as const;
 
-type AllowedHtmlWrapperTagsConfig = {
-	elementorCommon?: {
-		config?: {
-			allowedHTMLWrapperTags?: string[];
-		};
-	};
-};
-
 export function createDomRenderer(): DomRenderer {
 	const loader = createArrayLoader( {} );
 	const environment = createEnvironment( loader );
@@ -49,7 +41,7 @@ export function createDomRenderer(): DomRenderer {
 }
 
 function getAllowedHtmlWrapperTags(): readonly string[] {
-	const configTags = ( globalThis as AllowedHtmlWrapperTagsConfig ).elementorCommon?.config?.allowedHTMLWrapperTags;
+	const configTags = window.elementorCommon?.config?.allowedHTMLWrapperTags;
 
 	if ( Array.isArray( configTags ) ) {
 		return configTags;
