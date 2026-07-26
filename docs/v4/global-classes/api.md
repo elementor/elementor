@@ -12,7 +12,7 @@ Two programmatic surfaces manage global classes on the **active kit**:
 1. **REST API** (`Global_Classes_REST_API`) — used by the editor's `editor-global-classes` package and direct HTTP clients.
 2. **MCP ability** `elementor/manage-classes` (`Manage_Classes_Ability`) — bulk create/update/delete via raw CSS, for external agent hosts.
 
-A read-only MCP **resource** `elementor://global-classes` (`Global_Classes_Resource_Ability`) exposes the current label map for discovery.
+A read-only MCP **resource** `elementor://global-classes` (`Global_Classes_Resource_Ability`) exposes the current id → label map for discovery.
 
 ## When to use it
 
@@ -72,31 +72,11 @@ The JS client (`api.ts`) wraps this as `apiClient.saveDraft()` (`context=preview
 
 ### Import / export with kits
 
-Kit export includes `global-classes.json` when `settings` is in the export `include` array (`Import_Export\Export_Runner`). The file shape matches `{ items, order }` validated by `Global_Classes_Parser`.
-
-Import (`Import_Export\Import_Runner`) reads the JSON from the extracted kit directory and calls `Global_Classes_Repository::put()`. Kit meta keys for order, labels, relations, and sync map are preserved via `elementor/kit/meta_to_preserve_on_kit_import`.
-
-Template library import/export also supports global class snapshots through `Template_Library_Global_Classes` filters.
+Kit export writes `global-classes.json` when `settings` is in the export `include` array (`ImportExport\Export_Runner`, file constant `ImportExport::FILE_NAME`). Shape: `{ items, order }` validated by `Global_Classes_Parser`. Import (`ImportExport\Import_Runner`) calls `Global_Classes_Repository::put()`. Kit meta (order, labels, relations, sync map) is preserved via `elementor/kit/meta_to_preserve_on_kit_import`. Template library snapshots use `Template_Library_Global_Classes` filters.
 
 ### Usage tracking
 
-`GET /global-classes/usage` returns detailed usage via `Applied_Global_Classes_Usage::get_detailed_usage()`:
-
-```json
-{
-  "g-abc123": [
-    {
-      "pageId": 42,
-      "title": "Home",
-      "type": "page",
-      "total": 3,
-      "elements": ["e1a2b3c", "d4e5f6g"]
-    }
-  ]
-}
-```
-
-Document types `e-flexbox` and `template` are excluded from reporting. The editor prefetches usage for the class manager UI (`use-css-class-usage.ts`).
+`GET /global-classes/usage` returns per-class document usage via `Applied_Global_Classes_Usage::get_detailed_usage()` — keys are internal ids; each value lists `{ pageId, title, type, total, elements[] }`. Document types `e-flexbox` and `template` are excluded. Prefetched by the class manager UI (`use-css-class-usage.ts`).
 
 Deletion triggers `elementor/global_classes/cleanup` to strip removed class ids from affected documents.
 
@@ -136,21 +116,11 @@ Deletion triggers `elementor/global_classes/cleanup` to strip removed class ids 
 
 Duplicate labels are auto-renamed with `DUP_` prefix. Variable references in CSS must use label-only syntax and exist in `elementor://global-variables`.
 
-**Output:** `{ status, results[], order[] }` per `Bulk_Operations_Result`.
-
-**Resource:** Read `elementor://global-classes` before creating — returns JSON map of `id → label` from `all_labels()`.
-
-**In-editor JS tool:** `editor-global-classes` registers a `manage-classes` MCP tool that proxies to the PHP ability via `elementor/v1/mcp-proxy`. This is separate from the PHP ability but targets the same backend.
+**Output:** `{ status, results[], order[] }` per `Bulk_Operations_Result`. Create results include the generated internal id; use `elementor://global-classes` (id → label map from `all_labels()`) for discovery before composing.
 
 ### Capabilities
 
-| Capability | Roles (default) |
-|------------|-----------------|
-| `elementor_global_classes_update_class` | administrator |
-| `elementor_global_classes_remove_class` | administrator, editor, author, contributor, shop_manager |
-| `elementor_global_classes_apply_class` | administrator, editor, author, contributor, shop_manager |
-
-Gated by hidden experiment `global_classes_should_enforce_capabilities` (default active).
+REST `PUT` and MCP `manage-classes` require `elementor_global_classes_update_class` (administrator by default). Additional caps: `elementor_global_classes_remove_class`, `elementor_global_classes_apply_class` (editor roles). Gated by hidden experiment `global_classes_should_enforce_capabilities` (default active).
 
 ## Extension
 
@@ -162,12 +132,7 @@ There is no public PHP filter to register custom global class types; all items u
 
 ## Internals
 
-- REST controller: `modules/global-classes/global-classes-rest-api.php`
-- MCP ability: `modules/mcp/abilities/manage-classes-ability.php`
-- MCP resource: `modules/mcp/abilities/global-classes-resource-ability.php`
-- JS API client: `packages/packages/core/editor-global-classes/src/api.ts`
-- JS MCP tool: `packages/packages/core/editor-global-classes/src/mcp-integration/manage-classes-tool.ts`
-- Cache invalidation: `elementor/global_classes/update` → `Atomic_Global_Styles::invalidate_cache_for_updated_classes()`
+REST: `global-classes-rest-api.php`. MCP: `manage-classes-ability.php`, `global-classes-resource-ability.php`. JS: `editor-global-classes/src/api.ts`; in-editor Angie/WebMCP tool at `mcp-integration/manage-classes-tool.ts` (proxies PHP ability). Cache: `elementor/global_classes/update` → `Atomic_Global_Styles::invalidate_cache_for_updated_classes()`.
 
 ## See also
 

@@ -11,7 +11,13 @@
 
 Each class is a `StyleDefinition` with `type: "class"`, a human-readable **label** (the public identifier), and one or more **variants** (breakpoint/state style props validated against `Style_Schema`).
 
-The feature is gated by experiment **`e_classes`** (`Module::NAME` in `modules/global-classes/module.php`). It loads only when both `e_classes` and `e_atomic_elements` are active. On new sites installed at Elementor 4.0.0+, `e_classes` defaults to active.
+The feature is gated by experiment **`e_classes`** (`Module::NAME` in `modules/global-classes/module.php`). The module registers CPT, REST, CSS, and the editor package only when **both** `e_classes` and `e_atomic_elements` are active — enforced manually in the constructor (`is_feature_active` checks for each), not via a formal `dependencies: ['e_atomic_elements']` on the experiment registration (there is an open TODO in `module.php` to add that once `e_atomic_elements` is no longer hidden).
+
+| Setting | Value |
+|---------|-------|
+| Default (existing sites) | inactive (`STATE_INACTIVE`) |
+| New sites (Elementor ≥ 4.0.0) | active (`new_site.default_active`) |
+| Visibility | hidden experiment, alpha |
 
 ### Two different "classes" concepts
 

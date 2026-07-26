@@ -65,13 +65,23 @@ All kit-scoped indices live on the active **Kit** document:
 | `_elementor_global_classes_labels` | `Global_Classes_Labels::META_KEY_FRONTEND` | Published id → label map |
 | `_elementor_global_classes_labels_preview` | `Global_Classes_Labels::META_KEY_PREVIEW` | Draft label map |
 | `_elementor_global_classes_post_ids` | `Global_Classes_Post_IDs::META_KEY` | Internal id → CPT post id map |
+| `_elementor_global_classes_sync_to_v3` | `Global_Classes_Sync_Map::META_KEY` | Published class ids flagged for v3 Global Fonts sync |
 
 `Global_Classes_Repository` is the single entry point for reads and writes. It supports two contexts:
 
 - `CONTEXT_FRONTEND` (`'frontend'`) — published state
 - `CONTEXT_PREVIEW` (`'preview'`) — in-editor draft state
 
-Publishing (frontend `apply_changes`) copies order to preview, clears stale preview meta on touched posts, and updates the design-system sync map.
+Publishing (frontend `apply_changes`) copies order to preview, clears stale preview meta on touched posts, and updates the Design System Sync map (see `sync_to_v3` below).
+
+### `sync_to_v3` (optional)
+
+Optional boolean on a class item, preserved by `Global_Class_Data_Normalizer::normalize_style_fields()`. When `true`, the class is mirrored to legacy v3 **Global Fonts** typography via `modules/design-system-sync/`:
+
+1. On publish (`context=frontend`), `Global_Classes_Repository::apply_changes()` calls `Global_Classes_Sync_Map::apply_changes()` to add/remove the class id in kit meta `_elementor_global_classes_sync_to_v3`.
+2. `Classes_Provider::get_synced_typography_css_entries()` emits v3 CSS custom properties (`--e-global-typography-{v3_id}-{prop}`) from the class's typography variants.
+
+Toggle in the Class Manager UI: **Sync to Global Fonts** / **Stop syncing to Global Fonts**. The flag travels in `global-classes.json` on kit export. MCP `manage-classes` does not expose this field — editor/REST only.
 
 ### Label is the public id
 

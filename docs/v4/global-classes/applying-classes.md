@@ -18,6 +18,8 @@ Atomic elements attach global classes through the **`classes` settings prop**, d
 }
 ```
 
+(Internal ids shown intentionally — this is the on-disk element JSON shape.)
+
 In author-facing documentation and MCP examples, show **labels** instead:
 
 ```json
