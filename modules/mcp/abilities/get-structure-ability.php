@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -118,7 +118,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$skeleton['widgetType'] = $node['widgetType'];
 			}
 
-			$title = $this->resolve_element_title( $node );
+			$title = Element_Structure_Title::resolve( $node );
 
 			if ( null !== $title ) {
 				$skeleton['title'] = $title;
@@ -135,63 +135,6 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 			return $skeleton;
 		} );
-	}
-
-	private function resolve_element_title( array $node ): ?string {
-		$editor_title = $node['editor_settings']['title'] ?? null;
-
-		if ( is_string( $editor_title ) && '' !== $editor_title ) {
-			return $editor_title;
-		}
-
-		$settings = $node['settings'] ?? [];
-
-		if ( is_array( $settings ) ) {
-			foreach ( [ '_title', 'presetTitle' ] as $key ) {
-				$plain = $this->extract_plain_string( $settings[ $key ] ?? null );
-
-				if ( null !== $plain ) {
-					return $plain;
-				}
-			}
-		}
-
-		$type = $node['widgetType'] ?? $node['elType'] ?? null;
-
-		if ( ! $type ) {
-			return null;
-		}
-
-		$instance = Atomic_Elements_Utils::get_element_instance( (string) $type );
-
-		if ( ! $instance ) {
-			return null;
-		}
-
-		$label = $instance->get_title();
-
-		if ( ! is_string( $label ) || '' === $label ) {
-			return null;
-		}
-
-		return $label;
-	}
-
-	private function extract_plain_string( $value ): ?string {
-		if ( is_string( $value ) && '' !== $value ) {
-			return $value;
-		}
-
-		if (
-			is_array( $value )
-			&& isset( $value['value'] )
-			&& is_string( $value['value'] )
-			&& '' !== $value['value']
-		) {
-			return $value['value'];
-		}
-
-		return null;
 	}
 
 	private function resolve_post_id( $input ) {
