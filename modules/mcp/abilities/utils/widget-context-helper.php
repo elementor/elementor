@@ -30,8 +30,6 @@ class Widget_Context_Helper {
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
 
-	const BASE_SETTING_PROP_HINT = 'Has a widget default — omit unless user explicitly requests a change. See llm_guidance.default_settings.';
-
 	/**
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
 	 */
@@ -134,7 +132,7 @@ class Widget_Context_Helper {
 			];
 		}
 
-		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
+		$properties = self::build_configurable_properties_schema( $props_schema );
 
 		return self::filter_nulls( [
 			'type' => 'object',
@@ -146,9 +144,8 @@ class Widget_Context_Helper {
 
 	/**
 	 * @param array<string, Prop_Type> $props_schema
-	 * @param array<string, mixed>     $base_settings
 	 */
-	private static function build_configurable_properties_schema( array $props_schema, array $base_settings ): array {
+	private static function build_configurable_properties_schema( array $props_schema ): array {
 		$properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
@@ -159,9 +156,7 @@ class Widget_Context_Helper {
 			$properties[ $key ] = $prop_type->to_json_schema();
 		}
 
-		$properties = self::apply_llm_schema_filters( $properties );
-
-		return self::append_base_settings_hints( $properties, array_keys( $base_settings ) );
+		return self::apply_llm_schema_filters( $properties );
 	}
 
 	private static function apply_llm_schema_filters( array $properties ): array {
@@ -188,26 +183,6 @@ class Widget_Context_Helper {
 		}
 
 		return (bool) $prop_type->get_meta_item( 'llm_configurable', false );
-	}
-
-	private static function append_base_settings_hints( array $properties, array $base_settings_keys ): array {
-		if ( empty( $base_settings_keys ) ) {
-			return $properties;
-		}
-
-		foreach ( $base_settings_keys as $key ) {
-			if ( ! isset( $properties[ $key ] ) ) {
-				continue;
-			}
-
-			$existing_description = $properties[ $key ]['description'] ?? null;
-
-			$properties[ $key ]['description'] = $existing_description
-				? "{$existing_description} " . self::BASE_SETTING_PROP_HINT
-				: self::BASE_SETTING_PROP_HINT;
-		}
-
-		return $properties;
 	}
 
 	private static function get_description( array $config ): ?string {
