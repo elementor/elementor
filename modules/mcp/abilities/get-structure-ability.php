@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -19,14 +20,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, nested elements). When include_content is true, each node also includes settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When include_content is true, each node also includes settings and styles.',
 					],
 				],
 			],
@@ -117,6 +118,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$skeleton['widgetType'] = $node['widgetType'];
 			}
 
+			$title = $this->resolve_element_title( $node );
+
+			if ( null !== $title ) {
+				$skeleton['title'] = $title;
+			}
+
 			if ( ! empty( $node['elements'] ) ) {
 				$skeleton['elements'] = $node['elements'];
 			}
@@ -128,6 +135,63 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 			return $skeleton;
 		} );
+	}
+
+	private function resolve_element_title( array $node ): ?string {
+		$editor_title = $node['editor_settings']['title'] ?? null;
+
+		if ( is_string( $editor_title ) && '' !== $editor_title ) {
+			return $editor_title;
+		}
+
+		$settings = $node['settings'] ?? [];
+
+		if ( is_array( $settings ) ) {
+			foreach ( [ '_title', 'presetTitle' ] as $key ) {
+				$plain = $this->extract_plain_string( $settings[ $key ] ?? null );
+
+				if ( null !== $plain ) {
+					return $plain;
+				}
+			}
+		}
+
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		$instance = Atomic_Elements_Utils::get_element_instance( (string) $type );
+
+		if ( ! $instance ) {
+			return null;
+		}
+
+		$label = $instance->get_title();
+
+		if ( ! is_string( $label ) || '' === $label ) {
+			return null;
+		}
+
+		return $label;
+	}
+
+	private function extract_plain_string( $value ): ?string {
+		if ( is_string( $value ) && '' !== $value ) {
+			return $value;
+		}
+
+		if (
+			is_array( $value )
+			&& isset( $value['value'] )
+			&& is_string( $value['value'] )
+			&& '' !== $value['value']
+		) {
+			return $value['value'];
+		}
+
+		return null;
 	}
 
 	private function resolve_post_id( $input ) {
