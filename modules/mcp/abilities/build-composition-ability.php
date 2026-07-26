@@ -244,7 +244,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'interactions' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → array of interaction items in the native Interaction_Item shape (max 5 per element). Read elementor://interactions/schema for the full shape, allowed enum values, and Pro-gated fields.',
+					'description' => 'Record mapping configuration-id → array of interaction items in the native Interaction_Item shape. Read elementor://interactions/schema for the full shape, allowed enum values, and Pro-gated fields.',
 					'additionalProperties' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'object' ],

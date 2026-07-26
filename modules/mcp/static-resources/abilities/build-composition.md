@@ -139,35 +139,7 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Generous padding on CTAs: min 1rem 2.5rem
 
 # INTERACTIONS
-Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items (max **5 per element**).
-
-Read [elementor://interactions/schema] for the full shape, allowed enum values, and Pro-gated fields before adding interactions.
-
-Native shape (same keys as the stored `Interaction_Item` PropType):
-
-```json
-{
-  "trigger": "load",
-  "animation": {
-    "effect": "fade",
-    "type": "in",
-    "direction": "",
-    "timing_config": {
-      "duration": { "size": 600, "unit": "ms" },
-      "delay":    { "size": 0,   "unit": "ms" }
-    },
-    "config": { "easing": "easeIn" }
-  },
-  "breakpoints": { "excluded": [] }
-}
-```
-
-- Required: `trigger`, `animation.effect`, `animation.type`
-- Optional timing: `animation.timing_config.duration`, `animation.timing_config.delay` (`{ "size": <number>, "unit": "ms" }`)
-- Optional direction: `animation.direction` (relevant for slide)
-- Optional easing: `animation.config.easing`
-- Optional breakpoints: `breakpoints.excluded` (array of breakpoint IDs to disable)
-- Pro-only fields (see schema): `animation.config.repeat`, `animation.config.times`, `animation.config.replay`, `animation.config.relativeTo`, `animation.config.start`, `animation.config.end`, `animation.custom_effect` (when `animation.effect` is `custom`)
+Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape, allowed enum values, and Pro-gated fields.
 
 If the Interactions experiment is inactive, interactions are skipped and a warning is returned. Invalid values fail the call with `elementor_invalid_interactions`.
 

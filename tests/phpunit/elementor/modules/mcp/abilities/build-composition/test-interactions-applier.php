@@ -53,8 +53,15 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\Interactions\Schema\Interactions_Schema;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Interactions_Applier;
 use PHPUnit\Framework\TestCase;
+
+if ( ! function_exists( 'apply_filters' ) ) {
+	function apply_filters( $tag, $value ) {
+		return $value;
+	}
+}
 
 class Test_Interactions_Applier extends TestCase {
 
@@ -127,7 +134,7 @@ class Test_Interactions_Applier extends TestCase {
 
 		$this->assertNull( $result['error'] );
 		$this->assertArrayHasKey( 'interactions', $index['hero'] );
-		$this->assertSame( 1, $index['hero']['interactions']['version'] );
+		$this->assertSame( Interactions_Schema::get_interactions_schema()['version'], $index['hero']['interactions']['version'] );
 		$this->assertCount( 1, $index['hero']['interactions']['items'] );
 
 		$item = $index['hero']['interactions']['items'][0];
@@ -213,18 +220,6 @@ class Test_Interactions_Applier extends TestCase {
 		$breakpoints = $index['hero']['interactions']['items'][0]['value']['breakpoints']['value'];
 		$excluded = $breakpoints['excluded']['value'];
 		$this->assertCount( 2, $excluded );
-	}
-
-	public function test_apply__enforces_max_interactions_per_element() {
-		$applier = $this->make_applier();
-		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
-
-		$items = array_fill( 0, Interactions_Applier::MAX_INTERACTIONS_PER_ELEMENT + 1, $this->valid_interaction() );
-
-		$result = $applier->apply( $index, [ 'hero' => $items ] );
-
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( 'Too many interactions', $result['error']->get_error_message() );
 	}
 
 	public function test_apply__inactive_experiment_returns_warning() {

@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
+use Elementor\Modules\Interactions\Schema\Interactions_Schema;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Interactions_Applier {
-
-	const MAX_INTERACTIONS_PER_ELEMENT = 5;
-	const SCHEMA_VERSION = 1;
 
 	private bool $is_experiment_active;
 	private Plain_Values_Resolver $plain_values_resolver;
@@ -56,16 +54,6 @@ class Interactions_Applier {
 				continue;
 			}
 
-			if ( count( $items ) > self::MAX_INTERACTIONS_PER_ELEMENT ) {
-				$errors[] = sprintf(
-					/* translators: 1: element id, 2: max */
-					__( '[%1$s] Too many interactions (max %2$d).', 'elementor' ),
-					$config_id,
-					self::MAX_INTERACTIONS_PER_ELEMENT
-				);
-				continue;
-			}
-
 			$built_items = $this->resolve_items( $items, $prop_type, $config_id, $errors );
 
 			if ( empty( $built_items ) ) {
@@ -74,7 +62,7 @@ class Interactions_Applier {
 
 			$index[ $config_id ]['interactions'] = [
 				'items' => $built_items,
-				'version' => self::SCHEMA_VERSION,
+				'version' => Interactions_Schema::get_interactions_schema()['version'],
 			];
 		}
 
