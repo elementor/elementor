@@ -136,7 +136,8 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$props_schema = $this->resolve_props_schema( $node );
 
 				if ( is_array( $settings ) && $props_schema ) {
-					$settings = Render_Props_Resolver::for_settings()->resolve( $props_schema, $settings );
+					$schema = array_intersect_key( $props_schema, $settings );
+					$settings = Render_Props_Resolver::for_settings()->resolve( $schema, $settings );
 				}
 
 				$skeleton['settings'] = $settings ? $settings : (object) [];

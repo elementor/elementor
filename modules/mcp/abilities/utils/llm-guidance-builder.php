@@ -75,7 +75,9 @@ class Llm_Guidance_Builder {
 			return $base_settings;
 		}
 
-		return Render_Props_Resolver::for_settings()->resolve( $props_schema, $base_settings );
+		$schema = array_intersect_key( $props_schema, $base_settings );
+
+		return Render_Props_Resolver::for_settings()->resolve( $schema, $base_settings );
 	}
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {
