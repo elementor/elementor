@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
@@ -120,8 +121,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();
-
-		$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
+		$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
 		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
@@ -215,7 +215,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'element_config' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → widget PropValues ($$type + value). Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure.',
 				],
 				'style' => [
 					'type' => 'object',
@@ -373,6 +373,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function create_plain_values_resolver(): Plain_Values_Resolver {
+		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
 	private function is_variables_active(): bool {
