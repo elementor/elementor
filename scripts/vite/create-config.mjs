@@ -27,6 +27,8 @@ import {
 	wordpressAssetFilePlugin,
 } from './plugins/build.mjs';
 import { esbuildJsxPlugin } from './plugins/esbuild-jsx.mjs';
+import { cjsRequireInteropPlugin } from './plugins/cjs-require-interop.mjs';
+import { legacyBabelPlugin } from './plugins/legacy-babel.mjs';
 import { appScssPlugin, componentScssPlugin } from './plugins/scss.mjs';
 
 const REACT_JSX_RUNTIME_SHIM = fileURLToPath( new URL( './shims/react-jsx-runtime.js', import.meta.url ) );
@@ -79,7 +81,9 @@ function createBaseI18nPattern( entryPath, entryName ) {
 
 function createSharedPlugins( { isProduction, isFrontend = false, entryPath, entryName } = {} ) {
 	const plugins = [
+		cjsRequireInteropPlugin(),
 		esbuildJsxPlugin( { isProduction } ),
+		legacyBabelPlugin(),
 		appScssPlugin( { root: ROOT } ),
 		componentScssPlugin(),
 		applyBannerPlugin( SHARED_BANNER ),
@@ -245,7 +249,9 @@ export async function buildPackageEntries( isProduction, { watch = false } = {} 
 	for ( const { name, path: entryPath } of packageEntries ) {
 		const camelName = name.replace( /-(\w)/g, ( _, char ) => char.toUpperCase() );
 		const plugins = [
+			cjsRequireInteropPlugin(),
 			esbuildJsxPlugin( { isProduction } ),
+			legacyBabelPlugin(),
 			wordpressAssetFilePlugin( {
 				handle: ( handleName ) => `elementor-v2-${ handleName }`,
 				map: PACKAGES_EXTERNAL_MAP.map( ( { request, handle } ) => ( { request, handle } ) ),
