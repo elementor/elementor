@@ -188,4 +188,54 @@ describe( 'Interactions', () => {
 
 		getComputedStyleSpy.mockRestore();
 	} );
+
+	it( 'does not throw and stops observing when a scrollOut interaction leaves the viewport with replay disabled', async () => {
+		const animate = jest.fn( () => Promise.resolve() );
+		const stopObserving = jest.fn();
+		const inView = jest.fn( ( element, callback ) => {
+			const onLeaveViewport = callback();
+			onLeaveViewport();
+			return stopObserving;
+		} );
+		const scroll = jest.fn();
+		installMotionMocks( { animate, inView, scroll } );
+
+		const element = document.createElement( 'div' );
+		element.setAttribute( 'data-interaction-id', 'scroll-out-element' );
+		document.body.appendChild( element );
+
+		const script = document.createElement( 'script' );
+		script.id = 'elementor-interactions-data';
+		script.type = 'application/json';
+		script.textContent = JSON.stringify( [
+			{
+				elementId: 'scroll-out-element',
+				interactions: [
+					{
+						trigger: 'scrollOut',
+						breakpoints: { excluded: [] },
+						animation: {
+							effect: 'fade',
+							type: 'in',
+							direction: '',
+							timing_config: { duration: 600, delay: 0 },
+							config: { replay: false, easing: 'easeIn' },
+						},
+					},
+				],
+			},
+		] );
+		document.body.appendChild( script );
+
+		expect( () => {
+			jest.isolateModules( () => {
+				require( 'elementor/modules/interactions/assets/js/interactions.js' );
+			} );
+		} ).not.toThrow();
+
+		await flushPromises();
+
+		expect( animate ).toHaveBeenCalledTimes( 1 );
+		expect( stopObserving ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
