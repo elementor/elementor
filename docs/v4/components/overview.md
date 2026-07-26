@@ -29,6 +29,15 @@ Components require atomic elements only; legacy v3 widgets cannot be saved insid
 | Override | An instance-level value replacing an overridable prop's origin value |
 | Component UID | Stable string (`_elementor_component_uid` meta) used during creation before a numeric ID exists |
 
+### Lifecycle
+
+1. **Define** — author a component document (atomic elements only) and mark props as overridable.
+2. **Place** — insert an `e-component` instance on a page or template from the Components tab.
+3. **Override** — set per-instance values for exposed props via the instance editing panel or JSON.
+4. **Render** — `Component_Instance_Transformer` loads the source document, applies overrides, and formats inner element IDs for uniqueness.
+
+Publishing a component updates all instances on the next render; instances do not store a copy of the inner tree unless detached.
+
 ### Experiment gate
 
 | Key | Value |
@@ -49,6 +58,16 @@ The module constructor returns early when either experiment is inactive. The JS 
 | Edit source, publish, lock | Pro or expired license |
 
 Core (no Pro) users can view the feature but cannot create or place components.
+
+### MCP and LLM integrators
+
+There are **no dedicated component MCP abilities** in `modules/mcp/abilities/`. Integrate via:
+
+- **REST** — `elementor/v1/components` routes (see [document-model.md](./document-model.md)).
+- **Widget schema abilities** — `e-component` is excluded from `list-widget-schemas` / `get-widget-schema` by title filter in `Widget_Context_Helper::EXCLUDED_WIDGET_TITLE` (`'Component'`). Agents must construct instance JSON manually using the `component-instance` prop shape in [instances-and-overrides.md](./instances-and-overrides.md).
+- **In-editor MCP** — `editor-components` tracks `mcp_tool` as an execution source but does not register Angie/WebMCP tools (no `getMCPByDomain` usage in the package).
+
+`build-composition` does not create component instances today; placing components requires REST or direct element JSON.
 
 ## Extension
 
@@ -71,3 +90,4 @@ N/A — components are not currently extensible via a public registration hook. 
 - [nesting-rules.md](./nesting-rules.md) — validators and ID formatting
 - [../atomic-widgets/overview.md](../atomic-widgets/overview.md) — atomic element prerequisites
 - [../editor-packages/core-packages.md](../editor-packages/core-packages.md) — package snapshot
+- [../mcp/abilities/README.md](../mcp/abilities/README.md) — MCP abilities index (components not included)

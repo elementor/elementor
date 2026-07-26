@@ -60,6 +60,17 @@ Overridable props are also written on save from `settings.overridable_props` in 
 
 Draft/autosave workflow: when saving with `autosave` or `draft` status against a published component, the repository creates an autosave document for editing.
 
+### Kit limit
+
+`Components_REST_API::MAX_COMPONENTS` is **100**. This cap applies in two ways:
+
+| Check | Behavior |
+|-------|----------|
+| Batch create / validate | `Save_Components_Validator` counts **non-archived** existing components plus new items; returns *"Maximum number of components exceeded."* when over 100 |
+| `all()` listing | `get_posts()` uses `posts_per_page => MAX_COMPONENTS` — archived posts still consume a slot in the query window |
+
+Archive components you no longer need to free capacity for new ones.
+
 ### REST API
 
 Namespace: `elementor/v1/components` (`Components_REST_API::API_NAMESPACE` + `API_BASE`).

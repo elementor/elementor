@@ -24,7 +24,7 @@ A **component instance** is an `e-component` widget whose sole settings prop is 
 | `component-instance` | `Component_Instance_Prop_Type` | `{ component_id, overrides? }` |
 | `overridable` | `Overridable_Prop_Type` | `{ override_key, origin_value }` |
 | `override` | `Override_Prop_Type` | `{ override_key, override_value, schema_source }` |
-| `overrides` | `Overrides_Prop_Type` | Array of `override` or `overridable` items |
+| `overrides` | `Overrides_Prop_Type` | Array of `override` items (`define_item_type`); `overridable` entries are also accepted in validation/sanitization for nested component-in-component overrides |
 
 ### Example: instance with one override
 
@@ -62,7 +62,7 @@ On the component document, inner element settings store the `overridable` wrappe
 
 ### Override schema source
 
-`Override_Prop_Type` validates `schema_source.type`. Currently only `component` is supported (`Component_Override_Parser::get_override_type()`). The parser resolves the override value's prop type from the component's overridable-props metadata via `Parsing_Utils::get_prop_type()`.
+`Override_Prop_Type` validates `schema_source.type`. Resolution is a **hardcoded switch** in `Override_Prop_Type::get_parser()` — only `component` maps to `Component_Override_Parser::get_override_type()`. The parser resolves the override value's prop type from the component's overridable-props metadata via `Parsing_Utils::get_prop_type()`. All `schema_source.id` values must match the parent instance's `component_id`.
 
 ### Settings transformers
 
@@ -98,7 +98,7 @@ To prevent a custom atomic prop from being overridable, add meta when defining t
 String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() )
 ```
 
-There is no public hook to register additional `schema_source` types for overrides beyond `component`.
+There is no public hook or registry to register additional `schema_source` types — extend `Override_Prop_Type::get_parser()` internally to add a new parser class extending `Override_Parser`.
 
 ## Internals
 
@@ -112,3 +112,4 @@ There is no public hook to register additional `schema_source` types for overrid
 - [nesting-rules.md](./nesting-rules.md) — nested instance ID formatting
 - [../fundamentals/prop-types.md](../fundamentals/prop-types.md) — prop type taxonomy
 - [../global-classes/applying-classes.md](../global-classes/applying-classes.md) — `classes` prop (excluded from overridable wrapping)
+- [../mcp/abilities/get-widget-schema.md](../mcp/abilities/get-widget-schema.md) — widget schema ability (`e-component` excluded)

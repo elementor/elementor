@@ -29,3 +29,4 @@ Reference for Elementor v4 reusable component documents — kit-scoped building 
 - [../fundamentals/transformers.md](../fundamentals/transformers.md) — settings transformer registry
 - [../global-classes/applying-classes.md](../global-classes/applying-classes.md) — `classes` prop on atomic elements
 - [../architecture/packages-map.md](../architecture/packages-map.md) — PHP module ↔ JS package mapping
+- [../mcp/abilities/README.md](../mcp/abilities/README.md) — MCP abilities (no component-specific ability; use REST)

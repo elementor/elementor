@@ -65,7 +65,7 @@ When a component instance renders, inner element IDs must be unique per instance
 3. Replace `id` with `hashString(path.join('_'), 7)` — a djb2 hash rendered as 7-character base-36 lowercase.
 4. Store the original id in `origin_id` (PHP: `origin_id`; JS: `originId`).
 
-PHP: `Format_Element_Ids::format()` (aliased as `Format_Component_Elements_Id`).
+PHP: `Format_Component_Elements_Id::format()` (subclass of `Format_Element_Ids` in `modules/atomic-widgets/utils/format-element-ids.php`).
 JS: `formatComponentElementsId()` in `editor-components`.
 
 The hash implementation is kept in sync between `modules/atomic-widgets/utils/format-element-ids.php` and `@elementor/utils` (`hashString`).
