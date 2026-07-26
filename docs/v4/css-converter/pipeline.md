@@ -7,7 +7,7 @@
 
 ## What it is
 
-The ordered transformation inside `Css_Converter::convert()`. Raw CSS text becomes deduplicated rules, typed PropValues in a shared context, optional variable resolution, and finally cleaned props plus `customCss` / `rejected` leftovers.
+The ordered transformation inside `$converter->convert()`. Raw CSS text becomes deduplicated rules, typed PropValues in a shared context, optional variable resolution, and finally cleaned props plus `customCss` / `rejected` leftovers.
 
 Implementation: `modules/atomic-widgets/css-converter/css-converter.php`.
 
@@ -96,10 +96,11 @@ Use label-only references: `var(--wc26-gold)`, not internal ids.
 | Outcome | Destination |
 |---------|-------------|
 | Converter returns `true`, prop set | `props` |
+| No converter claims the property | `customCss` |
 | Converter returns `false` (incl. `Noop_Converter`) | `customCss` |
 | `Rejected_Converter` | `rejected` |
-| Unresolved variable (unknown) | `customCss` |
-| Unresolved variable (type mismatch) | `rejected` |
+| Unresolved variable (unknown label) | `customCss` |
+| Unresolved variable (known label, wrong type) | `rejected` |
 
 `Noop_Converter` explicitly claims schema properties without converting them (e.g. `stroke*`, fallback `background`) so they route to `customCss` by design.
 
@@ -109,7 +110,7 @@ N/A — registration mechanics live in [extension.md](./extension.md).
 
 ## Internals
 
-**Expander registry** (`Expander_Registry_Factory::create()`): `Physical_To_Logical_Expander`, `Background_Shorthand_Expander`, `Outline_Shorthand_Expander`, `Border_Shorthand_Expander` (all sides + per-side variants). Registration order matters — first match wins.
+**Expander registry** (`Expander_Registry_Factory::create()`): `Physical_To_Logical_Expander` (`top`/`right`/`bottom`/`left` → logical inset longhands), `Background_Shorthand_Expander`, `Outline_Shorthand_Expander`, `Border_Shorthand_Expander` (all sides + per-side variants). Registration order matters — first match wins.
 
 **Converter registry** (`Converter_Registry_Factory::create()`): real converters from `real_converters()`, then `Rejected_Converter` for `REJECTED_PROPERTIES`, then `Noop_Converter` for any `covered_properties()` entry without a real converter. Ensures exactly one handler per covered property.
 

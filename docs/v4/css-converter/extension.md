@@ -7,7 +7,7 @@
 
 ## What it is
 
-How to extend the CSS converter with new shorthand expanders and property converters. Extension today is **factory registration** — there is no public WordPress filter for converter discovery. Changes go through `Expander_Registry_Factory` and `Converter_Registry_Factory` in core.
+How to extend the CSS converter with new shorthand expanders and property converters. Extension today is **factory registration in core** — there is no public WordPress filter for converter or expander discovery. The only `apply_filters` call under `modules/atomic-widgets/css-converter/` is indirect: `Css_Converter::style_schema()` calls `Style_Schema::get()`, which applies `elementor/atomic-widgets/styles/schema` to the validation target (not to register converters).
 
 ## When to use it
 
@@ -70,7 +70,9 @@ context->set_prop(target, ObjectPropType::generate(fields))
 
 ### `covered_properties()` and Style_Schema
 
-`Converter_Registry_Factory::covered_properties()` is the **manual** exhaustive set of CSS property names the converter claims. It is intentionally **not** auto-derived from `Style_Schema` — a PHPUnit coverage test diffs live schema keys against this list so new schema props fail CI until wired.
+`Converter_Registry_Factory::covered_properties()` is the **manual** set of Style_Schema keys (plus a few intentional non-schema longhands such as `background-color`) the converter claims. It is intentionally **not** auto-derived from `Style_Schema` — `test-css-converter-rest-api.php::test_coverage__every_style_schema_property_is_hardcoded_as_covered` diffs live schema keys against this list so new schema props fail CI until wired.
+
+Side longhands such as `padding-top` are registered in `real_converters()` via `DIMENSIONS_SIDE_SPECS` but are **not** listed in `covered_properties()` because they are not top-level schema keys; they merge into aggregate props (`padding`, `margin`).
 
 To add coverage:
 
@@ -115,7 +117,7 @@ To add coverage:
 5. Confirm the target prop exists in `Style_Schema` and add/adjust schema if needed.
 6. Run coverage tests to ensure no schema/converter drift.
 
-TBD — verify with v4 team whether a public registration filter is planned; none exists in source today.
+**No public registration hook.** Searched `modules/atomic-widgets/css-converter/` — no `apply_filters`/`do_action` for registering expanders or converters, and neither factory is instantiated through a filterable factory elsewhere. `Converter_Registry` and `Expander_Registry` expose `register()` for tests and manual wiring, but production callers use `Converter_Registry_Factory::create()` / `Expander_Registry_Factory::create()` only. Third-party extension requires a core PR to those factories (or constructing a custom `Css_Converter` with hand-built registries outside the REST/MCP paths).
 
 ## Internals
 
@@ -124,6 +126,6 @@ N/A
 ## See also
 
 - [pipeline.md](./pipeline.md) — where expanders and converters run in the flow
-- [overview.md](./overview.md) — `Css_Converter::convert()` return shape
+- [overview.md](./overview.md) — `$converter->convert()` return shape
 - [../fundamentals/prop-value.md](../fundamentals/prop-value.md) — PropValue structure converters emit
 - [../variables/usage-in-styles.md](../variables/usage-in-styles.md) — variable token conventions

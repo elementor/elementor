@@ -26,3 +26,4 @@ Reference for the CSS-to-PropValue pipeline in `modules/atomic-widgets/css-conve
 - [../fundamentals/prop-value.md](../fundamentals/prop-value.md) — PropValue shape in `props`
 - [../variables/usage-in-styles.md](../variables/usage-in-styles.md) — `var(--label)` conventions and variable resolution
 - [../mcp/abilities/manage-elements.md](../mcp/abilities/manage-elements.md) — MCP ability that applies styles via the converter
+- [../mcp/abilities/manage-classes.md](../mcp/abilities/manage-classes.md) — global-class variant CSS via the same converter
