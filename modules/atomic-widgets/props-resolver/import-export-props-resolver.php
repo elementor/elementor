@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Import_Export_Props_Resolver extends Props_Resolver {
 	const CONTEXT_IMPORT = 'import';
 	const CONTEXT_EXPORT = 'export';
+	const CONTEXT_PLAIN = 'plain';
 
 	public static function for_import() {
 		return static::instance( self::CONTEXT_IMPORT );
@@ -18,6 +19,14 @@ class Import_Export_Props_Resolver extends Props_Resolver {
 
 	public static function for_export() {
 		return static::instance( self::CONTEXT_EXPORT );
+	}
+
+	public static function for_plain() {
+		return static::instance( self::CONTEXT_PLAIN );
+	}
+
+	public function resolve_value( $value, Prop_Type $prop_type ) {
+		return $this->resolve_item( $value, null, $prop_type );
 	}
 
 	public function resolve( array $schema, array $props ): array {

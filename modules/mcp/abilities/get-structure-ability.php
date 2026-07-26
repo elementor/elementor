@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Plain_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
@@ -150,7 +150,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return [];
 		}
 
-		$resolver = Plain_Props_Resolver::make();
+		$resolver = Import_Export_Props_Resolver::for_plain();
 		$prop_type = Interaction_Item_Prop_Type::make();
 		$plain = [];
 
