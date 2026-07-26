@@ -95,7 +95,19 @@ Dynamic_Prop_Type::make()
 
 If your tag's categories intersect a prop type's mapped categories, the prop schema gains a `dynamic` union member and your tag appears in `list-dynamic-tags`.
 
-**Control compatibility** — `Dynamic_Tags_Converter` supports: `text`, `textarea`, `select`, `number`, `switcher`, `choose`, `query`, `date_time`, `media`. Tags with unsupported controls are excluded unless you set `force_convert_to_atomic` on the tag (skips failed controls). TBD — verify with v4 team how to set `force_convert_to_atomic` from a `Tag` subclass (it may require a filter or tag meta not yet documented in the public API).
+**Control compatibility** — both `Dynamic_Tags_Editor_Config` (editor picker) and `Dynamic_Tags_Converter` (settings `props_schema`) support: `text`, `textarea`, `select`, `number`, `switcher`, `choose`, `query`, `date_time`, `media`. Tags with unsupported controls are excluded unless `force_convert_to_atomic` is set in the tag's editor config (see below).
+
+**`force_convert_to_atomic`** — not a `Base_Tag` method; add it by overriding `get_editor_config()`:
+
+```php
+public function get_editor_config() {
+    return array_merge( parent::get_editor_config(), [
+        'force_convert_to_atomic' => true,
+    ] );
+}
+```
+
+When set, unsupported controls are skipped instead of blocking atomic conversion. No production tags use this flag today; it exists for edge-case tags with a mix of convertible and legacy-only controls.
 
 ### Step 3 — Custom prop types (manual mapping)
 
@@ -120,12 +132,10 @@ String_Prop_Type::make()->meta( Dynamic_Prop_Type::ignore() );
 
 ### Extending the category map
 
-`Dynamic_Prop_Types_Mapping::get_related_categories()` is **private**, so it cannot be overridden from a plugin subclass today. To support a new prop type class:
+`Dynamic_Prop_Types_Mapping::get_related_categories()` is **private** and there is **no public filter** for third-party category mapping. To support a new prop type class:
 
 1. **Preferred** — add `Dynamic_Prop_Type::make()->categories( [ … ] )` directly in your prop type's union (see Step 3 above).
 2. **Core change** — add the prop type → category case inside `Dynamic_Prop_Types_Mapping` in Elementor core.
-
-TBD — verify with v4 team whether a public filter (e.g. `elementor/atomic-widgets/dynamic-tags/prop-types-mapping`) is planned for third-party category mapping without core edits.
 
 ### Select control filters
 
@@ -136,18 +146,19 @@ When legacy select options are dynamic (e.g. depend on post type), use:
 
 ## Extension
 
-This file **is** the extension guide. Minimum checklist:
+Minimum checklist:
 
-1. Create a `Tag` subclass with `get_name()`, `get_categories()`, `get_group()`, and convertible controls.
+1. `Tag` subclass with `get_name()`, `get_categories()`, `get_group()`, and convertible controls.
 2. Hook `elementor/dynamic_tags/register`.
-3. Confirm the tag appears via `list-dynamic-tags` / [discovery.md](./discovery.md).
-4. If targeting a custom prop type, add `Dynamic_Prop_Type` to its union or extend `Dynamic_Prop_Types_Mapping`.
+3. Confirm via `list-dynamic-tags` ([discovery.md](./discovery.md)).
+4. Custom prop type? Add `Dynamic_Prop_Type` to its union (Step 3).
 
 ## Internals
 
 - **Registry refresh** — `Dynamic_Tags_Module::fresh()` rebuilds the singleton after tags register (used in tests; normally tags register before atomic widgets boot).
 - **Schema build** — `Dynamic_Tags_Schemas::get( $tag_name )` lazily converts legacy controls to prop types.
 - **Render path** — `Dynamic_Transformer` in the settings/styles transformer registry (`elementor/atomic-widgets/settings/transformers/register`).
+- **LLM normalization** — `Dynamic_Tag_Llm_Resolver` (PHP MCP) and `dynamicTagLLMResolver` (in-editor) inject `group` from the registry and wrap plain settings into PropValues.
 - **Import/export** — separate `ImportExport\Dynamic_Transformer` adds `group` from the registry on import/export.
 
 ## See also

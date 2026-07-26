@@ -40,7 +40,7 @@ A dynamic binding is always a full PropValue, not a bare tag object:
 |-------|----------|-------------|
 | `$$type` | yes | Must be `"dynamic"` |
 | `value.name` | yes | Tag name from the registry (see [discovery.md](./discovery.md)) |
-| `value.settings` | no | Plain settings object matching the tag's schema; defaults to `{}` |
+| `value.settings` | yes (after normalization) | Settings object matching the tag's schema; use `{}` when the tag has no settings |
 | `disabled` | no | Standard PropValue flag; when `true`, the binding is ignored |
 
 Use `Dynamic_Prop_Type::generate()` in PHP to build this shape:
@@ -103,15 +103,19 @@ Look up the exact settings keys and types via [discovery.md](./discovery.md) (`l
 
 Legacy v3 tag **definitions** include a `group` — every `Base_Tag` subclass implements `get_group()`, and groups are registered with `register_group()`. The atomic editor config also carries `group` internally for UI grouping.
 
-The **author-facing PropValue shape does not include `group`**:
+The **author-facing PropValue shape omits `group`**:
 
 - `Dynamic_Prop_Type::to_json_schema()` exposes only `name` and `settings` under `value`.
 - MCP prompts (`list-dynamic-tags` static resource) explicitly say: *"Do not send `group`."*
 - `List_Dynamic_Tags_Ability` returns `name`, `label`, `categories`, and `settings` — no `group`.
 
-Authors and agents should bind dynamics with `name` + `settings` only.
+Authors and agents bind dynamics with `name` + `settings` only. Do not send `group` — resolvers inject it from the tag registry before persistence:
 
-**Internal note:** `Dynamic_Prop_Type::validate_value()` still checks for a `group` key in stored values, and the import/export transformer adds `group` from the tag registry when it is missing. This means persisted document data may contain `group` even though you should not send it when authoring. TBD — verify with v4 team whether validation will be relaxed for group-less values at save time.
+- **In-editor MCP** — `dynamicTagLLMResolver` (`editor-canvas`) looks up `atomicDynamicTags` and sets `group` from the registry.
+- **PHP MCP** — `Dynamic_Tag_Llm_Resolver` does the same via `Dynamic_Tags_Module::instance()->registry`.
+- **Import/export** — `ImportExport\Dynamic_Transformer` fills `group` from the registry when missing.
+
+**Stored shape:** persisted document data includes `group` because `Dynamic_Prop_Type::validate_value()` requires it. Render resolution (`Dynamic_Transformer`) uses only `name` and `settings`; `group` is not consulted at render time.
 
 ### Category gating
 

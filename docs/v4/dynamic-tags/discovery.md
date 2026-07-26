@@ -92,13 +92,13 @@ The in-editor MCP resource fetches the same data by calling the `list-dynamic-ta
 }
 ```
 
-External MCP hosts connecting through the WordPress Abilities API should call the ability directly. The `elementor://dynamic-tags` URI is primarily used by in-editor tools (Angie, WebMCP) via the JS MCP registry.
+External MCP hosts connecting through the WordPress Abilities API should call **`elementor/list-dynamic-tags`** directly. The `elementor://dynamic-tags` URI is for in-editor tools (Angie, WebMCP) via the JS MCP registry.
 
-TBD — verify with v4 team whether a PHP-side `read-resource` handler for `elementor://dynamic-tags` will be added to `Mcp_Proxy_REST_API` (it is not in the PHP resources map today; only the JS resource exists).
+**No PHP `read-resource` handler** — `Read_Resource_Ability::get_resource_executors()` does not register `elementor://dynamic-tags` (only `elementor://global-classes`, `elementor://global-variables`, `elementor://style/best-practices`, and `elementor://variables/tools/manage-global-variable-guide`). `List_Resources_Ability` also omits this URI. Use the `list-dynamic-tags` ability instead of `elementor/read-resource` for tag discovery.
 
 ### What is excluded
 
-Tags are omitted from the list when `Dynamic_Tags_Editor_Config` cannot convert their legacy controls to atomic controls (unless `force_convert_to_atomic` is set on the tag). If a tag you expect is missing, check control compatibility in [extending.md](./extending.md).
+Tags are omitted from the list when `Dynamic_Tags_Editor_Config` cannot convert their legacy controls to atomic controls (unless `force_convert_to_atomic` is set in the tag's `get_editor_config()` output). If a tag you expect is missing, check control compatibility in [extending.md](./extending.md).
 
 ## Extension
 

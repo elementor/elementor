@@ -9,7 +9,7 @@
 
 Dynamic tags let element props resolve at render time from WordPress data (post title, author, featured image, etc.) instead of a static value. Elementor has two cooperating layers:
 
-1. **Legacy (v3) registry** — `modules/dynamic-tags/` and `core/dynamic-tags/`. Tags are PHP classes extending `Elementor\Core\DynamicTags\Tag` (or `Data_Tag`). They declare categories, a group, controls, and render output via `get_content()`.
+1. **Legacy (v3) registry** — `modules/dynamic-tags/` and `core/dynamic-tags/`. Tags are PHP classes extending `Elementor\Core\DynamicTags\Tag` (or `Data_Tag`). They declare categories, a group, and controls. `Tag` subclasses implement `render()`; `Data_Tag` subclasses implement `get_value()`. The manager resolves output via `get_tag_data_content()`.
 2. **Atomic (v4) bridge** — `modules/atomic-widgets/dynamic-tags/`. Adapts the legacy registry into atomic PropValues (`$$type: dynamic`), extends widget/style prop schemas with a `dynamic` union variant, and resolves values through the props transformer pipeline.
 
 The bridge does **not** replace the legacy registry. Every atomic dynamic binding ultimately calls `Plugin::$instance->dynamic_tags` to render tag content.
@@ -65,7 +65,7 @@ Groups are a **legacy editor concept**. Tag classes return a group string; modul
 2. Converted tags are exposed to the editor via `atomicDynamicTags` in `elementor/editor/localize_settings`.
 3. Prop schemas gain a `dynamic` variant through the `elementor/atomic-widgets/props-schema` and `elementor/atomic-widgets/styles/schema` filters (both use `Dynamic_Prop_Types_Mapping`).
 
-Tags whose controls cannot be converted to atomic controls are **excluded** from the atomic registry unless `force_convert_to_atomic` is set on the tag config.
+Tags whose controls cannot be converted to atomic controls are **excluded** from the atomic registry unless `force_convert_to_atomic` is present in the tag's `get_editor_config()` output (see [extending.md](./extending.md)).
 
 ## Extension
 
@@ -73,9 +73,10 @@ See [extending.md](./extending.md) for registering a new legacy tag and ensuring
 
 ## Internals
 
-- **Control conversion** — `Dynamic_Tags_Converter` maps legacy control types (`text`, `select`, `query`, `media`, …) to atomic prop types. Unsupported control types block conversion unless `force_convert_to_atomic` skips failures.
+- **Control conversion** — `Dynamic_Tags_Editor_Config` maps legacy controls to atomic editor controls for the picker; `Dynamic_Tags_Schemas` uses `Dynamic_Tags_Converter` to map the same control types to prop types for settings schemas. Unsupported control types block inclusion unless `force_convert_to_atomic` is set in `get_editor_config()`.
 - **Render resolution** — `Dynamic_Transformer::transform()` resolves tag `settings` through `Render_Props_Resolver`, then calls `Dynamic_Tags_Manager::get_tag_data_content()`.
-- **Import/export** — a separate import/export `Dynamic_Transformer` fills in the `group` field from the tag registry when missing (see [binding-propvalues.md](./binding-propvalues.md)).
+- **LLM normalization** — `Dynamic_Tag_Llm_Resolver` (PHP MCP) and `dynamicTagLLMResolver` (in-editor) inject `group` from the registry and wrap plain settings into PropValues.
+- **Import/export** — `ImportExport\Dynamic_Transformer` fills in `group` from the tag registry when missing (see [binding-propvalues.md](./binding-propvalues.md)).
 - **LLM schema** — `LLM_Schema_Dedupe_Filter` runs on `elementor/atomic-widgets/llm-json-schema` to keep dynamic union schemas concise for agents.
 
 ## See also
