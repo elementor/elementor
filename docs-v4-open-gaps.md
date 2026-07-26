@@ -25,6 +25,32 @@ distinguishes the two.
 
 ---
 
+## Experiment graduation — long-active flags (new, 2026-07-26)
+
+Cross-check of `getting-started/experiments.md` (#36657) against `git blame`: several v4 experiments
+have been `default: active` (on for every existing site, not just new ones) for 6+ months up to
+~1 year, while still self-reporting `release_status: alpha/beta/dev`. That mismatch means it's not a
+docs call whether to graduate or drop them — tracked as **[ED-25066](https://elementor.atlassian.net/browse/ED-25066)**
+for the feature owners to decide. Current state, pending that decision:
+
+| Experiment | `default:active` since | Age | `release_status` | Proposed bucket |
+|---|---|---|---|---|
+| `e_variables` | 2025-07-13 | ~1y | alpha | **A** — fold into v4 |
+| `e_variables_manager` | 2025-10-21 | ~9mo | alpha | **A** — fold into v4 |
+| `e_components` | 2026-01-18 | ~6mo | beta | **A** — fold into v4 |
+| `e_interactions` | 2025-12-02 | ~8mo | dev | **A** (weakest case — lowest `release_status` of the group) |
+| `editor_mcp` | 2026-01-18 | ~6mo | dev | **B** — dead gate, no `is_feature_active('editor_mcp')` call found anywhere; needs a code fix (wire it up or delete it), not a docs edit |
+| `atomic_widgets_should_enforce_capabilities` | 2025-06-05 | ~14mo | dev | **C** — capability kill-switch, not a feature flag; recommend leave as-is |
+| `global_classes_should_enforce_capabilities` | 2025-06-05 | ~14mo | dev | **C** — same reasoning |
+| `e_bc_migrations` | 2026-01-14 | ~6mo | dev | **C** — migration infra toggle, same reasoning |
+
+**Once ED-25066 resolves:** update the "Experiment matrix" table in `getting-started/experiments.md`
+(#36657) to drop the graduated flags from bucket A (documenting the behavior as unconditional under
+`e_atomic_elements` instead), fix the `editor_mcp` row per whatever bucket-B fix lands, and remove
+this row here.
+
+---
+
 ## `fundamentals/` (PR #36648)
 
 | # | Gap | File | Action needed |
