@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits\Documents\Tabs;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
 use Elementor\Modules\Agents\Module as Agents_Module;
 use Elementor\Plugin;
@@ -16,12 +17,15 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		update_option( 'elementor_experiment-' . Agents_Module::EXPERIMENT_NAME, 'active' );
+		Plugin::$instance->experiments->set_feature_default_state(
+			Agents_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
 
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-		$this->kit = Plugin::$instance->documents->get( $active_kit->get_id(), false );
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$this->kit = Plugin::$instance->documents->get( $kit_id, false );
 
-		add_post_meta( $active_kit->get_main_id(), '_elementor_data', '[]' );
+		add_post_meta( $kit_id, '_elementor_data', '[]' );
 	}
 
 	public function test_before_save__stores_llms_under_agents_key() {

@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -16,7 +17,10 @@ class Test_Module extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		update_option( 'elementor_experiment-' . Module::EXPERIMENT_NAME, 'active' );
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
 
 		$this->module = new Module();
 	}
@@ -43,7 +47,8 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_get_llms_txt_content__returns_saved_content() {
 		// Arrange
 		$llms_content = '# llms.txt';
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
 		$settings = $kit->get_settings();
 		$settings['agents_llms'] = $llms_content;
 		$kit->save( [
