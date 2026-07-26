@@ -132,7 +132,7 @@ class Widget_Context_Helper {
 			];
 		}
 
-		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
+		$properties = self::build_configurable_properties_schema( $props_schema );
 
 		return self::filter_nulls( [
 			'type' => 'object',
@@ -144,9 +144,8 @@ class Widget_Context_Helper {
 
 	/**
 	 * @param array<string, Prop_Type> $props_schema
-	 * @param array<string, mixed>     $base_settings
 	 */
-	private static function build_configurable_properties_schema( array $props_schema, array $base_settings ): array {
+	private static function build_configurable_properties_schema( array $props_schema ): array {
 		$properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {

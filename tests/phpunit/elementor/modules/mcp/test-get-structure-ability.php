@@ -374,7 +374,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$child = $root['elements'][0];
 		$this->assertSame( 'widget1', $child['id'] );
 		$this->assertSame(
-			[ 'title' => [ 'content' => 'Hello', 'children' => [] ] ],
+			[ 'title' => 'Hello' ],
 			$child['settings']
 		);
 		$this->assertSame( [], $child['styles'] );
