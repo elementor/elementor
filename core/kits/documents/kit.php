@@ -5,6 +5,7 @@ use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use Elementor\Modules\Agents\Module as Agents_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -210,8 +211,11 @@ class Kit extends PageBase {
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
 			'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
 			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
-			'settings-agents' => Tabs\Settings_Agents::class,
 		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( Agents_Module::EXPERIMENT_NAME ) ) {
+			$tabs['settings-agents'] = Tabs\Settings_Agents::class;
+		}
 
 		foreach ( $tabs as $id => $class ) {
 			$this->register_tab( $id, $class );

@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -15,7 +16,20 @@ class Test_Module extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
+		update_option( 'elementor_experiment-' . Module::EXPERIMENT_NAME, 'active' );
+
 		$this->module = new Module();
+	}
+
+	public function test_experiment_is_registered() {
+		// Arrange
+		$data = Module::get_experimental_data();
+
+		// Act & Assert
+		$this->assertSame( Module::EXPERIMENT_NAME, $data['name'] );
+		$this->assertTrue( $data['hidden'] );
+		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
+		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
 	public function test_get_llms_txt_content__returns_empty_when_not_configured() {

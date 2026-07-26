@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Modules\Agents\Module as Agents_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -14,6 +15,8 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 		parent::setUp();
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		update_option( 'elementor_experiment-' . Agents_Module::EXPERIMENT_NAME, 'active' );
 
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 		$this->kit = Plugin::$instance->documents->get( $active_kit->get_id(), false );

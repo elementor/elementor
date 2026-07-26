@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Agents;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -12,8 +13,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const EXPERIMENT_NAME = 'agents_llms_txt';
+
 	public function get_name() {
 		return 'agents';
+	}
+
+	public static function get_experimental_data() {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Agents llms.txt', 'elementor' ),
+			'description' => esc_html__( 'Expose llms.txt from site settings at the site root for AI agents.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
 	}
 
 	public function __construct() {
