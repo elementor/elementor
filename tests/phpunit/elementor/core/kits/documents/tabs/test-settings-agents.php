@@ -12,10 +12,15 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 
 	private $kit;
 
+	private $original_experiment_default_state;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$this->original_experiment_default_state = Plugin::$instance->experiments
+			->get_features( Agents_Module::EXPERIMENT_NAME )['default'];
 
 		Plugin::$instance->experiments->set_feature_default_state(
 			Agents_Module::EXPERIMENT_NAME,
@@ -23,9 +28,21 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 		);
 
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$this->kit = Plugin::$instance->documents->get( $kit_id, false );
+		$this->flush_documents_cache();
+		$this->kit = Plugin::$instance->documents->get( $kit_id );
 
 		add_post_meta( $kit_id, '_elementor_data', '[]' );
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			Agents_Module::EXPERIMENT_NAME,
+			$this->original_experiment_default_state
+		);
+
+		$this->flush_documents_cache();
+
+		parent::tearDown();
 	}
 
 	public function test_kit_registers_agents_tab_when_experiment_is_active() {
@@ -85,11 +102,17 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 		] );
 
 		$kit_id = $this->kit->get_id();
-		$this->kit = Plugin::$instance->documents->get( $kit_id, false );
-		$settings = $this->kit->get_settings();
+		$this->flush_documents_cache();
+		$meta = get_post_meta( $kit_id, '_elementor_page_settings', true );
 
 		// Assert
-		$this->assertSame( $llms_content, $settings['agents']['llms'] );
-		$this->assertArrayNotHasKey( 'agents_llms', $settings );
+		$this->assertSame( $llms_content, $meta['agents']['llms'] );
+		$this->assertArrayNotHasKey( 'agents_llms', $meta );
+	}
+
+	private function flush_documents_cache(): void {
+		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
+		$reflection->setAccessible( true );
+		$reflection->setValue( Plugin::$instance->documents, [] );
 	}
 }

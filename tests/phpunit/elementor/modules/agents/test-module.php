@@ -11,10 +11,15 @@ class Test_Module extends Elementor_Test_Base {
 
 	private $module;
 
+	private $original_experiment_default_state;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$this->original_experiment_default_state = Plugin::$instance->experiments
+			->get_features( Module::EXPERIMENT_NAME )['default'];
 
 		Plugin::$instance->experiments->set_feature_default_state(
 			Module::EXPERIMENT_NAME,
@@ -22,6 +27,17 @@ class Test_Module extends Elementor_Test_Base {
 		);
 
 		$this->module = new Module();
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			$this->original_experiment_default_state
+		);
+
+		$this->flush_documents_cache();
+
+		parent::tearDown();
 	}
 
 	public function test_experiment_is_registered() {
@@ -47,12 +63,15 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange
 		$llms_content = '# llms.txt';
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id, false );
+		$this->flush_documents_cache();
+		$kit = Plugin::$instance->documents->get( $kit_id );
 		$kit->update_settings( [
 			'agents' => [
 				'llms' => $llms_content,
 			],
 		] );
+
+		$this->flush_documents_cache();
 
 		// Act
 		$content = $this->module->get_llms_txt_content();
@@ -91,5 +110,11 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $result );
+	}
+
+	private function flush_documents_cache(): void {
+		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
+		$reflection->setAccessible( true );
+		$reflection->setValue( Plugin::$instance->documents, [] );
 	}
 }
