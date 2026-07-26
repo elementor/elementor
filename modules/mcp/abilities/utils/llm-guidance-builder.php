@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -75,9 +75,7 @@ class Llm_Guidance_Builder {
 			return $base_settings;
 		}
 
-		return Atomic_Widgets_Module::instance()
-			->get_settings_envelope_values_serializer()
-			->serialize_map( $base_settings, $props_schema );
+		return Render_Props_Resolver::for_settings()->resolve( $props_schema, $base_settings );
 	}
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {

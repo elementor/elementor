@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -136,9 +136,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$props_schema = $this->resolve_props_schema( $node );
 
 				if ( is_array( $settings ) && $props_schema ) {
-					$settings = Atomic_Widgets_Module::instance()
-						->get_settings_envelope_values_serializer()
-						->serialize_map( $settings, $props_schema );
+					$settings = Render_Props_Resolver::for_settings()->resolve( $props_schema, $settings );
 				}
 
 				$skeleton['settings'] = $settings ? $settings : (object) [];
