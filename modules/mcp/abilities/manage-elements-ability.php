@@ -210,18 +210,18 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		$node_snapshot = $index[ $element_id ];
-		$tag = $node_snapshot['widgetType'] ?? $node_snapshot['elType'] ?? null;
-		if ( ! $tag ) {
+		$element_type = $node_snapshot['widgetType'] ?? $node_snapshot['elType'] ?? null;
+		if ( ! $element_type ) {
 			return $this->bad_request( __( 'Element has no resolvable type.', 'elementor' ) );
 		}
 
 		$xml_parser = new Xml_Parser();
 		$type_resolver = new Widget_Type_Resolver( $xml_parser );
-		$widget_config = $type_resolver->resolve_type_config( $tag );
+		$widget_config = $type_resolver->resolve_type_config( $element_type );
 		if ( is_wp_error( $widget_config ) ) {
 			return $widget_config;
 		}
-		$widget_configs = [ $tag => $widget_config ];
+		$widget_configs = [ $element_type => $widget_config ];
 
 		$variables_service = $this->create_variables_service();
 		$warnings = [];
@@ -252,7 +252,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( ! empty( $style ) ) {
 			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-			$style_result = $style_applier->apply( $index, [ $element_id => $style ] );
+			$style_result = $style_applier->apply( $index, [ $element_id => $style ], [ $element_id => $element_type ] );
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}

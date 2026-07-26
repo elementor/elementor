@@ -134,7 +134,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ) );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
@@ -339,6 +339,17 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$value = (array) $value;
 		}
 		return is_array( $value ) ? $value : [];
+	}
+
+	private function element_types_from_index( array $index ): array {
+		$element_types = [];
+		foreach ( $index as $config_id => $node ) {
+			$element_type = $node['widgetType'] ?? $node['elType'] ?? null;
+			if ( is_string( $element_type ) && '' !== $element_type ) {
+				$element_types[ $config_id ] = $element_type;
+			}
+		}
+		return $element_types;
 	}
 
 	private function get_mutator(): Document_Mutator {
