@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
@@ -35,6 +36,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	const CONFIGURATION_ID_ATTRIBUTE = Xml_Parser::CONFIGURATION_ID_ATTRIBUTE;
 	const DEFAULT_PARENT_ID = 'document';
+	const MODE_APPEND = 'append';
+	const MODE_REPLACE_CHILDREN = 'replace_children';
 
 	private ?Document_Mutator $mutator;
 
@@ -75,6 +78,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$post_id = (int) $input['post_id'];
 		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
 		$dry_run = ! empty( $input['dry_run'] );
+		$mode = $input['mode'] ?? self::MODE_APPEND;
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return new \WP_Error(
@@ -120,7 +124,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$element_config = $this->as_map( $input['element_config'] ?? [] );
 
-		$component_applier = new Component_Instance_Applier( new Components_Repository() );
+		$plain_values_resolver = $this->create_plain_values_resolver();
+
+		$component_applier = new Component_Instance_Applier( new Components_Repository(), $plain_values_resolver );
 		$prebuilt_config_ids = [];
 		$component_error = $component_applier->rewrite( $index, $element_config, $document, $prebuilt_config_ids );
 		if ( $component_error ) {
@@ -129,10 +135,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$variables_service = $this->create_variables_service();
 
-		$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
-		$config_error = $config_applier->apply( $index, $element_config, $widget_configs, $prebuilt_config_ids );
-		if ( $config_error ) {
-			return $config_error;
+		$config_applier = new Element_Config_Applier( $type_resolver, $plain_values_resolver );
+		$config_result = $config_applier->apply( $index, $element_config, $widget_configs, $prebuilt_config_ids );
+		if ( $config_result['error'] ) {
+			return $config_result['error'];
 		}
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
@@ -142,24 +148,26 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ) );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
 
+		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'] );
+
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $style_result['warnings'] );
+			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
-		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id );
+		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
 			return $persisted;
 		}
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $style_result['warnings'] );
+		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
 	}
 
 	private function get_ability_description(): string {
@@ -191,6 +199,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'type' => 'string',
 					'description' => 'Next-step instructions for the LLM.',
 				],
+				'warnings' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'string' ],
+					'description' => 'Non-fatal notices, e.g. props skipped because the target widget does not support them, or CSS that fell back to custom_css. The composition was still built.',
+				],
+				'removed_element_ids' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'string' ],
+					'description' => 'Element IDs removed when mode is replace_children (empty when none existed).',
+				],
 			],
 		];
 	}
@@ -211,7 +229,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'element_config' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → widget PropValues ($$type + value). Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure.',
 				],
 				'style' => [
 					'type' => 'object',
@@ -237,6 +255,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'default' => false,
 					'description' => 'If true, validate and return resolved tree without persisting.',
 				],
+				'mode' => [
+					'type' => 'string',
+					'enum' => [ self::MODE_APPEND, self::MODE_REPLACE_CHILDREN ],
+					'default' => self::MODE_APPEND,
+					'description' => 'append (default) inserts under parent_id; replace_children removes existing direct children of parent_id first, then inserts.',
+				],
 			],
 		];
 	}
@@ -254,6 +278,21 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return new \WP_Error(
 				'invalid_input',
 				__( 'xml_structure is required and must be a string.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		$mode = $input['mode'] ?? self::MODE_APPEND;
+		$valid_modes = [ self::MODE_APPEND, self::MODE_REPLACE_CHILDREN ];
+		if ( ! in_array( $mode, $valid_modes, true ) ) {
+			return new \WP_Error(
+				'invalid_input',
+				sprintf(
+					/* translators: 1: Provided mode value, 2: List of valid modes */
+					__( 'Invalid mode "%1$s". Must be one of: %2$s', 'elementor' ),
+					$mode,
+					implode( ', ', $valid_modes )
+				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
@@ -282,7 +321,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
-		array $warnings
+		array $warnings,
+		string $mode,
+		array $removed_ids
 	): array {
 		$post = get_post( $post_id );
 
@@ -300,6 +341,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$response['warnings'] = $warnings;
 		}
 
+		if ( self::MODE_REPLACE_CHILDREN === $mode ) {
+			$response['removed_element_ids'] = $removed_ids;
+		}
+
 		return $response;
 	}
 
@@ -308,6 +353,17 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$value = (array) $value;
 		}
 		return is_array( $value ) ? $value : [];
+	}
+
+	private function element_types_from_index( array $index ): array {
+		$element_types = [];
+		foreach ( $index as $config_id => $node ) {
+			$element_type = $node['widgetType'] ?? $node['elType'] ?? null;
+			if ( is_string( $element_type ) && '' !== $element_type ) {
+				$element_types[ $config_id ] = $element_type;
+			}
+		}
+		return $element_types;
 	}
 
 	private function get_mutator(): Document_Mutator {
@@ -342,6 +398,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function create_plain_values_resolver(): Plain_Values_Resolver {
+		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
 	private function is_variables_active(): bool {

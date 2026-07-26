@@ -105,43 +105,28 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'element_config' => [
 				'newspaper-title' => [
 					'title' => [
-						'$$type' => 'html-v3',
-						'value' => [
-							'content' => [ '$$type' => 'string', 'value' => 'Daily Herald' ],
-							'children' => [],
-						],
+						'content' => 'Daily Herald',
+						'children' => [],
 					],
 				],
 				'post-title-heading' => [
 					'title' => [
-						'$$type' => 'dynamic',
-						'value' => [
-							'name' => 'post-excerpt',
-							'settings' => [ 'length' => '55' ],
-						],
+						'name' => 'post-excerpt',
+						'settings' => [ 'length' => '55' ],
 					],
 				],
 			'masthead-eyebrow' => [
 				'paragraph' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => [ '$$type' => 'string', 'value' => 'Breaking News' ],
-						'children' => [],
-					],
+					'content' => 'Breaking News',
+					'children' => [],
 				],
 			],
 			'post-image' => [
 				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'url' => [ '$$type' => 'url', 'value' => 'https://example.com/post-image.jpg' ],
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'full' ],
+					'src' => [
+						'url' => 'https://example.com/post-image.jpg',
 					],
+					'size' => 'full',
 				],
 			],
 		],
@@ -304,19 +289,52 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	public function settings_validation_cases(): array {
 		return [
-			'unknown prop' => [
-				[ 'nonexistent_prop' => [ '$$type' => 'string', 'value' => 'x' ] ],
-				[ 'nonexistent_prop', 'does not exist', 'Available properties', 'e-heading' ],
+			'invalid tag enum' => [
+				[ 'tag' => 'h99' ],
+				[ 'tag', 'elementor://widgets/schema' ],
 			],
-			'scalar instead of envelope' => [
-				[ 'tag' => 'h2' ],
-				[ '$$type', 'PropValue envelope', 'elementor://widgets/schema' ],
-			],
-			'wrong scalar type' => [
-				[ 'title' => 12345 ],
-				[ '$$type', 'PropValue envelope' ],
+			'unresolvable title type' => [
+				[
+					'title' => [
+						'content' => [ 'not', 'a', 'string' ],
+						'children' => [],
+					],
+				],
+				[ 'title', 'could not be resolved' ],
 			],
 		];
+	}
+
+	public function test_execute__skips_unsupported_prop_and_warns() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-divider configuration-id="d1"/>',
+			'element_config' => [
+				'd1' => [
+					'link' => [
+						'destination' => 'https://example.com',
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['root_element_ids'] );
+		$this->assertNotEmpty( $result['warnings'] );
+
+		$warnings = implode( ' ', $result['warnings'] );
+		$this->assertStringContainsString( 'link', $warnings );
+		$this->assertStringContainsString( 'skipped', $warnings );
+		$this->assertStringContainsString( 'e-divider', $warnings );
 	}
 
 	/**
@@ -347,10 +365,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'element_config' => [
 				'h1' => [
-					'title' => [
-						'$$type' => 'dynamic',
-						'value' => $title_value,
-					],
+					'title' => $title_value,
 				],
 			],
 		] );
@@ -366,10 +381,40 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'unknown tag name' => [
 				[ 'name' => 'ghost-tag', 'settings' => [] ],
 			],
-			'settings shape mismatch' => [
-				[ 'name' => 'post-excerpt', 'settings' => [ 'length' => [ 'not', 'a', 'string' ] ] ],
-			],
 		];
+	}
+
+	public function test_execute__skips_invalid_dynamic_setting_and_builds() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$this->given_dynamic_tags( [
+			'post-excerpt' => [
+				'name' => 'post-excerpt',
+				'label' => 'Post Excerpt',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'length' => String_Prop_Type::make()->default( '55' ),
+				],
+			],
+		] );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [
+					'title' => [
+						'name' => 'post-excerpt',
+						'settings' => [ 'length' => [ 'not', 'a', 'string' ] ],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
 	}
 
 	public function test_execute__rejects_non_object_style_block() {
@@ -568,5 +613,238 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$html = preg_replace( '/data-interaction-id="[a-f0-9]+"/', 'data-interaction-id="{ID}"', $html );
 
 		return $html;
+	}
+
+	public function test_execute__mode_omitted_behaves_as_append() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[ 'elType' => 'e-flexbox', 'id' => 'existing-1', 'settings' => [], 'elements' => [] ],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'removed_element_ids', $result );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$this->assertCount( 2, $elements );
+		$this->assertSame( 'existing-1', $elements[0]['id'] );
+	}
+
+	public function test_execute__mode_append_preserves_existing_children() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[ 'elType' => 'e-flexbox', 'id' => 'existing-1', 'settings' => [], 'elements' => [] ],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'mode' => 'append',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'removed_element_ids', $result );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$this->assertCount( 2, $elements );
+		$this->assertSame( 'existing-1', $elements[0]['id'] );
+	}
+
+	public function test_execute__mode_replace_children_removes_existing_and_inserts_new() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[
+				'elType' => 'e-flexbox',
+				'id' => 'parent-container',
+				'settings' => [],
+				'elements' => [
+					[ 'elType' => 'e-flexbox', 'id' => 'child-1', 'settings' => [], 'elements' => [] ],
+					[ 'elType' => 'e-flexbox', 'id' => 'child-2', 'settings' => [], 'elements' => [] ],
+				],
+			],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-paragraph configuration-id="p1"/>',
+			'parent_id' => 'parent-container',
+			'mode' => 'replace_children',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayHasKey( 'removed_element_ids', $result );
+		$this->assertSame( [ 'child-1', 'child-2' ], $result['removed_element_ids'] );
+		$this->assertCount( 1, $result['root_element_ids'] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$parent = $elements[0] ?? null;
+		$this->assertNotNull( $parent );
+		$this->assertSame( 'parent-container', $parent['id'] );
+		$this->assertCount( 1, $parent['elements'] );
+		$this->assertSame( 'widget', $parent['elements'][0]['elType'] );
+		$this->assertSame( 'e-paragraph', $parent['elements'][0]['widgetType'] );
+	}
+
+	public function test_execute__mode_replace_children_with_empty_parent_behaves_as_append() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[
+				'elType' => 'e-flexbox',
+				'id' => 'empty-parent',
+				'settings' => [],
+				'elements' => [],
+			],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'parent_id' => 'empty-parent',
+			'mode' => 'replace_children',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayHasKey( 'removed_element_ids', $result );
+		$this->assertSame( [], $result['removed_element_ids'] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$parent = $elements[0] ?? null;
+		$this->assertNotNull( $parent );
+		$this->assertCount( 1, $parent['elements'] );
+	}
+
+	public function test_execute__mode_replace_children_on_document_root_wipes_all_elements() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[ 'elType' => 'e-flexbox', 'id' => 'root-1', 'settings' => [], 'elements' => [] ],
+			[ 'elType' => 'e-flexbox', 'id' => 'root-2', 'settings' => [], 'elements' => [] ],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="new-heading"/>',
+			'parent_id' => 'document',
+			'mode' => 'replace_children',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayHasKey( 'removed_element_ids', $result );
+		$this->assertSame( [ 'root-1', 'root-2' ], $result['removed_element_ids'] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$this->assertCount( 1, $elements );
+		$this->assertSame( 'widget', $elements[0]['elType'] );
+		$this->assertSame( 'e-heading', $elements[0]['widgetType'] );
+	}
+
+	public function test_execute__mode_replace_children_with_nonexistent_parent_returns_error() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[ 'elType' => 'e-flexbox', 'id' => 'existing-1', 'settings' => [], 'elements' => [] ],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'parent_id' => 'nonexistent-parent',
+			'mode' => 'replace_children',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
+		$this->assertSame( \WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$this->assertCount( 1, $elements );
+		$this->assertSame( 'existing-1', $elements[0]['id'] );
+	}
+
+	public function test_execute__invalid_mode_returns_error() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'mode' => 'invalid_mode',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'invalid_mode', $result->get_error_message() );
+		$this->assertStringContainsString( 'append', $result->get_error_message() );
+		$this->assertStringContainsString( 'replace_children', $result->get_error_message() );
+	}
+
+	private function given_document_with_elements( int $post_id, array $elements ): void {
+		$document = Plugin::$instance->documents->get( $post_id );
+		$document->save( [ 'elements' => $elements ] );
+
+		$this->clear_document_cache( $post_id );
+	}
+
+	private function clear_document_cache( int $post_id ): void {
+		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
+		$reflection->setAccessible( true );
+		$documents = $reflection->getValue( Plugin::$instance->documents );
+		unset( $documents[ $post_id ] );
+		$reflection->setValue( Plugin::$instance->documents, $documents );
 	}
 }

@@ -125,14 +125,16 @@ class Atomic_Styles_Manager {
 
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
 
+				// `CSS_Files_Manager::get()` owns the per-breakpoint decision: it consults the
+				// cache-validity leaf under `$breakpoint_path` (including the `should_exist`
+				// meta), regenerates when the cache is invalid or when a should-be-present file
+				// is missing on disk, and validates the leaf on success. See ED-24903.
 				$style_file = $this->css_files_manager->get(
 					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
 					$render_css,
-					$this->cache_validity->is_valid( $breakpoint_path )
+					$breakpoint_path
 				);
-
-				$this->cache_validity->validate( $breakpoint_path );
 
 				if ( ! $style_file ) {
 					continue;

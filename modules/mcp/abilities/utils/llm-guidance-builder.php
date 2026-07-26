@@ -2,8 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,18 +63,7 @@ class Llm_Guidance_Builder {
 			}
 		}
 
-		return self::convert_prop_values_to_css( $default_styles );
-	}
-
-	private static function convert_prop_values_to_css( array $props ): array {
-		if ( empty( $props ) ) {
-			return [];
-		}
-
-		$schema = Style_Schema::get();
-		$resolved = Render_Props_Resolver::for_styles()->resolve( $schema, $props );
-
-		return array_filter( $resolved, fn( $value ) => null !== $value && '' !== $value );
+		return Style_Props_To_Css::to_map( $default_styles );
 	}
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {

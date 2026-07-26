@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
 import { isTransformable, type ObjectPropType, type PropValue, type UnionPropType } from '@elementor/editor-props';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 
 import { PropKeyProvider, PropProvider } from '../../bound-prop-context';
 import { ControlActionsProvider } from '../../control-actions/control-actions-context';
 import { ControlReplacementsProvider, createControlReplacementsRegistry } from '../../control-replacements';
+import { type Suggestion } from '../../hooks/use-form-field-suggestions';
 import { EmailChipsField } from '../email-form-action-control/email-chips-field';
 
 const wrap = ( val: string ) => ( { $$type: 'string' as const, value: val } );
@@ -72,9 +73,10 @@ registerControlReplacement( {
 type RenderRecipientFieldArgs = {
 	fieldBind: 'to' | 'cc' | 'bcc';
 	fieldValue: PropValue;
+	suggestions?: Suggestion[];
 };
 
-const renderRecipientField = ( { fieldBind, fieldValue }: RenderRecipientFieldArgs ) => {
+const renderRecipientField = ( { fieldBind, fieldValue, suggestions }: RenderRecipientFieldArgs ) => {
 	const setValue = jest.fn();
 
 	renderWithTheme(
@@ -82,7 +84,7 @@ const renderRecipientField = ( { fieldBind, fieldValue }: RenderRecipientFieldAr
 			<PropKeyProvider bind={ fieldBind }>
 				<ControlReplacementsProvider replacements={ getControlReplacements() }>
 					<ControlActionsProvider items={ [] }>
-						<EmailChipsField fieldLabel="Recipients" />
+						<EmailChipsField fieldLabel="Recipients" suggestions={ suggestions } />
 					</ControlActionsProvider>
 				</ControlReplacementsProvider>
 			</PropKeyProvider>
@@ -148,5 +150,138 @@ describe( 'EmailChipsField dynamic tags', () => {
 			expect( fieldPropType.prop_types.dynamic?.key ).toBe( 'dynamic' );
 			expect( fieldPropType.prop_types[ 'string-array' ]?.key ).toBe( 'string-array' );
 		}
+	} );
+} );
+
+describe( 'EmailChipsField form-field shortcodes', () => {
+	it( 'should keep a mention shortcode as a chip instead of clearing it', () => {
+		// Arrange
+		const { setValue } = renderRecipientField( { fieldBind: 'to', fieldValue: wrapStringArray( [] ) } );
+		const input = screen.getByRole( 'combobox' );
+
+		// Act
+		fireEvent.change( input, { target: { value: '[email]' } } );
+		fireEvent.blur( input );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith( { to: wrapStringArray( [ '[email]' ] ) }, {}, { bind: 'to' } );
+	} );
+
+	it( 'should keep a legacy [field id="..."] shortcode as a chip instead of clearing it', () => {
+		// Arrange
+		const { setValue } = renderRecipientField( { fieldBind: 'cc', fieldValue: wrapStringArray( [] ) } );
+		const input = screen.getByRole( 'combobox' );
+
+		// Act
+		fireEvent.change( input, { target: { value: '[field id="email"]' } } );
+		fireEvent.blur( input );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith(
+			{ cc: wrapStringArray( [ '[field id="email"]' ] ) },
+			{},
+			{ bind: 'cc' }
+		);
+	} );
+
+	it( 'should still drop a plainly invalid, non-shortcode value', () => {
+		// Arrange
+		const { setValue } = renderRecipientField( { fieldBind: 'bcc', fieldValue: wrapStringArray( [] ) } );
+		const input = screen.getByRole( 'combobox' );
+
+		// Act
+		fireEvent.change( input, { target: { value: 'not-an-email' } } );
+		fireEvent.blur( input );
+
+		// Assert
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should add a suggested form field from the dropdown as a shortcode chip', () => {
+		// Arrange
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'to',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
+
+		const input = screen.getByRole( 'combobox' );
+		fireEvent.mouseDown( input );
+
+		const listbox = screen.getByRole( 'listbox' );
+
+		// Act
+		fireEvent.click( within( listbox ).getByText( '[email]' ) );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith( { to: wrapStringArray( [ '[email]' ] ) }, {}, { bind: 'to' } );
+	} );
+} );
+
+describe( 'EmailChipsField @ mentions', () => {
+	it( 'should convert a matching @mention into a shortcode chip on blur', () => {
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'to',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: '@email' } } );
+		fireEvent.blur( input );
+
+		expect( setValue ).toHaveBeenCalledWith( { to: wrapStringArray( [ '[email]' ] ) }, {}, { bind: 'to' } );
+	} );
+
+	it( 'should filter suggestions in the dropdown when typing an @mention query', () => {
+		const suggestions: Suggestion[] = [
+			{ label: 'email', value: 'email' },
+			{ label: 'name', value: 'name' },
+		];
+		renderRecipientField( { fieldBind: 'cc', fieldValue: wrapStringArray( [] ), suggestions } );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: '@ema' } } );
+
+		const listbox = screen.getByRole( 'listbox' );
+
+		expect( within( listbox ).getByText( '[email]' ) ).toBeInTheDocument();
+		expect( within( listbox ).queryByText( '[name]' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should not treat a real email address containing "@" as a mention', () => {
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'bcc',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: 'admin@example.com' } } );
+		fireEvent.blur( input );
+
+		expect( setValue ).toHaveBeenCalledWith(
+			{ bcc: wrapStringArray( [ 'admin@example.com' ] ) },
+			{},
+			{ bind: 'bcc' }
+		);
+	} );
+
+	it( 'should drop an @mention with no matching suggestion', () => {
+		const suggestions: Suggestion[] = [ { label: 'email', value: 'email' } ];
+		const { setValue } = renderRecipientField( {
+			fieldBind: 'to',
+			fieldValue: wrapStringArray( [] ),
+			suggestions,
+		} );
+		const input = screen.getByRole( 'combobox' );
+
+		fireEvent.change( input, { target: { value: '@unknown' } } );
+		fireEvent.blur( input );
+
+		expect( setValue ).not.toHaveBeenCalled();
 	} );
 } );

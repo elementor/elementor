@@ -1,8 +1,10 @@
 import { getCurrentDocument, reloadCurrentDocument } from '@elementor/editor-documents';
 import { getContainer, selectElement } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { AxiosError, type HttpResponse, httpService } from '@elementor/http-client';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
+
+import { getMcpErrorMessage } from '../../utils/get-mcp-error-message';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
@@ -15,6 +17,7 @@ type BuildCompositionResponse = {
 	resolved_xml: string;
 	llm_instructions: string;
 	warnings?: string[];
+	removed_element_ids?: string[];
 };
 
 export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
@@ -56,6 +59,12 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 				.string()
 				.optional()
 				.describe( "ID of the parent container. Omit or pass 'document' to insert at document root." ),
+			mode: z
+				.enum( [ 'append', 'replace_children' ] )
+				.optional()
+				.describe(
+					"'append' (default) inserts under parentId; 'replace_children' removes existing direct children of parentId first, then inserts."
+				),
 			dryRun: z
 				.boolean()
 				.optional()
@@ -68,8 +77,9 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 			resolvedXml: z.string(),
 			llmInstructions: z.string(),
 			warnings: z.array( z.string() ).optional(),
+			removedElementIds: z.array( z.string() ).optional(),
 		},
-		handler: async ( { xmlStructure, elementConfig, style, parentId, dryRun } ) => {
+		handler: async ( { xmlStructure, elementConfig, style, parentId, mode, dryRun } ) => {
 			const document = getCurrentDocument();
 
 			if ( ! document?.id ) {
@@ -85,6 +95,7 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 						element_config: elementConfig ?? {},
 						style: style ?? {},
 						parent_id: parentId ?? 'document',
+						mode: mode ?? 'append',
 						dry_run: dryRun ?? false,
 					},
 				} );
@@ -109,25 +120,11 @@ export const initBuildCompositionTool = ( reg: MCPRegistryEntry ) => {
 					resolvedXml: data.data.resolved_xml,
 					llmInstructions: data.data.llm_instructions,
 					warnings: data.data.warnings,
+					removedElementIds: data.data.removed_element_ids,
 				};
 			} catch ( error ) {
-				throw new Error( getErrorMessage( error ) );
+				throw new Error( getMcpErrorMessage( error, 'build-composition' ) );
 			}
 		},
 	} );
 };
-
-function getErrorMessage( error: unknown ): string {
-	if ( error instanceof AxiosError ) {
-		const data = error.response?.data as { message?: string; code?: string } | undefined;
-		if ( data?.message ) {
-			return data.code ? `${ data.code }: ${ data.message }` : data.message;
-		}
-	}
-
-	if ( error instanceof Error ) {
-		return error.message;
-	}
-
-	return 'build-composition failed with an unknown error.';
-}

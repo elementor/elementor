@@ -143,6 +143,12 @@ class Union_Prop_Type implements Prop_Type {
 		return $prop_type ? $prop_type->sanitize( $value ) : null;
 	}
 
+	public function should_persist( $value ): bool {
+		$prop_type = $this->get_prop_type_from_value( $value );
+
+		return $prop_type ? $prop_type->should_persist( $value ) : true;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			// phpcs:ignore

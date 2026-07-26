@@ -3,6 +3,8 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Component_Instance_Applier;
@@ -54,7 +56,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
 		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository );
+		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
 
 		$index = [ 'h1' => [ 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [] ] ];
 		$element_config = [ 'h1' => [ 'title' => [ '$$type' => 'string', 'value' => 'Hello' ] ] ];
@@ -72,7 +74,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
 		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository );
+		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
 		$element_config = [ 'hero' => [ 'component_id' => 999999 ] ];
@@ -95,7 +97,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$component->archive();
 
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$applier = new Component_Instance_Applier( $repository );
+		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
 		$element_config = [ 'hero' => [ 'component_id' => $component_id ] ];
@@ -115,7 +117,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
 		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository );
+		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
 		$element_config = [ 'hero' => [ 'component_id' => $component_id, 'overrides' => [ 'nonexistent-key' => 'value' ] ] ];
@@ -136,7 +138,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
 		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository );
+		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
 		$element_config = [
@@ -176,7 +178,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
 		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository );
+		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
 
 		$index = [ 'card' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
 		$element_config = [ 'card' => [ 'component_id' => $component_id ] ];
@@ -230,6 +232,10 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertNotNull( $ci );
 		$this->assertSame( 'component-instance', $ci['$$type'] );
 		$this->assertSame( $component_id, $ci['value']['component_id']['value'] );
+	}
+
+	private function plain_values_resolver(): Plain_Values_Resolver {
+		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
 	private function create_real_document(): int {

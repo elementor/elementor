@@ -715,7 +715,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-radius' => [
-					'$$type' => 'border-radius',
+					'$$type' => 'border-radius-v2',
 					'value' => [
 						'start-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
 						'start-end' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
@@ -776,7 +776,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-width' => [
-					'$$type' => 'border-width',
+					'$$type' => 'border-width-v2',
 					'value' => [
 						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
 						'inline-end' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
@@ -964,7 +964,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-width' => [
-					'$$type' => 'border-width',
+					'$$type' => 'border-width-v2',
 					'value' => [
 						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
 						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
@@ -990,7 +990,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-width' => [
-					'$$type' => 'border-width',
+					'$$type' => 'border-width-v2',
 					'value' => [
 						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
 						'inline-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
@@ -1018,7 +1018,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-radius' => [
-					'$$type' => 'border-radius',
+					'$$type' => 'border-radius-v2',
 					'value' => [
 						'start-start' => [ '$$type' => 'size', 'value' => [ 'size' => 10, 'unit' => 'px' ] ],
 					],
@@ -1043,7 +1043,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-width' => [
-					'$$type' => 'border-width',
+					'$$type' => 'border-width-v2',
 					'value' => [
 						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
 					],
@@ -1069,7 +1069,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'border-width' => [
-					'$$type' => 'border-width',
+					'$$type' => 'border-width-v2',
 					'value' => [
 						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
 						'inline-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],

@@ -3,14 +3,14 @@
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Circular_Dependency_Validator;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
-use Elementor\Modules\Mcp\Abilities\Llm_Prop_Value_Adjuster;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,9 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component_Instance_Applier {
 
 	private Components_Repository $repository;
+	private Plain_Values_Resolver $plain_values_resolver;
 
-	public function __construct( Components_Repository $repository ) {
+	public function __construct( Components_Repository $repository, Plain_Values_Resolver $plain_values_resolver ) {
 		$this->repository = $repository;
+		$this->plain_values_resolver = $plain_values_resolver;
 	}
 
 	/**
@@ -189,22 +191,14 @@ class Component_Instance_Applier {
 		}
 
 		$origin_prop_type = $this->resolve_origin_prop_type( $prop );
-		$force_key = $this->resolve_force_key( $origin_prop_type );
 
-		$adjusted = Llm_Prop_Value_Adjuster::adjust(
-			is_array( $raw_value ) ? $raw_value : [ '$$type' => $force_key, 'value' => $raw_value ],
-			[ 'force_key' => $force_key ]
-		);
-
-		return $adjusted ?? $raw_value;
-	}
-
-	private function resolve_force_key( $origin_prop_type ): ?string {
-		if ( ! $origin_prop_type || $origin_prop_type instanceof Union_Prop_Type ) {
-			return null;
+		if ( ! $origin_prop_type instanceof Prop_Type ) {
+			return $raw_value;
 		}
 
-		return $origin_prop_type::get_key();
+		$resolved = $this->plain_values_resolver->resolve( $raw_value, $origin_prop_type );
+
+		return $resolved ?? $raw_value;
 	}
 
 	private function resolve_origin_prop_type( ?Component_Overridable_Prop $prop ) {
