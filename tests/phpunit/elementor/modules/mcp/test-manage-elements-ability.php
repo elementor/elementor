@@ -4,6 +4,9 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
@@ -193,11 +196,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'element_id' => $heading_id,
 			'settings' => [
 				'title' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => [ '$$type' => 'string', 'value' => 'New Title' ],
-						'children' => [],
-					],
+					'content' => 'New Title',
+					'children' => [],
 				],
 			],
 		] );
@@ -219,7 +219,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'element_id' => $heading_id,
 			'settings' => [
-				'nonexistent_prop' => [ '$$type' => 'string', 'value' => 'x' ],
+				'nonexistent_prop' => 'x',
 			],
 		] );
 
@@ -267,6 +267,62 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertWPError( $result );
 		$this->assertSame( 'elementor_unknown_global_class', $result->get_error_code() );
+	}
+
+	public function test_update__applies_plain_dynamic_title() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$this->given_dynamic_tags( [
+			'post-excerpt' => [
+				'name' => 'post-excerpt',
+				'label' => 'Post Excerpt',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'length' => String_Prop_Type::make()->default( '55' ),
+				],
+			],
+		] );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'action' => 'update',
+			'post_id' => $post_id,
+			'element_id' => $heading_id,
+			'settings' => [
+				'title' => [
+					'name' => 'post-excerpt',
+					'settings' => [ 'length' => '120' ],
+				],
+			],
+		] );
+
+		$this->assertNoErrors( $result );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node );
+		$this->assertSame( 'dynamic', $node['settings']['title']['$$type'] ?? null );
+		$this->assertSame( 'post-excerpt', $node['settings']['title']['value']['name'] ?? null );
+		$this->assertSame( '120', $node['settings']['title']['value']['settings']['length']['value'] ?? null );
+	}
+
+	public function test_update__rejects_invalid_title_shape() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'action' => 'update',
+			'post_id' => $post_id,
+			'element_id' => $heading_id,
+			'settings' => [
+				'title' => 'plain string title',
+			],
+		] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
 	}
 
 	private function assertNoErrors( $result ): void {
@@ -343,6 +399,20 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 
 		return null;
+	}
+
+	private function given_dynamic_tags( array $tags ): void {
+		$module = Dynamic_Tags_Module::fresh();
+
+		$reflection = new \ReflectionClass( Dynamic_Tags_Editor_Config::class );
+		$tags_prop = $reflection->getProperty( 'tags' );
+		$tags_prop->setAccessible( true );
+		$tags_prop->setValue( $module->registry, $tags );
+
+		$module_reflection = new \ReflectionClass( Dynamic_Tags_Module::class );
+		$instance_prop = $module_reflection->getProperty( 'instance' );
+		$instance_prop->setAccessible( true );
+		$instance_prop->setValue( null, $module );
 	}
 
 	private function given_kit_global_class( string $label, string $color ): string {
