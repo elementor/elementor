@@ -24,4 +24,4 @@ Orientation for anyone new to Elementor v4 — what changed, how experiments gat
 
 - [../README.md](../README.md) — global index and reading paths
 - [../architecture/overview.md](../architecture/overview.md) — PHP ↔ JS ↔ frontend map
-- [../opt-in/activation.md](../opt-in/activation.md) — opt-in UX and settings (planned)
+- [../opt-in/activation.md](../opt-in/activation.md) — opt-in UX and settings

@@ -24,5 +24,5 @@ Map how Elementor v4 PHP modules, Editor V2 JS packages, and frontend rendering 
 
 - [../README.md](../README.md) — global index
 - [../getting-started/experiments.md](../getting-started/experiments.md) — what gates each module
-- [../editor-packages/overview.md](../editor-packages/overview.md) — micro-frontend details (planned)
+- [../editor-packages/overview.md](../editor-packages/overview.md) — micro-frontend details
 - `packages/docs/architecture.md` — Editor V2 architecture source doc

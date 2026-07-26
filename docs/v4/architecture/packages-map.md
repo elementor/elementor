@@ -30,7 +30,7 @@ A lookup table mapping v4 **docs areas** to **PHP module paths**, **Editor V2 JS
 | Components | `modules/components/` | `e_components` + `e_atomic_elements` | `editor-components` | `components/module.php` |
 | Dynamic tags | `modules/atomic-widgets/dynamic-tags/` + `modules/dynamic-tags/` | `e_atomic_elements` | *(bridge in atomic-widgets)* | — |
 | MCP (PHP) | `modules/mcp/abilities/*` | *(none)* | — | — |
-| MCP (in-editor JS) | — | `editor_mcp` *(TBD gate)* | `editor-mcp`, `elementor-mcp-common` | `Editor_Loader::EXTENSIONS` |
+| MCP (in-editor JS) | — | *(none — `editor_mcp` registered but not enforced)* | `editor-mcp`, `elementor-mcp-common` | `Editor_Loader::EXTENSIONS` |
 | Fundamentals libs | — | — | `editor-props`, `editor-styles`, `editor-controls`, `editor-elements`, `editor-responsive`, `schema` | atomic-widgets filter (partial) |
 
 ### atomic-widgets: PACKAGES constant

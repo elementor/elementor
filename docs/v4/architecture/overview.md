@@ -53,7 +53,7 @@ The legacy v1 editor shell (`assets/dev/js/editor/`) still orchestrates the page
 │  editor-variables    │      ┌──────────────────────────────────────┐
 │  editor-components   │      │  In-editor MCP (editor-mcp package)  │
 │  editor-interactions │◄────►│  Angie / WebMCP tool registry        │
-│  editor-mcp (lib)    │      │  (editor_mcp experiment — TBD gate)  │
+│  editor-mcp (lib)    │      │  (editor_mcp experiment registered but not enforced) │
 └─────────┬───────────┘      └──────────────────────────────────────┘
           │ document save (REST/AJAX)
           ▼
@@ -81,6 +81,7 @@ The legacy v1 editor shell (`assets/dev/js/editor/`) still orchestrates the page
 | components | `e_components` + `e_atomic_elements` | |
 | interactions | `e_interactions` + `e_atomic_elements` | |
 | MCP PHP abilities | *(none)* | Requires `McpAdapter` class |
+| In-editor MCP (`editor-mcp`) | *(none — `editor_mcp` registered but not enforced)* | Loads via `Editor_Loader::EXTENSIONS` |
 | Editor V2 packages | Per-module filters on `elementor/editor/v2/packages` | Plus base `Editor_Loader::EXTENSIONS` |
 
 Full matrix: [../getting-started/experiments.md](../getting-started/experiments.md).
@@ -155,6 +156,6 @@ Some libs are marked `// TODO: Need to be registered and not enqueued` — they 
 
 - [data-flow.md](data-flow.md) — save and render pipeline
 - [packages-map.md](packages-map.md) — module ↔ package table
-- [../editor-packages/overview.md](../editor-packages/overview.md) — extension API (planned)
+- [../editor-packages/overview.md](../editor-packages/overview.md) — extension API
 - [../getting-started/what-is-v4.md](../getting-started/what-is-v4.md)
 - `packages/docs/architecture.md` — micro-frontend design rationale

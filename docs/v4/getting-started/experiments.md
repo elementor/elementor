@@ -12,7 +12,7 @@ Elementor v4 features are gated behind **WordPress experiments** (feature flags)
 Two opt-in layers exist:
 
 1. **`e_opt_in_v4_page`** — gates the atomic-opt-in module (settings page, welcome screen). Default: **active**.
-2. **`e_opt_in_v4`** — the master "Editor V4" flag. Opt-in/out toggles a **bundle** of experiments together.
+2. **`e_opt_in_v4`** — the master Elementor v4 opt-in flag (UI title: "Editor V4"). Opt-in/out toggles a **bundle** of experiments together.
 
 ## When to use it
 
@@ -38,11 +38,25 @@ Consult this matrix when:
 | `e_variables_manager` | Variables Manager | `variables/module.php` | variables manager UI | active | — | `e_variables` (implicit) |
 | `e_components` | Components | `components/module.php` | `components` module | active | — | `e_atomic_elements` |
 | `e_interactions` | Interactions | `interactions/module.php` | `interactions` module | active | — | `e_atomic_elements` |
-| `editor_mcp` | Editor MCP for atomic widgets | `atomic-widgets/module.php` | *see note below* | active | — | — |
+| `editor_mcp` | Editor MCP for atomic widgets | `atomic-widgets/module.php` | *(none — dead registration)* | active | — | — |
 
 **Release status** (from source): `e_opt_in_v4` and `e_opt_in_v4_page` are **alpha**; `e_atomic_elements` is **beta**; `e_classes` is **alpha**; `e_variables` / `e_variables_manager` are **alpha**; `e_components` is **beta**; `e_interactions` and `editor_mcp` are **dev**.
 
 All listed experiments are `hidden: true` in source — they appear in WP Admin → Elementor → Settings → Experiments but are not marketed in-product.
+
+### Default-active vs release status (ED-25066)
+
+Several v4 experiments ship with `default: active` while retaining pre-release `release_status` values (`alpha`, `beta`, or `dev`). On many installs these features are **already on** even though the experiment labels are not stable:
+
+| Experiment | Default | Release status | Module gate also requires |
+|------------|---------|----------------|---------------------------|
+| `e_variables` | active | alpha | `e_atomic_elements` |
+| `e_variables_manager` | active | alpha | `e_variables` + `e_atomic_elements` (implicit — registered only when variables module loads) |
+| `e_components` | active | beta | `e_atomic_elements` |
+| `e_interactions` | active | dev | `e_atomic_elements` |
+| `editor_mcp` | active | dev | *(none — see below)* |
+
+This mismatch between defaults and release labels is tracked internally as **ED-25066**. Treat the **Default** column as authoritative for "is it on out of the box," not `release_status` alone.
 
 ### Opt-in bundle
 
@@ -67,15 +81,17 @@ REST: `POST /wp-json/elementor/v1/operations/opt-in-v4`.
 
 `e_opt_in_v4` is exposed to the legacy editor JS as `elementorCommon.config.experimentalFeatures.e_opt_in_v4`. `ContainerHelper.isV4OptIn()` reads this flag to change default container behavior (e.g. default type `e-flexbox`).
 
-### `editor_mcp` — two MCP systems
+### `editor_mcp` — registered but not enforced
 
-**PHP abilities** (`modules/mcp/module.php`) register unconditionally when `McpAdapter` and `wp_register_ability` exist. No experiment check in that module.
+The `editor_mcp` experiment is **registered** in `atomic-widgets/module.php` (`EXPERIMENT_EDITOR_MCP = 'editor_mcp'`, default active, release status dev). However, **no code checks `is_feature_active('editor_mcp')`** — a repo-wide search finds only the constant and `add_feature()` registration. The `editor-mcp` package loads unconditionally via `Editor_Loader::EXTENSIONS` in `core/editor/loader/editor-loader.php` (alongside `elementor-v3-mcp` and `elementor-kit-mcp`). Toggling `editor_mcp` in WP Admin has no effect on in-editor MCP tool loading today.
 
-**JS in-editor MCP** (`editor-mcp` package) is listed in `core/editor/loader/editor-loader.php` `EXTENSIONS` array alongside `elementor-v3-mcp` and `elementor-kit-mcp`. The `editor_mcp` experiment is **registered** in `atomic-widgets/module.php` (`EXPERIMENT_EDITOR_MCP = 'editor_mcp'`, default active) but **TBD — verify with v4 team:** no `is_feature_active('editor_mcp')` gate was found in source at time of writing. The plan doc references gating at a line that no longer contains that logic.
+The plan doc's note about gating at `atomic-widgets/module.php:147` is stale (that line is now an import statement).
 
 ### MCP PHP has no experiment gate
 
-Confirmed: `modules/mcp/module.php` constructor registers abilities on `wp_abilities_api_init` with no experiment check. External MCP hosts can call abilities regardless of v4 opt-in state (subject to WP capabilities).
+**PHP abilities** (`modules/mcp/module.php`) register unconditionally when `McpAdapter` and `wp_register_ability` exist. No experiment check in that module. External MCP hosts can call abilities regardless of v4 opt-in state (subject to WP capabilities).
+
+**JS in-editor MCP** (`editor-mcp` package) is a separate system — see the `editor_mcp` section above and [../mcp/overview.md](../mcp/overview.md).
 
 ## Extension
 
@@ -116,13 +132,14 @@ atomic-opt-in/module.php
   │     ├─ Opt_In::init()  → registers e_opt_in_v4, AJAX/REST
   │     └─ OptInPage
   └─ if e_opt_in_v4 active: WelcomeScreen
+        (checked via is_atomic_experiment_active() — method name is misleading; it reads e_opt_in_v4, not e_atomic_elements)
 ```
 
 ### Hidden companion experiments
 
 `atomic-widgets/module.php` also registers (not in main v4 matrix):
 
-- `e_indications_popover` — V4 indication popovers
+- `e_indications_popover` — Elementor v4 indication popovers
 - `atomic_widgets_should_enforce_capabilities`
 - `e_bc_migrations` — backward compatibility prop migrations (`Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS`)
 - `global_classes_should_enforce_capabilities` (in global-classes module)
@@ -130,6 +147,6 @@ atomic-opt-in/module.php
 ## See also
 
 - [what-is-v4.md](what-is-v4.md)
-- [../opt-in/activation.md](../opt-in/activation.md) — UX details (planned)
+- [../opt-in/activation.md](../opt-in/activation.md) — UX details
 - [../mcp/overview.md](../mcp/overview.md) — two MCP systems
 - [../architecture/overview.md](../architecture/overview.md) — package loading

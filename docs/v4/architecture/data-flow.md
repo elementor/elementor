@@ -29,10 +29,10 @@ User edits in Editor V2 (editor-canvas, editor-editing-panel)
 Legacy editor document model (v1 adapters sync state)
   │
   ▼
-Document save — elementor/document/before_save, after_save hooks
+Document save — `elementor/document/save/data`, `before_save`, `after_save` hooks
   │
-  ├─► interactions: handle_interactions() sanitize + assign IDs
-  ├─► components: validate_circular_dependencies(), set_component_overridable_props()
+  ├─► interactions: `handle_interactions()` on `elementor/document/save/data` (sanitize, validate, assign IDs)
+  ├─► components: `validate_circular_dependencies()` on `before_save`; `set_component_overridable_props()` on `after_save`
   │
   ▼
 Post meta JSON — elements tree with settings + styles PropValues
@@ -102,7 +102,7 @@ Preview uses `elementor/ajax/register_actions` → `Render_Element_Action` for s
 |---------------|--------|---------|
 | CSS converter | `Css_Converter_REST_API` | Convert raw CSS → `{ props, customCss, rejected }` |
 | Global classes | `Global_Classes_REST_API` | CRUD kit classes |
-| Variables | `Variables_API` | CRUD kit variables |
+| Variables | `Rest_Api` (`modules/variables/classes/rest-api.php`) | CRUD kit variables |
 | Components | `Components_REST_API` | Component document operations |
 | Opt-in | `POST elementor/v1/operations/opt-in-v4` | Enable v4 experiment bundle |
 

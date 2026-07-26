@@ -2,7 +2,7 @@
 
 > Status: draft
 
-Internal reference for Elementor Editor v4 — atomic widgets, global classes, variables, interactions, components, dynamic tags, CSS converter, editor packages, MCP (v4-specific surface), migration, and opt-in.
+Internal reference for Elementor v4 — atomic widgets, global classes, variables, interactions, components, dynamic tags, CSS converter, editor packages, MCP (v4-specific surface), migration, and opt-in.
 
 This tree lives at `docs/v4/` in the Elementor repository. It is **not published** today; `elementor/docs/README.md` notes that developer docs moved to [developers.elementor.com](https://developers.elementor.com). Treat this tree as an internal, LLM/agent-integrator, and power-user reference.
 
@@ -19,7 +19,7 @@ This tree lives at `docs/v4/` in the Elementor repository. It is **not published
 
 ## What v4 is
 
-Editor v4 replaces the legacy control-based widget model with an **atomic** model: typed props (`{ $$type, value }`), a canonical style schema, Twig-based rendering, and a micro-frontend editor (Editor V2) composed of independently loadable JS packages. PHP modules register experiments, REST endpoints, and editor packages; JS packages provide the in-editor UI.
+Elementor v4 replaces the legacy control-based widget model with an **atomic** model: typed props (`{ $$type, value }`), a canonical style schema, Twig-based rendering, and a micro-frontend editor (Editor V2) composed of independently loadable JS packages. PHP modules register experiments, REST endpoints, and editor packages; JS packages provide the in-editor UI.
 
 Start with [getting-started/what-is-v4.md](getting-started/what-is-v4.md) and [architecture/overview.md](architecture/overview.md).
 
@@ -32,38 +32,32 @@ Start with [getting-started/what-is-v4.md](getting-started/what-is-v4.md) and [a
 3. **Labels not internal ids** — use human-facing labels in examples (`wc26-gold`, not `e-gv-wc26-gold`).
 4. **Exact hook names** — filters and actions must match source strings.
 5. **Live schemas via MCP** — `get-widget-schema` remains source of truth for widget JSON; do not duplicate full schema dumps here.
-6. **Relative cross-links** — link sibling files with relative paths even when targets are not yet written.
+6. **Relative cross-links** — link sibling files with relative paths; no orphan pages.
 
 ---
 
 ## Folder map
 
-**Exists today (Phase 1):**
+74 markdown files across 14 folders (plus legacy `css-converter.kb.md` pending migration). See the [plan](../../docs-plan-v4-documentation.md) (§3) for the full file manifest.
 
 | Folder | Files | Description |
 |--------|-------|-------------|
 | [getting-started/](getting-started/README.md) | 4 | Orientation, experiments matrix, glossary |
 | [architecture/](architecture/README.md) | 4 | System map, data flow, packages table |
-| `css-converter.kb.md` | 1 | Legacy KB file (to be migrated in Phase 5) |
+| [fundamentals/](fundamentals/README.md) | 6 | PropValue, prop types, style schema, transformers, validation |
+| [atomic-widgets/](atomic-widgets/README.md) | 6 | Authoring, rendering, hooks, elements catalog |
+| [global-classes/](global-classes/README.md) | 5 | Kit-scoped reusable classes |
+| [variables/](variables/README.md) | 6 | Design tokens and variable types registry |
+| [interactions/](interactions/README.md) | 5 | Element motion and triggers |
+| [components/](components/README.md) | 5 | Reusable component documents |
+| [dynamic-tags/](dynamic-tags/README.md) | 5 | v3/v4 dynamic tag bridge |
+| [css-converter/](css-converter/README.md) | 4 | CSS → atomic props pipeline |
+| [editor-packages/](editor-packages/README.md) | 5 | Micro-frontend architecture and extension |
+| [mcp/](mcp/README.md) | 6 + [abilities/](mcp/abilities/README.md) (7) | v4-specific MCP surface (two-system disambiguation) |
+| [migration/](migration/README.md) | 3 | Prop type migrations and BC |
+| [opt-in/](opt-in/README.md) | 2 | Activation UX and settings |
 
-**Planned (not yet written):**
-
-| Folder | Files | Description |
-|--------|-------|-------------|
-| `fundamentals/` | 6 | PropValue, prop types, style schema, transformers, validation |
-| `atomic-widgets/` | 6 | Authoring, rendering, hooks, elements catalog |
-| `global-classes/` | 5 | Kit-scoped reusable classes |
-| `variables/` | 6 | Design tokens and variable types registry |
-| `interactions/` | 5 | Element motion and triggers |
-| `components/` | 5 | Reusable component documents |
-| `dynamic-tags/` | 5 | v3/v4 dynamic tag bridge |
-| `css-converter/` | 4 | CSS → atomic props pipeline (replaces `.kb.md`) |
-| `editor-packages/` | 5 | Micro-frontend architecture and extension |
-| `mcp/` | 6 + `abilities/` (7) | v4-specific MCP surface (two-system disambiguation) |
-| `migration/` | 3 | Prop type migrations and BC |
-| `opt-in/` | 2 | Activation UX and settings |
-
-74 files total per the [plan](../../docs-plan-v4-documentation.md) (§3).
+**Legacy (pending removal):** `css-converter.kb.md` — content migrates to `css-converter/` in a sibling branch.
 
 ---
 
@@ -110,7 +104,7 @@ Folder `README.md` files carry: Purpose, Files table, Reading order, Related.
 | `draft` | Partial content; not API-stable |
 | `stable` | Reviewed; safe for external use |
 
-Files in this Phase 1 batch are `draft`.
+Files filled in this branch (`getting-started/`, `architecture/`) are `draft`; other folders ship from sibling branches in the same PR stack.
 
 ---
 

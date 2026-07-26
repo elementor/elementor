@@ -1,4 +1,4 @@
-# What is v4?
+# What is Elementor v4?
 
 > Audience: both
 > Module: `modules/atomic-widgets/`, `modules/atomic-opt-in/`
@@ -7,7 +7,7 @@
 
 ## What it is
 
-**Editor v4** is Elementor's next-generation editing experience built around **atomic elements** — a typed, schema-driven model for element settings and styles. Instead of legacy controls that map loosely to CSS, each atomic element declares a **props schema** (settings) and uses a shared **style schema** for visual properties. Values are stored as **PropValues** (`{ $$type, value }` envelopes) and resolved to CSS or HTML at render time.
+**Elementor v4** is Elementor's next-generation editing experience built around **atomic elements** — a typed, schema-driven model for element settings and styles. Instead of legacy controls that map loosely to CSS, each atomic element declares a **props schema** (settings) and uses a shared **style schema** for visual properties. Values are stored as **PropValues** (`{ $$type, value }` envelopes) and resolved to CSS or HTML at render time.
 
 The v4 stack spans:
 
@@ -102,5 +102,5 @@ When the panel renders the `v4-elements` category, atomic-widgets injects a "New
 - [experiments.md](experiments.md) — experiment names and dependencies
 - [glossary.md](glossary.md) — PropValue, label vs id
 - [../architecture/overview.md](../architecture/overview.md) — system diagram
-- [../opt-in/activation.md](../opt-in/activation.md) — activation UX (planned)
+- [../opt-in/activation.md](../opt-in/activation.md) — activation UX
 - [developers.elementor.com](https://developers.elementor.com) — legacy v3 APIs

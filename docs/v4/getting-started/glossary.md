@@ -34,7 +34,7 @@ The atomic storage unit for a typed setting or style property. Serialized as a J
 - Optional **`disabled`** — when true, the prop is ignored at resolve time.
 - **Null / reset** — semantics vary by prop type; see [../fundamentals/prop-value.md](../fundamentals/prop-value.md).
 
-PropValues appear in element `settings` and `styles` arrays. The PHP `Props_Resolver` and JS `validatePropValue` enforce the schema.
+PropValues appear in element `settings` and `styles` arrays. PHP `Props_Parser` validates on save/import; `Render_Props_Resolver` resolves at render time; JS `validatePropValue` enforces the schema live in the editor.
 
 ### `$$type`
 
