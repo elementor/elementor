@@ -69,11 +69,36 @@ Register new types per [authoring-widgets.md](authoring-widgets.md). They appear
 | `e-tab` | element | no | — | Single tab trigger |
 | `e-tabs-content-area` | element | yes | `e-tab-content`, `container` | Tab panels wrapper |
 | `e-tab-content` | element | yes | any | Panel body |
-| `e-form` | element | yes | any | Pro + `e_pro_atomic_form` only |
+| `e-form` | element | yes | any | Pro + active `e_pro_atomic_form` (Core registers container) |
 | `e-form-success-message` | element | yes | `e-paragraph` | Required child of `e-form` |
 | `e-form-error-message` | element | yes | `e-paragraph` | Required child of `e-form` |
-| `e-form` (promotion) | element | — | — | Free sites: placeholder |
-| `e-collection-loop` | element | — | — | Free sites: Pro promotion stub |
+| `e-form` (promotion) | element | — | — | Free sites only: placeholder |
+| `e-collection-loop` | element | — | — | Free sites only: Pro promotion stub |
+
+### SNAPSHOT — Pro form field widgets (`elementor-pro`)
+
+Registered by `elementor-pro/modules/atomic-form/module.php` when Pro is active, Core ≥ 4.0, **`e_atomic_elements`** and **`e_pro_atomic_form`** are both active (Pro experiment; default active, hidden). Not part of Core `module.php`.
+
+| Type | Kind | Notes |
+|------|------|-------|
+| `e-form-input` | widget | Text input |
+| `e-form-label` | widget | Field label |
+| `e-form-textarea` | widget | Multiline input |
+| `e-form-submit-button` | widget | Submit control |
+| `e-form-checkbox` | widget | Checkbox field |
+| `e-form-radio-button` | widget | Radio field |
+| `e-form-date-picker` | widget | Core ≥ 4.1 only |
+| `e-form-time-picker` | widget | Core ≥ 4.1 only |
+| `e-form-select` | widget | Core ≥ 4.1 only |
+| `e-form-file-upload` | widget | Core ≥ 4.1 only |
+
+**Registration matrix (`e-form` family):**
+
+| Site | `e_pro_atomic_form` | What registers |
+|------|---------------------|----------------|
+| Free | — | `e-form` promotion stub + `e-collection-loop` promotion |
+| Pro | active | Core: `e-form` + message elements; Pro: field widgets above |
+| Pro | inactive | Nothing (Atomic Form panel category hidden) |
 
 **Tabs pairing rule** (from `Atomic_Tabs::$widget_description`): `e-tabs` contains `e-tabs-menu` (with `e-tab` children) and `e-tabs-content-area` (with `e-tab-content` children). Count of `e-tab` must equal count of `e-tab-content`; index N pairs trigger N with panel N.
 

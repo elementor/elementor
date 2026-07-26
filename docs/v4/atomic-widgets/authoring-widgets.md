@@ -52,7 +52,7 @@ PropValues use `{ $$type, value }` — see [../fundamentals/prop-value.md](../fu
 
 Built-in control types (from `controls/types/`):
 
-`text`, `textarea`, `number`, `select`, `toggle`, `switch`, `size`, `link`, `image`, `svg-media`, `video`, `html-tag`, `inline-editing`, `chips`, `repeatable`, `date-time`, `date-range`, `time-range`, `query`, `query-chips`, `query-filter-repeater`, `attachment-type`, `email`, `tabs`
+`text`, `textarea`, `number`, `select`, `toggle`, `switch`, `size`, `link`, `image`, `svg-media`, `video`, `html-tag`, `inline-editing`, `chips`, `repeatable`, `date-time`, `date-range`, `time-range`, `query`, `query-chips`, `query-filter-repeater`, `attachment-type`, `email` (form email-action), `tabs`
 
 Filter controls per widget: `elementor/atomic-widgets/controls`.
 
@@ -72,7 +72,7 @@ Container elements call `$this->meta( 'is_container', true )` in the constructor
 
 ### Register a widget
 
-Hook `elementor/widgets/register` (module uses this filter):
+Hook `elementor/widgets/register` (action — fired via `do_action` in `Widgets_Manager`):
 
 ```php
 add_action( 'elementor/widgets/register', function ( \Elementor\Widgets_Manager $manager ) {
@@ -98,13 +98,12 @@ add_action( 'elementor/elements/elements_registered', function ( \Elementor\Elem
 
 ```php
 add_filter( 'elementor/atomic-widgets/props-schema', function ( array $schema ) {
-    // Only when editing a specific class — check context in your callback
-    $schema['my_prop'] = String_Prop_Type::make();
-    return $schema;
+  $schema['my_prop'] = String_Prop_Type::make();
+  return $schema;
 } );
 ```
 
-Prefer a dedicated subclass when adding a new editor type; use filters for cross-cutting prop injection (dynamic tags do this).
+The filter receives only `$schema` (no element instance or class name) — it runs on every `get_props_schema()` call. Prefer a dedicated subclass for type-specific props; use the filter for cross-cutting unions (dynamic tags extend all schemas this way).
 
 ### Programmatic element trees
 

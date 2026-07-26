@@ -69,10 +69,10 @@ Cache invalidation: `elementor/atomic-widgets/styles/clear` with path array (e.g
 
 | Handle | Asset | Depends on |
 |--------|-------|------------|
-| `elementor-v2-frontend-handlers` | `packages/frontend-handlers` | — |
-| `elementor-v2-alpinejs` | Alpine.js bundle | — |
-| `elementor-v2-action-link-handlers` | action-link handler | frontend-handlers |
-| `elementor-v2-form-handlers` | form handler | frontend-handlers, alpinejs |
+| `elementor-v2-frontend-handlers` | `assets/js/packages/frontend-handlers/` | — |
+| `elementor-v2-alpinejs` | `assets/js/packages/alpinejs/` | — |
+| `elementor-v2-action-link-handlers` | `assets/js/atomic-widgets-action-link-handler.js` | frontend-handlers |
+| `elementor-v2-form-handlers` | `assets/js/atomic-widgets-form-handler.js` | frontend-handlers, alpinejs |
 
 Elements add handles via `get_script_depends()` (e.g. action links, `e-form`, `e-tabs` tabs-handler). Extension point: `elementor/atomic-widgets/frontend/loader/scripts/register`.
 

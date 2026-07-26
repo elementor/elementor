@@ -30,7 +30,7 @@ elementor/atomic-widgets/{context}/transformers/register
 
 Verified `{context}` values: `settings`, `styles`, `import`, `export`.
 
-**Callback args:** `( Transformers_Registry $registry, Props_Resolver $resolver )` — the resolver arg is passed for `settings` and `styles` registrations from dynamic tags; import/export receive registry only.
+**Callback args:** `( Transformers_Registry $registry, Props_Resolver $resolver )` for every context (`Props_Resolver::instance()` always passes both). Import/export listeners often ignore the second arg; `settings`/`styles` listeners (e.g. dynamic tags) use it to register nested resolvers.
 
 ## Extension
 
@@ -38,10 +38,10 @@ Verified `{context}` values: `settings`, `styles`, `import`, `export`.
 
 | Hook | Fired from | Args | Purpose |
 |------|------------|------|---------|
-| `elementor/atomic-widgets/props-schema` | `Has_Atomic_Base::get_props_schema()` | `$schema` (array of `Prop_Type`) | Add or modify prop types on a widget/element schema |
+| `elementor/atomic-widgets/props-schema` | `Has_Atomic_Base::get_props_schema()` | `$schema` (array of `Prop_Type`) | Add or modify prop types; no element/class context — runs on every static `get_props_schema()` call |
 | `elementor/atomic-widgets/styles/schema` | `Style_Schema::get()` | `$schema` | Extend canonical style keys |
 | `elementor/atomic-widgets/controls` | `Has_Atomic_Base::get_atomic_controls()` | `$controls`, `$element` | Modify editor control tree |
-| `elementor/atomic-widgets/llm-json-schema` | `Widget_Context_Helper` (MCP) | `$schema` (array) | Post-process exported JSON Schema for agents |
+| `elementor/atomic-widgets/llm-json-schema` | `Widget_Context_Helper::to_plain_llm_schema_from_json()` (MCP) | `$schema` (single prop's JSON Schema array) | Post-process each prop schema before MCP export — not the full widget schema |
 | `elementor/atomic-widgets/settings/transformers/classes` | `Classes_Transformer` | `$value`, `$context` | Filter resolved class list at render |
 | `elementor/atomic-widgets/styles/transitions/allowed-properties` | `Transition_Transformer` | `$properties` | Allowed CSS properties for transition transformer |
 
@@ -78,8 +78,8 @@ add_filter( 'elementor/atomic-widgets/llm-json-schema', function ( array $schema
 |------|------------|------|---------|
 | `elementor/atomic-widgets/settings/transformers/register` | `Props_Resolver` instance init | `$registry`, `$resolver` | Register settings-context transformers |
 | `elementor/atomic-widgets/styles/transformers/register` | same | `$registry`, `$resolver` | Register styles-context transformers |
-| `elementor/atomic-widgets/import/transformers/register` | same | `$registry` | Import transformers |
-| `elementor/atomic-widgets/export/transformers/register` | same | `$registry` | Export transformers |
+| `elementor/atomic-widgets/import/transformers/register` | same | `$registry`, `$resolver` | Import transformers |
+| `elementor/atomic-widgets/export/transformers/register` | same | `$registry`, `$resolver` | Export transformers |
 | `elementor/atomic-widgets/settings-resolvers/register` | `Module::get_settings_plain_values_resolver()` | `Plain_Resolvers_Registry $registry` | Register plain-value resolvers for non-transformable props |
 
 Core registers default transformers in `module.php` (`register_settings_transformers`, `register_styles_transformers`, etc.).

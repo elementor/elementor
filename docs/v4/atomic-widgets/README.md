@@ -18,8 +18,8 @@ Reference for the `modules/atomic-widgets/` PHP module and its built-in v4 eleme
 
 ## Reading order
 
-1. [overview.md](overview.md)
-2. [authoring-widgets.md](authoring-widgets.md)
+1. [authoring-widgets.md](authoring-widgets.md) — **primary** registration guide
+2. [overview.md](overview.md) — module role and experiment gate
 3. [elements-catalog.md](elements-catalog.md) — snapshot only; prefer MCP `get-widget-schema` for live schemas
 4. [hooks.md](hooks.md) — when extending schemas, transformers, or styles
 5. [rendering.md](rendering.md) — when debugging frontend output

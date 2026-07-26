@@ -49,7 +49,15 @@ Registered in `module.php` when the experiment is active:
 
 **Elements:** `e-div-block`, `e-flexbox`, `e-grid`, `e-tabs` (+ `e-tabs-menu`, `e-tab`, `e-tabs-content-area`, `e-tab-content`)
 
-**Conditional:** `e-form` (+ success/error message children) when Pro + `e_pro_atomic_form`; promotion stubs (`e-form`, `e-collection-loop`) on free sites.
+**Conditional — atomic form** (see [elements-catalog.md](elements-catalog.md) for the full matrix):
+
+| Condition | Registered |
+|-----------|------------|
+| Free site | `e-form` and `e-collection-loop` **promotion** stubs only |
+| Pro + `e_pro_atomic_form` active | `e-form`, `e-form-success-message`, `e-form-error-message` (Core) plus form field widgets (Pro) |
+| Pro + `e_pro_atomic_form` inactive | Nothing — panel category hidden |
+
+`e_pro_atomic_form` is an **Elementor Pro** experiment (`elementor-pro/modules/atomic-form/module.php`); it requires Core ≥ 4.0, `e_atomic_elements`, and Pro. Default: active (hidden). Form field types (`e-form-input`, `e-form-label`, …) register from Pro, not Core.
 
 Full snapshot with nesting: [elements-catalog.md](elements-catalog.md).
 
