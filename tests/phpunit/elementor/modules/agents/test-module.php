@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
