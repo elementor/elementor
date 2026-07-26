@@ -1,26 +1,4 @@
-import { sanitizeUrl, validateHTMLTag } from 'elementor-editor-utils/helpers';
-
-const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
-	'a',
-	'article',
-	'aside',
-	'button',
-	'div',
-	'footer',
-	'form',
-	'h1',
-	'h2',
-	'h3',
-	'h4',
-	'h5',
-	'h6',
-	'header',
-	'main',
-	'nav',
-	'p',
-	'section',
-	'span',
-];
+import { DEFAULT_ALLOWED_HTML_WRAPPER_TAGS, sanitizeUrl, validateHTMLTag } from 'elementor-editor-utils/helpers';
 
 describe( 'elementor.helpers.sanitizeUrl', () => {
 	test( 'should not affect valid URL', () => {

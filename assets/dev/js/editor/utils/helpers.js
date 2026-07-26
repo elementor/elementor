@@ -708,6 +708,8 @@ module.exports = {
 		return allowedTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
+	DEFAULT_ALLOWED_HTML_WRAPPER_TAGS,
+
 	convertSizeToFrString( size ) {
 		if ( 'number' !== typeof size || size <= 0 ) {
 			return size;

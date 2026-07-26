@@ -32,6 +32,12 @@ describe( 'createDomRenderer', () => {
 			expected: '<div></div>',
 		},
 		{
+			title: 'allowed html tag with uppercase casing',
+			template: `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`,
+			context: { tag: 'DIV' },
+			expected: '<DIV></DIV>',
+		},
+		{
 			title: 'allowed url (http)',
 			template: `{{ url | e( 'full_url' ) }}`,
 			context: { url: 'http://localhost/test-page' },
