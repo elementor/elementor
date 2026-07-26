@@ -93,13 +93,13 @@ Other plugins/modules extend schemas without editing the widget:
 
 ```php
 add_filter( 'elementor/atomic-widgets/props-schema', function ( array $schema ) {
-    // $schema is the merged map from the current element's define_props_schema()
+    // $schema is the element-type map from define_props_schema() for the current widget/element
     $schema['my_extension_field'] = String_Prop_Type::make();
     return $schema;
 } );
 ```
 
-Hook is applied in `Has_Atomic_Base::get_props_schema()` after the element's own schema is built.
+Hook runs in `Has_Atomic_Base::get_props_schema()` after the element class builds its own schema (per element type, not a global registry).
 
 For style keys, use `elementor/atomic-widgets/styles/schema` instead — see [style-schema.md](style-schema.md).
 

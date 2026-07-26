@@ -49,17 +49,16 @@ Used by atomic widget save paths, components overridable parsers, and CSS conver
 Location: `packages/packages/libs/editor-props/src/utils/validate-prop-value.ts`
 
 ```ts
-import { validatePropValue, validatePropValueDetailed } from '@elementor/editor-props';
+import { Schema, validatePropValue } from '@elementor/editor-props';
 
 const { valid, errors, errorMessages, jsonSchema } = validatePropValue( propType, value );
+// equivalent: Schema.validatePropValue( propType, value )
 ```
 
-- Builds JSON Schema via `propTypeToJsonSchema( schema )`
-- Validates with `jsonschema` npm package
+- Builds JSON Schema via `propTypeToJsonSchema( propType )`
+- Validates with the `jsonschema` npm package
 - **`null` bypass** — if `value === null`, returns `{ valid: true }` without schema check (explicit reset allowed)
-- `validatePropValueDetailed()` adds nested `anyOf` variant diagnostics for union types
-
-Exported from `@elementor/editor-props` as `Schema.validatePropValue` and top-level `validatePropValue`.
+- `validatePropValueDetailed()` (source-only, not in package exports) adds nested `anyOf` variant diagnostics for union debugging
 
 ### Partial-null bypass
 
@@ -80,14 +79,14 @@ Two parallel paths converge on agent-facing schema:
 
 - Each `Prop_Type::to_json_schema()` — envelope with `$$type` const + `value` shape
 - `Union_Prop_Type` → `{ anyOf: [ … ] }`
-- Widget MCP schema: `Widget_Context_Helper::build_configurable_properties_schema()` calls `to_json_schema()` per prop, then:
+- Widget MCP schema: `Widget_Context_Helper::build_configurable_properties_schema()` calls `to_json_schema()` per prop, then per prop runs:
 
 ```php
-apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+$filtered = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
 Plain_Llm_Schema_Converter::convert( $filtered );
 ```
 
-Filter registered by dynamic-tags (`LLM_Schema_Dedupe_Filter`), components (`Overridable_Llm_Filter`), and extensible by addons.
+(`$schema` here is one prop's JSON Schema fragment.) Filter registered by dynamic-tags (`LLM_Schema_Dedupe_Filter`), components (`Overridable_Llm_Filter`), and extensible by addons. The resulting `properties` map is separate from the sibling `llm_guidance` object on the widget schema root.
 
 **TS**
 
@@ -95,7 +94,7 @@ Filter registered by dynamic-tags (`LLM_Schema_Dedupe_Filter`), components (`Ove
 - `Schema.adjustLlmPropValueSchema()` — normalizes agent-produced values before save
 - `validatePropValue` round-trips against the same schema
 
-**`llm_guidance`** — separate from JSON Schema; built by `Llm_Guidance_Builder` in MCP widget context (`default_settings`, nesting hints, etc.). See [../mcp/abilities/get-widget-schema.md](../mcp/abilities/get-widget-schema.md). Not emitted by `to_json_schema()` itself.
+**`llm_guidance`** — separate sibling field on the MCP widget schema root, not part of `to_json_schema()` output. Built by `Llm_Guidance_Builder::build()` in `Widget_Context_Helper::build_widget_schema()` alongside the `properties` map (`default_settings`, `default_styles`, nesting hints, etc.). See [../mcp/abilities/get-widget-schema.md](../mcp/abilities/get-widget-schema.md).
 
 Live widget schemas: prefer MCP `get-widget-schema` over static docs (per plan §8).
 

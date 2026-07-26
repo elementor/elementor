@@ -61,14 +61,14 @@ Example: `Size_Prop_Type` stores `{ size, unit }`; `Size_Transformer` (styles co
 1. `null` → `null`
 2. Not transformable → return as-is
 3. `disabled: true` → `null`
-4. `depth >= TRANSFORM_DEPTH_LIMIT` (constant **3**) → `null` (loop guard)
+4. `depth >= TRANSFORM_DEPTH_LIMIT` (constant **3**) → `null` (loop guard; allows transforms at depths 0–2)
 5. `transform()` → if result is transformable, recurse with `depth + 1`
 
-Each transformer may return a **new** `{ $$type, value }`, enabling multi-step pipelines (e.g. resolve nested object props, then run type transformer). `Import_Export_Props_Resolver` does **not** chain — single `transform()` pass per item.
+Each transformer may return a **new** `{ $$type, value }`, enabling multi-step pipelines (e.g. resolve nested object props, then run type transformer). `Import_Export_Props_Resolver` does **not** chain — single `transform()` pass per item (no depth recursion).
 
 ### Fallback transformer
 
-Settings context registers `Plain_Transformer` as **fallback** — returns `value` unchanged. Styles context registers type-specific transformers per key (`size`, `color`, `background`, `transform`, …) plus `Multi_Props_Transformer` for props that expand to multiple CSS keys.
+Both **settings** and **styles** contexts register `Plain_Transformer` as **fallback** — returns `value` unchanged when no type-specific transformer matches. Styles also registers per-key transformers (`size`, `color`, `background`, `transform`, …) plus `Multi_Props_Transformer` for props that expand to multiple CSS keys. Import/export contexts use `Import_Export_Plain_Transformer` as fallback instead.
 
 ### `Multi_Props`
 

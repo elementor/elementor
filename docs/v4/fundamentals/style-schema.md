@@ -49,13 +49,19 @@ Prop types carry `dependencies` arrays evaluated by the editor (`editor-props` d
     ->add_prop_type( Position_Prop_Type::make() )
     ->set_dependencies(
         Dependency_Manager::make( Dependency_Manager::RELATION_AND )
-            ->where( [ 'operator' => 'exists', 'path' => [ 'object-fit' ] ] )
             ->where( [ 'operator' => 'ne', 'path' => [ 'object-fit' ], 'value' => 'fill' ] )
+            ->where( [ 'operator' => 'exists', 'path' => [ 'object-fit' ] ] )
             ->get()
     ),
 ```
 
-Non-`static` `position` unlocks `inset-*` size props. `column-count >= 1` unlocks `column-gap`. Dependencies on overridable props: TBD — verify with v4 team (known limitation noted in `atomic-self-hosted-video.php`).
+Non-`static` `position` unlocks `inset-*` size props. `column-count >= 1` unlocks `column-gap`.
+
+### Dependencies and overridable settings
+
+Editor dependency evaluation (`isDependencyMet` / `extractValue` in `@elementor/editor-props`) unwraps `overridable` envelopes when reading **affecting** props — it compares against `origin_value`, including nested object paths. Cascade reset/restore (`getUpdatedValues` in `editor-editing-panel`) rewraps values via `rewrapOverridableValue`.
+
+Some core widgets still ship with dependencies commented out where overridable behavior is not yet verified end-to-end on component instances (e.g. `poster` → `poster_enabled` in `atomic-self-hosted-video.php`). Test cross-prop dependencies on component instances before relying on them in custom widgets.
 
 ### Breakpoint variants
 

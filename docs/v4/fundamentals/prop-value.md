@@ -40,7 +40,7 @@ PHP (`Has_Transformable_Validation`) and TS (`isTransformable`) both require:
 - `$$type` matches the expected prop type key
 - `disabled`, if present, is a boolean
 
-Generate values in PHP via `Some_Prop_Type::generate( $inner_value )` or `::generate( $inner, $disable = true )` to set `disabled`.
+Generate values in PHP via `Some_Prop_Type::generate( $inner_value )`; pass `true` as the second argument to set `disabled` (default is `false`).
 
 ### Plain vs transformable
 
@@ -93,7 +93,7 @@ Component instances wrap overridable settings in an `overridable` envelope:
 - `origin_value` — the underlying prop value (any transformable type)
 - Resolved at render time by `Overridable_Transformer` (components module)
 
-Mark a schema field as non-overridable with `->meta( Overridable_Prop_Type::ignore() )`. See [../components/instances-and-overrides.md](../components/instances-and-overrides.md).
+Mark a schema field as non-overridable with `->meta( Overridable_Prop_Type::ignore() )`. On component instances, eligible settings are schema-wrapped as `overridable` by `Overridable_Schema_Extender`; editor dependency checks unwrap `origin_value` when reading affecting props (see [style-schema.md](style-schema.md#dependencies)). See [../components/instances-and-overrides.md](../components/instances-and-overrides.md).
 
 ## Extension
 
