@@ -3,9 +3,33 @@ import { WhatsNewItemTopicLine } from './whats-new-item-topic-line';
 import { WrapperWithLink } from './wrapper-with-link';
 import { WhatsNewItemMedia } from './whats-new-item-media';
 import { WhatsNewItemChips } from './whats-new-item-chips';
+import { isImageOnly } from './is-image-only';
 
 export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, featured = false } ) => {
 	const hasMedia = item.imageSrc || item.gifSrc || item.youtubeEmbedId;
+
+	if ( isImageOnly( item ) ) {
+		return (
+			<Box
+				key={ itemIndex }
+				display="flex"
+				flexDirection="column"
+				sx={ {
+					pt: 2,
+					...( featured && { px: 1 } ),
+				} }
+			>
+				<WhatsNewItemMedia item={ item } />
+				{ itemIndex !== itemsLength - 1 && (
+					<Divider
+						sx={ {
+							my: 1,
+						} }
+					/>
+				) }
+			</Box>
+		);
+	}
 
 	return (
 		<Box
