@@ -7,7 +7,7 @@
 
 ## What it is
 
-When a style control supports variables, the saved value is a **PropValue** whose `$$type` is a global-variable key and whose `value` is the variable's **internal id** (not the label). At render time `Global_Variable_Transformer` resolves the id to `var(--label)`.
+When a style control supports variables, the saved value is a **PropValue** whose `$$type` is a global-variable key and whose `value` is the variable's **internal id** (not the label). At render time, color and font bindings are resolved by PHP `Global_Variable_Transformer` to `var(--label)`; size bindings resolve in the editor via JS `variableTransformer` (see [Resolution pipeline](#resolution-pipeline)).
 
 Example — color on a style variant:
 
@@ -36,8 +36,8 @@ Prefer PropValue binding over raw `var(--label)` in `custom_css` when the style 
 |----------|----------|----------------|---------------|
 | `global-color-variable` | Color style keys (via `Style_Schema`) | Variable id | `var(--label)` |
 | `global-font-variable` | `font-family` union | Variable id | `var(--label)` |
-| `global-size-variable` | Size style keys (Pro; via `Size_Style_Schema`) | Variable id | `var(--label)` |
-| `global-custom-size-variable` | Complex size expressions (Pro) | Variable id | `var(--label)` |
+| `global-size-variable` | Size style keys (Pro; via `Size_Style_Schema`) | Variable id | `var(--label, fallback)` in editor; not resolved in PHP CSS today |
+| `global-custom-size-variable` | Complex size expressions (Pro) | Variable id | Same as size (editor JS only for PropValue resolution) |
 
 PHP classes: `modules/variables/prop-types/{color,font,size}-variable-prop-type.php`. JS utils: `packages/packages/core/editor-variables/src/prop-types/`.
 
@@ -55,11 +55,8 @@ Filter: `elementor/atomic-widgets/styles/schema`.
 ### Resolution pipeline
 
 1. Style variant stores PropValue with id in `value`.
-2. `Style_Transformers` registers `Global_Variable_Transformer` for color and font keys (`classes/style-transformers.php`).
-3. Transformer loads variable by id via `Variables::by_id()`, returns `var(--{label})`.
-4. Deleted variables fall back to `var(--{id})` so broken references are visible.
-
-Size variables use the editor `variableTransformer` on the JS canvas; PHP transformer registration for size is TBD — verify with v4 team if server-side render path differs.
+2. **PHP (frontend CSS):** `Style_Transformers` registers `Global_Variable_Transformer` for `global-color-variable` and `global-font-variable` only (`classes/style-transformers.php`). The transformer loads the variable by id via `Variables::by_id()` and returns `var(--{label})`; deleted variables fall back to `var(--{id})`. `global-size-variable` / `global-custom-size-variable` are **not** registered on `elementor/atomic-widgets/styles/transformers/register` — `Render_Props_Resolver` returns `null` for unregistered `$$type` keys, so size bindings do not resolve in server-generated CSS today. (`Global_Variable_Transformer` includes grid-track `repeat()` logic and is unit-tested for it, but that path is not wired for size keys in `Style_Transformers`.)
+3. **JS (editor canvas):** `registerVariableType()` auto-registers `variableTransformer` (`packages/packages/core/editor-variables/src/transformers/variable-transformer.ts`) for every type, including size. Output is `var(--label, fallback)` (or `repeat(n, 1fr)` on grid-track keys).
 
 ### Editor binding UX
 

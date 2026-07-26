@@ -71,7 +71,7 @@ Filter `elementor/variables/css_entry_additional` to append extra CSS per variab
 
 When Pro is active but **&lt; 3.35**, `custom_css` is preserved in parsed post styles.
 
-Stripping runs on frontend style parsing and when elements export raw editor data (`has-atomic-base.php`). Filter hook: `elementor/atomic_widgets/editor_data/element_styles` (second arg is unfiltered styles).
+Stripping runs on frontend style parsing and when elements export raw editor data (`modules/atomic-widgets/elements/base/has-atomic-base.php`). Filter hook: `elementor/atomic_widgets/editor_data/element_styles` (second arg is unfiltered styles).
 
 **Implication:** `var(--label)` declarations stored only in `custom_css` may not appear in cached frontend CSS on Pro ≥ 3.35 unless rendered through Pro's custom CSS path. Prefer typed variable PropValues or verify rendering for your target Pro version.
 

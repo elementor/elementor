@@ -67,16 +67,6 @@ Import reads `{extracted_directory}/global-variables.json` (`runners/import.php`
 
 Meta preserved on kit import: `_elementor_global_variables` (`Module::add_meta_to_preserve_on_kit_import`).
 
-## Extension
-
-Register types on `elementor/variables/register` before calling REST create/batch — see [types.md](./types.md). New types automatically pass `is_valid_variable_type()` validation.
-
-Filter `elementor/variables/css_entry_additional` for extra per-variable CSS at render time (advanced).
-
-## Internals
-
-N/A for external audience. Implementation: `classes/rest-api.php`, `services/variables-service.php`, `storage/variables-repository.php`.
-
 ### MCP
 
 | Ability / resource | ID / URI | Role |
@@ -102,6 +92,16 @@ Allowed types: `global-color-variable`, `global-font-variable`, `global-size-var
 Always read `elementor://global-variables` before create to avoid duplicate labels. Use **labels** in composition CSS, **ids** in update/delete.
 
 In-editor MCP tools also register under the `variables` domain (`editor-variables/src/init.ts`); see [../mcp/registering-editor-tools.md](../mcp/registering-editor-tools.md).
+
+## Extension
+
+Register types on `elementor/variables/register` before calling REST create/batch — see [types.md](./types.md). New types automatically pass `is_valid_variable_type()` validation.
+
+Filter `elementor/variables/css_entry_additional` for extra per-variable CSS at render time (advanced).
+
+## Internals
+
+N/A — see `classes/rest-api.php`, `services/variables-service.php`, `storage/variables-repository.php`.
 
 ## See also
 

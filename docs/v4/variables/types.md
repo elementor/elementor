@@ -25,7 +25,7 @@ Types are **not** a fixed catalog — new types are added through the `elementor
 | `elementor/variables/register` | Action fired once on `init`; receives the registry |
 | `Transformable_Prop_Type` | Atomic-widgets prop type contract; provides `get_key()`, `generate()`, validation |
 | Style schema augmentation | `Style_Schema` / `Size_Style_Schema` add variable unions to matching atomic style keys |
-| `Global_Variable_Transformer` | Registered for color/font keys in `Style_Transformers`; resolves stored id to `var(--label)` |
+| `Global_Variable_Transformer` | PHP: registered for color/font keys only (`classes/style-transformers.php`). JS: `variableTransformer` handles all types via `registerVariableType()` |
 
 Registry lifecycle (`module.php`):
 
@@ -52,7 +52,7 @@ add_action( 'elementor/variables/register', function (
 After registration, also wire:
 
 1. **Style schema** — extend `elementor/atomic-widgets/styles/schema` (or augment inside your module) so target style keys accept a union with your prop type. Follow `classes/style-schema.php` for color/font patterns.
-2. **Style transformer** — register on `elementor/atomic-widgets/styles/transformers/register` if values need id → `var(--label)` resolution. Color and font use `Global_Variable_Transformer` in `classes/style-transformers.php`.
+2. **Style transformer** — register on `elementor/atomic-widgets/styles/transformers/register` if values need id → `var(--label)` resolution at PHP render time. Color and font use `Global_Variable_Transformer` in `classes/style-transformers.php`; size types currently rely on the editor `variableTransformer` only (see [usage-in-props.md](./usage-in-props.md#resolution-pipeline)).
 3. **REST validation** — `Rest_Api::is_valid_variable_type()` reads `array_keys( $registry->all() )`; no extra REST wiring needed once registered.
 4. **Storage adapter** — if values need non-string encoding, extend `Adapters\Prop_Type_Adapter` schema map.
 
@@ -92,6 +92,7 @@ Call from `registerVariableTypes()` in `packages/packages/core/editor-variables/
 
 - **Registry API** — `register( string $key, Transformable_Prop_Type $prop_type )`, `get()`, `all()` (`variable-types-registry.php`).
 - **Built-in registration** — `hooks.php` → `register_variable_types()` hooks `elementor/variables/register`.
+- **PHP size gap** — `Style_Transformers` does not register `Global_Variable_Transformer` for size keys; editor canvas uses JS `variableTransformer` instead.
 - **Prop type classes** — `modules/variables/prop-types/*.php`; each extends `String_Prop_Type` with a static `get_key()`.
 - **Size schema gating** — `Size_Style_Schema` skips angle/time units; grid-track size variables need Pro ≥ 4.2 (`PRO_VERSION_FOR_GRID_TRACK_VARIABLES`).
 - **Quota** — color/font promotion limits set in `Module::get_quota_config()` (100,000 each in current code).
