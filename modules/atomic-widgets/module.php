@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resol
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
@@ -450,6 +451,7 @@ class Module extends BaseModule {
 		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
 		$registry->register( Boolean_Prop_Type::get_key(), new Boolean_Plain_Resolver() );
 		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
+		$registry->register( Size_Prop_Type::get_key(), new Size_Plain_Resolver() );
 	}
 
 	public function get_settings_plain_values_resolver(): Plain_Values_Resolver {

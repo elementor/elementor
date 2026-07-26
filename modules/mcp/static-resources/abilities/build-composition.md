@@ -1,6 +1,7 @@
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
+- [elementor://interactions/schema] - Flat interaction keys, allowed values, defaults, and Pro-gated fields for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 
 # TOOL SUPPORT
@@ -137,6 +138,25 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Use rem/em exclusively for responsive scaling
 - Generous padding on CTAs: min 1rem 2.5rem
 
+# INTERACTIONS
+Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of **flat scalar** interaction objects (max **5 per element**).
+
+Read [elementor://interactions/schema] for allowed values, Pro-gated fields, and defaults before adding interactions.
+
+Shape (flat scalar keys — server wraps into transformable PropTypes internally):
+
+```json
+{ "on": "load", "effect": "fade", "type": "in", "for": 600, "after": 0, "ease": "easeIn" }
+```
+
+- Required: `on`, `effect`, `type`
+- Optional timing: `for` (duration ms), `after` (delay ms), `ease`
+- Optional direction: `direction` (relevant for slide)
+- Optional breakpoints: `except` (array of breakpoint IDs to disable)
+- Pro-only keys (see schema): `repeat`, `replay`, `relativeTo`, `start`, `end`, `keyframes` (when `effect` is `custom`)
+
+If the Interactions experiment is inactive, interactions are skipped and a warning is returned. Invalid values fail the call with `elementor_invalid_interactions`.
+
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
@@ -155,6 +175,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT)
 - **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
+- **interactions**: configuration-id → array of flat scalar interaction objects (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
 - **parent_id**: ID of the parent container (omit to insert at document root)
 - **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting

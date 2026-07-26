@@ -15,6 +15,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -139,7 +140,18 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $style_result['error'];
 		}
 
-		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'] );
+		$interactions_applier = new Interactions_Applier();
+		$widget_type_by_config_id = $this->build_widget_type_map( $index );
+		$interactions_result = $interactions_applier->apply(
+			$index,
+			$this->as_map( $input['interactions'] ?? [] ),
+			$widget_type_by_config_id
+		);
+		if ( $interactions_result['error'] ) {
+			return $interactions_result['error'];
+		}
+
+		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] );
 
 		if ( $dry_run ) {
 			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
@@ -229,6 +241,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'additionalProperties' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
+					],
+				],
+				'interactions' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Record mapping configuration-id → array of flat scalar interaction objects (max 5 per element). Read elementor://interactions/schema for allowed values and defaults.',
+					'additionalProperties' => [
+						'type' => 'array',
+						'items' => [ 'type' => 'object' ],
 					],
 				],
 				'parent_id' => [
@@ -332,6 +353,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		return $response;
+	}
+
+	private function build_widget_type_map( array $index ): array {
+		$map = [];
+		foreach ( $index as $config_id => $node ) {
+			if ( isset( $node['widgetType'] ) ) {
+				$map[ $config_id ] = $node['widgetType'];
+			}
+		}
+		return $map;
 	}
 
 	private function as_map( $value ): array {
