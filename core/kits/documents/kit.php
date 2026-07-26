@@ -210,6 +210,7 @@ class Kit extends PageBase {
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
 			'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
 			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
+			'settings-agents' => Tabs\Settings_Agents::class,
 		];
 
 		foreach ( $tabs as $id => $class ) {

@@ -23,7 +23,8 @@ PanelMenu.createGroupItems = ( groupName ) => {
 };
 
 PanelMenu.initGroups = () => {
-	const settingsItems = PanelMenu.createGroupItems( 'settings' ),
+	const agentsItems = PanelMenu.createGroupItems( 'agents' ),
+		settingsItems = PanelMenu.createGroupItems( 'settings' ),
 		additionalSettingsProps = {
 			name: 'settings-additional-settings',
 			icon: 'eicon-tools',
@@ -45,6 +46,11 @@ PanelMenu.initGroups = () => {
 			name: 'theme_style',
 			title: __( 'Theme Style', 'elementor' ),
 			items: PanelMenu.createGroupItems( 'theme-style' ),
+		},
+		{
+			name: 'agents',
+			title: __( 'Agents', 'elementor' ),
+			items: agentsItems,
 		},
 		{
 			name: 'settings',
