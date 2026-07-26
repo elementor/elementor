@@ -776,6 +776,39 @@ class Utils {
 	}
 
 	/**
+	 * @var string[]|null
+	 */
+	private static $resolved_allowed_html_wrapper_tags;
+
+	/**
+	 * Get allowed HTML wrapper tags.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return string[]
+	 */
+	public static function get_allowed_html_wrapper_tags(): array {
+		if ( null !== self::$resolved_allowed_html_wrapper_tags ) {
+			return self::$resolved_allowed_html_wrapper_tags;
+		}
+
+		/**
+		 * Allowed HTML wrapper tags.
+		 *
+		 * Filters the list of allowed HTML tag names used by `validate_html_tag()`.
+		 *
+		 * @since 4.4.0
+		 *
+		 * @param string[] $tags A list of lowercase HTML tag name strings.
+		 */
+		$tags = apply_filters( 'elementor/allowed_html_wrapper_tags', self::ALLOWED_HTML_WRAPPER_TAGS );
+
+		self::$resolved_allowed_html_wrapper_tags = self::normalize_allowed_html_wrapper_tags( $tags );
+
+		return self::$resolved_allowed_html_wrapper_tags;
+	}
+
+	/**
 	 * Validate an HTML tag against a safe allowed list.
 	 *
 	 * @param string $tag
@@ -783,7 +816,26 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		return $tag && in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+		return $tag && in_array( strtolower( $tag ), self::get_allowed_html_wrapper_tags(), true ) ? $tag : 'div';
+	}
+
+	/**
+	 * @param array $tags
+	 *
+	 * @return string[]
+	 */
+	private static function normalize_allowed_html_wrapper_tags( array $tags ): array {
+		$normalized_tags = [];
+
+		foreach ( $tags as $tag ) {
+			if ( ! is_string( $tag ) ) {
+				continue;
+			}
+
+			$normalized_tags[] = strtolower( $tag );
+		}
+
+		return array_values( array_unique( $normalized_tags ) );
 	}
 
 	/**

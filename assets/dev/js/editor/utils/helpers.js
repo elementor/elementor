@@ -3,11 +3,14 @@ import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import DOMPurify, { isValidAttribute } from 'dompurify';
 
-const allowedHTMLWrapperTags = [
+const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
+	'a',
 	'article',
 	'aside',
+	'button',
 	'div',
 	'footer',
+	'form',
 	'h1',
 	'h2',
 	'h3',
@@ -21,6 +24,12 @@ const allowedHTMLWrapperTags = [
 	'section',
 	'span',
 ];
+
+function getAllowedHTMLWrapperTags() {
+	const { allowedHTMLWrapperTags } = globalThis.elementorCommon?.config ?? {};
+
+	return Array.isArray( allowedHTMLWrapperTags ) ? allowedHTMLWrapperTags : DEFAULT_ALLOWED_HTML_WRAPPER_TAGS;
+}
 
 module.exports = {
 	container: ContainerHelper,
@@ -694,7 +703,9 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag?.toLowerCase() ) ? tag : 'div';
+		const allowedTags = getAllowedHTMLWrapperTags();
+
+		return allowedTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {

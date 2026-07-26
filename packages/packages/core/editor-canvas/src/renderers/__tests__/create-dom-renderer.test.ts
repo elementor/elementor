@@ -1,7 +1,41 @@
 /* eslint-disable testing-library/render-result-naming-convention */
 import { createDomRenderer } from '../create-dom-renderer';
 
+const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
+	'a',
+	'article',
+	'aside',
+	'button',
+	'form',
+	'div',
+	'footer',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'header',
+	'main',
+	'nav',
+	'p',
+	'section',
+	'span',
+];
+
+type ElementorCommonWindow = typeof globalThis & {
+	elementorCommon?: {
+		config?: {
+			allowedHTMLWrapperTags?: string[];
+		};
+	};
+};
+
 describe( 'createDomRenderer', () => {
+	afterEach( () => {
+		delete ( globalThis as ElementorCommonWindow ).elementorCommon;
+	} );
+
 	it.each( [
 		{
 			title: 'basic string',
@@ -14,6 +48,12 @@ describe( 'createDomRenderer', () => {
 			template: `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`,
 			context: { tag: 'a' },
 			expected: '<a></a>',
+		},
+		{
+			title: 'allowed form html tag',
+			template: `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`,
+			context: { tag: 'form' },
+			expected: '<form></form>',
 		},
 		{
 			title: 'disallowed html tags',
@@ -62,5 +102,24 @@ describe( 'createDomRenderer', () => {
 
 		// Assert.
 		expect( result ).toBe( expected );
+	} );
+
+	it( 'should validate a tag added via localized config', async () => {
+		// Arrange.
+		( globalThis as ElementorCommonWindow ).elementorCommon = {
+			config: {
+				allowedHTMLWrapperTags: [ ...DEFAULT_ALLOWED_HTML_WRAPPER_TAGS, 'custom-tag' ],
+			},
+		};
+		const domRenderer = createDomRenderer();
+		const template = `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`;
+
+		domRenderer.register( 'test-template', template );
+
+		// Act.
+		const result = await domRenderer.render( 'test-template', { tag: 'custom-tag' } );
+
+		// Assert.
+		expect( result ).toBe( '<custom-tag></custom-tag>' );
 	} );
 } );

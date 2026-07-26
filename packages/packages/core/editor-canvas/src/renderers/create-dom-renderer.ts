@@ -5,6 +5,36 @@ export type DomRenderer = {
 	render: TwingEnvironment[ 'render' ];
 };
 
+const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
+	'a',
+	'article',
+	'aside',
+	'button',
+	'div',
+	'footer',
+	'form',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'header',
+	'main',
+	'nav',
+	'p',
+	'section',
+	'span',
+] as const;
+
+type AllowedHtmlWrapperTagsConfig = {
+	elementorCommon?: {
+		config?: {
+			allowedHTMLWrapperTags?: string[];
+		};
+	};
+};
+
 export function createDomRenderer(): DomRenderer {
 	const loader = createArrayLoader( {} );
 	const environment = createEnvironment( loader );
@@ -18,29 +48,21 @@ export function createDomRenderer(): DomRenderer {
 	};
 }
 
-function escapeHtmlTag( value: string ) {
-	const allowedTags = [
-		'a',
-		'article',
-		'aside',
-		'button',
-		'div',
-		'footer',
-		'h1',
-		'h2',
-		'h3',
-		'h4',
-		'h5',
-		'h6',
-		'header',
-		'main',
-		'nav',
-		'p',
-		'section',
-		'span',
-	];
+function getAllowedHtmlWrapperTags(): readonly string[] {
+	const configTags = ( globalThis as AllowedHtmlWrapperTagsConfig ).elementorCommon?.config?.allowedHTMLWrapperTags;
 
-	return allowedTags.includes( value ) ? value : 'div';
+	if ( Array.isArray( configTags ) ) {
+		return configTags;
+	}
+
+	return DEFAULT_ALLOWED_HTML_WRAPPER_TAGS;
+}
+
+function escapeHtmlTag( value: string ) {
+	const allowedTags = getAllowedHtmlWrapperTags();
+	const normalizedTag = value?.toLowerCase?.() ?? '';
+
+	return allowedTags.includes( normalizedTag ) ? value : 'div';
 }
 
 function escapeURL( value: string ) {
