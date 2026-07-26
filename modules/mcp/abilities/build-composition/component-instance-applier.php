@@ -136,7 +136,10 @@ class Component_Instance_Applier {
 			'component_instance' => [
 				'$$type' => 'component-instance',
 				'value'  => [
-					'component_id' => [ '$$type' => 'number', 'value' => $component_id ],
+					'component_id' => [
+						'$$type' => 'number',
+						'value' => $component_id,
+					],
 					'overrides'    => [
 						'$$type' => 'overrides',
 						'value'  => $overrides_value,
@@ -177,7 +180,10 @@ class Component_Instance_Applier {
 				'value'  => [
 					'override_key'   => $override_key,
 					'override_value' => $override_value,
-					'schema_source'  => [ 'type' => 'component', 'id' => $component_id ],
+					'schema_source'  => [
+						'type' => 'component',
+						'id' => $component_id,
+					],
 				],
 			];
 		}
@@ -230,7 +236,10 @@ class Component_Instance_Applier {
 				'component_instance' => [
 					'$$type' => 'component-instance',
 					'value'  => [
-						'component_id' => [ '$$type' => 'number', 'value' => $component_id ],
+						'component_id' => [
+							'$$type' => 'number',
+							'value' => $component_id,
+						],
 					],
 				],
 			],
