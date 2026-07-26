@@ -32,6 +32,8 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 		// Assert
 		$this->assertArrayHasKey( 'settings-agents', $this->kit->get_tabs() );
 	}
+
+	public function test_before_save__stores_llms_under_agents_key() {
 		// Arrange
 		$tab = new Settings_Agents( $this->kit );
 		$llms_content = '# Example llms.txt';
