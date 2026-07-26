@@ -15,6 +15,11 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'agents_llms_txt';
 
+	const PACKAGES = [
+		'editor-kit-settings',
+		'editor-kit-agents',
+	];
+
 	public function get_name() {
 		return 'agents';
 	}
@@ -34,6 +39,10 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		}
 	}
 
 	public function maybe_serve_llms_txt() {
@@ -66,6 +75,10 @@ class Module extends BaseModule {
 		$llms = $agents['llms'];
 
 		return is_string( $llms ) ? $llms : '';
+	}
+
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
 	}
 
 	private function is_llms_txt_request(): bool {
