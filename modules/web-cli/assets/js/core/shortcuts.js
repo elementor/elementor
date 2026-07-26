@@ -73,7 +73,7 @@ export default class Shortcuts {
 			if ( handler.exclude && -1 !== handler.exclude.indexOf( 'input' ) ) {
 				const $target = jQuery( event.target );
 
-				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"]' ).length ) {
+				if ( $target.is( ':input, .elementor-input' ) || $target.closest( '[contenteditable="true"], .monaco-editor' ).length ) {
 					return false;
 				}
 			}
