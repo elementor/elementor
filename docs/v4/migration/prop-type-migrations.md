@@ -3,7 +3,7 @@
 > Audience: internal
 > Module: `modules/atomic-widgets/prop-type-migrations/`
 > Status: draft
-> Related: [backward-compatibility.md](./backward-compatibility.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [../../migrations/README.md](../../migrations/README.md)
+> Related: [backward-compatibility.md](./backward-compatibility.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [../../../migrations/README.md](../../../migrations/README.md)
 
 ## What it is
 
@@ -45,7 +45,8 @@ Bundled manifests live at repo root `migrations/` (`manifest.json` + `operations
 ```json
 {
   "widgetKeys": {
-    "e-form-submit-button": [{ "from": "label", "to": "text" }]
+    "e-form-submit-button": [{ "from": "label", "to": "text" }],
+    "e-form-textarea": [{ "from": "maxlength", "to": "length" }]
   },
   "propTypes": {
     "html-v2-to-html-v3": {
@@ -83,7 +84,9 @@ Up migration wraps `value.content` in a nested `string` prop and updates `$$type
 
 ### Example: global classes
 
-Global class posts store style variants under kit meta (`_elementor_global_classes`). `Global_Class_Post::migrate_data()` calls the same `Migrations_Orchestrator::migrate()` with the class post ID and meta key. Prop-type mismatches inside `items[].variants[].props` are migrated independently from document `_elementor_data`.
+Each global class is stored as a CPT post. `Global_Class_Post::migrate_data()` calls `Migrations_Orchestrator::migrate()` with the post ID and meta key `_elementor_global_class_data` (or `_elementor_global_class_data_preview` in draft context). Prop-type mismatches inside `variants[].props` are migrated independently from document `_elementor_data`.
+
+Legacy kit-level bundles (`_elementor_global_classes` on the active kit) use an `items[].variants[].props` shape if still present; the same orchestrator walks whichever tree the caller passes.
 
 ### Bundled prop-type snapshot (current manifest)
 
@@ -127,4 +130,4 @@ Remote manifest is cached in transient `elementor_migrations_manifest` (12-hour 
 - [backward-compatibility.md](./backward-compatibility.md) — experiment gate and document-load hook
 - [../fundamentals/transformers.md](../fundamentals/transformers.md) — value transformation (not migration)
 - [../global-classes/data-model.md](../global-classes/data-model.md) — global class storage shape
-- [../../migrations/README.md](../../migrations/README.md) — authoring guide for new operation files
+- [../../../migrations/README.md](../../../migrations/README.md) — authoring guide for new operation files

@@ -52,7 +52,7 @@ Documents are not the only migration target:
 | Data | Identifier meta key | Trigger |
 |------|-------------------|---------|
 | Page/kit document tree | `_elementor_data` | `elementor/document/load/data` filter |
-| Global class post | `_elementor_global_classes` (or preview meta) | `Global_Class_Post::get_data()` |
+| Global class CPT post | `_elementor_global_class_data` / `_elementor_global_class_data_preview` | `Global_Class_Post::get_data()` |
 
 Each entity is cached independently by `(post_id, data_identifier, manifest_hash)`.
 
@@ -79,7 +79,7 @@ elementor/document/after_migrate
 
 Arguments: `( Document $document, array $migrated_data )`
 
-Known consumer: **components module** — on `Component_Document`, calls `align_overridable_props_with_elements()` after migration so override props match nested element schemas.
+Known consumer: **components module** — `after_component_migrate()` runs only when the migrated document is a `Component_Document`, calling `align_overridable_props_with_elements()` so override props match nested element schemas.
 
 ### Rollback behavior
 

@@ -24,4 +24,4 @@ Reference for how Elementor v4 upgrades stored atomic data when prop-type schema
 - [../fundamentals/prop-value.md](../fundamentals/prop-value.md) — `{ $$type, value }` shape migrations operate on
 - [../global-classes/data-model.md](../global-classes/data-model.md) — kit-scoped class storage migrated via the same orchestrator
 - [../opt-in/activation.md](../opt-in/activation.md) — enabling v4 experiments that may introduce schema changes requiring migration
-- [../../migrations/README.md](../../migrations/README.md) — upstream manifest authoring guide (repo root `migrations/`)
+- [../../../migrations/README.md](../../../migrations/README.md) — upstream manifest authoring guide (repo root `migrations/`)

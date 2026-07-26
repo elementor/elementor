@@ -51,7 +51,7 @@ User flow:
 2. Confirm → AJAX `editor_v4_opt_in` → page reload with success toast.
 3. When enrolled, primary button becomes **Try out the new experience**; **Deactivate** opens opt-out terms.
 
-Opt-in terms UI copy notes that **Containers** will also be activated (see bundled features below). Opt-out warns that atomic elements, classes, and variables content will no longer appear on the site.
+Opt-in terms UI copy (`opt-in-terms.js`) references **Containers and Nested Elements** — see [UI copy vs code](#ui-copy-vs-code-containers-and-nested-elements). Opt-out warns that atomic element, class, and variable content will no longer appear on the site.
 
 ### Welcome screen
 
@@ -63,11 +63,7 @@ Shown in the editor when **all** of:
 - User meta `_e_welcome_popover_displayed` is not set
 - Site is **not** a new installation (`Upgrade_Manager::is_new_installation()`)
 
-Sets `_e_welcome_popover_displayed` after first display.
-
-### Panel chip
-
-`PanelChip` enqueues `editor-v4-opt-in-alphachip` on `elementor/editor/before_enqueue_scripts`. Listens for `alphachip:open` custom event to mount a promotion popover on panel category headings.
+Sets `_e_welcome_popover_displayed` after first display. `PanelChip` (always loaded) enqueues the editor alpha chip and promotion popover on `alphachip:open`.
 
 ### Bundled experiment toggles
 
@@ -94,21 +90,37 @@ Sets `_e_welcome_popover_displayed` after first display.
 | Variables | `e_variables` |
 | Components | `e_components` |
 
-**Not in either list** (confirmed in source — must be toggled separately):
+**Not in either list** (confirmed in source — must be toggled separately or are unaffected):
 
 | Experiment | Notes |
 |------------|-------|
+| `nested-elements` | See [UI copy vs code](#ui-copy-vs-code-containers-and-nested-elements) below — not toggled by `opt_in_v4()` |
 | `e_interactions` | Requires `e_atomic_elements`; default active but not bundled |
 | `e_variables_manager` | Sub-feature of variables; default active but not bundled |
 | `editor_mcp` | Gates JS `editor-mcp` package only |
 | `e_bc_migrations` | BC migrations; separate from opt-in |
 | `container` | Opt-out does **not** deactivate containers |
 
-The opt-in terms dialog mentions "Containers and Nested Elements", but **`nested-elements` is not in `OPT_IN_FEATURES`** — only `container` is toggled. TBD — verify with v4 team whether nested-elements activation is intentional omission or handled elsewhere.
+### UI copy vs code: Containers and Nested Elements
+
+**Known discrepancy** — do not assume the terms dialog matches `OPT_IN_FEATURES`.
+
+| Source | What it says / does |
+|--------|---------------------|
+| Opt-in terms UI (`opt-in-terms.js`) | "When you activate, you'll also be activating **Containers and Nested Elements**." |
+| `Opt_In::OPT_IN_FEATURES` | Only `container` is listed — **`nested-elements` is absent** |
+| `nested-elements` experiment (`modules/nested-elements/module.php`) | `default: active`, `mutable: false`, `hidden: true`, `dependencies: ['container']` — not user-toggleable via Experiments UI on most sites |
+
+On opt-in, `opt_in_v4()` activates `container` only — not `nested-elements`. Because `nested-elements` is already default-active and immutable, users usually see no Nested Elements change; the UI copy nonetheless overstates what PHP toggles. Open product decision: update copy or add `nested-elements` to `OPT_IN_FEATURES`.
 
 ### API endpoints
 
-AJAX actions `editor_v4_opt_in` / `editor_v4_opt_out`, and REST `POST elementor/v1/operations/opt-in-v4` — all require `manage_options` and delegate to the same PHP handlers. Page reload follows client-side success.
+| Channel | Opt-in | Opt-out |
+|---------|--------|---------|
+| AJAX (`elementor/ajax`) | `editor_v4_opt_in` | `editor_v4_opt_out` |
+| REST | `POST elementor/v1/operations/opt-in-v4` | **No REST route** — opt-out is AJAX-only |
+
+All handlers require `manage_options`. Settings page reloads after AJAX success; `unlock-v4-promo` uses the REST opt-in route.
 
 ### New-site auto-enable
 
@@ -121,7 +133,7 @@ AJAX actions `editor_v4_opt_in` / `editor_v4_opt_out`, and REST `POST elementor/
 ],
 ```
 
-Same `minimum_installation_version: 4.0.0` pattern exists for `e_atomic_elements` and `e_classes`. Other v4 experiments (`e_variables`, `e_components`, `e_interactions`) use module-level defaults (typically active) but are **not** toggled by the opt-in bundle unless the admin uses the settings page or Experiments screen.
+Same `minimum_installation_version: 4.0.0` pattern exists for `e_atomic_elements` and `e_classes` (each registers its own `new_site` block). `e_variables`, `e_components`, and `e_interactions` have no `new_site` rule — they rely on module-level defaults (typically active) and are **not** toggled by the opt-in bundle unless the admin uses the settings page or Experiments screen.
 
 ### Data impact
 
@@ -129,9 +141,9 @@ Same `minimum_installation_version: 4.0.0` pattern exists for `e_atomic_elements
 |--------|----------------------|
 | **Opt-in** | Enables experiment flags only — no automatic data migration from the opt-in handler itself. Existing pages are unchanged; new atomic elements/classes/variables become available. BC migrations (`e_bc_migrations`) may upgrade prop shapes on next document load (see [backward-compatibility.md](../migration/backward-compatibility.md)). |
 | **Opt-out** | Disables v4 experiments. Per opt-out terms: atomic element content, global classes, and variables **will not render** on the frontend while features are off. Data remains in the database (meta/kit JSON) but is inaccessible to the v4 editor surfaces. Containers stay in their current state. |
-| **Re opt-in** | TBD — verify with v4 team whether previously created atomic content is fully restored without manual intervention. |
+| **Re opt-in** | Data remains in DB; re-enabling experiments should restore editor access to existing atomic content (no cleanup migration runs on opt-out). TBD — confirm edge cases with v4 team. |
 
-Opt-in does not delete post meta. Opt-out does not run a cleanup migration.
+Opt-in does not delete post meta.
 
 ## Extension
 
