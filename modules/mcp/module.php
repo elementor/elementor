@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\Mcp\RestApi\Document_Render_REST_API;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
 
@@ -25,6 +26,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		( new Mcp_Proxy_REST_API() )->register_hooks();
+		( new Document_Render_REST_API() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
@@ -56,6 +58,7 @@ class Module extends BaseModule {
 			return;
 		}
 
+		( new Abilities\Render_Page_Ability() )->register();
 		( new Abilities\Get_Structure_Ability() )->register();
 		( new Abilities\Update_Settings_Ability() )->register();
 		( new Abilities\Create_Page_Ability() )->register();
@@ -90,6 +93,7 @@ class Module extends BaseModule {
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
 			[
+				'elementor/render-page',
 				'elementor/get-page-structure',
 				'elementor/update-page-settings',
 				'elementor/create-page',

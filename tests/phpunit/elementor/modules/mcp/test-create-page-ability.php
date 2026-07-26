@@ -81,6 +81,7 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 
 		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
 		$mock_document->method( 'get_edit_url' )->willReturn( 'https://example.com/edit/1' );
+		$mock_document->method( 'get_wp_preview_url' )->willReturn( 'https://example.com/?p=1&preview_id=1&preview_nonce=abc&preview=true' );
 
 		$mock_docs = $this->createMock( Documents_Manager::class );
 		$mock_docs->method( 'get' )->willReturn( $mock_document );
@@ -93,6 +94,13 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'id', $result );
 		$this->assertArrayHasKey( 'edit_url', $result );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'render_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
+		$this->assertStringContainsString( '/mcp/documents/', $result['render_url'] );
 		$this->assertArrayHasKey( 'status', $result );
 		$this->assertArrayHasKey( 'type', $result );
 		$this->assertSame( 'page', $result['type'] );
@@ -107,6 +115,7 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 
 		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
 		$mock_document->method( 'get_edit_url' )->willReturn( 'https://example.com/edit/1' );
+		$mock_document->method( 'get_wp_preview_url' )->willReturn( 'https://example.com/?p=1&preview_id=1&preview_nonce=abc&preview=true' );
 
 		$mock_docs = $this->createMock( Documents_Manager::class );
 		$mock_docs->method( 'get' )->willReturnCallback( function ( $post_id ) use ( &$captured_post_id, $mock_document ) {

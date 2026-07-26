@@ -17,6 +17,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -46,11 +47,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status' ],
+				'required' => [ 'status', 'preview_url', 'render_url', 'llm_instructions' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
 					'post_id' => [ 'type' => 'integer' ],
 					'element_id' => [ 'type' => 'string' ],
+					'preview_url' => Document_Mutation_Links::preview_schema_property(),
+					'render_url' => Document_Mutation_Links::render_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 					'version' => [ 'type' => 'string' ],
 					'warnings' => [
 						'type' => 'array',
@@ -286,7 +290,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			'post_id' => (int) $document->get_main_id(),
 			'element_id' => $element_id,
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
-		];
+		] + Document_Mutation_Links::for_document( $document, $element_id );
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +25,9 @@ class Update_Settings_Ability extends Abstract_Ability {
 				'properties' => [
 					'success' => [ 'type' => 'boolean' ],
 					'post_id' => [ 'type' => 'integer' ],
+					'preview_url' => Document_Mutation_Links::preview_schema_property(),
+					'render_url' => Document_Mutation_Links::render_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
 			],
 			[
@@ -85,6 +89,10 @@ class Update_Settings_Ability extends Abstract_Ability {
 		return [
 			'success' => true,
 			'post_id' => $post_id,
-		];
+		] + Document_Mutation_Links::for_document(
+			$document,
+			null,
+			__( 'Page settings updated successfully.', 'elementor' )
+		);
 	}
 }

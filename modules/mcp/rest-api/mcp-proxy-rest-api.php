@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
+use Elementor\Modules\Mcp\Abilities\Render_Page_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
@@ -38,6 +39,7 @@ class Mcp_Proxy_REST_API {
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
 			'build-composition' => fn( array $input ) => ( new Build_Composition_Ability() )->execute( $input ),
+			'render-page' => fn( array $input ) => ( new Render_Page_Ability() )->execute( $input ),
 			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
 			'manage-elements' => fn( array $input ) => ( new Manage_Elements_Ability() )->execute( $input ),
 			'list-resources' => fn( array $input ) => ( new List_Resources_Ability() )->execute( $input ),
