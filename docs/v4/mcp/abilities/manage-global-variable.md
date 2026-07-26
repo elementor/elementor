@@ -104,6 +104,6 @@ New variable types register through `Variable_Types_Registry` and `elementor/var
 
 ## See also
 
-- **See also:** [manage-global-variable guide resource](../resources.md) — URI `elementor://variables/tools/manage-global-variable-guide` for the full operations guide (naming rules, Pro types, examples)
+- [../resources.md](../resources.md) — `elementor://variables/tools/manage-global-variable-guide` (full operations guide: naming rules, Pro types, examples)
 - [../composition-workflow.md](../composition-workflow.md) — step 3
 - [../../variables/usage-in-styles.md](../../variables/usage-in-styles.md) — `var(--label)` in CSS

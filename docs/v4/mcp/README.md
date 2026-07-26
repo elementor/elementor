@@ -13,7 +13,7 @@ Reference for Elementor v4 agent integration: **server-side PHP abilities** expo
 | **PHP abilities** | `modules/mcp/abilities/*.php` | External MCP hosts (Claude Desktop, Cursor, etc.) via `McpAdapter` / `Mcp_Proxy_REST_API` | [abilities/](abilities/README.md), [resources.md](resources.md), [composition-workflow.md](composition-workflow.md) |
 | **JS in-editor tool registry** | `packages/packages/libs/editor-mcp/src/mcp-registry.ts` | Elementor's in-editor AI (Angie) and WebMCP, registered by v4 editor packages | [registering-editor-tools.md](registering-editor-tools.md) |
 
-These are separate stacks. PHP abilities run on the WordPress server and do not require the `editor_mcp` experiment. The JS registry runs in the browser editor and is what v4 packages (`editor-canvas`, `editor-global-classes`, `editor-variables`, `editor-interactions`) use to expose tools to Angie/WebMCP.
+These are separate stacks. PHP abilities run on the WordPress server; the JS registry runs in the browser editor and is what v4 packages (`editor-canvas`, `editor-global-classes`, `editor-variables`, `editor-interactions`) use to expose tools to Angie/WebMCP. Neither stack is gated by the `editor_mcp` experiment today — that flag is registered but not yet wired (see [overview.md](overview.md)).
 
 ## Files
 
@@ -24,7 +24,7 @@ These are separate stacks. PHP abilities run on the WordPress server and do not 
 | [composition-workflow.md](composition-workflow.md) | End-to-end agent workflow: variables → classes → XML composition |
 | [design-guidance.md](design-guidance.md) | Short design principles for agents; links to full best-practices resource |
 | [registering-editor-tools.md](registering-editor-tools.md) | JS registration API (`getMCPByDomain`, `addTool`, adapters) — not a tool catalog |
-| [abilities/](abilities/README.md) | v4-specific PHP ability reference (7 abilities) |
+| [abilities/](abilities/README.md) | v4-specific PHP ability reference (6 abilities) |
 
 ## Reading order
 

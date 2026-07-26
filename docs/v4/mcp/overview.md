@@ -22,13 +22,13 @@ Elementor exposes two MCP-related surfaces for v4 work:
 
 ### `editor_mcp` experiment scope
 
-The experiment constant is `editor_mcp` (`EXPERIMENT_EDITOR_MCP` in `modules/atomic-widgets/module.php`). It is registered as a hidden dev experiment with default **active**.
-
-**Intended scope:** gate inclusion of the JS `editor-mcp` package (in-editor tool UI and adapters), **not** PHP abilities registration.
+The experiment constant is `editor_mcp` (`EXPERIMENT_EDITOR_MCP` in `modules/atomic-widgets/module.php`). It is registered as a hidden dev experiment with default **active** (`register_experimental_features()`, lines 244–251).
 
 **PHP abilities are unconditional.** `modules/mcp/module.php` registers abilities when `McpAdapter` and `wp_register_ability` exist — no experiment check.
 
-**JS package gating:** TBD — verify with v4 team. The experiment is defined in `modules/atomic-widgets/module.php`, but an `is_feature_active( 'editor_mcp' )` filter on `elementor/editor/v2/packages` was not found in the current branch. `editor-mcp` appears in `Editor_Loader::EXTENSIONS` unconditionally.
+**JS package gating: not wired yet.** Repo-wide search shows `editor_mcp` is **never read** — no `is_feature_active( 'editor_mcp' )` call exists in PHP, TypeScript, or build config. The `@elementor/editor-mcp` lib loads unconditionally via `Editor_Loader::EXTENSIONS` in `core/editor/loader/editor-loader.php` (includes `'editor-mcp'` at line 50), merged into the editor package list through `elementor/editor/v2/packages`. The experiment name and description imply a future kill-switch for in-editor MCP tooling, but toggling it in Experiments today has **no effect** on MCP loading.
+
+**Practical implication:** Both stacks (PHP abilities for external hosts and JS registry for Angie/WebMCP) are active regardless of `editor_mcp`. Treat the experiment as documentation/orientation until code connects it.
 
 ### WordPress Abilities API hooks
 

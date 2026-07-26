@@ -138,7 +138,7 @@ New adapters: implement `IMcpRegistrationAdapter`, call `registerMcpAdapter()` b
 - Registry: module-level `mcpRegistry` map namespace → `McpServer`
 - `registerTool` on server + adapter fan-out via `callAdapters()`
 - Tests use `mockMcpRegistry()` when `globalThis.jest` is defined
-- `editor-mcp` package loaded via `Editor_Loader::EXTENSIONS`; experiment gating TBD — verify with v4 team
+- `editor-mcp` package loaded unconditionally via `Editor_Loader::EXTENSIONS` (`core/editor/loader/editor-loader.php`); the `editor_mcp` experiment is registered but not wired to any `is_feature_active()` check yet
 
 ## See also
 

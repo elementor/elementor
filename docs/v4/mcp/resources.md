@@ -35,9 +35,9 @@ For external MCP hosts, use the general `elementor/read-resource` ability (docum
 
 ### Related resource (not in v4 catalog table)
 
-| URI | Ability ID | Notes |
-|-----|------------|-------|
-| `elementor://variables/tools/manage-global-variable-guide` | `elementor/manage-global-variable-guide` | Detailed guide for `manage-global-variable`; see [abilities/manage-global-variable.md](abilities/manage-global-variable.md) |
+| URI | Ability ID | MIME type | Notes |
+|-----|------------|-----------|-------|
+| `elementor://variables/tools/manage-global-variable-guide` | `elementor/manage-global-variable-guide` | `text/plain` | Detailed guide for `manage-global-variable`; see [abilities/manage-global-variable.md](abilities/manage-global-variable.md) |
 
 ### Label vs internal id
 
