@@ -107,9 +107,11 @@ Other schema triggers (`hover`, `click`, `scrollOn`) are **not** executed on the
 
 `interactions-breakpoints.js` reads `ElementorInteractionsConfig.breakpoints`, tracks active breakpoint on resize, and `skipInteraction()` excludes items whose `breakpoints.excluded` contains the active label.
 
-### Legacy fallback
+### Legacy fallback (`data-interactions`)
 
-If footer JSON is absent, `interactions.js` falls back to `[data-interactions]` attributes on elements. TBD — verify with v4 team whether legacy attributes are still emitted by atomic renderers.
+When the `#elementor-interactions-data` script tag is absent, `interactions.js` falls back to per-element `[data-interactions]` attributes. The primary path is footer JSON; the fallback remains for compatibility.
+
+Some atomic Twig templates still emit `data-interactions` alongside `data-interaction-id` — notably tabs subtree, `atomic-form`, and `atomic-self-hosted-video` (`_macros.html.twig` defines `render_interactions`). Container elements (flexbox, div-block, grid) emit only `data-interaction-id` via `render_data_attributes`.
 
 ### Config localization
 
@@ -133,7 +135,7 @@ N/A — no public frontend registration hook today. Internal changes require edi
 | `assets/js/interactions-breakpoints.js` | Responsive skip logic |
 | `assets/js/editor-interactions.js` | Preview iframe (editor only) |
 
-**DOM binding** — elements must expose `data-interaction-id` matching the element id used in the cache/collector. TBD — verify with v4 team which atomic renderer sets this attribute.
+**DOM binding** — `data-interaction-id` holds the **element id** (`origin_id ?? element id` from `Atomic_Element_Base::get_interaction_id()`), not the per-item `interaction_id` field. Set on every atomic element via Twig (`interaction_id` template variable) or `add_render_attribute( '_wrapper', 'data-interaction-id', … )`. Footer JSON keys by element id; `interactions.js` queries `[data-interaction-id="${elementId}"]`.
 
 **Transition workaround** — `applyAnimation` temporarily sets `element.style.transition = 'none'` because CSS transitions interfere with Motion animations.
 

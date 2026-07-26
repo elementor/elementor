@@ -58,7 +58,7 @@ Registered in `init.ts` (base-tier options shown; Pro options appear via promoti
 | `replay` | `Replay` | `no` |
 | `repeat` | `Repeat` | (no fixed options) |
 
-Additional control types in the registry type union but not registered in `init.ts`: `duration`, `delay`, `times`, `relativeTo`, `start`, `end`, `customEffects` — TBD verify with v4 team whether these are wired elsewhere or pending.
+**Wiring outside the registry** — `duration` and `delay` render inline in `interaction-details.tsx` via `TimeFrameIndicator` (not `registerInteractionsControl`). Registry slots `relativeTo`, `start`, `end`, `times`, and `customEffects` exist in the type union and `InteractionDetails` looks them up via `getInteractionsControl()`, but only the seven types above are registered in `init.ts` today — Pro-gated controls are expected to register from a companion package (e.g. Elementor Pro) at init time.
 
 Pro-gated triggers/effects use `PromotionSelect` with upgrade URLs (e.g. `go.elementor.com/go-pro-interactions-triggers-modal`).
 
@@ -70,7 +70,7 @@ Pro-gated triggers/effects use `PromotionSelect` with upgrade URLs (e.g. `go.ele
 - Subscribes to `elementor/element/update_interactions`
 - Returns all elements with non-empty `interactions.items` for canvas/preview consumers
 
-`createInteractionsProvider` / `createInteractionsRepository` allow additional providers (TBD — verify with v4 team for intended third-party use).
+`interactionsRepository` and `createInteractionsProvider` are exported from `@elementor/editor-interactions` — any editor package can call `interactionsRepository.register()` during its own `init()`. Today only `documentElementsInteractionsProvider` is registered (feeds `editor-canvas` overlay). There is no WordPress/PHP hook; this is an internal JS registry, not a documented external extension surface.
 
 ### Config bridge
 

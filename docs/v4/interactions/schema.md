@@ -37,7 +37,7 @@ The built-in schema is minimal — version plus an `items` array typed by `Inter
 
 | Field | Prop type | Description |
 |-------|-----------|-------------|
-| `interaction_id` | `string` | Stable id for DOM binding (`data-interaction-id`) |
+| `interaction_id` | `string` | Stable per-item id (editor preview, MCP); assigned on save as `{post_id}-{element_id}-*` |
 | `trigger` | `string` (enum) | When the animation fires |
 | `animation` | `animation-preset-props` | Effect, type, direction, timing, config |
 | `breakpoints` | `interaction-breakpoints` | Breakpoint exclusions |
@@ -96,11 +96,11 @@ This is the primary extension point. Hook it to merge new prop types into the sc
 
 ```php
 add_filter( 'elementor/atomic-widgets/interactions/schema', function ( array $schema ) {
-    // Example: add a new field to the interaction item shape
+    /** @var \Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type $item */
     $item = $schema['items'][0];
     $shape = $item->get_shape();
     $shape['my_extension'] = My_Extension_Prop_Type::make();
-  // Re-wrap if your prop type API requires it — TBD verify with v4 team
+    $item->set_shape( $shape );
     return $schema;
 } );
 ```
@@ -118,7 +118,7 @@ Prop types live under `modules/interactions/props/`. Follow existing `Object_Pro
 - **Filter application** — single call site: `Interactions_Schema::get()` in `schema/interactions-schema.php`.
 - **Consumers** — `atomic-import-export.php` (shape for prop resolution), `schema-resolver.php` (migrations), editor MCP `interactions-schema-resource.ts`.
 - **Save IDs** — `Parser` assigns `{post_id}-{element_id}-*` ids via `Utils::generate_id()`, replacing `temp-*` editor ids.
-- **Pro gating** — prop-type `meta( 'pro', … )` marks fields; `Prop_Shape_Filter_For_Pro` strips Pro fields on free installs (TBD — verify with v4 team for exact filter behavior).
+- **Pro gating** — prop-type `meta( 'pro', … )` documents Pro-only enum values (triggers, effects, `custom_effect`). Editor UI limits base-tier options via `registerInteractionsControl` + `PromotionSelect`; MCP merges `proSchema` only when `isProActive()`. PHP `Validation` accepts all schema values regardless of Pro — server-side Pro stripping via `Prop_Shape_Filter_For_Pro` is referenced in prop types but not implemented yet.
 
 ## See also
 

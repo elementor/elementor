@@ -30,7 +30,7 @@ Requires both experiments active:
 
 | Experiment | Constant | Default | Notes |
 |------------|----------|---------|-------|
-| `e_interactions` | `Module::EXPERIMENT_NAME` | Active | Hidden; `RELEASE_STATUS_DEV` |
+| `e_interactions` | `Module::EXPERIMENT_NAME` | Active (since ~Dec 2025) | Hidden; `RELEASE_STATUS_DEV` — lowest `release_status` among long-default-active v4 experiments; fold-into-v4 decision tracked in [ED-25066](https://elementor.atlassian.net/browse/ED-25066) |
 | `e_atomic_elements` | `AtomicWidgetsModule::EXPERIMENT_NAME` | — | Parent gate; module does not load without it |
 
 `Module::is_experiment_active()` checks both before registering hooks.
@@ -65,7 +65,7 @@ Requires both experiments active:
 
 Extend the schema and editor controls rather than patching element JSON directly. See [schema.md](./schema.md) for the `elementor/atomic-widgets/interactions/schema` filter and [editor.md](./editor.md) for `registerInteractionsControl`.
 
-To add frontend support for a new trigger or effect, you must update both the PHP validation layer (`Validation`, `Presets`) and the JS runtime (`interactions.js` / `interactions-utils.js`). TBD — verify with v4 team whether a registration hook for frontend handlers is planned.
+To add frontend support for a new trigger or effect, update PHP (`Validation`, `Presets`) and JS (`interactions.js`, `interactions-utils.js`) in parallel. There is no public frontend registration hook — `isSupportedInteraction()` in `interactions-utils.js` hard-filters the runtime subset.
 
 ## Internals
 
