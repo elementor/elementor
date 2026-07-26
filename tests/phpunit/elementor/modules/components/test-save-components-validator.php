@@ -166,6 +166,56 @@ class Test_Save_Components_Validator extends Elementor_Test_Base {
 		$this->assertEmpty( $result['messages'] );
 	}
 
+	public function test_validate_duplicated_values__fails_when_two_new_components_share_a_title() {
+		// Arrange
+		$existing_components = Collection::make( [] );
+		$new_components = Collection::make( [
+			[
+				'uid' => 'new-component-1',
+				'title' => 'Duplicate Title',
+				'elements' => [],
+			],
+			[
+				'uid' => 'new-component-2',
+				'title' => 'Duplicate Title',
+				'elements' => [],
+			],
+		] );
+
+		// Act
+		$validator = Save_Components_Validator::make( $existing_components );
+		$result = $validator->validate( $new_components );
+
+		// Assert
+		$this->assertFalse( $result['success'], 'Validation should fail when two components in the same batch share a title' );
+		$this->assertContains( "Component title 'Duplicate Title' is duplicated.", $result['messages'] );
+	}
+
+	public function test_validate_duplicated_values__passes_when_titles_are_unique() {
+		// Arrange
+		$existing_components = Collection::make( [] );
+		$new_components = Collection::make( [
+			[
+				'uid' => 'new-component-1',
+				'title' => 'First Title',
+				'elements' => [],
+			],
+			[
+				'uid' => 'new-component-2',
+				'title' => 'Second Title',
+				'elements' => [],
+			],
+		] );
+
+		// Act
+		$validator = Save_Components_Validator::make( $existing_components );
+		$result = $validator->validate( $new_components );
+
+		// Assert
+		$this->assertTrue( $result['success'], 'Validation should pass when all titles in the batch are unique' );
+		$this->assertEmpty( $result['messages'] );
+	}
+
 	// Helpers
 	private function create_mock_components( int $count, bool $is_archived = false ): array {
 		$components = [];
