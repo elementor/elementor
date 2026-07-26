@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { getV1CurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	__privateUseListenTo as useListenTo,
-	routeOpenEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateUseListenTo as useListenTo, routeOpenEvent } from '@elementor/editor-v1-adapters';
 import { Box, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 

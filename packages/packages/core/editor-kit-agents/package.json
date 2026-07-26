@@ -42,7 +42,8 @@
     "@elementor/editor-documents": "4.3.0",
     "@elementor/editor-kit-settings": "4.3.0",
     "@elementor/editor-v1-adapters": "4.3.0",
-    "@elementor/ui": "1.37.5"
+    "@elementor/ui": "1.37.5",
+    "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",
