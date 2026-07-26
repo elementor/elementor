@@ -28,7 +28,10 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 		add_post_meta( $kit_id, '_elementor_data', '[]' );
 	}
 
-	public function test_before_save__stores_llms_under_agents_key() {
+	public function test_kit_registers_agents_tab_when_experiment_is_active() {
+		// Assert
+		$this->assertArrayHasKey( 'settings-agents', $this->kit->get_tabs() );
+	}
 		// Arrange
 		$tab = new Settings_Agents( $this->kit );
 		$llms_content = '# Example llms.txt';
@@ -67,12 +70,16 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 	public function test_save__persists_agents_llms_to_database() {
 		// Arrange
 		$llms_content = 'User-agent: *';
+		$tab = new Settings_Agents( $this->kit );
 		$settings = $this->kit->get_settings();
 		$settings['agents_llms'] = $llms_content;
+		$data = $tab->before_save( [
+			'settings' => $settings,
+		] );
 
 		// Act
 		$this->kit->save( [
-			'settings' => $settings,
+			'settings' => $data['settings'],
 		] );
 
 		$kit_id = $this->kit->get_id();

@@ -48,10 +48,10 @@ class Test_Module extends Elementor_Test_Base {
 		$llms_content = '# llms.txt';
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$kit = Plugin::$instance->documents->get( $kit_id, false );
-		$settings = $kit->get_settings();
-		$settings['agents_llms'] = $llms_content;
-		$kit->save( [
-			'settings' => $settings,
+		$kit->update_settings( [
+			'agents' => [
+				'llms' => $llms_content,
+			],
 		] );
 
 		// Act
