@@ -4,6 +4,10 @@ global.ReactDOM = require( 'react-dom' );
 global.react = global.React;
 global[ 'react-dom' ] = global.ReactDOM;
 global.__ = ( text ) => text;
+
+if ( typeof global.structuredClone !== 'function' ) {
+	global.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
+}
 global.$e = {
 	modules: {
 		CommandInternalBase: class CommandInternalBase {},

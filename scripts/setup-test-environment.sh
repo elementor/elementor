@@ -40,8 +40,9 @@ npm run install:ci
 echo "Step 3: Building project from $CURRENT_BRANCH"
 npm run build:packages
 npm run composer:no-dev
-grunt scripts styles
-echo "Built Elementor from $CURRENT_BRANCH (skipped full grunt build to avoid text domain warnings)"
+npm run scripts
+npm run styles
+echo "Built Elementor from $CURRENT_BRANCH (skipped full build to avoid text domain warnings)"
 
 # Step 4: Download hello-elementor theme
 echo "Step 4: Downloading hello-elementor theme"

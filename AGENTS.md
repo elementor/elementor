@@ -31,8 +31,9 @@ The image may ship a system Node under `/exec-daemon/node` that does not match `
 |--------|---------|
 | Install deps | `npm ci --ignore-scripts && composer install` |
 | Build packages | `npm run build:packages` |
-| Build styles | `npx grunt styles` |
-| Build scripts | `npx grunt scripts` |
+| Build styles | `npm run styles` |
+| Build scripts | `npm run scripts` |
+| Full build | `npm run build` |
 | Full dev watch | `npm run watch` |
 | Lint JS/TS (root) | `npx eslint .` |
 | Lint JS/TS (packages) | `cd packages && npx eslint . --report-unused-disable-directives-severity error` |
@@ -65,7 +66,7 @@ That script installs deps, builds, downloads Hello Elementor, runs `npm run star
 
 Manual equivalent: see [tests/test-environment-setup.md](tests/test-environment-setup.md) (steps: `npm run start-local-server` then `npm run test:setup:playwright`).
 
-If Docker is not running on the VM yet, a typical pattern is `sudo dockerd &>/tmp/dockerd.log &` in the background, then ensure the Docker socket is usable for the agent user (for example `sudo chmod 666 /var/run/docker.sock` in **disposable** environments only). For a manual plugin tree under `./build/` without the setup script, flows often use `composer install --no-scripts --no-dev && composer dump-autoload && npx grunt copy`, then `npm run setup-templates`, then start **both** wp-lite-env instances (see `npm run start-local-server` in [package.json](package.json)).
+If Docker is not running on the VM yet, a typical pattern is `sudo dockerd &>/tmp/dockerd.log &` in the background, then ensure the Docker socket is usable for the agent user (for example `sudo chmod 666 /var/run/docker.sock` in **disposable** environments only). For a manual plugin tree under `./build/` without the setup script, flows often use `composer install --no-scripts --no-dev && composer dump-autoload && npm run build`, then `npm run setup-templates`, then start **both** wp-lite-env instances (see `npm run start-local-server` in [package.json](package.json)).
 
 Admin: http://localhost:8888/wp-admin/ — user `admin`, password `password` (see test environment doc).
 
@@ -86,6 +87,6 @@ For CI-style mounted **build** output use `npm run wp-playground:ci` (expects `.
 - `npm run lint` runs ESLint at the repo root and in the `elementor-packages` workspace (`npm run lint -w elementor-packages`); both must pass.
 - PHPCS may report warnings without errors on the current tree; treat policy from maintainers, not only the exit summary.
 - `composer install` post-install can run php-scoper (Twig prefixing); dev dependency `humbug/php-scoper` must be present for a full dev install.
-- For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npx grunt copy`. Dev dependencies must be restored afterward with `composer install`.
+- For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npm run build`. Dev dependencies must be restored afterward with `composer install`.
 - [package.json](package.json) `engines` and `.nvmrc` define the Node version; keep them aligned when troubleshooting.
 - Husky pre-commit runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192` (see [.husky/pre-commit](.husky/pre-commit)).

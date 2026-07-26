@@ -21,6 +21,8 @@ graphify-out/
 docs/superpowers/
 
 # build outputs
+.build-baseline/
+.vite-build/
 build/
 assets/css/
 assets/js/
