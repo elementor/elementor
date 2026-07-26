@@ -149,7 +149,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	}
 
 	private function resolve_props_schema( array $node ): ?array {
-		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+		$type = Atomic_Elements_Utils::get_element_type( $node );
 
 		if ( ! $type ) {
 			return null;
