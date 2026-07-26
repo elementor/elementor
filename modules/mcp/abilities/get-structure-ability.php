@@ -155,12 +155,6 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return null;
 		}
 
-		$instance = Atomic_Elements_Utils::get_element_instance( $type );
-
-		if ( ! Atomic_Elements_Utils::is_atomic_element( $instance ) ) {
-			return null;
-		}
-
 		$config = Widget_Context_Helper::get_widget_config( (string) $type );
 
 		return $config['atomic_props_schema'] ?? null;
