@@ -30,7 +30,7 @@ class Widget_Context_Helper {
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
 
-	const BASE_SETTING_PROP_HINT = 'Has a widget default — omit unless user explicitly requests a change. See llm_guidance.default_settings.';
+	const BASE_SETTING_PROP_HINT = 'Has a widget default — omit unless user explicitly requests a change.';
 
 	/**
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
