@@ -70,7 +70,7 @@ JS-side MCP registry used by v4 packages to expose tools to Elementor's in-edito
 
 Registration API (`getMCPByDomain`, `addTool`, `resource`, adapters) is documented in [../mcp/registering-editor-tools.md](../mcp/registering-editor-tools.md). Packages that currently import it include `editor-canvas`, `editor-global-classes`, `editor-variables`, and `editor-interactions`.
 
-TBD — verify with v4 team: the `editor_mcp` experiment is registered in `modules/atomic-widgets/module.php` but `editor-mcp` remains in `Editor_Loader::EXTENSIONS` unconditionally in current source.
+The `editor_mcp` experiment is registered in `modules/atomic-widgets/module.php` but is not wired to any loader check — `editor-mcp` is always enqueued from `Editor_Loader::EXTENSIONS`. Individual v4 packages gate their own MCP tool registration in `init()`; the shared registry library itself loads unconditionally.
 
 ## Extension
 

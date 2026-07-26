@@ -31,9 +31,7 @@ Every extension package exports `init` from its entry (`src/index.ts`). Webpack 
 window.elementorV2.{packageName}?.init?.();
 ```
 
-`init()` must be **synchronous registration only** — set up locations, registries, and listeners. Defer rendering to React components injected into slots.
-
-`init()` is for synchronous registration only — locations, registries, listeners. Examples: `editor-canvas` injects overlays; `editor-editing-panel` registers the atomic panel; `editor-global-classes` registers store slices and style providers; `editor-site-navigation` registers app-bar menu items.
+`init()` must be **synchronous registration only** — set up locations, registries, and listeners; defer rendering to React components injected into slots. Examples: `editor-canvas` injects overlays; `editor-editing-panel` registers the atomic panel; `editor-global-classes` registers store slices and style providers; `editor-site-navigation` registers app-bar menu items.
 
 ### `@elementor/locations`
 

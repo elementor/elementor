@@ -63,7 +63,9 @@ From `packages/docs/architecture.md`, the runtime phases are:
 
 Init order is **not** the PHP filter array order. It follows the WordPress script **dependency graph**: a package's `init()` runs after its declared `deps` have loaded and initialized. Packages that only register APIs (no `init` export) are pulled in as transitive dependencies of feature packages.
 
-Experiment gates are applied in PHP before a package name is added to the filter (for example `editor-global-classes` only registers when both `e_classes` and `e_atomic_elements` are active). TBD — verify with v4 team whether `editor_mcp` experiment currently removes `editor-mcp` from the loader or only affects downstream behavior; the experiment is registered in `modules/atomic-widgets/module.php` but `editor-mcp` remains in `Editor_Loader::EXTENSIONS` unconditionally in the current source.
+Experiment gates are applied in PHP before a package name is added to the filter (for example `editor-global-classes` only registers when both `e_classes` and `e_atomic_elements` are active). Not every experiment gates its JS package: `editor-interactions` loads whenever `e_atomic_elements` is active (it is in the `atomic-widgets` `PACKAGES` constant) even though the interactions PHP module also defines `e_interactions`.
+
+The `editor_mcp` experiment is registered in `modules/atomic-widgets/module.php` but **no `is_feature_active( 'editor_mcp' )` check exists anywhere in the repo** — the `editor-mcp` bundle is always enqueued via `Editor_Loader::EXTENSIONS`. Disabling the experiment in WP Admin has no effect on package loading today. See [../mcp/overview.md](../mcp/overview.md) for how PHP abilities differ from the in-editor JS registry.
 
 ## Extension
 

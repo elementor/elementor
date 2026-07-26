@@ -7,7 +7,9 @@
 
 ## What it is
 
-> **SNAPSHOT** — This table lists packages registered today through `elementor/editor/v2/packages` (and base loader extensions) as they relate to v4. It will go stale as packages are added, renamed, or gated differently. The durable content is [extending-editor.md](extending-editor.md) (how to register a new package).
+Internal reference table mapping v4-related editor packages to their PHP owners and experiment gates.
+
+> **SNAPSHOT** — Lists packages registered through `elementor/editor/v2/packages` and base loader extensions as of the current branch. Will go stale as packages are added or gated differently. To add a package, use [extending-editor.md](extending-editor.md).
 
 ## When to use it
 
@@ -21,43 +23,43 @@ Do **not** treat this as the extension guide — use [extending-editor.md](exten
 
 ### `atomic-widgets` PACKAGES constant
 
-Verified against `modules/atomic-widgets/module.php` (`PACKAGES` constant, lines 161–172):
+Verified against `modules/atomic-widgets/module.php` (`PACKAGES`, lines 161–172):
 
-| Package | In draft plan? | Notes |
-|---------|----------------|-------|
-| `editor-canvas` | Yes | Canvas rendering, overlays, style commands |
-| `editor-controls` | No (listed under libs in plan) | In PACKAGES with `// TODO: Need to be registered and not enqueued` |
-| `editor-editing-panel` | Yes | Atomic element editing panel |
-| `editor-elements` | No (listed under libs in plan) | In PACKAGES with same TODO |
-| `editor-props` | No (listed under libs in plan) | In PACKAGES with same TODO |
-| `editor-styles` | No (listed under libs in plan) | In PACKAGES with same TODO |
-| `editor-styles-repository` | Yes | Style providers and repository |
-| `editor-interactions` | Yes | Interactions tab and controls |
-| `editor-templates` | Yes | Template library integration |
-| `editor-design-system` | Yes | Design system UI |
+| Package | Role |
+|---------|------|
+| `editor-canvas` | Canvas rendering, overlays, style commands |
+| `editor-controls` | Atomic controls (see [libs.md](libs.md); TODO: register, do not independently enqueue) |
+| `editor-editing-panel` | Atomic element editing panel |
+| `editor-elements` | Element model types (see [libs.md](libs.md); same TODO) |
+| `editor-props` | Prop types / validation (see [libs.md](libs.md); same TODO) |
+| `editor-styles` | Style schema helpers (see [libs.md](libs.md); same TODO) |
+| `editor-styles-repository` | Style providers and repository |
+| `editor-interactions` | Interactions tab and controls |
+| `editor-templates` | Template library integration |
+| `editor-design-system` | Design system UI |
 
-**Diff from draft plan:** The draft listed nine feature packages (canvas through components) but omitted four foundation packages that `atomic-widgets` also registers (`editor-controls`, `editor-elements`, `editor-props`, `editor-styles`). Those are documented primarily in [libs.md](libs.md); they appear in the PHP constant because they must be registered for dependency resolution even though the TODO comments indicate they should not be independently enqueued.
+The four foundation packages (`editor-controls`, `editor-elements`, `editor-props`, `editor-styles`) appear in `PACKAGES` so WordPress can resolve their script handles as dependencies of feature packages. The inline TODO comments indicate they should not be independently enqueued.
 
-Filter application (same file, line 188):
+Filter application (line 188):
 
 ```php
 add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 ```
 
-Gated by experiment `e_atomic_elements` (`Module::is_active()`).
+Gated by experiment `e_atomic_elements` (`Module::is_active()`). All rows above share this gate — including `editor-interactions`, which does **not** additionally check `e_interactions` at registration time.
 
 ### Feature packages registered by sibling modules
 
 | Package | PHP module | Experiment gate |
 |---------|-----------|-----------------|
 | `editor-global-classes` | `modules/global-classes/module.php` | `e_classes` + `e_atomic_elements` |
-| `editor-variables` | `modules/variables/hooks.php` | Variables module active (see `modules/variables/`) |
+| `editor-variables` | `modules/variables/hooks.php` | `e_variables` + `e_atomic_elements` |
 | `editor-components` | `modules/components/module.php` | `e_components` + `e_atomic_elements` |
 | `editor-app-bar` | `modules/editor-app-bar/module.php` | None (unconditional) |
 
 ### Base loader extensions (always present)
 
-From `core/editor/loader/editor-loader.php` `EXTENSIONS` — loaded before filter additions:
+From `core/editor/loader/editor-loader.php` `EXTENSIONS` — merged before filter additions:
 
 | Package | Role |
 |---------|------|
@@ -67,7 +69,7 @@ From `core/editor/loader/editor-loader.php` `EXTENSIONS` — loaded before filte
 | `editor-panels` | Panel host infrastructure |
 | `editor-elements-panel` | Legacy elements panel host |
 | `unlock-v4-promo` | V4 promotion UI |
-| `editor-mcp` | In-editor MCP registry |
+| `editor-mcp` | In-editor MCP registry (always loaded; `editor_mcp` experiment not wired — see [overview.md](overview.md)) |
 | `elementor-v3-mcp` | Legacy v3 MCP bridge |
 | `elementor-kit-mcp` | Kit MCP bridge |
 
@@ -76,7 +78,8 @@ From `core/editor/loader/editor-loader.php` `EXTENSIONS` — loaded before filte
 | Package | PHP module | Notes |
 |---------|-----------|-------|
 | `editor-site-navigation` | `modules/site-navigation/module.php` | Pages panel; UI gated by `pages_panel` experiment via env |
-| `editor-widget-creation` | `modules/widget-creation/module.php` | Angie widget creation promo |
+| `editor-widget-creation` | `modules/widget-creation/module.php` | Package registered unconditionally; promo UI gated by `e_widget_creation` |
+| `editor-starter` | `app/modules/onboarding/module.php` | Starter onboarding; only when `should_show_starter()` |
 | `elementor-capabilities-mcp` | `modules/elementor-capabilities-mcp/module.php` | Admin capabilities MCP |
 
 ## Extension
@@ -106,4 +109,4 @@ Source entry points: `packages/packages/core/{package}/src/init.ts` (or `init.ts
 - [overview.md](overview.md) — lifecycle and init order
 - [libs.md](libs.md) — foundation libraries pulled in as dependencies
 - [../architecture/packages-map.md](../architecture/packages-map.md) — broader mapping including tests paths
-- [../getting-started/experiments.md](../getting-started/experiments.md) — experiment matrix (TBD if not yet written)
+- [../getting-started/experiments.md](../getting-started/experiments.md) — experiment matrix
