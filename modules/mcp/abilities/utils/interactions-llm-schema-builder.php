@@ -2,157 +2,99 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\Interactions\Presets;
-use Elementor\Modules\Interactions\Props\Animation_Config_Prop_Type;
-use Elementor\Modules\Interactions\Props\Animation_Preset_Prop_Type;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
-use Elementor\Modules\Interactions\Props\Timing_Config_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Builds the LLM-facing schema for interactions from the native Interaction_Item_Prop_Type tree.
+ *
+ * Same pattern as widget schemas: derive the plain JSON shape from the PropType via
+ * `Widget_Context_Helper::to_plain_llm_schema`, then strip Pro-gated fields and enum
+ * values (via `->meta('pro', ...)`) when Pro is inactive.
+ */
 class Interactions_Llm_Schema_Builder {
 
 	public static function build( ?bool $is_pro_active = null ): array {
 		$is_pro_active = $is_pro_active ?? defined( 'ELEMENTOR_PRO_VERSION' );
 
-		$item_shape = Interaction_Item_Prop_Type::make()->get_shape();
-		$animation_shape = Animation_Preset_Prop_Type::make()->get_shape();
-		$timing_shape = Timing_Config_Prop_Type::make()->get_shape();
-		$config_shape = Animation_Config_Prop_Type::make()->get_shape();
+		$prop_type = Interaction_Item_Prop_Type::make();
+		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type );
 
-		$schema = [
-			'on' => self::string_field( $item_shape['trigger'], true ),
-			'effect' => self::string_field( $animation_shape['effect'], true ),
-			'type' => self::string_field( $animation_shape['type'], true ),
-			'direction' => self::string_field( $animation_shape['direction'], false, '' ),
-			'for' => self::timing_field( $timing_shape['duration'], Presets::DEFAULT_DURATION ),
-			'after' => self::timing_field( $timing_shape['delay'], Presets::DEFAULT_DELAY ),
-			'ease' => self::string_field( $config_shape['easing'], false, Presets::DEFAULT_EASING ),
-			'except' => [
-				'type' => 'array',
-				'items' => [ 'type' => 'string' ],
-				'description' => 'Breakpoint IDs on which this interaction is disabled.',
-			],
-		];
-
-		if ( $is_pro_active ) {
-			$schema['repeat'] = self::repeat_field( $config_shape['repeat'] );
-			$schema['replay'] = self::boolean_field( $config_shape['replay'] );
-			$schema['relativeTo'] = self::string_field( $config_shape['relativeTo'], false );
-			$schema['start'] = self::percent_field( $config_shape['start'], Presets::DEFAULT_START );
-			$schema['end'] = self::percent_field( $config_shape['end'], Presets::DEFAULT_END );
-			$schema['keyframes'] = [
-				'type' => 'object',
-				'description' => 'Transformable keyframes object ($$type "keyframes"). Required when effect is "custom".',
-			];
-		}
-
-		return self::filter_pro_fields( $schema, $is_pro_active );
+		return self::walk( $schema, $prop_type, $is_pro_active );
 	}
 
-	private static function filter_pro_fields( array $schema, bool $is_pro_active ): array {
-		if ( $is_pro_active ) {
+	private static function walk( array $schema, Prop_Type $prop_type, bool $is_pro_active ): array {
+		if ( $prop_type instanceof Object_Prop_Type ) {
+			return self::walk_object( $schema, $prop_type, $is_pro_active );
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type ) {
+			return self::walk_array( $schema, $prop_type, $is_pro_active );
+		}
+
+		return self::enrich_primitive( $schema, $prop_type, $is_pro_active );
+	}
+
+	private static function walk_object( array $schema, Object_Prop_Type $prop_type, bool $is_pro_active ): array {
+		if ( ! isset( $schema['properties'] ) || ! is_array( $schema['properties'] ) ) {
 			return $schema;
 		}
 
-		$pro_shape = [
-			'trigger' => Interaction_Item_Prop_Type::make()->get_shape()['trigger'],
-			'effect' => Animation_Preset_Prop_Type::make()->get_shape()['effect'],
-			'easing' => Animation_Config_Prop_Type::make()->get_shape()['easing'],
-		];
+		$properties = $schema['properties'];
 
-		$schema['on']['enum'] = self::allowed_enum( $pro_shape['trigger'] );
-		$schema['effect']['enum'] = self::allowed_enum( $pro_shape['effect'] );
-		$schema['ease']['enum'] = self::allowed_enum( $pro_shape['easing'] );
+		foreach ( $prop_type->get_shape() as $key => $child_prop_type ) {
+			if ( ! isset( $properties[ $key ] ) ) {
+				continue;
+			}
+
+			if ( ! $is_pro_active && self::is_pro_only_field( $child_prop_type ) ) {
+				unset( $properties[ $key ] );
+				continue;
+			}
+
+			$properties[ $key ] = self::walk( $properties[ $key ], $child_prop_type, $is_pro_active );
+		}
+
+		$schema['properties'] = $properties;
 
 		return $schema;
 	}
 
-	private static function string_field( Prop_Type $prop, bool $required, ?string $default = null ): array {
-		$field = [
-			'type' => 'string',
-			'required' => $required,
-		];
-
-		$enum = self::allowed_enum( $prop );
-		if ( null !== $enum ) {
-			$field['enum'] = $enum;
+	private static function walk_array( array $schema, Array_Prop_Type $prop_type, bool $is_pro_active ): array {
+		if ( isset( $schema['items'] ) && is_array( $schema['items'] ) ) {
+			$schema['items'] = self::walk( $schema['items'], $prop_type->get_item_type(), $is_pro_active );
 		}
 
-		if ( null !== $default ) {
-			$field['default'] = $default;
-		}
-
-		$description = $prop->get_meta_item( 'description' );
-		if ( is_string( $description ) ) {
-			$field['description'] = $description;
-		}
-
-		return $field;
+		return $schema;
 	}
 
-	private static function timing_field( Prop_Type $prop, int $default ): array {
-		return [
-			'type' => 'number',
-			'default' => $default,
-			'unit' => 'ms',
-			'description' => $prop->get_meta_item( 'description' ),
-		];
-	}
+	private static function enrich_primitive( array $schema, Prop_Type $prop_type, bool $is_pro_active ): array {
+		$enum = $prop_type->get_meta_item( 'enum' );
 
-	private static function percent_field( Prop_Type $prop, int $default ): array {
-		return [
-			'type' => 'number',
-			'default' => $default,
-			'unit' => '%',
-			'minimum' => 0,
-			'maximum' => 100,
-			'description' => $prop->get_meta_item( 'description' ),
-		];
-	}
-
-	private static function boolean_field( Prop_Type $prop ): array {
-		return [
-			'type' => 'boolean',
-			'description' => $prop->get_meta_item( 'description' ),
-		];
-	}
-
-	private static function repeat_field( Prop_Type $prop ): array {
-		return [
-			'description' => $prop->get_meta_item( 'description' ),
-			'oneOf' => [
-				[ 'type' => 'string', 'enum' => Presets::REPEAT_OPTIONS ],
-				[ 'type' => 'number', 'minimum' => 1, 'description' => 'Shorthand for repeat "times".' ],
-			],
-		];
-	}
-
-	private static function allowed_enum( Prop_Type $prop ): ?array {
-		$enum = null;
-
-		if ( $prop instanceof String_Prop_Type && $prop->get_enum() ) {
-			$enum = $prop->get_enum();
+		if ( is_array( $enum ) ) {
+			$schema['enum'] = $is_pro_active ? array_values( $enum ) : self::filter_pro_enum_values( $enum, $prop_type );
 		}
 
-		$meta_enum = $prop->get_meta_item( 'enum' );
-		if ( is_array( $meta_enum ) ) {
-			$enum = $meta_enum;
+		return $schema;
+	}
+
+	private static function filter_pro_enum_values( array $enum, Prop_Type $prop_type ): array {
+		$pro_values = $prop_type->get_meta_item( 'pro' );
+
+		if ( ! is_array( $pro_values ) ) {
+			return array_values( $enum );
 		}
 
-		if ( ! is_array( $enum ) ) {
-			return null;
-		}
+		return array_values( array_diff( $enum, $pro_values ) );
+	}
 
-		$pro_values = $prop->get_meta_item( 'pro' );
-		if ( ! defined( 'ELEMENTOR_PRO_VERSION' ) && is_array( $pro_values ) ) {
-			$enum = array_values( array_diff( $enum, $pro_values ) );
-		}
-
-		return $enum;
+	private static function is_pro_only_field( Prop_Type $prop_type ): bool {
+		return true === $prop_type->get_meta_item( 'pro' );
 	}
 }

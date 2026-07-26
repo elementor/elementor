@@ -140,12 +140,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $style_result['error'];
 		}
 
-		$interactions_applier = new Interactions_Applier();
-		$widget_type_by_config_id = $this->build_widget_type_map( $index );
+		$interactions_applier = new Interactions_Applier( null, $this->create_plain_values_resolver() );
 		$interactions_result = $interactions_applier->apply(
 			$index,
-			$this->as_map( $input['interactions'] ?? [] ),
-			$widget_type_by_config_id
+			$this->as_map( $input['interactions'] ?? [] )
 		);
 		if ( $interactions_result['error'] ) {
 			return $interactions_result['error'];
@@ -246,7 +244,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'interactions' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → array of flat scalar interaction objects (max 5 per element). Read elementor://interactions/schema for allowed values and defaults.',
+					'description' => 'Record mapping configuration-id → array of interaction items in the native Interaction_Item shape (max 5 per element). Read elementor://interactions/schema for the full shape, allowed enum values, and Pro-gated fields.',
 					'additionalProperties' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'object' ],
@@ -353,16 +351,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		return $response;
-	}
-
-	private function build_widget_type_map( array $index ): array {
-		$map = [];
-		foreach ( $index as $config_id => $node ) {
-			if ( isset( $node['widgetType'] ) ) {
-				$map[ $config_id ] = $node['widgetType'];
-			}
-		}
-		return $map;
 	}
 
 	private function as_map( $value ): array {

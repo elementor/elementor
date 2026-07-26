@@ -2,7 +2,10 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,14 +18,20 @@ class Interactions_Applier {
 	const SCHEMA_VERSION = 1;
 
 	private bool $is_experiment_active;
-	private Interaction_Converter $converter;
+	private Plain_Values_Resolver $plain_values_resolver;
 
-	public function __construct( ?bool $is_experiment_active = null, ?Interaction_Converter $converter = null ) {
+	public function __construct( ?bool $is_experiment_active = null, ?Plain_Values_Resolver $plain_values_resolver = null ) {
 		$this->is_experiment_active = $is_experiment_active ?? $this->detect_experiment_active();
-		$this->converter = $converter ?? new Interaction_Converter();
+		$this->plain_values_resolver = $plain_values_resolver ?? Atomic_Widgets_Module::instance()->get_settings_plain_values_resolver();
 	}
 
-	public function apply( array &$index, array $interactions, array $config_id_to_widget = [] ): array {
+	/**
+	 * @param array<string, array&>               $index        Index of subtree refs.
+	 * @param array<string, array<int, array>>    $interactions Per-config-id list of native-shape interaction items.
+	 *
+	 * @return array{error: \WP_Error|null, warnings: string[]}
+	 */
+	public function apply( array &$index, array $interactions ): array {
 		$warnings = [];
 
 		if ( empty( $interactions ) ) {
@@ -35,6 +44,7 @@ class Interactions_Applier {
 		}
 
 		$errors = [];
+		$prop_type = Interaction_Item_Prop_Type::make();
 
 		foreach ( $interactions as $config_id => $items ) {
 			if ( ! isset( $index[ $config_id ] ) ) {
@@ -56,32 +66,7 @@ class Interactions_Applier {
 				continue;
 			}
 
-			$built_items = [];
-			foreach ( $items as $item_index => $plain_item ) {
-				if ( ! is_array( $plain_item ) ) {
-					$errors[] = sprintf( '[%s] Interaction at index %d must be an object.', $config_id, $item_index );
-					continue;
-				}
-
-				$conversion = $this->converter->convert( $plain_item );
-
-				if ( ! empty( $conversion['rejected'] ) ) {
-					$errors[] = sprintf(
-						'[%1$s] Interaction at index %2$d: %3$s See elementor://interactions/schema.',
-						$config_id,
-						$item_index,
-						implode( ' ', $conversion['rejected'] )
-					);
-					continue;
-				}
-
-				if ( null === $conversion['item'] ) {
-					continue;
-				}
-
-				$built_items[] = $conversion['item'];
-				$warnings = array_merge( $warnings, $conversion['warnings'] );
-			}
+			$built_items = $this->resolve_items( $items, $prop_type, $config_id, $errors );
 
 			if ( empty( $built_items ) ) {
 				continue;
@@ -105,6 +90,32 @@ class Interactions_Applier {
 		}
 
 		return [ 'error' => null, 'warnings' => $warnings ];
+	}
+
+	private function resolve_items( array $items, Interaction_Item_Prop_Type $prop_type, string $config_id, array &$errors ): array {
+		$built = [];
+
+		foreach ( $items as $item_index => $plain_item ) {
+			if ( ! is_array( $plain_item ) ) {
+				$errors[] = sprintf( '[%s] Interaction at index %d must be an object.', $config_id, $item_index );
+				continue;
+			}
+
+			$resolved = $this->plain_values_resolver->resolve( $plain_item, $prop_type );
+
+			if ( null === $resolved || ! $prop_type->validate( $resolved ) ) {
+				$errors[] = sprintf(
+					'[%s] Interaction at index %d could not be resolved. See elementor://interactions/schema.',
+					$config_id,
+					$item_index
+				);
+				continue;
+			}
+
+			$built[] = $resolved;
+		}
+
+		return $built;
 	}
 
 	private function detect_experiment_active(): bool {

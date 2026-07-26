@@ -18,7 +18,7 @@ class Interactions_Schema_Resource_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Interactions Schema', 'elementor' ),
-			__( 'Flat interaction input schema: allowed triggers, effects, timing keys, and defaults for build-composition.', 'elementor' ),
+			__( 'Native interaction input schema derived from Interaction_Item PropType: shape, allowed enums, and Pro-gated fields for build-composition.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -27,7 +27,7 @@ class Interactions_Schema_Resource_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'application/json',
-					'description' => __( 'Flat interaction keys, enums, defaults, and Pro-gated fields for build-composition.', 'elementor' ),
+					'description' => __( 'Native interaction item shape, enums, and Pro-gated fields for build-composition.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

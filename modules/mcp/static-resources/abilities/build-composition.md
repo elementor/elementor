@@ -1,7 +1,7 @@
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
-- [elementor://interactions/schema] - Flat interaction keys, allowed values, defaults, and Pro-gated fields for `interactions`
+- [elementor://interactions/schema] - Native interaction item shape, allowed enums, and Pro-gated fields for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 
 # TOOL SUPPORT
@@ -139,21 +139,35 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Generous padding on CTAs: min 1rem 2.5rem
 
 # INTERACTIONS
-Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of **flat scalar** interaction objects (max **5 per element**).
+Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items (max **5 per element**).
 
-Read [elementor://interactions/schema] for allowed values, Pro-gated fields, and defaults before adding interactions.
+Read [elementor://interactions/schema] for the full shape, allowed enum values, and Pro-gated fields before adding interactions.
 
-Shape (flat scalar keys — server wraps into transformable PropTypes internally):
+Native shape (same keys as the stored `Interaction_Item` PropType):
 
 ```json
-{ "on": "load", "effect": "fade", "type": "in", "for": 600, "after": 0, "ease": "easeIn" }
+{
+  "trigger": "load",
+  "animation": {
+    "effect": "fade",
+    "type": "in",
+    "direction": "",
+    "timing_config": {
+      "duration": { "size": 600, "unit": "ms" },
+      "delay":    { "size": 0,   "unit": "ms" }
+    },
+    "config": { "easing": "easeIn" }
+  },
+  "breakpoints": { "excluded": [] }
+}
 ```
 
-- Required: `on`, `effect`, `type`
-- Optional timing: `for` (duration ms), `after` (delay ms), `ease`
-- Optional direction: `direction` (relevant for slide)
-- Optional breakpoints: `except` (array of breakpoint IDs to disable)
-- Pro-only keys (see schema): `repeat`, `replay`, `relativeTo`, `start`, `end`, `keyframes` (when `effect` is `custom`)
+- Required: `trigger`, `animation.effect`, `animation.type`
+- Optional timing: `animation.timing_config.duration`, `animation.timing_config.delay` (`{ "size": <number>, "unit": "ms" }`)
+- Optional direction: `animation.direction` (relevant for slide)
+- Optional easing: `animation.config.easing`
+- Optional breakpoints: `breakpoints.excluded` (array of breakpoint IDs to disable)
+- Pro-only fields (see schema): `animation.config.repeat`, `animation.config.times`, `animation.config.replay`, `animation.config.relativeTo`, `animation.config.start`, `animation.config.end`, `animation.custom_effect` (when `animation.effect` is `custom`)
 
 If the Interactions experiment is inactive, interactions are skipped and a warning is returned. Invalid values fail the call with `elementor_invalid_interactions`.
 
@@ -175,7 +189,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT)
 - **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
-- **interactions**: configuration-id → array of flat scalar interaction objects (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
+- **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
 - **parent_id**: ID of the parent container (omit to insert at document root)
 - **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting
