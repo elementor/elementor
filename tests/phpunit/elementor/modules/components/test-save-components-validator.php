@@ -188,7 +188,7 @@ class Test_Save_Components_Validator extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $result['success'], 'Validation should fail when two components in the same batch share a title' );
-		$this->assertContains( "Component title 'Duplicate Title' is duplicated.", $result['messages'] );
+		$this->assertContains( "Component title &#039;Duplicate Title&#039; is duplicated.", $result['messages'] );
 	}
 
 	public function test_validate_duplicated_values__passes_when_titles_are_unique() {
