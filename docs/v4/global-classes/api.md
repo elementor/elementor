@@ -39,7 +39,7 @@ All routes accept optional `context` query param: `frontend` (default) or `previ
 
 ### REST `PUT` contract
 
-The editor sends the full delta in one request:
+The editor sends the full delta in one request. `items` holds the full definition of every id listed in `changes.added` or `changes.modified` **only** — deleted classes are referenced by id alone in `changes.deleted` and must not appear in `items`:
 
 ```json
 {
@@ -54,6 +54,12 @@ The editor sends the full delta in one request:
     "g-abc123": {
       "id": "g-abc123",
       "label": "wc26-gold",
+      "type": "class",
+      "variants": []
+    },
+    "g-newid1": {
+      "id": "g-newid1",
+      "label": "wc26-navy",
       "type": "class",
       "variants": []
     }
