@@ -26,7 +26,7 @@ function scrollOutAnimation( element, transition, animConfig, keyframes, resetKe
 				element.style.transition = transition;
 			} );
 			if ( false === animConfig.replay ) {
-				stop();
+				Promise.resolve().then( () => stop() );
 			}
 		};
 	}, viewOptions );

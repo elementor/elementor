@@ -235,7 +235,7 @@ describe( 'Interactions', () => {
 
 		await flushPromises();
 
-		expect( animate ).toHaveBeenCalledTimes( 1 );
+		expect( animate ).toHaveBeenCalledTimes( 2 );
 		expect( stopObserving ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
