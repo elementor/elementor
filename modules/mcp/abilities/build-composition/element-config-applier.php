@@ -26,11 +26,17 @@ class Element_Config_Applier {
 	}
 
 	/**
-	 * @param array<string, array&>               $config_id_index Index of subtree refs.
-	 * @param array<string, array<string, mixed>> $element_config  Per-config-id settings.
-	 * @param array<string, array>                $widget_configs  Resolved type configs.
+	 * @param array<string, array&>               $config_id_index    Index of subtree refs.
+	 * @param array<string, array<string, mixed>> $element_config     Per-config-id settings.
+	 * @param array<string, array>                $widget_configs     Resolved type configs.
+	 * @param array<int, string>                   $prebuilt_config_ids Config-ids whose settings are already
+	 *                                                                  fully-formed PropValues (e.g. component
+	 *                                                                  instances) and must skip LLM adjustment,
+	 *                                                                  which assumes every nested value is itself
+	 *                                                                  a PropValue and would corrupt plain fields
+	 *                                                                  such as an override's `override_key`.
 	 */
-	public function apply( array $config_id_index, array $element_config, array $widget_configs ): ?\WP_Error {
+	public function apply( array $config_id_index, array $element_config, array $widget_configs, array $prebuilt_config_ids = [] ): ?\WP_Error {
 		$transformers = array_merge(
 			Llm_Prop_Value_Adjuster::create_global_variable_transformers( $this->variables_service ),
 			[ Dynamic_Prop_Type::get_key() => Dynamic_Tag_Llm_Resolver::make() ]
@@ -51,7 +57,9 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$resolved = $this->resolve_settings_against_schema( $settings, $schema, $transformers, $tag, $config_id, $errors );
+			$resolved = in_array( $config_id, $prebuilt_config_ids, true )
+				? $settings
+				: $this->resolve_settings_against_schema( $settings, $schema, $transformers, $tag, $config_id, $errors );
 
 			$node['settings'] = array_merge( $node['settings'] ?? [], $resolved );
 

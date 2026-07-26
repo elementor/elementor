@@ -2,6 +2,7 @@
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
+- `elementor/list-components` + `elementor/get-component-schema` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
@@ -11,6 +12,37 @@ This tool supports v4 elements only.
 2. Check/create global classes via `elementor/manage-classes`
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 4. Use returned element IDs for subsequent configuration changes
+
+# COMPONENTS (only when explicitly requested)
+
+**Do NOT call `elementor/list-components` by default.** Compose from raw widgets unless the user explicitly asks to use a component (e.g. "use my Hero component", "insert the Product Card component", "reuse the CTA component I made").
+
+## When the user explicitly asks for a component
+
+1. Call `elementor/list-components` and find a component whose name matches what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.).
+2. If found, call `elementor/get-component-schema` for that component and verify its `overridable_props` cover the customizations the user needs.
+3. If the component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
+
+## Placement
+- Use `<e-component configuration-id="my-hero">` in `xml_structure`. **Leaf tag — no child tags inside it.**
+- Under `element_config`, map the configuration-id to a shorthand object:
+
+```json
+{
+  "my-hero": {
+    "component_id": 42,
+    "overrides": {
+      "title": { "$$type": "string", "value": "Welcome" },
+      "cta_url": { "$$type": "url", "value": "https://example.com" }
+    }
+  }
+}
+```
+
+- `component_id` is required. `overrides` is optional — omit it entirely if you have no overrides to apply.
+- Only `override_key`s listed in `overridable_props` are valid. Unknown keys are rejected.
+- Do NOT place archived components (`is_archived: true`).
+- Components can be mixed with raw widgets in the same composition.
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`

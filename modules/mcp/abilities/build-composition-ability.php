@@ -10,8 +10,10 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
@@ -116,10 +118,19 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
+		$element_config = $this->as_map( $input['element_config'] ?? [] );
+
+		$component_applier = new Component_Instance_Applier( new Components_Repository() );
+		$prebuilt_config_ids = [];
+		$component_error = $component_applier->rewrite( $index, $element_config, $document, $prebuilt_config_ids );
+		if ( $component_error ) {
+			return $component_error;
+		}
+
 		$variables_service = $this->create_variables_service();
 
 		$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
-		$config_error = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
+		$config_error = $config_applier->apply( $index, $element_config, $widget_configs, $prebuilt_config_ids );
 		if ( $config_error ) {
 			return $config_error;
 		}

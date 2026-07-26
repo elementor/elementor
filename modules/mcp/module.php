@@ -3,7 +3,10 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Plugin;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,6 +71,11 @@ class Module extends BaseModule {
 		( new Abilities\List_Dynamic_Tags_Ability() )->register();
 		( new Abilities\Build_Composition_Ability() )->register();
 		( new Abilities\Global_Classes_Resource_Ability() )->register();
+
+		if ( $this->is_components_active() ) {
+			( new Abilities\List_Components_Ability() )->register();
+			( new Abilities\Get_Component_Schema_Ability() )->register();
+		}
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
 		( new Abilities\Read_Resource_Ability() )->register();
@@ -100,6 +108,7 @@ class Module extends BaseModule {
 				'elementor/build-composition',
 				'elementor/list-resources',
 				'elementor/read-resource',
+				...( $this->is_components_active() ? [ 'elementor/list-components', 'elementor/get-component-schema' ] : [] ),
 			],
 			[
 				'elementor/style-best-practices',
@@ -115,5 +124,16 @@ class Module extends BaseModule {
 			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
 			return;
 		}
+	}
+
+	private function is_components_active(): bool {
+		if ( ! class_exists( Components_Module::class ) ) {
+			return false;
+		}
+
+		$experiments = Plugin::$instance->experiments;
+
+		return $experiments->is_feature_active( Components_Module::EXPERIMENT_NAME )
+			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 }
