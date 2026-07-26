@@ -1,10 +1,36 @@
-import { Box, Button, Divider, Link, Typography } from '@elementor/ui';
+import { Box, Button, Chip, Divider, Link, Typography } from '@elementor/ui';
 import { WhatsNewItemTopicLine } from './whats-new-item-topic-line';
 import { WrapperWithLink } from './wrapper-with-link';
 import { WhatsNewItemMedia } from './whats-new-item-media';
 import { WhatsNewItemChips } from './whats-new-item-chips';
+import { isImageOnly } from './is-image-only';
 
-export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
+export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, featured = false } ) => {
+	const hasMedia = item.imageSrc || item.gifSrc || item.youtubeEmbedId;
+
+	if ( isImageOnly( item ) ) {
+		return (
+			<Box
+				key={ itemIndex }
+				display="flex"
+				flexDirection="column"
+				sx={ {
+					pt: 2,
+					...( featured && { px: 1 } ),
+				} }
+			>
+				<WhatsNewItemMedia item={ item } />
+				{ itemIndex !== itemsLength - 1 && (
+					<Divider
+						sx={ {
+							my: 1,
+						} }
+					/>
+				) }
+			</Box>
+		);
+	}
+
 	return (
 		<Box
 			key={ itemIndex }
@@ -12,6 +38,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 			flexDirection="column"
 			sx={ {
 				pt: 2,
+				...( featured && { px: 1 } ),
 			} }
 		>
 			{ ( item.topic || item.date ) && (
@@ -22,18 +49,26 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 			) }
 			<WrapperWithLink link={ item.link }>
 				<Typography
-					variant="subtitle1"
-					sx={ {
-						pb: 2,
-					} }
+					variant={ featured ? 'h6' : 'subtitle1' }
+					sx={ { pb: 2 } }
 				>
 					{ item.title }
 				</Typography>
 			</WrapperWithLink>
-			<WhatsNewItemMedia item={ item } />
+			<Box sx={ { position: 'relative' } }>
+				<WhatsNewItemMedia item={ item } />
+				{ featured && item.chipPlan && hasMedia && (
+					<Chip
+						label={ item.chipPlan }
+						color="promotion"
+						size="small"
+						sx={ { position: 'absolute', top: 8, insetInlineStart: 8 } }
+					/>
+				) }
+			</Box>
 
 			<WhatsNewItemChips
-				chipPlan={ item.chipPlan }
+				chipPlan={ featured && hasMedia ? null : item.chipPlan }
 				chipTags={ item.chipTags }
 				itemIndex={ itemIndex }
 			/>
@@ -73,7 +108,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 						variant="contained"
 						size="small"
 						color="promotion"
-						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : () => {} }
+						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : undefined }
 					>
 						{ item.cta }
 					</Button>
@@ -95,4 +130,5 @@ WhatsNewItem.propTypes = {
 	itemIndex: PropTypes.number.isRequired,
 	itemsLength: PropTypes.number.isRequired,
 	setIsOpen: PropTypes.func.isRequired,
+	featured: PropTypes.bool,
 };

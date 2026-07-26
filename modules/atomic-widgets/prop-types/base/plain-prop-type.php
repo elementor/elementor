@@ -67,6 +67,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function should_persist( $value ): bool {
+		return true;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			// phpcs:ignore

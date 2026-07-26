@@ -7,8 +7,8 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsWidgetCreationView = require( './views/widget-creation' ),
 	PanelElementsLayoutView;
 
-function elementorIsAngiePluginAvailable() {
-	return !! window.angiePlugin?.available || !! document.querySelector( 'iframe[src*="angie/"]' );
+function elementorIsAngieIframeInDocument() {
+	return !! document.querySelector( 'iframe[src*="angie/"]' );
 }
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -319,7 +319,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		const isAngiePresent = elementorIsAngiePluginAvailable();
+		const isAngiePresent = elementorIsAngieIframeInDocument();
 		const isAdministrator = elementor.config.user.is_administrator;
 
 		if ( ! isAngiePresent && ! isAdministrator ) {

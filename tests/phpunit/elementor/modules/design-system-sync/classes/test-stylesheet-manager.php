@@ -269,6 +269,99 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-weight:', $css );
 	}
 
+	private function generate_with_synced_class(): void {
+		$this->set_kit_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Heading',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+	}
+
+	public function test_invalidate_sync_stylesheet__deletes_file_on_frontend_context() {
+		// Arrange
+		$this->generate_with_synced_class();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		// Act
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [] );
+
+		// Assert
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+	}
+
+	public function test_invalidate_sync_stylesheet__keeps_file_on_preview_context() {
+		// Arrange
+		$this->generate_with_synced_class();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		// Act
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_PREVIEW, [] );
+
+		// Assert
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+	}
+
+	public function test_enqueue__regenerates_stale_file_after_synced_classes_change() {
+		// Arrange
+		$this->set_kit_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Heading',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+		$this->assertStringContainsString( 'v4-heading', file_get_contents( $this->stylesheet_manager->get_path() ) );
+
+		// Act
+		$this->set_kit_classes( [
+			'g-2' => [
+				'id' => 'g-2',
+				'type' => 'class',
+				'label' => 'Caption',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 12, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+
+		( new Stylesheet_Manager() )->enqueue();
+
+		// Assert
+		$css = file_get_contents( $this->stylesheet_manager->get_path() );
+		$this->assertStringContainsString( '--e-global-typography-v4-caption-font-size:', $css );
+		$this->assertStringNotContainsString( 'v4-heading', $css );
+	}
+
 	public function test_generate__skips_non_synced_classes() {
 		// Arrange
 		$this->set_kit_classes( [

@@ -6,7 +6,9 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.67"
+        "automattic/jetpack-autoloader": "^5",
+        "elementor/wp-one-package": "1.0.68",
+        "wordpress/mcp-adapter": "^0.5.0"
     },
     "repositories": [
         {
@@ -34,11 +36,12 @@
         "spatie/phpunit-snapshot-assertions": "^4.2",
         "humbug/php-scoper": "0.17.5",
         "twig/twig": "3.11.3",
-        "wordpress/mcp-adapter": "^0.5.0"
+        "mixpanel/mixpanel-php": "^2.11"
     },
     "scripts": {
         "lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
         "format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
+        "check-twig-safety": "bash bin/check-twig-safety.sh",
         "test": "phpunit",
         "test:install": "bash ./bin/install-wp-tests-local.sh",
         "phpunit:local": "bash ./bin/phpunit-local.sh",
@@ -46,7 +49,8 @@
         "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
         "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
         "php-scoper": [
-            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
+            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force",
+            "php-scoper add-prefix --output-dir=./vendor_prefixed/mixpanel --config=php-scoper/mixpanel-inc.php --force"
         ],
         "post-install-cmd": [
             "@php composer run php-scoper",
@@ -59,7 +63,8 @@
     },
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "automattic/jetpack-autoloader": true
         },
         "platform": {
             "php": "7.4"

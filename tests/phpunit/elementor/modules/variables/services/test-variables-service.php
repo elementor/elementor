@@ -203,6 +203,77 @@ class Test_Variables_Service extends TestCase {
 
 		$this->assertTrue( true );
 	}
+
+	public function test_process_batch__lenient_mode_continues_after_failure_and_saves_successes() {
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Primary',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$data = [
+			[
+				'type' => 'create',
+				'variable' => [
+					'type' => 'global-color',
+					'label' => 'New-Color',
+					'value' => '#FF0000',
+				],
+			],
+			[
+				'type' => 'update',
+				'id' => 'missing-id',
+				'variable' => [
+					'label' => 'Updated',
+					'value' => '#0000FF',
+				],
+			],
+		];
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->expects( $this->once() )->method( 'save' )->willReturn( 6 );
+
+		$result = $this->service->process_batch( $data, true );
+
+		$this->assertTrue( $result['success'] );
+		$this->assertEquals( 6, $result['watermark'] );
+		$this->assertCount( 2, $result['results'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'New-Color', $result['results'][0]['label'] );
+		$this->assertSame( 'error', $result['results'][1]['status'] );
+		$this->assertSame( 'variable_not_found', $result['results'][1]['code'] );
+	}
+
+	public function test_process_batch__lenient_mode_does_not_save_when_all_operations_fail() {
+		$collection = Variables_Collection::default();
+
+		$data = [
+			[
+				'type' => 'update',
+				'id' => 'missing-id',
+				'variable' => [
+					'label' => 'Updated',
+					'value' => '#0000FF',
+				],
+			],
+		];
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->expects( $this->never() )->method( 'save' );
+
+		$result = $this->service->process_batch( $data, true );
+
+		$this->assertFalse( $result['success'] );
+		$this->assertSame( 'error', $result['results'][0]['status'] );
+		$this->assertSame( 'variable_not_found', $result['results'][0]['code'] );
+	}
+
 	public function test_create__successfully_creates_variable() {
 		// Arrange
 		$data = [

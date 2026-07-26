@@ -15,7 +15,7 @@ import {
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getModelContext } from './utils/get-model-context';
 import { getSDK } from './utils/get-sdk';
-import { waitForAngieReady } from './utils/is-angie-available';
+import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
 import { toMCPTitle } from './utils/to-mcp-title';
@@ -65,9 +65,7 @@ export const createAndRegisterAdapters = async (): Promise< void > => {
 		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
 	}
 
-	const isAngieReady = await waitForAngieReady();
-
-	if ( isAngieReady ) {
+	if ( isAngieAvailable() ) {
 		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
 	}
 

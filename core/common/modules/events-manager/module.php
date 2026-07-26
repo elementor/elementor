@@ -5,6 +5,7 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
+use Elementor\Core\Common\Modules\EventsManager\RestApi\Events_Proxy_REST_API;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
@@ -21,15 +22,21 @@ class Module extends BaseModule {
 	const DEFAULT_SESSION_RECORDING_PERCENT = 0;
 	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
 
+	const API_UPSTREAM_HOST = 'https://api-eu.mixpanel.com';
+	const LIBS_UPSTREAM_HOST = 'https://cdn.mxpnl.com/libs';
+
+	public function __construct() {
+		parent::__construct();
+
+		( new Events_Proxy_REST_API() )->register_hooks();
+	}
+
 	public function get_name() {
 		return 'events-manager';
 	}
 
 	public static function get_editor_events_config() {
-		$can_send_events = ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) &&
-			Tracker::is_allow_track() &&
-			! Tracker::has_terms_changed( '2025-07-07' ) &&
-			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+		$can_send_events = self::can_send_events();
 
 		$is_flags_enabled = false;
 		$session_recording_percent = self::DEFAULT_SESSION_RECORDING_PERCENT;
@@ -59,12 +66,39 @@ class Module extends BaseModule {
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
+			'proxy_api_host' => rest_url( Events_Proxy_REST_API::API_NAMESPACE . '/' . Events_Proxy_REST_API::API_BASE . '/api' ),
+			'proxy_lib_base_path' => rest_url( Events_Proxy_REST_API::API_NAMESPACE . '/' . Events_Proxy_REST_API::API_BASE . '/libs/' ),
 			'flags_enabled' => $is_flags_enabled,
 			'user_id' => self::get_user_id(),
 			'session_recording_percent' => $session_recording_percent,
 		];
 
 		return $settings;
+	}
+
+	public static function dispatch_event( string $event_name, array $properties = [] ): void {
+		if ( ! self::can_send_events() ) {
+			return;
+		}
+
+		try {
+			$user_id = self::get_user_id();
+
+			$context = [
+				'user_id' => $user_id,
+				'distinct_id' => $user_id,
+				'subscription_id' => self::get_subscription_id(),
+				'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
+				'app_version' => ELEMENTOR_VERSION,
+				'wp_version' => get_bloginfo( 'version' ),
+				'site_language' => get_locale(),
+				'source' => 'server',
+			];
+
+			Server_Events_Client::track( $event_name, array_merge( $properties, $context ) );
+		} catch ( \Throwable $e ) {
+			return;
+		}
 	}
 
 	public static function get_experimental_data(): array {
@@ -80,6 +114,13 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '3.32.0',
 			],
 		];
+	}
+
+	private static function can_send_events(): bool {
+		return ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) &&
+			Tracker::is_allow_track() &&
+			! Tracker::has_terms_changed() &&
+			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	private static function get_subscription_id() {
@@ -110,6 +151,19 @@ class Module extends BaseModule {
 
 		return $editor_assets_api->get_assets_data();
 	}
+
+	public static function get_mixpanel_api_host() {
+		$mixpanel_config = self::get_remote_mixpanel_config();
+
+		return wp_http_validate_url( $mixpanel_config[0]['apiHost'] ?? static::API_UPSTREAM_HOST );
+	}
+
+	public static function get_mixpanel_lib_host() {
+		$mixpanel_config = self::get_remote_mixpanel_config();
+
+		return wp_http_validate_url( $mixpanel_config[0]['libHost'] ?? static::LIBS_UPSTREAM_HOST );
+	}
+
 	private static function get_user_id() {
 		$user_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
 

@@ -271,6 +271,45 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		return $cb;
 	}
 
+	public function test_wordpress_category_is_not_registered_when_experiment_active() {
+		// Arrange
+		$experiments = Plugin::$instance->experiments;
+		$experiments->set_feature_default_state( Elements_Manager::EXPERIMENT_HIDE_WORDPRESS_WIDGETS, Experiments_Manager::STATE_ACTIVE );
+
+		$manager = $this->elementor()->elements_manager;
+		$this->reset_categories( $manager );
+
+		// Act
+		$categories = $manager->get_categories();
+
+		// Cleanup
+		$experiments->set_feature_default_state( Elements_Manager::EXPERIMENT_HIDE_WORDPRESS_WIDGETS, Experiments_Manager::STATE_ACTIVE );
+		$this->reset_categories( $manager );
+
+		// Assert
+		$this->assertArrayNotHasKey( Elements_Manager::CATEGORY_WORDPRESS, $categories );
+	}
+
+	public function test_wordpress_category_is_registered_when_experiment_inactive() {
+		// Arrange
+		$experiments = Plugin::$instance->experiments;
+		$experiments->set_feature_default_state( Elements_Manager::EXPERIMENT_HIDE_WORDPRESS_WIDGETS, Experiments_Manager::STATE_INACTIVE );
+
+		$manager = $this->elementor()->elements_manager;
+		$this->reset_categories( $manager );
+
+		// Act
+		$categories = $manager->get_categories();
+
+		// Cleanup
+		$experiments->set_feature_default_state( Elements_Manager::EXPERIMENT_HIDE_WORDPRESS_WIDGETS, Experiments_Manager::STATE_ACTIVE );
+		$this->reset_categories( $manager );
+
+		// Assert
+		$this->assertArrayHasKey( Elements_Manager::CATEGORY_WORDPRESS, $categories );
+		$this->assertSame( esc_html__( 'WordPress', 'elementor' ), $categories[ Elements_Manager::CATEGORY_WORDPRESS ]['title'] );
+	}
+
 	public function test_addChildWithNonExistentElementType() {
 		// Arrange
 		$container_data = [

@@ -128,7 +128,7 @@ class Test_Border_Radius_Property_Converter extends TestCase {
 
 	private function radius( string $start_start, string $start_end, string $end_end, string $end_start ): array {
 		return [
-			'$$type' => 'border-radius',
+			'$$type' => 'border-radius-v2',
 			'value' => [
 				'start-start' => $this->px( $start_start ),
 				'start-end' => $this->px( $start_end ),

@@ -1,95 +1,103 @@
-import { type V1ElementConfig } from '@elementor/editor-elements';
+import { httpService } from '@elementor/http-client';
 
-import { buildLlmGuidance, enrichPropertiesWithBaseSettingsHints, mergeInstructions } from '../build-llm-guidance';
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: jest.fn(),
+} ) );
 
-const mockEmailBaseSettings = {
-	email: {
-		$$type: 'emails',
-		value: {
-			to: {
-				$$type: 'string-array',
-				value: [ { $$type: 'string', value: 'admin@example.com' } ],
-			},
-			from: { $$type: 'string', value: 'email@example.com' },
-			message: { $$type: 'string', value: '[all-fields]' },
-		},
-	},
+jest.mock( '@elementor/editor-mcp', () => {
+	class MockResourceTemplate {
+		callbacks: { list?: () => Promise< { resources: unknown[] } > };
+		constructor( _uriTemplate: string, callbacks: { list?: () => Promise< { resources: unknown[] } > } ) {
+			this.callbacks = callbacks;
+		}
+	}
+	return { ResourceTemplate: MockResourceTemplate };
+} );
+
+import { initWidgetsSchemaResource, WIDGET_SCHEMA_URI } from '../widgets-schema-resource';
+
+const mockedHttpService = httpService as jest.MockedFunction< typeof httpService >;
+
+type ResourceTemplateHandler = (
+	uri: URL,
+	variables: Record< string, string >
+) => Promise< { contents: { text: string }[] } >;
+type ResourceTemplateLike = { callbacks: { list?: () => Promise< { resources: unknown[] } > } };
+
+const captureHandlers = () => {
+	const resource = jest.fn();
+	initWidgetsSchemaResource( { resource } as never );
+	const call = resource.mock.calls[ 0 ];
+	const template = call[ 1 ] as ResourceTemplateLike;
+	return {
+		list: template.callbacks.list as () => Promise< { resources: unknown[] } >,
+		readHandler: call[ 3 ] as ResourceTemplateHandler,
+	};
 };
 
-const mockFormWidgetData = {
-	title: 'Form',
-	controls: {},
-	elType: 'widget',
-	meta: { is_container: true },
-	base_settings: mockEmailBaseSettings,
-	atomic_props_schema: {
-		email: { kind: 'object', key: 'emails' },
-		'form-name': { kind: 'string', key: 'string' },
-	},
-} as unknown as V1ElementConfig;
-
-describe( 'build-llm-guidance', () => {
-	it( 'mergeInstructions combines existing and additional instructions', () => {
-		expect( mergeInstructions( 'First.', 'Second.' ) ).toBe( 'First. Second.' );
-		expect( mergeInstructions( undefined, 'Only.' ) ).toBe( 'Only.' );
+describe( 'widgets-schema-resource', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
 	} );
 
-	it( 'buildLlmGuidance exposes default_settings for widgets with base_settings', () => {
-		const guidance = buildLlmGuidance( mockFormWidgetData, 'e-form', {} );
-
-		expect( guidance.default_settings ).toEqual( mockEmailBaseSettings );
-		expect( guidance.instructions ).toContain( 'Omit them from elementConfig unless the user explicitly asks' );
-		expect( guidance.can_have_children ).toBe( true );
-	} );
-
-	it( 'buildLlmGuidance merges style and settings instructions when both exist', () => {
-		const widgetData = {
-			...mockFormWidgetData,
-			base_styles: {
-				'e-form-base': {
-					variants: [
-						{
-							props: {
-								display: { $$type: 'string', value: 'flex' },
-							},
-						},
+	it( 'lists widget types fetched from the server via list-widget-schemas with summary=true', async () => {
+		// Arrange
+		const post = jest.fn().mockResolvedValue( {
+			data: {
+				data: {
+					widgets: [
+						{ type: 'e-heading', description: 'A heading widget' },
+						{ type: 'e-button', description: 'A button widget' },
 					],
 				},
 			},
-		} as unknown as V1ElementConfig;
+		} );
+		mockedHttpService.mockReturnValue( { post } as never );
+		const { list } = captureHandlers();
 
-		const guidance = buildLlmGuidance( widgetData, 'e-form', {} );
+		// Act
+		const result = await list();
 
-		expect( guidance.default_styles ).toEqual( { display: { $$type: 'string', value: 'flex' } } );
-		expect( guidance.default_settings ).toEqual( mockEmailBaseSettings );
-		expect( guidance.instructions ).toContain( 'default styles' );
-		expect( guidance.instructions ).toContain( 'default settings' );
+		// Assert
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			tool: 'list-widget-schemas',
+			input: { summary: true },
+		} );
+		expect( result.resources ).toEqual( [
+			{ uri: 'elementor://widgets/schema/e-heading', name: 'Widget schema for e-heading' },
+			{ uri: 'elementor://widgets/schema/e-button', name: 'Widget schema for e-button' },
+		] );
 	} );
 
-	it( 'enrichPropertiesWithBaseSettingsHints adds omit guidance to base setting props', () => {
-		const enriched = enrichPropertiesWithBaseSettingsHints(
-			{
-				email: { type: 'object' },
-				'form-name': { type: 'object' },
-			},
-			[ 'email' ]
-		);
+	it( 'reads a single widget schema via the get-widget-schema tool', async () => {
+		// Arrange
+		const post = jest.fn().mockResolvedValue( {
+			data: { data: { type: 'object', properties: { text: { mocked: true } } } },
+		} );
+		mockedHttpService.mockReturnValue( { post } as never );
+		const { readHandler } = captureHandlers();
+		const uri = new URL( 'elementor://widgets/schema/e-heading' );
 
-		expect( enriched.email.description ).toContain( 'llm_guidance.default_settings' );
-		expect( enriched[ 'form-name' ].description ).toBeUndefined();
+		// Act
+		const result = await readHandler( uri, { widgetType: 'e-heading' } );
+
+		// Assert
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			tool: 'get-widget-schema',
+			input: { widget_type: 'e-heading' },
+		} );
+		expect( JSON.parse( result.contents[ 0 ].text ) ).toEqual( {
+			type: 'object',
+			properties: { text: { mocked: true } },
+		} );
 	} );
-} );
 
-describe( 'widgets-schema-resource base_settings integration', () => {
-	it( 'keeps base setting props in schema while enriching descriptions', () => {
-		const properties = enrichPropertiesWithBaseSettingsHints(
-			{
-				email: { type: 'object', properties: {} },
-			},
-			Object.keys( mockEmailBaseSettings )
-		);
+	it( 'throws when no widget type variable is provided', async () => {
+		// Arrange
+		const { readHandler } = captureHandlers();
+		const uri = new URL( WIDGET_SCHEMA_URI.replace( '{widgetType}', '' ) );
 
-		expect( properties ).toHaveProperty( 'email' );
-		expect( properties.email.description ).toContain( 'omit unless user explicitly requests' );
+		// Act & Assert
+		await expect( readHandler( uri, {} ) ).rejects.toThrow( 'No widget type provided.' );
 	} );
 } );
