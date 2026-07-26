@@ -27,10 +27,10 @@ class Style_Applier {
 	/**
 	 * @param array<string, array&>               $config_id_index Index of subtree refs.
 	 * @param array<string, array<string, mixed>> $styles          Per-config-id CSS blocks.
-	 * @param array<string, string>               $tags            Optional per-config-id element/widget tag, used in error messages to link the widget schema.
+	 * @param array<string, string>               $element_types   Optional per-config-id element type (widgetType or elType), used in error messages to link the widget schema.
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
-	public function apply( array $config_id_index, array $styles, array $tags = [] ): array {
+	public function apply( array $config_id_index, array $styles, array $element_types = [] ): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error' => null,
@@ -56,7 +56,7 @@ class Style_Applier {
 				continue;
 			}
 
-			$tag = $tags[ $config_id ] ?? null;
+			$element_type = $element_types[ $config_id ] ?? null;
 			$conversion = $this->convert_style_block( $declarations );
 
 			if ( ! empty( $conversion['rejected'] ) ) {
@@ -75,7 +75,7 @@ class Style_Applier {
 					$config_id,
 					$this->format_declarations( $declarations ),
 					$this->url_hint_for_declarations( $declarations ),
-					$this->schema_link_hint( $tag )
+					$this->schema_link_hint( $element_type )
 				);
 				continue;
 			}
@@ -85,7 +85,7 @@ class Style_Applier {
 					'[%s] Some declarations fell back to custom_css (may not render on Pro 3.35+): %s. Prefer atomic longhand properties.%s',
 					$config_id,
 					trim( $conversion['customCss'] ),
-					$this->schema_link_hint( $tag )
+					$this->schema_link_hint( $element_type )
 				);
 			}
 
@@ -97,7 +97,7 @@ class Style_Applier {
 				$declarations,
 				$style_parser,
 				$config_id,
-				$tag
+				$element_type
 			);
 
 			if ( $apply_error ) {
@@ -122,7 +122,7 @@ class Style_Applier {
 		array $declarations,
 		Style_Parser $style_parser,
 		string $config_id,
-		?string $tag
+		?string $element_type
 	): ?string {
 		$existing_style_id = $this->find_existing_local_style_id( $node );
 
@@ -135,7 +135,7 @@ class Style_Applier {
 			$parse_result = $style_parser->parse( $merged_definition );
 
 			if ( ! $parse_result->is_valid() ) {
-				return $this->format_parse_error( $config_id, $tag, $declarations, $parse_result->errors()->to_string() );
+				return $this->format_parse_error( $config_id, $element_type, $declarations, $parse_result->errors()->to_string() );
 			}
 
 			$node['styles'][ $existing_style_id ] = $parse_result->unwrap();
@@ -147,7 +147,7 @@ class Style_Applier {
 
 		$parse_result = $style_parser->parse( $definition );
 		if ( ! $parse_result->is_valid() ) {
-			return $this->format_parse_error( $config_id, $tag, $declarations, $parse_result->errors()->to_string() );
+			return $this->format_parse_error( $config_id, $element_type, $declarations, $parse_result->errors()->to_string() );
 		}
 
 		$node['styles'] = $node['styles'] ?? [];
@@ -157,14 +157,14 @@ class Style_Applier {
 		return null;
 	}
 
-	private function format_parse_error( string $config_id, ?string $tag, array $declarations, string $parser_error ): string {
+	private function format_parse_error( string $config_id, ?string $element_type, array $declarations, string $parser_error ): string {
 		return sprintf(
 			'[%s] Style validation failed: %s. Input declarations: %s.%s%s',
 			$config_id,
 			$parser_error,
 			$this->format_declarations( $declarations ),
 			$this->url_hint_for_declarations( $declarations ),
-			$this->schema_link_hint( $tag )
+			$this->schema_link_hint( $element_type )
 		);
 	}
 
@@ -185,11 +185,11 @@ class Style_Applier {
 		return '';
 	}
 
-	private function schema_link_hint( ?string $tag ): string {
-		if ( ! $tag ) {
+	private function schema_link_hint( ?string $element_type ): string {
+		if ( ! $element_type ) {
 			return '';
 		}
-		return sprintf( ' See elementor://widgets/schema/%s.', $tag );
+		return sprintf( ' See elementor://widgets/schema/%s.', $element_type );
 	}
 
 	/**
