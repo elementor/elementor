@@ -7,13 +7,12 @@ import {
 
 import { KIT_SETTINGS_ROUTE_PREFIX } from '../consts';
 import { getKitTab } from '../tabs';
-import { getWindow } from '../utils/get-window';
 
 export function useActiveKitTab() {
 	return useListenTo(
 		[ v1ReadyEvent(), routeOpenEvent( KIT_SETTINGS_ROUTE_PREFIX ), routeCloseEvent( KIT_SETTINGS_ROUTE_PREFIX ) ],
 		() => {
-			const panelRoute = getWindow().$e.routes.getCurrent()?.panel;
+			const panelRoute = window.$e?.routes?.getCurrent?.()?.panel;
 
 			if ( ! panelRoute || ! panelRoute.startsWith( KIT_SETTINGS_ROUTE_PREFIX ) ) {
 				return null;
