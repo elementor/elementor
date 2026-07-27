@@ -118,19 +118,20 @@ class Module extends BaseModule {
 		];
 
 		/**
-		 * Filters the list of MCP tool ability slugs exposed by the Elementor MCP server.
+		 * Filters additional MCP tool ability slugs to expose on the Elementor MCP server.
 		 *
 		 * Use this filter to add tool abilities (registered via `wp_register_ability` on the
 		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
-		 * ability id returned by the ability's `get_ability_id()`.
+		 * ability id returned by the ability's `get_ability_id()`. Core defaults are always
+		 * included and cannot be removed via this filter.
 		 *
 		 * @since 4.3.0
 		 *
-		 * @param string[] $tools List of tool ability slugs.
+		 * @param string[] $additional_tools List of tool ability slugs contributed by other modules.
 		 */
-		$filtered = apply_filters( 'elementor/mcp/server/tools', $tools );
+		$additional_tools = apply_filters( 'elementor/mcp/server/tools', [] );
 
-		return is_array( $filtered ) ? array_values( array_unique( array_filter( $filtered, 'is_string' ) ) ) : $tools;
+		return $this->normalize_slugs( $tools, $additional_tools );
 	}
 
 	private function get_server_resources(): array {
@@ -142,18 +143,25 @@ class Module extends BaseModule {
 		];
 
 		/**
-		 * Filters the list of MCP resource ability slugs exposed by the Elementor MCP server.
+		 * Filters additional MCP resource ability slugs to expose on the Elementor MCP server.
 		 *
 		 * Use this filter to add resource abilities (registered via `wp_register_ability` on the
 		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
-		 * ability id returned by the ability's `get_ability_id()`.
+		 * ability id returned by the ability's `get_ability_id()`. Core defaults are always
+		 * included and cannot be removed via this filter.
 		 *
 		 * @since 4.3.0
 		 *
-		 * @param string[] $resources List of resource ability slugs.
+		 * @param string[] $additional_resources List of resource ability slugs contributed by other modules.
 		 */
-		$filtered = apply_filters( 'elementor/mcp/server/resources', $resources );
+		$additional_resources = apply_filters( 'elementor/mcp/server/resources', [] );
 
-		return is_array( $filtered ) ? array_values( array_unique( array_filter( $filtered, 'is_string' ) ) ) : $resources;
+		return $this->normalize_slugs( $resources, $additional_resources );
+	}
+
+	private function normalize_slugs( array $defaults, $additional ): array {
+		$additional = is_array( $additional ) ? array_filter( $additional, 'is_string' ) : [];
+
+		return array_values( array_unique( array_merge( $defaults, $additional ) ) );
 	}
 }
