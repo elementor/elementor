@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,5 +61,19 @@ class Test_List_Dynamic_Tags_Ability extends TestCase {
 		$reflection = new \ReflectionMethod( $ability, 'get_ability_id' );
 		$reflection->setAccessible( true );
 		return $reflection->invoke( $ability );
+	}
+
+	public function test_dynamic_tags_uri_is_in_resource_catalog() {
+		// Arrange
+		$ability = new List_Resources_Ability();
+		$reflection = new \ReflectionMethod( $ability, 'get_resource_catalog' );
+		$reflection->setAccessible( true );
+
+		// Act
+		$catalog = $reflection->invoke( $ability );
+		$uris = array_column( $catalog, 'uri' );
+
+		// Assert
+		$this->assertContains( List_Dynamic_Tags_Ability::URI, $uris );
 	}
 }
