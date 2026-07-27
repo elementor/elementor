@@ -155,7 +155,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -223,15 +222,6 @@ class Module extends BaseModule {
 	}
 
 	private function register_experimental_features() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
-			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
-			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
 		Plugin::$instance->experiments->add_feature([
 			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
 			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
