@@ -4,6 +4,7 @@ var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 import PanelComponent from './component';
 import ElementsComponent from './pages/elements/component';
 import EditorComponent from './pages/editor/component';
+import { escapeFromPanelField } from 'elementor-editor-utils/keyboard-nav';
 
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
@@ -17,6 +18,11 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	pages: {},
+
+	// This element also hosts the V4 panel portal, so the handler covers V1 and V4 controls alike.
+	events: {
+		keydown: 'onKeyDown',
+	},
 
 	childEvents: {
 		'click:add'() {
@@ -139,6 +145,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		}
 
 		return this.currentPageView;
+	},
+
+	onKeyDown( event ) {
+		escapeFromPanelField( event, this.el );
 	},
 
 	onBeforeShow() {

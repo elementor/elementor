@@ -1,3 +1,34 @@
+const EDITABLE_SELECTOR = [
+	'input:not([type="hidden"]):not([disabled])',
+	'textarea:not([disabled])',
+	'select:not([disabled])',
+	'[contenteditable="true"]',
+].join( ', ' );
+
+const MONACO_SELECTOR = '.monaco-editor';
+
+// Overlays that own the Escape key themselves, so the panel must not interfere.
+const ESCAPE_OWNER_SELECTOR = [
+	'.dialog-widget',
+	'[role="dialog"]',
+	'.MuiModal-root',
+	'.MuiPopover-root',
+	'.MuiAutocomplete-popper',
+	'.select2-container--open',
+].join( ', ' );
+
+// V1 controls render `.elementor-control`, V4 settings fields render `[data-type="settings-field"]`.
+const CONTROL_ANCHOR_SELECTOR = '.elementor-control, [data-type="settings-field"], [role="group"]';
+
+const FOCUSABLE_SELECTOR = [
+	'a[href]',
+	'button:not([disabled])',
+	'input:not([disabled]):not([type="hidden"])',
+	'select:not([disabled])',
+	'textarea:not([disabled])',
+	'[tabindex]:not([tabindex="-1"])',
+].join( ', ' );
+
 /**
  * Handles arrow-key roving tabindex navigation within a group.
  *
@@ -117,4 +148,159 @@ export function suppressEscapeKeyUp( event ) {
 	};
 
 	window.addEventListener( 'keyup', handler, true );
+}
+
+/**
+ * @param {HTMLElement|Element|null} element
+ * @return {boolean} Whether the element accepts typed input.
+ */
+export function isEditableTarget( element ) {
+	if ( ! element || 'function' !== typeof element.matches ) {
+		return false;
+	}
+
+	return element.matches( EDITABLE_SELECTOR ) || !! element.closest( MONACO_SELECTOR );
+}
+
+/**
+ * @param {HTMLElement|Element|null} element
+ * @return {boolean} Whether the element lives inside an overlay that handles Escape on its own.
+ */
+export function isInsideOverlay( element ) {
+	if ( ! element || 'function' !== typeof element.closest ) {
+		return false;
+	}
+
+	return !! element.closest( ESCAPE_OWNER_SELECTOR );
+}
+
+/**
+ * Resolves the element that should hold focus once a field is escaped.
+ *
+ * @param {HTMLElement} field
+ * @return {HTMLElement|null} The control wrapper, or the closest usable ancestor.
+ */
+export function getEscapeAnchor( field ) {
+	const controlAnchor = field.closest( CONTROL_ANCHOR_SELECTOR );
+
+	if ( controlAnchor ) {
+		return controlAnchor;
+	}
+
+	// Anything inside Monaco would let the editor grab focus back.
+	const monacoRoot = field.closest( MONACO_SELECTOR );
+
+	return monacoRoot ? monacoRoot.parentElement : field.parentElement;
+}
+
+/**
+ * Finds the first focusable element that comes after an element's whole subtree.
+ *
+ * @param {HTMLElement} element
+ * @param {HTMLElement} root
+ * @return {HTMLElement|null} The next focusable element outside the subtree.
+ */
+export function findNextFocusableAfter( element, root ) {
+	const walker = root.ownerDocument.createTreeWalker( root, NodeFilter.SHOW_ELEMENT );
+
+	walker.currentNode = element;
+
+	let node = walker.nextNode();
+
+	while ( node ) {
+		if ( ! element.contains( node ) && node.matches( FOCUSABLE_SELECTOR ) ) {
+			return node;
+		}
+
+		node = walker.nextNode();
+	}
+
+	return null;
+}
+
+/**
+ * Parks focus on a control wrapper, keeping the panel's tab order intact.
+ *
+ * Focusing an ancestor puts the sequential focus starting point *before* its descendants, so a plain
+ * Tab would walk back into the field that was just escaped. A one-shot handler skips past the subtree.
+ *
+ * @param {HTMLElement} anchor
+ * @param {HTMLElement} root
+ */
+function parkFocusOnAnchor( anchor, root ) {
+	const hadTabIndex = anchor.hasAttribute( 'tabindex' );
+
+	const onKeyDown = ( event ) => {
+		if ( 'Tab' !== event.key || event.shiftKey || event.defaultPrevented || event.target !== anchor ) {
+			return;
+		}
+
+		const next = findNextFocusableAfter( anchor, root );
+
+		if ( ! next ) {
+			return;
+		}
+
+		event.preventDefault();
+		next.focus();
+	};
+
+	const onFocusOut = ( event ) => {
+		if ( event.relatedTarget && anchor.contains( event.relatedTarget ) ) {
+			return;
+		}
+
+		anchor.removeEventListener( 'keydown', onKeyDown );
+		anchor.removeEventListener( 'focusout', onFocusOut );
+
+		if ( ! hadTabIndex ) {
+			anchor.removeAttribute( 'tabindex' );
+		}
+	};
+
+	if ( ! hadTabIndex ) {
+		anchor.setAttribute( 'tabindex', '-1' );
+	}
+
+	anchor.addEventListener( 'keydown', onKeyDown );
+	anchor.addEventListener( 'focusout', onFocusOut );
+
+	anchor.focus( { preventScroll: true } );
+}
+
+/**
+ * Releases focus from an editable panel field on Escape, instead of letting the global `esc` shortcut
+ * route away to the menu. Pressing Escape again is not handled here, so it exits the panel as usual.
+ *
+ * @param {KeyboardEvent|jQuery.Event} event
+ * @param {HTMLElement}                root  - The panel element the event was delegated from.
+ * @return {boolean} Whether the event was handled.
+ */
+export function escapeFromPanelField( event, root ) {
+	const isDefaultPrevented = 'function' === typeof event.isDefaultPrevented
+		? event.isDefaultPrevented()
+		: event.defaultPrevented;
+
+	if ( 'Escape' !== event.key || isDefaultPrevented ) {
+		return false;
+	}
+
+	const field = root.ownerDocument.activeElement;
+
+	if ( ! isEditableTarget( field ) || ! root.contains( field ) || isInsideOverlay( field ) ) {
+		return false;
+	}
+
+	event.preventDefault();
+	event.stopPropagation();
+
+	const anchor = getEscapeAnchor( field );
+
+	field.blur();
+
+	if ( anchor ) {
+		parkFocusOnAnchor( anchor, root );
+	}
+
+	return true;
 }
