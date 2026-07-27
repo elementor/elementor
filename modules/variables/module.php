@@ -4,7 +4,7 @@ namespace Elementor\Modules\Variables;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
 use Elementor\Modules\Variables\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -33,10 +33,12 @@ class Module extends BaseModule {
 		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Variables', 'elementor' ),
-			'description' => esc_html__( 'Enable variables. (For this feature to work - Atomic Widgets must be active)', 'elementor' ),
+			'description' => esc_html__( 'Enable variables.', 'elementor' ),
 			'hidden' => true,
+			'mutable' => false,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+			'dependencies' => [ Opt_In::EXPERIMENT_NAME ],
 		];
 	}
 
@@ -65,16 +67,17 @@ class Module extends BaseModule {
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_MANAGER_NAME,
 			'title' => esc_html__( 'Variables Manager', 'elementor' ),
-			'description' => esc_html__( 'Enable variables manager. (For this feature to work - Variables must be active)', 'elementor' ),
+			'description' => esc_html__( 'Enable variables manager.', 'elementor' ),
 			'hidden' => true,
+			'mutable' => false,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+			'dependencies' => [ Opt_In::EXPERIMENT_NAME ],
 		]);
 	}
 
 	private function is_experiment_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	public function init_variable_types_registry(): void {

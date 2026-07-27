@@ -3,14 +3,10 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import ApiRequests from '../../../../assets/api-requests';
 import { deleteAllVariablesViaApi } from './variables-api-utils';
 
+// Variables and Variables Manager are merged into Editor V4, so enabling V4 enables them.
 const VARIABLES_BASE_EXPERIMENTS = {
-	e_variables: 'active',
 	e_atomic_elements: 'active',
 	e_classes: 'active',
-} as const;
-
-const VARIABLES_DEPENDENT_EXPERIMENTS = {
-	e_variables_manager: 'active',
 } as const;
 
 export async function initVariablesManagerTest(
@@ -20,7 +16,6 @@ export async function initVariablesManagerTest(
 ): Promise< WpAdminPage > {
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdminPage.setExperiments( VARIABLES_BASE_EXPERIMENTS );
-	await wpAdminPage.setExperiments( VARIABLES_DEPENDENT_EXPERIMENTS );
 	return wpAdminPage;
 }
 

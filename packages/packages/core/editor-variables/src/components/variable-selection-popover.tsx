@@ -27,7 +27,7 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
-	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
+	const onSettingsAvailable = isExperimentActive( 'e_opt_in_v4' )
 		? () => {
 				window.dispatchEvent(
 					new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )

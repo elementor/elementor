@@ -31,7 +31,7 @@ const PanelTabContent = () => {
 	const { element } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
-	const isInteractionsActive = isExperimentActive( 'e_interactions' );
+	const isInteractionsActive = isExperimentActive( 'e_opt_in_v4' );
 	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
 
 	const [ storedTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );

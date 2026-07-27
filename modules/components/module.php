@@ -3,7 +3,7 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
@@ -62,8 +62,7 @@ class Module extends BaseModule {
 	}
 
 	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	public static function get_experimental_data() {
@@ -72,8 +71,10 @@ class Module extends BaseModule {
 			'title'          => esc_html__( 'Components', 'elementor' ),
 			'description'    => esc_html__( 'Enable components.', 'elementor' ),
 			'hidden'         => true,
+			'mutable'        => false,
 			'default'        => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'dependencies'   => [ Opt_In::EXPERIMENT_NAME ],
 		];
 	}
 

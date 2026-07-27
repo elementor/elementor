@@ -5,7 +5,7 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -55,14 +55,15 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Interactions', 'elementor' ),
 			'description' => esc_html__( 'Enable element interactions.', 'elementor' ),
 			'hidden' => true,
+			'mutable' => false,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'dependencies' => [ Opt_In::EXPERIMENT_NAME ],
 		];
 	}
 
 	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	public function __construct() {

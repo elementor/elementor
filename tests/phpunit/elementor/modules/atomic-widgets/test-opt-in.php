@@ -5,10 +5,19 @@ namespace Elementor\Testing\Modules\AtomicWidgets;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
+use Elementor\Modules\Components\Module as ComponentsModule;
+use Elementor\Modules\Interactions\Module as InteractionsModule;
+use Elementor\Modules\Variables\Module as VariablesModule;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Opt_In extends Elementor_Test_Base {
+	const MERGED_FEATURES = [
+		VariablesModule::class,
+		ComponentsModule::class,
+		InteractionsModule::class,
+	];
+
 	public function test_experiment_is_registered_with_the_default_features(): void {
 		// Act.
 		$features = Plugin::instance()->experiments->get_features();
@@ -132,6 +141,38 @@ class Test_Opt_In extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( get_option( $this->opt_in_option_key() ), get_option( $this->atomic_option_key() ) );
+	}
+
+	/**
+	 * Variables, Variables Manager, Components and Interactions are merged into Editor V4: they
+	 * depend on it and are immutable, so a stored state of their own must not bring them back once
+	 * Editor V4 is off.
+	 */
+	public function test_merged_features_cannot_be_activated_while_editor_v4_is_off(): void {
+		// Arrange - store an active state of their own, which must not win over Editor V4.
+		update_option( $this->opt_in_option_key(), Experiments_Manager::STATE_INACTIVE );
+
+		foreach ( self::MERGED_FEATURES as $module ) {
+			$option_key = 'elementor_experiment-' . $module::get_experimental_data()['name'];
+
+			update_option( $option_key, Experiments_Manager::STATE_ACTIVE );
+		}
+
+		// Act - Modules_Manager registers each module experiment while Editor V4 is already known.
+		$experiments = new Experiments_Manager();
+
+		foreach ( self::MERGED_FEATURES as $module ) {
+			$experiments->add_feature( $module::get_experimental_data() );
+		}
+
+		// Assert.
+		$this->assertFalse( $experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) );
+
+		foreach ( self::MERGED_FEATURES as $module ) {
+			$name = $module::get_experimental_data()['name'];
+
+			$this->assertFalse( $experiments->is_feature_active( $name ), $name . ' should follow Editor V4' );
+		}
 	}
 
 	private function opt_in_option_key(): string {

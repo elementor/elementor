@@ -4,11 +4,10 @@ import ApiRequests from '../../../../assets/api-requests';
 import { createGlobalClasses, deleteAllGlobalClasses, getGlobalClasses } from '../global-classes/utils';
 import { createVariableWithSync, deleteAllVariablesViaApi } from '../editor-variables/variables-api-utils';
 
+// Variables and Variables Manager are merged into Editor V4, so enabling V4 enables them.
 export const DESIGN_SYSTEM_EXPERIMENTS = {
 	e_atomic_elements: 'active',
 	e_classes: 'active',
-	e_variables: 'active',
-	e_variables_manager: 'active',
 } as const;
 
 export async function initDesignSystemTest(

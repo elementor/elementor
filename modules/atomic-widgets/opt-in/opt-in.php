@@ -6,22 +6,18 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\GlobalClasses\Module as GlobalClassesModule;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\Variables\Module as VariablesModule;
-use Elementor\Modules\Components\Module as ComponentsModule;
-use Elementor\Modules\Interactions\Module as InteractionsModule;
 use Elementor\Plugin;
 
 class Opt_In {
 	const EXPERIMENT_NAME = 'e_opt_in_v4';
 
+	// Variables, Variables Manager, Components and Interactions are merged into Editor V4: they
+	// depend on it and are not settable on their own, so opting in and out only has to move the
+	// features that still carry their own state.
 	const OPT_OUT_FEATURES = [
 		self::EXPERIMENT_NAME,
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
-		VariablesModule::EXPERIMENT_NAME,
-		VariablesModule::EXPERIMENT_MANAGER_NAME,
-		ComponentsModule::EXPERIMENT_NAME,
-		InteractionsModule::EXPERIMENT_NAME,
 	];
 
 	// Opting in also enables Container, but opting out never disables it, as existing
@@ -31,10 +27,6 @@ class Opt_In {
 		'container',
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
-		VariablesModule::EXPERIMENT_NAME,
-		VariablesModule::EXPERIMENT_MANAGER_NAME,
-		ComponentsModule::EXPERIMENT_NAME,
-		InteractionsModule::EXPERIMENT_NAME,
 	];
 
 	public function init() {
