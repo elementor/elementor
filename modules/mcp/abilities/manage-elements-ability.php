@@ -46,7 +46,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only elements with version="v4" (see elementor/get-page-structure) are editable; V3 legacy elements return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. Each operation: action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only V4 elements (see elementor/get-page-structure -> version) can be the operation target; targeting a V3 legacy element_id returns elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -227,16 +227,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$v3_error = $this->reject_v3_target( $tree, $element_id );
 		if ( $v3_error ) {
 			return $v3_error;
-		}
-
-		if ( 'move' === $action ) {
-			$new_parent_id = $operation['new_parent_id'] ?? '';
-			if ( is_string( $new_parent_id ) && '' !== $new_parent_id && 'document' !== $new_parent_id ) {
-				$v3_parent_error = $this->reject_v3_target( $tree, $new_parent_id );
-				if ( $v3_parent_error ) {
-					return $v3_parent_error;
-				}
-			}
 		}
 
 		switch ( $action ) {

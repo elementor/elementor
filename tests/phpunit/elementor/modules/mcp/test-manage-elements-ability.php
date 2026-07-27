@@ -563,7 +563,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_move__rejects_v3_new_parent_id() {
+	public function test_move__allows_moving_v4_element_into_v3_parent() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$v4_heading_id = $this->given_heading_on_document( $post_id );
@@ -580,9 +580,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_v3_not_supported', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+
+		$v3_container = $this->find_element_in_document( $post_id, $v3_container_id );
+		$this->assertNotNull( $v3_container );
+		$this->assertSame( $v4_heading_id, $v3_container['elements'][0]['id'] ?? null );
 	}
 
 	public function test_bulk__v3_op_fails_but_sibling_v4_op_still_applies() {
