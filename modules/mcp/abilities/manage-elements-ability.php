@@ -20,6 +20,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -51,11 +52,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status', 'results', 'post_id' ],
+				'required' => [ 'status', 'results', 'post_id', 'preview_url', 'llm_instructions' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
 					'results' => [ 'type' => 'array' ],
 					'post_id' => [ 'type' => 'integer' ],
+					'preview_url' => Document_Mutation_Links::preview_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 					'version' => [ 'type' => 'string' ],
 				],
 			],
@@ -209,7 +212,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$response['post_id'] = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
-			return $response;
+			return $this->with_mutation_links( $response, $document );
 		}
 
 		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
@@ -218,7 +221,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$response['save_error'] = is_wp_error( $save_result )
 				? $save_result->get_error_message()
 				: __( 'Could not save document.', 'elementor' );
-			return $response;
+
+			return $this->with_mutation_links( $response, $document );
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
@@ -226,7 +230,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$post = get_post( $document->get_main_id() );
 		$response['version'] = $post ? $post->post_modified_gmt : current_time( 'mysql', true );
 
-		return $response;
+		return $this->with_mutation_links( $response, $document );
+	}
+
+	private function with_mutation_links( array $response, Document $document ): array {
+		return array_merge( $response, Document_Mutation_Links::for_document( $document ) );
 	}
 
 	private function apply_operation( array $tree, string $action, string $element_id, array $operation ) {
