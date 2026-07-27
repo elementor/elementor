@@ -876,7 +876,7 @@ class Upgrades {
 	 * stored value to keep the two switches aligned and avoid silently dropping those sites out
 	 * of V4.
 	 */
-	public static function _v_4_4_0_align_v4_umbrella_experiment() {
+	public static function _v_4_3_0_align_v4_umbrella_experiment() {
 		$opt_in_key = 'elementor_experiment-' . Opt_In::EXPERIMENT_NAME;
 
 		if ( false !== get_option( $opt_in_key, false ) ) {
