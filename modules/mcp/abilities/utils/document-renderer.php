@@ -81,7 +81,6 @@ class Document_Renderer {
 	}
 
 	private function resolve_preview_document( int $post_id ) {
-		$user_id = get_current_user_id();
 		$main = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $main ) {
@@ -92,12 +91,10 @@ class Document_Renderer {
 			);
 		}
 
-		if ( $main->get_autosave_id( $user_id ) ) {
-			$autosave = $main->get_autosave( $user_id );
+		$newer_autosave = $main->get_newer_autosave();
 
-			if ( $autosave ) {
-				return $autosave;
-			}
+		if ( $newer_autosave ) {
+			return $newer_autosave;
 		}
 
 		$status = get_post_status( $post_id );
