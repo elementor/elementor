@@ -156,7 +156,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -240,15 +239,6 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_EDITOR_MCP,
-			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
-			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
 
 		Plugin::$instance->experiments->add_feature([
 			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
