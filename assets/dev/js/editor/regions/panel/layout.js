@@ -19,7 +19,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 
 	pages: {},
 
-	// This element also hosts the V4 panel portal, so the handler covers V1 and V4 controls alike.
 	events: {
 		keydown: 'onKeyDown',
 	},

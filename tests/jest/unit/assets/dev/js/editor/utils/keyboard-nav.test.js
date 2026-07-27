@@ -113,7 +113,6 @@ describe( 'keyboard-nav - escapeFromPanelField', () => {
 
 		input.focus();
 
-		// Monaco and MUI overlays prevent default when they consume Escape themselves.
 		input.addEventListener( 'keydown', ( event ) => event.preventDefault() );
 		panel.addEventListener( 'keydown', ( event ) => escapeFromPanelField( event, panel ) );
 
