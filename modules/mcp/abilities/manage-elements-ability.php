@@ -18,6 +18,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -29,6 +30,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manage_Elements_Ability extends Abstract_Ability {
+
+	const MAX_BATCH_SIZE = 50;
 
 	private ?Document_Mutator $mutator;
 
@@ -43,20 +46,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Surgical edits on existing V4 elements in a document. action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 elements in a document (up to 50 operations applied to a single document tree, saved once). Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status' ],
+				'required' => [ 'status', 'results', 'post_id' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
+					'results' => [ 'type' => 'array' ],
 					'post_id' => [ 'type' => 'integer' ],
-					'element_id' => [ 'type' => 'string' ],
 					'version' => [ 'type' => 'string' ],
-					'warnings' => [
-						'type' => 'array',
-						'items' => [ 'type' => 'string' ],
-					],
 				],
 			],
 			[
@@ -69,39 +68,49 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			fn() => current_user_can( 'edit_posts' ),
 			[
 				'type' => 'object',
-				'required' => [ 'action', 'post_id', 'element_id' ],
+				'required' => [ 'post_id', 'operations' ],
 				'properties' => [
-					'action' => [
-						'type' => 'string',
-						'enum' => [ 'update', 'delete', 'move', 'duplicate' ],
-					],
 					'post_id' => [ 'type' => 'integer' ],
-					'element_id' => [ 'type' => 'string' ],
-					'settings' => [
-						'type' => 'object',
-						'description' => 'update only: partial plain settings map merged onto existing settings.',
-					],
-					'style' => [
-						'type' => 'object',
-						'description' => 'update only: raw CSS declarations (property → value); null resets a property.',
-					],
-					'classes' => [
+					'operations' => [
 						'type' => 'array',
-						'items' => [ 'type' => 'string' ],
-						'description' => 'update only: global class labels to attach (prepended to ex Fisting).',
-					],
-					'interactions' => [
-						'type' => 'array',
-						'items' => [ 'type' => 'object' ],
-						'description' => 'update only: array of interaction items in the native Interaction_Item shape. Replaces existing interactions on the element. Read elementor://interactions/schema for the full shape.',
-					],
-					'new_parent_id' => [
-						'type' => 'string',
-						'description' => "move only: target parent id or 'document' for root.",
-					],
-					'index' => [
-						'type' => [ 'integer', 'null' ],
-						'description' => 'move only: insertion index within new_parent_id (null = append).',
+						'description' => 'Bulk operations (1–50) applied in order to a single document tree, saved once at the end. Partial success is supported: failed ops return per-op errors while sibling valid ops still apply.',
+						'items' => [
+							'type' => 'object',
+							'required' => [ 'action', 'element_id' ],
+							'properties' => [
+								'action' => [
+									'type' => 'string',
+									'enum' => [ 'update', 'delete', 'move', 'duplicate' ],
+								],
+								'element_id' => [ 'type' => 'string' ],
+								'settings' => [
+									'type' => 'object',
+									'description' => 'update only: partial plain settings map merged onto existing settings.',
+								],
+								'style' => [
+									'type' => 'object',
+									'description' => 'update only: raw CSS declarations (property → value); null resets a property.',
+								],
+								'classes' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'string' ],
+									'description' => 'update only: global class labels to attach (prepended to existing).',
+								],
+								'interactions' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'object' ],
+									'description' => 'update only: array of interaction items in the native Interaction_Item shape. Replaces existing interactions on the element. Read elementor://interactions/schema for the full shape.',
+								],
+								'new_parent_id' => [
+									'type' => 'string',
+									'description' => "move only: target parent id or 'document' for root.",
+								],
+								'index' => [
+									'type' => [ 'integer', 'null' ],
+									'description' => 'move only: insertion index within new_parent_id (null = append).',
+								],
+							],
+						],
 					],
 				],
 			]
@@ -110,18 +119,36 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
-		$action = $input['action'] ?? '';
 
 		if ( empty( $input['post_id'] ) ) {
 			return $this->bad_request( __( 'post_id is required.', 'elementor' ) );
 		}
 
-		if ( empty( $input['element_id'] ) || ! is_string( $input['element_id'] ) ) {
-			return $this->bad_request( __( 'element_id is required.', 'elementor' ) );
+		$operations = $input['operations'] ?? null;
+		if ( ! is_array( $operations ) ) {
+			return $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+		}
+
+		if ( empty( $operations ) ) {
+			return $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+		}
+
+		if ( count( $operations ) > self::MAX_BATCH_SIZE ) {
+			return new \WP_Error(
+				'batch_size_exceeded',
+				sprintf(
+					/* translators: %d: maximum operations per request */
+					__( 'Maximum %d operations per request.', 'elementor' ),
+					self::MAX_BATCH_SIZE
+				),
+				[
+					'status' => \WP_Http::BAD_REQUEST,
+					'max_allowed' => self::MAX_BATCH_SIZE,
+				]
+			);
 		}
 
 		$post_id = (int) $input['post_id'];
-		$element_id = (string) $input['element_id'];
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return new \WP_Error(
@@ -136,90 +163,160 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $document;
 		}
 
+		return $this->handle_bulk( $document, $operations );
+	}
+
+	private function handle_bulk( Document $document, array $operations ): array {
+		$results = new Bulk_Operations_Result();
+		$tree = $this->get_tree( $document );
+		$any_change = false;
+
+		foreach ( $operations as $index => $operation ) {
+			$index = (int) $index;
+
+			if ( ! is_array( $operation ) ) {
+				$results->add_error( $index, '', 'invalid_input', __( 'Invalid operation.', 'elementor' ) );
+				continue;
+			}
+
+			$action = $operation['action'] ?? '';
+			$element_id = $operation['element_id'] ?? '';
+
+			if ( ! is_string( $element_id ) || '' === $element_id ) {
+				$results->add_error( $index, $action, 'invalid_input', __( 'element_id is required.', 'elementor' ) );
+				continue;
+			}
+
+			$outcome = $this->apply_operation( $tree, $action, $element_id, $operation );
+
+			if ( is_wp_error( $outcome ) ) {
+				$results->add_error( $index, $action, $outcome->get_error_code(), $outcome->get_error_message() );
+				continue;
+			}
+
+			$tree = $outcome['tree'];
+			$any_change = true;
+
+			$extra = [ 'element_id' => $element_id ];
+			if ( ! empty( $outcome['warnings'] ) ) {
+				$extra['warnings'] = $outcome['warnings'];
+			}
+			$results->add_success( $index, $action, $extra );
+		}
+
+		$response = $results->to_array();
+		$response['post_id'] = (int) $document->get_main_id();
+
+		if ( ! $any_change ) {
+			return $response;
+		}
+
+		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
+		if ( is_wp_error( $save_result ) || ! $save_result ) {
+			$response['status'] = 'error';
+			$response['save_error'] = is_wp_error( $save_result )
+				? $save_result->get_error_message()
+				: __( 'Could not save document.', 'elementor' );
+			return $response;
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		$post = get_post( $document->get_main_id() );
+		$response['version'] = $post ? $post->post_modified_gmt : current_time( 'mysql', true );
+
+		return $response;
+	}
+
+	private function apply_operation( array $tree, string $action, string $element_id, array $operation ) {
 		switch ( $action ) {
 			case 'update':
-				return $this->handle_update( $document, $element_id, $input );
+				return $this->apply_update( $tree, $element_id, $operation );
 			case 'delete':
-				return $this->handle_delete( $document, $element_id );
+				return $this->apply_delete( $tree, $element_id );
 			case 'move':
-				return $this->handle_move( $document, $element_id, $input );
+				return $this->apply_move( $tree, $element_id, $operation );
 			case 'duplicate':
-				return $this->handle_duplicate( $document, $element_id );
+				return $this->apply_duplicate( $tree, $element_id );
 			default:
-				return $this->bad_request( sprintf(
-					/* translators: %s: action name */
-					__( 'Unknown action: %s.', 'elementor' ),
-					$action
-				) );
+				return new \WP_Error(
+					'invalid_input',
+					sprintf(
+						/* translators: %s: action name */
+						__( 'Unknown action: %s.', 'elementor' ),
+						$action
+					)
+				);
 		}
 	}
 
-	private function handle_delete( Document $document, string $element_id ) {
-		$tree = $this->get_tree( $document );
+	private function apply_delete( array $tree, string $element_id ) {
 		$new_tree = $this->get_mutator()->remove( $tree, $element_id );
-
 		if ( is_wp_error( $new_tree ) ) {
 			return $this->to_public_error( $new_tree );
 		}
 
-		return $this->save_and_respond( $document, $new_tree, $element_id, [] );
+		return [
+			'tree' => $new_tree,
+			'warnings' => [],
+		];
 	}
 
-	private function handle_duplicate( Document $document, string $element_id ) {
-		$tree = $this->get_tree( $document );
+	private function apply_duplicate( array $tree, string $element_id ) {
 		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
-
 		if ( is_wp_error( $new_tree ) ) {
 			return $this->to_public_error( $new_tree );
 		}
 
-		return $this->save_and_respond( $document, $new_tree, $element_id, [] );
+		return [
+			'tree' => $new_tree,
+			'warnings' => [],
+		];
 	}
 
-	private function handle_move( Document $document, string $element_id, array $input ) {
-		$new_parent_id = $input['new_parent_id'] ?? '';
+	private function apply_move( array $tree, string $element_id, array $operation ) {
+		$new_parent_id = $operation['new_parent_id'] ?? '';
 		if ( ! is_string( $new_parent_id ) || '' === $new_parent_id ) {
-			return $this->bad_request( __( 'new_parent_id is required for action=move.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'new_parent_id is required for action=move.', 'elementor' ) );
 		}
 
-		$index = array_key_exists( 'index', $input ) && null !== $input['index'] ? (int) $input['index'] : null;
+		$index = array_key_exists( 'index', $operation ) && null !== $operation['index'] ? (int) $operation['index'] : null;
 
-		$tree = $this->get_tree( $document );
 		$new_tree = $this->get_mutator()->move( $tree, $element_id, $new_parent_id, $index );
-
 		if ( is_wp_error( $new_tree ) ) {
 			return $this->to_public_error( $new_tree );
 		}
 
-		return $this->save_and_respond( $document, $new_tree, $element_id, [] );
+		return [
+			'tree' => $new_tree,
+			'warnings' => [],
+		];
 	}
 
-	private function handle_update( Document $document, string $element_id, array $input ) {
-		$settings = $this->as_map( $input['settings'] ?? [] );
-		$style = $this->as_map( $input['style'] ?? [] );
-		$classes = $input['classes'] ?? null;
-		$interactions = $input['interactions'] ?? null;
+	private function apply_update( array $tree, string $element_id, array $operation ) {
+		$settings = $this->as_map( $operation['settings'] ?? [] );
+		$style = $this->as_map( $operation['style'] ?? [] );
+		$classes = $operation['classes'] ?? null;
+		$interactions = $operation['interactions'] ?? null;
 
 		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes ) || null !== $interactions;
 		if ( ! $has_change ) {
-			return $this->bad_request( __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
 		}
 
-		$tree = $this->get_tree( $document );
-
 		if ( null === $this->get_mutator()->find_by_id( $tree, $element_id ) ) {
-			return $this->not_found( __( 'Element not found.', 'elementor' ) );
+			return new \WP_Error( 'elementor_not_found', __( 'Element not found.', 'elementor' ) );
 		}
 
 		$index = $this->get_mutator()->build_ref_index( $tree, $element_id );
 		if ( empty( $index ) ) {
-			return $this->not_found( __( 'Element not found.', 'elementor' ) );
+			return new \WP_Error( 'elementor_not_found', __( 'Element not found.', 'elementor' ) );
 		}
 
 		$node_snapshot = $index[ $element_id ];
 		$element_type = $node_snapshot['widgetType'] ?? $node_snapshot['elType'] ?? null;
 		if ( ! $element_type ) {
-			return $this->bad_request( __( 'Element has no resolvable type.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'Element has no resolvable type.', 'elementor' ) );
 		}
 
 		$xml_parser = new Xml_Parser();
@@ -248,7 +345,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( ! empty( $classes ) ) {
 			if ( ! is_array( $classes ) ) {
-				return $this->bad_request( __( 'classes must be an array of global class labels.', 'elementor' ) );
+				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
 			}
 			$class_applier = new Class_Applier( $this->create_global_classes_repository() );
 			$class_error = $class_applier->apply( $index, [ $element_id => $classes ] );
@@ -268,7 +365,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( null !== $interactions ) {
 			if ( ! is_array( $interactions ) ) {
-				return $this->bad_request( __( 'interactions must be an array of interaction items.', 'elementor' ) );
+				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
 			}
 			$interactions_applier = new Interactions_Applier( null, $this->create_plain_values_resolver() );
 			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
@@ -278,40 +375,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
 		}
 
-		return $this->save_and_respond( $document, $tree, $element_id, $warnings );
-	}
-
-	private function save_and_respond( Document $document, array $tree, string $element_id, array $warnings ) {
-		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
-
-		if ( is_wp_error( $save_result ) ) {
-			return $save_result;
-		}
-
-		if ( ! $save_result ) {
-			return new \WP_Error(
-				'save_failed',
-				__( 'Could not save document.', 'elementor' ),
-				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
-			);
-		}
-
-		Plugin::$instance->files_manager->clear_cache();
-
-		$post = get_post( $document->get_main_id() );
-
-		$response = [
-			'status' => 'ok',
-			'post_id' => (int) $document->get_main_id(),
-			'element_id' => $element_id,
-			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
+		return [
+			'tree' => $tree,
+			'warnings' => $warnings,
 		];
-
-		if ( ! empty( $warnings ) ) {
-			$response['warnings'] = $warnings;
-		}
-
-		return $response;
 	}
 
 	private function resolve_document( int $post_id ) {
@@ -348,10 +415,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function bad_request( string $message ): \WP_Error {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
-	}
-
-	private function not_found( string $message ): \WP_Error {
-		return new \WP_Error( 'elementor_not_found', $message, [ 'status' => \WP_Http::NOT_FOUND ] );
 	}
 
 	private function as_map( $value ): array {
