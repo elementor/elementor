@@ -177,6 +177,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 		$this->assertSame( $root_id, $result['results'][0]['element_id'] );
 		$this->assertNotEmpty( $result['version'] );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
