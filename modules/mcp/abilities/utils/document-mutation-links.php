@@ -35,7 +35,7 @@ class Document_Mutation_Links {
 
 		return sprintf(
 			/* translators: 1: Success message, 2: Preview URL the LLM must share with the user. */
-			__( '%1$s You MUST show the human this preview link in your reply (they must be logged into WordPress as an editor): %2$s', 'elementor' ),
+			__( '%1$s You MUST show the user this preview link in your reply (they must be logged into WordPress as an editor): %2$s', 'elementor' ),
 			$prefix,
 			$preview_url
 		);
