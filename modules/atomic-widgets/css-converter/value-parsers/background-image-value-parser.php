@@ -212,38 +212,65 @@ class Background_Image_Value_Parser {
 			return null;
 		}
 
-		$stops = [];
+		$parsed = [];
 
 		foreach ( $tokens as $token ) {
-			$stop = self::parse_color_stop( trim( $token ) );
+			$parts = self::parse_color_stop_parts( trim( $token ) );
 
-			if ( null === $stop ) {
+			if ( null === $parts ) {
 				return null;
 			}
 
-			$stops[] = $stop;
+			$parsed[] = $parts;
 		}
 
-		return $stops;
+		return self::build_color_stops_with_defaults( $parsed );
 	}
 
-	private static function parse_color_stop( string $token ): ?array {
+	private static function parse_color_stop_parts( string $token ): ?array {
 		$parts = Css_Token_Splitter::split_by_whitespace( $token );
 
 		if ( empty( $parts ) || count( $parts ) > 2 ) {
 			return null;
 		}
 
-		$stop_value = [ 'color' => Color_Prop_Type::generate( $parts[0] ) ];
+		$offset = null;
 
 		if ( isset( $parts[1] ) ) {
 			if ( ! preg_match( '/^(-?\d+(?:\.\d+)?)%$/', $parts[1], $m ) ) {
 				return null;
 			}
 
-			$stop_value['offset'] = Number_Prop_Type::generate( (float) $m[1] );
+			$offset = (float) $m[1];
 		}
 
-		return Color_Stop_Prop_Type::generate( $stop_value );
+		return [
+			'color' => $parts[0],
+			'offset' => $offset,
+		];
+	}
+
+	private static function build_color_stops_with_defaults( array $parsed ): array {
+		$count = count( $parsed );
+		$stops = [];
+
+		foreach ( $parsed as $index => $part ) {
+			$offset = $part['offset'] ?? self::default_offset_for_index( $index, $count );
+
+			$stops[] = Color_Stop_Prop_Type::generate( [
+				'color' => Color_Prop_Type::generate( $part['color'] ),
+				'offset' => Number_Prop_Type::generate( $offset ),
+			] );
+		}
+
+		return $stops;
+	}
+
+	private static function default_offset_for_index( int $index, int $count ): float {
+		if ( $count <= 1 ) {
+			return 0.0;
+		}
+
+		return ( $index / ( $count - 1 ) ) * 100;
 	}
 }

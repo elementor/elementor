@@ -296,4 +296,68 @@ describe( 'SelectControl', () => {
 		expect( screen.getByText( 'Option 1' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Option 2' ) ).toBeInTheDocument();
 	} );
+
+	describe( 'grouped options', () => {
+		const groups = [
+			{
+				label: 'Group A',
+				options: [
+					{ label: 'A Option 1', value: 'a1' },
+					{ label: 'A Option 2', value: 'a2' },
+				],
+			},
+			{
+				label: 'Group B',
+				options: [ { label: 'B Option 1', value: 'b1' } ],
+			},
+		];
+
+		it( 'should render a subheader per group with its own options', () => {
+			// Arrange.
+			const props = { setValue: jest.fn(), value: { $$type: 'string', value: 'a1' }, bind: 'tag', propType };
+
+			// Act.
+			renderControl( <SelectControl groups={ groups } />, props );
+
+			const select = screen.getByRole( 'combobox' );
+			fireEvent.mouseDown( select );
+
+			// Assert.
+			expect( screen.getByText( 'Group A' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Group B' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: 'A Option 1' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: 'A Option 2' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: 'B Option 1' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should resolve the selected value label across groups', () => {
+			// Arrange.
+			const props = { setValue: jest.fn(), value: { $$type: 'string', value: 'b1' }, bind: 'tag', propType };
+
+			// Act.
+			renderControl( <SelectControl groups={ groups } />, props );
+
+			// Assert.
+			expect( screen.getByRole( 'combobox' ) ).toHaveTextContent( 'B Option 1' );
+		} );
+
+		it( 'should select a value from a grouped option and call setValue', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = { setValue, value: { $$type: 'string', value: null }, bind: 'tag', propType };
+
+			// Act.
+			renderControl( <SelectControl groups={ groups } />, props );
+
+			const select = screen.getByRole( 'combobox' );
+			fireEvent.mouseDown( select );
+			fireEvent.click( screen.getByRole( 'option', { name: 'B Option 1' } ) );
+
+			// Assert.
+			expect( setValue ).toHaveBeenCalledWith( {
+				$$type: 'string',
+				value: 'b1',
+			} );
+		} );
+	} );
 } );
