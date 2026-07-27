@@ -5,6 +5,7 @@ use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -309,6 +310,8 @@ class Manager extends Base_Object {
 	}
 
 	private function add_default_features() {
+		$this->add_feature( Opt_In::get_experimental_data() );
+
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),

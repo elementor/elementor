@@ -129,6 +129,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
@@ -206,6 +207,11 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
+	/**
+	 * @deprecated Use Opt_In::EXPERIMENT_NAME. 'e_atomic_elements' is kept only so that existing
+	 * callers and stored site options keep working; it mirrors Editor V4 and is never independently
+	 * settable. New gates must check Editor V4 instead.
+	 */
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
@@ -218,6 +224,7 @@ class Module extends BaseModule {
 				'default_active' => true,
 				'minimum_installation_version' => '4.0.0',
 			],
+			'on_state_change' => fn( $old_state, $new_state ) => Opt_In::mirror_state( Opt_In::EXPERIMENT_NAME, $new_state ),
 		];
 	}
 

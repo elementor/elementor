@@ -8,6 +8,8 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
 use Elementor\Includes\Elements\Container;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -866,6 +868,28 @@ class Upgrades {
 		delete_option( 'elementor_experiment-page-transitions' );
 		delete_option( 'elementor_experiment-search' );
 		delete_option( 'elementor_experiment-taxonomy-filter' );
+	}
+
+	/**
+	 * Editor V4 replaced Atomic Widgets as the V4 umbrella experiment. Sites that turned V4 on
+	 * through the Atomic Widgets experiment alone never got an Editor V4 option, so adopt the
+	 * stored value to keep the two switches aligned and avoid silently dropping those sites out
+	 * of V4.
+	 */
+	public static function _v_4_4_0_align_v4_umbrella_experiment() {
+		$opt_in_key = 'elementor_experiment-' . Opt_In::EXPERIMENT_NAME;
+
+		if ( false !== get_option( $opt_in_key, false ) ) {
+			return;
+		}
+
+		$atomic_state = get_option( 'elementor_experiment-' . AtomicWidgetsModule::EXPERIMENT_NAME, false );
+
+		if ( false === $atomic_state ) {
+			return;
+		}
+
+		update_option( $opt_in_key, $atomic_state );
 	}
 
 	private static function maybe_add_gap_control_data( $option_name ) {

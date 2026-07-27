@@ -38,25 +38,46 @@ class Opt_In {
 	];
 
 	public function init() {
-		$this->register_feature();
-
 		add_action( 'elementor/ajax/register_actions', fn( Ajax $ajax ) => $this->add_ajax_actions( $ajax ) );
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
 
-	private function register_feature() {
-		Plugin::$instance->experiments->add_feature([
+	/**
+	 * Editor V4 is the umbrella experiment for the whole V4 editor, so it has to be registered
+	 * before any module that depends on it. Modules_Manager registers module experiments while it
+	 * constructs each module in order, which is too late, so Experiments_Manager registers this one
+	 * with the rest of the default features.
+	 */
+	public static function get_experimental_data(): array {
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor V4', 'elementor' ),
 			'description' => esc_html__( 'Enable Editor V4.', 'elementor' ),
-			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '4.0.0',
 			],
-		]);
+			'on_state_change' => fn( $old_state, $new_state ) => self::mirror_state( AtomicWidgetsModule::EXPERIMENT_NAME, $new_state ),
+		];
+	}
+
+	/**
+	 * Editor V4 and the deprecated Atomic Widgets experiment are two names for the same switch, so
+	 * turning either one on or off has to move the other with it. Writing an option that already
+	 * holds the target value is a no-op in WordPress and fires no hook, which is what stops the two
+	 * mirrors from calling each other indefinitely.
+	 */
+	public static function mirror_state( string $feature, $new_state ) {
+		$option_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
+		$new_state = is_string( $new_state ) ? $new_state : Experiments_Manager::STATE_DEFAULT;
+
+		if ( get_option( $option_key ) === $new_state ) {
+			return;
+		}
+
+		update_option( $option_key, $new_state );
 	}
 
 	private function opt_out_v4() {
