@@ -155,6 +155,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	/**
+	 * @deprecated Use Opt_In::EXPERIMENT_NAME. Editor V4 is the V4 umbrella experiment; this one
+	 * only mirrors it and is kept so existing callers and stored site options keep working.
+	 */
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 
 	const PACKAGES = [
