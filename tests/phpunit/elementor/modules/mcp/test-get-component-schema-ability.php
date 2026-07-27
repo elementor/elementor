@@ -100,7 +100,6 @@ class Test_Get_Component_Schema_Ability extends Elementor_Test_Base {
 		$this->assertFalse( $result['is_archived'] );
 		$this->assertIsArray( $result['overridable_props'] );
 		$this->assertEmpty( $result['overridable_props'] );
-		$this->assertArrayHasKey( 'example_shorthand', $result );
 	}
 
 	public function test_execute__returns_overridable_props_schema_with_labels_and_groups() {
@@ -120,25 +119,6 @@ class Test_Get_Component_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Heading Title', $title_prop['label'] );
 		$this->assertSame( 'group-1', $title_prop['group_id'] );
 		$this->assertArrayHasKey( 'origin_prop_schema', $title_prop );
-	}
-
-	public function test_execute__example_shorthand_contains_all_override_keys() {
-		// Arrange
-		$this->act_as_admin();
-		$component_id = $this->create_component_with_overridable_props();
-		$ability = new Get_Component_Schema_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'component_id' => $component_id ] );
-
-		// Assert
-		$shorthand = $result['example_shorthand'];
-		$this->assertSame( $component_id, $shorthand['component_id'] );
-		$this->assertArrayHasKey( 'overrides', $shorthand );
-
-		foreach ( array_keys( $result['overridable_props'] ) as $override_key ) {
-			$this->assertArrayHasKey( $override_key, $shorthand['overrides'] );
-		}
 	}
 
 	private function create_component( string $title ): int {

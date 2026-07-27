@@ -72,12 +72,11 @@ class Get_Component_Schema_Ability extends Abstract_Ability {
 		$props_schema = $this->build_props_schema( $overridable_props->props );
 
 		return [
-			'id'               => $component->get_main_id(),
-			'name'             => $component->get_post()->post_title,
-			'uid'              => $component->get_component_uid(),
-			'is_archived'      => $component->get_is_archived(),
-			'overridable_props' => $props_schema,
-			'example_shorthand' => $this->build_example_shorthand( $component_id, $props_schema ),
+			'id'               	=> $component->get_main_id(),
+			'name'             	=> $component->get_post()->post_title,
+			'uid'              	=> $component->get_component_uid(),
+			'is_archived'      	=> $component->get_is_archived(),
+			'overridable_props' => $props_schema
 		];
 	}
 
@@ -123,17 +122,5 @@ class Get_Component_Schema_Ability extends Abstract_Ability {
 		} catch ( \Exception $e ) {
 			return null;
 		}
-	}
-
-	private function build_example_shorthand( int $component_id, array $props_schema ): array {
-		$overrides = [];
-		foreach ( array_keys( $props_schema ) as $override_key ) {
-			$overrides[ $override_key ] = '<PropValue per origin_prop_schema>';
-		}
-
-		return [
-			'component_id' => $component_id,
-			'overrides'    => $overrides,
-		];
 	}
 }
