@@ -5,7 +5,9 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -131,7 +133,15 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
-				$skeleton['settings']     = $node['settings'] ?? (object) [];
+				$settings = $node['settings'] ?? [];
+				$props_schema = $this->resolve_props_schema( $node );
+
+				if ( is_array( $settings ) && $props_schema ) {
+					$schema = array_intersect_key( $props_schema, $settings );
+					$settings = Render_Props_Resolver::for_settings()->resolve( $schema, $settings );
+				}
+
+				$skeleton['settings']     = $settings ? $settings : (object) [];
 				$skeleton['styles']       = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 				$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 			}
@@ -163,6 +173,18 @@ class Get_Structure_Ability extends Abstract_Ability {
 		}
 
 		return $plain;
+	}
+
+	private function resolve_props_schema( array $node ): ?array {
+		$type = Atomic_Elements_Utils::get_element_type( $node );
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		$config = Widget_Context_Helper::get_widget_config( (string) $type );
+
+		return $config['atomic_props_schema'] ?? null;
 	}
 
 	private function resolve_post_id( $input ) {
