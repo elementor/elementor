@@ -155,16 +155,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
 	const PACKAGES = [
 		'editor-canvas',
-		'editor-controls', // TODO: Need to be registered and not enqueued.
+		'editor-controls',
 		'editor-editing-panel',
-		'editor-elements', // TODO: Need to be registered and not enqueued.
-		'editor-props', // TODO: Need to be registered and not enqueued.
-		'editor-styles', // TODO: Need to be registered and not enqueued.
+		'editor-elements',
+		'editor-props',
+		'editor-styles',
 		'editor-styles-repository',
 		'editor-interactions',
 		'editor-templates',
@@ -182,7 +180,6 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->register_experimental_features();
 		$this->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
@@ -221,49 +218,6 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '4.0.0',
 			],
 		];
-	}
-
-	private function register_experimental_features() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_indications_popover',
-			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
-			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
-			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_EDITOR_MCP,
-			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
-			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
-			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
-			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		// When a new feature affects settings or style schema, global class, interactions, variable, etc
-		// anything in need of addressing migration for BC purposes, add it here.
-		$migrations_affecting_features = [];
-
-		Migrations_Orchestrator::register_affecting_feature_flag_hooks( $migrations_affecting_features );
 	}
 
 	private function register_hooks() {

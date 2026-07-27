@@ -33,11 +33,11 @@ class Widget_WordPress extends Widget_Base {
 	private $_widget_instance = null;
 
 	public function show_in_panel() {
-		return ! Plugin::$instance->experiments->is_feature_active( Elements_Manager::EXPERIMENT_HIDE_WORDPRESS_WIDGETS );
+		return false;
 	}
 
 	public function hide_on_search() {
-		return Plugin::$instance->experiments->is_feature_active( Elements_Manager::EXPERIMENT_HIDE_WORDPRESS_WIDGETS );
+		return true;
 	}
 
 	/**

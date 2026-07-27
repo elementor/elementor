@@ -18,10 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const NAME = 'e_classes';
-	const ENFORCE_CAPABILITIES_EXPERIMENT = 'global_classes_should_enforce_capabilities';
-
-	// TODO: Add global classes package
 	const PACKAGES = [
 		'editor-global-classes',
 	];
@@ -33,13 +29,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_features();
-
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::NAME );
 		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 
-		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
-		if ( $is_feature_active && $is_atomic_widgets_active ) {
+		if ( $is_atomic_widgets_active ) {
 			( new Global_Class_Post_Type() )->register();
 			( new Global_Classes_Post_IDs() )->register_hooks();
 
@@ -126,30 +118,6 @@ class Module extends BaseModule {
 		foreach ( $all_classes as $class_id ) {
 			Global_Class_Post::clone_to_other_kit( $class_id, $previous_kit, $new_kit );
 		}
-	}
-
-	private function register_features() {
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::NAME,
-			'title' => esc_html__( 'Global Classes', 'elementor' ),
-			'description' => esc_html__( 'Enable global CSS classes.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '4.0.0',
-			],
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
-			'title' => esc_html__( 'Enforce global classes capabilities', 'elementor' ),
-			'description' => esc_html__( 'Enforce global classes capabilities.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
 	}
 
 	private function add_packages( $packages ) {
