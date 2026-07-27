@@ -97,7 +97,6 @@ class Module extends BaseModule {
 				'elementor/manage-classes',
 				'elementor/get-widget-schema',
 				'elementor/list-widget-schemas',
-				'elementor/list-dynamic-tags',
 				'elementor/build-composition',
 				'elementor/manage-elements',
 				'elementor/list-resources',
@@ -108,6 +107,7 @@ class Module extends BaseModule {
 				'elementor/manage-global-variable-guide',
 				'elementor/global-classes-resource',
 				'elementor/global-variables-resource',
+				'elementor/list-dynamic-tags',
 			],
 			[]
 		);
