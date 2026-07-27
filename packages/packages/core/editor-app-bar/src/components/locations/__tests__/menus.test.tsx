@@ -198,7 +198,9 @@ describe( 'Menus components', () => {
 			}
 
 			renderWithTheme(
-				<AppBarSizeProvider value={ { tools: DEFAULT_MAX_TOOLBAR_ACTIONS.tools, utilities: maxUtilitiesItems } }>
+				<AppBarSizeProvider
+					value={ { tools: DEFAULT_MAX_TOOLBAR_ACTIONS.tools, utilities: maxUtilitiesItems } }
+				>
 					<UtilitiesMenuLocation />
 				</AppBarSizeProvider>
 			);
