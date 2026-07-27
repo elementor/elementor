@@ -349,6 +349,40 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
 	}
 
+	public function test_update__style_merges_into_existing_local_style_from_build_composition() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$build_result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'parent_id' => 'document',
+			'style' => [ 'h1' => [ 'color' => '#ff0000' ] ],
+		] );
+		$this->assertIsArray( $build_result, 'build-composition failed: ' . ( is_wp_error( $build_result ) ? $build_result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $build_result['success'] ?? false );
+		$heading_id = $build_result['root_element_ids'][0];
+
+		$update_result = ( new Manage_Elements_Ability() )->execute( [
+			'action' => 'update',
+			'post_id' => $post_id,
+			'element_id' => $heading_id,
+			'style' => [ 'font-size' => '24px' ],
+		] );
+		$this->assertNoErrors( $update_result );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node );
+
+		$this->assertCount( 1, $node['styles'] ?? [], 'Expected a single local style entry, got: ' . wp_json_encode( array_keys( $node['styles'] ?? [] ) ) );
+		$this->assertCount( 1, $node['settings']['classes']['value'] ?? [], 'Expected settings.classes.value to hold a single local style id.' );
+
+		$style = reset( $node['styles'] );
+		$desktop_variant = $style['variants'][0] ?? [];
+		$this->assertArrayHasKey( 'color', $desktop_variant['props'] ?? [] );
+		$this->assertArrayHasKey( 'font-size', $desktop_variant['props'] ?? [] );
+	}
+
 	private function assertNoErrors( $result ): void {
 		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertSame( 'ok', $result['status'] );
