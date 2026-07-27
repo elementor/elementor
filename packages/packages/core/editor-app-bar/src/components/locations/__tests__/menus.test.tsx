@@ -113,7 +113,7 @@ describe( 'Menus components', () => {
 
 			// Assert.
 			const toolbarButtons = screen.getAllByRole( 'button' );
-			const popoverButton = toolbarButtons[ maxItems ];
+			const popoverButton = toolbarButtons[ 0 ];
 
 			expect( toolbarButtons ).toHaveLength( maxItems + 1 ); // Including the popover button.
 			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );
@@ -148,7 +148,7 @@ describe( 'Menus components', () => {
 
 			// Assert.
 			const toolbarButtons = screen.getAllByRole( 'button' );
-			const popoverButton = toolbarButtons[ narrowMaxItems ];
+			const popoverButton = toolbarButtons[ 0 ];
 
 			expect( toolbarButtons ).toHaveLength( narrowMaxItems + 1 ); // Including the popover button.
 			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );

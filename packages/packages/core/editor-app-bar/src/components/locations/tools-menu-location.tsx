@@ -19,12 +19,6 @@ export default function ToolsMenuLocation() {
 
 	return (
 		<ToolbarMenu>
-			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
-				<MenuItem key={ id } />
-			) ) }
-			<AngieGuideLocation />
-			<SendFeedbackPopupLocation />
-			<IntegrationsMenuLocation />
 			{ popoverMenuItems.length > 0 && (
 				<ToolbarMenuMore id="elementor-editor-app-bar-tools-more">
 					{ popoverMenuItems.map( ( { MenuItem, id } ) => (
@@ -32,6 +26,12 @@ export default function ToolsMenuLocation() {
 					) ) }
 				</ToolbarMenuMore>
 			) }
+			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
+				<MenuItem key={ id } />
+			) ) }
+			<AngieGuideLocation />
+			<SendFeedbackPopupLocation />
+			<IntegrationsMenuLocation />
 		</ToolbarMenu>
 	);
 }
