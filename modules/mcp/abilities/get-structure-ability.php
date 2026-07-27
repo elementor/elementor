@@ -2,7 +2,11 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -19,14 +23,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, nested elements). When include_content is true, each node also includes settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When include_content is true, each node also includes settings and styles.',
 					],
 				],
 			],
@@ -117,17 +121,43 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$skeleton['widgetType'] = $node['widgetType'];
 			}
 
+			$title = Element_Structure_Title::resolve( $node );
+
+			if ( null !== $title ) {
+				$skeleton['title'] = $title;
+			}
+
 			if ( ! empty( $node['elements'] ) ) {
 				$skeleton['elements'] = $node['elements'];
 			}
 
 			if ( $include_content ) {
-				$skeleton['settings'] = $node['settings'] ?? (object) [];
+				$settings = $node['settings'] ?? [];
+				$props_schema = $this->resolve_props_schema( $node );
+
+				if ( is_array( $settings ) && $props_schema ) {
+					$schema = array_intersect_key( $props_schema, $settings );
+					$settings = Render_Props_Resolver::for_settings()->resolve( $schema, $settings );
+				}
+
+				$skeleton['settings'] = $settings ? $settings : (object) [];
 				$skeleton['styles']   = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 			}
 
 			return $skeleton;
 		} );
+	}
+
+	private function resolve_props_schema( array $node ): ?array {
+		$type = Atomic_Elements_Utils::get_element_type( $node );
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		$config = Widget_Context_Helper::get_widget_config( (string) $type );
+
+		return $config['atomic_props_schema'] ?? null;
 	}
 
 	private function resolve_post_id( $input ) {
