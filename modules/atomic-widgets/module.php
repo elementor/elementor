@@ -224,14 +224,6 @@ class Module extends BaseModule {
 
 	private function register_experimental_features() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_indications_popover',
-			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
 			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
 			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
