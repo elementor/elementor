@@ -144,7 +144,7 @@ class Test_Update_Settings_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
 		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
 		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
-		$this->assertStringContainsString( '/mcp/documents/', $result['render_url'] );
+		$this->assertStringContainsString( '/mcp/documents/', urldecode( $result['render_url'] ) );
 	}
 
 	public function test_execute__passes_settings_to_document_save() {

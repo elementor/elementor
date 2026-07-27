@@ -148,7 +148,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
 		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
 		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
-		$this->assertStringContainsString( '/mcp/documents/' . $post_id . '/render', $result['render_url'] );
+		$this->assertStringContainsString( '/mcp/documents/' . $post_id . '/render', urldecode( $result['render_url'] ) );
 		$this->assertNotEmpty( $result['warnings'] );
 		$this->assertStringContainsString( 'custom_css', implode( ' ', $result['warnings'] ) );
 

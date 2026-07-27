@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Render_Page_Ability;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,6 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor\Modules\Mcp
  */
 class Test_Render_Page_Ability extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		global $wp_scripts, $wp_styles;
+		$wp_scripts = new \WP_Scripts();
+		$wp_styles = new \WP_Styles();
+	}
 
 	public function test_execute__returns_rendered_text_for_document() {
 		$this->act_as_admin();
@@ -94,5 +101,9 @@ class Test_Render_Page_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 
 		return $result['root_element_ids'][0];
+	}
+
+	private function create_real_document(): int {
+		return $this->factory()->create_and_get_default_post()->ID;
 	}
 }

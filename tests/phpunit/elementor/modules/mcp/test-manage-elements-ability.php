@@ -132,7 +132,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
 		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
 		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
-		$this->assertStringContainsString( '/mcp/documents/' . $post_id . '/render', $result['render_url'] );
+		$this->assertStringContainsString( '/mcp/documents/' . $post_id . '/render', urldecode( $result['render_url'] ) );
 		$this->assertStringContainsString( 'element_id=' . $root_id, $result['render_url'] );
 
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );

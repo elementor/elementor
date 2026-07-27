@@ -29,21 +29,15 @@ class Document_Preview_Html {
 	}
 
 	private function build_head( string $css, array $fonts ): string {
-		$output = '';
-
 		if ( ! empty( $fonts ) ) {
 			$font_url = Plugin::$instance->frontend->get_stable_google_fonts_url( $fonts );
-
-			$output .= sprintf(
-				'<link rel="stylesheet" href="%s">',
-				esc_url( $font_url )
-			);
+			$css = '@import url("' . esc_url( $font_url ) . '");' . $css;
 		}
 
-		if ( '' !== $css ) {
-			$output .= '<style>' . $css . '</style>';
+		if ( '' === $css ) {
+			return '';
 		}
 
-		return $output;
+		return '<style>' . $css . '</style>';
 	}
 }
