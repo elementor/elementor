@@ -6,21 +6,22 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Get_Component_Schema_Ability extends Abstract_Ability {
+class List_Component_Schemas_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
-		return 'elementor/get-component-schema';
+		return 'elementor/list-component-schemas';
 	}
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'Get Elementor Component Schema', 'elementor' ),
-			Prompt_Loader::load( 'get-component-schema' ),
+			__( 'List Elementor Component Schemas', 'elementor' ),
+			Prompt_Loader::load( 'list-component-schemas' ),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
@@ -33,11 +34,13 @@ class Get_Component_Schema_Ability extends Abstract_Ability {
 			fn() => current_user_can( 'edit_posts' ),
 			[
 				'type'       => 'object',
-				'required'   => [ 'component_id' ],
+				'required'   => [ 'component_ids' ],
 				'properties' => [
-					'component_id' => [
-						'type'        => 'integer',
-						'description' => 'Post ID of the component (from elementor/list-components).',
+					'component_ids' => [
+						'type'        => 'array',
+						'items'       => [ 'type' => 'integer' ],
+						'minItems'    => 1,
+						'description' => 'Post IDs of components to fetch full schemas for (from elementor/list-components).',
 					],
 				],
 			]
@@ -46,38 +49,68 @@ class Get_Component_Schema_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
-		$component_id = isset( $input['component_id'] ) ? (int) $input['component_id'] : 0;
+		$component_ids = $this->normalize_ids( $input['component_ids'] ?? null );
 
-		if ( ! $component_id ) {
+		if ( empty( $component_ids ) ) {
 			return new \WP_Error(
 				'invalid_input',
-				__( 'component_id is required.', 'elementor' ),
+				__( 'component_ids must be a non-empty array of positive integers.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
 
 		$repository = new Components_Repository();
-		$component = $repository->get( $component_id, false );
+		$components = [];
+		$not_found = [];
 
-		if ( ! $component ) {
+		foreach ( $component_ids as $component_id ) {
+			$component = $repository->get( $component_id, false );
+
+			if ( ! $component ) {
+				$not_found[] = $component_id;
+				continue;
+			}
+
+			$components[] = [
+				'id'                => $component->get_main_id(),
+				'name'              => $component->get_post()->post_title,
+				'uid'               => $component->get_component_uid(),
+				'is_archived'       => $component->get_is_archived(),
+				'overridable_props' => $this->build_props_schema( $component->get_overridable_props()->props ),
+			];
+		}
+
+		if ( ! empty( $not_found ) ) {
 			return new \WP_Error(
 				'elementor_not_found',
-				/* translators: %d: component ID */
-				sprintf( __( 'Component %d not found.', 'elementor' ), $component_id ),
+				sprintf(
+					/* translators: %s: comma-separated list of component IDs */
+					__( 'Components not found: %s.', 'elementor' ),
+					implode( ', ', $not_found )
+				),
 				[ 'status' => \WP_Http::NOT_FOUND ]
 			);
 		}
 
-		$overridable_props = $component->get_overridable_props();
-		$props_schema = $this->build_props_schema( $overridable_props->props );
+		return [ 'components' => $components ];
+	}
 
-		return [
-			'id'               	=> $component->get_main_id(),
-			'name'             	=> $component->get_post()->post_title,
-			'uid'              	=> $component->get_component_uid(),
-			'is_archived'      	=> $component->get_is_archived(),
-			'overridable_props' => $props_schema
-		];
+	private function normalize_ids( $raw ): array {
+		if ( ! is_array( $raw ) ) {
+			return [];
+		}
+
+		$ids = [];
+
+		foreach ( $raw as $value ) {
+			$id = (int) $value;
+
+			if ( $id > 0 ) {
+				$ids[ $id ] = $id;
+			}
+		}
+
+		return array_values( $ids );
 	}
 
 	private function build_props_schema( array $props ): array {
@@ -118,7 +151,7 @@ class Get_Component_Schema_Ability extends Abstract_Ability {
 				);
 			}
 
-			return $prop_type->to_json_schema();
+			return Widget_Context_Helper::to_plain_llm_schema( $prop_type );
 		} catch ( \Exception $e ) {
 			return null;
 		}

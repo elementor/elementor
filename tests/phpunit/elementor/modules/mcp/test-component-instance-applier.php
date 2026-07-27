@@ -51,36 +51,95 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_rewrite__returns_null_when_no_component_entries_present() {
+	public function test_apply__returns_null_when_no_component_instances_given() {
 		// Arrange
 		$this->act_as_admin();
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$index = [ 'h1' => [ 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [] ] ];
-		$element_config = [ 'h1' => [ 'title' => [ '$$type' => 'string', 'value' => 'Hello' ] ] ];
 
 		// Act
-		$error = $applier->rewrite( $index, $element_config, $document );
+		$error = $applier->apply( $index, [], $document );
 
 		// Assert
 		$this->assertNull( $error );
-		$this->assertArrayHasKey( 'title', $element_config['h1'] );
+		$this->assertArrayNotHasKey( 'component_instance', $index['h1']['settings'] );
 	}
 
-	public function test_rewrite__returns_error_for_nonexistent_component_id() {
+	public function test_apply__returns_error_for_nonexistent_config_id() {
 		// Arrange
 		$this->act_as_admin();
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
-		$element_config = [ 'hero' => [ 'component_id' => 999999 ] ];
+		$component_instances = [ 'missing' => [ 'component_id' => 1 ] ];
 
 		// Act
-		$error = $applier->rewrite( $index, $element_config, $document );
+		$error = $applier->apply( $index, $component_instances, $document );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertStringContainsString( 'not found in xml_structure', $error->get_error_message() );
+	}
+
+	public function test_apply__returns_error_when_config_id_is_not_an_e_component() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_component( 'Hero' );
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'h1' => [ 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [] ] ];
+		$component_instances = [ 'h1' => [ 'component_id' => $component_id ] ];
+
+		// Act
+		$error = $applier->apply( $index, $component_instances, $document );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertStringContainsString( 'only valid for <e-component>', $error->get_error_message() );
+	}
+
+	public function test_apply__returns_error_when_component_id_is_missing_or_zero() {
+		// Arrange
+		$this->act_as_admin();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [
+			'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ],
+			'card' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ],
+		];
+		$component_instances = [
+			'hero' => [],
+			'card' => [ 'component_id' => 0 ],
+		];
+
+		// Act
+		$error = $applier->apply( $index, $component_instances, $document );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertSame( 'elementor_invalid_component_instance', $error->get_error_code() );
+		$this->assertStringContainsString( '[hero] component_id must be a non-zero integer', $error->get_error_message() );
+		$this->assertStringContainsString( '[card] component_id must be a non-zero integer', $error->get_error_message() );
+		$this->assertSame( [], $index['hero']['settings'] );
+		$this->assertSame( [], $index['card']['settings'] );
+	}
+
+	public function test_apply__returns_error_for_nonexistent_component_id() {
+		// Arrange
+		$this->act_as_admin();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$component_instances = [ 'hero' => [ 'component_id' => 999999 ] ];
+
+		// Act
+		$error = $applier->apply( $index, $component_instances, $document );
 
 		// Assert
 		$this->assertWPError( $error );
@@ -88,42 +147,39 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertStringContainsString( '999999', $error->get_error_message() );
 	}
 
-	public function test_rewrite__returns_error_for_archived_component() {
+	public function test_apply__returns_error_for_archived_component() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_component( 'Hero' );
 		$repository = new Components_Repository();
-		$component = $repository->get( $component_id, false );
-		$component->archive();
+		$repository->get( $component_id, false )->archive();
 
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
-		$element_config = [ 'hero' => [ 'component_id' => $component_id ] ];
+		$component_instances = [ 'hero' => [ 'component_id' => $component_id ] ];
 
 		// Act
-		$error = $applier->rewrite( $index, $element_config, $document );
+		$error = $applier->apply( $index, $component_instances, $document );
 
 		// Assert
 		$this->assertWPError( $error );
 		$this->assertStringContainsString( 'archived', $error->get_error_message() );
 	}
 
-	public function test_rewrite__returns_error_for_unknown_override_key() {
+	public function test_apply__returns_error_for_unknown_override_key() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_component( 'Hero' );
-
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
-		$element_config = [ 'hero' => [ 'component_id' => $component_id, 'overrides' => [ 'nonexistent-key' => 'value' ] ] ];
+		$component_instances = [ 'hero' => [ 'component_id' => $component_id, 'overrides' => [ 'nonexistent-key' => 'value' ] ] ];
 
 		// Act
-		$error = $applier->rewrite( $index, $element_config, $document );
+		$error = $applier->apply( $index, $component_instances, $document );
 
 		// Assert
 		$this->assertWPError( $error );
@@ -131,17 +187,15 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'Valid keys', $error->get_error_message() );
 	}
 
-	public function test_rewrite__builds_full_component_instance_propvalue_for_valid_shorthand() {
+	public function test_apply__writes_full_component_instance_propvalue_into_node_settings() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_component_with_heading_title_prop();
-
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
-		$element_config = [
+		$component_instances = [
 			'hero' => [
 				'component_id' => $component_id,
 				'overrides' => [
@@ -151,15 +205,12 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		];
 
 		// Act
-		$error = $applier->rewrite( $index, $element_config, $document );
+		$error = $applier->apply( $index, $component_instances, $document );
 
 		// Assert
 		$this->assertNull( $error );
 
-		$rewritten = $element_config['hero'];
-		$this->assertArrayHasKey( 'component_instance', $rewritten );
-
-		$envelope = $rewritten['component_instance'];
+		$envelope = $index['hero']['settings']['component_instance'];
 		$this->assertSame( 'component-instance', $envelope['$$type'] );
 		$this->assertSame( $component_id, $envelope['value']['component_id']['value'] );
 
@@ -171,29 +222,27 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertSame( 'component', $overrides[0]['value']['schema_source']['type'] );
 	}
 
-	public function test_rewrite__allows_empty_overrides() {
+	public function test_apply__allows_empty_overrides() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_component( 'Simple Card' );
-
 		$document = Plugin::$instance->documents->get( $this->create_real_document() );
-		$repository = new Components_Repository();
-		$applier = new Component_Instance_Applier( $repository, $this->plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$index = [ 'card' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
-		$element_config = [ 'card' => [ 'component_id' => $component_id ] ];
+		$component_instances = [ 'card' => [ 'component_id' => $component_id ] ];
 
 		// Act
-		$error = $applier->rewrite( $index, $element_config, $document );
+		$error = $applier->apply( $index, $component_instances, $document );
 
 		// Assert
 		$this->assertNull( $error );
-		$envelope = $element_config['card']['component_instance'];
+		$envelope = $index['card']['settings']['component_instance'];
 		$this->assertSame( 'component-instance', $envelope['$$type'] );
 		$this->assertEmpty( $envelope['value']['overrides']['value'] );
 	}
 
-	public function test_build_composition__persists_component_instance_with_correct_settings() {
+	public function test_build_composition__persists_component_instance_via_element_config() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_component_with_heading_title_prop();
@@ -232,6 +281,10 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertNotNull( $ci );
 		$this->assertSame( 'component-instance', $ci['$$type'] );
 		$this->assertSame( $component_id, $ci['value']['component_id']['value'] );
+	}
+
+	private function make_applier(): Component_Instance_Applier {
+		return new Component_Instance_Applier( new Components_Repository(), $this->plain_values_resolver() );
 	}
 
 	private function plain_values_resolver(): Plain_Values_Resolver {

@@ -27,43 +27,53 @@ class Component_Instance_Applier {
 	}
 
 	/**
-	 * Rewrites shorthand component-instance entries in $element_config in-place.
+	 * Builds the `component_instance` PropValue for each entry and writes it directly
+	 * into `$node['settings']['component_instance']` — same side-effect shape as
+	 * Style_Applier writing into `$node['styles']`.
 	 *
-	 * For every element whose widgetType is 'e-component', if the config entry looks
-	 * like shorthand ({ component_id, overrides?: {...} }), it is replaced with the
-	 * full component_instance PropValue envelope that Props_Parser expects.
-	 *
-	 * @param array<string, array&> $config_id_index    Index of subtree refs (from Subtree_Builder).
-	 * @param array                 $element_config     Per-config-id settings (modified by reference).
-	 * @param Document              $document           Target document (used for circular-dep check).
-	 * @param array                 $rewritten_config_ids Config-ids whose settings were fully resolved here
-	 *                                                     and must bypass generic schema adjustment downstream.
+	 * @param array<string, array&>                                                 $config_id_index      Index of subtree refs (from Subtree_Builder).
+	 * @param array<string, array{component_id:int,overrides?:array<string,mixed>}> $component_instances  Per-config-id shorthand.
+	 * @param Document                                                              $document             Target document (used for circular-dep check).
 	 * @return \WP_Error|null
 	 */
-	public function rewrite( array $config_id_index, array &$element_config, Document $document, array &$rewritten_config_ids = [] ): ?\WP_Error {
+	public function apply( array &$config_id_index, array $component_instances, Document $document ): ?\WP_Error {
+		if ( empty( $component_instances ) ) {
+			return null;
+		}
+
 		$errors = [];
 
-		foreach ( $element_config as $config_id => $settings ) {
-			if ( ! isset( $config_id_index[ $config_id ] ) || ! is_array( $settings ) ) {
+		foreach ( $component_instances as $config_id => $shorthand ) {
+			if ( ! isset( $config_id_index[ $config_id ] ) ) {
+				$errors[] = sprintf( '[%s] configuration-id not found in xml_structure.', $config_id );
 				continue;
 			}
 
-			$node = $config_id_index[ $config_id ];
+			$node = &$config_id_index[ $config_id ];
+
 			if ( ( $node['widgetType'] ?? null ) !== Component_Instance::get_element_type() ) {
+				$errors[] = sprintf(
+					'[%s] component_instances entries are only valid for <e-component> elements (got "%s").',
+					$config_id,
+					$node['widgetType'] ?? ( $node['elType'] ?? 'unknown' )
+				);
 				continue;
 			}
 
-			if ( ! $this->is_shorthand( $settings ) ) {
+			if ( ! is_array( $shorthand ) ) {
+				$errors[] = sprintf( '[%s] value must be an object with component_id and optional overrides.', $config_id );
 				continue;
 			}
 
-			$rewritten = $this->rewrite_entry( $config_id, $settings, $document, $errors );
+			$envelope = $this->build_envelope( $config_id, $shorthand, $document, $errors );
 
-			if ( null !== $rewritten ) {
-				$element_config[ $config_id ] = $rewritten;
-				$rewritten_config_ids[] = $config_id;
+			if ( null === $envelope ) {
+				continue;
 			}
+
+			$node['settings'] = array_merge( $node['settings'] ?? [], [ 'component_instance' => $envelope ] );
 		}
+		unset( $node );
 
 		if ( empty( $errors ) ) {
 			return null;
@@ -76,36 +86,31 @@ class Component_Instance_Applier {
 		);
 	}
 
-	private function is_shorthand( array $settings ): bool {
-		return array_key_exists( 'component_id', $settings )
-			&& ! isset( $settings['component_instance']['$$type'] );
-	}
-
-	private function rewrite_entry( string $config_id, array $settings, Document $document, array &$errors ): ?array {
-		$component_id = (int) ( $settings['component_id'] ?? 0 );
+	private function build_envelope( string $config_id, array $shorthand, Document $document, array &$errors ): ?array {
+		$component_id = (int) ( $shorthand['component_id'] ?? 0 );
 
 		if ( ! $component_id ) {
-			$errors[] = sprintf( '[%s] component_id must be a non-zero integer.', $config_id );
+			if ( isset( $shorthand['component_instance'] ) && is_array( $shorthand['component_instance'] ) ) {
+				$errors[] = sprintf(
+					'[%s] Invalid shape for <e-component> in element_config. Do not nest under "component_instance" — use the flat shape { "component_id": <int>, "overrides": { ... } } directly. See elementor/list-component-schemas.',
+					$config_id
+				);
+			} else {
+				$errors[] = sprintf( '[%s] component_id must be a non-zero integer.', $config_id );
+			}
+
 			return null;
 		}
 
 		$component = $this->repository->get( $component_id, false );
 
 		if ( ! $component ) {
-			$errors[] = sprintf(
-				'[%s] Component %d not found.',
-				$config_id,
-				$component_id
-			);
+			$errors[] = sprintf( '[%s] Component %d not found.', $config_id, $component_id );
 			return null;
 		}
 
 		if ( $component->get_is_archived() ) {
-			$errors[] = sprintf(
-				'[%s] Component %d is archived and cannot be placed.',
-				$config_id,
-				$component_id
-			);
+			$errors[] = sprintf( '[%s] Component %d is archived and cannot be placed.', $config_id, $component_id );
 			return null;
 		}
 
@@ -121,29 +126,25 @@ class Component_Instance_Applier {
 			}
 		}
 
-		$overridable_props = $component->get_overridable_props();
-		$raw_overrides = is_array( $settings['overrides'] ?? null ) ? $settings['overrides'] : [];
+		$overridable_props = $component->get_overridable_props()->props;
+		$raw_overrides = is_array( $shorthand['overrides'] ?? null ) ? $shorthand['overrides'] : [];
 
-		$override_errors = $this->validate_override_keys( $config_id, $raw_overrides, $overridable_props->props );
+		$override_errors = $this->validate_override_keys( $config_id, $raw_overrides, $overridable_props );
 		if ( ! empty( $override_errors ) ) {
 			$errors = array_merge( $errors, $override_errors );
 			return null;
 		}
 
-		$overrides_value = $this->build_overrides_value( $raw_overrides, $overridable_props->props, $component_id );
-
 		return [
-			'component_instance' => [
-				'$$type' => 'component-instance',
-				'value'  => [
-					'component_id' => [
-						'$$type' => 'number',
-						'value' => $component_id,
-					],
-					'overrides'    => [
-						'$$type' => 'overrides',
-						'value'  => $overrides_value,
-					],
+			'$$type' => 'component-instance',
+			'value'  => [
+				'component_id' => [
+					'$$type' => 'number',
+					'value' => $component_id,
+				],
+				'overrides'    => [
+					'$$type' => 'overrides',
+					'value'  => $this->build_overrides_value( $raw_overrides, $overridable_props, $component_id ),
 				],
 			],
 		];
@@ -173,13 +174,11 @@ class Component_Instance_Applier {
 		foreach ( $raw_overrides as $override_key => $raw_value ) {
 			$prop = $overridable_props[ $override_key ] ?? null;
 
-			$override_value = $this->resolve_override_value( $raw_value, $prop );
-
 			$overrides[] = [
 				'$$type' => 'override',
 				'value'  => [
 					'override_key'   => $override_key,
-					'override_value' => $override_value,
+					'override_value' => $this->resolve_override_value( $raw_value, $prop ),
 					'schema_source'  => [
 						'type' => 'component',
 						'id' => $component_id,

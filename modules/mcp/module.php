@@ -75,7 +75,7 @@ class Module extends BaseModule {
 
 		if ( $this->is_components_active() ) {
 			( new Abilities\List_Components_Ability() )->register();
-			( new Abilities\Get_Component_Schema_Ability() )->register();
+			( new Abilities\List_Component_Schemas_Ability() )->register();
 		}
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
@@ -110,7 +110,7 @@ class Module extends BaseModule {
 				'elementor/manage-elements',
 				'elementor/list-resources',
 				'elementor/read-resource',
-				...( $this->is_components_active() ? [ 'elementor/list-components', 'elementor/get-component-schema' ] : [] ),
+				...( $this->is_components_active() ? [ 'elementor/list-components', 'elementor/list-component-schemas' ] : [] ),
 			],
 			[
 				'elementor/style-best-practices',

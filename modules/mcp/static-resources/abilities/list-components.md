@@ -7,4 +7,4 @@ Each component is a user-defined reusable composition of widgets stored as a pos
 - `uid`: stable string identifier
 - `is_archived`: archived components should not be placed in new compositions
 
-Call `elementor/get-component-schema` with the component `id` before placing it to discover its overridable props and the shorthand format for `element_config`.
+Call `elementor/list-component-schemas` with the component `id`s you plan to place (as a `component_ids` array — even for a single one) to discover their overridable props and the value shape for each override.

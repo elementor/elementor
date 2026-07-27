@@ -2,7 +2,7 @@
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
-- `elementor/list-components` + `elementor/get-component-schema` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
+- `elementor/list-components` + `elementor/list-component-schemas` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
@@ -19,21 +19,23 @@ This tool supports v4 elements only.
 
 ## When the user explicitly asks for a component
 
-1. Call `elementor/list-components` and find a component whose name matches what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.).
-2. If found, call `elementor/get-component-schema` for that component and verify its `overridable_props` cover the customizations the user needs.
-3. If the component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
+1. Call `elementor/list-components` and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
+2. If found, call `elementor/list-component-schemas` with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
+3. If a component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
 
 ## Placement
 - Use `<e-component configuration-id="my-hero">` in `xml_structure`. **Leaf tag — no child tags inside it.**
-- Under `element_config`, map the configuration-id to a shorthand object:
+- Configure it under `element_config` like any other widget. The value has the flat shape `{ component_id, overrides? }` (the widget has no other settings). Each override value uses the plain-value shape from `origin_prop_schema` — no `$$type` envelopes, same convention as regular widget settings:
 
 ```json
 {
-  "my-hero": {
-    "component_id": 42,
-    "overrides": {
-      "title": { "$$type": "string", "value": "Welcome" },
-      "cta_url": { "$$type": "url", "value": "https://example.com" }
+  "element_config": {
+    "my-hero": {
+      "component_id": 42,
+      "overrides": {
+        "title": "Welcome",
+        "cta_url": "https://example.com"
+      }
     }
   }
 }
@@ -184,7 +186,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 # PARAMETERS
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
-- **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT)
+- **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT). For `<e-component>` config-ids the value is `{ component_id, overrides? }` (see COMPONENTS section).
 - **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **parent_id**: ID of the parent container (omit to insert at document root)

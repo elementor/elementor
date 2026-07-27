@@ -231,7 +231,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$config_result = $config_applier->apply(
 				$index,
 				[ $element_id => $settings ],
-				$widget_configs
+				$widget_configs,
+				$document
 			);
 			if ( $config_result['error'] ) {
 				return $config_result['error'];
