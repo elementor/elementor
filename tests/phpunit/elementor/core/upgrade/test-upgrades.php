@@ -6,6 +6,8 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Icons_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
@@ -620,5 +622,49 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'row' => '44',
 			'isLinked' => true,
 		], $inner_container['settings']['flex_gap_mobile'] );
+	}
+
+	public function test_v_4_3_0_align_v4_umbrella_experiment__adopts_the_atomic_widgets_state() {
+		// Arrange - a site that turned V4 on before the Editor V4 experiment existed.
+		delete_option( $this->opt_in_option_key() );
+		update_option( $this->atomic_option_key(), Experiments_Manager::STATE_ACTIVE );
+
+		// Act
+		Upgrades::_v_4_3_0_align_v4_umbrella_experiment();
+
+		// Assert
+		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, get_option( $this->opt_in_option_key() ) );
+	}
+
+	public function test_v_4_3_0_align_v4_umbrella_experiment__does_not_overwrite_an_existing_opt_in_state() {
+		// Arrange
+		update_option( $this->opt_in_option_key(), Experiments_Manager::STATE_INACTIVE );
+		update_option( $this->atomic_option_key(), Experiments_Manager::STATE_ACTIVE );
+
+		// Act
+		Upgrades::_v_4_3_0_align_v4_umbrella_experiment();
+
+		// Assert
+		$this->assertEquals( Experiments_Manager::STATE_INACTIVE, get_option( $this->opt_in_option_key() ) );
+	}
+
+	public function test_v_4_3_0_align_v4_umbrella_experiment__does_nothing_when_neither_state_is_stored() {
+		// Arrange
+		delete_option( $this->opt_in_option_key() );
+		delete_option( $this->atomic_option_key() );
+
+		// Act
+		Upgrades::_v_4_3_0_align_v4_umbrella_experiment();
+
+		// Assert
+		$this->assertFalse( get_option( $this->opt_in_option_key(), false ) );
+	}
+
+	private function opt_in_option_key() {
+		return Plugin::$instance->experiments->get_feature_option_key( Opt_In::EXPERIMENT_NAME );
+	}
+
+	private function atomic_option_key() {
+		return Plugin::$instance->experiments->get_feature_option_key( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 }
