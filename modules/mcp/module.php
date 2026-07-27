@@ -3,10 +3,8 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
-use Elementor\Plugin;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -129,13 +127,6 @@ class Module extends BaseModule {
 	}
 
 	private function is_components_active(): bool {
-		if ( ! class_exists( Components_Module::class ) ) {
-			return false;
-		}
-
-		$experiments = Plugin::$instance->experiments;
-
-		return $experiments->is_feature_active( Components_Module::EXPERIMENT_NAME )
-			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 }
