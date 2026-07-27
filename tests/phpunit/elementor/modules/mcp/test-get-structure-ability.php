@@ -163,12 +163,14 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 				[
 					'id' => 'container1',
 					'elType' => 'container',
+					'version' => 'v3',
 					'title' => 'Container',
 					'elements' => [
 						[
 							'id' => 'widget1',
 							'elType' => 'widget',
 							'widgetType' => 'e-heading',
+							'version' => 'v4',
 							'title' => 'Heading',
 						],
 					],
@@ -209,7 +211,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame(
 			[
-				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'title' => 'Button' ],
+				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'version' => 'v4', 'title' => 'Button' ],
 			],
 			$result['elements']
 		);
@@ -687,6 +689,89 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( 'Envelope Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__tags_v3_widget_and_v4_widget_with_version() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'container1',
+				'elType' => 'container',
+				'elements' => [
+					[ 'id' => 'v3', 'elType' => 'widget', 'widgetType' => 'heading', 'settings' => [] ],
+					[ 'id' => 'v4', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [] ],
+				],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$container = $result['elements'][0];
+		$this->assertSame( 'v3', $container['version'] );
+		$this->assertSame( 'v3', $container['elements'][0]['version'] );
+		$this->assertSame( 'v4', $container['elements'][1]['version'] );
+	}
+
+	public function test_execute__strips_v3_settings_and_styles_when_include_content_true() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'legacy1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [ 'title' => 'Legacy value', 'align' => 'center' ],
+				'styles' => [ 's-1' => [ 'variants' => [] ] ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'legacy1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$node = $result['elements'][0];
+		$this->assertSame( 'v3', $node['version'] );
+		$this->assertEquals( (object) [], $node['settings'] );
+		$this->assertEquals( (object) [], $node['styles'] );
+	}
+
+	public function test_execute__omits_version_for_unknown_type() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'unknown1',
+				'elType' => 'widget',
+				'widgetType' => 'this-type-does-not-exist',
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'version', $result['elements'][0] );
 	}
 
 	private function mock_document_with_elements( int $post_id, array $elements ): void {
