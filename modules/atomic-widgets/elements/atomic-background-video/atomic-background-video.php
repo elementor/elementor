@@ -173,10 +173,6 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 								'size' => 0,
 								'unit' => 'px',
 							] ),
-							'height' => Size_Prop_Type::generate( [
-								'size' => 400,
-								'unit' => 'px',
-							] ),
 							'width' => Size_Prop_Type::generate( [
 								'size' => 100,
 								'unit' => '%',

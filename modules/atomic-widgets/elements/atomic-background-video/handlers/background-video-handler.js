@@ -91,14 +91,17 @@ register( {
 				return 'playing' === this.previewState;
 			},
 			play() {
-				if ( ! video ) {
+				// In the editor, playback state is design-time and controlled by the States
+				// toggle in the panel; the on-canvas buttons are visual only, so ignore clicks
+				// to avoid pausing/resuming the actual <video> while editing.
+				if ( this.isEditor || ! video ) {
 					return;
 				}
 
 				video.play().catch( () => {} );
 			},
 			pause() {
-				if ( ! video ) {
+				if ( this.isEditor || ! video ) {
 					return;
 				}
 
