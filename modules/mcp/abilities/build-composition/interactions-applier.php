@@ -24,8 +24,8 @@ class Interactions_Applier {
 	}
 
 	/**
-	 * @param array<string, array&>               $index        Index of subtree refs.
-	 * @param array<string, array<int, array>>    $interactions Per-config-id list of native-shape interaction items.
+	 * @param array<string, array&>            $index        Index of subtree refs.
+	 * @param array<string, array<int, array>> $interactions Per-config-id list of native-shape interaction items.
 	 *
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
@@ -33,12 +33,18 @@ class Interactions_Applier {
 		$warnings = [];
 
 		if ( empty( $interactions ) ) {
-			return [ 'error' => null, 'warnings' => $warnings ];
+			return [
+				'error' => null,
+				'warnings' => $warnings,
+			];
 		}
 
 		if ( ! $this->is_experiment_active ) {
 			$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
-			return [ 'error' => null, 'warnings' => $warnings ];
+			return [
+				'error' => null,
+				'warnings' => $warnings,
+			];
 		}
 
 		$errors = [];
@@ -77,7 +83,10 @@ class Interactions_Applier {
 			];
 		}
 
-		return [ 'error' => null, 'warnings' => $warnings ];
+		return [
+			'error' => null,
+			'warnings' => $warnings,
+		];
 	}
 
 	private function resolve_items( array $items, Interaction_Item_Prop_Type $prop_type, string $config_id, array &$errors ): array {
