@@ -70,7 +70,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-video';
+		return 'eicon-background-video';
 	}
 
 	protected static function define_props_schema(): array {
