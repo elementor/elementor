@@ -125,6 +125,7 @@ class Test_Update_Settings_Ability extends Elementor_Test_Base {
 		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
 		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
 		$mock_document->method( 'save' )->willReturn( true );
+		$mock_document->method( 'get_wp_preview_url' )->willReturn( 'https://example.com/?p=1&preview_id=1&preview_nonce=abc&preview=true' );
 
 		$mock_docs = $this->createMock( Documents_Manager::class );
 		$mock_docs->method( 'get' )->willReturn( $mock_document );
@@ -137,6 +138,11 @@ class Test_Update_Settings_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertTrue( $result['success'] );
 		$this->assertSame( $post_id, $result['post_id'] );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 	}
 
 	public function test_execute__passes_settings_to_document_save() {

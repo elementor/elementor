@@ -19,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -163,7 +164,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function get_output_schema(): array {
 		return [
 			'type' => 'object',
-			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'version' ],
+			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'llm_instructions', 'version' ],
 			'properties' => [
 				'success' => [ 'type' => 'boolean' ],
 				'post_id' => [ 'type' => 'integer' ],
@@ -172,19 +173,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
 				],
-				'preview_url' => [
-					'type' => 'string',
-					'format' => 'uri',
-				],
+				'preview_url' => Document_Mutation_Links::preview_schema_property(),
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
 					'type' => 'string',
 					'description' => 'The XML with element IDs embedded.',
 				],
-				'llm_instructions' => [
-					'type' => 'string',
-					'description' => 'Next-step instructions for the LLM.',
-				],
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -317,11 +312,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'success' => true,
 			'post_id' => $post_id,
 			'root_element_ids' => $root_ids,
-			'preview_url' => $document->get_preview_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
-			'llm_instructions' => __( 'The composition was built successfully. Reload the editor to see the result.', 'elementor' ),
-		];
+		] + Document_Mutation_Links::for_document(
+			$document,
+			__( 'The composition was built successfully.', 'elementor' )
+		);
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
