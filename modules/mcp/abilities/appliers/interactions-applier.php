@@ -1,13 +1,11 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
-use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Interactions\Schema\Interactions_Schema;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,11 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Interactions_Applier {
 
-	private bool $is_experiment_active;
 	private Plain_Values_Resolver $plain_values_resolver;
 
-	public function __construct( ?bool $is_experiment_active = null, ?Plain_Values_Resolver $plain_values_resolver = null ) {
-		$this->is_experiment_active = $is_experiment_active ?? $this->detect_experiment_active();
+	public function __construct( ?Plain_Values_Resolver $plain_values_resolver = null ) {
 		$this->plain_values_resolver = $plain_values_resolver ?? Atomic_Widgets_Module::instance()->get_settings_plain_values_resolver();
 	}
 
@@ -30,25 +26,14 @@ class Interactions_Applier {
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
 	public function apply( array &$index, array $interactions ): array {
-		$warnings = [];
-
 		if ( empty( $interactions ) ) {
 			return [
 				'error' => null,
-				'warnings' => $warnings,
-			];
-		}
-
-		if ( ! $this->is_experiment_active ) {
-			$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
-			return [
-				'error' => null,
-				'warnings' => $warnings,
+				'warnings' => [],
 			];
 		}
 
 		$errors = [];
-		$prop_type = Interaction_Item_Prop_Type::make();
 
 		foreach ( $interactions as $config_id => $items ) {
 			if ( ! isset( $index[ $config_id ] ) ) {
@@ -60,7 +45,15 @@ class Interactions_Applier {
 				continue;
 			}
 
-			$built_items = $this->resolve_items( $items, $prop_type, $config_id, $errors );
+			if ( empty( $items ) ) {
+				$index[ $config_id ]['interactions'] = [
+					'items' => [],
+					'version' => Interactions_Schema::get_interactions_schema()['version'],
+				];
+				continue;
+			}
+
+			$built_items = $this->resolve_items( $items, $config_id, $errors );
 
 			if ( empty( $built_items ) ) {
 				continue;
@@ -79,17 +72,18 @@ class Interactions_Applier {
 					implode( ' ', $errors ),
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				),
-				'warnings' => $warnings,
+				'warnings' => [],
 			];
 		}
 
 		return [
 			'error' => null,
-			'warnings' => $warnings,
+			'warnings' => [],
 		];
 	}
 
-	private function resolve_items( array $items, Interaction_Item_Prop_Type $prop_type, string $config_id, array &$errors ): array {
+	private function resolve_items( array $items, string $config_id, array &$errors ): array {
+		$prop_type = Interaction_Item_Prop_Type::make();
 		$built = [];
 
 		foreach ( $items as $item_index => $plain_item ) {
@@ -113,13 +107,5 @@ class Interactions_Applier {
 		}
 
 		return $built;
-	}
-
-	private function detect_experiment_active(): bool {
-		if ( ! class_exists( Plugin::class ) || ! isset( Plugin::$instance ) ) {
-			return false;
-		}
-
-		return Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME );
 	}
 }

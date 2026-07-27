@@ -1,7 +1,7 @@
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
-- [elementor://interactions/schema] - Native interaction item shape, allowed enums, and Pro-gated fields for `interactions`
+- [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 
 # TOOL SUPPORT
@@ -139,9 +139,7 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Generous padding on CTAs: min 1rem 2.5rem
 
 # INTERACTIONS
-Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape, allowed enum values, and Pro-gated fields.
-
-If the Interactions experiment is inactive, interactions are skipped and a warning is returned. Invalid values fail the call with `elementor_invalid_interactions`.
+Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only

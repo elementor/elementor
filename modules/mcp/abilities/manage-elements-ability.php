@@ -12,9 +12,10 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -99,7 +100,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'interactions' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'object' ],
-									'description' => 'update only: array of interaction items in the native Interaction_Item shape. Replaces existing interactions on the element. Read elementor://interactions/schema for the full shape.',
+									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -331,7 +332,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
+			$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
 			$config_result = $config_applier->apply(
 				$index,
 				[ $element_id => $settings ],
@@ -367,12 +368,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( ! is_array( $interactions ) ) {
 				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
 			}
-			$interactions_applier = new Interactions_Applier( null, $this->create_plain_values_resolver() );
-			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
-			if ( $interactions_result['error'] ) {
-				return $interactions_result['error'];
+			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
+			} else {
+				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+				if ( $interactions_result['error'] ) {
+					return $interactions_result['error'];
+				}
+				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
 			}
-			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
 		}
 
 		return [
@@ -464,7 +469,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		);
 	}
 
-	private function create_plain_values_resolver(): Plain_Values_Resolver {
+	private function get_plain_values_resolver(): Plain_Values_Resolver {
 		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 

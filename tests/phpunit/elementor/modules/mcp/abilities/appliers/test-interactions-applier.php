@@ -54,7 +54,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Interactions\Schema\Interactions_Schema;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Interactions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use PHPUnit\Framework\TestCase;
 
 if ( ! function_exists( 'apply_filters' ) ) {
@@ -76,8 +76,8 @@ class Test_Interactions_Applier extends TestCase {
 		return new Plain_Values_Resolver( $registry );
 	}
 
-	private function make_applier( bool $is_experiment_active = true ): Interactions_Applier {
-		return new Interactions_Applier( $is_experiment_active, $this->make_plain_values_resolver() );
+	private function make_applier(): Interactions_Applier {
+		return new Interactions_Applier( $this->make_plain_values_resolver() );
 	}
 
 	private function valid_interaction(): array {
@@ -207,6 +207,25 @@ class Test_Interactions_Applier extends TestCase {
 		$this->assertStringContainsString( 'elementor://interactions/schema', $result['error']->get_error_message() );
 	}
 
+	public function test_apply__empty_items_array_clears_interactions_on_node() {
+		$applier = $this->make_applier();
+		$index = [
+			'hero' => [
+				'widgetType' => 'e-heading',
+				'interactions' => [
+					'items' => [ [ 'existing' => 'item' ] ],
+					'version' => 'old',
+				],
+			],
+		];
+
+		$result = $applier->apply( $index, [ 'hero' => [] ] );
+
+		$this->assertNull( $result['error'] );
+		$this->assertSame( [], $index['hero']['interactions']['items'] );
+		$this->assertSame( Interactions_Schema::get_interactions_schema()['version'], $index['hero']['interactions']['version'] );
+	}
+
 	public function test_apply__excluded_breakpoints_are_resolved() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
@@ -222,16 +241,4 @@ class Test_Interactions_Applier extends TestCase {
 		$this->assertCount( 2, $excluded );
 	}
 
-	public function test_apply__inactive_experiment_returns_warning() {
-		$applier = $this->make_applier( false );
-		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
-
-		$result = $applier->apply( $index, [
-			'hero' => [ $this->valid_interaction() ],
-		] );
-
-		$this->assertNull( $result['error'] );
-		$this->assertNotEmpty( $result['warnings'] );
-		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
-	}
 }
