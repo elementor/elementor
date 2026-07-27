@@ -89,26 +89,8 @@ class Module extends BaseModule {
 			[ \WP\MCP\Transport\HttpTransport::class ],
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
-			[
-				'elementor/get-page-structure',
-				'elementor/update-page-settings',
-				'elementor/create-page',
-				'elementor/manage-global-variable',
-				'elementor/manage-classes',
-				'elementor/get-widget-schema',
-				'elementor/list-widget-schemas',
-				'elementor/list-dynamic-tags',
-				'elementor/build-composition',
-				'elementor/manage-elements',
-				'elementor/list-resources',
-				'elementor/read-resource',
-			],
-			[
-				'elementor/style-best-practices',
-				'elementor/manage-global-variable-guide',
-				'elementor/global-classes-resource',
-				'elementor/global-variables-resource',
-			],
+			$this->get_server_tools(),
+			$this->get_server_resources(),
 			[]
 		);
 
@@ -117,5 +99,61 @@ class Module extends BaseModule {
 			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
 			return;
 		}
+	}
+
+	private function get_server_tools(): array {
+		$tools = [
+			'elementor/get-page-structure',
+			'elementor/update-page-settings',
+			'elementor/create-page',
+			'elementor/manage-global-variable',
+			'elementor/manage-classes',
+			'elementor/get-widget-schema',
+			'elementor/list-widget-schemas',
+			'elementor/list-dynamic-tags',
+			'elementor/build-composition',
+			'elementor/manage-elements',
+			'elementor/list-resources',
+			'elementor/read-resource',
+		];
+
+		/**
+		 * Filters the list of MCP tool ability slugs exposed by the Elementor MCP server.
+		 *
+		 * Use this filter to add tool abilities (registered via `wp_register_ability` on the
+		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
+		 * ability id returned by the ability's `get_ability_id()`.
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param string[] $tools List of tool ability slugs.
+		 */
+		$filtered = apply_filters( 'elementor/mcp/server/tools', $tools );
+
+		return is_array( $filtered ) ? array_values( array_unique( array_filter( $filtered, 'is_string' ) ) ) : $tools;
+	}
+
+	private function get_server_resources(): array {
+		$resources = [
+			'elementor/style-best-practices',
+			'elementor/manage-global-variable-guide',
+			'elementor/global-classes-resource',
+			'elementor/global-variables-resource',
+		];
+
+		/**
+		 * Filters the list of MCP resource ability slugs exposed by the Elementor MCP server.
+		 *
+		 * Use this filter to add resource abilities (registered via `wp_register_ability` on the
+		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
+		 * ability id returned by the ability's `get_ability_id()`.
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param string[] $resources List of resource ability slugs.
+		 */
+		$filtered = apply_filters( 'elementor/mcp/server/resources', $resources );
+
+		return is_array( $filtered ) ? array_values( array_unique( array_filter( $filtered, 'is_string' ) ) ) : $resources;
 	}
 }
