@@ -19,7 +19,7 @@ const captureHandler = (): ResourceHandler => {
 const readCatalog = async () => {
 	const handler = captureHandler();
 	const result = await handler( new URL( DYNAMIC_TAGS_URI ) );
-	return JSON.parse( result.contents[ 0 ].text );
+	return result.contents[ 0 ].text;
 };
 
 describe( 'dynamic-tags-resource', () => {
@@ -27,31 +27,9 @@ describe( 'dynamic-tags-resource', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns the flat tag list fetched from the server', async () => {
+	it( 'returns the json string fetched from the server', async () => {
 		// Arrange
-		const post = jest.fn().mockResolvedValue( {
-			data: {
-				data: [
-					{
-						name: 'post-custom-field',
-						label: 'Post Custom Field',
-						categories: [ 'text', 'url' ],
-						settings: { key: { mocked: true }, before: { mocked: true } },
-					},
-				],
-			},
-		} );
-		mockedHttpService.mockReturnValue( { post } as never );
-
-		// Act
-		const catalog = await readCatalog();
-
-		// Assert
-		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
-			tool: 'list-dynamic-tags',
-			input: {},
-		} );
-		expect( catalog ).toEqual( [
+		const serverJson = JSON.stringify( [
 			{
 				name: 'post-custom-field',
 				label: 'Post Custom Field',
@@ -59,17 +37,31 @@ describe( 'dynamic-tags-resource', () => {
 				settings: { key: { mocked: true }, before: { mocked: true } },
 			},
 		] );
-	} );
 
-	it( 'returns an empty list when the server returns no data', async () => {
-		// Arrange
-		const post = jest.fn().mockResolvedValue( { data: {} } );
-		mockedHttpService.mockReturnValue( { post } as never );
+		const get = jest.fn().mockResolvedValue( {
+			data: { data: serverJson },
+		} );
+		mockedHttpService.mockReturnValue( { get } as never );
 
 		// Act
-		const catalog = await readCatalog();
+		const text = await readCatalog();
 
 		// Assert
-		expect( catalog ).toEqual( [] );
+		expect( get ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			params: { uri: DYNAMIC_TAGS_URI },
+		} );
+		expect( text ).toBe( serverJson );
+	} );
+
+	it( 'returns an empty json array string when the server returns no data', async () => {
+		// Arrange
+		const get = jest.fn().mockResolvedValue( { data: {} } );
+		mockedHttpService.mockReturnValue( { get } as never );
+
+		// Act
+		const text = await readCatalog();
+
+		// Assert
+		expect( text ).toBe( '[]' );
 	} );
 } );
