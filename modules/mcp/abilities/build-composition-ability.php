@@ -104,9 +104,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $dom;
 		}
 
+		$elements_data = $document->get_elements_data();
 		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
 			$dom,
-			$document->get_elements_data() ?: [],
+			is_array( $elements_data ) ? $elements_data : [],
 			$parent_id
 		);
 

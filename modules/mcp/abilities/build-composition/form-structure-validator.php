@@ -169,7 +169,7 @@ class Form_Structure_Validator {
 	}
 
 	private function has_form_ancestor_in_dom( \DOMElement $node ): bool {
-		$parent = $node->parentNode;
+		$parent = $node->parentNode; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOMElement API.
 
 		while ( $parent instanceof \DOMElement ) {
 			if ( Xml_Parser::COMPOSITION_ROOT_TAG === strtolower( $parent->tagName ) ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOMElement API.
@@ -180,7 +180,7 @@ class Form_Structure_Validator {
 				return true;
 			}
 
-			$parent = $parent->parentNode;
+			$parent = $parent->parentNode; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOMElement API.
 		}
 
 		return false;

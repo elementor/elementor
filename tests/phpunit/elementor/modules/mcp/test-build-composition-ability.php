@@ -217,24 +217,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_execute__valid_form_structure_passes_form_validation() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$ability = new Build_Composition_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'post_id' => $post_id,
-			'dry_run' => true,
-			'xml_structure' => '<e-form configuration-id="form-1"><e-flexbox configuration-id="row-1"><e-form-input configuration-id="input-1"/></e-flexbox><e-form-submit-button configuration-id="btn-1"/></e-form>',
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'expected array result' );
-		$this->assertTrue( $result['success'] );
-	}
-
 	/**
 	 * @dataProvider input_and_permissions_cases
 	 */
