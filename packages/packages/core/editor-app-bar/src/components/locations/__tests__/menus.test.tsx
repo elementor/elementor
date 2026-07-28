@@ -7,6 +7,7 @@ jest.mock( '@elementor/editor-current-user', () => ( {
 	useCurrentUserCapabilities: () => ( { isAdmin: true, canUser: jest.fn(), capabilities: [] } ),
 } ) );
 
+import { DEFAULT_MAX_TOOLBAR_ACTIONS } from '../../../constants';
 import { AppBarSizeProvider } from '../../../contexts/app-bar-size-context';
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
@@ -83,13 +84,13 @@ describe( 'Menus components', () => {
 		{
 			menuName: 'Tools',
 			menu: toolsMenu,
-			maxItems: 5,
+			maxItems: DEFAULT_MAX_TOOLBAR_ACTIONS.tools,
 			Component: ToolsMenuLocation,
 		},
 		{
 			menuName: 'Utilities',
 			menu: utilitiesMenu,
-			maxItems: 4,
+			maxItems: DEFAULT_MAX_TOOLBAR_ACTIONS.utilities,
 			Component: UtilitiesMenuLocation,
 		},
 	] )( '$menuName menu', ( { maxItems, menu, Component } ) => {
@@ -161,7 +162,7 @@ describe( 'Menus components', () => {
 	} );
 
 	describe( 'Utilities menu late registration', () => {
-		const maxUtilitiesItems = 4;
+		const maxUtilitiesItems = DEFAULT_MAX_TOOLBAR_ACTIONS.utilities;
 
 		it( 'should render a menu item registered after the location has mounted', () => {
 			// Arrange.
@@ -197,7 +198,9 @@ describe( 'Menus components', () => {
 			}
 
 			renderWithTheme(
-				<AppBarSizeProvider value={ { tools: 5, utilities: maxUtilitiesItems } }>
+				<AppBarSizeProvider
+					value={ { tools: DEFAULT_MAX_TOOLBAR_ACTIONS.tools, utilities: maxUtilitiesItems } }
+				>
 					<UtilitiesMenuLocation />
 				</AppBarSizeProvider>
 			);

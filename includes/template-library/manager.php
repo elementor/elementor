@@ -27,6 +27,7 @@ class Manager {
 
 	const ERROR_TEMPLATE_SOURCE_NOT_FOUND = 'Template source not found.';
 	const ERROR_TEMPLATE_IDS_MISSING = 'Template IDs are missing.';
+	const ERROR_JSON_UPLOAD_NOT_ALLOWED = 'Uploading JSON files is not allowed for this user.';
 
 	/**
 	 * Registered template sources.
@@ -600,6 +601,10 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function import_template( array $data ) {
+		if ( ! User::is_current_user_can_upload_json() ) {
+			return new \WP_Error( 'template_error', self::ERROR_JSON_UPLOAD_NOT_ALLOWED );
+		}
+
 		// If the template is a JSON file, allow uploading it.
 		add_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
 		add_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
@@ -897,6 +902,10 @@ class Manager {
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		if ( 'import_template' === $ajax_request && ! User::is_current_user_can_upload_json() ) {
 			throw new \Exception( 'Access denied.' );
 		}
 

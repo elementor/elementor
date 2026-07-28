@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resol
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
@@ -122,6 +123,11 @@ use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Content\Atomic_Background_Video_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Controls\Atomic_Background_Video_Controls;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
@@ -188,6 +194,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
@@ -204,6 +211,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/plain/transformers/register', fn ( $transformers ) => $this->register_plain_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
@@ -301,6 +309,32 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	/**
+	 * Background Video is a container element, so core lists it among the atomic *elements*, which
+	 * always precede the atomic *widgets* in the widgets panel — `Document::get_config()` builds the
+	 * panel list as `array_merge( $elements_config, $widget_types_config )`, and the panel renders
+	 * tiles in that insertion order (there is no per-tile ordering field). The spec requires the tile
+	 * at the very bottom of the Atomic Elements section, after Divider and Video (both widgets), so we
+	 * re-append its config last in the initial document's widget list that seeds the editor cache.
+	 */
+	private function move_background_video_to_panel_end( $settings ) {
+		$type = Atomic_Background_Video::get_element_type();
+
+		if ( empty( $settings['initial_document']['widgets'][ $type ] ) ) {
+			return $settings;
+		}
+
+		$widgets = $settings['initial_document']['widgets'];
+		$config = $widgets[ $type ];
+
+		unset( $widgets[ $type ] );
+		$widgets[ $type ] = $config;
+
+		$settings['initial_document']['widgets'] = $widgets;
+
+		return $settings;
+	}
+
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
@@ -322,6 +356,12 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tab() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
+
+		$elements_manager->register_element_type( new Atomic_Background_Video() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
@@ -445,11 +485,16 @@ class Module extends BaseModule {
 		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Export_Transformer() );
 	}
 
+	public function register_plain_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Plain_Transformer() );
+	}
+
 	private function register_settings_resolvers( Plain_Resolvers_Registry $registry ): void {
 		$registry->register_fallback( new Passthrough_Plain_Resolver() );
 		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
 		$registry->register( Boolean_Prop_Type::get_key(), new Boolean_Plain_Resolver() );
 		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
+		$registry->register( Size_Prop_Type::get_key(), new Size_Plain_Resolver() );
 	}
 
 	public function get_settings_plain_values_resolver(): Plain_Values_Resolver {
@@ -523,6 +568,18 @@ class Module extends BaseModule {
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
+			'.e-background-video { position: relative; overflow: hidden; }',
+			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1; }',
+			'.e-background-video__controls { z-index: 2; }',
+			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
+			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
+			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
+			// No state pinned (editor "States" unselected): hide both buttons. The two `:not` guards lift
+			// specificity above the atomic base style so `display: none` wins. On the frontend Alpine always
+			// sets one of the state classes from real playback, so exactly one button shows there.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

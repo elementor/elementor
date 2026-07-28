@@ -12,13 +12,16 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -121,7 +124,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();
-		$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
+		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
 		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
@@ -139,7 +142,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $style_result['error'];
 		}
 
-		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'] );
+		$interactions_result = $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) );
+		if ( $interactions_result['error'] ) {
+			return $interactions_result['error'];
+		}
+
+		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] );
 
 		if ( $dry_run ) {
 			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
@@ -163,7 +171,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function get_output_schema(): array {
 		return [
 			'type' => 'object',
-			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'version' ],
+			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'llm_instructions', 'version' ],
 			'properties' => [
 				'success' => [ 'type' => 'boolean' ],
 				'post_id' => [ 'type' => 'integer' ],
@@ -172,19 +180,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
 				],
-				'preview_url' => [
-					'type' => 'string',
-					'format' => 'uri',
-				],
+				'preview_url' => Document_Mutation_Links::preview_schema_property(),
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
 					'type' => 'string',
 					'description' => 'The XML with element IDs embedded.',
 				],
-				'llm_instructions' => [
-					'type' => 'string',
-					'description' => 'Next-step instructions for the LLM.',
-				],
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -229,6 +231,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'additionalProperties' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
+					],
+				],
+				'interactions' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Record mapping configuration-id → array of interaction items in the native shape. Read elementor://interactions/schema for the full shape and allowed enum values. Send [] for a configuration-id to clear its interactions.',
+					'additionalProperties' => [
+						'type' => 'array',
+						'items' => [ 'type' => 'object' ],
 					],
 				],
 				'parent_id' => [
@@ -317,11 +328,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'success' => true,
 			'post_id' => $post_id,
 			'root_element_ids' => $root_ids,
-			'preview_url' => $document->get_preview_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
-			'llm_instructions' => __( 'The composition was built successfully. Reload the editor to see the result.', 'elementor' ),
-		];
+		] + Document_Mutation_Links::for_document(
+			$document,
+			__( 'The composition was built successfully.', 'elementor' )
+		);
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
@@ -386,8 +398,34 @@ class Build_Composition_Ability extends Abstract_Ability {
 		);
 	}
 
-	private function create_plain_values_resolver(): Plain_Values_Resolver {
+	private function get_plain_values_resolver(): Plain_Values_Resolver {
 		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
+	}
+
+	/**
+	 * @param array<string, array&>            $index
+	 * @param array<string, array<int, array>> $interactions
+	 *
+	 * @return array{error: \WP_Error|null, warnings: string[]}
+	 */
+	private function apply_interactions( array &$index, array $interactions ): array {
+		if ( empty( $interactions ) ) {
+			return [
+				'error' => null,
+				'warnings' => [],
+			];
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+			return [
+				'error' => null,
+				'warnings' => [ __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ) ],
+			];
+		}
+
+		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+
+		return $applier->apply( $index, $interactions );
 	}
 
 	private function is_variables_active(): bool {
