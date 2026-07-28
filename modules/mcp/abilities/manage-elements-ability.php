@@ -11,8 +11,10 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -87,7 +89,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'element_id' => [ 'type' => 'string' ],
 								'settings' => [
 									'type' => 'object',
-									'description' => 'update only: partial plain settings map merged onto existing settings.',
+									'description' => 'update only: partial plain settings map merged onto existing settings. For <e-component> targets, use { component_id?: int, overrides: { <override_key>: <plain value | null> } }; component_id is optional (inferred from the existing instance), each override_key is deep-merged onto existing overrides, and passing null for an override_key removes it. Unmentioned override_keys are preserved.',
 								],
 								'style' => [
 									'type' => 'object',
@@ -332,17 +334,25 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
-			$config_result = $config_applier->apply(
-				$index,
-				[ $element_id => $settings ],
-				$widget_configs,
-				$document
-			);
-			if ( $config_result['error'] ) {
-				return $config_result['error'];
+			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
+				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->create_plain_values_resolver() );
+				$component_error = $component_applier->apply_partial( $index, [ $element_id => $settings ], $document );
+				if ( $component_error ) {
+					return $component_error;
+				}
+			} else {
+				$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
+				$config_result = $config_applier->apply(
+					$index,
+					[ $element_id => $settings ],
+					$widget_configs,
+					$document
+				);
+				if ( $config_result['error'] ) {
+					return $config_result['error'];
+				}
+				$warnings = array_merge( $warnings, $config_result['warnings'] );
 			}
-			$warnings = array_merge( $warnings, $config_result['warnings'] );
 		}
 
 		if ( ! empty( $classes ) ) {

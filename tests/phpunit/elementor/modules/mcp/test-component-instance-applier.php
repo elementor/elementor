@@ -283,6 +283,192 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertSame( $component_id, $ci['value']['component_id']['value'] );
 	}
 
+	public function test_apply_partial__preserves_untouched_overrides_and_replaces_specified_key() {
+		// Arrange: build an existing envelope with two overrides via apply().
+		$this->act_as_admin();
+		$component_id = $this->create_component_with_heading_title_prop();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+
+		$initial = [
+			'hero' => [
+				'component_id' => $component_id,
+				'overrides' => [
+					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Original' ], 'children' => [] ] ],
+					'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h2' ],
+				],
+			],
+		];
+		$this->assertNull( $applier->apply( $index, $initial, $document ) );
+
+		// Act: partial-update only prop-uuid-1.
+		$partial = [
+			'hero' => [
+				'component_id' => $component_id,
+				'overrides' => [
+					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Updated' ], 'children' => [] ] ],
+				],
+			],
+		];
+		$error = $applier->apply_partial( $index, $partial, $document );
+
+		// Assert
+		$this->assertNull( $error );
+
+		$overrides = $index['hero']['settings']['component_instance']['value']['overrides']['value'];
+		$this->assertCount( 2, $overrides, 'Both override keys should be preserved after partial update.' );
+
+		$by_key = $this->overrides_by_key( $overrides );
+		$this->assertArrayHasKey( 'prop-uuid-1', $by_key );
+		$this->assertArrayHasKey( 'prop-uuid-2', $by_key );
+		$this->assertSame( 'Updated', $by_key['prop-uuid-1']['value']['override_value']['value']['content']['value'] );
+		$this->assertSame( 'h2', $by_key['prop-uuid-2']['value']['override_value']['value'] );
+	}
+
+	public function test_apply_partial__removes_override_when_value_is_null() {
+		// Arrange: existing envelope with two overrides.
+		$this->act_as_admin();
+		$component_id = $this->create_component_with_heading_title_prop();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$initial = [
+			'hero' => [
+				'component_id' => $component_id,
+				'overrides' => [
+					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Kept' ], 'children' => [] ] ],
+					'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h4' ],
+				],
+			],
+		];
+		$this->assertNull( $applier->apply( $index, $initial, $document ) );
+
+		// Act: null out prop-uuid-2.
+		$partial = [
+			'hero' => [ 'overrides' => [ 'prop-uuid-2' => null ] ],
+		];
+		$error = $applier->apply_partial( $index, $partial, $document );
+
+		// Assert
+		$this->assertNull( $error );
+
+		$overrides = $index['hero']['settings']['component_instance']['value']['overrides']['value'];
+		$this->assertCount( 1, $overrides );
+		$this->assertSame( 'prop-uuid-1', $overrides[0]['value']['override_key'] );
+	}
+
+	public function test_apply_partial__appends_new_override_key_not_present_before() {
+		// Arrange: existing envelope with only prop-uuid-1.
+		$this->act_as_admin();
+		$component_id = $this->create_component_with_heading_title_prop();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$initial = [
+			'hero' => [
+				'component_id' => $component_id,
+				'overrides' => [
+					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Kept' ], 'children' => [] ] ],
+				],
+			],
+		];
+		$this->assertNull( $applier->apply( $index, $initial, $document ) );
+
+		// Act: add prop-uuid-2 via partial.
+		$partial = [
+			'hero' => [ 'overrides' => [ 'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h1' ] ] ],
+		];
+		$this->assertNull( $applier->apply_partial( $index, $partial, $document ) );
+
+		// Assert
+		$by_key = $this->overrides_by_key( $index['hero']['settings']['component_instance']['value']['overrides']['value'] );
+		$this->assertArrayHasKey( 'prop-uuid-1', $by_key );
+		$this->assertArrayHasKey( 'prop-uuid-2', $by_key );
+	}
+
+	public function test_apply_partial__infers_component_id_from_existing_envelope() {
+		// Arrange: build existing envelope, then partial without component_id.
+		$this->act_as_admin();
+		$component_id = $this->create_component_with_heading_title_prop();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$initial = [
+			'hero' => [
+				'component_id' => $component_id,
+				'overrides' => [
+					'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h5' ],
+				],
+			],
+		];
+		$this->assertNull( $applier->apply( $index, $initial, $document ) );
+
+		// Act: no component_id in the partial payload.
+		$partial = [
+			'hero' => [ 'overrides' => [ 'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h6' ] ] ],
+		];
+		$error = $applier->apply_partial( $index, $partial, $document );
+
+		// Assert
+		$this->assertNull( $error );
+		$envelope = $index['hero']['settings']['component_instance'];
+		$this->assertSame( $component_id, $envelope['value']['component_id']['value'] );
+	}
+
+	public function test_apply_partial__errors_when_component_id_missing_and_no_existing_envelope() {
+		// Arrange: fresh e-component node with empty settings, partial without component_id.
+		$this->act_as_admin();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$partial = [ 'hero' => [ 'overrides' => [ 'prop-uuid-1' => [ '$$type' => 'string', 'value' => 'X' ] ] ] ];
+
+		// Act
+		$error = $applier->apply_partial( $index, $partial, $document );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertSame( 'elementor_invalid_component_instance', $error->get_error_code() );
+		$this->assertStringContainsString( 'component_id could not be resolved', $error->get_error_message() );
+	}
+
+	public function test_apply_partial__errors_for_unknown_override_key() {
+		// Arrange: existing envelope, then partial with an unknown key.
+		$this->act_as_admin();
+		$component_id = $this->create_component_with_heading_title_prop();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$initial = [ 'hero' => [ 'component_id' => $component_id, 'overrides' => [ 'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'A' ], 'children' => [] ] ] ] ] ];
+		$this->assertNull( $applier->apply( $index, $initial, $document ) );
+
+		// Act
+		$partial = [ 'hero' => [ 'overrides' => [ 'nonexistent-key' => 'value' ] ] ];
+		$error = $applier->apply_partial( $index, $partial, $document );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertStringContainsString( 'nonexistent-key', $error->get_error_message() );
+	}
+
+	private function overrides_by_key( array $overrides_list ): array {
+		$by_key = [];
+		foreach ( $overrides_list as $item ) {
+			$key = $item['value']['override_key'] ?? null;
+			if ( is_string( $key ) && '' !== $key ) {
+				$by_key[ $key ] = $item;
+			}
+		}
+		return $by_key;
+	}
+
 	private function make_applier(): Component_Instance_Applier {
 		return new Component_Instance_Applier( new Components_Repository(), $this->plain_values_resolver() );
 	}

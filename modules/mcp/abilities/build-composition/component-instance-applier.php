@@ -135,6 +135,109 @@ class Component_Instance_Applier {
 			return null;
 		}
 
+		return $this->assemble_envelope(
+			$component_id,
+			$this->build_overrides_value( $raw_overrides, $overridable_props, $component_id )
+		);
+	}
+
+	/**
+	 * Partial update entry-point for `manage-elements action=update` on `<e-component>` nodes.
+	 *
+	 * Contract (differs from apply()):
+	 *  - `component_id` is optional; if omitted, recovered from the node's existing envelope.
+	 *  - `overrides` is a **per-key merge** onto existing overrides.
+	 *      * A supplied non-null value replaces (or appends) that override key.
+	 *      * A supplied `null` value removes that override key from the envelope.
+	 *      * Override keys not mentioned in the payload are preserved untouched.
+	 *
+	 * @param array<string, array&>                                                                 $config_id_index
+	 * @param array<string, array{component_id?:int, overrides?:array<string, mixed|null>}>        $partial_shorthands
+	 * @param Document                                                                              $document
+	 */
+	public function apply_partial( array &$config_id_index, array $partial_shorthands, Document $document ): ?\WP_Error {
+		if ( empty( $partial_shorthands ) ) {
+			return null;
+		}
+
+		$errors = [];
+
+		foreach ( $partial_shorthands as $config_id => $shorthand ) {
+			if ( ! isset( $config_id_index[ $config_id ] ) ) {
+				$errors[] = sprintf( '[%s] configuration-id not found in xml_structure.', $config_id );
+				continue;
+			}
+
+			$node = &$config_id_index[ $config_id ];
+
+			if ( ( $node['widgetType'] ?? null ) !== Component_Instance::get_element_type() ) {
+				$errors[] = sprintf(
+					'[%s] apply_partial() is only valid for <e-component> elements (got "%s").',
+					$config_id,
+					$node['widgetType'] ?? ( $node['elType'] ?? 'unknown' )
+				);
+				continue;
+			}
+
+			if ( ! is_array( $shorthand ) ) {
+				$errors[] = sprintf( '[%s] settings must be an object with optional component_id and overrides.', $config_id );
+				continue;
+			}
+
+			$existing_envelope = is_array( $node['settings']['component_instance'] ?? null )
+				? $node['settings']['component_instance']
+				: null;
+
+			$component_id = $this->resolve_component_id( $shorthand, $existing_envelope );
+			if ( ! $component_id ) {
+				$errors[] = sprintf(
+					'[%s] component_id could not be resolved. Either the target is not an existing <e-component> instance or component_id must be supplied.',
+					$config_id
+				);
+				continue;
+			}
+
+			$component = $this->load_valid_component( $config_id, $component_id, $document, $errors );
+			if ( ! $component ) {
+				continue;
+			}
+
+			$overridable_props = $component->get_overridable_props()->props;
+			$partial_overrides = is_array( $shorthand['overrides'] ?? null ) ? $shorthand['overrides'] : [];
+
+			$key_errors = $this->validate_override_keys( $config_id, $partial_overrides, $overridable_props );
+			if ( ! empty( $key_errors ) ) {
+				$errors = array_merge( $errors, $key_errors );
+				continue;
+			}
+
+			$existing_overrides_list = $this->extract_overrides_list( $existing_envelope );
+			$merged_overrides_list = $this->merge_overrides_list(
+				$existing_overrides_list,
+				$partial_overrides,
+				$overridable_props,
+				$component_id
+			);
+
+			$node['settings'] = array_merge(
+				$node['settings'] ?? [],
+				[ 'component_instance' => $this->assemble_envelope( $component_id, $merged_overrides_list ) ]
+			);
+		}
+		unset( $node );
+
+		if ( empty( $errors ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_invalid_component_instance',
+			implode( ' ', $errors ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
+	}
+
+	private function assemble_envelope( int $component_id, array $overrides_list ): array {
 		return [
 			'$$type' => 'component-instance',
 			'value'  => [
@@ -144,10 +247,98 @@ class Component_Instance_Applier {
 				],
 				'overrides'    => [
 					'$$type' => 'overrides',
-					'value'  => $this->build_overrides_value( $raw_overrides, $overridable_props, $component_id ),
+					'value'  => $overrides_list,
 				],
 			],
 		];
+	}
+
+	private function resolve_component_id( array $shorthand, ?array $existing_envelope ): int {
+		$supplied = (int) ( $shorthand['component_id'] ?? 0 );
+		if ( $supplied ) {
+			return $supplied;
+		}
+
+		return (int) ( $existing_envelope['value']['component_id']['value'] ?? 0 );
+	}
+
+	private function extract_overrides_list( ?array $envelope ): array {
+		$list = $envelope['value']['overrides']['value'] ?? [];
+
+		return is_array( $list ) ? $list : [];
+	}
+
+	private function merge_overrides_list( array $existing_list, array $partial_overrides, array $overridable_props, int $component_id ): array {
+		$updates = [];
+		$deletions = [];
+		foreach ( $partial_overrides as $key => $value ) {
+			if ( null === $value ) {
+				$deletions[ $key ] = true;
+			} else {
+				$updates[ $key ] = $value;
+			}
+		}
+
+		$new_items = $this->build_overrides_value( $updates, $overridable_props, $component_id );
+		$new_items_by_key = [];
+		foreach ( $new_items as $item ) {
+			$key = $item['value']['override_key'] ?? null;
+			if ( is_string( $key ) && '' !== $key ) {
+				$new_items_by_key[ $key ] = $item;
+			}
+		}
+
+		$merged = [];
+		foreach ( $existing_list as $item ) {
+			$key = $item['value']['override_key'] ?? null;
+			if ( ! is_string( $key ) || '' === $key ) {
+				$merged[] = $item;
+				continue;
+			}
+			if ( isset( $deletions[ $key ] ) ) {
+				continue;
+			}
+			if ( isset( $new_items_by_key[ $key ] ) ) {
+				$merged[] = $new_items_by_key[ $key ];
+				unset( $new_items_by_key[ $key ] );
+				continue;
+			}
+			$merged[] = $item;
+		}
+
+		foreach ( $new_items_by_key as $item ) {
+			$merged[] = $item;
+		}
+
+		return $merged;
+	}
+
+	private function load_valid_component( string $config_id, int $component_id, Document $document, array &$errors ) {
+		$component = $this->repository->get( $component_id, false );
+
+		if ( ! $component ) {
+			$errors[] = sprintf( '[%s] Component %d not found.', $config_id, $component_id );
+			return null;
+		}
+
+		if ( $component->get_is_archived() ) {
+			$errors[] = sprintf( '[%s] Component %d is archived and cannot be placed.', $config_id, $component_id );
+			return null;
+		}
+
+		if ( $document instanceof Component_Document ) {
+			$circular_result = Circular_Dependency_Validator::make()->validate(
+				$document->get_main_id(),
+				[ $this->make_placeholder_element( $component_id ) ]
+			);
+
+			if ( ! $circular_result['success'] ) {
+				$errors[] = sprintf( '[%s] %s', $config_id, implode( ' ', $circular_result['messages'] ) );
+				return null;
+			}
+		}
+
+		return $component;
 	}
 
 	private function validate_override_keys( string $config_id, array $raw_overrides, array $overridable_props ): array {
