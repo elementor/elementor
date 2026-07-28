@@ -16,7 +16,7 @@ class Video_Src_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'id' => Video_Attachment_Id_Prop_Type::make()->description( 'The ID of the video attachment in the WordPress media library' ),
-			'url' => Url_Prop_Type::make()->skip_validation(),
+			'url' => Url_Prop_Type::make(),
 		];
 	}
 

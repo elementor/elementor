@@ -16,7 +16,7 @@ class Svg_Src_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'id' => Image_Attachment_Id_Prop_Type::make(),
-			'url' => Url_Prop_Type::make()->skip_validation(),
+			'url' => Url_Prop_Type::make(),
 		];
 	}
 
