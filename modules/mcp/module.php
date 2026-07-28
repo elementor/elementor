@@ -124,6 +124,7 @@ class Module extends BaseModule {
 			'elementor/manage-elements',
 			'elementor/list-resources',
 			'elementor/read-resource',
+			...( $this->is_components_active() ? [ 'elementor/list-components', 'elementor/list-component-schemas' ] : [] ),
 		];
 
 		/**
