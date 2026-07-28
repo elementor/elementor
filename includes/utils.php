@@ -840,6 +840,12 @@ class Utils {
 		echo wp_kses( $text, $allowed_html );
 	}
 
+	public static function kses_post_deep( $data ) {
+		return map_deep( $data, function ( $value ) {
+			return is_string( $value ) ? wp_kses_post( $value ) : $value;
+		} );
+	}
+
 	public static function is_elementor_path( $path ) {
 		$path = wp_normalize_path( $path );
 
