@@ -48,32 +48,7 @@ class Test_Widget_Context_Helper extends TestCase {
 	public function test_to_plain_llm_schema__enriches_enum_from_meta() {
 		$prop_type = Test_Widget_Context_Helper_Object::make();
 
-		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type, true );
-
-		$this->assertSame( [ 'a', 'b', 'c', 'd' ], $schema['properties']['enumed']['enum'] );
-	}
-
-	public function test_to_plain_llm_schema__pro_active_keeps_all_fields_and_values() {
-		$prop_type = Test_Widget_Context_Helper_Object::make();
-
-		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type, true );
-
-		$this->assertArrayHasKey( 'pro_only', $schema['properties'] );
-		$this->assertSame( [ 'a', 'b', 'c', 'd' ], $schema['properties']['enumed']['enum'] );
-	}
-
-	public function test_to_plain_llm_schema__pro_inactive_strips_pro_only_field() {
-		$prop_type = Test_Widget_Context_Helper_Object::make();
-
-		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type, false );
-
-		$this->assertArrayNotHasKey( 'pro_only', $schema['properties'] );
-	}
-
-	public function test_to_plain_llm_schema__pro_inactive_filters_pro_enum_values() {
-		$prop_type = Test_Widget_Context_Helper_Object::make();
-
-		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type, false );
+		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type );
 
 		$this->assertSame( [ 'a', 'b' ], $schema['properties']['enumed']['enum'] );
 	}
@@ -81,7 +56,7 @@ class Test_Widget_Context_Helper extends TestCase {
 	public function test_to_plain_llm_schema__no_op_when_no_meta_annotations() {
 		$prop_type = String_Prop_Type::make();
 
-		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type, false );
+		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type );
 
 		$this->assertArrayNotHasKey( 'enum', $schema );
 	}

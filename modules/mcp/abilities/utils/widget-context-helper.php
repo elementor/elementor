@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -169,24 +170,16 @@ class Widget_Context_Helper {
 		return $properties;
 	}
 
-	public static function to_plain_llm_schema( Transformable_Prop_Type $prop_type, ?bool $is_pro_active = null ): array {
+	public static function to_plain_llm_schema( Transformable_Prop_Type $prop_type ): array {
 		$schema = self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
 
-		if ( $prop_type instanceof Prop_Type ) {
-			$schema = self::refine_from_prop_type( $schema, $prop_type, $is_pro_active ?? self::is_pro_active() );
-		}
-
-		return $schema;
+		return self::refine_from_prop_type( $schema, $prop_type, Utils::has_pro() );
 	}
 
 	private static function to_plain_llm_schema_from_json( array $schema ): array {
 		$filtered = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
 
 		return Plain_Llm_Schema_Converter::convert( $filtered );
-	}
-
-	private static function is_pro_active(): bool {
-		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
 	/**
@@ -253,6 +246,10 @@ class Widget_Context_Helper {
 	}
 
 	private static function filter_pro_enum_values( array $enum_values, Prop_Type $prop_type ): array {
+		if ( self::is_pro_only_field( $prop_type ) ) {
+			return [];
+		}
+
 		$pro_values = $prop_type->get_meta_item( 'pro' );
 
 		if ( ! is_array( $pro_values ) ) {
