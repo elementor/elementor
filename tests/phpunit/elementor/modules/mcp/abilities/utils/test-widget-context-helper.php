@@ -22,6 +22,8 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 	}
 }
 
+require_once __DIR__ . '/../../../../../stubs/elementor-utils-stub.php';
+
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
