@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 4.2.1 - 2026-07-28 =
+
+* Fix: Improved code security enforcement in template handling
+* Fix: Improved code security enforcement in document handling
+* Fix: Invalid border-radius values in Global Classes prevent class changes - Atomic Editor
+* Fix: Atomic Variables synced from Atomic Classes are missing after site import - Atomic Editor
+
 = 4.2.0 - 2026-07-20 =
 
 * New: Introducing Grid for building advanced row and column layouts - Atomic Editor
