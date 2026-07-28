@@ -379,12 +379,12 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_panel_promotions',
-			'title' => esc_html__( 'Panel Promotions', 'elementor' ),
-			'description' => esc_html__( 'Enable experimental rendering for targeted promotions within the elements panels.', 'elementor' ),
+			'name' => 'e_hide_wordpress_widgets',
+			'title' => esc_html__( 'Hide WordPress Widgets Section', 'elementor' ),
+			'description' => esc_html__( 'Hides the WordPress widgets section from the editor panel.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_ACTIVE,
-			'type' => self::TYPE_HIDDEN,
+			'hidden' => true,
 		] );
 	}
 
