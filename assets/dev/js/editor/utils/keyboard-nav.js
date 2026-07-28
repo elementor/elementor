@@ -173,20 +173,29 @@ export function isInsideOverlay( element ) {
 }
 
 /**
+ * @param {HTMLElement|null} anchor
+ * @return {HTMLElement|null} The nearest ancestor-or-self that generates a box, so `focus()` applies.
+ */
+function getRenderedAnchor( anchor ) {
+	let candidate = anchor;
+
+	while ( candidate && 'contents' === candidate.ownerDocument.defaultView?.getComputedStyle( candidate ).display ) {
+		candidate = candidate.firstElementChild;
+	}
+
+	return candidate;
+}
+
+/**
  * @param {HTMLElement} field
  * @return {HTMLElement|null} The control wrapper, or the closest usable ancestor.
  */
 export function getEscapeAnchor( field ) {
-	const controlAnchor = field.closest( CONTROL_ANCHOR_SELECTOR );
-
-	if ( controlAnchor ) {
-		return controlAnchor;
-	}
-
-	// Anything inside Monaco would let the editor grab focus back.
 	const monacoRoot = field.closest( MONACO_SELECTOR );
+	const anchor = field.closest( CONTROL_ANCHOR_SELECTOR ) ||
+		( monacoRoot ? monacoRoot.parentElement : field.parentElement );
 
-	return monacoRoot ? monacoRoot.parentElement : field.parentElement;
+	return getRenderedAnchor( anchor );
 }
 
 /**
@@ -222,6 +231,20 @@ export function findNextFocusableAfter( element, root ) {
 function parkFocusOnAnchor( anchor, root ) {
 	const hadTabIndex = anchor.hasAttribute( 'tabindex' );
 
+	if ( ! hadTabIndex ) {
+		anchor.setAttribute( 'tabindex', '-1' );
+	}
+
+	anchor.focus( { preventScroll: true } );
+
+	if ( anchor.ownerDocument.activeElement !== anchor ) {
+		if ( ! hadTabIndex ) {
+			anchor.removeAttribute( 'tabindex' );
+		}
+
+		return;
+	}
+
 	const onKeyDown = ( event ) => {
 		if ( 'Tab' !== event.key || event.shiftKey || event.defaultPrevented || event.target !== anchor ) {
 			return;
@@ -250,14 +273,8 @@ function parkFocusOnAnchor( anchor, root ) {
 		}
 	};
 
-	if ( ! hadTabIndex ) {
-		anchor.setAttribute( 'tabindex', '-1' );
-	}
-
 	anchor.addEventListener( 'keydown', onKeyDown );
 	anchor.addEventListener( 'focusout', onFocusOut );
-
-	anchor.focus( { preventScroll: true } );
 }
 
 /**

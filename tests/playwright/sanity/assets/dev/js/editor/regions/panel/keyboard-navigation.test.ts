@@ -76,7 +76,7 @@ test.describe( 'Panel keyboard navigation @v4-tests', () => {
 			await editor.addWidget( { widgetType: 'heading', container } );
 		} );
 
-		const titleControl = page.locator( '.elementor-control-title' );
+		const titleControl = page.locator( '.elementor-control.elementor-control-title' );
 		const titleInput = titleControl.locator( 'textarea' );
 
 		await test.step( 'Focus the title control', async () => {
@@ -100,7 +100,11 @@ test.describe( 'Panel keyboard navigation @v4-tests', () => {
 			await expect( page.locator( PANEL_FOCUS ) ).toHaveCount( 1 );
 		} );
 
-		await test.step( 'A second Escape exits the editing panel as usual', async () => {
+		await test.step( 'Escaping twice from a field exits the editing panel as usual', async () => {
+			await titleInput.click();
+			await page.keyboard.press( 'Escape' );
+			await expect( titleControl ).toBeFocused();
+
 			await page.keyboard.press( 'Escape' );
 
 			await expect( page.locator( '#elementor-panel-page-editor' ) ).toBeHidden();

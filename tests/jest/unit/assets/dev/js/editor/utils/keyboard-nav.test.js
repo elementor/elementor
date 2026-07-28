@@ -51,10 +51,10 @@ describe( 'keyboard-nav - escapeFromPanelField', () => {
 		expect( event.defaultPrevented ).toBe( true );
 	} );
 
-	it( 'parks focus on the V4 settings field wrapper', () => {
+	it( 'parks focus on the rendered child of the V4 settings field wrapper', () => {
 		renderPanel( `
-			<span data-type="settings-field">
-				<textarea id="content"></textarea>
+			<span data-type="settings-field" style="display: contents">
+				<div id="grid"><textarea id="content"></textarea></div>
 			</span>
 		` );
 
@@ -66,7 +66,7 @@ describe( 'keyboard-nav - escapeFromPanelField', () => {
 
 		pressEscape();
 
-		expect( document.activeElement ).toBe( panel.querySelector( '[data-type="settings-field"]' ) );
+		expect( document.activeElement ).toBe( document.getElementById( 'grid' ) );
 	} );
 
 	it( 'stops propagation so the global esc shortcut does not run', () => {
@@ -233,6 +233,16 @@ describe( 'keyboard-nav - escape helpers', () => {
 		const anchor = getEscapeAnchor( document.querySelector( 'textarea' ) );
 
 		expect( anchor ).toBe( document.getElementById( 'css-control' ) );
+	} );
+
+	it( 'getEscapeAnchor skips a display:contents wrapper, which cannot take focus', () => {
+		document.body.innerHTML = `
+			<span data-type="settings-field" style="display: contents">
+				<div id="grid"><input type="text" /></div>
+			</span>
+		`;
+
+		expect( getEscapeAnchor( document.querySelector( 'input' ) ) ).toBe( document.getElementById( 'grid' ) );
 	} );
 
 	it( 'getEscapeAnchor falls back to the parent element', () => {
