@@ -96,7 +96,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'classes' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
-									'description' => 'update only: global class labels to attach (prepended to existing).',
+									'description' => 'update only: global class labels to attach (prepended to existing). Pass an empty array [] to remove all global classes from the element (local styles are preserved).',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -298,9 +298,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	private function apply_update( array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
 		$style = $this->as_map( $operation['style'] ?? [] );
-		$classes = $operation['classes'] ?? null;
+		$has_classes = array_key_exists( 'classes', $operation );
+		$classes = $has_classes ? $operation['classes'] : null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes );
+		$has_change = ! empty( $settings ) || ! empty( $style ) || $has_classes;
 		if ( ! $has_change ) {
 			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, or classes.', 'elementor' ) );
 		}
@@ -344,7 +345,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$warnings = array_merge( $warnings, $config_result['warnings'] );
 		}
 
-		if ( ! empty( $classes ) ) {
+		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
 				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
 			}
