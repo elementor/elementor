@@ -57,8 +57,8 @@
     "prepare": "husky"
   },
   "engines": {
-    "node": ">=20.19.0",
-    "npm": ">=10.0.0"
+    "node": ">=24.15.0",
+    "npm": ">=11.0.0"
   },
   "workspaces": [
     "packages",
@@ -225,6 +225,9 @@
     ],
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"
+    ],
+    "*.{php,twig}": [
+      "bash bin/check-twig-safety.sh"
     ]
   }
 }

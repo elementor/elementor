@@ -628,7 +628,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['editor_settings'] );
+		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {
@@ -896,6 +896,28 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__omits_empty_root_props() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [],
+			'styles' => [],
+			'editor_settings' => [],
+			'interactions' => [],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'settings', $data_for_save );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
+		$this->assertArrayNotHasKey( 'interactions', $data_for_save );
 	}
 
 	public function test_get_data_for_save__throws_on_settings_validation_error() {

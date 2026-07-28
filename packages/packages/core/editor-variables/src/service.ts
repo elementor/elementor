@@ -277,3 +277,23 @@ const handleWatermark = ( operation: string, newWatermark: number ) => {
 	}
 	storage.watermark( newWatermark );
 };
+
+export const applyLocalMutation = (
+	action: 'create' | 'update' | 'delete',
+	variableWithId: TVariable & { id: string },
+	watermark: number
+) => {
+	const { id: variableId, ...variable } = variableWithId;
+
+	handleWatermark( OP_RW, watermark );
+
+	if ( action === 'create' ) {
+		storage.add( variableId, variable );
+	} else {
+		storage.update( variableId, variable );
+	}
+
+	styleVariablesRepository.update( {
+		[ variableId ]: variable,
+	} );
+};

@@ -52,6 +52,15 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNotEmpty( $features, 'Default registered features' );
 	}
 
+	public function test_e_hide_wordpress_widgets_experiment_is_hidden_and_active_by_default() {
+		$feature = $this->experiments->get_features( 'e_hide_wordpress_widgets' );
+
+		$this->assertNotEmpty( $feature );
+		$this->assertTrue( $feature['hidden'] );
+		$this->assertSame( Experiments_Manager::STATE_ACTIVE, $feature['default'] );
+		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $feature['release_status'] );
+	}
+
 	public function test_add_feature() {
 		$test_feature_data = [
 			'default' => Experiments_Manager::STATE_ACTIVE,

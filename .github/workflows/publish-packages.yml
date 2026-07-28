@@ -117,57 +117,72 @@ jobs:
         run: npm run install:ci
 
       - name: Validate Inputs
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+          INPUT_TAG: ${{ inputs.tag }}
         run: |
           # Validate version format if provided (semver X.Y.Z, no pre-release suffix here)
-          if [ -n "${{ inputs.version }}" ]; then
-            if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [ -n "$INPUT_VERSION" ]; then
+            if ! [[ "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               echo "Error: version must be a base semver version (e.g., 1.2.3). Use version_suffix for pre-release labels."
               exit 1
             fi
           fi
 
           # Validate version_suffix contains only alphanumeric, dots, and hyphens
-          if [ -n "${{ inputs.version_suffix }}" ]; then
-            if [[ "${{ inputs.version_suffix }}" =~ [^a-zA-Z0-9.-] ]]; then
+          if [ -n "$INPUT_VERSION_SUFFIX" ]; then
+            if [[ "$INPUT_VERSION_SUFFIX" =~ [^a-zA-Z0-9.-] ]]; then
               echo "Error: version_suffix contains invalid characters (allowed: alphanumeric, dots, hyphens)"
               exit 1
             fi
           fi
 
           # Validate tag doesn't contain special characters
-          if [ -n "${{ inputs.tag }}" ]; then
-            if [[ "${{ inputs.tag }}" =~ [^a-zA-Z0-9._-] ]]; then
+          if [ -n "$INPUT_TAG" ]; then
+            if [[ "$INPUT_TAG" =~ [^a-zA-Z0-9._-] ]]; then
               echo "Error: tag contains invalid characters"
               exit 1
             fi
           fi
 
           # Disallow "latest" tag in manual (workflow_dispatch) runs
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.tag }}" == "latest" ]; then
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "$INPUT_TAG" == "latest" ]; then
             echo "Error: 'latest' tag is not allowed for manual workflow_dispatch runs. Use the release workflow to publish as latest."
             exit 1
           fi
 
       - name: Determine Tag Strategy
         id: tag-strategy
+        env:
+          INPUT_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+          INPUT_TAG: ${{ inputs.tag }}
         run: |
           # Determine effective tag based on trigger and inputs
           if [ "${{ github.event_name }}" == "push" ]; then
             # Existing behavior: use build number as version suffix
             TAG_SUFFIX="${{ github.run_number }}"
             NPM_DIST_TAG="build"
-          elif [ -z "${{ inputs.tag }}" ] || [ "${{ inputs.tag }}" == "manual" ]; then
+          elif [ -z "$INPUT_TAG" ] || [ "$INPUT_TAG" == "manual" ]; then
             # Manual tag
-            TAG_SUFFIX="${{ inputs.version_suffix != '' && inputs.version_suffix || 'manual' }}"
+            if [ -n "$INPUT_VERSION_SUFFIX" ]; then
+              TAG_SUFFIX="$INPUT_VERSION_SUFFIX"
+            else
+              TAG_SUFFIX="manual"
+            fi
             NPM_DIST_TAG="manual"
-          elif [ "${{ inputs.tag }}" == "latest" ]; then
+          elif [ "$INPUT_TAG" == "latest" ]; then
             # Latest - no version suffix (version_suffix is ignored for latest)
             TAG_SUFFIX=""
             NPM_DIST_TAG="latest"
           else
             # Custom dist-tag; version_suffix overrides tag for the version string if provided
-            TAG_SUFFIX="${{ inputs.version_suffix != '' && inputs.version_suffix || inputs.tag }}"
-            NPM_DIST_TAG="${{ inputs.tag }}"
+            if [ -n "$INPUT_VERSION_SUFFIX" ]; then
+              TAG_SUFFIX="$INPUT_VERSION_SUFFIX"
+            else
+              TAG_SUFFIX="$INPUT_TAG"
+            fi
+            NPM_DIST_TAG="$INPUT_TAG"
           fi
 
           echo "TAG_SUFFIX=$TAG_SUFFIX" >> $GITHUB_OUTPUT
@@ -180,10 +195,13 @@ jobs:
 
       - name: Get/Set Version
         id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          TAG_SUFFIX: ${{ steps.tag-strategy.outputs.TAG_SUFFIX }}
         run: |
           # Get base version - use input if provided, otherwise read from package.json
-          if [ -n "${{ inputs.version }}" ]; then
-            BASE_VERSION="${{ inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            BASE_VERSION="$INPUT_VERSION"
             echo "Using provided version: $BASE_VERSION"
           else
             BASE_VERSION=$(node packages/scripts/version-manager/index.js get-version "@elementor/editor")
@@ -193,16 +211,16 @@ jobs:
           echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_OUTPUT
 
           # Only set version if there's a tag suffix
-          if [ -n "${{ steps.tag-strategy.outputs.TAG_SUFFIX }}" ]; then
-            FULL_VERSION="${BASE_VERSION}-${{ steps.tag-strategy.outputs.TAG_SUFFIX }}"
+          if [ -n "$TAG_SUFFIX" ]; then
+            FULL_VERSION="${BASE_VERSION}-${TAG_SUFFIX}"
             echo "Setting version to: $FULL_VERSION"
-            node packages/scripts/version-manager/index.js set "$BASE_VERSION" --tag "${{ steps.tag-strategy.outputs.TAG_SUFFIX }}"
+            node packages/scripts/version-manager/index.js set "$BASE_VERSION" --tag "$TAG_SUFFIX"
           else
             # No tag suffix - versions already defined in package.json or set version without tag
             FULL_VERSION="$BASE_VERSION"
             echo "Using version: $FULL_VERSION"
             # If version was provided as input, we need to set it
-            if [ -n "${{ inputs.version }}" ]; then
+            if [ -n "$INPUT_VERSION" ]; then
               node packages/scripts/version-manager/index.js set "$BASE_VERSION"
             fi
           fi
@@ -211,9 +229,10 @@ jobs:
           echo "VERSION_WITH_TAG=$FULL_VERSION" >> $GITHUB_OUTPUT
 
       - name: Publish Packages
-        run: node packages/scripts/version-manager/index.js publish --tag "${{ steps.tag-strategy.outputs.NPM_DIST_TAG }}" --yes
         env:
+          NPM_DIST_TAG: ${{ steps.tag-strategy.outputs.NPM_DIST_TAG }}
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+        run: node packages/scripts/version-manager/index.js publish --tag "$NPM_DIST_TAG" --yes
 
       - name: Create Git Tag
         env:

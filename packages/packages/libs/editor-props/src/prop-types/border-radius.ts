@@ -4,7 +4,7 @@ import { createPropUtils } from '../utils/create-prop-utils';
 import { unknownChildrenSchema } from './utils';
 
 export const borderRadiusPropTypeUtil = createPropUtils(
-	'border-radius',
+	'border-radius-v2',
 	z.strictObject( {
 		'start-start': unknownChildrenSchema,
 		'start-end': unknownChildrenSchema,

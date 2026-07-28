@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Composition_Persister {
 
 	const DOCUMENT_ROOT = 'document';
+	const MODE_APPEND = 'append';
+	const MODE_REPLACE_CHILDREN = 'replace_children';
 
 	private Document_Mutator $mutator;
 	private Xml_Parser $xml_parser;
@@ -25,12 +27,23 @@ class Composition_Persister {
 	 * @param Document $document The target document.
 	 * @param array[]  $subtrees Root subtrees to insert.
 	 * @param string   $parent_id Parent element id ("document" for root).
-	 * @return array{tree: array, root_ids: string[]}|\WP_Error
+	 * @param string   $mode 'append' (default) or 'replace_children'.
+	 * @return array{tree: array, root_ids: string[], removed_ids: string[]}|\WP_Error
 	 */
-	public function insert_and_save( Document $document, array $subtrees, string $parent_id ) {
+	public function insert_and_save( Document $document, array $subtrees, string $parent_id, string $mode = self::MODE_APPEND ) {
 		$tree = $document->get_elements_data();
 		$tree = is_array( $tree ) ? $tree : [];
 		$root_ids = [];
+		$removed_ids = [];
+
+		if ( self::MODE_REPLACE_CHILDREN === $mode ) {
+			$replace_result = $this->replace_children( $tree, $parent_id );
+			if ( is_wp_error( $replace_result ) ) {
+				return $replace_result;
+			}
+			$tree = $replace_result['tree'];
+			$removed_ids = $replace_result['removed_ids'];
+		}
 
 		foreach ( $subtrees as $subtree ) {
 			$new_tree = $this->mutator->insert_subtree( $tree, $parent_id, null, $subtree );
@@ -41,7 +54,7 @@ class Composition_Persister {
 			$root_ids[] = $this->find_last_root_id( $tree, $parent_id );
 		}
 
-		$save_result = $this->save_to_draft( $document, $tree );
+		$save_result = $this->mutator->save_as_draft( $document, $tree );
 		if ( is_wp_error( $save_result ) ) {
 			return $save_result;
 		}
@@ -57,6 +70,54 @@ class Composition_Persister {
 		return [
 			'tree' => $tree,
 			'root_ids' => $root_ids,
+			'removed_ids' => $removed_ids,
+		];
+	}
+
+	/**
+	 * @return array{tree: array, removed_ids: string[]}|\WP_Error
+	 */
+	private function replace_children( array $tree, string $parent_id ) {
+		if ( self::DOCUMENT_ROOT === $parent_id ) {
+			$removed_ids = array_map(
+				fn( $node ) => isset( $node['id'] ) ? (string) $node['id'] : '',
+				$tree
+			);
+			$removed_ids = array_filter( $removed_ids );
+			return [
+				'tree' => [],
+				'removed_ids' => array_values( $removed_ids ),
+			];
+		}
+
+		$parent = $this->mutator->find_by_id( $tree, $parent_id );
+		if ( null === $parent ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Parent element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		$children = $parent['elements'] ?? [];
+		$removed_ids = [];
+
+		foreach ( $children as $child ) {
+			if ( ! isset( $child['id'] ) ) {
+				continue;
+			}
+			$child_id = (string) $child['id'];
+			$removed_ids[] = $child_id;
+			$new_tree = $this->mutator->remove( $tree, $child_id );
+			if ( is_wp_error( $new_tree ) ) {
+				return $new_tree;
+			}
+			$tree = $new_tree;
+		}
+
+		return [
+			'tree' => $tree,
+			'removed_ids' => $removed_ids,
 		];
 	}
 
@@ -114,16 +175,5 @@ class Composition_Persister {
 				$this->apply_ids_recursive( $child, $child_subtrees[ $index ] );
 			}
 		}
-	}
-
-	private function save_to_draft( Document $document, array $elements ) {
-		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
-			wp_update_post( [
-				'ID' => $document->get_main_id(),
-				'post_status' => 'draft',
-			] );
-		}
-
-		return $document->save( [ 'elements' => $elements ] );
 	}
 }

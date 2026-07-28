@@ -80,14 +80,14 @@ export function initStyleTransformers() {
 		)
 		.register( 'flex', flexTransformer )
 		.register(
-			'border-width',
+			'border-width-v2',
 			createMultiPropsTransformer(
 				[ 'block-start', 'block-end', 'inline-start', 'inline-end' ],
 				( { key } ) => `border-${ key }-width`
 			)
 		)
 		.register(
-			'border-radius',
+			'border-radius-v2',
 			createMultiPropsTransformer(
 				[ 'start-start', 'start-end', 'end-start', 'end-end' ],
 				( { key } ) => `border-${ key }-radius`

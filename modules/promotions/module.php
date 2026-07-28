@@ -18,7 +18,6 @@ use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
-use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
 use Elementor\Widgets_Manager;
@@ -100,19 +99,7 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 
-		// Add Ally promo
-		Ally_Dashboard_Widget::init();
-
 		$this->register_atomic_promotions();
-	}
-
-	/**
-	 * Get Ally Scanner URL
-	 *
-	 * @return string
-	 */
-	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://go.elementor.com/acc-checker-dashboard-plg' );
 	}
 
 	private function handle_external_redirects() {

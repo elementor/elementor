@@ -40,14 +40,16 @@ describe( 'widgets-schema-resource', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'lists widget types fetched from the server via the list-widgets tool', async () => {
+	it( 'lists widget types fetched from the server via list-widget-schemas with summary=true', async () => {
 		// Arrange
 		const post = jest.fn().mockResolvedValue( {
 			data: {
-				data: [
-					{ type: 'e-heading', version: 'v4' },
-					{ type: 'e-button', version: 'v4' },
-				],
+				data: {
+					widgets: [
+						{ type: 'e-heading', description: 'A heading widget' },
+						{ type: 'e-button', description: 'A button widget' },
+					],
+				},
 			},
 		} );
 		mockedHttpService.mockReturnValue( { post } as never );
@@ -57,7 +59,10 @@ describe( 'widgets-schema-resource', () => {
 		const result = await list();
 
 		// Assert
-		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', { tool: 'list-widgets', input: {} } );
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			tool: 'list-widget-schemas',
+			input: { summary: true },
+		} );
 		expect( result.resources ).toEqual( [
 			{ uri: 'elementor://widgets/schema/e-heading', name: 'Widget schema for e-heading' },
 			{ uri: 'elementor://widgets/schema/e-button', name: 'Widget schema for e-button' },

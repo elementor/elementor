@@ -11,16 +11,11 @@ export class FooterSaverAfterSave extends HookUIAfter {
 
 	apply( args, result ) {
 		const { status } = args,
-			{ data } = result,
 			{ footerSaver } = $e.components.get( 'document/save' );
 
 		NProgress.done();
 
-		footerSaver.ui.buttonPublish.removeClass( 'elementor-button-state' );
-		footerSaver.ui.lastEditedWrapper.removeClass( 'elementor-state-active' );
-
 		footerSaver.refreshWpPreview();
-		footerSaver.setLastEdited( data.config.document.last_edited );
 
 		if ( result.statusChanged && 'publish' === status && elementor.config.document.urls.have_a_look ) {
 			this.onPageStatusChange();

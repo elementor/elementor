@@ -5,6 +5,7 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
+use Elementor\Core\Common\Modules\EventsManager\RestApi\Events_Proxy_REST_API;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
@@ -20,6 +21,15 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'editor_events';
 	const DEFAULT_SESSION_RECORDING_PERCENT = 0;
 	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
+
+	const API_UPSTREAM_HOST = 'https://api-eu.mixpanel.com';
+	const LIBS_UPSTREAM_HOST = 'https://cdn.mxpnl.com/libs';
+
+	public function __construct() {
+		parent::__construct();
+
+		( new Events_Proxy_REST_API() )->register_hooks();
+	}
 
 	public function get_name() {
 		return 'events-manager';
@@ -56,6 +66,8 @@ class Module extends BaseModule {
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
+			'proxy_api_host' => rest_url( Events_Proxy_REST_API::API_NAMESPACE . '/' . Events_Proxy_REST_API::API_BASE . '/api' ),
+			'proxy_lib_base_path' => rest_url( Events_Proxy_REST_API::API_NAMESPACE . '/' . Events_Proxy_REST_API::API_BASE . '/libs/' ),
 			'flags_enabled' => $is_flags_enabled,
 			'user_id' => self::get_user_id(),
 			'session_recording_percent' => $session_recording_percent,
@@ -139,6 +151,19 @@ class Module extends BaseModule {
 
 		return $editor_assets_api->get_assets_data();
 	}
+
+	public static function get_mixpanel_api_host() {
+		$mixpanel_config = self::get_remote_mixpanel_config();
+
+		return wp_http_validate_url( $mixpanel_config[0]['apiHost'] ?? static::API_UPSTREAM_HOST );
+	}
+
+	public static function get_mixpanel_lib_host() {
+		$mixpanel_config = self::get_remote_mixpanel_config();
+
+		return wp_http_validate_url( $mixpanel_config[0]['libHost'] ?? static::LIBS_UPSTREAM_HOST );
+	}
+
 	private static function get_user_id() {
 		$user_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
 

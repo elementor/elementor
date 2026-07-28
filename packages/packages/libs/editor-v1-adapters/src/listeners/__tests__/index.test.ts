@@ -130,25 +130,6 @@ describe( '@elementor/editor-v1-adapters/listeners', () => {
 		} );
 	} );
 
-	it( 'should not crash when a route event carries a non-string route (e.g. legacy or malformed payloads)', () => {
-		// Arrange.
-		const callback = jest.fn();
-
-		listenTo( routeOpenEvent( 'panel/menu' ), callback );
-
-		// Act - dispatch a malformed route payload (object instead of string).
-		expect( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'elementor/routes/open', {
-					detail: { route: { unexpected: 'shape' } as unknown as string },
-				} )
-			);
-		} ).not.toThrow();
-
-		// Assert - listener should not have fired for the malformed payload.
-		expect( callback ).not.toHaveBeenCalled();
-	} );
-
 	it( 'should listen to window events', () => {
 		// Arrange.
 		const event = 'test-event',

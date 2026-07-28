@@ -8,21 +8,24 @@ export const AVAILABLE_WIDGETS_URI_V4 = 'elementor://context/available-widgets/v
 
 type WidgetSummary = {
 	type: string;
-	version: 'v3' | 'v4';
 	description?: string;
 };
 
-const fetchWidgets = async ( version?: WidgetSummary[ 'version' ] ): Promise< WidgetSummary[] > => {
-	const { data } = await httpService().post< HttpResponse< WidgetSummary[] > >( MCP_PROXY_URL, {
-		tool: 'list-widgets',
-		input: version ? { version } : {},
-	} );
-
-	return data.data ?? [];
+type WidgetSummaryResponse = {
+	widgets: WidgetSummary[];
 };
 
-const buildContents = async ( uri: string, version?: WidgetSummary[ 'version' ] ) => {
-	const widgets = await fetchWidgets( version );
+const fetchWidgets = async (): Promise< WidgetSummary[] > => {
+	const { data } = await httpService().post< HttpResponse< WidgetSummaryResponse > >( MCP_PROXY_URL, {
+		tool: 'list-widget-schemas',
+		input: { summary: true },
+	} );
+
+	return data.data?.widgets ?? [];
+};
+
+const buildContents = async ( uri: string ) => {
+	const widgets = await fetchWidgets();
 
 	return {
 		contents: [
@@ -44,14 +47,14 @@ export const initAvailableWidgetsResource = ( reg: MCPRegistryEntry ) => {
 		{
 			description: 'All registered v4 version widgets',
 		},
-		async () => buildContents( AVAILABLE_WIDGETS_URI_V4, 'v4' )
+		async () => buildContents( AVAILABLE_WIDGETS_URI_V4 )
 	);
 
 	resource(
 		'available-widgets',
 		AVAILABLE_WIDGETS_URI,
 		{
-			description: 'All registered widget types with v3/v4 version metadata and description.',
+			description: 'All registered v4 widget types with description.',
 		},
 		async () => buildContents( AVAILABLE_WIDGETS_URI )
 	);

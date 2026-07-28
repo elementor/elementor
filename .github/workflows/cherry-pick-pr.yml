@@ -148,6 +148,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
+                    --assignee "$PR_USER_LOGIN" \
                     --label "auto-reviewed" \
                     --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts: ${PR_TITLE_BODY}" \
                     --body "⚠️ **Manual Resolution Required**
@@ -218,6 +219,7 @@ jobs:
               PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
+                --assignee "$PR_USER_LOGIN" \
                 --label "auto-reviewed" \
                 --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}: ${PR_TITLE_BODY}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.

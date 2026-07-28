@@ -7,8 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
-
 $show_editing_panel_sticky_promotion = ! Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' );
 $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtered_Promotions_Manager::get_editor_panel_sticky_promotion() : [];
 ?>
@@ -18,9 +16,6 @@ $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtere
 	</div>
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
-	<footer id="elementor-panel-footer">
-		<div class="elementor-panel-container"></div>
-	</footer>
 	<div id="elementor-mode-switcher"></div>
 </script>
 
@@ -76,74 +71,6 @@ $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtere
 	<button id="elementor-panel-header-add-button" class="elementor-header-button {{{ extraClass }}}" aria-label="<?php echo esc_attr__( 'Widgets Panel', 'elementor' ); ?>">
 		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php echo esc_attr__( 'Widgets Panel', 'elementor' ); ?>"></i>
 	</button>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php
-	printf(
-		/* translators: %s: Document title. */
-		esc_attr__( '%s Settings', 'elementor' ),
-		esc_attr( $document::get_title() )
-	); ?>">
-		<i class="eicon-cog" aria-hidden="true"></i>
-	</button>
-	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>
-	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>">
-		<i class="eicon-navigator" aria-hidden="true"></i>
-	</button>
-	<# } #>
-	<button id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'History', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'History', 'elementor' ); ?>">
-		<i class="eicon-history" aria-hidden="true"></i>
-	</button>
-	<button id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php echo esc_attr__( 'Responsive Mode', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Responsive Mode', 'elementor' ); ?>">
-		<i class="eicon-device-responsive" aria-hidden="true"></i>
-	</button>
-	<button id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Preview Changes', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Preview Changes', 'elementor' ); ?>">
-		<span id="elementor-panel-footer-saver-preview-label">
-			<i class="eicon-preview-medium" aria-hidden="true"></i>
-		</span>
-	</button>
-	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
-		<# const publishTitle = $e.components.get( 'document/elements' ).utils.getTitleForPublishButton(); #>
-		<button id="elementor-panel-saver-button-publish" class="elementor-button e-primary elementor-disabled" title="{{{ publishTitle }}}">
-			<span class="elementor-state-icon">
-				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
-			</span>
-			<span id="elementor-panel-saver-button-publish-label">
-				<?php echo esc_html__( 'Publish', 'elementor' ); ?>
-			</span>
-		</button>
-	</div>
-	<div id="elementor-panel-footer-saver-options" class="elementor-panel-footer-tool elementor-toggle-state">
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button e-primary tooltip-target elementor-disabled" data-tooltip="<?php echo esc_attr__( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7" aria-label="<?php echo esc_attr__( 'Save Options', 'elementor' ); ?>">
-			<i class="eicon-chevron-right" aria-hidden="true"></i>
-		</button>
-		<div class="elementor-panel-footer-sub-menu-wrapper">
-			<p class="elementor-last-edited-wrapper">
-				<span class="elementor-state-icon">
-					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
-				</span>
-				<span class="elementor-last-edited">
-				</span>
-			</p>
-			<div class="elementor-panel-footer-sub-menu">
-				<div id="elementor-panel-footer-sub-menu-item-save-draft" class="elementor-panel-footer-sub-menu-item elementor-disabled">
-					<i class="elementor-icon eicon-save" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo esc_html__( 'Save Draft', 'elementor' ); ?></span>
-				</div>
-				<div id="elementor-panel-footer-sub-menu-item-save-template" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon eicon-folder" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo esc_html__( 'Save as Template', 'elementor' ); ?></span>
-				</div>
-				<# if ( $e.components.get( 'document/elements' ).utils.showCopyAndShareButton() ) { #>
-				<div id="elementor-panel-footer-sub-menu-item-copy-share-link" class="elementor-panel-footer-sub-menu-item">
-					<i class="elementor-icon eicon-link" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo esc_html__( 'Copy and Share Link', 'elementor' ); ?></span>
-				</div>
-				<# } #>
-			</div>
-		</div>
-	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">

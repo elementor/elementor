@@ -17,12 +17,8 @@ export class FooterSeverRefreshMenu extends HookUIAfter {
 		return args.settings && 'undefined' !== typeof args.settings.post_status;
 	}
 
-	apply( args ) {
-		const { footerSaver } = $e.components.get( 'document/save' );
-
-		footerSaver.setMenuItems( args.container.document );
-
-		footerSaver.refreshWpPreview();
+	apply() {
+		$e.components.get( 'document/save' ).footerSaver.refreshWpPreview();
 	}
 }
 

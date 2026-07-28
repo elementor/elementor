@@ -28,14 +28,16 @@ describe( 'available-widgets-resource', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'fetches all widgets via list-widgets without a version filter', async () => {
+	it( 'fetches all widgets via list-widget-schemas with summary=true', async () => {
 		// Arrange
 		const post = jest.fn().mockResolvedValue( {
 			data: {
-				data: [
-					{ type: 'e-heading', version: 'v4' },
-					{ type: 'legacy-icon', version: 'v3' },
-				],
+				data: {
+					widgets: [
+						{ type: 'e-heading', description: 'A heading widget' },
+						{ type: 'e-button', description: 'A button widget' },
+					],
+				},
 			},
 		} );
 		mockedHttpService.mockReturnValue( { post } as never );
@@ -45,16 +47,21 @@ describe( 'available-widgets-resource', () => {
 		const result = await allHandler();
 
 		// Assert
-		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', { tool: 'list-widgets', input: {} } );
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			tool: 'list-widget-schemas',
+			input: { summary: true },
+		} );
 		expect( JSON.parse( result.contents[ 0 ].text ) ).toEqual( [
-			{ type: 'e-heading', version: 'v4' },
-			{ type: 'legacy-icon', version: 'v3' },
+			{ type: 'e-heading', description: 'A heading widget' },
+			{ type: 'e-button', description: 'A button widget' },
 		] );
 	} );
 
-	it( 'fetches only v4 widgets via list-widgets with a version filter', async () => {
+	it( 'fetches v4 widgets via list-widget-schemas with summary=true', async () => {
 		// Arrange
-		const post = jest.fn().mockResolvedValue( { data: { data: [ { type: 'e-heading', version: 'v4' } ] } } );
+		const post = jest.fn().mockResolvedValue( {
+			data: { data: { widgets: [ { type: 'e-heading', description: 'A heading widget' } ] } },
+		} );
 		mockedHttpService.mockReturnValue( { post } as never );
 		const { v4Handler } = captureHandlers();
 
@@ -63,10 +70,12 @@ describe( 'available-widgets-resource', () => {
 
 		// Assert
 		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
-			tool: 'list-widgets',
-			input: { version: 'v4' },
+			tool: 'list-widget-schemas',
+			input: { summary: true },
 		} );
-		expect( JSON.parse( result.contents[ 0 ].text ) ).toEqual( [ { type: 'e-heading', version: 'v4' } ] );
+		expect( JSON.parse( result.contents[ 0 ].text ) ).toEqual( [
+			{ type: 'e-heading', description: 'A heading widget' },
+		] );
 	} );
 
 	it( 'exposes the expected resource URIs', () => {
