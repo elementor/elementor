@@ -15,6 +15,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -99,6 +100,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$dom = $xml_parser->parse( (string) $input['xml_structure'] );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
+		}
+
+		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
+			$dom,
+			$document->get_elements_data() ?: [],
+			$parent_id
+		);
+
+		if ( $form_structure_error ) {
+			return $form_structure_error;
 		}
 
 		$widget_configs = $type_resolver->collect_used( $dom );

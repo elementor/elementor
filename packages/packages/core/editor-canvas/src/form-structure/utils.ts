@@ -156,7 +156,7 @@ export function collectEmptyMessageErrors( xml: Document ): string[] {
 	const errors: string[] = [];
 	for ( const node of xml.querySelectorAll( 'e-form-success-message, e-form-error-message' ) ) {
 		if ( node.children.length === 0 ) {
-			errors.push( `<${ node.tagName }> must have at least one child element (e.g. <e-atomic-paragraph>).` );
+			errors.push( `<${ node.tagName }> must have at least one child element (e.g. <e-paragraph>).` );
 		}
 	}
 	return errors;
