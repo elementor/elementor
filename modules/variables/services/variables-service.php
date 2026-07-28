@@ -68,32 +68,58 @@ class Variables_Service {
 	}
 
 	/**
-	 * @throws BatchOperationFailed Thrown when one of the operations fails.
+	 * @throws BatchOperationFailed Thrown when one of the operations fails and $lenient is false.
 	 * @throws FatalError Failed to save after batch.
 	 */
-	public function process_batch( array $operations ) {
+	public function process_batch( array $operations, bool $lenient = false ) {
 		$collection = $this->repo->load();
 		$results = [];
 		$errors = [];
+		$has_success = false;
 
 		$error_formatter = new Batch_Error_Formatter();
 
 		foreach ( $operations as $index => $operation ) {
 			try {
-				$results[] = $this->batch_processor->apply_operation( $collection, $operation );
+				$batch_result = $this->batch_processor->apply_operation( $collection, $operation );
+				$has_success = true;
 
+				if ( $lenient ) {
+					$results[] = $this->format_lenient_success_result( $index, $batch_result );
+				} else {
+					$results[] = $batch_result;
+				}
 			} catch ( \Exception $e ) {
-				$errors[ $this->batch_processor->operation_id( $operation, $index ) ] = [
-					'status' => $error_formatter->status_for( $e ),
-					'code' => $error_formatter->error_code_for( $e ),
-					'message' => $e->getMessage(),
-				];
+				if ( $lenient ) {
+					$results[] = [
+						'index' => $index,
+						'status' => 'error',
+						'action' => $operation['type'] ?? '',
+						'id' => $operation['id'] ?? ( $operation['variable']['id'] ?? null ),
+						'code' => $error_formatter->error_code_for( $e ),
+						'message' => $e->getMessage(),
+					];
+				} else {
+					$errors[ $this->batch_processor->operation_id( $operation, $index ) ] = [
+						'status' => $error_formatter->status_for( $e ),
+						'code' => $error_formatter->error_code_for( $e ),
+						'message' => $e->getMessage(),
+					];
+				}
 			}
 		}
 
-		if ( ! empty( $errors ) ) {
+		if ( ! $lenient && ! empty( $errors ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new BatchOperationFailed( 'Batch failed', $errors );
+		}
+
+		if ( ! $has_success ) {
+			return [
+				'success' => false,
+				'results' => $results,
+				'watermark' => $collection->watermark(),
+			];
 		}
 
 		$watermark = $this->repo->save( $collection );
@@ -107,6 +133,21 @@ class Variables_Service {
 			'results'   => $results,
 			'watermark' => $watermark,
 		];
+	}
+
+	private function format_lenient_success_result( int $index, array $batch_result ): array {
+		$result = [
+			'index' => $index,
+			'status' => 'ok',
+			'action' => $batch_result['type'] ?? '',
+			'id' => $batch_result['id'] ?? null,
+		];
+
+		if ( isset( $batch_result['variable']['label'] ) ) {
+			$result['label'] = $batch_result['variable']['label'];
+		}
+
+		return $result;
 	}
 
 	/**

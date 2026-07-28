@@ -36,7 +36,6 @@ class Mcp_Proxy_REST_API {
 			'manage-classes' => fn( array $input ) => ( new Manage_Classes_Ability() )->execute( $input ),
 			'get-widget-schema' => fn( array $input ) => ( new Get_Widget_Schema_Ability() )->execute( $input ),
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
-			'list-dynamic-tags' => fn( array $input ) => ( new List_Dynamic_Tags_Ability() )->execute( $input ),
 			'build-composition' => fn( array $input ) => ( new Build_Composition_Ability() )->execute( $input ),
 			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
 			'manage-elements' => fn( array $input ) => ( new Manage_Elements_Ability() )->execute( $input ),
@@ -49,6 +48,7 @@ class Mcp_Proxy_REST_API {
 			Manage_Variable_Guide_Ability::URI => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
 			Global_Classes_Resource_Ability::URI => fn() => ( new Global_Classes_Resource_Ability() )->execute(),
 			Global_Variables_Resource_Ability::URI => fn() => ( new Global_Variables_Resource_Ability() )->execute(),
+			List_Dynamic_Tags_Ability::URI => fn() => ( new List_Dynamic_Tags_Ability() )->execute(),
 		];
 	}
 

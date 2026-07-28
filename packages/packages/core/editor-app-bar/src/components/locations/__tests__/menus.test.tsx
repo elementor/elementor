@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { createMockMenuAction, createMockMenuLink, createMockMenuToggleAction, renderWithTheme } from 'test-utils';
 import { __flushAllInjections } from '@elementor/locations';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
 jest.mock( '@elementor/editor-current-user', () => ( {
 	useCurrentUserCapabilities: () => ( { isAdmin: true, canUser: jest.fn(), capabilities: [] } ),
 } ) );
 
+import { DEFAULT_MAX_TOOLBAR_ACTIONS } from '../../../constants';
 import { AppBarSizeProvider } from '../../../contexts/app-bar-size-context';
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
@@ -83,13 +84,13 @@ describe( 'Menus components', () => {
 		{
 			menuName: 'Tools',
 			menu: toolsMenu,
-			maxItems: 5,
+			maxItems: DEFAULT_MAX_TOOLBAR_ACTIONS.tools,
 			Component: ToolsMenuLocation,
 		},
 		{
 			menuName: 'Utilities',
 			menu: utilitiesMenu,
-			maxItems: 4,
+			maxItems: DEFAULT_MAX_TOOLBAR_ACTIONS.utilities,
 			Component: UtilitiesMenuLocation,
 		},
 	] )( '$menuName menu', ( { maxItems, menu, Component } ) => {
@@ -157,6 +158,73 @@ describe( 'Menus components', () => {
 
 			// Assert.
 			expect( screen.getAllByRole( 'menuitem' ) ).toHaveLength( maxItems - narrowMaxItems );
+		} );
+	} );
+
+	describe( 'Utilities menu late registration', () => {
+		const maxUtilitiesItems = DEFAULT_MAX_TOOLBAR_ACTIONS.utilities;
+
+		it( 'should render a menu item registered after the location has mounted', () => {
+			// Arrange.
+			renderWithTheme( <UtilitiesMenuLocation /> );
+
+			expect( screen.queryByLabelText( 'Late item' ) ).not.toBeInTheDocument();
+
+			// Act.
+			act( () => {
+				utilitiesMenu.registerAction( {
+					id: 'late-item',
+					props: {
+						title: 'Late item',
+						icon: () => <span>late</span>,
+					},
+				} );
+			} );
+
+			// Assert.
+			expect( screen.getByLabelText( 'Late item' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should move a late-registered item into the More popover when at inline capacity', () => {
+			// Arrange.
+			for ( let i = 0; i < maxUtilitiesItems; i++ ) {
+				utilitiesMenu.registerAction( {
+					id: `test-${ i }`,
+					props: {
+						title: `Test ${ i }`,
+						icon: () => <span>a</span>,
+					},
+				} );
+			}
+
+			renderWithTheme(
+				<AppBarSizeProvider
+					value={ { tools: DEFAULT_MAX_TOOLBAR_ACTIONS.tools, utilities: maxUtilitiesItems } }
+				>
+					<UtilitiesMenuLocation />
+				</AppBarSizeProvider>
+			);
+
+			// Act.
+			act( () => {
+				utilitiesMenu.registerAction( {
+					id: 'late-item',
+					props: {
+						title: 'Late item',
+						icon: () => <span>late</span>,
+					},
+				} );
+			} );
+
+			// Assert.
+			const toolbarButtons = screen.getAllByRole( 'button' );
+			expect( toolbarButtons ).toHaveLength( maxUtilitiesItems + 1 );
+			expect( screen.getByLabelText( 'More' ) ).toBeInTheDocument();
+			expect( screen.queryByLabelText( 'Late item' ) ).not.toBeInTheDocument();
+
+			fireEvent.click( screen.getByLabelText( 'More' ) );
+
+			expect( screen.getByText( 'Late item' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
