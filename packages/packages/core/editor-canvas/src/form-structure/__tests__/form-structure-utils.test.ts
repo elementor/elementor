@@ -214,7 +214,7 @@ describe( 'form-structure utils', () => {
 			const xml = parseXml( `
 				<e-form>
 					<e-form-success-message>
-						<e-paragraph />
+						<e-atomic-paragraph />
 					</e-form-success-message>
 				</e-form>
 			` );
@@ -225,7 +225,7 @@ describe( 'form-structure utils', () => {
 			const xml = parseXml( `
 				<e-form>
 					<e-form-error-message>
-						<e-paragraph />
+						<e-atomic-paragraph />
 					</e-form-error-message>
 				</e-form>
 			` );
@@ -278,7 +278,7 @@ describe( 'form-structure utils', () => {
 			const xml = parseXml( `
 				<e-flexbox>
 					<e-form-success-message>
-						<e-paragraph />
+						<e-atomic-paragraph />
 					</e-form-success-message>
 				</e-flexbox>
 			` );

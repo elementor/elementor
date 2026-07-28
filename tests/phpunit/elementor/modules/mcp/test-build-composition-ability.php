@@ -217,6 +217,40 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_execute__valid_form_structure_passes_form_validation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		if ( ! Plugin::$instance->elements_manager->get_element_types( 'e-form' ) ) {
+			Plugin::$instance->elements_manager->register_element_type(
+				new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion()
+			);
+		}
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-form configuration-id="form-1"><e-flexbox configuration-id="row-1"><e-form-input configuration-id="input-1"/></e-flexbox><e-form-submit-button configuration-id="btn-1"/></e-form>',
+		] );
+
+		// Assert
+		if ( is_wp_error( $result ) ) {
+			$this->assertNotSame(
+				'elementor_invalid_form_structure',
+				$result->get_error_code(),
+				$result->get_error_message()
+			);
+
+			return;
+		}
+
+		$this->assertTrue( $result['success'] );
+	}
+
 	/**
 	 * @dataProvider input_and_permissions_cases
 	 */
