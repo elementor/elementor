@@ -1,6 +1,6 @@
 == Changelog ==
 
-= 4.2.0 - 2026-07-20 =
+= 4.2.12 - 2026-07-20 =
 
 * New: Introducing Grid for building advanced row and column layouts - Atomic Editor
 * Tweak: Improved Angie layout, composition, and design system creation from prompts and images - Atomic Editor
