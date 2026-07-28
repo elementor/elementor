@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resol
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
@@ -210,6 +211,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/plain/transformers/register', fn ( $transformers ) => $this->register_plain_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
@@ -483,11 +485,16 @@ class Module extends BaseModule {
 		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Export_Transformer() );
 	}
 
+	public function register_plain_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Plain_Transformer() );
+	}
+
 	private function register_settings_resolvers( Plain_Resolvers_Registry $registry ): void {
 		$registry->register_fallback( new Passthrough_Plain_Resolver() );
 		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
 		$registry->register( Boolean_Prop_Type::get_key(), new Boolean_Plain_Resolver() );
 		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
+		$registry->register( Size_Prop_Type::get_key(), new Size_Plain_Resolver() );
 	}
 
 	public function get_settings_plain_values_resolver(): Plain_Values_Resolver {
