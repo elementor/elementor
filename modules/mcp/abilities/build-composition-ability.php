@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
@@ -18,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -120,8 +122,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();
-
-		$config_applier = new Element_Config_Applier( $type_resolver, $variables_service );
+		$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
 		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
@@ -134,7 +135,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ) );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
@@ -163,7 +164,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function get_output_schema(): array {
 		return [
 			'type' => 'object',
-			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'version' ],
+			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'llm_instructions', 'version' ],
 			'properties' => [
 				'success' => [ 'type' => 'boolean' ],
 				'post_id' => [ 'type' => 'integer' ],
@@ -172,19 +173,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
 				],
-				'preview_url' => [
-					'type' => 'string',
-					'format' => 'uri',
-				],
+				'preview_url' => Document_Mutation_Links::preview_schema_property(),
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
 					'type' => 'string',
 					'description' => 'The XML with element IDs embedded.',
 				],
-				'llm_instructions' => [
-					'type' => 'string',
-					'description' => 'Next-step instructions for the LLM.',
-				],
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -215,7 +210,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'element_config' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → widget PropValues ($$type + value). Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure.',
 				],
 				'style' => [
 					'type' => 'object',
@@ -317,11 +312,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'success' => true,
 			'post_id' => $post_id,
 			'root_element_ids' => $root_ids,
-			'preview_url' => $document->get_preview_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
-			'llm_instructions' => __( 'The composition was built successfully. Reload the editor to see the result.', 'elementor' ),
-		];
+		] + Document_Mutation_Links::for_document(
+			$document,
+			__( 'The composition was built successfully.', 'elementor' )
+		);
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
@@ -339,6 +335,17 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$value = (array) $value;
 		}
 		return is_array( $value ) ? $value : [];
+	}
+
+	private function element_types_from_index( array $index ): array {
+		$element_types = [];
+		foreach ( $index as $config_id => $node ) {
+			$element_type = $node['widgetType'] ?? $node['elType'] ?? null;
+			if ( is_string( $element_type ) && '' !== $element_type ) {
+				$element_types[ $config_id ] = $element_type;
+			}
+		}
+		return $element_types;
 	}
 
 	private function get_mutator(): Document_Mutator {
@@ -373,6 +380,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function create_plain_values_resolver(): Plain_Values_Resolver {
+		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
 	private function is_variables_active(): bool {

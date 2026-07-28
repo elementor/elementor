@@ -14,7 +14,7 @@ export default function UtilitiesMenuLocation() {
 
 	// If there are more items than the allowed max, show the max inline and the rest in the popover.
 	// Otherwise, display all items inline.
-	const shouldUsePopover = menuItems.default.length > maxToolbarActions + 1;
+	const shouldUsePopover = menuItems.default.length > maxToolbarActions;
 
 	const toolbarMenuItems = shouldUsePopover ? menuItems.default.slice( 0, maxToolbarActions ) : menuItems.default;
 	const popoverMenuItems = shouldUsePopover ? menuItems.default.slice( maxToolbarActions ) : [];

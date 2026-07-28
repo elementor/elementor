@@ -3,6 +3,8 @@
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -27,8 +29,6 @@ class Widget_Context_Helper {
 	const V3_FALLBACK_MESSAGE = 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.';
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
-
-	const BASE_SETTING_PROP_HINT = 'Has a widget default — omit unless user explicitly requests a change. See llm_guidance.default_settings.';
 
 	/**
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
@@ -132,7 +132,7 @@ class Widget_Context_Helper {
 			];
 		}
 
-		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
+		$properties = self::build_configurable_properties_schema( $props_schema );
 
 		return self::filter_nulls( [
 			'type' => 'object',
@@ -144,9 +144,8 @@ class Widget_Context_Helper {
 
 	/**
 	 * @param array<string, Prop_Type> $props_schema
-	 * @param array<string, mixed>     $base_settings
 	 */
-	private static function build_configurable_properties_schema( array $props_schema, array $base_settings ): array {
+	private static function build_configurable_properties_schema( array $props_schema ): array {
 		$properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
@@ -157,17 +156,25 @@ class Widget_Context_Helper {
 			$properties[ $key ] = $prop_type->to_json_schema();
 		}
 
-		$properties = self::apply_llm_schema_filters( $properties );
-
-		return self::append_base_settings_hints( $properties, array_keys( $base_settings ) );
+		return self::apply_llm_schema_filters( $properties );
 	}
 
 	private static function apply_llm_schema_filters( array $properties ): array {
 		foreach ( $properties as $key => $schema ) {
-			$properties[ $key ] = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+			$properties[ $key ] = self::to_plain_llm_schema_from_json( $schema );
 		}
 
 		return $properties;
+	}
+
+	public static function to_plain_llm_schema( Transformable_Prop_Type $prop_type ): array {
+		return self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
+	}
+
+	private static function to_plain_llm_schema_from_json( array $schema ): array {
+		$filtered = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+
+		return Plain_Llm_Schema_Converter::convert( $filtered );
 	}
 
 	private static function is_prop_key_configurable( string $key, Prop_Type $prop_type ): bool {
@@ -176,26 +183,6 @@ class Widget_Context_Helper {
 		}
 
 		return (bool) $prop_type->get_meta_item( 'llm_configurable', false );
-	}
-
-	private static function append_base_settings_hints( array $properties, array $base_settings_keys ): array {
-		if ( empty( $base_settings_keys ) ) {
-			return $properties;
-		}
-
-		foreach ( $base_settings_keys as $key ) {
-			if ( ! isset( $properties[ $key ] ) ) {
-				continue;
-			}
-
-			$existing_description = $properties[ $key ]['description'] ?? null;
-
-			$properties[ $key ]['description'] = $existing_description
-				? "{$existing_description} " . self::BASE_SETTING_PROP_HINT
-				: self::BASE_SETTING_PROP_HINT;
-		}
-
-		return $properties;
 	}
 
 	private static function get_description( array $config ): ?string {

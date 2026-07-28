@@ -4,6 +4,9 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
@@ -51,14 +54,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__unknown_action_returns_bad_request() {
+	public function test_execute__missing_post_id_returns_bad_request() {
 		$this->act_as_admin();
-		$post_id = $this->create_real_document();
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'noop',
-			'post_id' => $post_id,
-			'element_id' => 'anything',
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'x' ],
+			],
 		] );
 
 		$this->assertWPError( $result );
@@ -66,28 +68,60 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 
-	public function test_execute__missing_post_id_returns_bad_request() {
+	public function test_execute__missing_operations_returns_bad_request() {
 		$this->act_as_admin();
+		$post_id = $this->create_real_document();
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+		] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	public function test_execute__empty_operations_returns_bad_request() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [],
+		] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	public function test_execute__batch_size_exceeded() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$operations = array_fill( 0, Manage_Elements_Ability::MAX_BATCH_SIZE + 1, [
 			'action' => 'delete',
 			'element_id' => 'x',
 		] );
 
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => $operations,
+		] );
+
 		$this->assertWPError( $result );
+		$this->assertSame( 'batch_size_exceeded', $result->get_error_code() );
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 
-	public function test_execute__forbidden_user_returns_403() {
-		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
+	public function test_execute__forbidden_user_returns_403_before_touching_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'delete',
 			'post_id' => $post_id,
-			'element_id' => 'x',
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'x' ],
+			],
 		] );
 
 		$this->assertWPError( $result );
@@ -95,19 +129,37 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 	}
 
-	public function test_execute__unknown_element_returns_not_found() {
+	public function test_execute__unknown_action_returns_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'delete',
 			'post_id' => $post_id,
-			'element_id' => 'ghost',
+			'operations' => [
+				[ 'action' => 'noop', 'element_id' => 'anything' ],
+			],
 		] );
 
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
-		$this->assertSame( \WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'error', $result['results'][0]['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_execute__unknown_element_returns_per_op_not_found() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_not_found', $result['results'][0]['code'] );
 	}
 
 	public function test_delete__removes_element_from_document() {
@@ -116,13 +168,20 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$root_id = $this->given_heading_on_document( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'delete',
 			'post_id' => $post_id,
-			'element_id' => $root_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $root_id ],
+			],
 		] );
 
-		$this->assertNoErrors( $result );
-
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( $root_id, $result['results'][0]['element_id'] );
+		$this->assertNotEmpty( $result['version'] );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
@@ -132,12 +191,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'duplicate',
 			'post_id' => $post_id,
-			'element_id' => $container_id,
+			'operations' => [
+				[ 'action' => 'duplicate', 'element_id' => $container_id ],
+			],
 		] );
 
-		$this->assertNoErrors( $result );
+		$this->assertOkOperation( $result, 0 );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
 		$this->assertCount( 2, $elements );
@@ -152,34 +212,39 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'move',
 			'post_id' => $post_id,
-			'element_id' => $heading_id,
-			'new_parent_id' => 'document',
-			'index' => 0,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $heading_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
 		] );
 
-		$this->assertNoErrors( $result );
+		$this->assertOkOperation( $result, 0 );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
 		$this->assertSame( $heading_id, $elements[0]['id'] );
 		$this->assertEmpty( $elements[1]['elements'] ?? [] );
 	}
 
-	public function test_move__missing_new_parent_id_returns_bad_request() {
+	public function test_move__missing_new_parent_id_returns_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'move',
 			'post_id' => $post_id,
-			'element_id' => $heading_id,
+			'operations' => [
+				[ 'action' => 'move', 'element_id' => $heading_id ],
+			],
 		] );
 
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_input', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
 	}
 
 	public function test_update__merges_partial_settings_into_existing_element() {
@@ -188,21 +253,22 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$heading_id = $this->given_heading_on_document( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'update',
 			'post_id' => $post_id,
-			'element_id' => $heading_id,
-			'settings' => [
-				'title' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => [ '$$type' => 'string', 'value' => 'New Title' ],
-						'children' => [],
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => [
+							'content' => 'New Title',
+							'children' => [],
+						],
 					],
 				],
 			],
 		] );
 
-		$this->assertNoErrors( $result );
+		$this->assertOkOperation( $result, 0 );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node );
@@ -215,18 +281,50 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$heading_id = $this->given_heading_on_document( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'update',
 			'post_id' => $post_id,
-			'element_id' => $heading_id,
-			'settings' => [
-				'nonexistent_prop' => [ '$$type' => 'string', 'value' => 'x' ],
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [ 'nonexistent_prop' => 'x' ],
+				],
 			],
 		] );
 
-		$this->assertNoErrors( $result );
-		$this->assertNotEmpty( $result['warnings'] );
-		$this->assertStringContainsString( 'nonexistent_prop', $result['warnings'][0] );
-		$this->assertStringContainsString( 'skipped', $result['warnings'][0] );
+		$this->assertOkOperation( $result, 0 );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$this->assertStringContainsString( 'nonexistent_prop', $warnings[0] );
+		$this->assertStringContainsString( 'skipped', $warnings[0] );
+	}
+
+	public function test_update__unhandled_style_declaration_warns_with_declaration_and_url_hint() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => [
+						'background' => 'url(/wp-content/uploads/x.png) center/cover no-repeat',
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+
+		$warning = $warnings[0];
+		$this->assertStringContainsString( 'background:', $warning );
+		$this->assertStringContainsString( 'url(', $warning );
+		$this->assertStringContainsString( 'URLs must be absolute', $warning );
+		$this->assertStringContainsString( 'elementor://widgets/schema/', $warning );
 	}
 
 	public function test_update__applies_style_and_attaches_global_class_by_label() {
@@ -236,14 +334,18 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$class_id = $this->given_kit_global_class( 'hero-heading', '#111111' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'update',
 			'post_id' => $post_id,
-			'element_id' => $heading_id,
-			'style' => [ 'font-size' => '2rem' ],
-			'classes' => [ 'hero-heading' ],
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => [ 'font-size' => '2rem' ],
+					'classes' => [ 'hero-heading' ],
+				],
+			],
 		] );
 
-		$this->assertNoErrors( $result );
+		$this->assertOkOperation( $result, 0 );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node );
@@ -253,25 +355,206 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $node['styles'] ?? [] );
 	}
 
-	public function test_update__rejects_unknown_class_label() {
+	public function test_update__rejects_unknown_class_label_as_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
-			'action' => 'update',
 			'post_id' => $post_id,
-			'element_id' => $heading_id,
-			'classes' => [ 'missing-class' ],
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'classes' => [ 'missing-class' ],
+				],
+			],
 		] );
 
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_unknown_global_class', $result->get_error_code() );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_unknown_global_class', $result['results'][0]['code'] );
 	}
 
-	private function assertNoErrors( $result ): void {
+	public function test_update__applies_plain_dynamic_title() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$this->given_dynamic_tags( [
+			'post-excerpt' => [
+				'name' => 'post-excerpt',
+				'label' => 'Post Excerpt',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'length' => String_Prop_Type::make()->default( '55' ),
+				],
+			],
+		] );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => [
+							'name' => 'post-excerpt',
+							'settings' => [ 'length' => '120' ],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node );
+		$this->assertSame( 'dynamic', $node['settings']['title']['$$type'] ?? null );
+		$this->assertSame( 'post-excerpt', $node['settings']['title']['value']['name'] ?? null );
+		$this->assertSame( '120', $node['settings']['title']['value']['settings']['length']['value'] ?? null );
+	}
+
+	public function test_update__rejects_invalid_title_shape_as_per_op_error() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [ 'title' => 'plain string title' ],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+	}
+
+	public function test_update__style_merges_into_existing_local_style_from_build_composition() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$build_result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'parent_id' => 'document',
+			'style' => [ 'h1' => [ 'color' => '#ff0000' ] ],
+		] );
+		$this->assertIsArray( $build_result, 'build-composition failed: ' . ( is_wp_error( $build_result ) ? $build_result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $build_result['success'] ?? false );
+		$heading_id = $build_result['root_element_ids'][0];
+
+		$update_result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => [ 'font-size' => '24px' ],
+				],
+			],
+		] );
+		$this->assertOkOperation( $update_result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node );
+
+		$this->assertCount( 1, $node['styles'] ?? [], 'Expected a single local style entry, got: ' . wp_json_encode( array_keys( $node['styles'] ?? [] ) ) );
+		$this->assertCount( 1, $node['settings']['classes']['value'] ?? [], 'Expected settings.classes.value to hold a single local style id.' );
+
+		$style = reset( $node['styles'] );
+		$desktop_variant = $style['variants'][0] ?? [];
+		$this->assertArrayHasKey( 'color', $desktop_variant['props'] ?? [] );
+		$this->assertArrayHasKey( 'font-size', $desktop_variant['props'] ?? [] );
+	}
+
+	public function test_bulk__multiple_ops_persisted_in_single_save() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => [ 'content' => 'Bulk Title', 'children' => [] ],
+					],
+				],
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_id,
+				],
+				[
+					'action' => 'move',
+					'element_id' => $heading_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertCount( 3, $result['results'] );
+		foreach ( $result['results'] as $row ) {
+			$this->assertSame( 'ok', $row['status'] );
+		}
+		$this->assertNotEmpty( $result['version'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( $heading_id, $elements[0]['id'] );
+		$this->assertCount( 3, $elements );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Bulk Title', $node['settings']['title']['value']['content']['value'] );
+	}
+
+	public function test_bulk__partial_failure_still_saves_valid_ops() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => [ 'content' => 'Survived', 'children' => [] ],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'error', $result['results'][0]['status'] );
+		$this->assertSame( 'elementor_not_found', $result['results'][0]['code'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertNotEmpty( $result['version'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
+	}
+
+	private function assertOkOperation( $result, int $index ): void {
 		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][ $index ]['status'] ?? null );
 	}
 
 	private function create_real_document(): int {
@@ -343,6 +626,20 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 
 		return null;
+	}
+
+	private function given_dynamic_tags( array $tags ): void {
+		$module = Dynamic_Tags_Module::fresh();
+
+		$reflection = new \ReflectionClass( Dynamic_Tags_Editor_Config::class );
+		$tags_prop = $reflection->getProperty( 'tags' );
+		$tags_prop->setAccessible( true );
+		$tags_prop->setValue( $module->registry, $tags );
+
+		$module_reflection = new \ReflectionClass( Dynamic_Tags_Module::class );
+		$instance_prop = $module_reflection->getProperty( 'instance' );
+		$instance_prop->setAccessible( true );
+		$instance_prop->setValue( null, $module );
 	}
 
 	private function given_kit_global_class( string $label, string $color ): string {

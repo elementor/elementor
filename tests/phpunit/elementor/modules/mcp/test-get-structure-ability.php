@@ -163,11 +163,13 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 				[
 					'id' => 'container1',
 					'elType' => 'container',
+					'title' => 'Container',
 					'elements' => [
 						[
 							'id' => 'widget1',
 							'elType' => 'widget',
 							'widgetType' => 'e-heading',
+							'title' => 'Heading',
 						],
 					],
 				],
@@ -207,7 +209,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame(
 			[
-				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button' ],
+				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'title' => 'Button' ],
 			],
 			$result['elements']
 		);
@@ -292,8 +294,14 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$elements = [
 			[
 				'id' => 'container1',
-				'elType' => 'container',
-				'settings' => [ 'padding' => [ '$$type' => 'size', 'value' => '20px' ] ],
+				'elType' => 'widget',
+				'widgetType' => 'e-flexbox',
+				'settings' => [
+					'tag' => [
+						'$$type' => 'string',
+						'value' => 'section',
+					],
+				],
 				'styles' => [
 					's-abc' => [
 						'id' => 's-abc',
@@ -315,7 +323,18 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 						'id' => 'widget1',
 						'elType' => 'widget',
 						'widgetType' => 'e-heading',
-						'settings' => [ 'title' => [ '$$type' => 'string', 'value' => 'Hello' ] ],
+						'settings' => [
+							'title' => [
+								'$$type' => 'html-v3',
+								'value' => [
+									'content' => [
+										'$$type' => 'string',
+										'value' => 'Hello',
+									],
+									'children' => [],
+								],
+							],
+						],
 						'styles' => [],
 						'elements' => [],
 					],
@@ -345,7 +364,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		$this->assertSame( 'container1', $root['id'] );
 		$this->assertSame(
-			[ 'padding' => [ '$$type' => 'size', 'value' => '20px' ] ],
+			[ 'tag' => 'section' ],
 			$root['settings']
 		);
 		$this->assertSame( 's-abc', $root['styles']['__style_id'] );
@@ -355,7 +374,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$child = $root['elements'][0];
 		$this->assertSame( 'widget1', $child['id'] );
 		$this->assertSame(
-			[ 'title' => [ '$$type' => 'string', 'value' => 'Hello' ] ],
+			[ 'title' => 'Hello' ],
 			$child['settings']
 		);
 		$this->assertSame( [], $child['styles'] );
@@ -401,7 +420,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$node = $result['elements'][0];
 		$this->assertSame(
-			[ 'classes' => [ '$$type' => 'classes', 'value' => [ 'g-abc' ] ] ],
+			[ 'classes' => [ 'g-abc' ] ],
 			$node['settings']
 		);
 		$this->assertSame( [], $node['styles'] );
@@ -518,5 +537,166 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( '__custom_css', $styles );
 		$this->assertCount( 1, $styles['__variants'] );
 		$this->assertSame( 'mobile', $styles['__variants'][0]['meta']['breakpoint'] );
+		$this->assertSame( '#000', $styles['__variants'][0]['color'] );
+	}
+
+	public function test_execute__includes_editor_settings_title_in_skeleton() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'editor_settings' => [ 'title' => 'Hero Section' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Hero Section', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__falls_back_to_title_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [ '_title' => 'Legacy Custom Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Legacy Custom Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__falls_back_to_preset_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [ 'presetTitle' => 'Preset Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Preset Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__falls_back_to_widget_type_label() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Heading', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__prefers_editor_settings_title_over_title_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'editor_settings' => [ 'title' => 'Editor Title' ],
+				'settings' => [ '_title' => 'Legacy Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Editor Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__extracts_title_from_envelope_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'_title' => [
+						'$$type' => 'string',
+						'value' => 'Envelope Title',
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Envelope Title', $result['elements'][0]['title'] );
+	}
+
+	private function mock_document_with_elements( int $post_id, array $elements ): void {
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
 	}
 }
