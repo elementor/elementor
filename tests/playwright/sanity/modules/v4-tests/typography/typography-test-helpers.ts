@@ -88,27 +88,20 @@ export async function verifySpacingEditor( params:
 	await expect( async () => {
 		const computedStyles = await element.evaluate( ( el, property ) => {
 			const styles = window.getComputedStyle( el );
-
-			// Per CSS Text Level 4, percentage letter/word spacing is relative to the
-			// advance measure of the space character (U+0020) in the applied font.
-			const canvasContext = document.createElement( 'canvas' ).getContext( '2d' )!;
-			canvasContext.font = `${ styles.fontStyle } ${ styles.fontWeight } ${ styles.fontSize } ${ styles.fontFamily }`;
-			const spaceAdvanceWidth = canvasContext.measureText( ' ' ).width;
-
 			return {
 				spacing: styles[ property ],
 				fontSize: parseFloat( styles.fontSize ),
 				parentFontSize: parseFloat( styles.fontSize ), // For spacing properties, em is relative to element's own font-size
-				spaceAdvanceWidth,
 				windowWidth: window.innerWidth,
 				windowHeight: window.innerHeight,
 			};
 		}, cssProperty );
 
 		if ( UNITS.percent === expectedUnit ) {
-			const computedValue = parseSpacingValue( computedStyles.spacing );
-			const expectedPixels = ( expectedValue / 100 ) * computedStyles.spaceAdvanceWidth;
-			expect( computedValue ).toBeCloseTo( expectedPixels, 0 );
+			// Per CSS Text Level 4, letter/word-spacing percentages are kept as a
+			// percentage at computed-value time (not resolved to a length), so
+			// getComputedStyle() reports the specified percentage back as-is.
+			expect( computedStyles.spacing ).toBe( `${ expectedValue }%` );
 			return;
 		}
 
