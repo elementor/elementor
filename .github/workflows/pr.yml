@@ -140,8 +140,6 @@ jobs:
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
@@ -170,7 +168,12 @@ jobs:
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
           echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
       - name: Build plugin
-        run: npm run build:pr
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
+        env:
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
       - uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
