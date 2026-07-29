@@ -110,6 +110,32 @@ Loading every bundle in dependency order under jsdom with real React registers 5
 both development and production, and the Grunt baseline scores identically on the same harness; the
 4 exceptions are jsdom canvas and coercion limits, not build differences.
 
+## Plugin tree
+
+`assemble-plugin.mjs` replaces the Grunt `clean` and `copy` tasks: it empties `build/` and copies
+the distributable file set into it. The include and exclude list is read from
+`.grunt-config/copy.js` rather than transcribed, so the two pipelines cannot drift while both
+exist; that list moves into this directory at cutoff.
+
+Grunt's ordered pattern semantics are reproduced faithfully, because the config depends on them: a
+positive pattern adds matches and a negative pattern removes them, so the last pattern to match a
+path wins. The trailing positive entries re-include the parts of `vendor` and `core/files/assets`
+that broad exclusions above them had removed. Directories that are excluded with no later
+re-inclusion are pruned before the scan; `vendor` and `core/**/assets` deliberately are not.
+
+`usebanner` has no counterpart, since it always wrote to files that `scripts` and `styles`
+overwrote in the same concurrent block.
+
+Verified against the `grunt build` tree: every file outside `assets/js` is present and
+byte-identical. Two categories of `assets/js` file are absent by design, and the parity harness
+ignores both:
+
+- 142 hashed `.bundle.js` chunks, since every dynamic import is inlined.
+- 34 `.min.js.LICENSE.txt` sidecars that Terser extracted. The minifier here keeps the same legal
+  notices inline in the 30 bundles that carry them, so no notice is lost.
+
+A full `npm run build:vite` produces all four trees in about 43s.
+
 ## Parity harness
 
 | Command | Description |
