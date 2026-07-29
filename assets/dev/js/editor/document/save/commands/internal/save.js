@@ -8,9 +8,7 @@ export class Save extends $e.modules.CommandInternalBase {
 
 		const container = document.container;
 
-		if ( elementorCommon.config.experimentalFeatures?.e_components ) {
-			await elementorCommon.__beforeSave?.( { container, status } );
-		}
+		await elementorCommon.__beforeSave?.( { container, status } );
 
 		const settings = container.settings.toJSON( { remove: [ 'default' ] } );
 		const oldStatus = container.settings.get( 'post_status' );

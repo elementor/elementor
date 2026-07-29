@@ -38,7 +38,7 @@ test.describe( 'Reset style fields @v4-tests', () => {
 		context = await browser.newContext();
 		const page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
 	test.afterAll( async () => {
