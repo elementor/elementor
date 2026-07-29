@@ -15,7 +15,7 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdminPage.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
