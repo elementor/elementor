@@ -91,7 +91,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'element_id' => [ 'type' => 'string' ],
 								'settings' => [
 									'type' => 'object',
-									'description' => 'update only: partial plain settings map merged onto existing settings. For <e-component> targets, use { component_id?: int, overrides: { <override_key>: <plain value | null> } }; component_id is optional (inferred from the existing instance), each override_key is deep-merged onto existing overrides, and passing null for an override_key removes it. Unmentioned override_keys are preserved.',
+									'description' => 'update only: partial plain settings map merged onto existing settings.',
 								],
 								'style' => [
 									'type' => 'object',

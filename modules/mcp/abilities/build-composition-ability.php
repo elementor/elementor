@@ -218,7 +218,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'element_config' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure. For <e-component> configuration-ids, the value is { component_id: int, overrides?: {<override_key>: <plain value>} } — discover components with elementor/list-components and override keys/shapes with elementor/list-component-schemas.',
+					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure. For <e-component> configuration-ids, the value is { component_id: int, overrides?: {<override_key>: <plain value>} } — see elementor/list-components.',
 				],
 				'style' => [
 					'type' => 'object',

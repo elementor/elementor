@@ -5,10 +5,15 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\Components\Circular_Dependency_Validator;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Component_Override_Parser;
+use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overrides_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 
@@ -92,7 +97,7 @@ class Component_Instance_Applier {
 		if ( ! $component_id ) {
 			if ( isset( $shorthand['component_instance'] ) && is_array( $shorthand['component_instance'] ) ) {
 				$errors[] = sprintf(
-					'[%s] Invalid shape for <e-component> in element_config. Do not nest under "component_instance" — use the flat shape { "component_id": <int>, "overrides": { ... } } directly. See elementor/list-component-schemas.',
+					'[%s] Invalid shape for <e-component> in element_config. Do not nest under "component_instance" — use the flat shape { "component_id": <int>, "overrides": { ... } } directly. See elementor/list-components.',
 					$config_id
 				);
 			} else {
@@ -151,9 +156,9 @@ class Component_Instance_Applier {
 	 *      * A supplied `null` value removes that override key from the envelope.
 	 *      * Override keys not mentioned in the payload are preserved untouched.
 	 *
-	 * @param array<string, array&>                                                                 $config_id_index
-	 * @param array<string, array{component_id?:int, overrides?:array<string, mixed|null>}>        $partial_shorthands
-	 * @param Document                                                                              $document
+	 * @param array<string, array&>                                                         $config_id_index
+	 * @param array<string, array{component_id?:int, overrides?:array<string, mixed|null>}> $partial_shorthands
+	 * @param Document                                                                      $document
 	 */
 	public function apply_partial( array &$config_id_index, array $partial_shorthands, Document $document ): ?\WP_Error {
 		if ( empty( $partial_shorthands ) ) {
@@ -184,11 +189,9 @@ class Component_Instance_Applier {
 				continue;
 			}
 
-			$existing_envelope = is_array( $node['settings']['component_instance'] ?? null )
-				? $node['settings']['component_instance']
-				: null;
+			$existing_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
-			$component_id = $this->resolve_component_id( $shorthand, $existing_envelope );
+			$component_id = $this->resolve_component_id( $shorthand, $existing_settings );
 			if ( ! $component_id ) {
 				$errors[] = sprintf(
 					'[%s] component_id could not be resolved. Either the target is not an existing <e-component> instance or component_id must be supplied.',
@@ -211,7 +214,7 @@ class Component_Instance_Applier {
 				continue;
 			}
 
-			$existing_overrides_list = $this->extract_overrides_list( $existing_envelope );
+			$existing_overrides_list = $this->extract_overrides_list( $existing_settings );
 			$merged_overrides_list = $this->merge_overrides_list(
 				$existing_overrides_list,
 				$partial_overrides,
@@ -239,31 +242,32 @@ class Component_Instance_Applier {
 
 	private function assemble_envelope( int $component_id, array $overrides_list ): array {
 		return [
-			'$$type' => 'component-instance',
+			'$$type' => Component_Instance_Prop_Type::get_key(),
 			'value'  => [
 				'component_id' => [
-					'$$type' => 'number',
+					'$$type' => Number_Prop_Type::get_key(),
 					'value' => $component_id,
 				],
 				'overrides'    => [
-					'$$type' => 'overrides',
+					'$$type' => Overrides_Prop_Type::get_key(),
 					'value'  => $overrides_list,
 				],
 			],
 		];
 	}
 
-	private function resolve_component_id( array $shorthand, ?array $existing_envelope ): int {
+	private function resolve_component_id( array $shorthand, array $existing_settings ): int {
 		$supplied = (int) ( $shorthand['component_id'] ?? 0 );
+
 		if ( $supplied ) {
 			return $supplied;
 		}
 
-		return (int) ( $existing_envelope['value']['component_id']['value'] ?? 0 );
+		return (int) Component_Instance_Prop_Type::extract_component_id( $existing_settings );
 	}
 
-	private function extract_overrides_list( ?array $envelope ): array {
-		$list = $envelope['value']['overrides']['value'] ?? [];
+	private function extract_overrides_list( array $existing_settings ): array {
+		$list = $existing_settings['component_instance']['value']['overrides']['value'] ?? [];
 
 		return is_array( $list ) ? $list : [];
 	}
@@ -366,12 +370,12 @@ class Component_Instance_Applier {
 			$prop = $overridable_props[ $override_key ] ?? null;
 
 			$overrides[] = [
-				'$$type' => 'override',
+				'$$type' => Override_Prop_Type::get_key(),
 				'value'  => [
 					'override_key'   => $override_key,
 					'override_value' => $this->resolve_override_value( $raw_value, $prop ),
 					'schema_source'  => [
-						'type' => 'component',
+						'type' => Component_Override_Parser::get_override_type(),
 						'id' => $component_id,
 					],
 				],
@@ -423,15 +427,7 @@ class Component_Instance_Applier {
 			'widgetType' => Component_Instance::get_element_type(),
 			'elements'   => [],
 			'settings'   => [
-				'component_instance' => [
-					'$$type' => 'component-instance',
-					'value'  => [
-						'component_id' => [
-							'$$type' => 'number',
-							'value' => $component_id,
-						],
-					],
-				],
+				'component_instance' => $this->assemble_envelope( $component_id, [] ),
 			],
 		];
 	}

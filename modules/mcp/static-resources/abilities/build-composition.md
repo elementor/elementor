@@ -3,7 +3,7 @@
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
-- `elementor/list-components` + `elementor/list-component-schemas` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
+- `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
@@ -20,8 +20,8 @@ This tool supports v4 elements only.
 
 ## When the user explicitly asks for a component
 
-1. Call `elementor/list-components` and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
-2. If found, call `elementor/list-component-schemas` with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
+1. Call `elementor/list-components` with no arguments and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
+2. If found, call `elementor/list-components` again with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
 3. If a component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
 
 ## Placement

@@ -120,6 +120,44 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( [], $e_component_node['settings'] );
 	}
 
+	public function test_apply__reports_settings_and_component_errors_together() {
+		// Arrange
+		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [],
+		];
+		$e_component_node = [
+			'elType' => 'widget',
+			'widgetType' => 'e-component',
+			'settings' => [],
+		];
+
+		$index = [
+			'hero-title' => &$hero_title,
+			'my-hero' => &$e_component_node,
+		];
+
+		// Act
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-title' => [ 'title' => [ 'not' => 'a scalar' ] ],
+				'my-hero' => [ 'component_id' => 42 ],
+			],
+			[
+				'mock-widget' => [ 'class' => Plain_Settings_Widget::class ],
+			]
+		);
+
+		// Assert
+		$this->assertNotNull( $result['error'] );
+		$this->assertStringContainsString( 'hero-title', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'my-hero', $result['error']->get_error_message() );
+	}
+
 }
 
 class Plain_Settings_Widget {

@@ -22,6 +22,12 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		];
 	}
 
+	public static function extract_component_id( array $settings ): ?int {
+		$component_id = $settings['component_instance']['value']['component_id']['value'] ?? null;
+
+		return null === $component_id ? null : (int) $component_id;
+	}
+
 	public function validate_value( $value ): bool {
 		if ( ! parent::validate_value( $value ) ) {
 			return false;
