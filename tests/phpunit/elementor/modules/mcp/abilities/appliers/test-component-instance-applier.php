@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../components/mocks/component-overrides-mocks.php';
+require_once __DIR__ . '/../../../components/mocks/component-overrides-mocks.php';
 
 /**
  * @group Elementor\Modules\Mcp
