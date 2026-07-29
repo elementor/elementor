@@ -10,6 +10,7 @@ import { createEntryConfig } from './create-config.mjs';
 import { generateEiconsFile } from './shared/eicons.mjs';
 import { BASE_ENTRIES, FRONTEND_ENTRIES, QUNIT_ENTRIES } from './shared/entries.mjs';
 import { ASSETS_JS } from './shared/paths.mjs';
+import { verifyNoUnresolvedImports, verifySelfPublishedGlobals } from './shared/verify-bundles.mjs';
 
 /**
  * The Webpack runtime chunk has no equivalent once every entry is self-contained, but the
@@ -122,6 +123,8 @@ export async function buildScripts( { targets, watch, devOnly, prodOnly, clean }
 	writeRuntimePlaceholders();
 
 	if ( ! watch ) {
+		verifyNoUnresolvedImports();
+		verifySelfPublishedGlobals();
 		return;
 	}
 

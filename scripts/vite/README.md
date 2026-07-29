@@ -67,6 +67,27 @@ are larger and nothing is lazily fetched. `webpack.runtime[.min].js` is emitted 
 because the `elementor-webpack-runtime` script handle is still registered in PHP and depended on by
 `elementor-frontend-modules`.
 
+Inlining has two failure modes that the bundler reports at no log level, so
+`shared/verify-bundles.mjs` fails the build on both. Each one silently removed a feature that a
+filename and size comparison could not see, because the entry was still emitted and merely smaller.
+
+- **A specifier written as a template literal is not resolved**, even with no interpolation, and the
+  target is dropped. `lightbox-manager.js` lost the entire Lightbox module this way; only a test that
+  opened a lightbox caught it. Since nothing should remain to fetch, the check is that no static
+  `import()` survives at all.
+- **A dynamic import of an external is left as a bare specifier**, which the browser cannot resolve,
+  so the promise rejects. `plugins/dynamic-externals.mjs` rewrites these to
+  `Promise.resolve( <global> )`, which is what the external already is; Webpack did the same.
+
+Externals arrive as IIFE arguments and so are read before the bundle body runs, which means a bundle
+cannot consume a global it publishes itself. `app-packages` was invoked as
+`(React, wp.i18n, elementorAppPackages.router)` and threw before reaching the assignment on its own
+first line, leaving the whole App with an empty root. Webpack tolerated the cycle because its
+externals were dereferenced lazily on first require. `SELF_PUBLISHED_REQUESTS` in
+`shared/externals.mjs` keeps such a request bundled instead, which is equivalent rather than a
+workaround: `app/assets/js/router.js` exports the very singleton it assigns to
+`elementorAppPackages.router`, with a comment saying so.
+
 `plugins/webpack-shims.mjs` neutralises `assets/dev/js/public-path.js`, which assigns the
 `__webpack_public_path__` free variable that no longer exists. Left in place the assignment threw a
 `ReferenceError` that aborted the rest of the frontend entry before

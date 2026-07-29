@@ -3,11 +3,12 @@ import { defineConfig } from 'vite-plus';
 import { appScssPlugin } from './plugins/app-scss.mjs';
 import { babelLegacyPlugin } from './plugins/babel-legacy.mjs';
 import { cjsExternalsPlugin } from './plugins/cjs-externals.mjs';
+import { dynamicExternalsPlugin } from './plugins/dynamic-externals.mjs';
 import { i18nStringsPlugin } from './plugins/i18n-strings.mjs';
 import { MULTI_SOURCE_ENTRY_ID, multiSourceEntryPlugin } from './plugins/multi-source-entry.mjs';
 import { webpackShimsPlugin } from './plugins/webpack-shims.mjs';
 import { loadAliases } from './shared/aliases.mjs';
-import { isExternal, resolveGlobal } from './shared/externals.mjs';
+import { isExternal, resolveGlobal, SELF_PUBLISHED_ALIASES } from './shared/externals.mjs';
 import { toEntrySources, withProductionSuffix } from './shared/entries.mjs';
 import { ASSETS_JS } from './shared/paths.mjs';
 
@@ -61,6 +62,8 @@ export function createEntryConfig( {
 	const outputName = isProduction ? withProductionSuffix( entryName ) : entryName;
 	const inputId = sources.length > 1 ? MULTI_SOURCE_ENTRY_ID : sources[ 0 ];
 
+	const resolveBundleGlobal = ( request ) => resolveGlobal( request, entryName );
+
 	const plugins = [
 		multiSourceEntryPlugin( { sources } ),
 		webpackShimsPlugin(),
@@ -69,7 +72,8 @@ export function createEntryConfig( {
 			sourcemap: ! isProduction,
 		} ),
 		appScssPlugin(),
-		cjsExternalsPlugin(),
+		dynamicExternalsPlugin( { resolve: resolveBundleGlobal } ),
+		cjsExternalsPlugin( { resolve: resolveBundleGlobal } ),
 	];
 
 	if ( emitStrings ) {
@@ -77,7 +81,7 @@ export function createEntryConfig( {
 	}
 
 	return defineConfig( {
-		logLevel: 'error',
+		logLevel: process.env.ELEMENTOR_BUILD_VERBOSE ? 'info' : 'error',
 		// Mirrors Webpack's `mode`. Without it the bundler would resolve production `exports`
 		// conditions in the development build too, pulling in the production React runtime and
 		// dropping the development warnings the unminified bundles exist to provide.
@@ -87,7 +91,7 @@ export function createEntryConfig( {
 		},
 		plugins,
 		resolve: {
-			alias: loadAliases(),
+			alias: { ...loadAliases(), ...SELF_PUBLISHED_ALIASES },
 			extensions: RESOLVE_EXTENSIONS,
 		},
 		build: {
@@ -99,14 +103,14 @@ export function createEntryConfig( {
 			watch: watch ? {} : null,
 			rollupOptions: {
 				input: { [ outputName ]: inputId },
-				external: ( id, importer ) => isExternal( id, importer ),
+				external: ( id ) => isExternal( id, entryName ),
 				transform: { inject: INJECTED_GLOBALS },
 				output: {
 					format: 'iife',
 					entryFileNames: '[name].js',
 					keepNames: true,
 					minify: isProduction ? MINIFY_OPTIONS : false,
-					globals: ( id ) => resolveGlobal( id ) ?? undefined,
+					globals: ( id ) => resolveGlobal( id, entryName ) ?? undefined,
 				},
 			},
 		},
