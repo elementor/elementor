@@ -110,6 +110,10 @@ class Read_Resource_Ability extends Abstract_Ability {
 				'execute' => fn() => ( new List_Dynamic_Tags_Ability() )->execute(),
 				'mimeType' => 'application/json',
 			],
+			Interactions_Schema_Resource_Ability::URI => [
+				'execute' => fn() => ( new Interactions_Schema_Resource_Ability() )->execute(),
+				'mimeType' => 'application/json',
+			],
 		];
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;

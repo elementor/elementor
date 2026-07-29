@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Component_Instance_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;

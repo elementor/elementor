@@ -1,12 +1,13 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -78,32 +79,30 @@ class Element_Config_Applier {
 		}
 		unset( $node );
 
-		if ( ! empty( $errors ) ) {
-			return [
-				'error' => new \WP_Error(
-					'elementor_invalid_settings',
-					implode( ' ', $errors ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				),
-				'warnings' => $warnings,
-			];
-		}
-
-		if ( ! empty( $component_entries ) ) {
-			$component_error = $this->apply_component_entries( $config_id_index, $component_entries, $document );
-
-			if ( $component_error ) {
-				return [
-					'error' => $component_error,
-					'warnings' => $warnings,
-				];
-			}
-		}
+		$component_error = empty( $component_entries )
+			? null
+			: $this->apply_component_entries( $config_id_index, $component_entries, $document );
 
 		return [
-			'error' => null,
+			'error' => $this->combine_errors( $errors, $component_error ),
 			'warnings' => $warnings,
 		];
+	}
+
+	private function combine_errors( array $settings_errors, ?\WP_Error $component_error ): ?\WP_Error {
+		if ( empty( $settings_errors ) ) {
+			return $component_error;
+		}
+
+		if ( $component_error ) {
+			$settings_errors[] = $component_error->get_error_message();
+		}
+
+		return new \WP_Error(
+			'elementor_invalid_settings',
+			implode( ' ', $settings_errors ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 
 	private function apply_component_entries( array &$config_id_index, array $component_entries, ?Document $document ): ?\WP_Error {

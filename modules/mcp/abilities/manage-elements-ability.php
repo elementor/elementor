@@ -13,10 +13,12 @@ use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Component_Instance_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
@@ -48,7 +50,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 elements in a document (up to 50 operations applied to a single document tree, saved once). Each operation: action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 elements in a document (up to 50 operations applied to a single document tree, saved once). Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -99,6 +101,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
 									'description' => 'update only: global class labels to attach (prepended to existing).',
+								],
+								'interactions' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'object' ],
+									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -301,10 +308,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
 		$style = $this->as_map( $operation['style'] ?? [] );
 		$classes = $operation['classes'] ?? null;
+		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes );
+		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes ) || null !== $interactions;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, or classes.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
 		}
 
 		if ( null === $this->get_mutator()->find_by_id( $tree, $element_id ) ) {
@@ -335,13 +343,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( ! empty( $settings ) ) {
 			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
-				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->create_plain_values_resolver() );
+				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
 				$component_error = $component_applier->apply_partial( $index, [ $element_id => $settings ], $document );
 				if ( $component_error ) {
 					return $component_error;
 				}
 			} else {
-				$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
+				$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
 				$config_result = $config_applier->apply(
 					$index,
 					[ $element_id => $settings ],
@@ -373,6 +381,22 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
+		}
+
+		if ( null !== $interactions ) {
+			if ( ! is_array( $interactions ) ) {
+				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
+			}
+			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
+			} else {
+				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+				if ( $interactions_result['error'] ) {
+					return $interactions_result['error'];
+				}
+				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+			}
 		}
 
 		return [
@@ -464,7 +488,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		);
 	}
 
-	private function create_plain_values_resolver(): Plain_Values_Resolver {
+	private function get_plain_values_resolver(): Plain_Values_Resolver {
 		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 

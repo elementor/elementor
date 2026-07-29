@@ -76,6 +76,7 @@ class Module extends BaseModule {
 			( new Abilities\List_Component_Schemas_Ability() )->register();
 		}
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
+		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
 		( new Abilities\Read_Resource_Ability() )->register();
 	}
@@ -151,6 +152,7 @@ class Module extends BaseModule {
 			'elementor/global-classes-resource',
 			'elementor/global-variables-resource',
 			'elementor/list-dynamic-tags',
+			'elementor/interactions-schema-resource',
 		];
 
 		/**
