@@ -7,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { build as viteBuild } from 'vite-plus';
 
 import { createEntryConfig } from './create-config.mjs';
+import { generateEiconsFile } from './shared/eicons.mjs';
 import { BASE_ENTRIES, FRONTEND_ENTRIES, QUNIT_ENTRIES } from './shared/entries.mjs';
 import { ASSETS_JS } from './shared/paths.mjs';
 
@@ -30,6 +31,7 @@ function parseArgs( argv ) {
 	return {
 		watch: argv.includes( '--watch' ),
 		devOnly: argv.includes( '--dev' ) || argv.includes( '--watch' ),
+		prodOnly: argv.includes( '--prod' ),
 		clean: ! argv.includes( '--no-clean' ),
 		targets: requested.length ? requested : [ 'base', 'frontend' ],
 	};
@@ -83,13 +85,24 @@ async function buildTarget( targetName, { isProduction, watch } ) {
 	return watchers;
 }
 
-export async function buildScripts( { targets, watch, devOnly, clean } ) {
+function resolveModes( { devOnly, prodOnly } ) {
+	if ( devOnly ) {
+		return [ false ];
+	}
+
+	return prodOnly ? [ true ] : [ false, true ];
+}
+
+export async function buildScripts( { targets, watch, devOnly, prodOnly, clean } ) {
 	if ( clean && ! watch ) {
 		cleanBundleOutput();
 	}
 
+	// The frontend entries import the generated icon module, so it has to exist before bundling.
+	generateEiconsFile();
+
 	const watchers = [];
-	const modes = devOnly ? [ false ] : [ false, true ];
+	const modes = resolveModes( { devOnly, prodOnly } );
 
 	for ( const targetName of targets ) {
 		for ( const isProduction of modes ) {

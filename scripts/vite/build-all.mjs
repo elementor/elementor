@@ -8,11 +8,13 @@ import { buildScripts } from './build-scripts.mjs';
 import { buildStyles } from './build-styles.mjs';
 
 /**
- * Equivalent of `grunt build`: produce every asset, then assemble the distributable plugin tree.
+ * Produces every asset, then assembles the distributable plugin tree.
  *
- * `grunt build` also ran `i18n` and `usebanner` in the same concurrent block. `usebanner` is
- * omitted deliberately: it targeted the same files `scripts` and `styles` were writing, so its
- * output was always overwritten and no shipped file has ever carried the banner.
+ * Two steps of the Grunt `build` task have no counterpart here. `usebanner` targeted the same files
+ * that `scripts` and `styles` were writing in the same concurrent block, so its output was always
+ * overwritten and no shipped file has ever carried the banner. `checktextdomain` duplicated the
+ * `WordPress.WP.I18n` sniff that `ruleset.xml` already configures with the same text domain, and the
+ * test environment setup script had been skipping it for years to avoid its warnings.
  */
 export async function buildAll() {
 	await buildStyles( {} );

@@ -20,7 +20,7 @@ function isFirstPartySource( id ) {
 }
 
 /**
- * Replicates the `babel-loader` rule of `.grunt-config/webpack.js`.
+ * Lowers first-party source to ES5.
  *
  * Rolldown refuses any target below ES2015, but the Backbone and Marionette layers of this
  * codebase depend on the ES5 downlevel the Babel pipeline performed: Backbone invokes object

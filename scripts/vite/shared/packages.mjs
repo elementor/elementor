@@ -43,8 +43,8 @@ function resolveEntryPath( packageDir, entrySource ) {
 }
 
 /**
- * Mirrors `getLocalRepoPackagesEntries` of `.grunt-config/webpack.packages.js`: development builds
- * compile TypeScript sources, production builds prefer each package's prebuilt `dist`.
+ * Development builds compile the TypeScript sources; production builds prefer each package's
+ * prebuilt `dist`.
  */
 export function getPackageEntries( entrySource ) {
 	const discovered = PACKAGE_GROUPS.flatMap( ( group ) =>

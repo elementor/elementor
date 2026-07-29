@@ -1,22 +1,14 @@
 #!/usr/bin/env node
 
 import { cpSync, mkdirSync, rmSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { globSync } from 'glob';
 import { minimatch } from 'minimatch';
 
-import { BUILD_DIR, resolveFromRoot, ROOT } from './shared/paths.mjs';
-
-const require = createRequire( import.meta.url );
-
-/**
- * The include and exclude list is read from the Grunt copy task rather than transcribed, so the two
- * pipelines cannot drift while both exist. At cutoff this list moves here.
- */
-const PLUGIN_FILE_PATTERNS = require( resolveFromRoot( '.grunt-config/copy.js' ) ).main.src;
+import { BUILD_DIR, ROOT } from './shared/paths.mjs';
+import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
 
 /**
  * Directories that are excluded with no later re-inclusion, pruned up front so the scan does not
@@ -46,10 +38,8 @@ const PRUNED = [
 ];
 
 /**
- * Applies the patterns the way `grunt.file.expand` does: a positive pattern adds matches to the
- * set and a negative pattern removes them, so the last pattern to match a path decides. The trailing
- * positive entries in the Grunt config rely on this to re-include the parts of `vendor` and
- * `core/files/assets` that the broad exclusions above them removed.
+ * Applies the patterns in order, as `PLUGIN_FILE_PATTERNS` requires: a positive pattern adds matches
+ * to the set and a negative pattern removes them, so the last pattern to match a path decides.
  */
 function selectPluginFiles( candidates ) {
 	const selected = new Set();

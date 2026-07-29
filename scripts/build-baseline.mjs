@@ -3,8 +3,9 @@
 /**
  * Snapshots the compiled plugin assets into a comparable directory tree.
  *
- * Used to prove output parity between the legacy Grunt/Webpack pipeline and the
- * Vite/Rolldown pipeline. Run once per toolchain, then diff with compare-builds.mjs.
+ * Take a snapshot before a change to the build pipeline and another after it, then diff them with
+ * compare-builds.mjs to see exactly which artifacts moved. This is how the Grunt/Webpack to
+ * Vite/Rolldown migration was proven, and it stays useful for any later change to the pipeline.
  */
 
 import { execSync } from 'node:child_process';
@@ -24,14 +25,12 @@ const SNAPSHOT_SOURCES = [
 ];
 
 const BUILD_COMMANDS = {
-	grunt: 'npx grunt styles && npx grunt scripts',
-	'grunt-full': 'npx grunt build',
-	vite: 'npm run styles:vite && npm run scripts:vite',
-	'vite-full': 'npm run build:vite',
+	assets: 'npm run styles && npm run scripts',
+	full: 'npm run build',
 };
 
 function parseArgs( argv ) {
-	const args = { outputDir: DEFAULT_OUTPUT_DIR, build: 'grunt' };
+	const args = { outputDir: DEFAULT_OUTPUT_DIR, build: 'assets' };
 
 	for ( let index = 0; index < argv.length; index++ ) {
 		const arg = argv[ index ];

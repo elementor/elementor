@@ -1,8 +1,11 @@
 /**
- * Grunt copy task config
- * @package Elementor
+ * The file set copied into `build/` to form the distributable plugin.
+ *
+ * Order is significant. A positive pattern adds matches and a negative pattern removes them, so the
+ * last pattern to match a path decides. The trailing positive entries rely on this to re-include the
+ * parts of `vendor` and `core/files/assets` that the broad exclusions above them had removed.
  */
-const getBuildFiles = [
+export const PLUGIN_FILE_PATTERNS = [
 	'**',
 	'!.cursor/**',
 	'!.vscode/**',
@@ -27,7 +30,6 @@ const getBuildFiles = [
 	'!cypress.json',
 	'!docker-compose.yml',
 	'!docs/**',
-	'!Gruntfile.js',
 	'!local-site/**',
 	'!modules/**/assets/**',
 	'!nightwatch.conf.js',
@@ -70,13 +72,3 @@ const getBuildFiles = [
 	'vendor/jetpack-autoloader/**',
 	'vendor/wordpress/**',
 ];
-
-const copy = {
-	main: {
-		src: getBuildFiles,
-		expand: true,
-		dest: 'build/'
-	}
-};
-
-module.exports = copy;

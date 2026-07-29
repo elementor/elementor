@@ -6,8 +6,7 @@ import { ROOT } from '../shared/paths.mjs';
 const TYPESCRIPT_SOURCE = /\.[jt]sx?$/;
 
 /**
- * Packages built from a prebuilt `dist` are already transpiled, so they are left untouched exactly
- * as the Webpack rule excluded them from `babel-loader`.
+ * Packages built from a prebuilt `dist` are already transpiled, so they are left untouched.
  */
 const PREBUILT_DIST = /[\\/]packages[\\/](?:packages[\\/](?:core|libs)|apps)[\\/][^\\/]+[\\/]dist[\\/]/;
 
@@ -22,9 +21,8 @@ function isPackageSource( id ) {
 }
 
 /**
- * Stands in for the `@babel/preset-typescript` + `@babel/preset-react` pair of
- * `.grunt-config/webpack.packages.js`. Unlike the base bundles these presets only strip types and
- * compile JSX, with no downlevel, so esbuild produces equivalent output far more cheaply.
+ * Unlike the base bundles, the packages need only type stripping and JSX compilation with no
+ * downlevel, so esbuild produces equivalent output far more cheaply than Babel would.
  */
 export function typescriptPlugin() {
 	return {

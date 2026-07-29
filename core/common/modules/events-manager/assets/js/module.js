@@ -2,7 +2,7 @@ import eventsConfig from './events-config';
 import mixpanel from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
 
-/** @type {Mixpanel | null} */
+/** @type {typeof mixpanel | null} */
 let mixpanelInstance = null;
 
 export default class extends elementorModules.Module {

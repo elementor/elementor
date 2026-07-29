@@ -32,7 +32,6 @@ const SASS_TARGETS = [
 	{ cwd: 'modules/container-converter/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/container-converter' },
 	{ cwd: 'modules/design-system-sync/assets/scss', src: 'design-system-sync.scss', dest: 'assets/css/modules/design-system-sync' },
 	{ cwd: 'modules/notes/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/notes' },
-	{ cwd: 'assets/dev/scss/frontend', src: 'swiper.scss', dest: 'assets/lib/swiper/css' },
 	{ cwd: 'modules/announcements/assets/scss', src: 'announcements.scss', dest: 'assets/css/modules/announcements' },
 	{ cwd: 'modules/styleguide/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/styleguide' },
 	{ cwd: 'modules/atomic-widgets/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/atomic-widgets' },
@@ -63,7 +62,7 @@ const MINIFY_GLOBS = [
 ];
 
 const TEMPLATES_DEST = 'assets/css/templates';
-const TEMPLATE_ENTRY_SOURCES = [ 'frontend.scss', 'frontend-rtl.scss' ];
+const TEMPLATE_ENTRY_SOURCES = [ 'frontend.scss' ];
 
 function isPartial( filePath ) {
 	return basename( filePath ).startsWith( '_' );
@@ -203,10 +202,11 @@ function compileBreakpointTemplates( widgetsCss, watchFiles ) {
 }
 
 /**
- * Compiles every stylesheet, reproducing the task order of the legacy `grunt styles` task.
+ * Compiles every stylesheet. The step order matters: widget entries are generated before the Sass
+ * pass, and the widget artifacts are deleted after minification consumes them.
  *
- * Development mode intentionally stops after the Sass pass, matching `grunt styles:true`:
- * no widget entry generation, no autoprefixing, no minification and no cleanup.
+ * Development mode intentionally stops after the Sass pass, so dev output is unprefixed and
+ * unminified and widget CSS is not regenerated.
  */
 export async function compileStyles( { devMode = false } = {} ) {
 	const watchFiles = new Set();

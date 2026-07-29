@@ -1,96 +1,98 @@
-# Vite / Rolldown build
+# Build pipeline
 
-Replacement for the Grunt + Webpack toolchain. Both pipelines coexist until cutoff.
+Elementor Core builds with Vite and Rolldown. This directory is the whole build; there is no Grunt
+and no Webpack.
+
+Babel is still here, and deliberately so: Rolldown will not target below ES2015, but the Backbone and
+Marionette layers need real ES5 function prototypes. See [Scripts pipeline](#scripts-pipeline).
+
+`webpack` also remains a devDependency, because the plugins published from
+`packages/packages/tools/` declare it as a peer and their tests compile with it. Nothing in Core's
+own build uses it.
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run styles:vite` | Build CSS (Sass + PostCSS) |
-| `npm run scripts:vite` | Build JS via Rolldown |
-| `npm run styles:vite:watch` | Watch CSS |
-| `npm run scripts:vite:watch` | Watch JS |
-| `npm run build:vite` | Full build including the `build/` plugin tree |
+| `npm run build` | Everything, including the `build/` plugin tree |
+| `npm run styles` | CSS (Sass + PostCSS) |
+| `npm run scripts` | JS bundles and package bundles |
+| `npm run packages:assets` | Package bundles only |
+| `npm run styles:watch` | Watch CSS |
+| `npm run scripts:watch` | Watch JS and packages |
+| `npm run test:qunit` | Build the Qunit bundles and run Karma |
 
 ## Styles pipeline
 
-`build-styles.mjs` drives `plugins/scss-build.mjs`, which reproduces the task order of
-`grunt styles`: generate per-widget entry files, compile every Sass target, autoprefix the
-top level stylesheets in place, minify the five glob sets, compile the custom breakpoint
-templates behind a proxy import swap, then delete the non-minified widget artifacts.
+`build-styles.mjs` drives `plugins/scss-build.mjs`: generate per-widget entry files, compile every
+Sass target, autoprefix the top level stylesheets in place, minify the five glob sets, compile the
+custom breakpoint templates behind a proxy import swap, then delete the non-minified widget
+artifacts.
 
-Two asymmetries from the Grunt pipeline are deliberate and preserved:
+Two asymmetries are deliberate:
 
-- `--dev` and `--watch` stop after the Sass pass, exactly like `grunt styles:true`, so dev
-  output is unprefixed and unminified and widget CSS is not regenerated.
+- `--dev` and `--watch` stop after the Sass pass, so dev output is unprefixed and unminified and
+  widget CSS is not regenerated.
 - Autoprefixer runs over the unminified `assets/css/*.css` only. Nested folders
   (`conditionals/`, `modules/`, `templates/`, `lib/swiper/css/`) are prefixed solely as part
   of minification, so their unminified output carries no vendor prefixes.
 
-Verified: all 236 compiled stylesheets and `responsive-widgets.json` are byte-identical to
-the Grunt output.
-
 ## Scripts pipeline
 
-`build-scripts.mjs` builds each entry as its own Rolldown IIFE bundle, matching the four Webpack
-configs (`base` and `frontend`, each in development and production). `qunit` is a third target that
-emits only the eight filenames `karma.conf.js` loads.
+`build-scripts.mjs` builds each entry as its own Rolldown IIFE bundle. There are two entry targets,
+`base` and `frontend`, each built in development and production, plus a `qunit` target that emits
+only the eight filenames `karma.conf.js` loads. `shared/eicons.mjs` regenerates the committed
+`e-icons.js` source module first, since the frontend entries import it.
 
 Three decisions carry the pipeline and are not optional:
 
-- **Babel is retained for the transform stage** (`plugins/babel-legacy.mjs`). Rolldown refuses any
-  target below ES2015, but the Backbone and Marionette layers depend on the ES5 downlevel Babel
-  performed: Backbone's `extend` uses an object literal's `constructor` member as the child
-  constructor and reads `.prototype` off members such as `Collection#model`, and a shorthand method
-  has neither a `[[Construct]]` slot nor a prototype. Targeting ES2020 left them as shorthand
-  methods and took Qunit from 261 passing to 70 failing. The bundler still owns resolution, tree
-  shaking, externals and minification; only the syntax lowering stays with Babel, and it costs
-  roughly 4s of the 31s JS build.
-- **The two preset sets are asymmetric, as in Webpack.** Frontend entries use bare
-  `@babel/preset-env` with `useBuiltIns: 'usage'`, everything else uses `@wordpress/default`. The
-  two resolve different browser targets, so frontend output legitimately retains arrow functions
-  while base output does not.
-- **`@babel/plugin-transform-modules-commonjs` is deliberately dropped.** Rolldown needs ESM to
-  apply externals and tree shaking. This is the one intentional semantic change, and it is why
-  candidate bundles are consistently smaller: `e-wc-product-editor.js` falls from 107KB to 6KB
-  because `@wordpress/element`'s `useState`/`useEffect` collapse to the already-external `react`
-  global instead of bundling the whole package, which the CommonJS-transformed Webpack graph could
-  not see through.
+- **Babel performs the ES5 downlevel** (`plugins/babel-legacy.mjs`). Rolldown refuses any target
+  below ES2015, but the Backbone and Marionette layers depend on ES5 semantics: Backbone's `extend`
+  uses an object literal's `constructor` member as the child constructor and reads `.prototype` off
+  members such as `Collection#model`, and a shorthand method has neither a `[[Construct]]` slot nor
+  a prototype. Targeting ES2020 took Qunit from 261 passing to 70 failing. The bundler still owns
+  resolution, tree shaking, externals and minification; only syntax lowering stays with Babel, and
+  it costs roughly 4s of the 31s JS build.
+- **The two preset sets are asymmetric.** Frontend entries use bare `@babel/preset-env` with
+  `useBuiltIns: 'usage'`, everything else uses `@wordpress/default`. The two resolve different
+  browser targets, so frontend output legitimately retains arrow functions where base output does
+  not.
+- **`@babel/plugin-transform-modules-commonjs` is not used.** Rolldown needs ESM to apply externals
+  and tree shaking. This is why bundles are smaller than they used to be: `e-wc-product-editor.js`
+  fell from 107KB to 6KB, because `@wordpress/element`'s `useState`/`useEffect` collapse to the
+  already-external `react` global instead of bundling the whole package.
 
-`plugins/webpack-shims.mjs` neutralises `assets/dev/js/public-path.js`. It assigns Webpack's
-`__webpack_public_path__` free variable to tell the Webpack runtime where to fetch lazy chunks;
-IIFE output cannot code split, so nothing is ever fetched. Left in place the assignment threw a
+Every dynamic import is inlined, since IIFE cannot code split. That is a deliberate trade: entries
+are larger and nothing is lazily fetched. `webpack.runtime[.min].js` is emitted as a no-op file
+because the `elementor-webpack-runtime` script handle is still registered in PHP and depended on by
+`elementor-frontend-modules`.
+
+`plugins/webpack-shims.mjs` neutralises `assets/dev/js/public-path.js`, which assigns the
+`__webpack_public_path__` free variable that no longer exists. Left in place the assignment threw a
 `ReferenceError` that aborted the rest of the frontend entry before
-`window.elementorFrontend = new Frontend()`, which surfaced only as "The preview could not be
-loaded" in the editor with no console error on the editor page itself.
+`window.elementorFrontend = new Frontend()`, surfacing only as "The preview could not be loaded" in
+the editor with no console error on the editor page itself.
 
-Every dynamic import is inlined, since IIFE cannot code split. `webpack.runtime[.min].js` is
-emitted as a no-op so the `elementor-webpack-runtime` script handle still resolves in PHP.
-
-Two source files needed fixing because Rolldown validates named imports against a package's real
-exports where Webpack did not. Both were latent bugs, and both still build under Grunt:
+Two source files carried latent bugs that only became build failures once the bundler started
+validating named imports against a package's real exports:
 
 - `assets/dev/js/editor/utils/helpers.js` imported `isValidAttribute` as a named export of
   `dompurify`, which only exposes it as an instance member.
 - `core/common/modules/events-manager/assets/js/module.js` imported the `Mixpanel` type as a value
   from `mixpanel-browser`, using it only in a JSDoc annotation.
 
-Verified: Qunit 261/261 and Jest 800/800 pass with the tests unmodified, all 432 non-chunk
-`assets/js` filenames are present, `.strings.js` content matches, and the editor loads and
-takes element selection against a live site.
-
 ## Packages pipeline
 
 `build-packages.mjs` builds the 55 `elementorV2` libraries into
-`assets/js/packages/<name>/<name>[.min].js`, replacing `.grunt-config/webpack.packages.js` and the
-four Webpack plugins under `packages/packages/tools`. Entries are discovered by scanning
-`packages/packages/core`, `packages/packages/libs` and `packages/apps`, plus `ui` and `icons` from
-node_modules.
+`assets/js/packages/<name>/<name>[.min].js`. It reimplements what the four Webpack plugins under
+`packages/packages/tools` did; those packages are still published for external consumers, but Core no
+longer builds with them. Entries are discovered by scanning `packages/packages/core`,
+`packages/packages/libs` and `packages/apps`, plus `ui` and `icons` from node_modules.
 
-- **Production consumes `dist/index.mjs`, not `dist/index.js`.** Webpack read the CommonJS build
-  through `main`, but Rolldown cannot externalize a `require()`, so every dependency would be
-  bundled and `.asset.php` would list no deps at all. All 53 packages that ship `dist/index.js`
-  also ship the ESM `dist/index.mjs` built from the same sources.
+- **Production consumes `dist/index.mjs`, not the CommonJS `dist/index.js`.** Rolldown cannot
+  externalize a `require()`, so every dependency would be bundled and `.asset.php` would list no deps
+  at all. All 53 packages that ship `dist/index.js` also ship the ESM `dist/index.mjs` built from the
+  same sources.
 - **The `window.elementorV2` assignment is written explicitly**
   (`plugins/packages-library-entry.mjs`). Given a dotted `output.name`, Rolldown's IIFE emits the
   namespace guard but never assigns the entry's exports to the leaf, so the library would be
@@ -98,58 +100,45 @@ node_modules.
 - **`react-dom` reaches the dependency list through the CommonJS rewriter.** `v4-activation-modal`
   imports `react-dom/client`, which is not itself mapped and so gets bundled; its inner
   `require( 'react-dom' )` is what needs the global. `plugins/cjs-externals.mjs` reports the
-  requests it rewires so `.asset.php` can include them, matching how Webpack picked them up by
-  walking the chunk's module graph.
+  requests it rewires so `.asset.php` can include them.
 
-TypeScript and JSX are handled by esbuild rather than Babel, since these presets only strip types
-and compile JSX with no downlevel. JSX uses the **classic** runtime
-(`React.createElement`/`React.Fragment`), because that is still the default of `@babel/preset-react`
-7.x and the packages depend on it: `React` resolves to the external global rather than to a bundled
+TypeScript and JSX are handled by esbuild rather than Babel, since the packages need only type
+stripping and JSX compilation with no downlevel. JSX uses the **classic** runtime
+(`React.createElement`/`React.Fragment`), which is what `@babel/preset-react` 7.x still defaults to
+and what the packages depend on: `React` resolves to the external global rather than to a bundled
 `react/jsx-runtime`. The development build additionally runs `@emotion/babel-plugin` for readable
-class names, exactly as the Webpack development rule did.
-
-Verified: all 55 `.asset.php` files and `.strings.js` files are byte-identical to the Grunt output.
-Loading every bundle in dependency order under jsdom with real React registers 51 of 55 globals for
-both development and production, and the Grunt baseline scores identically on the same harness; the
-4 exceptions are jsdom canvas and coercion limits, not build differences.
+class names.
 
 ## Plugin tree
 
-`assemble-plugin.mjs` replaces the Grunt `clean` and `copy` tasks: it empties `build/` and copies
-the distributable file set into it. The include and exclude list is read from
-`.grunt-config/copy.js` rather than transcribed, so the two pipelines cannot drift while both
-exist; that list moves into this directory at cutoff.
+`assemble-plugin.mjs` empties `build/` and copies the distributable file set into it, listed in
+`shared/plugin-files.mjs`.
 
-Grunt's ordered pattern semantics are reproduced faithfully, because the config depends on them: a
-positive pattern adds matches and a negative pattern removes them, so the last pattern to match a
-path wins. The trailing positive entries re-include the parts of `vendor` and `core/files/assets`
-that broad exclusions above them had removed. Directories that are excluded with no later
-re-inclusion are pruned before the scan; `vendor` and `core/**/assets` deliberately are not.
+That list is order dependent and the implementation honours it: a positive pattern adds matches and a
+negative pattern removes them, so the last pattern to match a path wins. The trailing positive
+entries re-include the parts of `vendor` and `core/files/assets` that broad exclusions above them had
+removed. Directories that are excluded with no later re-inclusion are pruned before the scan;
+`vendor` and `core/**/assets` deliberately are not.
 
-`usebanner` has no counterpart, since it always wrote to files that `scripts` and `styles`
-overwrote in the same concurrent block.
+Two things the old `grunt build` did have no counterpart here. `usebanner` always wrote to files that
+`scripts` and `styles` overwrote in the same concurrent block, so no shipped file ever carried the
+banner. `checktextdomain` duplicated the `WordPress.WP.I18n` sniff that `ruleset.xml` already
+configures with the same `elementor` text domain, and the test environment setup script had been
+skipping it for years to avoid its warnings.
 
-Verified against the `grunt build` tree: every file outside `assets/js` is present and
-byte-identical. Two categories of `assets/js` file are absent by design, and the parity harness
-ignores both:
-
-- 142 hashed `.bundle.js` chunks, since every dynamic import is inlined.
-- 34 `.min.js.LICENSE.txt` sidecars that Terser extracted. The minifier here keeps the same legal
-  notices inline in the 30 bundles that carry them, so no notice is lost.
-
-A full `npm run build:vite` produces all four trees in about 43s.
+A full `npm run build` produces all four trees in about 43s.
 
 ## Build mode
 
-Both pipelines set `mode` and define `process.env.NODE_ENV` from the target, mirroring Webpack. This
-is not cosmetic: without it the bundler resolves production `exports` conditions in the development
-build too, so `@elementor/ui` pulled in React's production JSX runtime and the unminified bundles
-lost the development warnings they exist to provide. It surfaced as a React "unique key" warning
-that the Grunt build did not produce, and `ui.js` carrying no `jsxDEV` reference at all.
+Both pipelines set `mode` and define `process.env.NODE_ENV` from the target. This is not cosmetic:
+without it the bundler resolves production `exports` conditions in the development build too, so
+`@elementor/ui` pulled in React's production JSX runtime and the unminified bundles lost the
+development warnings they exist to provide. It surfaced as a React "unique key" warning and as
+`ui.js` carrying no `jsxDEV` reference at all.
 
 ## Verification
 
-Against a live site, with the whole tree built by `npm run build:vite` and no test modified:
+Against a live site, with the whole tree built by `npm run build` and no test modified:
 
 | Check | Result |
 |-------|--------|
@@ -164,48 +153,38 @@ Two results need context:
 
 - The `entry-initialization-webpack-plugin` and `extract-i18n-wordpress-expressions-webpack-plugin`
   suites compile with real Webpack and exceed Jest's 5s timeout when the machine is loaded. They run
-  in about 340ms in isolation and are unrelated to this migration.
+  in about 340ms in isolation.
 - The admin pages request `assets/js/locales/en/*.json`, which 404. Those files are not produced by
-  either pipeline, are not in the repository, and 404 identically on the Grunt build.
+  the build, are not in the repository, and 404 on the old toolchain too.
 
-The editor and frontend checks were also run against the Grunt baseline assets for comparison, which
-is how the mode issue above was found: the baseline reported 0 console errors where the candidate
-reported 1.
+Every check above was also run against the old Grunt output and matched, which is how the mode issue
+was found: the old build reported 0 console errors where the new one reported 1.
 
 ## Parity harness
 
+Kept for future changes to the build. Snapshot before a change, snapshot after, then diff.
+
 | Command | Description |
 |---------|-------------|
-| `npm run build:baseline` | Run `grunt styles && grunt scripts`, snapshot to `.build-baseline/` |
-| `npm run build:baseline:full` | Run `grunt build`, snapshot assets plus `build/` tree |
-| `npm run build:snapshot` | Snapshot current assets to `.vite-build/` without building |
-| `npm run build:compare` | Diff `.build-baseline/` against `.vite-build/` |
+| `npm run build:baseline` | Build styles and scripts, snapshot to `.build-baseline/` |
+| `npm run build:baseline:full` | Full build, snapshot assets plus the `build/` tree |
+| `npm run build:snapshot` | Snapshot current output to `.build-candidate/` without building |
+| `npm run build:compare` | Diff `.build-baseline/` against `.build-candidate/` |
 
 Structural parity (file existence) is enforced on every tree. Content parity is enforced
 byte-for-byte on `.css`, `.asset.php`, `.json` and `.strings.js` after stripping banners and
-`sourceMappingURL` comments. JS bundles are size-checked only, since two bundlers
-legitimately emit different module wrappers. Hashed `.bundle` chunks are counted but not
-compared, because inlining every dynamic import means the candidate emits none.
+`sourceMappingURL` comments. JS bundles are size-checked only, since bundlers legitimately emit
+different module wrappers. Hashed `.bundle` chunks, source maps and `.LICENSE.txt` sidecars are not
+compared.
 
-## Baseline findings (Grunt/Webpack, v4.3.0)
+## Things that surprise people
 
-Recorded while capturing the reference build; these shape what parity means.
-
-- **Banners are never applied.** `usebanner` runs inside the same `grunt-concurrent`
-  block as `scripts` and `styles`, so its output is always overwritten. Zero of 352
-  `assets/js/*.js` and zero of 142 `assets/css/*.css` files carry the banner. The Vite
-  pipeline must also emit no banner.
-- **core-js polyfills are injected into frontend entries** by
-  `@babel/preset-env { useBuiltIns: 'usage', corejs: '3.23' }`: `es.array.push`,
-  `es.iterator.{constructor,filter,find,for-each,map}`,
-  `esnext.iterator.{constructor,filter,find,for-each,map}`, `web.dom-exception.stack`.
-  These are dropped in the Vite pipeline by decision. The iterator helpers are the only
-  ones not natively available across the `.browserslistrc` range, and they are injected
-  because Babel cannot prove `.map()`/`.filter()` receivers are arrays, not because the
-  source uses iterator helpers.
-- **Dead Sass entries.** `.grunt-config/sass.js` compiles `assets/dev/scss/frontend/swiper.scss`
-  and `Gruntfile.js` references `assets/dev/scss/direction/frontend-rtl.scss`; neither file
-  exists, so both are silent no-ops that produce no output.
-- Baseline volume: 485 files under `assets/js` (352 `.js`, 143 `.min.js`, 64 `.strings.js`,
-  71 + 69 hashed `.bundle` chunks, 55 package directories), 236 under `assets/css`,
-  `assets/data/responsive-widgets.json`.
+- **No banner is emitted, and none ever was.** The old `usebanner` task wrote to files that were
+  being overwritten in the same concurrent block, so zero shipped `.js` or `.css` files carried it.
+- **core-js polyfills land in frontend entries only**, injected by `@babel/preset-env` with
+  `useBuiltIns: 'usage'`: `es.array.push`, `es.iterator.*`, `esnext.iterator.*` and
+  `web.dom-exception.stack`. The iterator helpers are the only ones not natively available across the
+  `.browserslistrc` range, and they appear because Babel cannot prove that `.map()`/`.filter()`
+  receivers are arrays, not because the source uses iterator helpers.
+- **Output volume.** 432 files under `assets/js` including 55 package directories, 236 under
+  `assets/css`, and `assets/data/responsive-widgets.json`.

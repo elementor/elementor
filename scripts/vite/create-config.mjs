@@ -18,9 +18,10 @@ import { ASSETS_JS } from './shared/paths.mjs';
 const BUILD_TARGET = 'es2015';
 
 /**
- * The preset sets of the two `babel-loader` rules in `.grunt-config/webpack.js`. Frontend entries
- * used a bare `preset-env` with `useBuiltIns: 'usage'` so that core-js polyfills were injected;
- * every other entry used the WordPress default preset, which does not polyfill.
+ * The two preset sets are deliberately asymmetric. Frontend entries resolve a wider browser range
+ * and inject core-js polyfills; every other entry uses the WordPress default preset, which does not
+ * polyfill. This is why frontend output legitimately retains arrow functions where base output
+ * does not.
  */
 const BASE_PRESETS = [ '@wordpress/default' ];
 const FRONTEND_PRESETS = [ [ '@babel/preset-env', { useBuiltIns: 'usage', corejs: '3.23' } ] ];

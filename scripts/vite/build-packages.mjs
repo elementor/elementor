@@ -28,7 +28,7 @@ const MINIFY_OPTIONS = {
 	compress: { keepNames: { function: true, class: true } },
 };
 
-function createPackageConfig( { name, path: entryPath }, isProduction ) {
+function createPackageConfig( { name, path: entryPath }, isProduction, watch ) {
 	const globalName = kebabToCamelCase( name );
 
 	// Requests reached only through a CommonJS `require()` never surface as chunk imports, so the
@@ -77,6 +77,7 @@ function createPackageConfig( { name, path: entryPath }, isProduction ) {
 			// with `optimization.minimize: false`; production emits no maps at all.
 			sourcemap: ! isProduction,
 			minify: false,
+			watch: watch ? {} : null,
 			rollupOptions: {
 				input: { [ name ]: LIBRARY_ENTRY_ID },
 				external: ( id ) => isPackageExternal( id ),
@@ -95,24 +96,61 @@ function createPackageConfig( { name, path: entryPath }, isProduction ) {
 	} );
 }
 
-export async function buildPackages( { devOnly = false } = {} ) {
-	const modes = devOnly ? [ false ] : [ false, true ];
+function resolveModes( { devOnly, prodOnly, watch } ) {
+	// Watching only makes sense against the TypeScript sources, which is also what Webpack's
+	// development config consumed.
+	if ( devOnly || watch ) {
+		return [ false ];
+	}
+
+	return prodOnly ? [ true ] : [ false, true ];
+}
+
+export async function buildPackages( { devOnly = false, prodOnly = false, watch = false } = {} ) {
+	const modes = resolveModes( { devOnly, prodOnly, watch } );
+	const watchers = [];
 
 	for ( const isProduction of modes ) {
 		const entries = getPackageEntries( isProduction ? 'dist' : 'src' );
 		const startedAt = Date.now();
 
 		for ( const entry of entries ) {
-			await viteBuild( createPackageConfig( entry, isProduction ) );
+			const result = await viteBuild( createPackageConfig( entry, isProduction, watch ) );
+
+			if ( watch ) {
+				watchers.push( result );
+			}
 		}
 
 		const mode = isProduction ? 'production' : 'development';
 		console.log( `[vite:packages] ${ mode }: ${ entries.length } entries in ${ Date.now() - startedAt }ms` );
 	}
+
+	if ( ! watch ) {
+		return;
+	}
+
+	console.log( `[vite:packages] Watching ${ watchers.length } bundles. Press Ctrl+C to stop.` );
+
+	const stop = () => {
+		for ( const watcher of watchers ) {
+			watcher?.close?.();
+		}
+		process.exit( 0 );
+	};
+
+	process.on( 'SIGINT', stop );
+	process.on( 'SIGTERM', stop );
 }
 
 if ( import.meta.url === pathToFileURL( process.argv[ 1 ] ).href ) {
-	buildPackages( { devOnly: process.argv.includes( '--dev' ) } ).catch( ( error ) => {
+	const argv = process.argv.slice( 2 );
+
+	buildPackages( {
+		devOnly: argv.includes( '--dev' ),
+		prodOnly: argv.includes( '--prod' ),
+		watch: argv.includes( '--watch' ),
+	} ).catch( ( error ) => {
 		console.error( error );
 		process.exit( 1 );
 	} );
