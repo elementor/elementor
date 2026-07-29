@@ -128,33 +128,19 @@ jobs:
   build:
     name: Build plugin
     runs-on: ubuntu-22.04
-    needs: install
     if: startsWith( github.repository, 'elementor/' )
     outputs:
-      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+      artifact_name: ${{ steps.set_outputs.outputs.artifact_name }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
-      - name: Cache turbo build setup
-        uses: actions/cache@v5
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          package-manager-cache: false
-      - name: Restore dependency cache
-        uses: actions/cache/restore@v5
-        with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          cache: 'npm'
       - name: Set ENV variables
+        id: set_env
         run: |
           DATE_VERSION=$(date '+%Y%m%d.%H%M')
           VERSION=$(node -p "require('./package.json').version")
@@ -167,6 +153,8 @@ jobs:
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
           echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
+      - name: Install dependencies
+        uses: ./.github/workflows/install-dependencies
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -174,6 +162,11 @@ jobs:
           BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
         env:
           MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+      - name: Set build outputs
+        id: set_outputs
+        run: echo "artifact_name=${PLUGIN_FOLDER_FILENAME}" >> "$GITHUB_OUTPUT"
+        env:
+          PLUGIN_FOLDER_FILENAME: ${{ env.PLUGIN_FOLDER_FILENAME }}
       - uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
