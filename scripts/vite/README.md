@@ -79,6 +79,37 @@ Verified: Qunit 261/261 and Jest 800/800 pass with the tests unmodified, all 432
 `assets/js` filenames are present, `.strings.js` content matches, and the editor loads and
 takes element selection against a live site.
 
+## Packages pipeline
+
+`build-packages.mjs` builds the 55 `elementorV2` libraries into
+`assets/js/packages/<name>/<name>[.min].js`, replacing `.grunt-config/webpack.packages.js` and the
+four Webpack plugins under `packages/packages/tools`. Entries are discovered by scanning
+`packages/packages/core`, `packages/packages/libs` and `packages/apps`, plus `ui` and `icons` from
+node_modules.
+
+- **Production consumes `dist/index.mjs`, not `dist/index.js`.** Webpack read the CommonJS build
+  through `main`, but Rolldown cannot externalize a `require()`, so every dependency would be
+  bundled and `.asset.php` would list no deps at all. All 53 packages that ship `dist/index.js`
+  also ship the ESM `dist/index.mjs` built from the same sources.
+- **The `window.elementorV2` assignment is written explicitly**
+  (`plugins/packages-library-entry.mjs`). Given a dotted `output.name`, Rolldown's IIFE emits the
+  namespace guard but never assigns the entry's exports to the leaf, so the library would be
+  undefined. A generated entry module performs the assignment instead, and no output name is used.
+- **`react-dom` reaches the dependency list through the CommonJS rewriter.** `v4-activation-modal`
+  imports `react-dom/client`, which is not itself mapped and so gets bundled; its inner
+  `require( 'react-dom' )` is what needs the global. `plugins/cjs-externals.mjs` reports the
+  requests it rewires so `.asset.php` can include them, matching how Webpack picked them up by
+  walking the chunk's module graph.
+
+TypeScript and JSX are handled by esbuild rather than Babel, since these presets only strip types
+and compile JSX with no downlevel. The development build additionally runs `@emotion/babel-plugin`
+for readable class names, exactly as the Webpack development rule did.
+
+Verified: all 55 `.asset.php` files and `.strings.js` files are byte-identical to the Grunt output.
+Loading every bundle in dependency order under jsdom with real React registers 51 of 55 globals for
+both development and production, and the Grunt baseline scores identically on the same harness; the
+4 exceptions are jsdom canvas and coercion limits, not build differences.
+
 ## Parity harness
 
 | Command | Description |

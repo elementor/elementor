@@ -53,6 +53,7 @@
     "styles:vite:watch": "node scripts/vite/build-styles.mjs --watch",
     "scripts:vite": "node scripts/vite/build-scripts.mjs",
     "scripts:vite:watch": "node scripts/vite/build-scripts.mjs --watch",
+    "packages:vite": "node scripts/vite/build-packages.mjs",
     "lint": "eslint . && npm run lint -w elementor-packages",
     "format": "npm run format:eslint && npm run format:packages",
     "format:eslint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --fix",

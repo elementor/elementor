@@ -58,11 +58,11 @@ export function getStringsScanPattern( entryName, entrySourcePath ) {
  * The expressions are deliberately not taken from the bundle itself, so that minification and
  * transpilation cannot rewrite them beyond recognition.
  */
-export function i18nStringsPlugin( { entryName, entrySourcePath, outputDir } ) {
+export function i18nStringsPlugin( { entryName, entrySourcePath, outputDir, scanPattern } ) {
 	return {
 		name: 'elementor-i18n-strings',
 		async writeBundle() {
-			const pattern = getStringsScanPattern( entryName, entrySourcePath );
+			const pattern = scanPattern ?? getStringsScanPattern( entryName, entrySourcePath );
 			const filePaths = await glob( pattern, {
 				ignore: {
 					ignored: ( candidate ) => ! SOURCE_EXTENSION_PATTERN.test( candidate.name ),

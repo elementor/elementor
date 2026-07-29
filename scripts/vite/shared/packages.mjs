@@ -1,0 +1,57 @@
+import { existsSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+
+import { resolveFromRoot } from './paths.mjs';
+
+const PACKAGES_ROOT = resolveFromRoot( 'packages' );
+
+const PACKAGE_GROUPS = [ 'packages/core', 'packages/libs', 'apps' ];
+
+/**
+ * `ui` and `icons` ship prebuilt in node_modules rather than living in the monorepo, but they are
+ * still published as `elementorV2` libraries, so they are appended to the scanned set.
+ */
+const PREBUILT_PACKAGES = [
+	{ name: 'ui', path: resolveFromRoot( 'node_modules/@elementor/ui/index.js' ) },
+	{ name: 'icons', path: resolveFromRoot( 'node_modules/@elementor/icons/index.js' ) },
+];
+
+export const PACKAGES_OUTPUT_DIR = resolveFromRoot( 'assets/js/packages' );
+
+function resolveEntryPath( packageDir, entrySource ) {
+	const sourceEntry = join( packageDir, 'src/index.ts' );
+
+	if ( 'src' === entrySource ) {
+		return sourceEntry;
+	}
+
+	// Webpack consumed the CommonJS `dist/index.js` through `main`. Its `require()` calls cannot be
+	// externalized by Rolldown, which would silently bundle every dependency and leave `.asset.php`
+	// without any deps. Every package that ships `dist/index.js` also ships the ESM `dist/index.mjs`
+	// built from the same sources, so that is used instead.
+	const distEntry = join( packageDir, 'dist/index.mjs' );
+
+	if ( existsSync( distEntry ) ) {
+		return distEntry;
+	}
+
+	// Production asked for dist but it is missing; falling back to src silently would ship a mixed
+	// graph without any signal.
+	console.warn( `[vite:packages] Production build is using TypeScript instead of missing dist: ${ distEntry }` );
+
+	return sourceEntry;
+}
+
+/**
+ * Mirrors `getLocalRepoPackagesEntries` of `.grunt-config/webpack.packages.js`: development builds
+ * compile TypeScript sources, production builds prefer each package's prebuilt `dist`.
+ */
+export function getPackageEntries( entrySource ) {
+	const discovered = PACKAGE_GROUPS.flatMap( ( group ) =>
+		readdirSync( resolve( PACKAGES_ROOT, group ) )
+			.map( ( name ) => ( { name, path: resolveEntryPath( resolve( PACKAGES_ROOT, group, name ), entrySource ) } ) )
+			.filter( ( { path } ) => existsSync( path ) ),
+	);
+
+	return [ ...discovered, ...PREBUILT_PACKAGES ];
+}
