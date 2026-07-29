@@ -23,7 +23,7 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: TOOL_NAME,
 		description:
-			'Manage V4 global CSS classes on the active kit. Create, update, or delete a single class using raw CSS declarations.',
+			'Manage V4 global CSS classes on the active kit. Create, update, or delete a single class. Supports per-breakpoint and pseudo-class styles via the styles field.',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ),
 			id: z
@@ -37,10 +37,24 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 			css: z
 				.record( z.string() )
 				.optional()
-				.describe( 'Raw CSS declarations (property → value) — required for create/update.' ),
+				.describe( 'Flat property → value map for CSS declarations. Ignored when styles is present.' ),
+			styles: z
+				.record( z.string().nullable() )
+				.optional()
+				.describe(
+					'Map of breakpoint key to CSS string. Use "default" for desktop. Supports &:hover / &:focus / &:active nesting. Takes precedence over css. Pass null for a breakpoint key to remove all its variants.'
+				),
+			mode: z
+				.enum( [ 'patch', 'replace' ] )
+				.optional()
+				.describe(
+					'Merge strategy for update — patch (default): merge incoming props with existing; replace: discard all existing variants for the affected breakpoints.'
+				),
 		},
 		outputSchema: {
 			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
+			id: z.string().optional().describe( 'ID of the affected class — use for subsequent update/delete calls.' ),
+			label: z.string().optional().describe( 'Final label of the class after any auto-rename.' ),
 		},
 		requiredResources: [
 			{
@@ -79,7 +93,11 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 			dispatch( slice.actions.reset( { context: 'frontend' } ) );
 			window.dispatchEvent( new CustomEvent( 'classes:updated', { detail: { context: 'frontend' } } ) );
 
-			return { status: 'ok' };
+			return {
+				status: 'ok' as const,
+				id: result?.id,
+				label: result?.label,
+			};
 		},
 	} );
 };

@@ -110,7 +110,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 				detail: { context: 'frontend' },
 			} )
 		);
-		expect( result ).toEqual( { status: 'ok' } );
+		expect( result ).toEqual( { status: 'ok', id: 'g-new123', label: 'hero-heading' } );
 	} );
 
 	it( 'proxies update action and mutates store locally', async () => {
@@ -176,6 +176,39 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		);
 		expect( globalClassesStylesProvider.actions.delete ).toHaveBeenCalledWith( 'g-abc1234' );
 		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
+	} );
+
+	it( 'forwards styles and mode fields to the proxy', async () => {
+		const { registeredTool } = createMockRegistry();
+
+		await registeredTool.handler( {
+			action: 'create',
+			label: 'hero-heading',
+			styles: { default: 'color: red; &:hover { color: blue; }' },
+			mode: 'replace',
+		} );
+
+		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
+			tool: 'manage-classes',
+			input: {
+				operations: [
+					{
+						action: 'create',
+						label: 'hero-heading',
+						styles: { default: 'color: red; &:hover { color: blue; }' },
+						mode: 'replace',
+					},
+				],
+			},
+		} );
+	} );
+
+	it( 'schema exposes styles and mode fields', () => {
+		const { registeredTool } = createMockRegistry();
+		const schemaKeys = Object.keys( registeredTool.schema );
+
+		expect( schemaKeys ).toContain( 'styles' );
+		expect( schemaKeys ).toContain( 'mode' );
 	} );
 
 	it( 'propagates server errors from the proxy without mutating store', async () => {

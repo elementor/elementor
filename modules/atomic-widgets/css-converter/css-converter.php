@@ -38,70 +38,133 @@ class Css_Converter {
 	 * @return array{blocks: array<int, array{selector: string|null, css: string}>}|array{blocks: array, error: string}
 	 */
 	public function parse_nested( string $css ): array {
-		if ( $this->has_unclosed_brace( $css ) ) {
+		$result = $this->scan_ampersand_blocks( $css );
+
+		if ( isset( $result['error'] ) ) {
 			return [
 				'blocks' => [],
-				'error' => 'Unclosed brace detected in CSS input.',
+				'error'  => $result['error'],
 			];
 		}
 
-		$nested_blocks = [];
-		$error = null;
-		$base_css = preg_replace_callback(
-			'/&([^{]*)\{([^}]*)\}/s',
-			function ( $matches ) use ( &$nested_blocks, &$error ) {
-				$selector = trim( $matches[1] );
-
-				if ( '' === $selector ) {
-					$error = 'Bare & block without a selector is not valid CSS.';
-					return $matches[0];
-				}
-
-				$nested_blocks[] = [
-					'selector' => $selector,
-					'css'      => $matches[2],
-				];
-				return '';
-			},
-			$css
-		);
-
-		if ( null !== $error ) {
-			return [
-				'blocks' => [],
-				'error' => $error,
-			];
-		}
-
-		$blocks = array_merge(
-			[
-				[
-					'selector' => null,
-					'css' => $base_css,
-				],
-			],
-			$nested_blocks
-		);
-
-		return [ 'blocks' => $blocks ];
+		return [
+			'blocks' => array_merge(
+				[ [ 'selector' => null, 'css' => $result['base_css'] ] ],
+				$result['nested_blocks']
+			),
+		];
 	}
 
-	private function has_unclosed_brace( string $css ): bool {
-		$depth = 0;
-		$length = strlen( $css );
+	private function scan_ampersand_blocks( string $css ): array {
+		$nested_blocks = [];
+		$base_css      = '';
+		$len           = strlen( $css );
+		$i             = 0;
+		$segment_start = 0;
+		$in_string     = false;
+		$string_char   = '';
 
-		for ( $i = 0; $i < $length; $i++ ) {
-			if ( '{' === $css[ $i ] ) {
-				++$depth;
-			} elseif ( '}' === $css[ $i ] ) {
-				--$depth;
-				if ( $depth < 0 ) {
-					return true;
+		while ( $i < $len ) {
+			$char = $css[ $i ];
+
+			if ( $in_string ) {
+				if ( $char === $string_char && ( $i === 0 || '\\' !== $css[ $i - 1 ] ) ) {
+					$in_string = false;
+				}
+				$i++;
+				continue;
+			}
+
+			if ( '"' === $char || "'" === $char ) {
+				$in_string   = true;
+				$string_char = $char;
+				$i++;
+				continue;
+			}
+
+			if ( '{' === $char || '}' === $char ) {
+				return [ 'error' => 'Unclosed brace detected in CSS input.' ];
+			}
+
+			if ( '&' !== $char ) {
+				$i++;
+				continue;
+			}
+
+			$j = $i + 1;
+			while ( $j < $len && '{' !== $css[ $j ] ) {
+				$j++;
+			}
+
+			if ( $j >= $len ) {
+				$i++;
+				continue;
+			}
+
+			$selector = trim( substr( $css, $i + 1, $j - $i - 1 ) );
+
+			if ( '' === $selector ) {
+				return [ 'error' => 'Bare & block without a selector is not valid CSS.' ];
+			}
+
+			$block_end = $this->find_block_end( $css, $j + 1, $len );
+
+			if ( null === $block_end ) {
+				return [ 'error' => 'Unclosed brace detected in CSS input.' ];
+			}
+
+			$block_content = substr( $css, $j + 1, $block_end - $j - 2 );
+			$base_css     .= substr( $css, $segment_start, $i - $segment_start );
+			$segment_start = $block_end;
+
+			$nested_blocks[] = [
+				'selector' => $selector,
+				'css'      => $block_content,
+			];
+
+			$i = $block_end;
+		}
+
+		$base_css .= substr( $css, $segment_start );
+
+		return [
+			'base_css'      => $base_css,
+			'nested_blocks' => $nested_blocks,
+		];
+	}
+
+	private function find_block_end( string $css, int $start, int $len ): ?int {
+		$depth     = 1;
+		$in_string = false;
+		$str_char  = '';
+
+		for ( $i = $start; $i < $len; $i++ ) {
+			$c = $css[ $i ];
+
+			if ( $in_string ) {
+				if ( $c === $str_char && ( $i === 0 || '\\' !== $css[ $i - 1 ] ) ) {
+					$in_string = false;
+				}
+				continue;
+			}
+
+			if ( '"' === $c || "'" === $c ) {
+				$in_string = true;
+				$str_char  = $c;
+				continue;
+			}
+
+			if ( '{' === $c ) {
+				$depth++;
+			} elseif ( '}' === $c ) {
+				$depth--;
+				if ( 0 === $depth ) {
+					return $i + 1;
 				}
 			}
 		}
 
-		return 0 !== $depth;
+		return null;
 	}
 
 	/**
