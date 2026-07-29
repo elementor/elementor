@@ -89,7 +89,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'element_id' => [ 'type' => 'string' ],
 								'settings' => [
 									'type' => 'object',
-									'description' => 'update only: partial plain settings map merged onto existing settings.',
+									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
 								],
 								'style' => [
 									'type' => 'object',
@@ -98,7 +98,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'classes' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
-									'description' => 'update only: global class labels to attach (prepended to existing).',
+									'description' => 'update only: global class labels to attach (prepended to existing). Pass an empty array [] to remove all global classes from the element (local styles are preserved).',
 								],
 								'interactions' => [
 									'type' => 'array',
@@ -305,10 +305,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	private function apply_update( array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
 		$style = $this->as_map( $operation['style'] ?? [] );
-		$classes = $operation['classes'] ?? null;
+		$has_classes = array_key_exists( 'classes', $operation );
+		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes ) || null !== $interactions;
+		$has_change = ! empty( $settings ) || ! empty( $style ) || $has_classes || null !== $interactions;
 		if ( ! $has_change ) {
 			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
 		}
@@ -352,7 +353,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$warnings = array_merge( $warnings, $config_result['warnings'] );
 		}
 
-		if ( ! empty( $classes ) ) {
+		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
 				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
 			}

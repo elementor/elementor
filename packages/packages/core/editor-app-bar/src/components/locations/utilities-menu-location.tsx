@@ -21,11 +21,6 @@ export default function UtilitiesMenuLocation() {
 
 	return (
 		<ToolbarMenu>
-			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
-				<Fragment key={ id }>
-					<MenuItem />
-				</Fragment>
-			) ) }
 			{ popoverMenuItems.length > 0 && (
 				<ToolbarMenuMore id="elementor-editor-app-bar-utilities-more">
 					{ popoverMenuItems.map( ( { MenuItem, id } ) => (
@@ -33,6 +28,11 @@ export default function UtilitiesMenuLocation() {
 					) ) }
 				</ToolbarMenuMore>
 			) }
+			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
+				<Fragment key={ id }>
+					<MenuItem />
+				</Fragment>
+			) ) }
 		</ToolbarMenu>
 	);
 }
