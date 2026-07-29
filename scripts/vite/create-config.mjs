@@ -77,6 +77,13 @@ export function createEntryConfig( {
 
 	return defineConfig( {
 		logLevel: 'error',
+		// Mirrors Webpack's `mode`. Without it the bundler would resolve production `exports`
+		// conditions in the development build too, pulling in the production React runtime and
+		// dropping the development warnings the unminified bundles exist to provide.
+		mode: isProduction ? 'production' : 'development',
+		define: {
+			'process.env.NODE_ENV': JSON.stringify( isProduction ? 'production' : 'development' ),
+		},
 		plugins,
 		resolve: {
 			alias: loadAliases(),

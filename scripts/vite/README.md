@@ -102,8 +102,11 @@ node_modules.
   walking the chunk's module graph.
 
 TypeScript and JSX are handled by esbuild rather than Babel, since these presets only strip types
-and compile JSX with no downlevel. The development build additionally runs `@emotion/babel-plugin`
-for readable class names, exactly as the Webpack development rule did.
+and compile JSX with no downlevel. JSX uses the **classic** runtime
+(`React.createElement`/`React.Fragment`), because that is still the default of `@babel/preset-react`
+7.x and the packages depend on it: `React` resolves to the external global rather than to a bundled
+`react/jsx-runtime`. The development build additionally runs `@emotion/babel-plugin` for readable
+class names, exactly as the Webpack development rule did.
 
 Verified: all 55 `.asset.php` files and `.strings.js` files are byte-identical to the Grunt output.
 Loading every bundle in dependency order under jsdom with real React registers 51 of 55 globals for
@@ -135,6 +138,39 @@ ignores both:
   notices inline in the 30 bundles that carry them, so no notice is lost.
 
 A full `npm run build:vite` produces all four trees in about 43s.
+
+## Build mode
+
+Both pipelines set `mode` and define `process.env.NODE_ENV` from the target, mirroring Webpack. This
+is not cosmetic: without it the bundler resolves production `exports` conditions in the development
+build too, so `@elementor/ui` pulled in React's production JSX runtime and the unminified bundles
+lost the development warnings they exist to provide. It surfaced as a React "unique key" warning
+that the Grunt build did not produce, and `ui.js` carrying no `jsxDEV` reference at all.
+
+## Verification
+
+Against a live site, with the whole tree built by `npm run build:vite` and no test modified:
+
+| Check | Result |
+|-------|--------|
+| Jest (main) | 800/800 |
+| Jest (packages) | 3656 passed, 20 skipped |
+| Karma / Qunit | 261/261 |
+| Editor | panel and widget list render, preview handshake live, 34 `elementorV2` globals with none broken, 0 console errors, 0 failed requests |
+| Frontend | `elementorFrontend` initialised, 0 console errors, 0 failed requests |
+| wp-admin sweep | dashboard, settings, tools, post list and Gutenberg all clean |
+
+Two results need context:
+
+- The `entry-initialization-webpack-plugin` and `extract-i18n-wordpress-expressions-webpack-plugin`
+  suites compile with real Webpack and exceed Jest's 5s timeout when the machine is loaded. They run
+  in about 340ms in isolation and are unrelated to this migration.
+- The admin pages request `assets/js/locales/en/*.json`, which 404. Those files are not produced by
+  either pipeline, are not in the repository, and 404 identically on the Grunt build.
+
+The editor and frontend checks were also run against the Grunt baseline assets for comparison, which
+is how the mode issue above was found: the baseline reported 0 console errors where the candidate
+reported 1.
 
 ## Parity harness
 

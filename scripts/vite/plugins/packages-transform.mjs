@@ -39,7 +39,13 @@ export function typescriptPlugin() {
 
 			const result = await transform( code, {
 				loader: path.endsWith( 'x' ) ? 'tsx' : 'ts',
-				jsx: 'automatic',
+				// `@babel/preset-react` 7.x still defaults to the classic runtime, and the packages
+				// rely on it: `React` resolves to the external global rather than to a bundled
+				// `react/jsx-runtime`. The automatic runtime also changes how an array child is
+				// keyed, which React reports as a missing `key` warning.
+				jsx: 'transform',
+				jsxFactory: 'React.createElement',
+				jsxFragment: 'React.Fragment',
 				sourcefile: path,
 				sourcemap: true,
 				target: 'es2020',

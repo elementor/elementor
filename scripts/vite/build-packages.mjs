@@ -62,6 +62,12 @@ function createPackageConfig( { name, path: entryPath }, isProduction ) {
 
 	return defineConfig( {
 		logLevel: 'error',
+		// Mirrors Webpack's `mode`, which decided both the `process.env.NODE_ENV` replacement and
+		// which `exports` condition of a dependency was resolved.
+		mode: isProduction ? 'production' : 'development',
+		define: {
+			'process.env.NODE_ENV': JSON.stringify( isProduction ? 'production' : 'development' ),
+		},
 		plugins,
 		resolve: { extensions: RESOLVE_EXTENSIONS },
 		build: {
