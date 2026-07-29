@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Style_Applier {
 
 	const LOCAL_STYLE_ID_PREFIX = 'e-';
-	const LOCAL_STYLE_MARKER_PREFIX = 's-';
 	const DESKTOP_BREAKPOINT = 'desktop';
 	const LOCAL_STYLE_LABEL = 'local';
 	const LOCAL_STYLE_TYPE = 'class';
@@ -27,9 +26,10 @@ class Style_Applier {
 	/**
 	 * @param array<string, array&>               $config_id_index Index of subtree refs.
 	 * @param array<string, array<string, mixed>> $styles          Per-config-id CSS blocks.
+	 * @param array<string, string>               $element_types   Optional per-config-id element type (widgetType or elType), used in error messages to link the widget schema.
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
-	public function apply( array $config_id_index, array $styles ): array {
+	public function apply( array $config_id_index, array $styles, array $element_types = [] ): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error' => null,
@@ -55,25 +55,36 @@ class Style_Applier {
 				continue;
 			}
 
+			$element_type = $element_types[ $config_id ] ?? null;
 			$conversion = $this->convert_style_block( $declarations );
 
 			if ( ! empty( $conversion['rejected'] ) ) {
 				$errors[] = sprintf(
-					'[%s] Invalid variable usage: %s. Variables must exist in [elementor://global-variables] and use label-only references (e.g., var(--wc26-gold), NOT var(--e-gv-wc26-gold)).',
+					'[%s] Invalid variable usage: %s. Referenced in: %s. Variables must exist in [elementor://global-variables] and use label-only references (e.g. var(--wc26-gold), NOT var(--e-gv-wc26-gold)).',
 					$config_id,
-					implode( ', ', $conversion['rejected'] )
+					implode( ', ', $conversion['rejected'] ),
+					$this->format_declarations( $declarations )
 				);
 				continue;
 			}
 
 			if ( empty( $conversion['props'] ) && empty( $conversion['customCss'] ) ) {
+				$warnings[] = sprintf(
+					'[%s] No style applied. Unhandled declarations: %s.%s Use longhand properties (e.g. background-image, background-size) instead of shorthands.%s',
+					$config_id,
+					$this->format_declarations( $declarations ),
+					$this->url_hint_for_declarations( $declarations ),
+					$this->schema_link_hint( $element_type )
+				);
 				continue;
 			}
 
 			if ( ! empty( $conversion['customCss'] ) ) {
 				$warnings[] = sprintf(
-					'[%s] Some CSS properties fell back to custom_css which may not render on Pro 3.35+. Consider using longhand properties instead.',
-					$config_id
+					'[%s] Some declarations fell back to custom_css (may not render on Pro 3.35+): %s. Prefer atomic longhand properties.%s',
+					$config_id,
+					trim( $conversion['customCss'] ),
+					$this->schema_link_hint( $element_type )
 				);
 			}
 
@@ -82,8 +93,10 @@ class Style_Applier {
 			$apply_error = $this->apply_conversion_to_node(
 				$node,
 				$conversion,
+				$declarations,
 				$style_parser,
-				$config_id
+				$config_id,
+				$element_type
 			);
 
 			if ( $apply_error ) {
@@ -105,8 +118,10 @@ class Style_Applier {
 	private function apply_conversion_to_node(
 		array &$node,
 		array $conversion,
+		array $declarations,
 		Style_Parser $style_parser,
-		string $config_id
+		string $config_id,
+		?string $element_type
 	): ?string {
 		$existing_style_id = $this->find_existing_local_style_id( $node );
 
@@ -119,7 +134,7 @@ class Style_Applier {
 			$parse_result = $style_parser->parse( $merged_definition );
 
 			if ( ! $parse_result->is_valid() ) {
-				return sprintf( '[%s] %s', $config_id, $parse_result->errors()->to_string() );
+				return $this->format_parse_error( $config_id, $element_type, $declarations, $parse_result->errors()->to_string() );
 			}
 
 			$node['styles'][ $existing_style_id ] = $parse_result->unwrap();
@@ -131,7 +146,7 @@ class Style_Applier {
 
 		$parse_result = $style_parser->parse( $definition );
 		if ( ! $parse_result->is_valid() ) {
-			return sprintf( '[%s] %s', $config_id, $parse_result->errors()->to_string() );
+			return $this->format_parse_error( $config_id, $element_type, $declarations, $parse_result->errors()->to_string() );
 		}
 
 		$node['styles'] = $node['styles'] ?? [];
@@ -139,6 +154,41 @@ class Style_Applier {
 		$node['settings'] = $this->add_style_to_classes( $node['settings'] ?? [], $style_id );
 
 		return null;
+	}
+
+	private function format_parse_error( string $config_id, ?string $element_type, array $declarations, string $parser_error ): string {
+		return sprintf(
+			'[%s] Style validation failed: %s. Input declarations: %s.%s%s',
+			$config_id,
+			$parser_error,
+			$this->format_declarations( $declarations ),
+			$this->url_hint_for_declarations( $declarations ),
+			$this->schema_link_hint( $element_type )
+		);
+	}
+
+	private function format_declarations( array $declarations ): string {
+		$parts = [];
+		foreach ( $declarations as $property => $value ) {
+			$parts[] = $property . ': ' . ( null === $value ? 'null' : (string) $value );
+		}
+		return implode( '; ', $parts );
+	}
+
+	private function url_hint_for_declarations( array $declarations ): string {
+		foreach ( $declarations as $value ) {
+			if ( is_string( $value ) && false !== stripos( $value, 'url(' ) ) {
+				return ' URLs must be absolute (include the http(s):// scheme, e.g. https://example.com/image.png).';
+			}
+		}
+		return '';
+	}
+
+	private function schema_link_hint( ?string $element_type ): string {
+		if ( ! $element_type ) {
+			return '';
+		}
+		return sprintf( ' See elementor://widgets/schema/%s.', $element_type );
 	}
 
 	/**
@@ -161,7 +211,7 @@ class Style_Applier {
 
 	private function find_existing_local_style_id( array $node ): ?string {
 		foreach ( $node['styles'] ?? [] as $style_id => $_style ) {
-			if ( str_starts_with( $style_id, self::LOCAL_STYLE_MARKER_PREFIX ) ) {
+			if ( str_starts_with( (string) $style_id, self::LOCAL_STYLE_ID_PREFIX ) ) {
 				return $style_id;
 			}
 		}
