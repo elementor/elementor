@@ -13,5 +13,6 @@ export const ASSETS_JS = resolveFromRoot( 'assets/js' );
 export const ASSETS_PACKAGES_JS = resolveFromRoot( 'assets/js/packages' );
 export const BUILD_DIR = resolveFromRoot( 'build' );
 
+export const APP_IMPORTS_SCSS = resolveFromRoot( 'app/assets/styles/app-imports.scss' );
 export const BREAKPOINTS_PROXY = resolveFromRoot( 'assets/dev/scss/frontend/breakpoints/proxy.scss' );
 export const WEBPACK_ALIASES = resolveFromRoot( '.grunt-config/webpack.alias.js' );

@@ -30,6 +30,55 @@ Two asymmetries from the Grunt pipeline are deliberate and preserved:
 Verified: all 236 compiled stylesheets and `responsive-widgets.json` are byte-identical to
 the Grunt output.
 
+## Scripts pipeline
+
+`build-scripts.mjs` builds each entry as its own Rolldown IIFE bundle, matching the four Webpack
+configs (`base` and `frontend`, each in development and production). `qunit` is a third target that
+emits only the eight filenames `karma.conf.js` loads.
+
+Three decisions carry the pipeline and are not optional:
+
+- **Babel is retained for the transform stage** (`plugins/babel-legacy.mjs`). Rolldown refuses any
+  target below ES2015, but the Backbone and Marionette layers depend on the ES5 downlevel Babel
+  performed: Backbone's `extend` uses an object literal's `constructor` member as the child
+  constructor and reads `.prototype` off members such as `Collection#model`, and a shorthand method
+  has neither a `[[Construct]]` slot nor a prototype. Targeting ES2020 left them as shorthand
+  methods and took Qunit from 261 passing to 70 failing. The bundler still owns resolution, tree
+  shaking, externals and minification; only the syntax lowering stays with Babel, and it costs
+  roughly 4s of the 31s JS build.
+- **The two preset sets are asymmetric, as in Webpack.** Frontend entries use bare
+  `@babel/preset-env` with `useBuiltIns: 'usage'`, everything else uses `@wordpress/default`. The
+  two resolve different browser targets, so frontend output legitimately retains arrow functions
+  while base output does not.
+- **`@babel/plugin-transform-modules-commonjs` is deliberately dropped.** Rolldown needs ESM to
+  apply externals and tree shaking. This is the one intentional semantic change, and it is why
+  candidate bundles are consistently smaller: `e-wc-product-editor.js` falls from 107KB to 6KB
+  because `@wordpress/element`'s `useState`/`useEffect` collapse to the already-external `react`
+  global instead of bundling the whole package, which the CommonJS-transformed Webpack graph could
+  not see through.
+
+`plugins/webpack-shims.mjs` neutralises `assets/dev/js/public-path.js`. It assigns Webpack's
+`__webpack_public_path__` free variable to tell the Webpack runtime where to fetch lazy chunks;
+IIFE output cannot code split, so nothing is ever fetched. Left in place the assignment threw a
+`ReferenceError` that aborted the rest of the frontend entry before
+`window.elementorFrontend = new Frontend()`, which surfaced only as "The preview could not be
+loaded" in the editor with no console error on the editor page itself.
+
+Every dynamic import is inlined, since IIFE cannot code split. `webpack.runtime[.min].js` is
+emitted as a no-op so the `elementor-webpack-runtime` script handle still resolves in PHP.
+
+Two source files needed fixing because Rolldown validates named imports against a package's real
+exports where Webpack did not. Both were latent bugs, and both still build under Grunt:
+
+- `assets/dev/js/editor/utils/helpers.js` imported `isValidAttribute` as a named export of
+  `dompurify`, which only exposes it as an instance member.
+- `core/common/modules/events-manager/assets/js/module.js` imported the `Mixpanel` type as a value
+  from `mixpanel-browser`, using it only in a JSDoc annotation.
+
+Verified: Qunit 261/261 and Jest 800/800 pass with the tests unmodified, all 432 non-chunk
+`assets/js` filenames are present, `.strings.js` content matches, and the editor loads and
+takes element selection against a live site.
+
 ## Parity harness
 
 | Command | Description |
@@ -40,9 +89,10 @@ the Grunt output.
 | `npm run build:compare` | Diff `.build-baseline/` against `.vite-build/` |
 
 Structural parity (file existence) is enforced on every tree. Content parity is enforced
-byte-for-byte on `.css`, `.asset.php` and `.json` after stripping banners and
+byte-for-byte on `.css`, `.asset.php`, `.json` and `.strings.js` after stripping banners and
 `sourceMappingURL` comments. JS bundles are size-checked only, since two bundlers
-legitimately emit different module wrappers.
+legitimately emit different module wrappers. Hashed `.bundle` chunks are counted but not
+compared, because inlining every dynamic import means the candidate emits none.
 
 ## Baseline findings (Grunt/Webpack, v4.3.0)
 

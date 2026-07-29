@@ -104,7 +104,10 @@ function isHashedChunk( normalizedPath ) {
 }
 
 function isContentCriticalPath( relativePath ) {
-	return relativePath.endsWith( '.css' ) || relativePath.endsWith( '.asset.php' ) || relativePath.endsWith( '.json' );
+	return relativePath.endsWith( '.css' ) ||
+		relativePath.endsWith( '.asset.php' ) ||
+		relativePath.endsWith( '.json' ) ||
+		relativePath.endsWith( '.strings.js' );
 }
 
 function stableStringify( value ) {
@@ -124,6 +127,12 @@ function normalizeContent( relativePath, fullPath ) {
 
 	if ( relativePath.endsWith( '.json' ) ) {
 		return stableStringify( JSON.parse( content ) );
+	}
+
+	// The Webpack pipeline emitted translation expressions in a non-deterministic file order,
+	// so these are compared as a set of expressions rather than as an ordered document.
+	if ( relativePath.endsWith( '.strings.js' ) ) {
+		return content.split( '\n' ).sort().join( '\n' ).trim();
 	}
 
 	content = content.replace( BANNER_PATTERN, '' ).replace( SOURCE_MAPPING_PATTERN, '' );
@@ -158,11 +167,13 @@ function compareTree( label, baselineDir, candidateDir, strictContent ) {
 	const sizeDeltas = [];
 	const contentMismatches = [];
 
-	const baselineHasChunks = [ ...baselineFiles.keys() ].some( isHashedChunk );
-	const candidateHasChunks = [ ...candidateFiles.keys() ].some( isHashedChunk );
+	const chunkCounts = {
+		baseline: [ ...baselineFiles.keys() ].filter( isHashedChunk ).length,
+		candidate: [ ...candidateFiles.keys() ].filter( isHashedChunk ).length,
+	};
 
 	for ( const [ normalizedPath, baselineMeta ] of baselineFiles ) {
-		if ( isHashedChunk( normalizedPath ) && candidateHasChunks ) {
+		if ( isHashedChunk( normalizedPath ) ) {
 			continue;
 		}
 
@@ -193,7 +204,7 @@ function compareTree( label, baselineDir, candidateDir, strictContent ) {
 	}
 
 	for ( const [ normalizedPath, candidateMeta ] of candidateFiles ) {
-		if ( isHashedChunk( normalizedPath ) && baselineHasChunks ) {
+		if ( isHashedChunk( normalizedPath ) ) {
 			continue;
 		}
 
@@ -202,7 +213,7 @@ function compareTree( label, baselineDir, candidateDir, strictContent ) {
 		}
 	}
 
-	return { label, missing, extra, sizeDeltas, contentMismatches, baselineCount: baselineFiles.size, candidateCount: candidateFiles.size };
+	return { label, missing, extra, sizeDeltas, contentMismatches, chunkCounts, baselineCount: baselineFiles.size, candidateCount: candidateFiles.size };
 }
 
 function printList( title, items ) {
@@ -246,6 +257,10 @@ function printReport( result ) {
 		}
 	} else {
 		console.log( '  Content parity: OK' );
+	}
+
+	if ( result.chunkCounts.baseline !== result.chunkCounts.candidate ) {
+		console.log( `  Split chunks (informational): baseline=${ result.chunkCounts.baseline }, candidate=${ result.chunkCounts.candidate }` );
 	}
 
 	if ( result.sizeDeltas.length ) {

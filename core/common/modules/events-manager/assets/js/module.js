@@ -1,5 +1,5 @@
 import eventsConfig from './events-config';
-import mixpanel, { Mixpanel } from 'mixpanel-browser';
+import mixpanel from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
 
 /** @type {Mixpanel | null} */
