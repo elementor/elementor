@@ -24,7 +24,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version="v3" (legacy) or "v4" (atomic). Only version="v4" nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version="v3" nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles, and interactions in the same shape that build-composition accepts as input; V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles, and interactions in the same shape that build-composition accepts as input; V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -138,7 +138,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
-				if ( 'v3' === $version ) {
+				if ( null !== $version && $version < 4 ) {
 					$skeleton['settings'] = (object) [];
 					$skeleton['styles'] = (object) [];
 					return $skeleton;
@@ -161,7 +161,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 		} );
 	}
 
-	private function resolve_element_version( array $node ): ?string {
+	private function resolve_element_version( array $node ): ?int {
 		$type = Atomic_Elements_Utils::get_element_type( $node );
 
 		if ( ! $type ) {
@@ -174,7 +174,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return null;
 		}
 
-		return Atomic_Elements_Utils::is_atomic_element( $instance ) ? 'v4' : 'v3';
+		return Atomic_Elements_Utils::is_atomic_element( $instance ) ? 4 : 3;
 	}
 
 	private function normalize_interactions( $interactions ): array {

@@ -163,14 +163,14 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 				[
 					'id' => 'container1',
 					'elType' => 'container',
-					'version' => 'v3',
+					'version' => 3,
 					'title' => 'Container',
 					'elements' => [
 						[
 							'id' => 'widget1',
 							'elType' => 'widget',
 							'widgetType' => 'e-heading',
-							'version' => 'v4',
+							'version' => 4,
 							'title' => 'Heading',
 						],
 					],
@@ -211,7 +211,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame(
 			[
-				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'version' => 'v4', 'title' => 'Button' ],
+				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'version' => 4, 'title' => 'Button' ],
 			],
 			$result['elements']
 		);
@@ -714,9 +714,9 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$container = $result['elements'][0];
-		$this->assertSame( 'v3', $container['version'] );
-		$this->assertSame( 'v3', $container['elements'][0]['version'] );
-		$this->assertSame( 'v4', $container['elements'][1]['version'] );
+		$this->assertSame( 3, $container['version'] );
+		$this->assertSame( 3, $container['elements'][0]['version'] );
+		$this->assertSame( 4, $container['elements'][1]['version'] );
 	}
 
 	public function test_execute__strips_v3_settings_and_styles_when_include_content_true() {
@@ -746,7 +746,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$node = $result['elements'][0];
-		$this->assertSame( 'v3', $node['version'] );
+		$this->assertSame( 3, $node['version'] );
 		$this->assertEquals( (object) [], $node['settings'] );
 		$this->assertEquals( (object) [], $node['styles'] );
 	}
