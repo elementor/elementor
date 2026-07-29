@@ -8,6 +8,10 @@ on:
         required: false
         default: ''
 
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('playwright-suite-{0}', github.ref) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
