@@ -13,7 +13,7 @@ const TOOL_NAME = 'manage-classes';
 
 type ManageClassesResponse = {
 	status: string;
-	class?: StyleDefinition;
+	results?: StyleDefinition[];
 	order?: string[];
 };
 
@@ -52,21 +52,21 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 		handler: async ( params ) => {
 			const { data } = await httpService().post< HttpResponse< ManageClassesResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: params,
+				input: { operations: [ params ] },
 			} );
 
-			const payload = data.data;
+			const result = data.data.results?.[ 0 ];
 			const { create, update, delete: del } = globalClassesStylesProvider.actions;
 
 			switch ( params.action ) {
 				case 'create':
-					if ( payload.class && create ) {
-						create( payload.class.label, payload.class.variants, payload.class.id );
+					if ( result && create ) {
+						create( result.label, result.variants, result.id );
 					}
 					break;
 				case 'update':
-					if ( payload.class && update ) {
-						update( payload.class );
+					if ( result && update ) {
+						update( result );
 					}
 					break;
 				case 'delete':

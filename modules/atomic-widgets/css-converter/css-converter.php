@@ -35,6 +35,76 @@ class Css_Converter {
 	}
 
 	/**
+	 * @return array{blocks: array<int, array{selector: string|null, css: string}>}|array{blocks: array, error: string}
+	 */
+	public function parse_nested( string $css ): array {
+		if ( $this->has_unclosed_brace( $css ) ) {
+			return [
+				'blocks' => [],
+				'error' => 'Unclosed brace detected in CSS input.',
+			];
+		}
+
+		$nested_blocks = [];
+		$error = null;
+		$base_css = preg_replace_callback(
+			'/&([^{]*)\{([^}]*)\}/s',
+			function ( $matches ) use ( &$nested_blocks, &$error ) {
+				$selector = trim( $matches[1] );
+
+				if ( '' === $selector ) {
+					$error = 'Bare & block without a selector is not valid CSS.';
+					return $matches[0];
+				}
+
+				$nested_blocks[] = [
+					'selector' => $selector,
+					'css'      => $matches[2],
+				];
+				return '';
+			},
+			$css
+		);
+
+		if ( null !== $error ) {
+			return [
+				'blocks' => [],
+				'error' => $error,
+			];
+		}
+
+		$blocks = array_merge(
+			[
+				[
+					'selector' => null,
+					'css' => $base_css,
+				],
+			],
+			$nested_blocks
+		);
+
+		return [ 'blocks' => $blocks ];
+	}
+
+	private function has_unclosed_brace( string $css ): bool {
+		$depth = 0;
+		$length = strlen( $css );
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			if ( '{' === $css[ $i ] ) {
+				++$depth;
+			} elseif ( '}' === $css[ $i ] ) {
+				--$depth;
+				if ( $depth < 0 ) {
+					return true;
+				}
+			}
+		}
+
+		return 0 !== $depth;
+	}
+
+	/**
 	 * @return array{props: array, customCss: string, rejected: string[]}
 	 */
 	public function convert( string $css ): array {
