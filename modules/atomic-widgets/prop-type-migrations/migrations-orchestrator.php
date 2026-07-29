@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
@@ -19,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Orchestrator {
+	const EXPERIMENT_BC_MIGRATIONS = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const MIGRATIONS_URL = 'https://editor.elementor.com/v1/migrations/';
 	const BUNDLED_MIGRATIONS_DIRECTORY = 'migrations/';
 
@@ -38,6 +40,13 @@ class Migrations_Orchestrator {
 
 	public function register_hooks() {
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
+	}
+
+	public static function is_active(): bool {
+		return true;
+	}
+
+	public static function register_affecting_feature_flag_hooks( array $features ): void {
 	}
 
 	public static function make( ?string $migrations_path = null ): self {

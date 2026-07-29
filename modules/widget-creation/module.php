@@ -5,6 +5,7 @@ namespace Elementor\Modules\WidgetCreation;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Utils\Hints;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const EXPERIMENT_NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
 	const MODULE_NAME = 'widget-creation';
 
 	const PACKAGES = [

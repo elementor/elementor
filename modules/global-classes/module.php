@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
 	const PACKAGES = [
 		'editor-global-classes',
 	];

@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const PACKAGES        = [ 'editor-components' ];
 
 	public function get_name() {

@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\OptIn\Opt_In as Atomic_Widgets_Opt_In;
 use Elementor\Plugin;
 
 class Module extends BaseModule {
+	const EXPERIMENT_NAME = Atomic_Widgets_Opt_In::EXPERIMENT_NAME;
 	const MODULE_NAME = 'editor-v4-opt-in';
 	const WELCOME_POPOVER_DISPLAYED_OPTION = '_e_welcome_popover_displayed';
 

@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const MODULE_NAME = 'e-interactions';
 
 	const HANDLE_MOTION_JS            = 'motion-js';
