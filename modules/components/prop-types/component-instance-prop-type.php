@@ -23,7 +23,11 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 	}
 
 	public static function extract_component_id( array $settings ) {
-		return $settings['component_instance']['value']['component_id']['value'] ?? null;
+		if ( empty( $settings['component_instance']['value']['component_id']['value'] ) ) {
+			return null;
+		}
+
+		return $settings['component_instance']['value']['component_id']['value'];
 	}
 
 	public function validate_value( $value ): bool {
