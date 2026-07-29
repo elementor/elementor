@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
@@ -50,7 +51,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 elements in a document (up to 50 operations applied to a single document tree, saved once). Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only V4 elements (see elementor/get-page-structure -> version) can be the operation target; targeting a V3 legacy element_id returns elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -91,7 +92,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'element_id' => [ 'type' => 'string' ],
 								'settings' => [
 									'type' => 'object',
-									'description' => 'update only: partial plain settings map merged onto existing settings.',
+									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
 								],
 								'style' => [
 									'type' => 'object',
@@ -100,7 +101,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'classes' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
-									'description' => 'update only: global class labels to attach (prepended to existing).',
+									'description' => 'update only: global class labels to attach (prepended to existing). Pass an empty array [] to remove all global classes from the element (local styles are preserved).',
 								],
 								'interactions' => [
 									'type' => 'array',
@@ -240,6 +241,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {
+		$v3_error = $this->reject_v3_target( $tree, $element_id );
+		if ( $v3_error ) {
+			return $v3_error;
+		}
+
 		switch ( $action ) {
 			case 'update':
 				return $this->apply_update( $document, $tree, $element_id, $operation );
@@ -259,6 +265,33 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					)
 				);
 		}
+	}
+
+	private function reject_v3_target( array $tree, string $element_id ): ?\WP_Error {
+		$node = $this->get_mutator()->find_by_id( $tree, $element_id );
+		if ( null === $node ) {
+			return null;
+		}
+
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+		if ( ! is_string( $type ) || '' === $type ) {
+			return null;
+		}
+
+		$instance = Atomic_Elements_Utils::get_element_instance( $type );
+		if ( $instance && Atomic_Elements_Utils::is_atomic_element( $instance ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_v3_not_supported',
+			__( 'Legacy V3 element cannot be modified through this MCP. Edit V3 elements directly in the Elementor editor.', 'elementor' ),
+			[
+				'status' => \WP_Http::BAD_REQUEST,
+				'element_id' => $element_id,
+				'version' => 'v3',
+			]
+		);
 	}
 
 	private function apply_delete( array $tree, string $element_id ) {
@@ -307,10 +340,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
 		$style = $this->as_map( $operation['style'] ?? [] );
-		$classes = $operation['classes'] ?? null;
+		$has_classes = array_key_exists( 'classes', $operation );
+		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes ) || null !== $interactions;
+		$has_change = ! empty( $settings ) || ! empty( $style ) || $has_classes || null !== $interactions;
 		if ( ! $has_change ) {
 			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
 		}
@@ -363,7 +397,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		if ( ! empty( $classes ) ) {
+		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
 				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
 			}
