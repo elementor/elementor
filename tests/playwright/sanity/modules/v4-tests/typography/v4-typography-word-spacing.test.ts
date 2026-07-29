@@ -125,8 +125,6 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setWordSpacing( 100, UNITS.percent );
-			// Percentage word spacing is relative to the advance measure of the space
-			// character (U+0020), per CSS Text Level 4.
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 100, expectedUnit: UNITS.percent, cssProperty: 'wordSpacing' } );
 		} );
 	} );

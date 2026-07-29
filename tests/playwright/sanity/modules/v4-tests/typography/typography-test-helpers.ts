@@ -98,9 +98,6 @@ export async function verifySpacingEditor( params:
 		}, cssProperty );
 
 		if ( UNITS.percent === expectedUnit ) {
-			// Per CSS Text Level 4, letter/word-spacing percentages are kept as a
-			// percentage at computed-value time (not resolved to a length), so
-			// getComputedStyle() reports the specified percentage back as-is.
 			expect( computedStyles.spacing ).toBe( `${ expectedValue }%` );
 			return;
 		}
