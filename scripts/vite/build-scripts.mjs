@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -37,7 +37,14 @@ function parseArgs( argv ) {
 	};
 }
 
+/**
+ * `assets/js` is generated output and is not in the repository, so on a clean checkout it does not
+ * exist yet. Only the bundles at the top level are removed; the `packages/` subdirectory is owned by
+ * the packages build.
+ */
 function cleanBundleOutput() {
+	mkdirSync( ASSETS_JS, { recursive: true } );
+
 	for ( const fileName of readdirSync( ASSETS_JS ) ) {
 		const fullPath = join( ASSETS_JS, fileName );
 
@@ -48,6 +55,8 @@ function cleanBundleOutput() {
 }
 
 function writeRuntimePlaceholders() {
+	mkdirSync( ASSETS_JS, { recursive: true } );
+
 	for ( const fileName of RUNTIME_PLACEHOLDER_NAMES ) {
 		writeFileSync( join( ASSETS_JS, fileName ), RUNTIME_PLACEHOLDER_SOURCE );
 	}

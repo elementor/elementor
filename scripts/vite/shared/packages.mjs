@@ -31,15 +31,16 @@ function resolveEntryPath( packageDir, entrySource ) {
 	// built from the same sources, so that is used instead.
 	const distEntry = join( packageDir, 'dist/index.mjs' );
 
-	if ( existsSync( distEntry ) ) {
+	if ( existsSync( distEntry ) || ! existsSync( sourceEntry ) ) {
+		// A directory with neither entry is not a package, and the caller drops it.
 		return distEntry;
 	}
 
-	// Production asked for dist but it is missing; falling back to src silently would ship a mixed
-	// graph without any signal.
-	console.warn( `[vite:packages] Production build is using TypeScript instead of missing dist: ${ distEntry }` );
-
-	return sourceEntry;
+	// Falling back to src here builds a mixed graph whose externals cannot all be resolved to a
+	// global, which the bundler reports only as "globals option: The function returned `undefined`".
+	throw new Error(
+		`Missing ${ distEntry }. Run \`npm run build:packages\` before building the production bundles.`,
+	);
 }
 
 /**
