@@ -12,6 +12,24 @@ Replacement for the Grunt + Webpack toolchain. Both pipelines coexist until cuto
 | `npm run scripts:vite:watch` | Watch JS |
 | `npm run build:vite` | Full build including the `build/` plugin tree |
 
+## Styles pipeline
+
+`build-styles.mjs` drives `plugins/scss-build.mjs`, which reproduces the task order of
+`grunt styles`: generate per-widget entry files, compile every Sass target, autoprefix the
+top level stylesheets in place, minify the five glob sets, compile the custom breakpoint
+templates behind a proxy import swap, then delete the non-minified widget artifacts.
+
+Two asymmetries from the Grunt pipeline are deliberate and preserved:
+
+- `--dev` and `--watch` stop after the Sass pass, exactly like `grunt styles:true`, so dev
+  output is unprefixed and unminified and widget CSS is not regenerated.
+- Autoprefixer runs over the unminified `assets/css/*.css` only. Nested folders
+  (`conditionals/`, `modules/`, `templates/`, `lib/swiper/css/`) are prefixed solely as part
+  of minification, so their unminified output carries no vendor prefixes.
+
+Verified: all 236 compiled stylesheets and `responsive-widgets.json` are byte-identical to
+the Grunt output.
+
 ## Parity harness
 
 | Command | Description |

@@ -89,12 +89,13 @@ function collectFiles( directory, files = [] ) {
 
 function copyDirectory( snapshotRoot, sourceRelative, destinationRelative ) {
 	const sourcePath = join( ROOT, sourceRelative );
-	const destinationPath = join( snapshotRoot, destinationRelative );
 
 	if ( ! existsSync( sourcePath ) ) {
 		console.warn( `[snapshot] Skipping missing source: ${ sourceRelative }` );
 		return;
 	}
+
+	const destinationPath = join( snapshotRoot, destinationRelative );
 
 	mkdirSync( dirname( destinationPath ), { recursive: true } );
 	cpSync( sourcePath, destinationPath, { recursive: true, force: true } );
