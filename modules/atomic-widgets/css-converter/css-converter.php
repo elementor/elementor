@@ -49,7 +49,12 @@ class Css_Converter {
 
 		return [
 			'blocks' => array_merge(
-				[ [ 'selector' => null, 'css' => $result['base_css'] ] ],
+				[
+					[
+						'selector' => null,
+						'css' => $result['base_css'],
+					],
+				],
 				$result['nested_blocks']
 			),
 		];
@@ -68,17 +73,17 @@ class Css_Converter {
 			$char = $css[ $i ];
 
 			if ( $in_string ) {
-				if ( $char === $string_char && ( $i === 0 || '\\' !== $css[ $i - 1 ] ) ) {
+				if ( $string_char === $char && ( 0 === $i || '\\' !== $css[ $i - 1 ] ) ) {
 					$in_string = false;
 				}
-				$i++;
+				++$i;
 				continue;
 			}
 
 			if ( '"' === $char || "'" === $char ) {
 				$in_string   = true;
 				$string_char = $char;
-				$i++;
+				++$i;
 				continue;
 			}
 
@@ -87,17 +92,17 @@ class Css_Converter {
 			}
 
 			if ( '&' !== $char ) {
-				$i++;
+				++$i;
 				continue;
 			}
 
 			$j = $i + 1;
 			while ( $j < $len && '{' !== $css[ $j ] ) {
-				$j++;
+				++$j;
 			}
 
 			if ( $j >= $len ) {
-				$i++;
+				++$i;
 				continue;
 			}
 
@@ -142,7 +147,7 @@ class Css_Converter {
 			$c = $css[ $i ];
 
 			if ( $in_string ) {
-				if ( $c === $str_char && ( $i === 0 || '\\' !== $css[ $i - 1 ] ) ) {
+				if ( $str_char === $c && ( 0 === $i || '\\' !== $css[ $i - 1 ] ) ) {
 					$in_string = false;
 				}
 				continue;
@@ -155,9 +160,9 @@ class Css_Converter {
 			}
 
 			if ( '{' === $c ) {
-				$depth++;
+				++$depth;
 			} elseif ( '}' === $c ) {
-				$depth--;
+				--$depth;
 				if ( 0 === $depth ) {
 					return $i + 1;
 				}
