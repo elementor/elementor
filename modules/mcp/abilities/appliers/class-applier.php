@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
@@ -39,6 +39,13 @@ class Class_Applier {
 					$config_id,
 					gettype( $labels )
 				);
+				continue;
+			}
+
+			if ( empty( $labels ) ) {
+				$node = &$config_id_index[ $config_id ];
+				$node['settings'] = $this->clear_global_classes( $node['settings'] ?? [] );
+				unset( $node );
 				continue;
 			}
 
@@ -93,6 +100,26 @@ class Class_Applier {
 		}
 
 		return $id_by_label;
+	}
+
+	private function clear_global_classes( array $settings ): array {
+		$existing = $settings['classes']['value'] ?? [];
+
+		if ( ! is_array( $existing ) ) {
+			$existing = [];
+		}
+
+		$local_only = array_values( array_filter(
+			$existing,
+			static fn( $id ) => is_string( $id ) && str_starts_with( $id, Style_Applier::LOCAL_STYLE_ID_PREFIX )
+		) );
+
+		$settings['classes'] = [
+			'$$type' => 'classes',
+			'value' => $local_only,
+		];
+
+		return $settings;
 	}
 
 	private function prepend_global_classes( array $settings, array $class_ids ): array {

@@ -1,10 +1,11 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,13 +43,17 @@ class Element_Config_Applier {
 			$schema = $this->type_resolver->get_props_schema( $tag, $widget_configs );
 
 			if ( ! $schema ) {
-				$node['settings'] = array_merge( $node['settings'] ?? [], $settings );
+				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $settings );
 				continue;
 			}
 
-			$resolved = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings );
+			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings );
 
-			$node['settings'] = array_merge( $node['settings'] ?? [], $resolved );
+			$node['settings'] = array_merge( $node['settings'] ?? [], $outcome['resolved'] );
+
+			foreach ( $outcome['cleared'] as $cleared_key ) {
+				unset( $node['settings'][ $cleared_key ] );
+			}
 
 			$validation_error = $this->validate_settings( $node['settings'], $schema );
 			if ( $validation_error ) {
@@ -87,6 +92,7 @@ class Element_Config_Applier {
 	): array {
 		$alias_map = Prop_Canonicalizer::build_alias_map( $schema );
 		$resolved = [];
+		$cleared = [];
 
 		foreach ( $settings as $name => $value ) {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
@@ -98,6 +104,11 @@ class Element_Config_Applier {
 					$name,
 					$element_type
 				);
+				continue;
+			}
+
+			if ( null === $value ) {
+				$cleared[] = $canonical;
 				continue;
 			}
 
@@ -123,7 +134,22 @@ class Element_Config_Applier {
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
-		return $resolved;
+		return [
+			'resolved' => $resolved,
+			'cleared' => $cleared,
+		];
+	}
+
+	private function merge_with_clears( array $existing, array $incoming ): array {
+		$merged = $existing;
+		foreach ( $incoming as $key => $value ) {
+			if ( null === $value ) {
+				unset( $merged[ $key ] );
+				continue;
+			}
+			$merged[ $key ] = $value;
+		}
+		return $merged;
 	}
 
 	private function validate_settings( array $settings, array $schema ): ?string {
