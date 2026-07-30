@@ -36,7 +36,7 @@ export default defineConfig( {
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 3 : 0,
-	workers: process.env.CI ? 2 : 1,
+	workers: 1,
 	fullyParallel: false,
 	reporter: process.env.CI
 		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]

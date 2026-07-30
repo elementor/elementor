@@ -1,10 +1,6 @@
 name: Build
 
 on:
-  pull_request:
-    branches:
-      - 'main'
-      - '[0-9].[0-9][0-9]'
   merge_group:
   workflow_dispatch:
   workflow_call:
@@ -49,8 +45,6 @@ jobs:
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
 
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
