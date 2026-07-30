@@ -39,7 +39,7 @@ export default defineConfig( {
 	workers: 1,
 	fullyParallel: false,
 	reporter: process.env.CI
-		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]
+		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false, attachments: { trace: 'on' } } ] ]
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {
