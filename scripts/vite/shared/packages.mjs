@@ -29,7 +29,7 @@ function resolveEntryPath( packageDir, entrySource ) {
 	// externalized by Rolldown, which would silently bundle every dependency and leave `.asset.php`
 	// without any deps. Every package that ships `dist/index.js` also ships the ESM `dist/index.mjs`
 	// built from the same sources, so that is used instead.
-	const distEntry = join( packageDir, 'dist/index.mjs' );
+	const distEntry = join( packageDir, process.env.ELEMENTOR_PROD_CJS ? 'dist/index.js' : 'dist/index.mjs' );
 
 	if ( existsSync( distEntry ) || ! existsSync( sourceEntry ) ) {
 		// A directory with neither entry is not a package, and the caller drops it.
