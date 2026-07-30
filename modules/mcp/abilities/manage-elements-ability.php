@@ -11,10 +11,12 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
@@ -192,7 +194,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				continue;
 			}
 
-			$outcome = $this->apply_operation( $tree, $action, $element_id, $operation );
+			$outcome = $this->apply_operation( $document, $tree, $action, $element_id, $operation );
 
 			if ( is_wp_error( $outcome ) ) {
 				$results->add_error( $index, $action, $outcome->get_error_code(), $outcome->get_error_message() );
@@ -238,7 +240,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return array_merge( $response, Document_Mutation_Links::for_document( $document ) );
 	}
 
-	private function apply_operation( array $tree, string $action, string $element_id, array $operation ) {
+	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {
 		$v3_error = $this->reject_v3_target( $tree, $element_id );
 		if ( $v3_error ) {
 			return $v3_error;
@@ -246,7 +248,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		switch ( $action ) {
 			case 'update':
-				return $this->apply_update( $tree, $element_id, $operation );
+				return $this->apply_update( $document, $tree, $element_id, $operation );
 			case 'delete':
 				return $this->apply_delete( $tree, $element_id );
 			case 'move':
@@ -335,7 +337,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function apply_update( array $tree, string $element_id, array $operation ) {
+	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
 		$style = $this->as_map( $operation['style'] ?? [] );
 		$has_classes = array_key_exists( 'classes', $operation );
@@ -374,16 +376,25 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
-			$config_result = $config_applier->apply(
-				$index,
-				[ $element_id => $settings ],
-				$widget_configs
-			);
-			if ( $config_result['error'] ) {
-				return $config_result['error'];
+			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
+				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
+				$component_error = $component_applier->apply_partial( $index, [ $element_id => $settings ], $document );
+				if ( $component_error ) {
+					return $component_error;
+				}
+			} else {
+				$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
+				$config_result = $config_applier->apply(
+					$index,
+					[ $element_id => $settings ],
+					$widget_configs,
+					$document
+				);
+				if ( $config_result['error'] ) {
+					return $config_result['error'];
+				}
+				$warnings = array_merge( $warnings, $config_result['warnings'] );
 			}
-			$warnings = array_merge( $warnings, $config_result['warnings'] );
 		}
 
 		if ( $has_classes ) {

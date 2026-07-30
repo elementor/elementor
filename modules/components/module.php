@@ -33,7 +33,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! $this->is_experiment_active() ) {
+		if ( ! self::is_experiment_active() ) {
 			return;
 		}
 
@@ -60,7 +60,7 @@ class Module extends BaseModule {
 		( new Components_REST_API() )->register_hooks();
 	}
 
-	public function is_experiment_active() {
+	public static function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 

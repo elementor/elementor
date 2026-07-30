@@ -5,7 +5,6 @@ namespace Elementor\Modules\Mcp\Abilities\Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
@@ -170,7 +169,7 @@ class Widget_Context_Helper {
 		return $properties;
 	}
 
-	public static function to_plain_llm_schema( Transformable_Prop_Type $prop_type ): array {
+	public static function to_plain_llm_schema( Prop_Type $prop_type ): array {
 		$schema = self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
 
 		return self::refine_from_prop_type( $schema, $prop_type, Utils::has_pro() );
