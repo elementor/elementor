@@ -161,6 +161,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -185,6 +186,8 @@ class Module extends BaseModule {
 		if ( ! self::is_active() ) {
 			return;
 		}
+
+		$this->register_icon_button_experiment();
 
 		$this->register_hooks();
 
@@ -226,6 +229,21 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '4.0.0',
 			],
 		];
+	}
+
+	/**
+	 * Dev-only gate that keeps the V4 Icon Button element off trunk while it is built across
+	 * several pull requests. Remove it once the element passes QA.
+	 */
+	private function register_icon_button_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ICON_BUTTON,
+			'title' => esc_html__( 'Icon Button', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Icon Button element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	private function register_hooks() {
