@@ -90,20 +90,6 @@ class Migrations_Orchestrator {
 		Migrations_Cache::clear_migration_cache( $id, $data_identifier );
 	}
 
-	/**
-	 * Migrations orchestrator should follow the following steps:
-	 * 1. Check cache to see if the data is already migrated
-	 * 2. Resolve the schema for the current element
-	 * 3. Walk through the data and migrate the props if type mismatch (between data and schema) is found
-	 * 4. Migrate the widget keys
-	 * 5. Save migrated data to the database
-	 * 6. Save the migrated state to the cache
-	 *
-	 * @param array    $data            Data structure to migrate will return modified data by reference
-	 * @param int      $entity_id       Unique ID for caching mechanism, so we don't run the migration again for the same data
-	 * @param string   $data_identifier Unique identifier for DB table, the data type (e.g., '_elementor_data', '_elementor_global_classes')
-	 * @param callable $save_callback   Function to persist migrated data if changes occurred
-	 */
 	public function migrate_payload( array &$data ): bool {
 		$this->loader = $this->get_active_loader();
 
@@ -118,6 +104,20 @@ class Migrations_Orchestrator {
 		}
 	}
 
+	/**
+	 * Migrations orchestrator should follow the following steps:
+	 * 1. Check cache to see if the data is already migrated
+	 * 2. Resolve the schema for the current element
+	 * 3. Walk through the data and migrate the props if type mismatch (between data and schema) is found
+	 * 4. Migrate the widget keys
+	 * 5. Save migrated data to the database
+	 * 6. Save the migrated state to the cache
+	 *
+	 * @param array    $data            Data structure to migrate will return modified data by reference
+	 * @param int      $entity_id       Unique ID for caching mechanism, so we don't run the migration again for the same data
+	 * @param string   $data_identifier Unique identifier for DB table, the data type (e.g., '_elementor_data', '_elementor_global_classes')
+	 * @param callable $save_callback   Function to persist migrated data if changes occurred
+	 */
 	public function migrate( array &$data, int $entity_id, string $data_identifier, callable $save_callback ): void {
 		$this->loader = $this->get_active_loader();
 
