@@ -36,11 +36,11 @@ function deriveChunkName( resolvedPath ) {
 	const parent = segments[ segments.length - 2 ];
 	const leaf = segments[ segments.length - 1 ];
 
-	if ( leaf === 'index' && parent ) {
+	if ( 'index' === leaf && parent ) {
 		return parent;
 	}
 
-	if ( parent && parent !== 'handlers' && parent !== 'src' ) {
+	if ( parent && 'handlers' !== parent && 'src' !== parent ) {
 		return `${ parent }-${ leaf }`;
 	}
 
