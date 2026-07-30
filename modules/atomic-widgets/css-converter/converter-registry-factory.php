@@ -336,7 +336,7 @@ class Converter_Registry_Factory {
 	 *
 	 * @return array<string, array{0: string, 1: string}>
 	 */
-	private static function border_side_specs(): array {
+	public static function border_side_specs(): array {
 		return [
 			'border-top-width' => [ 'border-width', 'block-start' ],
 			'border-right-width' => [ 'border-width', 'inline-end' ],

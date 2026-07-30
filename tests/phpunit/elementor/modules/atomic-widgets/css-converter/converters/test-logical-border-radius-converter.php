@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Side_Merge_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
@@ -130,26 +131,18 @@ class Test_Logical_Border_Radius_Converter extends TestCase {
 	private function make_registry(): Converter_Registry {
 		$registry = new Converter_Registry();
 
-		$corners = [
-			'border-start-start-radius'  => 'start-start',
-			'border-start-end-radius'    => 'start-end',
-			'border-end-end-radius'      => 'end-end',
-			'border-end-start-radius'    => 'end-start',
-			'border-top-left-radius'     => 'start-start',
-			'border-top-right-radius'    => 'start-end',
-			'border-bottom-right-radius' => 'end-end',
-			'border-bottom-left-radius'  => 'end-start',
-		];
+		$border_radius_specs = array_filter(
+			Converter_Registry_Factory::border_side_specs(),
+			fn( $spec ) => 'border-radius' === $spec[0]
+		);
 
-		$all_corner_keys = [ 'start-start', 'start-end', 'end-end', 'end-start' ];
-
-		foreach ( $corners as $property => $side_key ) {
+		foreach ( $border_radius_specs as $property => [ , $side_key ] ) {
 			$registry->register( new Object_Side_Merge_Converter(
 				$property,
 				'border-radius',
 				Border_Radius_Prop_Type::get_key(),
 				$side_key,
-				$all_corner_keys,
+				Converter_Registry_Factory::BORDER_RADIUS_CORNER_KEYS,
 				Border_Radius_Prop_Type::class
 			) );
 		}
