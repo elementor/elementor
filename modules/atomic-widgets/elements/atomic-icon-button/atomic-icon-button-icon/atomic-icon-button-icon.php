@@ -24,6 +24,8 @@ class Atomic_Icon_Button_Icon extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'Icon slot for the Icon Button element. Holds the decorative icon; drop any V4 element here to replace the default SVG.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'permanently_locked', true );
