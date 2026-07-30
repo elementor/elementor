@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Mcp\Abilities\Utils\Static_Markdown_Resources;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
 
@@ -78,6 +79,7 @@ class Module extends BaseModule {
 		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
 		( new Abilities\Read_Resource_Ability() )->register();
+		Static_Markdown_Resources::register_abilities();
 	}
 
 	public function register_server( $adapter ) {
@@ -145,14 +147,17 @@ class Module extends BaseModule {
 	}
 
 	private function get_server_resources(): array {
-		$resources = [
-			'elementor/style-best-practices',
-			'elementor/manage-global-variable-guide',
-			'elementor/global-classes-resource',
-			'elementor/global-variables-resource',
-			'elementor/list-dynamic-tags',
-			'elementor/interactions-schema-resource',
-		];
+		$resources = array_merge(
+			[
+				'elementor/style-best-practices',
+				'elementor/manage-global-variable-guide',
+				'elementor/global-classes-resource',
+				'elementor/global-variables-resource',
+				'elementor/list-dynamic-tags',
+				'elementor/interactions-schema-resource',
+			],
+			Static_Markdown_Resources::ability_slugs()
+		);
 
 		/**
 		 * Filters additional MCP resource ability slugs to expose on the Elementor MCP server.
