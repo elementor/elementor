@@ -64,6 +64,15 @@ class Atomic_Background_Video_Pause extends Atomic_Element_Base {
 		];
 	}
 
+	public static function get_props_schema(): array {
+		$schema = parent::get_props_schema();
+
+		// Locked sub-element: Display Conditions belong on the Background Video root only.
+		unset( $schema['display-conditions'] );
+
+		return $schema;
+	}
+
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()

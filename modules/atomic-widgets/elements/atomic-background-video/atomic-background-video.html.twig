@@ -1,8 +1,9 @@
 {% set state_class = '' %}
 {% if settings.state == 'playing' %}{% set state_class = 'e-background-video--playing' %}{% endif %}
 {% if settings.state == 'paused' %}{% set state_class = 'e-background-video--paused' %}{% endif %}
+{% set tag = settings.tag | default('div') %}
 {% set classes = ['e-background-video', 'e-con', 'e-atomic-element', base_styles.base, state_class] | merge(settings.classes | default([])) | join(' ') %}
-<div class="{{ classes }} {{ editor_classes | default('') }}"
+<{{ tag | e('html_tag') }} class="{{ classes }} {{ editor_classes | default('') }}"
 	data-id="{{ id }}"
 	data-element_type="{{ type }}"
 	data-e-type="{{ type }}"
@@ -30,4 +31,4 @@
 		</video>
 	{% endif %}
 	<!-- elementor-children-placeholder -->
-</div>
+</{{ tag | e('html_tag') }}>
