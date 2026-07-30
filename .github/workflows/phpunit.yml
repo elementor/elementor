@@ -7,7 +7,6 @@ on:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
-  pull_request:
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -39,7 +38,7 @@ jobs:
   test_pr_group:
     uses: ./.github/workflows/phpunit-runner.yml
     needs: ['file-diff']
-    if: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && (github.event.pull_request.title == null || needs.file-diff.outputs.php_diff) }}
+    if: ${{ github.event_name == 'merge_group' && (github.event.pull_request.title == null || needs.file-diff.outputs.php_diff) }}
     with:
       job_name: PHPUnit (PR/Merge)
       wordpress_versions: '["latest", "6.9", "6.8"]'
