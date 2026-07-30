@@ -111,3 +111,49 @@ export function verifySelfPublishedGlobals( directory = ASSETS_JS ) {
 		);
 	}
 }
+
+/**
+ * Node-mode interop applied to the result of a `require_*` helper. That is Rolldown's shape for a
+ * bundled CommonJS module whose graph node was inlined, which is exactly what breaks: the bundler
+ * generates the helper, then wraps its result with node semantics that clobber the module's own
+ * `default` export. Wrapping a local parameter or an external identifier is generated for other
+ * reasons and does not exhibit the bug.
+ */
+const BUNDLED_CJS_NODE_INTEROP = /__toESM\(\s*require_[A-Za-z_$][\w$]*\(\s*\)\s*,\s*1\s*\)/g;
+
+/**
+ * Fails the build when a bundled CommonJS module is imported with node-mode interop.
+ *
+ * The second argument to Rolldown's `__toESM` runtime helper is Node interop mode. With it set, a
+ * module without `__esModule` has its whole `exports` object assigned as `default`, discarding any
+ * `exports.default` the module already published. That is exactly what a UMD bundle does with a
+ * React component, so `lottie-react`'s default import came back as the wrapper object and
+ * `BackgroundLottie` failed to render. The path taken was the Node ESM-to-CJS interop that
+ * Rolldown applies to a `.mjs` importer, and the fix was to consume each package's CommonJS `dist`
+ * instead. This guard catches the same class of regression on any other module.
+ */
+export function verifyNoNodeInterop( directory = ASSETS_JS ) {
+	const offences = [];
+
+	for ( const fileName of readdirSync( directory, { recursive: true } ) ) {
+		if ( ! fileName.endsWith( MINIFIED_BUNDLE ) ) {
+			continue;
+		}
+
+		const code = readFileSync( join( directory, fileName ), 'utf8' );
+
+		for ( const [ match ] of code.matchAll( BUNDLED_CJS_NODE_INTEROP ) ) {
+			offences.push( `${ fileName }: ${ match }` );
+		}
+	}
+
+	if ( offences.length ) {
+		throw new Error(
+			[
+				'Node-mode CommonJS interop applied to bundled modules, which discards their `default` export:',
+				...offences.map( ( offence ) => `  ${ offence }` ),
+				'A package built from `.mjs` triggers this. Prefer the CommonJS entry in shared/packages.mjs.',
+			].join( '\n' ),
+		);
+	}
+}

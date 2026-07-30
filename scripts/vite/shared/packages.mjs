@@ -25,11 +25,17 @@ function resolveEntryPath( packageDir, entrySource ) {
 		return sourceEntry;
 	}
 
-	// Webpack consumed the CommonJS `dist/index.js` through `main`. Its `require()` calls cannot be
-	// externalized by Rolldown, which would silently bundle every dependency and leave `.asset.php`
-	// without any deps. Every package that ships `dist/index.js` also ships the ESM `dist/index.mjs`
-	// built from the same sources, so that is used instead.
-	const distEntry = join( packageDir, process.env.ELEMENTOR_PROD_CJS ? 'dist/index.js' : 'dist/index.mjs' );
+	// The CommonJS `dist/index.js` is what Webpack consumed. It is preferred over the ESM
+	// `dist/index.mjs` sibling because Rolldown applies Node's ESM-to-CJS interop to a `.mjs`
+	// importer, so a default import of a bundled CommonJS dependency yields the whole
+	// `module.exports` object rather than `module.exports.default`. `lottie-react`'s UMD build put
+	// `default` on `exports`, and the ESM path returned the wrapper object instead of the component,
+	// which React then rejected as an invalid element type inside `BackgroundLottie`.
+	//
+	// The original reason for choosing `.mjs` was that Rolldown could not externalize `require()`
+	// calls; `plugins/cjs-externals.mjs` now rewrites them and populates `.asset.php` with the same
+	// dependency list either way.
+	const distEntry = join( packageDir, 'dist/index.js' );
 
 	if ( existsSync( distEntry ) || ! existsSync( sourceEntry ) ) {
 		// A directory with neither entry is not a package, and the caller drops it.

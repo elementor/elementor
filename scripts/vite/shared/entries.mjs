@@ -67,7 +67,6 @@ export const BASE_ENTRIES = {
 	'editor-one-top-bar': 'modules/editor-one/assets/js/top-bar/app.js',
 	'editor-one-menu': 'modules/editor-one/assets/js/admin-menu/app.js',
 	'editor-v4-opt-in': 'modules/atomic-opt-in/assets/js/opt-in-page/app.js',
-	'pro-free-trial-popup': 'modules/pro-free-trial-popup/assets/js/pro-free-trial-popup.js',
 	'editor-v4-opt-in-alphachip': 'modules/atomic-opt-in/assets/js/panel-chip/panel-chip.js',
 	'e-conversion-banner': 'modules/promotions/assets/js/conversion-banner/conversion-banner.js',
 	'e-react-promotions': 'modules/promotions/assets/js/react/index.js',

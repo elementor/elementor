@@ -16,6 +16,7 @@ import {
 	resolvePackageGlobal,
 } from './shared/packages-externals.mjs';
 import { getPackageEntries, PACKAGES_OUTPUT_DIR } from './shared/packages.mjs';
+import { verifyNoNodeInterop } from './shared/verify-bundles.mjs';
 
 const RESOLVE_EXTENSIONS = [ '.tsx', '.ts', '.js', '.jsx', '.mjs' ];
 
@@ -127,6 +128,7 @@ export async function buildPackages( { devOnly = false, prodOnly = false, watch 
 	}
 
 	if ( ! watch ) {
+		verifyNoNodeInterop( PACKAGES_OUTPUT_DIR );
 		return;
 	}
 
