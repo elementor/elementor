@@ -67,6 +67,18 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 			);
 		}
 
+		if ( Widget_Context_Helper::VERSION_V3 === Widget_Context_Helper::get_widget_version( $config ) ) {
+			return new \WP_Error(
+				'elementor_v3_not_supported',
+				__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+				[
+					'status' => \WP_Http::BAD_REQUEST,
+					'widget_type' => $widget_type,
+					'version' => 'v3',
+				]
+			);
+		}
+
 		$all_widget_configs = Widget_Context_Helper::get_llm_eligible_widgets();
 		$parents_index = Widget_Context_Helper::build_parents_index( $all_widget_configs );
 

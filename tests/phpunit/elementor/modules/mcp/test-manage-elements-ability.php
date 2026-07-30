@@ -355,6 +355,193 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $node['styles'] ?? [] );
 	}
 
+	public function test_update__empty_classes_removes_globals_and_keeps_local_style() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+		$class_id = $this->given_kit_global_class( 'hero-heading', '#111111' );
+
+		$attach = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => [ 'font-size' => '2rem' ],
+					'classes' => [ 'hero-heading' ],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $attach, 0 );
+
+		$node_before = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node_before );
+		$class_values_before = $node_before['settings']['classes']['value'] ?? [];
+		$this->assertContains( $class_id, $class_values_before );
+		$local_ids = array_values( array_filter( $class_values_before, static fn( $id ) => is_string( $id ) && str_starts_with( $id, 'e-' ) ) );
+		$this->assertCount( 1, $local_ids, 'Expected one local style id from applied style.' );
+
+		$clear = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'classes' => [],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $clear, 0 );
+
+		$node_after = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node_after );
+		$class_values_after = $node_after['settings']['classes']['value'] ?? [];
+		$this->assertSame( $local_ids, $class_values_after, 'Expected only local style id to remain after clearing classes.' );
+	}
+
+	public function test_update__empty_classes_alone_is_a_valid_change() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'classes' => [],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_update__null_setting_removes_top_level_key() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$attach = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'destination' => 'https://example.com',
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $attach, 0 );
+
+		$node_before = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertArrayHasKey( 'link', $node_before['settings'] ?? [] );
+
+		$clear = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => null,
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $clear, 0 );
+
+		$node_after = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node_after );
+		$this->assertArrayNotHasKey( 'link', $node_after['settings'] ?? [] );
+	}
+
+	public function test_update__null_setting_alone_is_a_valid_change() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => null,
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_update__null_setting_on_required_prop_returns_invalid_settings_error() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$node_before = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node_before );
+		$title_before = $node_before['settings']['title'] ?? null;
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => null,
+						'tag' => 'h99',
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+
+		$node_after = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( $title_before, $node_after['settings']['title'] ?? null );
+	}
+
+	public function test_update__null_unknown_setting_warns_without_clearing() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'nonexistent_prop' => null,
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$this->assertStringContainsString( 'nonexistent_prop', $warnings[0] );
+		$this->assertStringContainsString( 'skipped', $warnings[0] );
+	}
+
 	public function test_update__rejects_unknown_class_label_as_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -521,6 +708,105 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Bulk Title', $node['settings']['title']['value']['content']['value'] );
 	}
 
+	public function test_execute__rejects_v3_update_per_op() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'title' => 'x' ],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_v3_not_supported', $result['results'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertNotNull( $node );
+		$this->assertArrayNotHasKey( 'title', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__rejects_v3_delete_move_duplicate_per_op() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $v3_id ],
+				[ 'action' => 'duplicate', 'element_id' => $v3_id ],
+				[ 'action' => 'move', 'element_id' => $v3_id, 'new_parent_id' => 'document', 'index' => 0 ],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		foreach ( $result['results'] as $row ) {
+			$this->assertSame( 'error', $row['status'] );
+			$this->assertSame( 'elementor_v3_not_supported', $row['code'] );
+		}
+	}
+
+	public function test_move__allows_moving_v4_element_into_v3_parent() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v4_heading_id = $this->given_heading_on_document( $post_id );
+		$v3_container_id = $this->given_v3_container_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $v4_heading_id,
+					'new_parent_id' => $v3_container_id,
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$v3_container = $this->find_element_in_document( $post_id, $v3_container_id );
+		$this->assertNotNull( $v3_container );
+		$this->assertSame( $v4_heading_id, $v3_container['elements'][0]['id'] ?? null );
+	}
+
+	public function test_bulk__v3_op_fails_but_sibling_v4_op_still_applies() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+		$v4_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $v3_id ],
+				[
+					'action' => 'update',
+					'element_id' => $v4_id,
+					'settings' => [ 'title' => [ 'content' => 'Survived', 'children' => [] ] ],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'elementor_v3_not_supported', $result['results'][0]['code'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+
+		$this->assertNotNull( $this->find_element_in_document( $post_id, $v3_id ) );
+		$node = $this->find_element_in_document( $post_id, $v4_id );
+		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -603,6 +889,47 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 
 		$this->fail( 'Container not found after fixture setup.' );
+	}
+
+	private function given_v3_heading_on_document( int $post_id ): string {
+		$id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $id,
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [],
+				'elements' => [],
+			],
+		] );
+
+		return $id;
+	}
+
+	private function given_v3_container_on_document( int $post_id ): string {
+		$id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $id,
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [],
+			],
+		] );
+
+		return $id;
+	}
+
+	private function append_elements_to_document( int $post_id, array $new_elements ): void {
+		$document = Plugin::$instance->documents->get( $post_id );
+		$existing = $document->get_elements_data();
+		$document->save( [ 'elements' => array_merge( is_array( $existing ) ? $existing : [], $new_elements ) ] );
+	}
+
+	private function random_element_id(): string {
+		return substr( str_replace( '.', '', uniqid( '', true ) ), -7 );
 	}
 
 	private function find_element_in_document( int $post_id, string $id ): ?array {

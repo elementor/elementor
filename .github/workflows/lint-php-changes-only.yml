@@ -1,11 +1,6 @@
 name: Lint-PHP-Changes-Only
 
 on:
-  pull_request:
-    paths:
-      - '**/*.php'
-      - '**/*.twig'
-      - '.github/workflows/lint-php-changes-only.yml'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs

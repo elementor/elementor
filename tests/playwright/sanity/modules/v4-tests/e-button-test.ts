@@ -11,7 +11,6 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
-			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
 		} );
 

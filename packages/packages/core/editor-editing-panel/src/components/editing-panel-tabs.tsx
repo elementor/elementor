@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 import * as React from 'react';
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -31,7 +30,6 @@ const PanelTabContent = () => {
 	const { element } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
-	const isInteractionsActive = isExperimentActive( 'e_interactions' );
 	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
 
 	const [ storedTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
@@ -55,9 +53,7 @@ const PanelTabContent = () => {
 							<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						) }
 						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
-						{ isInteractionsActive && (
-							<Tab label={ __( 'Interactions', 'elementor' ) } { ...getTabProps( 'interactions' ) } />
-						) }
+						<Tab label={ __( 'Interactions', 'elementor' ) } { ...getTabProps( 'interactions' ) } />
 					</Tabs>
 					<Divider />
 				</Stack>
@@ -69,11 +65,9 @@ const PanelTabContent = () => {
 				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 					<StyleTab />
 				</TabPanel>
-				{ isInteractionsActive && (
-					<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
-						<InteractionsTab />
-					</TabPanel>
-				) }
+				<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
+					<InteractionsTab />
+				</TabPanel>
 			</Stack>
 		</ScrollProvider>
 	);

@@ -12,10 +12,13 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -101,6 +104,17 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $dom;
 		}
 
+		$elements_data = $document->get_elements_data();
+		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
+			$dom,
+			is_array( $elements_data ) ? $elements_data : [],
+			$parent_id
+		);
+
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		$widget_configs = $type_resolver->collect_used( $dom );
 		if ( is_wp_error( $widget_configs ) ) {
 			return $widget_configs;
@@ -122,8 +136,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();
-		$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
-		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
+
+		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
+		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs, $document );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
 		}
@@ -140,7 +155,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $style_result['error'];
 		}
 
-		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'] );
+		$interactions_result = $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) );
+		if ( $interactions_result['error'] ) {
+			return $interactions_result['error'];
+		}
+
+		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] );
 
 		if ( $dry_run ) {
 			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
@@ -210,7 +230,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'element_config' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure. For <e-component> configuration-ids, the value is { component_id: int, overrides?: {<override_key>: <plain value>} } — see elementor/list-components.',
 				],
 				'style' => [
 					'type' => 'object',
@@ -224,6 +244,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'additionalProperties' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
+					],
+				],
+				'interactions' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Record mapping configuration-id → array of interaction items in the native shape. Read elementor://interactions/schema for the full shape and allowed enum values. Send [] for a configuration-id to clear its interactions.',
+					'additionalProperties' => [
+						'type' => 'array',
+						'items' => [ 'type' => 'object' ],
 					],
 				],
 				'parent_id' => [
@@ -382,8 +411,34 @@ class Build_Composition_Ability extends Abstract_Ability {
 		);
 	}
 
-	private function create_plain_values_resolver(): Plain_Values_Resolver {
+	private function get_plain_values_resolver(): Plain_Values_Resolver {
 		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
+	}
+
+	/**
+	 * @param array<string, array&>            $index
+	 * @param array<string, array<int, array>> $interactions
+	 *
+	 * @return array{error: \WP_Error|null, warnings: string[]}
+	 */
+	private function apply_interactions( array &$index, array $interactions ): array {
+		if ( empty( $interactions ) ) {
+			return [
+				'error' => null,
+				'warnings' => [],
+			];
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+			return [
+				'error' => null,
+				'warnings' => [ __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ) ],
+			];
+		}
+
+		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+
+		return $applier->apply( $index, $interactions );
 	}
 
 	private function is_variables_active(): bool {

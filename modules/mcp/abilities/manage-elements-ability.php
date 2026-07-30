@@ -11,10 +11,15 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Class_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
@@ -46,7 +51,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 elements in a document (up to 50 operations applied to a single document tree, saved once). Each operation: action=update merges partial plain settings, raw-CSS style, and global class labels; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only V4 elements (see elementor/get-page-structure -> version) can be the operation target; targeting a V3 legacy element_id returns elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -87,7 +92,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'element_id' => [ 'type' => 'string' ],
 								'settings' => [
 									'type' => 'object',
-									'description' => 'update only: partial plain settings map merged onto existing settings.',
+									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
 								],
 								'style' => [
 									'type' => 'object',
@@ -96,7 +101,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'classes' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
-									'description' => 'update only: global class labels to attach (prepended to existing).',
+									'description' => 'update only: global class labels to attach (prepended to existing). Pass an empty array [] to remove all global classes from the element (local styles are preserved).',
+								],
+								'interactions' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'object' ],
+									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -184,7 +194,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				continue;
 			}
 
-			$outcome = $this->apply_operation( $tree, $action, $element_id, $operation );
+			$outcome = $this->apply_operation( $document, $tree, $action, $element_id, $operation );
 
 			if ( is_wp_error( $outcome ) ) {
 				$results->add_error( $index, $action, $outcome->get_error_code(), $outcome->get_error_message() );
@@ -230,10 +240,15 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return array_merge( $response, Document_Mutation_Links::for_document( $document ) );
 	}
 
-	private function apply_operation( array $tree, string $action, string $element_id, array $operation ) {
+	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {
+		$v3_error = $this->reject_v3_target( $tree, $element_id );
+		if ( $v3_error ) {
+			return $v3_error;
+		}
+
 		switch ( $action ) {
 			case 'update':
-				return $this->apply_update( $tree, $element_id, $operation );
+				return $this->apply_update( $document, $tree, $element_id, $operation );
 			case 'delete':
 				return $this->apply_delete( $tree, $element_id );
 			case 'move':
@@ -250,6 +265,33 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					)
 				);
 		}
+	}
+
+	private function reject_v3_target( array $tree, string $element_id ): ?\WP_Error {
+		$node = $this->get_mutator()->find_by_id( $tree, $element_id );
+		if ( null === $node ) {
+			return null;
+		}
+
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+		if ( ! is_string( $type ) || '' === $type ) {
+			return null;
+		}
+
+		$instance = Atomic_Elements_Utils::get_element_instance( $type );
+		if ( $instance && Atomic_Elements_Utils::is_atomic_element( $instance ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_v3_not_supported',
+			__( 'Legacy V3 element cannot be modified through this MCP. Edit V3 elements directly in the Elementor editor.', 'elementor' ),
+			[
+				'status' => \WP_Http::BAD_REQUEST,
+				'element_id' => $element_id,
+				'version' => 'v3',
+			]
+		);
 	}
 
 	private function apply_delete( array $tree, string $element_id ) {
@@ -295,14 +337,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function apply_update( array $tree, string $element_id, array $operation ) {
+	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
 		$style = $this->as_map( $operation['style'] ?? [] );
-		$classes = $operation['classes'] ?? null;
+		$has_classes = array_key_exists( 'classes', $operation );
+		$classes = $has_classes ? $operation['classes'] : null;
+		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || ! empty( $classes );
+		$has_change = ! empty( $settings ) || ! empty( $style ) || $has_classes || null !== $interactions;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, or classes.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
 		}
 
 		if ( null === $this->get_mutator()->find_by_id( $tree, $element_id ) ) {
@@ -332,19 +376,28 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings = [];
 
 		if ( ! empty( $settings ) ) {
-			$config_applier = new Element_Config_Applier( $type_resolver, $this->create_plain_values_resolver() );
-			$config_result = $config_applier->apply(
-				$index,
-				[ $element_id => $settings ],
-				$widget_configs
-			);
-			if ( $config_result['error'] ) {
-				return $config_result['error'];
+			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
+				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
+				$component_error = $component_applier->apply_partial( $index, [ $element_id => $settings ], $document );
+				if ( $component_error ) {
+					return $component_error;
+				}
+			} else {
+				$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
+				$config_result = $config_applier->apply(
+					$index,
+					[ $element_id => $settings ],
+					$widget_configs,
+					$document
+				);
+				if ( $config_result['error'] ) {
+					return $config_result['error'];
+				}
+				$warnings = array_merge( $warnings, $config_result['warnings'] );
 			}
-			$warnings = array_merge( $warnings, $config_result['warnings'] );
 		}
 
-		if ( ! empty( $classes ) ) {
+		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
 				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
 			}
@@ -362,6 +415,22 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
+		}
+
+		if ( null !== $interactions ) {
+			if ( ! is_array( $interactions ) ) {
+				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
+			}
+			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
+			} else {
+				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+				if ( $interactions_result['error'] ) {
+					return $interactions_result['error'];
+				}
+				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+			}
 		}
 
 		return [
@@ -453,7 +522,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		);
 	}
 
-	private function create_plain_values_resolver(): Plain_Values_Resolver {
+	private function get_plain_values_resolver(): Plain_Values_Resolver {
 		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
 	}
 
