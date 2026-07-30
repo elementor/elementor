@@ -39,6 +39,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'!package.json',
 	'!packages/**',
 	'!phpunit.xml',
+	'!AGENTS.md',
 	'!CHANGELOG.md',
 	'!README.md',
 	'!ruleset.xml',
