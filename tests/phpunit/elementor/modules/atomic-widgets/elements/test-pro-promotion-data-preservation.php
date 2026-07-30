@@ -11,15 +11,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Pro_Promotion_Data_Preservation extends Elementor_Test_Base {
 
+	private Pro_Promotion_Data_Preservation $preservation;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
 
-		// Pro is absent in the test env, so the promotion element stands in for `e-form`.
+		Plugin::$instance->elements_manager->get_element_types();
+
 		Plugin::$instance->elements_manager->register_element_type( new Atomic_Form_Promotion() );
 
-		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+		$this->preservation = new Pro_Promotion_Data_Preservation();
+		$this->preservation->register_hooks();
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->elements_manager->unregister_element_type( Atomic_Form_Promotion::get_type() );
+
+		remove_all_filters( 'elementor/document/save/data' );
+		remove_all_filters( 'elementor/atomic/form/email_action_count' );
+
+		parent::tearDown();
 	}
 
 	public function test_form_children_and_settings_are_restored_across_a_save() {

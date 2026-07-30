@@ -39,7 +39,7 @@ class Test_Border_Cascade extends TestCase {
 		$this->assertEquals(
 			[
 				'border-width' => [
-					'$$type' => 'border-width',
+					'$$type' => 'border-width-v2',
 					'value' => [
 						'block-start' => $this->size( 1 ),
 						'inline-end' => $this->size( 1 ),
@@ -75,7 +75,7 @@ class Test_Border_Cascade extends TestCase {
 			->register( new Object_Side_Merge_Converter(
 				'border-left-width',
 				'border-width',
-				'border-width',
+				Border_Width_Prop_Type::get_key(),
 				'inline-start',
 				self::WIDTH_KEYS,
 				Border_Width_Prop_Type::class

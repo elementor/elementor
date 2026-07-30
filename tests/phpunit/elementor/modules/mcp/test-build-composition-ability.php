@@ -11,7 +11,6 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -106,43 +105,28 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'element_config' => [
 				'newspaper-title' => [
 					'title' => [
-						'$$type' => 'html-v3',
-						'value' => [
-							'content' => [ '$$type' => 'string', 'value' => 'Daily Herald' ],
-							'children' => [],
-						],
+						'content' => 'Daily Herald',
+						'children' => [],
 					],
 				],
 				'post-title-heading' => [
 					'title' => [
-						'$$type' => 'dynamic',
-						'value' => [
-							'name' => 'post-excerpt',
-							'settings' => [ 'length' => '55' ],
-						],
+						'name' => 'post-excerpt',
+						'settings' => [ 'length' => '55' ],
 					],
 				],
 			'masthead-eyebrow' => [
 				'paragraph' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => [ '$$type' => 'string', 'value' => 'Breaking News' ],
-						'children' => [],
-					],
+					'content' => 'Breaking News',
+					'children' => [],
 				],
 			],
 			'post-image' => [
 				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'url' => [ '$$type' => 'url', 'value' => 'https://example.com/post-image.jpg' ],
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'full' ],
+					'src' => [
+						'url' => 'https://example.com/post-image.jpg',
 					],
+					'size' => 'full',
 				],
 			],
 		],
@@ -158,6 +142,11 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertTrue( $result['success'] );
 		$this->assertCount( 1, $result['root_element_ids'] );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 		$this->assertNotEmpty( $result['warnings'] );
 		$this->assertStringContainsString( 'custom_css', implode( ' ', $result['warnings'] ) );
 
@@ -209,6 +198,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( $expected_code, $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 
 	public function structure_validation_cases(): array {
@@ -218,7 +208,47 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'invalid child type' => [ '<e-tabs-content-area><e-heading/></e-tabs-content-area>', 'elementor_invalid_child_type' ],
 			'leaf widget rejects children' => [ '<e-heading configuration-id="h1"><e-paragraph configuration-id="p1"/></e-heading>', 'elementor_invalid_child_type' ],
 			'leaf widget rejects container child' => [ '<e-image configuration-id="i1"><e-flexbox configuration-id="f1"/></e-image>', 'elementor_invalid_child_type' ],
+			'orphaned form field' => [ '<e-flexbox><e-form-input configuration-id="input-1"/></e-flexbox>', 'elementor_invalid_form_structure' ],
+			'form without submit button' => [ '<e-form><e-form-input configuration-id="input-1"/></e-form>', 'elementor_invalid_form_structure' ],
+			'empty success message' => [ '<e-form><e-form-submit-button/><e-form-success-message/></e-form>', 'elementor_invalid_form_structure' ],
+			'empty error message' => [ '<e-form><e-form-submit-button/><e-form-error-message/></e-form>', 'elementor_invalid_form_structure' ],
+			'multiple submit buttons' => [ '<e-form><e-form-submit-button/><e-form-submit-button/></e-form>', 'elementor_invalid_form_structure' ],
+			'nested form' => [ '<e-form><e-form-submit-button/><e-form><e-form-submit-button/></e-form></e-form>', 'elementor_invalid_form_structure' ],
 		];
+	}
+
+	public function test_execute__valid_form_structure_passes_form_validation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		if ( ! Plugin::$instance->elements_manager->get_element_types( 'e-form' ) ) {
+			Plugin::$instance->elements_manager->register_element_type(
+				new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion()
+			);
+		}
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-form configuration-id="form-1"><e-flexbox configuration-id="row-1"><e-form-input configuration-id="input-1"/></e-flexbox><e-form-submit-button configuration-id="btn-1"/></e-form>',
+		] );
+
+		// Assert
+		if ( is_wp_error( $result ) ) {
+			$this->assertNotSame(
+				'elementor_invalid_form_structure',
+				$result->get_error_code(),
+				$result->get_error_message()
+			);
+
+			return;
+		}
+
+		$this->assertTrue( $result['success'] );
 	}
 
 	/**
@@ -305,28 +335,20 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	public function settings_validation_cases(): array {
 		return [
-			'scalar instead of envelope' => [
-				[ 'tag' => 'h2' ],
-				[ '$$type', 'PropValue envelope', 'elementor://widgets/schema' ],
+			'invalid tag enum' => [
+				[ 'tag' => 'h99' ],
+				[ 'tag', 'elementor://widgets/schema' ],
 			],
-			'wrong scalar type' => [
-				[ 'title' => 12345 ],
-				[ '$$type', 'PropValue envelope' ],
+			'unresolvable title type' => [
+				[
+					'title' => [
+						'content' => [ 'not', 'a', 'string' ],
+						'children' => [],
+					],
+				],
+				[ 'title', 'could not be resolved' ],
 			],
 		];
-	}
-
-	public function test_linkable_widget_types__derived_from_schemas() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$linkable = Widget_Context_Helper::get_linkable_widget_types();
-
-		// Assert
-		$this->assertContains( 'e-button', $linkable );
-		$this->assertContains( 'e-heading', $linkable );
-		$this->assertNotContains( 'e-divider', $linkable );
 	}
 
 	public function test_execute__skips_unsupported_prop_and_warns() {
@@ -343,10 +365,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'element_config' => [
 				'd1' => [
 					'link' => [
-						'$$type' => 'link',
-						'value' => [
-							'destination' => [ '$$type' => 'url', 'value' => 'https://example.com' ],
-						],
+						'destination' => 'https://example.com',
 					],
 				],
 			],
@@ -392,10 +411,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'element_config' => [
 				'h1' => [
-					'title' => [
-						'$$type' => 'dynamic',
-						'value' => $title_value,
-					],
+					'title' => $title_value,
 				],
 			],
 		] );
@@ -411,10 +427,40 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'unknown tag name' => [
 				[ 'name' => 'ghost-tag', 'settings' => [] ],
 			],
-			'settings shape mismatch' => [
-				[ 'name' => 'post-excerpt', 'settings' => [ 'length' => [ 'not', 'a', 'string' ] ] ],
-			],
 		];
+	}
+
+	public function test_execute__skips_invalid_dynamic_setting_and_builds() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$this->given_dynamic_tags( [
+			'post-excerpt' => [
+				'name' => 'post-excerpt',
+				'label' => 'Post Excerpt',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'length' => String_Prop_Type::make()->default( '55' ),
+				],
+			],
+		] );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [
+					'title' => [
+						'name' => 'post-excerpt',
+						'settings' => [ 'length' => [ 'not', 'a', 'string' ] ],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
 	}
 
 	public function test_execute__rejects_non_object_style_block() {

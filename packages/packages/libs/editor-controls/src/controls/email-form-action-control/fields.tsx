@@ -13,11 +13,26 @@ import { EmailChipsField } from './email-chips-field';
 import { EmailField } from './email-field';
 import { shouldShowMentionsInfo } from './utils';
 
-export const SendToField = ( { placeholder }: { placeholder?: string } ) => (
-	<PropKeyProvider bind="to">
-		<EmailChipsField fieldLabel={ __( 'Send to', 'elementor' ) } placeholder={ placeholder } />
-	</PropKeyProvider>
-);
+export const SendToField = ( { placeholder }: { placeholder?: string } ) => {
+	const suggestions = useFormFieldSuggestions( { inputType: 'email' } );
+
+	return (
+		<PropKeyProvider bind="to">
+			<Stack gap={ 0.5 }>
+				<EmailChipsField
+					fieldLabel={ __( 'Send to', 'elementor' ) }
+					placeholder={ placeholder }
+					suggestions={ suggestions }
+				/>
+				{ shouldShowMentionsInfo() && (
+					<InfoAlert>
+						{ __( 'Type @ or an email field name to insert its submitted value.', 'elementor' ) }
+					</InfoAlert>
+				) }
+			</Stack>
+		</PropKeyProvider>
+	);
+};
 
 export const SubjectField = () => (
 	<EmailField
@@ -92,17 +107,25 @@ export const ReplyToField = () => {
 	);
 };
 
-export const CcField = () => (
-	<PropKeyProvider bind="cc">
-		<EmailChipsField fieldLabel={ __( 'Cc', 'elementor' ) } />
-	</PropKeyProvider>
-);
+export const CcField = () => {
+	const suggestions = useFormFieldSuggestions( { inputType: 'email' } );
 
-export const BccField = () => (
-	<PropKeyProvider bind="bcc">
-		<EmailChipsField fieldLabel={ __( 'Bcc', 'elementor' ) } />
-	</PropKeyProvider>
-);
+	return (
+		<PropKeyProvider bind="cc">
+			<EmailChipsField fieldLabel={ __( 'Cc', 'elementor' ) } suggestions={ suggestions } />
+		</PropKeyProvider>
+	);
+};
+
+export const BccField = () => {
+	const suggestions = useFormFieldSuggestions( { inputType: 'email' } );
+
+	return (
+		<PropKeyProvider bind="bcc">
+			<EmailChipsField fieldLabel={ __( 'Bcc', 'elementor' ) } suggestions={ suggestions } />
+		</PropKeyProvider>
+	);
+};
 
 export const MetaDataField = () => (
 	<PropKeyProvider bind="meta-data">

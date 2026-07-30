@@ -214,10 +214,6 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 					'$$type' => 'number',
 					'value' => self::NON_EXISTENT_COMPONENT_ID,
 				],
-				'overrides' => [
-					'$$type' => 'overrides',
-					'value' => [],
-				],
 			],
 		], $result );
 	}

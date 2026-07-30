@@ -1,4 +1,4 @@
-name: Remove stale branches
+name: Remove stale branches and tags
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
     inputs:
       dry_run:
         type: boolean
-        description: 'Preview only (no stale comments or branch deletions)'
+        description: 'Preview only (no stale comments, branch deletions, or tag deletions)'
         required: false
         default: true
 
@@ -59,73 +59,313 @@ jobs:
           operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN || '10' }}
           ignore-unknown-authors: true
 
-      - name: Publish stale branch job summary
-        if: always()
+  remove-stale-tags:
+    name: Remove Stale Tags
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Remove old tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+$' }}
+          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || '90' }}
+          OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
+        run: |
+          set -euo pipefail
+
+          tags_dir="${RUNNER_TEMP}/tags-repo"
+          rm -rf "${tags_dir}"
+          mkdir -p "${tags_dir}"
+          cd "${tags_dir}"
+
+          gh auth setup-git
+          git init -q
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
+
+          deletions=0
+          skipped_exempt=0
+          skipped_young=0
+          now_epoch=$(date -u +%s)
+          min_age_seconds=$((DAYS_BEFORE_TAG_DELETE * 86400))
+          tag_count=$(git tag -l | wc -l | tr -d ' ')
+          remote_tag_count=$(git ls-remote --tags --refs origin | wc -l | tr -d ' ')
+
+          echo "Local tags: ${tag_count}; remote tags: ${remote_tag_count}"
+
+          if [ "${tag_count}" -lt "${remote_tag_count}" ]; then
+            echo "::error::Fetched ${tag_count} tags but remote has ${remote_tag_count}."
+            exit 1
+          fi
+
+          if [ "${tag_count}" -eq 0 ]; then
+            echo "::warning::No tags found after tag fetch. Tag cleanup cannot run."
+            printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' "0" "0" "0"
+            exit 0
+          fi
+
+          echo "Found ${tag_count} tags; deleting up to ${OPERATIONS_PER_RUN} non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days"
+
+          log_tag_result() {
+            printf 'STALE_CLEANUP\t%s\ttag\t%s\n' "$1" "$2"
+          }
+
+          log_tag_detail() {
+            printf 'STALE_CLEANUP_DETAIL\t%s\n' "$1"
+          }
+
+          format_tag_date() {
+            date -u -d "@${1}" '+%Y-%m-%d %H:%M:%S UTC'
+          }
+
+          while IFS='|' read -r tag_epoch tag_name; do
+            [ -z "${tag_name}" ] && continue
+            [ "${deletions}" -ge "${OPERATIONS_PER_RUN}" ] && break
+
+            age_seconds=$((now_epoch - tag_epoch))
+            tag_date=$(format_tag_date "${tag_epoch}")
+
+            if [[ "${tag_name}" =~ ${EXEMPT_TAGS_REGEX} ]]; then
+              skipped_exempt=$((skipped_exempt + 1))
+              continue
+            fi
+
+            if [ "${age_seconds}" -lt "${min_age_seconds}" ]; then
+              skipped_young=$((skipped_young + 1))
+              continue
+            fi
+
+            deletions=$((deletions + 1))
+
+            if [ "${DRY_RUN}" = "true" ]; then
+              log_tag_result "would_delete" "${tag_name}"
+              log_tag_detail "last updated ${tag_date}"
+            else
+              log_tag_result "deleted" "${tag_name}"
+              detail="last updated ${tag_date}"
+              if gh release view "${tag_name}" >/dev/null 2>&1; then
+                if gh release delete "${tag_name}" --yes; then
+                  detail="${detail}; release deleted"
+                fi
+              else
+                :
+              fi
+              if gh api -X DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}"; then
+                log_tag_detail "${detail}; tag deleted"
+              else
+                log_tag_detail "${detail}; tag delete failed"
+              fi
+            fi
+          done < <(git for-each-ref --sort=creatordate --format='%(creatordate:unix)|%(refname:short)' refs/tags)
+
+          printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' \
+            "${skipped_exempt}" "${skipped_young}" "${deletions}"
+
+  publish-cleanup-summary:
+    name: Publish Cleanup Summary
+    needs: [remove-stale-branches, remove-stale-tags]
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Publish cleanup job summary
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: |
           set -euo pipefail
 
-          JOB_ID="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" \
-            --jq '.jobs[] | select(.name == "Remove Stale Branches") | .id')"
+          parse_cleanup_log() {
+            local entity="$1"
+            local action_log="$2"
+            local parsed="$3"
 
-          gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/${JOB_ID}/logs" > job-logs.zip
-          unzip -p job-logs.zip '*Remove stale branches except PR branches*' > action.log 2>/dev/null || true
+            if [ ! -s "${action_log}" ]; then
+              return 1
+            fi
 
-          PARSED="$(mktemp)"
-          if [ -s action.log ]; then
-            awk '
-              function flush() {
-                if (branch == "") return
-                if (detail == "") detail = "see workflow logs"
-                printf "%s\t%s\t%s\n", bucket, branch, detail
-                branch = bucket = detail = ""
+            awk -v entity="${entity}" '
+              function strip_line(raw) {
+                line = raw
+                sub(/^[^\t]*Z /, "", line)
+                gsub(/\033\[[0-9;]*m/, "", line)
+                return line
               }
-              /##\[group\]/ {
+              function flush() {
+                if (ref == "") return
+                if (detail == "") detail = "see workflow logs"
+                printf "%s\t%s\t%s\n", bucket, ref, detail
+                ref = bucket = detail = ""
+              }
+              {
+                line = strip_line($0)
+              }
+              line ~ /^STALE_CLEANUP\t/ {
                 flush()
-                header = $0
-                sub(/^.*##\[group\]/, "", header)
-                if (sub(/^❌ branch /, "", header)) { bucket = "deleted"; branch = header }
-                else if (sub(/^✏ branch /, "", header)) { bucket = "marked_stale"; branch = header }
-                else if (sub(/^😐 branch /, "", header)) { bucket = "kept_stale"; branch = header }
-                else if (sub(/^✅ branch /, "", header)) { bucket = "skipped"; branch = header }
+                split(line, parts, "\t")
+                if (parts[3] == entity) {
+                  bucket = parts[2]
+                  ref = parts[4]
+                }
                 next
               }
-              /##\[endgroup\]/ { flush(); next }
-              bucket != "" && $0 !~ /##\[/ {
-                line = $0
-                sub(/^[^Z]*Z /, "", line)
+              line ~ /^STALE_CLEANUP_DETAIL\t/ {
+                sub(/^STALE_CLEANUP_DETAIL\t/, "", line)
+                if (detail == "") detail = line
+                else detail = detail "; " line
+                next
+              }
+              line ~ /^##\[group\]/ && line !~ /\$\{/ {
+                flush()
+                header = line
+                sub(/^##\[group\]/, "", header)
+                deleted_prefix = "❌ " entity " "
+                stale_prefix = "✏ " entity " "
+                kept_prefix = "😐 " entity " "
+                skipped_prefix = "✅ " entity " "
+                if (sub("^" deleted_prefix, "", header)) { bucket = "deleted"; ref = header }
+                else if (sub("^" stale_prefix, "", header)) { bucket = "marked_stale"; ref = header }
+                else if (sub("^" kept_prefix, "", header)) { bucket = "kept_stale"; ref = header }
+                else if (sub("^" skipped_prefix, "", header)) { bucket = "skipped"; ref = header }
+                next
+              }
+              line ~ /^##\[endgroup\]/ { flush(); next }
+              bucket != "" && line !~ /^##\[/ {
                 if (line ~ /^-> /) detail = substr(line, 4)
                 else if (bucket == "skipped" && detail == "") detail = line
               }
               END { flush() }
-            ' action.log > "${PARSED}"
-          fi
+            ' "${action_log}" > "${parsed}"
+          }
 
-          DELETED_COUNT=$(awk -F '\t' '$1 == "deleted" { c++ } END { print c + 0 }' "${PARSED}")
-          MARKED_STALE_COUNT=$(awk -F '\t' '$1 == "marked_stale" { c++ } END { print c + 0 }' "${PARSED}")
-          KEPT_STALE_COUNT=$(awk -F '\t' '$1 == "kept_stale" { c++ } END { print c + 0 }' "${PARSED}")
-          SKIPPED_COUNT=$(awk -F '\t' '$1 == "skipped" { c++ } END { print c + 0 }' "${PARSED}")
+          fetch_job_log() {
+            local job_name="$1"
+            local output_log="$2"
+
+            : > "${output_log}"
+
+            local job_id
+            job_id="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" \
+              --jq ".jobs[] | select(.name == \"${job_name}\") | .id")"
+
+            if [ -z "${job_id}" ]; then
+              echo "Could not find ${job_name} job id" >&2
+              return 1
+            fi
+
+            if ! gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/${job_id}/logs" > "${output_log}" 2>/dev/null; then
+              echo "Could not download job logs for ${job_name}" >&2
+              return 1
+            fi
+          }
+
+          render_tag_summary_section() {
+            local action_log="$1"
+            local parsed="$2"
+            local stats_exempt=0 stats_young=0
+
+            if [ -s "${action_log}" ]; then
+              stats_line=$(awk '/STALE_CLEANUP_STATS/ {
+                line = $0
+                sub(/^[^Z]*Z /, "", line)
+                print line
+              }' "${action_log}" | tail -1)
+              if [ -n "${stats_line}" ]; then
+                stats_exempt=$(echo "${stats_line}" | sed -n 's/.*exempt=\([0-9]*\).*/\1/p')
+                stats_young=$(echo "${stats_line}" | sed -n 's/.*young=\([0-9]*\).*/\1/p')
+              fi
+            fi
+
+            action_bucket="deleted"
+            action_label="Deleted"
+            table_message="_Deleted oldest eligible non-exempt tags first._"
+            empty_message="_No tags were deleted this run. Lower \`DAYS_BEFORE_TAG_DELETE\` or adjust \`EXEMPT_TAGS_REGEX\` if needed._"
+            section_title="Stale tag cleanup"
+
+            if [ "${DRY_RUN}" = "true" ]; then
+              section_title="Stale tag cleanup (dry run)"
+              action_bucket="would_delete"
+              action_label="Would delete"
+              table_message="_Dry run: oldest eligible non-exempt tags that would be deleted._"
+              empty_message="_Dry run: no tags would be deleted this run. Lower \`DAYS_BEFORE_TAG_DELETE\` or adjust \`EXEMPT_TAGS_REGEX\` if needed._"
+            fi
+
+            action_count=$(awk -F '\t' -v bucket="${action_bucket}" '$1 == bucket { c++ } END { print c + 0 }' "${parsed}")
+
+            {
+              echo "## ${section_title}"
+              echo ""
+              echo "- **${action_label}:** ${action_count}"
+              echo "- **Skipped (exempt):** ${stats_exempt}"
+              echo "- **Skipped (too young):** ${stats_young}"
+              echo ""
+              if [ ! -s "${action_log}" ]; then
+                echo "_Could not parse action logs. Expand the **Remove old tags** step for details._"
+              elif [ "${action_count}" -eq 0 ]; then
+                echo "${empty_message}"
+              else
+                echo "${table_message}"
+                echo ""
+                echo "| Action | Tag | Detail |"
+                echo "| --- | --- | --- |"
+                awk -F '\t' -v bucket="${action_bucket}" '$1 == bucket { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${parsed}"
+              fi
+              echo ""
+            } >> "${GITHUB_STEP_SUMMARY}"
+          }
+
+          render_summary_section() {
+            local title="$1"
+            local entity_label="$2"
+            local step_name="$3"
+            local action_log="$4"
+            local parsed="$5"
+
+            local deleted_count marked_stale_count kept_stale_count skipped_count
+            deleted_count=$(awk -F '\t' '$1 == "deleted" { c++ } END { print c + 0 }' "${parsed}")
+            marked_stale_count=$(awk -F '\t' '$1 == "marked_stale" { c++ } END { print c + 0 }' "${parsed}")
+            kept_stale_count=$(awk -F '\t' '$1 == "kept_stale" { c++ } END { print c + 0 }' "${parsed}")
+            skipped_count=$(awk -F '\t' '$1 == "skipped" { c++ } END { print c + 0 }' "${parsed}")
+
+            {
+              echo "## ${title}"
+              echo ""
+              echo "- **Deleted:** ${deleted_count}"
+              echo "- **Marked stale:** ${marked_stale_count}"
+              echo "- **Kept stale:** ${kept_stale_count}"
+              echo "- **Skipped:** ${skipped_count}"
+              echo ""
+              if [ ! -s "${action_log}" ]; then
+                echo "_Could not parse action logs. Expand the **${step_name}** step for details._"
+              else
+                echo "_Parsed from action step logs. Expand that step for full per-${entity_label} output._"
+                echo ""
+                echo "| Action | ${entity_label^} | Detail |"
+                echo "| --- | --- | --- |"
+                awk -F '\t' '$1 != "skipped" { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${parsed}"
+              fi
+              echo ""
+            } >> "${GITHUB_STEP_SUMMARY}"
+          }
+
+          BRANCH_LOG="$(mktemp)"
+          BRANCH_PARSED="$(mktemp)"
+          TAG_LOG="$(mktemp)"
+          TAG_PARSED="$(mktemp)"
+
+          fetch_job_log "Remove Stale Branches" "${BRANCH_LOG}" || true
+          fetch_job_log "Remove Stale Tags" "${TAG_LOG}" || true
+
+          parse_cleanup_log "branch" "${BRANCH_LOG}" "${BRANCH_PARSED}" || true
+          parse_cleanup_log "tag" "${TAG_LOG}" "${TAG_PARSED}" || true
 
           {
-            echo "## Stale branch cleanup"
+            echo "# Stale cleanup"
             echo ""
             echo "- **Repository:** ${GITHUB_REPOSITORY}"
             echo "- **Run ID:** ${GITHUB_RUN_ID}"
             echo "- **Dry run:** ${DRY_RUN}"
-            echo "- **Deleted:** ${DELETED_COUNT}"
-            echo "- **Marked stale:** ${MARKED_STALE_COUNT}"
-            echo "- **Kept stale:** ${KEPT_STALE_COUNT}"
-            echo "- **Skipped:** ${SKIPPED_COUNT}"
             echo ""
-            if [ ! -s action.log ]; then
-              echo "_Could not parse action logs. Expand the **Remove stale branches except PR branches** step for details._"
-            else
-              echo "_Parsed from action step logs. Expand that step for full per-branch output._"
-              echo ""
-              echo "| Action | Branch | Detail |"
-              echo "| --- | --- | --- |"
-              awk -F '\t' '$1 != "skipped" { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${PARSED}"
-            fi
           } >> "${GITHUB_STEP_SUMMARY}"
+
+          render_summary_section "Stale branch cleanup" "branch" "Remove stale branches except PR branches" "${BRANCH_LOG}" "${BRANCH_PARSED}"
+          render_tag_summary_section "${TAG_LOG}" "${TAG_PARSED}"

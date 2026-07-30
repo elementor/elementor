@@ -7,7 +7,6 @@ test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 	const page = await context.newPage();
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdmin.setExperiments( {
-		e_opt_in_v4_page: 'active',
 		e_atomic_elements: 'active',
 	} );
 
@@ -51,8 +50,7 @@ const testData = [
 ];
 
 test.describe( 'Link control tests @v4-tests', () => {
-	// TODO: to be fixed in ED-24960
-	test.skip( 'Link sanitization tests', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Link sanitization tests', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		let buttonId;
@@ -67,8 +65,17 @@ test.describe( 'Link control tests @v4-tests', () => {
 			await test.step( `Test case: ${ name }`, async () => {
 				await editor.selectElement( buttonId );
 				await editor.v4Panel.openTab( 'general' );
-				await page.locator( '[aria-label="Toggle link"]' ).click();
-				await editor.v4Panel.fillField( 0, input );
+
+				const urlInput = page.getByPlaceholder( 'Type or paste your URL' );
+
+				if ( ! await urlInput.isVisible() ) {
+					await page.locator( '[aria-label="Toggle link"]' ).click();
+				}
+
+				await urlInput.fill( input );
+
+				const previewAnchor = ( await editor.getWidget( buttonId ) ).locator( 'a' );
+				await expect( previewAnchor ).toHaveAttribute( 'href', input );
 
 				await editor.publishPage();
 				await page.reload();
@@ -77,7 +84,7 @@ test.describe( 'Link control tests @v4-tests', () => {
 				const button = await editor.getWidget( buttonId );
 				const anchor = button.locator( 'a' );
 
-				await expect( anchor ).toHaveAttribute( 'href', expected, { timeout: 1000 } );
+				await expect( anchor ).toHaveAttribute( 'href', expected );
 			} );
 		}
 	} );

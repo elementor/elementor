@@ -2,8 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -13,19 +12,15 @@ class Llm_Guidance_Builder {
 
 	const DEFAULT_STYLES_INSTRUCTION = 'These are the default styles applied to the widget. Override only when necessary.';
 
-	const DEFAULT_SETTINGS_INSTRUCTION = 'These are the default settings applied to the widget. Omit them from elementConfig unless the user explicitly asks to change them.';
-
 	public static function build( array $config, string $widget_type, array $parents_index ): array {
 		$guidance = [
 			'can_have_children' => ! empty( $config['meta']['is_container'] ),
 		];
 
 		$default_styles = self::collect_default_styles( $config['base_styles'] ?? [] );
-		$default_settings = $config['base_settings'] ?? [];
 
 		$instructions = array_filter( [
 			! empty( $default_styles ) ? self::DEFAULT_STYLES_INSTRUCTION : null,
-			! empty( $default_settings ) ? self::DEFAULT_SETTINGS_INSTRUCTION : null,
 		] );
 
 		if ( $instructions ) {
@@ -34,10 +29,6 @@ class Llm_Guidance_Builder {
 
 		if ( ! empty( $default_styles ) ) {
 			$guidance['default_styles'] = $default_styles;
-		}
-
-		if ( ! empty( $default_settings ) ) {
-			$guidance['default_settings'] = $default_settings;
 		}
 
 		$nesting = self::build_nesting( $config, $widget_type, $parents_index );
@@ -64,18 +55,7 @@ class Llm_Guidance_Builder {
 			}
 		}
 
-		return self::convert_prop_values_to_css( $default_styles );
-	}
-
-	private static function convert_prop_values_to_css( array $props ): array {
-		if ( empty( $props ) ) {
-			return [];
-		}
-
-		$schema = Style_Schema::get();
-		$resolved = Render_Props_Resolver::for_styles()->resolve( $schema, $props );
-
-		return array_filter( $resolved, fn( $value ) => null !== $value && '' !== $value );
+		return Style_Props_To_Css::to_map( $default_styles );
 	}
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {

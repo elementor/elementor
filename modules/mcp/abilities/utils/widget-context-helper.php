@@ -2,9 +2,13 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,9 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Context_Helper {
 
-	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes' ];
-
-	const LINK_PROP_KEY = 'link';
+	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes', 'display-conditions' ];
 
 	const EXCLUDED_WIDGET_TITLE = 'Component';
 
@@ -29,8 +31,6 @@ class Widget_Context_Helper {
 	const V3_FALLBACK_MESSAGE = 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.';
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
-
-	const BASE_SETTING_PROP_HINT = 'Has a widget default — omit unless user explicitly requests a change. See llm_guidance.default_settings.';
 
 	/**
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
@@ -58,26 +58,6 @@ class Widget_Context_Helper {
 		$instance = Atomic_Elements_Utils::get_element_instance( $widget_type );
 
 		return $instance ? $instance->get_config() : null;
-	}
-
-	/**
-	 * LLM-eligible widget types whose atomic props schema exposes a `link` prop.
-	 * Derived from the registered widget schemas so the list can never drift.
-	 *
-	 * @return string[]
-	 */
-	public static function get_linkable_widget_types(): array {
-		$linkable = [];
-
-		foreach ( self::get_llm_eligible_widgets() as $widget_type => $config ) {
-			if ( isset( $config['atomic_props_schema'][ self::LINK_PROP_KEY ] ) ) {
-				$linkable[] = $widget_type;
-			}
-		}
-
-		sort( $linkable );
-
-		return $linkable;
 	}
 
 	public static function is_widget_eligible_for_llm( array $config ): bool {
@@ -154,7 +134,7 @@ class Widget_Context_Helper {
 			];
 		}
 
-		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
+		$properties = self::build_configurable_properties_schema( $props_schema );
 
 		return self::filter_nulls( [
 			'type' => 'object',
@@ -166,9 +146,8 @@ class Widget_Context_Helper {
 
 	/**
 	 * @param array<string, Prop_Type> $props_schema
-	 * @param array<string, mixed>     $base_settings
 	 */
-	private static function build_configurable_properties_schema( array $props_schema, array $base_settings ): array {
+	private static function build_configurable_properties_schema( array $props_schema ): array {
 		$properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
@@ -179,17 +158,108 @@ class Widget_Context_Helper {
 			$properties[ $key ] = $prop_type->to_json_schema();
 		}
 
-		$properties = self::apply_llm_schema_filters( $properties );
-
-		return self::append_base_settings_hints( $properties, array_keys( $base_settings ) );
+		return self::apply_llm_schema_filters( $properties );
 	}
 
 	private static function apply_llm_schema_filters( array $properties ): array {
 		foreach ( $properties as $key => $schema ) {
-			$properties[ $key ] = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+			$properties[ $key ] = self::to_plain_llm_schema_from_json( $schema );
 		}
 
 		return $properties;
+	}
+
+	public static function to_plain_llm_schema( Prop_Type $prop_type ): array {
+		$schema = self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
+
+		return self::refine_from_prop_type( $schema, $prop_type, Utils::has_pro() );
+	}
+
+	private static function to_plain_llm_schema_from_json( array $schema ): array {
+		$filtered = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+
+		return Plain_Llm_Schema_Converter::convert( $filtered );
+	}
+
+	/**
+	 * Walks a plain LLM schema alongside its PropType tree to:
+	 *   - Enrich primitive enums from `meta('enum')` when the JSON schema lacks them.
+	 *   - Strip fields marked `meta('pro') === true` and enum values listed in `meta('pro')`
+	 *     when Pro is inactive.
+	 */
+	private static function refine_from_prop_type( array $schema, Prop_Type $prop_type, bool $is_pro_active ): array {
+		if ( $prop_type instanceof Object_Prop_Type ) {
+			return self::refine_object( $schema, $prop_type, $is_pro_active );
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type ) {
+			return self::refine_array( $schema, $prop_type, $is_pro_active );
+		}
+
+		return self::refine_primitive( $schema, $prop_type, $is_pro_active );
+	}
+
+	private static function refine_object( array $schema, Object_Prop_Type $prop_type, bool $is_pro_active ): array {
+		if ( ! isset( $schema['properties'] ) || ! is_array( $schema['properties'] ) ) {
+			return $schema;
+		}
+
+		$properties = $schema['properties'];
+
+		foreach ( $prop_type->get_shape() as $key => $child_prop_type ) {
+			if ( ! isset( $properties[ $key ] ) ) {
+				continue;
+			}
+
+			if ( ! $is_pro_active && self::is_pro_only_field( $child_prop_type ) ) {
+				unset( $properties[ $key ] );
+				continue;
+			}
+
+			$properties[ $key ] = self::refine_from_prop_type( $properties[ $key ], $child_prop_type, $is_pro_active );
+		}
+
+		$schema['properties'] = $properties;
+
+		return $schema;
+	}
+
+	private static function refine_array( array $schema, Array_Prop_Type $prop_type, bool $is_pro_active ): array {
+		if ( isset( $schema['items'] ) && is_array( $schema['items'] ) ) {
+			$schema['items'] = self::refine_from_prop_type( $schema['items'], $prop_type->get_item_type(), $is_pro_active );
+		}
+
+		return $schema;
+	}
+
+	private static function refine_primitive( array $schema, Prop_Type $prop_type, bool $is_pro_active ): array {
+		$enum_values = $prop_type->get_meta_item( 'enum' );
+
+		if ( is_array( $enum_values ) ) {
+			$schema['enum'] = $is_pro_active
+				? array_values( $enum_values )
+				: self::filter_pro_enum_values( $enum_values, $prop_type );
+		}
+
+		return $schema;
+	}
+
+	private static function filter_pro_enum_values( array $enum_values, Prop_Type $prop_type ): array {
+		if ( self::is_pro_only_field( $prop_type ) ) {
+			return [];
+		}
+
+		$pro_values = $prop_type->get_meta_item( 'pro' );
+
+		if ( ! is_array( $pro_values ) ) {
+			return array_values( $enum_values );
+		}
+
+		return array_values( array_diff( $enum_values, $pro_values ) );
+	}
+
+	private static function is_pro_only_field( Prop_Type $prop_type ): bool {
+		return true === $prop_type->get_meta_item( 'pro' );
 	}
 
 	private static function is_prop_key_configurable( string $key, Prop_Type $prop_type ): bool {
@@ -198,26 +268,6 @@ class Widget_Context_Helper {
 		}
 
 		return (bool) $prop_type->get_meta_item( 'llm_configurable', false );
-	}
-
-	private static function append_base_settings_hints( array $properties, array $base_settings_keys ): array {
-		if ( empty( $base_settings_keys ) ) {
-			return $properties;
-		}
-
-		foreach ( $base_settings_keys as $key ) {
-			if ( ! isset( $properties[ $key ] ) ) {
-				continue;
-			}
-
-			$existing_description = $properties[ $key ]['description'] ?? null;
-
-			$properties[ $key ]['description'] = $existing_description
-				? "{$existing_description} " . self::BASE_SETTING_PROP_HINT
-				: self::BASE_SETTING_PROP_HINT;
-		}
-
-		return $properties;
 	}
 
 	private static function get_description( array $config ): ?string {

@@ -32,6 +32,10 @@ class Mock_Prop_Type implements Prop_Type {
 		return null;
 	}
 
+	public function should_persist( $value ): bool {
+		return true;
+	}
+
 	public function validate( $value ): bool {
 		return true;
 	}

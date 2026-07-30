@@ -78,7 +78,7 @@ class Widget_Type_Resolver {
 	/**
 	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class']
 	 */
-	private function resolve_type_config( string $type ) {
+	public function resolve_type_config( string $type ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			$config = $widget->get_config();
