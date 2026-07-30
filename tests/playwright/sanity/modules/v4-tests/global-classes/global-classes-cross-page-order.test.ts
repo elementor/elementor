@@ -13,7 +13,7 @@ import {
 	saveAndCloseClassManager,
 } from './utils';
 
-const EXPERIMENTS = { e_atomic_elements: 'active', e_classes: 'active' } as const;
+const EXPERIMENTS = { e_atomic_elements: 'active' } as const;
 
 const CLASS_A = 'cross-class-a';
 const CLASS_B = 'cross-class-b';

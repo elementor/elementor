@@ -1,10 +1,10 @@
 import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
+import { comparePngBuffers } from '../assets/image-comparator';
 import { expect, type Page, type Frame, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
-import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
 import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, ContainerType, ContainerPreset } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
@@ -959,7 +959,7 @@ export default class EditorPage extends BasePage {
 	async publishPage(): Promise<void> {
 		await this.clickTopBarItem( TopBarSelectors.publish );
 		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -1184,7 +1184,6 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async isUiStable( locator: Locator, retries: number = 3, timeout: number = 500 ): Promise<void> {
-		const comparator = getComparator( 'image/png' );
 		let retry = 0,
 			beforeImage: Buffer,
 			afterImage: Buffer;
@@ -1206,7 +1205,7 @@ export default class EditorPage extends BasePage {
 				path: `./after.png`,
 			} );
 			retry = retry++;
-		} while ( null !== comparator( beforeImage, afterImage ) );
+		} while ( null !== comparePngBuffers( beforeImage, afterImage ) );
 	}
 
 	/**

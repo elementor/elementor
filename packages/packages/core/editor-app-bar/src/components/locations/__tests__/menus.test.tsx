@@ -7,6 +7,7 @@ jest.mock( '@elementor/editor-current-user', () => ( {
 	useCurrentUserCapabilities: () => ( { isAdmin: true, canUser: jest.fn(), capabilities: [] } ),
 } ) );
 
+import { DEFAULT_MAX_TOOLBAR_ACTIONS } from '../../../constants';
 import { AppBarSizeProvider } from '../../../contexts/app-bar-size-context';
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
@@ -83,16 +84,20 @@ describe( 'Menus components', () => {
 		{
 			menuName: 'Tools',
 			menu: toolsMenu,
-			maxItems: 5,
+			maxItems: DEFAULT_MAX_TOOLBAR_ACTIONS.tools,
 			Component: ToolsMenuLocation,
+			// Tools sits on the right side of the app bar, so its `More` button is rendered last, closest to the center.
+			popoverPosition: 'last' as const,
 		},
 		{
 			menuName: 'Utilities',
 			menu: utilitiesMenu,
-			maxItems: 4,
+			maxItems: DEFAULT_MAX_TOOLBAR_ACTIONS.utilities,
 			Component: UtilitiesMenuLocation,
+			// Utilities sits on the left side of the app bar, so its `More` button is rendered first, closest to the center.
+			popoverPosition: 'first' as const,
 		},
-	] )( '$menuName menu', ( { maxItems, menu, Component } ) => {
+	] )( '$menuName menu', ( { maxItems, menu, Component, popoverPosition } ) => {
 		it( `should render ${ maxItems } menu items in a toolbar and the rest in a popover`, () => {
 			// Arrange.
 			const extraAfterMax = 2;
@@ -112,7 +117,7 @@ describe( 'Menus components', () => {
 
 			// Assert.
 			const toolbarButtons = screen.getAllByRole( 'button' );
-			const popoverButton = toolbarButtons[ maxItems ];
+			const popoverButton = toolbarButtons[ popoverPosition === 'first' ? 0 : maxItems ];
 
 			expect( toolbarButtons ).toHaveLength( maxItems + 1 ); // Including the popover button.
 			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );
@@ -147,7 +152,7 @@ describe( 'Menus components', () => {
 
 			// Assert.
 			const toolbarButtons = screen.getAllByRole( 'button' );
-			const popoverButton = toolbarButtons[ narrowMaxItems ];
+			const popoverButton = toolbarButtons[ popoverPosition === 'first' ? 0 : narrowMaxItems ];
 
 			expect( toolbarButtons ).toHaveLength( narrowMaxItems + 1 ); // Including the popover button.
 			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );
@@ -161,7 +166,7 @@ describe( 'Menus components', () => {
 	} );
 
 	describe( 'Utilities menu late registration', () => {
-		const maxUtilitiesItems = 4;
+		const maxUtilitiesItems = DEFAULT_MAX_TOOLBAR_ACTIONS.utilities;
 
 		it( 'should render a menu item registered after the location has mounted', () => {
 			// Arrange.
@@ -197,7 +202,9 @@ describe( 'Menus components', () => {
 			}
 
 			renderWithTheme(
-				<AppBarSizeProvider value={ { tools: 5, utilities: maxUtilitiesItems } }>
+				<AppBarSizeProvider
+					value={ { tools: DEFAULT_MAX_TOOLBAR_ACTIONS.tools, utilities: maxUtilitiesItems } }
+				>
 					<UtilitiesMenuLocation />
 				</AppBarSizeProvider>
 			);
