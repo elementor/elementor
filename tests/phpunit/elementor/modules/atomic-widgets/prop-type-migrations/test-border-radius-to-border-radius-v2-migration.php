@@ -41,6 +41,58 @@ class Test_Border_Radius_To_Border_Radius_V2_Migration extends TestCase {
 		$this->assertSame( 40, $result['value']['end-start']['value']['size'] );
 	}
 
+	public function test_up__still_updates_type_when_no_physical_keys_exist() {
+		// Arrange
+		$data = [
+			'$$type' => 'border-radius',
+			'value' => [
+				'start-start' => $this->make_size( 10 ),
+				'start-end' => $this->make_size( 20 ),
+			],
+		];
+
+		// Act
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		// Assert
+		$this->assertSame( 'border-radius-v2', $result['$$type'] );
+		$this->assertSame( 10, $result['value']['start-start']['value']['size'] );
+		$this->assertSame( 20, $result['value']['start-end']['value']['size'] );
+	}
+
+	public function test_up__still_updates_type_when_value_is_empty() {
+		// Arrange
+		$data = [
+			'$$type' => 'border-radius',
+			'value' => [],
+		];
+
+		// Act
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		// Assert
+		$this->assertSame( 'border-radius-v2', $result['$$type'] );
+		$this->assertSame( [], $result['value'] );
+	}
+
+	public function test_up__skipping_key_rename_conditions_does_not_block_type_change() {
+		// Arrange
+		$data = [
+			'$$type' => 'border-radius',
+			'value' => [
+				'start-end' => $this->make_size( 5 ),
+			],
+		];
+
+		// Act
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		// Assert
+		$this->assertSame( 'border-radius-v2', $result['$$type'] );
+		$this->assertArrayNotHasKey( 'top-left', $result['value'] );
+		$this->assertSame( 5, $result['value']['start-end']['value']['size'] );
+	}
+
 	public function test_up__renames_only_existing_corners() {
 		// Arrange
 		$data = [

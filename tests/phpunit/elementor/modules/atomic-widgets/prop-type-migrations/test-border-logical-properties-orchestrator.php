@@ -126,6 +126,51 @@ class Test_Border_Logical_Properties_Orchestrator extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'top', $border_width['value'] );
 	}
 
+	public function test_migrate__legacy_type_with_logical_keys_still_gets_type_bumped() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
+		$global_classes_data = [
+			'items' => [
+				[
+					'id' => 'gc_1',
+					'type' => 'class',
+					'label' => 'Logical Keys Legacy Type',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => [
+								'border-radius' => [
+									'$$type' => 'border-radius',
+									'value' => [
+										'start-start' => $this->make_size( 12 ),
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+			'order' => [ 'gc_1' ],
+		];
+
+		$save_callback_called = false;
+		$save_callback = function () use ( &$save_callback_called ) {
+			$save_callback_called = true;
+		};
+
+		// Act
+		$orchestrator->migrate( $global_classes_data, 2004, 'test_border_radius_logical_keys_legacy_type', $save_callback );
+
+		// Assert
+		$this->assertTrue( $save_callback_called );
+		$border_radius = $global_classes_data['items'][0]['variants'][0]['props']['border-radius'];
+		$this->assertSame( 'border-radius-v2', $border_radius['$$type'] );
+		$this->assertSame( 12, $border_radius['value']['start-start']['value']['size'] );
+	}
+
 	public function test_migrate__logical_border_radius_is_unchanged() {
 		// Arrange
 		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
