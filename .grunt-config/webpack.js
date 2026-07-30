@@ -141,7 +141,6 @@ const entry = {
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
-	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 	'editor-one-sidebar-navigation': path.resolve( __dirname, '../modules/editor-one/assets/js/sidebar-navigation/app.js' ),
 	'editor-one-top-bar': path.resolve( __dirname, '../modules/editor-one/assets/js/top-bar/app.js' ),
 	'editor-one-menu': path.resolve( __dirname, '../modules/editor-one/assets/js/admin-menu/app.js' ),

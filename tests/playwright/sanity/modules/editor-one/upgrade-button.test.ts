@@ -10,7 +10,7 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openWordPressDashboard();
-		await page.goto( '/wp-admin/admin.php?page=elementor' );
+		await page.goto( '/wp-admin/admin.php?page=elementor-settings' );
 		await page.waitForLoadState( 'domcontentloaded' );
 	} );
 

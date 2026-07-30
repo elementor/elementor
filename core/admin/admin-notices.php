@@ -806,11 +806,11 @@ class Admin_Notices extends Module {
 	}
 
 	private function is_elementor_admin_screen(): bool {
-		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library' ], true );
+		return in_array( $this->current_screen_id, [ 'edit-elementor_library' ], true );
 	}
 
 	private function is_elementor_admin_screen_with_system_info(): bool {
-		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true );
+		return in_array( $this->current_screen_id, [ 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true );
 	}
 	private function get_plugin_button_install_url( $plugin_slug ) {
 		return wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ), 'install-plugin_' . $plugin_slug );

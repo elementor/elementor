@@ -105,7 +105,7 @@ class Menu_Config {
 	}
 
 	public static function get_elementor_home_url(): string {
-		return admin_url( 'admin.php?page=' . self::ELEMENTOR_MENU_SLUG );
+		return admin_url( 'admin.php?page=elementor-settings' );
 	}
 
 	public static function get_elementor_post_types(): array {

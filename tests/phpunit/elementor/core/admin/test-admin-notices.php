@@ -140,12 +140,12 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		] );
 
 		wp_set_current_user( $user_id );
-		set_current_screen( 'toplevel_page_elementor' );
+		set_current_screen( 'edit-elementor_library' );
 
 		$reflection = new ReflectionClass( Admin_Notices::class );
 		$property = $reflection->getProperty( 'current_screen_id' );
 		$property->setAccessible( true );
-		$property->setValue( $admin_notices, 'toplevel_page_elementor' );
+		$property->setValue( $admin_notices, 'edit-elementor_library' );
 	}
 }
 
