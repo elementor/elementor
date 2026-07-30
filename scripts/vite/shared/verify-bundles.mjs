@@ -35,7 +35,7 @@ const MINIFIED_BUNDLE = '.min.js';
 export function verifyNoUnresolvedImports( directory = ASSETS_JS ) {
 	const offences = [];
 
-	for ( const fileName of readdirSync( directory ) ) {
+	for ( const fileName of readdirSync( directory, { recursive: true } ) ) {
 		if ( ! fileName.endsWith( MINIFIED_BUNDLE ) ) {
 			continue;
 		}
@@ -52,6 +52,7 @@ export function verifyNoUnresolvedImports( directory = ASSETS_JS ) {
 			[
 				'Unresolved dynamic imports left in the output, so the target modules are missing:',
 				...offences.map( ( offence ) => `  ${ offence }` ),
+				'Frontend entries route dynamic imports through __elementorLoadChunk; base entries still inline them.',
 				'Externals must be rewritten to a global, and first-party specifiers must be plain string literals.',
 			].join( '\n' ),
 		);

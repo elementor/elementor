@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 
 import { build as viteBuild } from 'vite-plus';
 
-import { createEntryConfig } from './create-config.mjs';
+import { createChunkConfig, createEntryConfig, CHUNKS_OUTPUT_DIR } from './create-config.mjs';
 import { generateEiconsFile } from './shared/eicons.mjs';
 import { BASE_ENTRIES, FRONTEND_ENTRIES, QUNIT_ENTRIES } from './shared/entries.mjs';
 import { ASSETS_JS } from './shared/paths.mjs';
@@ -63,6 +63,35 @@ function writeRuntimePlaceholders() {
 	}
 }
 
+/**
+ * The `frontend` entry (not the target of the same name; see FRONTEND_ENTRIES) is the one that
+ * uses `import()` to lazy-load per-widget handlers. Every chunk it discovers is built after the
+ * entry itself and lands in `assets/js/chunks/` for `utils/chunk-loader.js` to fetch on demand.
+ */
+const CHUNKED_ENTRY_NAME = 'frontend';
+
+function cleanChunksOutput() {
+	mkdirSync( CHUNKS_OUTPUT_DIR, { recursive: true } );
+
+	for ( const fileName of readdirSync( CHUNKS_OUTPUT_DIR ) ) {
+		rmSync( join( CHUNKS_OUTPUT_DIR, fileName ), { force: true } );
+	}
+}
+
+async function buildFrontendChunks( { chunks, isProduction, watch } ) {
+	const watchers = [];
+
+	for ( const [ chunkName, entryPath ] of chunks ) {
+		const result = await viteBuild( createChunkConfig( { chunkName, entryPath, isProduction, watch } ) );
+
+		if ( watch ) {
+			watchers.push( result );
+		}
+	}
+
+	return watchers;
+}
+
 async function buildTarget( targetName, { isProduction, watch } ) {
 	const target = TARGETS[ targetName ];
 
@@ -73,6 +102,7 @@ async function buildTarget( targetName, { isProduction, watch } ) {
 	const watchers = [];
 	const entryNames = Object.keys( target.entries );
 	const startedAt = Date.now();
+	const chunks = new Map();
 
 	for ( const entryName of entryNames ) {
 		const result = await viteBuild( createEntryConfig( {
@@ -82,6 +112,7 @@ async function buildTarget( targetName, { isProduction, watch } ) {
 			watch,
 			emitStrings: target.emitStrings && isProduction,
 			isFrontend: Boolean( target.isFrontend ),
+			chunkEntries: ( target.isFrontend && entryName === CHUNKED_ENTRY_NAME ) ? chunks : null,
 		} ) );
 
 		if ( watch ) {
@@ -91,6 +122,14 @@ async function buildTarget( targetName, { isProduction, watch } ) {
 
 	const mode = isProduction ? 'production' : 'development';
 	console.log( `[vite:scripts] ${ targetName } (${ mode }): ${ entryNames.length } entries in ${ Date.now() - startedAt }ms` );
+
+	if ( chunks.size ) {
+		const chunkStart = Date.now();
+		const chunkWatchers = await buildFrontendChunks( { chunks, isProduction, watch } );
+
+		watchers.push( ...chunkWatchers );
+		console.log( `[vite:scripts] ${ targetName } (${ mode }): ${ chunks.size } chunks in ${ Date.now() - chunkStart }ms` );
+	}
 
 	return watchers;
 }
@@ -106,6 +145,7 @@ function resolveModes( { devOnly, prodOnly } ) {
 export async function buildScripts( { targets, watch, devOnly, prodOnly, clean } ) {
 	if ( clean && ! watch ) {
 		cleanBundleOutput();
+		cleanChunksOutput();
 	}
 
 	// The frontend entries import the generated icon module, so it has to exist before bundling.

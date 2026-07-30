@@ -62,21 +62,43 @@ Three decisions carry the pipeline and are not optional:
   fell from 107KB to 6KB, because `@wordpress/element`'s `useState`/`useEffect` collapse to the
   already-external `react` global instead of bundling the whole package.
 
-Every dynamic import is inlined, since IIFE cannot code split. That is a deliberate trade: entries
-are larger and nothing is lazily fetched. `webpack.runtime[.min].js` is emitted as a no-op file
-because the `elementor-webpack-runtime` script handle is still registered in PHP and depended on by
-`elementor-frontend-modules`.
+Base entries inline every dynamic import, since IIFE cannot code split. The frontend entry does
+not: `plugins/frontend-chunks.mjs` rewrites each `import( '<first-party>' )` to
+`__elementorLoadChunk( '<name>' )` and records the target, and the build then emits each recorded
+target as its own IIFE bundle under `assets/js/chunks/`. Doing this only for the frontend targets
+the audit that made this necessary: Lighthouse's `unused-javascript` assertion, which measures
+what a public page loads on first hit. Base entries load once in wp-admin and are not scored
+against the same threshold.
 
-Inlining has two failure modes that the bundler reports at no log level, so
-`shared/verify-bundles.mjs` fails the build on both. Each one silently removed a feature that a
-filename and size comparison could not see, because the entry was still emitted and merely smaller.
+The runtime lives in `assets/dev/js/frontend/utils/chunk-loader.js`. Each chunk registers itself
+onto `window.__elementorChunks[ name ]` when its script tag fires `onload`, and `loadChunk` hands
+out the same promise for concurrent requests so the tag is appended once. Chunk filenames match
+the entry flavor (`<name>.js` or `<name>.min.js`), because the build defines
+`__ELEMENTOR_CHUNK_SUFFIX__` from `isProduction` and the loader references it. The
+`webpack.runtime[.min].js` placeholders remain, because the `elementor-webpack-runtime` script
+handle is still registered in PHP and depended on by `elementor-frontend-modules`.
 
-- **A specifier written as a template literal is not resolved**, even with no interpolation, and the
-  target is dropped. `lightbox-manager.js` lost the entire Lightbox module this way; only a test that
-  opened a lightbox caught it. Since nothing should remain to fetch, the check is that no static
-  `import()` survives at all.
-- **A dynamic import of an external is left as a bare specifier**, which the browser cannot resolve,
-  so the promise rejects. `plugins/dynamic-externals.mjs` rewrites these to
+Chunk names derive from the resolved path rather than the specifier, because two call sites can
+import different modules whose basenames collide: `handlers/container/shapes` and
+`handlers/section/shapes` become `container-shapes` and `section-shapes` respectively. Webpack
+avoided this class of collision through the `webpackChunkName` magic comment; the plugin ignores
+those comments deliberately, so the source stays free of build-tool metadata.
+
+`plugins/frontend-chunks.mjs` runs with `enforce: 'pre'`, because `babel-legacy.mjs` also runs
+pre, and `@babel/plugin-transform-runtime` had already compiled `import()` down to
+`Promise.resolve().then( () => require() )` by the time the chunks plugin saw the code, at which
+point the specifier was no longer statically recoverable.
+
+Two failure modes remain that the bundler reports at no log level, so `shared/verify-bundles.mjs`
+still fails the build on both. Each one silently removed a feature that a filename and size
+comparison could not see, because the entry was still emitted and merely smaller.
+
+- **A specifier written as a template literal is not resolved**, even with no interpolation, and
+  the target is dropped. `lightbox-manager.js` lost the entire Lightbox module this way; only a
+  test that opened a lightbox caught it. The guard checks that no static `import()` survives
+  anywhere under `assets/js/`, including chunks.
+- **A dynamic import of an external is left as a bare specifier**, which the browser cannot
+  resolve, so the promise rejects. `plugins/dynamic-externals.mjs` rewrites these to
   `Promise.resolve( <global> )`, which is what the external already is; Webpack did the same.
 
 Externals arrive as IIFE arguments and so are read before the bundle body runs, which means a bundle
