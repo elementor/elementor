@@ -265,6 +265,15 @@ export default class WpAdminPage extends BasePage {
 	async waitForPanel(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
+		// The DOM signals above hide before the editor bootstrap assigns `window.elementor`, so a
+		// test that immediately does `page.evaluate( () => elementor... )` sees a `ReferenceError`.
+		// Polling the API surface the caller is about to use closes that race deterministically.
+		await this.page.waitForFunction(
+			() => 'object' === typeof ( window as unknown as { elementor?: { getContainer?: unknown } } ).elementor &&
+				'function' === typeof ( window as unknown as { elementor: { getContainer?: unknown } } ).elementor.getContainer,
+			null,
+			{ timeout: timeouts.heavyAction },
+		);
 	}
 
 	/**
