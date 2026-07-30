@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -88,6 +89,10 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->default( 'div' )
+				->description( 'The HTML tag for the background video container. Could be div, header, section, article, aside, or footer.' ),
 			'source' => Video_Src_Prop_Type::make()->alias( 'video', 'src' ),
 			'start_time' => Number_Prop_Type::make()
 				->default( null )
@@ -148,11 +153,37 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
+					Html_Tag_Control::bind_to( 'tag' )
+						->set_options( [
+							[
+								'value' => 'div',
+								'label' => 'Div',
+							],
+							[
+								'value' => 'header',
+								'label' => 'Header',
+							],
+							[
+								'value' => 'section',
+								'label' => 'Section',
+							],
+							[
+								'value' => 'article',
+								'label' => 'Article',
+							],
+							[
+								'value' => 'aside',
+								'label' => 'Aside',
+							],
+							[
+								'value' => 'footer',
+								'label' => 'Footer',
+							],
+						] )
+						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( [
-							'layout' => 'two-columns',
-						] ),
+						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
 		];
 	}
@@ -167,10 +198,11 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
 							'overflow' => String_Prop_Type::generate( 'hidden' ),
-							// The root is a full-bleed video background; content spacing belongs to the
-							// content area, so override the inherited `.e-con` container padding to 0.
+							// Match Flexbox/container default padding so the empty-state outline and
+							// stacking gaps match other layout elements. Absolute video still covers
+							// the full padding box (abspos containing block = padding edge).
 							'padding' => Size_Prop_Type::generate( [
-								'size' => 0,
+								'size' => 10,
 								'unit' => 'px',
 							] ),
 							'width' => Size_Prop_Type::generate( [
