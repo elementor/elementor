@@ -464,6 +464,59 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( $sanitized_files, $result );
 	}
 
+	public function test_kses_post_deep__strips_disallowed_html_from_strings() {
+		// Arrange
+		$value = '<iframe src="https://evil.example"></iframe><strong>Bold</strong>';
+
+		// Act
+		$result = Utils::kses_post_deep( $value );
+
+		// Assert
+		$this->assertEquals( '<strong>Bold</strong>', $result );
+	}
+
+	public function test_kses_post_deep__preserves_non_string_scalars() {
+		// Arrange
+		$data = [
+			'bool_true' => true,
+			'bool_false' => false,
+			'null_value' => null,
+			'int_value' => 5,
+			'float_value' => 1.5,
+		];
+
+		// Act
+		$result = Utils::kses_post_deep( $data );
+
+		// Assert
+		$this->assertSame( $data, $result );
+	}
+
+	public function test_kses_post_deep__sanitizes_strings_inside_nested_arrays() {
+		// Arrange
+		$data = [
+			'title' => '<iframe src="https://evil.example"></iframe>Title',
+			'nested' => [
+				'description' => '<iframe src="evil"></iframe><em>Description</em>',
+				'z_index' => 10,
+				'is_visible' => false,
+			],
+		];
+
+		// Act
+		$result = Utils::kses_post_deep( $data );
+
+		// Assert
+		$this->assertEquals( [
+			'title' => 'Title',
+			'nested' => [
+				'description' => '<em>Description</em>',
+				'z_index' => 10,
+				'is_visible' => false,
+			],
+		], $result );
+	}
+
 	private function reset_allowed_html_wrapper_tags_cache(): void {
 		$reflection = new \ReflectionClass( Utils::class );
 		$property = $reflection->getProperty( 'resolved_allowed_html_wrapper_tags' );

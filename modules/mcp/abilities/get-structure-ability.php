@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -23,14 +24,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles in the same shape that build-composition accepts as input. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles, and interactions in the same shape that build-composition accepts as input; V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When include_content is true, each node also includes settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles, and interactions; V3 nodes always have empty settings and styles.',
 					],
 				],
 			],
@@ -59,7 +60,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each node\'s settings and styles (in the same shape build-composition accepts as input). Requires element_id.',
+						'description' => 'If true, includes each node\'s settings, styles, and interactions (in the same shape build-composition accepts as input). Requires element_id.',
 					],
 				],
 			]
@@ -121,6 +122,11 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$skeleton['widgetType'] = $node['widgetType'];
 			}
 
+			$version = $this->resolve_element_version( $node );
+			if ( null !== $version ) {
+				$skeleton['version'] = $version;
+			}
+
 			$title = Element_Structure_Title::resolve( $node );
 
 			if ( null !== $title ) {
@@ -132,6 +138,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
+				if ( null !== $version && $version < 4 ) {
+					$skeleton['settings'] = (object) [];
+					$skeleton['styles'] = (object) [];
+					return $skeleton;
+				}
+
 				$settings = $node['settings'] ?? [];
 				$props_schema = $this->resolve_props_schema( $node );
 
@@ -140,12 +152,54 @@ class Get_Structure_Ability extends Abstract_Ability {
 					$settings = Render_Props_Resolver::for_settings()->resolve( $schema, $settings );
 				}
 
-				$skeleton['settings'] = $settings ? $settings : (object) [];
-				$skeleton['styles']   = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
+				$skeleton['settings']     = $settings ? $settings : (object) [];
+				$skeleton['styles']       = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
+				$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 			}
 
 			return $skeleton;
 		} );
+	}
+
+	private function resolve_element_version( array $node ): ?int {
+		$type = Atomic_Elements_Utils::get_element_type( $node );
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		$instance = Atomic_Elements_Utils::get_element_instance( (string) $type );
+
+		if ( ! $instance ) {
+			return null;
+		}
+
+		return Atomic_Elements_Utils::is_atomic_element( $instance ) ? 4 : 3;
+	}
+
+	private function normalize_interactions( $interactions ): array {
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			$interactions = ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) ? $decoded : [];
+		}
+
+		if ( ! is_array( $interactions ) || empty( $interactions['items'] ) ) {
+			return [];
+		}
+
+		$resolver = Render_Props_Resolver::for_plain();
+		$prop_type = Interaction_Item_Prop_Type::make();
+		$plain = [];
+
+		foreach ( $interactions['items'] as $item ) {
+			$serialized = $resolver->resolve_value( $item, $prop_type );
+
+			if ( is_array( $serialized ) && ! empty( $serialized ) ) {
+				$plain[] = $serialized;
+			}
+		}
+
+		return $plain;
 	}
 
 	private function resolve_props_schema( array $node ): ?array {

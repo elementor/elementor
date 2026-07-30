@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
 
@@ -69,7 +70,12 @@ class Module extends BaseModule {
 		( new Abilities\Build_Composition_Ability() )->register();
 		( new Abilities\Manage_Elements_Ability() )->register();
 		( new Abilities\Global_Classes_Resource_Ability() )->register();
+
+		if ( $this->is_components_active() ) {
+			( new Abilities\List_Components_Ability() )->register();
+		}
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
+		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
 		( new Abilities\Read_Resource_Ability() )->register();
 	}
@@ -89,26 +95,8 @@ class Module extends BaseModule {
 			[ \WP\MCP\Transport\HttpTransport::class ],
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
-			[
-				'elementor/get-page-structure',
-				'elementor/update-page-settings',
-				'elementor/create-page',
-				'elementor/manage-global-variable',
-				'elementor/manage-classes',
-				'elementor/get-widget-schema',
-				'elementor/list-widget-schemas',
-				'elementor/list-dynamic-tags',
-				'elementor/build-composition',
-				'elementor/manage-elements',
-				'elementor/list-resources',
-				'elementor/read-resource',
-			],
-			[
-				'elementor/style-best-practices',
-				'elementor/manage-global-variable-guide',
-				'elementor/global-classes-resource',
-				'elementor/global-variables-resource',
-			],
+			$this->get_server_tools(),
+			$this->get_server_resources(),
 			[]
 		);
 
@@ -117,5 +105,75 @@ class Module extends BaseModule {
 			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
 			return;
 		}
+	}
+
+	private function is_components_active(): bool {
+		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
+	}
+
+	private function get_server_tools(): array {
+		$tools = [
+			'elementor/get-page-structure',
+			'elementor/update-page-settings',
+			'elementor/create-page',
+			'elementor/manage-global-variable',
+			'elementor/manage-classes',
+			'elementor/get-widget-schema',
+			'elementor/list-widget-schemas',
+			'elementor/build-composition',
+			'elementor/manage-elements',
+			'elementor/list-resources',
+			'elementor/read-resource',
+			...( $this->is_components_active() ? [ 'elementor/list-components' ] : [] ),
+		];
+
+		/**
+		 * Filters additional MCP tool ability slugs to expose on the Elementor MCP server.
+		 *
+		 * Use this filter to add tool abilities (registered via `wp_register_ability` on the
+		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
+		 * ability id returned by the ability's `get_ability_id()`. Core defaults are always
+		 * included and cannot be removed via this filter.
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param string[] $additional_tools List of tool ability slugs contributed by other modules.
+		 */
+		$additional_tools = apply_filters( 'elementor/mcp/server/tools', [] );
+
+		return $this->normalize_slugs( $tools, $additional_tools );
+	}
+
+	private function get_server_resources(): array {
+		$resources = [
+			'elementor/style-best-practices',
+			'elementor/manage-global-variable-guide',
+			'elementor/global-classes-resource',
+			'elementor/global-variables-resource',
+			'elementor/list-dynamic-tags',
+			'elementor/interactions-schema-resource',
+		];
+
+		/**
+		 * Filters additional MCP resource ability slugs to expose on the Elementor MCP server.
+		 *
+		 * Use this filter to add resource abilities (registered via `wp_register_ability` on the
+		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
+		 * ability id returned by the ability's `get_ability_id()`. Core defaults are always
+		 * included and cannot be removed via this filter.
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param string[] $additional_resources List of resource ability slugs contributed by other modules.
+		 */
+		$additional_resources = apply_filters( 'elementor/mcp/server/resources', [] );
+
+		return $this->normalize_slugs( $resources, $additional_resources );
+	}
+
+	private function normalize_slugs( array $defaults, $additional ): array {
+		$additional = is_array( $additional ) ? array_filter( $additional, 'is_string' ) : [];
+
+		return array_values( array_unique( array_merge( $defaults, $additional ) ) );
 	}
 }
