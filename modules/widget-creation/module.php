@@ -3,9 +3,9 @@
 namespace Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const EXPERIMENT_NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
 	const MODULE_NAME = 'widget-creation';
-	const EXPERIMENT_NAME = 'e_widget_creation';
 
 	const PACKAGES = [
 		'editor-widget-creation',
@@ -24,17 +24,6 @@ class Module extends BaseModule {
 
 	public function get_name() {
 		return self::MODULE_NAME;
-	}
-
-	public static function get_experimental_data(): array {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Widget Creation', 'elementor' ),
-			'description' => esc_html__( 'Promote widget creation with Angie plugin.', 'elementor' ),
-			'hidden' => true,
-			'default' => ExperimentsManager::STATE_ACTIVE,
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
-		];
 	}
 
 	public function __construct() {
@@ -61,10 +50,6 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_register_custom_widgets_category_fallback( Elements_Manager $elements_manager ): void {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return;
-		}
-
 		if ( Hints::is_plugin_active( 'angie' ) ) {
 			return;
 		}
@@ -90,10 +75,6 @@ class Module extends BaseModule {
 	}
 
 	public function render_custom_widgets_category_heading_cta(): void {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return;
-		}
-
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
@@ -106,10 +87,6 @@ class Module extends BaseModule {
 	}
 
 	public function render_custom_widgets_category_empty_state(): void {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return;
-		}
-
 		if ( $this->custom_widgets_category_has_widgets() ) {
 			return;
 		}
