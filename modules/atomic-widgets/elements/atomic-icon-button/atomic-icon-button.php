@@ -39,6 +39,8 @@ class Atomic_Icon_Button extends Atomic_Element_Base {
 	const ELEMENT_TYPE_CONTENT = 'e-icon-button-content';
 	const ELEMENT_TYPE_ICON = 'e-icon-button-icon';
 
+	public static $widget_description = 'A pre-composed button with an icon and a text label. Structure: e-icon-button contains e-icon-button-content (holds the label, any V4 element) and e-icon-button-icon (holds the icon, any V4 element). Renders as a <button>, or as an <a> when a link is set.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
@@ -86,16 +88,21 @@ class Atomic_Icon_Button extends Atomic_Element_Base {
 
 		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
+				->default( [] )
+				->description( 'The CSS classes applied to the button.' ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'button', 'a', 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'button' )
-				->set_dependencies( $tag_dependencies ),
-			'link' => Link_Prop_Type::make(),
+				->set_dependencies( $tag_dependencies )
+				->description( 'The HTML tag for the button. Defaults to button, and switches to a automatically when a link is set. Could be button, a, div, header, section, article, aside, or footer.' ),
+			'link' => Link_Prop_Type::make()
+				->description( 'The link destination of the button. When set, the button is rendered as an anchor with an href.' ),
 			'show_icon' => Boolean_Prop_Type::make()
-				->default( true ),
+				->default( true )
+				->description( 'Whether the icon slot is rendered. When false, the icon element is removed from the markup entirely and the button shows text only.' ),
 			'attributes' => Attributes_Prop_Type::make()
-				->meta( Overridable_Prop_Type::ignore() ),
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes added to the button.' ),
 		];
 	}
 
@@ -258,5 +265,21 @@ class Atomic_Icon_Button extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-icon-button' => __DIR__ . '/atomic-icon-button.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$text = trim( wp_strip_all_tags( parent::render_markdown() ) );
+
+		if ( empty( $text ) ) {
+			return '';
+		}
+
+		$settings = $this->get_atomic_settings();
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			return '[' . $text . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return '**' . $text . '**';
 	}
 }

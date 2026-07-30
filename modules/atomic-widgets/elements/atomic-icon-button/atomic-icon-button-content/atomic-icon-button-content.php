@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Icon_Button_Content extends Atomic_Element_Base {
 	use Has_Element_Template;
 
+	public static $widget_description = 'Content slot for the Icon Button element. Holds the button label; drop any V4 element here to replace the default paragraph.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'permanently_locked', true );
