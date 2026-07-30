@@ -77,6 +77,40 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertSame( 'div', Utils::validate_html_tag( 'script' ) );
 	}
 
+	public function test_get_allowed_html_wrapper_tags__filter_cannot_reintroduce_forbidden_tags() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function ( $tags ) {
+				return array_merge( $tags, Utils::FORBIDDEN_HTML_WRAPPER_TAGS, [ 'SCRIPT', 'custom-tag' ] );
+			}
+		);
+
+		// Act.
+		$tags = Utils::get_allowed_html_wrapper_tags();
+
+		// Assert.
+		foreach ( Utils::FORBIDDEN_HTML_WRAPPER_TAGS as $forbidden_tag ) {
+			$this->assertNotContains( $forbidden_tag, $tags );
+		}
+
+		$this->assertContains( 'custom-tag', $tags );
+	}
+
+	public function test_validate_html_tag__rejects_forbidden_tag_even_when_filter_allows_it() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function ( $tags ) {
+				return array_merge( $tags, [ 'script', 'IFRAME' ] );
+			}
+		);
+
+		// Act & Assert.
+		$this->assertSame( 'div', Utils::validate_html_tag( 'script' ) );
+		$this->assertSame( 'div', Utils::validate_html_tag( 'iframe' ) );
+	}
+
 	public function test_should_return_elementor_pro_link() {
 		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}

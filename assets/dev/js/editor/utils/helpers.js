@@ -3,32 +3,15 @@ import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import DOMPurify, { isValidAttribute } from 'dompurify';
 
-const DEFAULT_ALLOWED_HTML_WRAPPER_TAGS = [
-	'a',
-	'article',
-	'aside',
-	'button',
-	'div',
-	'footer',
-	'form',
-	'h1',
-	'h2',
-	'h3',
-	'h4',
-	'h5',
-	'h6',
-	'header',
-	'main',
-	'nav',
-	'p',
-	'section',
-	'span',
-];
-
+/**
+ * PHP (`Utils::get_allowed_html_wrapper_tags()`) is the single source of truth for this
+ * list; it's localized via `elementorCommon.config`. If it's ever missing, fail closed
+ * (no tags allowed) rather than fall back to a second hardcoded copy that could drift.
+ */
 function getAllowedHTMLWrapperTags() {
 	const { allowedHTMLWrapperTags } = globalThis.elementorCommon?.config ?? {};
 
-	return Array.isArray( allowedHTMLWrapperTags ) ? allowedHTMLWrapperTags : DEFAULT_ALLOWED_HTML_WRAPPER_TAGS;
+	return Array.isArray( allowedHTMLWrapperTags ) ? allowedHTMLWrapperTags : [];
 }
 
 module.exports = {
@@ -707,8 +690,6 @@ module.exports = {
 
 		return allowedTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
-
-	DEFAULT_ALLOWED_HTML_WRAPPER_TAGS,
 
 	convertSizeToFrString( size ) {
 		if ( 'number' !== typeof size || size <= 0 ) {

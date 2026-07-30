@@ -47,6 +47,27 @@ class Utils {
 		'span',
 	];
 
+	/**
+	 * Tags that must never be usable as an HTML wrapper tag, regardless of what
+	 * `elementor/allowed_html_wrapper_tags` filters return. These are the classic
+	 * script-execution / markup-injection vectors (XSS), so they're enforced as a
+	 * hard denylist rather than left to filter authors to avoid re-adding them.
+	 */
+	const FORBIDDEN_HTML_WRAPPER_TAGS = [
+		'script',
+		'iframe',
+		'object',
+		'embed',
+		'style',
+		'link',
+		'meta',
+		'base',
+		'noscript',
+		'template',
+		'svg',
+		'math',
+	];
+
 	const EXTENDED_ALLOWED_HTML_TAGS = [
 		'iframe' => [
 			'iframe' => [
@@ -797,6 +818,10 @@ class Utils {
 		 *
 		 * Filters the list of allowed HTML tag names used by `validate_html_tag()`.
 		 *
+		 * Note: tags in `Utils::FORBIDDEN_HTML_WRAPPER_TAGS` (e.g. `script`, `iframe`,
+		 * `object`) are always stripped after this filter runs and cannot be re-added,
+		 * to prevent XSS via a wrapper tag that executes script or embeds external content.
+		 *
 		 * @since 4.4.0
 		 *
 		 * @param string[] $tags A list of lowercase HTML tag name strings.
@@ -832,7 +857,13 @@ class Utils {
 				continue;
 			}
 
-			$normalized_tags[] = strtolower( $tag );
+			$tag = strtolower( $tag );
+
+			if ( in_array( $tag, self::FORBIDDEN_HTML_WRAPPER_TAGS, true ) ) {
+				continue;
+			}
+
+			$normalized_tags[] = $tag;
 		}
 
 		return array_values( array_unique( $normalized_tags ) );

@@ -1,7 +1,17 @@
 /* eslint-disable testing-library/render-result-naming-convention */
-import { createDomRenderer, DEFAULT_ALLOWED_HTML_WRAPPER_TAGS } from '../create-dom-renderer';
+import { createDomRenderer } from '../create-dom-renderer';
+
+const TEST_ALLOWED_HTML_WRAPPER_TAGS = [ 'a', 'div', 'form', 'span' ];
 
 describe( 'createDomRenderer', () => {
+	beforeEach( () => {
+		window.elementorCommon = {
+			config: {
+				allowedHTMLWrapperTags: TEST_ALLOWED_HTML_WRAPPER_TAGS,
+			},
+		};
+	} );
+
 	afterEach( () => {
 		delete window.elementorCommon;
 	} );
@@ -84,7 +94,7 @@ describe( 'createDomRenderer', () => {
 		// Arrange.
 		window.elementorCommon = {
 			config: {
-				allowedHTMLWrapperTags: [ ...DEFAULT_ALLOWED_HTML_WRAPPER_TAGS, 'custom-tag' ],
+				allowedHTMLWrapperTags: [ ...TEST_ALLOWED_HTML_WRAPPER_TAGS, 'custom-tag' ],
 			},
 		};
 		const domRenderer = createDomRenderer();
@@ -97,5 +107,20 @@ describe( 'createDomRenderer', () => {
 
 		// Assert.
 		expect( result ).toBe( '<custom-tag></custom-tag>' );
+	} );
+
+	it( 'should fail closed to div when the localized config is missing, even for an otherwise-safe tag', async () => {
+		// Arrange.
+		delete window.elementorCommon;
+		const domRenderer = createDomRenderer();
+		const template = `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`;
+
+		domRenderer.register( 'test-template', template );
+
+		// Act.
+		const result = await domRenderer.render( 'test-template', { tag: 'a' } );
+
+		// Assert.
+		expect( result ).toBe( '<div></div>' );
 	} );
 } );
