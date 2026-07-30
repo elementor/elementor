@@ -346,6 +346,10 @@ class Converter_Registry_Factory {
 			'border-top-right-radius' => [ 'border-radius', 'start-end' ],
 			'border-bottom-right-radius' => [ 'border-radius', 'end-end' ],
 			'border-bottom-left-radius' => [ 'border-radius', 'end-start' ],
+			'border-start-start-radius' => [ 'border-radius', 'start-start' ],
+			'border-start-end-radius' => [ 'border-radius', 'start-end' ],
+			'border-end-end-radius' => [ 'border-radius', 'end-end' ],
+			'border-end-start-radius' => [ 'border-radius', 'end-start' ],
 		];
 	}
 
