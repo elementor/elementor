@@ -25,6 +25,8 @@ jobs:
   validate:
     name: Validate (Dry Run)
     if: github.repository_owner == 'elementor'
+    permissions:
+      contents: read
     uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
     with:
       version: ${{ inputs.version }}
@@ -44,6 +46,8 @@ jobs:
     needs: validate
     environment: release-approval
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       - name: Approval received
         run: echo "Tag creation for ${{ inputs.version }} approved. Proceeding."
@@ -71,6 +75,8 @@ jobs:
     name: Release Drafted
     needs: build-draft
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       - name: Write release summary
         run: |
@@ -90,6 +96,8 @@ jobs:
     needs: release-summary
     environment: release-approval
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Approval received
         run: echo "Publish of ${{ inputs.version }} approved. Proceeding."

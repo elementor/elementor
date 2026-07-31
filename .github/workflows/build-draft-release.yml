@@ -44,6 +44,8 @@ jobs:
     name: Verify Version Changelog
     if: ${{ inputs.channel == 'stable' }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Checkout tagged commit
         uses: actions/checkout@v4
@@ -60,6 +62,8 @@ jobs:
     needs: changelog-check
     if: always() && (needs.changelog-check.result == 'success' || needs.changelog-check.result == 'skipped')
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Checkout tagged commit
         uses: actions/checkout@v4
@@ -101,6 +105,8 @@ jobs:
     # unless each one explicitly overrides it with always().
     if: always() && needs.build-job.result == 'success'
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

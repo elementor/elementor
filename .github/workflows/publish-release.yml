@@ -176,6 +176,8 @@ jobs:
   publish-packages:
     name: Publish Packages
     needs: publish
+    permissions:
+      contents: read
     uses: ./.github/workflows/publish-packages.yml
     with:
       version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
