@@ -67,7 +67,7 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon, actio
 				justifyContent: hasBadge ? 'flex-start' : 'center',
 				gap: 1,
 				height: '100%',
-				pl: hasBadge ? 1 : 0,
+				pl: hasBadge ? 2 : 0,
 			} }
 		>
 			{ Icon ? <Icon /> : null }
