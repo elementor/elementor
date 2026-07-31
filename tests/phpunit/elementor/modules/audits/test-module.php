@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Audits;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Audits\Data\Controller;
 use Elementor\Modules\Audits\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -20,6 +21,7 @@ class Test_Module extends Elementor_Test_Base {
 
 		remove_all_filters( 'elementor/editor/v2/packages' );
 		remove_all_actions( 'elementor/editor/v2/scripts/enqueue' );
+		unset( Plugin::$instance->data_manager_v2->controllers['audits'] );
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Module::EXPERIMENT_NAME )['default'];
@@ -49,6 +51,29 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert.
 		$feature = Plugin::$instance->experiments->get_features( Module::EXPERIMENT_NAME );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_BETA, $feature['release_status'] );
+		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $feature['default'] );
+	}
+
+	public function test_data_controller_is_not_registered_when_experiment_is_inactive() {
+		// Arrange.
+		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+
+		// Act.
+		new Module();
+
+		// Assert.
+		$this->assertFalse( Plugin::$instance->data_manager_v2->get_controller( 'audits' ) );
+	}
+
+	public function test_data_controller_is_registered_when_experiment_is_active() {
+		// Arrange.
+		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		new Module();
+
+		// Assert.
+		$this->assertInstanceOf( Controller::class, Plugin::$instance->data_manager_v2->get_controller( 'audits' ) );
 	}
 
 	public function test_packages_filter_is_not_added_when_experiment_is_inactive() {
