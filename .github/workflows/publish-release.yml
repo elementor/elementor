@@ -106,7 +106,7 @@ jobs:
         draft: false
 
     - name: Publish to WordPress.org SVN
-      if: github.repository_owner == 'elementor'
+      if: github.repository_owner == 'elementor' && !inputs.prerelease
       env:
         PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
