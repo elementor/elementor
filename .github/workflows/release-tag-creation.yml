@@ -57,7 +57,7 @@ jobs:
 
       - name: Release tag creation
         id: release-tag-creation
-        uses: elementor/elementor-editor-github-actions/actions/release-tag-creation@ED-24451-fix-package-ref
+        uses: elementor/elementor-editor-github-actions/actions/release-tag-creation@main
         with:
           version: ${{ inputs.version }}
           dry_run: ${{ inputs.dry_run }}

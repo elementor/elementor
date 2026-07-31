@@ -135,7 +135,7 @@ test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 		const request = page.context().request;
 
 		logProgress( 'Setting up experiments...' );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		logProgress( 'Cleaning up existing global classes...' );
 		const cleanupResult = await deleteAllGlobalClasses( apiRequests, request );

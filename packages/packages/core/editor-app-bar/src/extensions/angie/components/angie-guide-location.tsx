@@ -84,7 +84,7 @@ export function AngieGuideLocation() {
 					],
 				} }
 			>
-				<span />
+				<span style={ { display: 'contents' } } />
 			</Infotip>
 		</ThemeProvider>
 	);

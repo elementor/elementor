@@ -24,7 +24,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   validate:
     name: Validate (Dry Run)
-    uses: davseve/elementor/.github/workflows/release-tag-creation.yml@split-release-process
+    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
     with:
       version: ${{ inputs.version }}
       dry_run: true
@@ -53,7 +53,7 @@ jobs:
   tag:
     name: Create Release Tag
     needs: approve-tag
-    uses: davseve/elementor/.github/workflows/release-tag-creation.yml@split-release-process
+    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
     with:
       version: ${{ inputs.version }}
       dry_run: false
@@ -134,7 +134,7 @@ jobs:
   build-draft:
     name: Build & Draft Release
     needs: tag
-    uses: davseve/elementor/.github/workflows/build-draft-release.yml@split-release-process
+    uses: elementor/elementor/.github/workflows/build-draft-release.yml@main
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
@@ -185,7 +185,7 @@ jobs:
   publish:
     name: Publish Release
     needs: [approve-publish, tag]
-    uses: davseve/elementor/.github/workflows/publish-release.yml@split-release-process
+    uses: elementor/elementor/.github/workflows/publish-release.yml@main
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
