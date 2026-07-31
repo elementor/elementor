@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish, Slack announcement, and npm packages publish)'
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish, beta→dev cascade, Slack announcement, and npm packages publish)'
       channel:
         required: false
         type: choice
@@ -117,7 +117,7 @@ jobs:
         bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
 
     - name: Release Dev From Beta
-      if: inputs.channel == 'beta'
+      if: inputs.channel == 'beta' && !inputs.prerelease
       uses: ./.github/workflows/release-dev-from-beta
       with:
         BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
