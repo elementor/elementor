@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish and Slack announcement)'
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish, Slack announcement, and npm packages publish)'
 
 permissions:
   contents: write

@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish and Slack announcement)'
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish, Slack announcement, and npm packages publish)'
       channel:
         required: false
         type: choice
@@ -178,6 +178,7 @@ jobs:
   publish-packages:
     name: Publish Packages
     needs: publish
+    if: ${{ !inputs.prerelease }}
     uses: ./.github/workflows/publish-packages.yml
     with:
       version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
