@@ -130,6 +130,7 @@ class Modules_Manager {
 			'design-system-sync',
 			'wc-product-editor',
 			'checklist',
+			'audits',
 			'cloud-library',
 			'cloud-kit-library',
 			'atomic-opt-in',

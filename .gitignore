@@ -53,6 +53,7 @@ coverage/
 !.cursor/rules/
 .cursor/rules/LOCAL_RULES.md
 .claude/
+docs/superpowers/
 
 # PHPunit and PHPlint cache files
 *.cache
