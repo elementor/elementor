@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type ComponentType } from 'react';
 import { XIcon } from '@elementor/icons';
 import { __useSelector as useSelector } from '@elementor/store';
-import { Box, Chip, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
+import { Box, Chip, IconButton, Stack, Tooltip, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useFloatingPanelActions } from '../../hooks/use-floating-panel-actions';
@@ -17,6 +17,7 @@ type Props = {
 	icon?: ComponentType;
 	actions?: FloatingPanelHeaderAction[];
 	badge?: string;
+	titleVariant?: TypographyProps[ 'variant' ];
 };
 
 function HeaderAction( {
@@ -50,19 +51,37 @@ function HeaderAction( {
 	);
 }
 
-export default function FloatingPanelHeader( { panelId, title, icon: Icon, actions, badge }: Props ) {
+export default function FloatingPanelHeader( { panelId, title, icon: Icon, actions, badge, titleVariant }: Props ) {
 	const { close } = useFloatingPanelActions( panelId );
 	const isDraggable = useSelector( ( state: GlobalState ) => selectIsDraggable( state, panelId ) );
 	const hasActions = Boolean( actions?.length );
 	const panelZIndex = useFloatingPanelZIndex( panelId );
 
+	const hasBadge = Boolean( badge );
+
 	const titleContent = (
-		<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, height: '100%' } }>
+		<Box
+			sx={ {
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: hasBadge ? 'flex-start' : 'center',
+				gap: 1,
+				height: '100%',
+				pl: hasBadge ? 1 : 0,
+			} }
+		>
 			{ Icon ? <Icon /> : null }
-			<Typography component="h2" sx={ { textAlign: 'center', fontSize: '13px', fontWeight: 400 } }>
+			<Typography
+				component="h2"
+				variant={ titleVariant }
+				sx={ {
+					textAlign: hasBadge ? 'left' : 'center',
+					...( ! titleVariant && { fontSize: '13px', fontWeight: 400 } ),
+				} }
+			>
 				{ title }
 			</Typography>
-			{ badge ? <Chip label={ badge } size="small" color="info" variant="standard" /> : null }
+			{ badge ? <Chip label={ badge } size="tiny" variant="standard" /> : null }
 		</Box>
 	);
 

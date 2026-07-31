@@ -24,6 +24,7 @@ export default function AuditPanel() {
 				panelId="audit-panel"
 				title={ __( 'Audit', 'elementor' ) }
 				badge={ __( 'Beta', 'elementor' ) }
+				titleVariant="subtitle2"
 				// actions={ [
 				// 	{
 				// 		id: 'audit',

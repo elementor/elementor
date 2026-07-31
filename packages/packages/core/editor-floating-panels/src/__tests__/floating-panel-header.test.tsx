@@ -149,6 +149,38 @@ describe( 'FloatingPanelHeader', () => {
 		expect( screen.queryByText( 'Beta' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'left-aligns the title when a badge is provided', () => {
+		renderHeader( { badge: 'Beta' } );
+
+		const title = screen.getByRole( 'heading', { name: 'Test Panel' } );
+
+		expect( title ).toHaveStyle( { textAlign: 'left' } );
+	} );
+
+	it( 'centers the title when badge is omitted', () => {
+		renderHeader();
+
+		const title = screen.getByRole( 'heading', { name: 'Test Panel' } );
+
+		expect( title ).toHaveStyle( { textAlign: 'center', fontWeight: 400 } );
+	} );
+
+	it( 'renders the title with the given titleVariant', () => {
+		renderHeader( { titleVariant: 'subtitle2' } );
+
+		const title = screen.getByRole( 'heading', { name: 'Test Panel' } );
+
+		expect( title ).toHaveClass( 'MuiTypography-subtitle2' );
+	} );
+
+	it( 'does not render a typography variant class when titleVariant is omitted', () => {
+		renderHeader();
+
+		const title = screen.getByRole( 'heading', { name: 'Test Panel' } );
+
+		expect( title ).not.toHaveClass( 'MuiTypography-subtitle2' );
+	} );
+
 	it( 'does not render drag handle when isDraggable is false', () => {
 		__deleteStore();
 		__registerSlice( slice );
