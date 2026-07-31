@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Audits;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Audits\Data\Controller;
 use Elementor\Plugin;
 
@@ -11,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	const EXPERIMENT_NAME = 'e_page_audit';
 
 	const REST_NAMESPACE = 'elementor/v1';
 
@@ -25,6 +28,12 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_experiment();
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return;
+		}
+
 		$this->register_data_controller();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
@@ -33,6 +42,16 @@ class Module extends BaseModule {
 
 	public function get_name(): string {
 		return 'audits';
+	}
+
+	private function register_experiment(): void {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Page Audit', 'elementor' ),
+			'description' => esc_html__( 'Scan the current page for SEO, accessibility, performance, and best-practice issues directly from the editor.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 	}
 
 	public function register_data_controller(): void {

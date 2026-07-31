@@ -137,6 +137,18 @@ describe( 'FloatingPanelHeader', () => {
 		expect( screen.getByRole( 'button', { name: /drag to reposition/i } ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders a badge chip when badge is provided', () => {
+		renderHeader( { badge: 'Beta' } );
+
+		expect( screen.getByText( 'Beta' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render a badge chip when badge is omitted', () => {
+		renderHeader();
+
+		expect( screen.queryByText( 'Beta' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'does not render drag handle when isDraggable is false', () => {
 		__deleteStore();
 		__registerSlice( slice );

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type ComponentType } from 'react';
 import { XIcon } from '@elementor/icons';
 import { __useSelector as useSelector } from '@elementor/store';
-import { Box, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
+import { Box, Chip, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useFloatingPanelActions } from '../../hooks/use-floating-panel-actions';
@@ -16,6 +16,7 @@ type Props = {
 	title: string;
 	icon?: ComponentType;
 	actions?: FloatingPanelHeaderAction[];
+	badge?: string;
 };
 
 function HeaderAction( {
@@ -49,7 +50,7 @@ function HeaderAction( {
 	);
 }
 
-export default function FloatingPanelHeader( { panelId, title, icon: Icon, actions }: Props ) {
+export default function FloatingPanelHeader( { panelId, title, icon: Icon, actions, badge }: Props ) {
 	const { close } = useFloatingPanelActions( panelId );
 	const isDraggable = useSelector( ( state: GlobalState ) => selectIsDraggable( state, panelId ) );
 	const hasActions = Boolean( actions?.length );
@@ -61,6 +62,7 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon, actio
 			<Typography component="h2" sx={ { textAlign: 'center', fontSize: '13px', fontWeight: 400 } }>
 				{ title }
 			</Typography>
+			{ badge ? <Chip label={ badge } size="small" color="info" variant="standard" /> : null }
 		</Box>
 	);
 

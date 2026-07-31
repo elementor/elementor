@@ -6,6 +6,8 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 	apiRequests,
 }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	await wpAdmin.setExperiments( { e_page_audit: 'active' } );
+
 	const editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'image' );
@@ -32,4 +34,6 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 	await expect(
 		editor.getPreviewFrame().locator( '.elementor-element.elementor-element-edit-mode' ),
 	).toBeVisible();
+
+	await wpAdmin.resetExperiments();
 } );

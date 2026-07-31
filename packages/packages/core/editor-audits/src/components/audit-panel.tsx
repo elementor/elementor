@@ -23,6 +23,7 @@ export default function AuditPanel() {
 			<FloatingPanelHeader
 				panelId="audit-panel"
 				title={ __( 'Audit', 'elementor' ) }
+				badge={ __( 'Beta', 'elementor' ) }
 				// actions={ [
 				// 	{
 				// 		id: 'audit',
