@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
 
@@ -69,6 +70,10 @@ class Module extends BaseModule {
 		( new Abilities\Build_Composition_Ability() )->register();
 		( new Abilities\Manage_Elements_Ability() )->register();
 		( new Abilities\Global_Classes_Resource_Ability() )->register();
+
+		if ( $this->is_components_active() ) {
+			( new Abilities\List_Components_Ability() )->register();
+		}
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
 		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
@@ -102,6 +107,10 @@ class Module extends BaseModule {
 		}
 	}
 
+	private function is_components_active(): bool {
+		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
+	}
+
 	private function get_server_tools(): array {
 		$tools = [
 			'elementor/get-page-structure',
@@ -115,6 +124,7 @@ class Module extends BaseModule {
 			'elementor/manage-elements',
 			'elementor/list-resources',
 			'elementor/read-resource',
+			...( $this->is_components_active() ? [ 'elementor/list-components' ] : [] ),
 		];
 
 		/**

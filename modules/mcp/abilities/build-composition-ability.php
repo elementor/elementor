@@ -18,6 +18,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -103,6 +104,17 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $dom;
 		}
 
+		$elements_data = $document->get_elements_data();
+		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
+			$dom,
+			is_array( $elements_data ) ? $elements_data : [],
+			$parent_id
+		);
+
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		$widget_configs = $type_resolver->collect_used( $dom );
 		if ( is_wp_error( $widget_configs ) ) {
 			return $widget_configs;
@@ -124,8 +136,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();
+
 		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
-		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs );
+		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs, $document );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
 		}
@@ -217,7 +230,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'element_config' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure. For <e-component> configuration-ids, the value is { component_id: int, overrides?: {<override_key>: <plain value>} } — see elementor/list-components.',
 				],
 				'style' => [
 					'type' => 'object',
