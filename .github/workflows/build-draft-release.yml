@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish)'
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish and Slack announcement)'
       channel:
         required: false
         type: string

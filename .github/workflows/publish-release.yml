@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish)'
+        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish and Slack announcement)'
       channel:
         required: false
         type: choice
@@ -130,6 +130,7 @@ jobs:
 
     - name: Prepare Slack release announcement
       id: prepare_slack_announcement
+      if: ${{ !inputs.prerelease }}
       env:
         CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
         RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}
@@ -140,6 +141,7 @@ jobs:
         bash "${GITHUB_WORKSPACE}/.github/scripts/prepare-slack-release-announcement.sh"
 
     - name: Post to Slack
+      if: ${{ !inputs.prerelease }}
       uses: ./.github/workflows/post-to-slack
       with:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
