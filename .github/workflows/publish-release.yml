@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips WordPress.org SVN publish, beta→dev cascade, Slack announcement, and npm packages publish)'
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
       channel:
         required: false
         type: choice
@@ -69,6 +69,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   publish:
     name: Build & Publish
+    if: ${{ !inputs.prerelease }}
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -106,7 +107,7 @@ jobs:
         draft: false
 
     - name: Publish to WordPress.org SVN
-      if: github.repository_owner == 'elementor' && !inputs.prerelease
+      if: github.repository_owner == 'elementor'
       env:
         PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -117,7 +118,7 @@ jobs:
         bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
 
     - name: Release Dev From Beta
-      if: inputs.channel == 'beta' && !inputs.prerelease
+      if: inputs.channel == 'beta'
       uses: ./.github/workflows/release-dev-from-beta
       with:
         BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
@@ -130,7 +131,6 @@ jobs:
 
     - name: Prepare Slack release announcement
       id: prepare_slack_announcement
-      if: ${{ !inputs.prerelease }}
       env:
         CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
         RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}
@@ -141,7 +141,6 @@ jobs:
         bash "${GITHUB_WORKSPACE}/.github/scripts/prepare-slack-release-announcement.sh"
 
     - name: Post to Slack
-      if: ${{ !inputs.prerelease }}
       uses: ./.github/workflows/post-to-slack
       with:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -178,7 +177,6 @@ jobs:
   publish-packages:
     name: Publish Packages
     needs: publish
-    if: ${{ !inputs.prerelease }}
     uses: ./.github/workflows/publish-packages.yml
     with:
       version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
