@@ -69,7 +69,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   publish:
     name: Build & Publish
-    if: ${{ !inputs.prerelease }}
+    if: ${{ !inputs.prerelease && github.repository_owner == 'elementor' }}
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -107,7 +107,6 @@ jobs:
         draft: false
 
     - name: Publish to WordPress.org SVN
-      if: github.repository_owner == 'elementor'
       env:
         PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}

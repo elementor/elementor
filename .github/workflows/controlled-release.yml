@@ -24,6 +24,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   validate:
     name: Validate (Dry Run)
+    if: github.repository_owner == 'elementor'
     uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
     with:
       version: ${{ inputs.version }}
