@@ -7,6 +7,7 @@ import {
 	mockTracking,
 	renderWithStore,
 } from 'test-utils';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
@@ -45,11 +46,30 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
 jest.mock( '../start-sync-to-v3-modal', () => ( {
-	StartSyncToV3Modal: ( { onConfirm, externalOpen }: { onConfirm?: () => void; externalOpen?: boolean } ) =>
+	StartSyncToV3Modal: ( {
+		onConfirm,
+		onSuppressMessage,
+		externalOpen,
+	}: {
+		onConfirm?: () => void;
+		onSuppressMessage?: () => void;
+		externalOpen?: boolean;
+	} ) =>
 		externalOpen ? (
-			<button type="button" onClick={ onConfirm }>
-				Confirm sync
-			</button>
+			<>
+				<button type="button" onClick={ onConfirm }>
+					Confirm sync
+				</button>
+				<button
+					type="button"
+					onClick={ () => {
+						onSuppressMessage?.();
+						onConfirm?.();
+					} }
+				>
+					Confirm sync and suppress
+				</button>
+			</>
 		) : null,
 } ) );
 
@@ -114,6 +134,8 @@ describe( 'ClassManagerPanel', () => {
 		);
 
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
+		mockSuppressedMessages( {} );
+		jest.mocked( loadExistingClasses ).mockResolvedValue( undefined );
 	} );
 
 	it( 'should render embedded panel structure correctly', () => {
@@ -654,4 +676,72 @@ describe( 'ClassManagerPanel', () => {
 			variants: unloadedClass.variants,
 		} );
 	} );
+
+	it( 'should suppress the start sync message when it is dismissed from the modal', async () => {
+		// Arrange.
+		const suppressStartSyncMessage = jest.fn();
+
+		mockSuppressedMessages( { 'start-sync-class': [ false, suppressStartSyncMessage ] as SuppressedMessage } );
+
+		renderWithStore(
+			<ThemeProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+				</QueryClientProvider>
+			</ThemeProvider>,
+			store
+		);
+
+		const [ classItem ] = screen.getAllByRole( 'listitem' );
+
+		// Act.
+		fireEvent.click( within( classItem ).getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click( screen.getByRole( 'menuitem', { name: /Sync to Global Fonts/i } ) );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Confirm sync and suppress' } ) ).toBeInTheDocument();
+		} );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Confirm sync and suppress' } ) );
+
+		// Assert.
+		expect( suppressStartSyncMessage ).toHaveBeenCalled();
+	} );
+
+	it( 'should not show the start sync modal again once the message is suppressed', async () => {
+		// Arrange.
+		mockSuppressedMessages( { 'start-sync-class': [ true, jest.fn() ] as SuppressedMessage } );
+
+		renderWithStore(
+			<ThemeProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+				</QueryClientProvider>
+			</ThemeProvider>,
+			store
+		);
+
+		const [ classItem ] = screen.getAllByRole( 'listitem' );
+
+		// Act.
+		fireEvent.click( within( classItem ).getByRole( 'button', { name: 'More actions' } ) );
+		fireEvent.click( screen.getByRole( 'menuitem', { name: /Sync to Global Fonts/i } ) );
+
+		// Assert.
+		await waitFor( () => {
+			expect( store.getState().globalClasses.data.items[ 'class-2' ] ).toMatchObject( {
+				sync_to_v3: true,
+			} );
+		} );
+
+		expect( screen.queryByRole( 'button', { name: 'Confirm sync' } ) ).not.toBeInTheDocument();
+	} );
 } );
+
+type SuppressedMessage = readonly [ boolean, () => void ];
+
+function mockSuppressedMessages( messages: Record< string, SuppressedMessage > ) {
+	jest.mocked( useSuppressedMessage ).mockImplementation( ( messageKey: string ): SuppressedMessage => {
+		return messages[ messageKey ] ?? [ false, jest.fn() ];
+	} );
+}
