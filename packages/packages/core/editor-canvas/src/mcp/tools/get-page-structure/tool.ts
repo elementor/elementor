@@ -17,7 +17,7 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: 'get-page-structure',
 		description:
-			'Returns a lean Elementor element tree skeleton (id, elType, widgetType, nested elements) for a post or page. ' +
+			'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a post or page. ' +
 			'If no postId is provided, uses the currently open document. Optionally scope to a subtree with elementId. ' +
 			"Set includeContent=true (requires elementId) to also return each node's settings and styles.",
 		schema: {
@@ -42,7 +42,7 @@ export const initGetPageStructureTool = ( reg: MCPRegistryEntry ) => {
 			elements: z
 				.array( z.any() )
 				.describe(
-					'Skeleton of Elementor elements (id, elType, widgetType, nested elements). When includeContent is true, each node also includes settings and styles.'
+					'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When includeContent is true, each node also includes settings and styles.'
 				),
 		},
 		handler: async ( { postId, elementId, includeContent } ) => {

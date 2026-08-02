@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
@@ -25,6 +26,61 @@ class Variable_Prop_Value_Transformer {
 
 	public function __construct( Variables_Service $variables_service ) {
 		$this->variables_service = $variables_service;
+	}
+
+	/**
+	 * Resolves global-color-variable references inside gradient color stops to their actual color values.
+	 * Variables cannot be used inside gradient stops because the gradient UI control does not support them.
+	 * If a variable cannot be resolved, the entire background prop is ejected to custom CSS.
+	 *
+	 * @param array                                                                   $props  Mutated in place.
+	 * @param array<int, array{property: string, value: string, declaration: string}> $rules
+	 * @return string[] Extra custom CSS declarations produced by ejected props.
+	 */
+	public function normalize_gradient_color_stops( array &$props, array $rules ): array {
+		$background = $props['background'] ?? null;
+
+		if ( ! is_array( $background ) || 'background' !== ( $background['$$type'] ?? null ) ) {
+			return [];
+		}
+
+		$overlays = $background['value']['background-overlay']['value'] ?? null;
+
+		if ( ! is_array( $overlays ) ) {
+			return [];
+		}
+
+		foreach ( $overlays as $i => $overlay ) {
+			if ( 'background-gradient-overlay' !== ( $overlay['$$type'] ?? null ) ) {
+				continue;
+			}
+
+			$stops = $overlay['value']['stops']['value'] ?? [];
+
+			foreach ( $stops as $j => $stop ) {
+				if ( 'color-stop' !== ( $stop['$$type'] ?? null ) ) {
+					continue;
+				}
+
+				$color = $stop['value']['color'] ?? null;
+
+				if ( ! is_array( $color ) || Color_Variable_Prop_Type::get_key() !== ( $color['$$type'] ?? null ) ) {
+					continue;
+				}
+
+				$variable = $this->variables_service->find_by_label_or_id( $color['value'] ?? '' );
+
+				if ( null === $variable || '' === ( $variable['value'] ?? '' ) ) {
+					unset( $props['background'] );
+					$declaration = $this->declaration_for_ejected_prop( $rules, 'background' );
+					return null !== $declaration ? [ $declaration . ';' ] : [];
+				}
+
+				$props['background']['value']['background-overlay']['value'][ $i ]['value']['stops']['value'][ $j ]['value']['color'] = Color_Prop_Type::generate( $variable['value'] );
+			}
+		}
+
+		return [];
 	}
 
 	/**

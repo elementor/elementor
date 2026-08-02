@@ -79,6 +79,18 @@ class List_Resources_Ability extends Abstract_Ability {
 				'description' => 'Design tokens (colors, fonts, sizes) from the active kit; check before styling with variables.',
 				'mimeType' => 'application/json',
 			],
+			[
+				'uri' => List_Dynamic_Tags_Ability::URI,
+				'name' => 'Dynamic Tags',
+				'description' => List_Dynamic_Tags_Ability::DESCRIPTION,
+				'mimeType' => 'application/json',
+			],
+			[
+				'uri' => Interactions_Schema_Resource_Ability::URI,
+				'name' => 'Interactions Schema',
+				'description' => 'Interaction item shape, enums, and defaults for build-composition.',
+				'mimeType' => 'application/json',
+			],
 		];
 	}
 }

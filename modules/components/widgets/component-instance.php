@@ -123,12 +123,8 @@ class Component_Instance extends Atomic_Widget_Base {
 	}
 
 	private function get_component_id(): ?int {
-		$settings = $this->get_settings();
+		$component_id = Component_Instance_Prop_Type::extract_component_id( $this->get_settings() );
 
-		if ( ! isset( $settings['component_instance']['value']['component_id']['value'] ) ) {
-			return null;
-		}
-
-		return (int) $settings['component_instance']['value']['component_id']['value'];
+		return null === $component_id ? null : (int) $component_id;
 	}
 }
