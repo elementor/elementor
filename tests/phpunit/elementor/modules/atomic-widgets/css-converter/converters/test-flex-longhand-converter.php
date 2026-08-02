@@ -26,7 +26,6 @@ class Test_Flex_Longhand_Converter extends TestCase {
 	}
 
 	// --- flex-grow: unit tests ---
-
 	public function test_flex_grow__converts_integer() {
 		// Arrange.
 		$converter = $this->flex_grow_converter();
@@ -186,8 +185,52 @@ class Test_Flex_Longhand_Converter extends TestCase {
 		$this->assertSame( 'flex-basis: banana;', $result['customCss'] );
 	}
 
-	// --- flex-basis: unit tests ---
+	// --- flex-shrink: unit + integration (mirrors flex-grow; same numeric parser) ---
 
+	public function test_flex_shrink__converts_numeric() {
+		// Arrange.
+		$converter = $this->flex_shrink_converter();
+
+		// Act.
+		$result = $converter->convert( $this->context, [ 'property' => 'flex-shrink', 'value' => '2' ] );
+
+		// Assert.
+		$this->assertTrue( $result );
+		$this->assertSame( 2.0, $this->context->get_prop( 'flex' )['value']['flexShrink']['value'] );
+	}
+
+	public function test_flex_shrink__merges_into_existing_flex() {
+		// Arrange.
+		$converter = $this->flex_shrink_converter();
+
+		$this->context->set_prop( 'flex', Flex_Prop_Type::generate( [
+			'flexGrow'   => Number_Prop_Type::generate( 1.0 ),
+			'flexShrink' => Number_Prop_Type::generate( 1.0 ),
+			'flexBasis'  => Size_Prop_Type::generate( [ 'size' => 50, 'unit' => '%' ] ),
+		] ) );
+
+		// Act.
+		$converter->convert( $this->context, [ 'property' => 'flex-shrink', 'value' => '0' ] );
+
+		// Assert.
+		$flex = $this->context->get_prop( 'flex' );
+		$this->assertSame( 1.0, $flex['value']['flexGrow']['value'] );
+		$this->assertSame( 0.0, $flex['value']['flexShrink']['value'] );
+	}
+
+	public function test_flex_shrink__non_numeric_falls_to_custom_css() {
+		// Arrange.
+		$converter = $this->make_css_converter( $this->flex_shrink_converter() );
+
+		// Act.
+		$result = $converter->convert( 'flex-shrink: auto' );
+
+		// Assert.
+		$this->assertEmpty( $result['props'] );
+		$this->assertSame( 'flex-shrink: auto;', $result['customCss'] );
+	}
+
+	// --- flex-basis: unit tests ---
 	public function test_flex_basis__converts_pixel_value() {
 		// Arrange.
 		$converter = $this->flex_basis_converter();
@@ -352,6 +395,19 @@ class Test_Flex_Longhand_Converter extends TestCase {
 		return new Flex_Longhand_Converter(
 			'flex-grow',
 			'flexGrow',
+			static function ( string $v ): ?array {
+				if ( ! is_numeric( $v ) ) {
+					return null;
+				}
+				return Number_Prop_Type::generate( (float) $v );
+			}
+		);
+	}
+
+	private function flex_shrink_converter(): Flex_Longhand_Converter {
+		return new Flex_Longhand_Converter(
+			'flex-shrink',
+			'flexShrink',
 			static function ( string $v ): ?array {
 				if ( ! is_numeric( $v ) ) {
 					return null;

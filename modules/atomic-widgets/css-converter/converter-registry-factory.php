@@ -223,8 +223,9 @@ class Converter_Registry_Factory {
 	 */
 	public static function flex_longhand_specs(): array {
 		return [
-			'flex-grow'  => 'flexGrow',
-			'flex-basis' => 'flexBasis',
+			'flex-grow'   => 'flexGrow',
+			'flex-shrink' => 'flexShrink',
+			'flex-basis'  => 'flexBasis',
 		];
 	}
 
@@ -454,6 +455,17 @@ class Converter_Registry_Factory {
 		$converters['flex-grow'] = new Flex_Longhand_Converter(
 			'flex-grow',
 			'flexGrow',
+			static function ( string $v ): ?array {
+				if ( ! is_numeric( $v ) ) {
+					return null;
+				}
+				return Number_Prop_Type::generate( (float) $v );
+			}
+		);
+
+		$converters['flex-shrink'] = new Flex_Longhand_Converter(
+			'flex-shrink',
+			'flexShrink',
 			static function ( string $v ): ?array {
 				if ( ! is_numeric( $v ) ) {
 					return null;
