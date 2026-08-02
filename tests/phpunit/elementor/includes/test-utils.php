@@ -12,8 +12,103 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	public function tearDown(): void {
 		parent::tearDown();
 
+		remove_all_filters( 'elementor/allowed_html_wrapper_tags' );
+		$this->reset_allowed_html_wrapper_tags_cache();
+
 		$_REQUEST  = [];
 		$_FILES = [];
+	}
+
+	public function test_get_allowed_html_wrapper_tags__returns_default_list() {
+		// Act.
+		$tags = Utils::get_allowed_html_wrapper_tags();
+
+		// Assert.
+		$this->assertSame( Utils::ALLOWED_HTML_WRAPPER_TAGS, $tags );
+	}
+
+	public function test_get_allowed_html_wrapper_tags__returns_filter_added_tags() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function ( $tags ) {
+				return array_merge( $tags, [ 'custom-tag' ] );
+			}
+		);
+
+		// Act.
+		$tags = Utils::get_allowed_html_wrapper_tags();
+
+		// Assert.
+		$this->assertContains( 'custom-tag', $tags );
+		$this->assertSame(
+			array_values( array_unique( array_merge( Utils::ALLOWED_HTML_WRAPPER_TAGS, [ 'custom-tag' ] ) ) ),
+			$tags
+		);
+	}
+
+	public function test_get_allowed_html_wrapper_tags__normalizes_filter_values() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function () {
+				return [ 'span', 'SPAN', 'fieldset', 'FIELDSET', 42, null, [ 'invalid' ] ];
+			}
+		);
+
+		// Act.
+		$tags = Utils::get_allowed_html_wrapper_tags();
+
+		// Assert.
+		$this->assertSame( [ 'span', 'fieldset' ], $tags );
+	}
+
+	public function test_validate_html_tag__accepts_filter_added_tag() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function ( $tags ) {
+				return array_merge( $tags, [ 'custom-tag' ] );
+			}
+		);
+
+		// Act & Assert.
+		$this->assertSame( 'custom-tag', Utils::validate_html_tag( 'custom-tag' ) );
+		$this->assertSame( 'div', Utils::validate_html_tag( 'script' ) );
+	}
+
+	public function test_get_allowed_html_wrapper_tags__filter_cannot_reintroduce_forbidden_tags() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function ( $tags ) {
+				return array_merge( $tags, Utils::FORBIDDEN_HTML_WRAPPER_TAGS, [ 'SCRIPT', 'custom-tag' ] );
+			}
+		);
+
+		// Act.
+		$tags = Utils::get_allowed_html_wrapper_tags();
+
+		// Assert.
+		foreach ( Utils::FORBIDDEN_HTML_WRAPPER_TAGS as $forbidden_tag ) {
+			$this->assertNotContains( $forbidden_tag, $tags );
+		}
+
+		$this->assertContains( 'custom-tag', $tags );
+	}
+
+	public function test_validate_html_tag__rejects_forbidden_tag_even_when_filter_allows_it() {
+		// Arrange.
+		add_filter(
+			'elementor/allowed_html_wrapper_tags',
+			function ( $tags ) {
+				return array_merge( $tags, [ 'script', 'IFRAME' ] );
+			}
+		);
+
+		// Act & Assert.
+		$this->assertSame( 'div', Utils::validate_html_tag( 'script' ) );
+		$this->assertSame( 'div', Utils::validate_html_tag( 'iframe' ) );
 	}
 
 	public function test_should_return_elementor_pro_link() {
@@ -367,6 +462,66 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		];
 
 		$this->assertEquals( $sanitized_files, $result );
+	}
+
+	public function test_kses_post_deep__strips_disallowed_html_from_strings() {
+		// Arrange
+		$value = '<iframe src="https://evil.example"></iframe><strong>Bold</strong>';
+
+		// Act
+		$result = Utils::kses_post_deep( $value );
+
+		// Assert
+		$this->assertEquals( '<strong>Bold</strong>', $result );
+	}
+
+	public function test_kses_post_deep__preserves_non_string_scalars() {
+		// Arrange
+		$data = [
+			'bool_true' => true,
+			'bool_false' => false,
+			'null_value' => null,
+			'int_value' => 5,
+			'float_value' => 1.5,
+		];
+
+		// Act
+		$result = Utils::kses_post_deep( $data );
+
+		// Assert
+		$this->assertSame( $data, $result );
+	}
+
+	public function test_kses_post_deep__sanitizes_strings_inside_nested_arrays() {
+		// Arrange
+		$data = [
+			'title' => '<iframe src="https://evil.example"></iframe>Title',
+			'nested' => [
+				'description' => '<iframe src="evil"></iframe><em>Description</em>',
+				'z_index' => 10,
+				'is_visible' => false,
+			],
+		];
+
+		// Act
+		$result = Utils::kses_post_deep( $data );
+
+		// Assert
+		$this->assertEquals( [
+			'title' => 'Title',
+			'nested' => [
+				'description' => '<em>Description</em>',
+				'z_index' => 10,
+				'is_visible' => false,
+			],
+		], $result );
+	}
+
+	private function reset_allowed_html_wrapper_tags_cache(): void {
+		$reflection = new \ReflectionClass( Utils::class );
+		$property = $reflection->getProperty( 'resolved_allowed_html_wrapper_tags' );
+		$property->setAccessible( true );
+		$property->setValue( null );
 	}
 
 	private function create_mocked_elements_data( $url ) {

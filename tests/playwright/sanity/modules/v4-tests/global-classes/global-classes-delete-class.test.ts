@@ -40,7 +40,7 @@ async function assertEditingPanelRestoredAfterClose(
 	await expect( page.locator( `[aria-label="Edit ${ deletedClassName }"]` ) ).toBeHidden();
 }
 
-const EXPERIMENTS = { e_atomic_elements: 'active', e_classes: 'active' } as const;
+const EXPERIMENTS = { e_atomic_elements: 'active' } as const;
 
 test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
