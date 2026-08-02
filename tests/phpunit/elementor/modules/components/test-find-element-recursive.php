@@ -23,8 +23,6 @@ class Test_Find_Element_Recursive extends Elementor_Test_Base {
 
 	private string $original_atomic_widgets_experiment_state;
 
-	private string $original_components_experiment_state;
-
 	public function setUp(): void {
 		parent::setUp();
 
@@ -32,15 +30,9 @@ class Test_Find_Element_Recursive extends Elementor_Test_Base {
 
 		$this->original_atomic_widgets_experiment_state = Plugin::$instance->experiments
 			->get_features( Atomic_Widgets_Module::EXPERIMENT_NAME )['default'];
-		$this->original_components_experiment_state = Plugin::$instance->experiments
-			->get_features( Components_Module::EXPERIMENT_NAME )['default'];
 
 		Plugin::$instance->experiments->set_feature_default_state(
 			Atomic_Widgets_Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-		Plugin::$instance->experiments->set_feature_default_state(
-			Components_Module::EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
 		);
 
@@ -64,10 +56,6 @@ class Test_Find_Element_Recursive extends Elementor_Test_Base {
 		Plugin::$instance->experiments->set_feature_default_state(
 			Atomic_Widgets_Module::EXPERIMENT_NAME,
 			$this->original_atomic_widgets_experiment_state
-		);
-		Plugin::$instance->experiments->set_feature_default_state(
-			Components_Module::EXPERIMENT_NAME,
-			$this->original_components_experiment_state
 		);
 
 		parent::tearDown();

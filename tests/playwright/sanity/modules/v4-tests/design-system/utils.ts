@@ -6,9 +6,6 @@ import { createVariableWithSync, deleteAllVariablesViaApi } from '../editor-vari
 
 export const DESIGN_SYSTEM_EXPERIMENTS = {
 	e_atomic_elements: 'active',
-	e_classes: 'active',
-	e_variables: 'active',
-	e_variables_manager: 'active',
 } as const;
 
 export async function initDesignSystemTest(
