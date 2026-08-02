@@ -1,6 +1,6 @@
 # Opt-in
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

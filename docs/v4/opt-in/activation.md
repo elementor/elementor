@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-opt-in/`, `modules/atomic-widgets/opt-in/`
-> Status: draft
+> Status: final
 > Related: [../getting-started/experiments.md](../getting-started/experiments.md), [../migration/backward-compatibility.md](../migration/backward-compatibility.md)
 
 ## What it is

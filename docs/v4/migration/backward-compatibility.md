@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/prop-type-migrations/`
-> Status: draft
+> Status: final
 > Related: [prop-type-migrations.md](./prop-type-migrations.md), [../getting-started/experiments.md](../getting-started/experiments.md), [../opt-in/activation.md](../opt-in/activation.md)
 
 ## What it is

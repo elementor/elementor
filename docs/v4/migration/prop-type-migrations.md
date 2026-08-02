@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/atomic-widgets/prop-type-migrations/`
-> Status: draft
+> Status: final
 > Related: [backward-compatibility.md](./backward-compatibility.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [../../../migrations/README.md](../../../migrations/README.md)
 
 ## What it is
