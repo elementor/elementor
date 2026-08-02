@@ -19,8 +19,11 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
 					'originValue' => [
-						'$$type' => 'string',
-						'value' => 'Original Title',
+						'$$type' => 'html-v3',
+						'value' => [
+							'content' => [ '$$type' => 'string', 'value' => 'Original Title' ],
+							'children' => [],
+						],
 					],
 					'groupId' => 'group-1',
 				],
@@ -110,17 +113,17 @@ class Component_Overrides_Mocks {
 			'groups' => [
 				'items' => [
 					'group-1' => [
-						'id' => 'group-1-uuid',
+						'id' => 'group-1',
 						'label' => 'Heading',
 						'props' => [ 'prop-uuid-1', 'prop-uuid-2' ],
 					],
 					'group-2' => [
-						'id' => 'group-2-uuid',
+						'id' => 'group-2',
 						'label' => 'Image',
 						'props' => [ 'prop-uuid-3', 'prop-uuid-4', 'prop-uuid-5' ],
 					],
 				],
-				'order' => [ 'group-1-uuid', 'group-2-uuid' ],
+				'order' => [ 'group-1', 'group-2' ],
 			],
 		];
 	}

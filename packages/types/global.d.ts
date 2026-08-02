@@ -75,6 +75,7 @@ declare global {
 			};
 		};
 			config?: {
+				allowedHTMLWrapperTags?: string[];
 				experimentalFeatures?: Record< string, boolean >;
 				urls?: {
 					assets?: string;

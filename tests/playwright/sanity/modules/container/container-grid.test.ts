@@ -689,10 +689,10 @@ async function testPreset( frame, editor, rows, cols ) {
 		];
 	} );
 
-	await container.evaluate( ( el, rowsCount, colsCount ) => {
+	await container.evaluate( ( el, { rowsCount, colsCount } ) => {
 		el.style.setProperty( 'grid-template-rows', `repeat(${ rowsCount }, 1fr)` );
 		el.style.setProperty( 'grid-template-columns', `repeat(${ colsCount }, 1fr)` );
-	}, rows, cols );
+	}, { rowsCount: rows, colsCount: cols } );
 
 	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
 	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );

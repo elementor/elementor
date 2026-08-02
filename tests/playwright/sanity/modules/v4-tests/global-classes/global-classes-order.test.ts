@@ -53,7 +53,7 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		page = await browser.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
 	test.beforeEach( async ( { apiRequests } ) => {

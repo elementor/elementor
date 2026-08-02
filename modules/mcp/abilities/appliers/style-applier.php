@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Style_Applier {
 
 	const LOCAL_STYLE_ID_PREFIX = 'e-';
-	const LOCAL_STYLE_MARKER_PREFIX = 's-';
 	const DESKTOP_BREAKPOINT = 'desktop';
 	const LOCAL_STYLE_LABEL = 'local';
 	const LOCAL_STYLE_TYPE = 'class';
@@ -212,7 +211,7 @@ class Style_Applier {
 
 	private function find_existing_local_style_id( array $node ): ?string {
 		foreach ( $node['styles'] ?? [] as $style_id => $_style ) {
-			if ( str_starts_with( $style_id, self::LOCAL_STYLE_MARKER_PREFIX ) ) {
+			if ( str_starts_with( (string) $style_id, self::LOCAL_STYLE_ID_PREFIX ) ) {
 				return $style_id;
 			}
 		}
