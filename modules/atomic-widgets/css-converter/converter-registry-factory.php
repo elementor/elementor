@@ -336,7 +336,7 @@ class Converter_Registry_Factory {
 	 *
 	 * @return array<string, array{0: string, 1: string}>
 	 */
-	private static function border_side_specs(): array {
+	public static function border_side_specs(): array {
 		return [
 			'border-top-width' => [ 'border-width', 'block-start' ],
 			'border-right-width' => [ 'border-width', 'inline-end' ],
@@ -346,6 +346,10 @@ class Converter_Registry_Factory {
 			'border-top-right-radius' => [ 'border-radius', 'start-end' ],
 			'border-bottom-right-radius' => [ 'border-radius', 'end-end' ],
 			'border-bottom-left-radius' => [ 'border-radius', 'end-start' ],
+			'border-start-start-radius' => [ 'border-radius', 'start-start' ],
+			'border-start-end-radius' => [ 'border-radius', 'start-end' ],
+			'border-end-end-radius' => [ 'border-radius', 'end-end' ],
+			'border-end-start-radius' => [ 'border-radius', 'end-start' ],
 		];
 	}
 
