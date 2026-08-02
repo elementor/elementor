@@ -2,7 +2,6 @@
 namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
@@ -24,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_components';
+	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const PACKAGES        = [ 'editor-components' ];
 
 	public function get_name() {
@@ -34,7 +33,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! $this->is_experiment_active() ) {
+		if ( ! self::is_experiment_active() ) {
 			return;
 		}
 
@@ -61,20 +60,8 @@ class Module extends BaseModule {
 		( new Components_REST_API() )->register_hooks();
 	}
 
-	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name'           => self::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Components', 'elementor' ),
-			'description'    => esc_html__( 'Enable components.', 'elementor' ),
-			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		];
+	public static function is_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public function get_widgets() {
