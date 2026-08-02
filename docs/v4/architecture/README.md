@@ -1,6 +1,6 @@
 # Architecture
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

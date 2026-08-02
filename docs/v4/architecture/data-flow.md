@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/atomic-widgets/`, `modules/mcp/`
-> Status: draft
+> Status: final
 > Related: [overview.md](overview.md), [../fundamentals/transformers.md](../fundamentals/transformers.md), [../atomic-widgets/rendering.md](../atomic-widgets/rendering.md)
 
 ## What it is

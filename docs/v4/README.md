@@ -1,6 +1,6 @@
 # Elementor v4 Documentation
 
-> Status: draft
+> Status: final
 
 Internal reference for Elementor v4 — atomic widgets, global classes, variables, interactions, components, dynamic tags, CSS converter, editor packages, MCP (v4-specific surface), migration, and opt-in.
 
@@ -38,7 +38,7 @@ Start with [getting-started/what-is-v4.md](getting-started/what-is-v4.md) and [a
 
 ## Folder map
 
-74 markdown files across 14 folders (plus legacy `css-converter.kb.md` pending migration). See the [plan](../../docs-plan-v4-documentation.md) (§3) for the full file manifest.
+74 markdown files across 14 folders. See the [plan](../../docs-plan-v4-documentation.md) (§3) for the full file manifest.
 
 | Folder | Files | Description |
 |--------|-------|-------------|
@@ -56,8 +56,6 @@ Start with [getting-started/what-is-v4.md](getting-started/what-is-v4.md) and [a
 | [mcp/](mcp/README.md) | 6 + [abilities/](mcp/abilities/README.md) (7) | v4-specific MCP surface (two-system disambiguation) |
 | [migration/](migration/README.md) | 3 | Prop type migrations and BC |
 | [opt-in/](opt-in/README.md) | 2 | Activation UX and settings |
-
-**Legacy (pending removal):** `css-converter.kb.md` — content migrates to `css-converter/` in a sibling branch.
 
 ---
 

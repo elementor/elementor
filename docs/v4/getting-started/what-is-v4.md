@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/`, `modules/atomic-opt-in/`
-> Status: draft
+> Status: final
 > Related: [experiments.md](experiments.md), [../architecture/overview.md](../architecture/overview.md), [../fundamentals/prop-value.md](../fundamentals/prop-value.md)
 
 ## What it is

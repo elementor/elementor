@@ -1,6 +1,6 @@
 # Getting Started
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

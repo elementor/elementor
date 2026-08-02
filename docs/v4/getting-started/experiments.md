@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/`, `modules/atomic-opt-in/`, `modules/global-classes/`, `modules/variables/`, `modules/components/`, `modules/interactions/`, `modules/mcp/`
-> Status: draft
+> Status: final
 > Related: [what-is-v4.md](what-is-v4.md), [../opt-in/activation.md](../opt-in/activation.md), [../mcp/overview.md](../mcp/overview.md)
 
 ## What it is

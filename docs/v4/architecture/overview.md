@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: (cross-cutting)
-> Status: draft
+> Status: final
 > Related: [data-flow.md](data-flow.md), [packages-map.md](packages-map.md), [../getting-started/experiments.md](../getting-started/experiments.md)
 
 ## What it is

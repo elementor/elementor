@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: (cross-cutting)
-> Status: draft
+> Status: final
 > Related: [overview.md](overview.md), [../editor-packages/core-packages.md](../editor-packages/core-packages.md)
 
 ## What it is

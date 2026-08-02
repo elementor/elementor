@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: (cross-cutting)
-> Status: draft
+> Status: final
 > Related: [../fundamentals/prop-value.md](../fundamentals/prop-value.md), [../global-classes/data-model.md](../global-classes/data-model.md), [../mcp/composition-workflow.md](../mcp/composition-workflow.md)
 
 ## What it is
