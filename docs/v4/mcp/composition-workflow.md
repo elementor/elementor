@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/build-composition-ability.php`, `build-composition/`  
-> Status: draft  
+> Status: final  
 > Related: [abilities/build-composition.md](abilities/build-composition.md), [resources.md](resources.md), [../fundamentals/prop-value.md](../fundamentals/prop-value.md)
 
 ## What it is

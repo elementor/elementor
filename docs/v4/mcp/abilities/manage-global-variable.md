@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/manage-variable-ability.php`, `manage-variable-guide-ability.php`  
-> Status: draft  
+> Status: final  
 > Related: [../resources.md](../resources.md), [../../variables/api.md](../../variables/api.md), [build-composition.md](build-composition.md)
 
 ## What it is

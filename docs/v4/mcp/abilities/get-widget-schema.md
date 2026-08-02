@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/get-widget-schema-ability.php`  
-> Status: draft  
+> Status: final  
 > Related: [list-widget-schemas.md](list-widget-schemas.md), [build-composition.md](build-composition.md), [../../atomic-widgets/elements-catalog.md](../../atomic-widgets/elements-catalog.md)
 
 ## What it is

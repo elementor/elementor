@@ -2,7 +2,7 @@
 
 > Audience: both  
 > Module: `packages/packages/libs/editor-mcp/src/mcp-registry.ts`, `src/adapters/`  
-> Status: draft  
+> Status: final  
 > Related: [overview.md](overview.md), [../editor-packages/extending-editor.md](../editor-packages/extending-editor.md)
 
 ## What it is

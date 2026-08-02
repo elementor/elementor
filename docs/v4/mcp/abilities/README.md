@@ -1,6 +1,6 @@
 # MCP abilities (v4 subset)
 
-> Status: draft
+> Status: final
 
 ## Purpose
 
@@ -18,6 +18,8 @@ General, non-v4 abilities (`get-page-structure`, `create-page`, `update-page-set
 | [manage-classes.md](manage-classes.md) | `elementor/manage-classes` | Global class CRUD via raw CSS |
 | [manage-global-variable.md](manage-global-variable.md) | `elementor/manage-global-variable` | Global variable CRUD |
 | [manage-elements.md](manage-elements.md) | `elementor/manage-elements` | Update/delete/move/duplicate existing elements |
+| [list-components.md](list-components.md) | `elementor/list-components` | Component discovery and overridable prop schemas (Components experiment) |
+| [interactions-schema-resource.md](interactions-schema-resource.md) | `elementor/interactions-schema-resource` | Native interaction item JSON Schema (resource) |
 
 ## Recommended call order
 
@@ -27,9 +29,11 @@ For new page content, follow [../composition-workflow.md](../composition-workflo
 2. `elementor/manage-global-variable` — create missing tokens
 3. `elementor/manage-classes` — create missing classes
 4. `elementor/list-widget-schemas` (`summary: true`) — discover widgets
-5. `elementor/get-widget-schema` — per widget type
-6. `elementor/build-composition` — insert layout (`dry_run` first if unsure)
-7. `elementor/manage-elements` — surgical follow-up edits
+5. `elementor/list-components` — discover components (when using `<e-component>`)
+6. `elementor/get-widget-schema` — per widget type
+7. Read `elementor://interactions/schema` — when adding native interactions
+8. `elementor/build-composition` — insert layout (`dry_run` first if unsure)
+9. `elementor/manage-elements` — surgical follow-up edits
 
 `elementor/list-dynamic-tags` is documented under [../../dynamic-tags/discovery.md](../../dynamic-tags/discovery.md).
 

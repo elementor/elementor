@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/build-composition-ability.php`  
-> Status: draft  
+> Status: final  
 > Related: [../composition-workflow.md](../composition-workflow.md), [get-widget-schema.md](get-widget-schema.md), [manage-classes.md](manage-classes.md)
 
 ## What it is

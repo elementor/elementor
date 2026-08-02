@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/style-best-practices-ability.php`  
-> Status: draft  
+> Status: final  
 > Related: [resources.md](resources.md), [composition-workflow.md](composition-workflow.md)
 
 ## What it is

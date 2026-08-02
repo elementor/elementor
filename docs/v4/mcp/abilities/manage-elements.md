@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/manage-elements-ability.php`  
-> Status: draft  
+> Status: final  
 > Related: [build-composition.md](build-composition.md), [get-widget-schema.md](get-widget-schema.md), [../../css-converter/overview.md](../../css-converter/overview.md)
 
 ## What it is

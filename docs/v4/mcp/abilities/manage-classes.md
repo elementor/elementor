@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/manage-classes-ability.php`  
-> Status: draft  
+> Status: final  
 > Related: [../resources.md](../resources.md), [build-composition.md](build-composition.md), [../../global-classes/api.md](../../global-classes/api.md)
 
 ## What it is

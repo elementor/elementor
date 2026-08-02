@@ -2,7 +2,7 @@
 
 > Audience: external  
 > Module: `modules/mcp/abilities/*-resource-ability.php`, `packages/packages/core/editor-canvas/src/mcp/resources/`  
-> Status: draft  
+> Status: final  
 > Related: [overview.md](overview.md), [abilities/README.md](abilities/README.md), [../dynamic-tags/discovery.md](../dynamic-tags/discovery.md)
 
 ## What it is
@@ -32,6 +32,7 @@ For external MCP hosts, use the general `elementor/read-resource` ability (docum
 | `elementor://global-variables` | `elementor/global-variables-resource` | `application/json` | `Global_Variables_Resource_Ability` | `{ variables, total, watermark }` from active kit |
 | `elementor://style/best-practices` | `elementor/style-best-practices` | `text/markdown` | `Style_Best_Practices_Ability` | Contents of `modules/mcp/static-resources/style/best-practices.md` |
 | `elementor://dynamic-tags` | *(no PHP resource ability)* | `application/json` | JS: `editor-canvas/src/mcp/resources/dynamic-tags-resource.ts` | Array of `{ name, label, categories, settings }` via `list-dynamic-tags` proxy |
+| `elementor://interactions/schema` | `elementor/interactions-schema-resource` | `application/json` | `Interactions_Schema_Resource_Ability` | Plain LLM JSON Schema for native interaction items |
 
 ### Related resource (not in v4 catalog table)
 

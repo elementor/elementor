@@ -1,6 +1,6 @@
 # MCP (v4)
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

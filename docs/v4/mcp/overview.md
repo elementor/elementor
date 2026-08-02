@@ -2,7 +2,7 @@
 
 > Audience: both  
 > Module: `modules/mcp/`, `packages/packages/libs/editor-mcp/`  
-> Status: draft  
+> Status: final  
 > Related: [README.md](README.md), [composition-workflow.md](composition-workflow.md), [registering-editor-tools.md](registering-editor-tools.md)
 
 ## What it is
