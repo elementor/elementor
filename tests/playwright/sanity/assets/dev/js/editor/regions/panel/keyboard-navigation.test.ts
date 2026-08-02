@@ -12,7 +12,7 @@ test.describe( 'Panel keyboard navigation @v4-tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
-			e_opt_in_v4_page: 'active',
+			e_opt_in_v4: 'active',
 			e_atomic_elements: 'active',
 		} );
 
