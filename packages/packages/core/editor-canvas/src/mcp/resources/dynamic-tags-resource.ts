@@ -5,20 +5,13 @@ export const DYNAMIC_TAGS_URI = 'elementor://dynamic-tags';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
-type DynamicTagEntry = {
-	name: string;
-	label: string;
-	categories: string[];
-	settings: Record< string, unknown >;
-};
-
-const fetchDynamicTags = async (): Promise< DynamicTagEntry[] > => {
-	const { data } = await httpService().post< HttpResponse< DynamicTagEntry[] > >( MCP_PROXY_URL, {
-		tool: 'list-dynamic-tags',
-		input: {},
+// NOTE: JSON-encoded array of dynamic tag entries; shape defined by List_Dynamic_Tags_Ability::execute() in modules/mcp/abilities/list-dynamic-tags-ability.php
+const fetchDynamicTags = async (): Promise< string > => {
+	const { data } = await httpService().get< HttpResponse< string > >( MCP_PROXY_URL, {
+		params: { uri: DYNAMIC_TAGS_URI },
 	} );
 
-	return data.data ?? [];
+	return data.data ?? '[]';
 };
 
 export const initDynamicTagsResource = ( reg: MCPRegistryEntry ) => {
@@ -35,14 +28,12 @@ export const initDynamicTagsResource = ( reg: MCPRegistryEntry ) => {
 			mimeType: 'application/json',
 		},
 		async ( uri: URL ) => {
-			const tags = await fetchDynamicTags();
-
 			return {
 				contents: [
 					{
 						uri: uri.href,
 						mimeType: 'application/json',
-						text: JSON.stringify( tags ),
+						text: await fetchDynamicTags(),
 					},
 				],
 			};
