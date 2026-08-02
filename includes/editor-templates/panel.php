@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$show_editing_panel_sticky_promotion = ! Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' );
+$show_editing_panel_sticky_promotion = ! Utils::has_pro();
 $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtered_Promotions_Manager::get_editor_panel_sticky_promotion() : [];
 ?>
 <script type="text/template" id="tmpl-elementor-panel">

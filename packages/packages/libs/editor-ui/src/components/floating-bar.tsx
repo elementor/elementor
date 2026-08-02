@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { createContext, type PropsWithChildren, type ReactElement, useContext, useState } from 'react';
-import { styled, UnstableFloatingActionBar } from '@elementor/ui';
+import { styled, UnstableFloatingActionBar, type UnstableFloatingActionBarProps } from '@elementor/ui';
+
+const FLOATING_ACTIONS_PLACEMENT: NonNullable< UnstableFloatingActionBarProps[ 'placement' ] > = 'top-start';
 
 // CSS hack to hide empty floating bars.
 const FloatingBarContainer = styled( 'span' )`
@@ -26,7 +28,11 @@ export function FloatingActionsBar( { actions, children }: PropsWithChildren< { 
 	return (
 		<FloatingActionsContext.Provider value={ { open, setOpen } }>
 			<FloatingBarContainer>
-				<UnstableFloatingActionBar actions={ actions } open={ open || undefined }>
+				<UnstableFloatingActionBar
+					actions={ actions }
+					open={ open || undefined }
+					placement={ FLOATING_ACTIONS_PLACEMENT }
+				>
 					{ children as ReactElement }
 				</UnstableFloatingActionBar>
 			</FloatingBarContainer>
