@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/variables/` · `packages/packages/core/editor-variables/`
-> Status: draft
+> Status: final
 > Related: [types.md](./types.md), [usage-in-props.md](./usage-in-props.md), [../getting-started/experiments.md](../getting-started/experiments.md)
 
 ## What it is

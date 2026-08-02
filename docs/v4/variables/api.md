@@ -2,7 +2,7 @@
 
 > Audience: external
 > Module: `modules/variables/classes/rest-api.php`, `modules/mcp/abilities/`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [../mcp/abilities/manage-global-variable.md](../mcp/abilities/manage-global-variable.md), [../mcp/resources.md](../mcp/resources.md)
 
 ## What it is

@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/styles/`, `modules/atomic-widgets/css-converter/`
-> Status: draft
+> Status: final
 > Related: [usage-in-props.md](./usage-in-props.md), [../css-converter/overview.md](../css-converter/overview.md), [api.md](./api.md)
 
 ## What it is

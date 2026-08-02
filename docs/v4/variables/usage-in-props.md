@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/variables/prop-types/`, `modules/atomic-widgets/props-resolver/`
-> Status: draft
+> Status: final
 > Related: [../fundamentals/prop-value.md](../fundamentals/prop-value.md), [types.md](./types.md), [usage-in-styles.md](./usage-in-styles.md)
 
 ## What it is

@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/variables/classes/variable-types-registry.php`, `modules/variables/hooks.php`
-> Status: draft
+> Status: final
 > Related: [usage-in-props.md](./usage-in-props.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [../fundamentals/transformers.md](../fundamentals/transformers.md)
 
 ## What it is
