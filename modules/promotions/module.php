@@ -211,10 +211,6 @@ class Module extends Base_Module {
 	}
 
 	public function add_editing_panel_sticky_promotion( array $settings ): array {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' ) ) {
-			return $settings;
-		}
-
 		$settings['editingPanelStickyPromotion'] = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
 
 		return $settings;

@@ -15,7 +15,7 @@ import {
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-function scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
+function scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
@@ -26,7 +26,7 @@ function scrollOutAnimation( element, transition, keyframes, resetKeyframes, opt
 				element.style.transition = transition;
 			} );
 			if ( false === animConfig.replay ) {
-				stop();
+				Promise.resolve().then( () => stop() );
 			}
 		};
 	}, viewOptions );
@@ -71,7 +71,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const transition = element.style.transition;
 	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
 		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {

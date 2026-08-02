@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import type { PropTypeKey } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { VariableTypeProvider } from '../context/variable-type-context';
@@ -27,13 +26,11 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
-	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
-		? () => {
-				window.dispatchEvent(
-					new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
-				);
-		  }
-		: undefined;
+	const onSettingsAvailable = () => {
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
+		);
+	};
 
 	return (
 		<VariableTypeProvider propTypeKey={ propTypeKey }>
