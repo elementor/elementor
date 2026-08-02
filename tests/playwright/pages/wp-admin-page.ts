@@ -265,12 +265,13 @@ export default class WpAdminPage extends BasePage {
 	async waitForPanel(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
-		// The DOM signals above hide before the editor bootstrap assigns `window.elementor`, so a
-		// test that immediately does `page.evaluate( () => elementor... )` sees a `ReferenceError`.
-		// Polling the API surface the caller is about to use closes that race deterministically.
+		// The DOM signals above hide before the editor bootstrap assigns `window.elementor` and
+		// registers the `document` container, so a test that immediately does
+		// `elementor.getContainer( 'document' )` can get back `undefined` rather than a
+		// `ReferenceError`. Polling the container itself, not just the method, closes that race
+		// deterministically for the common case of adding elements right after the panel loads.
 		await this.page.waitForFunction(
-			() => 'object' === typeof ( window as unknown as { elementor?: { getContainer?: unknown } } ).elementor &&
-				'function' === typeof ( window as unknown as { elementor: { getContainer?: unknown } } ).elementor.getContainer,
+			() => Boolean( ( window as unknown as { elementor?: { getContainer?: ( id: string ) => unknown } } ).elementor?.getContainer?.( 'document' ) ),
 			null,
 			{ timeout: timeouts.heavyAction },
 		);
