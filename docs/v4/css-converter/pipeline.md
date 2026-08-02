@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/atomic-widgets/css-converter/css-converter.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [extension.md](./extension.md), [../fundamentals/validation.md](../fundamentals/validation.md)
 
 ## What it is

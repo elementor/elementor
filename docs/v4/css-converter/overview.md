@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/css-converter/`
-> Status: draft
+> Status: final
 > Related: [pipeline.md](./pipeline.md), [extension.md](./extension.md), [../fundamentals/style-schema.md](../fundamentals/style-schema.md)
 
 ## What it is
