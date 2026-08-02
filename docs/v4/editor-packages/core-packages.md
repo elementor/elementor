@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/atomic-widgets/`, `modules/global-classes/`, `modules/variables/`, `modules/components/`, `modules/editor-app-bar/`
-> Status: draft
+> Status: final
 > Related: [extending-editor.md](extending-editor.md), [overview.md](overview.md), [../architecture/packages-map.md](../architecture/packages-map.md)
 
 ## What it is

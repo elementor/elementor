@@ -1,6 +1,6 @@
 # Editor Packages
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `core/editor/loader/`, `packages/packages/core/`, `packages/packages/libs/`
-> Status: draft
+> Status: final
 > Related: [overview.md](overview.md), [libs.md](libs.md), [../mcp/registering-editor-tools.md](../mcp/registering-editor-tools.md)
 
 ## What it is

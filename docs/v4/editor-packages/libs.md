@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `packages/packages/libs/`
-> Status: draft
+> Status: final
 > Related: [extending-editor.md](extending-editor.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [../mcp/registering-editor-tools.md](../mcp/registering-editor-tools.md)
 
 ## What it is

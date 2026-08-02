@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `core/editor/loader/`, `packages/packages/core/`
-> Status: draft
+> Status: final
 > Related: [extending-editor.md](extending-editor.md), [core-packages.md](core-packages.md), [../architecture/overview.md](../architecture/overview.md)
 
 ## What it is
