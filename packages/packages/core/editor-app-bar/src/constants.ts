@@ -9,6 +9,6 @@ export type MaxToolbarActions = {
 };
 
 export const DEFAULT_MAX_TOOLBAR_ACTIONS: MaxToolbarActions = {
-	tools: 5,
-	utilities: 4,
+	tools: 6,
+	utilities: 5,
 };
