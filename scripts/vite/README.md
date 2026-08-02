@@ -203,23 +203,6 @@ Two results need context:
 Every check above was also run against the old Grunt output and matched, which is how the mode issue
 was found: the old build reported 0 console errors where the new one reported 1.
 
-## Parity harness
-
-Kept for future changes to the build. Snapshot before a change, snapshot after, then diff.
-
-| Command | Description |
-|---------|-------------|
-| `npm run build:baseline` | Build styles and scripts, snapshot to `.build-baseline/` |
-| `npm run build:baseline:full` | Full build, snapshot assets plus the `build/` tree |
-| `npm run build:snapshot` | Snapshot current output to `.build-candidate/` without building |
-| `npm run build:compare` | Diff `.build-baseline/` against `.build-candidate/` |
-
-Structural parity (file existence) is enforced on every tree. Content parity is enforced
-byte-for-byte on `.css`, `.asset.php`, `.json` and `.strings.js` after stripping banners and
-`sourceMappingURL` comments. JS bundles are size-checked only, since bundlers legitimately emit
-different module wrappers. Hashed `.bundle` chunks, source maps and `.LICENSE.txt` sidecars are not
-compared.
-
 ## Things that surprise people
 
 - **No banner is emitted, and none ever was.** The old `usebanner` task wrote to files that were

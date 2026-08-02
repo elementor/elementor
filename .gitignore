@@ -30,8 +30,6 @@ assets/lib/swiper/css/swiper*.css
 /templates/
 /hello-elementor/
 .turbo/
-.build-baseline*/
-.build-candidate/
 
 # build tools lock
 yarn.lock
