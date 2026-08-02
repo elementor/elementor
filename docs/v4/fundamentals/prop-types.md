@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: atomic-widgets
-> Status: draft
+> Status: final
 > Related: [prop-value.md](prop-value.md), [style-schema.md](style-schema.md), [../atomic-widgets/authoring-widgets.md](../atomic-widgets/authoring-widgets.md), [../editor-packages/libs.md](../editor-packages/libs.md)
 
 ## What it is

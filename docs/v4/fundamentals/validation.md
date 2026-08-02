@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: atomic-widgets
-> Status: draft
+> Status: final
 > Related: [prop-value.md](prop-value.md), [prop-types.md](prop-types.md), [../css-converter/overview.md](../css-converter/overview.md), [../mcp/abilities/get-widget-schema.md](../mcp/abilities/get-widget-schema.md)
 
 ## What it is

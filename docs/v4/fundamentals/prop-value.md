@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: atomic-widgets (shared contract)
-> Status: draft
+> Status: final
 > Related: [prop-types.md](prop-types.md), [transformers.md](transformers.md), [../components/instances-and-overrides.md](../components/instances-and-overrides.md), [../getting-started/glossary.md](../getting-started/glossary.md)
 
 ## What it is

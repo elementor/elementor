@@ -1,6 +1,6 @@
 # Fundamentals
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

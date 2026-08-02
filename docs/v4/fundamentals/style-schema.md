@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: atomic-widgets
-> Status: draft
+> Status: final
 > Related: [prop-types.md](prop-types.md), [../variables/usage-in-styles.md](../variables/usage-in-styles.md), [../global-classes/applying-classes.md](../global-classes/applying-classes.md), [../css-converter/extension.md](../css-converter/extension.md)
 
 ## What it is
