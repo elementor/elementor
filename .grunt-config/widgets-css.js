@@ -33,11 +33,9 @@ class WidgetsCss {
 		const widgetsCssFilesList = this.getWidgetsCssFilesList();
 
 		widgetsCssFilesList.forEach( ( item ) => {
-			const widgetScssFileDest = path.join( this.tempScssFolder, item.defaultFilename ),
-				widgetScssRtlFileDest = path.join( this.tempScssFolder, item.rtlFilename );
+			const widgetScssFileDest = path.join( this.tempScssFolder, item.defaultFilename );
 
 			write.sync( widgetScssFileDest, this.getWidgetScssContent( item.importPath, 'ltr' ) );
-			write.sync( widgetScssRtlFileDest, this.getWidgetScssContent( item.importPath, 'rtl' ) );
 		} );
 	}
 
@@ -97,7 +95,6 @@ class WidgetsCss {
 			standAloneWidgetData.push( {
 				widgetName,
 				defaultFilename: this.cssFilePrefix + filename,
-				rtlFilename: this.cssFilePrefix + filename.replace( '.scss', '-rtl.scss' ),
 				importPath: `../frontend/widgets/${ widgetName }`,
 				filePath: this.sourceScssFolder + '/' + filename,
 				cssFileName: `${ this.cssFilePrefix }${  filename.replace( '.scss', '' ) }`,
@@ -118,7 +115,6 @@ class WidgetsCss {
 			moduleWidgetData.push( {
 				widgetName: widgetData.name,
 				defaultFilename: this.cssFilePrefix + widgetData.name + '.scss',
-				rtlFilename: this.cssFilePrefix + widgetData.name + '-rtl.scss',
 				importPath: `../../../../modules/${  widgetData.path }`,
 				filePath,
 				cssFileName: `${ this.cssFilePrefix }${ widgetData.name }`,
@@ -179,7 +175,7 @@ class WidgetsCss {
 
 			// Collecting all widgets .scss files that has @media queries in order to create templates files for custom breakpoints.
 			if ( fileContent.indexOf( '@media' ) > -1 ) {
-				this.responsiveWidgets.push( item.defaultFilename, item.rtlFilename );
+				this.responsiveWidgets.push( item.defaultFilename, item.defaultFilename );
 			}
 		} );
 
@@ -192,11 +188,6 @@ class WidgetsCss {
 		const responsiveWidgetsJsonFolder = path.resolve( __dirname, '../assets/data' ),
 			responsiveWidgetsJsonPath = path.join( responsiveWidgetsJsonFolder, 'responsive-widgets.json' ),
 			responsiveWidgetsObject = responsiveWidgets.reduce( ( obj, val ) => {
-				// No need to save also the -rtl key.
-				if ( val.indexOf( '-rtl' ) > -1 ) {
-					return obj;
-				}
-
 				val = val.replace( this.cssFilePrefix, '' ).replace( '.scss', '' );
 
 				return { ...obj, [ val ]: true };
