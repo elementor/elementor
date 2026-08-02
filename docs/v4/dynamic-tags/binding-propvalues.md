@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/dynamic-tags/dynamic-prop-type.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [discovery.md](./discovery.md), [../fundamentals/prop-value.md](../fundamentals/prop-value.md)
 
 ## What it is

@@ -1,6 +1,6 @@
 # Dynamic tags
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

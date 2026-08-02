@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/dynamic-tags/` (v3) + `modules/atomic-widgets/dynamic-tags/` (v4 bridge)
-> Status: draft
+> Status: final
 > Related: [binding-propvalues.md](./binding-propvalues.md), [extending.md](./extending.md), [../architecture/overview.md](../architecture/overview.md)
 
 ## What it is

@@ -2,7 +2,7 @@
 
 > Audience: external
 > Module: `modules/dynamic-tags/` + `modules/atomic-widgets/dynamic-tags/dynamic-prop-types-mapping.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [binding-propvalues.md](./binding-propvalues.md), [discovery.md](./discovery.md)
 
 ## What it is

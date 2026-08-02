@@ -2,7 +2,7 @@
 
 > Audience: external
 > Module: `modules/mcp/abilities/list-dynamic-tags-ability.php`
-> Status: draft
+> Status: final
 > Related: [binding-propvalues.md](./binding-propvalues.md), [../mcp/overview.md](../mcp/overview.md), [../mcp/resources.md](../mcp/resources.md)
 
 ## What it is
