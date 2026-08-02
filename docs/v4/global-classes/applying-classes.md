@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/prop-types/classes-prop-type.php`, `modules/global-classes/atomic-global-styles.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [data-model.md](./data-model.md), [../mcp/composition-workflow.md](../mcp/composition-workflow.md)
 
 ## What it is

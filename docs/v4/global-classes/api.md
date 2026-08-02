@@ -2,7 +2,7 @@
 
 > Audience: external
 > Module: `modules/global-classes/global-classes-rest-api.php`, `modules/mcp/abilities/manage-classes-ability.php`
-> Status: draft
+> Status: final
 > Related: [data-model.md](./data-model.md), [../mcp/abilities/manage-classes.md](../mcp/abilities/manage-classes.md), [../mcp/resources.md](../mcp/resources.md)
 
 ## What it is

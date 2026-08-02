@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/global-classes/`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [api.md](./api.md), [../fundamentals/style-schema.md](../fundamentals/style-schema.md)
 
 ## What it is

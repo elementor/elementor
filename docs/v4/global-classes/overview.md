@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/global-classes/`, `packages/packages/core/editor-global-classes/`
-> Status: draft
+> Status: final
 > Related: [data-model.md](./data-model.md), [applying-classes.md](./applying-classes.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md)
 
 ## What it is

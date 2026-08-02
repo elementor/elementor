@@ -1,6 +1,6 @@
 # Global Classes
 
-> Status: draft
+> Status: final
 
 ## Purpose
 
