@@ -479,7 +479,10 @@ class Converter_Registry_Factory {
 			'flexBasis',
 			static function ( string $v ): ?array {
 				if ( in_array( strtolower( $v ), self::FLEX_BASIS_CUSTOM_KEYWORDS, true ) ) {
-					return Size_Prop_Type::generate( [ 'size' => $v, 'unit' => 'custom' ] );
+					return Size_Prop_Type::generate( [
+						'size' => $v,
+						'unit' => 'custom',
+					] );
 				}
 				$parsed = Size_Value_Parser::parse( $v );
 				return null !== $parsed ? Size_Prop_Type::generate( $parsed ) : null;
