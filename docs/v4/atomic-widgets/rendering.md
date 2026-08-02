@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/atomic-widgets/elements/`, `modules/atomic-widgets/styles/`
-> Status: draft
+> Status: final
 > Related: [authoring-widgets.md](authoring-widgets.md), [../fundamentals/transformers.md](../fundamentals/transformers.md), [../architecture/data-flow.md](../architecture/data-flow.md)
 
 ## What it is

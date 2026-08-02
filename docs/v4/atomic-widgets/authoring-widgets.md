@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/elements/`
-> Status: draft
+> Status: final
 > Related: [../fundamentals/prop-value.md](../fundamentals/prop-value.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [hooks.md](hooks.md), [rendering.md](rendering.md)
 
 ## What it is

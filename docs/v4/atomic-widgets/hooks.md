@@ -2,7 +2,7 @@
 
 > Audience: external
 > Module: `modules/atomic-widgets/`
-> Status: draft
+> Status: final
 > Related: [authoring-widgets.md](authoring-widgets.md), [../fundamentals/prop-types.md](../fundamentals/prop-types.md), [../fundamentals/transformers.md](../fundamentals/transformers.md)
 
 ## What it is

@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/elements/`
-> Status: draft
+> Status: final
 > Related: [authoring-widgets.md](authoring-widgets.md), [../mcp/abilities/get-widget-schema.md](../mcp/abilities/get-widget-schema.md)
 
 ## What it is

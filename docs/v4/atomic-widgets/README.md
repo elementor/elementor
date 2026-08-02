@@ -1,6 +1,6 @@
 # Atomic widgets
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

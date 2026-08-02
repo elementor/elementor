@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/atomic-widgets/`
-> Status: draft
+> Status: final
 > Related: [authoring-widgets.md](authoring-widgets.md), [../getting-started/experiments.md](../getting-started/experiments.md), [../architecture/packages-map.md](../architecture/packages-map.md)
 
 ## What it is
