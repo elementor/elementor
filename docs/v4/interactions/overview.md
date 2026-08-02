@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/interactions/` · `@elementor/editor-interactions`
-> Status: draft
+> Status: final
 > Related: [schema.md](./schema.md) · [editor.md](./editor.md) · [frontend.md](./frontend.md) · [../getting-started/experiments.md](../getting-started/experiments.md)
 
 ## What it is

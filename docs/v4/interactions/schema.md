@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/interactions/schema/interactions-schema.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md) · [../fundamentals/prop-value.md](../fundamentals/prop-value.md) · [../fundamentals/validation.md](../fundamentals/validation.md)
 
 ## What it is

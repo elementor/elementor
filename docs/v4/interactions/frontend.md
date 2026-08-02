@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/interactions/interactions-frontend-handler.php` · `assets/js/interactions.js`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md) · [schema.md](./schema.md)
 
 ## What it is

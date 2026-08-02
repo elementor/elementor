@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `packages/packages/core/editor-interactions/`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md) · [schema.md](./schema.md) · [../mcp/registering-editor-tools.md](../mcp/registering-editor-tools.md)
 
 ## What it is
