@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.53.0");
-  src: url("../fonts/eicons.eot?5.53.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.53.0") format("woff2"), url("../fonts/eicons.woff?5.53.0") format("woff"), url("../fonts/eicons.ttf?5.53.0") format("truetype"), url("../fonts/eicons.svg?5.53.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.54.0");
+  src: url("../fonts/eicons.eot?5.54.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.54.0") format("woff2"), url("../fonts/eicons.woff?5.54.0") format("woff"), url("../fonts/eicons.ttf?5.54.0") format("truetype"), url("../fonts/eicons.svg?5.54.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -2081,6 +2081,10 @@
 
 .eicon-x-twitter:before {
   content: "\ef04";
+}
+
+.eicon-background-video:before {
+  content: "\ea01";
 }
 
 .eicon-eye:before {

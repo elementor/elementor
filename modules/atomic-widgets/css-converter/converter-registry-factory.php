@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Border_Radius_Proper
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Flex_Longhand_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Flex_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Transform_Origin_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Transform_Property_Converter;
@@ -23,13 +24,16 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Side_Merge_Co
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Span_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Size_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\Variables\Services\Variables_Service;
 
@@ -211,6 +215,27 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Flex longhands that each contribute one field to the aggregate `flex` prop
+	 * (Flex_Prop_Type). Not Style_Schema properties themselves; accumulated into
+	 * the schema aggregate by Flex_Longhand_Converter.
+	 *
+	 * @return array<string, string> input property -> Flex_Prop_Type field key
+	 */
+	public static function flex_longhand_specs(): array {
+		return [
+			'flex-grow'   => 'flexGrow',
+			'flex-shrink' => 'flexShrink',
+			'flex-basis'  => 'flexBasis',
+		];
+	}
+
+	/**
+	 * CSS-wide keywords accepted as `custom` size values for flex-basis. The UI exposes a free
+	 * "custom" input for flex-basis, so these are stored verbatim as {size: "<keyword>", unit: "custom"}.
+	 */
+	const FLEX_BASIS_CUSTOM_KEYWORDS = [ 'initial', 'inherit', 'unset', 'revert', 'revert-layer' ];
+
+	/**
 	 * Filter-function lists backed by Array(Css_Filter_Func) (filter, backdrop-filter). Handled
 	 * uniformly by Filter_Property_Converter + Filter_Value_Parser; the two share inner items and
 	 * differ only by the wrapping $$type, which is sourced from the live schema.
@@ -320,6 +345,7 @@ class Converter_Registry_Factory {
 			self::FILTER_PROPERTIES,
 			self::OTHER_PROPERTIES,
 			array_keys( self::border_side_specs() ),
+			array_keys( self::flex_longhand_specs() ),
 			self::BACKGROUND_FIELD_PROPERTIES,
 			self::BACKGROUND_LAYER_PROPERTIES,
 			self::NOOP_PROPERTIES,
@@ -336,7 +362,7 @@ class Converter_Registry_Factory {
 	 *
 	 * @return array<string, array{0: string, 1: string}>
 	 */
-	private static function border_side_specs(): array {
+	public static function border_side_specs(): array {
 		return [
 			'border-top-width' => [ 'border-width', 'block-start' ],
 			'border-right-width' => [ 'border-width', 'inline-end' ],
@@ -346,6 +372,10 @@ class Converter_Registry_Factory {
 			'border-top-right-radius' => [ 'border-radius', 'start-end' ],
 			'border-bottom-right-radius' => [ 'border-radius', 'end-end' ],
 			'border-bottom-left-radius' => [ 'border-radius', 'end-start' ],
+			'border-start-start-radius' => [ 'border-radius', 'start-start' ],
+			'border-start-end-radius' => [ 'border-radius', 'start-end' ],
+			'border-end-end-radius' => [ 'border-radius', 'end-end' ],
+			'border-end-start-radius' => [ 'border-radius', 'end-start' ],
 		];
 	}
 
@@ -421,6 +451,43 @@ class Converter_Registry_Factory {
 		$converters['border-width'] = new Dimensions_Property_Converter( 'border-width', Border_Width_Prop_Type::class );
 		$converters['object-position'] = new Object_Position_Property_Converter();
 		$converters['flex'] = new Flex_Property_Converter();
+
+		$converters['flex-grow'] = new Flex_Longhand_Converter(
+			'flex-grow',
+			'flexGrow',
+			static function ( string $v ): ?array {
+				if ( ! is_numeric( $v ) ) {
+					return null;
+				}
+				return Number_Prop_Type::generate( (float) $v );
+			}
+		);
+
+		$converters['flex-shrink'] = new Flex_Longhand_Converter(
+			'flex-shrink',
+			'flexShrink',
+			static function ( string $v ): ?array {
+				if ( ! is_numeric( $v ) ) {
+					return null;
+				}
+				return Number_Prop_Type::generate( (float) $v );
+			}
+		);
+
+		$converters['flex-basis'] = new Flex_Longhand_Converter(
+			'flex-basis',
+			'flexBasis',
+			static function ( string $v ): ?array {
+				if ( in_array( strtolower( $v ), self::FLEX_BASIS_CUSTOM_KEYWORDS, true ) ) {
+					return Size_Prop_Type::generate( [
+						'size' => $v,
+						'unit' => 'custom',
+					] );
+				}
+				$parsed = Size_Value_Parser::parse( $v );
+				return null !== $parsed ? Size_Prop_Type::generate( $parsed ) : null;
+			}
+		);
 		$converters['transition'] = new Transition_Property_Converter();
 		$converters['transform'] = new Transform_Property_Converter();
 		$converters['transform-origin'] = new Transform_Origin_Property_Converter();
