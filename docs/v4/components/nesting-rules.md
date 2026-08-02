@@ -2,7 +2,7 @@
 
 > Audience: internal
 > Module: `modules/components/circular-dependency-validator.php`, `modules/components/component-lock-manager.php`, `modules/atomic-widgets/utils/format-element-ids.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [instances-and-overrides.md](./instances-and-overrides.md), [../global-classes/applying-classes.md](../global-classes/applying-classes.md)
 
 ## What it is

@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/components/`, `packages/packages/core/editor-components/`
-> Status: draft
+> Status: final
 > Related: [document-model.md](./document-model.md), [instances-and-overrides.md](./instances-and-overrides.md), [../getting-started/experiments.md](../getting-started/experiments.md)
 
 ## What it is

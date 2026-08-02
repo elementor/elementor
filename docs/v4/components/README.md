@@ -1,6 +1,6 @@
 # Components
 
-> Status: draft
+> Status: final
 
 ## Purpose
 

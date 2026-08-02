@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/components/documents/component.php`, `modules/components/components-repository.php`, `modules/components/components-rest-api.php`
-> Status: draft
+> Status: final
 > Related: [overview.md](./overview.md), [instances-and-overrides.md](./instances-and-overrides.md), [../global-classes/data-model.md](../global-classes/data-model.md)
 
 ## What it is

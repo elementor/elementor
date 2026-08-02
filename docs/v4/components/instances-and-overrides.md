@@ -2,7 +2,7 @@
 
 > Audience: both
 > Module: `modules/components/prop-types/`, `modules/components/transformers/`, `packages/packages/core/editor-components/`
-> Status: draft
+> Status: final
 > Related: [document-model.md](./document-model.md), [../fundamentals/prop-value.md](../fundamentals/prop-value.md), [../fundamentals/transformers.md](../fundamentals/transformers.md)
 
 ## What it is
