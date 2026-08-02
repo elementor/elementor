@@ -101,10 +101,6 @@ class Global_Class_Post {
 	}
 
 	private function migrate_data( array &$data, string $meta_key ): void {
-		if ( ! Migrations_Orchestrator::is_active() ) {
-			return;
-		}
-
 		$post_id = $this->post->ID;
 
 		Migrations_Orchestrator::make()->migrate(
