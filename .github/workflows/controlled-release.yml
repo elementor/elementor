@@ -15,7 +15,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
 
 jobs:
   # ── Job 1 ────────────────────────────────────────────────────────────────
@@ -109,7 +108,7 @@ jobs:
   cleanup-tag:
     name: Rollback Tag (Rejected)
     needs: approve-publish
-    if: always() && needs.approve-publish.result == 'failure'
+    if: always() && needs.approve-publish.result != 'success' && needs.approve-publish.result != 'skipped'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -160,7 +159,8 @@ jobs:
   cleanup-tag-on-build-failure:
     name: Rollback Tag (Build Failed)
     needs: build-draft
-    if: always() && needs.build-draft.result == 'failure'
+    # Cover failure + cancel; skip when build-draft never ran.
+    if: always() && needs.build-draft.result != 'success' && needs.build-draft.result != 'skipped'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
