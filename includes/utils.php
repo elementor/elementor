@@ -47,6 +47,27 @@ class Utils {
 		'span',
 	];
 
+	/**
+	 * Tags that must never be usable as an HTML wrapper tag, regardless of what
+	 * `elementor/allowed_html_wrapper_tags` filters return. These are the classic
+	 * script-execution / markup-injection vectors (XSS), so they're enforced as a
+	 * hard denylist rather than left to filter authors to avoid re-adding them.
+	 */
+	const FORBIDDEN_HTML_WRAPPER_TAGS = [
+		'script',
+		'iframe',
+		'object',
+		'embed',
+		'style',
+		'link',
+		'meta',
+		'base',
+		'noscript',
+		'template',
+		'svg',
+		'math',
+	];
+
 	const EXTENDED_ALLOWED_HTML_TAGS = [
 		'iframe' => [
 			'iframe' => [
@@ -776,6 +797,43 @@ class Utils {
 	}
 
 	/**
+	 * @var string[]|null
+	 */
+	private static $resolved_allowed_html_wrapper_tags;
+
+	/**
+	 * Get allowed HTML wrapper tags.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return string[]
+	 */
+	public static function get_allowed_html_wrapper_tags(): array {
+		if ( null !== self::$resolved_allowed_html_wrapper_tags ) {
+			return self::$resolved_allowed_html_wrapper_tags;
+		}
+
+		/**
+		 * Allowed HTML wrapper tags.
+		 *
+		 * Filters the list of allowed HTML tag names used by `validate_html_tag()`.
+		 *
+		 * Note: tags in `Utils::FORBIDDEN_HTML_WRAPPER_TAGS` (e.g. `script`, `iframe`,
+		 * `object`) are always stripped after this filter runs and cannot be re-added,
+		 * to prevent XSS via a wrapper tag that executes script or embeds external content.
+		 *
+		 * @since 4.4.0
+		 *
+		 * @param string[] $tags A list of lowercase HTML tag name strings.
+		 */
+		$tags = apply_filters( 'elementor/allowed_html_wrapper_tags', self::ALLOWED_HTML_WRAPPER_TAGS );
+
+		self::$resolved_allowed_html_wrapper_tags = self::normalize_allowed_html_wrapper_tags( $tags );
+
+		return self::$resolved_allowed_html_wrapper_tags;
+	}
+
+	/**
 	 * Validate an HTML tag against a safe allowed list.
 	 *
 	 * @param string $tag
@@ -783,7 +841,32 @@ class Utils {
 	 * @return string
 	 */
 	public static function validate_html_tag( $tag ) {
-		return $tag && in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+		return $tag && in_array( strtolower( $tag ), self::get_allowed_html_wrapper_tags(), true ) ? $tag : 'div';
+	}
+
+	/**
+	 * @param array $tags
+	 *
+	 * @return string[]
+	 */
+	private static function normalize_allowed_html_wrapper_tags( array $tags ): array {
+		$normalized_tags = [];
+
+		foreach ( $tags as $tag ) {
+			if ( ! is_string( $tag ) ) {
+				continue;
+			}
+
+			$tag = strtolower( $tag );
+
+			if ( in_array( $tag, self::FORBIDDEN_HTML_WRAPPER_TAGS, true ) ) {
+				continue;
+			}
+
+			$normalized_tags[] = $tag;
+		}
+
+		return array_values( array_unique( $normalized_tags ) );
 	}
 
 	/**
@@ -838,6 +921,12 @@ class Utils {
 		}
 
 		echo wp_kses( $text, $allowed_html );
+	}
+
+	public static function kses_post_deep( $data ) {
+		return map_deep( $data, function ( $value ) {
+			return is_string( $value ) ? wp_kses_post( $value ) : $value;
+		} );
 	}
 
 	public static function is_elementor_path( $path ) {
