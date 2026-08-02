@@ -14,6 +14,12 @@ const REQUIRE_CALL_PATTERN = /(^|[^.\w$])require\(\s*(["'])([^"']+)\2\s*\)/g;
  * `resolve` selects the global for a request, and `onExternal` is notified of every request that
  * was rewired, so callers that need the full external set (such as `.asset.php` generation) can see
  * the requests that never appeared as chunk imports.
+ *
+ * `resolve` is called with the request alone, not the chunk it was found in: every caller
+ * (`resolveBundleGlobal` in `create-config.mjs`, `resolvePackageGlobal`) already closes over the one
+ * bundle or package a given Rolldown build produces, since `viteBuild()` runs once per entry. A
+ * `require('@reduxjs/toolkit')` found while building `vendors-redux` itself therefore already resolves
+ * to `null` through `SELF_PUBLISHED_REQUESTS`, the same guarantee an explicit chunk importer would give.
  */
 export function cjsExternalsPlugin( { resolve = resolveGlobal, onExternal } = {} ) {
 	return {
