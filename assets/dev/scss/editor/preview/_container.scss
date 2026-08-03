@@ -279,11 +279,11 @@
 	}
 }
 
-.e-atomic-element {
-	&:has( .elementor-empty-view ) {
-		min-height: 120px;
-	}
+:where( .e-atomic-element ):has( .elementor-empty-view ) {
+	min-height: 120px;
+}
 
+.e-atomic-element {
 	& > .elementor-empty-view.elementor-empty-view {
 		min-height: inherit;
 	}
