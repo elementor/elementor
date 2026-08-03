@@ -1,5 +1,5 @@
-import { type LegacyWindow } from '@elementor/editor-canvas';
 import {
+	getWidgetsCache,
 	reconcileInitialChildren,
 	type V1ElementConfig,
 	type V1ElementData,
@@ -25,14 +25,13 @@ function overridesRecordToMapping( overrides: Record< string, unknown > ): Overr
 }
 
 function getElementConfig( element: V1ElementData ): V1ElementConfig | undefined {
-	const legacyWindow = window as unknown as LegacyWindow;
 	const type = element.elType === 'widget' ? element.widgetType : element.elType;
 
 	if ( ! type ) {
 		return undefined;
 	}
 
-	return legacyWindow.elementor?.config?.elements?.[ type ] as V1ElementConfig | undefined;
+	return getWidgetsCache()?.[ type ];
 }
 
 function reconcileElementTree( element: V1ElementData, overridesMapping: OverridesMapping ): V1ElementData {
