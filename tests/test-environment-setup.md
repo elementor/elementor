@@ -64,7 +64,8 @@ npm run install:ci
 # 2. Build from current branch
 npm run build:packages
 npm run composer:no-dev
-grunt scripts styles
+npm run scripts
+npm run styles
 
 # 3. Start WordPress environments
 npm run start-local-server
@@ -165,8 +166,8 @@ npm run test:setup:playwright
 npm run test:setup:playwright
 ```
 
-**Build fails on text domains:**
-This is expected behavior. The script skips the full grunt build to avoid hello-elementor text domain warnings that would halt the process. Core Elementor functionality is still built correctly.
+**Build only produces assets, not `build/`:**
+This is expected. The script builds scripts and styles but not the distributable plugin tree, which the test environment does not need. Use `npm run build` if you want the `build/` tree as well.
 
 ### Reset Everything
 ```bash
