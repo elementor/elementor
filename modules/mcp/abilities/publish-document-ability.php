@@ -64,6 +64,14 @@ class Publish_Document_Ability extends Abstract_Ability {
 			);
 		}
 
+		if ( wp_is_post_revision( $post_id ) ) {
+			return new \WP_Error(
+				'invalid_post_id',
+				__( 'Revision IDs cannot be published. Pass the parent document ID.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
@@ -74,7 +82,9 @@ class Publish_Document_Ability extends Abstract_Ability {
 			);
 		}
 
-		if ( ! current_user_can( 'publish_post', $post_id ) ) {
+		$main_id = $document->get_main_id();
+
+		if ( ! current_user_can( 'publish_post', $main_id ) ) {
 			return new \WP_Error(
 				'rest_cannot_publish',
 				__( 'Sorry, you are not allowed to publish this document.', 'elementor' ),
@@ -82,7 +92,6 @@ class Publish_Document_Ability extends Abstract_Ability {
 			);
 		}
 
-		$main_id = $document->get_main_id();
 		$previous_status = get_post_status( $main_id );
 
 		if ( 'publish' === $previous_status ) {
