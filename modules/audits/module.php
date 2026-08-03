@@ -28,7 +28,13 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiment();
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Page Audit', 'elementor' ),
+			'description' => esc_html__( 'Scan the current page for SEO, accessibility, performance, and best-practice issues directly from the editor.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
@@ -42,16 +48,6 @@ class Module extends BaseModule {
 
 	public function get_name(): string {
 		return 'audits';
-	}
-
-	private function register_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Page Audit', 'elementor' ),
-			'description' => esc_html__( 'Scan the current page for SEO, accessibility, performance, and best-practice issues directly from the editor.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
 	}
 
 	public function register_data_controller(): void {
