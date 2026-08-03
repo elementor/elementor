@@ -283,14 +283,12 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 				click( event ) {
 					event.preventDefault();
 
-					event.currentTarget.focus(); // Safari does not focus the tab automatically
+					self.activateSettingsTab( event.currentTarget );
+
+					event.currentTarget.focus();
 				},
-				focus() { // Using focus event to enable navigation by tab key
-					var hrefWithoutHash = location.href.replace( /#.*/, '' );
-
-					history.pushState( {}, '', hrefWithoutHash + this.hash );
-
-					self.goToSettingsTabFromHash();
+				focus() {
+					self.activateSettingsTab( this );
 				},
 			} );
 
@@ -506,6 +504,18 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 
 		animateLoader() {
 			this.elements.$goToEditLink.addClass( 'elementor-animate' );
+		},
+
+		activateSettingsTab( tabElement ) {
+			if ( ! tabElement?.hash ) {
+				return;
+			}
+
+			const hrefWithoutHash = location.href.replace( /#.*/, '' );
+
+			history.pushState( {}, '', hrefWithoutHash + tabElement.hash );
+
+			this.goToSettingsTabFromHash();
 		},
 
 		goToSettingsTabFromHash() {
