@@ -49,6 +49,7 @@ class Module extends BaseModule {
 			'description' => esc_html__( 'Scan the current page for SEO, accessibility, performance, and best-practice issues directly from the editor.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => true,
 		];
 	}
 
