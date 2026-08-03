@@ -104,7 +104,7 @@ add_filter( 'elementor/editor/v2/packages', fn( $packages ) => array_merge( $pac
 
 1. **PHP** — `modules/your-feature/module.php`, register experiment, hook `elementor/editor/v2/packages`
 2. **JS** — `packages/packages/core/editor-your-feature/`, export `init.ts`
-3. **Docs** — add folder under `docs/v4/your-feature/`
+3. **Docs** — add folder under `docs/atomic-builder/your-feature/`
 
 See [packages-map.md](packages-map.md) for registration patterns.
 
