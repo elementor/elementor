@@ -317,6 +317,7 @@ jobs:
       - name: Build test report
         run: |
           if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
+            node .github/scripts/retag-playwright-traces.js ./allure-results
             npx allure generate --clean allure-results -o allure-report || mkdir -p allure-report
           else
             echo "No allure-results found. Creating empty report directory."
