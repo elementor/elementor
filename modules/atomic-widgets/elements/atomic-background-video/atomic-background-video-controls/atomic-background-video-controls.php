@@ -4,6 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomi
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -25,7 +27,7 @@ class Atomic_Background_Video_Controls extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'Controls wrapper for the Background Video element. Contains play and pause buttons positioned over the video.';
+	public static $widget_description = 'Controls wrapper for the Background Video element. REQUIRED children: e-background-video-play and e-background-video-pause, each with a required e-paragraph child for the button label.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -117,6 +119,13 @@ class Atomic_Background_Video_Controls extends Atomic_Element_Base {
 							] ),
 						] )
 				),
+		];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Background_Video_Play::build_default_element( true ),
+			Atomic_Background_Video_Pause::build_default_element( true ),
 		];
 	}
 

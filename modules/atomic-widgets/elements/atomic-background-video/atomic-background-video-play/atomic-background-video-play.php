@@ -26,7 +26,7 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'Play button for the Background Video element. Drop any element inside to replace the default label.';
+	public static $widget_description = 'Play button for the Background Video element. REQUIRED child: e-paragraph with the button label text (e.g. "Play"). Drop any element inside to replace the default label.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -116,17 +116,36 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 		];
 	}
 
+	public static function build_default_element( bool $mark_required = false ): array {
+		$builder = static::generate()
+			->children( [ static::build_label_paragraph() ] )
+			->editor_settings( [
+				'title' => esc_html__( 'Play Button', 'elementor' ),
+			] );
+
+		if ( $mark_required ) {
+			$builder->meta( [ 'required' => true ] );
+		}
+
+		return $builder->build();
+	}
+
+	private static function build_label_paragraph(): array {
+		return Atomic_Paragraph::generate()
+			->meta( [ 'required' => true ] )
+			->settings( [
+				'paragraph' => Html_V3_Prop_Type::generate( [
+					'content'  => String_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
+					'children' => [],
+				] ),
+				'tag' => String_Prop_Type::generate( 'span' ),
+			] )
+			->build();
+	}
+
 	protected function define_default_children() {
 		return [
-			Atomic_Paragraph::generate()
-				->settings( [
-					'paragraph' => Html_V3_Prop_Type::generate( [
-						'content'  => String_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
-						'children' => [],
-					] ),
-					'tag' => String_Prop_Type::generate( 'span' ),
-				] )
-				->build(),
+			static::build_label_paragraph(),
 		];
 	}
 
