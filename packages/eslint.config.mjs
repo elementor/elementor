@@ -1,14 +1,15 @@
 import { createRequire } from 'node:module';
-import { fixupConfigRules } from '@eslint/compat';
-import { FlatCompat } from '@eslint/eslintrc';
-import tanstackQuery from '@tanstack/eslint-plugin-query';
-import wordpress from '@wordpress/eslint-plugin';
+
 import jestDom from 'eslint-plugin-jest-dom';
 import reactCompiler from 'eslint-plugin-react-compiler';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import testingLibrary from 'eslint-plugin-testing-library';
 import unicorn from 'eslint-plugin-unicorn';
 import tseslint from 'typescript-eslint';
+import { fixupConfigRules } from '@eslint/compat';
+import { FlatCompat } from '@eslint/eslintrc';
+import tanstackQuery from '@tanstack/eslint-plugin-query';
+import wordpress from '@wordpress/eslint-plugin';
 
 const require = createRequire( import.meta.url );
 const compat = new FlatCompat( {
@@ -22,14 +23,7 @@ function getImportSortGroups() {
 	return [
 		[ '^\\u0000' ],
 		[ '^node:' ],
-		[
-			'^react$',
-			'^react-dom$',
-			'^react-dom\\/',
-			'^\\w',
-			'^@elementor\\/',
-			'^@?\\w',
-		],
+		[ '^react$', '^react-dom$', '^react-dom\\/', '^\\w', '^@elementor\\/', '^@?\\w' ],
 		[ '^' ],
 		[ '^\\.' ],
 	];
@@ -37,14 +31,7 @@ function getImportSortGroups() {
 
 export default [
 	{
-		ignores: [
-			'node_modules/',
-			'**/dist/',
-			'docs/**',
-			'!.github/',
-			'scripts/**',
-			'tests/**',
-		],
+		ignores: [ 'node_modules/', '**/dist/', 'docs/**', '!.github/', 'scripts/**', 'tests/**', 'eslint.config.mjs' ],
 	},
 	...wordpress.configs.recommended,
 	...tseslint.configs.strict,
@@ -136,10 +123,7 @@ export default [
 	{
 		files: [ '**/packages/@(core|libs)/**/*.[tj]s?(x)' ],
 		rules: {
-			'@wordpress/i18n-text-domain': [
-				'error',
-				{ allowedTextDomain: 'elementor' },
-			],
+			'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor' } ],
 		},
 	},
 	{

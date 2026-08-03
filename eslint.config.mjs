@@ -3,7 +3,7 @@ import { fixupConfigRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import wordpress from '@wordpress/eslint-plugin';
 import noJquery from 'eslint-plugin-no-jquery';
-import react from 'eslint-plugin-react';
+import playwright from 'eslint-plugin-playwright';
 import tseslint from 'typescript-eslint';
 
 const require = createRequire( import.meta.url );
@@ -95,6 +95,8 @@ export default [
 			'playwright-test-results',
 			'**/.env',
 			'docker-output/',
+			'.lighthouserc.js',
+			'.grunt-config/**',
 		],
 	},
 	...wordpress.configs[ 'recommended-with-formatting' ],
@@ -126,9 +128,11 @@ export default [
 			},
 			jsdoc: { mode: 'typescript' },
 		},
+		linterOptions: {
+			reportUnusedDisableDirectives: 'off',
+		},
 		rules: {
 			...noJqueryRules,
-			...react.configs.flat.recommended.rules,
 			'no-var': 'off',
 			'wrap-iife': 'off',
 			'computed-property-spacing': [ 'error', 'always' ],
@@ -214,6 +218,9 @@ export default [
 				},
 			],
 			'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
+			'space-in-parens': 'off',
+			'template-curly-spacing': 'off',
+			'quote-props': 'off',
 		},
 	},
 	{
@@ -229,6 +236,18 @@ export default [
 		rules: {
 			'no-console': 'off',
 			'jsdoc/require-param': 'off',
+		},
+	},
+	{
+		files: [ '.github/scripts/**/*.js' ],
+		languageOptions: {
+			globals: {
+				...elementorGlobals,
+				...require( 'globals' ).node,
+			},
+		},
+		rules: {
+			'no-console': 'off',
 		},
 	},
 	...tseslint.config(
@@ -254,17 +273,28 @@ export default [
 			'local-rules/no-react-namespace': 'off',
 		},
 	},
-	...wordpress.configs[ 'test-playwright' ].map( ( config ) => ( {
-		...config,
+	{
+		...playwright.configs[ 'flat/recommended' ],
 		files: [
 			'tests/playwright/**/*.ts',
 			'tests/elements-regression/**/*.ts',
 		],
 		rules: {
-			...config.rules,
+			...playwright.configs[ 'flat/recommended' ].rules,
 			'playwright/no-networkidle': 'warn',
 			'playwright/expect-expect': 'off',
 			'playwright/no-conditional-in-test': 'off',
+			'playwright/no-wait-for-selector': 'off',
+			'playwright/prefer-locator': 'off',
+			'playwright/no-wait-for-timeout': 'off',
+			'playwright/prefer-web-first-assertions': 'off',
+			'playwright/valid-title': 'off',
+			'playwright/prefer-to-have-count': 'off',
+			'playwright/no-unsafe-references': 'off',
+			'playwright/no-nested-step': 'off',
+			'playwright/no-conditional-expect': 'off',
+			'playwright/no-wait-for-navigation': 'off',
+			'playwright/valid-describe-callback': 'off',
 		},
-	} ) ),
+	},
 ];
