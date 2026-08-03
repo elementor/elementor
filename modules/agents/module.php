@@ -4,6 +4,7 @@ namespace Elementor\Modules\Agents;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -34,6 +35,18 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
+		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
+	}
+
+	/**
+	 * @param \Elementor\Core\Kits\Documents\Kit $kit
+	 */
+	public function register_kit_tabs( $kit ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return;
+		}
+
+		$kit->register_tab( 'settings-agents', Settings_Agents::class );
 	}
 
 	public function maybe_serve_llms_txt() {

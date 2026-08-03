@@ -33,22 +33,31 @@ class Settings_Agents extends Tab_Base {
 	}
 
 	public function before_save( array $data ) {
-		if ( empty( $data['settings'] ) || ! isset( $data['settings']['agents_llms'] ) ) {
+		if ( empty( $data['settings'] ) ) {
 			return $data;
 		}
 
-		$llms = is_string( $data['settings']['agents_llms'] )
-			? sanitize_textarea_field( $data['settings']['agents_llms'] )
-			: '';
+		$llms = $this->extract_llms_from_settings( $data['settings'] );
+
+		if ( null === $llms ) {
+			return $data;
+		}
 
 		unset( $data['settings']['agents_llms'] );
 
+		$agents = is_array( $data['settings']['agents'] ?? null ) ? $data['settings']['agents'] : [];
+
 		if ( '' !== $llms ) {
-			$data['settings']['agents'] = [
-				'llms' => $llms,
-			];
+			$agents['llms'] = $llms;
+			$data['settings']['agents'] = $agents;
 		} else {
-			unset( $data['settings']['agents'] );
+			unset( $agents['llms'] );
+
+			if ( empty( $agents ) ) {
+				unset( $data['settings']['agents'] );
+			} else {
+				$data['settings']['agents'] = $agents;
+			}
 		}
 
 		return $data;
@@ -89,5 +98,26 @@ class Settings_Agents extends Tab_Base {
 		}
 
 		$this->parent->set_settings( 'agents_llms', $settings['agents']['llms'] );
+	}
+
+	/**
+	 * @param array $settings
+	 *
+	 * @return string|null Sanitized llms content, or null when llms was not in the payload.
+	 */
+	private function extract_llms_from_settings( array $settings ): ?string {
+		if ( isset( $settings['agents_llms'] ) ) {
+			return is_string( $settings['agents_llms'] )
+				? sanitize_textarea_field( $settings['agents_llms'] )
+				: '';
+		}
+
+		if ( ! isset( $settings['agents']['llms'] ) ) {
+			return null;
+		}
+
+		return is_string( $settings['agents']['llms'] )
+			? sanitize_textarea_field( $settings['agents']['llms'] )
+			: '';
 	}
 }
