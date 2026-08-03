@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Preview;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -45,6 +47,10 @@ class Public_Preview_Handler {
 			return;
 		}
 
+		if ( ! $this->is_valid_post( $claims['post_id'] ) ) {
+			return;
+		}
+
 		if ( ! $this->is_valid_revision( $claims['post_id'], $claims['revision_id'] ) ) {
 			return;
 		}
@@ -56,6 +62,22 @@ class Public_Preview_Handler {
 		$this->rewrite_main_query( $wp, $claims['post_id'] );
 		$this->install_render_filters();
 		$this->send_privacy_headers();
+	}
+
+	private function is_valid_post( int $post_id ): bool {
+		if ( $post_id <= 0 ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( ! $post || 'revision' === $post->post_type ) {
+			return false;
+		}
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		return $document && $document->is_built_with_elementor();
 	}
 
 	private function is_valid_revision( int $post_id, int $revision_id ): bool {

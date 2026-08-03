@@ -56,6 +56,35 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
 	}
 
+	public function test_missing_post__does_nothing() {
+		$non_existent_post_id = 999999;
+		$revision_id = $this->factory()->post->create( [
+			'post_type' => 'revision',
+			'post_parent' => $non_existent_post_id,
+			'post_status' => 'inherit',
+		] );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $non_existent_post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+
+		$this->handler->maybe_activate( new \WP() );
+
+		$this->assertNull( $this->handler->filter_post_metadata( null, $non_existent_post_id, '_elementor_data', true ) );
+	}
+
+	public function test_non_elementor_post__does_nothing() {
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft' ] );
+		$revision_id = $this->factory()->post->create( [
+			'post_type' => 'revision',
+			'post_parent' => $post_id,
+			'post_status' => 'inherit',
+		] );
+		update_post_meta( $revision_id, '_elementor_data', 'snapshot' );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+
+		$this->handler->maybe_activate( new \WP() );
+
+		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+	}
+
 	public function test_revision_parent_mismatch__does_nothing() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
 		$other_post_id = $this->factory()->post->create();
@@ -117,6 +146,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 	private function create_snapshot_post( string $data ): int {
 		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft' ] );
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 		update_post_meta( $post_id, '_elementor_data', $data );
 
 		return $post_id;

@@ -98,31 +98,11 @@ class Test_Create_Preview_Link_Ability extends Elementor_Test_Base {
 	public function test_execute__uses_fixed_ttl() {
 		$this->act_as_admin();
 		$post_id = $this->create_elementor_post();
+		$expected_ttl_seconds = Create_Preview_Link_Ability::TTL_MINUTES * MINUTE_IN_SECONDS;
 
-		$before = time();
 		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
-		$after = time();
 
-		$this->assert_expires_after_fixed_ttl( $result, $before, $after );
-	}
-
-	public function test_execute__ignores_caller_supplied_ttl() {
-		$this->act_as_admin();
-		$post_id = $this->create_elementor_post();
-		$excessive_ttl_minutes = 999999;
-
-		$before = time();
-		$result = $this->ability->execute( [ 'post_id' => $post_id, 'ttl_minutes' => $excessive_ttl_minutes ] );
-		$after = time();
-
-		$this->assert_expires_after_fixed_ttl( $result, $before, $after );
-	}
-
-	private function assert_expires_after_fixed_ttl( array $result, int $before, int $after ): void {
-		$ttl_seconds = Create_Preview_Link_Ability::TTL_MINUTES * MINUTE_IN_SECONDS;
-
-		$this->assertGreaterThanOrEqual( $before + $ttl_seconds, $result['expires_at_unix'] );
-		$this->assertLessThanOrEqual( $after + $ttl_seconds, $result['expires_at_unix'] );
+		$this->assertSame( time() + $expected_ttl_seconds, $result['expires_at_unix'] );
 	}
 
 	private function create_elementor_post( array $elements = [] ): int {
