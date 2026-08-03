@@ -27,6 +27,14 @@ abstract class Test_Manage_Classes_Ability_Base extends TestCase {
 		return [ 'operations' => $operations ];
 	}
 
+	protected function make_stub_converter(): Css_Converter {
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )->willReturn( [ 'blocks' => [ [ 'selector' => null, 'css' => '' ] ] ] );
+		$converter->method( 'convert' )->willReturn( [ 'props' => [], 'customCss' => '', 'rejected' => [] ] );
+
+		return $converter;
+	}
+
 	protected function make_ability( ?Global_Classes_Repository $repository = null ): Manage_Classes_Ability {
 		if ( null === $repository ) {
 			$repository = $this->createMock( Global_Classes_Repository::class );
@@ -34,9 +42,11 @@ abstract class Test_Manage_Classes_Ability_Base extends TestCase {
 			$repository->method( 'get_order' )->willReturn( [] );
 		}
 
-		return new class( $repository ) extends Manage_Classes_Ability {
-			public function __construct( ?Global_Classes_Repository $repository = null ) {
-				parent::__construct( $repository );
+		$converter = $this->make_stub_converter();
+
+		return new class( $repository, $converter ) extends Manage_Classes_Ability {
+			public function __construct( ?Global_Classes_Repository $repository = null, ?Css_Converter $css_converter = null ) {
+				parent::__construct( $repository, $css_converter );
 			}
 
 			protected function get_active_breakpoint_keys(): array {

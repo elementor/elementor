@@ -87,7 +87,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		const result = await registeredTool.handler( {
 			action: 'create',
 			label: 'hero-heading',
-			css: { color: '#000000' },
+			css: 'color: #000000;',
 		} );
 
 		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
@@ -97,7 +97,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 					{
 						action: 'create',
 						label: 'hero-heading',
-						css: { color: '#000000' },
+						css: 'color: #000000;',
 					},
 				],
 			},
@@ -131,7 +131,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 			action: 'update',
 			id: 'g-abc1234',
 			label: 'hero-heading',
-			css: { color: '#ffffff' },
+			css: 'color: #ffffff;',
 		} );
 
 		expect( httpMock.post ).toHaveBeenLastCalledWith(
@@ -178,13 +178,13 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
 	} );
 
-	it( 'forwards styles and mode fields to the proxy', async () => {
+	it( 'forwards css string and mode fields to the proxy', async () => {
 		const { registeredTool } = createMockRegistry();
 
 		await registeredTool.handler( {
 			action: 'create',
 			label: 'hero-heading',
-			styles: { default: 'color: red; &:hover { color: blue; }' },
+			css: 'color: red; @media(--mobile) { &:hover { color: blue; } }',
 			mode: 'replace',
 		} );
 
@@ -195,7 +195,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 					{
 						action: 'create',
 						label: 'hero-heading',
-						styles: { default: 'color: red; &:hover { color: blue; }' },
+						css: 'color: red; @media(--mobile) { &:hover { color: blue; } }',
 						mode: 'replace',
 					},
 				],
@@ -203,12 +203,13 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		} );
 	} );
 
-	it( 'schema exposes styles and mode fields', () => {
+	it( 'schema exposes css string and mode fields but not styles', () => {
 		const { registeredTool } = createMockRegistry();
 		const schemaKeys = Object.keys( registeredTool.schema );
 
-		expect( schemaKeys ).toContain( 'styles' );
+		expect( schemaKeys ).toContain( 'css' );
 		expect( schemaKeys ).toContain( 'mode' );
+		expect( schemaKeys ).not.toContain( 'styles' );
 	} );
 
 	it( 'propagates server errors from the proxy without mutating store', async () => {
@@ -220,7 +221,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 			registeredTool.handler( {
 				action: 'create',
 				label: 'hero-heading',
-				css: { color: '#000000' },
+				css: 'color: #000000;',
 			} )
 		).rejects.toThrow( 'duplicated label' );
 

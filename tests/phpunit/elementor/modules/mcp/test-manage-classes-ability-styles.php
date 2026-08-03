@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Base {
 
-	public function test_create__with_styles_produces_variants() {
+	public function test_create__with_css_string_produces_variants() {
 		// Arrange.
 		$converter = $this->createMock( Css_Converter::class );
 		$converter->method( 'parse_nested' )
@@ -40,7 +40,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: red;' ],
+				'css'    => 'color: red;',
 			],
 		] ) );
 
@@ -84,7 +84,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: red; &:hover { color: blue; }' ],
+				'css'    => 'color: red; &:hover { color: blue; }',
 			],
 		] ) );
 
@@ -104,41 +104,6 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		$this->assertCleanVariants( $captured_variants );
 	}
 
-	public function test_create__styles_takes_precedence_over_css() {
-		// Arrange.
-		$converter = $this->createMock( Css_Converter::class );
-		$converter->method( 'parse_nested' )
-			->with( 'color: new;' )
-			->willReturn( [ 'blocks' => [ [ 'selector' => null, 'css' => 'color: new;' ] ] ] );
-		$converter->method( 'convert' )
-			->with( 'color: new;' )
-			->willReturn( [ 'props' => [ 'color' => 'new' ], 'customCss' => '', 'rejected' => [] ] );
-
-		$captured_variants = null;
-		$repository        = $this->createMock( Global_Classes_Repository::class );
-		$repository->method( 'all_labels' )->willReturn( [] );
-		$repository->method( 'get_order' )->willReturn( [] );
-		$repository->method( 'apply_changes' )->willReturnCallback( function ( $touched ) use ( &$captured_variants ) {
-			$item              = reset( $touched );
-			$captured_variants = $item['variants'];
-		} );
-
-		// Act.
-		$result = $this->make_ability_with_converter( $repository, $converter )->execute( $this->operations_input( [
-			[
-				'action' => 'create',
-				'label'  => 'test-class',
-				'css'    => [ 'color' => 'legacy' ],
-				'styles' => [ 'default' => 'color: new;' ],
-			],
-		] ) );
-
-		// Assert.
-		$this->assertSame( 'ok', $result['status'] );
-		$this->assertSame( 'new', $captured_variants[0]['props']['color'] );
-		$this->assertCleanVariants( $captured_variants );
-	}
-
 	public function test_create__styles_parse_error_returns_operation_error() {
 		// Arrange.
 		$converter = $this->createMock( Css_Converter::class );
@@ -150,7 +115,49 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: red; &:hover { unclosed' ],
+				'css'    => 'color: red; &:hover { unclosed',
+			],
+		] ) );
+
+		// Assert.
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_css', $result['results'][0]['code'] );
+	}
+
+	public function test_create__stray_closing_bracket_returns_error() {
+		// Arrange.
+		$repository = $this->createMock( Global_Classes_Repository::class );
+		$repository->method( 'all_labels' )->willReturn( [] );
+		$repository->method( 'get_order' )->willReturn( [] );
+		$repository->expects( $this->never() )->method( 'apply_changes' );
+
+		// Act.
+		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'label'  => 'test-class',
+				'css'    => 'color: red; }',
+			],
+		] ) );
+
+		// Assert.
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_css', $result['results'][0]['code'] );
+	}
+
+	public function test_create__malformed_media_block_returns_error() {
+		// Arrange.
+		$repository = $this->createMock( Global_Classes_Repository::class );
+		$repository->method( 'all_labels' )->willReturn( [] );
+		$repository->method( 'get_order' )->willReturn( [] );
+		$repository->expects( $this->never() )->method( 'apply_changes' );
+
+		// Act.
+		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'label'  => 'test-class',
+				'css'    => '@media(--mobile) { color: red;',
 			],
 		] ) );
 
@@ -171,13 +178,13 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'tablet' => 'color: red;' ],
+				'css'    => '@media(--tablet) { color: red; }',
 			],
 		] ) );
 
 		// Assert.
 		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'unknown_breakpoint', $result['results'][0]['code'] );
+		$this->assertSame( 'invalid_css', $result['results'][0]['code'] );
 		$this->assertStringContainsString( 'tablet', $result['results'][0]['message'] );
 		$this->assertStringContainsString( 'desktop', $result['results'][0]['message'] );
 	}
@@ -197,7 +204,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: red;' ],
+				'css'    => '@media(--default) { color: red; }',
 			],
 		] ) );
 
@@ -239,7 +246,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => '&:hover {}' ],
+				'css'    => '&:hover {}',
 			],
 		] ) );
 
@@ -276,10 +283,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [
-					'default' => 'color: red;',
-					'mobile'  => 'color: pink;',
-				],
+				'css'    => 'color: red; @media(--mobile) { color: pink; }',
 			],
 		] ) );
 
@@ -330,7 +334,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: red; &:disabled { color: grey; }' ],
+				'css'    => 'color: red; &:disabled { color: grey; }',
 			],
 		] ) );
 
@@ -378,7 +382,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: red; &:hover { color: blue; } &:disabled { color: grey; } &.my-class { font-weight: bold; }' ],
+				'css'    => 'color: red; &:hover { color: blue; } &:disabled { color: grey; } &.my-class { font-weight: bold; }',
 			],
 		] ) );
 
@@ -433,7 +437,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => '&:disabled { color: grey; }' ],
+				'css'    => '&:disabled { color: grey; }',
 			],
 		] ) );
 
@@ -476,7 +480,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: blue;' ],
+				'css'    => 'color: blue;',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -521,7 +525,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: blue;' ],
+				'css'    => 'color: blue;',
 				'mode'   => 'replace',
 			],
 		] ) );
@@ -560,7 +564,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => null ],
+				'css'    => '@media(--default) { }',
 			],
 		] ) );
 
@@ -573,6 +577,14 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 
 	public function test_update__patch_mode_null_prop_deletes_prop() {
 		// Arrange.
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )
+			->with( 'color: null;' )
+			->willReturn( [ 'blocks' => [ [ 'selector' => null, 'css' => 'color: null;' ] ] ] );
+		$converter->method( 'convert' )
+			->with( '' )
+			->willReturn( [ 'props' => [], 'customCss' => '', 'rejected' => [] ] );
+
 		$existing_variants = [
 			[ 'meta' => [ 'breakpoint' => 'desktop', 'state' => null ], 'props' => [ 'color' => 'red', 'font-size' => '14px' ], 'custom_css' => null ],
 		];
@@ -584,12 +596,12 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		} );
 
 		// Act.
-		$this->make_ability( $repository )->execute( $this->operations_input( [
+		$this->make_ability_with_converter( $repository, $converter )->execute( $this->operations_input( [
 			[
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'css'    => [ 'color' => null ],
+				'css'    => 'color: null;',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -602,6 +614,14 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 
 	public function test_update__patch_mode_string_null_deletes_prop() {
 		// Arrange.
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )
+			->with( 'color: null;' )
+			->willReturn( [ 'blocks' => [ [ 'selector' => null, 'css' => 'color: null;' ] ] ] );
+		$converter->method( 'convert' )
+			->with( '' )
+			->willReturn( [ 'props' => [], 'customCss' => '', 'rejected' => [] ] );
+
 		$existing_variants = [
 			[ 'meta' => [ 'breakpoint' => 'desktop', 'state' => null ], 'props' => [ 'color' => 'red', 'font-size' => '14px' ], 'custom_css' => null ],
 		];
@@ -613,12 +633,12 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		} );
 
 		// Act.
-		$this->make_ability( $repository )->execute( $this->operations_input( [
+		$this->make_ability_with_converter( $repository, $converter )->execute( $this->operations_input( [
 			[
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'css'    => [ 'color' => 'null' ],
+				'css'    => 'color: null;',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -629,8 +649,16 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		$this->assertCleanVariants( $captured_variants );
 	}
 
-	public function test_update__replace_mode_ignores_null_prop() {
+	public function test_update__replace_mode_discards_existing_variants() {
 		// Arrange.
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )
+			->with( 'color: #fff;' )
+			->willReturn( [ 'blocks' => [ [ 'selector' => null, 'css' => 'color: #fff;' ] ] ] );
+		$converter->method( 'convert' )
+			->with( 'color: #fff;' )
+			->willReturn( [ 'props' => [ 'color' => '#fff' ], 'customCss' => '', 'rejected' => [] ] );
+
 		$existing_variants = [
 			[ 'meta' => [ 'breakpoint' => 'desktop', 'state' => null ], 'props' => [ 'color' => 'red', 'font-size' => '14px' ], 'custom_css' => null ],
 		];
@@ -642,12 +670,12 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		} );
 
 		// Act.
-		$this->make_ability( $repository )->execute( $this->operations_input( [
+		$this->make_ability_with_converter( $repository, $converter )->execute( $this->operations_input( [
 			[
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'css'    => [ 'color' => '#fff' ],
+				'css'    => 'color: #fff;',
 				'mode'   => 'replace',
 			],
 		] ) );
@@ -685,7 +713,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'default' => 'color: blue;' ],
+				'css'    => 'color: blue;',
 			],
 		] ) );
 
@@ -721,7 +749,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'mobile' => 'color: null;' ],
+				'css'    => '@media(--mobile) { color: null; }',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -760,7 +788,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'mobile' => 'color: null;' ],
+				'css'    => '@media(--mobile) { color: null; }',
 				'mode'   => 'replace',
 			],
 		] ) );
@@ -796,7 +824,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'mobile' => 'color: null;' ],
+				'css'    => '@media(--mobile) { color: null; }',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -831,7 +859,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'mobile' => 'all: null; color: blue;' ],
+				'css'    => '@media(--mobile) { all: null; color: blue; }',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -866,7 +894,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'mobile' => 'all: null;' ],
+				'css'    => '@media(--mobile) { all: null; }',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -903,7 +931,7 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'test-class',
-				'styles' => [ 'mobile' => '&:hover { all: null; }' ],
+				'css'    => '@media(--mobile) { &:hover { all: null; } }',
 				'mode'   => 'patch',
 			],
 		] ) );
@@ -956,12 +984,12 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 			[
 				'action' => 'create',
 				'label'  => 'valid-class',
-				'styles' => [ 'default' => 'color: red;' ],
+				'css'    => 'color: red;',
 			],
 			[
 				'action' => 'create',
 				'label'  => 'invalid-class',
-				'styles' => [ 'unknown-bp' => 'color: blue;' ],
+				'css'    => '@media(--unknown-bp) { color: blue; }',
 			],
 		] ) );
 
@@ -970,6 +998,6 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		$this->assertCount( 2, $result['results'] );
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
 		$this->assertSame( 'error', $result['results'][1]['status'] );
-		$this->assertSame( 'unknown_breakpoint', $result['results'][1]['code'] );
+		$this->assertSame( 'invalid_css', $result['results'][1]['code'] );
 	}
 }

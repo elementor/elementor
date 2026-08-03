@@ -94,7 +94,7 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 			[
 				'action' => 'create',
 				'label'  => 'hero-heading',
-				'css'    => [ 'color' => '#000000' ],
+				'css'    => 'color: #000000;',
 			],
 		] ) );
 
@@ -116,7 +116,7 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 			[
 				'action' => 'create',
 				'label'  => 'hero-heading',
-				'css'    => [ 'color' => '#000000' ],
+				'css'    => 'color: #000000;',
 			],
 		] ) );
 
@@ -137,12 +137,12 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 			[
 				'action' => 'create',
 				'label'  => 'hero-heading',
-				'css'    => [ 'color' => '#000000' ],
+				'css'    => 'color: #000000;',
 			],
 			[
 				'action' => 'create',
 				'label'  => 'hero-heading',
-				'css'    => [ 'color' => '#ffffff' ],
+				'css'    => 'color: #ffffff;',
 			],
 		] ) );
 
@@ -172,7 +172,7 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 			[
 				'action' => 'create',
 				'label'  => 'new-class',
-				'css'    => [ 'color' => '#000000' ],
+				'css'    => 'color: #000000;',
 			],
 		] ) );
 
@@ -199,7 +199,7 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 				'action' => 'update',
 				'id'     => 'missing',
 				'label'  => 'hero-heading',
-				'css'    => [ 'color' => '#ffffff' ],
+				'css'    => 'color: #ffffff;',
 			],
 		] ) );
 
@@ -239,7 +239,7 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 				'action' => 'update',
 				'id'     => 'g-abc1234',
 				'label'  => 'hero-heading',
-				'css'    => [ 'color' => '#ffffff' ],
+				'css'    => 'color: #ffffff;',
 			],
 		] ) );
 
@@ -333,13 +333,13 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 			[
 				'action' => 'create',
 				'label'  => 'new-class',
-				'css'    => [ 'color' => '#000000' ],
+				'css'    => 'color: #000000;',
 			],
 			[
 				'action' => 'update',
 				'id'     => 'g-update',
 				'label'  => 'updated-class',
-				'css'    => [ 'color' => '#111111' ],
+				'css'    => 'color: #111111;',
 			],
 			[
 				'action' => 'delete',

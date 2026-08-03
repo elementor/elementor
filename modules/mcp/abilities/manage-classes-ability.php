@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
@@ -76,7 +77,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				'properties' => [
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50). Each item requires action; create/update need label and either css or styles; update/delete need id. Use styles for pseudo-class support (hover/focus/active) per breakpoint. Use mode to control merge behaviour on update (patch = upsert, replace = overwrite breakpoint).',
+						'description' => 'Bulk operations (1–50). Each item requires action; create/update need label and css; update/delete need id. Use mode to control merge behaviour on update (patch = upsert, replace = overwrite breakpoint).',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action' ],
@@ -88,16 +89,8 @@ class Manage_Classes_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'string' ],
 								'label' => [ 'type' => 'string' ],
 								'css' => [
-									'type' => 'object',
-									'description' => 'Flat property → value map for CSS declarations. Ignored when styles is present.',
-								],
-								'styles' => [
-									'type' => 'object',
-									'description' => 'Map of breakpoint key to CSS string. Use "default" for desktop. Supports &:hover/&:focus/&:active nesting. Takes precedence over css. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant (or deletes it when nothing remains); works per-block, e.g. "&:hover { all: null; }" deletes only hover.',
-									'additionalProperties' => [
-										'type' => [ 'string', 'null' ],
-										'description' => 'CSS for the breakpoint. null or empty string removes all variants for that breakpoint.',
-									],
+									'type' => 'string',
+									'description' => 'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.',
 								],
 								'mode' => [
 									'type' => 'string',
@@ -241,47 +234,33 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	}
 
 	private function translate_create( int $index, array $operation, array &$intents, array &$reserved_ids, Bulk_Operations_Result $results ): void {
-		$label = $operation['label'] ?? '';
+		$label      = $operation['label'] ?? '';
+		$css_string = $operation['css'] ?? null;
 
 		if ( '' === $label ) {
 			$results->add_error( $index, 'create', 'invalid_input', __( 'Create requires label.', 'elementor' ) );
 			return;
 		}
 
-		if ( isset( $operation['styles'] ) && is_array( $operation['styles'] ) ) {
-			$parsed = $this->parse_styles_field( $index, 'create', $operation, $results );
-			if ( null === $parsed ) {
-				return;
-			}
-
-			$class_id = Utils::generate_id( 'g-', $reserved_ids );
-			$reserved_ids[] = $class_id;
-
-			$intents['creates'][ $index ] = [
-				'id'                  => $class_id,
-				'label'               => $label,
-				'css'                 => [],
-				'breakpoint_blocks'   => $parsed['breakpoint_blocks'],
-				'removal_breakpoints' => $parsed['removal_breakpoints'],
-			];
-			$intents['added_ids'][] = $class_id;
-			return;
-		}
-
-		$css = $this->as_map( $operation['css'] ?? [] );
-
-		if ( empty( $css ) ) {
+		if ( ! is_string( $css_string ) || '' === trim( $css_string ) ) {
 			$results->add_error( $index, 'create', 'invalid_input', __( 'Create requires label and css.', 'elementor' ) );
 			return;
 		}
 
-		$class_id = Utils::generate_id( 'g-', $reserved_ids );
+		$parsed = $this->parse_css_string( $index, 'create', $css_string, $results );
+		if ( null === $parsed ) {
+			return;
+		}
+
+		$class_id       = Utils::generate_id( 'g-', $reserved_ids );
 		$reserved_ids[] = $class_id;
 
 		$intents['creates'][ $index ] = [
-			'id'    => $class_id,
-			'label' => $label,
-			'css'   => $css,
+			'id'                  => $class_id,
+			'label'               => $label,
+			'css'                 => [],
+			'breakpoint_blocks'   => $parsed['breakpoint_blocks'],
+			'removal_breakpoints' => $parsed['removal_breakpoints'],
 		];
 		$intents['added_ids'][] = $class_id;
 	}
@@ -312,8 +291,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			return;
 		}
 
-		if ( isset( $operation['styles'] ) && is_array( $operation['styles'] ) ) {
-			$parsed = $this->parse_styles_field( $index, 'update', $operation, $results );
+		$css_string = $operation['css'] ?? null;
+
+		if ( is_string( $css_string ) && '' !== trim( $css_string ) ) {
+			$parsed = $this->parse_css_string( $index, 'update', $css_string, $results );
 			if ( null === $parsed ) {
 				return;
 			}
@@ -327,28 +308,15 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				'mode'                => $operation['mode'] ?? 'patch',
 				'existing_variants'   => $existing['variants'] ?? [],
 			];
-
-			if ( ! in_array( $id, $intents['modified_ids'], true ) ) {
-				$intents['modified_ids'][] = $id;
-			}
-			return;
+		} else {
+			$intents['updates'][ $index ] = [
+				'id'                => $id,
+				'label'             => $label,
+				'css'               => [],
+				'mode'              => $operation['mode'] ?? 'patch',
+				'existing_variants' => $existing['variants'] ?? [],
+			];
 		}
-
-		$css = $this->as_map( $operation['css'] ?? [] );
-
-		if ( empty( $css ) ) {
-			$results->add_error( $index, 'update', 'invalid_input', __( 'Update requires id, label, and css.', 'elementor' ) );
-			return;
-		}
-
-		$intents['updates'][ $index ] = [
-			'id'               => $id,
-			'label'            => $label,
-			'css'              => $css,
-			'mode'             => $operation['mode'] ?? 'patch',
-			'existing_variants' => $existing['variants'] ?? [],
-			'null_reset_props' => Style_Variants_Merger::extract_null_reset_props( $css ),
-		];
 
 		if ( ! in_array( $id, $intents['modified_ids'], true ) ) {
 			$intents['modified_ids'][] = $id;
@@ -359,8 +327,25 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		return Plugin::$instance->breakpoints->get_active_devices_list();
 	}
 
-	private function parse_styles_field( int $index, string $action, array $operation, Bulk_Operations_Result $results ): ?array {
-		$raw_styles          = $operation['styles'];
+	private function parse_css_string( int $index, string $action, string $css_string, Bulk_Operations_Result $results ): ?array {
+		$active_breakpoints = $this->get_active_breakpoint_keys();
+		$splitter           = new Css_Media_Splitter( $active_breakpoints );
+		$result             = $splitter->split( $css_string );
+
+		if ( null !== $result['error'] ) {
+			$results->add_error(
+				$index,
+				$action,
+				'invalid_css',
+				$result['error'] . sprintf( ' Valid breakpoints: %s.', implode( ', ', $active_breakpoints ) )
+			);
+			return null;
+		}
+
+		return $this->parse_styles_field( $index, $action, $result['breakpoints'], $results );
+	}
+
+	private function parse_styles_field( int $index, string $action, array $raw_styles, Bulk_Operations_Result $results ): ?array {
 		$breakpoint_blocks   = [];
 		$removal_breakpoints = [];
 		$active_breakpoints  = $this->get_active_breakpoint_keys();

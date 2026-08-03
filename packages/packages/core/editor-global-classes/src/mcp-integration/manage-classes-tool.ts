@@ -23,7 +23,7 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: TOOL_NAME,
 		description:
-			'Manage V4 global CSS classes on the active kit. Create, update, or delete a single class. Supports per-breakpoint and pseudo-class styles via the styles field.',
+			'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix.',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ),
 			id: z
@@ -35,14 +35,10 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 				.optional()
 				.describe( 'Class label (lowercase, dash-separated) — required for create/update.' ),
 			css: z
-				.record( z.string() )
-				.optional()
-				.describe( 'Flat property → value map for CSS declarations. Ignored when styles is present.' ),
-			styles: z
-				.record( z.string().nullable() )
+				.string()
 				.optional()
 				.describe(
-					'Map of breakpoint key to CSS string. Use "default" for desktop. Supports &:hover / &:focus / &:active nesting. Takes precedence over css. Pass null for a breakpoint key to remove all its variants.'
+					'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.'
 				),
 			mode: z
 				.enum( [ 'patch', 'replace' ] )
