@@ -8,8 +8,6 @@ You are generating designs for real users who expect distinctive, intentional ae
 
 When in doubt between "safe" and "distinctive," choose distinctive - users can always request refinements, but they cannot salvage generic foundations.
 
-> **Where taste comes from.** The deep, general design references — curated palettes, type scales & font pairings, layout composition, the AI-slop kill-list, and hard UX numbers (contrast, tap targets, spacing) — live in the cross-skill design skills (`color`, `typography`, `layout`, `anti-ai-design-slop`, `ui-ux-patterns`, `shadows`, `polish`, `responsive`). Use them as your source of taste. [elementor://style/design-taste] tells you exactly which of that guidance to apply here and where Elementor's static-only engine forces an override (no motion/hover, giant headlines via `clamp()` not SVG, gradients need an angle, prefer longhands). Plan the page first and run a polish/space audit at the end — both are described there.
-
 ---
 
 # DESIGN VECTORS - Concrete Implementation Guidance
@@ -25,15 +23,6 @@ When in doubt between "safe" and "distinctive," choose distinctive - users can a
 - **For Technical/Modern**: Consider monospace headlines (JetBrains Mono, Space Mono, IBM Plex Mono) paired with clean body text
 - **For Editorial/Elegant**: Consider serif headlines (Playfair Display, Fraunces, Cormorant, Crimson Text) with sans-serif body
 - **For Playful/Creative**: Consider display fonts with character (Bebas Neue, Anton, Space Grotesk), paired with highly legible body text
-
-### Font Loading Rule (CRITICAL):
-Fonts load automatically ONLY if the family name is in Elementor's registered font list (~1,500 Google Fonts + Arial, Tahoma, Verdana, Helvetica, Times New Roman, Trebuchet MS, Georgia). An unregistered name (e.g. "SF Mono", a made-up name, or a niche foundry font) renders NO font link and silently falls back to a system default — defeating the typography entirely. Use exact Google Fonts family names.
-
-**NEVER write a CSS fallback stack.** Each `font-family` value must be a single exact family name — `font-family: Space Grotesk` — NOT `font-family: "Space Grotesk, sans-serif"`. A stack does not match the registry, so NO font loads and the element falls back to the browser default (headings render as serif because their default style is `all: unset`). One family name per value, nothing after it.
-
-This is a rule about each *value*, NOT a limit on how many fonts the page uses. A **font pairing is good taste** — e.g. a display/heading family (`var(--heading-font)`) plus a distinct legible body family (`var(--body-font)`). Store each as its own global variable and apply the heading font to headings and the body font to paragraphs. Two well-chosen families read as more crafted than one family everywhere; just never combine them into a single stacked value.
-
-If a design reference uses a font outside Google Fonts, pick the closest Google Fonts match and tell the user which font to install manually if they want the original.
 
 ### Scale & Contrast Implementation (use rem/em, never px):
 - Headline-to-body size ratios: 3x minimum (e.g., 3rem+ headline vs 1rem body)
@@ -75,26 +64,17 @@ If a design reference uses a font outside Google Fonts, pick the closest Google 
   - Hero sections: asymmetric layouts, not centered blocks
   - Cards/components: vary sizes intentionally, not uniform grids
 
-## 4. Motion & Depth (CAPABILITY-AWARE — read carefully)
+## 4. Motion & Interaction Design
 
-**What this tool can emit today is STATIC styling only.** The following are silently stripped or rejected — DO NOT use them, they will not render:
-- `animation` / `@keyframes` — rejected outright (dropped, not even kept as custom CSS)
-- `:hover` / `:focus` / `:active` states — cannot be expressed; the tool only writes default-state desktop styles
-- `transition` — it converts, but with no hover/state to transition *to* it is inert, and easing/delay are dropped. Do not rely on it for effect.
+### Avoid Distributional Defaults:
+- NO scattered micro-interactions on every element
+- NO generic fade-in animations
+- NO 0.3s ease-in-out transitions everywhere
 
-Also NOT possible through this tool — do NOT attempt them; the result is a broken layout, not the effect:
-- **Scroll-driven / sticky / pinned / lock-scroll / horizontal-scroll ("spatial") sections** — there is no sticky, no scroll-jacking, no horizontal scroller. Attempting one produces a broken split with an empty half and an overflowing half. Build **simple sections stacked vertically**, full width.
-- **Layered/overlapping elements via absolute positioning** — fragile and usually misaligns. Use a normal grid/flex side-by-side instead of stacking one element on top of another.
-
-### Create the FEELING of dynamism statically instead:
-- **Diagonal gradients** (135deg/225deg) read as more energetic than flat fills
-- **Layered box-shadows** with a color tint imply elevation (`0 20px 60px rgba(brand,0.15)`)
-- **backdrop-filter: blur(...)** for glassmorphism depth
-- **Extreme size/weight contrast** creates visual "movement" through hierarchy alone
-
-**❌ NEVER ROTATE elements.** `transform: rotate(...)` on cards/sections/images looks sloppy and amateur — it is banned. Static `scale`/`translate` are allowed ONLY when subtle and purposeful; when in doubt, don't transform at all. Alignment and rhythm come from grid/flex, never from tilting things.
-
-> Hover lifts, staggered reveals, and scroll/entrance animations ARE supported by the Elementor V4 engine but are not yet exposed through this tool. Design so the static composition stands on its own — motion will enhance it later, not rescue it.
+### Intentional Alternatives:
+- **High-Impact Moments**: Use animation for 2-3 key moments (page load hero, primary CTA, section reveals)
+- **Staggered Reveals**: When animating multiple items, use staggered delays (0.1s increments)
+- **Purposeful Timing**: Fast interactions (0.15s) for responsiveness, slow reveals (0.6s+) for drama
 
 ## 5. Backgrounds & Atmospheric Depth
 
@@ -103,12 +83,10 @@ Also NOT possible through this tool — do NOT attempt them; the result is a bro
 - NO single-color backgrounds
 - NO generic gradient overlays
 
-### Intentional Alternatives (verified-supported only):
-- **Layered Gradients**: `linear-gradient` MUST use an explicit angle (e.g. `135deg`) and `radial-gradient` uses `circle at <named-position>`. Keyword directions (`to right`) and `conic-gradient` are NOT supported — always use an angle.
-- **Glassmorphism**: translucent background + `backdrop-filter: blur(...)`
-- **Strategic Contrast**: alternate light and dark sections for rhythm
-- **Tinted color blocking**: large sections in warm/cool tinted neutrals, never plain white
-- AVOID SVG *patterns* and noise/texture *backgrounds* unless the asset is ALREADY uploaded — inline SVG and external textures/data-URIs are not available to this tool. For **icons**, see [elementor://style/icons]: use a real uploaded `e-svg`/PNG asset, otherwise OMIT the icon or use a text label — never fabricate one from primitives or a unicode glyph.
+### Intentional Alternatives:
+- **Layered Gradients**: Combine 2-3 subtle gradients for depth
+- **Geometric Patterns**: SVG patterns, mesh gradients, or subtle noise textures
+- **Strategic Contrast**: Alternate between light and dark sections for rhythm
 
 ## 6. Visual Hierarchy Principles
 
@@ -156,10 +134,10 @@ When building a composition:
    - Create asymmetry (not everything centered)
    - Vary component sizes intentionally
 
-5. **Build Static Depth (no motion)**
-   - Use layered shadows, diagonal gradients, and glassmorphism for a sense of dynamism
-   - Use static transforms for asymmetry/overlap — never animate
-   - Do NOT add transitions, hover states, or entrance animations (unsupported by this tool)
+5. **Add Strategic Motion**
+   - Identify 2-3 high-impact animation moments
+   - Use staggered timing for multiple elements
+   - Keep interactions purposeful, not decorative
 
 6. **Layer Atmospheric Depth**
    - Use gradient combinations for backgrounds

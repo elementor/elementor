@@ -1,79 +1,58 @@
-# HOW THIS TOOL WORKS — READ FIRST (the #1 cause of broken builds)
-This tool takes THREE separate inputs. **The XML is STRUCTURE ONLY.** Text and styles are NOT written inside the XML — they go in separate parameters keyed by `configuration-id`. Writing HTML-style XML (inline `style=`, text between tags) is silently stripped → you get "This is a title" placeholders and no styling. That is the most common failure.
-
-❌ WRONG (HTML-style — text + styles are DROPPED):
-`<e-heading configuration-id="hero-title" tag="h1" style="font-size:5rem;color:#fff">Your Headline</e-heading>`
-
-✅ RIGHT — three params, separated (element_config uses PLAIN JSON values):
-- `xml_structure` (tags + configuration-id ONLY):
-  `<e-heading configuration-id="hero-title"></e-heading>`
-- `element_config` (text + props, keyed by configuration-id):
-  `{ "hero-title": { "tag": "h1", "title": { "content": "Your Headline", "children": [] } } }`
-- `style` (raw CSS, keyed by configuration-id):
-  `{ "hero-title": { "font-size": "5rem", "color": "#fff" } }`
-
-Hard structural rules (ignoring any of these breaks the build):
-- NO `style=`, `class`, `id`, or any attribute except `configuration-id` in the XML. NO text between tags.
-- NO `<![CDATA[...]]>` wrapper and NO `<?xml?>` declaration — pass raw tags as the string.
-- Containers are ONLY `e-flexbox`, `e-div-block`, `e-grid`, `e-tabs`. **There is NO `e-section`** — for a section, use `e-flexbox`/`e-div-block` and set `tag: "section"` in element_config.
-- Body text widget is `e-paragraph` (there is no `e-text`).
-
-**LAYOUT-ENGINE TRUTHS (design within these — most "broken/weird" output comes from ignoring them):**
-- **`e-flexbox` defaults to COLUMN.** Anything meant to be a horizontal row (nav bar, button group, footer columns row, pill row) MUST set `flex-direction:row` explicitly — or it stacks vertically. This is the #1 nav failure.
-- **STATIC & STACKED only.** No hover/transition/animation; **no scroll-driven / sticky / pinned / horizontal-scroll sections** (they don't exist here — attempting one yields an empty-half + overflowing-half mess). Build plain full-width sections stacked top to bottom.
-- **NEVER `transform: rotate()`** on any element — banned, looks sloppy. No absolute-positioned overlapping/floating cards — use grid/flex side-by-side.
-- **Full width, no overflow.** Root sections `width:100%` (NEVER `100vw` → causes a horizontal-scroll sliver at the page edge). Nothing wider than the viewport.
-- **Text over an image/dark background** MUST have an explicit light `color` AND a dark overlay on the container (e.g. `linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45))` over the image) — never dark text on a photo.
-- **Restrained sizing** — don't max out type/space; a hero display ~3–5rem, section headings ~2–3rem. Oversized-everything reads amateur.
-
-# HARD RULES — EVERY BUILD, DO NOT SKIP (these override laziness)
-1. **Design system FIRST.** Create global VARIABLES (colors, fonts, sizes) via `elementor/manage-global-variable` and reusable CLASSES via `elementor/manage-classes` before composing. Variable labels MUST be lowercase-dash (`dark-brown`, NOT "Dark Brown") or they error. Style via classes + `var(--label)` — not scattered inline hex.
-2. **Real fonts (pairing encouraged).** Use ONE or TWO distinctive Google Fonts families — a common, tasteful choice is a display/heading font (e.g. Space Grotesk, Fraunces, DM Serif Display) paired with a legible body font, each stored as its own variable (`--heading-font`, `--body-font`). Use each family's EXACT name. NEVER `system-ui`/`-apple-system`, NEVER Inter/Roboto/Arial, NEVER a fallback stack like `"X, sans-serif"` in a single value (a stack does not load → renders as serif).
-3. **Populate ALL text.** Every heading `title`, paragraph `text`, and button `text` gets REAL content via `element_config` in the html-v3 shape `{ "content": "…", "children": [] }` (see element_config FORMAT). NEVER leave the widget default ("This is a title" / "Type your paragraph here") — that is a failed build.
-4. **Real images.** Set each `e-image` `image` with the exact shape `{ "src": { "url": "https://…" }, "size": "full" }` using an on-theme Unsplash/Pexels direct image URL. A gray box / broken slot is a failed build. If no fit, ask the user.
-5. **Read [elementor://style/best-practices] + [elementor://style/widget-patterns] before composing** — they prevent generic "AI slop". Build fluid for mobile per [elementor://style/responsive] (rem/em only, `clamp()`, wrapping flex).
-6. **Static only.** No hover/transition/animation (the engine writes a single desktop/no-state variant — states are silently dropped); gradients need an explicit angle (`135deg`).
-7. **Real controls, never fake ones.** Anything a user would click is a real link/button — never a paragraph or div styled to look clickable. Nav items → linked `e-button` in a `tag:"header"` container; a whole clickable card → a container (`e-div-block`/`e-flexbox`/`e-grid`) with `tag:"a"` + a `link`. A label/CTA sitting ON an image → a linked container with the photo as `background-image` and the label as a child (NOT an absolutely-positioned button over an `<e-image>`). A "faux-CTA" is a functional defect. Full patterns: [elementor://style/interactive].
-8. **Reuse via classes.** Any styling used ≥2× becomes a shared global class attached via the `classes` param — do NOT repeat the same inline `style` across elements (that auto-creates junk per-element `"local"` classes). See GLOBAL CLASSES.
-9. **Icons: real asset or omit — NEVER fabricate.** Per [elementor://style/icons]: use an icon only when a real UPLOADED asset exists (`e-svg` with an uploaded media asset `{id,url}`, or a PNG via `e-image`). If none, OMIT the icon or use a text label. Do NOT auto-build icons from `e-div-block`/`e-flexbox` primitives, NEVER a unicode/emoji glyph, NEVER a data-URI `background-image` (dropped), NEVER `e-svg` with an external URL (renders an empty div).
-10. **Inventory the reference FIRST.** Before composing, list every text block, image, ICON, and INTERACTIVE element from the reference (see WORKFLOW step 0). An icon or control you don't inventory is one you'll fake — this is the #1 cause of missed hamburgers, glyph-arrows, and paragraph "buttons".
-
-If you did not do 1–10, the build is not done. Do not report success with placeholder text, system fonts, empty images, faked controls, faked/empty icons, or repeated inline styles that should be a class.
-
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
+- [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
+- `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 - [elementor://style/best-practices] - **READ THIS FIRST.** Design-quality / anti-"AI slop" guide: typography, color, spacing, depth, hierarchy. It reflects what this tool can actually render — do not add motion/effects it warns against.
-- [elementor://style/widget-patterns] - UI pattern → widget-combination guide (hero, nav, cards, pricing, forms, tabs). Use these structures as starting points instead of inventing layouts from scratch.
-- [elementor://style/responsive] - How to build ONE desktop composition that also works on mobile (fluid units, `clamp()`, wrapping flex, `auto-fit` grids). The tool cannot emit per-breakpoint overrides — build intrinsically fluid.
-- [elementor://style/design-taste] - **Your source of taste (self-contained):** curated palettes (with hexes), type scales, font pairings, rhythm/weight tokens, the anti-slop kill-list, and hard UX numbers — all adapted to engine limits, plus the plan-first and polish-gate steps.
-- [elementor://style/icons] - Icons are real assets or nothing: use an uploaded `e-svg`/PNG asset, else OMIT or use a text label. Never fabricate from primitives, glyphs, data-URIs, or external `e-svg` URLs.
-- [elementor://style/interactive] - Real controls: inventory clickable elements, use `e-button`/linked containers, semantic nav, forms, clickable cards, and buttons on images.
-- [elementor://interactions/schema] - Native interaction item shape and allowed enums for the `interactions` parameter (read only when adding interactions).
+- [elementor://style/design-taste] - **Your source of taste:** curated palettes, type scales, font pairings, rhythm/weight tokens, the anti-slop kill-list, and hard UX numbers.
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
 
 # WORKFLOW
-0. **Inventory the reference** (if any): list every text block, image, ICON (hamburger/arrows/chevrons/logos/social), and INTERACTIVE element (buttons, nav items, links, form fields, anything clickable — including labels/CTAs on images). This inventory is what stops you faking icons and controls. Then read [elementor://style/best-practices] + [elementor://style/design-taste] and commit to a design system FIRST (font pairing, 60-30-10 palette, type scale, one signature move) before placing any element
+0. Read [elementor://style/best-practices] + [elementor://style/design-taste] and commit to a design system and a site identity before placing any element
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
-3. Build composition (THIS TOOL) — prefer **one ROOT-level section per call** (hero, nav, features, footer, …) with default `append` at document root, not the whole page in one XML. Minimal inline styles; attach existing global classes via `classes`.
-4. Use returned element IDs for subsequent configuration changes or as `parent_id` when adding nested content under an existing section.
+3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+4. Use returned element IDs for subsequent configuration changes
 
-# DESIGN SYSTEM STATE (branch before styling)
-Read [elementor://global-variables] and [elementor://global-classes], then branch:
-- **Rich system** (colors + fonts + sizes defined): CONSTRAINED MODE. Snap every color/font/size to existing tokens via `var(--label)`. Zero rogue hex values. Match the site's established look — consistency over novelty.
-- **Partial system** (some tokens, gaps or conflicts): use what exists; propose additions to the user before creating them; flag conflicts (e.g. 3 near-identical blues) instead of adding a 4th.
-- **Clean slate** (no tokens): CREATIVE MODE. Derive a full system from context (business type, mood, audience), CREATE the global variables first (colors, fonts, key sizes), then build against them — never hard-code values that should be tokens.
+# COMPONENTS (only when explicitly requested)
 
-# PAGE TEMPLATE (set this or the theme wraps your design)
-For a full-page / reference-matched build, set the document to **Elementor Canvas** so the WordPress theme's header, page title, and footer do NOT wrap the composition — call `elementor/update-page-settings` with `{ "post_id": <id>, "settings": { "template": "elementor_canvas" } }`. Use `"elementor_header_footer"` (Full Width) only when you intend to keep the theme's header/footer. Leaving the default theme template on a full-bleed design is the #1 "looks broken" defect.
+**Do NOT call `elementor/list-components` by default.** Compose from raw widgets unless the user explicitly asks to use a component (e.g. "use my Hero component", "insert the Product Card component", "reuse the CTA component I made").
+
+## When the user explicitly asks for a component
+
+1. Call `elementor/list-components` with no arguments and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
+2. If found, call `elementor/list-components` again with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
+3. If a component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
+
+## Placement
+- Use `<e-component configuration-id="my-hero">` in `xml_structure`. **Leaf tag — no child tags inside it.**
+- Configure it under `element_config` like any other widget. The value has the flat shape `{ component_id, overrides? }` (the widget has no other settings). Each override value uses the plain-value shape from `origin_prop_schema` — no `$$type` envelopes, same convention as regular widget settings:
+
+```json
+{
+  "element_config": {
+    "my-hero": {
+      "component_id": 42,
+      "overrides": {
+        "title": "Welcome",
+        "cta_url": "https://example.com"
+      }
+    }
+  }
+}
+```
+
+- `component_id` is required. `overrides` is optional — omit it entirely if you have no overrides to apply.
+- Only `override_key`s listed in `overridable_props` are valid. Unknown keys are rejected.
+- Do NOT place archived components (`is_archived: true`).
+- Components can be mixed with raw widgets in the same composition.
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
-- Containers: "e-flexbox" (1-D row/column layout), "e-div-block" (plain block box), "e-grid" (2-D rows+columns), "e-tabs". Choosing the right one matters — see the "CHOOSING A CONTAINER" section in [elementor://style/widget-patterns]. Do not default everything to flexbox.
+- Containers: "e-flexbox", "e-div-block", "e-tabs"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
@@ -96,11 +75,6 @@ Some elements have internal tree structures (nesting). When using these elements
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
 ## element_config FORMAT
-**⚠ SEND PLAIN, UNWRAPPED VALUES. NEVER use a `$$type`/`value` wrapper in `element_config`.** The widget schema you get from `elementor/get-widget-schema` is already plain JSON, and the engine's resolver wraps values internally. If YOU wrap them, they will NOT resolve — you get `Property "X" on "e-*" could not be resolved`. Elementor's *stored/persisted* format uses `$$type`; the input you SEND does not. Ignore any `$$type` you may see in stored page JSON, internal engine code, or old examples — that is not the input shape.
-- ❌ WRONG: `"tag": { "$$type": "string", "value": "h2" }`  → fails to resolve
-- ❌ WRONG: `"title": { "content": { "$$type": "string", "value": "Hello" } }`  → fails to resolve
-- ✅ RIGHT: `"tag": "h2"`, `"title": { "content": "Hello", "children": [] }`
-
 Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
@@ -112,36 +86,19 @@ Match the widget schema shape:
 ## GLOBAL VARIABLES
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
 
-**EXACT CALL SHAPE (this tool is BULK — there is NO top-level `action`).** The one required param is `operations`, an array (1–50). Each item needs `action` (`create`/`update`/`delete`); `create` needs `type`+`label`+`value`, `update` needs `id`+`label`+`value`, `delete` needs `id`. `type` is one of `global-color-variable`, `global-font-variable`, `global-size-variable`, `global-custom-size-variable`. Create the WHOLE design system in ONE call (labels/values below are illustrative placeholders — substitute the palette and fonts from the design system you chose):
-```json
-{ "operations": [
-  { "action": "create", "type": "global-color-variable", "label": "brand-primary", "value": "#1a1a2e" },
-  { "action": "create", "type": "global-color-variable", "label": "brand-accent",  "value": "#e94560" },
-  { "action": "create", "type": "global-font-variable",  "label": "heading-font",  "value": "Space Grotesk" },
-  { "action": "create", "type": "global-font-variable",  "label": "body-font",     "value": "Work Sans" }
-] }
-```
-Do NOT send `{ "action": "create", "type": …, "label": … }` at the top level — that is the OLD single-variable shape and the tool rejects it with "operations is a required property". If a call errors, fix the payload shape/label and retry — NEVER give up on the design system and fall back to inline hex (that reintroduces the no-classes / junk-`local`-class defect).
-
-**Variable labels MUST be lowercase, dash-separated, no spaces or capitals** — `dark-brown`, `heading-font`, `spacing-lg`. A label like `Dark Brown` is rejected; if create errors, fix the label and retry — do not abandon variables and inline raw hex instead.
-**In `style`, reference a font by its single exact family name (`font-family: var(--heading-font)` or `font-family: Space Grotesk`) — never a fallback stack like `Space Grotesk, sans-serif`, which fails to load and renders as serif. Pairing two families (heading + body) is good taste; just keep each `font-family` value a single exact name.**
-
 **In `style` (raw CSS):** reference by label only:
-- `color: var(--brand-primary)` or `color: var(--brand-primary, #1a1a2e)`
+- `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
-- Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-brand-primary)` is wrong; use `var(--brand-primary)`)
+- Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
 
-## GLOBAL CLASSES — MANDATORY for anything repeated
+## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
-
-**Why this matters:** if you style every element only through the per-element `style` param, the tool auto-creates one junk class labelled `"local"` per element — dozens of near-duplicate style blocks and a Classes panel showing only `local`. That is the signature of an unreasoned, un-crafted build. Create real, named classes for repeated patterns instead.
 
 **In `classes` (reference-only):** attach existing global classes by label:
 - Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)
-- Create the class with `elementor/manage-classes` BEFORE referencing it here — an unknown label errors (the tool resolves labels→ids against the kit).
-- Global classes are prepended before any local styles from `style`; local styles still win on conflicts — so use a class for the shared base and `style` only for a genuine one-off override.
-- **Gate:** any styling pattern used ≥2× (cards, nav links, buttons, section shells, eyebrows) MUST be a shared class. Per-element `style` is for one-offs only. Two elements sharing styling without sharing a class = a defect to fix.
+- Create or update classes with `elementor/manage-classes` before referencing them here
+- Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
 # DYNAMIC TAGS
 - A value can be made dynamic wherever the widget schema allows a dynamic variant (often a union on the prop or a nested field such as an image's `src`).
@@ -155,14 +112,6 @@ Note about configuration ids: These names are visible to the end-user, make sure
 # DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
 
 **Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
-
-## PAGE IDENTITY (commit before first section)
-Before the first `append`, commit in a short internal plan:
-- **layout identity** in 2–3 words (e.g. "editorial magazine", "brutalist grid", "warm boutique")
-- **palette vibe** (from design-taste §1) and **type scale tier** (from design-taste §2)
-- **one signature move** for the whole page (design-taste §5 / widget-patterns §18)
-
-Every subsequent section is checked against this identity. If a section drifts into the safe template (centered hero → 3 equal cards → testimonials → CTA), stop and swap in the signature move or a non-boxy recipe.
 
 ## SIZING: DEFAULT IS NO SIZE (CRITICAL)
 
@@ -203,7 +152,7 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 - Gradient overlays on images for text readability
 - Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
 - Backdrop blur for glassmorphism where appropriate
-- NO hover states, transitions, or animations — this tool writes a single desktop/no-state style variant, so states are silently dropped. Create dynamism through static depth instead (layering, shadows, contrast).
+- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
 
 ## Typography with Character
 - Display fonts for headlines (from user's brand or contextually appropriate)
@@ -231,7 +180,7 @@ Attach element interactions via the `interactions` parameter — a record mappin
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
-- Icons: real asset or omit — see [elementor://style/icons]. `e-svg` needs an UPLOADED media asset `{id,url}` (external URL renders an empty div; data-URI `background-image` is dropped); a PNG `e-image` also works. If no uploaded asset exists, OMIT the icon or use a text label. Do NOT build icons from primitives, and never a unicode glyph.
+- Avoid SVG widgets unless assets are pre-uploaded
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
 # MODE
@@ -243,7 +192,7 @@ Prefer section-by-section assembly: each call adds one top-level section via `ap
 # PARAMETERS
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
-- **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT)
+- **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT). For `<e-component>` config-ids the value is `{ component_id, overrides? }` (see COMPONENTS section).
 - **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
