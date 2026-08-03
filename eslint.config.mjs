@@ -97,6 +97,7 @@ export default [
 			'docker-output/',
 			'.lighthouserc.js',
 			'.grunt-config/**',
+			'.github/scripts/**',
 		],
 	},
 	...wordpress.configs[ 'recommended-with-formatting' ],
@@ -138,7 +139,7 @@ export default [
 			'computed-property-spacing': [ 'error', 'always' ],
 			'comma-dangle': [ 'error', 'always-multiline' ],
 			'no-undef': 'off',
-			'no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
+			'no-unused-vars': [ 'error', { ignoreRestSiblings: true, caughtErrors: 'none' } ],
 			'dot-notation': 'error',
 			'no-shadow': 'error',
 			'no-lonely-if': 'error',
@@ -193,6 +194,7 @@ export default [
 				{ definedTags: [ 'jest-environment' ] },
 			],
 			'jsdoc/require-returns-description': 'off',
+			'jsdoc/no-undefined-types': 'off',
 			'import/default': 'error',
 			'import/no-unresolved': [
 				2,
@@ -209,6 +211,7 @@ export default [
 			],
 			'import/no-extraneous-dependencies': 'off',
 			'@wordpress/i18n-ellipsis': 'off',
+			'@wordpress/i18n-translator-comments': 'off',
 			'capitalized-comments': [
 				'error',
 				'always',
@@ -221,6 +224,7 @@ export default [
 			'space-in-parens': 'off',
 			'template-curly-spacing': 'off',
 			'quote-props': 'off',
+			'space-unary-ops': 'off',
 		},
 	},
 	{
@@ -238,18 +242,6 @@ export default [
 			'jsdoc/require-param': 'off',
 		},
 	},
-	{
-		files: [ '.github/scripts/**/*.js' ],
-		languageOptions: {
-			globals: {
-				...elementorGlobals,
-				...require( 'globals' ).node,
-			},
-		},
-		rules: {
-			'no-console': 'off',
-		},
-	},
 	...tseslint.config(
 		{
 			files: [ '**/*.ts', '**/*.tsx' ],
@@ -264,6 +256,7 @@ export default [
 				'@typescript-eslint/no-var-requires': 'error',
 				'@typescript-eslint/ban-ts-comment': 'error',
 				'local-rules/no-react-namespace': 'error',
+				'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true, caughtErrors: 'none' } ],
 			},
 		},
 	),
@@ -271,6 +264,12 @@ export default [
 		files: [ 'tests/**/*.ts', 'tests/**/*.tsx' ],
 		rules: {
 			'local-rules/no-react-namespace': 'off',
+		},
+	},
+	{
+		files: [ 'tests/playwright/parallelTest.ts' ],
+		rules: {
+			'react-hooks/rules-of-hooks': 'off',
 		},
 	},
 	{
