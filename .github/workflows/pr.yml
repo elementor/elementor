@@ -379,16 +379,24 @@ jobs:
       actions: read
     needs: [detect-changes, build, lint-js, lint-php, jest, js-qunit, phpunit]
     if: |
-      success() &&
+      always() &&
+      needs.detect-changes.result == 'success' &&
+      needs.build.result == 'success' &&
+      contains(fromJSON('["success", "skipped"]'), needs.lint-js.result) &&
+      contains(fromJSON('["success", "skipped"]'), needs.lint-php.result) &&
+      contains(fromJSON('["success", "skipped"]'), needs.jest.result) &&
+      contains(fromJSON('["success", "skipped"]'), needs.js-qunit.result) &&
+      contains(fromJSON('["success", "skipped"]'), needs.phpunit.result) &&
       (
         needs.detect-changes.outputs.playwright == 'true' ||
         contains(github.event.pull_request.labels.*.name, 'run-tests') ||
         contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
       ) &&
-      !github.event.pull_request.draft
+      github.event.pull_request.draft == false
     uses: ./.github/workflows/playwright-suite.yml
     with:
       build_artifact_name: ${{ needs.build.outputs.artifact_name }}
+      pull_request_number: ${{ github.event.pull_request.number }}
 
   summarize:
     name: Summarize PR checks
@@ -526,8 +534,8 @@ jobs:
           done
 
           if [ "$PLAYWRIGHT_REQUIRED" = "true" ]; then
-            if ! is_ok "$PLAYWRIGHT_RESULT"; then
-              echo "Playwright check failed with result: $PLAYWRIGHT_RESULT"
+            if [ "$PLAYWRIGHT_RESULT" != "success" ]; then
+              echo "Playwright was required but result was: $PLAYWRIGHT_RESULT"
               FAILED=1
             fi
           fi
