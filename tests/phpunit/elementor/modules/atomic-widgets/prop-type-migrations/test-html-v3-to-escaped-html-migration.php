@@ -89,6 +89,24 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'children', $result );
 	}
 
+	public function test_up__children_without_content_becomes_null_value() {
+		$data = [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => null,
+				'children' => [
+					[ 'id' => 'e-1', 'type' => 'strong', 'content' => 'world' ],
+				],
+			],
+		];
+
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		$this->assertSame( 'escaped-html', $result['$$type'] );
+		$this->assertNull( $result['value'] );
+		$this->assertArrayNotHasKey( 'children', $result );
+	}
+
 	public function test_up__null_content_becomes_null_value() {
 		$data = [
 			'$$type' => 'html-v3',

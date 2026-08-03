@@ -152,6 +152,36 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		$this->assertSame( '<div>block</div> <strong>inline</strong>', $result['value'] );
 	}
 
+	public function test_sanitize__strips_javascript_href_from_links() {
+		// Arrange.
+		$prop_type = Escaped_Html_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [
+			'$$type' => 'escaped-html',
+			'value' => '<a href="javascript:alert(1)">click</a>',
+		] );
+
+		// Assert.
+		$this->assertStringNotContainsString( 'javascript:', $result['value'] );
+		$this->assertStringContainsString( 'click', $result['value'] );
+	}
+
+	public function test_sanitize__strips_data_href_from_links() {
+		// Arrange.
+		$prop_type = Escaped_Html_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [
+			'$$type' => 'escaped-html',
+			'value' => '<a href="data:text/html,<script>alert(1)</script>">click</a>',
+		] );
+
+		// Assert.
+		$this->assertStringNotContainsString( 'data:text/html', $result['value'] );
+		$this->assertStringContainsString( 'click', $result['value'] );
+	}
+
 	public function test_json_schema__exposes_value_as_string_for_llms() {
 		// Arrange.
 		$prop_type = Escaped_Html_Prop_Type::make();

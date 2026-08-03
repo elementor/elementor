@@ -43,4 +43,28 @@ describe( 'sanitizeEscapedHtml', () => {
 		// Assert.
 		expect( result ).toBe( 'world' );
 	} );
+
+	it( 'strips javascript href from links', () => {
+		// Arrange.
+		const value = '<a href="javascript:alert(1)">click</a>';
+
+		// Act.
+		const result = sanitizeEscapedHtml( value );
+
+		// Assert.
+		expect( result ).not.toContain( 'javascript:' );
+		expect( result ).toContain( 'click' );
+	} );
+
+	it( 'strips data href from links', () => {
+		// Arrange.
+		const value = '<a href="data:text/html,<script>alert(1)</script>">click</a>';
+
+		// Act.
+		const result = sanitizeEscapedHtml( value );
+
+		// Assert.
+		expect( result ).not.toContain( 'data:text/html' );
+		expect( result ).toContain( 'click' );
+	} );
 } );

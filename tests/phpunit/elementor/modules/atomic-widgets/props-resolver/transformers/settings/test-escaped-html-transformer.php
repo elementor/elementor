@@ -45,6 +45,18 @@ class Test_Escaped_Html_Transformer extends TestCase {
 		$this->assertSame( '<strong>world</strong>', $result );
 	}
 
+	public function test_transform__strips_javascript_href_from_links() {
+		// Arrange.
+		$transformer = new Escaped_Html_Transformer();
+
+		// Act.
+		$result = $transformer->transform( '<a href="javascript:alert(1)">click</a>', Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertStringNotContainsString( 'javascript:', $result );
+		$this->assertStringContainsString( 'click', $result );
+	}
+
 	public function test_transform__returns_empty_string_when_value_is_null() {
 		// Arrange.
 		$transformer = new Escaped_Html_Transformer();

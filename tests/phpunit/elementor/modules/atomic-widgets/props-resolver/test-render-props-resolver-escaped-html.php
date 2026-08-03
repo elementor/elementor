@@ -67,4 +67,23 @@ class Test_Render_Props_Resolver_Escaped_Html extends TestCase {
 		// Assert.
 		$this->assertSame( 'alert(1)<strong>Title</strong>', $result );
 	}
+
+	public function test_resolve_item__strips_javascript_href_from_escaped_html() {
+		// Arrange.
+		$resolver = Render_Props_Resolver::for_settings();
+		$method = new ReflectionMethod( Render_Props_Resolver::class, 'resolve_item' );
+		$method->setAccessible( true );
+
+		// Act.
+		$result = $method->invoke(
+			$resolver,
+			'<a href="javascript:alert(1)">click</a>',
+			'title',
+			Escaped_Html_Prop_Type::make()
+		);
+
+		// Assert.
+		$this->assertStringNotContainsString( 'javascript:', $result );
+		$this->assertStringContainsString( 'click', $result );
+	}
 }
