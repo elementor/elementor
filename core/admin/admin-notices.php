@@ -4,7 +4,6 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
-use Elementor\Core\Upgrade\Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
@@ -20,8 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Notices extends Module {
 
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
-	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
-	const LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION = '3.33.3';
 
 	const EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY = false;
 
@@ -35,7 +32,6 @@ class Admin_Notices extends Module {
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
-		self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
 	];
 
 	private $elementor_pages_count = null;
@@ -427,50 +423,6 @@ class Admin_Notices extends Module {
 
 		$detected_form_plugin = false;
 		return $detected_form_plugin;
-	}
-
-	private function notice_local_google_fonts_disabled() {
-
-		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
-			return false;
-		}
-
-		if ( ! Manager::had_install_prior_to( self::LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION ) ) {
-			return false;
-		}
-
-		if ( User::is_user_notice_viewed( self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID ) ) {
-			return false;
-		}
-
-		$is_local_gf_enabled = (bool) get_option( 'elementor_local_google_fonts', '0' );
-
-		if ( $is_local_gf_enabled ) {
-			return false;
-		}
-
-		$options = [
-			'title' => esc_html__( 'Important: Local Google Fonts Settings in Elementor', 'elementor' ),
-			'description' => esc_html__( 'Please note: The "Load Google Fonts Locally" feature has been disabled by default on all websites. To turn it back on, go to Elementor → Settings → Performance → Enable Load Google Fonts Locally.', 'elementor' ),
-			'id' => self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
-			'type' => '',
-			'button' => [
-				'text' => esc_html__( 'Take me there', 'elementor' ),
-				'url' => '../wp-admin/admin.php?page=elementor-settings#tab-performance',
-				'new_tab' => false,
-				'type' => 'cta',
-			],
-			'button_secondary' => [
-				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/wp-dash-google-fonts-locally-notice/',
-				'new_tab' => true,
-				'type' => 'cta',
-			],
-		];
-
-		$this->print_admin_notice( $options );
-
-		return true;
 	}
 
 	private function notice_ally_pages_promotion() {
