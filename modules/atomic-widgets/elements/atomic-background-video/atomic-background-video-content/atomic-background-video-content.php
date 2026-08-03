@@ -99,12 +99,6 @@ class Atomic_Background_Video_Content extends Atomic_Element_Base {
 									'unit' => 'custom',
 								] ),
 							] ),
-							// Override `.e-atomic-element:has(.elementor-empty-view) { min-height: 120px }`
-							// so nested content does not overflow the padded root and clip the bottom gap.
-							'min-height' => Size_Prop_Type::generate( [
-								'size' => 0,
-								'unit' => 'px',
-							] ),
 						] )
 				),
 		];

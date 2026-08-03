@@ -572,12 +572,14 @@ class Module extends BaseModule {
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
-			// Abspos covers the padding box; padding + border-box insets object-fit paint (matches root 10px).
-			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; box-sizing: border-box; padding: 10px; object-fit: cover; pointer-events: none; z-index: 0; }',
-			// flex-basis auto + min-height 0: avoid nested empty-view min-height (120px) overflowing the
-			// padded root and getting clipped by overflow:hidden (which ate the bottom gap).
-			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; }',
-			'.e-background-video.e-atomic-element .e-background-video__content.e-atomic-element { min-height: 0; }',
+			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; }',
+			// Editor empty state: content is a nested flex child inside padded root (overflow:hidden).
+			// Let content shrink to the inner flex area, then grow the empty-view to fill it.
+			'.elementor-edit-mode .e-background-video.e-atomic-element:has(.elementor-empty-view) { min-height: 140px; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view.elementor-empty-view { position: relative; flex: 1 1 auto; min-height: 120px; height: auto; width: 100%; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view > .elementor-first-add { position: absolute; inset: 0; width: 100%; height: 100%; }',
 			'.e-background-video__controls { z-index: 2; }',
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
