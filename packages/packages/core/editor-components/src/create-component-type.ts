@@ -220,13 +220,13 @@ function createComponentView( options: ComponentTypeOptions ): typeof TemplatedE
 
 				const instanceId = this.model.get( 'id' );
 				const elements = componentInstance.elements ?? [];
-				const formattedElements = formatComponentElementsId( elements, [ instanceId ] );
 				const reconciledElements = reconcileComponentInstanceElements(
-					formattedElements,
+					elements,
 					componentInstance.overrides ?? {}
 				);
+				const formattedElements = formatComponentElementsId( reconciledElements, [ instanceId ] );
 
-				this.collection = legacyWindow.elementor.createBackboneElementsCollection( reconciledElements );
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
