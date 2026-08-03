@@ -47,7 +47,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	const ELEMENT_TYPE_PLAY = 'e-background-video-play';
 	const ELEMENT_TYPE_PAUSE = 'e-background-video-pause';
 
-	public static $widget_description = 'Create a section with a looping video background and content layered on top. Structure: e-background-video contains e-background-video-content (for any widgets) and e-background-video-controls (with e-background-video-play and e-background-video-pause buttons).';
+	public static $widget_description = 'Create a section with a looping video background and content layered on top. REQUIRED direct children: e-background-video-content (content area) and e-background-video-controls (play/pause controls). The controls container MUST include e-background-video-play and e-background-video-pause, each with a required e-paragraph child for the button label.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -216,28 +216,20 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		$content = Atomic_Background_Video_Content::generate()
+			->meta( [ 'required' => true ] )
 			->editor_settings( [
 				'title' => esc_html__( 'Content Area', 'elementor' ),
 			] )
 			->build();
 
 		$controls = Atomic_Background_Video_Controls::generate()
+			->meta( [ 'required' => true ] )
 			->editor_settings( [
 				'title' => esc_html__( 'Controls', 'elementor' ),
 			] )
 			->children( [
-				Atomic_Background_Video_Play::generate()
-					->hydrate_default_children( true )
-					->editor_settings( [
-						'title' => esc_html__( 'Play Button', 'elementor' ),
-					] )
-					->build(),
-				Atomic_Background_Video_Pause::generate()
-					->hydrate_default_children( true )
-					->editor_settings( [
-						'title' => esc_html__( 'Pause Button', 'elementor' ),
-					] )
-					->build(),
+				Atomic_Background_Video_Play::build_default_element( true ),
+				Atomic_Background_Video_Pause::build_default_element( true ),
 			] )
 			->build();
 
