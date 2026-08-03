@@ -1,148 +1,174 @@
-# Agent and cloud environment guide
+# Elementor Core — local & agent development
 
-Short reference for Cursor Cloud and other non-interactive agents. For full human onboarding use [CONTRIBUTING.md](CONTRIBUTING.md) and [tests/test-environment-setup.md](tests/test-environment-setup.md).
+Works for **laptop local development** and **Cursor Cloud / non-interactive agents**. Commands are the same; Cloud-only notes are at the bottom.
 
-**Source of truth for commands:** root [package.json](package.json) scripts (and [composer.json](composer.json) for PHPUnit). Prefer those named scripts over raw `npm ci` / `grunt` / `composer` invocations.
+**Source of truth:** root [package.json](package.json) scripts (and [composer.json](composer.json) for PHPUnit). Prefer named scripts over raw `npm ci` / `grunt` / `composer` chains.
 
-## Choosing a WordPress environment
+Longer human onboarding: [CONTRIBUTING.md](CONTRIBUTING.md), Playwright Docker: [tests/test-environment-setup.md](tests/test-environment-setup.md).
 
-| Runtime | When to use | Ports / URL |
-|--------|-------------|----------------|
-| **wp-lite-env** (Docker) | Same stack as Playwright in CI (`.github/workflows/playwright.yml`). Full PHP/MySQL containers, two WP instances. | http://localhost:8888 and http://localhost:8889 |
-| **WP Playground CLI** (`npm run wp-playground`) | No Docker. WordPress in WASM; quick editor and blueprint-driven setup. | http://127.0.0.1:9400 |
-| **wp-env** (`npm run wp-env`, [.wp-env.json](.wp-env.json)) | Alternative Docker-based `@wordpress/env` setup. | See `@wordpress/env` defaults after `wp-env start` |
+## Layout (Core + Pro)
 
-Use **wp-lite-env** for Docker parity with CI Playwright. Use **WP Playground** when Docker is missing/broken or for quick editor checks. Blueprint: [tests/playwright/blueprints/local.json](tests/playwright/blueprints/local.json).
+Clone as siblings so Pro can see Core at `../elementor`:
 
-## Cursor Cloud specifics
+```text
+parent/
+├── elementor/          # this repo
+└── elementor-pro/      # Pro mounts ../elementor in wp-playground
+```
 
-### Layout
+Cloud paths: `/agent/repos/elementor` and `/agent/repos/elementor-pro`.
 
-- Core: `/agent/repos/elementor`
-- Pro (sibling): `/agent/repos/elementor-pro` — Pro's `wp-playground` mounts `../elementor`
+## How to do everything (local recipe)
 
-### Snapshot vs update script
+Use Node from [.nvmrc](.nvmrc). From **this repo root**:
+
+### 1. Install dependencies
+
+```bash
+npm run install
+# = npm ci --ignore-scripts --no-audit && composer install
+```
+
+### 2. Build once (dev assets)
+
+```bash
+npm run start
+# = composer:no-dev + build:packages + styles + scripts
+```
+
+Production zip-style build into `./build`:
+
+```bash
+npm run build
+```
+
+### 3. Watch while coding
+
+```bash
+npm run watch
+```
+
+Note: `start` / `watch` / `build` run `composer:no-dev` and strip PHPUnit. Before PHPUnit, restore with `composer install` or `npm run install`.
+
+### 4. Run WordPress (pick one)
+
+| Goal | Command | URL |
+|------|---------|-----|
+| Quick editor (no Docker) | `npm run wp-playground` | http://127.0.0.1:9400 |
+| Core **and** Pro together | from `../elementor-pro`: `npm run wp-playground` | same — mounts Pro + `../elementor` |
+| Playwright CI parity (Docker) | `SKIP_CONFIRMATION=true npm run env:setup` | http://localhost:8888 and :8889 |
+
+Playground login: `admin` / `password`. After asset changes, rebuild (`start`) or keep `watch` running.
+
+### 5. Lint & unit tests
+
+```bash
+npm run lint          # ESLint root + packages
+npm run test          # all Jest
+npm run test:jest     # main Jest only
+npm run test:packages # packages Jest only
+```
+
+### 6. PHPUnit
+
+Fast, no WordPress/MySQL (only for pure PHP subjects):
+
+```bash
+tests/phpunit/run-unit.sh tests/phpunit/elementor/.../test-something.php
+```
+
+Full suite (CI-like: MySQL + WordPress test lib):
+
+```bash
+# once: MySQL + bin/install-wp-tests.sh (see "Full PHPUnit suite" below)
+composer run test
+# or filtered:
+vendor/bin/phpunit --filter '<Test_Class_Name>'
+```
+
+### 7. Working with Pro day-to-day
+
+From **elementor-pro** (after both repos `npm run install` + at least one `npm run start`):
+
+```bash
+npm run watch:with-core   # watch Core + Pro together
+npm run wp-playground     # WordPress with both plugins
+# or all-in-one:
+npm run full-e2e-local    # watch:with-core + playground + Playwright UI
+```
+
+Details live in Pro [AGENTS.md](../elementor-pro/AGENTS.md).
+
+## Script cheat sheet
+
+| Goal | Script |
+|------|--------|
+| Deps | `npm run install` |
+| CI deps | `npm run install:ci` then `npm run composer:no-dev` |
+| Dev one-shot build | `npm run start` |
+| Production build | `npm run build` |
+| Dev watch | `npm run watch` |
+| Lint | `npm run lint` |
+| Jest | `npm run test` |
+| Playground (Core only) | `npm run wp-playground` |
+| Playwright Docker setup | `SKIP_CONFIRMATION=true npm run env:setup` |
+| Playwright run | `npm run test:playwright` |
+| PHPUnit (CI-like) | `composer run test` |
+| PHPUnit (docker-compose) | `npm run test:php` |
+| Fast DB-less PHPUnit | `tests/phpunit/run-unit.sh <file…>` |
+
+## WordPress environments
+
+| Runtime | When | URL |
+|---------|------|-----|
+| **WP Playground** (`npm run wp-playground`) | No Docker; quick editor | http://127.0.0.1:9400 |
+| **wp-lite-env** (`env:setup`) | Same as Playwright CI | :8888 and :8889 |
+| **wp-env** (`npm run wp-env`) | Alternative Docker `@wordpress/env` | after `wp-env start` |
+
+Blueprint: [tests/playwright/blueprints/local.json](tests/playwright/blueprints/local.json).
+
+If playground SQLite corrupts (`database disk image is malformed`): stop it, `rm -rf /tmp/node-playground-cli-site-*`, restart.
+
+## Full PHPUnit suite (MySQL)
+
+Matches `.github/workflows/phpunit-runner.yml`.
+
+```bash
+# MySQL (example container name used in Cloud snapshot)
+docker start wp-mysql   # or create:
+# docker run --name wp-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_ROOT_HOST=% \
+#   -p 3306:3306 -d --restart unless-stopped mysql:8.0 \
+#   --default-authentication-plugin=mysql_native_password
+
+WP_TESTS_DIR="$PWD/tmp/wordpress-tests-lib" WP_CORE_DIR="$PWD/tmp/wordpress/" \
+  bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest
+
+composer run test
+```
+
+`phpunit.xml` → `WP_TESTS_DIR=./tmp/wordpress-tests-lib`. DB: `wordpress_test`, `root`/`root`, `127.0.0.1:3306`.
+
+Do not pass raw `test-*.php` paths to PHPUnit; use `--filter <Class>`.
+
+## Gotchas
+
+- Prefer package.json script names; do not invent ad-hoc install/build chains.
+- `npm run lint` must pass at root **and** packages.
+- PHPCS may warn; treat policy from maintainers.
+- `composer install` post-install runs php-scoper; needs `humbug/php-scoper` (dev install).
+- Keep `engines` and `.nvmrc` aligned.
+- Husky pre-commit: `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192`.
+
+## Cursor Cloud specific instructions
+
+Same commands as local. Extra context for this VM only:
 
 | Layer | What |
 |-------|------|
 | **Snapshot** | Node (`.nvmrc` via nvm), PHP 8.3 + mysqli, Composer, svn, Docker; both repos already ran `npm run install` + `npm run start`; MySQL `wp-mysql` + Core `tmp/` from `bin/install-wp-tests.sh` |
-| **Update script (every session)** | `npm run install` in Core and Pro ([package.json](package.json) → `npm ci --ignore-scripts --no-audit && composer install`). No builds, no service starts |
+| **Update script (every session)** | `npm run install` in Core and Pro only. No builds, no service starts |
 
-After JS/CSS source changes, use the dedicated [package.json](package.json) scripts — don't chain `build:packages` + `grunt` by hand:
-
-```bash
-npm run start    # dev one-shot: composer:no-dev + build:packages + styles + scripts
-npm run watch    # dev watch (CONTRIBUTING.md local loop)
-npm run build    # production build into ./build (CI: build-zip.sh)
-```
-
-Note: `npm run start` / `npm run watch` run `composer:no-dev`, which strips PHPUnit. Restore PHPUnit afterward with `composer install` (or re-run `npm run install`) before `vendor/bin/phpunit` / `composer run test`.
-
-### PATH
-
-`/exec-daemon/node` may shadow nvm. Confirm `which node` matches [.nvmrc](.nvmrc). Prefer shell cwd `/agent` (wp-playground chroots under `/tmp/node-playground-cli-site-*` break `/bin/bash`).
-
-### Canonical scripts ([package.json](package.json) / CI)
-
-| Goal | Script | Notes |
-|------|--------|-------|
-| Local / Cloud deps | `npm run install` | CONTRIBUTING.md; used by Cloud update script |
-| CI deps | `npm run install:ci` then `npm run composer:no-dev` | `.github/workflows/install-dependencies` |
-| **Build (dev one-shot)** | `npm run start` | `composer:no-dev` + `build:packages` + `styles` + `scripts` |
-| **Build (production)** | `npm run build` | into `./build`; CI `build-zip.sh` |
-| **Watch** | `npm run watch` | dev watch (CONTRIBUTING.md) |
-| Lint | `npm run lint` | Root + packages workspace |
-| Jest | `npm run test` / `test:jest` / `test:packages` | |
-| Playwright env (Docker) | `SKIP_CONFIRMATION=true npm run env:setup` | → `scripts/setup-test-environment.sh` |
-| Playwright run | `npm run test:playwright` | After env setup |
-| Playground (no Docker) | `npm run wp-playground` | |
-| PHPUnit (CI-like) | `composer run test` | After `bin/install-wp-tests.sh` + MySQL |
-| Fast DB-less PHPUnit | `tests/phpunit/run-unit.sh <file…>` | No WP/MySQL |
-
-### Fast DB-less PHPUnit
-
-```bash
-tests/phpunit/run-unit.sh tests/phpunit/elementor/modules/atomic-widgets/css-converter/test-css-converter.php
-tests/phpunit/run-unit.sh tests/phpunit/.../test-css-converter.php --filter test_convert
-```
-
-Only for subjects that never touch WordPress at load/run time. Otherwise use the MySQL suite below.
-
-## Full PHPUnit suite (standalone MySQL — CI-aligned)
-
-Matches `.github/workflows/phpunit-runner.yml`: MySQL + `bin/install-wp-tests.sh` + `composer run test` (or `vendor/bin/phpunit`).
-
-Fresh-boot service start (not in the update script):
-
-```bash
-sudo bash -c 'nohup dockerd >/tmp/dockerd.log 2>&1 &'   # if `docker info` fails
-sudo chmod 666 /var/run/docker.sock                      # disposable env only
-docker start wp-mysql
-until mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --protocol=tcp 2>/dev/null | grep -q "is alive"; do sleep 2; done
-```
-
-From Core repo root (`phpunit.xml` → `WP_TESTS_DIR=./tmp/wordpress-tests-lib`):
-
-```bash
-composer run test                                        # full suite (CI)
-vendor/bin/phpunit --filter '<Test_Class_Name>'          # filtered
-```
-
-DB facts in `tmp/wordpress-tests-lib/wp-tests-config.php`: DB `wordpress_test`, user/pass `root`/`root`, host `127.0.0.1:3306`.
-
-Recreate if missing:
-
-```bash
-docker run --name wp-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_ROOT_HOST=% \
-  -p 3306:3306 -d --restart unless-stopped mysql:8.0 --default-authentication-plugin=mysql_native_password
-WP_TESTS_DIR="$PWD/tmp/wordpress-tests-lib" WP_CORE_DIR="$PWD/tmp/wordpress/" \
-  bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest
-```
-
-Gotchas:
-- Docker 29 needs `containerd-snapshotter` disabled for `fuse-overlayfs` (already in snapshot).
-- Do not pass raw `test-*.php` paths to PHPUnit; use `--filter <Class>` (filename ≠ classname).
-- Harmless shutdown noise: `wptests_options` missing after bootstrap `drop_tables` races Elementor's DB logger — ignore if the result line is `OK (...)`.
-- PHPUnit needs Composer **dev** deps; if you just ran `npm run start`/`watch`, run `composer install` (or `npm run install`) again first.
-
-## wp-lite-env (Docker): full Playwright setup
-
-CI-like one-shot ([tests/test-environment-setup.md](tests/test-environment-setup.md)):
-
-```bash
-SKIP_CONFIRMATION=true npm run env:setup
-```
-
-That runs `install:ci` → `build:packages` → `composer:no-dev` → `grunt scripts styles` → hello-elementor → `start-local-server` (8888 **and** 8889) → `test:setup:playwright`.
-
-Manual equivalent: same doc / [package.json](package.json) `start-local-server` + `test:setup:playwright`.
-
-Admin: http://localhost:8888/wp-admin/ — `admin` / `password`.
-
-## WP Playground CLI (no Docker)
-
-Needs a prior `npm run start` (or equivalent assets). Core alone:
-
-```bash
-npm run wp-playground
-```
-
-Pro (mounts both; preferred for full product) — from `/agent/repos/elementor-pro`:
-
-```bash
-npm run wp-playground
-# → http://127.0.0.1:9400  admin/password
-```
-
-If SQLite corrupts (`database disk image is malformed`): stop playground, `rm -rf /tmp/node-playground-cli-site-*`, restart. Keep shell cwd at `/agent`.
-
-CI mount of built Core: `npm run wp-playground:ci` (expects `./build`).
-
-## Gotchas
-
-- Prefer [package.json](package.json) script names (`install`, `start`, `watch`, `env:setup`, `test`, `lint`) over inventing raw command chains.
-- `npm run lint` must pass at root **and** packages workspace.
-- PHPCS may report warnings; treat policy from maintainers.
-- `composer install` post-install runs php-scoper; needs `humbug/php-scoper` (dev install).
-- `engines` + `.nvmrc` must stay aligned.
-- Husky pre-commit: `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192`.
+- `/exec-daemon/node` may shadow nvm — confirm `which node` matches `.nvmrc`.
+- Prefer shell cwd `/agent` (wp-playground chroots under `/tmp/node-playground-cli-site-*` break `/bin/bash`).
+- If `docker info` fails: `sudo bash -c 'nohup dockerd >/tmp/dockerd.log 2>&1 &'` then `sudo chmod 666 /var/run/docker.sock` (disposable env), then `docker start wp-mysql`.
+- Nested Docker: `fuse-overlayfs` + `containerd-snapshotter: false` already in snapshot daemon.json.
