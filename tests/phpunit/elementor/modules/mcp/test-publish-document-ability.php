@@ -162,7 +162,8 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 	}
 
 	public function test_execute__authorizes_against_main_id_not_input() {
-		// Arrange — author can publish their own page A, but not page B owned by another user
+		// Arrange — author has `publish_posts` but not `publish_pages`,
+		// so publish_post cap passes on input (post) and fails on remapped (page).
 		$author_id = $this->factory()->user->create( [ 'role' => 'author' ] );
 		$input_post_id = $this->factory()->post->create( [
 			'post_status' => 'draft',
@@ -171,8 +172,7 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		] );
 		$remapped_post_id = $this->factory()->post->create( [
 			'post_status' => 'draft',
-			'post_type' => 'post',
-			'post_author' => $this->factory()->user->create( [ 'role' => 'author' ] ),
+			'post_type' => 'page',
 		] );
 
 		wp_set_current_user( $author_id );
