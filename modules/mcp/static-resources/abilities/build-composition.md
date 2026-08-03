@@ -107,7 +107,7 @@ Match the widget schema shape:
 - **boolean**: plain boolean (`true`)
 - **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
-- **image**: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }`
+- **image**: `{ "src": { "url": "https://example.com/photo.jpg", "alt": "Description" }, "size": "full" }` — `url` alone is sufficient for any external or placeholder image (e.g. `https://placehold.co/300x400`). `id` is only required for images already in the WordPress media library; omit it for all other cases. `alt` is optional but recommended for accessibility.
 
 ## GLOBAL VARIABLES
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.

@@ -124,6 +124,14 @@ Also NOT possible through this tool — do NOT attempt them; the result is a bro
 - Space: Primary gets 2x+ surrounding white space vs. secondary
 
 
+## 7. Flexbox Gotcha (CAPABILITY-AWARE)
+
+`e-flexbox` defaults to `flex-direction: row`, not `column` — stacked content
+(heading + paragraph, footer columns, etc.) needs `"display": "flex",
+"flex-direction": "column"` set explicitly, or children render side-by-side with
+no warning. Set `flex-direction` explicitly on every multi-child container.
+
+
 # IMPLEMENTATION WORKFLOW
 
 When building a composition:
