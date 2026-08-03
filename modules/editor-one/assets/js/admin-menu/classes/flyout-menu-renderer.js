@@ -60,7 +60,7 @@ export class FlyoutMenuRenderer {
 			return null;
 		}
 
-		const editorItem = submenu.querySelector( 'a[href$="page=elementor"]' );
+		const editorItem = submenu.querySelector( 'a[href$="page=elementor-settings"]' );
 
 		if ( ! editorItem ) {
 			return null;

@@ -2,12 +2,14 @@
 
 namespace Elementor\Core\Admin\EditorOneMenu;
 
-use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
+use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,8 +68,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
-			Menu_Config::ELEMENTOR_MENU_SLUG,
-			'',
+			Settings::SETTINGS_PAGE_ID,
+			[ Plugin::$instance->settings, 'display_settings_page' ],
 			20
 		);
 
@@ -140,7 +142,9 @@ class Elementor_One_Menu_Manager {
 		}
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-		if ( Menu_Config::ELEMENTOR_MENU_SLUG !== $page ) {
+		$redirected_pages = [ Menu_Config::ELEMENTOR_MENU_SLUG, Settings::SETTINGS_PAGE_ID ];
+
+		if ( ! in_array( $page, $redirected_pages, true ) ) {
 			return;
 		}
 
@@ -223,6 +227,11 @@ class Elementor_One_Menu_Manager {
 	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
 		$original_parent = $this->get_original_parent_slug( $item );
 		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
+
+		if ( $this->is_submenu_page_registered( $parent_slug, $item_slug ) ) {
+			return null;
+		}
+
 		$has_page = method_exists( $item, 'render' );
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
@@ -238,6 +247,24 @@ class Elementor_One_Menu_Manager {
 			$callback,
 			$position
 		);
+	}
+
+	private function is_submenu_page_registered( string $parent_slug, string $item_slug ): bool {
+		global $submenu;
+
+		if ( empty( $submenu[ $parent_slug ] ) ) {
+			return false;
+		}
+
+		foreach ( $submenu[ $parent_slug ] as $existing_item ) {
+			$existing_slug = $existing_item[2] ?? '';
+
+			if ( $item_slug === $existing_slug ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
@@ -283,6 +310,7 @@ class Elementor_One_Menu_Manager {
 	public function hide_flyout_items_from_wp_menu(): void {
 		$protected_wp_menu_slugs = [
 			Menu_Config::EDITOR_MENU_SLUG,
+			Settings::SETTINGS_PAGE_ID,
 			'elementor-theme-builder',
 			'e-form-submissions',
 		];
