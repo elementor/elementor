@@ -86,6 +86,63 @@ class Test_Settings_Agents extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'agents_llms', $result['settings'] );
 	}
 
+	public function test_before_save__sanitizes_nested_agents_llms() {
+		// Arrange
+		$tab = new Settings_Agents( $this->kit );
+		$unsafe_content = "<script>alert('xss')</script>\n# llms.txt";
+
+		// Act
+		$result = $tab->before_save( [
+			'settings' => [
+				'agents' => [
+					'llms' => $unsafe_content,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( sanitize_textarea_field( $unsafe_content ), $result['settings']['agents']['llms'] );
+	}
+
+	public function test_before_save__preserves_existing_agents_keys() {
+		// Arrange
+		$tab = new Settings_Agents( $this->kit );
+		$llms_content = '# Example llms.txt';
+
+		// Act
+		$result = $tab->before_save( [
+			'settings' => [
+				'agents_llms' => $llms_content,
+				'agents' => [
+					'future_setting' => 'keep-me',
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( $llms_content, $result['settings']['agents']['llms'] );
+		$this->assertSame( 'keep-me', $result['settings']['agents']['future_setting'] );
+	}
+
+	public function test_before_save__clears_only_llms_when_other_agents_keys_exist() {
+		// Arrange
+		$tab = new Settings_Agents( $this->kit );
+
+		// Act
+		$result = $tab->before_save( [
+			'settings' => [
+				'agents' => [
+					'llms' => '',
+					'future_setting' => 'keep-me',
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'llms', $result['settings']['agents'] );
+		$this->assertSame( 'keep-me', $result['settings']['agents']['future_setting'] );
+	}
+
 	public function test_save__persists_agents_llms_to_database() {
 		// Arrange
 		$llms_content = 'User-agent: *';

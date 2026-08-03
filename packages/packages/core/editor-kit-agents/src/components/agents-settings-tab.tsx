@@ -1,61 +1,20 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { getV1CurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { __privateUseListenTo as useListenTo, routeOpenEvent } from '@elementor/editor-v1-adapters';
 import { Box, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const AGENTS_SETTINGS_KEY = 'agents';
-const LLMS_SETTINGS_KEY = 'llms';
+import { getKitSettingsBag, readLlmsContent, writeLlmsContent } from '../llms-settings';
+
 const TAB_ID = 'settings-agents';
 const TAB_ROUTE = `panel/global/${ TAB_ID }`;
 
-type SettingsBag = {
-	get: ( key: string ) => unknown;
-	set: ( key: string, value: unknown ) => void;
-};
-
-function getKitSettingsBag(): SettingsBag | null {
-	const settings = getV1CurrentDocument()?.container?.settings;
-
-	return settings ? ( settings as SettingsBag ) : null;
-}
-
-function readLlmsContent(): string {
-	const settings = getKitSettingsBag();
-	const agents = settings?.get( AGENTS_SETTINGS_KEY );
-
-	if ( ! agents || typeof agents !== 'object' ) {
-		return '';
-	}
-
-	const llms = ( agents as Record< string, unknown > )[ LLMS_SETTINGS_KEY ];
-
-	return typeof llms === 'string' ? llms : '';
-}
-
-function writeLlmsContent( content: string ) {
-	const settings = getKitSettingsBag();
-
-	if ( ! settings ) {
-		return;
-	}
-
-	if ( '' === content ) {
-		settings.set( AGENTS_SETTINGS_KEY, undefined );
-	} else {
-		settings.set( AGENTS_SETTINGS_KEY, {
-			[ LLMS_SETTINGS_KEY ]: content,
-		} );
-	}
-
-	setDocumentModifiedStatus( true );
-}
-
 export function AgentsSettingsTab() {
 	const [ value, setValue ] = useState( readLlmsContent );
+	const [ isSettingsAvailable, setIsSettingsAvailable ] = useState( () => null !== getKitSettingsBag() );
 
 	useListenTo( [ routeOpenEvent( TAB_ROUTE ) ], () => {
+		setIsSettingsAvailable( null !== getKitSettingsBag() );
 		setValue( readLlmsContent() );
 	} );
 
@@ -76,7 +35,12 @@ export function AgentsSettingsTab() {
 					multiline
 					minRows={ 12 }
 					fullWidth
-					helperText={ __( 'Content served at /llms.txt when saved. Leave empty to disable.', 'elementor' ) }
+					disabled={ ! isSettingsAvailable }
+					helperText={
+						isSettingsAvailable
+							? __( 'Content served at /llms.txt when saved. Leave empty to disable.', 'elementor' )
+							: __( 'Kit settings are unavailable. Reopen Site Settings and try again.', 'elementor' )
+					}
 				/>
 			</Stack>
 		</Box>

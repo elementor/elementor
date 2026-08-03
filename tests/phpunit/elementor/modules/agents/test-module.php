@@ -112,6 +112,59 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
+	public function test_non_llms_txt_request_does_not_intercept() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/about';
+
+		// Act
+		ob_start();
+		$this->module->maybe_serve_llms_txt();
+		$output = ob_get_clean();
+
+		// Cleanup
+		unset( $_SERVER['REQUEST_URI'] );
+
+		// Assert
+		$this->assertSame( '', $output );
+	}
+
+	public function test_is_llms_txt_request__matches_path_with_query_string() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/llms.txt?foo=bar';
+		$method = new \ReflectionMethod( Module::class, 'is_llms_txt_request' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $this->module );
+
+		// Cleanup
+		unset( $_SERVER['REQUEST_URI'] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_llms_txt_request__matches_subdirectory_install() {
+		// Arrange
+		add_filter( 'home_url', static function () {
+			return 'http://example.com/blog';
+		} );
+
+		$_SERVER['REQUEST_URI'] = '/blog/llms.txt';
+		$method = new \ReflectionMethod( Module::class, 'is_llms_txt_request' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $this->module );
+
+		// Cleanup
+		remove_all_filters( 'home_url' );
+		unset( $_SERVER['REQUEST_URI'] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
 	private function flush_documents_cache(): void {
 		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
 		$reflection->setAccessible( true );
