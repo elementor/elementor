@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Preview\Preview_Token;
 use Elementor\Plugin;
 
@@ -22,7 +23,7 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Create Elementor Public Preview Link', 'elementor' ),
-			__( 'Creates a signed, time-limited URL that renders a snapshot of the current Elementor content of a post without publishing it. Anyone with the URL can view the snapshot until it expires. Use to ensure changes you did look as intended.', 'elementor' ),
+			Prompt_Loader::load( 'create-preview-link' ),
 			'elementor',
 			[
 				'type' => 'object',
