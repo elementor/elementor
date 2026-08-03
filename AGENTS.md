@@ -134,7 +134,7 @@ Playground uses [tests/playwright/blueprints/local.json](tests/playwright/bluepr
 
 `SKIP_CONFIRMATION=true npm run env:setup` installs deps, builds, downloads Hello Elementor, runs `start-local-server` (8888 **and** 8889), then `test:setup:playwright`. Do not start only 8888 and then run `test:setup:playwright` alone — [package.json](package.json) expects both ports. Admin: http://localhost:8888/wp-admin/ (`admin` / `password`).
 
-If playground SQLite corrupts (`database disk image is malformed`): stop it, `rm -rf /tmp/node-playground-cli-site-*`, restart.
+If playground SQLite corrupts (`database disk image is malformed`): kill the playground PIDs, `rm -rf /tmp/node-playground-cli-site-*`, restart. Long-lived instances on the default 6 workers corrupt their SQLite file; appending `--workers=1` to the CLI command (the CLI warns about deadlocks, but it survives editor sessions) avoids it. Never leave two instances running against the same repo — the second one silently picks a random port.
 
 ## Fast DB-less PHPUnit
 
