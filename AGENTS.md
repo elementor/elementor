@@ -14,16 +14,27 @@ Use **wp-lite-env** when you need Docker parity with CI (full Playwright against
 
 ## Cursor Cloud specifics
 
-### System requirements (typical VM image)
+### What the environment snapshot already contains
 
-- Node.js version from [.nvmrc](.nvmrc) (via nvm; PATH in `~/.bashrc`)
-- PHP >= 7.4 with extensions: mbstring, xml, zip, curl, dom, bcmath (see [composer.json](composer.json))
-- Composer 2.x
-- Docker only if you use wp-lite-env or wp-env (often needs fuse-overlayfs and iptables-legacy in nested setups)
+Repos live under `/agent/repos/elementor` (Core) and `/agent/repos/elementor-pro` (Pro, sibling — required for Pro's `../elementor` wp-playground mount). The snapshot has:
+
+- Node from [.nvmrc](.nvmrc) (nvm), PHP 8.3 + extensions (mbstring, xml, zip, curl, dom, bcmath, mysqli), Composer 2.x, subversion, Docker CE (`fuse-overlayfs`, `containerd-snapshotter` disabled)
+- Full `npm ci` + `composer install` + **built assets** for both Core and Pro (`npm run build:packages && npx grunt styles && npx grunt scripts`)
+- MySQL 8.0 container `wp-mysql` (`root`/`root` @ `127.0.0.1:3306`) and WordPress PHPUnit lib under Core `tmp/` (from `bin/install-wp-tests.sh`)
+
+### Update script (runs every session — deps only)
+
+Refreshes Node PATH, then `npm ci --ignore-scripts --no-audit` + `composer install` for **both** repos. It intentionally does **not** rebuild assets, start Docker/MySQL/wp-playground, or re-provision `tmp/` (those are brittle / already snapshotted). After pulling JS/CSS/PHP package source changes, rebuild yourself:
+
+```bash
+# Core and/or Pro, from that repo root:
+npm run build:packages && npx grunt styles && npx grunt scripts
+# or continuous: npm run watch
+```
 
 ### PATH
 
-The image may ship a system Node under `/exec-daemon/node` that does not match `.nvmrc`. If installs or engines fail, confirm `which node` points at the nvm-managed binary.
+`/exec-daemon/node` may shadow nvm. Prefer `which node` → nvm binary matching `.nvmrc`. `~/.bashrc` prepends the nvm Node bin.
 
 ### Common commands
 
@@ -33,6 +44,7 @@ The image may ship a system Node under `/exec-daemon/node` that does not match `
 | Build packages | `npm run build:packages` |
 | Build styles | `npx grunt styles` |
 | Build scripts | `npx grunt scripts` |
+| Full one-shot build | `npm run build:packages && npx grunt styles && npx grunt scripts` |
 | Full dev watch | `npm run watch` |
 | Lint JS/TS (root) | `npx eslint .` |
 | Lint JS/TS (packages) | `cd packages && npx eslint . --report-unused-disable-directives-severity error` |
@@ -55,9 +67,9 @@ Only works for tests whose subjects don't touch WordPress at load/run time. Test
 
 ## Full PHPUnit suite (standalone MySQL container)
 
-This is the lightweight way to run the DB-backed PHPUnit suite (`vendor/bin/phpunit`) without wp-lite-env's two-instance stack — a single MySQL 8.0 Docker container plus the WordPress test library that `bin/install-wp-tests.sh` provisions. The MySQL container, the installed WP test library under `tmp/`, and `vendor/` are all baked into the environment snapshot, so on a fresh Cursor Cloud VM only the **service startup** below is needed (no re-provisioning).
+Lightweight DB-backed PHPUnit (`vendor/bin/phpunit`) without wp-lite-env's two-instance stack — MySQL 8.0 container `wp-mysql` + WordPress test library from `bin/install-wp-tests.sh`. Container + `tmp/` + `vendor/` are snapshotted; fresh VMs only need the **service startup** below.
 
-**The PHPUnit suite needs `composer install` only — no JS/CSS build.** The tests exercise PHP; the plugin is "activated" in-process by `tests/bootstrap.php` (via `wp_tests_options['active_plugins']` + the `muplugins_loaded` filter), and no `npm install` / `grunt styles|scripts` / `turbo build` / `watch` is required. Verified: the full suite (`vendor/bin/phpunit`, **4037 tests / 41177 assertions, 0 failures**) passes with `assets/js` absent. Build and `npm run watch` are only for the editor/frontend runtime (wp-playground or a browser), not for PHPUnit. That is why the environment update script is just `composer install`.
+PHPUnit exercises PHP only: the plugin is activated in-process by `tests/bootstrap.php` (`wp_tests_options['active_plugins']` + `muplugins_loaded`). A JS/CSS build is **not** required for PHPUnit (verified: full suite 4037 tests / 0 failures with `assets/js` absent). The editor/wp-playground path **does** need the build (already in the snapshot; rebuild after source changes — see Update script above).
 
 Startup after a fresh boot (Docker has no systemd here, so `dockerd` and the container must be started by hand; the update script must not do this):
 
@@ -69,7 +81,7 @@ docker start wp-mysql                                     # MySQL 8.0 on 127.0.0
 until mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --protocol=tcp 2>/dev/null | grep -q "is alive"; do sleep 2; done
 ```
 
-Run the suite (must run from the repo root so `phpunit.xml`'s `WP_TESTS_DIR=./tmp/wordpress-tests-lib` resolves):
+Run the suite (must run from the Core repo root so `phpunit.xml`'s `WP_TESTS_DIR=./tmp/wordpress-tests-lib` resolves):
 
 ```bash
 vendor/bin/phpunit --filter '<Test_Class_Name>'          # a class/group; full run is very large
@@ -92,7 +104,7 @@ Gotchas:
 - Docker 29 needs `containerd-snapshotter` disabled in `/etc/docker/daemon.json` for `fuse-overlayfs` to work in this nested VM (already configured in the snapshot).
 - Passing a raw `test-*.php` path to `vendor/bin/phpunit` fails with "Class ... could not be found" because Elementor's class names don't match PHPUnit's filename convention; use `--filter <Class>` (or a group) against the configured testsuite instead.
 - A harmless `WordPress database error: Table 'wordpress_test.wptests_options' doesn't exist` can print on shutdown — the bootstrap's `drop_tables` shutdown filter races Elementor's DB logger. It does not affect the test result line (`OK (...)`).
-
+- Shell cwd can land inside the wp-playground site chroot (`/tmp/node-playground-cli-site-*`) where `/bin/bash` is missing; run agent shell commands with cwd `/agent` (or a real repo root) instead.
 ## wp-lite-env (Docker): full setup
 
 Non-interactive one-shot (skips container cleanup prompt):
@@ -111,16 +123,24 @@ Admin: http://localhost:8888/wp-admin/ — user `admin`, password `password` (se
 
 ## WP Playground CLI (no Docker)
 
-After `npm ci` (or full install per repo):
+Requires **built** Core (and Pro, if testing Pro). From Core alone:
 
 ```bash
 npm run wp-playground
 ```
 
-Wait until the CLI prints that WordPress is running, then open http://127.0.0.1:9400 . This flow was smoke-tested with the same CLI flags as [package.json](package.json) `wp-playground` in a clean agent-style environment without Docker.
+From Pro (mounts both plugins; preferred for full product):
+
+```bash
+# cwd = /agent/repos/elementor-pro (sibling ../elementor must exist and be built)
+npm run wp-playground
+# → http://127.0.0.1:9400  admin/password
+# Blueprint activates Elementor + Elementor Pro + Hello Elementor
+```
+
+Wait until the CLI prints that WordPress is running. If the SQLite site DB becomes malformed (`database disk image is malformed`), stop the process, `rm -rf /tmp/node-playground-cli-site-*`, and restart. Prefer running shell commands with cwd `/agent` so you don't inherit the playground chroot.
 
 For CI-style mounted **build** output use `npm run wp-playground:ci` (expects `./build`).
-
 ## Gotchas
 
 - `npm run lint` runs ESLint at the repo root and in the `elementor-packages` workspace (`npm run lint -w elementor-packages`); both must pass.
