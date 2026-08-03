@@ -165,6 +165,157 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_get_etag__differs_per_content() {
+		// Act
+		$first = $this->invoke_private( 'get_etag', [ '# llms.txt' ] );
+		$second = $this->invoke_private( 'get_etag', [ '# other llms.txt' ] );
+
+		// Assert
+		$this->assertSame( '"' . md5( '# llms.txt' ) . '"', $first );
+		$this->assertNotSame( $first, $second );
+	}
+
+	public function test_get_cache_max_age__defaults_and_is_filterable() {
+		// Assert
+		$this->assertSame( Module::DEFAULT_CACHE_MAX_AGE, $this->invoke_private( 'get_cache_max_age' ) );
+
+		// Arrange
+		add_filter( 'elementor/agents/llms_txt/cache_max_age', static function () {
+			return 60;
+		} );
+
+		// Act
+		$filtered = $this->invoke_private( 'get_cache_max_age' );
+
+		// Cleanup
+		remove_all_filters( 'elementor/agents/llms_txt/cache_max_age' );
+
+		// Assert
+		$this->assertSame( 60, $filtered );
+	}
+
+	public function test_get_cache_max_age__never_negative() {
+		// Arrange
+		add_filter( 'elementor/agents/llms_txt/cache_max_age', static function () {
+			return -100;
+		} );
+
+		// Act
+		$max_age = $this->invoke_private( 'get_cache_max_age' );
+
+		// Cleanup
+		remove_all_filters( 'elementor/agents/llms_txt/cache_max_age' );
+
+		// Assert
+		$this->assertSame( 0, $max_age );
+	}
+
+	public function test_is_client_cache_fresh__matches_strong_and_weak_etag() {
+		// Arrange
+		$etag = '"abc123"';
+
+		// Act & Assert
+		$_SERVER['HTTP_IF_NONE_MATCH'] = $etag;
+		$this->assertTrue( $this->invoke_private( 'is_client_cache_fresh', [ $etag, 0 ] ) );
+
+		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/' . $etag;
+		$this->assertTrue( $this->invoke_private( 'is_client_cache_fresh', [ $etag, 0 ] ) );
+
+		$_SERVER['HTTP_IF_NONE_MATCH'] = '"other", ' . $etag;
+		$this->assertTrue( $this->invoke_private( 'is_client_cache_fresh', [ $etag, 0 ] ) );
+
+		// Cleanup
+		unset( $_SERVER['HTTP_IF_NONE_MATCH'] );
+	}
+
+	public function test_is_client_cache_fresh__rejects_stale_etag_even_when_not_modified_since() {
+		// Arrange
+		$_SERVER['HTTP_IF_NONE_MATCH'] = '"stale"';
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = gmdate( 'D, d M Y H:i:s', time() + 60 ) . ' GMT';
+
+		// Act
+		$result = $this->invoke_private( 'is_client_cache_fresh', [ '"fresh"', time() ] );
+
+		// Cleanup
+		unset( $_SERVER['HTTP_IF_NONE_MATCH'], $_SERVER['HTTP_IF_MODIFIED_SINCE'] );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_is_client_cache_fresh__honors_if_modified_since() {
+		// Arrange
+		$last_modified = time() - 600;
+
+		// Act & Assert
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = gmdate( 'D, d M Y H:i:s', $last_modified ) . ' GMT';
+		$this->assertTrue( $this->invoke_private( 'is_client_cache_fresh', [ '"abc"', $last_modified ] ) );
+
+		$_SERVER['HTTP_IF_MODIFIED_SINCE'] = gmdate( 'D, d M Y H:i:s', $last_modified - 60 ) . ' GMT';
+		$this->assertFalse( $this->invoke_private( 'is_client_cache_fresh', [ '"abc"', $last_modified ] ) );
+
+		// Cleanup
+		unset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] );
+	}
+
+	public function test_is_client_cache_fresh__is_false_without_validators() {
+		// Assert
+		$this->assertFalse( $this->invoke_private( 'is_client_cache_fresh', [ '"abc"', time() ] ) );
+	}
+
+	public function test_kit_save_invalidates_llms_txt_cache() {
+		// Arrange
+		$invalidated_for = null;
+
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function ( $kit_id ) use ( &$invalidated_for ) {
+			$invalidated_for = $kit_id;
+		} );
+
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$this->flush_documents_cache();
+		$kit = Plugin::$instance->documents->get( $kit_id );
+
+		// Act
+		$kit->save( [
+			'settings' => [
+				'agents' => [
+					'llms' => '# llms.txt',
+				],
+			],
+		] );
+
+		// Cleanup
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+
+		// Assert
+		$this->assertSame( $kit_id, $invalidated_for );
+	}
+
+	public function test_non_kit_document_save_does_not_invalidate_llms_txt_cache() {
+		// Arrange
+		$invalidated = false;
+
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function () use ( &$invalidated ) {
+			$invalidated = true;
+		} );
+
+		// Act
+		$this->module->maybe_invalidate_llms_txt_cache( new \stdClass() );
+
+		// Cleanup
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+
+		// Assert
+		$this->assertFalse( $invalidated );
+	}
+
+	private function invoke_private( string $name, array $args = [] ) {
+		$method = new \ReflectionMethod( Module::class, $name );
+		$method->setAccessible( true );
+
+		return $method->invokeArgs( $this->module, $args );
+	}
+
 	private function flush_documents_cache(): void {
 		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
 		$reflection->setAccessible( true );
