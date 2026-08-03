@@ -289,7 +289,8 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $compiled;
 		}
 
-		$elements = $this->stamp_compiled_ids( $compiled['elements'] );
+		$elements = $this->assign_element_ids( $compiled['elements'] );
+		$warnings = $compiled['warnings'];
 
 		$non_atomic_validation = Non_Atomic_Widget_Validator::make()->validate( $elements );
 		if ( ! $non_atomic_validation['success'] ) {
@@ -310,11 +311,11 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		$result = $this->save_component( $component, $elements, $settings );
-		if ( is_wp_error( $result ) || empty( $compiled['warnings'] ) ) {
+		if ( is_wp_error( $result ) || empty( $warnings ) ) {
 			return $result;
 		}
 
-		return $result + [ 'warnings' => $compiled['warnings'] ];
+		return $result + [ 'warnings' => $warnings ];
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
@@ -378,7 +379,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		return [
-			'elements' => $this->stamp_compiled_ids( $compiled['elements'] ),
+			'elements' => $this->assign_element_ids( $compiled['elements'] ),
 			'warnings' => $compiled['warnings'],
 		];
 	}
@@ -411,7 +412,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		return [
-			'elements' => [ $this->regenerate_element_ids( $found ) ],
+			'elements' => $this->assign_element_ids( [ $found ] ),
 			'warnings' => [],
 		];
 	}
@@ -440,37 +441,22 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * Compiled subtrees have no ids yet (`Subtree_Builder` never sets one). Since these
-	 * elements are being persisted into a brand new/fully-replaced tree, it's safe to reuse
-	 * the caller-chosen configuration-id as the persisted element id, so `overridable_props.target`
-	 * can address the same identifier the caller already used in `xml_structure`/`element_config`.
+	 * Compiled subtrees have no ids yet (`Subtree_Builder` never sets one), and copied
+	 * subtrees carry ids from another document that would collide here. Both paths need
+	 * fresh, slug-safe machine ids; the caller's configuration-id stays on
+	 * `editor_settings.title` so `overridable_props.target` and other tools can still
+	 * address elements by the identifier the caller used in `xml_structure` — see
+	 * `Overridable_Props_Builder::find_element_ref`.
 	 */
-	private function stamp_compiled_ids( array $elements ): array {
-		return array_map( fn( array $element ) => $this->stamp_compiled_element_id( $element ), $elements );
+	private function assign_element_ids( array $elements ): array {
+		return array_map( fn( array $element ) => $this->assign_element_id( $element ), $elements );
 	}
 
-	private function stamp_compiled_element_id( array $element ): array {
-		$configuration_id = $element['editor_settings']['title'] ?? null;
-		$element['id'] = ( is_string( $configuration_id ) && '' !== $configuration_id )
-			? $configuration_id
-			: Document_Mutator::instance()->generate_id();
-
-		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-			$element['elements'] = array_map( fn( array $child ) => $this->stamp_compiled_element_id( $child ), $element['elements'] );
-		}
-
-		return $element;
-	}
-
-	/**
-	 * Always regenerates ids to avoid duplicates when copying an existing subtree
-	 * into a new component, matching `Document_Mutator::insert_subtree()` semantics.
-	 */
-	private function regenerate_element_ids( array $element ): array {
+	private function assign_element_id( array $element ): array {
 		$element['id'] = Document_Mutator::instance()->generate_id();
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-			$element['elements'] = array_map( fn( array $child ) => $this->regenerate_element_ids( $child ), $element['elements'] );
+			$element['elements'] = array_map( fn( array $child ) => $this->assign_element_id( $child ), $element['elements'] );
 		}
 
 		return $element;
