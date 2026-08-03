@@ -26,10 +26,6 @@ class Reconcile_Test_Parent extends Div_Block {
 		return 'e-reconcile-test-parent';
 	}
 
-	public function get_name() {
-		return 'e-reconcile-test-parent';
-	}
-
 	protected static function define_props_schema(): array {
 		return array_merge(
 			parent::define_props_schema(),
@@ -69,10 +65,6 @@ class Reconcile_Test_Child extends Div_Block {
 	public static function get_element_type(): string {
 		return 'e-reconcile-test-child';
 	}
-
-	public function get_name() {
-		return 'e-reconcile-test-child';
-	}
 }
 
 class Reconcile_Test_Leaf extends Div_Block {
@@ -81,10 +73,6 @@ class Reconcile_Test_Leaf extends Div_Block {
 	}
 
 	public static function get_element_type(): string {
-		return 'e-reconcile-test-leaf';
-	}
-
-	public function get_name() {
 		return 'e-reconcile-test-leaf';
 	}
 }
