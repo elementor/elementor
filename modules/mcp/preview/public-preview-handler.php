@@ -105,26 +105,12 @@ class Public_Preview_Handler {
 	}
 
 	private function prime_revision_meta_cache( int $revision_id ): void {
-		global $wpdb;
+		foreach ( self::OVERRIDDEN_META_KEYS as $meta_key ) {
+			$values = get_post_meta( $revision_id, $meta_key, false );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d",
-				$revision_id
-			)
-		);
-
-		if ( ! is_array( $rows ) ) {
-			return;
-		}
-
-		foreach ( $rows as $row ) {
-			if ( ! in_array( $row->meta_key, self::OVERRIDDEN_META_KEYS, true ) ) {
-				continue;
+			if ( is_array( $values ) && ! empty( $values ) ) {
+				$this->revision_meta_cache[ $meta_key ] = $values;
 			}
-
-			$this->revision_meta_cache[ $row->meta_key ][] = maybe_unserialize( $row->meta_value );
 		}
 	}
 
