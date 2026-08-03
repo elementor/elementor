@@ -44,6 +44,16 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertSame( 'audits', $module->get_name() );
 	}
 
+	public function test_get_experimental_data_returns_beta_experiment_definition() {
+		// Act.
+		$data = Module::get_experimental_data();
+
+		// Assert.
+		$this->assertSame( Module::EXPERIMENT_NAME, $data['name'] );
+		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
+		$this->assertSame( Experiments_Manager::RELEASE_STATUS_BETA, $data['release_status'] );
+	}
+
 	public function test_data_controller_is_not_registered_when_experiment_is_inactive() {
 		// Arrange.
 		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );

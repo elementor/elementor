@@ -28,15 +28,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Page Audit', 'elementor' ),
-			'description' => esc_html__( 'Scan the current page for SEO, accessibility, performance, and best-practice issues directly from the editor.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+		if ( ! self::is_active() ) {
 			return;
 		}
 
@@ -48,6 +40,20 @@ class Module extends BaseModule {
 
 	public function get_name(): string {
 		return 'audits';
+	}
+
+	public static function get_experimental_data() {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Page Audit', 'elementor' ),
+			'description' => esc_html__( 'Scan the current page for SEO, accessibility, performance, and best-practice issues directly from the editor.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		];
+	}
+
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	public function register_data_controller(): void {
