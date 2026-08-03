@@ -57,7 +57,7 @@ jobs:
   tag:
     name: Create Release Tag
     needs: approve-tag
-    # uses: elementor/elementor/.github/workflows/release-tag-creation.yml@split-release-process-ED-24452
+    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@split-release-process-ED-24452
     with:
       version: ${{ inputs.version }}
       dry_run: false
