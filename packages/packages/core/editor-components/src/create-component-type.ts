@@ -25,6 +25,7 @@ import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { detachComponentInstance } from './utils/detach-component-instance';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
+import { reconcileComponentInstanceElements } from './utils/reconcile-component-instance-elements';
 import { isProComponentsSupported, isProOutdatedForComponents } from './utils/is-pro-components-supported';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
@@ -220,12 +221,17 @@ function createComponentView( options: ComponentTypeOptions ): typeof TemplatedE
 				const instanceId = this.model.get( 'id' );
 				const elements = componentInstance.elements ?? [];
 				const formattedElements = formatComponentElementsId( elements, [ instanceId ] );
+				const reconciledElements = reconcileComponentInstanceElements(
+					formattedElements,
+					componentInstance.overrides ?? {}
+				);
 
-				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( reconciledElements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
 				settings.component_instance = '<template data-children-placeholder></template>';
+				settings.__componentOverridesFingerprint = JSON.stringify( componentInstance.overrides ?? {} );
 			}
 
 			return settings;
