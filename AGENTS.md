@@ -57,6 +57,8 @@ Only works for tests whose subjects don't touch WordPress at load/run time. Test
 
 This is the lightweight way to run the DB-backed PHPUnit suite (`vendor/bin/phpunit`) without wp-lite-env's two-instance stack — a single MySQL 8.0 Docker container plus the WordPress test library that `bin/install-wp-tests.sh` provisions. The MySQL container, the installed WP test library under `tmp/`, and `vendor/` are all baked into the environment snapshot, so on a fresh Cursor Cloud VM only the **service startup** below is needed (no re-provisioning).
 
+**The PHPUnit suite needs `composer install` only — no JS/CSS build.** The tests exercise PHP; the plugin is "activated" in-process by `tests/bootstrap.php` (via `wp_tests_options['active_plugins']` + the `muplugins_loaded` filter), and no `npm install` / `grunt styles|scripts` / `turbo build` / `watch` is required. Verified: the full suite (`vendor/bin/phpunit`, **4037 tests / 41177 assertions, 0 failures**) passes with `assets/js` absent. Build and `npm run watch` are only for the editor/frontend runtime (wp-playground or a browser), not for PHPUnit. That is why the environment update script is just `composer install`.
+
 Startup after a fresh boot (Docker has no systemd here, so `dockerd` and the container must be started by hand; the update script must not do this):
 
 ```bash
