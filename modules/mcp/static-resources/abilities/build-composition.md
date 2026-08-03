@@ -69,7 +69,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - style is raw CSS (property → value strings); the server converts it to native styles
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
-- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
+- NO LINKS in configuration
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
@@ -81,8 +81,8 @@ Match the widget schema shape:
 - **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
-  - Library asset (preferred, from `elementor/list-assets`): `{ "src": { "id": 123 }, "size": "full" }` — gives real dimensions and `srcset` at render time.
-  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works, but no `srcset` and breaks if the remote dies. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
+  - Library asset (from `elementor/list-assets`): `{ "src": { "id": 123 }, "size": "full" }`.
+  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
 - **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
 
 ## GLOBAL VARIABLES
