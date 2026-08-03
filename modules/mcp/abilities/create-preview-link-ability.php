@@ -38,7 +38,10 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 					],
 					'post_id' => [ 'type' => 'integer' ],
 					'revision_id' => [ 'type' => 'integer' ],
-					'expires_at' => [ 'type' => 'string', 'format' => 'date-time' ],
+					'expires_at' => [
+						'type' => 'string',
+						'format' => 'date-time',
+					],
 					'expires_at_unix' => [ 'type' => 'integer' ],
 				],
 			],

@@ -21,15 +21,17 @@ class Public_Preview_Handler {
 
 	private ?int $active_post_id = null;
 	private ?int $active_revision_id = null;
+	private array $revision_meta_cache = [];
 
 	public function register(): void {
 		add_action( 'parse_request', [ $this, 'maybe_activate' ], 1 );
 	}
 
 	public function maybe_activate( \WP $wp ): void {
-		$raw_token = $_GET[ Preview_Token::QUERY_ARG ] ?? null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$raw_token = isset( $_GET[ Preview_Token::QUERY_ARG ] ) ? sanitize_text_field( wp_unslash( $_GET[ Preview_Token::QUERY_ARG ] ) ) : '';
 
-		if ( ! is_string( $raw_token ) || '' === $raw_token ) {
+		if ( '' === $raw_token ) {
 			return;
 		}
 
@@ -49,6 +51,7 @@ class Public_Preview_Handler {
 
 		$this->active_post_id = $claims['post_id'];
 		$this->active_revision_id = $claims['revision_id'];
+		$this->prime_revision_meta_cache( $claims['revision_id'] );
 
 		$this->rewrite_main_query( $wp, $claims['post_id'] );
 		$this->install_render_filters();
@@ -94,13 +97,35 @@ class Public_Preview_Handler {
 			return $value;
 		}
 
-		$revision_values = get_metadata( 'post', $this->active_revision_id, $meta_key, false );
-
-		if ( ! is_array( $revision_values ) ) {
+		if ( ! array_key_exists( $meta_key, $this->revision_meta_cache ) ) {
 			return $value;
 		}
 
-		return $revision_values;
+		return $this->revision_meta_cache[ $meta_key ];
+	}
+
+	private function prime_revision_meta_cache( int $revision_id ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d",
+				$revision_id
+			)
+		);
+
+		if ( ! is_array( $rows ) ) {
+			return;
+		}
+
+		foreach ( $rows as $row ) {
+			if ( ! in_array( $row->meta_key, self::OVERRIDDEN_META_KEYS, true ) ) {
+				continue;
+			}
+
+			$this->revision_meta_cache[ $row->meta_key ][] = maybe_unserialize( $row->meta_value );
+		}
 	}
 
 	public function filter_posts_results( $posts ) {
