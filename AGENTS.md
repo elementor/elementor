@@ -51,7 +51,45 @@ tests/phpunit/run-unit.sh tests/phpunit/elementor/modules/atomic-widgets/css-con
 tests/phpunit/run-unit.sh tests/phpunit/.../test-css-converter.php --filter test_convert
 ```
 
-Only works for tests whose subjects don't touch WordPress at load/run time. Tests needing WordPress/MySQL (e.g. REST endpoints with `act_as_admin`/`WP_REST_Server`, or anything pulling `Style_Schema`) must use the full suite (`npm run test:setup:playwright` env, or the wp-lite-env setup below).
+Only works for tests whose subjects don't touch WordPress at load/run time. Tests needing WordPress/MySQL (e.g. REST endpoints with `act_as_admin`/`WP_REST_Server`, or anything pulling `Style_Schema`) must use the full suite (`npm run test:setup:playwright` env, the standalone MySQL container below, or the wp-lite-env setup below).
+
+## Full PHPUnit suite (standalone MySQL container)
+
+This is the lightweight way to run the DB-backed PHPUnit suite (`vendor/bin/phpunit`) without wp-lite-env's two-instance stack — a single MySQL 8.0 Docker container plus the WordPress test library that `bin/install-wp-tests.sh` provisions. The MySQL container, the installed WP test library under `tmp/`, and `vendor/` are all baked into the environment snapshot, so on a fresh Cursor Cloud VM only the **service startup** below is needed (no re-provisioning).
+
+Startup after a fresh boot (Docker has no systemd here, so `dockerd` and the container must be started by hand; the update script must not do this):
+
+```bash
+sudo bash -c 'nohup dockerd >/tmp/dockerd.log 2>&1 &'   # if `docker info` fails
+sudo chmod 666 /var/run/docker.sock                      # disposable env only
+docker start wp-mysql                                     # MySQL 8.0 on 127.0.0.1:3306
+# wait for readiness
+until mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --protocol=tcp 2>/dev/null | grep -q "is alive"; do sleep 2; done
+```
+
+Run the suite (must run from the repo root so `phpunit.xml`'s `WP_TESTS_DIR=./tmp/wordpress-tests-lib` resolves):
+
+```bash
+vendor/bin/phpunit --filter '<Test_Class_Name>'          # a class/group; full run is very large
+```
+
+DB/connection facts (already wired into `tmp/wordpress-tests-lib/wp-tests-config.php`):
+- DB `wordpress_test`, user `root`, pass `root`, host `127.0.0.1:3306`, `ABSPATH` → `tmp/wordpress/`.
+- `tmp/` is gitignored; it holds WP core (`tmp/wordpress/`) and the test lib (`tmp/wordpress-tests-lib/`).
+
+If the container is missing (snapshot lost it), recreate and re-provision:
+
+```bash
+docker run --name wp-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_ROOT_HOST=% \
+  -p 3306:3306 -d --restart unless-stopped mysql:8.0 --default-authentication-plugin=mysql_native_password
+WP_TESTS_DIR="$PWD/tmp/wordpress-tests-lib" WP_CORE_DIR="$PWD/tmp/wordpress/" \
+  bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest
+```
+
+Gotchas:
+- Docker 29 needs `containerd-snapshotter` disabled in `/etc/docker/daemon.json` for `fuse-overlayfs` to work in this nested VM (already configured in the snapshot).
+- Passing a raw `test-*.php` path to `vendor/bin/phpunit` fails with "Class ... could not be found" because Elementor's class names don't match PHPUnit's filename convention; use `--filter <Class>` (or a group) against the configured testsuite instead.
+- A harmless `WordPress database error: Table 'wordpress_test.wptests_options' doesn't exist` can print on shutdown — the bootstrap's `drop_tables` shutdown filter races Elementor's DB logger. It does not affect the test result line (`OK (...)`).
 
 ## wp-lite-env (Docker): full setup
 
