@@ -78,6 +78,24 @@ function cleanChunksOutput() {
 	}
 }
 
+/**
+ * In watch mode `viteBuild` resolves as soon as the watcher exists, before the first bundle has run.
+ * The chunk list is only filled by the transform hook during that bundle, so the chunked entry has
+ * to be awaited or the chunk pass sees an empty map and `assets/js/chunks/` is never written.
+ *
+ * Chunks discovered by a later rebuild (a newly added `import()`) still need a restart, because the
+ * per-chunk watchers are created once, here.
+ */
+function waitForFirstBundle( watcher ) {
+	return new Promise( ( resolve ) => {
+		watcher.on( 'event', ( event ) => {
+			if ( 'END' === event.code || 'ERROR' === event.code ) {
+				resolve();
+			}
+		} );
+	} );
+}
+
 async function buildFrontendChunks( { chunks, isProduction, watch } ) {
 	const watchers = [];
 
@@ -105,6 +123,7 @@ async function buildTarget( targetName, { isProduction, watch } ) {
 	const chunks = new Map();
 
 	for ( const entryName of entryNames ) {
+		const isChunkedEntry = Boolean( target.isFrontend ) && entryName === CHUNKED_ENTRY_NAME;
 		const result = await viteBuild( createEntryConfig( {
 			entryName,
 			entry: target.entries[ entryName ],
@@ -112,11 +131,15 @@ async function buildTarget( targetName, { isProduction, watch } ) {
 			watch,
 			emitStrings: target.emitStrings && isProduction,
 			isFrontend: Boolean( target.isFrontend ),
-			chunkEntries: ( target.isFrontend && entryName === CHUNKED_ENTRY_NAME ) ? chunks : null,
+			chunkEntries: isChunkedEntry ? chunks : null,
 		} ) );
 
 		if ( watch ) {
 			watchers.push( result );
+
+			if ( isChunkedEntry ) {
+				await waitForFirstBundle( result );
+			}
 		}
 	}
 
