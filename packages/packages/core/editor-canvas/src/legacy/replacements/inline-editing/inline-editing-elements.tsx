@@ -136,9 +136,23 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		return stringPropTypeUtil.extract( extracted?.content ?? null ) ?? '';
 	}
 
+	createContentPropValue( value: string | null ): PropValue {
+		const content = value || '';
+		const propTypeKey = this.getInlineEditablePropTypeKey();
+
+		if ( propTypeKey === htmlV3PropTypeUtil.key ) {
+			return htmlV3PropTypeUtil.create( {
+				content: stringPropTypeUtil.create( content ),
+				children: [],
+			} );
+		}
+
+		return escapedHtmlPropTypeUtil.create( content );
+	}
+
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
-		const valueToSave = escapedHtmlPropTypeUtil.create( value || '' );
+		const valueToSave = this.createContentPropValue( value );
 
 		undoable(
 			{
