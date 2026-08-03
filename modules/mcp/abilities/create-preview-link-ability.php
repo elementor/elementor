@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Create_Preview_Link_Ability extends Abstract_Ability {
 
-	const DEFAULT_TTL_MINUTES = 60;
-	const MAX_TTL_MINUTES = 1440;
-	const MIN_TTL_MINUTES = 1;
+	const TTL_MINUTES = 5;
 
 	protected function get_ability_id(): string {
 		return 'elementor/create-preview-link';
@@ -64,13 +62,6 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 						'type' => 'integer',
 						'description' => 'Post ID to snapshot and share.',
 					],
-					'ttl_minutes' => [
-						'type' => 'integer',
-						'description' => 'Link lifetime in minutes. Default 60, min 1, max 1440 (24 hours).',
-						'default' => self::DEFAULT_TTL_MINUTES,
-						'minimum' => self::MIN_TTL_MINUTES,
-						'maximum' => self::MAX_TTL_MINUTES,
-					],
 				],
 			]
 		);
@@ -91,14 +82,12 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 			return $permission_error;
 		}
 
-		$ttl_minutes = $this->normalize_ttl( $input['ttl_minutes'] ?? self::DEFAULT_TTL_MINUTES );
-
 		$revision_id = $this->snapshot_revision( $post_id );
 		if ( is_wp_error( $revision_id ) ) {
 			return $revision_id;
 		}
 
-		$expires_at = time() + $ttl_minutes * MINUTE_IN_SECONDS;
+		$expires_at = time() + self::TTL_MINUTES * MINUTE_IN_SECONDS;
 		$token = Preview_Token::encode( $post_id, $revision_id, $expires_at, Preview_Token::secret() );
 		$document = Plugin::$instance->documents->get( $post_id );
 
@@ -144,20 +133,6 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 		}
 
 		return null;
-	}
-
-	private function normalize_ttl( $raw ): int {
-		$ttl = (int) $raw;
-
-		if ( $ttl < self::MIN_TTL_MINUTES ) {
-			return self::MIN_TTL_MINUTES;
-		}
-
-		if ( $ttl > self::MAX_TTL_MINUTES ) {
-			return self::MAX_TTL_MINUTES;
-		}
-
-		return $ttl;
 	}
 
 	private function snapshot_revision( int $post_id ) {
