@@ -178,8 +178,22 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertStringNotContainsString( 'data:text/html', $result['value'] );
+		$this->assertStringNotContainsString( '<a href=', $result['value'] );
 		$this->assertStringContainsString( 'click', $result['value'] );
+	}
+
+	public function test_should_persist__true_for_empty_string() {
+		// Arrange.
+		$prop_type = Escaped_Html_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'escaped-html',
+			'value' => '',
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
 	}
 
 	public function test_json_schema__exposes_value_as_string_for_llms() {

@@ -25,7 +25,7 @@ export const InlineEditingControl = createControl(
 			( newValue: unknown ) => {
 				const html = ( newValue ?? '' ) as string;
 
-				setValue( html || null );
+				setValue( html );
 			},
 			[ setValue ]
 		);

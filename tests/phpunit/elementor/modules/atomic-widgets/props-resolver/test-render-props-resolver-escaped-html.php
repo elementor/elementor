@@ -86,4 +86,24 @@ class Test_Render_Props_Resolver_Escaped_Html extends TestCase {
 		$this->assertStringNotContainsString( 'javascript:', $result );
 		$this->assertStringContainsString( 'click', $result );
 	}
+
+	public function test_resolve__renders_empty_string_instead_of_default() {
+		// Arrange.
+		$resolver = Render_Props_Resolver::for_settings();
+		$schema = [
+			'title' => Escaped_Html_Prop_Type::make()->default( 'Default title' ),
+		];
+		$props = [
+			'title' => [
+				'$$type' => 'escaped-html',
+				'value' => '',
+			],
+		];
+
+		// Act.
+		$result = $resolver->resolve( $schema, $props );
+
+		// Assert.
+		$this->assertSame( '', $result['title'] );
+	}
 }

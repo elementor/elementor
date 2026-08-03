@@ -64,7 +64,7 @@ describe( 'sanitizeEscapedHtml', () => {
 		const result = sanitizeEscapedHtml( value );
 
 		// Assert.
-		expect( result ).not.toContain( 'data:text/html' );
+		expect( result ).not.toMatch( /<a\s+href=/i );
 		expect( result ).toContain( 'click' );
 	} );
 } );
