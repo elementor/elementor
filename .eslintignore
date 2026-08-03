@@ -10,7 +10,8 @@ tests/qunit/setup/tinymce.js
 packages/**/*
 eslint-local-rules.js
 .eslintrc.js
-scripts/**
+scripts/create-version-change.js
+scripts/lint-packages-staged.js
 
 # directories
 coverage-report/
