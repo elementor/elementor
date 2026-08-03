@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
-use Elementor\Modules\Mcp\Abilities\Utils\Static_Markdown_Resources;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -90,7 +89,11 @@ class Read_Resource_Ability extends Abstract_Ability {
 	}
 
 	private function get_resource_executors(): array {
-		return array_merge( Static_Markdown_Resources::executors(), [
+		return [
+			Design_Taste_Ability::URI => [
+				'execute' => fn() => ( new Design_Taste_Ability() )->execute(),
+				'mimeType' => 'text/markdown',
+			],
 			Style_Best_Practices_Ability::URI => [
 				'execute' => fn() => ( new Style_Best_Practices_Ability() )->execute(),
 				'mimeType' => 'text/markdown',
@@ -115,6 +118,6 @@ class Read_Resource_Ability extends Abstract_Ability {
 				'execute' => fn() => ( new Interactions_Schema_Resource_Ability() )->execute(),
 				'mimeType' => 'application/json',
 			],
-		] );
+		];
 	}
 }

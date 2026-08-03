@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
-use Elementor\Modules\Mcp\Abilities\Utils\Static_Markdown_Resources;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -55,7 +54,13 @@ class List_Resources_Ability extends Abstract_Ability {
 	}
 
 	private function get_resource_catalog(): array {
-		return array_merge( Static_Markdown_Resources::catalog(), [
+		return [
+			[
+				'uri' => Design_Taste_Ability::URI,
+				'name' => 'Design Taste',
+				'description' => 'Read when committing a design system (colors, fonts, type scale, rhythm). Curated palettes, pairings, anti-slop kill-list, contrast floors.',
+				'mimeType' => 'text/markdown',
+			],
 			[
 				'uri' => Style_Best_Practices_Ability::URI,
 				'name' => 'Style Best Practices',
@@ -92,6 +97,6 @@ class List_Resources_Ability extends Abstract_Ability {
 				'description' => 'Interaction item shape, enums, and defaults for build-composition.',
 				'mimeType' => 'application/json',
 			],
-		] );
+		];
 	}
 }
