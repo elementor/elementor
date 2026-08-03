@@ -21,5 +21,6 @@ jobs:
           if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "VERSION=8.4" >> $GITHUB_OUTPUT
           else
-            echo "VERSION=8.1" >> $GITHUB_OUTPUT
+            # WP 7 Docker images dropped PHP 8.1; 8.2 is the lowest published tag.
+            echo "VERSION=8.2" >> $GITHUB_OUTPUT
           fi
