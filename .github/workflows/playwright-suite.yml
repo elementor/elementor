@@ -7,10 +7,14 @@ on:
         type: string
         required: false
         default: ''
+      pull_request_number:
+        type: string
+        required: false
+        default: ''
 
 concurrency:
-  group: ${{ github.event_name == 'pull_request' && format('pr-{0}-playwright', github.event.pull_request.number) || format('playwright-suite-{0}', github.ref) }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ inputs.pull_request_number != '' && format('pr-{0}-playwright', inputs.pull_request_number) || format('playwright-suite-{0}', github.ref) }}
+  cancel-in-progress: ${{ inputs.pull_request_number != '' }}
 
 permissions:
   contents: read
