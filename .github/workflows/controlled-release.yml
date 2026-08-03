@@ -26,7 +26,7 @@ jobs:
     if: github.repository_owner == 'elementor'
     permissions:
       contents: read
-    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
+    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@split-release-process-ED-24452
     with:
       version: ${{ inputs.version }}
       dry_run: true
@@ -57,7 +57,7 @@ jobs:
   tag:
     name: Create Release Tag
     needs: approve-tag
-    uses: elementor/elementor/.github/workflows/release-tag-creation.yml@main
+    # uses: elementor/elementor/.github/workflows/release-tag-creation.yml@split-release-process-ED-24452
     with:
       version: ${{ inputs.version }}
       dry_run: false
@@ -142,7 +142,7 @@ jobs:
   build-draft:
     name: Build & Draft Release
     needs: tag
-    uses: elementor/elementor/.github/workflows/build-draft-release.yml@main
+    uses: elementor/elementor/.github/workflows/build-draft-release.yml@split-release-process-ED-24452
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
@@ -159,8 +159,7 @@ jobs:
   cleanup-tag-on-build-failure:
     name: Rollback Tag (Build Failed)
     needs: build-draft
-    # Cover failure + cancel; skip when build-draft never ran.
-    if: always() && needs.build-draft.result != 'success' && needs.build-draft.result != 'skipped'
+    if: always() && needs.build-draft.result == 'failure'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -194,7 +193,7 @@ jobs:
   publish:
     name: Publish Release
     needs: [approve-publish, tag]
-    uses: elementor/elementor/.github/workflows/publish-release.yml@main
+    uses: elementor/elementor/.github/workflows/publish-release.yml@split-release-process-ED-24452
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
