@@ -36,14 +36,14 @@ jobs:
 
   # ── Job 2 ────────────────────────────────────────────────────────────────
   # Approval gate. Reviewer reads the dry-run summary from Job 1 and clicks
-  # Approve in the GitHub Actions UI (Settings → Environments → release-approval).
+  # Approve in the GitHub Actions UI (Settings → Environments → release-owners).
   # environment: cannot be placed on a `uses:` job — this intermediate job
   # holds the gate so Job 3 can use a reusable workflow cleanly.
   # ─────────────────────────────────────────────────────────────────────────
   approve-tag:
     name: Await Approval (Create Tag)
     needs: validate
-    environment: release-approval
+    environment: release-owners
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -93,7 +93,7 @@ jobs:
   approve-publish:
     name: Await Approval (Publish Release)
     needs: release-summary
-    environment: release-approval
+    environment: release-owners
     runs-on: ubuntu-22.04
     permissions:
       contents: read
