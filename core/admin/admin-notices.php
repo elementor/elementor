@@ -8,7 +8,6 @@ use Elementor\Core\Upgrade\Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
-use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
@@ -33,7 +32,6 @@ class Admin_Notices extends Module {
 		'tracker_last_update',
 		'rate_us_feedback',
 		'role_manager_promote',
-		'experiment_promotion',
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
@@ -382,45 +380,6 @@ class Admin_Notices extends Module {
 		];
 
 		$options = Filtered_Promotions_Manager::get_filtered_promotion_data( $options, 'core/admin/notice_role_manager_promote', 'button', 'url' );
-
-		$this->print_admin_notice( $options );
-
-		return true;
-	}
-
-	private function notice_experiment_promotion() {
-		$notice_id = 'experiment_promotion';
-
-		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		$experiments = Plugin::$instance->experiments;
-		$is_all_performance_features_active = (
-			$experiments->is_feature_active( 'e_font_icon_svg' ) &&
-			$experiments->is_feature_active( 'e_optimized_markup' )
-		);
-
-		if ( $is_all_performance_features_active ) {
-			return false;
-		}
-
-		$options = [
-			'title' => esc_html__( 'Improve your site’s performance score.', 'elementor' ),
-			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before. Look for the Performance label on our Experiments page and activate those experiments to improve your site loading speed.', 'elementor' ),
-			'id' => $notice_id,
-			'button' => [
-				'text' => esc_html__( 'Try it out', 'elementor' ),
-				'url' => Settings::get_settings_tab_url( 'experiments' ),
-				'type' => 'cta',
-			],
-			'button_secondary' => [
-				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/wp-dash-experiment-promotion/',
-				'new_tab' => true,
-				'type' => 'cta',
-			],
-		];
 
 		$this->print_admin_notice( $options );
 
