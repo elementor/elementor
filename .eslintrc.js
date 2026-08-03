@@ -44,6 +44,20 @@ module.exports = {
 	},
 	overrides: [
 		{
+			files: [ 'scripts/**/*.mjs' ],
+			parserOptions: {
+				sourceType: 'module',
+				ecmaVersion: 'latest',
+			},
+			env: {
+				node: true,
+			},
+			rules: {
+				'no-console': 'off',
+				'jsdoc/require-param': 'off',
+			},
+		},
+		{
 			files: [ '*.ts', '*.tsx' ],
 			extends: [
 				'plugin:@typescript-eslint/recommended',

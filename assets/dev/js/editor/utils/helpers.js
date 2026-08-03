@@ -1,7 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
-import DOMPurify, { isValidAttribute } from 'dompurify';
+import DOMPurify from 'dompurify';
 
 /**
  * PHP (`Utils::get_allowed_html_wrapper_tags()`) is the single source of truth for this
@@ -705,7 +705,7 @@ module.exports = {
 	},
 
 	sanitizeUrl( url ) {
-		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
+		const isValidUrl = !! url ? DOMPurify.isValidAttribute( 'a', 'href', url ) : false;
 
 		if ( ! isValidUrl ) {
 			return '';
