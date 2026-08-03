@@ -28,12 +28,12 @@ Use **wp-lite-env** for Docker parity with CI Playwright. Use **WP Playground** 
 | **Snapshot** | Node (`.nvmrc` via nvm), PHP 8.3 + mysqli, Composer, svn, Docker; both repos already ran `npm run install` + `npm run start`; MySQL `wp-mysql` + Core `tmp/` from `bin/install-wp-tests.sh` |
 | **Update script (every session)** | `npm run install` in Core and Pro ([package.json](package.json) → `npm ci --ignore-scripts --no-audit && composer install`). No builds, no service starts |
 
-After JS/CSS source changes, rebuild with the package.json scripts (not raw grunt):
+After JS/CSS source changes, use the dedicated [package.json](package.json) scripts — don't chain `build:packages` + `grunt` by hand:
 
 ```bash
-npm run start    # one-shot: composer:no-dev + build:packages + styles + scripts
-# or
-npm run watch    # continuous (CONTRIBUTING.md local loop)
+npm run start    # dev one-shot: composer:no-dev + build:packages + styles + scripts
+npm run watch    # dev watch (CONTRIBUTING.md local loop)
+npm run build    # production build into ./build (CI: build-zip.sh)
 ```
 
 Note: `npm run start` / `npm run watch` run `composer:no-dev`, which strips PHPUnit. Restore PHPUnit afterward with `composer install` (or re-run `npm run install`) before `vendor/bin/phpunit` / `composer run test`.
@@ -48,9 +48,9 @@ Note: `npm run start` / `npm run watch` run `composer:no-dev`, which strips PHPU
 |------|--------|-------|
 | Local / Cloud deps | `npm run install` | CONTRIBUTING.md; used by Cloud update script |
 | CI deps | `npm run install:ci` then `npm run composer:no-dev` | `.github/workflows/install-dependencies` |
-| One-shot assets | `npm run start` | `composer:no-dev` + packages + styles + scripts |
-| Watch | `npm run watch` | CONTRIBUTING.md |
-| Production zip build | `npm run build` | CI `build-zip.sh` |
+| **Build (dev one-shot)** | `npm run start` | `composer:no-dev` + `build:packages` + `styles` + `scripts` |
+| **Build (production)** | `npm run build` | into `./build`; CI `build-zip.sh` |
+| **Watch** | `npm run watch` | dev watch (CONTRIBUTING.md) |
 | Lint | `npm run lint` | Root + packages workspace |
 | Jest | `npm run test` / `test:jest` / `test:packages` | |
 | Playwright env (Docker) | `SKIP_CONFIRMATION=true npm run env:setup` | → `scripts/setup-test-environment.sh` |
