@@ -150,6 +150,16 @@ composer run test
 
 Do not pass raw `test-*.php` paths to PHPUnit; use `--filter <Class>`.
 
+## PR conventions (CI-enforced)
+
+`PR Linter` runs commitlint on the **PR title** with [commitlint.config.js](commitlint.config.js), and `PR Jira Ticket Check` needs an `ED-XXXXX` key in the title, branch, or body. So the title must be:
+
+```text
+Internal: Sentence case description [ED-XXXXX]
+```
+
+Allowed types: `Feature`, `CI`, `New`, `Tweak`, `Fix`, `Experiment`, `Deprecate`, `Deprecated`, `Revert`, `Internal` (sentence case, header <= 100 chars). Conventional-commit style like `docs(agents): …` fails. Both checks only re-run on push, not on title edits.
+
 ## Gotchas
 
 - Prefer package.json script names; do not invent ad-hoc install/build chains.
