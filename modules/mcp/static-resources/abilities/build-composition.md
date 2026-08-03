@@ -13,6 +13,7 @@ This tool supports v4 elements only.
 2. Check/create global classes via `elementor/manage-classes`
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 4. Use returned element IDs for subsequent configuration changes
+5. (Only after you build everything) use `elementor/create-preview-link` to generate a preview link and use the browser to validate the work you did
 
 # COMPONENTS (only when explicitly requested)
 

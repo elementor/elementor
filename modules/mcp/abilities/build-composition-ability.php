@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
@@ -22,7 +21,6 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
-use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -163,7 +161,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] );
 
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			return $this->build_response( $post_id, $xml_parser, $dom, [], $warnings, $mode, [] );
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
@@ -174,7 +172,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		return $this->build_response( $post_id, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
 	}
 
 	private function get_ability_description(): string {
@@ -184,7 +182,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function get_output_schema(): array {
 		return [
 			'type' => 'object',
-			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'llm_instructions', 'version' ],
+			'required' => [ 'success', 'post_id', 'root_element_ids', 'version' ],
 			'properties' => [
 				'success' => [ 'type' => 'boolean' ],
 				'post_id' => [ 'type' => 'integer' ],
@@ -193,13 +191,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
 				],
-				'preview_url' => Document_Mutation_Links::preview_schema_property(),
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
 					'type' => 'string',
 					'description' => 'The XML with element IDs embedded.',
 				],
-				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -327,7 +323,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	private function build_response(
 		int $post_id,
-		Document $document,
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
@@ -343,10 +338,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'root_element_ids' => $root_ids,
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
-		] + Document_Mutation_Links::for_document(
-			$document,
-			__( 'The composition was built successfully.', 'elementor' )
-		);
+		];
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;

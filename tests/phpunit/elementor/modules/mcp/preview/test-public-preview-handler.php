@@ -72,7 +72,16 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertSame( 'snapshot', $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+		$this->assertSame( [ 'snapshot' ], $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+	}
+
+	public function test_valid_token__falls_through_when_revision_has_no_value_for_key() {
+		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+
+		$this->handler->maybe_activate( new \WP() );
+
+		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_css', true ) );
 	}
 
 	public function test_valid_token__ignores_other_post_ids() {

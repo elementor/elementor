@@ -94,13 +94,13 @@ class Public_Preview_Handler {
 			return $value;
 		}
 
-		$revision_value = get_metadata( 'post', $this->active_revision_id, $meta_key, $single );
+		$revision_values = get_metadata( 'post', $this->active_revision_id, $meta_key, false );
 
-		if ( $single ) {
-			return $revision_value;
+		if ( ! is_array( $revision_values ) ) {
+			return $value;
 		}
 
-		return is_array( $revision_value ) ? $revision_value : [ $revision_value ];
+		return $revision_values;
 	}
 
 	public function filter_posts_results( $posts ) {
