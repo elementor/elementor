@@ -14,32 +14,6 @@ const defaultOptions: Options = {
 	transformers: {},
 };
 
-const extractStringPropValue = ( value: unknown ): string => {
-	if ( typeof value === 'string' ) {
-		return value;
-	}
-
-	if ( typeof value === 'object' && value !== null && 'value' in value ) {
-		const inner = ( value as { value: unknown } ).value;
-
-		return typeof inner === 'string' ? inner : '';
-	}
-
-	return '';
-};
-
-const normalizeEscapedHtmlValue = ( rawValue: unknown ): string => {
-	if ( typeof rawValue === 'string' ) {
-		return rawValue;
-	}
-
-	if ( typeof rawValue === 'object' && rawValue !== null && 'content' in rawValue ) {
-		return extractStringPropValue( ( rawValue as { content: unknown } ).content );
-	}
-
-	return extractStringPropValue( rawValue );
-};
-
 export const adjustLlmPropValueSchema = (
 	value: Readonly< PropValue >,
 	{ transformers = {}, forceKey = undefined }: Options = defaultOptions
@@ -86,25 +60,11 @@ export const adjustLlmPropValueSchema = (
 				},
 			};
 		}
-		case 'escaped-html': {
-			return {
-				$$type: 'escaped-html',
-				value: normalizeEscapedHtmlValue( transformablePropValue.value ),
-			};
-		}
 		case 'html-v3': {
 			const { value: rawHtmlV3PropValue } = transformablePropValue as TransformablePropValue<
 				string,
 				{ content: StringPropValue; children: PropValue[] }
 			>;
-
-			if ( forceKey === 'escaped-html' ) {
-				return {
-					$$type: 'escaped-html',
-					value: normalizeEscapedHtmlValue( rawHtmlV3PropValue ),
-				};
-			}
-
 			return {
 				$$type: 'html-v3',
 				value: {

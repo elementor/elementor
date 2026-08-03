@@ -259,10 +259,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [
-							'content' => 'New Title',
-							'children' => [],
-						],
+						'title' => 'New Title',
 					],
 				],
 			],
@@ -616,7 +613,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'settings' => [ 'title' => 123 ],
+					'settings' => [ 'title' => [ 'foo' => 'bar' ] ],
 				],
 			],
 		] );
@@ -676,7 +673,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [ 'content' => 'Bulk Title', 'children' => [] ],
+						'title' => 'Bulk Title',
 					],
 				],
 				[
@@ -792,7 +789,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $v4_id,
-					'settings' => [ 'title' => [ 'content' => 'Survived', 'children' => [] ] ],
+					'settings' => [ 'title' => 'Survived' ],
 				],
 			],
 		] );
@@ -820,7 +817,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [ 'content' => 'Survived', 'children' => [] ],
+						'title' => 'Survived',
 					],
 				],
 			],

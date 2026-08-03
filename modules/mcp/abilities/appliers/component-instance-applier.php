@@ -16,7 +16,6 @@ use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overrides_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
-use Elementor\Modules\Mcp\Abilities\Utils\Adjust_Llm_Prop_Value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -397,10 +396,7 @@ class Component_Instance_Applier {
 			return $raw_value;
 		}
 
-		$resolved = $this->plain_values_resolver->resolve(
-			Adjust_Llm_Prop_Value::adjust_for_plain_resolver( $raw_value, $origin_prop_type ),
-			$origin_prop_type
-		);
+		$resolved = $this->plain_values_resolver->resolve( $raw_value, $origin_prop_type );
 
 		return $resolved ?? $raw_value;
 	}

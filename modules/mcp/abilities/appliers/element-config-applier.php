@@ -9,7 +9,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
-use Elementor\Modules\Mcp\Abilities\Utils\Adjust_Llm_Prop_Value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -165,10 +164,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$resolved_value = $this->plain_values_resolver->resolve(
-				Adjust_Llm_Prop_Value::adjust_for_plain_resolver( $value, $prop_type ),
-				$prop_type
-			);
+			$resolved_value = $this->plain_values_resolver->resolve( $value, $prop_type );
 
 			if ( null === $resolved_value ) {
 				$errors[] = sprintf(
