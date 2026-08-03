@@ -46,6 +46,8 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
+    outputs:
+      CHANGES: ${{ steps.get_release_body.outputs.CHANGES }}
     steps:
       - name: Checkout tagged commit
         uses: actions/checkout@v4
@@ -57,6 +59,16 @@ jobs:
         with:
           VERSION: ${{ inputs.version }}
 
+      - name: Get Release Body From Changelog
+        id: get_release_body
+        run: |
+          CHANGES=$(node ./.github/scripts/get-changelog-section.js ${{ inputs.version }})
+          echo "CHANGES: $CHANGES"
+          {
+            echo "CHANGES<<EOF"
+            echo "$CHANGES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
   build-job:
     name: Build Plugin
     needs: changelog-check
@@ -99,10 +111,7 @@ jobs:
   validate-job:
     name: Validate Build
     needs: build-job
-    # build-job's own success isn't enough to satisfy the implicit success()
-    # check once an earlier job in the chain (changelog-check) was skipped —
-    # GitHub applies the skip to every job downstream of the skip point
-    # unless each one explicitly overrides it with always().
+
     if: always() && needs.build-job.result == 'success'
     runs-on: ubuntu-22.04
     permissions:
@@ -133,7 +142,7 @@ jobs:
 
   draft-job:
     name: Create Draft Release
-    needs: validate-job
+    needs: [validate-job, changelog-check]
     if: always() && needs.validate-job.result == 'success'
     runs-on: ubuntu-22.04
     permissions:
@@ -152,3 +161,4 @@ jobs:
           files: elementor-*.zip
           prerelease: ${{ inputs.prerelease }}
           draft: true
+          body: ${{ needs.changelog-check.outputs.CHANGES }}
