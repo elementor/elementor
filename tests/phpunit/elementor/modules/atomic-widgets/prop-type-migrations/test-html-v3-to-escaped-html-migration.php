@@ -23,6 +23,18 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$this->migration = json_decode( file_get_contents( $path ), true );
 	}
 
+	public function test_up__preserves_plain_string_value_from_type_only_html_v3() {
+		$data = [
+			'$$type' => 'html-v3',
+			'value' => 'Plain string from html-v2 migration',
+		];
+
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		$this->assertSame( 'escaped-html', $result['$$type'] );
+		$this->assertSame( 'Plain string from html-v2 migration', $result['value'] );
+	}
+
 	public function test_up__unwraps_content_to_plain_string() {
 		$data = [
 			'$$type' => 'html-v3',
@@ -40,6 +52,21 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$this->assertSame( 'escaped-html', $result['$$type'] );
 		$this->assertSame( 'Hello <strong>world</strong>', $result['value'] );
 		$this->assertArrayNotHasKey( 'content', $result );
+	}
+
+	public function test_up__unwraps_primitive_content_to_plain_string() {
+		$data = [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => 'Should chain: html-v3 -> html-v2',
+				'children' => [],
+			],
+		];
+
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		$this->assertSame( 'escaped-html', $result['$$type'] );
+		$this->assertSame( 'Should chain: html-v3 -> html-v2', $result['value'] );
 	}
 
 	public function test_up__drops_children() {

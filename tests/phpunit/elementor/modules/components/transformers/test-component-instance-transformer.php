@@ -184,7 +184,7 @@ abstract class Base_Mock_Component extends Component {
 						'widgetType' => 'e-heading',
 						'settings' => [
 							'title' => [
-								'$$type' => 'html-v3',
+								'$$type' => 'escaped-html',
 								'value' => [
 									'content' => ['$$type' => 'string', 'value' => $this->content],
 									'children' => [],

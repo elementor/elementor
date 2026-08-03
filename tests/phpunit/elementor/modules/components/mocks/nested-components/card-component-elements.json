@@ -55,14 +55,8 @@
                 "value": {
                   "override_key": "prop-3",
                   "origin_value": {
-                    "$$type": "html-v3",
-                    "value": {
-                      "content": {
-                        "$$type": "string",
-                        "value": "This is a title"
-                      },
-                      "children": []
-                    }
+                    "$$type": "escaped-html",
+                    "value": "This is a title"
                   }
                 }
               }
@@ -93,14 +87,8 @@
                             "value": {
                               "override_key": "prop-0",
                               "override_value": {
-                                "$$type": "html-v3",
-                                "value": {
-                                  "content": {
-                                    "$$type": "string",
-                                    "value": "Learn more"
-                                  },
-                                  "children": []
-                                }
+                                "$$type": "escaped-html",
+                                "value": "Learn more"
                               },
                               "schema_source": {
                                 "type": "component",
