@@ -12,7 +12,13 @@ class Style_Variants_Merger {
 
 	const PSEUDO_STATES = [ 'hover', 'focus', 'active' ];
 
-	const NULL_DECLARATION_PATTERN = '/([a-zA-Z][a-zA-Z0-9-]*)\s*:\s*null\s*;?/';
+	/**
+	 * Matches a property declaration `name: null;` only when it is not inside
+	 * a quoted string. The boundary (^|[;{]) ensures we only capture top-level
+	 * declarations, not occurrences inside values like content: "color: null;".
+	 * The boundary char is captured so it can be preserved in replacements.
+	 */
+	const NULL_DECLARATION_PATTERN = '/(^|[;{])\s*([a-zA-Z][a-zA-Z0-9-]*)\s*:\s*null\s*;?/';
 
 	public static function build_variants( array $breakpoint_blocks, Css_Converter $converter ): array {
 		$variants = [];
@@ -32,68 +38,29 @@ class Style_Variants_Merger {
 					continue;
 				}
 
-				$state = ltrim( $selector, ':' );
+				$state = strtolower( ltrim( $selector, ':' ) );
 
-				if ( in_array( $state, self::PSEUDO_STATES, true ) ) {
-					$null_props     = self::extract_null_props( $css );
-					$stripped_css   = self::strip_null_declarations( $css );
-					$result         = $converter->convert( $stripped_css );
-					$props          = $result['props'] ?? [];
-					$custom_css_str = $result['customCss'] ?? '';
-
-					if ( empty( $props ) && '' === $custom_css_str && empty( $null_props ) ) {
-						continue;
-					}
-
-					$variants[] = [
-						'meta'       => [
-							'breakpoint' => $bp,
-							'state'      => $state,
-						],
-						'props'      => $props,
-						'custom_css' => '' !== $custom_css_str
-							? [ 'raw' => base64_encode( $custom_css_str ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
-							: null,
-						'null_props' => $null_props,
-					];
+				if ( ':' !== ( $selector[0] ?? '' ) || ! in_array( $state, self::PSEUDO_STATES, true ) ) {
+					$base_custom_css_parts[] = '&' . $selector . ' { ' . trim( $css ) . ' }';
 					continue;
 				}
 
-				$base_custom_css_parts[] = '&' . $selector . ' { ' . trim( $css ) . ' }';
+				$variant = self::make_variant( $bp, $state, $css, $converter );
+				if ( null !== $variant ) {
+					$variants[] = $variant;
+				}
 			}
 
-			$base_null_props = self::extract_null_props( $base_block_css );
-			$base_block_css  = self::strip_null_declarations( $base_block_css );
-			$base_result     = $converter->convert( $base_block_css );
-			$base_props      = $base_result['props'] ?? [];
-			$base_custom_str = $base_result['customCss'] ?? '';
-
-			if ( ! empty( $base_custom_css_parts ) ) {
-				$extra           = implode( ' ', $base_custom_css_parts );
-				$base_custom_str = '' !== $base_custom_str ? $base_custom_str . ' ' . $extra : $extra;
+			$base_variant = self::make_variant( $bp, null, $base_block_css, $converter, $base_custom_css_parts );
+			if ( null !== $base_variant ) {
+				$variants[] = $base_variant;
 			}
-
-			if ( empty( $base_props ) && '' === $base_custom_str && empty( $base_null_props ) ) {
-				continue;
-			}
-
-			$variants[] = [
-				'meta'       => [
-					'breakpoint' => $bp,
-					'state'      => null,
-				],
-				'props'      => $base_props,
-				'custom_css' => '' !== $base_custom_str
-					? [ 'raw' => base64_encode( $base_custom_str ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
-					: null,
-				'null_props' => $base_null_props,
-			];
 		}
 
 		return $variants;
 	}
 
-	public static function apply_mode( array $existing, array $new_variants, string $mode, array $affected_breakpoints, array $props_to_remove = [] ): array {
+	public static function apply_mode( array $existing, array $new_variants, string $mode, array $affected_breakpoints ): array {
 		if ( 'replace' === $mode ) {
 			$kept      = array_values(
 				array_filter( $existing, fn( $v ) => ! in_array( $v['meta']['breakpoint'] ?? null, $affected_breakpoints, true ) )
@@ -138,16 +105,13 @@ class Style_Variants_Merger {
 
 			$variant_null_props  = $new_variant['null_props'] ?? [];
 			$wipe_all            = in_array( 'all', $variant_null_props, true );
-			$all_props_to_remove = array_merge(
-				$props_to_remove,
-				array_filter( $variant_null_props, fn( $k ) => 'all' !== $k )
-			);
+			$props_to_remove     = array_filter( $variant_null_props, fn( $k ) => 'all' !== $k );
 
 			$merged_props = $wipe_all
 				? ( $new_variant['props'] ?? [] )
 				: array_merge( $result[ $match ]['props'] ?? [], $new_variant['props'] ?? [] );
 
-			foreach ( $all_props_to_remove as $key ) {
+			foreach ( $props_to_remove as $key ) {
 				unset( $merged_props[ $key ] );
 			}
 
@@ -171,12 +135,6 @@ class Style_Variants_Merger {
 		return $result;
 	}
 
-	public static function extract_null_reset_props( array $css ): array {
-		return array_keys(
-			array_filter( $css, fn( $v ) => null === $v || 'null' === $v )
-		);
-	}
-
 	public static function merge_custom_css( ?array $existing, ?array $incoming ): ?array {
 		$existing_raw = isset( $existing['raw'] ) ? base64_decode( $existing['raw'] ) : ''; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding stored base64 custom_css for merge.
 		$incoming_raw = isset( $incoming['raw'] ) ? base64_decode( $incoming['raw'] ) : ''; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Decoding stored base64 custom_css for merge.
@@ -188,12 +146,41 @@ class Style_Variants_Merger {
 			: null;
 	}
 
+	private static function make_variant( string $breakpoint, ?string $state, string $css, Css_Converter $converter, array $extra_custom_css_parts = [] ): ?array {
+		$null_props   = self::extract_null_props( $css );
+		$stripped_css = self::strip_null_declarations( $css );
+		$result       = $converter->convert( $stripped_css );
+		$props        = $result['props'] ?? [];
+		$custom_str   = $result['customCss'] ?? '';
+
+		if ( ! empty( $extra_custom_css_parts ) ) {
+			$extra      = implode( ' ', $extra_custom_css_parts );
+			$custom_str = '' !== $custom_str ? $custom_str . ' ' . $extra : $extra;
+		}
+
+		if ( empty( $props ) && '' === $custom_str && empty( $null_props ) ) {
+			return null;
+		}
+
+		return [
+			'meta'       => [
+				'breakpoint' => $breakpoint,
+				'state'      => $state,
+			],
+			'props'      => $props,
+			'custom_css' => '' !== $custom_str
+				? [ 'raw' => base64_encode( $custom_str ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
+				: null,
+			'null_props' => $null_props,
+		];
+	}
+
 	private static function extract_null_props( string $css ): array {
 		$null_props = [];
 		preg_replace_callback(
 			self::NULL_DECLARATION_PATTERN,
 			function ( $matches ) use ( &$null_props ) {
-				$null_props[] = $matches[1];
+				$null_props[] = $matches[2];
 			},
 			$css
 		);
@@ -201,6 +188,6 @@ class Style_Variants_Merger {
 	}
 
 	private static function strip_null_declarations( string $css ): string {
-		return (string) preg_replace( self::NULL_DECLARATION_PATTERN, '', $css );
+		return (string) preg_replace( self::NULL_DECLARATION_PATTERN, '$1', $css );
 	}
 }

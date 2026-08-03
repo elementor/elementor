@@ -270,4 +270,29 @@ class Test_Css_Media_Splitter extends TestCase {
 		$this->assertStringContainsString( 'content: "}"', $result['breakpoints']['desktop'] );
 		$this->assertSame( 'font-size: 14px;', $result['breakpoints']['mobile'] );
 	}
+
+	public function test_split__non_alias_media_preserves_space_before_keyword() {
+		// Arrange.
+		$splitter = $this->make();
+
+		// Act — @media print is a valid raw media query; the word "print" must not be concatenated directly.
+		$result = $splitter->split( '@media print { color: red; }' );
+
+		// Assert.
+		$this->assertNull( $result['error'] );
+		$this->assertStringContainsString( '@media print', $result['custom_css'] );
+		$this->assertStringNotContainsString( '@mediaprint', $result['custom_css'] );
+	}
+
+	public function test_split__escaped_backslash_before_quote_does_not_terminate_string_early() {
+		// Arrange.
+		$splitter = $this->make();
+
+		// Act — `"\\"` is an escaped backslash; the string ends at the second quote, not at the escaped one.
+		$result = $splitter->split( 'content: "a\\\\"; @media(--mobile) { font-size: 14px; }' );
+
+		// Assert.
+		$this->assertNull( $result['error'] );
+		$this->assertArrayHasKey( 'mobile', $result['breakpoints'] );
+	}
 }

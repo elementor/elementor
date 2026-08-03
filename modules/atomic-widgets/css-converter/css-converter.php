@@ -76,7 +76,7 @@ class Css_Converter {
 			$char = $css[ $i ];
 
 			if ( $in_string ) {
-				if ( $string_char === $char && ( 0 === $i || '\\' !== $css[ $i - 1 ] ) ) {
+				if ( $string_char === $char && ! $this->is_escaped( $css, $i ) ) {
 					$in_string = false;
 				}
 				++$i;
@@ -90,7 +90,11 @@ class Css_Converter {
 				continue;
 			}
 
-			if ( '{' === $char || '}' === $char ) {
+			if ( '{' === $char ) {
+				return [ 'error' => 'Unsupported nested selector. Only &:hover, &:focus, and &:active pseudo-class blocks are allowed.' ];
+			}
+
+			if ( '}' === $char ) {
 				return [ 'error' => 'Unclosed brace detected in CSS input.' ];
 			}
 
@@ -100,16 +104,16 @@ class Css_Converter {
 			}
 
 			$j = $i + 1;
-			while ( $j < $len && '{' !== $css[ $j ] ) {
+			while ( $j < $len && '{' !== $css[ $j ] && ';' !== $css[ $j ] && '}' !== $css[ $j ] ) {
 				++$j;
 			}
 
-			if ( $j >= $len ) {
+			if ( $j >= $len || ';' === $css[ $j ] || '}' === $css[ $j ] ) {
 				++$i;
 				continue;
 			}
 
-			$selector = trim( substr( $css, $i + 1, $j - $i - 1 ) );
+			$selector = rtrim( substr( $css, $i + 1, $j - $i - 1 ) );
 
 			if ( '' === $selector ) {
 				return [ 'error' => 'Bare & block without a selector is not valid CSS.' ];

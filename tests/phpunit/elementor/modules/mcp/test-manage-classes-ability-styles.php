@@ -1000,4 +1000,109 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		$this->assertSame( 'error', $result['results'][1]['status'] );
 		$this->assertSame( 'invalid_css', $result['results'][1]['code'] );
 	}
+
+	public function test_create__descendant_combinator_block_treated_as_custom_css_not_pseudo_state() {
+		// Arrange — "& :hover" (space before :hover) is a descendant combinator, not a pseudo-class.
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )
+			->with( '& :hover { color: blue; }' )
+			->willReturn( [
+				'blocks' => [
+					[ 'selector' => null, 'css' => '' ],
+					[ 'selector' => ' :hover', 'css' => ' color: blue; ' ],
+				],
+			] );
+		$converter->method( 'convert' )
+			->willReturn( [ 'props' => [], 'customCss' => '& :hover { color: blue; }', 'rejected' => [] ] );
+
+		$captured_variants = null;
+		$repository        = $this->createMock( Global_Classes_Repository::class );
+		$repository->method( 'all_labels' )->willReturn( [] );
+		$repository->method( 'get_order' )->willReturn( [] );
+		$repository->method( 'apply_changes' )->willReturnCallback( function ( $touched ) use ( &$captured_variants ) {
+			$item              = reset( $touched );
+			$captured_variants = $item['variants'];
+		} );
+
+		// Act.
+		$this->make_ability_with_converter( $repository, $converter )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'label'  => 'test-class',
+				'css'    => '& :hover { color: blue; }',
+			],
+		] ) );
+
+		// Assert — no pseudo-state variant; the block ends up in custom_css.
+		$states = array_column( array_column( $captured_variants, 'meta' ), 'state' );
+		$this->assertNotContains( 'hover', $states );
+		$this->assertCleanVariants( $captured_variants );
+	}
+
+	public function test_create__pseudo_state_case_insensitive() {
+		// Arrange — "&:HOVER" should behave exactly as "&:hover".
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )
+			->willReturn( [
+				'blocks' => [
+					[ 'selector' => null, 'css' => '' ],
+					[ 'selector' => ':HOVER', 'css' => 'color: blue;' ],
+				],
+			] );
+		$converter->method( 'convert' )
+			->willReturnMap( [
+				[ '', [ 'props' => [], 'customCss' => '', 'rejected' => [] ] ],
+				[ 'color: blue;', [ 'props' => [ 'color' => 'blue' ], 'customCss' => '', 'rejected' => [] ] ],
+			] );
+
+		$captured_variants = null;
+		$repository        = $this->createMock( Global_Classes_Repository::class );
+		$repository->method( 'all_labels' )->willReturn( [] );
+		$repository->method( 'get_order' )->willReturn( [] );
+		$repository->method( 'apply_changes' )->willReturnCallback( function ( $touched ) use ( &$captured_variants ) {
+			$item              = reset( $touched );
+			$captured_variants = $item['variants'];
+		} );
+
+		// Act.
+		$this->make_ability_with_converter( $repository, $converter )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'label'  => 'test-class',
+				'css'    => '&:HOVER { color: blue; }',
+			],
+		] ) );
+
+		// Assert — variant recorded with lowercase state.
+		$this->assertCount( 1, $captured_variants );
+		$this->assertSame( 'hover', $captured_variants[0]['meta']['state'] );
+		$this->assertCleanVariants( $captured_variants );
+	}
+
+	public function test_update__label_only_preserves_existing_variants() {
+		// Arrange — no css provided; only label changes.
+		$existing_variants = [
+			[ 'meta' => [ 'breakpoint' => 'desktop', 'state' => null ], 'props' => [ 'color' => 'red' ], 'custom_css' => null ],
+		];
+		$repository = $this->make_repository_with_existing_class( 'g-abc1234', $existing_variants );
+
+		$captured_item = null;
+		$repository->method( 'apply_changes' )->willReturnCallback( function ( $touched ) use ( &$captured_item ) {
+			$captured_item = $touched['g-abc1234'];
+		} );
+
+		// Act.
+		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id'     => 'g-abc1234',
+				'label'  => 'renamed-class',
+			],
+		] ) );
+
+		// Assert.
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'renamed-class', $captured_item['label'] );
+		$this->assertSame( $existing_variants, $captured_item['variants'] );
+	}
 }

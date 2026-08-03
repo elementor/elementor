@@ -151,6 +151,44 @@ class Test_Css_Converter_Parse_Nested extends TestCase {
 		$this->assertStringContainsString( 'color: blue;', $block_css );
 	}
 
+	public function test_parse_nested__ampersand_in_property_value_does_not_corrupt_parse() {
+		// Arrange.
+		$converter = $this->make();
+
+		// Act — & inside url() is not a selector; the following &:hover block should parse correctly.
+		$result = $converter->parse_nested( 'background: url(a&b.png); &:hover { color: red; }' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'error', $result );
+		$this->assertCount( 2, $result['blocks'] );
+		$this->assertSame( ':hover', $result['blocks'][1]['selector'] );
+	}
+
+	public function test_parse_nested__descendant_space_selector_is_not_treated_as_pseudo_state() {
+		// Arrange.
+		$converter = $this->make();
+
+		// Act — "& :hover" (space) is a descendant combinator, not a pseudo-class.
+		$result = $converter->parse_nested( '& :hover { color: blue; }' );
+
+		// Assert — extracted as a block with selector ' :hover' (leading space preserved).
+		$this->assertArrayNotHasKey( 'error', $result );
+		$this->assertCount( 2, $result['blocks'] );
+		$this->assertSame( ' :hover', $result['blocks'][1]['selector'] );
+	}
+
+	public function test_parse_nested__unsupported_nested_selector_returns_descriptive_error() {
+		// Arrange.
+		$converter = $this->make();
+
+		// Act — "span { }" is an unsupported nested selector.
+		$result = $converter->parse_nested( 'color: blue; span { color: green; }' );
+
+		// Assert — error message mentions supported selectors, not "unclosed brace".
+		$this->assertArrayHasKey( 'error', $result );
+		$this->assertStringContainsString( 'Unsupported nested selector', $result['error'] );
+	}
+
 	public function test_parse_nested__base_declarations_preserved_after_stripping_blocks() {
 		// Arrange.
 		$converter = $this->make();

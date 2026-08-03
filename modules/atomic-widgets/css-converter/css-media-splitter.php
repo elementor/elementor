@@ -12,7 +12,9 @@ class Css_Media_Splitter {
 
 	const DESKTOP_ALIASES = [ 'desktop', 'default' ];
 	const DESKTOP_KEY     = 'desktop';
+	const MEDIA_AT_LENGTH = 6;
 
+	/** @var array */
 	private array $known_breakpoints;
 
 	public function __construct( array $known_breakpoints ) {
@@ -38,7 +40,7 @@ class Css_Media_Splitter {
 			$char = $css[ $i ];
 
 			if ( $in_string ) {
-				if ( $string_char === $char && ( 0 === $i || '\\' !== $css[ $i - 1 ] ) ) {
+				if ( $string_char === $char && ! $this->is_escaped( $css, $i ) ) {
 					$in_string = false;
 				}
 				++$i;
@@ -61,11 +63,7 @@ class Css_Media_Splitter {
 			if ( '}' === $char ) {
 				--$depth;
 				if ( $depth < 0 ) {
-					return [
-						'breakpoints' => [],
-						'custom_css'  => '',
-						'error'       => 'Unexpected closing bracket in CSS.',
-					];
+					return $this->split_error( 'Unexpected closing bracket in CSS.' );
 				}
 				++$i;
 				continue;
@@ -83,7 +81,7 @@ class Css_Media_Splitter {
 
 			$root_segments[] = substr( $css, $segment_start, $i - $segment_start );
 
-			$j = $i + 6;
+			$j = $i + self::MEDIA_AT_LENGTH;
 			while ( $j < $len && '{' !== $css[ $j ] ) {
 				++$j;
 			}
@@ -94,15 +92,11 @@ class Css_Media_Splitter {
 				continue;
 			}
 
-			$raw_selector = trim( substr( $css, $i + 6, $j - $i - 6 ) );
+			$raw_selector = trim( substr( $css, $i + self::MEDIA_AT_LENGTH, $j - $i - self::MEDIA_AT_LENGTH ) );
 			$block_end    = $this->find_block_end( $css, $j + 1, $len );
 
 			if ( null === $block_end ) {
-				return [
-					'breakpoints' => [],
-					'custom_css'  => '',
-					'error'       => 'Unclosed @media block.',
-				];
+				return $this->split_error( 'Unclosed @media block.' );
 			}
 
 			$block_content = trim( substr( $css, $j + 1, $block_end - $j - 2 ) );
@@ -113,27 +107,19 @@ class Css_Media_Splitter {
 				$result = $this->resolve_alias( $matches[1] );
 
 				if ( isset( $result['error'] ) ) {
-					return [
-						'breakpoints' => [],
-						'custom_css'  => '',
-						'error'       => $result['error'],
-					];
+					return $this->split_error( $result['error'] );
 				}
 
 				if ( $this->contains_nested_breakpoint( $block_content ) ) {
-					return [
-						'breakpoints' => [],
-						'custom_css'  => '',
-						'error'       => 'Nested breakpoints are not allowed.',
-					];
+					return $this->split_error( 'Nested breakpoints are not allowed.' );
 				}
 
-				$target                  = $result['breakpoint'];
+				$target                 = $result['breakpoint'];
 				$breakpoints[ $target ] = isset( $breakpoints[ $target ] )
 					? $breakpoints[ $target ] . ' ' . $block_content
 					: $block_content;
 			} else {
-				$custom_blocks[] = '@media' . $raw_selector . ' { ' . $block_content . ' }';
+				$custom_blocks[] = '@media ' . $raw_selector . ' { ' . $block_content . ' }';
 			}
 		}
 
@@ -153,6 +139,14 @@ class Css_Media_Splitter {
 		];
 	}
 
+	private function split_error( string $message ): array {
+		return [
+			'breakpoints' => [],
+			'custom_css'  => '',
+			'error'       => $message,
+		];
+	}
+
 	private function contains_nested_breakpoint( string $css ): bool {
 		$all_aliases = array_merge( self::DESKTOP_ALIASES, $this->known_breakpoints );
 		$pattern     = '/@media\s*\(\s*--(?:' . implode( '|', array_map( 'preg_quote', $all_aliases ) ) . ')\s*\)/';
@@ -161,11 +155,11 @@ class Css_Media_Splitter {
 	}
 
 	private function is_media_at( string $css, int $pos ): bool {
-		if ( 0 !== strncmp( substr( $css, $pos, 6 ), '@media', 6 ) ) {
+		if ( 0 !== strncmp( substr( $css, $pos, self::MEDIA_AT_LENGTH ), '@media', self::MEDIA_AT_LENGTH ) ) {
 			return false;
 		}
 
-		$after = $pos + 6;
+		$after = $pos + self::MEDIA_AT_LENGTH;
 		$len   = strlen( $css );
 
 		return $after >= $len || ! ctype_alpha( $css[ $after ] );
