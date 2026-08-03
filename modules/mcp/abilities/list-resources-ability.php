@@ -48,8 +48,33 @@ class List_Resources_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
+		$catalog = $this->get_resource_catalog();
+
+		/**
+		 * Filters the MCP list-resources catalog.
+		 *
+		 * Contributors should append associative arrays keyed by `uri`, `name`, `description`, `mimeType`.
+		 * Entries with a duplicate `uri` are deduped (last write wins).
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param array $catalog List of catalog entries.
+		 */
+		$filtered = apply_filters( 'elementor/mcp/list-resources/catalog', $catalog );
+
+		if ( ! is_array( $filtered ) ) {
+			$filtered = $catalog;
+		}
+
+		$deduped = [];
+		foreach ( $filtered as $entry ) {
+			if ( is_array( $entry ) && isset( $entry['uri'] ) && is_string( $entry['uri'] ) ) {
+				$deduped[ $entry['uri'] ] = $entry;
+			}
+		}
+
 		return [
-			'resources' => $this->get_resource_catalog(),
+			'resources' => array_values( $deduped ),
 		];
 	}
 

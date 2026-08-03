@@ -89,7 +89,7 @@ class Read_Resource_Ability extends Abstract_Ability {
 	}
 
 	private function get_resource_executors(): array {
-		return [
+		$executors = [
 			Style_Best_Practices_Ability::URI => [
 				'execute' => fn() => ( new Style_Best_Practices_Ability() )->execute(),
 				'mimeType' => 'text/markdown',
@@ -115,5 +115,20 @@ class Read_Resource_Ability extends Abstract_Ability {
 				'mimeType' => 'application/json',
 			],
 		];
+
+		/**
+		 * Filters the MCP read-resource executor map.
+		 *
+		 * Contributors should append entries keyed by resource URI. Each value must be an
+		 * associative array with `execute` (callable returning string|WP_Error) and `mimeType` (string).
+		 * Core defaults are always included; duplicate URI keys overwrite the previous entry.
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param array $executors Map of URI => [ 'execute' => callable, 'mimeType' => string ].
+		 */
+		$filtered = apply_filters( 'elementor/mcp/read-resource/executors', $executors );
+
+		return is_array( $filtered ) ? $filtered : $executors;
 	}
 }
