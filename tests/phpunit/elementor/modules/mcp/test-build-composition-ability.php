@@ -142,6 +142,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertTrue( $result['success'] );
 		$this->assertCount( 1, $result['root_element_ids'] );
+		$this->assertArrayHasKey( 'edit_url', $result );
+		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result );
 		$this->assertArrayNotHasKey( 'llm_instructions', $result );
 		$this->assertNotEmpty( $result['warnings'] );

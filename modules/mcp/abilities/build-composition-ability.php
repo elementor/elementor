@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
@@ -161,7 +162,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] );
 
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $xml_parser, $dom, [], $warnings, $mode, [] );
+			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
@@ -172,7 +173,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
 	}
 
 	private function get_ability_description(): string {
@@ -182,7 +183,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function get_output_schema(): array {
 		return [
 			'type' => 'object',
-			'required' => [ 'success', 'post_id', 'root_element_ids', 'version' ],
+			'required' => [ 'success', 'post_id', 'root_element_ids', 'edit_url', 'version' ],
 			'properties' => [
 				'success' => [ 'type' => 'boolean' ],
 				'post_id' => [ 'type' => 'integer' ],
@@ -190,6 +191,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
+				],
+				'edit_url' => [
+					'type' => 'string',
+					'format' => 'uri',
+					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
 				],
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
@@ -323,6 +329,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	private function build_response(
 		int $post_id,
+		Document $document,
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
@@ -336,6 +343,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'success' => true,
 			'post_id' => $post_id,
 			'root_element_ids' => $root_ids,
+			'edit_url' => $document->get_edit_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];

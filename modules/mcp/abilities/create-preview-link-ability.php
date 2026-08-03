@@ -28,7 +28,16 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 			[
 				'type' => 'object',
 				'properties' => [
-					'url' => [ 'type' => 'string', 'format' => 'uri' ],
+					'url' => [
+						'type' => 'string',
+						'format' => 'uri',
+						'description' => 'Anonymous, time-limited preview URL. For the agent to self-validate rendering. DO NOT share with the user.',
+					],
+					'edit_url' => [
+						'type' => 'string',
+						'format' => 'uri',
+						'description' => 'Elementor editor URL for the post. Share THIS with the user when they need a link (they must be logged into WordPress as an editor).',
+					],
 					'post_id' => [ 'type' => 'integer' ],
 					'revision_id' => [ 'type' => 'integer' ],
 					'expires_at' => [ 'type' => 'string', 'format' => 'date-time' ],
@@ -91,9 +100,11 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 
 		$expires_at = time() + $ttl_minutes * MINUTE_IN_SECONDS;
 		$token = Preview_Token::encode( $post_id, $revision_id, $expires_at, Preview_Token::secret() );
+		$document = Plugin::$instance->documents->get( $post_id );
 
 		return [
 			'url' => add_query_arg( Preview_Token::QUERY_ARG, $token, home_url( '/' ) ),
+			'edit_url' => $document ? $document->get_edit_url() : '',
 			'post_id' => $post_id,
 			'revision_id' => $revision_id,
 			'expires_at' => gmdate( 'c', $expires_at ),

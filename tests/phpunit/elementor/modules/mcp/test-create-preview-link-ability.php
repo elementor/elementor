@@ -64,6 +64,8 @@ class Test_Create_Preview_Link_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'url', $result );
 		$this->assertStringContainsString( Preview_Token::QUERY_ARG . '=', $result['url'] );
+		$this->assertArrayHasKey( 'edit_url', $result );
+		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertSame( $post_id, $result['post_id'] );
 		$this->assertGreaterThan( 0, $result['revision_id'] );
 		$this->assertGreaterThan( time(), $result['expires_at_unix'] );
