@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Children_Dependency_Eva
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\Utils\Format_Element_Ids;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Plugin;
 
@@ -13,27 +14,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Applies `children_dependencies` rules to a component's element tree at render
+ * time, mirroring what the editor does on the canvas via `reconcileInitialChildren`.
+ *
+ * Must run *before* {@see Format_Component_Elements_Id::format()} so that children
+ * inserted here are included in the instance-scoped id hashing.
+ */
 class Reconcile_Component_Instance_Elements {
+	const ELEMENT_ID_LENGTH = 7;
+
 	public static function apply( array $elements ): array {
 		return array_map( [ self::class, 'reconcile_element' ], $elements );
 	}
 
 	private static function reconcile_element( array $element ): array {
-		if ( ! empty( $element['elements'] ) ) {
-			$element['elements'] = array_map( [ self::class, 'reconcile_element' ], $element['elements'] );
-		}
+		$children = self::resolve_children( $element );
 
+		$element['elements'] = array_map( [ self::class, 'reconcile_element' ], $children );
+
+		return $element;
+	}
+
+	private static function resolve_children( array $element ): array {
+		$children = $element['elements'] ?? [];
 		$instance = Plugin::$instance->elements_manager->create_element_instance( $element );
 
-		if ( ! Utils::is_atomic( $instance ) ) {
-			return $element;
+		if ( ! $instance || ! Utils::is_atomic( $instance ) ) {
+			return $children;
 		}
 
 		/** @var Atomic_Element_Base|Atomic_Widget_Base $instance */
 		$dependencies = $instance->get_config()['children_dependencies'] ?? [];
 
 		if ( empty( $dependencies ) ) {
-			return $element;
+			return $children;
 		}
 
 		$resolved_settings = Render_Props_Resolver::for_settings()->resolve(
@@ -41,18 +56,20 @@ class Reconcile_Component_Instance_Elements {
 			$instance->get_settings()
 		);
 
-		$children = $element['elements'] ?? [];
-
 		foreach ( $dependencies as $rule ) {
-			$is_met = Children_Dependency_Evaluator::is_met( $rule['when'] ?? null, $resolved_settings );
 			$child_type = $rule['child_type'];
+			$is_met = Children_Dependency_Evaluator::is_met( $rule['when'] ?? null, $resolved_settings );
 			$index = self::find_child_index( $children, $child_type );
 			$is_present = $index >= 0;
 
 			if ( $is_met && ! $is_present ) {
-				$model = $rule['default_model'] ?? [ 'elType' => $child_type ];
-				$insert_at = self::resolve_insert_index( $rule['position'] ?? [], $children );
-				array_splice( $children, $insert_at, 0, [ $model ] );
+				$model = self::derive_ids(
+					$rule['default_model'] ?? [ 'elType' => $child_type ],
+					( $element['id'] ?? '' ) . '_' . $child_type
+				);
+
+				array_splice( $children, self::resolve_insert_index( $rule['position'] ?? [], $children ), 0, [ $model ] );
+
 				continue;
 			}
 
@@ -61,9 +78,25 @@ class Reconcile_Component_Instance_Elements {
 			}
 		}
 
-		if ( ! empty( $children ) ) {
-			$element['elements'] = array_map( [ self::class, 'reconcile_element' ], $children );
-		} else {
+		return $children;
+	}
+
+	/**
+	 * `default_model` payloads are static configuration and carry no ids, so every
+	 * inserted node gets one derived from the parent id and its position in the subtree.
+	 * Keep in sync with `deriveIds()` in the editor's
+	 * `reconcile-component-instance-elements.ts` so ids match between render and canvas.
+	 */
+	private static function derive_ids( array $element, string $seed ): array {
+		$element['id'] = Format_Element_Ids::hash_string( $seed, self::ELEMENT_ID_LENGTH );
+
+		if ( ! empty( $element['elements'] ) ) {
+			$children = array_values( $element['elements'] );
+
+			foreach ( $children as $index => $child ) {
+				$children[ $index ] = self::derive_ids( $child, $element['id'] . '_' . $index );
+			}
+
 			$element['elements'] = $children;
 		}
 

@@ -58,8 +58,8 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
-		$data = Format_Component_Elements_Id::format( $data, [ $instance_element_id ] );
 		$data = Reconcile_Component_Instance_Elements::apply( $data );
+		$data = Format_Component_Elements_Id::format( $data, [ $instance_element_id ] );
 
 		$content = '';
 

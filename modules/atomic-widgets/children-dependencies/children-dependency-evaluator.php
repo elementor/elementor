@@ -80,6 +80,16 @@ class Children_Dependency_Evaluator {
 
 				return in_array( $actual_value, $expected_value, true ) === ( 'in' === $operator );
 
+			case 'contains':
+			case 'ncontains':
+				$contains = self::contains( $actual_value, $expected_value );
+
+				if ( null === $contains ) {
+					return false;
+				}
+
+				return ( 'contains' === $operator ) === $contains;
+
 			case 'exists':
 			case 'not_exist':
 				$exists = (bool) $actual_value || 0 === $actual_value || false === $actual_value;
@@ -89,5 +99,25 @@ class Children_Dependency_Evaluator {
 			default:
 				return true;
 		}
+	}
+
+	/**
+	 * @return bool|null Null when the values are not comparable.
+	 */
+	private static function contains( $actual_value, $expected_value ): ?bool {
+		if ( is_array( $actual_value ) ) {
+			$haystack = array_map(
+				fn( $item ) => is_array( $item ) && array_key_exists( 'value', $item ) ? $item['value'] : $item,
+				$actual_value
+			);
+
+			return in_array( $expected_value, $haystack, true );
+		}
+
+		if ( is_string( $actual_value ) && is_string( $expected_value ) ) {
+			return false !== strpos( $actual_value, $expected_value );
+		}
+
+		return null;
 	}
 }
