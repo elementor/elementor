@@ -2,7 +2,7 @@
 
 ## v4 (atomic)
 
-In-repo reference for Elementor v4: [docs/v4/](v4/README.md)
+In-repo reference for Elementor v4: [docs/atomic-builder/](atomic-builder/README.md)
 
 ## v3 addon development
 
