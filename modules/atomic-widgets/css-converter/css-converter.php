@@ -59,6 +59,11 @@ class Css_Converter {
 			$props = $ejected['props'];
 			$leftover = array_merge( $leftover, $ejected['custom_css'] );
 			$rejected = array_merge( $rejected, $ejected['rejected'] );
+
+			// Post-processing: handle edge cases that the general transform pipeline cannot cover.
+			$gradient_color_stops_leftovers = $this->variable_transformer->normalize_gradient_color_stops( $props, $rules );
+			$leftover = array_merge( $leftover, $gradient_color_stops_leftovers );
+
 			$props = $this->validate_props( $props, $schema );
 		}
 
