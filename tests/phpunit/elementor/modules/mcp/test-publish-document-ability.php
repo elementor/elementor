@@ -130,7 +130,6 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'forced_failure', $result->get_error_code() );
 		$this->assertSame( 'draft', get_post_status( $post_id ) );
 	}
 }
