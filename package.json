@@ -85,7 +85,7 @@
     "@babel/runtime-corejs3": "^7.26.0",
     "@elementor/wp-lite-env": "^0.0.20",
     "@emotion/babel-plugin": "^11.13.5",
-    "@eslint/compat": "^1.4.1",
+    "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.6",
     "@jest/globals": "~29.7.0",
     "@playwright/test": "~1.62.0",
@@ -207,7 +207,21 @@
     "scheduler": "^0.20.0",
     "form-data": "4.0.4",
     "baseline-browser-mapping": "^2.9.19",
-    "zod-validation-error": "^4.0.2"
+    "zod-validation-error": "^4.0.2",
+    "@babel/eslint-parser": { "eslint": "$eslint" },
+    "eslint-plugin-import": { "eslint": "$eslint" },
+    "eslint-plugin-react": { "eslint": "$eslint" },
+    "eslint-plugin-jsx-a11y": { "eslint": "$eslint" },
+    "eslint-plugin-jsdoc": { "eslint": "$eslint" },
+    "eslint-plugin-jest-dom": { "eslint": "$eslint" },
+    "eslint-plugin-testing-library": { "eslint": "$eslint" },
+    "eslint-plugin-local-rules": { "eslint": "$eslint" },
+    "eslint-plugin-no-jquery": { "eslint": "$eslint" },
+    "eslint-plugin-playwright": { "eslint": "$eslint" },
+    "eslint-plugin-simple-import-sort": { "eslint": "$eslint" },
+    "eslint-import-resolver-typescript": { "eslint": "$eslint" },
+    "@tanstack/eslint-plugin-query": { "eslint": "$eslint" },
+    "eslint-plugin-react-compiler": { "eslint": "$eslint" }
   },
   "lint-staged": {
     "packages/**/*.{js,jsx,ts,tsx}": [
