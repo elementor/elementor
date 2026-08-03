@@ -3,6 +3,7 @@
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
+- `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
 - `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 
 # TOOL SUPPORT
@@ -80,7 +81,10 @@ Match the widget schema shape:
 - **boolean**: plain boolean (`true`)
 - **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
-- **image**: `{ "src": { "url": "https://example.com/photo.jpg", "alt": "Description" }, "size": "full" }` — `url` alone is sufficient for any external or placeholder image (e.g. `https://placehold.co/300x400`). `id` is only required for images already in the WordPress media library; omit it for all other cases. `alt` is optional but recommended for accessibility.
+- **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
+  - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`.
+  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
+- **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
 
 ## GLOBAL VARIABLES
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
@@ -179,7 +183,7 @@ Attach element interactions via the `interactions` parameter — a record mappin
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
-- Avoid SVG widgets unless assets are pre-uploaded
+- SVG widgets require an uploaded attachment: discover one via `elementor/list-assets` with `type: "svg"` and reference it by `id`. External URLs on `e-svg` render an empty div. When none exists, ask the user to upload, otherwise omit the icon or use a text label.
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
 # MODE
