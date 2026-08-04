@@ -25,7 +25,7 @@ jobs:
     name: Validate (Dry Run)
     if: github.repository_owner == 'elementor'
     permissions:
-      contents: read
+      contents: write
     uses: ./.github/workflows/release-tag-creation.yml
     with:
       version: ${{ inputs.version }}
