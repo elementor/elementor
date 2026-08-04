@@ -3,10 +3,11 @@ import { type ComponentProps, useCallback } from 'react';
 import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 
-import { useBoundProp } from '../bound-prop-context';
+import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { extractInlineHtmlContent } from '../utils/inline-editing';
 
 export const InlineEditingControl = createControl(
 	( {
@@ -18,8 +19,9 @@ export const InlineEditingControl = createControl(
 		attributes?: Record< string, string >;
 		props?: ComponentProps< 'div' >;
 	} ) => {
-		const { value, setValue, placeholder } = useBoundProp( escapedHtmlPropTypeUtil );
-		const content = value ?? '';
+		const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
+		const { value: rawValue } = usePropKeyContext();
+		const content = value ?? extractInlineHtmlContent( rawValue );
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {

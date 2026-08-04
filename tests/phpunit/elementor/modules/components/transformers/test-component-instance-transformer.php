@@ -185,10 +185,7 @@ abstract class Base_Mock_Component extends Component {
 						'settings' => [
 							'title' => [
 								'$$type' => 'escaped-html',
-								'value' => [
-									'content' => ['$$type' => 'string', 'value' => $this->content],
-									'children' => [],
-								],
+								'value' => $this->content,
 							],
 						],
 						'elements' => [],
