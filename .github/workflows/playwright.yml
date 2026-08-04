@@ -169,21 +169,20 @@ jobs:
           if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
             echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
             echo "BROWSER=all" >> $GITHUB_ENV
+            echo "PLAYWRIGHT_BROWSERS=chromium firefox webkit" >> $GITHUB_ENV
           elif [ "$BROWSER_INPUT" != "chromium" ]; then
             echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
             echo "BROWSER=$BROWSER_INPUT" >> $GITHUB_ENV
+            echo "PLAYWRIGHT_BROWSERS=$BROWSER_INPUT" >> $GITHUB_ENV
           else
             echo "BROWSER=chromium" >> $GITHUB_ENV
+            echo "PLAYWRIGHT_BROWSERS=chromium" >> $GITHUB_ENV
           fi
-      - name: Install playwright/test
-        run: |
-          if [ "$FULL_BROWSER_COMPAT" = "true" ] && [ "$BROWSER" = "all" ]; then
-            npx playwright install --with-deps chromium firefox webkit
-          elif [ "$FULL_BROWSER_COMPAT" = "true" ]; then
-            npx playwright install --with-deps "$BROWSER"
-          else
-            npx playwright install --with-deps chromium
-          fi
+      - name: Install Playwright browsers
+        uses: ./.github/actions/install-playwright-browsers
+        with:
+          browsers: ${{ env.PLAYWRIGHT_BROWSERS }}
+
       - name: Run Playwright tests
         env:
           REPEAT_EACH: ${{ github.event.inputs.repeat_each }}
