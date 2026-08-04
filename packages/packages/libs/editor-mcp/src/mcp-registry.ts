@@ -284,7 +284,7 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 					params as Parameters< typeof toolCallback >[ 0 ],
 					/* WebMCP: no protocol session — handlers must not rely on `extra` here */
 					{} as RequestHandlerExtra< ServerRequest, ServerNotification >
-				),
+				) as Promise< unknown >,
 		};
 		const extraData = {
 			resources: [ `Server resource name: ${ serverName }, Required to fetch!` ],
