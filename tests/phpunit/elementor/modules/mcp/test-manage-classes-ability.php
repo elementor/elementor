@@ -180,9 +180,9 @@ class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 		$this->assertSame( 'global_classes_limit_exceeded', $result['results'][0]['code'] );
 	}
 
-	public function test_update__requires_id_label_and_css() {
+	public function test_update__requires_at_least_id_or_label() {
 		$result = $this->make_ability()->execute( $this->operations_input( [
-			[ 'action' => 'update', 'label' => 'hero-heading' ],
+			[ 'action' => 'update' ],
 		] ) );
 
 		$this->assertSame( 'error', $result['status'] );

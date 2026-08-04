@@ -75,7 +75,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				'properties' => [
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50). Each item requires action; create/update need label and css; update/delete need id. Use mode to control merge behaviour on update (patch = upsert, replace = overwrite breakpoint).',
+						'description' => 'Bulk operations (1–50). Each item requires action. create needs label and css. update/delete need id or label (both unique identifiers; label is also updated if provided on update). Use mode to control merge behaviour on update (patch = upsert, replace = overwrite breakpoint).',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action' ],
@@ -265,9 +265,21 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$id    = $operation['id'] ?? '';
 		$label = $operation['label'] ?? '';
 
-		if ( '' === $id || '' === $label ) {
-			$results->add_error( $index, 'update', 'invalid_input', __( 'Update requires id and label.', 'elementor' ) );
+		if ( '' === $id && '' === $label ) {
+			$results->add_error( $index, 'update', 'invalid_input', __( 'Update requires id or label.', 'elementor' ) );
 			return;
+		}
+
+		if ( '' === $id ) {
+			$id = $this->resolve_class_id_by_label( $label, $all_labels );
+			if ( null === $id ) {
+				$results->add_error( $index, 'update', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+				return;
+			}
+		}
+
+		if ( '' === $label ) {
+			$label = $all_labels[ $id ] ?? '';
 		}
 
 		$mode = $operation['mode'] ?? 'patch';
@@ -369,11 +381,20 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	}
 
 	private function translate_delete( int $index, array $operation, array &$intents, array $all_labels, array $current_order, array &$deleted_set, Bulk_Operations_Result $results ): void {
-		$id = $operation['id'] ?? '';
+		$id    = $operation['id'] ?? '';
+		$label = $operation['label'] ?? '';
+
+		if ( '' === $id && '' === $label ) {
+			$results->add_error( $index, 'delete', 'invalid_input', __( 'Delete requires id or label.', 'elementor' ) );
+			return;
+		}
 
 		if ( '' === $id ) {
-			$results->add_error( $index, 'delete', 'invalid_input', __( 'Delete requires id.', 'elementor' ) );
-			return;
+			$id = $this->resolve_class_id_by_label( $label, $all_labels );
+			if ( null === $id ) {
+				$results->add_error( $index, 'delete', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+				return;
+			}
 		}
 
 		if ( ! in_array( $id, $current_order, true ) || isset( $deleted_set[ $id ] ) ) {
@@ -570,6 +591,11 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$new_order = array_values( $new_order );
 
 		return array_merge( $new_order, $added_ids );
+	}
+
+	private function resolve_class_id_by_label( string $label, array $all_labels ): ?string {
+		$id = array_search( $label, $all_labels, true );
+		return false !== $id ? $id : null;
 	}
 
 	private function bad_request( string $message ): \WP_Error {
