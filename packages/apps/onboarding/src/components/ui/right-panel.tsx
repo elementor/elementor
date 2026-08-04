@@ -34,7 +34,7 @@ const RightPanelRoot = styled( Box, {
 	};
 } );
 
-const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: string | undefined } ) {
+const VideoStack = React.memo( function ( { activeUrl }: { activeUrl: string | undefined } ) {
 	const videoRefs = useRef< Map< string, HTMLVideoElement > >( new Map() );
 	const [ readyUrls, setReadyUrls ] = useState< Set< string > >( () => new Set() );
 
@@ -103,7 +103,7 @@ interface RightPanelProps {
 	config: StepVisualConfig;
 }
 
-export const RightPanel = React.memo( function RightPanel( { config }: RightPanelProps ) {
+export const RightPanel = React.memo( function ( { config }: RightPanelProps ) {
 	return (
 		<RightPanelRoot background={ config.background }>
 			<VideoStack activeUrl={ config.video } />
