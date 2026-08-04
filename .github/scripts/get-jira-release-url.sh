@@ -3,6 +3,8 @@ set -uo pipefail
 
 JIRA_PROJECT_KEY="${JIRA_PROJECT_KEY:-ED}"
 JIRA_SITE_URL="${JIRA_SITE_URL:-https://elementor.atlassian.net}"
+CURL_CONNECT_TIMEOUT_SECONDS=10
+CURL_MAX_TIME_SECONDS=30
 
 skip() {
   echo "::warning::$1 Skipping Jira release link."
@@ -24,6 +26,7 @@ fi
 VERSION_NAME="v${RELEASE_VERSION}"
 
 VERSIONS_RESPONSE=$(curl -s --write-out '\n%{http_code}' \
+  --connect-timeout "$CURL_CONNECT_TIMEOUT_SECONDS" --max-time "$CURL_MAX_TIME_SECONDS" \
   -u "${JIRA_API_EMAIL}:${JIRA_API_TOKEN}" \
   "${JIRA_SITE_URL}/rest/api/3/project/${JIRA_PROJECT_KEY}/versions")
 VERSIONS_HTTP_CODE=$(echo "$VERSIONS_RESPONSE" | tail -n1)
