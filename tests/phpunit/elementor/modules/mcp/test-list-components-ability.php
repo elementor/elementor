@@ -87,17 +87,32 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'overridable_props', $result['components'][0] );
 	}
 
-	public function test_execute__returns_archived_flag_for_archived_components() {
+	public function test_execute__excludes_archived_components_from_the_discovery_list() {
 		// Arrange
 		$this->act_as_admin();
-		$component_id = $this->create_component( 'Old Header', 'publish' );
+		$archived_id = $this->create_component( 'Old Header', 'publish' );
+		$active_id = $this->create_component( 'Current Header', 'publish' );
 		$repository = new Components_Repository();
-		$component = $repository->get( $component_id, false );
-		$component->archive();
+		$repository->get( $archived_id, false )->archive();
 		$ability = new List_Components_Ability();
 
 		// Act
 		$result = $ability->execute();
+
+		// Assert
+		$this->assertSame( [ $active_id ], array_column( $result['components'], 'id' ) );
+	}
+
+	public function test_execute__returns_archived_flag_when_an_archived_component_is_requested_by_id() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_component( 'Old Header', 'publish' );
+		$repository = new Components_Repository();
+		$repository->get( $component_id, false )->archive();
+		$ability = new List_Components_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'component_ids' => [ $component_id ] ] );
 
 		// Assert
 		$this->assertCount( 1, $result['components'] );

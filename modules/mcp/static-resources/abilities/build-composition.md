@@ -23,7 +23,7 @@ This tool supports v4 elements only.
 
 1. Call `elementor/list-components` with no arguments and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
 2. If found, call `elementor/list-components` again with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
-3. If a component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
+3. If a component is not listed (archived components never are) or its overridable props do not cover the required customizations, fall back to raw widgets, save the composition as a new component, and inform the user about that.
 
 ## Placement
 - Use `<e-component configuration-id="my-hero">` in `xml_structure`. **Leaf tag — no child tags inside it.**
@@ -45,7 +45,6 @@ This tool supports v4 elements only.
 
 - `component_id` is required. `overrides` is optional — omit it entirely if you have no overrides to apply.
 - Only `override_key`s listed in `overridable_props` are valid. Unknown keys are rejected.
-- Do NOT place archived components (`is_archived: true`).
 - Components can be mixed with raw widgets in the same composition.
 
 # XML STRUCTURE

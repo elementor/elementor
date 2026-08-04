@@ -34,7 +34,10 @@ class List_Components_Ability extends Abstract_Ability {
 								'id'          => [ 'type' => 'integer' ],
 								'name'        => [ 'type' => 'string' ],
 								'uid'         => [ 'type' => 'string' ],
-								'is_archived' => [ 'type' => 'boolean' ],
+								'is_archived' => [
+									'type' => 'boolean',
+									'description' => 'Only present for components requested via component_ids. The discovery list never includes archived components.',
+								],
 								'overridable_props' => [
 									'type' => 'object',
 									'description' => 'Only present for components requested via component_ids.',
@@ -91,6 +94,7 @@ class List_Components_Ability extends Abstract_Ability {
 
 		return array_values(
 			$repository->all()
+				->filter( fn( $component ) => ! ( $component['is_archived'] ?? false ) )
 				->map( fn( $component ) => [
 					'id'          => $component['id'],
 					'name'        => $component['title'],

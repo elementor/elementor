@@ -151,6 +151,10 @@ class Components_Repository {
 	 * If target status is publish:
 	 * - Will return the main document. If it's an autosave, it will be published later by the publish_component method.
 	 */
+	public function get_for_edit( int $component_id, string $target_status ): ?Component_Document {
+		return $this->get_component_for_edit( $component_id, $target_status );
+	}
+
 	private function get_component_for_edit( int $component_id, string $target_status ): ?Component_Document {
 		$component = $this->get( $component_id );
 
