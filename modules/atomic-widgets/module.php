@@ -248,10 +248,6 @@ class Module extends BaseModule {
 		] );
 	}
 
-	/**
-	 * Dev-only gate that keeps the V4 Accordion element off trunk while it is built across
-	 * several pull requests. Remove it once the element passes QA.
-	 */
 	private function register_accordion_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ACCORDION,
