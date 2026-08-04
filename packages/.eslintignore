@@ -1,6 +1,0 @@
-node_modules/
-**/dist/
-docs/**
-!.github/
-scripts/**
-tests/**
