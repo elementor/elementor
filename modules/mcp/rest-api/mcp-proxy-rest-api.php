@@ -131,7 +131,19 @@ class Mcp_Proxy_REST_API {
 				->build();
 		}
 
-		return Response_Builder::make( $result )->build();
+		$http_status = $this->resolve_http_status( $result );
+
+		return Response_Builder::make( $result )->set_status( $http_status )->build();
+	}
+
+	private function resolve_http_status( $result ): int {
+		$status = is_array( $result ) ? ( $result['status'] ?? 'ok' ) : 'ok';
+
+		return match ( $status ) {
+			'error'         => 422,
+			'partial_error' => 207,
+			default         => 200,
+		};
 	}
 
 	private function route_wrapper( callable $cb ) {
