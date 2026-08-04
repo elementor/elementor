@@ -137,13 +137,7 @@ export const navigateToHomeScreen = async ( page: Page ) => {
 };
 
 export const expectScreenshot = async ( locator: Locator, baseName: string ): Promise<void> => {
-	try {
-		await expect( locator ).toHaveScreenshot( baseName );
-	} catch {
-		const extension = baseName.lastIndexOf( '.' );
-		const wp7Name = `${ baseName.slice( 0, extension ) }-with-wordpress7${ baseName.slice( extension ) }`;
-		await expect( locator ).toHaveScreenshot( wp7Name );
-	}
+	await expect( locator ).toHaveScreenshot( baseName );
 };
 
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
