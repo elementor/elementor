@@ -5,6 +5,7 @@ import { Box, Button, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAuditReport } from '../hooks/use-audit-report';
+import AuditFeedback from './audit-feedback';
 import ErrorPage from './pages/error-page';
 import LoadingPage from './pages/loading-page';
 import WelcomePage from './pages/welcome-page';
@@ -39,6 +40,7 @@ export default function AuditPanel() {
 				) : (
 					<Box sx={ { flex: 1 } } />
 				) }
+				{ lastScanLabel && <AuditFeedback /> }
 				<Button
 					variant="contained"
 					size="small"
