@@ -146,8 +146,16 @@ jobs:
             fi
           fi
 
-          # Disallow "latest" tag in manual (workflow_dispatch) runs
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "$INPUT_TAG" == "latest" ]; then
+          # Disallow "latest" tag in manual (workflow_dispatch) runs.
+          # NOTE: must check github.event.inputs (the raw dispatch payload),
+          # not github.event_name alone or the `inputs` context. github.event_name
+          # reflects the *root* trigger of the whole run, so it's still
+          # "workflow_dispatch" even when this workflow is invoked via
+          # workflow_call from another workflow_dispatch-triggered pipeline
+          # (e.g. one-click-release.yml, publish-release.yml). github.event.inputs
+          # only carries the directly-dispatched workflow's own inputs, so it's
+          # empty here unless *this* workflow was the one manually run.
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.tag }}" == "latest" ]; then
             echo "Error: 'latest' tag is not allowed for manual workflow_dispatch runs. Use the release workflow to publish as latest."
             exit 1
           fi
