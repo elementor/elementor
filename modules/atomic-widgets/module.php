@@ -161,6 +161,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_LIST = 'e_list';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
 
@@ -188,6 +189,7 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_list_experiment();
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
 
@@ -231,6 +233,21 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '4.0.0',
 			],
 		];
+	}
+
+	/**
+	 * Dev-only gate that keeps the V4 List element off trunk while it is built across
+	 * several pull requests. Remove it once the element passes QA.
+	 */
+	private function register_list_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_LIST,
+			'title' => esc_html__( 'List', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 List element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	/**
