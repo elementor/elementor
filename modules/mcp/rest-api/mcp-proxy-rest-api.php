@@ -139,11 +139,12 @@ class Mcp_Proxy_REST_API {
 	private function resolve_http_status( $result ): int {
 		$status = is_array( $result ) ? ( $result['status'] ?? 'ok' ) : 'ok';
 
-		return match ( $status ) {
+		$status_map = [
 			'error'         => 422,
 			'partial_error' => 207,
-			default         => 200,
-		};
+		];
+
+		return $status_map[ $status ] ?? 200;
 	}
 
 	private function route_wrapper( callable $cb ) {
