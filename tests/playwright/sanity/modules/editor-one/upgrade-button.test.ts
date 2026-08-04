@@ -60,6 +60,8 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 
 		await link.hover();
 
+		// Assert.
+
 		await expect( async () => {
 			const hoverBg = await link.evaluate(
 				( el ) => getComputedStyle( el ).backgroundColor,
