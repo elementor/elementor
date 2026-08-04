@@ -34,7 +34,6 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
-		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
 		self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
@@ -427,14 +426,6 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	private function site_has_forms_plugins() {
-		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' ) || did_action( 'metform/after_load' ) || defined( 'FORMINATOR_PLUGIN_BASENAME' );
-	}
-
-	private function site_has_woocommerce() {
-		return class_exists( 'WooCommerce' );
-	}
-
 	private function get_installed_form_plugin_name() {
 		static $detected_form_plugin = null;
 
@@ -611,194 +602,6 @@ class Admin_Notices extends Module {
 		$this->print_admin_notice( $options );
 
 		return true;
-	}
-
-	private function notice_site_mailer_promotion() {
-		$notice_id = 'site_mailer_promotion';
-		$has_forms = $this->site_has_forms_plugins();
-		$has_woocommerce = $this->site_has_woocommerce();
-
-		if ( ! $has_forms && ! $has_woocommerce ) {
-			return false;
-		}
-
-		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
-			return false;
-		}
-
-		if ( ( Utils::has_pro() && ! $has_woocommerce ) || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		$plugin_slug = 'site-mailer';
-		$plugin_file_path = 'site-mailer/site-mailer.php';
-
-		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
-		$is_woocommerce = $this->should_render_woocommerce_hint( $has_forms, $has_woocommerce );
-		$is_installed = Hints::is_plugin_installed( $plugin_slug );
-		$is_active = Hints::is_plugin_active( $plugin_slug );
-
-		if ( $is_active ) {
-			return false;
-		}
-
-		if ( $one_subscription ) {
-			if ( $is_woocommerce ) {
-				$title = esc_html__( 'Improve transactional email deliverability', 'elementor' );
-
-				if ( ! $is_installed ) {
-					$description = esc_html__( 'Use Email Deliverability to ensure store emails like purchase confirmations and shipping updates reach the inbox every time. Included in your ONE subscription.', 'elementor' );
-					$button_text = esc_html__( 'Install now', 'elementor' );
-					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg-one',
-						'source' => 'sm-core-woo-one-install',
-						'medium' => 'wp-dash',
-					];
-				} elseif ( ! $is_active ) {
-					$description = esc_html__( 'Email Deliverability is installed and included in your ONE subscription. Activate it to ensure store emails like purchase confirmations and shipping updates reach the inbox every time.', 'elementor' );
-					$button_text = esc_html__( 'Activate now', 'elementor' );
-					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg-one',
-						'source' => 'sm-core-woo-one-activate',
-						'medium' => 'wp-dash',
-					];
-				}
-			} else {
-				$title = esc_html__( 'Keep your form emails out of the spam folder', 'elementor' );
-
-				if ( ! $is_installed ) {
-					$description = esc_html__( 'Use Email Deliverability to ensure emails reach the inbox and track delivery with built-in logs. Included in your ONE subscription.', 'elementor' );
-					$button_text = esc_html__( 'Install now', 'elementor' );
-					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg-one',
-						'source' => 'sm-core-form-one-install',
-						'medium' => 'wp-dash',
-					];
-				} elseif ( ! $is_active ) {
-					$description = esc_html__( 'Use Email Deliverability to ensure emails reach the inbox and track delivery with built-in logs. Email Deliverability is included in your ONE subscription. Activate it to continue.', 'elementor' );
-					$button_text = esc_html__( 'Activate now', 'elementor' );
-					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg-one',
-						'source' => 'sm-core-form-one-activate',
-						'medium' => 'wp-dash',
-					];
-				}
-			}
-		// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
-		} else {
-			if ( $is_woocommerce ) {
-				$title = esc_html__( 'Improve Transactional Email Deliverability', 'elementor' );
-				$description = esc_html__( "Use Elementor's Email Deliverability to ensure your store emails like purchase confirmations, shipping updates and more are reliably delivered.", 'elementor' );
-
-				if ( ! $is_installed ) {
-					$button_text = esc_html__( 'Install now', 'elementor' );
-					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg',
-						'source' => 'sm-core-woo-install',
-						'medium' => 'wp-dash',
-					];
-				} elseif ( ! $is_active ) {
-					$button_text = esc_html__( 'Activate now', 'elementor' );
-					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg',
-						'source' => 'sm-core-woo-activate',
-						'medium' => 'wp-dash',
-					];
-				}
-			} else {
-				$title = esc_html__( 'Ensure your form emails avoid the spam folder!', 'elementor' );
-				$description = esc_html__( 'Use Email Deliverability for improved email deliverability, detailed email logs, and an easy setup.', 'elementor' );
-
-				if ( ! $is_installed ) {
-					$button_text = esc_html__( 'Install now', 'elementor' );
-					$button_url = $this->get_plugin_button_install_url( $plugin_slug );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg',
-						'source' => 'sm-core-form-install',
-						'medium' => 'wp-dash',
-					];
-				} elseif ( ! $is_active ) {
-					$button_text = esc_html__( 'Activate now', 'elementor' );
-					$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
-					$campaign_data = [
-						'name' => 'elementor_site_mailer_campaign',
-						'campaign' => 'sm-plg',
-						'source' => 'sm-core-form-activate',
-						'medium' => 'wp-dash',
-					];
-				}
-			}
-		}
-
-		$learn_more_url = $one_subscription && $is_woocommerce
-			? 'https://go.elementor.com/sm-woo-learn-more-one'
-			: 'https://go.elementor.com/sm-core-form/';
-
-		$options = [
-			'title' => $title,
-			'description' => $description,
-			'id' => $notice_id,
-			'type' => 'cta',
-			'button' => [
-				'text' => $button_text,
-				'url' => self::add_plg_campaign_data( $button_url, $campaign_data ),
-				'type' => 'cta',
-				'data' => [
-					'campaign' => $campaign_data['campaign'],
-					'source' => $campaign_data['source'],
-					'medium' => $campaign_data['medium'],
-				],
-			],
-			'button_secondary' => [
-				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => $learn_more_url,
-				'new_tab' => true,
-				'type' => 'cta',
-			],
-		];
-
-		if ( $is_woocommerce ) {
-			// We include WP's default notice class so it will be properly handled by WP's js handler
-			// And add a new one to distinguish between the two types of notices
-			$options['classes'] = [ 'notice', 'e-notice', 'sm-notice-wc' ];
-		}
-
-		$this->print_admin_notice( $options );
-
-		return true;
-	}
-
-	private function should_render_woocommerce_hint( $has_forms, $has_woocommerce ): bool {
-		if ( ! $has_forms && ! $has_woocommerce ) {
-			return false;
-		}
-
-		if ( ! $has_forms && $has_woocommerce ) {
-			return true;
-		}
-
-		if ( $has_forms && $has_woocommerce && Utils::has_pro() ) {
-			return true;
-		}
-
-		if ( ! $has_woocommerce ) {
-			return false;
-		}
-
-		return (bool) wp_rand( 0, 1 );
 	}
 
 	private function is_elementor_page(): bool {
@@ -1091,7 +894,6 @@ class Admin_Notices extends Module {
 		$allowed_plgs = [
 			'elementor_image_optimization_campaign',
 			'elementor_ea11y_campaign',
-			'elementor_site_mailer_campaign',
 		];
 
 		if ( ! in_array( $_GET['plg_campaign_name'], $allowed_plgs, true ) ) {
