@@ -85,7 +85,6 @@ runs:
           *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
         esac
 
-    - name: Install Playwright browsers
-      uses: ./.github/actions/install-playwright-browsers
-      with:
-        browsers: ${{ steps.browsers.outputs.list }}
+    - name: Install playwright/test
+      shell: bash
+      run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
