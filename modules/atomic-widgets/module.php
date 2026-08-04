@@ -162,6 +162,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
+	const EXPERIMENT_ACCORDION = 'e_accordion';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -188,6 +189,7 @@ class Module extends BaseModule {
 		}
 
 		$this->register_icon_button_experiment();
+		$this->register_accordion_experiment();
 
 		$this->register_hooks();
 
@@ -240,6 +242,21 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ICON_BUTTON,
 			'title' => esc_html__( 'Icon Button', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Icon Button element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	/**
+	 * Dev-only gate that keeps the V4 Accordion element off trunk while it is built across
+	 * several pull requests. Remove it once the element passes QA.
+	 */
+	private function register_accordion_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ACCORDION,
+			'title' => esc_html__( 'Accordion', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
