@@ -1,0 +1,208 @@
+name: Controlled Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'Version to release (e.g. 4.2.3 or 4.2.0-beta1)'
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
+
+permissions:
+  contents: write
+
+jobs:
+  # ── Job 1 ────────────────────────────────────────────────────────────────
+  # Dry-run: validates version, shows what tag will be created, writes
+  # a summary for the reviewer. Nothing is pushed.
+  # ─────────────────────────────────────────────────────────────────────────
+  validate:
+    name: Validate (Dry Run)
+    if: github.repository_owner == 'elementor'
+    permissions:
+      contents: read
+    uses: .github/workflows/release-tag-creation.yml@main
+    with:
+      version: ${{ inputs.version }}
+      dry_run: true
+    secrets:
+      MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+      MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+
+  # ── Job 2 ────────────────────────────────────────────────────────────────
+  # Approval gate. Reviewer reads the dry-run summary from Job 1 and clicks
+  # Approve in the GitHub Actions UI (Settings → Environments → release-owners).
+  # environment: cannot be placed on a `uses:` job — this intermediate job
+  # holds the gate so Job 3 can use a reusable workflow cleanly.
+  # ─────────────────────────────────────────────────────────────────────────
+  approve-tag:
+    name: Await Approval (Create Tag)
+    needs: validate
+    environment: release-owners
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Approval received
+        run: echo "Tag creation for ${{ inputs.version }} approved. Proceeding."
+
+  # ── Job 3 ────────────────────────────────────────────────────────────────
+  # Pushes the version bump commit and the Git tag.
+  # ─────────────────────────────────────────────────────────────────────────
+  tag:
+    name: Create Release Tag
+    needs: approve-tag
+    uses: .github/workflows/release-tag-creation.yml@main
+    with:
+      version: ${{ inputs.version }}
+      dry_run: false
+    secrets:
+      MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+      MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+
+  # ── Job 4 ────────────────────────────────────────────────────────────────
+  # Runs immediately after the draft release is created (no gate) so the
+  # reviewer can see a link to the draft release before deciding whether
+  # to approve Job 5.
+  # ─────────────────────────────────────────────────────────────────────────
+  release-summary:
+    name: Release Drafted
+    needs: build-draft
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Write release summary
+        run: |
+          {
+            echo "### 📦 Draft release created: \`${{ inputs.version }}\`"
+            echo ""
+            echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
+            echo ""
+            echo "> Before approving: I executed custom core with the build that was created by this action."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 5 ────────────────────────────────────────────────────────────────
+  # Approval gate. Reviewer confirms the tag/version bump before build & release.
+  # ─────────────────────────────────────────────────────────────────────────
+  approve-publish:
+    name: Await Approval (Publish Release)
+    needs: release-summary
+    environment: release-owners
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Approval received
+        run: echo "Publish of ${{ inputs.version }} approved. Proceeding."
+
+  # ── Job 6 ────────────────────────────────────────────────────────────────
+  # Rollback: runs only if the publish approval was rejected. Deletes the
+  # tag (and optionally the version-bump commit) created by Job 3.
+  # ─────────────────────────────────────────────────────────────────────────
+  cleanup-tag:
+    name: Rollback Tag (Rejected)
+    needs: approve-publish
+    if: always() && needs.approve-publish.result != 'success' && needs.approve-publish.result != 'skipped'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete remote tag
+        run: |
+          git push origin --delete "${{ inputs.version }}" || echo "Tag already absent"
+
+      - name: Delete draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete "${{ inputs.version }}" --yes || echo "Release already absent"
+
+      - name: Write deletion summary
+        run: |
+          {
+            echo "### 🗑️ Tag \`${{ inputs.version }}\` deleted"
+            echo ""
+            echo "Publish approval was rejected, so the tag has been removed from the repository."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 7 ────────────────────────────────────────────────────────────────
+  # Builds the plugin from the tagged commit and creates a draft release so
+  # the reviewer can inspect the actual built artifact before approving.
+  # ─────────────────────────────────────────────────────────────────────────
+  build-draft:
+    name: Build & Draft Release
+    needs: tag
+    uses: .github/workflows/build-draft-release.yml@main
+    with:
+      version: ${{ inputs.version }}
+      prerelease: ${{ inputs.prerelease }}
+      channel: ${{ needs.tag.outputs.channel }}
+    secrets:
+      MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+
+  # ── Job 7b ───────────────────────────────────────────────────────────────
+  # Rollback: runs only if build-draft failed outright (build/validate/draft
+  # error, not a rejection). No draft release exists yet in this failure
+  # path, so only the tag needs removing — unlike cleanup-tag, which also
+  # deletes a draft release created after a successful build.
+  # ─────────────────────────────────────────────────────────────────────────
+  cleanup-tag-on-build-failure:
+    name: Rollback Tag (Build Failed)
+    needs: build-draft
+    if: always() && needs.build-draft.result == 'failure'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete remote tag
+        run: |
+          git push origin --delete "${{ inputs.version }}" || echo "Tag already absent"
+
+      - name: Delete draft release (if partially created)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete "${{ inputs.version }}" --yes || echo "Release already absent"
+
+      - name: Write deletion summary
+        run: |
+          {
+            echo "### 🗑️ Tag \`${{ inputs.version }}\` deleted"
+            echo ""
+            echo "Build & Draft Release failed, so the tag has been removed from the repository."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 8 ────────────────────────────────────────────────────────────────
+  # Undrafts the release and publishes it (SVN, Slack). Delegates to
+  # publish-release.yml, runnable standalone against an existing draft.
+  # ─────────────────────────────────────────────────────────────────────────
+  publish:
+    name: Publish Release
+    needs: [approve-publish, build-draft, tag]
+    uses: .github/workflows/publish-release.yml@main
+    with:
+      version: ${{ inputs.version }}
+      prerelease: ${{ inputs.prerelease }}
+      channel: ${{ needs.tag.outputs.channel }}
+    secrets:
+      MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      SLACK_CHANNEL_RELEASE: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
