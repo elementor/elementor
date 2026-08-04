@@ -278,13 +278,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function update_with_xml( Component_Document $component, array $input ) {
-		$compiled = Composition_Compiler::make()->compile(
-			(string) $input['xml_structure'],
-			$input['element_config'] ?? [],
-			$input['classes'] ?? [],
-			$input['style'] ?? [],
-			$component
-		);
+		$compiled = $this->compile_composition( $input, $component );
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
 		}
@@ -367,12 +361,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * @return array{elements: array[], warnings: string[]}|\WP_Error
 	 */
 	private function compile_elements_from_xml( array $input ) {
-		$compiled = Composition_Compiler::make()->compile(
-			(string) $input['xml_structure'],
-			$input['element_config'] ?? [],
-			$input['classes'] ?? [],
-			$input['style'] ?? []
-		);
+		$compiled = $this->compile_composition( $input );
 
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
@@ -382,6 +371,26 @@ class Manage_Component_Ability extends Abstract_Ability {
 			'elements' => $this->assign_element_ids( $compiled['elements'] ),
 			'warnings' => $compiled['warnings'],
 		];
+	}
+
+	/**
+	 * @return array{elements: array[], warnings: string[], dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 */
+	private function compile_composition( array $input, ?Document $document = null ) {
+		$compiled = Composition_Compiler::make()->compile( $input, $document );
+		if ( is_wp_error( $compiled ) ) {
+			return $compiled;
+		}
+
+		if ( 1 !== count( $compiled['elements'] ) ) {
+			return new \WP_Error(
+				'component_requires_single_root',
+				__( 'A component composition must contain exactly one root element.', 'elementor' ),
+				[ 'status' => \WP_Http::UNPROCESSABLE_ENTITY ]
+			);
+		}
+
+		return $compiled;
 	}
 
 	/**
@@ -581,7 +590,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 				],
 				'xml_structure' => [
 					'type' => 'string',
-					'description' => 'create/update: same tag language as elementor/build-composition. Mutually exclusive with source_post_id/element_id.',
+					'description' => 'create/update: same tag language as elementor/build-composition, with exactly one root element. Mutually exclusive with source_post_id/element_id.',
 				],
 				'element_config' => [
 					'type' => 'object',
@@ -597,6 +606,11 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'type' => 'object',
 					'default' => (object) [],
 					'description' => 'Same shape as elementor/build-composition style. Only used with xml_structure.',
+				],
+				'interactions' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Same shape as elementor/build-composition interactions. Only used with xml_structure.',
 				],
 				'overridable_props' => [
 					'type' => 'object',

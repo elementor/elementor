@@ -3,10 +3,12 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -185,6 +187,70 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( $heading['id'], sanitize_key( $heading['id'] ) );
 	}
 
+	public function test_create__rejects_xml_structure_with_multiple_root_elements() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'create',
+			'title' => 'Multiple Roots',
+			'xml_structure' => '<e-heading configuration-id="heading"/><e-paragraph configuration-id="paragraph"/>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'component_requires_single_root', $result->get_error_code() );
+		$this->assertSame( \WP_Http::UNPROCESSABLE_ENTITY, $result->get_error_data()['status'] );
+	}
+
+	public function test_create__rejects_invalid_form_structure_from_xml() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'create',
+			'title' => 'Invalid Form',
+			'xml_structure' => '<e-flexbox configuration-id="wrapper"><e-form-input configuration-id="input"/></e-flexbox>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_form_structure', $result->get_error_code() );
+	}
+
+	public function test_create__applies_interactions_from_xml() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $this->with_interactions_active(
+			fn() => $ability->execute( [
+				'action' => 'create',
+				'title' => 'Interactive Heading',
+				'xml_structure' => '<e-heading configuration-id="heading"/>',
+				'interactions' => [ 'heading' => [ $this->valid_interaction() ] ],
+			] )
+		);
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
+		$elements = ( new Components_Repository() )->get( $result['component_id'], false )->get_elements_data();
+		$this->assertArrayHasKey( 'interactions', $elements[0], wp_json_encode( $elements[0] ) );
+		$this->assertCount( 1, $elements[0]['interactions']['items'] );
+		$interaction = $elements[0]['interactions']['items'][0];
+		$this->assertSame( 'interaction-item', $interaction['$$type'] );
+		$this->assertSame( 'load', $interaction['value']['trigger']['value'] );
+		$this->assertSame( 'fade', $interaction['value']['animation']['value']['effect']['value'] );
+	}
+
 	public function test_create__copies_an_existing_element_subtree_and_regenerates_ids() {
 		// Arrange
 		$this->act_as_admin();
@@ -328,6 +394,24 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 			'title' => 'Legacy Widget Component',
 			'source_post_id' => $post_id,
 			'element_id' => 'legacy-heading-id',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( Non_Atomic_Widget_Validator::ERROR_CODE, $result->get_error_code() );
+	}
+
+	public function test_create__rejects_non_atomic_widget_from_xml() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'create',
+			'title' => 'Legacy Heading XML',
+			'xml_structure' => '<heading configuration-id="heading"/>',
 		] );
 
 		// Assert
@@ -516,6 +600,49 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_overridable_props', $result->get_error_code() );
+	}
+
+	public function test_create__creates_nested_component_instances_and_exposes_their_props() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+		$inner_component_id = $this->given_card_component( $ability );
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'create',
+			'title' => 'Cards Grid ' . uniqid(),
+			'xml_structure' => '<e-flexbox configuration-id="grid"><e-component configuration-id="card-1"/><e-component configuration-id="card-2"/></e-flexbox>',
+			'element_config' => [
+				'card-1' => [ 'component_id' => $inner_component_id ],
+				'card-2' => [ 'component_id' => $inner_component_id ],
+			],
+			'overridable_props' => [
+				'card_1_caption' => [
+					'target' => 'card-1',
+					'prop_key' => 'caption',
+					'label' => 'Card 1 Caption',
+				],
+				'card_2_caption' => [
+					'target' => 'card-2',
+					'prop_key' => 'caption',
+					'label' => 'Card 2 Caption',
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
+		$component = ( new Components_Repository() )->get( $result['component_id'], false );
+		$instances = $component->get_elements_data()[0]['elements'];
+		$this->assertCount( 2, $instances );
+		$this->assertSame( 'e-component', $instances[0]['widgetType'] );
+		$this->assertSame( 'e-component', $instances[1]['widgetType'] );
+		$this->assertSame( $inner_component_id, $instances[0]['settings']['component_instance']['value']['component_id']['value'] );
+		$this->assertSame( $inner_component_id, $instances[1]['settings']['component_instance']['value']['component_id']['value'] );
+		$this->assertArrayHasKey( 'card_1_caption', $component->get_overridable_props()->props );
+		$this->assertArrayHasKey( 'card_2_caption', $component->get_overridable_props()->props );
 	}
 
 	public function test_update__exposes_further_from_nested_e_component_instance() {
@@ -899,6 +1026,76 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'p1', $elements[0]['elements'][0]['editor_settings']['title'] );
 	}
 
+	public function test_update__rejects_invalid_form_structure_and_preserves_the_element_tree() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component_with_content( [
+			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
+		], 'Invalid Form Update' );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'update',
+			'component_id' => $component_id,
+			'xml_structure' => '<e-flexbox configuration-id="wrapper"><e-form-input configuration-id="input"/></e-flexbox>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_form_structure', $result->get_error_code() );
+		$elements = ( new Components_Repository() )->get( $component_id, false )->get_elements_data();
+		$this->assertSame( 'h1', $elements[0]['id'] );
+	}
+
+	public function test_update__rejects_xml_structure_with_multiple_root_elements() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component_with_content( [
+			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
+		], 'Multiple Root Update' );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'update',
+			'component_id' => $component_id,
+			'xml_structure' => '<e-heading configuration-id="heading"/><e-paragraph configuration-id="paragraph"/>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'component_requires_single_root', $result->get_error_code() );
+	}
+
+	public function test_update__applies_interactions_from_xml() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component_with_content( [
+			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
+		], 'Interactive Update' );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $this->with_interactions_active(
+			fn() => $ability->execute( [
+				'action' => 'update',
+				'component_id' => $component_id,
+				'xml_structure' => '<e-heading configuration-id="heading"/>',
+				'interactions' => [ 'heading' => [ $this->valid_interaction() ] ],
+			] )
+		);
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
+		$elements = ( new Components_Repository() )->get( $component_id, false )->get_elements_data();
+		$this->assertArrayHasKey( 'interactions', $elements[0], wp_json_encode( $elements[0] ) );
+		$this->assertCount( 1, $elements[0]['interactions']['items'] );
+	}
+
 	public function test_update__with_draft_publish_status_creates_an_autosave_and_leaves_the_published_document_untouched() {
 		// Arrange
 		$this->act_as_admin();
@@ -1123,6 +1320,41 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 
 	private function create_component_with_content( array $elements, string $title, string $status = 'publish', array $settings = [] ): int {
 		return ( new Components_Repository() )->create( $title, $elements, $status, uniqid( 'uid-', true ), $settings );
+	}
+
+	private function valid_interaction(): array {
+		return [
+			'trigger' => 'load',
+			'animation' => [
+				'effect' => 'fade',
+				'type' => 'in',
+				'direction' => '',
+				'timing_config' => [
+					'duration' => [ 'size' => 600, 'unit' => 'ms' ],
+					'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+				],
+				'config' => [
+					'easing' => 'easeIn',
+				],
+			],
+			'breakpoints' => [
+				'excluded' => [],
+			],
+		];
+	}
+
+	private function with_interactions_active( callable $callback ) {
+		$experiments = Plugin::$instance->experiments;
+		$original_state = $experiments->get_features( Interactions_Module::EXPERIMENT_NAME )['state'];
+		$feature_option_key = $experiments->get_feature_option_key( Interactions_Module::EXPERIMENT_NAME );
+		update_option( $feature_option_key, Experiments_Manager::STATE_ACTIVE );
+		new Interactions_Module();
+
+		try {
+			return $callback();
+		} finally {
+			update_option( $feature_option_key, $original_state );
+		}
 	}
 
 	/**

@@ -7,12 +7,12 @@ Every call takes one `action`: `create`, `update`, `rename`, `archive`, `publish
 
 ## create
 Requires `title` (2-200 chars). Choose ONE source for the initial content, or omit both to create an empty component:
-- **xml_structure**: same tag language as `elementor/build-composition` (`element_config`, `classes`, `style`). Every element needs a unique `configuration-id`.
+- **xml_structure**: same tag language as `elementor/build-composition` (`element_config`, `classes`, `style`, `interactions`). It must contain exactly one root element, and every element needs a unique `configuration-id`.
 - **source_post_id** + **element_id**: copy an existing element (and its children) from another document — get `element_id` from `elementor/get-page-structure`. All ids are regenerated on the copy.
 
 Optionally attach `overridable_props` (see below). Returns `component_id`, `uid`, `editor_url`.
 
-`xml_structure` may contain `<e-component component_id="…" configuration-id="…"></e-component>` nodes to instance other components (leaf tag; no children inside `<e-component>`). Configure each instance via `element_config` using the flat `{ component_id, overrides? }` shape documented in `build-composition.md` COMPONENTS section.
+`xml_structure` may contain `<e-component configuration-id="…"></e-component>` nodes to instance other components (leaf tag; no children inside `<e-component>`). `configuration-id` identifies the instance within the request; configure the reusable component it references via `element_config` using the flat `{ component_id, overrides? }` shape documented in `build-composition.md` COMPONENTS section.
 
 ```json
 {

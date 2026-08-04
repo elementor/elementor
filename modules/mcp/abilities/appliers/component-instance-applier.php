@@ -38,10 +38,10 @@ class Component_Instance_Applier {
 	 *
 	 * @param array<string, array&>                                                 $config_id_index      Index of subtree refs (from Subtree_Builder).
 	 * @param array<string, array{component_id:int,overrides?:array<string,mixed>}> $component_instances  Per-config-id shorthand.
-	 * @param Document                                                              $document             Target document (used for circular-dep check).
+	 * @param Document|null                                                         $document             Target document, when one already exists.
 	 * @return \WP_Error|null
 	 */
-	public function apply( array &$config_id_index, array $component_instances, Document $document ): ?\WP_Error {
+	public function apply( array &$config_id_index, array $component_instances, ?Document $document ): ?\WP_Error {
 		if ( empty( $component_instances ) ) {
 			return null;
 		}
@@ -91,7 +91,7 @@ class Component_Instance_Applier {
 		);
 	}
 
-	private function build_envelope( string $config_id, array $shorthand, Document $document, array &$errors ): ?array {
+	private function build_envelope( string $config_id, array $shorthand, ?Document $document, array &$errors ): ?array {
 		$component_id = (int) ( $shorthand['component_id'] ?? 0 );
 
 		if ( ! $component_id ) {

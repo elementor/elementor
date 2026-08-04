@@ -33,7 +33,7 @@ class Element_Config_Applier {
 	 * @param array<string, array&>               $config_id_index Index of subtree refs.
 	 * @param array<string, array<string, mixed>> $element_config  Per-config-id settings.
 	 * @param array<string, array>                $widget_configs  Resolved type configs.
-	 * @param Document|null                       $document        Target document (required for <e-component> entries).
+	 * @param Document|null                       $document        Target document, when one already exists.
 	 *
 	 * @return array{ error: ?\WP_Error, warnings: string[] }
 	 */
@@ -110,17 +110,6 @@ class Element_Config_Applier {
 	}
 
 	private function apply_component_entries( array &$config_id_index, array $component_entries, ?Document $document ): ?\WP_Error {
-		if ( ! $document ) {
-			return new \WP_Error(
-				'elementor_invalid_settings',
-				sprintf(
-					'<e-component> entries in element_config require document context, which was not provided. Config-ids: %s.',
-					implode( ', ', array_keys( $component_entries ) )
-				),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
 		return $this->create_component_applier()->apply( $config_id_index, $component_entries, $document );
 	}
 

@@ -11,9 +11,12 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -27,36 +30,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Compiles the `xml_structure` tag language into an element tree, by consuming the same public
- * parsing and applier building blocks that back `elementor/build-composition`.
- *
- * Intentionally separate from `Build_Composition_Ability`, which keeps its own orchestration and
- * the concerns components have no use for: interactions and document persistence.
- */
 final class Composition_Compiler {
+
+	private const DEFAULT_PARENT_ID = 'document';
 
 	public static function make(): self {
 		return new self();
 	}
 
 	/**
-	 * @param string    $xml_structure  Raw XML tags, same language as `elementor/build-composition`.
-	 * @param mixed     $element_config Record mapping configuration-id → plain widget settings.
-	 * @param mixed     $classes        Record mapping configuration-id → global class labels.
-	 * @param mixed     $style          Record mapping configuration-id → raw CSS declarations.
-	 * @param ?Document $document       Context for resolving dynamic values, when a target document exists.
+	 * @param array     $input         Composition input using the `elementor/build-composition` shapes.
+	 * @param ?Document $document      Context for resolving dynamic values, when a target document exists.
+	 * @param array     $document_tree Existing document tree used for insertion-context validation.
+	 * @param string    $parent_id     Target parent used for insertion-context validation.
 	 *
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: string[], dom: \DOMDocument, xml_parser: Xml_Parser}|\WP_Error
 	 */
-	public function compile( string $xml_structure, $element_config = [], $classes = [], $style = [], ?Document $document = null ) {
+	public function compile(
+		array $input,
+		?Document $document = null,
+		array $document_tree = [],
+		string $parent_id = self::DEFAULT_PARENT_ID
+	) {
 		$xml_parser = new Xml_Parser();
 		$type_resolver = new Widget_Type_Resolver( $xml_parser );
 		$subtree_builder = new Subtree_Builder( $xml_parser );
 
-		$dom = $xml_parser->parse( $xml_structure );
+		$dom = $xml_parser->parse( (string) ( $input['xml_structure'] ?? '' ) );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
+		}
+
+		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
+			$dom,
+			$document_tree,
+			$parent_id
+		);
+		if ( $form_structure_error ) {
+			return $form_structure_error;
 		}
 
 		$widget_configs = $type_resolver->collect_used( $dom );
@@ -83,26 +94,33 @@ final class Composition_Compiler {
 		$variables_service = $this->create_variables_service();
 
 		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
-		$config_result = $config_applier->apply( $index, $this->as_map( $element_config ), $widget_configs, $document );
+		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs, $document );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
 		}
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-		$class_error = $class_applier->apply( $index, $this->as_map( $classes ) );
+		$class_error = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
 		if ( $class_error ) {
 			return $class_error;
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $style ), $this->element_types_from_index( $index ) );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
 
+		$interactions_result = $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) );
+		if ( $interactions_result['error'] ) {
+			return $interactions_result['error'];
+		}
+
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $config_result['warnings'], $style_result['warnings'] ),
+			'warnings' => array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'dom' => $dom,
+			'xml_parser' => $xml_parser,
 		];
 	}
 
@@ -160,6 +178,32 @@ final class Composition_Compiler {
 
 	private function get_plain_values_resolver(): Plain_Values_Resolver {
 		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
+	}
+
+	/**
+	 * @param array<string, array&>            $index
+	 * @param array<string, array<int, array>> $interactions
+	 *
+	 * @return array{error: \WP_Error|null, warnings: string[]}
+	 */
+	private function apply_interactions( array &$index, array $interactions ): array {
+		if ( empty( $interactions ) ) {
+			return [
+				'error' => null,
+				'warnings' => [],
+			];
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+			return [
+				'error' => null,
+				'warnings' => [ __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ) ],
+			];
+		}
+
+		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+
+		return $applier->apply( $index, $interactions );
 	}
 
 	private function is_variables_active(): bool {
