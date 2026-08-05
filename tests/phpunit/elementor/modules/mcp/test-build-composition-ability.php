@@ -661,7 +661,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
-	public function test_execute__rejects_widget_as_direct_document_child() {
+	public function test_execute__wraps_direct_document_children_in_single_div_block() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -671,15 +671,21 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-heading configuration-id="h1"/><e-button configuration-id="cta"/>',
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_parent', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
-		$this->assertStringContainsString( 'e-heading', $result->get_error_message() );
-		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['warnings'] );
+		$this->assertStringContainsString( 'e-div-block', $result['warnings'][0] );
+		$this->assertStringContainsString( '<e-div-block', $result['resolved_xml'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'e-div-block', $elements[0]['elType'] );
+		$this->assertCount( 2, $elements[0]['elements'] );
+		$this->assertSame( 'e-heading', $elements[0]['elements'][0]['widgetType'] );
+		$this->assertSame( 'e-button', $elements[0]['elements'][1]['widgetType'] );
 	}
 
 	public function test_execute__mode_omitted_behaves_as_append() {

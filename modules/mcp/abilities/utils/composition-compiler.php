@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Composition_Compiler {
 
 	private const DEFAULT_PARENT_ID = 'document';
+	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
 
 	public static function make(): self {
 		return new self();
@@ -74,6 +75,13 @@ final class Composition_Compiler {
 		if ( is_wp_error( $widget_configs ) ) {
 			return $widget_configs;
 		}
+
+		$wrapping_result = $this->wrap_document_root_content( $dom, $widget_configs, $parent_id, $type_resolver, $xml_parser );
+		if ( is_wp_error( $wrapping_result ) ) {
+			return $wrapping_result;
+		}
+
+		$widget_configs = $wrapping_result['widget_configs'];
 
 		$child_type_error = $type_resolver->validate_child_types( $dom, $widget_configs );
 		if ( $child_type_error ) {
@@ -118,9 +126,68 @@ final class Composition_Compiler {
 
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
+		];
+	}
+
+	private function wrap_document_root_content(
+		\DOMDocument $dom,
+		array $widget_configs,
+		string $parent_id,
+		Widget_Type_Resolver $type_resolver,
+		Xml_Parser $xml_parser
+	) {
+		if ( self::DEFAULT_PARENT_ID !== $parent_id ) {
+			return [
+				'widget_configs' => $widget_configs,
+				'warnings' => [],
+			];
+		}
+
+		$root = $xml_parser->get_root( $dom );
+		if ( ! $root ) {
+			return [
+				'widget_configs' => $widget_configs,
+				'warnings' => [],
+			];
+		}
+
+		$root_children = $xml_parser->get_child_elements( $root );
+		$has_widget = false;
+		foreach ( $root_children as $child ) {
+			$tag = $xml_parser->get_tag_name( $child );
+			if ( 'widget' === ( $widget_configs[ $tag ]['elType'] ?? null ) ) {
+				$has_widget = true;
+				break;
+			}
+		}
+
+		if ( ! $has_widget ) {
+			return [
+				'widget_configs' => $widget_configs,
+				'warnings' => [],
+			];
+		}
+
+		$wrapper_config = $type_resolver->resolve_type_config( self::DOCUMENT_ROOT_WRAPPER );
+		if ( is_wp_error( $wrapper_config ) ) {
+			return $wrapper_config;
+		}
+
+		$widget_configs[ self::DOCUMENT_ROOT_WRAPPER ] = $wrapper_config;
+
+		$wrapper = $dom->createElement( self::DOCUMENT_ROOT_WRAPPER );
+		$root->appendChild( $wrapper );
+
+		foreach ( $root_children as $child ) {
+			$wrapper->appendChild( $child );
+		}
+
+		return [
+			'widget_configs' => $widget_configs,
+			'warnings' => [ __( 'Direct document-root content was wrapped in an e-div-block element.', 'elementor' ) ],
 		];
 	}
 
