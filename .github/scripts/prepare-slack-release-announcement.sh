@@ -13,19 +13,21 @@ PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
   --arg version "$RELEASE_VERSION" \
   --arg jira_release_url "${JIRA_RELEASE_URL:-}" \
   '
-  def apply_announcement_tokens($text; $product_display_name; $distribution_note; $jira_release_link):
+  def apply_announcement_tokens($text; $product_display_name; $distribution_note; $jira_release_link; $release_line):
     $text
     | gsub("\\{product_display_name\\}"; $product_display_name)
     | gsub("\\{version\\}"; $version)
     | gsub("\\{released_by\\}"; $released_by)
     | gsub("\\{release_url\\}"; $release_url)
     | gsub("\\{distribution_note\\}"; $distribution_note)
-    | gsub("\\{jira_release_link\\}"; $jira_release_link);
+    | gsub("\\{jira_release_link\\}"; $jira_release_link)
+    | gsub("\\{release_line\\}"; $release_line);
 
   . as $copy |
   ($copy.distribution_notes[$channel] // "") as $channel_note |
   (if $channel_note == "" then "" else "\n\n" + $channel_note end) as $distribution_note |
   (if $jira_release_url == "" then "" else "\n\n📋 <" + $jira_release_url + "|View Jira Release>" end) as $jira_release_link |
+  (if $jira_release_url == "" then "" else "GitHub Release *" + $version + "*\n" end) as $release_line |
   {
     blocks: [
       {
@@ -34,7 +36,7 @@ PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
           type: "mrkdwn",
           text: (
             $copy.opening_line + "\n\n" +
-            apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note; $jira_release_link)
+            apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note; $jira_release_link; $release_line)
           )
         }
       },
@@ -43,7 +45,7 @@ PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
         type: "section",
         text: {
           type: "mrkdwn",
-          text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note; $jira_release_link)
+          text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note; $jira_release_link; $release_line)
         },
         accessory: {
           type: "button",
