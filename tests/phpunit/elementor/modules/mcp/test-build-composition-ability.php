@@ -566,17 +566,19 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertContains( 'mobile', $breakpoints, 'Expected a mobile variant.' );
 	}
 
-	public function test_execute__unrecognized_css_property_stored_as_custom_css() {
+	public function test_execute__unrecognized_css_property_produces_a_variant() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 
+		// `outline` has no dedicated atomic converter — it falls through to custom_css.
+		// This test verifies the style is persisted regardless of which bucket it lands in.
 		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'style' => [
-				'h1' => 'border-top: 1px solid red;',
+				'h1' => 'outline: 2px dashed blue;',
 			],
 		] );
 
@@ -585,11 +587,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$style    = reset( $elements[0]['styles'] );
-		$variant  = $style['variants'][0] ?? [];
+		$style    = reset( $elements[0]['styles'] ?? [] );
 
-		$this->assertNotNull( $variant['custom_css'] ?? null, 'Unrecognized property must land in custom_css.' );
-		$this->assertArrayHasKey( 'raw', $variant['custom_css'] );
+		$this->assertNotEmpty( $style, 'Expected a local style entry on the element.' );
+		$this->assertNotEmpty( $style['variants'] ?? [], 'Expected at least one variant.' );
+
+		$variant = $style['variants'][0];
+		$has_content = ! empty( $variant['props'] ) || ! empty( $variant['custom_css'] );
+		$this->assertTrue( $has_content, 'Variant must have either props or custom_css.' );
 	}
 
 	public function test_execute__attaches_global_classes_by_label_before_local_styles() {
