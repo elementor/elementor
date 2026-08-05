@@ -59,7 +59,7 @@ export default function AuditFeedback() {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { dispatchEvent: trackEvent = ( ...args: unknown[] ) => void args } = useMixpanel();
 
-	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) || isUserConnected() ) {
+	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) || ! isUserConnected() ) {
 		return null;
 	}
 
