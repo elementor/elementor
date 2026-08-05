@@ -1,12 +1,12 @@
-import { type Document, getV1DocumentsManager } from '@elementor/editor-documents';
+import { type Document } from '@elementor/editor-documents';
+
+import { apiClient } from '../api';
 
 type ComponentDocumentData = Document;
 
 export const getComponentDocumentData = async ( id: number ) => {
-	const documentManager = getV1DocumentsManager();
-
 	try {
-		return await documentManager.request< ComponentDocumentData >( id );
+		return await apiClient.getComponentConfig( id );
 	} catch {
 		return null;
 	}

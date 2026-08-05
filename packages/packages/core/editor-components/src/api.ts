@@ -1,3 +1,4 @@
+import { type Document } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
@@ -67,7 +68,7 @@ export const apiClient = {
 			ids,
 			status,
 		} ),
-	getComponentConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
+	getComponentConfig: ( id: number ) => ajax.load< { id: number }, Document >( getParams( id ) ),
 	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 	getComponentLockStatus: async ( componentId: number ) =>
 		await httpService()
