@@ -18,6 +18,13 @@ This tool supports v4 elements only.
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 4. Use returned element IDs for subsequent configuration changes
 
+## CRITICAL: Avoid write conflicts after build-composition
+`manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
+
+**Rules:**
+- Only use element IDs from the `resolved_xml` in **this tool's response** for any follow-up `manage-elements` calls — never IDs from an earlier read.
+- Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
+
 # COMPONENTS (only when explicitly requested)
 
 **Do NOT call `elementor/list-components` by default.** Compose from raw widgets unless the user explicitly asks to use a component (e.g. "use my Hero component", "insert the Product Card component", "reuse the CTA component I made").
@@ -69,7 +76,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks; the server converts it to native styles
+- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media (--breakpoint)` blocks (e.g. `@media (--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css`, which is stripped by Pro 3.35+.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
