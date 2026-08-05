@@ -361,7 +361,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-divider configuration-id="d1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-divider configuration-id="d1"/></e-flexbox>',
 			'element_config' => [
 				'd1' => [
 					'link' => [
@@ -448,7 +448,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'element_config' => [
 				'h1' => [
 					'title' => [
@@ -497,7 +497,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'style' => [
 				'h1' => [ 'border-top' => '1px solid red' ],
 			],
@@ -522,7 +522,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'classes' => [
 				'h1' => [ 'hero-heading' ],
 			],
@@ -537,7 +537,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
-		$heading = $elements[0] ?? null;
+		$heading = $elements[0]['elements'][0] ?? null;
 		$this->assertNotNull( $heading );
 
 		$class_values = $heading['settings']['classes']['value'] ?? [];
@@ -581,7 +581,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'style' => [
 				'h1' => [ 'color' => 'var(--wc26-gold)' ],
 			],
@@ -593,7 +593,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
-		$heading = $elements[0] ?? null;
+		$heading = $elements[0]['elements'][0] ?? null;
 		$this->assertNotNull( $heading );
 
 		$style = reset( $heading['styles'] );
@@ -661,6 +661,27 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
+	public function test_execute__rejects_widget_as_direct_document_child() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_parent', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'e-heading', $result->get_error_message() );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+	}
+
 	public function test_execute__mode_omitted_behaves_as_append() {
 		// Arrange
 		$this->act_as_admin();
@@ -674,7 +695,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"/>',
 		] );
 
 		// Assert
@@ -701,7 +722,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"/>',
 			'mode' => 'append',
 		] );
 
@@ -809,7 +830,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="new-heading"/>',
+			'xml_structure' => '<e-flexbox configuration-id="new-section"><e-heading configuration-id="new-heading"/></e-flexbox>',
 			'parent_id' => 'document',
 			'mode' => 'replace_children',
 		] );
@@ -823,8 +844,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
 		$this->assertCount( 1, $elements );
-		$this->assertSame( 'widget', $elements[0]['elType'] );
-		$this->assertSame( 'e-heading', $elements[0]['widgetType'] );
+		$this->assertSame( 'e-flexbox', $elements[0]['elType'] );
+		$this->assertSame( 'e-heading', $elements[0]['elements'][0]['widgetType'] );
 	}
 
 	public function test_execute__mode_replace_children_with_nonexistent_parent_returns_error() {
