@@ -4,18 +4,18 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -75,7 +75,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				'properties' => [
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50). Each item requires action; create/update need label and css, update/delete need id.',
+						'description' => 'Bulk operations (1–50). Each item requires action. create needs label and css. update/delete need id or label (both unique identifiers; label is also updated if provided on update). Use mode to control merge behaviour on update (patch = upsert, replace = overwrite breakpoint).',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action' ],
@@ -87,8 +87,14 @@ class Manage_Classes_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'string' ],
 								'label' => [ 'type' => 'string' ],
 								'css' => [
-									'type' => 'object',
-									'description' => 'Raw CSS declarations (property → value).',
+									'type' => 'string',
+									'description' => 'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.',
+								],
+								'mode' => [
+									'type' => 'string',
+									'enum' => [ 'patch', 'replace' ],
+									'default' => 'patch',
+									'description' => 'patch (default): upsert variants, preserving untouched ones; null/all:null deletions apply. replace: discard all variants for the affected breakpoints, then store new ones; null values have no effect.',
 								],
 							],
 						],
@@ -147,6 +153,14 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$deleted_ids = $intents['deleted_ids'];
 
 		$new_order = $this->compute_new_order( $current_order, $added_ids, $deleted_ids );
+
+		// NOTE: null_props is an internal patch-merge signal; strip it from all variants before persisting.
+		foreach ( $touched_items as &$item ) {
+			foreach ( $item['variants'] as &$variant ) {
+				unset( $variant['null_props'] );
+			}
+		}
+		unset( $item, $variant );
 
 		if ( ! empty( $added_ids ) || ! empty( $modified_ids ) || ! empty( $deleted_ids ) ) {
 			$repo->apply_changes(
@@ -218,32 +232,59 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	}
 
 	private function translate_create( int $index, array $operation, array &$intents, array &$reserved_ids, Bulk_Operations_Result $results ): void {
-		$label = $operation['label'] ?? '';
-		$css = $this->as_map( $operation['css'] ?? [] );
+		$label      = $operation['label'] ?? '';
+		$css_string = $operation['css'] ?? null;
 
-		if ( '' === $label || empty( $css ) ) {
+		if ( '' === $label ) {
+			$results->add_error( $index, 'create', 'invalid_input', __( 'Create requires label.', 'elementor' ) );
+			return;
+		}
+
+		if ( ! is_string( $css_string ) || '' === trim( $css_string ) ) {
 			$results->add_error( $index, 'create', 'invalid_input', __( 'Create requires label and css.', 'elementor' ) );
 			return;
 		}
 
-		$class_id = Utils::generate_id( 'g-', $reserved_ids );
+		$parsed = $this->parse_css_string( $index, 'create', $css_string, $results );
+		if ( null === $parsed ) {
+			return;
+		}
+
+		$class_id       = Utils::generate_id( 'g-', $reserved_ids );
 		$reserved_ids[] = $class_id;
 
 		$intents['creates'][ $index ] = [
-			'id' => $class_id,
-			'label' => $label,
-			'css' => $css,
+			'id'                => $class_id,
+			'label'             => $label,
+			'breakpoint_blocks' => $parsed['breakpoint_blocks'],
 		];
 		$intents['added_ids'][] = $class_id;
 	}
 
 	private function translate_update( int $index, array $operation, array &$intents, array $all_labels, array $current_order, array $deleted_set, Bulk_Operations_Result $results ): void {
-		$id = $operation['id'] ?? '';
+		$id    = $operation['id'] ?? '';
 		$label = $operation['label'] ?? '';
-		$css = $this->as_map( $operation['css'] ?? [] );
 
-		if ( '' === $id || '' === $label || empty( $css ) ) {
-			$results->add_error( $index, 'update', 'invalid_input', __( 'Update requires id, label, and css.', 'elementor' ) );
+		if ( '' === $id && '' === $label ) {
+			$results->add_error( $index, 'update', 'invalid_input', __( 'Update requires id or label.', 'elementor' ) );
+			return;
+		}
+
+		if ( '' === $id ) {
+			$id = $this->resolve_class_id_by_label( $label, $all_labels );
+			if ( null === $id ) {
+				$results->add_error( $index, 'update', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+				return;
+			}
+		}
+
+		if ( '' === $label ) {
+			$label = $all_labels[ $id ] ?? '';
+		}
+
+		$mode = $operation['mode'] ?? 'patch';
+		if ( ! in_array( $mode, [ 'patch', 'replace' ], true ) ) {
+			$results->add_error( $index, 'update', 'invalid_input', sprintf( 'Unknown mode: %s. Valid modes: patch, replace.', $mode ) );
 			return;
 		}
 
@@ -258,23 +299,102 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$intents['updates'][ $index ] = [
-			'id' => $id,
-			'label' => $label,
-			'css' => $css,
-		];
+		$css_string = $operation['css'] ?? null;
+
+		if ( is_string( $css_string ) && '' !== trim( $css_string ) ) {
+			$parsed = $this->parse_css_string( $index, 'update', $css_string, $results );
+			if ( null === $parsed ) {
+				return;
+			}
+
+			$intents['updates'][ $index ] = [
+				'id'                  => $id,
+				'label'               => $label,
+				'breakpoint_blocks'   => $parsed['breakpoint_blocks'],
+				'removal_breakpoints' => $parsed['removal_breakpoints'],
+				'mode'                => $operation['mode'] ?? 'patch',
+				'existing_variants'   => $existing['variants'] ?? [],
+			];
+		} else {
+			$intents['updates'][ $index ] = [
+				'id'                => $id,
+				'label'             => $label,
+				'mode'              => $operation['mode'] ?? 'patch',
+				'existing_variants' => $existing['variants'] ?? [],
+			];
+		}
 
 		if ( ! in_array( $id, $intents['modified_ids'], true ) ) {
 			$intents['modified_ids'][] = $id;
 		}
 	}
 
+	protected function get_active_breakpoint_keys(): array {
+		return Plugin::$instance->breakpoints->get_active_devices_list();
+	}
+
+	private function parse_css_string( int $index, string $action, string $css_string, Bulk_Operations_Result $results ): ?array {
+		$active_breakpoints = $this->get_active_breakpoint_keys();
+		$splitter           = new Css_Media_Splitter( $active_breakpoints );
+		$result             = $splitter->split( $css_string );
+
+		if ( null !== $result['error'] ) {
+			$results->add_error(
+				$index,
+				$action,
+				'invalid_css',
+				$result['error'] . sprintf( ' Valid breakpoints: %s.', implode( ', ', $active_breakpoints ) )
+			);
+			return null;
+		}
+
+		return $this->parse_styles_field( $index, $action, $result['breakpoints'], $results );
+	}
+
+	private function parse_styles_field( int $index, string $action, array $raw_styles, Bulk_Operations_Result $results ): ?array {
+		$breakpoint_blocks   = [];
+		$removal_breakpoints = [];
+
+		foreach ( $raw_styles as $breakpoint => $css_string ) {
+			if ( '' === trim( $css_string ) ) {
+				$removal_breakpoints[] = $breakpoint;
+				continue;
+			}
+
+			$result = $this->get_css_converter()->parse_nested( $css_string );
+
+			if ( isset( $result['error'] ) ) {
+				$results->add_error( $index, $action, 'invalid_css', $result['error'] );
+				return null;
+			}
+
+			$breakpoint_blocks[] = [
+				'breakpoint' => $breakpoint,
+				'blocks'     => $result['blocks'],
+			];
+		}
+
+		return [
+			'breakpoint_blocks'   => $breakpoint_blocks,
+			'removal_breakpoints' => $removal_breakpoints,
+		];
+	}
+
 	private function translate_delete( int $index, array $operation, array &$intents, array $all_labels, array $current_order, array &$deleted_set, Bulk_Operations_Result $results ): void {
-		$id = $operation['id'] ?? '';
+		$id    = $operation['id'] ?? '';
+		$label = $operation['label'] ?? '';
+
+		if ( '' === $id && '' === $label ) {
+			$results->add_error( $index, 'delete', 'invalid_input', __( 'Delete requires id or label.', 'elementor' ) );
+			return;
+		}
 
 		if ( '' === $id ) {
-			$results->add_error( $index, 'delete', 'invalid_input', __( 'Delete requires id.', 'elementor' ) );
-			return;
+			$id = $this->resolve_class_id_by_label( $label, $all_labels );
+			if ( null === $id ) {
+				$results->add_error( $index, 'delete', 'class_not_found', __( 'Global class not found', 'elementor' ) );
+				return;
+			}
 		}
 
 		if ( ! in_array( $id, $current_order, true ) || isset( $deleted_set[ $id ] ) ) {
@@ -307,25 +427,47 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$touched_items = [];
 
 		foreach ( $intents['creates'] as $index => $intent ) {
-			$class_item = $this->build_class_item( $intent['id'], $intent['label'], $intent['css'] );
-
-			if ( is_wp_error( $class_item ) ) {
-				$results->add_error( $index, 'create', $class_item->get_error_code(), $class_item->get_error_message() );
-				continue;
-			}
-
-			$touched_items[ $intent['id'] ] = $class_item;
+			$variants                      = Style_Variants_Merger::build_variants( $intent['breakpoint_blocks'], $this->get_css_converter() );
+			$touched_items[ $intent['id'] ] = [
+				'id'       => $intent['id'],
+				'label'    => $intent['label'],
+				'type'     => self::CLASS_TYPE,
+				'variants' => $variants,
+			];
 		}
 
 		foreach ( $intents['updates'] as $index => $intent ) {
-			$class_item = $this->build_class_item( $intent['id'], $intent['label'], $intent['css'] );
-
-			if ( is_wp_error( $class_item ) ) {
-				$results->add_error( $index, 'update', $class_item->get_error_code(), $class_item->get_error_message() );
+			if ( isset( $intent['breakpoint_blocks'] ) ) {
+				$new_variants           = Style_Variants_Merger::build_variants( $intent['breakpoint_blocks'], $this->get_css_converter() );
+				$removal_breakpoints    = $intent['removal_breakpoints'];
+				$existing_after_removal = array_values(
+					array_filter(
+						$intent['existing_variants'],
+						fn( $v ) => ! in_array( $v['meta']['breakpoint'] ?? null, $removal_breakpoints, true )
+					)
+				);
+				$merged_variants = Style_Variants_Merger::apply_mode(
+					$existing_after_removal,
+					$new_variants,
+					$intent['mode'],
+					array_column( $intent['breakpoint_blocks'], 'breakpoint' )
+				);
+				$touched_items[ $intent['id'] ] = [
+					'id'       => $intent['id'],
+					'label'    => $intent['label'],
+					'type'     => self::CLASS_TYPE,
+					'variants' => $merged_variants,
+				];
 				continue;
 			}
 
-			$touched_items[ $intent['id'] ] = $class_item;
+			// Label-only update — preserve existing variants, only apply new label.
+			$touched_items[ $intent['id'] ] = [
+				'id'       => $intent['id'],
+				'label'    => $intent['label'],
+				'type'     => self::CLASS_TYPE,
+				'variants' => $intent['existing_variants'],
+			];
 		}
 
 		return $touched_items;
@@ -451,72 +593,9 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		return array_merge( $new_order, $added_ids );
 	}
 
-	protected function build_class_item( string $id, string $label, array $css ) {
-		$variant = $this->convert_css_to_variant( $css );
-		if ( is_wp_error( $variant ) ) {
-			return $variant;
-		}
-
-		$definition = [
-			'id' => $id,
-			'label' => $label,
-			'type' => self::CLASS_TYPE,
-			'variants' => [ $variant ],
-		];
-
-		$parse_result = Style_Parser::make( Style_Schema::get() )->parse( $definition );
-		if ( ! $parse_result->is_valid() ) {
-			return new \WP_Error(
-				'invalid_class',
-				$parse_result->errors()->to_string(),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		return $parse_result->unwrap();
-	}
-
-	private function convert_css_to_variant( array $css ) {
-		$css_parts = [];
-		foreach ( $css as $property => $value ) {
-			$is_null_reset = null === $value || 'null' === $value;
-			$css_parts[] = $property . ': ' . ( $is_null_reset ? 'null' : $value ) . ';';
-		}
-
-		$result = $this->get_css_converter()->convert( implode( ' ', $css_parts ) );
-
-		if ( ! empty( $result['rejected'] ) ) {
-			return new \WP_Error(
-				'invalid_css',
-				sprintf(
-					/* translators: %s: comma-separated rejected variable references */
-					__( 'Invalid variable usage: %s. Variables must exist in elementor://global-variables and use label-only references.', 'elementor' ),
-					implode( ', ', $result['rejected'] )
-				),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		if ( empty( $result['props'] ) && empty( $result['customCss'] ) ) {
-			return new \WP_Error(
-				'invalid_css',
-				__( 'CSS produced no valid style properties.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		$custom_css = $result['customCss'] ?? '';
-
-		return [
-			'meta' => [
-				'breakpoint' => self::DESKTOP_BREAKPOINT,
-				'state' => null,
-			],
-			'props' => $result['props'] ?? [],
-			'custom_css' => '' !== $custom_css
-				? [ 'raw' => base64_encode( $custom_css ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
-				: null,
-		];
+	private function resolve_class_id_by_label( string $label, array $all_labels ): ?string {
+		$id = array_search( $label, $all_labels, true );
+		return false !== $id ? $id : null;
 	}
 
 	private function bad_request( string $message ): \WP_Error {
@@ -582,13 +661,5 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
-	}
-
-	private function as_map( $value ): array {
-		if ( is_object( $value ) ) {
-			$value = (array) $value;
-		}
-
-		return is_array( $value ) ? $value : [];
 	}
 }

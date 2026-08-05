@@ -8,6 +8,7 @@ use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Assets_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
@@ -37,6 +38,7 @@ class Mcp_Proxy_REST_API {
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
 			'manage-elements' => fn( array $input ) => ( new Manage_Elements_Ability() )->execute( $input ),
+			'list-assets' => fn( array $input ) => ( new List_Assets_Ability() )->execute( $input ),
 			'list-resources' => fn( array $input ) => ( new List_Resources_Ability() )->execute( $input ),
 			'read-resource' => fn( array $input ) => ( new Read_Resource_Ability() )->execute( $input ),
 		];
@@ -129,7 +131,20 @@ class Mcp_Proxy_REST_API {
 				->build();
 		}
 
-		return Response_Builder::make( $result )->build();
+		$http_status = $this->resolve_http_status( $result );
+
+		return Response_Builder::make( $result )->set_status( $http_status )->build();
+	}
+
+	private function resolve_http_status( $result ): int {
+		$status = is_array( $result ) ? ( $result['status'] ?? 'ok' ) : 'ok';
+
+		$status_map = [
+			'error'         => 422,
+			'partial_error' => 207,
+		];
+
+		return $status_map[ $status ] ?? 200;
 	}
 
 	private function route_wrapper( callable $cb ) {

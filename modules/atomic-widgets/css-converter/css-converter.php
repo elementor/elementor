@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Css_Converter {
+
+	use Css_Block_Scanner_Trait;
+
 	const BLOCKED_PROPERTIES = [ 'behavior', '-moz-binding' ];
 	const BLOCKED_VALUE_NEEDLES = [ 'expression(', 'javascript:' ];
 
@@ -32,6 +35,114 @@ class Css_Converter {
 		$this->failure_reporter = $failure_reporter;
 		$this->expanders = $expanders ?? new Expander_Registry();
 		$this->variable_transformer = $variable_transformer;
+	}
+
+	/**
+	 * @return array{blocks: array<int, array{selector: string|null, css: string}>}|array{blocks: array, error: string}
+	 */
+	public function parse_nested( string $css ): array {
+		$result = $this->scan_ampersand_blocks( $css );
+
+		if ( isset( $result['error'] ) ) {
+			return [
+				'blocks' => [],
+				'error'  => $result['error'],
+			];
+		}
+
+		return [
+			'blocks' => array_merge(
+				[
+					[
+						'selector' => null,
+						'css' => $result['base_css'],
+					],
+				],
+				$result['nested_blocks']
+			),
+		];
+	}
+
+	private function scan_ampersand_blocks( string $css ): array {
+		$nested_blocks = [];
+		$base_css      = '';
+		$len           = strlen( $css );
+		$i             = 0;
+		$segment_start = 0;
+		$in_string     = false;
+		$string_char   = '';
+
+		while ( $i < $len ) {
+			$char = $css[ $i ];
+
+			if ( $in_string ) {
+				if ( $string_char === $char && ! $this->is_escaped( $css, $i ) ) {
+					$in_string = false;
+				}
+				++$i;
+				continue;
+			}
+
+			if ( '"' === $char || "'" === $char ) {
+				$in_string   = true;
+				$string_char = $char;
+				++$i;
+				continue;
+			}
+
+			if ( '{' === $char ) {
+				return [ 'error' => 'Unsupported nested selector. Only &:hover, &:focus, and &:active pseudo-class blocks are allowed.' ];
+			}
+
+			if ( '}' === $char ) {
+				return [ 'error' => 'Unclosed brace detected in CSS input.' ];
+			}
+
+			if ( '&' !== $char ) {
+				++$i;
+				continue;
+			}
+
+			$j = $i + 1;
+			while ( $j < $len && '{' !== $css[ $j ] && ';' !== $css[ $j ] && '}' !== $css[ $j ] ) {
+				++$j;
+			}
+
+			if ( $j >= $len || ';' === $css[ $j ] || '}' === $css[ $j ] ) {
+				++$i;
+				continue;
+			}
+
+			$selector = rtrim( substr( $css, $i + 1, $j - $i - 1 ) );
+
+			if ( '' === $selector ) {
+				return [ 'error' => 'Bare & block without a selector is not valid CSS.' ];
+			}
+
+			$block_end = $this->find_block_end( $css, $j + 1, $len );
+
+			if ( null === $block_end ) {
+				return [ 'error' => 'Unclosed brace detected in CSS input.' ];
+			}
+
+			$block_content = substr( $css, $j + 1, $block_end - $j - 2 );
+			$base_css     .= substr( $css, $segment_start, $i - $segment_start );
+			$segment_start = $block_end;
+
+			$nested_blocks[] = [
+				'selector' => $selector,
+				'css'      => $block_content,
+			];
+
+			$i = $block_end;
+		}
+
+		$base_css .= substr( $css, $segment_start );
+
+		return [
+			'base_css'      => $base_css,
+			'nested_blocks' => $nested_blocks,
+		];
 	}
 
 	/**
@@ -59,6 +170,11 @@ class Css_Converter {
 			$props = $ejected['props'];
 			$leftover = array_merge( $leftover, $ejected['custom_css'] );
 			$rejected = array_merge( $rejected, $ejected['rejected'] );
+
+			// Post-processing: handle edge cases that the general transform pipeline cannot cover.
+			$gradient_color_stops_leftovers = $this->variable_transformer->normalize_gradient_color_stops( $props, $rules );
+			$leftover = array_merge( $leftover, $gradient_color_stops_leftovers );
+
 			$props = $this->validate_props( $props, $schema );
 		}
 
