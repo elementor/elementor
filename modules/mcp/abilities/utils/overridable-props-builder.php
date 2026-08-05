@@ -259,7 +259,7 @@ class Overridable_Props_Builder {
 
 		if ( null === $inner_component_id ) {
 			return new \WP_Error(
-				'x',
+				'invalid_overridable_prop_definition',
 				sprintf(
 					'[%s] target "%s" is an <e-component> instance but has no valid component_instance settings. Set component_id on the instance (via element_config) before exposing an override through it.',
 					$override_key,
