@@ -101,7 +101,7 @@ class Sidebar_Navigation_Handler {
 			'activeMenuSlug' => $active_state['menu_slug'],
 			'activeChildSlug' => $active_state['child_slug'],
 			'siteTitle' => esc_html__( 'Editor', 'elementor' ),
-			'hasPro' => Utils::has_pro(),
+			'hasPro' => Utils::has_premium_access(),
 			'upgradeUrl' => $promotion['url'],
 			'upgradeText' => $promotion['text'],
 		];
