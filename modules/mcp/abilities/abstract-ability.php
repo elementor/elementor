@@ -14,6 +14,22 @@ abstract class Abstract_Ability {
 
 	abstract public function execute( $input = [] );
 
+	public function check_permission(): bool {
+		return (bool) call_user_func( $this->get_definition()->permission_callback );
+	}
+
+	public function permission_error(): ?\WP_Error {
+		if ( $this->check_permission() ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'rest_forbidden',
+			__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
+			[ 'status' => \WP_Http::FORBIDDEN ]
+		);
+	}
+
 	public function register(): void {
 		$definition = $this->get_definition()->to_array();
 		$definition['execute_callback'] = [ $this, 'execute' ];
