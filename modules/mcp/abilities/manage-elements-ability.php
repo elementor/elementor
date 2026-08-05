@@ -94,16 +94,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'type' => 'object',
 									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
 								],
-							'style' => [
-								'type' => 'string',
-								'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour.',
-							],
-							'style_apply_mode' => [
-								'type' => 'string',
-								'enum' => [ 'patch', 'replace' ],
-								'default' => 'patch',
-								'description' => 'patch (default): merge incoming style variants with existing. replace: discard existing variants for the affected breakpoints before writing new ones. Pass an empty string with replace to wipe all local style variants.',
-							],
+								'style' => [
+									'type' => 'string',
+									'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour.',
+								],
+								'style_apply_mode' => [
+									'type' => 'string',
+									'enum' => [ 'patch', 'replace' ],
+									'default' => 'patch',
+									'description' => 'patch (default): merge incoming style variants with existing. replace: discard existing variants for the affected breakpoints before writing new ones. Pass an empty string with replace to wipe all local style variants.',
+								],
 								'classes' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],

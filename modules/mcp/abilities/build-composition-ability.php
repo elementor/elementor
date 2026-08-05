@@ -232,12 +232,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'default' => (object) [],
 					'description' => 'Record mapping configuration-id → plain widget settings matching elementor://widgets/schema/{type}. Keys MUST match configuration-id attributes in xml_structure. For <e-component> configuration-ids, the value is { component_id: int, overrides?: {<override_key>: <plain value>} } — see elementor/list-components.',
 				],
-			'style' => [
-				'type' => 'object',
-				'default' => (object) [],
-				'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure.',
-				'additionalProperties' => [ 'type' => 'string' ],
-			],
+				'style' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure.',
+					'additionalProperties' => [ 'type' => 'string' ],
+				],
 				'classes' => [
 					'type' => 'object',
 					'default' => (object) [],

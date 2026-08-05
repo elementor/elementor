@@ -22,7 +22,7 @@ class Style_Variants_Merger {
 	const NULL_DECLARATION_PATTERN = '/(^|[;{])\s*([a-zA-Z][a-zA-Z0-9-]*)\s*:\s*null\s*;?/';
 
 	/**
-	 * @param callable(): Css_Converter $get_converter Resolved lazily — only called if the CSS split succeeds.
+	 * $get_converter is a factory callable resolved lazily — only called if the CSS split succeeds.
 	 */
 	public static function parse_css_string(
 		string $css_string,
