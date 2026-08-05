@@ -79,10 +79,19 @@ class Atomic_Accordion_Item_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'flex' ),
-							'flex-direction' => String_Prop_Type::generate( 'column' ),
+							// Deliberately `block`, not `flex`: this slot's role is a collapsible body
+							// that accepts any V4 element, and a flex container changes layout semantics
+							// for arbitrary user content (margin collapsing stops, inline children become
+							// block-level flex items, `float`/`vertical-align` stop working). Matches
+							// `Atomic_Tab_Content`, the closest precedent.
+							'display' => String_Prop_Type::generate( 'block' ),
 							'padding' => Size_Prop_Type::generate( [
 								'size' => 10,
+								'unit' => 'px',
+							] ),
+							// Keeps an emptied slot a droppable target in the editor.
+							'min-width' => Size_Prop_Type::generate( [
+								'size' => 30,
 								'unit' => 'px',
 							] ),
 						] )

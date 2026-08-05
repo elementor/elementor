@@ -5,11 +5,13 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -52,7 +54,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'accordion', 'faq', 'collapse', 'toggle' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'accordion', 'faq', 'collapse' ];
 	}
 
 	public function get_icon() {
@@ -105,17 +107,75 @@ class Atomic_Accordion extends Atomic_Element_Base {
 		$items = [];
 
 		foreach ( range( 1, self::DEFAULT_ITEM_COUNT ) as $i ) {
-			$items[] = Atomic_Accordion_Item::generate()
-				->hydrate_default_children( true )
-				->editor_settings( [
-					/* translators: %d: Accordion item position. */
-					'title' => sprintf( esc_html__( 'Accordion Item %d', 'elementor' ), $i ),
-					'initial_position' => $i,
-				] )
-				->build();
+			$items[] = $this->build_default_item( $i );
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Builds one `e-accordion-item` with its numbered title seeded explicitly.
+	 *
+	 * Each level of `default_children` is hydrated independently client-side
+	 * (`Atomic_Element_Base_Model::onElementCreate()`, driven by `hydrateDefaultChildren: true`),
+	 * so the title slot's own `define_default_children()` has no way to know which item it
+	 * belongs to. Building the item → head → title → paragraph chain explicitly here lets the
+	 * numbered text ("Accordion Item 1", "Accordion Item 2") reach the rendered paragraph. The
+	 * icon and content branches don't need per-index content, so they keep using their own
+	 * `define_default_children()` via `hydrate_default_children( true )`.
+	 *
+	 * @param int $index
+	 * @return array
+	 */
+	private function build_default_item( int $index ): array {
+		/* translators: %d: Accordion item position. */
+		$numbered_title = sprintf( esc_html__( 'Accordion Item %d', 'elementor' ), $index );
+
+		$title = Element_Builder::make( self::ELEMENT_TYPE_TITLE )
+			->editor_settings( [
+				'title' => esc_html__( 'Title', 'elementor' ),
+			] )
+			->children( [
+				Atomic_Paragraph::generate()
+					->settings( [
+						'paragraph' => Html_V3_Prop_Type::generate( [
+							'content' => String_Prop_Type::generate( $numbered_title ),
+							'children' => [],
+						] ),
+						'tag' => String_Prop_Type::generate( 'span' ),
+					] )
+					->build(),
+			] )
+			->build();
+
+		$icon = Element_Builder::make( self::ELEMENT_TYPE_ICON )
+			->hydrate_default_children( true )
+			->editor_settings( [
+				'title' => esc_html__( 'Icon', 'elementor' ),
+			] )
+			->build();
+
+		$head = Element_Builder::make( self::ELEMENT_TYPE_HEAD )
+			->editor_settings( [
+				'title' => esc_html__( 'Head', 'elementor' ),
+			] )
+			->children( [ $title, $icon ] )
+			->build();
+
+		$content = Element_Builder::make( self::ELEMENT_TYPE_CONTENT )
+			->hydrate_default_children( true )
+			->editor_settings( [
+				'title' => esc_html__( 'Content', 'elementor' ),
+			] )
+			->build();
+
+		return Element_Builder::make( self::ELEMENT_TYPE_ITEM )
+			->editor_settings( [
+				'title' => $numbered_title,
+				'initial_position' => $index,
+			] )
+			->children( [ $head, $content ] )
+			->build();
 	}
 
 	/**
@@ -127,7 +187,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 * @param string $item_id
 	 * @return int|null
 	 */
-	public function get_item_index( string $item_id ) {
+	private function get_item_index( string $item_id ) {
 		$item_ids = Collection::make( $this->get_children() )
 			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_ITEM )
 			->map( fn( $child ) => $child->get_id() )

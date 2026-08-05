@@ -11,8 +11,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,8 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	use Has_Element_Template;
-
-	const BASE_STYLE_KEY = 'base';
 
 	public static $widget_description = 'The title slot of an accordion item header. Its HTML tag is controlled by the accordion\'s Title HTML Tag setting. Accepts any element as its content.';
 
@@ -80,17 +76,14 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 		return 'span';
 	}
 
-	protected function define_base_styles(): array {
-		return [
-			static::BASE_STYLE_KEY => Style_Definition::make()
-				->add_variant(
-					Style_Variant::make()
-						->add_props( [
-							'display' => String_Prop_Type::generate( 'block' ),
-						] )
-				),
-		];
-	}
+	/*
+	 * No base styles for this slot (Step 2's table: base styles "none" for the title). Removing
+	 * the override entirely, rather than returning an empty `Style_Definition` list, is safe:
+	 * `Has_Base_Styles::get_base_styles_dictionary()` returns `[]` for a type with no
+	 * `define_base_styles()` override, and the `render_base_classes` Twig macro reads
+	 * `base_styles.base` — an empty array leaves that lookup `null`, which `join(' ')` renders as
+	 * an empty string alongside the other class names, so the class list still comes out clean.
+	 */
 
 	protected function define_default_children() {
 		return [

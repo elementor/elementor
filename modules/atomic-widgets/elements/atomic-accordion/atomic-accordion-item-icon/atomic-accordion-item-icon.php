@@ -100,10 +100,18 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 							'align-items' => String_Prop_Type::generate( 'center' ),
 							'justify-content' => String_Prop_Type::generate( 'center' ),
 							// The style schema has no `flex-shrink` longhand — only the composite
-							// `flex`. `flexShrink: 0` alone resolves to `flex: 0 0`, which is what a
-							// fixed-size indicator wants.
+							// `flex`. This slot is a flex item of the head (`display: flex`), so the
+							// main-axis size is governed by `flex-basis`, not `width`, unless the basis
+							// is `auto`. `flexShrink: 0` alone resolves to `flex: 0 0` — CSS treats an
+							// omitted basis as `0`, i.e. `flex-basis: 0%` — which would override the
+							// `width` below. Passing `flexBasis: auto` keeps the declared 16px width in
+							// the main axis while still preventing the icon from shrinking.
 							'flex' => Flex_Prop_Type::generate( [
 								'flexShrink' => Number_Prop_Type::generate( 0 ),
+								'flexBasis' => Size_Prop_Type::generate( [
+									'size' => 'auto',
+									'unit' => 'custom',
+								] ),
 							] ),
 							'width' => $size,
 							'height' => $size,
