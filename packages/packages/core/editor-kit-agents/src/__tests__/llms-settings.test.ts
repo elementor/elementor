@@ -17,18 +17,17 @@ const mockGetV1CurrentDocument = jest.mocked( getV1CurrentDocument );
 const mockSetDocumentModifiedStatus = jest.mocked( setDocumentModifiedStatus );
 
 function createSettingsBag( initial: Record< string, unknown > = {} ) {
-	const store = { ...initial };
+	const store = new Map( Object.entries( initial ) );
 
 	return {
-		get: jest.fn( ( key: string ) => store[ key ] ),
+		get: jest.fn( ( key: string ) => store.get( key ) ),
 		set: jest.fn( ( key: string, value: unknown ) => {
 			if ( undefined === value ) {
-				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-				delete store[ key ];
+				store.delete( key );
 				return;
 			}
 
-			store[ key ] = value;
+			store.set( key, value );
 		} ),
 		store,
 	};
@@ -102,6 +101,25 @@ describe( 'llms-settings', () => {
 			future_setting: 'keep-me',
 			[ LLMS_SETTINGS_KEY ]: '# llms.txt',
 		} );
+	} );
+
+	it( 'removes the whole agents object when clearing the only llms key', () => {
+		// Arrange.
+		const settings = createSettingsBag( {
+			[ AGENTS_SETTINGS_KEY ]: {
+				[ LLMS_SETTINGS_KEY ]: '# llms.txt',
+			},
+		} );
+		mockGetV1CurrentDocument.mockReturnValue( {
+			container: { settings },
+		} as unknown as ReturnType< typeof getV1CurrentDocument > );
+
+		// Act.
+		writeLlmsContent( '' );
+
+		// Assert.
+		expect( settings.set ).toHaveBeenCalledWith( AGENTS_SETTINGS_KEY, undefined );
+		expect( settings.store.has( AGENTS_SETTINGS_KEY ) ).toBe( false );
 	} );
 
 	it( 'removes only llms when clearing content but keeps other agents keys', () => {

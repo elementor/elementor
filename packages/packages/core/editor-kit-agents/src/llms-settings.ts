@@ -3,6 +3,8 @@ import { getV1CurrentDocument, setDocumentModifiedStatus } from '@elementor/edit
 export const AGENTS_SETTINGS_KEY = 'agents';
 export const LLMS_SETTINGS_KEY = 'llms';
 
+type AgentsSettings = Record< string, unknown >;
+
 type SettingsBag = {
 	get: ( key: string ) => unknown;
 	set: ( key: string, value: unknown ) => void;
@@ -14,15 +16,22 @@ export function getKitSettingsBag(): SettingsBag | null {
 	return settings ? ( settings as SettingsBag ) : null;
 }
 
-export function readLlmsContent(): string {
-	const settings = getKitSettingsBag();
+function readAgentsSettings( settings: SettingsBag | null ): AgentsSettings {
 	const agents = settings?.get( AGENTS_SETTINGS_KEY );
 
-	if ( ! agents || typeof agents !== 'object' ) {
-		return '';
-	}
+	return agents && typeof agents === 'object' ? { ...( agents as AgentsSettings ) } : {};
+}
 
-	const llms = ( agents as Record< string, unknown > )[ LLMS_SETTINGS_KEY ];
+function omitLlms( agents: AgentsSettings ): AgentsSettings {
+	return Object.fromEntries( Object.entries( agents ).filter( ( [ key ] ) => key !== LLMS_SETTINGS_KEY ) );
+}
+
+function isEmpty( agents: AgentsSettings ): boolean {
+	return 0 === Object.keys( agents ).length;
+}
+
+export function readLlmsContent(): string {
+	const llms = readAgentsSettings( getKitSettingsBag() )[ LLMS_SETTINGS_KEY ];
 
 	return typeof llms === 'string' ? llms : '';
 }
@@ -34,23 +43,14 @@ export function writeLlmsContent( content: string ): boolean {
 		return false;
 	}
 
-	const existingAgents = settings.get( AGENTS_SETTINGS_KEY );
-	const agents =
-		existingAgents && typeof existingAgents === 'object'
-			? { ...( existingAgents as Record< string, unknown > ) }
-			: {};
+	const agents = readAgentsSettings( settings );
 
 	if ( '' === content ) {
-		const { [ LLMS_SETTINGS_KEY ]: _removedLlms, ...remainingAgents } = agents;
+		const remainingAgents = omitLlms( agents );
 
-		if ( 0 === Object.keys( remainingAgents ).length ) {
-			settings.set( AGENTS_SETTINGS_KEY, undefined );
-		} else {
-			settings.set( AGENTS_SETTINGS_KEY, remainingAgents );
-		}
+		settings.set( AGENTS_SETTINGS_KEY, isEmpty( remainingAgents ) ? undefined : remainingAgents );
 	} else {
-		agents[ LLMS_SETTINGS_KEY ] = content;
-		settings.set( AGENTS_SETTINGS_KEY, agents );
+		settings.set( AGENTS_SETTINGS_KEY, { ...agents, [ LLMS_SETTINGS_KEY ]: content } );
 	}
 
 	setDocumentModifiedStatus( true );
