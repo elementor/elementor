@@ -62,7 +62,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 				data: {
 					data: {
 						status: 'ok',
-						class: { id: 'g-new123', label: 'hero-heading', variants: [] },
+						results: [ { id: 'g-new123', label: 'hero-heading', variants: [] } ],
 						order: [ 'g-new123' ],
 					},
 				},
@@ -87,15 +87,19 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		const result = await registeredTool.handler( {
 			action: 'create',
 			label: 'hero-heading',
-			css: { color: '#000000' },
+			css: 'color: #000000;',
 		} );
 
 		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
 			tool: 'manage-classes',
 			input: {
-				action: 'create',
-				label: 'hero-heading',
-				css: { color: '#000000' },
+				operations: [
+					{
+						action: 'create',
+						label: 'hero-heading',
+						css: 'color: #000000;',
+					},
+				],
 			},
 		} );
 		expect( globalClassesStylesProvider.actions.create ).toHaveBeenCalledWith( 'hero-heading', [], 'g-new123' );
@@ -106,7 +110,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 				detail: { context: 'frontend' },
 			} )
 		);
-		expect( result ).toEqual( { status: 'ok' } );
+		expect( result ).toEqual( { status: 'ok', id: 'g-new123', label: 'hero-heading' } );
 	} );
 
 	it( 'proxies update action and mutates store locally', async () => {
@@ -115,7 +119,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 			data: {
 				data: {
 					status: 'ok',
-					class: updatedClass,
+					results: [ updatedClass ],
 					order: [ 'g-abc1234' ],
 				},
 			},
@@ -127,14 +131,18 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 			action: 'update',
 			id: 'g-abc1234',
 			label: 'hero-heading',
-			css: { color: '#ffffff' },
+			css: 'color: #ffffff;',
 		} );
 
 		expect( httpMock.post ).toHaveBeenLastCalledWith(
 			MCP_PROXY_URL,
 			expect.objectContaining( {
 				tool: 'manage-classes',
-				input: expect.objectContaining( { action: 'update', id: 'g-abc1234' } ),
+				input: expect.objectContaining( {
+					operations: expect.arrayContaining( [
+						expect.objectContaining( { action: 'update', id: 'g-abc1234' } ),
+					] ),
+				} ),
 			} )
 		);
 		expect( globalClassesStylesProvider.actions.update ).toHaveBeenCalledWith( updatedClass );
@@ -146,7 +154,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 			data: {
 				data: {
 					status: 'ok',
-					class: { id: 'g-abc1234', label: 'hero-heading', variants: [] },
+					results: [],
 					order: [],
 				},
 			},
@@ -159,11 +167,49 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		expect( httpMock.post ).toHaveBeenLastCalledWith(
 			MCP_PROXY_URL,
 			expect.objectContaining( {
-				input: expect.objectContaining( { action: 'delete', id: 'g-abc1234' } ),
+				input: expect.objectContaining( {
+					operations: expect.arrayContaining( [
+						expect.objectContaining( { action: 'delete', id: 'g-abc1234' } ),
+					] ),
+				} ),
 			} )
 		);
 		expect( globalClassesStylesProvider.actions.delete ).toHaveBeenCalledWith( 'g-abc1234' );
 		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
+	} );
+
+	it( 'forwards css string and mode fields to the proxy', async () => {
+		const { registeredTool } = createMockRegistry();
+
+		await registeredTool.handler( {
+			action: 'create',
+			label: 'hero-heading',
+			css: 'color: red; @media(--mobile) { &:hover { color: blue; } }',
+			mode: 'replace',
+		} );
+
+		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
+			tool: 'manage-classes',
+			input: {
+				operations: [
+					{
+						action: 'create',
+						label: 'hero-heading',
+						css: 'color: red; @media(--mobile) { &:hover { color: blue; } }',
+						mode: 'replace',
+					},
+				],
+			},
+		} );
+	} );
+
+	it( 'schema exposes css string and mode fields but not styles', () => {
+		const { registeredTool } = createMockRegistry();
+		const schemaKeys = Object.keys( registeredTool.schema );
+
+		expect( schemaKeys ).toContain( 'css' );
+		expect( schemaKeys ).toContain( 'mode' );
+		expect( schemaKeys ).not.toContain( 'styles' );
 	} );
 
 	it( 'propagates server errors from the proxy without mutating store', async () => {
@@ -175,7 +221,7 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 			registeredTool.handler( {
 				action: 'create',
 				label: 'hero-heading',
-				css: { color: '#000000' },
+				css: 'color: #000000;',
 			} )
 		).rejects.toThrow( 'duplicated label' );
 
