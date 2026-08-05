@@ -597,6 +597,47 @@ class Module extends BaseModule {
 			// sets one of the state classes from real playback, so exactly one button shows there.
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
+			// Accordion: `<summary>` already loses its native marker via `display: flex` on the head's
+			// base style in Chrome/Firefox, but Safari renders `::-webkit-details-marker` regardless of
+			// `display`, so a stray triangle would sit next to our chevron unless the pseudo-element is
+			// killed explicitly. `list-style: none` is kept for completeness (browsers that box the
+			// marker as a list-item marker box), the `::-webkit-details-marker` rule is what actually
+			// fixes Safari.
+			'.e-accordion-item-head-base { list-style: none; }',
+			'.e-accordion-item-head-base::-webkit-details-marker { display: none; }',
+			// Animated expand/collapse via `::details-content` (block-size 0 -> auto) needs
+			// `interpolate-size: allow-keywords` on the <details> element to let `block-size: auto`
+			// participate in the transition. Graceful degradation is deliberate here: `::details-content`
+			// is an unsupported/invalid pseudo-element in older browsers, and CSS drops an entire rule
+			// when its selector doesn't parse — it does not apply some declarations and skip others. So
+			// browsers without `::details-content` parse none of the three rules below and simply keep
+			// the browser's native <details> toggle (content already shown/hidden correctly without any
+			// CSS from us). Do not split "collapse to 0" and "expand on [open]" so that one half could
+			// ever apply without the other - that would either hide open content forever or reveal
+			// closed content, in an unsupporting browser.
+			'.e-accordion-item-base { interpolate-size: allow-keywords; }',
+			'.e-accordion-item-base::details-content {',
+			'block-size: 0; overflow: hidden;',
+			'transition: block-size .3s ease, content-visibility .3s ease allow-discrete;',
+			'}',
+			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
+			// Icon slot sizing: `e-svg`'s base style is `.elementor .e-svg-base { width: 65px; height:
+			// 65px; ... }` (0-2-0 specificity). The rendered DOM is
+			// `.e-accordion-item-icon-base > (div|a).e-svg-base > svg` — the wrapper carries
+			// `e-svg-base`, and the inner <svg> itself already gets an inline `width: 100%; height: 100%`
+			// from Svg_Src_Transformer, which resolves against its containing block: the wrapper. So the
+			// wrapper's fixed 65px, not the svg, is what needs neutralising to let the already-100% svg
+			// fill the 16x16 slot. `.e-accordion-item-icon-base > .e-svg-base` alone would only tie the
+			// base rule's specificity (0-2-0) and the winner would depend on stylesheet order, which we
+			// don't control here, so the class is doubled to (0-3-0) to win outright.
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base > .e-svg-base { width: 100%; height: 100%; }',
+			// Rotation targets the <svg> element itself, not the slot or its wrapper, so that non-icon
+			// content dropped into the slot (e.g. a text/paragraph element, which never renders an <svg>
+			// tag) is structurally excluded from rotating. A descendant combinator is used rather than a
+			// direct child combinator because the real DOM nests the <svg> two levels below the slot
+			// (icon slot > e-svg wrapper > svg); a `>` selector here would silently never match.
+			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
