@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Accordion_Items_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
@@ -74,7 +75,13 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
-				->set_items( [] ),
+				->set_items( [
+					Accordion_Items_Control::make()
+						->set_label( __( 'Accordion Items', 'elementor' ) )
+						->set_meta( [
+							'layout' => 'custom',
+						] ),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
