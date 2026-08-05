@@ -35,17 +35,18 @@ export function writeLlmsContent( content: string ): boolean {
 	}
 
 	const existingAgents = settings.get( AGENTS_SETTINGS_KEY );
-	const agents = existingAgents && typeof existingAgents === 'object'
-		? { ...( existingAgents as Record< string, unknown > ) }
-		: {};
+	const agents =
+		existingAgents && typeof existingAgents === 'object'
+			? { ...( existingAgents as Record< string, unknown > ) }
+			: {};
 
 	if ( '' === content ) {
-		delete agents[ LLMS_SETTINGS_KEY ];
+		const { [ LLMS_SETTINGS_KEY ]: _removedLlms, ...remainingAgents } = agents;
 
-		if ( 0 === Object.keys( agents ).length ) {
+		if ( 0 === Object.keys( remainingAgents ).length ) {
 			settings.set( AGENTS_SETTINGS_KEY, undefined );
 		} else {
-			settings.set( AGENTS_SETTINGS_KEY, agents );
+			settings.set( AGENTS_SETTINGS_KEY, remainingAgents );
 		}
 	} else {
 		agents[ LLMS_SETTINGS_KEY ] = content;

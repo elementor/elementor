@@ -23,6 +23,7 @@ function createSettingsBag( initial: Record< string, unknown > = {} ) {
 		get: jest.fn( ( key: string ) => store[ key ] ),
 		set: jest.fn( ( key: string, value: unknown ) => {
 			if ( undefined === value ) {
+				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 				delete store[ key ];
 				return;
 			}
@@ -40,7 +41,7 @@ describe( 'llms-settings', () => {
 
 	it( 'returns null when the kit settings bag is unavailable', () => {
 		// Arrange.
-		mockGetV1CurrentDocument.mockReturnValue( null );
+		mockGetV1CurrentDocument.mockReturnValue( null as unknown as ReturnType< typeof getV1CurrentDocument > );
 
 		// Assert.
 		expect( getKitSettingsBag() ).toBeNull();
