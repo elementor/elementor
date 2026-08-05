@@ -1,4 +1,4 @@
-import { createMockDocumentData } from 'test-utils';
+import { createMockDocument } from 'test-utils';
 
 import { apiClient } from '../../api';
 import { getComponentDocumentData } from '../component-document-data';
@@ -16,10 +16,10 @@ describe( 'getComponentDocumentData', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should fetch component document config via batched ajax.load', async () => {
+	it( 'should fetch the component config through the batched ajax api', async () => {
 		// Arrange
 		const componentId = 123;
-		const mockDocument = createMockDocumentData( { id: componentId } );
+		const mockDocument = createMockDocument( { id: componentId } );
 		mockGetComponentConfig.mockResolvedValueOnce( mockDocument );
 
 		// Act
@@ -30,7 +30,7 @@ describe( 'getComponentDocumentData', () => {
 		expect( result ).toBe( mockDocument );
 	} );
 
-	it( 'should return null when fetch fails', async () => {
+	it( 'should return null when the fetch fails', async () => {
 		// Arrange
 		mockGetComponentConfig.mockRejectedValueOnce( new Error( 'Not found' ) );
 

@@ -1,8 +1,4 @@
-import { type Document } from '@elementor/editor-documents';
-
 import { apiClient } from '../api';
-
-type ComponentDocumentData = Document;
 
 export const getComponentDocumentData = async ( id: number ) => {
 	try {
