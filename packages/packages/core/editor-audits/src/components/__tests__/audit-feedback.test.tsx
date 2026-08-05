@@ -60,12 +60,12 @@ describe( 'AuditFeedback', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'renders nothing when the user is not connected to their Elementor account', () => {
+	it( 'still renders the trigger button when the user is not connected to their Elementor account', () => {
 		mockConnected( false );
 
-		const { container } = renderWithTheme( <AuditFeedback /> );
+		renderWithTheme( <AuditFeedback /> );
 
-		expect( container ).toBeEmptyDOMElement();
+		expect( screen.getByRole( 'button', { name: 'Give feedback' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'opens the dialog and tracks the click event when the trigger is clicked', () => {
@@ -76,7 +76,27 @@ describe( 'AuditFeedback', () => {
 		expect( screen.getByText( 'Let us know what you think' ) ).toBeInTheDocument();
 		expect( mockTrackEvent ).toHaveBeenCalledWith( 'audit_feedback_clicked', {
 			entry_point: FEEDBACK_ENTRY_POINT,
+			connected: true,
 		} );
+	} );
+
+	it( 'opens the connect URL in a new tab and does not open the dialog when the user is not connected', () => {
+		mockConnected( false );
+		window.elementor = { config: { user: { top_bar: { connect_url: 'https://my.elementor.com/connect' } } } };
+		const windowOpenSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		renderWithTheme( <AuditFeedback /> );
+		openModal();
+
+		expect( windowOpenSpy ).toHaveBeenCalledWith( 'https://my.elementor.com/connect', '_blank', 'noopener' );
+		expect( screen.queryByText( 'Let us know what you think' ) ).not.toBeInTheDocument();
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'audit_feedback_clicked', {
+			entry_point: FEEDBACK_ENTRY_POINT,
+			connected: false,
+		} );
+
+		windowOpenSpy.mockRestore();
+		delete window.elementor;
 	} );
 
 	it( 'closes the dialog without submitting and tracks the cancel event when Cancel is clicked', async () => {
@@ -117,9 +137,6 @@ describe( 'AuditFeedback', () => {
 		} );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
 
-		expect( mockTrackEvent ).toHaveBeenCalledWith( 'audit_feedback_sent', {
-			entry_point: FEEDBACK_ENTRY_POINT,
-		} );
 		expect( post ).toHaveBeenCalledWith( 'elementor/v1/feedback/submit', {
 			subject: 'Page Audit Tool',
 			description: 'Great feature, but slow.',
@@ -130,6 +147,9 @@ describe( 'AuditFeedback', () => {
 				expect.objectContaining( { type: 'success', message: 'Feedback sent. Thanks for helping us out.' } )
 			)
 		);
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'audit_feedback_sent', {
+			entry_point: FEEDBACK_ENTRY_POINT,
+		} );
 		await waitFor( () => expect( screen.queryByText( 'Let us know what you think' ) ).not.toBeInTheDocument() );
 	} );
 

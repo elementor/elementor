@@ -59,15 +59,25 @@ export default function AuditFeedback() {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { dispatchEvent: trackEvent = ( ...args: unknown[] ) => void args } = useMixpanel();
 
-	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) || ! isUserConnected() ) {
+	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) ) {
 		return null;
 	}
 
 	const triggerLabel = __( 'Give feedback', 'elementor' );
 
 	const handleOpen = () => {
+		if ( ! isUserConnected() ) {
+			const connectUrl = window.elementor?.config?.user?.top_bar?.connect_url;
+
+			if ( connectUrl ) {
+				window.open( connectUrl, '_blank', 'noopener' );
+			}
+
+			return;
+		}
+
 		setIsOpen( true );
-		trackEvent( FEEDBACK_CLICKED_EVENT, { entry_point: FEEDBACK_ENTRY_POINT } );
+		trackEvent( FEEDBACK_CLICKED_EVENT, { entry_point: FEEDBACK_ENTRY_POINT, connected: true } );
 	};
 
 	const dismiss = ( eventName: string ) => {
