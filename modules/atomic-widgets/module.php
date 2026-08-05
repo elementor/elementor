@@ -28,6 +28,12 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head\Atomic_Accordion_Item_Head;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -358,6 +364,15 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tab() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ACCORDION ) ) {
+			$elements_manager->register_element_type( new Atomic_Accordion() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Head() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
+		}
 
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
