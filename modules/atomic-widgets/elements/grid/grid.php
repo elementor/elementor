@@ -30,6 +30,8 @@ class Grid extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'CSS grid layout. Defaults to 3 columns x 2 rows with 1fr tracks. When children do not fill both rows, always override grid-template-rows to the intended row count (e.g. repeat(1, auto) for a single row) - empty 1fr row tracks do not collapse and create an equal-height phantom empty band.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
