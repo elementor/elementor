@@ -125,7 +125,7 @@ class Test_Style_Variants_Merger extends TestCase {
 	public function test_parse_css_string__unknown_breakpoint_returns_null_with_error() {
 		// Arrange.
 		$results = $this->make_results();
-		$converter = $this->make_converter();
+		$converter_called = false;
 
 		// Act.
 		$parsed = Style_Variants_Merger::parse_css_string(
@@ -134,11 +134,15 @@ class Test_Style_Variants_Merger extends TestCase {
 			0,
 			'create',
 			$results,
-			fn() => $converter
+			function () use ( &$converter_called ) {
+				$converter_called = true;
+				throw new \RuntimeException( 'converter should not be called when split fails' );
+			}
 		);
 
 		// Assert.
 		$this->assertNull( $parsed );
+		$this->assertFalse( $converter_called, 'Converter factory must not be called when the media split fails.' );
 		$result_data = $results->to_array();
 		$this->assertSame( 'error', $result_data['status'] );
 		$this->assertStringContainsString( 'nonexistent', $result_data['results'][0]['message'] );
