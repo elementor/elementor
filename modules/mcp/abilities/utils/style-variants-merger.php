@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,6 +20,59 @@ class Style_Variants_Merger {
 	 * The boundary char is captured so it can be preserved in replacements.
 	 */
 	const NULL_DECLARATION_PATTERN = '/(^|[;{])\s*([a-zA-Z][a-zA-Z0-9-]*)\s*:\s*null\s*;?/';
+
+	/**
+	 * @param callable(): Css_Converter $get_converter Resolved lazily — only called if the CSS split succeeds.
+	 */
+	public static function parse_css_string(
+		string $css_string,
+		array $active_breakpoints,
+		int $op_index,
+		string $op_action,
+		Bulk_Operations_Result $results,
+		callable $get_converter
+	): ?array {
+		$splitter = new Css_Media_Splitter( $active_breakpoints );
+		$split    = $splitter->split( $css_string );
+
+		if ( null !== $split['error'] ) {
+			$results->add_error(
+				$op_index,
+				$op_action,
+				'invalid_css',
+				$split['error'] . sprintf( ' Valid breakpoints: %s.', implode( ', ', $active_breakpoints ) )
+			);
+			return null;
+		}
+
+		$css_converter       = $get_converter();
+		$breakpoint_blocks   = [];
+		$removal_breakpoints = [];
+
+		foreach ( $split['breakpoints'] as $breakpoint => $css ) {
+			if ( '' === trim( $css ) ) {
+				$removal_breakpoints[] = $breakpoint;
+				continue;
+			}
+
+			$result = $css_converter->parse_nested( $css );
+
+			if ( isset( $result['error'] ) ) {
+				$results->add_error( $op_index, $op_action, 'invalid_css', $result['error'] );
+				return null;
+			}
+
+			$breakpoint_blocks[] = [
+				'breakpoint' => $breakpoint,
+				'blocks'     => $result['blocks'],
+			];
+		}
+
+		return [
+			'breakpoint_blocks'   => $breakpoint_blocks,
+			'removal_breakpoints' => $removal_breakpoints,
+		];
+	}
 
 	public static function build_variants( array $breakpoint_blocks, Css_Converter $converter ): array {
 		$variants = [];
