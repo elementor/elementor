@@ -440,14 +440,15 @@ class Converter_Registry_Factory {
 
 		foreach ( self::border_side_specs() as $property => [ $target, $side_key ] ) {
 			$is_radius = 'border-radius' === $target;
+			$prop_type_class = $is_radius ? Border_Radius_Prop_Type::class : Border_Width_Prop_Type::class;
 
 			$converters[ $property ] = new Object_Side_Merge_Converter(
 				$property,
 				$target,
-				$target,
+				$prop_type_class::get_key(),
 				$side_key,
 				$is_radius ? self::BORDER_RADIUS_CORNER_KEYS : self::BORDER_WIDTH_SIDE_KEYS,
-				$is_radius ? Border_Radius_Prop_Type::class : Border_Width_Prop_Type::class,
+				$prop_type_class,
 				$variables_service
 			);
 		}

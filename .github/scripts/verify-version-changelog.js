@@ -12,7 +12,7 @@ const getVersionHeaderPattern = (version) =>
 
 const getVersionSectionPattern = (version) =>
 	new RegExp(
-		`^= ${escapeVersionForRegex(version)} - \\d{4}-\\d{2}-\\d{2} =\\s*\\n+([\\s\\S]*?)(?=^= \\d+\\.\\d+\\.\\d+ - |\\Z)`,
+		`^= ${escapeVersionForRegex(version)} - \\d{4}-\\d{2}-\\d{2} =\\s*\\n+([\\s\\S]*?)(?=^= \\d+\\.\\d+\\.\\d+ - \\d{4}-\\d{2}-\\d{2} =|(?![\\s\\S]))`,
 		'm'
 	);
 

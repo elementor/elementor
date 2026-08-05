@@ -1,7 +1,14 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { timeouts } from '../../../config/timeouts';
+
+function waitForNestedSelectMenuToClose( page: Page ) {
+	return page.waitForFunction(
+		() => ! document.querySelector( '.MuiPopover-paper .MuiModal-root' ),
+		{ timeout: timeouts.action },
+	);
+}
 
 function getElementInteractionsData( elementId: string ) {
 	const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
@@ -129,14 +136,17 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( scrollOnOption ).toBeVisible();
 			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 
-			await page.keyboard.press( 'Escape' );
+			await pageOption( /page load/i ).click();
+			await waitForNestedSelectMenuToClose( page );
 
 			await expect( popover.locator( '[aria-label="Relative To control"]' ) ).toHaveCount( 0 );
 			await expect( popover.locator( '[aria-label="Start control"]' ) ).toHaveCount( 0 );
 			await expect( popover.locator( '[aria-label="End control"]' ) ).toHaveCount( 0 );
 
+			await expect( popover ).toBeVisible();
 			await triggerSelect.click();
 			await pageOption( /scroll into view/i ).click();
+			await waitForNestedSelectMenuToClose( page );
 
 			await expect( popover.locator( '[aria-label="Relative To control"]' ) ).toHaveCount( 0 );
 			await expect( popover.locator( '[aria-label="Start control"]' ) ).toHaveCount( 0 );
@@ -175,10 +185,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const selectInPopover = async ( combobox, optionText ) => {
 				await combobox.click();
 				await page.locator( '[role="option"]' ).filter( { hasText: optionText } ).click();
-				await page.waitForFunction(
-					() => ! document.querySelector( '.MuiPopover-paper .MuiModal-root' ),
-					{ timeout: 3000 },
-				);
+				await waitForNestedSelectMenuToClose( page );
 			};
 
 			const getFieldCombobox = ( label: string ) =>
