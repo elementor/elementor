@@ -30,6 +30,8 @@ class Grid extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'CSS grid layout. Always set grid-template-rows to match the actual number of rows the children fill. Empty fr row tracks do not collapse and render as an equal-height empty band below the content.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
