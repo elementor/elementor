@@ -131,6 +131,9 @@ jobs:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
 
+      - name: Unzip build artifact
+        run: unzip -o ${{ github.event.repository.name }}-${{ inputs.version }}.zip -d $GITHUB_WORKSPACE
+
       - name: Validate build files
         if: github.repository_owner == 'elementor'
         env:
