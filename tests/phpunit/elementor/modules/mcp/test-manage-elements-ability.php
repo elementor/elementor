@@ -1057,6 +1057,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function given_kit_global_class( string $label, string $color ): string {
 		( new Global_Class_Post_Type() )->register_post_type();
+		$class_id = 'g-testcls';
 		$data = [
 			'type' => 'class',
 			'variants' => [
