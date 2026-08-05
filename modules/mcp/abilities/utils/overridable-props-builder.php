@@ -82,9 +82,10 @@ class Overridable_Props_Builder {
 		$group_order = [];
 		$group_ids_by_label = [];
 		$errors = [];
+		$updated_elements = $elements;
 
 		foreach ( $friendly_props as $override_key => $definition ) {
-			$prop = $this->build_prop( (string) $override_key, $definition, $elements, $group_ids_by_label, $groups, $group_order );
+			$prop = $this->build_prop( (string) $override_key, $definition, $updated_elements, $group_ids_by_label, $groups, $group_order );
 
 			if ( is_wp_error( $prop ) ) {
 				$errors[] = $prop->get_error_message();
@@ -101,6 +102,8 @@ class Overridable_Props_Builder {
 				[ 'status' => WP_Http::BAD_REQUEST ]
 			);
 		}
+
+		$elements = $updated_elements;
 
 		return [
 			'props' => $props,
@@ -271,8 +274,7 @@ class Overridable_Props_Builder {
 		$inner_component = $this->get_repository()->get( $inner_component_id, false );
 
 		if ( ! $inner_component ) {
-			return new \WP_Error(
-				'x',
+			return $this->invalid_definition(
 				sprintf( '[%s] inner component %d referenced by target "%s" was not found.', $override_key, $inner_component_id, (string) $element['id'] )
 			);
 		}
@@ -282,8 +284,7 @@ class Overridable_Props_Builder {
 
 		if ( ! $inner_prop ) {
 			$available = empty( $inner_props ) ? '(none)' : implode( ', ', array_keys( $inner_props ) );
-			return new \WP_Error(
-				'x',
+			return $this->invalid_definition(
 				sprintf(
 					'[%s] component %d has no exposed override "%s". Available: %s. Use one of these as prop_key when the target is an <e-component>, or expose the underlying raw widget on the inner component first.',
 					$override_key,

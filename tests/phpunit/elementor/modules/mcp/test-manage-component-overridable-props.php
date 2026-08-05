@@ -10,6 +10,7 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -244,6 +245,38 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 				'target "does-not-exist" was not found',
 			],
 		];
+	}
+
+	public function test_build__does_not_mutate_elements_when_any_prop_is_invalid() {
+		// Arrange
+		$elements = [
+			[
+				'id' => 'h1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'elements' => [],
+			],
+		];
+		$original_elements = $elements;
+
+		// Act
+		$result = Overridable_Props_Builder::make()->build( $elements, [
+			'heading_tag' => [
+				'target' => 'h1',
+				'prop_key' => 'tag',
+				'label' => 'Heading Tag',
+			],
+			'missing_target' => [
+				'target' => 'does-not-exist',
+				'prop_key' => 'tag',
+				'label' => 'Missing Target',
+			],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( $original_elements, $elements );
 	}
 
 	public function test_create__creates_nested_component_instances_and_exposes_their_props() {
