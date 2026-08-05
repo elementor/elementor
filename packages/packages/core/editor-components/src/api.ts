@@ -48,9 +48,12 @@ export type ValidateComponentsResponse = {
 	};
 };
 
+// The unique_id must stay identical to the V1 documents manager's request args, otherwise
+// `elementor.documents.invalidateCache()` (run on document save and on component switch)
+// would clear a different ajax cache entry and components would render stale content.
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
-	unique_id: `document-config-${ id }`,
+	unique_id: `document-${ id }`,
 	data: { id },
 } );
 
