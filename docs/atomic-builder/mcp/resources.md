@@ -47,13 +47,15 @@ Resources expose **labels** for author-facing references. Do not use internal pr
 
 | URI | Payload |
 |-----|---------|
-| `global-classes` | id → **label** map from active kit |
+| `global-classes` | `{ priority, classes }`, where `classes` is an ordered `[{ id, label }]` list from highest to lowest CSS priority |
 | `global-variables` | `{ variables, total, watermark }` |
 | `style/best-practices` | Markdown from `static-resources/style/best-practices.md` |
 | `interactions/schema` | LLM JSON Schema for interaction items |
 | `dynamic-tags` | `[{ name, label, categories, settings }]` via `list-dynamic-tags` proxy |
 
 Cache `watermark` from global-variables to detect stale reads.
+
+For global classes, the earliest class in `classes` wins when multiple classes on the same element set the same CSS property. Use `elementor/reorder-classes` to change this order.
 
 ## Extension
 

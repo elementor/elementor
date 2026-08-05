@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\RestApi;
 
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
@@ -15,6 +16,7 @@ use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
+use Elementor\Modules\Mcp\Abilities\Reorder_Classes_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
@@ -34,6 +36,7 @@ class Mcp_Proxy_REST_API {
 		$this->tools = [
 			'manage-global-variable' => fn( array $input ) => ( new Manage_Variable_Ability() )->execute( $input ),
 			'manage-classes' => fn( array $input ) => ( new Manage_Classes_Ability() )->execute( $input ),
+			'reorder-classes' => fn( array $input ) => ( new Reorder_Classes_Ability() )->execute( $input ),
 			'get-widget-schema' => fn( array $input ) => ( new Get_Widget_Schema_Ability() )->execute( $input ),
 			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
 			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
@@ -96,6 +99,13 @@ class Mcp_Proxy_REST_API {
 				->set_status( 404 )
 				// translators: By tool name
 				->set_message( sprintf( __( 'Unknown tool: %s', 'elementor' ), $tool ) )
+				->build();
+		}
+
+		if ( 'reorder-classes' === $tool && ! current_user_can( Add_Capabilities::UPDATE_CLASS ) ) {
+			return Error_Builder::make( 'forbidden' )
+				->set_status( 403 )
+				->set_message( __( 'Sorry, you are not allowed to reorder global classes.', 'elementor' ) )
 				->build();
 		}
 
