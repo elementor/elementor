@@ -59,7 +59,7 @@ export default function AuditFeedback() {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { dispatchEvent: trackEvent = ( ...args: unknown[] ) => void args } = useMixpanel();
 
-	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) || ! isUserConnected() ) {
+	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) || isUserConnected() ) {
 		return null;
 	}
 
@@ -80,7 +80,6 @@ export default function AuditFeedback() {
 	const handleClose = () => dismiss( FEEDBACK_CLOSED_EVENT );
 
 	const handleSubmit = () => {
-		trackEvent( FEEDBACK_SENT_EVENT, { entry_point: FEEDBACK_ENTRY_POINT } );
 		setIsSubmitting( true );
 
 		httpService()
@@ -97,6 +96,7 @@ export default function AuditFeedback() {
 				setIsOpen( false );
 				setFeedbackText( '' );
 				notifySuccess();
+				trackEvent( FEEDBACK_SENT_EVENT, { entry_point: FEEDBACK_ENTRY_POINT } );
 			} )
 			.catch( notifyError )
 			.finally( () => setIsSubmitting( false ) );
