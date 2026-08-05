@@ -33,6 +33,15 @@ describe( 'accordion-items-control actions', () => {
 	};
 
 	describe( 'addItem', () => {
+		const DEFAULT_TITLES = [ 'Accordion Item 1', 'Accordion Item 2' ];
+
+		const addedTitles = () =>
+			jest
+				.mocked( createElements )
+				.mock.calls.map(
+					( [ { elements } ] ) => ( elements[ 0 ].model as unknown as V1ElementData ).editor_settings?.title
+				);
+
 		it( 'should create a single self-contained accordion item', () => {
 			// Arrange.
 			const { result } = renderHook( () => useActions() );
@@ -40,6 +49,7 @@ describe( 'accordion-items-control actions', () => {
 			// Act.
 			result.current.addItem( {
 				accordionId: ACCORDION_ID,
+				existingTitles: DEFAULT_TITLES,
 				items: [ { item: { id: '' }, index: 2 } ],
 			} );
 
@@ -60,6 +70,7 @@ describe( 'accordion-items-control actions', () => {
 			// Act.
 			result.current.addItem( {
 				accordionId: ACCORDION_ID,
+				existingTitles: DEFAULT_TITLES,
 				items: [
 					{ item: { id: '' }, index: 2 },
 					{ item: { id: '' }, index: 3 },
@@ -68,14 +79,7 @@ describe( 'accordion-items-control actions', () => {
 
 			// Assert.
 			expect( createElements ).toHaveBeenCalledTimes( 2 );
-			expect(
-				jest
-					.mocked( createElements )
-					.mock.calls.map(
-						( [ { elements } ] ) =>
-							( elements[ 0 ].model as unknown as V1ElementData ).editor_settings?.title
-					)
-			).toEqual( [ 'Accordion Item 3', 'Accordion Item 4' ] );
+			expect( addedTitles() ).toEqual( [ 'Accordion Item 3', 'Accordion Item 4' ] );
 		} );
 
 		it( 'should build the head/title/icon/content subtree of the added item', () => {
@@ -85,6 +89,7 @@ describe( 'accordion-items-control actions', () => {
 			// Act.
 			result.current.addItem( {
 				accordionId: ACCORDION_ID,
+				existingTitles: [],
 				items: [ { item: { id: '' }, index: 0 } ],
 			} );
 
@@ -108,6 +113,7 @@ describe( 'accordion-items-control actions', () => {
 			// Act.
 			result.current.addItem( {
 				accordionId: ACCORDION_ID,
+				existingTitles: DEFAULT_TITLES,
 				items: [ { item: { id: '' }, index: 2 } ],
 			} );
 
@@ -140,6 +146,7 @@ describe( 'accordion-items-control actions', () => {
 			// Act.
 			result.current.addItem( {
 				accordionId: ACCORDION_ID,
+				existingTitles: [],
 				items: [ { item: { id: '' }, index: 0 } ],
 			} );
 
@@ -166,9 +173,137 @@ describe( 'accordion-items-control actions', () => {
 			expect( () => {
 				result.current.addItem( {
 					accordionId: ACCORDION_ID,
+					existingTitles: [],
 					items: [ { item: { id: '' }, index: 0 } ],
 				} );
 			} ).toThrow( 'Accordion container not found' );
+		} );
+	} );
+
+	describe( 'addItem numbering', () => {
+		const addOne = ( existingTitles: ( string | undefined )[], index: number ) => {
+			const { result } = renderHook( () => useActions() );
+
+			result.current.addItem( {
+				accordionId: ACCORDION_ID,
+				existingTitles,
+				items: [ { item: { id: '' }, index } ],
+			} );
+
+			const model = jest.mocked( createElements ).mock.calls[ 0 ][ 0 ].elements[ 0 ]
+				.model as unknown as V1ElementData;
+
+			return {
+				title: model.editor_settings?.title,
+				paragraphContent: (
+					model.elements?.[ 0 ].elements?.[ 0 ].elements?.[ 0 ].settings?.paragraph as {
+						value: { content: { value: string } };
+					}
+				 ).value.content.value,
+			};
+		};
+
+		it( 'should not reuse a surviving title after the first item was removed', () => {
+			// Arrange.
+			// The default pair minus "Accordion Item 1": one item left, so the Repeater reports index 1.
+			const survivingTitles = [ 'Accordion Item 2' ];
+
+			// Act.
+			const { title, paragraphContent } = addOne( survivingTitles, 1 );
+
+			// Assert.
+			// Count-based numbering would have produced "Accordion Item 2" here - a duplicate of the
+			// survivor, both in the Structure panel and on canvas.
+			expect( title ).not.toBe( 'Accordion Item 2' );
+			expect( survivingTitles ).not.toContain( title );
+			expect( title ).toBe( 'Accordion Item 3' );
+			expect( paragraphContent ).toBe( 'Accordion Item 3' );
+		} );
+
+		it( 'should not reuse a surviving title after a middle item was removed', () => {
+			// Arrange.
+			const survivingTitles = [ 'Accordion Item 1', 'Accordion Item 3' ];
+
+			// Act.
+			const { title } = addOne( survivingTitles, 2 );
+
+			// Assert.
+			expect( survivingTitles ).not.toContain( title );
+			expect( title ).toBe( 'Accordion Item 4' );
+		} );
+
+		it( 'should never duplicate a visible title across a remove-then-add sequence', () => {
+			// Arrange.
+			let titles = [ 'Accordion Item 1', 'Accordion Item 2', 'Accordion Item 3' ];
+
+			// Act.
+			// Remove the first item, add, remove the first again, add - the sequence that breaks
+			// count-based numbering twice over.
+			titles = titles.slice( 1 );
+			const first = addOne( titles, titles.length );
+			titles = [ ...titles, first.title as string ].slice( 1 );
+
+			jest.mocked( createElements ).mockClear();
+			const second = addOne( titles, titles.length );
+
+			// Assert.
+			const finalTitles = [ ...titles, second.title as string ];
+
+			expect( new Set( finalTitles ).size ).toBe( finalTitles.length );
+		} );
+
+		it( 'should number from 1 when no items remain', () => {
+			// Act.
+			const { title } = addOne( [], 0 );
+
+			// Assert.
+			expect( title ).toBe( 'Accordion Item 1' );
+		} );
+
+		it( 'should ignore renamed titles that carry no trailing number', () => {
+			// Act.
+			const { title } = addOne( [ 'Shipping', 'Returns' ], 2 );
+
+			// Assert.
+			expect( title ).toBe( 'Accordion Item 1' );
+		} );
+
+		it( 'should still avoid a collision when a user renamed an item onto the generated name', () => {
+			// Arrange.
+			// "Accordion Item 1" has no trailing number above it, so the max is 1 and the natural next
+			// number is 2 - which the user has already taken by hand.
+			const existingTitles = [ 'Accordion Item 1', 'Accordion Item 2' ];
+
+			// Act.
+			const { title } = addOne( existingTitles, 2 );
+
+			// Assert.
+			expect( existingTitles ).not.toContain( title );
+			expect( title ).toBe( 'Accordion Item 3' );
+		} );
+
+		it( 'should give each item added in one action a distinct number', () => {
+			// Arrange.
+			const { result } = renderHook( () => useActions() );
+
+			// Act.
+			result.current.addItem( {
+				accordionId: ACCORDION_ID,
+				existingTitles: [ 'Accordion Item 2' ],
+				items: [
+					{ item: { id: '' }, index: 1 },
+					{ item: { id: '' }, index: 2 },
+				],
+			} );
+
+			// Assert.
+			const titles = jest
+				.mocked( createElements )
+				.mock.calls.map(
+					( [ { elements } ] ) => ( elements[ 0 ].model as unknown as V1ElementData ).editor_settings?.title
+				);
+
+			expect( titles ).toEqual( [ 'Accordion Item 3', 'Accordion Item 4' ] );
 		} );
 	} );
 

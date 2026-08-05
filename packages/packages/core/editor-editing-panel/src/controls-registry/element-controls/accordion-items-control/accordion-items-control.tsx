@@ -39,7 +39,13 @@ export const AccordionItemsControl = ( { label }: { label: string } ) => {
 		meta?: SetRepeaterValuesMeta< RepeaterItem< AccordionItem > >
 	) => {
 		if ( meta?.action?.type === 'add' ) {
-			return addItem( { accordionId: element.id, items: meta.action.payload } );
+			return addItem( {
+				accordionId: element.id,
+				// The new item's number comes from the titles already in use, not from the item count -
+				// see `getNextItemNumber`.
+				existingTitles: repeaterValues.map( ( { title } ) => title ),
+				items: meta.action.payload,
+			} );
 		}
 
 		if ( meta?.action?.type === 'remove' ) {

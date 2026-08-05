@@ -29,6 +29,42 @@ const getItemTitle = ( position: number ) =>
 	/* translators: %d: Accordion item position. */
 	sprintf( __( 'Accordion Item %d', 'elementor' ), position );
 
+const TRAILING_NUMBER = /(\d+)\s*$/;
+
+// Picks the number for a newly added item from the titles that exist right now, never from how many
+// items there are.
+//
+// The Repeater's add action reports `index = items.length`, i.e. the current visible count. Deriving
+// the number from that collides after a delete: remove "Accordion Item 1" from the default pair and
+// the count drops to 1, so the next add would be numbered 2 — a duplicate of the surviving
+// "Accordion Item 2". The number is not just a Structure-panel label, it is baked into the item's
+// rendered paragraph, so the canvas would show two identical headers.
+//
+// Taking `max( trailing number of each existing title ) + 1` keeps the surviving item in view when
+// the number is chosen, which is what fixes that case. The final loop then guarantees the property
+// we actually care about — the new title differs from every title currently present — even when a
+// user has renamed items by hand. It cannot know about numbers used by items that were already
+// deleted, so a delete-the-highest-then-add sequence can still reuse a number; that reuse is never a
+// visible duplicate, which is the failure that matters.
+const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
+	const taken = new Set( existingTitles.filter( ( title ): title is string => Boolean( title ) ) );
+
+	const highest = existingTitles.reduce( ( max: number, title ) => {
+		const [ , trailingNumber ] = title?.match( TRAILING_NUMBER ) ?? [];
+		const parsed = trailingNumber ? Number( trailingNumber ) : 0;
+
+		return Number.isFinite( parsed ) && parsed > max ? parsed : max;
+	}, 0 );
+
+	let next = highest + 1;
+
+	while ( taken.has( getItemTitle( next ) ) ) {
+		next += 1;
+	}
+
+	return next;
+};
+
 // Builds one `e-accordion-item` subtree, mirroring `Atomic_Accordion::build_default_item()`.
 //
 // Each level of an atomic element's default children is hydrated independently
@@ -97,23 +133,38 @@ const buildItemModel = ( position: number ): V1ElementData => {
 };
 
 export const useActions = () => {
-	const addItem = ( { accordionId, items }: { accordionId: string; items: ItemsActionPayload< AccordionItem > } ) => {
+	const addItem = ( {
+		accordionId,
+		existingTitles,
+		items,
+	}: {
+		accordionId: string;
+		existingTitles: ( string | undefined )[];
+		items: ItemsActionPayload< AccordionItem >;
+	} ) => {
 		const accordion = getContainer( accordionId );
 
 		if ( ! accordion ) {
 			throw new Error( 'Accordion container not found' );
 		}
 
-		items.forEach( ( { index } ) => {
+		// Grows as we go, so adding several items in one action can't hand out the same number twice.
+		const titles = [ ...existingTitles ];
+
+		items.forEach( () => {
+			const position = getNextItemNumber( titles );
+
 			createElements( {
 				title: __( 'Accordion', 'elementor' ),
 				elements: [
 					{
 						container: accordion,
-						model: buildItemModel( index + 1 ) as unknown as CreateElementParams[ 'model' ],
+						model: buildItemModel( position ) as unknown as CreateElementParams[ 'model' ],
 					},
 				],
 			} );
+
+			titles.push( getItemTitle( position ) );
 		} );
 	};
 
