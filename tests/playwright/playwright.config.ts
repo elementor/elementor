@@ -36,10 +36,10 @@ export default defineConfig( {
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 3 : 0,
-	workers: 1,
+	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI
-		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false, attachments: { trace: 'on' } } ] ]
+		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {

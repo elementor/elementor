@@ -166,7 +166,7 @@ test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 		const { order: existingIds } = await getGlobalClasses( apiRequests, request );
 		logProgress( `Found ${ existingIds.length } classes in storage` );
 
-		expect( existingIds.length ).toBe( CLASS_COUNT );
+		expect( existingIds ).toHaveLength( CLASS_COUNT );
 		expect( new Set( existingIds ).size ).toBe( CLASS_COUNT );
 
 		let publishTime = 0;

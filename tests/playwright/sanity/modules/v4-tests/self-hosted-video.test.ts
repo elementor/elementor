@@ -32,10 +32,12 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 	test( 'Self hosted video widget', async () => {
 		// Arrange
 		let widgetId = '';
+
 		await test.step( 'Add widget and check editor canvas', async () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			widgetId = await editor.addWidget( { widgetType, container: containerId } );
 		} );
+
 		const videoElement = editor.page.frameLocator( 'iframe[title="Preview"]' ).locator( 'video' );
 
 		// Act
