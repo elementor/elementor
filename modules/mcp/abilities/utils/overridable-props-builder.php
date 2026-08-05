@@ -131,7 +131,7 @@ class Overridable_Props_Builder {
 		$element = &$this->find_element_ref( $elements, $target );
 
 		if ( null === $element ) {
-			return new \WP_Error( 'x', sprintf( '[%s] target "%s" was not found in the element tree.', $override_key, $target ) );
+			return $this->invalid_definition( sprintf( '[%s] target "%s" was not found in the element tree.', $override_key, $target ) );
 		}
 
 		$widget_type = (string) ( $element['widgetType'] ?? '' );
@@ -166,11 +166,11 @@ class Overridable_Props_Builder {
 	 */
 	private function validate_common_definition( string $override_key, $definition ) {
 		if ( ! is_array( $definition ) ) {
-			return new \WP_Error( 'x', sprintf( '[%s] overridable_props entry must be an object.', $override_key ) );
+			return $this->invalid_definition( sprintf( '[%s] overridable_props entry must be an object.', $override_key ) );
 		}
 
 		if ( sanitize_key( $override_key ) !== $override_key ) {
-			return new \WP_Error( 'x', sprintf( '[%s] override keys must be slugs: lowercase letters, digits, dashes and underscores only.', $override_key ) );
+			return $this->invalid_definition( sprintf( '[%s] override keys must be slugs: lowercase letters, digits, dashes and underscores only.', $override_key ) );
 		}
 
 		$target = $definition['target'] ?? null;
@@ -181,7 +181,7 @@ class Overridable_Props_Builder {
 			: self::DEFAULT_GROUP_LABEL;
 
 		if ( ! is_string( $target ) || '' === $target || ! is_string( $prop_key ) || '' === $prop_key || ! is_string( $label ) || '' === $label ) {
-			return new \WP_Error( 'x', sprintf( '[%s] overridable_props entries require a non-empty target, prop_key, and label.', $override_key ) );
+			return $this->invalid_definition( sprintf( '[%s] overridable_props entries require a non-empty target, prop_key, and label.', $override_key ) );
 		}
 
 		return [
@@ -211,7 +211,7 @@ class Overridable_Props_Builder {
 		try {
 			$prop_type = Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'x', sprintf( '[%s] %s', $override_key, $e->getMessage() ) );
+			return $this->invalid_definition( sprintf( '[%s] %s', $override_key, $e->getMessage() ) );
 		}
 
 		$origin_value = $element['settings'][ $prop_key ] ?? $prop_type->get_default();
@@ -485,6 +485,10 @@ class Overridable_Props_Builder {
 		}
 
 		return $this->repository;
+	}
+
+	private function invalid_definition( string $message ): \WP_Error {
+		return new \WP_Error( 'invalid_overridable_prop_definition', $message );
 	}
 
 	/**

@@ -19,13 +19,13 @@ Requires `title` (2-200 chars). Choose ONE source for the initial content, or om
 
 Optionally attach `overridable_props` (see below). Returns `component_id`, `uid`, `editor_url`.
 
-`xml_structure` may contain `<e-component configuration-id="…"></e-component>` nodes to instance other components (leaf tag; no children inside `<e-component>`). `configuration-id` identifies the instance within the request; configure the reusable component it references via `element_config` using the flat `{ component_id, overrides? }` shape documented in `build-composition.md` COMPONENTS section.
+`xml_structure` may contain self-closing `<e-component configuration-id="…"/>` nodes to instance other components (leaf tag; no children inside `<e-component>`). `configuration-id` identifies the instance within the request; configure the reusable component it references via `element_config` using the flat `{ component_id, overrides? }` shape documented in `build-composition.md` COMPONENTS section.
 
 ```json
 {
   "action": "create",
   "title": "Two Cards",
-  "xml_structure": "<e-flexbox configuration-id=\"row\"><e-component configuration-id=\"card-a\"></e-component><e-component configuration-id=\"card-b\"></e-component></e-flexbox>",
+  "xml_structure": "<e-flexbox configuration-id=\"row\"><e-component configuration-id=\"card-a\"/><e-component configuration-id=\"card-b\"/></e-flexbox>",
   "element_config": {
     "card-a": { "component_id": 42, "overrides": { "title": "First Card", "image": { "src": { "url": "https://example.com/a.jpg" }, "size": "full" } } },
     "card-b": { "component_id": 42, "overrides": { "title": "Second Card", "image": { "src": { "url": "https://example.com/b.jpg" }, "size": "full" } } }
@@ -74,7 +74,7 @@ Example — a `Cards Grid` wrapper that re-exposes `caption`/`image` from each n
 {
   "action": "create",
   "title": "Cards Grid",
-  "xml_structure": "<e-flexbox configuration-id=\"grid\"><e-component configuration-id=\"card-1\"></e-component><e-component configuration-id=\"card-2\"></e-component></e-flexbox>",
+  "xml_structure": "<e-flexbox configuration-id=\"grid\"><e-component configuration-id=\"card-1\"/><e-component configuration-id=\"card-2\"/></e-flexbox>",
   "element_config": {
     "card-1": { "component_id": 42 },
     "card-2": { "component_id": 42 }

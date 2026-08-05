@@ -1,5 +1,10 @@
 Returns the components available on this site. Each component is a user-defined reusable composition of widgets stored as a post, embeddable in any document via the `<e-component>` XML tag in `elementor/build-composition`.
 
+Every successful response includes `capabilities` for the current user and license tier:
+- `can_create`: new components may be created.
+- `can_edit`: existing components may be updated.
+- `can_add_to_page`: components may be placed in page compositions.
+
 Call in two steps, the same way `elementor/list-widget-schemas` works:
 
 1. **Discovery** — call with no arguments to list every component without its schema. Returns `id`, `name`, `uid` per component. Archived components are never listed.

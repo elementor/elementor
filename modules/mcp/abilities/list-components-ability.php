@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Components\Components_Access_Controller;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
@@ -45,6 +46,15 @@ class List_Components_Ability extends Abstract_Ability {
 							],
 						],
 					],
+					'capabilities' => [
+						'type' => 'object',
+						'description' => 'Component operations available to the current user and license tier.',
+						'properties' => [
+							'can_create' => [ 'type' => 'boolean' ],
+							'can_edit' => [ 'type' => 'boolean' ],
+							'can_add_to_page' => [ 'type' => 'boolean' ],
+						],
+					],
 				],
 			],
 			[
@@ -73,7 +83,7 @@ class List_Components_Ability extends Abstract_Ability {
 		$requested_ids = is_array( $input['component_ids'] ?? null ) ? $input['component_ids'] : [];
 
 		if ( empty( $requested_ids ) ) {
-			return [ 'components' => $this->build_summaries() ];
+			return $this->build_response( $this->build_summaries() );
 		}
 
 		$component_ids = $this->normalize_ids( $requested_ids );
@@ -86,7 +96,26 @@ class List_Components_Ability extends Abstract_Ability {
 			);
 		}
 
-		return $this->build_schemas( $component_ids );
+		$result = $this->build_schemas( $component_ids );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return $this->build_response( $result['components'] );
+	}
+
+	private function build_response( array $components ): array {
+		$can_manage_components = current_user_can( 'manage_options' );
+
+		return [
+			'components' => $components,
+			'capabilities' => [
+				'can_create' => $can_manage_components && Components_Access_Controller::can_create(),
+				'can_edit' => $can_manage_components && Components_Access_Controller::can_edit(),
+				'can_add_to_page' => current_user_can( 'edit_posts' ) && Components_Access_Controller::can_add_to_page(),
+			],
+		];
 	}
 
 	private function build_summaries(): array {
@@ -99,7 +128,6 @@ class List_Components_Ability extends Abstract_Ability {
 					'id'          => $component['id'],
 					'name'        => $component['title'],
 					'uid'         => $component['uid'],
-					'is_archived' => $component['is_archived'] ?? false,
 				] )
 				->all()
 		);

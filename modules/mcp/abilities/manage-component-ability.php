@@ -129,16 +129,9 @@ class Manage_Component_Ability extends Abstract_Ability {
 			);
 		}
 
-		$non_atomic_validation = Non_Atomic_Widget_Validator::make()->validate_items( $items );
-		if ( ! $non_atomic_validation['success'] ) {
-			return new \WP_Error(
-				Non_Atomic_Widget_Validator::ERROR_CODE,
-				__( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ),
-				[
-					'status' => \WP_Http::UNPROCESSABLE_ENTITY,
-					'non_atomic_elements' => $non_atomic_validation['non_atomic_elements'],
-				]
-			);
+		$non_atomic_error = $this->validate_atomic_elements( $elements );
+		if ( $non_atomic_error ) {
+			return $non_atomic_error;
 		}
 
 		try {
@@ -286,16 +279,9 @@ class Manage_Component_Ability extends Abstract_Ability {
 		$elements = $this->assign_element_ids( $compiled['elements'] );
 		$warnings = $compiled['warnings'];
 
-		$non_atomic_validation = Non_Atomic_Widget_Validator::make()->validate( $elements );
-		if ( ! $non_atomic_validation['success'] ) {
-			return new \WP_Error(
-				Non_Atomic_Widget_Validator::ERROR_CODE,
-				__( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ),
-				[
-					'status' => \WP_Http::UNPROCESSABLE_ENTITY,
-					'non_atomic_elements' => $non_atomic_validation['non_atomic_elements'],
-				]
-			);
+		$non_atomic_error = $this->validate_atomic_elements( $elements );
+		if ( $non_atomic_error ) {
+			return $non_atomic_error;
 		}
 
 		$settings = [];
@@ -330,6 +316,23 @@ class Manage_Component_Ability extends Abstract_Ability {
 			'success' => true,
 			'component_id' => $component->get_main_id(),
 		] + $this->document_links( $component );
+	}
+
+	private function validate_atomic_elements( array $elements ): ?\WP_Error {
+		$validation = Non_Atomic_Widget_Validator::make()->validate( $elements );
+
+		if ( $validation['success'] ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			Non_Atomic_Widget_Validator::ERROR_CODE,
+			__( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ),
+			[
+				'status' => \WP_Http::UNPROCESSABLE_ENTITY,
+				'non_atomic_elements' => $validation['non_atomic_elements'],
+			]
+		);
 	}
 
 	/**
@@ -439,7 +442,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return null;
 		}
 
-		$builder_result = Overridable_Props_Builder::make()->build( $elements, $input['overridable_props'] );
+		$builder_result = Overridable_Props_Builder::make( $this->get_repository() )->build( $elements, $input['overridable_props'] );
 		if ( is_wp_error( $builder_result ) ) {
 			return $builder_result;
 		}

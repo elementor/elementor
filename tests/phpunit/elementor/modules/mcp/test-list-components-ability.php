@@ -8,12 +8,15 @@ use Elementor\Modules\Mcp\Abilities\List_Components_Ability;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Mock_Pro_License_API;
+use WP_Http;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 require_once __DIR__ . '/../components/mocks/component-overrides-mocks.php';
+require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -34,11 +37,82 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 			'public'   => false,
 			'supports' => Component_Document::get_supported_features(),
 		] );
+
+		Mock_Pro_License_API::reset();
 	}
 
 	public function tearDown(): void {
 		$this->delete_all_components();
+		Mock_Pro_License_API::reset();
 		parent::tearDown();
+	}
+
+	/**
+	 * @dataProvider access_capability_cases
+	 */
+	public function test_execute__returns_component_access_capabilities( bool $active, bool $expired, array $expected ) {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( $active, $expired );
+		$ability = new List_Components_Ability();
+
+		// Act
+		$result = $ability->execute();
+
+		// Assert
+		$this->assertSame( $expected, $result['capabilities'] );
+	}
+
+	public function access_capability_cases(): array {
+		return [
+			'pro' => [
+				true,
+				false,
+				[
+					'can_create' => true,
+					'can_edit' => true,
+					'can_add_to_page' => true,
+				],
+			],
+			'expired' => [
+				false,
+				true,
+				[
+					'can_create' => false,
+					'can_edit' => true,
+					'can_add_to_page' => false,
+				],
+			],
+			'core' => [
+				false,
+				false,
+				[
+					'can_create' => false,
+					'can_edit' => false,
+					'can_add_to_page' => false,
+				],
+			],
+		];
+	}
+
+	public function test_execute__includes_user_permissions_in_component_capabilities() {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'editor' ] ) );
+		$ability = new List_Components_Ability();
+
+		// Act
+		$result = $ability->execute();
+
+		// Assert
+		$this->assertSame(
+			[
+				'can_create' => false,
+				'can_edit' => false,
+				'can_add_to_page' => true,
+			],
+			$result['capabilities']
+		);
 	}
 
 	public function test_execute__returns_empty_list_when_no_components_exist() {
@@ -70,7 +144,7 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 		$this->assertSame( $component_id, $component['id'] );
 		$this->assertSame( 'My Hero', $component['name'] );
 		$this->assertArrayHasKey( 'uid', $component );
-		$this->assertFalse( $component['is_archived'] );
+		$this->assertArrayNotHasKey( 'is_archived', $component );
 	}
 
 	public function test_execute__omits_overridable_props_from_the_discovery_list() {
@@ -145,7 +219,7 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_input', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertSame( WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 
 	public function test_execute__returns_404_when_any_requested_component_is_missing() {
@@ -160,7 +234,7 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
-		$this->assertSame( \WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
+		$this->assertSame( WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
 	}
 
 	public function test_execute__returns_404_when_id_points_to_non_component_post() {

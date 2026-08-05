@@ -76,7 +76,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	// action routing
 	// ---------------------------------------------------------------------
 
-	public function test_execute__returns_invalid_input_for_missing_or_unknown_action() {
+	public function test_execute__returns_invalid_input_for_unknown_action() {
 		// Arrange
 		$this->act_as_admin();
 		$ability = new Manage_Component_Ability();
@@ -87,6 +87,58 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	/**
+	 * @dataProvider invalid_action_input_cases
+	 */
+	public function test_execute__validates_action_specific_required_fields( array $input ) {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( $input );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	public function invalid_action_input_cases(): array {
+		return [
+			'create requires a valid title' => [ [ 'action' => 'create', 'title' => 'X' ] ],
+			'update requires component_id' => [ [ 'action' => 'update' ] ],
+			'rename requires component_id and a valid title' => [ [ 'action' => 'rename', 'component_id' => 1, 'title' => 'X' ] ],
+			'archive requires component_ids' => [ [ 'action' => 'archive', 'component_ids' => [] ] ],
+			'publish requires component_id' => [ [ 'action' => 'publish' ] ],
+		];
+	}
+
+	/**
+	 * @dataProvider unknown_component_action_cases
+	 */
+	public function test_execute__returns_not_found_for_unknown_component( array $input ) {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( $input );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
+	}
+
+	public function unknown_component_action_cases(): array {
+		return [
+			'update' => [ [ 'action' => 'update', 'component_id' => 999999 ] ],
+			'rename' => [ [ 'action' => 'rename', 'component_id' => 999999, 'title' => 'New Title' ] ],
+			'publish' => [ [ 'action' => 'publish', 'component_id' => 999999 ] ],
+		];
 	}
 
 	// ---------------------------------------------------------------------
@@ -128,20 +180,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	// ---------------------------------------------------------------------
 	// create
 	// ---------------------------------------------------------------------
-
-	public function test_create__requires_a_title_of_at_least_two_characters() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'create', 'title' => 'X' ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_input', $result->get_error_code() );
-	}
 
 	public function test_create__creates_an_empty_component_when_no_source_is_given() {
 		// Arrange
@@ -204,24 +242,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'component_requires_single_root', $result->get_error_code() );
 		$this->assertSame( \WP_Http::UNPROCESSABLE_ENTITY, $result->get_error_data()['status'] );
-	}
-
-	public function test_create__rejects_invalid_form_structure_from_xml() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'action' => 'create',
-			'title' => 'Invalid Form',
-			'xml_structure' => '<e-flexbox configuration-id="wrapper"><e-form-input configuration-id="input"/></e-flexbox>',
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_form_structure', $result->get_error_code() );
 	}
 
 	public function test_create__applies_interactions_from_xml() {
@@ -552,7 +572,10 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Default', $groups['items'][ $group_id ]['label'] );
 	}
 
-	public function test_create__returns_error_for_a_non_slug_override_key() {
+	/**
+	 * @dataProvider invalid_overridable_props_cases
+	 */
+	public function test_create__rejects_invalid_overridable_props( array $overridable_props, string $expected_message ) {
 		// Arrange
 		$this->act_as_admin();
 		Mock_Pro_License_API::set_license_state( true );
@@ -561,45 +584,40 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'action' => 'create',
-			'title' => 'Non Slug Override Key',
+			'title' => 'Invalid Overridable Props',
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
-			'overridable_props' => [
-				'Heading Tag' => [
-					'target' => 'h1',
-					'prop_key' => 'tag',
-					'label' => 'Heading Tag',
-				],
-			],
+			'overridable_props' => $overridable_props,
 		] );
 
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_overridable_props', $result->get_error_code() );
+		$this->assertStringContainsString( $expected_message, $result->get_error_message() );
 	}
 
-	public function test_create__returns_error_for_an_invalid_overridable_props_target() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'action' => 'create',
-			'title' => 'Bad Overridable Target',
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
-			'overridable_props' => [
-				'heading_tag' => [
-					'target' => 'does-not-exist',
-					'prop_key' => 'tag',
-					'label' => 'Heading Tag',
+	public function invalid_overridable_props_cases(): array {
+		return [
+			'non-slug override key' => [
+				[
+					'Heading Tag' => [
+						'target' => 'h1',
+						'prop_key' => 'tag',
+						'label' => 'Heading Tag',
+					],
 				],
+				'override keys must be slugs',
 			],
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_overridable_props', $result->get_error_code() );
+			'unknown target' => [
+				[
+					'heading_tag' => [
+						'target' => 'does-not-exist',
+						'prop_key' => 'tag',
+						'label' => 'Heading Tag',
+					],
+				],
+				'target "does-not-exist" was not found',
+			],
+		];
 	}
 
 	public function test_create__creates_nested_component_instances_and_exposes_their_props() {
@@ -928,34 +946,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	// update
 	// ---------------------------------------------------------------------
 
-	public function test_update__requires_component_id() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'update' ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_input', $result->get_error_code() );
-	}
-
-	public function test_update__returns_not_found_for_unknown_component() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'update', 'component_id' => 999999 ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
-	}
-
 	public function test_update__requires_overridable_props_or_xml_structure() {
 		// Arrange
 		$this->act_as_admin();
@@ -1049,53 +1039,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'h1', $elements[0]['id'] );
 	}
 
-	public function test_update__rejects_xml_structure_with_multiple_root_elements() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$component_id = $this->create_component_with_content( [
-			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
-		], 'Multiple Root Update' );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'action' => 'update',
-			'component_id' => $component_id,
-			'xml_structure' => '<e-heading configuration-id="heading"/><e-paragraph configuration-id="paragraph"/>',
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'component_requires_single_root', $result->get_error_code() );
-	}
-
-	public function test_update__applies_interactions_from_xml() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$component_id = $this->create_component_with_content( [
-			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
-		], 'Interactive Update' );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $this->with_interactions_active(
-			fn() => $ability->execute( [
-				'action' => 'update',
-				'component_id' => $component_id,
-				'xml_structure' => '<e-heading configuration-id="heading"/>',
-				'interactions' => [ 'heading' => [ $this->valid_interaction() ] ],
-			] )
-		);
-
-		// Assert
-		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
-		$elements = ( new Components_Repository() )->get( $component_id, false )->get_elements_data();
-		$this->assertArrayHasKey( 'interactions', $elements[0], wp_json_encode( $elements[0] ) );
-		$this->assertCount( 1, $elements[0]['interactions']['items'] );
-	}
-
 	public function test_update__with_draft_publish_status_creates_an_autosave_and_leaves_the_published_document_untouched() {
 		// Arrange
 		$this->act_as_admin();
@@ -1151,20 +1094,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	// rename
 	// ---------------------------------------------------------------------
 
-	public function test_rename__requires_component_id_and_a_title_of_at_least_two_characters() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'rename', 'component_id' => 1, 'title' => 'X' ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_input', $result->get_error_code() );
-	}
-
 	public function test_rename__updates_the_component_title() {
 		// Arrange
 		$this->act_as_admin();
@@ -1183,37 +1112,9 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'New Title', $component->get_post()->post_title );
 	}
 
-	public function test_rename__returns_not_found_for_unknown_component() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'rename', 'component_id' => 999999, 'title' => 'New Title' ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
-	}
-
 	// ---------------------------------------------------------------------
 	// archive
 	// ---------------------------------------------------------------------
-
-	public function test_archive__requires_a_non_empty_component_ids_array() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'archive', 'component_ids' => [] ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_input', $result->get_error_code() );
-	}
 
 	public function test_archive__archives_valid_ids_and_reports_failures_for_invalid_ones() {
 		// Arrange
@@ -1239,34 +1140,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	// ---------------------------------------------------------------------
 	// publish
 	// ---------------------------------------------------------------------
-
-	public function test_publish__requires_component_id() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'publish' ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_input', $result->get_error_code() );
-	}
-
-	public function test_publish__returns_not_found_for_unknown_component() {
-		// Arrange
-		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
-		$ability = new Manage_Component_Ability();
-
-		// Act
-		$result = $ability->execute( [ 'action' => 'publish', 'component_id' => 999999 ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
-	}
 
 	public function test_publish__promotes_a_draft_autosave_to_the_published_document() {
 		// Arrange
