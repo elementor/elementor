@@ -115,7 +115,7 @@ class App extends BaseApp {
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'pages_url' => admin_url( 'edit.php?post_type=page' ),
 			'return_url' => $referer ? $referer : admin_url(),
-			'hasPro' => Utils::has_pro(),
+			'hasPro' => Utils::has_premium_access(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
