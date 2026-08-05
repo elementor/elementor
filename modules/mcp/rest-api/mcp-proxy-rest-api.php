@@ -104,10 +104,9 @@ class Mcp_Proxy_REST_API {
 		}
 
 		$ability = ( $this->tools[ $tool ] )();
-		$permission_error = $ability->permission_error();
 
-		if ( $permission_error ) {
-			return $this->build_response( $permission_error );
+		if ( ! $ability->check_permission() ) {
+			return $this->build_response( $this->forbidden_error() );
 		}
 
 		$result = $ability->execute( is_array( $input ) ? $input : [] );
@@ -127,15 +126,22 @@ class Mcp_Proxy_REST_API {
 		}
 
 		$ability = ( $this->resources[ $uri ] )();
-		$permission_error = $ability->permission_error();
 
-		if ( $permission_error ) {
-			return $this->build_response( $permission_error );
+		if ( ! $ability->check_permission() ) {
+			return $this->build_response( $this->forbidden_error() );
 		}
 
 		$result = $ability->execute();
 
 		return $this->build_response( $result );
+	}
+
+	private function forbidden_error(): \WP_Error {
+		return new \WP_Error(
+			'rest_forbidden',
+			__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
+			[ 'status' => \WP_Http::FORBIDDEN ]
+		);
 	}
 
 	private function build_response( $result ) {

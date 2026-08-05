@@ -77,10 +77,13 @@ class Read_Resource_Ability extends Abstract_Ability {
 		$executor = $executors[ $uri ];
 		/** @var Abstract_Ability $ability */
 		$ability = $executor['ability'];
-		$permission_error = $ability->permission_error();
 
-		if ( $permission_error ) {
-			return $permission_error;
+		if ( ! $ability->check_permission() ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
 		}
 
 		$content = $ability->execute();
