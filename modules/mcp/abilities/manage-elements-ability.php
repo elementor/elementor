@@ -51,7 +51,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only V4 elements (see elementor/get-page-structure -> version) can be the operation target; targeting a V3 legacy element_id returns elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only V4 elements (see elementor/get-page-structure -> version) can be the operation target; targeting a V3 legacy element_id returns elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -94,10 +94,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'type' => 'object',
 									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
 								],
-								'style' => [
-									'type' => 'object',
-									'description' => 'update only: raw CSS declarations (property → value); null resets a property.',
-								],
+							'style' => [
+								'type' => 'string',
+								'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour.',
+							],
+							'style_apply_mode' => [
+								'type' => 'string',
+								'enum' => [ 'patch', 'replace' ],
+								'default' => 'patch',
+								'description' => 'patch (default): merge incoming style variants with existing. replace: discard existing variants for the affected breakpoints before writing new ones. Pass an empty string with replace to wipe all local style variants.',
+							],
 								'classes' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
@@ -339,14 +345,20 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
-		$style = $this->as_map( $operation['style'] ?? [] );
+		$style = $operation['style'] ?? null;
+		$has_style = isset( $operation['style'] );
 		$has_classes = array_key_exists( 'classes', $operation );
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || $has_classes || null !== $interactions;
+		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions;
 		if ( ! $has_change ) {
 			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
+		}
+
+		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
+		if ( ! in_array( $style_apply_mode, [ 'patch', 'replace' ], true ) ) {
+			return new \WP_Error( 'invalid_input', __( 'style_apply_mode must be "patch" or "replace".', 'elementor' ) );
 		}
 
 		if ( null === $this->get_mutator()->find_by_id( $tree, $element_id ) ) {
@@ -408,9 +420,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		if ( ! empty( $style ) ) {
-			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-			$style_result = $style_applier->apply( $index, [ $element_id => $style ], [ $element_id => $element_type ] );
+		if ( $has_style ) {
+			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
+			$style_result = $style_applier->apply( $index, [ $element_id => $style ], $style_apply_mode );
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}
@@ -531,5 +543,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	private function get_active_breakpoints(): array {
+		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 	}
 }

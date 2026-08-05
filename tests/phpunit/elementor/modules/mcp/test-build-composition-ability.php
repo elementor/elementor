@@ -130,10 +130,10 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				],
 			],
 		],
-			'style' => [
-				'newspaper-section' => [ 'color' => 'var(--wc26-gold)' ],
-				'post-rule' => [ 'border-top' => '1px solid red' ],
-			],
+		'style' => [
+			'newspaper-section' => 'color: var(--wc26-gold);',
+			'post-rule' => 'border-top: 1px solid red;',
+		],
 			'parent_id' => 'document',
 			'dry_run' => false,
 		] );
@@ -147,8 +147,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
 		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
 		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
-		$this->assertNotEmpty( $result['warnings'] );
-		$this->assertStringContainsString( 'custom_css', implode( ' ', $result['warnings'] ) );
 
 		$rendered = $this->render_root_elements( $post_id );
 		$this->assertMatchesSnapshot( $this->normalize_snapshot( $rendered ) );
@@ -463,11 +461,10 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 	}
 
-	public function test_execute__rejects_non_object_style_block() {
+	public function test_execute__rejects_invalid_css_breakpoint_in_style() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
-
 		$ability = new Build_Composition_Ability();
 
 		// Act
@@ -475,40 +472,124 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'style' => [
-				'h1' => 'color: #2d2a26;',
+				'h1' => '@media(--nonexistent) { color: red; }',
 			],
 		] );
 
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'elementor_invalid_styles', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
-		$this->assertStringContainsString( 'h1', $result->get_error_message() );
-		$this->assertStringContainsString( 'property', $result->get_error_message() );
+		$this->assertStringContainsString( 'nonexistent', $result->get_error_message() );
 	}
 
-	public function test_execute__reports_custom_css_fallback_with_warning() {
+	public function test_execute__css_string_creates_desktop_variant_with_props() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 
-		$ability = new Build_Composition_Ability();
-
 		// Act
-		$result = $ability->execute( [
+		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'style' => [
-				'h1' => [ 'border-top' => '1px solid red' ],
+				'h1' => 'color: #ff0000;',
 			],
 		] );
 
 		// Assert
-		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertIsArray( $result );
 		$this->assertTrue( $result['success'] );
-		$this->assertNotEmpty( $result['warnings'] );
-		$this->assertStringContainsString( 'custom_css', implode( ' ', $result['warnings'] ) );
-		$this->assertStringContainsString( 'h1', implode( ' ', $result['warnings'] ) );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$style    = reset( $elements[0]['styles'] );
+
+		$this->assertSame( 'local', $style['label'] );
+		$this->assertCount( 1, $style['variants'] );
+
+		$variant = $style['variants'][0];
+		$this->assertSame( 'desktop', $variant['meta']['breakpoint'] );
+		$this->assertNull( $variant['meta']['state'] );
+		$this->assertArrayHasKey( 'color', $variant['props'] );
+	}
+
+	public function test_execute__css_string_with_pseudo_state_creates_hover_variant() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'style' => [
+				'h1' => 'color: #ff0000; &:hover { color: #0000ff; }',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$style    = reset( $elements[0]['styles'] );
+
+		$by_state = array_column( $style['variants'], null, null );
+		$states   = array_map( fn( $v ) => $v['meta']['state'], $style['variants'] );
+
+		$this->assertContains( null, $states, 'Expected a base (no-state) variant.' );
+		$this->assertContains( 'hover', $states, 'Expected a hover variant.' );
+	}
+
+	public function test_execute__css_string_with_breakpoint_creates_breakpoint_variant() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'style' => [
+				'h1' => 'font-size: 2rem; @media(--mobile) { font-size: 1.2rem; }',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+
+		$elements    = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$style       = reset( $elements[0]['styles'] );
+		$breakpoints = array_map( fn( $v ) => $v['meta']['breakpoint'], $style['variants'] );
+
+		$this->assertContains( 'desktop', $breakpoints, 'Expected a desktop variant.' );
+		$this->assertContains( 'mobile', $breakpoints, 'Expected a mobile variant.' );
+	}
+
+	public function test_execute__unrecognized_css_property_stored_as_custom_css() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'style' => [
+				'h1' => 'border-top: 1px solid red;',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$style    = reset( $elements[0]['styles'] );
+		$variant  = $style['variants'][0] ?? [];
+
+		$this->assertNotNull( $variant['custom_css'] ?? null, 'Unrecognized property must land in custom_css.' );
+		$this->assertArrayHasKey( 'raw', $variant['custom_css'] );
 	}
 
 	public function test_execute__attaches_global_classes_by_label_before_local_styles() {
@@ -527,7 +608,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				'h1' => [ 'hero-heading' ],
 			],
 			'style' => [
-				'h1' => [ 'font-size' => '2rem' ],
+				'h1' => 'font-size: 2rem;',
 			],
 		] );
 
@@ -583,7 +664,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'style' => [
-				'h1' => [ 'color' => 'var(--wc26-gold)' ],
+				'h1' => 'color: var(--wc26-gold);',
 			],
 		] );
 
