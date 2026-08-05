@@ -13,7 +13,7 @@ const TOOL_NAME = 'manage-classes';
 
 type ManageClassesResponse = {
 	status: string;
-	class?: StyleDefinition;
+	results?: StyleDefinition[];
 	order?: string[];
 };
 
@@ -23,7 +23,7 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: TOOL_NAME,
 		description:
-			'Manage V4 global CSS classes on the active kit. Create, update, or delete a single class using raw CSS declarations.',
+			'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix.',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ),
 			id: z
@@ -35,12 +35,22 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 				.optional()
 				.describe( 'Class label (lowercase, dash-separated) — required for create/update.' ),
 			css: z
-				.record( z.string() )
+				.string()
 				.optional()
-				.describe( 'Raw CSS declarations (property → value) — required for create/update.' ),
+				.describe(
+					'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.'
+				),
+			mode: z
+				.enum( [ 'patch', 'replace' ] )
+				.optional()
+				.describe(
+					'Merge strategy for update — patch (default): merge incoming props with existing; replace: discard all existing variants for the affected breakpoints.'
+				),
 		},
 		outputSchema: {
 			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
+			id: z.string().optional().describe( 'ID of the affected class — use for subsequent update/delete calls.' ),
+			label: z.string().optional().describe( 'Final label of the class after any auto-rename.' ),
 		},
 		requiredResources: [
 			{
@@ -52,21 +62,21 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 		handler: async ( params ) => {
 			const { data } = await httpService().post< HttpResponse< ManageClassesResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: params,
+				input: { operations: [ params ] },
 			} );
 
-			const payload = data.data;
+			const result = data.data.results?.[ 0 ];
 			const { create, update, delete: del } = globalClassesStylesProvider.actions;
 
 			switch ( params.action ) {
 				case 'create':
-					if ( payload.class && create ) {
-						create( payload.class.label, payload.class.variants, payload.class.id );
+					if ( result && create ) {
+						create( result.label, result.variants, result.id );
 					}
 					break;
 				case 'update':
-					if ( payload.class && update ) {
-						update( payload.class );
+					if ( result && update ) {
+						update( result );
 					}
 					break;
 				case 'delete':
@@ -79,7 +89,11 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 			dispatch( slice.actions.reset( { context: 'frontend' } ) );
 			window.dispatchEvent( new CustomEvent( 'classes:updated', { detail: { context: 'frontend' } } ) );
 
-			return { status: 'ok' };
+			return {
+				status: 'ok' as const,
+				id: result?.id,
+				label: result?.label,
+			};
 		},
 	} );
 };
