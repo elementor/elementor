@@ -1,4 +1,3 @@
-import { type Document } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
@@ -48,12 +47,9 @@ export type ValidateComponentsResponse = {
 	};
 };
 
-// The unique_id must stay identical to the V1 documents manager's request args, otherwise
-// `elementor.documents.invalidateCache()` (run on document save and on component switch)
-// would clear a different ajax cache entry and components would render stale content.
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
-	unique_id: `document-${ id }`,
+	unique_id: `document-config-${ id }`,
 	data: { id },
 } );
 
@@ -71,7 +67,7 @@ export const apiClient = {
 			ids,
 			status,
 		} ),
-	getComponentConfig: ( id: number ) => ajax.load< { id: number }, Document >( getParams( id ) ),
+	getComponentConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
 	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 	getComponentLockStatus: async ( componentId: number ) =>
 		await httpService()
