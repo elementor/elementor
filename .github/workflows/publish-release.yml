@@ -135,7 +135,6 @@ jobs:
       - name: Get Jira release URL
         id: get_jira_release_url
         env:
-          CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
           RELEASE_VERSION: ${{ env.RELEASE_NAME }}
           JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}

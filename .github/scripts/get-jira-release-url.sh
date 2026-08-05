@@ -3,6 +3,7 @@ set -uo pipefail
 
 JIRA_PROJECT_KEY="${JIRA_PROJECT_KEY:-ED}"
 JIRA_SITE_URL="${JIRA_SITE_URL:-https://elementor.atlassian.net}"
+JIRA_BETA_VERSION_PREFIX="${JIRA_BETA_VERSION_PREFIX:-}"
 CURL_CONNECT_TIMEOUT_SECONDS=10
 CURL_MAX_TIME_SECONDS=30
 
@@ -12,18 +13,18 @@ skip() {
   exit 0
 }
 
-# Beta releases have no corresponding Jira fixVersion/release notes.
-if [ "$CHANNEL" != "ga" ]; then
-  echo "jira_release_url=" >> "$GITHUB_OUTPUT"
-  exit 0
-fi
-
 if [ -z "${JIRA_API_EMAIL:-}" ] || [ -z "${JIRA_API_TOKEN:-}" ]; then
   skip "JIRA_API_EMAIL/JIRA_API_TOKEN not set."
 fi
 
 # GA fixVersions are named "v<version>" (e.g. "v4.2.2" for release 4.2.2).
-VERSION_NAME="v${RELEASE_VERSION}"
+# Beta fixVersions are named "<prefix>v<version> - Beta <n>" (e.g. "v4.3.0 - Beta 1",
+# or "Pro v4.3.0 - Beta 1" for Elementor Pro).
+if [[ "$RELEASE_VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-beta([0-9]+)$ ]]; then
+  VERSION_NAME="${JIRA_BETA_VERSION_PREFIX}v${BASH_REMATCH[1]} - Beta ${BASH_REMATCH[2]}"
+else
+  VERSION_NAME="v${RELEASE_VERSION}"
+fi
 
 VERSIONS_RESPONSE=$(curl -s --write-out '\n%{http_code}' \
   --connect-timeout "$CURL_CONNECT_TIMEOUT_SECONDS" --max-time "$CURL_MAX_TIME_SECONDS" \
