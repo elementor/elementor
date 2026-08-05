@@ -19,6 +19,7 @@ Durable extension surface for Editor V2:
 | `injectIntoPageIndication`, `toolsMenu` | `@elementor/editor-app-bar` | App bar slots and menus |
 | `injectIntoStyleTab`, `registerEditingPanelReplacement` | `@elementor/editor-editing-panel` | Editing panel |
 | `injectTab` | `@elementor/editor-elements-panel` | Elements panel tabs |
+| `injectKitTab` | `@elementor/editor-kit-settings` | Site Settings kit tabs |
 | `__registerPanel` | `@elementor/editor-panels` | Slide-in panels |
 | `getMCPByDomain` | `@elementor/editor-mcp` | In-editor MCP domain |
 | `__registerSlice` | `@elementor/store` | Redux slice registration |
@@ -53,6 +54,7 @@ window.elementorV2.{packageName}?.init?.();
 | `@elementor/editor-panels` | `registerPanel` |
 | `@elementor/editor-editing-panel` | `injectIntoStyleTab`, `registerEditingPanelReplacement` |
 | `@elementor/editor-elements-panel` | `injectTab` |
+| `@elementor/editor-kit-settings` | `injectKitTab` |
 
 ## Extension
 
@@ -93,7 +95,21 @@ export function init() {
 
 Reference: `packages/packages/core/editor-site-navigation/src/init.ts`.
 
-### 4. Editing panel
+### 4. Site Settings kit tab
+
+```ts
+import { injectKitTab } from '@elementor/editor-kit-settings';
+
+export function init() {
+    injectKitTab( { id: 'settings-my-feature', component: MyFeatureSettingsTab } );
+}
+```
+
+Requires a matching PHP kit tab id and `editor-kit-settings` in `elementor/editor/v2/packages`. See [kit-settings.md](kit-settings.md).
+
+Reference: `packages/packages/core/editor-kit-agents/src/init.ts`.
+
+### 5. Editing panel
 
 ```ts
 import { injectIntoStyleTab, registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
@@ -108,11 +124,11 @@ registerEditingPanelReplacement( {
 } );
 ```
 
-### 5. Legacy bridge
+### 6. Legacy bridge
 
 `registerDataHook`, `blockCommand`, `listenTo( v1ReadyEvent(), fn )`. Exports prefixed `__private` are internal.
 
-### 6. MCP tools
+### 7. MCP tools
 
 Use `getMCPByDomain()` — see [../mcp/registering-editor-tools.md](../mcp/registering-editor-tools.md).
 
