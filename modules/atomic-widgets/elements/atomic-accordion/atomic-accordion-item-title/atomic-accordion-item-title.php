@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -103,5 +104,24 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-accordion-item-title' => __DIR__ . '/atomic-accordion-item-title.html.twig',
 		];
+	}
+
+	/**
+	 * Reads the tag to render as from the accordion's render context.
+	 *
+	 * `title-tag` is `null` until Task 7 adds the `title_tag` prop, and the context itself is `[]`
+	 * when this element renders outside a parent `Atomic_Accordion` pass (e.g. `Render_Element_Action`
+	 * re-rendering a single element) — both cases fall back to `null` here rather than warn on a
+	 * missing array key, and the Twig template's `title_tag | default('span')` turns that into the
+	 * same `span` it already renders today.
+	 *
+	 * @return array
+	 */
+	protected function build_template_context(): array {
+		$accordion_context = Render_Context::get( Atomic_Accordion::class );
+
+		return array_merge( $this->build_base_template_context(), [
+			'title_tag' => $accordion_context['title-tag'] ?? null,
+		] );
 	}
 }

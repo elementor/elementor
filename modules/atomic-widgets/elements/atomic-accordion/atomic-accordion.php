@@ -202,4 +202,29 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			'elementor/elements/atomic-accordion' => __DIR__ . '/atomic-accordion.html.twig',
 		];
 	}
+
+	/**
+	 * Exposes the accordion's identity and per-item lookup to descendants that render inside its
+	 * pass (item, head, title, icon, content) via `Render_Context::get( self::class )`.
+	 *
+	 * `default-state`, `max-expanded` and `title-tag` read props that don't exist yet (Tasks 6–7
+	 * add them); `get_atomic_setting()` returns `null` for an undeclared prop, so these keys land
+	 * as `null` today. That's intentional: the context shape is fixed now so the later tasks only
+	 * add a prop and read an existing key, instead of also touching this method.
+	 *
+	 * @return array
+	 */
+	protected function define_render_context(): array {
+		return [
+			[
+				'context' => [
+					'accordion-id' => $this->get_id(),
+					'get-item-index' => fn( $item_id ) => $this->get_item_index( $item_id ),
+					'default-state' => $this->get_atomic_setting( 'default_state' ),
+					'max-expanded' => $this->get_atomic_setting( 'max_expanded' ),
+					'title-tag' => $this->get_atomic_setting( 'title_tag' ),
+				],
+			],
+		];
+	}
 }

@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head\Atomic_Accordion_Item_Head;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -122,5 +123,26 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-accordion-item' => __DIR__ . '/atomic-accordion-item.html.twig',
 		];
+	}
+
+	/**
+	 * Resolves this item's position among its siblings via the accordion's render context.
+	 *
+	 * `Render_Context::get()` returns `[]` when this item renders outside a parent
+	 * `Atomic_Accordion` pass (e.g. the editor's `Render_Element_Action` re-rendering a single
+	 * element), so `get-item-index` may be absent; treat it as "no index" rather than fatal on an
+	 * uncallable value. `item_index` isn't consumed by the Twig template yet — Task 6 reads it to
+	 * decide the `open` attribute — landing it now keeps that step to a prop and a template change.
+	 *
+	 * @return array
+	 */
+	protected function build_template_context(): array {
+		$accordion_context = Render_Context::get( Atomic_Accordion::class );
+		$get_item_index = $accordion_context['get-item-index'] ?? null;
+		$item_index = is_callable( $get_item_index ) ? $get_item_index( $this->get_id() ) : null;
+
+		return array_merge( $this->build_base_template_context(), [
+			'item_index' => $item_index,
+		] );
 	}
 }
