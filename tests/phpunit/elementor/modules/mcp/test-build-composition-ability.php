@@ -587,12 +587,15 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$style    = reset( $elements[0]['styles'] ?? [] );
+		$styles   = $elements[0]['styles'] ?? [];
 
-		$this->assertNotEmpty( $style, 'Expected a local style entry on the element.' );
-		$this->assertNotEmpty( $style['variants'] ?? [], 'Expected at least one variant.' );
+		$this->assertNotEmpty( $styles, 'Expected a local style entry on the element.' );
 
-		$variant = $style['variants'][0];
+		$style   = reset( $styles );
+		$variant = $style['variants'][0] ?? [];
+
+		$this->assertNotEmpty( $variant, 'Expected at least one variant.' );
+
 		$has_content = ! empty( $variant['props'] ) || ! empty( $variant['custom_css'] );
 		$this->assertTrue( $has_content, 'Variant must have either props or custom_css.' );
 	}
