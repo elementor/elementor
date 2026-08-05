@@ -2,6 +2,13 @@ Create and manage Elementor components — user-facing reusable compositions of 
 
 Requires administrator access. `create`, `rename`, and `archive` additionally require an active Elementor Pro license; `publish` and `update` also work with an expired license. Without the required license, calls fail with `insufficient_permissions`.
 
+# COMPONENT INTENT
+An Elementor component is a persistent, reusable widget composition. It is not a global CSS class and is not merely a group of raw widgets placed on one page.
+
+Treat "create/build components", "with components", "basic components", and "component library/design system" as requests to create missing Elementor components. When a request separately names variables, classes, and components, all three are distinct deliverables.
+
+Before creating a component, call `elementor/list-components` and reuse a matching component when its exposed properties cover the requested customization. If component creation fails, report the failure instead of substituting a global class and claiming that it is a component.
+
 # ACTIONS
 Every call takes one `action`: `create`, `update`, `rename`, `archive`, `publish`.
 

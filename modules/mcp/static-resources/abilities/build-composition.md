@@ -4,7 +4,7 @@
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 - `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
-- `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
+- `elementor/list-components` - User-defined reusable widget compositions; call when the user explicitly asks to use, create, build, include, or work with components (see COMPONENT INTENT below)
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
@@ -12,18 +12,40 @@ This tool supports v4 elements only.
 # WORKFLOW
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
-3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
-4. Use returned element IDs for subsequent configuration changes
+3. When component intent is present, check/create components via `elementor/list-components` and `elementor/manage-component`
+4. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+5. Use returned element IDs for subsequent configuration changes
 
-# COMPONENTS (only when explicitly requested)
+# COMPONENT INTENT
 
-**Do NOT call `elementor/list-components` by default.** Compose from raw widgets unless the user explicitly asks to use a component (e.g. "use my Hero component", "insert the Product Card component", "reuse the CTA component I made").
+An Elementor component and a global CSS class are different artifacts:
+- A **global class** is a reusable visual style attached through `classes`.
+- An **Elementor component** is a user-facing reusable widget composition created through `elementor/manage-component` and placed through `<e-component>`.
 
-## When the user explicitly asks for a component
+Never satisfy a request for components by creating global classes or by grouping raw widgets on a page.
+
+Treat the following as explicit component intent:
+- **Reuse intent**: "use my Hero component", "insert the Product Card component", or "reuse the CTA component I made".
+- **Creation intent**: "create/build components", "with components", "basic components", or "component library/design system".
+- A request that separately names **variables, classes, and components** requires three distinct deliverables. Do not collapse components into classes.
+
+If "component" could mean either an Elementor component or an informally named page section, and the request does not otherwise establish reuse or creation intent, ask one focused clarification before modifying the site.
+
+**Do NOT call `elementor/list-components` when there is no component intent.** Compose from raw widgets in that case.
+
+## Reuse existing components
 
 1. Call `elementor/list-components` with no arguments and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
 2. If found, call `elementor/list-components` again with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
 3. If a component is not listed (archived components never are) or its overridable props do not cover the required customizations, fall back to raw widgets, save the composition as a new component, and inform the user about that.
+
+## Create components
+
+1. Call `elementor/list-components` with no arguments before creating anything, so matching reusable components are not duplicated.
+2. Reuse a matching component when its `overridable_props` cover the required customizations.
+3. Create each missing reusable composition with `elementor/manage-component`, including meaningful `overridable_props` for content that varies between instances.
+4. Place the resulting component through `<e-component>` instead of duplicating its raw widget subtree on the page.
+5. If creation fails because of permissions or licensing, report that failure. Do not claim that a global class or raw widget composition is the requested component.
 
 ## Placement
 - Use `<e-component configuration-id="my-hero">` in `xml_structure`. **Leaf tag — no child tags inside it.**
@@ -229,3 +251,5 @@ Note: No height/width specified on any element - flexbox handles layout automati
 
 # FURTHER INSTRUCTIONS
 Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.
+
+Before reporting completion, verify every requested artifact type was created through its corresponding tool. Do not claim that an Elementor component exists unless `elementor/manage-component` succeeded or a matching existing component was placed through `<e-component>`.
