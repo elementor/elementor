@@ -484,6 +484,52 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'p1', $elements[0]['elements'][0]['editor_settings']['title'] );
 	}
 
+	public function test_save_component__maps_circular_dependency_exception_to_circular_dependency_detected() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component_with_content( [], 'Self Referencing Hero' );
+		$component = ( new Components_Repository() )->get( $component_id, false );
+		$ability = new Manage_Component_Ability();
+		$save_component = new \ReflectionMethod( Manage_Component_Ability::class, 'save_component' );
+		$save_component->setAccessible( true );
+
+		// Act
+		$result = $save_component->invoke(
+			$ability,
+			$component,
+			[ $this->self_referencing_component_element( $component_id ) ],
+			[]
+		);
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'circular_dependency_detected', $result->get_error_code() );
+	}
+
+	public function test_update__rejects_circular_nesting_with_circular_dependency_detected() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component_with_content( [], 'Self Referencing Hero' );
+		$ability = new Manage_Component_Ability();
+		$validate_circular_dependency = new \ReflectionMethod( Manage_Component_Ability::class, 'validate_circular_dependency' );
+		$validate_circular_dependency->setAccessible( true );
+
+		// Act
+		$result = $validate_circular_dependency->invoke(
+			$ability,
+			fn() => \Elementor\Modules\Components\Circular_Dependency_Validator::make()->validate(
+				$component_id,
+				[ $this->self_referencing_component_element( $component_id ) ]
+			)
+		);
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'circular_dependency_detected', $result->get_error_code() );
+	}
+
 	public function test_update__rejects_invalid_form_structure_and_preserves_the_element_tree() {
 		// Arrange
 		$this->act_as_admin();
@@ -740,6 +786,26 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		foreach ( $posts as $post ) {
 			wp_delete_post( $post->ID, true );
 		}
+	}
+
+	private function self_referencing_component_element( int $component_id ): array {
+		return [
+			'id' => 'component-instance-' . $component_id,
+			'elType' => 'widget',
+			'widgetType' => 'e-component',
+			'settings' => [
+				'component_instance' => [
+					'$$type' => 'component-instance',
+					'value' => [
+						'component_id' => [
+							'$$type' => 'number',
+							'value' => $component_id,
+						],
+					],
+				],
+			],
+			'elements' => [],
+		];
 	}
 
 	private function error_message( $result ): string {
