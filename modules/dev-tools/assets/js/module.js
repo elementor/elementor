@@ -1,4 +1,6 @@
-import Deprecation from './deprecation';
+/**
+ * @typedef {import('./deprecation').default} Deprecation
+ */
 
 /* global elementorDevToolsConfig */
 
