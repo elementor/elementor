@@ -5,6 +5,7 @@ namespace Elementor\Modules\EditorOne\Classes;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -311,6 +312,7 @@ class Menu_Data_Provider {
 			'group_id' => '',
 			'priority' => 50,
 			'has_divider_before' => false,
+			'event_id' => 'theme_builder',
 		];
 	}
 
@@ -383,6 +385,7 @@ class Menu_Data_Provider {
 			'group_id' => '',
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_first,
+			'event_id' => $this->resolve_event_id( $item, $item_slug ),
 		];
 	}
 
@@ -419,6 +422,7 @@ class Menu_Data_Provider {
 			'group_id' => $group_id,
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_third_party_parent,
+			'event_id' => $this->resolve_event_id( $item, $item_slug ),
 		];
 	}
 
@@ -494,6 +498,7 @@ class Menu_Data_Provider {
 					'label' => $this->title_case( $item->get_label() ),
 					'url' => $url,
 					'priority' => $this->get_item_priority( $item ),
+					'event_id' => $this->resolve_event_id( $item, $item_slug ),
 				];
 
 				$existing_labels[] = $label_lower;
@@ -551,6 +556,31 @@ class Menu_Data_Provider {
 		usort( $items, function ( array $a, array $b ): int {
 			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
 		} );
+	}
+
+	private function resolve_event_id( Menu_Item_Interface $item, string $item_slug ): string {
+		if ( $item instanceof Menu_Item_With_Event_Id_Interface ) {
+			return $item->get_event_id();
+		}
+
+		return $this->derive_event_id_from_slug( $item_slug );
+	}
+
+	private function derive_event_id_from_slug( string $slug ): string {
+		$slug_event_map = [
+			'edit.php?post_type=elementor_library' => 'saved_templates',
+			'elementor-app' => 'theme_builder',
+		];
+
+		if ( isset( $slug_event_map[ $slug ] ) ) {
+			return $slug_event_map[ $slug ];
+		}
+
+		$event_id = preg_replace( '/^elementor-/', '', $slug );
+		$event_id = preg_replace( '/[?#].*$/', '', $event_id );
+		$event_id = str_replace( [ '-', ' ' ], '_', $event_id );
+
+		return strtolower( $event_id );
 	}
 
 	private function title_case( string $text ): string {
