@@ -1,9 +1,9 @@
 ---
-name: external-author-atomic-widget
-description: "External: Create Elementor v4 atomic widgets and container elements from a third-party plugin using public registration hooks, atomic base classes, props, controls, and Twig."
+name: create-atomic-widget
+description: "External: Create atomic widgets and container elements from a third-party plugin. Atomic_Widget_Base, define_props_schema, elementor/widgets/register, props, controls, Twig."
 ---
 
-# Author atomic widget or element
+# Create atomic widget
 
 > **Scope: External** — the full documented outcome is shippable from a 3rd-party plugin via `elementor/widgets/register` / `elementor/elements/elements_registered`; no Elementor Core changes required. Changing the built-in element catalog is Core-only. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
@@ -37,7 +37,7 @@ Read first: [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/a
 
 ## Minimal skeleton
 
-Requires experiment `e_atomic_elements`. Full runnable example: [docs/atomic-builder/examples/external-author-atomic-widget.md](../../../docs/atomic-builder/examples/external-author-atomic-widget.md).
+Requires experiment `e_atomic_elements`. Full runnable example: [docs/atomic-builder/examples/create-atomic-widget.md](../../../docs/atomic-builder/examples/create-atomic-widget.md).
 
 ```php
 class My_Atomic_Widget extends \Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base {

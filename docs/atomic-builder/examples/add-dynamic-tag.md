@@ -1,6 +1,6 @@
-# Example: Extend dynamic tags (atomic bridge)
+# Example: Add dynamic tag
 
-> Skill: [external-extend-dynamic-tags](../../../.cursor/skills/external-extend-dynamic-tags/SKILL.md)
+> Skill: [add-dynamic-tag](../../../.cursor/skills/add-dynamic-tag/SKILL.md)
 > Docs: [dynamic-tags/extending.md](../dynamic-tags/extending.md)
 > Verdict: **Relevant** — required bridge for WordPress data in v4 props. Auto-mapping is category-based, not free-form schema intersection.
 

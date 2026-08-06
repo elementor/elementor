@@ -1,9 +1,9 @@
 ---
-name: external-extend-dynamic-tags
-description: "External: Add Elementor dynamic tags for v4 atomic widgets from a third-party plugin using elementor/dynamic_tags/register, tag categories, atomic PropValue unions, and select filters."
+name: add-dynamic-tag
+description: "External: Add dynamic tags for v4 atomic widgets from a third-party plugin. elementor/dynamic_tags/register, tag categories, PropValue unions, select filters."
 ---
 
-# Extend dynamic tags (atomic bridge)
+# Add dynamic tag
 
 > **Scope: External** — the full documented outcome is shippable from a 3rd-party plugin via `elementor/dynamic_tags/register` and the atomic select-control filters; no Core changes required. There is no public filter for category→schema auto-mapping — custom mapping needs manual prop unions. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
@@ -24,7 +24,7 @@ add_action( 'elementor/dynamic_tags/register', function ( $manager ) {
 } );
 ```
 
-2. **Tag class** — extend `\Elementor\Core\DynamicTags\Tag`; `get_name()`, `get_title()`, `get_group()`, `get_categories()` using `\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY`, `URL_CATEGORY`, etc. Convertible controls: `text`, `textarea`, `select`, `number`, `switcher`, `choose`, `query`, `date_time`, `media`. Example: [docs/atomic-builder/examples/external-extend-dynamic-tags.md](../../../docs/atomic-builder/examples/external-extend-dynamic-tags.md).
+2. **Tag class** — extend `\Elementor\Core\DynamicTags\Tag`; `get_name()`, `get_title()`, `get_group()`, `get_categories()` using `\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY`, `URL_CATEGORY`, etc. Convertible controls: `text`, `textarea`, `select`, `number`, `switcher`, `choose`, `query`, `date_time`, `media`. Example: [docs/atomic-builder/examples/add-dynamic-tag.md](../../../docs/atomic-builder/examples/add-dynamic-tag.md).
 3. **Optional group** — `Plugin::$instance->dynamic_tags->register_group( 'my-plugin', [ 'title' => 'My Plugin' ] )`.
 4. **Atomic auto-mapping** — `Dynamic_Prop_Types_Mapping` maps prop types to categories (e.g. `String_Prop_Type` → `TEXT_CATEGORY`), unions `Dynamic_Prop_Type`, sets `allowed_tag_names`. Hooks: `elementor/atomic-widgets/props-schema` (widget props) and `elementor/atomic-widgets/styles/schema` (color props only).
 5. **Non-convertible controls** — override `get_editor_config()`:
@@ -56,5 +56,5 @@ public function get_editor_config() {
 
 ## See also
 
-- [external-author-atomic-widget](../external-author-atomic-widget/SKILL.md) — define props that accept dynamic bindings
+- [create-atomic-widget](../create-atomic-widget/SKILL.md) — define props that accept dynamic bindings
 - [fundamentals/transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) — `Dynamic_Transformer`

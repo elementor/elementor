@@ -1,9 +1,9 @@
 ---
-name: external-extend-variables
-description: "External: Register Elementor v4 global design-token variable types from a third-party plugin using elementor/variables/register, registerVariableType JS, style schema unions, and styles transformers."
+name: extend-variables
+description: "External: Register global design-token variable types from a third-party plugin. elementor/variables/register, registerVariableType JS, style schema, transformers."
 ---
 
-# Extend variables (design tokens)
+# Extend variables
 
 > **Scope: External** — the full documented custom-variable outcome is shippable from a 3rd-party plugin via `elementor/variables/register` + style-schema/transformer hooks + your own package `init()`; no Core changes required. Modifying Elementor's built-in size types or their Pro gating is outside this skill and requires Core/Pro changes. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
@@ -29,7 +29,7 @@ add_action( 'elementor/variables/register', function (
 
 2. **Style schema union** — extend `elementor/atomic-widgets/styles/schema` so atomic style keys accept the new `$$type`.
 3. **PHP render transformer** — `elementor/atomic-widgets/styles/transformers/register` if frontend must resolve id → `var(--label)` (pattern: `Global_Variable_Transformer` for color/font).
-4. **JS editor type (required for UI)** — `registerVariableType` with `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`, plus `defaultValue` / `valueField` / `styleTransformer` as needed. Call from **your** editor v2 package `init()` (not core `register-variable-types.tsx`). Example: [docs/atomic-builder/examples/external-extend-variables.md](../../../docs/atomic-builder/examples/external-extend-variables.md).
+4. **JS editor type (required for UI)** — `registerVariableType` with `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`, plus `defaultValue` / `valueField` / `styleTransformer` as needed. Call from **your** editor v2 package `init()` (not core `register-variable-types.tsx`). Example: [docs/atomic-builder/examples/extend-variables.md](../../../docs/atomic-builder/examples/extend-variables.md).
    - **Warning:** skip this step and a PHP-only type still works via REST / MCP / CSS, but it will **not appear in the "Add Variable" dropdown** — the UI only lists registered JS types.
    - **No build pipeline** (WP code snippet, no npm/webpack): register via the `window.elementorV2.{camelCasePackage}` global for late-loaded scripts — see [extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md). Full `registerVariableType` field/`valueField` prop contract is in [variables/types.md](../../../docs/atomic-builder/variables/types.md#registervariabletype-field-contract).
 5. **Storage adapter** — extend `Adapters\Prop_Type_Adapter` if value encoding is non-standard.
@@ -57,5 +57,5 @@ Built-in keys: `global-color-variable`, `global-font-variable`, `global-size-var
 
 ## See also
 
-- [external-extend-prop-types-transformers](../external-extend-prop-types-transformers/SKILL.md) — prop type + transformer pairing
+- [extend-prop-types](../extend-prop-types/SKILL.md) — prop type + transformer pairing
 - [variables/overview.md](../../../docs/atomic-builder/variables/overview.md)

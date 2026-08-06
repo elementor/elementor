@@ -1,6 +1,6 @@
 # Example: Extend interactions
 
-> Skill: [internal-extend-interactions](../../../.cursor/skills/internal-extend-interactions/SKILL.md)
+> Skill: [extend-interactions](../../../.cursor/skills/extend-interactions/SKILL.md)
 > Docs: [interactions/editor.md](../interactions/editor.md), [interactions/schema.md](../interactions/schema.md), [interactions/frontend.md](../interactions/frontend.md)
 > Verdict: **Relevant with limits** — full outcome requires Core PR; published-page runtime has **no public registration hook**. Editor-only partial integration is insufficient.
 
@@ -56,7 +56,7 @@ export function init() {
 }
 ```
 
-Register your package via `elementor/editor/v2/packages` (see [external-extend-editor-v2.md](external-extend-editor-v2.md)). Editor-only work via this path does **not** complete the skill — frontend runtime still requires Core.
+Register your package via `elementor/editor/v2/packages` (see [extend-editor.md](extend-editor.md)). Editor-only work via this path does **not** complete the skill — frontend runtime still requires Core.
 
 Core free editor registers `trigger: load|scrollIn` only. Pro unlocks additional triggers via companion package in **elementor-pro** (not Core).
 

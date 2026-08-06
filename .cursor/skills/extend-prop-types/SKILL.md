@@ -1,9 +1,9 @@
 ---
-name: external-extend-prop-types-transformers
-description: "External: Extend Elementor v4 prop types and transformers from a third-party plugin using PHP Prop_Type classes, TS createPropUtils, and public atomic-widgets hooks."
+name: extend-prop-types
+description: "External: Extend prop types and transformers from a third-party plugin. PHP Prop_Type classes, TS createPropUtils, elementor/atomic-widgets hooks."
 ---
 
-# Extend prop types and transformers
+# Extend prop types
 
 > **Scope: External** — the full documented outcome is shippable from a 3rd-party plugin via `elementor/atomic-widgets/*` schema and `{context}/transformers/register` hooks plus your own TS prop utils; no Core changes required. Changing the *global* prop vocabulary (core `prop-types/`) is Core-only. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
@@ -20,7 +20,7 @@ Read first: [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamenta
 1. **Decide: prop type vs transformer**
    - Prop type → storage shape, validation, JSON Schema (`to_json_schema()`).
    - Transformer → render/import/export output when stored shape is already valid.
-2. **PHP prop type** — extend `Plain_Prop_Type`, `Object_Prop_Type`, or `Array_Prop_Type`; compose unions via `Union_Prop_Type::make()->add_prop_type()`. Implement `get_key()`, `define_shape()` (objects), `validate_value()`, `sanitize_value()`. Example: [docs/atomic-builder/examples/external-extend-prop-types-transformers.md](../../../docs/atomic-builder/examples/external-extend-prop-types-transformers.md).
+2. **PHP prop type** — extend `Plain_Prop_Type`, `Object_Prop_Type`, or `Array_Prop_Type`; compose unions via `Union_Prop_Type::make()->add_prop_type()`. Implement `get_key()`, `define_shape()` (objects), `validate_value()`, `sanitize_value()`. Example: [docs/atomic-builder/examples/extend-prop-types.md](../../../docs/atomic-builder/examples/extend-prop-types.md).
 3. **TypeScript mirror** — matching file in your plugin package using `createPropUtils()` and `propTypeToJsonSchema()`.
 4. **Wire schema**
    - Widget props: `define_props_schema()` or filter `elementor/atomic-widgets/props-schema`.

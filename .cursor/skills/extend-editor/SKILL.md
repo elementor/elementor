@@ -1,9 +1,9 @@
 ---
-name: external-extend-editor-v2
-description: "External: Extend Elementor Editor V2 from a third-party plugin using the packages filter, a plugin-owned init() package, public UI slots, adapters, and in-editor MCP."
+name: extend-editor
+description: "External: Extend Editor V2 from a third-party plugin. elementor/editor/v2/packages, init() package, UI slots, adapters, in-editor MCP."
 ---
 
-# Extend Editor V2
+# Extend editor
 
 > **Scope: External** — the full documented outcome is shippable from a 3rd-party plugin via `elementor/editor/v2/packages` and your own package `init()`; no Core changes required. Editing core packages is Core-only. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
@@ -28,7 +28,7 @@ add_filter( 'elementor/editor/v2/packages', function ( array $packages ) {
 
 Optional env: `elementor/editor/v2/scripts/env` → `$env['@elementor/my-editor-feature']`.
 
-3. **JS: implement `init()` in `src/init.ts(x)`**, re-export from `src/index.ts` — synchronous registration only; Vite footer auto-calls `window.elementorV2.{camelCasePackage}?.init?.()`. Example: [docs/atomic-builder/examples/external-extend-editor-v2.md](../../../docs/atomic-builder/examples/external-extend-editor-v2.md).
+3. **JS: implement `init()` in `src/init.ts(x)`**, re-export from `src/index.ts` — synchronous registration only; Vite footer auto-calls `window.elementorV2.{camelCasePackage}?.init?.()`. Example: [docs/atomic-builder/examples/extend-editor.md](../../../docs/atomic-builder/examples/extend-editor.md).
 4. **Pick injection API** (read doc for full list):
    - Shell: `injectIntoTop`, `injectIntoLogic` (`@elementor/editor`)
    - App bar: `injectIntoPageIndication`, `toolsMenu` (`@elementor/editor-app-bar`)

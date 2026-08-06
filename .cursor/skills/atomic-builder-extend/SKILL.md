@@ -1,9 +1,9 @@
 ---
 name: atomic-builder-extend
-description: Routes Elementor v4 / atomic-builder extension work to the correct domain skill. Use when extending atomic widgets, prop types, transformers, dynamic tags, editor packages, variables, CSS converter, or interactions without a named module — or when the user asks "how do I add X" in v4.
+description: "Pick the right Elementor v4 skill. Use when you want to create a widget, extend prop types, add a dynamic tag, extend the editor, variables, CSS converter, or interactions."
 ---
 
-# Atomic Builder Extension (router)
+# Extend Elementor V4 (router)
 
 Source of truth: [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md). Skills are checklists that link there — do not duplicate the doc tree. Runnable examples: [docs/atomic-builder/examples/](../../../docs/atomic-builder/examples/README.md).
 
@@ -28,13 +28,13 @@ Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not
 
 | Intent | Child skill | Scope | Primary docs |
 |--------|-------------|-------|--------------|
-| New widget or container element | [external-author-atomic-widget](../external-author-atomic-widget/SKILL.md) | External | [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md) |
-| `$$type`, prop schema, validation, transformers | [external-extend-prop-types-transformers](../external-extend-prop-types-transformers/SKILL.md) | External | [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) |
-| WordPress data source / dynamic binding | [external-extend-dynamic-tags](../external-extend-dynamic-tags/SKILL.md) | External | [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md) |
-| Editor UI, package, slots, in-editor MCP | [external-extend-editor-v2](../external-extend-editor-v2/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
-| Design tokens / kit variables | [external-extend-variables](../external-extend-variables/SKILL.md) | External | [variables/types.md](../../../docs/atomic-builder/variables/types.md) |
-| Legacy CSS → atomic style props | [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md) | Internal | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
-| Motion / interactions tab | [internal-extend-interactions](../internal-extend-interactions/SKILL.md) | Internal | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
+| New widget or container element | [create-atomic-widget](../create-atomic-widget/SKILL.md) | External | [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md) |
+| `$$type`, prop schema, validation, transformers | [extend-prop-types](../extend-prop-types/SKILL.md) | External | [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) |
+| WordPress data source / dynamic binding | [add-dynamic-tag](../add-dynamic-tag/SKILL.md) | External | [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md) |
+| Editor UI, package, slots, in-editor MCP | [extend-editor](../extend-editor/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
+| Design tokens / kit variables | [extend-variables](../extend-variables/SKILL.md) | External | [variables/types.md](../../../docs/atomic-builder/variables/types.md) |
+| Legacy CSS → atomic style props | [extend-css-converter](../extend-css-converter/SKILL.md) | Internal | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
+| Motion / interactions tab | [extend-interactions](../extend-interactions/SKILL.md) | Internal | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
 
 ## Scope: External vs Internal
 

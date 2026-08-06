@@ -1,6 +1,6 @@
 ---
-name: internal-extend-interactions
-description: "Internal: Extend Elementor v4 interactions end-to-end in a Core fork and submit a Core PR; editor APIs are externally callable, but the published-page runtime has no public registration hook."
+name: extend-interactions
+description: "Internal: Extend v4 interactions end-to-end in a Core fork and submit a Core PR. Editor APIs exist externally; published-page runtime has no public hook."
 ---
 
 # Extend interactions
@@ -15,7 +15,7 @@ description: "Internal: Extend Elementor v4 interactions end-to-end in a Core fo
 - **Pro companion only** (Pro-gated fields): elementor-pro repo — companion `registerInteractionsControl` options; **full core runtime belongs in Core**.
 - **Submit PR against Core.** Do not treat third-party editor-only package work as completing this skill.
 
-Read first: [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md), [interactions/schema.md](../../../docs/atomic-builder/interactions/schema.md), [interactions/frontend.md](../../../docs/atomic-builder/interactions/frontend.md). Example: [docs/atomic-builder/examples/internal-extend-interactions.md](../../../docs/atomic-builder/examples/internal-extend-interactions.md). Gate: experiment `e_atomic_elements`.
+Read first: [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md), [interactions/schema.md](../../../docs/atomic-builder/interactions/schema.md), [interactions/frontend.md](../../../docs/atomic-builder/interactions/frontend.md). Example: [docs/atomic-builder/examples/extend-interactions.md](../../../docs/atomic-builder/examples/extend-interactions.md). Gate: experiment `e_atomic_elements`.
 
 ## Checklist
 
@@ -56,5 +56,5 @@ Frontend `isSupportedInteraction()` allows triggers `load`, `scrollIn`, `scrollO
 ## See also
 
 - [interactions/overview.md](../../../docs/atomic-builder/interactions/overview.md)
-- [external-extend-editor-v2](../external-extend-editor-v2/SKILL.md) — package + `init()` patterns (editor-only partial path)
+- [extend-editor](../extend-editor/SKILL.md) — package + `init()` patterns (editor-only partial path)
 - [migration/prop-type-migrations.md](../../../docs/atomic-builder/migration/prop-type-migrations.md)
