@@ -5,7 +5,8 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
-use PHPUnit\Framework\TestCase;
+
+require_once __DIR__ . '/test-manage-classes-ability-base.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,47 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @group Elementor\Modules\Mcp
  */
-class Test_Manage_Classes_Ability extends TestCase {
-
-	private function assertWPError( $actual ): void {
-		$this->assertInstanceOf( \WP_Error::class, $actual );
-	}
-
-	private function make_ability( ?Global_Classes_Repository $repository = null ): Manage_Classes_Ability {
-		if ( null === $repository ) {
-			$repository = $this->createMock( Global_Classes_Repository::class );
-			$repository->method( 'all_labels' )->willReturn( [] );
-			$repository->method( 'get_order' )->willReturn( [] );
-		}
-
-		return new class( $repository ) extends Manage_Classes_Ability {
-			public function __construct( ?Global_Classes_Repository $repository = null ) {
-				parent::__construct( $repository );
-			}
-
-			protected function build_class_item( string $id, string $label, array $css ) {
-				return [
-					'id' => $id,
-					'label' => $label,
-					'type' => self::CLASS_TYPE,
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => self::DESKTOP_BREAKPOINT,
-								'state' => null,
-							],
-							'props' => $css,
-							'custom_css' => null,
-						],
-					],
-				];
-			}
-		};
-	}
-
-	private function operations_input( array $operations ): array {
-		return [ 'operations' => $operations ];
-	}
+class Test_Manage_Classes_Ability extends Test_Manage_Classes_Ability_Base {
 
 	public function test_execute__requires_operations_array() {
 		$result = $this->make_ability()->execute( [] );
@@ -73,7 +34,7 @@ class Test_Manage_Classes_Ability extends TestCase {
 	public function test_execute__rejects_batch_size_over_limit() {
 		$operations = array_fill( 0, Manage_Classes_Ability::MAX_BATCH_SIZE + 1, [
 			'action' => 'delete',
-			'id' => 'g-abc1234',
+			'id'     => 'g-abc1234',
 		] );
 
 		$result = $this->make_ability()->execute( $this->operations_input( $operations ) );
@@ -132,8 +93,8 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'create',
-				'label' => 'hero-heading',
-				'css' => [ 'color' => '#000000' ],
+				'label'  => 'hero-heading',
+				'css'    => 'color: #000000;',
 			],
 		] ) );
 
@@ -154,8 +115,8 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'create',
-				'label' => 'hero-heading',
-				'css' => [ 'color' => '#000000' ],
+				'label'  => 'hero-heading',
+				'css'    => 'color: #000000;',
 			],
 		] ) );
 
@@ -175,13 +136,13 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'create',
-				'label' => 'hero-heading',
-				'css' => [ 'color' => '#000000' ],
+				'label'  => 'hero-heading',
+				'css'    => 'color: #000000;',
 			],
 			[
 				'action' => 'create',
-				'label' => 'hero-heading',
-				'css' => [ 'color' => '#ffffff' ],
+				'label'  => 'hero-heading',
+				'css'    => 'color: #ffffff;',
 			],
 		] ) );
 
@@ -189,7 +150,6 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
 		$this->assertSame( 'hero-heading', $result['results'][0]['label'] );
 		$this->assertArrayNotHasKey( 'modified_label', $result['results'][0] );
-
 		$this->assertSame( 'ok', $result['results'][1]['status'] );
 		$this->assertSame( 'DUP_hero-heading', $result['results'][1]['label'] );
 		$this->assertSame( 'hero-heading', $result['results'][1]['modified_label']['original'] );
@@ -197,7 +157,7 @@ class Test_Manage_Classes_Ability extends TestCase {
 	}
 
 	public function test_create__rejects_when_max_classes_limit_reached() {
-		$max_items = Global_Classes_REST_API::MAX_ITEMS;
+		$max_items       = Global_Classes_REST_API::MAX_ITEMS;
 		$labels_at_limit = [];
 		for ( $i = 0; $i < $max_items; $i++ ) {
 			$labels_at_limit[ "g-existing-{$i}" ] = "class-{$i}";
@@ -211,8 +171,8 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'create',
-				'label' => 'new-class',
-				'css' => [ 'color' => '#000000' ],
+				'label'  => 'new-class',
+				'css'    => 'color: #000000;',
 			],
 		] ) );
 
@@ -220,9 +180,9 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$this->assertSame( 'global_classes_limit_exceeded', $result['results'][0]['code'] );
 	}
 
-	public function test_update__requires_id_label_and_css() {
+	public function test_update__requires_at_least_id_or_label() {
 		$result = $this->make_ability()->execute( $this->operations_input( [
-			[ 'action' => 'update', 'label' => 'hero-heading' ],
+			[ 'action' => 'update' ],
 		] ) );
 
 		$this->assertSame( 'error', $result['status'] );
@@ -237,9 +197,9 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'update',
-				'id' => 'missing',
-				'label' => 'hero-heading',
-				'css' => [ 'color' => '#ffffff' ],
+				'id'     => 'missing',
+				'label'  => 'hero-heading',
+				'css'    => 'color: #ffffff;',
 			],
 		] ) );
 
@@ -250,9 +210,9 @@ class Test_Manage_Classes_Ability extends TestCase {
 	public function test_update__delegates_to_repository_and_returns_compact_ok() {
 		$repository = $this->createMock( Global_Classes_Repository::class );
 		$repository->method( 'get' )->with( 'g-abc1234' )->willReturn( [
-			'id' => 'g-abc1234',
-			'label' => 'hero-heading',
-			'type' => 'class',
+			'id'       => 'g-abc1234',
+			'label'    => 'hero-heading',
+			'type'     => 'class',
 			'variants' => [],
 		] );
 		$repository->method( 'all_labels' )->willReturn( [ 'g-abc1234' => 'hero-heading' ] );
@@ -266,10 +226,10 @@ class Test_Manage_Classes_Ability extends TestCase {
 					return true;
 				} ),
 				[
-					'added' => [],
-					'deleted' => [],
+					'added'    => [],
+					'deleted'  => [],
 					'modified' => [ 'g-abc1234' ],
-					'order' => false,
+					'order'    => false,
 				],
 				[ 'g-abc1234' ]
 			);
@@ -277,9 +237,9 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'update',
-				'id' => 'g-abc1234',
-				'label' => 'hero-heading',
-				'css' => [ 'color' => '#ffffff' ],
+				'id'     => 'g-abc1234',
+				'label'  => 'hero-heading',
+				'css'    => 'color: #ffffff;',
 			],
 		] ) );
 
@@ -315,9 +275,9 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$repository->method( 'all_labels' )->willReturn( [ 'g-abc1234' => 'hero-heading' ] );
 		$repository->method( 'get_order' )->willReturn( [ 'g-abc1234', 'g-other' ] );
 		$repository->method( 'get' )->with( 'g-abc1234' )->willReturn( [
-			'id' => 'g-abc1234',
-			'label' => 'hero-heading',
-			'type' => 'class',
+			'id'       => 'g-abc1234',
+			'label'    => 'hero-heading',
+			'type'     => 'class',
 			'variants' => [],
 		] );
 		$repository->expects( $this->once() )
@@ -325,10 +285,10 @@ class Test_Manage_Classes_Ability extends TestCase {
 			->with(
 				[],
 				[
-					'added' => [],
-					'deleted' => [ 'g-abc1234' ],
+					'added'    => [],
+					'deleted'  => [ 'g-abc1234' ],
 					'modified' => [],
-					'order' => true,
+					'order'    => true,
 				],
 				[ 'g-other' ]
 			);
@@ -349,18 +309,18 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$repository->method( 'get' )->willReturnCallback( function ( $id ) {
 			if ( 'g-update' === $id ) {
 				return [
-					'id' => 'g-update',
-					'label' => 'update-me',
-					'type' => 'class',
+					'id'       => 'g-update',
+					'label'    => 'update-me',
+					'type'     => 'class',
 					'variants' => [],
 				];
 			}
 
 			if ( 'g-delete' === $id ) {
 				return [
-					'id' => 'g-delete',
-					'label' => 'delete-me',
-					'type' => 'class',
+					'id'       => 'g-delete',
+					'label'    => 'delete-me',
+					'type'     => 'class',
 					'variants' => [],
 				];
 			}
@@ -372,18 +332,18 @@ class Test_Manage_Classes_Ability extends TestCase {
 		$result = $this->make_ability( $repository )->execute( $this->operations_input( [
 			[
 				'action' => 'create',
-				'label' => 'new-class',
-				'css' => [ 'color' => '#000000' ],
+				'label'  => 'new-class',
+				'css'    => 'color: #000000;',
 			],
 			[
 				'action' => 'update',
-				'id' => 'g-update',
-				'label' => 'updated-class',
-				'css' => [ 'color' => '#111111' ],
+				'id'     => 'g-update',
+				'label'  => 'updated-class',
+				'css'    => 'color: #111111;',
 			],
 			[
 				'action' => 'delete',
-				'id' => 'g-delete',
+				'id'     => 'g-delete',
 			],
 		] ) );
 

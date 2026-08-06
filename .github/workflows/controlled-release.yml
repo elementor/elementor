@@ -30,6 +30,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
       dry_run: true
+      prerelease: ${{ inputs.prerelease }}
     secrets:
       MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
       MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
@@ -81,6 +82,11 @@ jobs:
         run: |
           {
             echo "### 📦 Draft release created: \`${{ inputs.version }}\`"
+            echo ""
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| **Version** | \`${{ inputs.version }}\` |"
+            echo "| **Pre-release** | ${{ inputs.prerelease && '✅ Yes (publish workflow skipped)' || 'No' }} |"
             echo ""
             echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
             echo ""
@@ -204,5 +210,7 @@ jobs:
       SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
       SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       SLACK_CHANNEL_RELEASE: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
