@@ -149,8 +149,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $class_error;
 		}
 
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
+		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch' );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
@@ -235,7 +235,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'style' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → raw CSS declarations (property → value strings; no selectors). Keys MUST match configuration-id attributes in xml_structure. Server converts to native styles; unconvertible declarations become the element custom CSS.',
+					'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure.',
+					'additionalProperties' => [ 'type' => 'string' ],
 				],
 				'classes' => [
 					'type' => 'object',
@@ -366,17 +367,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 		return is_array( $value ) ? $value : [];
 	}
 
-	private function element_types_from_index( array $index ): array {
-		$element_types = [];
-		foreach ( $index as $config_id => $node ) {
-			$element_type = $node['widgetType'] ?? $node['elType'] ?? null;
-			if ( is_string( $element_type ) && '' !== $element_type ) {
-				$element_types[ $config_id ] = $element_type;
-			}
-		}
-		return $element_types;
-	}
-
 	private function get_mutator(): Document_Mutator {
 		return $this->mutator ?? Document_Mutator::instance();
 	}
@@ -446,6 +436,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	private function get_active_breakpoints(): array {
+		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 	}
 
 	private function create_global_classes_repository(): Global_Classes_Repository {
