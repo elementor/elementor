@@ -6,6 +6,12 @@ Works for **laptop local development** and **Cursor Cloud / non-interactive agen
 
 Longer human onboarding: [CONTRIBUTING.md](.github/CONTRIBUTING.md), Playwright Docker: [tests/test-environment-setup.md](tests/test-environment-setup.md).
 
+## Atomic builder extension skills
+
+`.cursor/skills/` holds Cursor skills for Elementor v4 / atomic-builder extension work (widgets, prop types, dynamic tags, editor packages, variables, CSS converter, interactions). Source of truth remains [docs/atomic-builder/](docs/atomic-builder/README.md) — skills are checklists that link there.
+
+For v4 or atomic extension tasks: load [atomic-builder-extend](.cursor/skills/atomic-builder-extend/SKILL.md) first, then the matching domain skill it routes to.
+
 ## Layout (Core + Pro)
 
 Clone as siblings so Pro can see Core at `../elementor`:
