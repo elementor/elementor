@@ -13,6 +13,7 @@ use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Plugin;
 
@@ -93,6 +94,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		[ 'elements' => $elements, 'warnings' => $warnings ] = $source_result;
 
 		$settings = [];
+		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings );
+		if ( is_wp_error( $overridable_error ) ) {
+			return $overridable_error;
+		}
 
 		$uid = $this->generate_uid();
 		$item = [
@@ -162,11 +167,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		$has_xml = ! empty( $input['xml_structure'] ) && is_string( $input['xml_structure'] );
-		if ( ! $has_xml ) {
-			return $this->invalid_input( __( 'update requires xml_structure.', 'elementor' ) );
-		}
 
-		return $this->update_with_xml( $component, $input );
+		return $has_xml
+			? $this->update_with_xml( $component, $input )
+			: $this->update_overridable_props_only( $component, $input );
 	}
 
 	private function handle_rename( array $input ) {
@@ -245,6 +249,21 @@ class Manage_Component_Ability extends Abstract_Ability {
 		] + $this->document_links( $published );
 	}
 
+	private function update_overridable_props_only( Component_Document $component, array $input ) {
+		if ( ! is_array( $input['overridable_props'] ?? null ) || empty( $input['overridable_props'] ) ) {
+			return $this->invalid_input( __( 'update without xml_structure requires non-empty overridable_props.', 'elementor' ) );
+		}
+
+		$elements = $component->get_elements_data();
+		$settings = [];
+
+		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings );
+		if ( is_wp_error( $overridable_error ) ) {
+			return $overridable_error;
+		}
+
+		return $this->save_component( $component, $elements, $settings );
+	}
 
 	private function update_with_xml( Component_Document $component, array $input ) {
 		$compiled = $this->compile_composition( $input, $component );
@@ -260,6 +279,12 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $non_atomic_error;
 		}
 
+		$settings = [];
+		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings );
+		if ( is_wp_error( $overridable_error ) ) {
+			return $overridable_error;
+		}
+
 		$circular_error = $this->validate_circular_dependency(
 			fn() => Circular_Dependency_Validator::make()->validate( $component->get_main_id(), $elements )
 		);
@@ -267,7 +292,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $circular_error;
 		}
 
-		$result = $this->save_component( $component, $elements, [] );
+		$result = $this->save_component( $component, $elements, $settings );
 		if ( is_wp_error( $result ) || empty( $warnings ) ) {
 			return $result;
 		}
@@ -382,7 +407,12 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * @return array{elements: array[], warnings: string[], dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
-		$compiled = Composition_Compiler::make()->compile( $input, $document );
+		$compiled = Composition_Compiler::make()->compile(
+			$input,
+			$document,
+			[],
+			Composition_Compiler::COMPONENT_PARENT_ID
+		);
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
 		}
@@ -431,13 +461,36 @@ class Manage_Component_Ability extends Abstract_Ability {
 		];
 	}
 
+	/**
+	 * Builds the native overridable-props payload and stamps `overridable` envelopes
+	 * onto the referenced element settings. Validation and persistence of the native
+	 * payload itself is left to the component document's save hook, which already
+	 * parses and persists it for every component save.
+	 *
+	 * @return \WP_Error|null
+	 */
+	private function apply_overridable_props( array &$elements, array $input, array &$settings ) {
+		if ( ! is_array( $input['overridable_props'] ?? null ) || empty( $input['overridable_props'] ) ) {
+			return null;
+		}
+
+		$builder_result = Overridable_Props_Builder::make( $this->get_repository() )->build( $elements, $input['overridable_props'] );
+		if ( is_wp_error( $builder_result ) ) {
+			return $builder_result;
+		}
+
+		$settings['overridable_props'] = $builder_result;
+
+		return null;
+	}
 
 	/**
 	 * Compiled subtrees have no ids yet (`Subtree_Builder` never sets one), and copied
 	 * subtrees carry ids from another document that would collide here. Both paths need
 	 * fresh, slug-safe machine ids; the caller's configuration-id stays on
 	 * `editor_settings.title` so `overridable_props.target` and other tools can still
-	 * address elements by the identifier the caller used in `xml_structure`.
+	 * address elements by the identifier the caller used in `xml_structure` — see
+	 * `Overridable_Props_Builder::find_element_ref`.
 	 */
 	private function assign_element_ids( array $elements ): array {
 		return array_map( fn( array $element ) => $this->assign_element_id( $element ), $elements );
@@ -593,6 +646,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'type' => 'object',
 					'default' => (object) [],
 					'description' => 'Same shape as elementor/build-composition interactions. Only used with xml_structure.',
+				],
+				'overridable_props' => [
+					'type' => 'object',
+					'description' => 'Caller-supplied record mapping override-key → { target, prop_key, label, group? }. target identifies the element to expose: for xml_structure, use the same configuration-id you set on that element; for source_post_id/element_id (create) or an update without xml_structure, use the real element id (from elementor/get-page-structure). Group IDs and origin values are generated server-side.',
 				],
 				'publish_status' => [
 					'type' => 'string',

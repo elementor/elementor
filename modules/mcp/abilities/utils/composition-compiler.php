@@ -34,6 +34,9 @@ final class Composition_Compiler {
 
 	private const DEFAULT_PARENT_ID = 'document';
 	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
+	private const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
+
+	public const COMPONENT_PARENT_ID = 'component';
 
 	public static function make(): self {
 		return new self();
@@ -158,10 +161,18 @@ final class Composition_Compiler {
 		$has_widget = false;
 		foreach ( $root_children as $child ) {
 			$tag = $xml_parser->get_tag_name( $child );
-			if ( 'widget' === ( $widget_configs[ $tag ]['elType'] ?? null ) ) {
-				$has_widget = true;
-				break;
+			$config = $widget_configs[ $tag ] ?? [];
+
+			if ( 'widget' !== ( $config['elType'] ?? null ) ) {
+				continue;
 			}
+
+			if ( self::COMPONENT_INSTANCE_WIDGET_TYPE === ( $config['widgetType'] ?? null ) ) {
+				continue;
+			}
+
+			$has_widget = true;
+			break;
 		}
 
 		if ( ! $has_widget ) {
