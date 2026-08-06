@@ -4,6 +4,7 @@ import { booleanPropTypeUtil } from '@elementor/editor-props';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { HISTORY_DEBOUNCE_WAIT } from '../../../hooks/use-styles-fields';
 import { ACCORDION_ITEM_ELEMENT_TYPE } from './use-actions';
 
 const ACCORDION_ITEM_HEAD_ELEMENT_TYPE = 'e-accordion-item-head';
@@ -59,6 +60,18 @@ export const cascadeShowIconToHeads = undoable< CascadeShowIconPayload, CascadeS
 	{
 		title: __( 'Accordion', 'elementor' ),
 		subtitle: __( 'Show Icon', 'elementor' ),
+		// `undoable()`'s debounce only delays when the *history entry* is pushed onto the undo stack -
+		// the settings write itself (`do()`) still runs synchronously on every call. The root's own
+		// `show_icon` change goes through `SettingsField` -> `useUndoableUpdateElementProp`
+		// (`settings-field.tsx`), which debounces its history push by `HISTORY_DEBOUNCE_WAIT` (800ms).
+		// Without matching that here, this cascade's history entry (pushed immediately) would land on
+		// the undo stack *before* the root's (pushed 800ms later), so the first Undo after a toggle
+		// would revert the root switch alone while every head stayed on its new value - the switch and
+		// the icons would visibly disagree until a second Undo. Matching the debounce window fixes the
+		// stack order to be deterministic (root's own entry, then this one) regardless of how quickly a
+		// user hits Undo. It does not make the two changes one atomic transaction - see the comment on
+		// `useShowIconWriteThrough` for why that would require forking the shared `Switch_Control`.
+		debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 	}
 );
 

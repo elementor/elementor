@@ -2,6 +2,7 @@ import { getContainer, getElementSettings, updateElementSettings, type V1Element
 import { renderHook } from '@testing-library/react';
 import { mockHistoryManager } from 'test-utils';
 
+import { HISTORY_DEBOUNCE_WAIT } from '../../../../hooks/use-styles-fields';
 import { cascadeShowIconToHeads, useShowIconWriteThrough } from '../use-show-icon-write-through';
 
 jest.mock( '@elementor/editor-elements' );
@@ -33,6 +34,7 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.useFakeTimers();
 		historyMock.beforeEach();
 
 		jest.mocked( getContainer ).mockImplementation( ( id: string ) =>
@@ -46,6 +48,7 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 
 	afterEach( () => {
 		historyMock.afterEach();
+		jest.useRealTimers();
 	} );
 
 	describe( 'cascadeShowIconToHeads', () => {
@@ -70,6 +73,10 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 		it( 'restores every head to its previous value with a single undo', () => {
 			// Act.
 			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+
+			// The history push is debounced (see the "debounce timing" tests below) - flush it before
+			// undo can see anything on the stack.
+			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT );
 			jest.mocked( updateElementSettings ).mockClear();
 
 			historyMock.instance.undo();
@@ -97,6 +104,45 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 
 			// Assert.
 			expect( updateElementSettings ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'cascadeShowIconToHeads history debounce timing', () => {
+		// `settings-field.tsx`'s `useUndoableUpdateElementProp` (the pipeline the root's plain
+		// `Switch_Control` goes through) debounces its history push by `HISTORY_DEBOUNCE_WAIT`. Before
+		// this fix, `cascadeShowIconToHeads` pushed its own history entry immediately/undebounced, so it
+		// would always land on the undo stack *before* the root's - the opposite of the order the spec
+		// wants (heads reverted together on the first Undo, root on the second). These tests exercise
+		// the timing directly against `getHistoryManager`'s `addItem`, since the fake history util used
+		// elsewhere in this file only retains a single item and can't itself demonstrate two-entry
+		// stack ordering - see the task report for what this test suite can and cannot prove.
+		it( 'does not push a history entry synchronously', () => {
+			// Act.
+			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+
+			// Assert - the settings write happens synchronously ...
+			expect( updateElementSettings ).toHaveBeenCalled();
+			// ... but nothing has reached the undo stack yet.
+			expect( historyMock.instance.get() ).toBeNull();
+		} );
+
+		it( 'still has not pushed a history entry just before the debounce window elapses', () => {
+			// Act.
+			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT - 1 );
+
+			// Assert.
+			expect( historyMock.instance.get() ).toBeNull();
+		} );
+
+		it( 'pushes the history entry once the same wait used by the root switch elapses', () => {
+			// Act.
+			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT );
+
+			// Assert.
+			expect( historyMock.instance.get() ).not.toBeNull();
+			expect( historyMock.instance.get()?.subTitle ).toBe( 'Show Icon' );
 		} );
 	} );
 
