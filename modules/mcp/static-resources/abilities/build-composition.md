@@ -2,7 +2,7 @@
 If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered.
 
 # RESOURCES (Read before use)
-- [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
+- [elementor://global-classes] - Reusable CSS classes from the active kit as `class_id -> { label, css }`; check FIRST before adding inline styles. `css` uses the same `@media(--breakpoint)` + `&:hover/&:focus/&:active` format that `elementor/manage-classes` accepts as input.
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
