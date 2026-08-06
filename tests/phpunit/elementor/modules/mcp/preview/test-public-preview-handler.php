@@ -77,7 +77,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 			'post_parent' => $post_id,
 			'post_status' => 'inherit',
 		] );
-		update_post_meta( $revision_id, '_elementor_data', 'snapshot' );
+		update_metadata( 'post', $revision_id, '_elementor_data', 'snapshot' );
 		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
 
 		$this->handler->maybe_activate( new \WP() );
@@ -159,7 +159,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 			'post_parent' => $post_id,
 			'post_status' => 'inherit',
 		] );
-		update_post_meta( $revision_id, '_elementor_data', $revision_data );
+		update_metadata( 'post', $revision_id, '_elementor_data', $revision_data );
 
 		return [ $post_id, $revision_id ];
 	}

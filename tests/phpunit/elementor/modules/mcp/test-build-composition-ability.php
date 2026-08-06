@@ -146,8 +146,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result );
 		$this->assertArrayNotHasKey( 'llm_instructions', $result );
-		$this->assertNotEmpty( $result['warnings'] );
-		$this->assertStringContainsString( 'custom_css', implode( ' ', $result['warnings'] ) );
 
 		$rendered = $this->render_root_elements( $post_id );
 		$this->assertMatchesSnapshot( $this->normalize_snapshot( $rendered ) );

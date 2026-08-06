@@ -80,7 +80,7 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 			return $post_error;
 		}
 
-		$permission_error = $this->check_permission( $post_id );
+		$permission_error = $this->check_edit_permission( $post_id );
 		if ( $permission_error ) {
 			return $permission_error;
 		}
@@ -126,7 +126,7 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 		return null;
 	}
 
-	private function check_permission( int $post_id ): ?\WP_Error {
+	private function check_edit_permission( int $post_id ): ?\WP_Error {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return new \WP_Error(
 				'rest_cannot_edit',
