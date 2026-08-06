@@ -1,7 +1,7 @@
 # Example: Extend variables (design tokens)
 
 > Skill: [external-extend-variables](../../../.cursor/skills/external-extend-variables/SKILL.md)
-> Docs: [variables/types.md](../variables/types.md), [variables/api.md](../variables/api.md)  
+> Docs: [variables/types.md](../variables/types.md), [variables/api.md](../variables/api.md)
 > Verdict: **Relevant** — kit tokens need PHP type + style schema + editor registration. Size has no PHP render transformer.
 
 ## PHP: register variable type

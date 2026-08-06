@@ -1,7 +1,7 @@
 # Example: Extend interactions
 
 > Skill: [internal-extend-interactions](../../../.cursor/skills/internal-extend-interactions/SKILL.md)
-> Docs: [interactions/editor.md](../interactions/editor.md), [interactions/schema.md](../interactions/schema.md), [interactions/frontend.md](../interactions/frontend.md)  
+> Docs: [interactions/editor.md](../interactions/editor.md), [interactions/schema.md](../interactions/schema.md), [interactions/frontend.md](../interactions/frontend.md)
 > Verdict: **Relevant with limits** — full outcome requires Core PR; published-page runtime has **no public registration hook**. Editor-only partial integration is insufficient.
 
 ## Data model

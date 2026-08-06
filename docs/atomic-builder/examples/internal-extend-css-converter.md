@@ -1,7 +1,7 @@
 # Example: Extend CSS converter
 
 > Skill: [internal-extend-css-converter](../../../.cursor/skills/internal-extend-css-converter/SKILL.md)
-> Docs: [css-converter/extension.md](../css-converter/extension.md)  
+> Docs: [css-converter/extension.md](../css-converter/extension.md)
 > Verdict: **Relevant for Core only** — no public WordPress discovery hook. Third parties need a core PR or a private `Css_Converter` instance.
 
 ## When to use
