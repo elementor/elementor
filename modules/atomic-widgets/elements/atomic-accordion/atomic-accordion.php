@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Accordion_Items_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -74,6 +75,9 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			'max_expanded' => String_Prop_Type::make()
 				->enum( [ 'one', 'multiple' ] )
 				->default( 'one' ),
+			'title_tag' => String_Prop_Type::make()
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'span' ] )
+				->default( 'span' ),
 		];
 	}
 
@@ -116,6 +120,19 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->set_convert_options( true )
 						->set_size( 'tiny' )
 						->set_full_width( true ),
+					Html_Tag_Control::bind_to( 'title_tag' )
+						->set_label( esc_html__( 'Title HTML Tag', 'elementor' ) )
+						->set_options( [
+							[ 'value' => 'h1', 'label' => 'H1' ],
+							[ 'value' => 'h2', 'label' => 'H2' ],
+							[ 'value' => 'h3', 'label' => 'H3' ],
+							[ 'value' => 'h4', 'label' => 'H4' ],
+							[ 'value' => 'h5', 'label' => 'H5' ],
+							[ 'value' => 'h6', 'label' => 'H6' ],
+							[ 'value' => 'div', 'label' => 'Div' ],
+							[ 'value' => 'p', 'label' => 'P' ],
+							[ 'value' => 'span', 'label' => 'Span' ],
+						] ),
 				] ),
 		];
 	}
@@ -240,11 +257,6 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	/**
 	 * Exposes the accordion's identity and per-item lookup to descendants that render inside its
 	 * pass (item, head, title, icon, content) via `Render_Context::get( self::class )`.
-	 *
-	 * `default-state`, `max-expanded` and `title-tag` read props that don't exist yet (Tasks 6–7
-	 * add them); `get_atomic_setting()` returns `null` for an undeclared prop, so these keys land
-	 * as `null` today. That's intentional: the context shape is fixed now so the later tasks only
-	 * add a prop and read an existing key, instead of also touching this method.
 	 *
 	 * @return array
 	 */
