@@ -338,9 +338,10 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 *
 	 * When `$via_type` is given, the target is looked up one level deeper (e.g. the title lives
 	 * inside the head, not directly on the item). `render_markdown()` is `Element_Base`'s existing
-	 * recursive default (fact 6) — reused as-is, not re-implemented — and `wp_strip_all_tags()`
-	 * strips the markdown syntax it can emit (`**bold**`, `[text](url)`) so JSON-LD text fields
-	 * stay plain text.
+	 * recursive default (fact 6) — reused as-is, not re-implemented. Its output is markdown syntax
+	 * (`**bold**`, `[text](url)`, …), not HTML, so `strip_markdown_syntax()` — not
+	 * `wp_strip_all_tags()` — does the real cleanup; `wp_strip_all_tags()` stays only as a
+	 * defensive second pass in case some element's `render_markdown()` ever emits raw HTML.
 	 *
 	 * @param Atomic_Element_Base $item
 	 * @param string|null $via_type
@@ -368,7 +369,68 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			return '';
 		}
 
-		return trim( wp_strip_all_tags( $target->render_markdown() ) );
+		$plain = $this->strip_markdown_syntax( $target->render_markdown() );
+
+		return trim( wp_strip_all_tags( $plain ) );
+	}
+
+	/**
+	 * Strips the markdown syntax `render_markdown()` produces via `Html_To_Markdown::convert()`
+	 * (see `modules/markdown-render/html-to-markdown.php`) so it never leaks into JSON-LD text
+	 * fields verbatim — `**bold**`, `[text](url)`, `# heading`, etc. are not valid prose, and a
+	 * FAQPage consumer (Google, any schema.org parser) should see clean text. `wp_strip_all_tags()`
+	 * cannot do this job: it strips HTML tags, and markdown syntax is punctuation, not HTML.
+	 *
+	 * Deliberately scoped to exactly what `Html_To_Markdown::convert()` can emit in this codebase's
+	 * configuration, not a general-purpose markdown parser:
+	 * - fenced ``` code blocks and inline `code` spans (backtick fence length varies)
+	 * - `![alt](src)` images and `[text](url)` links — the visible text is kept, the target dropped
+	 * - `**bold**` / `__bold__`, `*italic*` / `_italic_`, `~~strikethrough~~`
+	 * - `#` … `######` heading markers and `-`/`*`/`+`/`1.` list markers at line start
+	 * - the backslash-escaping `Html_To_Markdown::escape_text()` applies to literal
+	 *   `\ \` * _ [ ]` characters in ordinary text, so those round-trip back to plain characters
+	 *   instead of surfacing a stray backslash
+	 *
+	 * Tables and blockquotes aren't handled: the accordion's title/content subtrees only ever
+	 * contain paragraph-level content in practice, and adding unused coverage would be guessing at
+	 * requirements rather than matching them.
+	 *
+	 * @param string $markdown
+	 * @return string
+	 */
+	private function strip_markdown_syntax( string $markdown ): string {
+		$text = $markdown;
+
+		// Fenced code blocks: keep only the code content.
+		$text = preg_replace( '/```[^\n`]*\n(.*?)\n```/s', '$1', $text );
+
+		// Inline code spans.
+		$text = preg_replace( '/`+(.*?)`+/s', '$1', $text );
+
+		// Images and links: keep the visible text, drop the target.
+		$text = preg_replace( '/!\[([^\]]*)\]\([^)]*\)/', '$1', $text );
+		$text = preg_replace( '/\[([^\]]*)\]\([^)]*\)/', '$1', $text );
+
+		// Headings: leading #'s at the start of a line.
+		$text = preg_replace( '/^#{1,6}[ \t]+/m', '', $text );
+
+		// List markers: "- ", "* ", "+ " or "1. " at a (possibly indented) line start.
+		$text = preg_replace( '/^[ \t]*(?:[-*+]|\d+\.)[ \t]+/m', '', $text );
+
+		// Bold, italic, strikethrough.
+		$text = preg_replace( '/(\*\*|__)(.+?)\1/s', '$2', $text );
+		$text = preg_replace( '/\*(.+?)\*/s', '$1', $text );
+		$text = preg_replace( '/_(.+?)_/s', '$1', $text );
+		$text = preg_replace( '/~~(.+?)~~/s', '$1', $text );
+
+		// Undo the converter's backslash-escaping of literal markdown-special characters.
+		$text = preg_replace( '/\\\\([\\\\`*_\[\]])/', '$1', $text );
+
+		// Collapse whitespace left behind by the removals above.
+		$text = preg_replace( '/[ \t]+/', ' ', $text );
+		$text = preg_replace( '/\s*\n\s*/', ' ', $text );
+
+		return trim( $text );
 	}
 
 	/**
