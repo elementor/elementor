@@ -18,6 +18,13 @@ This tool supports v4 elements only.
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 4. Use returned element IDs for subsequent configuration changes
 
+## CRITICAL: Avoid write conflicts after build-composition
+`manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
+
+**Rules:**
+- Only use element IDs from the `resolved_xml` in **this tool's response** for any follow-up `manage-elements` calls — never IDs from an earlier read.
+- Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
+
 # COMPONENTS (only when explicitly requested)
 
 **Do NOT call `elementor/list-components` by default.** Compose from raw widgets unless the user explicitly asks to use a component (e.g. "use my Hero component", "insert the Product Card component", "reuse the CTA component I made").
@@ -66,10 +73,10 @@ Some elements have internal tree structures (nesting). When using these elements
 - `allowed_parents` lists which element types this element can be placed inside
 
 # CONFIGURATION
-- Map configuration-id → element_config (props) + style (raw CSS declarations) + classes (global class labels)
+- Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is raw CSS (property → value strings); the server converts it to native styles
+- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media (--breakpoint)` blocks (e.g. `@media (--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css`, which is stripped by Pro 3.35+.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
@@ -198,7 +205,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
 - **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT). For `<e-component>` config-ids the value is `{ component_id, overrides? }` (see COMPONENTS section).
-- **style**: configuration-id → raw CSS declarations (property → value strings; no selectors); variables by **label** via `var(--label)`
+- **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). Variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
 - **parent_id**: ID of the parent container (omit to insert at document root)
@@ -218,14 +225,8 @@ Section with heading + button (NO explicit heights - content sizes naturally):
     }
   },
   "style": {
-    "Main Section": {
-      "padding": "6rem 4rem",
-      "background": "linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%)"
-    },
-    "Section Title": {
-      "font-size": "3.5rem",
-      "color": "#2d2a26"
-    }
+    "Main Section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }
 ```
