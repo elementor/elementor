@@ -1,7 +1,7 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { SUGGESTED_ACTIONS_HTML } from './suggested-actions-html';
-
+const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 export const SUGGESTED_ACTIONS_URI = 'ui://elementor/suggested-actions';
 const SUGGESTED_ACTIONS_MIME = 'text/html;profile=mcp-app';
 
@@ -15,14 +15,20 @@ export const initSuggestedActionsResource = ( reg: MCPRegistryEntry ) => {
 			description: 'Interactive MCP Apps view for rendering suggested next-step action chips.',
 			mimeType: SUGGESTED_ACTIONS_MIME,
 		},
-		async ( uri: URL ) => ( {
-			contents: [
-				{
-					uri: uri.href,
-					mimeType: SUGGESTED_ACTIONS_MIME,
-					text: SUGGESTED_ACTIONS_HTML,
-				},
-			],
-		} )
+		async ( uri: URL ) => {
+			const { data } = await httpService().get< HttpResponse< string > >( MCP_PROXY_URL, {
+				params: { uri: uri.href },
+			} );
+
+			return {
+				contents: [
+					{
+						uri: uri.href,
+						mimeType: SUGGESTED_ACTIONS_MIME,
+						text: data.data,
+					},
+				],
+			};
+		}
 	);
 };
