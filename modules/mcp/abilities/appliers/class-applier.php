@@ -42,8 +42,15 @@ class Class_Applier {
 				continue;
 			}
 
+			$node = &$config_id_index[ $config_id ];
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				$this->apply_v3_classes( $node, $labels, $id_by_label, $config_id, $errors );
+				unset( $node );
+				continue;
+			}
+
 			if ( empty( $labels ) ) {
-				$node = &$config_id_index[ $config_id ];
 				$node['settings'] = $this->clear_global_classes( $node['settings'] ?? [] );
 				unset( $node );
 				continue;
@@ -71,13 +78,13 @@ class Class_Applier {
 			}
 
 			if ( empty( $resolved_ids ) ) {
+				unset( $node );
 				continue;
 			}
 
-			$node = &$config_id_index[ $config_id ];
 			$node['settings'] = $this->prepend_global_classes( $node['settings'] ?? [], $resolved_ids );
+			unset( $node );
 		}
-		unset( $node );
 
 		if ( empty( $errors ) ) {
 			return null;
@@ -88,6 +95,47 @@ class Class_Applier {
 			implode( ' ', $errors ),
 			[ 'status' => \WP_Http::BAD_REQUEST ]
 		);
+	}
+
+	/**
+	 * @param array                $node        Reference to a subtree node.
+	 * @param string[]             $labels      Global class labels input for this node.
+	 * @param array<string,string> $id_by_label Map of label => class id (for validation).
+	 * @param string               $config_id   Identifier used in error messages.
+	 * @param string[]             $errors      Collected error messages (by reference).
+	 */
+	private function apply_v3_classes( array &$node, array $labels, array $id_by_label, string $config_id, array &$errors ): void {
+		if ( empty( $labels ) ) {
+			V3_Node_Bridge::clear_classes( $node );
+			return;
+		}
+
+		$resolved_labels = [];
+
+		foreach ( $labels as $label ) {
+			if ( ! is_string( $label ) || '' === $label ) {
+				$errors[] = sprintf( '[%s] Each global class label must be a non-empty string.', $config_id );
+				continue;
+			}
+
+			if ( ! isset( $id_by_label[ $label ] ) ) {
+				$errors[] = sprintf(
+					'[%s] Unknown global class label "%s". Available labels: %s',
+					$config_id,
+					$label,
+					! empty( $id_by_label ) ? implode( ', ', array_keys( $id_by_label ) ) : '(none)'
+				);
+				continue;
+			}
+
+			$resolved_labels[] = $label;
+		}
+
+		if ( empty( $resolved_labels ) ) {
+			return;
+		}
+
+		V3_Node_Bridge::apply_classes( $node, $resolved_labels );
 	}
 
 	private function build_label_to_id_map( array $label_by_id ): array {

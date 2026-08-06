@@ -28,6 +28,15 @@ class Widget_Context_Helper {
 
 	const VERSION_V4 = 'v4';
 
+	const V3_ALLOWLIST = [
+		'nav-menu',
+		'theme-post-content',
+		'theme-post-title',
+		'theme-post-featured-image',
+		'theme-post-excerpt',
+		'theme-archive-title',
+	];
+
 	const V3_FALLBACK_MESSAGE = 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.';
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
@@ -82,6 +91,10 @@ class Widget_Context_Helper {
 
 	public static function get_widget_version( array $config ): string {
 		return empty( $config['atomic_props_schema'] ) ? self::VERSION_V3 : self::VERSION_V4;
+	}
+
+	public static function is_v3_allowlisted( string $widget_type ): bool {
+		return in_array( $widget_type, self::V3_ALLOWLIST, true );
 	}
 
 	public static function build_widget_summary( string $widget_type, array $config ): array {

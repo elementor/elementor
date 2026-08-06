@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -44,6 +45,24 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'v3', $data['version'] );
 	}
 
+	public function test_execute__returns_v3_fallback_for_allowlisted_widget() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_fake_v3_widget( 'nav-menu', [
+			'menu' => [ 'type' => 'select', 'default' => '' ],
+			'layout' => [ 'type' => 'select', 'options' => [ 'horizontal' => 'Horizontal', 'vertical' => 'Vertical' ] ],
+		] );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'nav-menu' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
+		$this->assertSame( Widget_Context_Helper::V3_FALLBACK_MESSAGE, $result['message'] );
+		$this->assertSame( Widget_Context_Helper::V3_FALLBACK_FIELDS_NOTE, $result['fields_note'] );
+		$this->assertArrayHasKey( 'properties', $result );
+		$this->assertArrayHasKey( 'menu', $result['properties'] );
+		$this->assertSame( 'select', $result['properties']['menu']['type'] );
+	}
+
 	public function test_execute__returns_404_for_unknown_widget_type() {
 		$this->act_as_admin();
 
@@ -63,11 +82,19 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 
-	private function given_widget_manager_with_fake_v3_widget( string $type ): void {
-		$widget = new class() {
+	private function given_widget_manager_with_fake_v3_widget( string $type, array $controls = null ): void {
+		$controls = $controls ?? [ 'title' => [ 'type' => 'text' ] ];
+
+		$widget = new class( $controls ) {
+			private array $controls;
+
+			public function __construct( array $controls ) {
+				$this->controls = $controls;
+			}
+
 			public function get_config(): array {
 				return [
-					'controls' => [ 'title' => [ 'type' => 'text' ] ],
+					'controls' => $this->controls,
 					'atomic_props_schema' => null,
 					'title' => 'Fake V3',
 				];

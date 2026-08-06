@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -796,6 +798,131 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
 	}
 
+	public function test_execute__allowlisted_v3_update_merges_raw_settings() {
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'menu' => '3', 'layout' => 'horizontal' ],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertNotNull( $node );
+		$this->assertSame( '3', $node['settings']['menu'] );
+		$this->assertSame( 'horizontal', $node['settings']['layout'] );
+	}
+
+	public function test_execute__allowlisted_v3_classes_write_to_css_classes() {
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$this->given_kit_global_class( 'menu-primary', '#111111' );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'classes' => [ 'menu-primary' ],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertSame( 'menu-primary', $node['settings']['_css_classes'] ?? null );
+		$this->assertArrayNotHasKey( 'classes', $node['settings'] );
+	}
+
+	public function test_execute__allowlisted_v3_style_bridged_to_custom_css_when_pro_active() {
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
+		}
+
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'style' => 'font-size: 2rem;',
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertSame( 'selector { font-size: 2rem; }', $node['settings']['custom_css'] ?? null );
+		$this->assertArrayNotHasKey( 'styles', $node );
+	}
+
+	public function test_execute__allowlisted_v3_style_warns_when_pro_missing() {
+		if ( \Elementor\Utils::has_pro() ) {
+			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
+		}
+
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'style' => 'font-size: 2rem;',
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$this->assertStringContainsString( 'Elementor Pro', $warnings[0] );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+	}
+
+	public function test_execute__allowlisted_v3_delete_succeeds() {
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'theme-post-content' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'theme-post-content' );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $v3_id ],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$this->assertNull( $this->find_element_in_document( $post_id, $v3_id ) );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -990,6 +1117,26 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 
 		return $id;
+	}
+
+	private function given_allowlisted_v3_widget_on_document( int $post_id, string $widget_type ): string {
+		$id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $id,
+				'elType' => 'widget',
+				'widgetType' => $widget_type,
+				'settings' => [],
+				'elements' => [],
+			],
+		] );
+
+		return $id;
+	}
+
+	private function given_fake_v3_widget_registered( string $type ): void {
+		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
 	}
 
 	private function given_v3_container_on_document( int $post_id ): string {
