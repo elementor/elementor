@@ -1,8 +1,8 @@
-# Example: Extend editor
+# Example: Add editor package
 
-> Skill: [extend-editor](../../../.cursor/skills/extend-editor/SKILL.md)
+> Skill: [add-editor-package](../../../.cursor/skills/add-editor-package/SKILL.md)
 > Docs: [editor-packages/extending-editor.md](../editor-packages/extending-editor.md)
-> Verdict: **Relevant** — primary path for editor UI and in-editor MCP. Not PHP `modules/mcp/` abilities.
+> Verdict: **Relevant** — primary path for injecting editor UI and in-editor MCP via a plugin-owned package. Not PHP `modules/mcp/` abilities.
 
 ## PHP: register package
 

@@ -2,7 +2,7 @@
 
 > Skill: [extend-prop-types](../../../.cursor/skills/extend-prop-types/SKILL.md)
 > Docs: [fundamentals/prop-types.md](../fundamentals/prop-types.md), [fundamentals/transformers.md](../fundamentals/transformers.md)
-> Verdict: **Relevant** — core extension surface. Skill had wrong `Transformer_Base` FQCN and value shape.
+> Verdict: **Relevant** — prop type is the primary surface; transformers are optional when render/import/export differs. Style prop types should also be covered via `internal-extend-css-converter` (Internal).
 
 ## Pattern: existing `size` type (core reference)
 

@@ -1,6 +1,6 @@
 ---
 name: extend-prop-types
-description: "External: Extend prop types and transformers from a third-party plugin. PHP Prop_Type classes, TS createPropUtils, elementor/atomic-widgets hooks."
+description: "External: Add or extend a prop type from a third-party plugin. Description also covers transformers for render/import/export. PHP Prop_Type, createPropUtils, atomic-widgets hooks."
 ---
 
 # Extend prop types
@@ -17,15 +17,13 @@ Read first: [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamenta
 
 ## Checklist
 
-1. **Decide: prop type vs transformer**
-   - Prop type → storage shape, validation, JSON Schema (`to_json_schema()`).
-   - Transformer → render/import/export output when stored shape is already valid.
+1. **Start with the prop type** — storage shape, validation, JSON Schema (`to_json_schema()`). Add a **transformer** only when render/import/export needs a different output from the stored shape.
 2. **PHP prop type** — extend `Plain_Prop_Type`, `Object_Prop_Type`, or `Array_Prop_Type`; compose unions via `Union_Prop_Type::make()->add_prop_type()`. Implement `get_key()`, `define_shape()` (objects), `validate_value()`, `sanitize_value()`. Example: [docs/atomic-builder/examples/extend-prop-types.md](../../../docs/atomic-builder/examples/extend-prop-types.md).
 3. **TypeScript mirror** — matching file in your plugin package using `createPropUtils()` and `propTypeToJsonSchema()`.
 4. **Wire schema**
    - Widget props: `define_props_schema()` or filter `elementor/atomic-widgets/props-schema`.
    - Style keys: filter `elementor/atomic-widgets/styles/schema` — [style-schema.md](../../../docs/atomic-builder/fundamentals/style-schema.md).
-5. **Register transformers** (priority `20+` to override core defaults at `10`):
+5. **Register transformers** when needed (priority `20+` to override core defaults at `10`):
 
 ```php
 add_action( 'elementor/atomic-widgets/settings/transformers/register', function ( $registry, $resolver ) {
@@ -37,9 +35,10 @@ Contexts: `settings`, `styles`, `import`, `export`, `plain` — hook pattern:
 
 `elementor/atomic-widgets/{context}/transformers/register`
 
-6. **Editor controls** — filter `elementor/atomic-widgets/controls` when UI must change.
-7. **MCP** — filter `elementor/atomic-widgets/llm-json-schema` to post-process single-prop JSON Schema.
-8. **Verify** — PropValue `{ $$type, value }`; chained transform depth ≤ 3; `disabled: true` → `null`.
+6. **If this prop type is used in styles** — cover it in the CSS converter so legacy CSS import maps to the new PropValue. That work is **Internal** (no public discovery hook) — follow [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md).
+7. **Editor controls** — filter `elementor/atomic-widgets/controls` when UI must change.
+8. **MCP** — filter `elementor/atomic-widgets/llm-json-schema` to post-process single-prop JSON Schema.
+9. **Verify** — PropValue `{ $$type, value }`; chained transform depth ≤ 3; `disabled: true` → `null`.
 
 ## Transformer skeleton
 
@@ -67,3 +66,5 @@ class My_Transformer extends \Elementor\Modules\AtomicWidgets\PropsResolver\Tran
 
 - [fundamentals/prop-value.md](../../../docs/atomic-builder/fundamentals/prop-value.md)
 - [atomic-widgets/rendering.md](../../../docs/atomic-builder/atomic-widgets/rendering.md) — resolver pipeline
+- [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md) — when a style prop type needs legacy CSS coverage (Internal)
+- [add-editor-package](../add-editor-package/SKILL.md) — editor package `init()` for TS prop utils

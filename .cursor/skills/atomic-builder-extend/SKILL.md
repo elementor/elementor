@@ -1,6 +1,6 @@
 ---
 name: atomic-builder-extend
-description: "Pick the right Elementor v4 skill. Use when you want to create a widget, extend prop types, add a dynamic tag, extend the editor, variables, CSS converter, or interactions."
+description: "Pick the right Elementor v4 skill. Use when you want to create a widget, extend prop types, add a dynamic tag, add an editor package, extend variables, or run an Internal Core-only skill (CSS converter / interactions)."
 ---
 
 # Extend Elementor V4 (router)
@@ -31,10 +31,10 @@ Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not
 | New widget or container element | [create-atomic-widget](../create-atomic-widget/SKILL.md) | External | [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md) |
 | `$$type`, prop schema, validation, transformers | [extend-prop-types](../extend-prop-types/SKILL.md) | External | [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) |
 | WordPress data source / dynamic binding | [add-dynamic-tag](../add-dynamic-tag/SKILL.md) | External | [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md) |
-| Editor UI, package, slots, in-editor MCP | [extend-editor](../extend-editor/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
+| Editor UI, package, slots, in-editor MCP | [add-editor-package](../add-editor-package/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
 | Design tokens / kit variables | [extend-variables](../extend-variables/SKILL.md) | External | [variables/types.md](../../../docs/atomic-builder/variables/types.md) |
-| Legacy CSS → atomic style props | [extend-css-converter](../extend-css-converter/SKILL.md) | Internal | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
-| Motion / interactions tab | [extend-interactions](../extend-interactions/SKILL.md) | Internal | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
+| Legacy CSS → atomic style props | [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md) | Internal | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
+| Motion / interactions tab | [internal-extend-interactions](../internal-extend-interactions/SKILL.md) | Internal | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
 
 ## Scope: External vs Internal
 

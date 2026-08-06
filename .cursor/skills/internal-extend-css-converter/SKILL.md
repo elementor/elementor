@@ -1,5 +1,5 @@
 ---
-name: extend-css-converter
+name: internal-extend-css-converter
 description: "Internal: Extend the atomic CSS converter in a Core fork and submit a Core PR. Shorthand_Expander_Base, Property_Converter_Base, no public discovery hook."
 ---
 
@@ -16,7 +16,7 @@ description: "Internal: Extend the atomic CSS converter in a Core fork and submi
 - Add PHPUnit under `tests/phpunit/elementor/modules/atomic-widgets/css-converter/`.
 - **Submit PR against Core.** Third-party plugins cannot wire converters into the core import pipeline.
 
-Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Example: [docs/atomic-builder/examples/extend-css-converter.md](../../../docs/atomic-builder/examples/extend-css-converter.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
+Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Example: [docs/atomic-builder/examples/internal-extend-css-converter.md](../../../docs/atomic-builder/examples/internal-extend-css-converter.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
 
 ## Checklist
 
