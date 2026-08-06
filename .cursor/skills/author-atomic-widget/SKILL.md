@@ -30,17 +30,19 @@ Read first: [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/a
 
 ## Minimal skeleton
 
-```php
-class My_Atomic_Widget extends \Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base {
-    use \Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+Requires experiment `e_atomic_elements`. Full runnable example: [docs/atomic-builder/examples/author-atomic-widget.md](../../../docs/atomic-builder/examples/author-atomic-widget.md).
 
-    public static function get_element_type(): string {
-        return 'e-my-widget';
-    }
+```php
+class My_Atomic_Widget extends \Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base {
+    use \Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+
+    public static function get_element_type(): string { return 'e-my-widget'; }
+    public function get_title() { return 'My Widget'; }
+    public function get_icon() { return 'eicon-heading'; }
 
     protected static function define_props_schema(): array {
         return [
-            'title' => \Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type::make()
+            'title' => \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
                 ->default( 'Hello' ),
         ];
     }
@@ -48,16 +50,19 @@ class My_Atomic_Widget extends \Elementor\Modules\AtomicWidgets\Elements\Atomic_
     protected function define_atomic_controls(): array {
         return [
             \Elementor\Modules\AtomicWidgets\Controls\Section::make()
-                ->add_control(
-                    \Elementor\Modules\AtomicWidgets\Controls\Text_Control::make()
-                        ->bind_to( 'title' )
-                ),
+                ->set_items( [
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control::bind_to( 'title' ),
+                ] ),
         ];
+    }
+
+    protected function get_templates(): array {
+        return [ 'my-plugin/my-widget' => __DIR__ . '/my-widget.html.twig' ];
     }
 }
 ```
 
-Test/MCP JSON: `My_Atomic_Widget::generate()` (widget) or `My_Container::generate()` (element).
+Test/MCP JSON: `My_Atomic_Widget::generate()` (widget) or `My_Container::generate()` (element; uses `get_type()`).
 
 ## Public path
 

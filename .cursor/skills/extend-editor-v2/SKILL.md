@@ -20,7 +20,7 @@ add_filter( 'elementor/editor/v2/packages', function ( array $packages ) {
 
 Optional env: `elementor/editor/v2/scripts/env` → `$env['@elementor/my-editor-feature']`.
 
-3. **JS: export `init()`** from `src/index.ts` — synchronous registration only; render in React components injected into slots.
+3. **JS: implement `init()` in `src/init.ts(x)`**, re-export from `src/index.ts` — synchronous registration only; Vite footer auto-calls `window.elementorV2.{camelCasePackage}?.init?.()`. Example: [docs/atomic-builder/examples/extend-editor-v2.md](../../../docs/atomic-builder/examples/extend-editor-v2.md).
 4. **Pick injection API** (read doc for full list):
    - Shell: `injectIntoTop`, `injectIntoLogic` (`@elementor/editor`)
    - App bar: `injectIntoPageIndication`, `toolsMenu` (`@elementor/editor-app-bar`)
@@ -28,27 +28,29 @@ Optional env: `elementor/editor/v2/scripts/env` → `$env['@elementor/my-editor-
    - Elements panel: `injectTab` (`@elementor/editor-elements-panel`)
    - Slide-in panels: `__registerPanel` (`@elementor/editor-panels`)
    - Styles: `stylesRepository.register` (`@elementor/editor-styles-repository`)
-   - Legacy bridge: `registerDataHook`, `blockCommand`, `listenTo( v1ReadyEvent() )` (`@elementor/editor-v1-adapters`)
-5. **MCP (in-editor only)** — in `init()`:
+   - Legacy bridge: `registerDataHook`, `blockCommand`, `__privateListenTo( v1ReadyEvent(), fn )` (`@elementor/editor-v1-adapters`)
+5. **MCP (in-editor only)** — in `init()`; Zod from `@elementor/schema`:
 
 ```ts
 import { getMCPByDomain } from '@elementor/editor-mcp';
+import { z } from '@elementor/schema';
 
-const mcp = getMCPByDomain( 'my_domain', { docs: '…' } );
-mcp.addTool( { name: 'my_tool', description: '…', schema: { … }, handler: async ( args ) => { … } } );
+const mcp = getMCPByDomain( 'my_domain', { instructions: '…', docs: '…' } );
+mcp.addTool( { name: 'my_tool', description: '…', schema: { id: z.string() }, handler: async () => '…' } );
 ```
 
-Namespace: lowercase + underscores only. **Not** PHP `modules/mcp/` abilities.
+Namespace: `/^[a-z_]+$/` only. **Not** PHP `modules/mcp/` abilities.
 
-6. **Verify** — package loads via `window.elementorV2.{packageName}?.init?.()`; UI appears in chosen slot; MCP tools visible to Angie/WebMCP when experiment allows.
+6. **Verify** — `window.elementorV2.editorMyFeature` (camelCase slug); UI in chosen slot; MCP tools when experiment allows.
 
 ## Minimal init skeleton
 
 ```ts
-import { injectIntoPageIndication } from '@elementor/editor-app-bar';
+import { injectIntoPageIndication, toolsMenu } from '@elementor/editor-app-bar';
 
 export function init() {
     injectIntoPageIndication( { id: 'my-indicator', component: MyIndicator } );
+    toolsMenu.registerToggleAction( { id: 'toggle-my-panel', priority: 20, useProps: useMyToggleProps } );
 }
 ```
 

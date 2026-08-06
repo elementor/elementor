@@ -5,7 +5,7 @@ description: Routes Elementor v4 / atomic-builder extension work to the correct 
 
 # Atomic Builder Extension (router)
 
-Source of truth: [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md). Skills are checklists that link there — do not duplicate the doc tree.
+Source of truth: [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md). Skills are checklists that link there — do not duplicate the doc tree. Runnable examples: [docs/atomic-builder/examples/](../../../docs/atomic-builder/examples/README.md).
 
 ## Checklist
 

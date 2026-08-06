@@ -5,7 +5,7 @@ description: Extends Elementor atomic CSS converter — Shorthand_Expander_Base,
 
 # Extend CSS converter
 
-Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
+Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Example: [docs/atomic-builder/examples/extend-css-converter.md](../../../docs/atomic-builder/examples/extend-css-converter.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
 
 ## Checklist
 
@@ -19,7 +19,7 @@ Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-conver
    - `get_supported_properties()`, `do_convert()` returns `true` to claim
    - Optional `convert_null()` for aggregate props
    - Register in `Converter_Registry_Factory::real_converters()`
-5. **Update `covered_properties()`** — manual list CI-diffed against live `Style_Schema` (`test-css-converter-rest-api.php`).
+5. **Update coverage constants** — add property to family constant (`STRING_PROPERTIES`, `OTHER_PROPERTIES`, etc.); `covered_properties()` merges them. CI: `test-css-converter-rest-api.php::test_coverage__every_style_schema_property_is_hardcoded_as_covered`.
 6. **PHPUnit** — add tests under `tests/phpunit/elementor/modules/atomic-widgets/css-converter/`.
 
 ## Public path (limited)

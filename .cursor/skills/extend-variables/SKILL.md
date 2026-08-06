@@ -21,13 +21,13 @@ add_action( 'elementor/variables/register', function (
 
 2. **Style schema union** — extend `elementor/atomic-widgets/styles/schema` so atomic style keys accept the new `$$type`.
 3. **PHP render transformer** — `elementor/atomic-widgets/styles/transformers/register` if frontend must resolve id → `var(--label)` (pattern: `Global_Variable_Transformer` for color/font).
-4. **JS editor type** — `registerVariableType` from `@elementor/editor-variables` with matching `key`, `propTypeUtil`, `variableType`, `defaultValue`; call from package `init()` / `register-variable-types.tsx`.
+4. **JS editor type** — `registerVariableType` with `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`, plus `defaultValue` / `styleTransformer` as needed. Call from **your** editor v2 package `init()` (not core `register-variable-types.tsx`). Example: [docs/atomic-builder/examples/extend-variables.md](../../../docs/atomic-builder/examples/extend-variables.md).
 5. **Storage adapter** — extend `Adapters\Prop_Type_Adapter` if value encoding is non-standard.
 6. **Verify on active kit** — REST `elementor/v1/variables/*` and MCP `elementor/manage-global-variable` only **confirm** types already registered; they do not define new types.
 
 ## Size gap (important)
 
-PHP `Style_Transformers` registers `Global_Variable_Transformer` for **color and font only**. **Size** variables resolve in editor JS (`variableTransformer`); do not assume PHP render parity for every type — read [types.md](../../../docs/atomic-builder/variables/types.md) internals.
+PHP `Style_Transformers` registers `Global_Variable_Transformer` for **color and font only**. Size has **no** matching PHP styles transformer. Built-in size types in JS use `EmptyTransformer`; editor canvas gets token values via `StyleVariablesRenderer`. New types needing `var(--label)` in canvas should pass an explicit `styleTransformer` in `registerVariableType`. Requires experiment `e_atomic_elements`; register `elementor/variables/register` before WordPress `init`.
 
 Built-in keys: `global-color-variable`, `global-font-variable`, `global-size-variable`, `global-custom-size-variable`.
 

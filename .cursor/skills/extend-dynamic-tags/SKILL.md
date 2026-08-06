@@ -17,9 +17,9 @@ add_action( 'elementor/dynamic_tags/register', function ( $manager ) {
 } );
 ```
 
-2. **Tag class** — `get_name()`, `get_title()`, `get_group()`, `get_categories()` (use `Module::TEXT_CATEGORY`, `URL_CATEGORY`, etc.), convertible controls (`text`, `textarea`, `select`, `number`, …).
+2. **Tag class** — extend `\Elementor\Core\DynamicTags\Tag`; `get_name()`, `get_title()`, `get_group()`, `get_categories()` using `\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY`, `URL_CATEGORY`, etc. Convertible controls: `text`, `textarea`, `select`, `number`, `switcher`, `choose`, `query`, `date_time`, `media`. Example: [docs/atomic-builder/examples/extend-dynamic-tags.md](../../../docs/atomic-builder/examples/extend-dynamic-tags.md).
 3. **Optional group** — `Plugin::$instance->dynamic_tags->register_group( 'my-plugin', [ 'title' => 'My Plugin' ] )`.
-4. **Atomic auto-mapping** — `Dynamic_Prop_Types_Mapping` unions `Dynamic_Prop_Type` when tag categories intersect prop schemas (hooks `elementor/atomic-widgets/props-schema` and `styles/schema` internally).
+4. **Atomic auto-mapping** — `Dynamic_Prop_Types_Mapping` maps prop types to categories (e.g. `String_Prop_Type` → `TEXT_CATEGORY`), unions `Dynamic_Prop_Type`, sets `allowed_tag_names`. Hooks: `elementor/atomic-widgets/props-schema` (widget props) and `elementor/atomic-widgets/styles/schema` (color props only).
 5. **Non-convertible controls** — override `get_editor_config()`:
 
 ```php
@@ -34,7 +34,7 @@ public function get_editor_config() {
 7. **Dynamic select options** — filters:
    - `elementor/atomic/dynamic-tags/select_control_options`
    - `elementor/atomic/dynamic-tags/select_control_groups`
-8. **Verify** — tag appears in discovery; binding saves as PropValue; render uses `Dynamic_Transformer` on `settings/transformers/register`.
+8. **Verify** — tag in editor `atomicDynamicTags`; binding saves as `$$type: dynamic`; render via `Dynamic_Transformer` on `elementor/atomic-widgets/settings/transformers/register` and `styles/transformers/register`; import/export via `ImportExport\Dynamic_Transformer`.
 
 ## Public path
 
