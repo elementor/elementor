@@ -154,9 +154,9 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<EditorPage>}
 	 */
 	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
-		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+		await page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
-		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 		await this.closeAnnouncementsIfVisible();
 
@@ -265,6 +265,16 @@ export default class WpAdminPage extends BasePage {
 	async waitForPanel(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
+		// The DOM signals above hide before the editor bootstrap assigns `window.elementor` and
+		// registers the `document` container, so a test that immediately does
+		// `elementor.getContainer( 'document' )` can get back `undefined` rather than a
+		// `ReferenceError`. Polling the container itself, not just the method, closes that race
+		// deterministically for the common case of adding elements right after the panel loads.
+		await this.page.waitForFunction(
+			() => Boolean( ( window as unknown as { elementor?: { getContainer?: ( id: string ) => unknown } } ).elementor?.getContainer?.( 'document' ) ),
+			null,
+			{ timeout: timeouts.heavyAction },
+		);
 	}
 
 	/**
