@@ -259,10 +259,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [
-							'content' => 'New Title',
-							'children' => [],
-						],
+						'title' => 'New Title',
 					],
 				],
 			],
@@ -272,7 +269,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node );
-		$this->assertSame( 'New Title', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'New Title', $node['settings']['title']['value'] );
 	}
 
 	public function test_update__skips_unknown_prop_with_warning() {
@@ -616,7 +613,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'settings' => [ 'title' => 'plain string title' ],
+					'settings' => [ 'title' => [ 'foo' => 'bar' ] ],
 				],
 			],
 		] );
@@ -676,7 +673,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [ 'content' => 'Bulk Title', 'children' => [] ],
+						'title' => 'Bulk Title',
 					],
 				],
 				[
@@ -705,7 +702,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertCount( 3, $elements );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Bulk Title', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'Bulk Title', $node['settings']['title']['value'] );
 	}
 
 	public function test_execute__rejects_v3_update_per_op() {
@@ -792,7 +789,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $v4_id,
-					'settings' => [ 'title' => [ 'content' => 'Survived', 'children' => [] ] ],
+					'settings' => [ 'title' => 'Survived' ],
 				],
 			],
 		] );
@@ -804,7 +801,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertNotNull( $this->find_element_in_document( $post_id, $v3_id ) );
 		$node = $this->find_element_in_document( $post_id, $v4_id );
-		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
 	}
 
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
@@ -820,7 +817,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [ 'content' => 'Survived', 'children' => [] ],
+						'title' => 'Survived',
 					],
 				],
 			],
@@ -834,7 +831,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['version'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
 	}
 
 	private function assertOkOperation( $result, int $index ): void {

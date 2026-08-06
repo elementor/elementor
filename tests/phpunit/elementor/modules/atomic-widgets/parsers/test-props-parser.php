@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -85,6 +86,23 @@ class Test_Props_Parser extends TestCase {
 		$this->assertSame( [
 			'empty_string' => [ '$$type' => 'string', 'value' => '' ],
 			'valid_string' => [ '$$type' => 'string', 'value' => 'hello' ],
+		], $result );
+	}
+
+	public function test_sanitize__keeps_escaped_html_with_empty_value() {
+		// Arrange.
+		$parser = Props_Parser::make( [
+			'title' => Escaped_Html_Prop_Type::make()->default( 'Default title' ),
+		] );
+
+		// Act.
+		$result = $parser->sanitize( [
+			'title' => [ '$$type' => 'escaped-html', 'value' => '' ],
+		] )->unwrap();
+
+		// Assert.
+		$this->assertSame( [
+			'title' => [ '$$type' => 'escaped-html', 'value' => '' ],
 		], $result );
 	}
 
