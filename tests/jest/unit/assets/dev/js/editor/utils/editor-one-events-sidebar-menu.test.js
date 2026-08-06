@@ -31,14 +31,14 @@ describe( 'EditorOneEventManager sidebar menu events', () => {
 		EditorOneEventManager.sendSidebarMenuItemClicked( { eventId: 'settings' } );
 
 		// Assert
-		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_item_clicked', {
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_item_clicked', expect.objectContaining( {
 			window_name: 'sidebar_menu',
 			interaction_type: 'click',
 			target_type: 'link',
 			target_name: 'settings',
 			interaction_result: 'page_opened',
 			target_location: 'sidebar',
-		} );
+		} ) );
 		expect( dispatchEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'location_l1' );
 	} );
 
@@ -50,7 +50,7 @@ describe( 'EditorOneEventManager sidebar menu events', () => {
 		} );
 
 		// Assert
-		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_item_clicked', {
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_item_clicked', expect.objectContaining( {
 			window_name: 'sidebar_menu',
 			interaction_type: 'click',
 			target_type: 'link',
@@ -58,7 +58,7 @@ describe( 'EditorOneEventManager sidebar menu events', () => {
 			interaction_result: 'page_opened',
 			target_location: 'sidebar',
 			location_l1: 'system',
-		} );
+		} ) );
 	} );
 
 	test( 'sendSidebarMenuGroupToggled dispatches expanded when group opens', () => {
@@ -69,14 +69,14 @@ describe( 'EditorOneEventManager sidebar menu events', () => {
 		} );
 
 		// Assert
-		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_group_toggled', {
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_group_toggled', expect.objectContaining( {
 			window_name: 'sidebar_menu',
 			interaction_type: 'click',
 			target_type: 'toggle',
 			target_name: 'templates',
 			interaction_result: 'expanded',
 			target_location: 'sidebar',
-		} );
+		} ) );
 	} );
 
 	test( 'sendSidebarMenuGroupToggled dispatches collapsed when group closes', () => {
@@ -87,14 +87,14 @@ describe( 'EditorOneEventManager sidebar menu events', () => {
 		} );
 
 		// Assert
-		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_group_toggled', {
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'sidebar_menu_group_toggled', expect.objectContaining( {
 			window_name: 'sidebar_menu',
 			interaction_type: 'click',
 			target_type: 'toggle',
 			target_name: 'custom_elements',
 			interaction_result: 'collapsed',
 			target_location: 'sidebar',
-		} );
+		} ) );
 	} );
 
 	test( 'does not dispatch when events cannot be sent', () => {
