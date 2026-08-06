@@ -17,6 +17,11 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'agents_llms_txt';
 
+	const PACKAGES = [
+		'editor-site-settings',
+		'editor-agents',
+	];
+
 	const DEFAULT_CACHE_MAX_AGE = 300;
 
 	public function get_name() {
@@ -40,6 +45,10 @@ class Module extends BaseModule {
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
 		add_action( 'elementor/document/after_save', [ $this, 'maybe_invalidate_llms_txt_cache' ] );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		}
 	}
 
 	/**
@@ -116,6 +125,10 @@ class Module extends BaseModule {
 		$llms = $agents['llms'];
 
 		return is_string( $llms ) ? $llms : '';
+	}
+
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
 	}
 
 	private function get_cache_max_age(): int {
