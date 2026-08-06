@@ -28,8 +28,6 @@
     "access": "public"
   },
   "files": [
-    "README.md",
-    "CHANGELOG.md",
     "/dist",
     "/src",
     "!**/__tests__"

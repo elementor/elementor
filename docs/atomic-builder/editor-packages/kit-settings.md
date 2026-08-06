@@ -1,19 +1,17 @@
 # Kit Site Settings (React tabs)
 
 > Audience: both
-> Module: `modules/agents/`, `core/kits/documents/tabs/`
+> Module: `core/kits/documents/tabs/`
 > Related: [extending-editor.md](extending-editor.md), [core-packages.md](core-packages.md)
 
 ## What it is
 
 Infrastructure for rendering **React** UI inside Elementor **Site Settings** kit tabs, instead of legacy PHP `Controls_Manager` fields.
 
-Two packages work together:
-
 | Package | Role |
 |---------|------|
 | `@elementor/editor-kit-settings` | Tab registry, route listener, portal host in the kit panel |
-| `@elementor/editor-kit-agents` | Reference implementation: Agents tab for `llms.txt` content |
+| Feature packages (e.g. `@elementor/editor-kit-agents`) | One package per tab implementation |
 
 The PHP kit tab class still registers the tab (title, icon, group, save hooks). React replaces only the tab **content** via a portal into `#elementor-kit-panel-content-controls`.
 
@@ -24,9 +22,8 @@ The PHP kit tab class still registers the tab (title, icon, group, save hooks). 
 | `injectKitTab()` | `@elementor/editor-kit-settings` | Register a React component for a kit tab id |
 | `registerKitTab()` | `@elementor/editor-kit-settings` | Lower-level tab registry (prefer `injectKitTab`) |
 | `init()` | `@elementor/editor-kit-settings` | Injects `KitSettingsTab` host via `injectIntoTop` |
-| `init()` | `@elementor/editor-kit-agents` | Registers Agents tab when `agents_llms_txt` experiment is active |
 
-Verified: `packages/packages/core/editor-kit-settings/src/index.ts`, `packages/packages/core/editor-kit-agents/src/init.ts`.
+Verified: `packages/packages/core/editor-kit-settings/src/index.ts`.
 
 ## When to use it
 
@@ -38,7 +35,7 @@ Verified: `packages/packages/core/editor-kit-settings/src/index.ts`, `packages/p
 
 ### Route matching
 
-Kit settings routes follow `panel/global/{tab-id}`. Example: Agents tab id `settings-agents` → route `panel/global/settings-agents`.
+Kit settings routes follow `panel/global/{tab-id}`. Example: tab id `settings-colors` → route `panel/global/settings-colors`.
 
 `useActiveKitTab()` reads `window.$e.routes.getCurrent().panel`, strips the `panel/global/` prefix, and resolves the registered tab component.
 
@@ -56,26 +53,23 @@ getV1CurrentDocument()?.container?.settings
 
 Call `setDocumentModifiedStatus(true)` after writes so the kit save flow picks up changes.
 
-Nested storage shape for Agents (served at `/llms.txt`):
+Use nested keys under a feature namespace in kit settings, for example:
 
 ```json
 {
-  "agents": {
-    "llms": "# llms.txt content"
+  "myFeature": {
+    "optionA": "value"
   }
 }
 ```
 
 ### PHP save sanitization
 
-`Settings_Agents::before_save()` normalizes both legacy flat `agents_llms` and nested `agents.llms`, applies `sanitize_textarea_field()`, and stores only the nested `agents` key. React saves must use the nested shape; the flat key remains for backward compatibility on ingest.
+Implement `before_save()` on the tab class to sanitize and normalize settings written by React. Shape validation belongs on the server even when the UI is React-only.
 
-### Experiment gate
+### Package loading
 
-`modules/agents/module.php` registers:
-
-- PHP kit tab + `/llms.txt` endpoint when `agents_llms_txt` is active
-- Editor packages `editor-kit-settings` and `editor-kit-agents` via `elementor/editor/v2/packages`
+Register `editor-kit-settings` once per editor (safe to list from multiple modules). Add feature-specific packages via `elementor/editor/v2/packages`, typically gated by an experiment.
 
 ## Extension
 
@@ -92,7 +86,7 @@ add_action( 'elementor/kit/register_tabs', function ( $kit ) {
 } );
 
 add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => array_merge( $packages, [
-    'editor-kit-settings', // once per editor; safe to list from multiple modules
+    'editor-kit-settings',
     'editor-my-feature-settings',
 ] ) );
 ```
@@ -119,32 +113,15 @@ Tab id must match the PHP tab `get_id()` return value.
 
 ### 3. Settings helpers pattern
 
-Follow `editor-kit-agents/src/llms-settings.ts`:
+Encapsulate read/write in a dedicated module per feature:
 
 - `getKitSettingsBag()` — null-safe access to v1 settings
 - `read*()` / `write*()` — encapsulate key paths and `setDocumentModifiedStatus`
 - Disable controls when the settings bag is unavailable (kit document not loaded)
 
-Reference: `packages/packages/core/editor-kit-agents/src/components/agents-settings-tab.tsx`.
-
-## Agents llms.txt (reference)
-
-| Layer | Location |
-|-------|----------|
-| Experiment | `agents_llms_txt` (`modules/agents/module.php`) |
-| PHP tab | `core/kits/documents/tabs/settings-agents.php` |
-| React UI | `@elementor/editor-kit-agents` |
-| Public URL | `/llms.txt` (plain text, cache headers + invalidation on kit save) |
-
-Enable the hidden experiment, open **Site Settings → Agents**, edit the multiline **llms.txt** field, save the kit. Empty content disables the endpoint.
-
-Hooks:
-
-- `elementor/agents/llms_txt/cache_max_age` — cache lifetime (seconds)
-- `elementor/agents/llms_txt/cache_invalidated` — fired after kit save; use to purge CDN/page cache
+First reference implementation: `@elementor/editor-kit-agents`.
 
 ## See also
 
 - [extending-editor.md](extending-editor.md)
 - [core-packages.md](core-packages.md)
-- [../getting-started/experiments.md](../getting-started/experiments.md)

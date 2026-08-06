@@ -11,7 +11,8 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	v1ReadyEvent: jest.fn( () => 'v1:ready' ),
 } ) );
 
-const AgentsTab = () => null;
+const ExampleTab = () => null;
+const EXAMPLE_TAB_ID = 'settings-example';
 
 describe( 'useActiveKitTab', () => {
 	const originalRoutes = window.$e?.routes;
@@ -24,7 +25,7 @@ describe( 'useActiveKitTab', () => {
 			},
 		} as unknown as typeof window.$e;
 
-		registerKitTab( { id: 'settings-agents', component: AgentsTab } );
+		registerKitTab( { id: EXAMPLE_TAB_ID, component: ExampleTab } );
 	} );
 
 	afterEach( () => {
@@ -32,33 +33,33 @@ describe( 'useActiveKitTab', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns null when the panel route is outside kit settings', () => {
-		// Arrange.
+	it( 'returns null when the current panel route is not a kit settings tab', () => {
+		// Arrange — editor canvas route, not panel/global/*.
 		mockGetCurrent.mockReturnValue( { panel: 'panel/editor' } );
 
 		// Act.
 		const { result } = renderHook( () => useActiveKitTab() );
 
-		// Assert.
+		// Assert — no kit tab component should mount.
 		expect( result.current ).toBeNull();
 		expect( useListenTo ).toHaveBeenCalled();
 	} );
 
-	it( 'returns the registered tab for the active kit settings route', () => {
-		// Arrange.
+	it( 'returns the tab registered for the active panel/global/{tab-id} route', () => {
+		// Arrange — user opened Site Settings on a tab with a React override.
 		mockGetCurrent.mockReturnValue( {
-			panel: 'panel/global/settings-agents',
+			panel: `panel/global/${ EXAMPLE_TAB_ID }`,
 		} );
 
 		// Act.
 		const { result } = renderHook( () => useActiveKitTab() );
 
-		// Assert.
-		expect( result.current?.component ).toBe( AgentsTab );
+		// Assert — hook resolves tab id from the route and looks up the component.
+		expect( result.current?.component ).toBe( ExampleTab );
 	} );
 
-	it( 'returns null when the kit settings route has no registered tab', () => {
-		// Arrange.
+	it( 'returns null when the kit settings route has no registered React tab', () => {
+		// Arrange — legacy PHP-only tab with no injectKitTab() registration.
 		mockGetCurrent.mockReturnValue( {
 			panel: 'panel/global/settings-colors',
 		} );
@@ -66,7 +67,7 @@ describe( 'useActiveKitTab', () => {
 		// Act.
 		const { result } = renderHook( () => useActiveKitTab() );
 
-		// Assert.
+		// Assert — portal host renders nothing until a package registers the tab.
 		expect( result.current ).toBeNull();
 	} );
 } );
