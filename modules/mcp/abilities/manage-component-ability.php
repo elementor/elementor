@@ -117,16 +117,11 @@ class Manage_Component_Ability extends Abstract_Ability {
 			);
 		}
 
-		$circular_validation = Circular_Dependency_Validator::make()->validate_new_components( $items );
-		if ( ! $circular_validation['success'] ) {
-			return new \WP_Error(
-				'circular_dependency_detected',
-				__( "Can't add this component - components that contain each other can't be nested.", 'elementor' ),
-				[
-					'status' => \WP_Http::UNPROCESSABLE_ENTITY,
-					'caused_by' => $circular_validation['messages'],
-				]
-			);
+		$circular_error = $this->validate_circular_dependency(
+			fn() => Circular_Dependency_Validator::make()->validate_new_components( $items )
+		);
+		if ( $circular_error ) {
+			return $circular_error;
 		}
 
 		$non_atomic_error = $this->validate_atomic_elements( $elements );
@@ -290,6 +285,13 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $overridable_error;
 		}
 
+		$circular_error = $this->validate_circular_dependency(
+			fn() => Circular_Dependency_Validator::make()->validate( $component->get_main_id(), $elements )
+		);
+		if ( $circular_error ) {
+			return $circular_error;
+		}
+
 		$result = $this->save_component( $component, $elements, $settings );
 		if ( is_wp_error( $result ) || empty( $warnings ) ) {
 			return $result;
@@ -305,6 +307,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 				'settings' => $settings,
 			] );
 		} catch ( \Exception $e ) {
+			if ( str_contains( $e->getMessage(), 'components that contain each other' ) ) {
+				return new \WP_Error(
+					'circular_dependency_detected',
+					__( "Can't add this component - components that contain each other can't be nested.", 'elementor' ),
+					[ 'status' => \WP_Http::UNPROCESSABLE_ENTITY ]
+				);
+			}
+
 			return new \WP_Error( 'save_failed', $e->getMessage(), [ 'status' => \WP_Http::UNPROCESSABLE_ENTITY ] );
 		}
 
@@ -316,6 +326,23 @@ class Manage_Component_Ability extends Abstract_Ability {
 			'success' => true,
 			'component_id' => $component->get_main_id(),
 		] + $this->document_links( $component );
+	}
+
+	private function validate_circular_dependency( callable $validate ): ?\WP_Error {
+		$circular_validation = $validate();
+
+		if ( $circular_validation['success'] ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'circular_dependency_detected',
+			__( "Can't add this component - components that contain each other can't be nested.", 'elementor' ),
+			[
+				'status' => \WP_Http::UNPROCESSABLE_ENTITY,
+				'caused_by' => $circular_validation['messages'],
+			]
+		);
 	}
 
 	private function validate_atomic_elements( array $elements ): ?\WP_Error {
@@ -380,7 +407,12 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * @return array{elements: array[], warnings: string[], dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
-		$compiled = Composition_Compiler::make()->compile( $input, $document );
+		$compiled = Composition_Compiler::make()->compile(
+			$input,
+			$document,
+			[],
+			Composition_Compiler::COMPONENT_PARENT_ID
+		);
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
 		}
