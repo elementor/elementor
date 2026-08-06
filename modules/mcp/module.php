@@ -64,6 +64,7 @@ class Module extends BaseModule {
 		( new Abilities\Style_Best_Practices_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Classes_Ability() )->register();
+		( new Abilities\Reorder_Classes_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
 		( new Abilities\Get_Widget_Schema_Ability() )->register();
 		( new Abilities\List_Widget_Schemas_Ability() )->register();
@@ -121,6 +122,7 @@ class Module extends BaseModule {
 			'elementor/publish-document',
 			'elementor/manage-global-variable',
 			'elementor/manage-classes',
+			'elementor/reorder-classes',
 			'elementor/get-widget-schema',
 			'elementor/list-widget-schemas',
 			'elementor/build-composition',
