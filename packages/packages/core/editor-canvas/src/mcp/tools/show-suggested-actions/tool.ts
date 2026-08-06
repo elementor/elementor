@@ -3,6 +3,9 @@ import { z } from '@elementor/schema';
 
 import { SUGGESTED_ACTIONS_URI } from '../../resources/suggested-actions-resource';
 
+const MIN_SUGGESTED_ACTIONS = 1;
+const MAX_SUGGESTED_ACTIONS = 5;
+
 export const initShowSuggestedActionsTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
 
@@ -19,8 +22,8 @@ export const initShowSuggestedActionsTool = ( reg: MCPRegistryEntry ) => {
 						icon: z.enum( [ 'sparkles', 'grid', 'branch' ] ).optional(),
 					} )
 				)
-				.min( 1 )
-				.max( 5 )
+				.min( MIN_SUGGESTED_ACTIONS )
+				.max( MAX_SUGGESTED_ACTIONS )
 				.describe( '1-5 suggested actions' ),
 		},
 		outputSchema: {
