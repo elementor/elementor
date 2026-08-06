@@ -5,6 +5,8 @@ description: Extends Elementor v4 prop types and transformers — PHP Prop_Type 
 
 # Extend prop types and transformers
 
+> **Scope: External** — shippable from a 3rd-party plugin via `elementor/atomic-widgets/*` schema and `{context}/transformers/register` hooks plus your own TS prop utils; no Core changes required. Changing the *global* prop vocabulary (core `prop-types/`) is Internal. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [fundamentals/transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md), [atomic-widgets/hooks.md](../../../docs/atomic-builder/atomic-widgets/hooks.md).
 
 ## Checklist

@@ -13,6 +13,10 @@ Runnable reference examples for each Cursor skill under `.cursor/skills/`. Use t
 | [extend-css-converter](extend-css-converter.md) | Property converter pattern | **Relevant** — core-only; no public discovery hook |
 | [extend-interactions](extend-interactions.md) | Editor controls + schema filter | **Relevant, limited** — editor yes, frontend no public hook |
 
+## Scope
+
+Each skill is **External** (3rd-party plugin, no Core changes), **Internal** (requires a Core PR), or **Hybrid**. See [skills-scope.md](../skills-scope.md) before implementing — a plugin-only approach cannot ship an Internal capability (`extend-css-converter`) or the frontend side of a Hybrid one (`extend-interactions`).
+
 ## Prerequisites
 
 - Experiment `e_atomic_elements` active — see [getting-started/experiments.md](../getting-started/experiments.md).

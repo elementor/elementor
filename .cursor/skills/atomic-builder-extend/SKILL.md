@@ -22,21 +22,27 @@ Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not
 
 ## Decision table
 
-| Intent | Child skill | Primary docs |
-|--------|-------------|--------------|
-| New widget or container element | [author-atomic-widget](../author-atomic-widget/SKILL.md) | [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md) |
-| `$$type`, prop schema, validation, transformers | [extend-prop-types-transformers](../extend-prop-types-transformers/SKILL.md) | [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) |
-| WordPress data source / dynamic binding | [extend-dynamic-tags](../extend-dynamic-tags/SKILL.md) | [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md) |
-| Editor UI, package, slots, in-editor MCP | [extend-editor-v2](../extend-editor-v2/SKILL.md) | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
-| Design tokens / kit variables | [extend-variables](../extend-variables/SKILL.md) | [variables/types.md](../../../docs/atomic-builder/variables/types.md) |
-| Legacy CSS → atomic style props | [extend-css-converter](../extend-css-converter/SKILL.md) | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
-| Motion / interactions tab | [extend-interactions](../extend-interactions/SKILL.md) | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
+**Scope** = who can ship it: **External** (3rd-party plugin, no Core changes) · **Internal** (requires a PR against Core) · **Hybrid** (editor External, frontend needs a Core PR). Full split with caveats: [docs/atomic-builder/skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
-## Public path vs Internal path
+| Intent | Child skill | Scope | Primary docs |
+|--------|-------------|-------|--------------|
+| New widget or container element | [author-atomic-widget](../author-atomic-widget/SKILL.md) | External | [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md) |
+| `$$type`, prop schema, validation, transformers | [extend-prop-types-transformers](../extend-prop-types-transformers/SKILL.md) | External | [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) |
+| WordPress data source / dynamic binding | [extend-dynamic-tags](../extend-dynamic-tags/SKILL.md) | External | [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md) |
+| Editor UI, package, slots, in-editor MCP | [extend-editor-v2](../extend-editor-v2/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
+| Design tokens / kit variables | [extend-variables](../extend-variables/SKILL.md) | External | [variables/types.md](../../../docs/atomic-builder/variables/types.md) |
+| Legacy CSS → atomic style props | [extend-css-converter](../extend-css-converter/SKILL.md) | **Internal** | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
+| Motion / interactions tab | [extend-interactions](../extend-interactions/SKILL.md) | **Hybrid** | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
 
-**Public path** — third-party plugin in its own repo: subclass + WordPress hooks/filters documented in child skills; own npm package for editor JS.
+## Scope: External vs Internal
 
-**Internal path** — Elementor Core / Pro: change `modules/atomic-widgets/`, `packages/packages/core/`, or `packages/packages/pro/`; follow module ownership in linked docs.
+Before implementing, confirm the skill's scope — a plugin-only approach cannot ship an **Internal** capability.
+
+- **External** — third-party plugin in its own repo: subclass + WordPress hooks/filters documented in child skills; own npm package for editor JS.
+- **Internal** — requires changing Elementor Core / Pro (`modules/atomic-widgets/`, `packages/packages/core/`, `packages/packages/pro/`) via an accepted PR.
+- **Hybrid** — one side external, one side Core; see per-skill "Scope" banner.
+
+Full classification, per-skill caveats, and disclaimer: [docs/atomic-builder/skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
 ## Next step
 

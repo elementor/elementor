@@ -5,6 +5,8 @@ description: Extends Elementor v4 interactions — registerInteractionsControl, 
 
 # Extend interactions
 
+> **Scope: Hybrid** — the **editor** side is External (your own package + `registerInteractionsControl` / `interactionsRepository.register` / `elementor/atomic-widgets/interactions/schema`). The **published-page frontend has no public registration hook**, so new triggers/effects require a PR against Elementor Core (`interactions.js` / `interactions-utils.js`). Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md), [interactions/schema.md](../../../docs/atomic-builder/interactions/schema.md), [interactions/frontend.md](../../../docs/atomic-builder/interactions/frontend.md). Example: [docs/atomic-builder/examples/extend-interactions.md](../../../docs/atomic-builder/examples/extend-interactions.md). Gate: experiment `e_atomic_elements`.
 
 ## Checklist

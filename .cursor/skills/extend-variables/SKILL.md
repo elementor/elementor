@@ -5,6 +5,8 @@ description: Registers Elementor v4 global design-token variable types — eleme
 
 # Extend variables (design tokens)
 
+> **Scope: External** — shippable from a 3rd-party plugin via `elementor/variables/register` + style-schema/transformer hooks + your own package `init()`; no Core changes required. PHP render parity for non color/font types (e.g. size) is Core, and size types are Pro-gated. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [variables/types.md](../../../docs/atomic-builder/variables/types.md), [variables/api.md](../../../docs/atomic-builder/variables/api.md), [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) (for the no-build-pipeline path). Usage: [usage-in-props.md](../../../docs/atomic-builder/variables/usage-in-props.md), [usage-in-styles.md](../../../docs/atomic-builder/variables/usage-in-styles.md).
 
 ## Checklist
