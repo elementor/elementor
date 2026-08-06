@@ -101,6 +101,10 @@ class Read_Resource_Ability extends Abstract_Ability {
 
 	private function get_resource_executors(): array {
 		return [
+			Design_Taste_Ability::URI => [
+				'execute' => fn() => ( new Design_Taste_Ability() )->execute(),
+				'mimeType' => 'text/markdown',
+			],
 			Style_Best_Practices_Ability::URI => [
 				'ability' => new Style_Best_Practices_Ability(),
 				'mimeType' => 'text/markdown',

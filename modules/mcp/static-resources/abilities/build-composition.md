@@ -8,11 +8,14 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 - `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
 - `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
+- [elementor://style/best-practices] - **READ THIS FIRST.** Design-quality / anti-"AI slop" guide: typography, color, spacing, depth, hierarchy. It reflects what this tool can actually render — do not add motion/effects it warns against.
+- [elementor://style/design-taste] - **Your source of taste:** curated palettes, type scales, font pairings, rhythm/weight tokens, the anti-slop kill-list, and hard UX numbers.
 
 # TOOL SUPPORT
 This tool supports v4 elements only.
 
 # WORKFLOW
+0. Read [elementor://style/best-practices] + [elementor://style/design-taste] and commit to a design system and a site identity before placing any element
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
@@ -69,9 +72,8 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → element_config (props) + style (raw CSS declarations) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is raw CSS (property → value strings); the server converts it to native styles
+- style is raw CSS (property → value strings); the server maps supported declarations to native styles — anything unmapped lands in `custom_css` (non-fatal warning; may not render on Pro 3.35+). Prefer longhands for layout, type, and color (e.g. `padding-top`, `border-…`); a few `custom_css` fallbacks are fine when no native prop exists (e.g. per-side border color, an exotic background you could not split).
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
@@ -189,7 +191,7 @@ Attach element interactions via the `interactions` parameter — a record mappin
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
 # MODE
-Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's id — one call replaces its children. Default `'append'` keeps existing content.
+Prefer section-by-section assembly: each call adds one top-level section via `append` (default). Use `replace_children` only to redesign an existing parent (or the whole page via `parent_id: 'document'`).
 - `append` (default): Insert new elements as children of `parent_id`, preserving existing children.
 - `replace_children`: Remove all direct children of `parent_id` first, then insert new elements. The response includes `removed_element_ids` listing what was removed.
 - When `parent_id: 'document'` + `mode: 'replace_children'`, all top-level elements are removed — use this to redesign the whole page.

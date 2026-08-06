@@ -20,12 +20,12 @@ When in doubt between "safe" and "distinctive," choose distinctive - users can a
 - NO uniform font weights (everything at 400 or 600)
 
 ### Intentional Alternatives:
-- **For Technical/Modern**: Consider monospace headlines (JetBrains Mono, SF Mono) paired with clean body text
-- **For Editorial/Elegant**: Consider serif headlines (Playfair Display, Crimson Text) with sans-serif body
-- **For Playful/Creative**: Consider display fonts with character, paired with highly legible body text
+- **For Technical/Modern**: Consider monospace headlines (JetBrains Mono, Space Mono, IBM Plex Mono) paired with clean body text
+- **For Editorial/Elegant**: Consider serif headlines (Playfair Display, Fraunces, Cormorant, Crimson Text) with sans-serif body
+- **For Playful/Creative**: Consider display fonts with character (Bebas Neue, Anton, Space Grotesk), paired with highly legible body text
 
-### Scale & Contrast Implementation:
-- Headline-to-body size ratios: 3x minimum (e.g., 48px headline vs 16px body)
+### Scale & Contrast Implementation (use rem/em, never px):
+- Headline-to-body size ratios: 3x minimum (e.g., 3rem+ headline vs 1rem body)
 - Use extreme weight contrasts: pair weight-100 or 200 with weight-800 or 900
 - Line height contrasts: tight headlines (1.1) vs. generous body (1.7)
 - Letter spacing: compressed headlines (-0.02em to -0.05em) vs. open small text (0.03em+)
@@ -52,15 +52,15 @@ When in doubt between "safe" and "distinctive," choose distinctive - users can a
 ## 3. Spatial Design & White Space
 
 ### Avoid Distributional Defaults:
-- NO uniform spacing (everything 16px or 24px)
+- NO uniform spacing (everything 1rem or 1.5rem)
 - NO cramped layouts that maximize content density
-- NO default container widths (1200px, 1440px)
+- NO default container widths (75rem/1200px everywhere)
 
-### Intentional Alternatives:
-- **Breathing Room**: Use generous white space as a design element (80-120px vertical spacing between sections)
-- **Asymmetric Spacing**: Vary padding dramatically (small: 12px, medium: 48px, large: 96px)
+### Intentional Alternatives (use rem/em, never px):
+- **Breathing Room**: Use generous white space as a design element (5-8rem vertical spacing between sections)
+- **Asymmetric Spacing**: Vary padding dramatically (small: 0.75rem, medium: 3rem, large: 6rem)
 - **Content Width Strategy**:
-  - Reading content: max 65-75 characters (600-700px)
+  - Reading content: max 65-75 characters (~40rem)
   - Hero sections: asymmetric layouts, not centered blocks
   - Cards/components: vary sizes intentionally, not uniform grids
 

@@ -56,6 +56,12 @@ class List_Resources_Ability extends Abstract_Ability {
 	private function get_resource_catalog(): array {
 		return [
 			[
+				'uri' => Design_Taste_Ability::URI,
+				'name' => 'Design Taste',
+				'description' => 'Read when committing a design system (colors, fonts, type scale, rhythm). Curated palettes, pairings, anti-slop kill-list, contrast floors.',
+				'mimeType' => 'text/markdown',
+			],
+			[
 				'uri' => Style_Best_Practices_Ability::URI,
 				'name' => 'Style Best Practices',
 				'description' => 'Design quality guidelines for creating distinctive, intentional aesthetics. Covers typography, color strategy, spacing, motion, and visual hierarchy.',

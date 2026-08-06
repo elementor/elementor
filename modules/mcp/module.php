@@ -62,6 +62,7 @@ class Module extends BaseModule {
 		( new Abilities\Create_Page_Ability() )->register();
 		( new Abilities\Publish_Document_Ability() )->register();
 		( new Abilities\Style_Best_Practices_Ability() )->register();
+		( new Abilities\Design_Taste_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Classes_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
@@ -151,6 +152,7 @@ class Module extends BaseModule {
 	private function get_server_resources(): array {
 		$resources = [
 			'elementor/style-best-practices',
+			'elementor/design-taste',
 			'elementor/manage-global-variable-guide',
 			'elementor/global-classes-resource',
 			'elementor/global-variables-resource',
