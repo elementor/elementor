@@ -41,6 +41,7 @@ class Style_Applier {
 
 		$active_breakpoints = $this->get_active_breakpoints();
 		$errors             = [];
+		$warnings           = [];
 
 		foreach ( $styles as $config_id => $css_string ) {
 			if ( ! is_string( $css_string ) ) {
@@ -52,7 +53,17 @@ class Style_Applier {
 				continue;
 			}
 
-			$node         = &$config_id_index[ $config_id ];
+			$node = &$config_id_index[ $config_id ];
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				$warning = V3_Node_Bridge::apply_custom_css( $node, $css_string );
+				if ( null !== $warning ) {
+					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
+				}
+				unset( $node );
+				continue;
+			}
+
 			$is_empty_css = '' === trim( $css_string );
 
 			if ( $is_empty_css ) {
@@ -109,7 +120,7 @@ class Style_Applier {
 				implode( ' ', $errors ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			) : null,
-			'warnings' => [],
+			'warnings' => $warnings,
 		];
 	}
 
