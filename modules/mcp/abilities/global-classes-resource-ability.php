@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Styles\Style_Variants_To_Css;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
@@ -20,7 +19,7 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Global Classes', 'elementor' ),
-			__( 'Reusable CSS classes from the active kit; check FIRST before adding inline styles. Each entry exposes { label, css } where css is a raw CSS string using the same @media(--breakpoint) + &:hover/&:focus/&:active format that elementor/manage-classes accepts as input.', 'elementor' ),
+			__( 'Reusable CSS classes from the active kit; check FIRST before adding inline styles.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -29,7 +28,7 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'application/json',
-					'description' => __( 'Global class definitions from the active kit as a map of class_id -> { label, css } (round-trippable to elementor/manage-classes in replace mode).', 'elementor' ),
+					'description' => __( 'Global class definitions and order from the active kit.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )
@@ -39,25 +38,8 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$classes = Global_Classes_Repository::make( $kit )->all();
-		$items = $classes->get_items()->all();
-		$order = $classes->get_order()->all();
+		$classes_payload = Global_Classes_Repository::make( $kit )->all_labels();
 
-		$payload = [];
-
-		foreach ( $order as $class_id ) {
-			if ( ! isset( $items[ $class_id ] ) ) {
-				continue;
-			}
-
-			$item = $items[ $class_id ];
-
-			$payload[ $class_id ] = [
-				'label' => $item['label'] ?? '',
-				'css'   => Style_Variants_To_Css::to_css( $item['variants'] ?? [] ),
-			];
-		}
-
-		return wp_json_encode( (object) $payload );
+		return wp_json_encode( (object) $classes_payload );
 	}
 }
