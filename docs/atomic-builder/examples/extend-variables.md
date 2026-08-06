@@ -49,7 +49,7 @@ Size tokens have **no** matching PHP transformer. Editor canvas uses `StyleVaria
 Do not edit core `register-variable-types.tsx`.
 
 ```ts
-import { registerVariableType } from '@elementor/editor-variables';
+import { registerVariableType, variableTransformer } from '@elementor/editor-variables';
 import { stringPropTypeUtil } from '@elementor/editor-props';
 import { BrushIcon } from '@elementor/icons';
 
@@ -63,12 +63,16 @@ export function init() {
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'shadow',
 		defaultValue: '0 2px 4px rgba(0,0,0,0.1)',
-import { variableTransformer } from '@elementor/editor-variables';
+		styleTransformer: variableTransformer,
 	} );
 }
 ```
 
-Required fields: `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`.
+Required fields: `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`. Full field + `valueField` prop contract: [variables/types.md](../variables/types.md#registervariabletype-field-contract).
+
+**Without this JS step**, a PHP-only type works via REST / MCP / CSS but never appears in the "Add Variable" dropdown.
+
+**No build pipeline (WP code snippet):** register through the `window.elementorV2.{camelCasePackage}` global for late-loaded scripts instead of an npm package — see [editor-packages/extending-editor.md](../editor-packages/extending-editor.md).
 
 ## REST / MCP
 

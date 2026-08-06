@@ -18,6 +18,8 @@ Source of truth: [docs/atomic-builder/README.md](../../../docs/atomic-builder/RE
 
 The marketplace skill `elementor-widget-patterns` is **v3 only** (`Widget_Base`, `Controls_Manager`, `content_template`). For atomic / v4 work, use the child skills below — not legacy widget patterns.
 
+Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not this repo) is also **v3 only** — legacy hooks like `elementor/widgets/register`, `elementor/element/{name}/{section}/before_section_end`. It has no atomic/v4 coverage; for v4 use the decision table below and the `elementor/atomic-widgets/*` hooks documented in the child skills.
+
 ## Decision table
 
 | Intent | Child skill | Primary docs |
