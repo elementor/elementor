@@ -2,8 +2,8 @@
 If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered.
 
 # RESOURCES (Read before use)
-- [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
-- [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
+- `elementor/list-global-classes` - Reusable CSS classes from the active kit; check FIRST before adding inline styles
+- `elementor/list-global-variables` - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
 - `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
@@ -70,7 +70,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
 - style is raw CSS (property → value strings); the server converts it to native styles
-- classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
+- classes is configuration-id → array of existing global class **labels** from `elementor/list-global-classes`
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Retry on errors up to 10x
@@ -89,7 +89,7 @@ Match the widget schema shape:
 - **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
 
 ## GLOBAL VARIABLES
-Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
+Read `elementor/list-global-variables` before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
 
 **In `style` (raw CSS):** reference by label only:
 - `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
@@ -98,7 +98,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
 
 ## GLOBAL CLASSES
-Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
+Read `elementor/list-global-classes` before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
 
 **In `classes` (reference-only):** attach existing global classes by label:
 - Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)
@@ -183,8 +183,8 @@ BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
 # HARD CONSTRAINTS
-- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
-- Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
+- Variables ONLY from `elementor/list-global-variables`; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
+- Classes ONLY from `elementor/list-global-classes`; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
 - SVG widgets require an uploaded attachment: discover one via `elementor/list-assets` with `type: "svg"` and reference it by `id`. External URLs on `e-svg` render an empty div. When none exists, ask the user to upload, otherwise omit the icon or use a text label.
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 

@@ -60,7 +60,7 @@ class Style_Applier {
 
 			if ( ! empty( $conversion['rejected'] ) ) {
 				$errors[] = sprintf(
-					'[%s] Invalid variable usage: %s. Referenced in: %s. Variables must exist in [elementor://global-variables] and use label-only references (e.g. var(--wc26-gold), NOT var(--e-gv-wc26-gold)).',
+					'[%s] Invalid variable usage: %s. Referenced in: %s. Variables must exist in `elementor/list-global-variables` and use label-only references (e.g. var(--wc26-gold), NOT var(--e-gv-wc26-gold)).',
 					$config_id,
 					implode( ', ', $conversion['rejected'] ),
 					$this->format_declarations( $declarations )

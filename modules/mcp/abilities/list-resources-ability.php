@@ -68,18 +68,6 @@ class List_Resources_Ability extends Abstract_Ability {
 				'mimeType' => 'text/plain',
 			],
 			[
-				'uri' => Global_Classes_Resource_Ability::URI,
-				'name' => 'Global Classes',
-				'description' => 'Reusable CSS classes from the active kit; check FIRST before adding inline styles.',
-				'mimeType' => 'application/json',
-			],
-			[
-				'uri' => Global_Variables_Resource_Ability::URI,
-				'name' => 'Global Variables',
-				'description' => 'Design tokens (colors, fonts, sizes) from the active kit; check before styling with variables.',
-				'mimeType' => 'application/json',
-			],
-			[
 				'uri' => List_Dynamic_Tags_Ability::URI,
 				'name' => 'Dynamic Tags',
 				'description' => List_Dynamic_Tags_Ability::DESCRIPTION,

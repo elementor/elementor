@@ -1,14 +1,14 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { initListGlobalVariablesTool } from './list-global-variables-tool';
 import { initManageVariableTool } from './manage-variable-tool';
-import { initVariablesResource } from './variables-resource';
 
-export function initMcp( reg: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) {
+export function initMcp( reg: MCPRegistryEntry, _canvasMcpEntry: MCPRegistryEntry ) {
 	window.addEventListener(
 		'elementor/init',
 		() => {
 			initManageVariableTool( reg );
-			initVariablesResource( reg, canvasMcpEntry );
+			initListGlobalVariablesTool( reg );
 		},
 		{ once: true }
 	);

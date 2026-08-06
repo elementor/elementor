@@ -7,10 +7,10 @@ use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
-use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Assets_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Global_Classes_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Global_Variables_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
@@ -43,6 +43,8 @@ class Mcp_Proxy_REST_API {
 			'get-page-structure' => fn() => new Get_Structure_Ability(),
 			'manage-elements' => fn() => new Manage_Elements_Ability(),
 			'list-assets' => fn() => new List_Assets_Ability(),
+			'list-global-variables' => fn() => new List_Global_Variables_Ability(),
+			'list-global-classes' => fn() => new List_Global_Classes_Ability(),
 			'list-resources' => fn() => new List_Resources_Ability(),
 			'read-resource' => fn() => new Read_Resource_Ability(),
 		];
@@ -50,8 +52,6 @@ class Mcp_Proxy_REST_API {
 		$this->resources = [
 			Style_Best_Practices_Ability::URI => fn() => new Style_Best_Practices_Ability(),
 			Manage_Variable_Guide_Ability::URI => fn() => new Manage_Variable_Guide_Ability(),
-			Global_Classes_Resource_Ability::URI => fn() => new Global_Classes_Resource_Ability(),
-			Global_Variables_Resource_Ability::URI => fn() => new Global_Variables_Resource_Ability(),
 			List_Dynamic_Tags_Ability::URI => fn() => new List_Dynamic_Tags_Ability(),
 		];
 	}

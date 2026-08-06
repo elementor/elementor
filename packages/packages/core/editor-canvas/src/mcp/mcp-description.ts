@@ -17,9 +17,9 @@ All data in Elementor uses PropValues - a typed wrapper for values:
 \`\`\`
 The \`$$type\` defines how Elementor interprets the value. Providing the correct \`$$type\` is critical - incorrect types will be rejected.
 
-## Design System Resources
-- **Global Variables**: Reusable colors, sizes, and fonts (\`elementor://global-variables\`)
-- **Global Classes**: Reusable style sets that can be applied to elements (\`elementor://global-classes\`)
+## Design System Tools
+- **Global Variables**: Reusable colors, sizes, and fonts (\`list-global-variables\`)
+- **Global Classes**: Reusable style sets that can be applied to elements (\`list-global-classes\`)
 - **Widget Schemas**: Configuration options for each widget type (\`${ WIDGET_SCHEMA_URI }\`)
 
 # Configuring Elements with configure-element
@@ -31,10 +31,10 @@ The \`configure-element\` tool updates settings and styles on existing V4 elemen
 ### 1. Parse User Requirements
 Understand what needs to change: content, settings, or styling on existing elements.
 
-### 2. Check Global Resources FIRST
-Always check existing resources before styling:
-- List \`elementor://global-variables\` for available variables (colors, sizes, fonts)
-- List \`elementor://global-classes\` for available style sets
+### 2. Check Global Design Tokens FIRST
+Always check existing tokens before styling:
+- Call \`list-global-variables\` for available variables (colors, sizes, fonts)
+- Call \`list-global-classes\` for available style sets
 - **Always prefer using existing global resources over creating inline styles**
 
 ### 3. Retrieve Widget Schemas

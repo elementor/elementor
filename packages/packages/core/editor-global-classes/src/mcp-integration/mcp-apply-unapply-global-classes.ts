@@ -4,7 +4,6 @@ import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { APPLY_GLOBAL_CLASS_GUIDE_URI, generateApplyGlobalClassGuidePrompt } from './apply-global-class-guide-prompt';
-import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEntry ) {
 	const { addTool, resource } = server;
@@ -35,10 +34,9 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 				.describe( 'Instructions what to do next, Important to follow these instructions!' ),
 		},
 		name: 'apply-global-class',
-		description: `Apply a global class to an element for shared design-system styling. Read the full guide at [${ APPLY_GLOBAL_CLASS_GUIDE_URI }].`,
+		description: `Apply a global class to an element for shared design-system styling. Read the full guide at [${ APPLY_GLOBAL_CLASS_GUIDE_URI }]. Resolve class labels to IDs via list-global-classes.`,
 		requiredResources: [
 			{ description: 'Apply global class tool guide', uri: APPLY_GLOBAL_CLASS_GUIDE_URI },
-			{ description: 'Global classes list', uri: GLOBAL_CLASSES_URI },
 		],
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
@@ -68,8 +66,8 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 		outputSchema: {
 			result: z.string().describe( 'Result message indicating the success of the unapply operation' ),
 		},
-		description: `Unapply a global class from an element by class ID. Resolve class names to IDs via [${ GLOBAL_CLASSES_URI }].`,
-		requiredResources: [ { description: 'Global classes list', uri: GLOBAL_CLASSES_URI } ],
+		description:
+			'Unapply a global class from an element by class ID. Resolve class names to IDs via list-global-classes.',
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
 			const ok = doUnapplyClass( elementId, classId );

@@ -3,7 +3,6 @@ import { z } from '@elementor/schema';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { type CssClassUsageContent, type EnhancedCssClassUsageContent } from '../components/css-class-usage/types';
-import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry ) {
 	const { addTool } = reg;
@@ -36,8 +35,7 @@ export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry 
 - To identify unused global classes for cleanup.
 
 ## When NOT to use:
-- To list global classes themselves — use the global-classes resource instead (this tool returns usages, not the class list).`,
-		requiredResources: [ { description: 'Global classes list', uri: GLOBAL_CLASSES_URI } ],
+- To list global classes themselves — use list-global-classes instead (this tool returns usages, not the class list).`,
 		outputSchema: globalClassesUsageSchema,
 		handler: async () => {
 			const data = await fetchCssClassUsage();

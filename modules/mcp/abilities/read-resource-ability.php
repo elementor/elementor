@@ -109,14 +109,6 @@ class Read_Resource_Ability extends Abstract_Ability {
 				'ability' => new Manage_Variable_Guide_Ability(),
 				'mimeType' => 'text/plain',
 			],
-			Global_Classes_Resource_Ability::URI => [
-				'ability' => new Global_Classes_Resource_Ability(),
-				'mimeType' => 'application/json',
-			],
-			Global_Variables_Resource_Ability::URI => [
-				'ability' => new Global_Variables_Resource_Ability(),
-				'mimeType' => 'application/json',
-			],
 			List_Dynamic_Tags_Ability::URI => [
 				'ability' => new List_Dynamic_Tags_Ability(),
 				'mimeType' => 'application/json',

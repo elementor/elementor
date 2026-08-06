@@ -1,0 +1,1 @@
+Lists V4 global variables (design tokens) from the active kit. Supports search by label, optional type filter, and pagination. Call before styling with `var(--label)` or before `manage-global-variable` to avoid duplicate labels.
