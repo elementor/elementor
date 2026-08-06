@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends Module_Base {
 
+	const DEFAULT_SUBJECT = 'Editor Feedback';
+
 	public function __construct() {
 		add_action( 'rest_api_init', fn() => self::register_routes() );
 	}
@@ -37,7 +39,7 @@ class Module extends Module_Base {
 			'title' => 'Editor Feedback',
 			'description' => $request->get_param( 'description' ),
 			'product' => 'EDITOR',
-			'subject' => 'Editor Feedback',
+			'subject' => sanitize_text_field( $request->get_param( 'subject' ) ) ?: self::DEFAULT_SUBJECT,
 		];
 
 		$response = $app->submit( $body );
