@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -22,6 +23,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -269,6 +271,36 @@ class Atomic_Accordion extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-accordion' => __DIR__ . '/atomic-accordion.html.twig',
 		];
+	}
+
+	/**
+	 * Editor-only: auto-opens the item containing the descendant the editor just selected
+	 * (`handlers/editor-accordion-state.js`). Nothing is added on the frontend - the toggle itself
+	 * stays native, no JS involved.
+	 *
+	 * @return array
+	 */
+	public function get_script_depends() {
+		$global_depends = parent::get_script_depends();
+
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return array_merge( $global_depends, [ 'elementor-accordion-preview-handler' ] );
+		}
+
+		return $global_depends;
+	}
+
+	public function register_frontend_handlers() {
+		$assets_url = ELEMENTOR_ASSETS_URL;
+		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
+		wp_register_script(
+			'elementor-accordion-preview-handler',
+			"{$assets_url}js/accordion-preview-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	/**
