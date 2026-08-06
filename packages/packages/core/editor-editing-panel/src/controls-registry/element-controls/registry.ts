@@ -1,10 +1,12 @@
 import { type ControlComponent } from '@elementor/editor-controls';
 
 import { type ControlRegistry, controlsRegistry } from '../controls-registry';
+import { AccordionItemsControl } from './accordion-items-control/accordion-items-control';
 import { TabsControl } from './tabs-control/tabs-control';
 
 const controlTypes = {
 	tabs: { component: TabsControl as ControlComponent, layout: 'full' },
+	'accordion-items': { component: AccordionItemsControl as ControlComponent, layout: 'full' },
 } as const satisfies ControlRegistry;
 
 export const registerElementControls = () => {

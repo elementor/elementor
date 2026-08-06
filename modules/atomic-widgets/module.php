@@ -28,6 +28,12 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head\Atomic_Accordion_Item_Head;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -359,6 +365,15 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ACCORDION ) ) {
+			$elements_manager->register_element_type( new Atomic_Accordion() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Head() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
+		}
+
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
@@ -582,6 +597,60 @@ class Module extends BaseModule {
 			// sets one of the state classes from real playback, so exactly one button shows there.
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
+			// Accordion: `<summary>` already loses its native marker via `display: flex` on the head's
+			// base style in Chrome/Firefox, but Safari renders `::-webkit-details-marker` regardless of
+			// `display`, so a stray triangle would sit next to our chevron unless the pseudo-element is
+			// killed explicitly. `list-style: none` is kept for completeness (browsers that box the
+			// marker as a list-item marker box), the `::-webkit-details-marker` rule is what actually
+			// fixes Safari.
+			'.e-accordion-item-head-base { list-style: none; }',
+			'.e-accordion-item-head-base::-webkit-details-marker { display: none; }',
+			// Animated expand/collapse via `::details-content` (block-size 0 -> auto) needs
+			// `interpolate-size: allow-keywords` on the <details> element to let `block-size: auto`
+			// participate in the transition. Graceful degradation is deliberate here, but the two failure
+			// modes are different: `interpolate-size` is a real CSS property with a valid selector
+			// (`.e-accordion-item-base`), so that rule always PARSES everywhere — an unsupporting browser
+			// just drops the one unknown *declaration* inside it (inert on its own; harmless). The two
+			// `::details-content` rules are different: `::details-content` is an unrecognised
+			// pseudo-element there, which invalidates the *whole selector*, so the *entire rule* is
+			// dropped, not just a declaration. That whole-rule drop is what structurally guarantees
+			// "collapse to 0" and "expand on [open]" can never apply one without the other — both live
+			// behind the identical `::details-content` requirement, so an unsupporting browser parses
+			// neither and simply keeps the browser's native <details> toggle (content already shown/hidden
+			// correctly without any CSS from us): an instant toggle, never a silently blanked panel.
+			'.e-accordion-item-base { interpolate-size: allow-keywords; }',
+			'.e-accordion-item-base::details-content {',
+			'block-size: 0; overflow: hidden;',
+			'transition: block-size .3s ease, content-visibility .3s ease allow-discrete;',
+			'}',
+			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
+			// Icon slot sizing: `e-svg`'s base style is `.elementor .e-svg-base { width: 65px; height:
+			// 65px; ... }` (0-2-0 specificity). The rendered DOM is
+			// `.e-accordion-item-icon-base ... .e-svg-base ... svg` — the wrapper carries `e-svg-base`,
+			// and the inner <svg> itself already gets an inline `width: 100%; height: 100%` from
+			// Svg_Src_Transformer, which resolves against its containing block: the wrapper. So the
+			// wrapper's fixed 65px, not the svg, is what needs neutralising to let the already-100% svg
+			// fill the 16x16 slot. A descendant combinator is used, not a direct child combinator: the
+			// icon slot has no `define_allowed_child_types()` restriction, so a user can drop a container
+			// into it before the e-svg, putting the wrapper an extra level deep
+			// (`icon-slot > container > .e-svg-base`) — a `>` selector would miss exactly that case while
+			// the rotation rule below (already a descendant selector) would still match, so the icon would
+			// render at 65x65 *and rotate* inside the 16x16 slot. `.e-accordion-item-icon-base
+			// .e-svg-base` alone would only tie the base rule's specificity (0-2-0), and the tie is not
+			// hypothetical: `wp_add_inline_style( 'elementor-frontend', … )` for this method is printed at
+			// `includes/frontend.php:671`, while the atomic base/local CSS is enqueued later, at `:703`,
+			// with no dependency between them — so on a same-specificity tie this inline CSS prints
+			// *earlier* and would lose to the base style. The class is doubled to (0-3-0) so this rule
+			// wins outright regardless of that order.
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: 100%; height: 100%; }',
+			// Rotation targets the <svg> element itself, not the slot or its wrapper, so that non-icon
+			// content dropped into the slot (e.g. a text/paragraph element, which never renders an <svg>
+			// tag) is structurally excluded from rotating. A descendant combinator is used rather than a
+			// direct child combinator because the real DOM nests the <svg> two levels below the slot
+			// (icon slot > e-svg wrapper > svg), and deeper still if a user wraps the e-svg in another
+			// container (see the sizing rule above) — a `>` selector here would silently miss those cases.
+			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
