@@ -1,23 +1,17 @@
 name: Upgrade Elementor test
 
 on:
-  #push:
-    # branches:
-    #   - 'main'
-    #   - '[0-9].[0-9][0-9]'
-    # paths-ignore:
-    #   - '**.md'
-    #   - '**.txt'
-    #   - '.github/config.json'
-    #   - 'bin/**'
-    #   - '.gitignore'
-    #   - 'docs/**'
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Elementor version from WordPress svn'
-        required: false
-        default: ''
+  push:
+    branches:
+      - 'elementor/upgrade-test'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
 
 jobs:
   build-plugin:
@@ -28,7 +22,7 @@ jobs:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.build-plugin.outputs.changelog_diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
