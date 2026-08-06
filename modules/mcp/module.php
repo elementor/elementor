@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Modules\Mcp\Utils\Mcp_App_Mime_Type;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -190,29 +191,11 @@ class Module extends BaseModule {
 		return array_values( array_unique( array_merge( $defaults, $additional ) ) );
 	}
 
-	/**
-	 * The adapter's MIME validator rejects RFC 2045 parameters (e.g. profile=mcp-app),
-	 * so MCP Apps profile mimeTypes must be reapplied after Resource DTO construction.
-	 *
-	 * @param array $resources Resource DTOs from the MCP adapter.
-	 * @return array
-	 */
 	public function restore_mcp_app_resource_mime_types( array $resources ): array {
-		return array_map(
-			function ( $resource ) {
-				if ( ! $resource instanceof \WP\McpSchema\Server\Resources\DTO\Resource ) {
-					return $resource;
-				}
+		$mime_types_by_uri = [
+			Abilities\Suggested_Actions_Ui_Ability::URI => Abilities\Suggested_Actions_Ui_Ability::MIME_TYPE,
+		];
 
-				if ( Abilities\Suggested_Actions_Ui_Ability::URI !== $resource->getUri() ) {
-					return $resource;
-				}
-
-				return \WP\McpSchema\Server\Resources\DTO\Resource::fromArray(
-					array_merge( $resource->toArray(), [ 'mimeType' => Abilities\Suggested_Actions_Ui_Ability::MIME_TYPE ] )
-				);
-			},
-			$resources
-		);
+		return ( new Mcp_App_Mime_Type( $mime_types_by_uri ) )->restore( $resources );
 	}
 }

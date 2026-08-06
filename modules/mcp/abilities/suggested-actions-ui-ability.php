@@ -39,7 +39,7 @@ class Suggested_Actions_Ui_Ability extends Abstract_Ability {
 			return new \WP_Error(
 				'resource_not_found',
 				__( 'Static resource file not found', 'elementor' ),
-				[ 'status' => 404 ]
+				[ 'status' => \WP_Http::NOT_FOUND ]
 			);
 		}
 

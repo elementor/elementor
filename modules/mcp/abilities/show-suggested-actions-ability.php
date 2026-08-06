@@ -94,7 +94,12 @@ class Show_Suggested_Actions_Ability extends Abstract_Ability {
 		if ( ! is_array( $actions ) || count( $actions ) < self::MIN_ACTIONS || count( $actions ) > self::MAX_ACTIONS ) {
 			return new \WP_Error(
 				'invalid_actions',
-				__( 'actions must be a non-empty array with between 1 and 5 items.', 'elementor' ),
+				sprintf(
+					/* translators: 1: minimum number of actions, 2: maximum number of actions */
+					__( 'actions must be an array with between %1$d and %2$d items.', 'elementor' ),
+					self::MIN_ACTIONS,
+					self::MAX_ACTIONS
+				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
