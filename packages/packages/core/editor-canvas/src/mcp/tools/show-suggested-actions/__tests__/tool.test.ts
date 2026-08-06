@@ -3,13 +3,9 @@ import { McpAppDisplayMode } from '@elementor/editor-mcp';
 import { SUGGESTED_ACTIONS_URI } from '../../../resources/suggested-actions-resource';
 import { initShowSuggestedActionsTool } from '../tool';
 
-jest.mock( '@elementor/editor-mcp', () => {
-	const { McpAppDisplayMode: ActualMcpAppDisplayMode } = jest.requireActual<
-		typeof import( '@elementor/editor-mcp' )
-	>( '@elementor/editor-mcp' );
-
-	return { McpAppDisplayMode: ActualMcpAppDisplayMode };
-} );
+jest.mock( '@elementor/editor-mcp', () => ( {
+	McpAppDisplayMode: jest.requireActual( '@elementor/editor-mcp' ).McpAppDisplayMode,
+} ) );
 
 type Handler = ( params: {
 	actions: Array< { label: string; prompt: string; icon?: string } >;

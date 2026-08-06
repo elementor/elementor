@@ -1,10 +1,12 @@
 export const ANGIE_MODEL_PREFERENCES = 'angie/modelPreferences' as const;
 export const ANGIE_REQUIRED_RESOURCES = 'angie/requiredResources' as const;
 
-export enum McpAppDisplayMode {
-	Inline = 'inline',
-	EndOfTurn = 'end-of-turn',
-}
+export const McpAppDisplayMode = {
+	Inline: 'inline',
+	EndOfTurn: 'end-of-turn',
+} as const;
+
+export type McpAppDisplayMode = ( typeof McpAppDisplayMode )[ keyof typeof McpAppDisplayMode ];
 
 export interface AngieToolUiMeta {
 	resourceUri?: string;

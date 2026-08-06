@@ -49,4 +49,16 @@ describe( 'toCallToolResult', () => {
 		expect( callResult.structuredContent ).toBeUndefined();
 		expect( callResult.content[ 0 ].text ).toBe( 'done' );
 	} );
+
+	it( 'omits structuredContent for array results, which MCP does not accept', () => {
+		// Arrange
+		const result = [ { label: 'Next' } ];
+
+		// Act
+		const callResult = toCallToolResult( result );
+
+		// Assert
+		expect( callResult.structuredContent ).toBeUndefined();
+		expect( callResult.content[ 0 ].text ).toBe( JSON.stringify( result ) );
+	} );
 } );

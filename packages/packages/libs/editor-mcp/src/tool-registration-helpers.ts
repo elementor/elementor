@@ -25,17 +25,27 @@ export function buildToolMeta( {
 	};
 }
 
-export function toCallToolResult( invocationResult: unknown ): {
-	structuredContent?: unknown;
+type StructuredContent = Record< string, unknown >;
+
+export type CallToolTextResult = {
+	structuredContent?: StructuredContent;
 	content: Array< { type: 'text'; text: string } >;
-} {
+};
+
+function toStructuredContent( invocationResult: unknown ): StructuredContent | undefined {
+	const isStructurable =
+		typeof invocationResult === 'object' && invocationResult !== null && ! Array.isArray( invocationResult );
+
+	return isStructurable ? ( invocationResult as StructuredContent ) : undefined;
+}
+
+export function toCallToolResult( invocationResult: unknown ): CallToolTextResult {
 	return {
-		structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
+		structuredContent: toStructuredContent( invocationResult ),
 		content: [
 			{
 				type: 'text',
-				text:
-					typeof invocationResult === 'string' ? invocationResult : JSON.stringify( invocationResult ),
+				text: typeof invocationResult === 'string' ? invocationResult : JSON.stringify( invocationResult ),
 			},
 		],
 	};
