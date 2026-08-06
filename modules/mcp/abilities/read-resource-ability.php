@@ -75,7 +75,18 @@ class Read_Resource_Ability extends Abstract_Ability {
 		}
 
 		$executor = $executors[ $uri ];
-		$content = $executor['execute']();
+		/** @var Abstract_Ability $ability */
+		$ability = $executor['ability'];
+
+		if ( ! $ability->check_permission() ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
+		$content = $ability->execute();
 
 		if ( is_wp_error( $content ) ) {
 			return $content;
@@ -91,27 +102,27 @@ class Read_Resource_Ability extends Abstract_Ability {
 	private function get_resource_executors(): array {
 		return [
 			Style_Best_Practices_Ability::URI => [
-				'execute' => fn() => ( new Style_Best_Practices_Ability() )->execute(),
+				'ability' => new Style_Best_Practices_Ability(),
 				'mimeType' => 'text/markdown',
 			],
 			Manage_Variable_Guide_Ability::URI => [
-				'execute' => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
+				'ability' => new Manage_Variable_Guide_Ability(),
 				'mimeType' => 'text/plain',
 			],
 			Global_Classes_Resource_Ability::URI => [
-				'execute' => fn() => ( new Global_Classes_Resource_Ability() )->execute(),
+				'ability' => new Global_Classes_Resource_Ability(),
 				'mimeType' => 'application/json',
 			],
 			Global_Variables_Resource_Ability::URI => [
-				'execute' => fn() => ( new Global_Variables_Resource_Ability() )->execute(),
+				'ability' => new Global_Variables_Resource_Ability(),
 				'mimeType' => 'application/json',
 			],
 			List_Dynamic_Tags_Ability::URI => [
-				'execute' => fn() => ( new List_Dynamic_Tags_Ability() )->execute(),
+				'ability' => new List_Dynamic_Tags_Ability(),
 				'mimeType' => 'application/json',
 			],
 			Interactions_Schema_Resource_Ability::URI => [
-				'execute' => fn() => ( new Interactions_Schema_Resource_Ability() )->execute(),
+				'ability' => new Interactions_Schema_Resource_Ability(),
 				'mimeType' => 'application/json',
 			],
 		];
