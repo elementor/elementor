@@ -10,11 +10,15 @@ on:
       prerelease:
         required: false
         type: boolean
-        default: false
+        default: true
         description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
 
 permissions:
   contents: write
+
+concurrency:
+  group: controlled-release-${{ github.repository }}
+  cancel-in-progress: false
 
 jobs:
   # ── Job 1 ────────────────────────────────────────────────────────────────
