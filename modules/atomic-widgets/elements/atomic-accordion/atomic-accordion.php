@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Accordion_Items_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
@@ -67,6 +68,12 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			'default_state' => String_Prop_Type::make()
+				->enum( [ 'first_expanded', 'all_collapsed' ] )
+				->default( 'first_expanded' ),
+			'max_expanded' => String_Prop_Type::make()
+				->enum( [ 'one', 'multiple' ] )
+				->default( 'one' ),
 		];
 	}
 
@@ -89,6 +96,26 @@ class Atomic_Accordion extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
+					Toggle_Control::bind_to( 'default_state' )
+						->set_label( esc_html__( 'Default State', 'elementor' ) )
+						->add_options( [
+							'first_expanded' => [ 'title' => esc_html__( 'First expanded', 'elementor' ) ],
+							'all_collapsed' => [ 'title' => esc_html__( 'All collapsed', 'elementor' ) ],
+						] )
+						->set_exclusive( true )
+						->set_convert_options( true )
+						->set_size( 'tiny' )
+						->set_full_width( true ),
+					Toggle_Control::bind_to( 'max_expanded' )
+						->set_label( esc_html__( 'Max Items Expanded', 'elementor' ) )
+						->add_options( [
+							'one' => [ 'title' => esc_html__( 'One', 'elementor' ) ],
+							'multiple' => [ 'title' => esc_html__( 'Multiple', 'elementor' ) ],
+						] )
+						->set_exclusive( true )
+						->set_convert_options( true )
+						->set_size( 'tiny' )
+						->set_full_width( true ),
 				] ),
 		];
 	}

@@ -126,13 +126,18 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 	}
 
 	/**
-	 * Resolves this item's position among its siblings via the accordion's render context.
+	 * Resolves this item's position among its siblings, and the `open`/`name` attributes that
+	 * depend on it, via the accordion's render context.
 	 *
 	 * `Render_Context::get()` returns `[]` when this item renders outside a parent
 	 * `Atomic_Accordion` pass (e.g. the editor's `Render_Element_Action` re-rendering a single
-	 * element), so `get-item-index` may be absent; treat it as "no index" rather than fatal on an
-	 * uncallable value. `item_index` isn't consumed by the Twig template yet — Task 6 reads it to
-	 * decide the `open` attribute — landing it now keeps that step to a prop and a template change.
+	 * element), so `get-item-index`, `default-state`, `max-expanded` and `accordion-id` may all be
+	 * absent. Rather than special-case that, the fallbacks below (`null`/`[]`) simply propagate
+	 * through the same expressions used in the normal case: `item_index` stays `null` so it can
+	 * never equal `0` and `is_open` resolves `false`, and `accordion_id` stays `null` so
+	 * `group_name` resolves `false`/absent regardless of `max_expanded`. A parentless item
+	 * therefore renders collapsed and without a `name` — it has no accordion identity to be
+	 * exclusive within, so asserting `open` or a `name` would be guessing.
 	 *
 	 * @return array
 	 */
@@ -141,8 +146,17 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 		$get_item_index = $accordion_context['get-item-index'] ?? null;
 		$item_index = is_callable( $get_item_index ) ? $get_item_index( $this->get_id() ) : null;
 
+		$default_state = $accordion_context['default-state'] ?? null;
+		$max_expanded = $accordion_context['max-expanded'] ?? null;
+		$accordion_id = $accordion_context['accordion-id'] ?? null;
+
+		$is_open = 'first_expanded' === $default_state && 0 === $item_index;
+		$group_name = ( 'one' === $max_expanded && $accordion_id ) ? $accordion_id : null;
+
 		return array_merge( $this->build_base_template_context(), [
 			'item_index' => $item_index,
+			'is_open' => $is_open,
+			'group_name' => $group_name,
 		] );
 	}
 }
