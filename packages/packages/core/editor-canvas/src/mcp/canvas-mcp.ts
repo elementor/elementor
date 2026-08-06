@@ -9,9 +9,11 @@ import { initDynamicTagsResource } from './resources/dynamic-tags-resource';
 import { initEditorStateResource } from './resources/editor-state-resource';
 import { initGeneralContextResource } from './resources/general-context-resource';
 import { initSelectedElementResource } from './resources/selected-element-resource';
+import { initSuggestedActionsResource } from './resources/suggested-actions-resource';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
 import { initConfigureElementTool } from './tools/configure-element/tool';
 import { initGetPageStructureTool } from './tools/get-page-structure/tool';
+import { initShowSuggestedActionsTool } from './tools/show-suggested-actions/tool';
 import { getDynamicTagNamesByCategories } from './utils/resolve-dynamic-tag';
 
 export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
@@ -27,7 +29,9 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initEditorStateResource( reg );
 	initGeneralContextResource( reg );
 	initBestPracticesResource( reg );
+	initSuggestedActionsResource( reg );
 	initConfigureElementTool( reg );
 	initGetPageStructureTool( reg );
+	initShowSuggestedActionsTool( reg );
 	initBreakpointsResource( reg );
 };

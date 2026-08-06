@@ -95,8 +95,25 @@ class Read_Resource_Ability extends Abstract_Ability {
 		return [
 			'uri' => $uri,
 			'mimeType' => $executor['mimeType'],
-			'content' => is_string( $content ) ? $content : wp_json_encode( $content ),
+			'content' => $this->to_content_string( $content ),
 		];
+	}
+
+	private function to_content_string( $content ): string {
+		if ( is_string( $content ) ) {
+			return $content;
+		}
+
+		if (
+			is_array( $content )
+			&& isset( $content[0] )
+			&& is_array( $content[0] )
+			&& isset( $content[0]['text'] )
+		) {
+			return (string) $content[0]['text'];
+		}
+
+		return wp_json_encode( $content );
 	}
 
 	private function get_resource_executors(): array {
@@ -124,6 +141,10 @@ class Read_Resource_Ability extends Abstract_Ability {
 			Interactions_Schema_Resource_Ability::URI => [
 				'ability' => new Interactions_Schema_Resource_Ability(),
 				'mimeType' => 'application/json',
+			],
+			Suggested_Actions_Ui_Ability::URI => [
+				'ability' => new Suggested_Actions_Ui_Ability(),
+				'mimeType' => Suggested_Actions_Ui_Ability::MIME_TYPE,
 			],
 		];
 	}

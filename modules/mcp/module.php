@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Modules\Mcp\Utils\Mcp_App_Mime_Type;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,6 +39,7 @@ class Module extends BaseModule {
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 		add_action( 'mcp_adapter_init', [ $this, 'register_server' ] );
+		add_filter( 'mcp_adapter_resources_list', [ $this, 'restore_mcp_app_resource_mime_types' ] );
 	}
 
 	public function register_ability_category() {
@@ -81,6 +83,8 @@ class Module extends BaseModule {
 		}
 		( new Abilities\Global_Variables_Resource_Ability() )->register();
 		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
+		( new Abilities\Suggested_Actions_Ui_Ability() )->register();
+		( new Abilities\Show_Suggested_Actions_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
 		( new Abilities\Read_Resource_Ability() )->register();
 	}
@@ -132,6 +136,7 @@ class Module extends BaseModule {
 			'elementor/list-assets',
 			'elementor/list-resources',
 			'elementor/read-resource',
+			'elementor/show-suggested-actions',
 			...( $this->is_components_active() ? [ 'elementor/list-components' ] : [] ),
 		];
 
@@ -160,6 +165,7 @@ class Module extends BaseModule {
 			'elementor/global-variables-resource',
 			'elementor/list-dynamic-tags',
 			'elementor/interactions-schema-resource',
+			'elementor/suggested-actions-ui',
 		];
 
 		/**
@@ -183,5 +189,13 @@ class Module extends BaseModule {
 		$additional = is_array( $additional ) ? array_filter( $additional, 'is_string' ) : [];
 
 		return array_values( array_unique( array_merge( $defaults, $additional ) ) );
+	}
+
+	public function restore_mcp_app_resource_mime_types( array $resources ): array {
+		$mime_types_by_uri = [
+			Abilities\Suggested_Actions_Ui_Ability::URI => Abilities\Suggested_Actions_Ui_Ability::MIME_TYPE,
+		];
+
+		return ( new Mcp_App_Mime_Type( $mime_types_by_uri ) )->restore( $resources );
 	}
 }

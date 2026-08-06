@@ -6,13 +6,9 @@ import { type ServerNotification, type ServerRequest } from '@modelcontextprotoc
 import { AngieMcpAdapter } from './adapters/angie-adapter';
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
 import { WebMCPAdapter } from './adapters/web-mcp-adapter';
-import {
-	ANGIE_MODEL_PREFERENCES,
-	ANGIE_REQUIRED_RESOURCES,
-	type AngieModelPreferences,
-	createDefaultModelPreferences,
-} from './angie-annotations';
+import { type AngieModelPreferences, type AngieToolUiMeta } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { buildToolMeta, toCallToolResult } from './tool-registration-helpers';
 import { getModelContext } from './utils/get-model-context';
 import { getSDK } from './utils/get-sdk';
 import { isAngieAvailable } from './utils/is-angie-available';
@@ -202,6 +198,7 @@ type ToolRegistrationOptions<
 	isDestructive?: boolean;
 	requiredResources?: ResourceList;
 	modelPreferences?: AngieModelPreferences;
+	ui?: AngieToolUiMeta;
 };
 
 function createToolRegistry( server: McpServer, serverName: string, serverDocsUri?: string ) {
@@ -223,18 +220,7 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 		const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
-				return {
-					// structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
-					content: [
-						{
-							type: 'text',
-							text:
-								typeof invocationResult === 'string'
-									? invocationResult
-									: JSON.stringify( invocationResult ),
-						},
-					],
-				};
+				return toCallToolResult( invocationResult );
 			} catch ( error ) {
 				return {
 					isError: true,
@@ -258,10 +244,11 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 			title: opts.name,
 		};
 		const mergedResources = mergeRequiredResources( opts.requiredResources, serverDocsUri );
-		const angieAnnotations = {
-			[ ANGIE_MODEL_PREFERENCES ]: opts.modelPreferences ?? createDefaultModelPreferences(),
-			[ ANGIE_REQUIRED_RESOURCES ]: mergedResources,
-		};
+		const angieAnnotations = buildToolMeta( {
+			modelPreferences: opts.modelPreferences,
+			requiredResources: mergedResources,
+			ui: opts.ui,
+		} );
 		server.registerTool(
 			opts.name,
 			{
