@@ -4,3 +4,4 @@
     {{- m.render_custom_attributes(settings, editor_attributes) }}>
     <!-- elementor-children-placeholder -->
 </div>
+{% if faq_schema_json %}<script type="application/ld+json">{{ faq_schema_json | raw }}</script>{% endif %}

@@ -21,6 +21,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,6 +90,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			// never drive a grandchild's presence. Do not "clean up" the mirror; the duplication is
 			// structural, not an oversight.
 			'show_icon' => Boolean_Prop_Type::make()->default( true ),
+			'faq_schema' => Boolean_Prop_Type::make()->default( false ),
 		];
 	}
 
@@ -146,6 +148,8 @@ class Atomic_Accordion extends Atomic_Element_Base {
 							[ 'value' => 'p', 'label' => 'P' ],
 							[ 'value' => 'span', 'label' => 'Span' ],
 						] ),
+					Switch_Control::bind_to( 'faq_schema' )
+						->set_label( esc_html__( 'FAQ Schema', 'elementor' ) ),
 				] ),
 		];
 	}
@@ -265,6 +269,106 @@ class Atomic_Accordion extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-accordion' => __DIR__ . '/atomic-accordion.html.twig',
 		];
+	}
+
+	/**
+	 * Adds the FAQPage JSON-LD payload to the template context, when enabled.
+	 *
+	 * Kept out of the editor preview: structured data is a frontend/SEO concern, and building it
+	 * from live descendant markdown on every preview re-render would be wasted work with no
+	 * user-visible effect (the `<script type="application/ld+json">` tag renders invisibly).
+	 *
+	 * @return array
+	 */
+	protected function build_template_context(): array {
+		$faq_schema_json = null;
+
+		if ( $this->get_atomic_setting( 'faq_schema' ) && ! Plugin::$instance->preview->is_preview_mode() ) {
+			$faq_schema_json = $this->build_faq_schema_json();
+		}
+
+		return array_merge( $this->build_base_template_context(), [
+			'faq_schema_json' => $faq_schema_json,
+		] );
+	}
+
+	/**
+	 * Builds the `wp_json_encode()`-ready FAQPage JSON-LD string from the accordion's items, or
+	 * `null` when there is nothing valid to emit.
+	 *
+	 * @return string|null
+	 */
+	private function build_faq_schema_json() {
+		$entities = [];
+
+		$items = Collection::make( $this->get_children() )
+			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_ITEM );
+
+		foreach ( $items as $item ) {
+			$question = $this->get_faq_item_text( $item, self::ELEMENT_TYPE_HEAD, self::ELEMENT_TYPE_TITLE );
+			$answer = $this->get_faq_item_text( $item, null, self::ELEMENT_TYPE_CONTENT );
+
+			if ( '' === $question || '' === $answer ) {
+				continue;
+			}
+
+			$entities[] = [
+				'@type' => 'Question',
+				'name' => $question,
+				'acceptedAnswer' => [
+					'@type' => 'Answer',
+					'text' => $answer,
+				],
+			];
+		}
+
+		if ( empty( $entities ) ) {
+			return null;
+		}
+
+		return wp_json_encode( [
+			'@context' => 'https://schema.org',
+			'@type' => 'FAQPage',
+			'mainEntity' => $entities,
+		] );
+	}
+
+	/**
+	 * Plain text of a sub-element within an `e-accordion-item`, found by element type.
+	 *
+	 * When `$via_type` is given, the target is looked up one level deeper (e.g. the title lives
+	 * inside the head, not directly on the item). `render_markdown()` is `Element_Base`'s existing
+	 * recursive default (fact 6) — reused as-is, not re-implemented — and `wp_strip_all_tags()`
+	 * strips the markdown syntax it can emit (`**bold**`, `[text](url)`) so JSON-LD text fields
+	 * stay plain text.
+	 *
+	 * @param Atomic_Element_Base $item
+	 * @param string|null $via_type
+	 * @param string $target_type
+	 * @return string
+	 */
+	private function get_faq_item_text( $item, $via_type, string $target_type ): string {
+		$scope = $item;
+
+		if ( null !== $via_type ) {
+			$scope = Collection::make( $item->get_children() )
+				->filter( fn( $child ) => $child->get_type() === $via_type )
+				->first();
+
+			if ( null === $scope ) {
+				return '';
+			}
+		}
+
+		$target = Collection::make( $scope->get_children() )
+			->filter( fn( $child ) => $child->get_type() === $target_type )
+			->first();
+
+		if ( null === $target ) {
+			return '';
+		}
+
+		return trim( wp_strip_all_tags( $target->render_markdown() ) );
 	}
 
 	/**
