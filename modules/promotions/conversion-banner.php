@@ -24,6 +24,7 @@ class Conversion_Banner {
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
+	const THEME_SETTINGS_PAGE_SUFFIX = '-settings';
 	const GO_PRO_TITLE_PREFIX = 'Go Pro';
 
 	public function __construct() {
@@ -81,7 +82,15 @@ class Conversion_Banner {
 
 		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query_args );
 
-		return in_array( $query_args['page'] ?? '', self::THEME_SLUGS );
+		$page = $query_args['page'] ?? '';
+
+		foreach ( self::THEME_SLUGS as $theme_slug ) {
+			if ( $page === $theme_slug || $page === $theme_slug . self::THEME_SETTINGS_PAGE_SUFFIX ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function ajax_dismiss_banner(): void {
