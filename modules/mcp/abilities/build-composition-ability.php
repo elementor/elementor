@@ -22,7 +22,6 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
-use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -149,8 +148,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $class_error;
 		}
 
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
+		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch' );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
@@ -184,7 +183,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function get_output_schema(): array {
 		return [
 			'type' => 'object',
-			'required' => [ 'success', 'post_id', 'root_element_ids', 'preview_url', 'llm_instructions', 'version' ],
+			'required' => [ 'success', 'post_id', 'root_element_ids', 'edit_url', 'version' ],
 			'properties' => [
 				'success' => [ 'type' => 'boolean' ],
 				'post_id' => [ 'type' => 'integer' ],
@@ -193,13 +192,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
 				],
-				'preview_url' => Document_Mutation_Links::preview_schema_property(),
+				'edit_url' => [
+					'type' => 'string',
+					'format' => 'uri',
+					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
+				],
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
 					'type' => 'string',
 					'description' => 'The XML with element IDs embedded.',
 				],
-				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -235,7 +237,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'style' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → raw CSS declarations (property → value strings; no selectors). Keys MUST match configuration-id attributes in xml_structure. Server converts to native styles; unconvertible declarations become the element custom CSS.',
+					'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure.',
+					'additionalProperties' => [ 'type' => 'string' ],
 				],
 				'classes' => [
 					'type' => 'object',
@@ -341,12 +344,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'success' => true,
 			'post_id' => $post_id,
 			'root_element_ids' => $root_ids,
+			'edit_url' => $document->get_edit_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
-		] + Document_Mutation_Links::for_document(
-			$document,
-			__( 'The composition was built successfully.', 'elementor' )
-		);
+		];
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
@@ -364,17 +365,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$value = (array) $value;
 		}
 		return is_array( $value ) ? $value : [];
-	}
-
-	private function element_types_from_index( array $index ): array {
-		$element_types = [];
-		foreach ( $index as $config_id => $node ) {
-			$element_type = $node['widgetType'] ?? $node['elType'] ?? null;
-			if ( is_string( $element_type ) && '' !== $element_type ) {
-				$element_types[ $config_id ] = $element_type;
-			}
-		}
-		return $element_types;
 	}
 
 	private function get_mutator(): Document_Mutator {
@@ -446,6 +436,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	private function get_active_breakpoints(): array {
+		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 	}
 
 	private function create_global_classes_repository(): Global_Classes_Repository {

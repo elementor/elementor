@@ -214,5 +214,7 @@ jobs:
       SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
       SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       SLACK_CHANNEL_RELEASE: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
