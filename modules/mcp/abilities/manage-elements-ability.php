@@ -23,7 +23,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
-use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -55,13 +54,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status', 'results', 'post_id', 'preview_url', 'llm_instructions' ],
+				'required' => [ 'status', 'results', 'post_id', 'edit_url' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
 					'results' => [ 'type' => 'array' ],
 					'post_id' => [ 'type' => 'integer' ],
-					'preview_url' => Document_Mutation_Links::preview_schema_property(),
-					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
+					'edit_url' => [
+						'type' => 'string',
+						'format' => 'uri',
+						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
+					],
 					'version' => [ 'type' => 'string' ],
 				],
 			],
@@ -221,7 +223,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$response['post_id'] = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
-			return $this->with_mutation_links( $response, $document );
+			return $this->with_edit_url( $response, $document );
 		}
 
 		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
@@ -231,7 +233,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				? $save_result->get_error_message()
 				: __( 'Could not save document.', 'elementor' );
 
-			return $this->with_mutation_links( $response, $document );
+			return $this->with_edit_url( $response, $document );
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
@@ -239,11 +241,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$post = get_post( $document->get_main_id() );
 		$response['version'] = $post ? $post->post_modified_gmt : current_time( 'mysql', true );
 
-		return $this->with_mutation_links( $response, $document );
+		return $this->with_edit_url( $response, $document );
 	}
 
-	private function with_mutation_links( array $response, Document $document ): array {
-		return array_merge( $response, Document_Mutation_Links::for_document( $document ) );
+	private function with_edit_url( array $response, Document $document ): array {
+		$response['edit_url'] = $document->get_edit_url();
+
+		return $response;
 	}
 
 	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {
