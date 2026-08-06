@@ -1,11 +1,16 @@
 ---
-name: author-atomic-widget
-description: Workflow for creating Elementor v4 atomic widgets and container elements — Atomic_Widget_Base, Atomic_Element_Base, define_props_schema, define_atomic_controls, Twig rendering, and registration hooks. Use for new v4 elements, e-my-widget types, or atomic-widgets module work.
+name: external-author-atomic-widget
+description: "External: Create Elementor v4 atomic widgets and container elements from a third-party plugin using public registration hooks, atomic base classes, props, controls, and Twig."
 ---
 
 # Author atomic widget or element
 
-> **Scope: External** — shippable from a 3rd-party plugin via `elementor/widgets/register` / `elementor/elements/elements_registered`; no Elementor Core changes required. Changing the built-in element catalog is Internal. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+> **Scope: External** — the full documented outcome is shippable from a 3rd-party plugin via `elementor/widgets/register` / `elementor/elements/elements_registered`; no Elementor Core changes required. Changing the built-in element catalog is Core-only. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
+## Implementation location
+
+- **PHP:** existing or new **third-party plugin repository**; plugin-owned namespace/module (e.g. `MyPlugin\AtomicWidgets\`).
+- **Do not modify Elementor Core.** Built-in elements live in Core at `modules/atomic-widgets/elements/` — mirror patterns there only as reference.
 
 Read first: [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md), [hooks.md](../../../docs/atomic-builder/atomic-widgets/hooks.md), [rendering.md](../../../docs/atomic-builder/atomic-widgets/rendering.md).
 
@@ -32,7 +37,7 @@ Read first: [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/a
 
 ## Minimal skeleton
 
-Requires experiment `e_atomic_elements`. Full runnable example: [docs/atomic-builder/examples/author-atomic-widget.md](../../../docs/atomic-builder/examples/author-atomic-widget.md).
+Requires experiment `e_atomic_elements`. Full runnable example: [docs/atomic-builder/examples/external-author-atomic-widget.md](../../../docs/atomic-builder/examples/external-author-atomic-widget.md).
 
 ```php
 class My_Atomic_Widget extends \Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base {
@@ -66,13 +71,13 @@ class My_Atomic_Widget extends \Elementor\Modules\AtomicWidgets\Elements\Base\At
 
 Test/MCP JSON: `My_Atomic_Widget::generate()` (widget) or `My_Container::generate()` (element; uses `get_type()`).
 
-## Public path
+## External implementation path
 
 - Plugin owns PHP classes; register on `elementor/widgets/register` or `elementor/elements/elements_registered`.
 - Extend schema for **all** types only via `elementor/atomic-widgets/props-schema` when type-agnostic — prefer subclassing for type-specific props.
 - Filter `elementor/atomic-widgets/controls` to tweak control trees per element.
 
-## Internal path
+## Core reference paths (do not edit)
 
 - Built-ins live in `modules/atomic-widgets/elements/`; mirror patterns from `Atomic_Heading` and catalog in [elements-catalog.md](../../../docs/atomic-builder/atomic-widgets/elements-catalog.md).
 - Category `v4-elements`; save validation via `Props_Parser` / `Style_Parser` in `get_data_for_save()`.

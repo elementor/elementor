@@ -1,8 +1,8 @@
 # Example: Extend interactions
 
-> Skill: [extend-interactions](../../.cursor/skills/extend-interactions/SKILL.md)  
+> Skill: [internal-extend-interactions](../../../.cursor/skills/internal-extend-interactions/SKILL.md)
 > Docs: [interactions/editor.md](../interactions/editor.md), [interactions/schema.md](../interactions/schema.md), [interactions/frontend.md](../interactions/frontend.md)  
-> Verdict: **Relevant with limits** — editor extension works; published-page runtime has **no public registration hook**.
+> Verdict: **Relevant with limits** — full outcome requires Core PR; published-page runtime has **no public registration hook**. Editor-only partial integration is insufficient.
 
 ## Data model
 
@@ -56,7 +56,7 @@ export function init() {
 }
 ```
 
-Register your package via `elementor/editor/v2/packages` (see [extend-editor-v2.md](extend-editor-v2.md)).
+Register your package via `elementor/editor/v2/packages` (see [external-extend-editor-v2.md](external-extend-editor-v2.md)). Editor-only work via this path does **not** complete the skill — frontend runtime still requires Core.
 
 Core free editor registers `trigger: load|scrollIn` only. Pro unlocks additional triggers via companion package in **elementor-pro** (not Core).
 
@@ -84,6 +84,7 @@ function isSupportedInteraction( animationConfig ) {
 
 - Add new Motion.js effects on the live site without core changes to `interactions.js` / `interactions-utils.js`.
 - Register frontend triggers/effects via WordPress hooks (none exist).
+- Satisfy this skill with editor-only package work alone.
 
 `window.elementorModules.interactions` exposes shared utils to Pro — not an effect registration API.
 

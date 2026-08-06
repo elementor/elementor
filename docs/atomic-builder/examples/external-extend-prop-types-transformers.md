@@ -1,6 +1,6 @@
 # Example: Extend prop types and transformers
 
-> Skill: [extend-prop-types-transformers](../../.cursor/skills/extend-prop-types-transformers/SKILL.md)  
+> Skill: [external-extend-prop-types-transformers](../../../.cursor/skills/external-extend-prop-types-transformers/SKILL.md)
 > Docs: [fundamentals/prop-types.md](../fundamentals/prop-types.md), [fundamentals/transformers.md](../fundamentals/transformers.md)  
 > Verdict: **Relevant** — core extension surface. Skill had wrong `Transformer_Base` FQCN and value shape.
 
