@@ -1,6 +1,6 @@
 # Example: Extend Editor V2
 
-> Skill: [extend-editor-v2](../../.cursor/skills/extend-editor-v2/SKILL.md)  
+> Skill: [external-extend-editor-v2](../../../.cursor/skills/external-extend-editor-v2/SKILL.md)
 > Docs: [editor-packages/extending-editor.md](../editor-packages/extending-editor.md)  
 > Verdict: **Relevant** — primary path for editor UI and in-editor MCP. Not PHP `modules/mcp/` abilities.
 

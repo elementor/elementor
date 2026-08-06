@@ -1,11 +1,17 @@
 ---
-name: extend-variables
-description: Registers Elementor v4 global design-token variable types — elementor/variables/register, registerVariableType JS, style schema unions, and styles transformers. Use for global-color-variable, kit tokens, Variable_Types_Registry, or Prop_Type_Adapter extensions.
+name: external-extend-variables
+description: "External: Register Elementor v4 global design-token variable types from a third-party plugin using elementor/variables/register, registerVariableType JS, style schema unions, and styles transformers."
 ---
 
 # Extend variables (design tokens)
 
-> **Scope: External** — shippable from a 3rd-party plugin via `elementor/variables/register` + style-schema/transformer hooks + your own package `init()`; no Core changes required. PHP render parity for non color/font types (e.g. size) is Core, and size types are Pro-gated. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+> **Scope: External** — the full documented custom-variable outcome is shippable from a 3rd-party plugin via `elementor/variables/register` + style-schema/transformer hooks + your own package `init()`; no Core changes required. Modifying Elementor's built-in size types or their Pro gating is outside this skill and requires Core/Pro changes. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
+## Implementation location
+
+- **PHP:** existing or new **third-party plugin repository**; plugin-owned variable prop types, transformers, and `elementor/variables/register` listeners (e.g. `My\Shadow_Variable_Prop_Type`).
+- **Editor TS:** plugin-owned package `init()` with `registerVariableType`, registered via `elementor/editor/v2/packages`.
+- **Do not modify Elementor Core.** Core registry and editor package live in `modules/variables/` and `packages/packages/core/editor-variables/` — reference only.
 
 Read first: [variables/types.md](../../../docs/atomic-builder/variables/types.md), [variables/api.md](../../../docs/atomic-builder/variables/api.md), [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) (for the no-build-pipeline path). Usage: [usage-in-props.md](../../../docs/atomic-builder/variables/usage-in-props.md), [usage-in-styles.md](../../../docs/atomic-builder/variables/usage-in-styles.md).
 
@@ -23,7 +29,7 @@ add_action( 'elementor/variables/register', function (
 
 2. **Style schema union** — extend `elementor/atomic-widgets/styles/schema` so atomic style keys accept the new `$$type`.
 3. **PHP render transformer** — `elementor/atomic-widgets/styles/transformers/register` if frontend must resolve id → `var(--label)` (pattern: `Global_Variable_Transformer` for color/font).
-4. **JS editor type (required for UI)** — `registerVariableType` with `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`, plus `defaultValue` / `valueField` / `styleTransformer` as needed. Call from **your** editor v2 package `init()` (not core `register-variable-types.tsx`). Example: [docs/atomic-builder/examples/extend-variables.md](../../../docs/atomic-builder/examples/extend-variables.md).
+4. **JS editor type (required for UI)** — `registerVariableType` with `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`, plus `defaultValue` / `valueField` / `styleTransformer` as needed. Call from **your** editor v2 package `init()` (not core `register-variable-types.tsx`). Example: [docs/atomic-builder/examples/external-extend-variables.md](../../../docs/atomic-builder/examples/external-extend-variables.md).
    - **Warning:** skip this step and a PHP-only type still works via REST / MCP / CSS, but it will **not appear in the "Add Variable" dropdown** — the UI only lists registered JS types.
    - **No build pipeline** (WP code snippet, no npm/webpack): register via the `window.elementorV2.{camelCasePackage}` global for late-loaded scripts — see [extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md). Full `registerVariableType` field/`valueField` prop contract is in [variables/types.md](../../../docs/atomic-builder/variables/types.md#registervariabletype-field-contract).
 5. **Storage adapter** — extend `Adapters\Prop_Type_Adapter` if value encoding is non-standard.
@@ -37,13 +43,13 @@ Built-in keys: `global-color-variable`, `global-font-variable`, `global-size-var
 
 "(Pro)" on size is not only a PHP gate: the free Core JS bundle registers both size keys with `isActive: false` + an upsell `emptyState` CTA, so the picker shows a promotion, not an editable field. Pro re-registers them as active. `clamp(...)` / `calc(...)` belong to `global-custom-size-variable`. Details: [variables/types.md](../../../docs/atomic-builder/variables/types.md#built-in-types).
 
-## Public path
+## External implementation path
 
 - Plugin hooks `elementor/variables/register` + style schema + transformers.
 - Editor: `registerVariableType` in own v2 package `init()`.
 - Optional CSS: filter `elementor/variables/css_entry_additional`.
 
-## Internal path
+## Core reference paths (do not edit)
 
 - `modules/variables/classes/variable-types-registry.php`, `hooks.php`, `prop-types/*-variable-prop-type.php`.
 - Editor package: `packages/packages/core/editor-variables/`.
@@ -51,5 +57,5 @@ Built-in keys: `global-color-variable`, `global-font-variable`, `global-size-var
 
 ## See also
 
-- [extend-prop-types-transformers](../extend-prop-types-transformers/SKILL.md) — prop type + transformer pairing
+- [external-extend-prop-types-transformers](../external-extend-prop-types-transformers/SKILL.md) — prop type + transformer pairing
 - [variables/overview.md](../../../docs/atomic-builder/variables/overview.md)

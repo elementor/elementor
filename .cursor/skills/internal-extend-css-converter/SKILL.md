@@ -1,13 +1,22 @@
 ---
-name: extend-css-converter
-description: Extends Elementor atomic CSS converter — Shorthand_Expander_Base, Property_Converter_Base, Converter_Registry_Factory, Expander_Registry_Factory, covered_properties CI. Use when migrating legacy CSS to Style_Schema PropValues; no public discovery filter exists.
+name: internal-extend-css-converter
+description: "Internal: Extend Elementor's atomic CSS converter in a Core fork and submit a Core PR; no public converter or expander discovery hook exists for third-party plugins."
 ---
 
 # Extend CSS converter
 
-> **Scope: Internal (Core PR required)** — there is **no public registration hook**. A 3rd-party plugin cannot wire a converter into the core import pipeline. Extending this needs a PR against Elementor Core (`Converter_Registry_Factory` / `Expander_Registry_Factory`), or a private `Css_Converter` instance not integrated into core import. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+> **Scope: Internal** — there is **no public registration hook**. The full documented outcome requires a PR against Elementor Core (`Converter_Registry_Factory` / `Expander_Registry_Factory`), or a private `Css_Converter` instance not integrated into core import. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
-Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Example: [docs/atomic-builder/examples/extend-css-converter.md](../../../docs/atomic-builder/examples/extend-css-converter.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
+## Implementation location
+
+- **Fork/clone** [elementor/elementor](https://github.com/elementor/elementor).
+- Implement in `modules/atomic-widgets/css-converter/`:
+  - `converter-registry-factory.php`, `expander-registry-factory.php`
+  - `expanders/`, `converters/`
+- Add PHPUnit under `tests/phpunit/elementor/modules/atomic-widgets/css-converter/`.
+- **Submit PR against Core.** Third-party plugins cannot wire converters into the core import pipeline.
+
+Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Example: [docs/atomic-builder/examples/internal-extend-css-converter.md](../../../docs/atomic-builder/examples/internal-extend-css-converter.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
 
 ## Checklist
 
@@ -24,14 +33,14 @@ Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-conver
 5. **Update coverage constants** — add property to family constant (`STRING_PROPERTIES`, `OTHER_PROPERTIES`, etc.); `covered_properties()` merges them. CI: `test-css-converter-rest-api.php::test_coverage__every_style_schema_property_is_hardcoded_as_covered`.
 6. **PHPUnit** — add tests under `tests/phpunit/elementor/modules/atomic-widgets/css-converter/`.
 
-## Public path (limited)
+## External workaround (not integrated into Core import)
 
 Third-party plugins **cannot** register via WordPress filter. Options:
 
 - Open a **core PR** adding expander/converter to `Expander_Registry_Factory` / `Converter_Registry_Factory`.
 - Instantiate custom `Css_Converter` with privately built registries for plugin-internal migration tooling (not wired into core import UI unless integrated upstream).
 
-## Internal path
+## Internal implementation path
 
 - Module: `modules/atomic-widgets/css-converter/`
 - Factories: `converter-registry-factory.php`, `expander-registry-factory.php`
@@ -41,4 +50,4 @@ Third-party plugins **cannot** register via WordPress filter. Options:
 ## See also
 
 - [fundamentals/style-schema.md](../../../docs/atomic-builder/fundamentals/style-schema.md)
-- [extend-prop-types-transformers](../extend-prop-types-transformers/SKILL.md) — style transformers after conversion
+- [external-extend-prop-types-transformers](../external-extend-prop-types-transformers/SKILL.md) — style transformers after conversion

@@ -1,6 +1,6 @@
 # Example: Author atomic widget
 
-> Skill: [author-atomic-widget](../../.cursor/skills/author-atomic-widget/SKILL.md)  
+> Skill: [external-author-atomic-widget](../../../.cursor/skills/external-author-atomic-widget/SKILL.md)
 > Docs: [atomic-widgets/authoring-widgets.md](../atomic-widgets/authoring-widgets.md)  
 > Verdict: **Relevant** — primary path for new v4 elements. Skill skeleton had wrong namespaces; this example is corrected.
 
