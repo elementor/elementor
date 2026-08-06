@@ -63,16 +63,19 @@ export default function AuditFeedback() {
 		return null;
 	}
 
+	const connected = isUserConnected();
+	const connectUrl = window.elementor?.config?.user?.top_bar?.connect_url;
+
+	if ( ! connected && ! connectUrl ) {
+		return null;
+	}
+
 	const triggerLabel = __( 'Give feedback', 'elementor' );
 
 	const handleOpen = () => {
-		if ( ! isUserConnected() ) {
-			const connectUrl = window.elementor?.config?.user?.top_bar?.connect_url;
-
-			if ( connectUrl ) {
-				window.open( connectUrl, '_blank', 'noopener' );
-			}
-
+		if ( ! connected ) {
+			window.open( connectUrl, '_blank', 'noopener' );
+			trackEvent( FEEDBACK_CLICKED_EVENT, { entry_point: FEEDBACK_ENTRY_POINT, connected: false } );
 			return;
 		}
 

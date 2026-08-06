@@ -39,7 +39,7 @@ class Module extends Module_Base {
 			'title' => 'Editor Feedback',
 			'description' => $request->get_param( 'description' ),
 			'product' => 'EDITOR',
-			'subject' => $request->get_param( 'subject' ) ?: self::DEFAULT_SUBJECT,
+			'subject' => sanitize_text_field( $request->get_param( 'subject' ) ) ?: self::DEFAULT_SUBJECT,
 		];
 
 		$response = $app->submit( $body );

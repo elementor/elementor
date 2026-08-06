@@ -60,12 +60,23 @@ describe( 'AuditFeedback', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'still renders the trigger button when the user is not connected to their Elementor account', () => {
+	it( 'still renders the trigger button when the user is not connected but a connect URL is available', () => {
 		mockConnected( false );
+		window.elementor = { config: { user: { top_bar: { connect_url: 'https://my.elementor.com/connect' } } } };
 
 		renderWithTheme( <AuditFeedback /> );
 
 		expect( screen.getByRole( 'button', { name: 'Give feedback' } ) ).toBeInTheDocument();
+
+		delete window.elementor;
+	} );
+
+	it( 'renders nothing when the user is not connected and no connect URL is available', () => {
+		mockConnected( false );
+
+		const { container } = renderWithTheme( <AuditFeedback /> );
+
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'opens the dialog and tracks the click event when the trigger is clicked', () => {
