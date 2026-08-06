@@ -244,6 +244,21 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 				],
 				'target "does-not-exist" was not found',
 			],
+			'duplicate target and prop key' => [
+				[
+					'heading_tag' => [
+						'target' => 'h1',
+						'prop_key' => 'tag',
+						'label' => 'Heading Tag',
+					],
+					'heading_tag_duplicate' => [
+						'target' => 'h1',
+						'prop_key' => 'tag',
+						'label' => 'Duplicate Heading Tag',
+					],
+				],
+				'target "h1" and prop_key "tag" are duplicated',
+			],
 		];
 	}
 
@@ -617,6 +632,28 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [ 'action' => 'update', 'component_id' => $component_id ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	public function test_update__rejects_empty_overridable_props_without_xml_structure() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component_with_content( [
+			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
+		], 'Editable Hero' );
+
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'update',
+			'component_id' => $component_id,
+			'overridable_props' => [],
+		] );
 
 		// Assert
 		$this->assertWPError( $result );

@@ -250,8 +250,8 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function update_overridable_props_only( Component_Document $component, array $input ) {
-		if ( ! is_array( $input['overridable_props'] ?? null ) ) {
-			return $this->invalid_input( __( 'update without xml_structure requires overridable_props.', 'elementor' ) );
+		if ( ! is_array( $input['overridable_props'] ?? null ) || empty( $input['overridable_props'] ) ) {
+			return $this->invalid_input( __( 'update without xml_structure requires non-empty overridable_props.', 'elementor' ) );
 		}
 
 		$elements = $component->get_elements_data();
@@ -649,7 +649,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 				],
 				'overridable_props' => [
 					'type' => 'object',
-					'description' => 'Record mapping override-key → { target, prop_key, label, group? }. target identifies the element to expose: for xml_structure, use the same configuration-id you set on that element; for source_post_id/element_id (create) or an update without xml_structure, use the real element id (from elementor/get-page-structure). override keys, groupIds, and origin values are generated server-side.',
+					'description' => 'Caller-supplied record mapping override-key → { target, prop_key, label, group? }. target identifies the element to expose: for xml_structure, use the same configuration-id you set on that element; for source_post_id/element_id (create) or an update without xml_structure, use the real element id (from elementor/get-page-structure). Group IDs and origin values are generated server-side.',
 				],
 				'publish_status' => [
 					'type' => 'string',

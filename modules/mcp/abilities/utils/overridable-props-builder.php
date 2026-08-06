@@ -17,29 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Enriches a friendly, LLM-authorable overridable-props input into the native
- * `{ props, groups }` shape expected by `Component_Overridable_Props_Parser`,
- * and rewrites the referenced element settings into `overridable` envelopes.
- *
- * Friendly input shape:
- * ```
- * [
- *     '<override-key>' => [
- *         'target'    => '<element id, or the configuration-id the element was compiled from>',
- *         'prop_key'  => '<setting key on that element (raw widget target)
- *                          OR nested override key exposed by the target component (e-component target)>',
- *         'label'     => '<human label>',
- *         'group'     => '<optional group label, defaults to "Default">',
- *     ],
- * ]
- * ```
- *
- * When `target` is an `<e-component>` instance, the builder switches to the "expose further" flow:
- * it reads the inner component's own `overridable_props`, threads any pre-existing `originPropFields`
- * through for multi-hop composition, and splices an `overridable → override` envelope into the nested
- * instance's `component_instance.value.overrides` list — matching what the editor's expose-further UI
- * produces on save. Any override already addressing that inner key is absorbed into the envelope rather
- * than left beside it, so a per-instance value set via `element_config` survives being exposed.
+ * Builds native component overridable props from MCP definitions.
  */
 class Overridable_Props_Builder {
 
@@ -58,16 +36,13 @@ class Overridable_Props_Builder {
 	}
 
 	/**
-	 * @param array $elements       Elements tree containing the referenced target ids. Mutated in place:
-	 *                              each referenced element's setting is rewritten into an `overridable` envelope
-	 *                              (raw widget target) or spliced into `component_instance.value.overrides`
-	 *                              (`<e-component>` target).
-	 * @param array $friendly_props Friendly overridable-props input, keyed by override key.
+	 * @param array $elements         Elements tree containing the referenced targets.
+	 * @param array $prop_definitions Overridable prop definitions keyed by override key.
 	 *
 	 * @return array{props: array, groups: array{items: array, order: array}}|\WP_Error
 	 */
-	public function build( array &$elements, array $friendly_props ) {
-		if ( empty( $friendly_props ) ) {
+	public function build( array &$elements, array $prop_definitions ) {
+		if ( empty( $prop_definitions ) ) {
 			return [
 				'props' => [],
 				'groups' => [
@@ -83,9 +58,18 @@ class Overridable_Props_Builder {
 		$group_ids_by_label = [];
 		$errors = [];
 		$updated_elements = $elements;
+		$override_keys_by_element_prop = [];
 
-		foreach ( $friendly_props as $override_key => $definition ) {
-			$prop = $this->build_prop( (string) $override_key, $definition, $updated_elements, $group_ids_by_label, $groups, $group_order );
+		foreach ( $prop_definitions as $override_key => $definition ) {
+			$prop = $this->build_prop(
+				(string) $override_key,
+				$definition,
+				$updated_elements,
+				$group_ids_by_label,
+				$groups,
+				$group_order,
+				$override_keys_by_element_prop
+			);
 
 			if ( is_wp_error( $prop ) ) {
 				$errors[] = $prop->get_error_message();
@@ -123,7 +107,8 @@ class Overridable_Props_Builder {
 		array &$elements,
 		array &$group_ids_by_label,
 		array &$groups,
-		array &$group_order
+		array &$group_order,
+		array &$override_keys_by_element_prop
 	) {
 		$common = $this->validate_common_definition( $override_key, $definition );
 		if ( is_wp_error( $common ) ) {
@@ -136,6 +121,22 @@ class Overridable_Props_Builder {
 		if ( null === $element ) {
 			return $this->invalid_definition( sprintf( '[%s] target "%s" was not found in the element tree.', $override_key, $target ) );
 		}
+
+		$element_id = (string) ( $element['id'] ?? $target );
+
+		if ( isset( $override_keys_by_element_prop[ $element_id ][ $prop_key ] ) ) {
+			return $this->invalid_definition(
+				sprintf(
+					'[%1$s] target "%2$s" and prop_key "%3$s" are duplicated by override key "%4$s".',
+					$override_key,
+					$target,
+					$prop_key,
+					$override_keys_by_element_prop[ $element_id ][ $prop_key ]
+				)
+			);
+		}
+
+		$override_keys_by_element_prop[ $element_id ][ $prop_key ] = $override_key;
 
 		$widget_type = (string) ( $element['widgetType'] ?? '' );
 
