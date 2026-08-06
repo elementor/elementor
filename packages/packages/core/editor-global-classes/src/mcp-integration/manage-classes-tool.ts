@@ -6,7 +6,6 @@ import { __dispatch as dispatch } from '@elementor/store';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { slice } from '../store';
-import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-classes';
@@ -29,7 +28,7 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 			id: z
 				.string()
 				.optional()
-				.describe( 'Class id — required for update/delete. Get from the global-classes resource.' ),
+				.describe( 'Class id — required for update/delete. Get from list-global-classes.' ),
 			label: z
 				.string()
 				.optional()
@@ -52,12 +51,6 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 			id: z.string().optional().describe( 'ID of the affected class — use for subsequent update/delete calls.' ),
 			label: z.string().optional().describe( 'Final label of the class after any auto-rename.' ),
 		},
-		requiredResources: [
-			{
-				uri: GLOBAL_CLASSES_URI,
-				description: 'Current global classes — check before creating to avoid duplicates',
-			},
-		],
 		isDestructive: true,
 		handler: async ( params ) => {
 			const { data } = await httpService().post< HttpResponse< ManageClassesResponse > >( MCP_PROXY_URL, {

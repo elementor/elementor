@@ -22,7 +22,7 @@ export const generateApplyGlobalClassGuidePrompt = () => {
 
 	prompt.instruction(
 		`## Prerequisites:
-- **REQUIRED**: Get the list of available global classes from 'elementor://global-classes' resource
+- **REQUIRED**: Get the list of available global classes from the list-global-classes tool
 - **REQUIRED**: Get element IDs from the page structure or selected element resources
 - Ensure you have the most up-to-date list of classes applied to the element to avoid duplicates
 - Make sure you have the correct class ID that you want to apply`

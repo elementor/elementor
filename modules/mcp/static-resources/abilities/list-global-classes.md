@@ -1,0 +1,1 @@
+Lists V4 global CSS classes from the active kit (id + label). Supports search by label and pagination. Call FIRST before adding inline styles or before `manage-classes` / `apply-global-class` to resolve labels to ids.

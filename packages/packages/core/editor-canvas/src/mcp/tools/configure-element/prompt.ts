@@ -13,7 +13,7 @@ Configure an existing element on the page.
 
 # **CRITICAL - REQUIRED INFORMATION (Must read before using this tool)**
 1. [${ WIDGET_SCHEMA_URI }] — **Widget properties** (\`propertiesToChange\`): each widgetType (e.g. e-heading, e-button) has its own PropType schema; values must be PropValues with \`$$type\`.
-2. [elementor://global-variables] — **Design tokens for styling**: use labels in CSS as \`var(--label)\` or \`var(--label, fallback)\`; only variables listed here are valid.
+2. list-global-variables — **Design tokens for styling**: use labels in CSS as \`var(--label)\` or \`var(--label, fallback)\`; only variables returned by that tool are valid.
 3. **Styling** (\`style\` parameter): flat map of CSS property → value strings — **not** PropValues. The server converts to native styles; unconvertible declarations become custom CSS.
 4. **Current state**: \`get-element-configuration-values\` returns \`properties\` as PropValues and \`style\` in stored form; when writing, send raw CSS in \`style\`, not copied PropValues.
 

@@ -70,13 +70,13 @@ class Module extends BaseModule {
 		( new Abilities\List_Dynamic_Tags_Ability() )->register();
 		( new Abilities\Build_Composition_Ability() )->register();
 		( new Abilities\Manage_Elements_Ability() )->register();
-		( new Abilities\Global_Classes_Resource_Ability() )->register();
+		( new Abilities\List_Global_Classes_Ability() )->register();
 		( new Abilities\List_Assets_Ability() )->register();
 
 		if ( $this->is_components_active() ) {
 			( new Abilities\List_Components_Ability() )->register();
 		}
-		( new Abilities\Global_Variables_Resource_Ability() )->register();
+		( new Abilities\List_Global_Variables_Ability() )->register();
 		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
 		( new Abilities\List_Resources_Ability() )->register();
 		( new Abilities\Read_Resource_Ability() )->register();
@@ -126,6 +126,8 @@ class Module extends BaseModule {
 			'elementor/build-composition',
 			'elementor/manage-elements',
 			'elementor/list-assets',
+			'elementor/list-global-variables',
+			'elementor/list-global-classes',
 			'elementor/list-resources',
 			'elementor/read-resource',
 			...( $this->is_components_active() ? [ 'elementor/list-components' ] : [] ),
@@ -152,8 +154,6 @@ class Module extends BaseModule {
 		$resources = [
 			'elementor/style-best-practices',
 			'elementor/manage-global-variable-guide',
-			'elementor/global-classes-resource',
-			'elementor/global-variables-resource',
 			'elementor/list-dynamic-tags',
 			'elementor/interactions-schema-resource',
 		];

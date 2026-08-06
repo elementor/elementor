@@ -56,7 +56,7 @@ Create, update, or delete V4 global CSS variables. These are distinct from legac
 - Labels must be **lowercase**, using only letters (a-z), numbers, digits (0-9), dashes (-), or underscores (_)
 - No spaces, no special characters
 - Example: "Headline Primary" → `headline-primary`
-- Labels must be unique — always check [elementor://global-variables] first
+- Labels must be unique — always check `elementor/list-global-variables` first
 
 # Value Rules
 - Provide a **plain CSS value** only — do NOT pass JSON, legacy-globals object structures, or variable references
@@ -65,7 +65,7 @@ Create, update, or delete V4 global CSS variables. These are distinct from legac
 
 # Operations
 - **create** — requires `type`, `label`, `value`. Label must be unique.
-- **update** — requires `id`, `label`, `value`. Get `id` from [elementor://global-variables]. When renaming: keep existing value. When changing value: keep exact existing label.
+- **update** — requires `id`, `label`, `value`. Get `id` from `elementor/list-global-variables`. When renaming: keep existing value. When changing value: keep exact existing label.
 - **delete** — requires `id`. DESTRUCTIVE — always confirm with user before executing.
 
 # Examples
@@ -85,7 +85,7 @@ Delete a variable:
 { "action": "delete", "id": "abc123" }
 
 # Instruction
-Always read [elementor://global-variables] before creating to check existing variables and avoid duplicate labels.
+Always read `elementor/list-global-variables` before creating to check existing variables and avoid duplicate labels.
 GUIDE;
 	}
 }

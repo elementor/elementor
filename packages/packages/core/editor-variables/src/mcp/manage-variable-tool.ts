@@ -6,7 +6,6 @@ import { isProActive } from '@elementor/utils';
 import { applyLocalMutation } from '../service';
 import { type TVariable } from '../storage';
 import { MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
-import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-global-variable';
@@ -58,7 +57,7 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 			id: z
 				.string()
 				.optional()
-				.describe( 'Variable id — required for update/delete. Get from the global-variables resource.' ),
+				.describe( 'Variable id — required for update/delete. Get from list-global-variables.' ),
 			type: z.enum( RUNTIME_ALLOWED_VARIABLE_TYPES ),
 			label: z.string().describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
 			value: z
@@ -74,10 +73,6 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 		},
 		requiredResources: [
 			{ uri: MANAGE_VARIABLES_GUIDE_URI, description: 'Full guide for variable types, naming rules, and usage' },
-			{
-				uri: GLOBAL_VARIABLES_URI,
-				description: 'Current global variables — check before creating to avoid duplicates',
-			},
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
