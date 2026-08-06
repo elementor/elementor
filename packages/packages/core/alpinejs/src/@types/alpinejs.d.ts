@@ -1,6 +1,5 @@
 declare module '@alpinejs/csp' {
-	import type { Alpine as AlpineBase } from 'alpinejs';
+  import type { Alpine as AlpineBase } from 'alpinejs';
 
-	export const Alpine: AlpineBase;
+  export const Alpine: AlpineBase;
 }
-
