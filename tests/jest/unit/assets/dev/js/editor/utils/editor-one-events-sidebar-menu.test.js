@@ -107,4 +107,31 @@ describe( 'EditorOneEventManager sidebar menu events', () => {
 		// Assert
 		expect( dispatchEvent ).not.toHaveBeenCalled();
 	} );
+
+	test( 'sendSidebarMenuItemClicked does not throw when dispatch fails', () => {
+		// Arrange
+		dispatchEvent.mockImplementation( () => {
+			throw new Error( 'dispatch failed' );
+		} );
+
+		// Act & Assert
+		expect( () => {
+			EditorOneEventManager.sendSidebarMenuItemClicked( { eventId: 'settings' } );
+		} ).not.toThrow();
+	} );
+
+	test( 'sendSidebarMenuGroupToggled does not throw when dispatch fails', () => {
+		// Arrange
+		dispatchEvent.mockImplementation( () => {
+			throw new Error( 'dispatch failed' );
+		} );
+
+		// Act & Assert
+		expect( () => {
+			EditorOneEventManager.sendSidebarMenuGroupToggled( {
+				eventId: 'templates',
+				isExpanded: true,
+			} );
+		} ).not.toThrow();
+	} );
 } );

@@ -17,11 +17,16 @@ export class EditorOneEventManager {
 	}
 
 	static dispatchEvent( eventName, payload ) {
-		if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
+		try {
+			if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
+				return false;
+			}
+
+			this.getEventsManager().dispatchEvent( eventName, payload );
+			return true;
+		} catch ( error ) {
 			return false;
 		}
-
-		this.getEventsManager().dispatchEvent( eventName, payload );
 	}
 
 	static toLowerSnake( value ) {
@@ -321,37 +326,45 @@ export class EditorOneEventManager {
 	}
 
 	static sendSidebarMenuItemClicked( { eventId, groupEventId } ) {
-		const config = this.getConfig();
-		const payload = this.createBasePayload( {
-			window_name: config?.windowNames?.sidebarMenu,
-			interaction_type: this.toLowerSnake( config?.triggers?.click ),
-			target_type: config?.targetTypes?.link,
-			target_name: eventId,
-			interaction_result: config?.interactionResults?.pageOpened,
-			target_location: this.toLowerSnake( config?.locations?.sidebar ),
-		} );
+		try {
+			const config = this.getConfig();
+			const payload = this.createBasePayload( {
+				window_name: config?.windowNames?.sidebarMenu,
+				interaction_type: this.toLowerSnake( config?.triggers?.click ),
+				target_type: config?.targetTypes?.link,
+				target_name: eventId,
+				interaction_result: config?.interactionResults?.pageOpened,
+				target_location: this.toLowerSnake( config?.locations?.sidebar ),
+			} );
 
-		if ( groupEventId ) {
-			payload.location_l1 = groupEventId;
+			if ( groupEventId ) {
+				payload.location_l1 = groupEventId;
+			}
+
+			return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
+		} catch ( error ) {
+			return false;
 		}
-
-		return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
 	}
 
 	static sendSidebarMenuGroupToggled( { eventId, isExpanded } ) {
-		const config = this.getConfig();
-		const interactionResult = isExpanded
-			? config?.interactionResults?.expanded
-			: config?.interactionResults?.collapsed;
+		try {
+			const config = this.getConfig();
+			const interactionResult = isExpanded
+				? config?.interactionResults?.expanded
+				: config?.interactionResults?.collapsed;
 
-		return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuGroupToggled, this.createBasePayload( {
-			window_name: config?.windowNames?.sidebarMenu,
-			interaction_type: this.toLowerSnake( config?.triggers?.click ),
-			target_type: config?.targetTypes?.toggle,
-			target_name: eventId,
-			interaction_result: interactionResult,
-			target_location: this.toLowerSnake( config?.locations?.sidebar ),
-		} ) );
+			return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuGroupToggled, this.createBasePayload( {
+				window_name: config?.windowNames?.sidebarMenu,
+				interaction_type: this.toLowerSnake( config?.triggers?.click ),
+				target_type: config?.targetTypes?.toggle,
+				target_name: eventId,
+				interaction_result: interactionResult,
+				target_location: this.toLowerSnake( config?.locations?.sidebar ),
+			} ) );
+		} catch ( error ) {
+			return false;
+		}
 	}
 }
 

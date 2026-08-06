@@ -34,22 +34,21 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 
 	const handleClick = useCallback( () => {
 		if ( hasChildren ) {
-			setIsExpanded( ( prev ) => {
-				const newState = ! prev;
-				localStorage.setItem( `${ STORAGE_KEY_PREFIX }${ item.slug }`, String( newState ) );
-				EditorOneEventManager.sendSidebarMenuGroupToggled( {
-					eventId: item.event_id,
-					isExpanded: newState,
-				} );
-				return newState;
-			} );
-		} else {
-			EditorOneEventManager.sendSidebarMenuItemClicked( {
+			const newState = ! isExpanded;
+			setIsExpanded( newState );
+			localStorage.setItem( `${ STORAGE_KEY_PREFIX }${ item.slug }`, String( newState ) );
+			EditorOneEventManager.sendSidebarMenuGroupToggled( {
 				eventId: item.event_id,
+				isExpanded: newState,
 			} );
-			window.location.href = item.url;
+			return;
 		}
-	}, [ hasChildren, item.event_id, item.slug, item.url ] );
+
+		EditorOneEventManager.sendSidebarMenuItemClicked( {
+			eventId: item.event_id,
+		} );
+		window.location.href = item.url;
+	}, [ hasChildren, isExpanded, item.event_id, item.slug, item.url ] );
 
 	const handleChildClick = useCallback( ( childItem ) => {
 		EditorOneEventManager.sendSidebarMenuItemClicked( {
