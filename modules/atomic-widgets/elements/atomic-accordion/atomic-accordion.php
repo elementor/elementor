@@ -387,12 +387,25 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 * - `![alt](src)` images and `[text](url)` links — the visible text is kept, the target dropped
 	 * - `**bold**` / `__bold__`, `*italic*` / `_italic_`, `~~strikethrough~~`
 	 * - `#` … `######` heading markers and `-`/`*`/`+`/`1.` list markers at line start
+	 * - `> ` blockquote markers (repeated per nesting depth) at line start — reachable from a plain
+	 *   `Atomic_Paragraph`, which whitelists `<blockquote>` in its own output filter and feeds it
+	 *   straight into `Html_To_Markdown::convert()`, so this is not a hypothetical case
 	 * - the backslash-escaping `Html_To_Markdown::escape_text()` applies to literal
 	 *   `\ \` * _ [ ]` characters in ordinary text, so those round-trip back to plain characters
 	 *   instead of surfacing a stray backslash
 	 *
-	 * Tables and blockquotes aren't handled: the accordion's title/content subtrees only ever
-	 * contain paragraph-level content in practice, and adding unused coverage would be guessing at
+	 * The formatting-delimiter regexes below (code/bold/italic/link/image) all require an
+	 * *unescaped* delimiter via `(?<!\\)`: `escape_text()` backslash-escapes a literal `* _ \` [ ]`
+	 * character wherever it appears in plain text (not just when paired), so a string like
+	 * `1* free*` (literal asterisks, no formatting intended) round-trips through `render_markdown()`
+	 * as `1\* free\*`. Without the guard, the two escaped asterisks look like a real `*...*` pair to
+	 * a naive regex, which eats the enclosed text and leaves orphaned backslashes behind — this was
+	 * exactly the Round 1→2 regression. Unescaping runs *after* the delimiter regexes so the escaped
+	 * characters are still backslash-prefixed (and therefore excluded by the lookbehind) while those
+	 * regexes run.
+	 *
+	 * Tables aren't handled: no reachable path in this codebase currently produces table markdown
+	 * for an accordion title/content subtree, and adding unused coverage would be guessing at
 	 * requirements rather than matching them.
 	 *
 	 * @param string $markdown
@@ -404,12 +417,12 @@ class Atomic_Accordion extends Atomic_Element_Base {
 		// Fenced code blocks: keep only the code content.
 		$text = preg_replace( '/```[^\n`]*\n(.*?)\n```/s', '$1', $text );
 
-		// Inline code spans.
-		$text = preg_replace( '/`+(.*?)`+/s', '$1', $text );
+		// Inline code spans (only when both fences are unescaped — see docblock).
+		$text = preg_replace( '/(?<!\\\\)`+(.*?)(?<!\\\\)`+/s', '$1', $text );
 
-		// Images and links: keep the visible text, drop the target.
-		$text = preg_replace( '/!\[([^\]]*)\]\([^)]*\)/', '$1', $text );
-		$text = preg_replace( '/\[([^\]]*)\]\([^)]*\)/', '$1', $text );
+		// Images and links: keep the visible text, drop the target (unescaped opening bracket only).
+		$text = preg_replace( '/(?<!\\\\)!\[([^\]]*)\]\([^)]*\)/', '$1', $text );
+		$text = preg_replace( '/(?<!\\\\)\[([^\]]*)\]\([^)]*\)/', '$1', $text );
 
 		// Headings: leading #'s at the start of a line.
 		$text = preg_replace( '/^#{1,6}[ \t]+/m', '', $text );
@@ -417,10 +430,13 @@ class Atomic_Accordion extends Atomic_Element_Base {
 		// List markers: "- ", "* ", "+ " or "1. " at a (possibly indented) line start.
 		$text = preg_replace( '/^[ \t]*(?:[-*+]|\d+\.)[ \t]+/m', '', $text );
 
-		// Bold, italic, strikethrough.
-		$text = preg_replace( '/(\*\*|__)(.+?)\1/s', '$2', $text );
-		$text = preg_replace( '/\*(.+?)\*/s', '$1', $text );
-		$text = preg_replace( '/_(.+?)_/s', '$1', $text );
+		// Blockquote markers: "> " (repeated for nested quotes) at the start of a line.
+		$text = preg_replace( '/^(?:>[ \t]?)+/m', '', $text );
+
+		// Bold, italic (unescaped delimiters only — see docblock), strikethrough (never escaped).
+		$text = preg_replace( '/(?<!\\\\)(\*\*|__)(.+?)(?<!\\\\)\1/s', '$2', $text );
+		$text = preg_replace( '/(?<!\\\\)\*(.+?)(?<!\\\\)\*/s', '$1', $text );
+		$text = preg_replace( '/(?<!\\\\)_(.+?)(?<!\\\\)_/s', '$1', $text );
 		$text = preg_replace( '/~~(.+?)~~/s', '$1', $text );
 
 		// Undo the converter's backslash-escaping of literal markdown-special characters.
