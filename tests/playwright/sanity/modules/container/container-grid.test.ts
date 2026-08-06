@@ -601,6 +601,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Empty item should not be presented', async () => {
 			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
+
 		//
 		await test.step( 'Empty item should not be present in tablet', async () => {
 			await editor.changeResponsiveView( 'tablet' );
