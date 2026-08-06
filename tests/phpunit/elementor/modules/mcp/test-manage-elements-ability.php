@@ -177,11 +177,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 		$this->assertSame( $root_id, $result['results'][0]['element_id'] );
 		$this->assertNotEmpty( $result['version'] );
-		$this->assertArrayHasKey( 'preview_url', $result );
-		$this->assertArrayHasKey( 'llm_instructions', $result );
-		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
-		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
-		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
+		$this->assertArrayHasKey( 'edit_url', $result );
+		$this->assertNotEmpty( $result['edit_url'] );
+		$this->assertArrayNotHasKey( 'preview_url', $result );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
@@ -298,7 +297,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $warnings[0] );
 	}
 
-	public function test_update__unhandled_style_declaration_warns_with_declaration_and_url_hint() {
+	public function test_update__unknown_css_property_applies_without_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -309,22 +308,12 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'style' => [
-						'background' => 'url(/wp-content/uploads/x.png) center/cover no-repeat',
-					],
+					'style' => 'background: url(https://example.com/x.png) center/cover no-repeat;',
 				],
 			],
 		] );
 
 		$this->assertOkOperation( $result, 0 );
-		$warnings = $result['results'][0]['warnings'] ?? [];
-		$this->assertNotEmpty( $warnings );
-
-		$warning = $warnings[0];
-		$this->assertStringContainsString( 'background:', $warning );
-		$this->assertStringContainsString( 'url(', $warning );
-		$this->assertStringContainsString( 'URLs must be absolute', $warning );
-		$this->assertStringContainsString( 'elementor://widgets/schema/', $warning );
 	}
 
 	public function test_update__applies_style_and_attaches_global_class_by_label() {
@@ -339,16 +328,16 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'style' => [ 'font-size' => '2rem' ],
-					'classes' => [ 'hero-heading' ],
-				],
+				'style' => 'font-size: 2rem;',
+				'classes' => [ 'hero-heading' ],
 			],
-		] );
+		],
+	] );
 
-		$this->assertOkOperation( $result, 0 );
+	$this->assertOkOperation( $result, 0 );
 
-		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertNotNull( $node );
+	$node = $this->find_element_in_document( $post_id, $heading_id );
+	$this->assertNotNull( $node );
 
 		$class_values = $node['settings']['classes']['value'] ?? [];
 		$this->assertContains( $class_id, $class_values );
@@ -365,15 +354,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'operations' => [
 				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'style' => [ 'font-size' => '2rem' ],
-					'classes' => [ 'hero-heading' ],
-				],
+			'action' => 'update',
+				'element_id' => $heading_id,
+				'style' => 'font-size: 2rem;',
+				'classes' => [ 'hero-heading' ],
 			],
-		] );
+		],
+	] );
 
-		$this->assertOkOperation( $attach, 0 );
+	$this->assertOkOperation( $attach, 0 );
 
 		$node_before = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node_before );
@@ -634,7 +623,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'parent_id' => 'document',
-			'style' => [ 'h1' => [ 'color' => '#ff0000' ] ],
+			'style' => [ 'h1' => 'color: #ff0000;' ],
 		] );
 		$this->assertIsArray( $build_result, 'build-composition failed: ' . ( is_wp_error( $build_result ) ? $build_result->get_error_message() : 'unknown' ) );
 		$this->assertTrue( $build_result['success'] ?? false );
@@ -646,7 +635,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'style' => [ 'font-size' => '24px' ],
+					'style' => 'font-size: 24px;',
 				],
 			],
 		] );
@@ -837,6 +826,102 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
 	}
 
+	public function test_update__css_string_creates_desktop_variant_in_local_style() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => 'color: #ff0000;',
+				],
+			],
+		] );
+
+		// Assert.
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotEmpty( $node['styles'] ?? [] );
+
+		$style = reset( $node['styles'] );
+		$this->assertSame( 'local', $style['label'] );
+		$this->assertNotEmpty( $style['variants'] );
+
+		$desktop_variant = $style['variants'][0] ?? [];
+		$this->assertSame( 'desktop', $desktop_variant['meta']['breakpoint'] ?? null );
+		$this->assertArrayHasKey( 'color', $desktop_variant['props'] ?? [] );
+	}
+
+	public function test_update__style_apply_mode_replace_wipes_existing_variants() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => 'color: #ff0000; font-size: 2rem;',
+				],
+			],
+		] );
+
+		// Act.
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => '',
+					'style_apply_mode' => 'replace',
+				],
+			],
+		] );
+
+		// Assert.
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$style = reset( $node['styles'] );
+		$this->assertEmpty( $style['variants'] ?? [], 'replace + empty CSS must wipe all variants.' );
+	}
+
+	public function test_update__invalid_style_apply_mode_returns_error() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => 'color: red;',
+					'style_apply_mode' => 'overwrite',
+				],
+			],
+		] );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
 	private function assertOkOperation( $result, int $index ): void {
 		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertSame( 'ok', $result['status'] );
@@ -971,8 +1056,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function given_kit_global_class( string $label, string $color ): string {
 		( new Global_Class_Post_Type() )->register_post_type();
-
-		$class_id = 'g-' . strtolower( substr( md5( $label ), 0, 6 ) );
+		$class_id = 'g-testcls';
 		$data = [
 			'type' => 'class',
 			'variants' => [
