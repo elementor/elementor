@@ -1,26 +1,21 @@
-import {
-  createArrayLoader,
-  createEnvironment,
-  type TwingArrayLoader,
-  type TwingEnvironment,
-} from '@elementor/twing';
+import { createArrayLoader, createEnvironment, type TwingArrayLoader, type TwingEnvironment } from '@elementor/twing';
 
 export type DomRenderer = {
-  register: TwingArrayLoader[ 'setTemplate' ];
-  render: TwingEnvironment[ 'render' ];
+	register: TwingArrayLoader[ 'setTemplate' ];
+	render: TwingEnvironment[ 'render' ];
 };
 
 export function createDomRenderer(): DomRenderer {
-  const loader = createArrayLoader( {} );
-  const environment = createEnvironment( loader );
+	const loader = createArrayLoader( {} );
+	const environment = createEnvironment( loader );
 
-  environment.registerEscapingStrategy( escapeHtmlTag, 'html_tag' );
-  environment.registerEscapingStrategy( escapeURL, 'full_url' );
+	environment.registerEscapingStrategy( escapeHtmlTag, 'html_tag' );
+	environment.registerEscapingStrategy( escapeURL, 'full_url' );
 
-  return {
-    register: loader.setTemplate,
-    render: environment.render,
-  };
+	return {
+		register: loader.setTemplate,
+		render: environment.render,
+	};
 }
 
 /**
@@ -29,24 +24,24 @@ export function createDomRenderer(): DomRenderer {
  * (no tags allowed) rather than fall back to a second hardcoded copy that could drift.
  */
 function getAllowedHtmlWrapperTags(): readonly string[] {
-  return window.elementorCommon?.config?.allowedHTMLWrapperTags ?? [];
+	return window.elementorCommon?.config?.allowedHTMLWrapperTags ?? [];
 }
 
 function escapeHtmlTag( value: string ) {
-  const allowedTags = getAllowedHtmlWrapperTags();
-  const normalizedTag = value?.toLowerCase?.() ?? '';
+	const allowedTags = getAllowedHtmlWrapperTags();
+	const normalizedTag = value?.toLowerCase?.() ?? '';
 
-  return allowedTags.includes( normalizedTag ) ? value : 'div';
+	return allowedTags.includes( normalizedTag ) ? value : 'div';
 }
 
 function escapeURL( value: string ) {
-  const allowedProtocols = [ 'http:', 'https:', 'mailto:', 'tel:' ];
+	const allowedProtocols = [ 'http:', 'https:', 'mailto:', 'tel:' ];
 
-  try {
-    const parsed = new URL( value );
+	try {
+		const parsed = new URL( value );
 
-    return allowedProtocols.includes( parsed.protocol ) ? value : '';
-  } catch {
-    return '';
-  }
+		return allowedProtocols.includes( parsed.protocol ) ? value : '';
+	} catch {
+		return '';
+	}
 }
