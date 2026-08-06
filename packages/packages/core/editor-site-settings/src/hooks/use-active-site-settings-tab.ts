@@ -10,11 +10,7 @@ import { getSiteSettingsTab } from '../tabs';
 
 export function useActiveSiteSettingsTab() {
 	return useListenTo(
-		[
-			v1ReadyEvent(),
-			routeOpenEvent( SITE_SETTINGS_ROUTE_PREFIX ),
-			routeCloseEvent( SITE_SETTINGS_ROUTE_PREFIX ),
-		],
+		[ v1ReadyEvent(), routeOpenEvent( SITE_SETTINGS_ROUTE_PREFIX ), routeCloseEvent( SITE_SETTINGS_ROUTE_PREFIX ) ],
 		() => {
 			const panelRoute = window.$e?.routes?.getCurrent?.()?.panel;
 
