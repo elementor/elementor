@@ -76,13 +76,16 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 			'default_state' => String_Prop_Type::make()
 				->enum( [ 'first_expanded', 'all_collapsed' ] )
-				->default( 'first_expanded' ),
+				->default( 'first_expanded' )
+				->description( 'Which items are open when the accordion first renders. Valid values: first_expanded, all_collapsed' ),
 			'max_expanded' => String_Prop_Type::make()
 				->enum( [ 'one', 'multiple' ] )
-				->default( 'one' ),
+				->default( 'one' )
+				->description( 'How many items can be open at the same time. Valid values: one, multiple' ),
 			'title_tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'span' ] )
-				->default( 'span' ),
+				->default( 'span' )
+				->description( 'The HTML tag used to render every item title. Valid values: h1, h2, h3, h4, h5, h6, div, p, span' ),
 			// Single, global, user-facing toggle - there is no per-item Show Icon (confirmed with the
 			// PM: users want icons on every item or on none, never mixed). It is exposable as a
 			// component property, so no `Overridable_Prop_Type::ignore()`. Every `e-accordion-item-head`
@@ -91,8 +94,10 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			// and can only attach/detach that element's *direct* children - a root-level prop here can
 			// never drive a grandchild's presence. Do not "clean up" the mirror; the duplication is
 			// structural, not an oversight.
-			'show_icon' => Boolean_Prop_Type::make()->default( true ),
-			'faq_schema' => Boolean_Prop_Type::make()->default( false ),
+			'show_icon' => Boolean_Prop_Type::make()->default( true )
+				->description( 'Whether every item header shows an open/closed indicator icon. Applies to all items; there is no per-item override.' ),
+			'faq_schema' => Boolean_Prop_Type::make()->default( false )
+				->description( 'Whether to output an FAQPage JSON-LD structured data script on the frontend, built from each item\'s title (question) and content (answer).' ),
 		];
 	}
 
@@ -265,6 +270,86 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			->all();
 
 		return $item_ids[ $item_id ] ?? null;
+	}
+
+	/**
+	 * Root markdown output: one `### <title>` heading followed by the content subtree's markdown,
+	 * per accordion item, blank-line separated.
+	 *
+	 * `Element_Base::render_markdown()` (the inherited default - fact 6) already recurses
+	 * `get_children()` and joins every non-empty result with a blank line, with no regard for
+	 * structure. Left unchanged, item -> head -> title -> paragraph and item -> content -> paragraph
+	 * would all flatten into one undifferentiated string per item ("Title\n\nContent"), and there is
+	 * no delimiter left in that output to tell where the title ends and the content begins - the
+	 * heading marker has to be added *before* the two are joined, not recovered afterwards. That
+	 * ruled out simply wrapping `parent::render_markdown()` and reformatting its return value.
+	 *
+	 * Instead this walks the `e-accordion-item` children directly - the same
+	 * `Collection::make($this->get_children())->filter()` idiom `get_item_index()` and
+	 * `build_faq_schema_json()` already use in this file - keeping each item's title and content
+	 * markdown separate until the `### ` heading is applied. The actual text/markdown extraction
+	 * still comes from calling `render_markdown()` on the title and content sub-elements (per the
+	 * plan's reuse-over-reimplementation preference, the same way `get_faq_item_text()` does above);
+	 * only the top-level assembly differs from the inherited default.
+	 *
+	 * @return string
+	 */
+	public function render_markdown(): string {
+		$items = Collection::make( $this->get_children() )
+			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_ITEM );
+
+		$blocks = [];
+
+		foreach ( $items as $item ) {
+			$title_markdown = trim( $this->get_item_title_markdown( $item ) );
+			$content_markdown = trim( $this->get_item_content_markdown( $item ) );
+
+			if ( '' === $title_markdown && '' === $content_markdown ) {
+				continue;
+			}
+
+			$blocks[] = '### ' . $title_markdown . "\n\n" . $content_markdown;
+		}
+
+		return implode( "\n\n", $blocks );
+	}
+
+	/**
+	 * Markdown of an item's title, via `e-accordion-item` -> `e-accordion-item-head` ->
+	 * `e-accordion-item-title` -> `render_markdown()`.
+	 *
+	 * @param Atomic_Element_Base $item
+	 * @return string
+	 */
+	private function get_item_title_markdown( $item ): string {
+		$head = Collection::make( $item->get_children() )
+			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_HEAD )
+			->first();
+
+		if ( null === $head ) {
+			return '';
+		}
+
+		$title = Collection::make( $head->get_children() )
+			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TITLE )
+			->first();
+
+		return null === $title ? '' : $title->render_markdown();
+	}
+
+	/**
+	 * Markdown of an item's content, via `e-accordion-item` -> `e-accordion-item-content` ->
+	 * `render_markdown()`.
+	 *
+	 * @param Atomic_Element_Base $item
+	 * @return string
+	 */
+	private function get_item_content_markdown( $item ): string {
+		$content = Collection::make( $item->get_children() )
+			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_CONTENT )
+			->first();
+
+		return null === $content ? '' : $content->render_markdown();
 	}
 
 	protected function get_templates(): array {
