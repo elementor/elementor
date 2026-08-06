@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
@@ -245,7 +244,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$parsed = $this->parse_css_string( $index, 'create', $css_string, $results );
+		$parsed = Style_Variants_Merger::parse_css_string( $css_string, $this->get_active_breakpoint_keys(), $index, 'create', $results, fn() => $this->get_css_converter() );
 		if ( null === $parsed ) {
 			return;
 		}
@@ -302,7 +301,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$css_string = $operation['css'] ?? null;
 
 		if ( is_string( $css_string ) && '' !== trim( $css_string ) ) {
-			$parsed = $this->parse_css_string( $index, 'update', $css_string, $results );
+			$parsed = Style_Variants_Merger::parse_css_string( $css_string, $this->get_active_breakpoint_keys(), $index, 'update', $results, fn() => $this->get_css_converter() );
 			if ( null === $parsed ) {
 				return;
 			}
@@ -331,53 +330,6 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	protected function get_active_breakpoint_keys(): array {
 		return Plugin::$instance->breakpoints->get_active_devices_list();
-	}
-
-	private function parse_css_string( int $index, string $action, string $css_string, Bulk_Operations_Result $results ): ?array {
-		$active_breakpoints = $this->get_active_breakpoint_keys();
-		$splitter           = new Css_Media_Splitter( $active_breakpoints );
-		$result             = $splitter->split( $css_string );
-
-		if ( null !== $result['error'] ) {
-			$results->add_error(
-				$index,
-				$action,
-				'invalid_css',
-				$result['error'] . sprintf( ' Valid breakpoints: %s.', implode( ', ', $active_breakpoints ) )
-			);
-			return null;
-		}
-
-		return $this->parse_styles_field( $index, $action, $result['breakpoints'], $results );
-	}
-
-	private function parse_styles_field( int $index, string $action, array $raw_styles, Bulk_Operations_Result $results ): ?array {
-		$breakpoint_blocks   = [];
-		$removal_breakpoints = [];
-
-		foreach ( $raw_styles as $breakpoint => $css_string ) {
-			if ( '' === trim( $css_string ) ) {
-				$removal_breakpoints[] = $breakpoint;
-				continue;
-			}
-
-			$result = $this->get_css_converter()->parse_nested( $css_string );
-
-			if ( isset( $result['error'] ) ) {
-				$results->add_error( $index, $action, 'invalid_css', $result['error'] );
-				return null;
-			}
-
-			$breakpoint_blocks[] = [
-				'breakpoint' => $breakpoint,
-				'blocks'     => $result['blocks'],
-			];
-		}
-
-		return [
-			'breakpoint_blocks'   => $breakpoint_blocks,
-			'removal_breakpoints' => $removal_breakpoints,
-		];
 	}
 
 	private function translate_delete( int $index, array $operation, array &$intents, array $all_labels, array $current_order, array &$deleted_set, Bulk_Operations_Result $results ): void {
