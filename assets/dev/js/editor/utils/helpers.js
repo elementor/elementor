@@ -1,26 +1,18 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
-import DOMPurify, { isValidAttribute } from 'dompurify';
+import DOMPurify from 'dompurify';
 
-const allowedHTMLWrapperTags = [
-	'article',
-	'aside',
-	'div',
-	'footer',
-	'h1',
-	'h2',
-	'h3',
-	'h4',
-	'h5',
-	'h6',
-	'header',
-	'main',
-	'nav',
-	'p',
-	'section',
-	'span',
-];
+/**
+ * PHP (`Utils::get_allowed_html_wrapper_tags()`) is the single source of truth for this
+ * list; it's localized via `elementorCommon.config`. If it's ever missing, fail closed
+ * (no tags allowed) rather than fall back to a second hardcoded copy that could drift.
+ */
+function getAllowedHTMLWrapperTags() {
+	const { allowedHTMLWrapperTags } = globalThis.elementorCommon?.config ?? {};
+
+	return Array.isArray( allowedHTMLWrapperTags ) ? allowedHTMLWrapperTags : [];
+}
 
 module.exports = {
 	container: ContainerHelper,
@@ -694,7 +686,9 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag?.toLowerCase() ) ? tag : 'div';
+		const allowedTags = getAllowedHTMLWrapperTags();
+
+		return allowedTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {
@@ -711,7 +705,7 @@ module.exports = {
 	},
 
 	sanitizeUrl( url ) {
-		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
+		const isValidUrl = !! url ? DOMPurify.isValidAttribute( 'a', 'href', url ) : false;
 
 		if ( ! isValidUrl ) {
 			return '';

@@ -60,11 +60,14 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 
 		await link.hover();
 
-		const hoverBg = await link.evaluate(
-			( el ) => getComputedStyle( el ).backgroundColor,
-		);
-
 		// Assert.
-		expect( hoverBg ).not.toBe( normalBg );
+
+		await expect( async () => {
+			const hoverBg = await link.evaluate(
+				( el ) => getComputedStyle( el ).backgroundColor,
+			);
+
+			expect( hoverBg ).not.toBe( normalBg );
+		} ).toPass();
 	} );
 } );

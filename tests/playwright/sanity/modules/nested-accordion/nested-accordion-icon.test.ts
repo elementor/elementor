@@ -14,6 +14,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 
 	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
+
 		await test.step( 'Inline Font Icons: Off', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

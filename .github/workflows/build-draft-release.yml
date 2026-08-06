@@ -1,0 +1,167 @@
+name: Build & Draft Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'Existing tag/version to build and draft (e.g. 4.2.3)'
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
+      channel:
+        required: false
+        type: string
+        default: 'stable'
+        description: 'Release channel: stable or beta. Standalone runs default to stable (changelog checked).'
+
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      prerelease:
+        required: false
+        type: boolean
+        default: false
+      channel:
+        required: false
+        type: string
+        default: 'stable'
+    secrets:
+      MIXPANEL_TOKEN:
+        required: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Quick check verifies a changelog entry exists for this version. Skipped for beta-channel
+  # releases. Runs against the already-created tag (the source of truth),
+  # ─────────────────────────────────────────────────────────────────────────
+  changelog-check:
+    name: Verify Version Changelog
+    if: ${{ inputs.channel == 'stable' }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    outputs:
+      CHANGES: ${{ steps.get_release_body.outputs.CHANGES }}
+    steps:
+      - name: Checkout tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+
+      - name: Verify version changelog
+        uses: ./.github/workflows/verify-version-changelog
+        with:
+          VERSION: ${{ inputs.version }}
+
+      - name: Get Release Body From Changelog
+        id: get_release_body
+        run: |
+          CHANGES=$(node ./.github/scripts/get-changelog-section.js ${{ inputs.version }})
+          echo "CHANGES: $CHANGES"
+          {
+            echo "CHANGES<<EOF"
+            echo "$CHANGES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+  build-job:
+    name: Build Plugin
+    needs: changelog-check
+    if: always() && (needs.changelog-check.result == 'success' || needs.changelog-check.result == 'skipped')
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        uses: ./.github/workflows/install-dependencies
+
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ inputs.version }}
+          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
+        env:
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-zip
+          path: elementor-*.zip
+          retention-days: 1
+
+  validate-job:
+    name: Validate Build
+    needs: build-job
+
+    if: always() && needs.build-job.result == 'success'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-zip
+
+      - name: Get release name
+        uses: ./.github/workflows/get-release-name
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ inputs.version }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+
+      - name: Unzip build artifact
+        run: unzip -o ${{ github.event.repository.name }}-${{ inputs.version }}.zip -d $GITHUB_WORKSPACE
+
+      - name: Validate build files
+        if: github.repository_owner == 'elementor'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
+          PACKAGE_VERSION: ${{ inputs.version }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+
+  draft-job:
+    name: Create Draft Release
+    needs: [validate-job, changelog-check]
+    if: always() && needs.validate-job.result == 'success'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-zip
+
+      - name: Create draft GitHub release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          files: elementor-*.zip
+          prerelease: ${{ inputs.prerelease }}
+          draft: true
+          body: ${{ needs.changelog-check.outputs.CHANGES }}
