@@ -17,6 +17,7 @@ This tool supports v4 elements only.
 2. Check/create global classes via `elementor/manage-classes`
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 4. Use returned element IDs for subsequent configuration changes
+5. (Only after you build everything) use `elementor/create-preview-link` to generate a preview link and use the browser to validate the work you did.
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
