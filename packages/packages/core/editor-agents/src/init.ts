@@ -1,6 +1,6 @@
-import { injectKitTab } from '@elementor/editor-kit-settings';
+import { injectSiteSettingsTab } from '@elementor/editor-site-settings';
 
-import { AGENTS_KIT_TAB_ID, AgentsSettingsTab } from './components/agents-settings-tab';
+import { AGENTS_SITE_SETTINGS_TAB_ID, AgentsSettingsTab } from './components/agents-settings-tab';
 
 const EXPERIMENT_NAME = 'agents_llms_txt';
 
@@ -15,8 +15,8 @@ export function init() {
 		return;
 	}
 
-	injectKitTab( {
-		id: AGENTS_KIT_TAB_ID,
+	injectSiteSettingsTab( {
+		id: AGENTS_SITE_SETTINGS_TAB_ID,
 		component: AgentsSettingsTab,
 	} );
 }

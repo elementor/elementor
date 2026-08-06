@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/editor-kit-settings",
+  "name": "@elementor/editor-site-settings",
   "version": "4.3.0",
   "private": false,
   "author": "Elementor Team",
@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elementor/elementor.git",
-    "directory": "packages/core/editor-kit-settings"
+    "directory": "packages/core/editor-site-settings"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"

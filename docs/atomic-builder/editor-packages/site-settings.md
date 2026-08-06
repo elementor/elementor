@@ -1,4 +1,4 @@
-# Kit Site Settings (React tabs)
+# Site Settings (React tabs)
 
 > Audience: both
 > Module: `core/kits/documents/tabs/`
@@ -6,12 +6,12 @@
 
 ## What it is
 
-Infrastructure for rendering **React** UI inside Elementor **Site Settings** kit tabs, instead of legacy PHP `Controls_Manager` fields.
+Infrastructure for rendering **React** UI inside Elementor **Site Settings** tabs, instead of legacy PHP `Controls_Manager` fields.
 
 | Package | Role |
 |---------|------|
-| `@elementor/editor-kit-settings` | Tab registry, route listener, portal host in the kit panel |
-| Feature packages (e.g. `@elementor/editor-kit-agents`) | One package per tab implementation |
+| `@elementor/editor-site-settings` | Tab registry, route listener, portal host in the Site Settings panel |
+| Feature packages (e.g. `@elementor/editor-agents`) | One package per tab implementation |
 
 The PHP kit tab class still registers the tab (title, icon, group, save hooks). React replaces only the tab **content** via a portal into `#elementor-kit-panel-content-controls`.
 
@@ -19,11 +19,11 @@ The PHP kit tab class still registers the tab (title, icon, group, save hooks). 
 
 | Symbol | Package | Purpose |
 |--------|---------|---------|
-| `injectKitTab()` | `@elementor/editor-kit-settings` | Register a React component for a kit tab id |
-| `registerKitTab()` | `@elementor/editor-kit-settings` | Lower-level tab registry (prefer `injectKitTab`) |
-| `init()` | `@elementor/editor-kit-settings` | Injects `KitSettingsTab` host via `injectIntoTop` |
+| `injectSiteSettingsTab()` | `@elementor/editor-site-settings` | Register a React component for a Site Settings tab id |
+| `registerSiteSettingsTab()` | `@elementor/editor-site-settings` | Lower-level tab registry (prefer `injectSiteSettingsTab`) |
+| `init()` | `@elementor/editor-site-settings` | Injects `SiteSettingsTab` host via `injectIntoTop` |
 
-Verified: `packages/packages/core/editor-kit-settings/src/index.ts`.
+Verified: `packages/packages/core/editor-site-settings/src/index.ts`.
 
 ## When to use it
 
@@ -35,13 +35,13 @@ Verified: `packages/packages/core/editor-kit-settings/src/index.ts`.
 
 ### Route matching
 
-Kit settings routes follow `panel/global/{tab-id}`. Example: tab id `settings-colors` → route `panel/global/settings-colors`.
+Site Settings routes follow `panel/global/{tab-id}`. Example: tab id `settings-colors` → route `panel/global/settings-colors`.
 
-`useActiveKitTab()` reads `window.$e.routes.getCurrent().panel`, strips the `panel/global/` prefix, and resolves the registered tab component.
+`useActiveSiteSettingsTab()` reads `window.$e.routes.getCurrent().panel`, strips the `panel/global/` prefix, and resolves the registered tab component.
 
 ### Portal rendering
 
-`KitSettingsTab` renders the active tab component into the legacy kit panel DOM node (`KIT_PANEL_CONTENT_ID`). PHP `register_tab_controls()` can stay empty when React owns the UI.
+`SiteSettingsTab` renders the active tab component into the legacy kit panel DOM node (`SITE_SETTINGS_PANEL_CONTENT_ID`). PHP `register_tab_controls()` can stay empty when React owns the UI.
 
 ### Settings I/O
 
@@ -69,7 +69,7 @@ Implement `before_save()` on the tab class to sanitize and normalize settings wr
 
 ### Package loading
 
-Register `editor-kit-settings` once per editor (safe to list from multiple modules). Add feature-specific packages via `elementor/editor/v2/packages`, typically gated by an experiment.
+Register `editor-site-settings` once per editor (safe to list from multiple modules). Add feature-specific packages via `elementor/editor/v2/packages`, typically gated by an experiment.
 
 ## Extension
 
@@ -86,7 +86,7 @@ add_action( 'elementor/kit/register_tabs', function ( $kit ) {
 } );
 
 add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => array_merge( $packages, [
-    'editor-kit-settings',
+    'editor-site-settings',
     'editor-my-feature-settings',
 ] ) );
 ```
@@ -97,12 +97,12 @@ Tab class: implement metadata methods; leave `register_tab_controls()` empty if 
 
 ```ts
 // packages/packages/core/editor-my-feature-settings/src/init.ts
-import { injectKitTab } from '@elementor/editor-kit-settings';
+import { injectSiteSettingsTab } from '@elementor/editor-site-settings';
 
 import { MyFeatureSettingsTab } from './components/my-feature-settings-tab';
 
 export function init() {
-    injectKitTab( {
+    injectSiteSettingsTab( {
         id: 'settings-my-feature',
         component: MyFeatureSettingsTab,
     } );
@@ -115,11 +115,11 @@ Tab id must match the PHP tab `get_id()` return value.
 
 Encapsulate read/write in a dedicated module per feature:
 
-- `getKitSettingsBag()` — null-safe access to v1 settings
+- `getSiteSettingsBag()` — null-safe access to v1 settings
 - `read*()` / `write*()` — encapsulate key paths and `setDocumentModifiedStatus`
 - Disable controls when the settings bag is unavailable (kit document not loaded)
 
-First reference implementation: `@elementor/editor-kit-agents`.
+First reference implementation: `@elementor/editor-agents`.
 
 ## See also
 

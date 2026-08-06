@@ -9,7 +9,7 @@ const registry = new Map< string, Tab >();
 
 const DEFAULT_PRIORITY = 10;
 
-export function registerKitTab( {
+export function registerSiteSettingsTab( {
 	id,
 	priority = DEFAULT_PRIORITY,
 	component,
@@ -25,6 +25,6 @@ export function registerKitTab( {
 	}
 }
 
-export function getKitTab( id: string ): Tab | null {
+export function getSiteSettingsTab( id: string ): Tab | null {
 	return registry.get( id ) ?? null;
 }

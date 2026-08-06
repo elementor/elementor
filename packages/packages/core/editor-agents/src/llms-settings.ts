@@ -10,7 +10,7 @@ type SettingsBag = {
 	set: ( key: string, value: unknown ) => void;
 };
 
-export function getKitSettingsBag(): SettingsBag | null {
+export function getSiteSettingsBag(): SettingsBag | null {
 	const settings = getV1CurrentDocument()?.container?.settings;
 
 	return settings ? ( settings as SettingsBag ) : null;
@@ -31,13 +31,13 @@ function isEmpty( agents: AgentsSettings ): boolean {
 }
 
 export function readLlmsContent(): string {
-	const llms = readAgentsSettings( getKitSettingsBag() )[ LLMS_SETTINGS_KEY ];
+	const llms = readAgentsSettings( getSiteSettingsBag() )[ LLMS_SETTINGS_KEY ];
 
 	return typeof llms === 'string' ? llms : '';
 }
 
 export function writeLlmsContent( content: string ): boolean {
-	const settings = getKitSettingsBag();
+	const settings = getSiteSettingsBag();
 
 	if ( ! settings ) {
 		return false;

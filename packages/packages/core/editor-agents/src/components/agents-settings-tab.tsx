@@ -4,17 +4,17 @@ import { __privateUseListenTo as useListenTo, routeOpenEvent } from '@elementor/
 import { Box, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getKitSettingsBag, readLlmsContent, writeLlmsContent } from '../llms-settings';
+import { getSiteSettingsBag, readLlmsContent, writeLlmsContent } from '../llms-settings';
 
 const TAB_ID = 'settings-agents';
 const TAB_ROUTE = `panel/global/${ TAB_ID }`;
 
 export function AgentsSettingsTab() {
 	const [ value, setValue ] = useState( readLlmsContent );
-	const [ isSettingsAvailable, setIsSettingsAvailable ] = useState( () => null !== getKitSettingsBag() );
+	const [ isSettingsAvailable, setIsSettingsAvailable ] = useState( () => null !== getSiteSettingsBag() );
 
 	useListenTo( [ routeOpenEvent( TAB_ROUTE ) ], () => {
-		setIsSettingsAvailable( null !== getKitSettingsBag() );
+		setIsSettingsAvailable( null !== getSiteSettingsBag() );
 		setValue( readLlmsContent() );
 	} );
 
@@ -47,4 +47,4 @@ export function AgentsSettingsTab() {
 	);
 }
 
-export const AGENTS_KIT_TAB_ID = TAB_ID;
+export const AGENTS_SITE_SETTINGS_TAB_ID = TAB_ID;

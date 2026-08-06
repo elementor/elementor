@@ -18,8 +18,8 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'agents_llms_txt';
 
 	const PACKAGES = [
-		'editor-kit-settings',
-		'editor-kit-agents',
+		'editor-site-settings',
+		'editor-agents',
 	];
 
 	const DEFAULT_CACHE_MAX_AGE = 300;

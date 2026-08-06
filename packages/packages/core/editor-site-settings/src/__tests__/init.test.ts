@@ -11,14 +11,14 @@ describe( 'init', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'injects the kit settings tab host into the editor shell', () => {
+	it( 'injects the site settings tab host into the editor shell', () => {
 		// Act.
 		init();
 
 		// Assert.
 		expect( injectIntoTop ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				id: 'editor-kit-settings-tab',
+				id: 'editor-site-settings-tab',
 			} )
 		);
 	} );

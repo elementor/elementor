@@ -2,7 +2,7 @@ import { getV1CurrentDocument, setDocumentModifiedStatus } from '@elementor/edit
 
 import {
 	AGENTS_SETTINGS_KEY,
-	getKitSettingsBag,
+	getSiteSettingsBag,
 	LLMS_SETTINGS_KEY,
 	readLlmsContent,
 	writeLlmsContent,
@@ -38,12 +38,12 @@ describe( 'llms-settings', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns null when the kit settings bag is unavailable', () => {
+	it( 'returns null when the site settings bag is unavailable', () => {
 		// Arrange.
 		mockGetV1CurrentDocument.mockReturnValue( null as unknown as ReturnType< typeof getV1CurrentDocument > );
 
 		// Assert.
-		expect( getKitSettingsBag() ).toBeNull();
+		expect( getSiteSettingsBag() ).toBeNull();
 		expect( readLlmsContent() ).toBe( '' );
 		expect( writeLlmsContent( 'content' ) ).toBe( false );
 	} );

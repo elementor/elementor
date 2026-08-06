@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/editor-kit-agents",
+  "name": "@elementor/editor-agents",
   "version": "4.3.0",
   "private": false,
   "author": "Elementor Team",
@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elementor/elementor.git",
-    "directory": "packages/core/editor-kit-agents"
+    "directory": "packages/core/editor-agents"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@elementor/editor-documents": "4.3.0",
-    "@elementor/editor-kit-settings": "4.3.0",
+    "@elementor/editor-site-settings": "4.3.0",
     "@elementor/editor-v1-adapters": "4.3.0",
     "@elementor/ui": "1.37.5",
     "@wordpress/i18n": "^5.13.0"

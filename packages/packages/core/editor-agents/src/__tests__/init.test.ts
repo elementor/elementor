@@ -1,12 +1,12 @@
-import { injectKitTab } from '@elementor/editor-kit-settings';
+import { injectSiteSettingsTab } from '@elementor/editor-site-settings';
 
-const mockInjectKitTab = injectKitTab as jest.MockedFunction< typeof injectKitTab >;
+const mockInjectSiteSettingsTab = injectSiteSettingsTab as jest.MockedFunction< typeof injectSiteSettingsTab >;
 
-jest.mock( '@elementor/editor-kit-settings', () => ( {
-	injectKitTab: jest.fn(),
+jest.mock( '@elementor/editor-site-settings', () => ( {
+	injectSiteSettingsTab: jest.fn(),
 } ) );
 
-import { AGENTS_KIT_TAB_ID, AgentsSettingsTab } from '../components/agents-settings-tab';
+import { AGENTS_SITE_SETTINGS_TAB_ID, AgentsSettingsTab } from '../components/agents-settings-tab';
 import { init } from '../init';
 
 describe( 'init', () => {
@@ -20,7 +20,7 @@ describe( 'init', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'registers the agents kit tab when the experiment is active', () => {
+	it( 'registers the agents site settings tab when the experiment is active', () => {
 		// Arrange.
 		window.elementorCommon = {
 			config: {
@@ -34,13 +34,13 @@ describe( 'init', () => {
 		init();
 
 		// Assert.
-		expect( mockInjectKitTab ).toHaveBeenCalledWith( {
-			id: AGENTS_KIT_TAB_ID,
+		expect( mockInjectSiteSettingsTab ).toHaveBeenCalledWith( {
+			id: AGENTS_SITE_SETTINGS_TAB_ID,
 			component: AgentsSettingsTab,
 		} );
 	} );
 
-	it( 'does not register the agents kit tab when the experiment is inactive', () => {
+	it( 'does not register the agents site settings tab when the experiment is inactive', () => {
 		// Arrange.
 		window.elementorCommon = {
 			config: {
@@ -52,6 +52,6 @@ describe( 'init', () => {
 		init();
 
 		// Assert.
-		expect( mockInjectKitTab ).not.toHaveBeenCalled();
+		expect( mockInjectSiteSettingsTab ).not.toHaveBeenCalled();
 	} );
 } );

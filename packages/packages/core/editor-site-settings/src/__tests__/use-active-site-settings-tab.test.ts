@@ -1,8 +1,8 @@
 import { __privateUseListenTo as useListenTo } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
-import { useActiveKitTab } from '../hooks/use-active-kit-tab';
-import { registerKitTab } from '../tabs';
+import { useActiveSiteSettingsTab } from '../hooks/use-active-site-settings-tab';
+import { registerSiteSettingsTab } from '../tabs';
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateUseListenTo: jest.fn( ( _events, callback: () => unknown ) => callback() ),
@@ -14,7 +14,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 const ExampleTab = () => null;
 const EXAMPLE_TAB_ID = 'settings-example';
 
-describe( 'useActiveKitTab', () => {
+describe( 'useActiveSiteSettingsTab', () => {
 	const originalRoutes = window.$e?.routes;
 	const mockGetCurrent = jest.fn();
 
@@ -25,7 +25,7 @@ describe( 'useActiveKitTab', () => {
 			},
 		} as unknown as typeof window.$e;
 
-		registerKitTab( { id: EXAMPLE_TAB_ID, component: ExampleTab } );
+		registerSiteSettingsTab( { id: EXAMPLE_TAB_ID, component: ExampleTab } );
 	} );
 
 	afterEach( () => {
@@ -33,14 +33,14 @@ describe( 'useActiveKitTab', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns null when the current panel route is not a kit settings tab', () => {
+	it( 'returns null when the current panel route is not a site settings tab', () => {
 		// Arrange — editor canvas route, not panel/global/*.
 		mockGetCurrent.mockReturnValue( { panel: 'panel/editor' } );
 
 		// Act.
-		const { result } = renderHook( () => useActiveKitTab() );
+		const { result } = renderHook( () => useActiveSiteSettingsTab() );
 
-		// Assert — no kit tab component should mount.
+		// Assert — no site settings tab component should mount.
 		expect( result.current ).toBeNull();
 		expect( useListenTo ).toHaveBeenCalled();
 	} );
@@ -52,20 +52,20 @@ describe( 'useActiveKitTab', () => {
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useActiveKitTab() );
+		const { result } = renderHook( () => useActiveSiteSettingsTab() );
 
 		// Assert — hook resolves tab id from the route and looks up the component.
 		expect( result.current?.component ).toBe( ExampleTab );
 	} );
 
-	it( 'returns null when the kit settings route has no registered React tab', () => {
-		// Arrange — legacy PHP-only tab with no injectKitTab() registration.
+	it( 'returns null when the site settings route has no registered React tab', () => {
+		// Arrange — legacy PHP-only tab with no injectSiteSettingsTab() registration.
 		mockGetCurrent.mockReturnValue( {
 			panel: 'panel/global/settings-colors',
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useActiveKitTab() );
+		const { result } = renderHook( () => useActiveSiteSettingsTab() );
 
 		// Assert — portal host renders nothing until a package registers the tab.
 		expect( result.current ).toBeNull();
