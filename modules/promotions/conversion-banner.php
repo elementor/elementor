@@ -22,14 +22,8 @@ class Conversion_Banner {
 	const CONTAINER_ID = 'e-conversion-banner';
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
-	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
-	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
-	const GO_PRO_TITLE_PREFIX = 'Go Pro';
-
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
-
-		add_filter( self::HELLO_THEME_CONFIG_FILTER, [ $this, 'suppress_hello_theme_banner' ] );
 
 		add_action( 'current_screen', [ $this, 'maybe_register_banner_hooks' ] );
 	}
@@ -53,35 +47,6 @@ class Conversion_Banner {
 			<?php $this->print_banner_markup( true ); ?>
 		</div>
 		<?php
-	}
-
-	public function suppress_hello_theme_banner( $config ) {
-		if ( $this->is_request_from_theme_admin_page()
-			|| ! ( is_array( $config ) && isset( $config['welcome'] ) )
-			|| Utils::has_pro()
-		) {
-			return $config;
-		}
-
-		$title = $config['welcome']['title'] ?? '';
-
-		if ( is_string( $title ) && substr( $title, 0, strlen( self::GO_PRO_TITLE_PREFIX ) ) === self::GO_PRO_TITLE_PREFIX ) {
-			$config['welcome'] = [];
-		}
-
-		return $config;
-	}
-
-	private function is_request_from_theme_admin_page(): bool {
-		$referer = wp_get_referer();
-
-		if ( ! $referer ) {
-			return false;
-		}
-
-		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query_args );
-
-		return in_array( $query_args['page'] ?? '', self::THEME_SLUGS );
 	}
 
 	public function ajax_dismiss_banner(): void {
