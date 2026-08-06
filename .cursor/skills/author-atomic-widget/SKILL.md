@@ -5,6 +5,8 @@ description: Workflow for creating Elementor v4 atomic widgets and container ele
 
 # Author atomic widget or element
 
+> **Scope: External** — shippable from a 3rd-party plugin via `elementor/widgets/register` / `elementor/elements/elements_registered`; no Elementor Core changes required. Changing the built-in element catalog is Internal. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md), [hooks.md](../../../docs/atomic-builder/atomic-widgets/hooks.md), [rendering.md](../../../docs/atomic-builder/atomic-widgets/rendering.md).
 
 ## Checklist

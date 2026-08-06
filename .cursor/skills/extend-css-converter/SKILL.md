@@ -5,6 +5,8 @@ description: Extends Elementor atomic CSS converter — Shorthand_Expander_Base,
 
 # Extend CSS converter
 
+> **Scope: Internal (Core PR required)** — there is **no public registration hook**. A 3rd-party plugin cannot wire a converter into the core import pipeline. Extending this needs a PR against Elementor Core (`Converter_Registry_Factory` / `Expander_Registry_Factory`), or a private `Css_Converter` instance not integrated into core import. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md). Example: [docs/atomic-builder/examples/extend-css-converter.md](../../../docs/atomic-builder/examples/extend-css-converter.md). Pipeline: [pipeline.md](../../../docs/atomic-builder/css-converter/pipeline.md), [overview.md](../../../docs/atomic-builder/css-converter/overview.md).
 
 ## Checklist

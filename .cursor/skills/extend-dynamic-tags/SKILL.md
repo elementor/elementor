@@ -5,6 +5,8 @@ description: Adds Elementor dynamic tags for v4 atomic widgets — elementor/dyn
 
 # Extend dynamic tags (atomic bridge)
 
+> **Scope: External** — shippable from a 3rd-party plugin via `elementor/dynamic_tags/register` and the atomic select-control filters; no Core changes required. There is no public filter for category→schema auto-mapping — custom mapping needs manual prop unions. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md). Supporting: [overview.md](../../../docs/atomic-builder/dynamic-tags/overview.md), [binding-propvalues.md](../../../docs/atomic-builder/dynamic-tags/binding-propvalues.md), [discovery.md](../../../docs/atomic-builder/dynamic-tags/discovery.md).
 
 ## Checklist

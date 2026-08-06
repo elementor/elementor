@@ -5,6 +5,8 @@ description: Extends Elementor Editor V2 — elementor/editor/v2/packages PHP fi
 
 # Extend Editor V2
 
+> **Scope: External** — shippable from a 3rd-party plugin via `elementor/editor/v2/packages` and your own package `init()`; no Core changes required. Editing core packages is Internal. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
 Read first: [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md), [mcp/registering-editor-tools.md](../../../docs/atomic-builder/mcp/registering-editor-tools.md), [packages/docs/creating-a-new-package.md](../../../packages/docs/creating-a-new-package.md).
 
 ## Checklist
