@@ -134,6 +134,7 @@
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jquery": "^3.7.1",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
@@ -208,20 +209,48 @@
     "form-data": "4.0.4",
     "baseline-browser-mapping": "^2.9.19",
     "zod-validation-error": "^4.0.2",
-    "@babel/eslint-parser": { "eslint": "$eslint" },
-    "eslint-plugin-import": { "eslint": "$eslint" },
-    "eslint-plugin-react": { "eslint": "$eslint" },
-    "eslint-plugin-jsx-a11y": { "eslint": "$eslint" },
-    "eslint-plugin-jsdoc": { "eslint": "$eslint" },
-    "eslint-plugin-jest-dom": { "eslint": "$eslint" },
-    "eslint-plugin-testing-library": { "eslint": "$eslint" },
-    "eslint-plugin-local-rules": { "eslint": "$eslint" },
-    "eslint-plugin-no-jquery": { "eslint": "$eslint" },
-    "eslint-plugin-playwright": { "eslint": "$eslint" },
-    "eslint-plugin-simple-import-sort": { "eslint": "$eslint" },
-    "eslint-import-resolver-typescript": { "eslint": "$eslint" },
-    "@tanstack/eslint-plugin-query": { "eslint": "$eslint" },
-    "eslint-plugin-react-compiler": { "eslint": "$eslint" }
+    "@babel/eslint-parser": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-import": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-react": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jsx-a11y": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jsdoc": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jest-dom": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-testing-library": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-local-rules": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-no-jquery": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-playwright": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-simple-import-sort": {
+      "eslint": "$eslint"
+    },
+    "eslint-import-resolver-typescript": {
+      "eslint": "$eslint"
+    },
+    "@tanstack/eslint-plugin-query": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-react-compiler": {
+      "eslint": "$eslint"
+    }
   },
   "lint-staged": {
     "packages/**/*.{js,jsx,ts,tsx}": [
