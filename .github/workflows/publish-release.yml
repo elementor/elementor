@@ -176,6 +176,7 @@ jobs:
   publish-packages:
     name: Publish Packages
     needs: publish
+    if: ${{ !inputs.prerelease && github.repository_owner == 'elementor' }}
     permissions:
       contents: read
     uses: ./.github/workflows/publish-packages.yml
