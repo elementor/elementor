@@ -5,6 +5,10 @@ const eventsConfig = {
 		wpDash: 'wpdash',
 	},
 
+	windowNames: {
+		sidebarMenu: 'sidebar_menu',
+	},
+
 	targetTypes: {
 		dropdownItem: 'dropdown_item',
 		button: 'button',
@@ -17,6 +21,7 @@ const eventsConfig = {
 		wpDashAdminMenuItem: 'wpdash_admin_menu_item',
 		wpDashEditorMenu: 'wpdash_editor_menu',
 		wpDashSubMenuItem: 'wpdash_sub_menu_item',
+		link: 'link',
 	},
 
 	interactionResults: {
@@ -36,6 +41,9 @@ const eventsConfig = {
 		elementorSideMenuOpened: 'elementor_side_menu_opened',
 		editorSubMenuOpened: 'wpdash_editor_sub_menu_opened',
 		themeBuilderPromotionWindow: 'theme_builder_promotion_window',
+		pageOpened: 'page_opened',
+		expanded: 'expanded',
+		collapsed: 'collapsed',
 	},
 
 	targetNames: {
@@ -311,6 +319,8 @@ const eventsConfig = {
 			wpDashElementorMenuClick: 'wpdash_elementor_menu_click',
 			wpDashEditorSubMenuHover: 'wpdash_editor_sub_menu_hover',
 			wpDashThemeBuilderClick: 'wpdash_theme_builder_click',
+			sidebarMenuItemClicked: 'sidebar_menu_item_clicked',
+			sidebarMenuGroupToggled: 'sidebar_menu_group_toggled',
 		},
 		interactions: {
 			created: 'interactions_created',
