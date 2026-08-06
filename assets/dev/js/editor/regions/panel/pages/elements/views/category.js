@@ -1,6 +1,8 @@
-var CREATE_WIDGET_PROMPT = require( './widget-creation' ).CREATE_WIDGET_PROMPT,
-	PanelElementsElementsCollection = require( '../collections/elements' ),
+var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
+
+const COMMUNITY_LIBRARY_STORAGE_KEY = 'elementor_user_interactions/angie_community_library';
+const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 
 PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-panel-elements-category',
@@ -16,7 +18,9 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	events: {
 		'click @ui.title': 'onTitleClick',
 		'click @ui.chip': 'onChipClick',
-		'click .elementor-panel-custom-widgets__cta': 'onCustomWidgetsCtaClick',
+		'click .elementor-panel-custom-widgets__cta--heading': 'onCustomWidgetsMenuOpen',
+		'click .elementor-panel-custom-widgets-community-promo__button': 'onCustomWidgetsCommunityPromoClick',
+		'click .elementor-panel-custom-widgets-community-promo__dismiss': 'onCommunityPromoDismiss',
 		'click .elementor-panel-heading-promotion a': 'onPromotionLinkClick',
 	},
 
@@ -38,6 +42,22 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		}
 
 		this.collection = new PanelElementsElementsCollection( items );
+
+		this.onCreateWidgetEvent = this.onCreateWidgetEvent.bind( this );
+		window.addEventListener( CREATE_WIDGET_EVENT, this.onCreateWidgetEvent );
+	},
+
+	onDestroy() {
+		window.removeEventListener( CREATE_WIDGET_EVENT, this.onCreateWidgetEvent );
+	},
+
+	onCreateWidgetEvent( event ) {
+		if ( ! event.detail?.openCommunityLibrary ) {
+			return;
+		}
+
+		setCommunityLibraryState( { was_interacted: true } );
+		this.applyCommunityPromoState();
 	},
 
 	behaviors() {
@@ -61,6 +81,29 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			this.$el.addClass( 'elementor-active' );
 		} else {
 			this.ui.items.css( 'display', 'none' );
+		}
+
+		this.applyCommunityPromoState();
+	},
+
+	applyCommunityPromoState() {
+		const $promo = this.$el.find( '.elementor-panel-custom-widgets-community-promo' );
+		if ( ! $promo.length ) {
+			return;
+		}
+
+		const state = getCommunityLibraryState();
+
+		if ( state.was_dismissed ) {
+			$promo.hide();
+			return;
+		}
+
+		if ( state.was_interacted ) {
+			const $icon = $promo.find( '.elementor-panel-custom-widgets-community-promo__icon' );
+			const $dismiss = $promo.find( '.elementor-panel-custom-widgets-community-promo__dismiss' );
+			$icon.hide();
+			$dismiss.show();
 		}
 	},
 
@@ -111,14 +154,18 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		);
 	},
 
-	onCustomWidgetsCtaClick( event ) {
+	onCustomWidgetsMenuOpen( event ) {
 		event.stopPropagation();
 
+		const buttonRect = event.currentTarget.getBoundingClientRect();
+
 		window.dispatchEvent(
-			new CustomEvent( 'elementor/editor/create-widget', {
+			new CustomEvent( 'elementor/editor/open-create-widget-menu', {
 				detail: {
-					prompt: CREATE_WIDGET_PROMPT,
-					entry_point: 'widgets_panel',
+					anchorPosition: {
+						top: buttonRect.bottom,
+						left: buttonRect.left,
+					},
 				},
 			} ),
 		);
@@ -127,6 +174,48 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	onPromotionLinkClick( event ) {
 		event.stopPropagation();
 	},
+
+	onCustomWidgetsCommunityPromoClick( event ) {
+		event.stopPropagation();
+
+		window.dispatchEvent(
+			new CustomEvent( CREATE_WIDGET_EVENT, {
+				detail: {
+					entry_point: 'widgets_panel',
+					trigger: 'community-library-banner',
+					openCommunityLibrary: true,
+				},
+			} ),
+		);
+	},
+
+	onCommunityPromoDismiss( event ) {
+		event.stopPropagation();
+
+		setCommunityLibraryState( { was_dismissed: true } );
+		this.applyCommunityPromoState();
+	},
 } );
 
 module.exports = PanelElementsCategoryView;
+
+function getCommunityLibraryState() {
+	const defaultState = { was_interacted: false, was_dismissed: false };
+	const stored = localStorage.getItem( COMMUNITY_LIBRARY_STORAGE_KEY );
+
+	if ( ! stored ) {
+		return defaultState;
+	}
+
+	try {
+		return { ...defaultState, ...JSON.parse( stored ) };
+	} catch {
+		return defaultState;
+	}
+}
+
+function setCommunityLibraryState( newState ) {
+	const current = getCommunityLibraryState();
+	const updated = { ...current, ...newState };
+	localStorage.setItem( COMMUNITY_LIBRARY_STORAGE_KEY, JSON.stringify( updated ) );
+}
