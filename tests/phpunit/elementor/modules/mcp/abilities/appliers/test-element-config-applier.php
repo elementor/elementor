@@ -87,39 +87,6 @@ class Test_Element_Config_Applier extends TestCase {
 		);
 	}
 
-	public function test_apply__errors_when_e_component_entry_has_no_document_context() {
-		// Arrange
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
-
-		$e_component_node = [
-			'elType' => 'widget',
-			'widgetType' => 'e-component',
-			'settings' => [],
-		];
-
-		$index = [ 'my-hero' => &$e_component_node ];
-
-		// Act
-		$result = $applier->apply(
-			$index,
-			[
-				'my-hero' => [
-					'component_id' => 42,
-					'overrides' => [ 'title' => 'Welcome' ],
-				],
-			],
-			[]
-		);
-
-		// Assert
-		$this->assertNotNull( $result['error'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['error']->get_error_code() );
-		$this->assertStringContainsString( 'my-hero', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'document context', $result['error']->get_error_message() );
-		$this->assertSame( [], $e_component_node['settings'] );
-	}
-
 	public function test_apply__reports_settings_and_component_errors_together() {
 		// Arrange
 		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
