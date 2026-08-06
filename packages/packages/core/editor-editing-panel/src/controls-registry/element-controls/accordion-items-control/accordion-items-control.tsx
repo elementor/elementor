@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import { updateElementEditorSettings, useElementChildren, useElementEditorSettings } from '@elementor/editor-elements';
-import { type CreateOptions } from '@elementor/editor-props';
+import { booleanPropTypeUtil, type CreateOptions } from '@elementor/editor-props';
 import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { ACCORDION_ELEMENT_TYPE, ACCORDION_ITEM_ELEMENT_TYPE, type AccordionItem, useActions } from './use-actions';
+import { useShowIconWriteThrough } from './use-show-icon-write-through';
 
 // Unlike the Tabs control there is no `SettingsField` / `useBoundProp` wrapper here: an accordion
 // item is self-contained (head and content are nested inside the one `e-accordion-item`), so there
@@ -14,7 +15,7 @@ import { ACCORDION_ELEMENT_TYPE, ACCORDION_ITEM_ELEMENT_TYPE, type AccordionItem
 // context dependency is `ControlAdornmentsProvider`, which `SettingsControl` already provides for
 // element controls and which falls back to no adornments when absent.
 export const AccordionItemsControl = ( { label }: { label: string } ) => {
-	const { element } = useElement();
+	const { element, settings } = useElement();
 	const { addItem, duplicateItem, moveItem, removeItem } = useActions();
 
 	// Items are direct children of the root, so the root itself is the parent to read them from —
@@ -24,6 +25,14 @@ export const AccordionItemsControl = ( { label }: { label: string } ) => {
 		{ [ ACCORDION_ELEMENT_TYPE ]: ACCORDION_ITEM_ELEMENT_TYPE },
 		{ includeSelfAsParent: true }
 	);
+
+	// The root's `show_icon` (rendered elsewhere in this same "Content" section via the standard
+	// `Switch_Control` -> `SettingsField` pipeline). Read here, alongside the repeater, purely to
+	// drive the write-through to every head - see `useShowIconWriteThrough` for why this can't live
+	// inside the generic switch control itself.
+	const showIcon = booleanPropTypeUtil.extract( settings.show_icon ) ?? true;
+
+	useShowIconWriteThrough( element.id, showIcon );
 
 	const repeaterValues: RepeaterItem< AccordionItem >[] = items.map( ( item, index ) => {
 		return {
@@ -45,6 +54,7 @@ export const AccordionItemsControl = ( { label }: { label: string } ) => {
 				// see `getNextItemNumber`.
 				existingTitles: repeaterValues.map( ( { title } ) => title ),
 				items: meta.action.payload,
+				showIcon,
 			} );
 		}
 

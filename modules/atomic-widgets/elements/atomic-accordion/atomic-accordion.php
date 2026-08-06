@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Accordion_Items_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -15,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -78,6 +80,15 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			'title_tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'span' ] )
 				->default( 'span' ),
+			// Single, global, user-facing toggle - there is no per-item Show Icon (confirmed with the
+			// PM: users want icons on every item or on none, never mixed). It is exposable as a
+			// component property, so no `Overridable_Prop_Type::ignore()`. Every `e-accordion-item-head`
+			// carries its own mirrored `show_icon` prop (see that class) purely because the children-
+			// dependencies reconciler evaluates a rule against the *declaring* element's own settings
+			// and can only attach/detach that element's *direct* children - a root-level prop here can
+			// never drive a grandchild's presence. Do not "clean up" the mirror; the duplication is
+			// structural, not an oversight.
+			'show_icon' => Boolean_Prop_Type::make()->default( true ),
 		];
 	}
 
@@ -92,6 +103,8 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->set_meta( [
 							'layout' => 'custom',
 						] ),
+					Switch_Control::bind_to( 'show_icon' )
+						->set_label( esc_html__( 'Show Icon', 'elementor' ) ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )

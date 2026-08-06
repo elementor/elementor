@@ -51,6 +51,7 @@ describe( 'accordion-items-control actions', () => {
 				accordionId: ACCORDION_ID,
 				existingTitles: DEFAULT_TITLES,
 				items: [ { item: { id: '' }, index: 2 } ],
+				showIcon: true,
 			} );
 
 			// Assert.
@@ -75,6 +76,7 @@ describe( 'accordion-items-control actions', () => {
 					{ item: { id: '' }, index: 2 },
 					{ item: { id: '' }, index: 3 },
 				],
+				showIcon: true,
 			} );
 
 			// Assert.
@@ -91,6 +93,7 @@ describe( 'accordion-items-control actions', () => {
 				accordionId: ACCORDION_ID,
 				existingTitles: [],
 				items: [ { item: { id: '' }, index: 0 } ],
+				showIcon: true,
 			} );
 
 			// Assert.
@@ -104,6 +107,26 @@ describe( 'accordion-items-control actions', () => {
 			expect( title.elType ).toBe( 'e-accordion-item-title' );
 			expect( icon.elType ).toBe( 'e-accordion-item-icon' );
 			expect( icon.hydrateDefaultChildren ).toBe( true );
+			expect( head.settings ).toEqual( { show_icon: { $$type: 'boolean', value: true } } );
+		} );
+
+		it( "should seed the new item's head from the root's current show_icon value, not the schema default", () => {
+			// Arrange.
+			const { result } = renderHook( () => useActions() );
+
+			// Act.
+			result.current.addItem( {
+				accordionId: ACCORDION_ID,
+				existingTitles: [],
+				items: [ { item: { id: '' }, index: 0 } ],
+				showIcon: false,
+			} );
+
+			// Assert.
+			const model = getCreatedItemModel();
+			const [ head ] = model.elements ?? [];
+
+			expect( head.settings ).toEqual( { show_icon: { $$type: 'boolean', value: false } } );
 		} );
 
 		it( 'should number the rendered title paragraph the same way the default tree does', () => {
@@ -115,6 +138,7 @@ describe( 'accordion-items-control actions', () => {
 				accordionId: ACCORDION_ID,
 				existingTitles: DEFAULT_TITLES,
 				items: [ { item: { id: '' }, index: 2 } ],
+				showIcon: true,
 			} );
 
 			// Assert.
@@ -148,6 +172,7 @@ describe( 'accordion-items-control actions', () => {
 				accordionId: ACCORDION_ID,
 				existingTitles: [],
 				items: [ { item: { id: '' }, index: 0 } ],
+				showIcon: true,
 			} );
 
 			// Assert.
@@ -175,6 +200,7 @@ describe( 'accordion-items-control actions', () => {
 					accordionId: ACCORDION_ID,
 					existingTitles: [],
 					items: [ { item: { id: '' }, index: 0 } ],
+					showIcon: true,
 				} );
 			} ).toThrow( 'Accordion container not found' );
 		} );
@@ -188,6 +214,7 @@ describe( 'accordion-items-control actions', () => {
 				accordionId: ACCORDION_ID,
 				existingTitles,
 				items: [ { item: { id: '' }, index } ],
+				showIcon: true,
 			} );
 
 			const model = jest.mocked( createElements ).mock.calls[ 0 ][ 0 ].elements[ 0 ]
@@ -294,6 +321,7 @@ describe( 'accordion-items-control actions', () => {
 					{ item: { id: '' }, index: 1 },
 					{ item: { id: '' }, index: 2 },
 				],
+				showIcon: true,
 			} );
 
 			// Assert.

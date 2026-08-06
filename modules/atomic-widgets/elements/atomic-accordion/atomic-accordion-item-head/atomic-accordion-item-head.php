@@ -2,18 +2,23 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head;
 
+use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -61,6 +66,15 @@ class Atomic_Accordion_Item_Head extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			// Mirrors the root `e-accordion`'s `show_icon` toggle (see that class for the user-facing
+			// control). This copy exists only so `define_children_dependencies()` below has something
+			// on *this* element's own settings to evaluate: the children-dependencies reconciler reads
+			// only the declaring element's own settings and can only attach/detach its own direct
+			// children, so a root-level prop can never drive whether *this* head's icon child is
+			// present. The editor writes this prop through from the root whenever the root's `show_icon`
+			// changes (see `useShowIconWriteThrough` alongside the accordion items repeater control) -
+			// it is never surfaced in the panel and must never grow a per-item control of its own.
+			'show_icon' => Boolean_Prop_Type::make()->default( true ),
 		];
 	}
 
@@ -125,6 +139,32 @@ class Atomic_Accordion_Item_Head extends Atomic_Element_Base {
 					'title' => esc_html__( 'Icon', 'elementor' ),
 				] )
 				->build(),
+		];
+	}
+
+	/**
+	 * Attaches/detaches the icon child as the mirrored `show_icon` prop changes, with `stash( true )`
+	 * so a user's *replaced* SVG (or one with edited styles) comes back exactly as it was on
+	 * OFF -> ON, instead of a fresh default chevron being reseeded over it. Mirrors
+	 * `Atomic_Background_Video::define_children_dependencies()` for `show_controls` / the
+	 * Controls child.
+	 */
+	protected function define_children_dependencies(): array {
+		return [
+			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON )
+				->when( Dependency_Manager::make()->where( [
+					'operator' => 'ne',
+					'path' => [ 'show_icon' ],
+					'value' => false,
+				] ) )
+				->position( Element_Position::last() )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->build()
+				),
 		];
 	}
 

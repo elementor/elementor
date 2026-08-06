@@ -9,6 +9,7 @@ import {
 	removeElements,
 	type V1ElementData,
 } from '@elementor/editor-elements';
+import { booleanPropTypeUtil } from '@elementor/editor-props';
 import { __, sprintf } from '@wordpress/i18n';
 
 export type AccordionItem = {
@@ -77,7 +78,7 @@ const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 // `V1ElementData` is the plain-object form of a model tree: nested `elements` are objects that
 // Backbone turns into models on `initialize`, and ids have to be generated here because only the
 // outermost model gets one from `document/elements/create`.
-const buildItemModel = ( position: number ): V1ElementData => {
+const buildItemModel = ( position: number, showIcon: boolean ): V1ElementData => {
 	const numberedTitle = getItemTitle( position );
 
 	return {
@@ -89,6 +90,11 @@ const buildItemModel = ( position: number ): V1ElementData => {
 				elType: ACCORDION_ITEM_HEAD_ELEMENT_TYPE,
 				id: generateElementId(),
 				editor_settings: { title: __( 'Head', 'elementor' ) },
+				// Seeded from the root's *current* `show_icon` value, not the schema default: if a user
+				// has already turned Show Icon off, a newly added item must start with its icon hidden
+				// too, not re-show one just because the item itself is brand new. See the comment on
+				// the mirrored prop in `Atomic_Accordion_Item_Head` for why this duplication exists.
+				settings: { show_icon: booleanPropTypeUtil.create( showIcon ) },
 				elements: [
 					{
 						elType: ACCORDION_ITEM_TITLE_ELEMENT_TYPE,
@@ -137,10 +143,14 @@ export const useActions = () => {
 		accordionId,
 		existingTitles,
 		items,
+		showIcon,
 	}: {
 		accordionId: string;
 		existingTitles: ( string | undefined )[];
 		items: ItemsActionPayload< AccordionItem >;
+		// The root's *current* `show_icon` value, so the new item's head starts in sync with it
+		// instead of the schema default - see the comment on `buildItemModel`.
+		showIcon: boolean;
 	} ) => {
 		const accordion = getContainer( accordionId );
 
@@ -159,7 +169,7 @@ export const useActions = () => {
 				elements: [
 					{
 						container: accordion,
-						model: buildItemModel( position ) as unknown as CreateElementParams[ 'model' ],
+						model: buildItemModel( position, showIcon ) as unknown as CreateElementParams[ 'model' ],
 					},
 				],
 			} );
