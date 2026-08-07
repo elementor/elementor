@@ -35,11 +35,12 @@ class Module extends Module_Base {
 	protected function handle_submit( $request, $additional_cookies = [] ) {
 		$user_meta = get_user_meta( get_current_user_id(), 'wp_elementor_connect_common_data' );
 		$app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'feedback' );
+		$subject = sanitize_text_field( $request->get_param( 'subject' ) );
 		$body = [
 			'title' => 'Editor Feedback',
 			'description' => $request->get_param( 'description' ),
 			'product' => 'EDITOR',
-			'subject' => sanitize_text_field( $request->get_param( 'subject' ) ) ?: self::DEFAULT_SUBJECT,
+			'subject' => $subject ? $subject : self::DEFAULT_SUBJECT,
 		];
 
 		$response = $app->submit( $body );

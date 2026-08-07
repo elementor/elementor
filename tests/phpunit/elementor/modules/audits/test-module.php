@@ -112,7 +112,7 @@ class Test_Module extends Elementor_Test_Base {
 		do_action( 'elementor/editor/v2/scripts/enqueue' );
 
 		// Assert.
-		$this->assertEmpty( wp_scripts()->get_data( 'elementor-v2-editor-audits', 'data' ) );
+		$this->assertEmpty( wp_scripts()->get_inline_script_data( 'elementor-v2-editor-audits', 'before' ) );
 	}
 
 	public function test_inline_config_is_printed_when_editor_assets_enqueue_and_experiment_is_active() {
@@ -125,7 +125,7 @@ class Test_Module extends Elementor_Test_Base {
 		do_action( 'elementor/editor/v2/scripts/enqueue' );
 
 		// Assert.
-		$inline = wp_scripts()->get_data( 'elementor-v2-editor-audits', 'data' );
+		$inline = wp_scripts()->get_inline_script_data( 'elementor-v2-editor-audits', 'before' );
 		$this->assertIsString( $inline );
 		$this->assertStringContainsString( 'window.elementorAudits', $inline );
 		$this->assertStringContainsString( '"restNamespace"', $inline );

@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Audits;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\Audits\Data\Endpoints\Page_Context;
 use PHPUnit\Framework\TestCase;
 
@@ -22,6 +23,10 @@ class Test_Page_Context_Endpoint extends TestCase {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->ensure_active_kit_exists();
+
+		do_action( 'rest_api_init' );
 
 		$this->saved_blogname = get_option( 'blogname' );
 		$this->saved_blogdescription = get_option( 'blogdescription' );
@@ -303,5 +308,21 @@ class Test_Page_Context_Endpoint extends TestCase {
 
 	private function build_controller() {
 		return new \Elementor\Modules\Audits\Data\Controller();
+	}
+
+	/**
+	 * A previous test class may have left OPTION_ACTIVE pointing to a kit that was already
+	 * wiped from the database. `update_option( 'blogname' | 'blogdescription' )` triggers
+	 * Kits_Manager's site-identity sync, which requires a valid active kit to exist.
+	 */
+	private function ensure_active_kit_exists(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
+
+		Kits_Manager::create_default_kit();
 	}
 }

@@ -26,6 +26,7 @@ class Page_Context extends Endpoint_Base {
 
 		$post = get_post( $document_id );
 		$thumbnail_id = $post ? (int) get_post_thumbnail_id( $post ) : 0;
+		$privacy_policy_url = get_privacy_policy_url();
 
 		return [
 			'site_identity' => [
@@ -46,7 +47,7 @@ class Page_Context extends Endpoint_Base {
 			'is_noindex' => ! (bool) get_option( 'blog_public' ),
 			'reading_settings_url' => admin_url( 'options-reading.php' ),
 
-			'privacy_policy_url' => get_privacy_policy_url() ?: null,
+			'privacy_policy_url' => $privacy_policy_url ? $privacy_policy_url : null,
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
 			'ally_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=pojo-accessibility' ),
