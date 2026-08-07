@@ -72,7 +72,6 @@ class Page_Context extends Endpoint_Base {
 			}
 
 			if ( ! wp_attachment_is_image( $attachment_id ) ) {
-			if ( ! wp_attachment_is_image( $attachment_id ) ) {
 				continue;
 			}
 
