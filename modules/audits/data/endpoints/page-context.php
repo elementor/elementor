@@ -67,6 +67,11 @@ class Page_Context extends Endpoint_Base {
 		$result = [];
 
 		foreach ( $attachment_ids as $attachment_id ) {
+			if ( ! current_user_can( 'read_post', $attachment_id ) ) {
+				continue;
+			}
+
+			if ( ! wp_attachment_is_image( $attachment_id ) ) {
 			if ( ! wp_attachment_is_image( $attachment_id ) ) {
 				continue;
 			}
