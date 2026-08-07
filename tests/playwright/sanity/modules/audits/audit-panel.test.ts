@@ -1,5 +1,6 @@
-import { expect, test } from '@playwright/test';
-import { WpAdminPage } from '../../../pages/wp-admin-page';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test( 'audit panel opens, runs, lists a violation, and deep-links to the offending element', async ( {
 	page,
