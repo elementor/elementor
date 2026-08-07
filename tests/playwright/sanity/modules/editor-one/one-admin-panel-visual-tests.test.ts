@@ -27,7 +27,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 			await page.waitForLoadState( 'networkidle' );
 		}
 
-		await page.goto( '/wp-admin/admin.php?page=elementor', {
+		await page.goto( '/wp-admin/admin.php?page=elementor-settings', {
 			timeout: timeouts.singleTest,
 			waitUntil: 'domcontentloaded',
 		} );
@@ -39,7 +39,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 
 		await page.waitForLoadState( 'load', { timeout: timeouts.heavyAction } );
 
-		await expect.soft( page ).toHaveScreenshot( 'editor-one-quickstart-full-page-hebrew.png', {
+		await expect.soft( page ).toHaveScreenshot( 'editor-one-settings-full-page-hebrew.png', {
 			timeout: timeouts.heavyAction,
 			maxDiffPixelRatio: 0.1,
 			mask: [ page.locator( '#wpadminbar' ), page.locator( '#adminmenumain' ) ],

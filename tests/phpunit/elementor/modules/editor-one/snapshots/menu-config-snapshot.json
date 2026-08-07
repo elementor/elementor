@@ -3,16 +3,6 @@
         "parent_slug": "elementor-editor",
         "items": [
             {
-                "slug": "elementor",
-                "label": "Quick Start",
-                "url": "/wp-admin/admin.php?page=elementor",
-                "icon": "home",
-                "group_id": "",
-                "priority": 10,
-                "has_divider_before": false,
-                "event_id": "elementor"
-            },
-            {
                 "slug": "elementor-settings",
                 "label": "Settings",
                 "url": "/wp-admin/admin.php?page=elementor-settings",
@@ -140,14 +130,14 @@
                 {
                     "slug": "elementor-app",
                     "label": "Theme Builder",
-                    "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor#site-editor/promotion",
+                    "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor-settings#site-editor/promotion",
                     "priority": 15,
                     "event_id": "theme_builder"
                 },
                 {
-                    "slug": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor&source=wp_db_templates_menu#/kit-library",
+                    "slug": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor-settings&source=wp_db_templates_menu#/kit-library",
                     "label": "Website Templates",
-                    "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor&source=wp_db_templates_menu#/kit-library",
+                    "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor-settings&source=wp_db_templates_menu#/kit-library",
                     "priority": 30,
                     "event_id": "http://example.org/wp_admin/admin.php"
                 },

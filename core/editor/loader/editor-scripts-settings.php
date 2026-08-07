@@ -8,7 +8,6 @@ use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Apps\Module as AppsModule;
 use Elementor\Core\Common\Modules\EventsManager\Module as EditorEventsModule;
-use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Shapes;
@@ -40,7 +39,7 @@ class Editor_Scripts_Settings {
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
-			'admin_settings_url' => admin_url( 'admin.php?page=' . Home_Module::get_elementor_settings_page_id() ),
+			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::SETTINGS_PAGE_ID ),
 			'admin_tools_url' => admin_url( 'admin.php?page=' . Tools::PAGE_ID ),
 			'admin_apps_url' => admin_url( 'admin.php?page=' . AppsModule::PAGE_ID ),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
