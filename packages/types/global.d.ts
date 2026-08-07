@@ -133,6 +133,11 @@ declare global {
 					message: string;
 					button_text: string;
 				};
+				user?: {
+					top_bar?: {
+						connect_url?: string;
+					};
+				};
 			};
 			dynamicTags?: DynamicTagsManager;
 			widgetsCache?: Record<
