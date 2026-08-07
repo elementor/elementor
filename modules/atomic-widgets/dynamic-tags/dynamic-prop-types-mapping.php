@@ -61,11 +61,11 @@ class Dynamic_Prop_Types_Mapping extends Prop_Types_Schema_Extender {
 		}
 
 		if ( $prop_type instanceof Svg_Src_Prop_Type ) {
-			return [ V1_Dynamic_Tags_Module::SVG_CATEGORY ];
+			return [ V1_Dynamic_Tags_Module::SVG_CATEGORY, V1_Dynamic_Tags_Module::URL_CATEGORY ];
 		}
 
 		if ( $prop_type instanceof Image_Src_Prop_Type ) {
-			return [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY ];
+			return [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY, V1_Dynamic_Tags_Module::URL_CATEGORY ];
 		}
 
 		if ( $prop_type instanceof Url_Prop_Type ) {

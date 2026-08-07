@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
@@ -561,7 +562,12 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 			'image-src' => [
 				Image_Src_Prop_Type::make(),
-				[ V1DynamicTags::IMAGE_CATEGORY ],
+				[ V1DynamicTags::IMAGE_CATEGORY, V1DynamicTags::URL_CATEGORY ],
+			],
+
+			'svg-src' => [
+				Svg_Src_Prop_Type::make(),
+				[ V1DynamicTags::SVG_CATEGORY, V1DynamicTags::URL_CATEGORY ],
 			],
 
 			'string' => [
