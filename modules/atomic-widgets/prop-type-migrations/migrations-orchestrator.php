@@ -40,6 +40,7 @@ class Migrations_Orchestrator {
 
 	public function register_hooks() {
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
+		add_filter( 'elementor/document/save/data', fn ( $data, $document ) => $this->migrate_document_save_data( $data, $document ), 5, 2 );
 	}
 
 	public static function is_active(): bool {
@@ -87,6 +88,20 @@ class Migrations_Orchestrator {
 
 	public static function clear_entity_migration_cache( int $id, string $data_identifier ): void {
 		Migrations_Cache::clear_migration_cache( $id, $data_identifier );
+	}
+
+	public function migrate_payload( array &$data ): bool {
+		$this->loader = $this->get_active_loader();
+
+		try {
+			return $this->walk_and_migrate( $data, [] );
+		} catch ( \Exception $e ) {
+			Logger::warning( 'Migration failed', [
+				'error' => $e->getMessage(),
+			] );
+
+			return false;
+		}
 	}
 
 	/**
@@ -408,6 +423,16 @@ class Migrations_Orchestrator {
 				do_action( 'elementor/document/after_migrate', $document, $migrated_data );
 			}
 		);
+
+		return $data;
+	}
+
+	private function migrate_document_save_data( array $data, Document $document ): array {
+		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
+			return $data;
+		}
+
+		$this->migrate_payload( $data['elements'] );
 
 		return $data;
 	}

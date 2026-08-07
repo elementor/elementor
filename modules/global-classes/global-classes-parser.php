@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 class Global_Classes_Parser {
@@ -81,8 +82,10 @@ class Global_Classes_Parser {
 		$sanitized_items = [];
 		$result = Parse_Result::make();
 		$style_parser = $this->get_style_parser();
+		$migrations_orchestrator = Migrations_Orchestrator::make();
 
-		foreach ( $items as $item_id => $item ) {
+		foreach ( $items as $item_id => &$item ) {
+			$migrations_orchestrator->migrate_payload( $item );
 			$item_result = $style_parser->parse( $item );
 
 			if ( ! $item_result->is_valid() ) {
@@ -101,6 +104,7 @@ class Global_Classes_Parser {
 
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 		}
+		unset( $item );
 
 		return $result->wrap( $sanitized_items );
 	}

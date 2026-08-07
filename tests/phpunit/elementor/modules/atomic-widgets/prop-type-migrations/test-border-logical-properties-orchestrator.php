@@ -126,6 +126,99 @@ class Test_Border_Logical_Properties_Orchestrator extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'top', $border_width['value'] );
 	}
 
+	public function test_migrate_payload__element_styles_legacy_border_radius_is_converted() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
+		$elements = [
+			[
+				'id' => 'element_1',
+				'elType' => 'widget',
+				'widgetType' => 'e-div-block',
+				'settings' => [],
+				'styles' => [
+					'style_1' => [
+						'variants' => [
+							[
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+								'props' => [
+									'border-radius' => [
+										'$$type' => 'border-radius',
+										'value' => [
+											'top-left' => $this->make_size( 12 ),
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		// Act
+		$has_changes = $orchestrator->migrate_payload( $elements );
+
+		// Assert
+		$this->assertTrue( $has_changes );
+		$border_radius = $elements[0]['styles']['style_1']['variants'][0]['props']['border-radius'];
+		$this->assertSame( 'border-radius-v2', $border_radius['$$type'] );
+		$this->assertSame( 12, $border_radius['value']['start-start']['value']['size'] );
+	}
+
+	public function test_migrate_payload__runs_even_when_entity_is_migration_cached() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
+		$elements = [
+			[
+				'id' => 'element_1',
+				'elType' => 'widget',
+				'widgetType' => 'e-div-block',
+				'styles' => [
+					'style_1' => [
+						'variants' => [
+							[
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+								'props' => [
+									'border-radius' => [
+										'$$type' => 'border-radius',
+										'value' => [
+											'top-left' => $this->make_size( 8 ),
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator->migrate(
+			$elements,
+			3001,
+			'_elementor_data',
+			function () {}
+		);
+
+		$elements[0]['styles']['style_1']['variants'][0]['props']['border-radius']['$$type'] = 'border-radius';
+
+		// Act
+		$has_changes = $orchestrator->migrate_payload( $elements );
+
+		// Assert
+		$this->assertTrue( $has_changes );
+		$this->assertSame(
+			'border-radius-v2',
+			$elements[0]['styles']['style_1']['variants'][0]['props']['border-radius']['$$type']
+		);
+	}
+
 	public function test_migrate__logical_border_radius_is_unchanged() {
 		// Arrange
 		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
