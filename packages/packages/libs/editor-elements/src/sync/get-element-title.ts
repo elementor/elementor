@@ -22,6 +22,12 @@ function extractString( value: unknown ): string | null {
 
 export function getElementTitle( elementId: ElementID ): string | null {
 	const editorSettings = getElementEditorSettings( elementId );
+	const editorLabel = extractString( editorSettings?.label );
+
+	if ( editorLabel ) {
+		return editorLabel;
+	}
+
 	const editorTitle = extractString( editorSettings?.title );
 
 	if ( editorTitle ) {

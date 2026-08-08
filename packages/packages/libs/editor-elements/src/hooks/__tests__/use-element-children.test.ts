@@ -179,6 +179,34 @@ describe( 'useElementChildren', () => {
 		expect( result.current.tab.map( ( e ) => e.id ) ).toEqual( [ 'child-1', 'child-2' ] );
 	} );
 
+	it( 'should update when editor settings change event is dispatched', () => {
+		// Arrange.
+		const tabs = [ createMockChild( { id: 'child-1', elType: 'tab' } ) ];
+		const tabsParent = createMockContainer( 'tabs-parent', tabs, 'tabs' );
+		const mockContainer = createMockContainer( 'element-1', [ tabsParent ] );
+		mockGetContainer.mockReturnValue( mockContainer );
+
+		// Act.
+		const { result } = renderHook( () => useElementChildren( 'element-1', { tabs: 'tab' } ) );
+
+		// Assert.
+		expect( result.current.tab[ 0 ]?.editorSettings?.title ).toBeUndefined();
+
+		// Arrange.
+		const updatedTabs = [ createMockChild( { id: 'child-1', elType: 'tab', editor_settings: { title: 'Updated' } } ) ];
+		const updatedTabsParent = createMockContainer( 'tabs-parent', updatedTabs, 'tabs' );
+		const updatedContainer = createMockContainer( 'element-1', [ updatedTabsParent ] );
+		mockGetContainer.mockReturnValue( updatedContainer );
+
+		// Act.
+		act( () => {
+			window.dispatchEvent( new CustomEvent( 'elementor/element/update_editor_settings' ) );
+		} );
+
+		// Assert.
+		expect( result.current.tab[ 0 ]?.editorSettings?.title ).toBe( 'Updated' );
+	} );
+
 	it( 'should re-compute when elementId dependency changes', () => {
 		// Arrange.
 		const tabs1 = [ createMockChild( { id: 'child-1', elType: 'tab' } ) ];

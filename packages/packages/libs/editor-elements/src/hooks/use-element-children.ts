@@ -1,4 +1,4 @@
-import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent, windowEvent } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from '../sync/get-container';
 import { findChildRecursive, getElementChildren, type ModelResult } from '../sync/model-utils';
@@ -30,6 +30,7 @@ export function useElementChildren< T extends ElementChildren >(
 			commandEndEvent( 'document/elements/delete' ),
 			commandEndEvent( 'document/elements/update' ),
 			commandEndEvent( 'document/elements/set-settings' ),
+			windowEvent( 'elementor/element/update_editor_settings' ),
 		],
 		() => {
 			const container = getContainer( elementId );

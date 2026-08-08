@@ -7,8 +7,15 @@ jest.mock( '../get-container' );
 jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'updateElementEditorSettings', () => {
+	let dispatchEventSpy: jest.SpyInstance;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' ).mockImplementation( () => true );
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy.mockRestore();
 	} );
 
 	it( 'should update element editor settings successfully', () => {
@@ -32,6 +39,9 @@ describe( 'updateElementEditorSettings', () => {
 			...existingSettings,
 			...newSettings,
 		} );
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( { type: 'elementor/element/update_editor_settings' } )
+		);
 		expect( runCommandSync ).toHaveBeenCalledWith(
 			'document/save/set-is-modified',
 			{ status: true },

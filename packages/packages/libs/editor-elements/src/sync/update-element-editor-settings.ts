@@ -19,6 +19,7 @@ export const updateElementEditorSettings = ( {
 	const editorSettings = element.model.get( 'editor_settings' ) ?? {};
 
 	element.model.set( 'editor_settings', { ...editorSettings, ...settings } );
+	window.dispatchEvent( new CustomEvent( 'elementor/element/update_editor_settings' ) );
 
 	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 };

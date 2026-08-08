@@ -178,6 +178,7 @@ export type ElementPosition = {
 };
 
 export type V1ElementEditorSettingsProps = {
+	label?: string;
 	title?: string;
 	initial_position?: number;
 	component_uid?: string;
