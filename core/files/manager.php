@@ -26,6 +26,18 @@ class Manager {
 	private $files = [];
 
 	/**
+	 * Whether `clear_cache()` already ran once during the current request.
+	 *
+	 * Only consulted when the `e_optimized_css_files` experiment is active, to
+	 * collapse the multiple purges a single genuine update can trigger (e.g.
+	 * Elementor's own DB upgrade purges at both upgrade-start and
+	 * upgrade-complete, on top of the `upgrader_process_complete` hook).
+	 *
+	 * @var bool
+	 */
+	private $has_cleared_cache_this_request = false;
+
+	/**
 	 * Files manager constructor.
 	 *
 	 * Initializing the Elementor files manager.
@@ -35,6 +47,7 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_actions();
+		$this->register_site_changed_hooks();
 	}
 
 	public function get( $class_name, $args ) {
@@ -101,15 +114,35 @@ class Manager {
 	 * Delete all meta containing files data. And delete the actual
 	 * files from the upload directory.
 	 *
+	 * When the `e_optimized_css_files` experiment is active, repeated calls within
+	 * the same request are collapsed into a single purge.
+	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
 	public function clear_cache() {
+		if ( $this->is_optimized_css_files_active() ) {
+			if ( $this->has_cleared_cache_this_request ) {
+				return;
+			}
+
+			$this->has_cleared_cache_this_request = true;
+		}
+
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
-		foreach ( glob( $path ) as $file_path ) {
-			unlink( $file_path );
+		$file_paths = glob( $path );
+
+		if ( is_array( $file_paths ) ) {
+			foreach ( $file_paths as $file_path ) {
+				// A file that vanished between `glob()` and `unlink()` (e.g. a concurrent
+				// purge) is not an error, so guard with `is_file()` instead of letting
+				// `unlink()` emit a PHP warning.
+				if ( is_file( $file_path ) ) {
+					unlink( $file_path );
+				}
+			}
 		}
 
 		delete_post_meta_by_key( Post_CSS::META_KEY );
@@ -207,6 +240,102 @@ class Manager {
 	 */
 	private function reset_assets_data() {
 		delete_option( Page_Assets_Data_Manager::ASSETS_DATA_KEY );
+	}
+
+	/**
+	 * Register site-changed hooks.
+	 *
+	 * Purge the files cache whenever the site's plugins, theme or Elementor's
+	 * own element-cache TTL setting change. Relocated here (from the
+	 * `element-cache` module) because the module's Performance-tab setting
+	 * does not actually govern this purge - it is a files/assets concern.
+	 *
+	 * Ungated: this registration is behaviour-neutral regardless of the
+	 * `e_optimized_css_files` experiment.
+	 *
+	 * @since 3.33.0
+	 * @access private
+	 */
+	private function register_site_changed_hooks() {
+		add_action( 'activated_plugin', [ $this, 'clear_cache' ] );
+		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
+		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
+		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_process_complete' ], 10, 2 );
+
+		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'clear_cache' ] );
+	}
+
+	/**
+	 * On upgrader process complete.
+	 *
+	 * Fired by the `upgrader_process_complete` action, which WordPress also fires on
+	 * mere update checks, translation updates, and bulk-update submissions with an
+	 * empty item queue - none of which changed anything Elementor needs to purge for.
+	 *
+	 * When the `e_optimized_css_files` experiment is active, those false alarms are
+	 * skipped. When inactive, behaviour is unchanged: always purge.
+	 *
+	 * @since 3.33.0
+	 * @access public
+	 *
+	 * @param \WP_Upgrader|false $upgrader The upgrader instance, or false.
+	 * @param array              $options  Upgrade options, including `hook_extra`.
+	 */
+	public function on_upgrader_process_complete( $upgrader, $options ) {
+		if ( $this->is_optimized_css_files_active() && ! $this->is_genuine_update( $options ) ) {
+			return;
+		}
+
+		$this->clear_cache();
+	}
+
+	/**
+	 * Whether the `upgrader_process_complete` payload represents a genuine plugin,
+	 * theme or core update (as opposed to an update check, a translation update, or
+	 * a bulk-update form submitted with nothing selected).
+	 *
+	 * @since 3.33.0
+	 * @access private
+	 *
+	 * @param array $options Upgrade options, including `hook_extra`.
+	 *
+	 * @return bool
+	 */
+	private function is_genuine_update( $options ) {
+		$hook_extra = is_array( $options ) && isset( $options['hook_extra'] ) ? $options['hook_extra'] : null;
+
+		if ( empty( $hook_extra ) || ! is_array( $hook_extra ) ) {
+			return false;
+		}
+
+		if ( 'translation' === ( $hook_extra['type'] ?? null ) || ! empty( $hook_extra['translations'] ) ) {
+			return false;
+		}
+
+		if ( 'update' === ( $hook_extra['action'] ?? null ) && 'core' !== ( $hook_extra['type'] ?? null ) ) {
+			$has_queued_items = ! empty( $hook_extra['plugins'] )
+				|| ! empty( $hook_extra['themes'] )
+				|| ! empty( $hook_extra['plugin'] )
+				|| ! empty( $hook_extra['theme'] );
+
+			if ( ! $has_queued_items ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Whether the `e_optimized_css_files` experiment is active.
+	 *
+	 * @since 3.33.0
+	 * @access private
+	 *
+	 * @return bool
+	 */
+	private function is_optimized_css_files_active() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_files' );
 	}
 
 	/**
