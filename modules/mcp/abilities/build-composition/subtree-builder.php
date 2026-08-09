@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -81,6 +83,10 @@ class Subtree_Builder {
 		$configuration_id = $this->xml_parser->get_configuration_id( $node );
 		if ( null !== $configuration_id ) {
 			$element['editor_settings']['title'] = $configuration_id;
+		}
+
+		if ( ! empty( $config['controls'] ) ) {
+			V3_Node_Bridge::seed_dynamic_defaults( $element, [ 'controls' => $config['controls'] ] );
 		}
 
 		return $element;

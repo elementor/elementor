@@ -17,7 +17,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
@@ -134,8 +133,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 			);
 		}
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
-
-		$this->seed_v3_dynamic_defaults( $index );
 
 		$variables_service = $this->create_variables_service();
 
@@ -368,34 +365,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$value = (array) $value;
 		}
 		return is_array( $value ) ? $value : [];
-	}
-
-	/**
-	 * @param array<string, array&> $index config-id -> subtree node reference.
-	 */
-	private function seed_v3_dynamic_defaults( array &$index ): void {
-		$controls_cache = [];
-
-		foreach ( $index as $config_id => &$node ) {
-			if ( ! V3_Node_Bridge::is_v3_node( $node ) ) {
-				continue;
-			}
-
-			$tag = $node['widgetType'];
-
-			if ( ! array_key_exists( $tag, $controls_cache ) ) {
-				$controls_cache[ $tag ] = $this->get_widget_controls( $tag );
-			}
-
-			V3_Node_Bridge::seed_dynamic_defaults( $node, [ 'controls' => $controls_cache[ $tag ] ] );
-		}
-		unset( $node );
-	}
-
-	private function get_widget_controls( string $widget_type ): array {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
-
-		return $widget && method_exists( $widget, 'get_controls' ) ? (array) $widget->get_controls() : [];
 	}
 
 	private function get_mutator(): Document_Mutator {

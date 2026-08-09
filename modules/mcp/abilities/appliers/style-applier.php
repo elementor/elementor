@@ -155,7 +155,7 @@ class Style_Applier {
 		}
 
 		$unmapped = $result['unmapped_css'] ?? '';
-		$warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped );
+		$warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
 		if ( null !== $warning ) {
 			$warnings[] = $warning;
 		} elseif ( '' !== trim( $unmapped ) ) {
