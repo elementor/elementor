@@ -47,14 +47,19 @@
   var container = document.getElementById('container');
 
   function send(msg) {
-    window.parent.postMessage(JSON.stringify(msg), '*');
+    // SEP-1865 hosts dispatch on event.data.method / event.data.id directly,
+    // so the JSON-RPC message MUST be posted as a plain object, not a string.
+    window.parent.postMessage(msg, '*');
   }
 
   function notifySize() {
     send({
       jsonrpc: '2.0',
       method: 'ui/notifications/size-changed',
-      params: { height: container.offsetHeight + 24 }
+      params: {
+        width: container.offsetWidth,
+        height: container.offsetHeight + 24
+      }
     });
   }
 
@@ -116,7 +121,9 @@
     } catch (e) { return; }
     if (!data || data.jsonrpc !== '2.0') { return; }
 
-    if (data.id === 1 && data.result !== undefined) {
+    if (data.id === 1 && (data.result !== undefined || data.error !== undefined)) {
+      // Best effort on error: a strict host will not proceed anyway, while a
+      // lenient one can still deliver tool-input after `initialized`.
       send({ jsonrpc: '2.0', method: 'ui/notifications/initialized', params: {} });
     }
 
@@ -128,7 +135,16 @@
     }
   });
 
-  send({ jsonrpc: '2.0', id: 1, method: 'ui/initialize', params: {} });
+  send({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'ui/initialize',
+    params: {
+      protocolVersion: '2026-01-26',
+      clientInfo: { name: 'elementor-suggested-actions', version: '1.0.0' },
+      appCapabilities: { availableDisplayModes: ['inline'] }
+    }
+  });
 })();
 </script>
 </body>
