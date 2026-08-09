@@ -18,7 +18,13 @@ class Test_Atomic_List extends Elementor_Test_Base {
 
 		$this->assertArrayHasKey( 'show_markers', $schema );
 		$this->assertInstanceOf( Prop_Type::class, $schema['show_markers'] );
-		$this->assertTrue( $schema['show_markers']->get_default() );
+		$this->assertSame(
+			[
+				'$$type' => 'boolean',
+				'value' => true,
+			],
+			$schema['show_markers']->get_default()
+		);
 	}
 
 	public function test_show_markers_switch_control_is_registered() {
