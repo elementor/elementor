@@ -65,6 +65,7 @@ class Module extends BaseModule {
 		( new Abilities\Create_Preview_Link_Ability() )->register();
 		( new Abilities\Publish_Document_Ability() )->register();
 		( new Abilities\Style_Best_Practices_Ability() )->register();
+		( new Abilities\WordPress_Best_Practices_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Classes_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
@@ -155,6 +156,7 @@ class Module extends BaseModule {
 	private function get_server_resources(): array {
 		$resources = [
 			'elementor/style-best-practices',
+			'elementor/wordpress-best-practices',
 			'elementor/manage-global-variable-guide',
 			'elementor/global-classes-resource',
 			'elementor/global-variables-resource',
