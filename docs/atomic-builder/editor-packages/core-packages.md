@@ -34,6 +34,7 @@ From `modules/atomic-widgets/module.php`:
 | `editor-interactions` | Interactions tab |
 | `editor-templates` | Template library |
 | `editor-design-system` | Design system UI |
+| `editor-site-settings` | Site Settings React tab registry and portal host |
 
 Gated by `e_atomic_elements`. Filter:
 
@@ -71,7 +72,6 @@ From `Editor_Loader::EXTENSIONS`:
 | `editor-site-navigation` | `site-navigation` | Pages panel |
 | `editor-widget-creation` | `widget-creation` | Promo gated by `e_widget_creation` |
 | `editor-starter` | `onboarding` | When `should_show_starter()` |
-| `editor-site-settings` | `agents` | `agents_llms_txt` (infra; load once) |
 | `editor-agents` | `agents` | `agents_llms_txt` |
 
 ## Public API

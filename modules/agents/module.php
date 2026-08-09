@@ -18,7 +18,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'agents_llms_txt';
 
 	const PACKAGES = [
-		'editor-site-settings',
 		'editor-agents',
 	];
 
