@@ -10,15 +10,27 @@ class V3_Controls_Metadata {
 
 	const LAYOUT_CONTROL_TYPES = [ 'section', 'tab', 'tabs' ];
 
-	public static function extract( $controls ): array {
+	/**
+	 * @param mixed       $controls     Widget controls stack.
+	 * @param string[]|null $allowed_keys When provided, only these control keys are emitted.
+	 */
+	public static function extract( $controls, ?array $allowed_keys = null ): array {
 		if ( ! is_array( $controls ) || empty( $controls ) ) {
 			return [];
 		}
+
+		$allowed_lookup = null === $allowed_keys
+			? null
+			: array_fill_keys( $allowed_keys, true );
 
 		$result = [];
 
 		foreach ( $controls as $control_key => $control ) {
 			if ( ! is_array( $control ) ) {
+				continue;
+			}
+
+			if ( null !== $allowed_lookup && ! isset( $allowed_lookup[ $control_key ] ) ) {
 				continue;
 			}
 

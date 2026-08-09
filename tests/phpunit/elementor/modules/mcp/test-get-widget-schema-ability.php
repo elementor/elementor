@@ -55,12 +55,14 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$result = $this->ability->execute( [ 'widget_type' => 'nav-menu' ] );
 
 		$this->assertIsArray( $result );
+		$this->assertSame( 'object', $result['type'] );
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertSame( Widget_Context_Helper::V3_FALLBACK_MESSAGE, $result['message'] );
 		$this->assertSame( Widget_Context_Helper::V3_FALLBACK_FIELDS_NOTE, $result['fields_note'] );
 		$this->assertArrayHasKey( 'properties', $result );
 		$this->assertArrayHasKey( 'menu', $result['properties'] );
-		$this->assertSame( 'select', $result['properties']['menu']['type'] );
+		$this->assertSame( 'string', $result['properties']['menu']['type'] );
+		$this->assertSame( [ 'horizontal', 'vertical' ], $result['properties']['layout']['enum'] );
 	}
 
 	public function test_execute__returns_404_for_unknown_widget_type() {

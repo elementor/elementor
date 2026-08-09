@@ -5,18 +5,12 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
-- [elementor/list-widget-schemas?summary=true] - Available v4 widgets plus the closed V3 allowlist (`nav-menu`, theme-post-* / theme-archive-title)
+- [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
 - `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
 - `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 
 # TOOL SUPPORT
-This tool supports v4 elements and a closed V3 allowlist (`nav-menu`, `theme-post-content`, `theme-post-title`, `theme-post-featured-image`, `theme-post-excerpt`, `theme-archive-title`).
-
-V3 mapping (same LLM contract as V4, translated internally):
-- `element_config` → raw V3 settings (no schema validation).
-- `classes` (global class labels) → V3 `_css_classes` (space-separated string).
-- `style` (plain CSS) → V3 `custom_css`, wrapped in `selector { ... }`. **Requires Elementor Pro**; without Pro the style is skipped and a warning is emitted.
-- Interactions and V4 nested `&:hover` / `@media (--mobile)` in `style` are not translated to V3 — keep V3 style inputs simple.
+Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
 
 # WORKFLOW
 1. Check/create global variables via `elementor/manage-global-variable`
