@@ -23,7 +23,7 @@ Every single template has one optional editorial slot: a `theme-post-content` wi
 <e-div-block configuration-id="Post Bottom">...</e-div-block>
 ```
 
-`theme-post-content` is the actual widget name (V3 widget; see [post-content.php](../../../../../../elementor-pro/modules/theme-builder/widgets/post-content.php)). It is not currently exposed via `elementor/list-widget-schemas` or `elementor/get-widget-schema` (returns `elementor_v3_not_supported`), but the composition write path accepts it — emit `<theme-post-content>` in `xml_structure` with no `element_config` needed.
+`theme-post-content` is the widget name. Emit `<theme-post-content>` in `xml_structure` with no `element_config` — the composition write path accepts it as-is.
 
 - Wrap with `e-div-block`, NOT `e-flexbox` — a row-direction default would squeeze the article body. Style the wrapper's `max-width` / `padding`.
 - Exactly one `theme-post-content` per single template.
