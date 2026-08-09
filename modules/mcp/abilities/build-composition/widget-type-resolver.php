@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -76,18 +77,24 @@ class Widget_Type_Resolver {
 	}
 
 	/**
-	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class']
+	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class', 'controls']
 	 */
 	public function resolve_type_config( string $type ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			$config = $widget->get_config();
-			return [
+			$resolved = [
 				'elType' => 'widget',
 				'widgetType' => $type,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
 				'class' => get_class( $widget ),
 			];
+
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) && method_exists( $widget, 'get_controls' ) ) {
+				$resolved['controls'] = (array) $widget->get_controls();
+			}
+
+			return $resolved;
 		}
 
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
