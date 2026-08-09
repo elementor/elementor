@@ -68,9 +68,17 @@
   }
 
   function parseActions(params) {
+    // tool-result: structured data optimized for UI rendering.
     if (params.structuredContent && params.structuredContent.actions) {
       return params.structuredContent.actions;
     }
+    // tool-input: the tool arguments themselves. Per the MCP Apps spec this
+    // notification is guaranteed and arrives before tool-result, so an inline
+    // widget must render from it too, otherwise the container stays empty.
+    if (params.arguments && params.arguments.actions) {
+      return params.arguments.actions;
+    }
+    // tool-result text fallback for hosts that only forward content items.
     if (params.content && params.content[0] && params.content[0].text) {
       try {
         var parsed = JSON.parse(params.content[0].text);
