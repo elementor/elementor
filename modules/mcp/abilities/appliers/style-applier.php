@@ -169,7 +169,7 @@ class Style_Applier {
 		}
 
 		$unmapped = $result['unmapped_css'] ?? '';
-		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped );
+		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
 		if ( null !== $pro_warning ) {
 			$warnings[] = $pro_warning;
 		}

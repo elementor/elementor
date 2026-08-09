@@ -125,7 +125,7 @@ class V3_Node_Bridge {
 	 *
 	 * @return string|null Warning message when Pro is missing, otherwise null.
 	 */
-	public static function apply_custom_css( array &$node, string $css_string ): ?string {
+	public static function apply_custom_css( array &$node, string $css_string, string $widget_type = '' ): ?string {
 		$css_string = trim( $css_string );
 
 		if ( '' === $css_string ) {
@@ -134,7 +134,13 @@ class V3_Node_Bridge {
 		}
 
 		if ( ! Utils::has_pro() ) {
-			return __( 'V3 widget styles require Elementor Pro (Custom CSS module). Style not applied.', 'elementor' );
+			$widget_label = '' !== $widget_type ? $widget_type : 'this V3 widget';
+
+			return sprintf(
+				/* translators: %s: V3 widget type name. */
+				__( 'V3 widget styles for `%s` require Elementor Pro (Custom CSS module) and were not applied. Do not retry the `style` field for this widget in the current environment — either fall back to `settings`-only edits, or ask the user to install and activate Elementor Pro.', 'elementor' ),
+				$widget_label
+			);
 		}
 
 		$node['settings'][ self::V3_CUSTOM_CSS_SETTING ] = self::wrap_with_selector( $css_string );
