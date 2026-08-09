@@ -114,7 +114,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 
 	reconcileListItemMarkerData( listItem, showMarkers ) {
 		const nextChildren = [ ...( listItem.elements ?? [] ) ];
-		const markerIndex = nextChildren.findIndex( ( child ) => child.elType === LIST_ITEM_MARKER_ELEMENT_TYPE );
+		const markerIndex = nextChildren.findIndex( ( child ) => LIST_ITEM_MARKER_ELEMENT_TYPE === child.elType );
 		const listItemId = listItem.id;
 
 		if ( showMarkers ) {
@@ -148,7 +148,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 
 		const currentChildren = listItem.children ?? [];
 		const hasMarker = currentChildren.some(
-			( child ) => child.model.get( 'elType' ) === LIST_ITEM_MARKER_ELEMENT_TYPE,
+			( child ) => LIST_ITEM_MARKER_ELEMENT_TYPE === child.model.get( 'elType' ),
 		);
 
 		if ( hasMarker ) {
@@ -181,7 +181,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
 		const listItem = adapter?.getContainer?.( listItemId );
 		const markerChild = listItem?.children?.find(
-			( child ) => child.model.get( 'elType' ) === LIST_ITEM_MARKER_ELEMENT_TYPE,
+			( child ) => LIST_ITEM_MARKER_ELEMENT_TYPE === child.model.get( 'elType' ),
 		);
 
 		if ( ! markerChild ) {
@@ -198,7 +198,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 	}
 
 	getMarkerInsertIndex( children = [] ) {
-		const contentIndex = children.findIndex( ( child ) => child.elType === LIST_ITEM_CONTENT_ELEMENT_TYPE );
+		const contentIndex = children.findIndex( ( child ) => LIST_ITEM_CONTENT_ELEMENT_TYPE === child.elType );
 
 		return contentIndex >= 0 ? contentIndex : 0;
 	}
@@ -262,7 +262,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 		const listItems = this.get( 'elements' ) ?? [];
 
 		listItems.forEach( ( child ) => {
-			if ( child?.elType === LIST_ITEM_ELEMENT_TYPE && child.id ) {
+			if ( LIST_ITEM_ELEMENT_TYPE === child?.elType && child.id ) {
 				sessionStorage.removeItem( this.buildListMarkerStashKey( child.id ) );
 			}
 		} );
@@ -273,7 +273,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 	}
 
 	requestNavigatorRefresh( parentId ) {
-		if ( 'undefined' === typeof window || typeof window.dispatchEvent !== 'function' ) {
+		if ( 'undefined' === typeof window || 'function' !== typeof window.dispatchEvent ) {
 			return;
 		}
 
