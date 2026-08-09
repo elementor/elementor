@@ -4,6 +4,8 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Mcp\Oauth\Elementor_Oauth_Http_Transport;
+use Elementor\Modules\Mcp\Oauth\Oauth_Integration;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
@@ -35,9 +37,21 @@ class Module extends BaseModule {
 
 		McpAdapter::instance();
 
+		( new Oauth_Integration() )->register();
+
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 		add_action( 'mcp_adapter_init', [ $this, 'register_server' ] );
+	}
+
+	/**
+	 * @return array{tools: string[], resources: string[]}
+	 */
+	public function get_server_abilities(): array {
+		return [
+			'tools' => $this->get_server_tools(),
+			'resources' => $this->get_server_resources(),
+		];
 	}
 
 	public function register_ability_category() {
@@ -90,6 +104,10 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$transport = Oauth_Integration::is_enabled() && Oauth_Integration::is_oauth_transport_available()
+			? Elementor_Oauth_Http_Transport::class
+			: \WP\MCP\Transport\HttpTransport::class;
+
 		$result = $adapter->create_server(
 			'elementor-mcp-server',
 			'elementor',
@@ -97,7 +115,7 @@ class Module extends BaseModule {
 			'Elementor MCP',
 			'Read and modify Elementor Editor abilities.',
 			'v1.0.0',
-			[ \WP\MCP\Transport\HttpTransport::class ],
+			[ $transport ],
 			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
 			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
 			$this->get_server_tools(),

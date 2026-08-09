@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc102c01e65d6c29d6436e01f58b20c9",
+    "content-hash": "3d10bd62874c342229e2a86712004b6a",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -258,6 +258,111 @@
                 "schema"
             ],
             "time": "2026-06-05T08:26:32+00:00"
+        },
+        {
+            "name": "wp-media/apply-filters-typed",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-media/apply-filters-typed.git",
+                "reference": "d8f5bca83e85196d1f01d92283b63ef6f886ac4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-media/apply-filters-typed/zipball/d8f5bca83e85196d1f01d92283b63ef6f886ac4d",
+                "reference": "d8f5bca83e85196d1f01d92283b63ef6f886ac4d",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpcompatibility/phpcompatibility-wp": "^2.0",
+                "phpstan/extension-installer": "^1.4",
+                "szepeviktor/phpstan-wordpress": "^1.3",
+                "wp-coding-standards/wpcs": "^3",
+                "wp-media/phpunit": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "WP Media",
+                    "email": "contact@wp-media.me"
+                }
+            ],
+            "description": "Library for usage of WordPress filters in a safe-type way",
+            "support": {
+                "issues": "https://github.com/wp-media/apply-filters-typed/issues",
+                "source": "https://github.com/wp-media/apply-filters-typed/tree/v1.2"
+            },
+            "time": "2024-09-16T12:21:47+00:00"
+        },
+        {
+            "name": "wp-media/mcp-oauth",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-media/mcp-oauth.git",
+                "reference": "c19fc9ec1e084f678f0eb2cf049f3f752712ceac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-media/mcp-oauth/zipball/c19fc9ec1e084f678f0eb2cf049f3f752712ceac",
+                "reference": "c19fc9ec1e084f678f0eb2cf049f3f752712ceac",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4",
+                "wordpress/mcp-adapter": "^0.5",
+                "wp-media/apply-filters-typed": "^1.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1",
+                "php": ">=7.4",
+                "php-stubs/wordpress-tests-stubs": "^6.8",
+                "phpcompatibility/phpcompatibility-wp": "^2.0",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan-mockery": "^1.1",
+                "phpstan/phpstan-phpunit": "^1.4",
+                "roave/security-advisories": "dev-master",
+                "szepeviktor/phpstan-wordpress": "^1.3",
+                "wp-coding-standards/wpcs": "^3",
+                "wp-media/phpunit": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WPMedia\\MCP\\OAuth\\": "inc/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "WP Media",
+                    "email": "contact@wp-media.me"
+                }
+            ],
+            "description": "MCP OAuth layer for the WordPress MCP Adapter",
+            "homepage": "https://github.com/wp-media/mcp-oauth",
+            "keywords": [
+                "plugin",
+                "wordpress",
+                "wp"
+            ],
+            "support": {
+                "issues": "https://github.com/wp-media/mcp-oauth/issues",
+                "source": "https://github.com/wp-media/mcp-oauth/tree/v1.0.3"
+            },
+            "time": "2026-07-21T19:13:38+00:00"
         }
     ],
     "packages-dev": [
@@ -4859,5 +4964,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
