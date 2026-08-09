@@ -1,7 +1,8 @@
 # SITE PARTS (Pro)
-If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered.
+If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
 
 # RESOURCES (Read before use)
+- [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
 - [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
