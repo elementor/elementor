@@ -1,10 +1,53 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Files\CSS\Base as CSS_Base;
 use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
+
+/**
+ * A minimal, directly instantiable `CSS\Base` subclass used to exercise `enqueue()` /
+ * `update()` / `write()` self-heal behaviour without depending on the post/document
+ * pipeline (mirrors the isolation `Test_Css_Files_Manager` gets for the atomic side).
+ */
+class Optimized_Css_Files_Test_File extends CSS_Base {
+	const META_KEY = 'elementor_test_optimized_css_files_meta';
+
+	private $css_content = 'body { color: red; }';
+
+	private $write_should_fail = false;
+
+	public function get_name() {
+		return 'test-optimized-css-files';
+	}
+
+	protected function get_file_handle_id() {
+		return 'elementor-test-optimized-css-files';
+	}
+
+	protected function render_css() {
+		$this->get_stylesheet()->add_raw_css( $this->css_content );
+	}
+
+	public function set_css_content( $css ) {
+		$this->css_content = $css;
+	}
+
+	public function set_write_should_fail( $should_fail ) {
+		$this->write_should_fail = $should_fail;
+	}
+
+	public function write() {
+		if ( $this->write_should_fail ) {
+			return false;
+		}
+
+		return parent::write();
+	}
+}
 
 /**
  * Test the CSS Base class
@@ -332,4 +375,190 @@ class Test_Base extends Elementor_Test_Base {
 
 		wp_deregister_style( 'registered-handle' );
 	}
+
+	// region Step 2 — filesystem self-heal (`e_optimized_css_files`).
+
+	public function tearDown(): void {
+		parent::tearDown();
+
+		delete_option( Optimized_Css_Files_Test_File::META_KEY );
+
+		$file = $this->make_optimized_css_files_test_file();
+
+		if ( file_exists( $file->get_path() ) ) {
+			unlink( $file->get_path() );
+		}
+
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_INACTIVE );
+
+		// `CSS\Base::$printed` is a static, per-process "already enqueued this handle" cache;
+		// reset it so each test starts with a clean slate regardless of test execution order.
+		$printed_property = new \ReflectionProperty( CSS_Base::class, 'printed' );
+		$printed_property->setAccessible( true );
+		$printed_property->setValue( null, [] );
+	}
+
+	private function make_optimized_css_files_test_file(): Optimized_Css_Files_Test_File {
+		return new Optimized_Css_Files_Test_File( 'optimized-css-files-test.css' );
+	}
+
+	private function set_optimized_css_files_experiment( $state ) {
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', $state );
+	}
+
+	private function seed_file_status_meta( Optimized_Css_Files_Test_File $file ) {
+		update_option( Optimized_Css_Files_Test_File::META_KEY, [
+			'time' => time(),
+			'status' => CSS_Base::CSS_STATUS_FILE,
+			'css' => '',
+			'fonts' => [],
+			'icons' => [],
+			'dynamic_elements_ids' => [],
+		] );
+	}
+
+	public function test_enqueue__self_heals_when_status_file_but_file_missing_and_experiment_active() {
+		// Arrange.
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$file = $this->make_optimized_css_files_test_file();
+		$this->seed_file_status_meta( $file );
+
+		$this->assertFileDoesNotExist( $file->get_path() );
+
+		// Act.
+		$file->enqueue();
+
+		// Assert.
+		$this->assertFileExists( $file->get_path(), 'A missing file must be regenerated on enqueue when the experiment is active.' );
+		$this->assertNotEmpty( file_get_contents( $file->get_path() ) );
+		$this->assertEquals( CSS_Base::CSS_STATUS_FILE, $file->get_meta( 'status' ) );
+		$this->assertTrue( wp_style_is( 'elementor-test-optimized-css-files', 'enqueued' ) );
+	}
+
+	public function test_enqueue__self_heals_when_status_file_but_file_is_zero_bytes_and_experiment_active() {
+		// Arrange.
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$file = $this->make_optimized_css_files_test_file();
+		$this->seed_file_status_meta( $file );
+
+		file_put_contents( $file->get_path(), '' );
+		$this->assertFileExists( $file->get_path() );
+		$this->assertEquals( 0, filesize( $file->get_path() ) );
+
+		// Act.
+		$file->enqueue();
+
+		// Assert.
+		$this->assertGreaterThan( 0, filesize( $file->get_path() ), 'A zero-byte file must be regenerated on enqueue when the experiment is active.' );
+		$this->assertEquals( CSS_Base::CSS_STATUS_FILE, $file->get_meta( 'status' ) );
+	}
+
+	public function test_enqueue__does_not_self_heal_when_experiment_inactive() {
+		// Arrange — experiment left at its default (inactive) state.
+		$file = $this->make_optimized_css_files_test_file();
+		$this->seed_file_status_meta( $file );
+
+		$this->assertFileDoesNotExist( $file->get_path() );
+
+		// Act.
+		$file->enqueue();
+
+		// Assert — today's behaviour is preserved: no `file_exists()` check, the (missing)
+		// file's URL is still enqueued, and the meta status is left untouched.
+		$this->assertFileDoesNotExist( $file->get_path() );
+		$this->assertEquals( CSS_Base::CSS_STATUS_FILE, $file->get_meta( 'status' ) );
+		$this->assertTrue( wp_style_is( 'elementor-test-optimized-css-files', 'enqueued' ) );
+	}
+
+	public function test_enqueue__does_not_self_heal_zero_byte_file_when_experiment_inactive() {
+		// Arrange.
+		$file = $this->make_optimized_css_files_test_file();
+		$this->seed_file_status_meta( $file );
+
+		file_put_contents( $file->get_path(), '' );
+
+		// Act.
+		$file->enqueue();
+
+		// Assert — zero-byte file is served as-is, matching current (pre-Step-2) behaviour.
+		$this->assertFileExists( $file->get_path() );
+		$this->assertEquals( 0, filesize( $file->get_path() ) );
+		$this->assertEquals( CSS_Base::CSS_STATUS_FILE, $file->get_meta( 'status' ) );
+	}
+
+	public function test_update__falls_back_to_inline_status_when_write_fails_and_experiment_active() {
+		// Arrange.
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$file = $this->make_optimized_css_files_test_file();
+		$file->set_write_should_fail( true );
+
+		// Act.
+		$file->update();
+
+		// Assert.
+		$this->assertEquals( CSS_Base::CSS_STATUS_INLINE, $file->get_meta( 'status' ) );
+		$this->assertEquals( 'body { color: red; }', $file->get_meta( 'css' ) );
+		$this->assertFileDoesNotExist( $file->get_path() );
+	}
+
+	public function test_update__keeps_file_status_on_write_failure_when_experiment_inactive() {
+		// Arrange — experiment left inactive: today's behaviour (write failure is silent).
+		$file = $this->make_optimized_css_files_test_file();
+		$file->set_write_should_fail( true );
+
+		// Act.
+		$file->update();
+
+		// Assert.
+		$this->assertEquals( CSS_Base::CSS_STATUS_FILE, $file->get_meta( 'status' ) );
+	}
+
+	public function test_write__successful_write_is_never_observed_as_zero_byte() {
+		// Arrange.
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$file = $this->make_optimized_css_files_test_file();
+		$file->set_css_content( str_repeat( 'a { color: red; }', 500 ) );
+
+		// Act.
+		$file->update();
+
+		// Assert — the final file at the public path is either absent or fully written;
+		// a partial/zero-byte state must never be observable once the write has completed.
+		$this->assertFileExists( $file->get_path() );
+		$this->assertGreaterThan( 0, filesize( $file->get_path() ) );
+		$this->assertStringContainsString( 'a { color: red; }', file_get_contents( $file->get_path() ) );
+
+		// No leftover temp file should remain after a successful atomic write.
+		$leftover_tmp_files = glob( $file->get_path() . '.tmp-*' );
+		$this->assertEmpty( $leftover_tmp_files, 'No temp file should remain after a successful atomic write.' );
+	}
+
+	public function test_write__uses_atomic_temp_file_and_rename_when_experiment_active() {
+		// Arrange.
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$file = $this->make_optimized_css_files_test_file();
+
+		$method = new \ReflectionMethod( $file, 'write_atomically' );
+		$method->setAccessible( true );
+
+		$content_property = new \ReflectionProperty( \Elementor\Core\Files\Base::class, 'content' );
+		$content_property->setAccessible( true );
+		$content_property->setValue( $file, 'body { color: blue; }' );
+
+		// Act.
+		$result = $method->invoke( $file );
+
+		// Assert.
+		$this->assertTrue( $result );
+		$this->assertFileExists( $file->get_path() );
+		$this->assertEquals( 'body { color: blue; }', file_get_contents( $file->get_path() ) );
+		$this->assertEmpty( glob( $file->get_path() . '.tmp-*' ) );
+	}
+
+	// endregion
 }
