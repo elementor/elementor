@@ -122,6 +122,10 @@ class Read_Resource_Ability extends Abstract_Ability {
 				'ability' => new Style_Best_Practices_Ability(),
 				'mimeType' => 'text/markdown',
 			],
+			Wordpress_Best_Practices_Ability::URI => [
+				'ability' => new Wordpress_Best_Practices_Ability(),
+				'mimeType' => 'text/markdown',
+			],
 			Manage_Variable_Guide_Ability::URI => [
 				'ability' => new Manage_Variable_Guide_Ability(),
 				'mimeType' => 'text/plain',
