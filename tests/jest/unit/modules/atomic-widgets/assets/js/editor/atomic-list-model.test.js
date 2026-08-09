@@ -145,7 +145,7 @@ describe( 'AtomicListModel', () => {
 					},
 				},
 			},
-			{}
+			{},
 		);
 
 		expect( model.get( 'elements' ) ).toEqual( [
@@ -159,7 +159,7 @@ describe( 'AtomicListModel', () => {
 			} ),
 		] );
 		expect(
-			sessionStorage.getItem( 'elementor/editor-state/item-1/children-deps/e-list-item-marker' )
+			sessionStorage.getItem( 'elementor/editor-state/item-1/children-deps/e-list-item-marker' ),
 		).toContain( '"elType":"e-list-item-marker"' );
 	} );
 
@@ -173,14 +173,14 @@ describe( 'AtomicListModel', () => {
 		const markerChild = {
 			id: 'marker-1',
 			model: {
-				get: ( key ) => ( key === 'elType' ? 'e-list-item-marker' : undefined ),
+				get: ( key ) => ( 'elType' === key ? 'e-list-item-marker' : undefined ),
 				toJSON: () => ( { elType: 'e-list-item-marker', id: 'marker-1', elements: [] } ),
 			},
 		};
 		const contentChild = {
 			id: 'content-1',
 			model: {
-				get: ( key ) => ( key === 'elType' ? 'e-list-item-content' : undefined ),
+				get: ( key ) => ( 'elType' === key ? 'e-list-item-content' : undefined ),
 				toJSON: () => ( { elType: 'e-list-item-content', id: 'content-1', elements: [] } ),
 			},
 		};
@@ -194,7 +194,7 @@ describe( 'AtomicListModel', () => {
 				{
 					id: 'item-1',
 					model: {
-						get: ( key ) => ( key === 'elType' ? 'e-list-item' : undefined ),
+						get: ( key ) => ( 'elType' === key ? 'e-list-item' : undefined ),
 					},
 				},
 			],
@@ -246,12 +246,12 @@ describe( 'AtomicListModel', () => {
 		expect( addModelToParentMock ).toHaveBeenCalledWith(
 			'item-1',
 			expect.objectContaining( { elType: 'e-list-item-marker', id: 'marker-1' } ),
-			{ at: 0 }
+			{ at: 0 },
 		);
 		expect(
 			dispatchSpy.mock.calls
 				.map( ( args ) => args[ 0 ] )
-				.filter( ( event ) => event.type === 'elementor/navigator/refresh-children' )
+				.filter( ( event ) => 'elementor/navigator/refresh-children' === event.type ),
 		).toHaveLength( 2 );
 
 		dispatchSpy.mockRestore();

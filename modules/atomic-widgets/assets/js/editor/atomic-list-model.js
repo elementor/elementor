@@ -148,7 +148,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 
 		const currentChildren = listItem.children ?? [];
 		const hasMarker = currentChildren.some(
-			( child ) => child.model.get( 'elType' ) === LIST_ITEM_MARKER_ELEMENT_TYPE
+			( child ) => child.model.get( 'elType' ) === LIST_ITEM_MARKER_ELEMENT_TYPE,
 		);
 
 		if ( hasMarker ) {
@@ -156,12 +156,12 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 		}
 
 		const markerModel = this.ensureModelId(
-			this.takeStashedMarker( listItemId ) ?? this.createDefaultMarkerModel()
+			this.takeStashedMarker( listItemId ) ?? this.createDefaultMarkerModel(),
 		);
 
 		const attached = adapter.addModelToParent( listItemId, markerModel, {
 			at: this.getMarkerInsertIndex(
-				currentChildren.map( ( child ) => child.model.toJSON() )
+				currentChildren.map( ( child ) => child.model.toJSON() ),
 			),
 		} );
 
@@ -177,20 +177,20 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
 		const listItem = adapter?.getContainer?.( listItemId );
 		const markerChild = listItem?.children?.find(
-			( child ) => child.model.get( 'elType' ) === LIST_ITEM_MARKER_ELEMENT_TYPE
+			( child ) => child.model.get( 'elType' ) === LIST_ITEM_MARKER_ELEMENT_TYPE,
 		);
 
 		if ( ! markerChild ) {
 			return;
 		}
 
-		const markerSnapshot = markerChild.model.toJSON();
 		const removed = adapter.removeModelFromParent( listItemId, markerChild.id );
 
 		if ( ! removed ) {
 			return;
 		}
 
+		const markerSnapshot = markerChild.model.toJSON();
 		this.saveMarkerToStash( listItemId, markerSnapshot );
 		this.requestNavigatorRefresh( listItemId );
 	}
@@ -231,7 +231,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 
 		sessionStorage.setItem(
 			this.buildListMarkerStashKey( listItemId ),
-			JSON.stringify( data )
+			JSON.stringify( data ),
 		);
 	}
 
@@ -271,14 +271,14 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 	}
 
 	requestNavigatorRefresh( parentId ) {
-		if ( typeof window === 'undefined' || typeof window.dispatchEvent !== 'function' ) {
+		if ( 'undefined' === typeof window || typeof window.dispatchEvent !== 'function' ) {
 			return;
 		}
 
 		window.dispatchEvent(
 			new CustomEvent( 'elementor/navigator/refresh-children', {
 				detail: { elementId: parentId },
-			} )
+			} ),
 		);
 	}
 }
