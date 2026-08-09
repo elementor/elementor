@@ -20,6 +20,7 @@ use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Reorder_Classes_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
+use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,6 +52,7 @@ class Mcp_Proxy_REST_API {
 
 		$this->resources = [
 			Style_Best_Practices_Ability::URI => fn() => new Style_Best_Practices_Ability(),
+			Wordpress_Best_Practices_Ability::URI => fn() => new Wordpress_Best_Practices_Ability(),
 			Manage_Variable_Guide_Ability::URI => fn() => new Manage_Variable_Guide_Ability(),
 			Global_Classes_Resource_Ability::URI => fn() => new Global_Classes_Resource_Ability(),
 			Global_Variables_Resource_Ability::URI => fn() => new Global_Variables_Resource_Ability(),
