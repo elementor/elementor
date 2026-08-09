@@ -101,9 +101,22 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 		return propValue;
 	}
 
-	reconcileListMarkersWithModel( showMarkers ) {
+	getContainerSafely( id ) {
 		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
-		const listContainer = adapter?.getContainer?.( this.get( 'id' ) );
+
+		if ( ! adapter?.getContainer || ! id ) {
+			return null;
+		}
+
+		try {
+			return adapter.getContainer( id ) ?? null;
+		} catch {
+			return null;
+		}
+	}
+
+	reconcileListMarkersWithModel( showMarkers ) {
+		const listContainer = this.getContainerSafely( this.get( 'id' ) );
 
 		if ( ! listContainer ) {
 			return;
@@ -151,7 +164,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 
 	attachMarkerToItem( listItemId ) {
 		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
-		const listItem = adapter?.getContainer?.( listItemId );
+		const listItem = this.getContainerSafely( listItemId );
 
 		if ( ! listItem ) {
 			return;
@@ -190,7 +203,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 
 	detachMarkerFromItem( listItemId ) {
 		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
-		const listItem = adapter?.getContainer?.( listItemId );
+		const listItem = this.getContainerSafely( listItemId );
 		const markerChild = listItem?.children?.find(
 			( child ) => LIST_ITEM_MARKER_ELEMENT_TYPE === child.model.get( 'elType' ),
 		);

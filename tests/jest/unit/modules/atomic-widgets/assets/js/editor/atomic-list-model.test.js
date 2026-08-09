@@ -163,6 +163,22 @@ describe( 'AtomicListModel', () => {
 		).toContain( '"elType":"e-list-item-marker"' );
 	} );
 
+	it( 'does not throw when the editor container tree is not ready yet', () => {
+		const settings = createReactiveSettings( {
+			show_markers: {
+				$$type: 'boolean',
+				value: false,
+			},
+		} );
+		const model = createModel( { settings } );
+
+		getContainerMock.mockImplementation( () => {
+			throw new TypeError( "Cannot read properties of undefined (reading 'children')" );
+		} );
+
+		expect( () => model.initialize( {}, {} ) ).not.toThrow();
+	} );
+
 	it( 'removes and restores list-item markers when show_markers changes', () => {
 		const settings = createReactiveSettings( {
 			show_markers: {
