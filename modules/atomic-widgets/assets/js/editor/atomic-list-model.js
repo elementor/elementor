@@ -159,11 +159,15 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 			this.takeStashedMarker( listItemId ) ?? this.createDefaultMarkerModel(),
 		);
 
-		const attached = adapter.addModelToParent( listItemId, markerModel, {
-			at: this.getMarkerInsertIndex(
-				currentChildren.map( ( child ) => child.model.toJSON() ),
-			),
-		} );
+		const attached = adapter.addModelToParent(
+			listItemId,
+			markerModel,
+			{
+				at: this.getMarkerInsertIndex(
+					currentChildren.map( ( child ) => child.model.toJSON() ),
+				),
+			},
+		);
 
 		if ( ! attached ) {
 			this.saveMarkerToStash( listItemId, markerModel );
@@ -184,9 +188,7 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 			return;
 		}
 
-		const removed = adapter.removeModelFromParent( listItemId, markerChild.id );
-
-		if ( ! removed ) {
+		if ( ! adapter.removeModelFromParent( listItemId, markerChild.id ) ) {
 			return;
 		}
 
