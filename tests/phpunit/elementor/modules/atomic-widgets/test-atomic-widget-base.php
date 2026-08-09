@@ -662,7 +662,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_meta_breakpoint_validation_error() {
@@ -696,7 +696,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_id_validation_error() {
@@ -732,7 +732,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_type_validation_error() {
@@ -769,7 +769,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_label_validation_error() {
@@ -805,7 +805,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_variant_validation_error() {
@@ -847,7 +847,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_with_element_context() {
@@ -885,7 +885,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_and_saves_valid_styles() {
@@ -901,6 +901,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'breakpoint' => 'desktop',
 						'state' => null,
 					],
+					'custom_css' => null,
 				],
 			],
 		];
@@ -976,7 +977,56 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+	}
+
+	public function test_get_data_for_save__logs_skipped_invalid_styles() {
+		$debug_log_enabled = defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG;
+		$debug_display_disabled = ! defined( 'WP_DEBUG_DISPLAY' ) || ! WP_DEBUG_DISPLAY;
+
+		if ( ! $debug_log_enabled || ! $debug_display_disabled ) {
+			$this->markTestSkipped( 'Requires WP_DEBUG_LOG enabled and WP_DEBUG_DISPLAY disabled.' );
+		}
+
+		$log_file = tempnam( sys_get_temp_dir(), 'elementor-atomic-log-' );
+		$previous_log = ini_get( 'error_log' );
+		ini_set( 'error_log', $log_file );
+
+		try {
+			$widget = $this->make_mock_widget( [
+				'props_schema' => [],
+				'settings' => [],
+				'styles' => [
+					's-invalid' => [
+						'id' => 's-invalid',
+						'type' => 'invalid-type',
+						'label' => 'invalid-class',
+						'variants' => [
+							[
+								'props' => [],
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+							],
+						],
+					],
+				],
+			] );
+
+			$widget->get_data_for_save();
+
+			$log_contents = file_get_contents( $log_file );
+
+			$this->assertStringContainsString(
+				'Styles validation failed for style `s-invalid` (widget `1`)',
+				$log_contents
+			);
+			$this->assertStringContainsString( 'type: missing_or_invalid', $log_contents );
+		} finally {
+			ini_set( 'error_log', $previous_log );
+			@unlink( $log_file );
+		}
 	}
 
 	public function test_get_data_for_save__omits_empty_root_props() {
