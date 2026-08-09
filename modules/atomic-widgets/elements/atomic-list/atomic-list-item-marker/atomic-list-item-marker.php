@@ -7,8 +7,11 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
@@ -76,7 +79,18 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
 							'align-items' => String_Prop_Type::generate( 'center' ),
-							'flex-shrink' => String_Prop_Type::generate( '0' ),
+							'width' => Size_Prop_Type::generate( [
+								'size' => 'fit-content',
+								'unit' => Size_Constants::UNIT_CUSTOM,
+							] ),
+							'flex' => Flex_Prop_Type::generate( [
+								'flexGrow' => 0,
+								'flexShrink' => 0,
+								'flexBasis' => Size_Prop_Type::generate( [
+									'size' => 'auto',
+									'unit' => Size_Constants::UNIT_CUSTOM,
+								] ),
+							] ),
 						] )
 				),
 		];

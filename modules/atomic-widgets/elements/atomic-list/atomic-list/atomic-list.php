@@ -32,6 +32,7 @@ class Atomic_List extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
+	const DEFAULT_MARKER_ICON_STYLE_ID = 'e-list-default-marker-icon';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -135,7 +136,14 @@ class Atomic_List extends Atomic_Element_Base {
 				->children( [
 					Atomic_List_Item_Marker::generate()
 						->children( [
-							Widget_Builder::make( Atomic_Svg::get_element_type() )->build(),
+							[
+								'elType' => 'widget',
+								'widgetType' => Atomic_Svg::get_element_type(),
+								'settings' => [
+									'classes' => Classes_Prop_Type::generate( [ static::DEFAULT_MARKER_ICON_STYLE_ID ] ),
+								],
+								'styles' => $this->get_default_marker_icon_styles(),
+							],
 						] )
 						->build(),
 					Atomic_List_Item_Content::generate()
@@ -152,6 +160,26 @@ class Atomic_List extends Atomic_Element_Base {
 						->build(),
 				] )
 				->build(),
+		];
+	}
+
+	private function get_default_marker_icon_styles(): array {
+		return [
+			Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'width' => Size_Prop_Type::generate( [
+								'size' => 20,
+								'unit' => 'px',
+							] ),
+							'height' => Size_Prop_Type::generate( [
+								'size' => 20,
+								'unit' => 'px',
+							] ),
+						] )
+				)
+				->build( static::DEFAULT_MARKER_ICON_STYLE_ID ),
 		];
 	}
 
