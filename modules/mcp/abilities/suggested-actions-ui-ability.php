@@ -20,7 +20,20 @@ class Suggested_Actions_Ui_Ability extends Abstract_Ability {
 			__( 'Suggested Actions UI', 'elementor' ),
 			__( 'Interactive suggested next-step action chips rendered by MCP Apps hosts.', 'elementor' ),
 			'elementor',
-			[ 'type' => 'string' ],
+			// Content items rather than a bare string: the Abilities API validates this
+			// output, and only the item shape carries mimeType through resources/read.
+			[
+				'type'  => 'array',
+				'items' => [
+					'type'       => 'object',
+					'required'   => [ 'uri', 'mimeType', 'text' ],
+					'properties' => [
+						'uri'      => [ 'type' => 'string' ],
+						'mimeType' => [ 'type' => 'string' ],
+						'text'     => [ 'type' => 'string' ],
+					],
+				],
+			],
 			[
 				'mcp' => [
 					'type'        => 'resource',
