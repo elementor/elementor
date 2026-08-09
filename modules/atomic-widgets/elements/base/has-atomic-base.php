@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -385,7 +386,9 @@ trait Has_Atomic_Base {
 		$schema = static::define_props_schema();
 
 		if ( ! isset( $schema['_cssid'] ) ) {
-			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+			$schema['_cssid'] = String_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->meta( Prop_Duplication_Behavior::clear() );
 		}
 
 		return apply_filters(
