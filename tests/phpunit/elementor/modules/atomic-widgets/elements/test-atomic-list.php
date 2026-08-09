@@ -4,6 +4,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -34,6 +35,26 @@ class Test_Atomic_List extends Elementor_Test_Base {
 
 		$this->assertInstanceOf( Switch_Control::class, $show_markers );
 		$this->assertSame( 'switch', $show_markers->get_type() );
+	}
+
+	public function test_list_item_label_is_preserved_in_editor_settings_when_saved() {
+		$list_item = new Atomic_List_Item( [
+			'id' => 'test_atomic_list_item_instance',
+			'elType' => Atomic_List_Item::get_type(),
+			'settings' => [],
+			'editor_settings' => [
+				'label' => '<b>Renamed item</b>',
+			],
+		], null );
+
+		$data_for_save = $list_item->get_data_for_save();
+
+		$this->assertSame(
+			[
+				'label' => 'Renamed item',
+			],
+			$data_for_save['editor_settings']
+		);
 	}
 
 	private function find_control_by_bind( array $controls, string $bind ): ?Atomic_Control_Base {
