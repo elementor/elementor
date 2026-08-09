@@ -6,6 +6,10 @@ namespace Elementor {
 			public static function generate_random_string(): string {
 				return dechex( rand() );
 			}
+
+			public static function has_pro(): bool {
+				return true;
+			}
 		}
 	}
 }
@@ -21,7 +25,9 @@ namespace {
 		}
 	}
 
+	use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
 	use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+	use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 	use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 	use PHPUnit\Framework\TestCase;
 
@@ -248,6 +254,46 @@ namespace {
 			// Assert.
 			$this->assertInstanceOf( \WP_Error::class, $result['error'] );
 			$this->assertStringContainsString( 'nonexistent', $result['error']->get_error_message() );
+		}
+
+		public function test_apply__v3_maps_css_to_settings_and_falls_back_unmapped_to_custom_css() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'post-title' => &$node ];
+			$widget_configs = [
+				'theme-post-title' => [
+					'controls' => [
+						'title_color' => [ 'type' => 'color' ],
+						'typography_typography' => [ 'type' => 'typography' ],
+						'typography_font_size' => [ 'type' => 'slider' ],
+					],
+				],
+			];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'post-title' => 'color: #222222; font-size: 2rem; filter: blur(2px);' ],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( '#222222', $node['settings']['title_color'] );
+			$this->assertSame( 'custom', $node['settings']['typography_typography'] );
+			$this->assertSame( [ 'unit' => 'rem', 'size' => 2.0 ], $node['settings']['typography_font_size'] );
+			$this->assertArrayHasKey( 'custom_css', $node['settings'] );
+			$this->assertStringContainsString( 'filter: blur(2px);', $node['settings']['custom_css'] );
+			$this->assertNotEmpty( $result['warnings'] );
 		}
 	}
 }

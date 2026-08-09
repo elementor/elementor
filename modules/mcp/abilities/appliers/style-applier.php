@@ -3,8 +3,10 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,9 +31,11 @@ class Style_Applier {
 	/**
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
+	 * @param string                $style_apply_mode `patch` or `replace`.
+	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
-	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch' ): array {
+	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error'    => null,
@@ -56,8 +60,8 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$warning = V3_Node_Bridge::apply_custom_css( $node, $css_string );
-				if ( null !== $warning ) {
+				$v3_warnings = $this->apply_v3_style( $node, $css_string, $widget_configs );
+				foreach ( $v3_warnings as $warning ) {
 					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
 				}
 				unset( $node );
@@ -122,6 +126,43 @@ class Style_Applier {
 			) : null,
 			'warnings' => $warnings,
 		];
+	}
+
+	/**
+	 * @param array<string, array> $widget_configs
+	 * @return string[] Warnings (without config-id prefix).
+	 */
+	private function apply_v3_style( array &$node, string $css_string, array $widget_configs = [] ): array {
+		$warnings = [];
+		$widget_type = $node['widgetType'] ?? '';
+		$widget_config = [];
+
+		if ( is_string( $widget_type ) && '' !== $widget_type ) {
+			$widget_config = $widget_configs[ $widget_type ]
+				?? Widget_Context_Helper::get_widget_config( $widget_type )
+				?? [];
+		}
+
+		$mapper = new V3_Style_Mapper( $this->css_converter, $this->get_active_breakpoints() );
+		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
+
+		foreach ( $result['warnings'] as $warning ) {
+			$warnings[] = $warning;
+		}
+
+		if ( ! empty( $result['settings_patch'] ) ) {
+			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+		}
+
+		$unmapped = $result['unmapped_css'] ?? '';
+		$warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped );
+		if ( null !== $warning ) {
+			$warnings[] = $warning;
+		} elseif ( '' !== trim( $unmapped ) ) {
+			$warnings[] = __( 'Some CSS could not be mapped to V3 settings and was written to custom_css.', 'elementor' );
+		}
+
+		return $warnings;
 	}
 
 	private function get_active_breakpoints(): array {
