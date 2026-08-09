@@ -21,6 +21,12 @@ describe( 'list-items-control actions', () => {
 	it( 'creates a full default list-item subtree when adding an item', () => {
 		const listContainer = createMockElement( {
 			model: { id: 'list-1', elType: 'e-list' },
+			settings: {
+				show_markers: {
+					$$type: 'boolean',
+					value: true,
+				},
+			},
 		} ) as unknown as V1Element;
 		const { result } = renderHook( () => useActions() );
 
@@ -58,6 +64,48 @@ describe( 'list-items-control actions', () => {
 				],
 			} )
 		);
+	} );
+
+	it( 'creates a content-only list-item subtree when show_markers is off', () => {
+		const listContainer = createMockElement( {
+			model: { id: 'list-1', elType: 'e-list' },
+			settings: {
+				show_markers: {
+					$$type: 'boolean',
+					value: false,
+				},
+			},
+		} ) as unknown as V1Element;
+		const { result } = renderHook( () => useActions() );
+
+		result.current.addItem( {
+			listContainer,
+			items: [ { index: 0, item: { id: '', title: 'Item' } } ],
+		} );
+
+		expect( createElements ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				elements: [
+					expect.objectContaining( {
+						model: expect.objectContaining( {
+							elType: 'e-list-item',
+							elements: [
+								expect.objectContaining( {
+									elType: 'e-list-item-content',
+								} ),
+							],
+						} ),
+					} ),
+				],
+			} )
+		);
+
+		const createdModel = jest.mocked( createElements ).mock.calls[ 0 ]?.[ 0 ]?.elements?.[ 0 ]?.model as {
+			elements: Array<{ elType: string }>;
+		};
+
+		expect( createdModel.elements ).toHaveLength( 1 );
+		expect( createdModel.elements[ 0 ] ).toMatchObject( { elType: 'e-list-item-content' } );
 	} );
 
 	it( 'removes the selected list items by root id', () => {
