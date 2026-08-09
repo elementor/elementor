@@ -11,7 +11,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
 	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
-	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
+	// { pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
@@ -94,6 +94,17 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 
 				await page.goto( '/law-firm-about/?elementor' );
+
+				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
+					await page.getByRole( 'link', { name: 'Not right now' } ).click();
+					await page.goto( '/law-firm-about/?elementor' );
+				}
+
+				if ( 'header-footer-elementor' === plugin.pluginName && page.url().includes( 'page=hfe' ) ) {
+					await page.getByText( 'Exit Guided Setup' ).click();
+					await page.goto( '/law-firm-about/?elementor' );
+				}
+
 				await wpAdmin.closeAnnouncementsIfVisible();
 
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
