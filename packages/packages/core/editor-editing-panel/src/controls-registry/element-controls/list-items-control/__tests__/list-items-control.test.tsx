@@ -3,168 +3,176 @@ import { render, screen } from '@testing-library/react';
 
 import { ListItemsControlContent } from '../list-items-control';
 
-const mockRepeater = jest.fn( () => null );
-const mockGetContainer = jest.fn();
-const mockGetElementChildren = jest.fn();
-const mockUseElementEditorSettings = jest.fn( () => ( { label: 'Item 1' } ) );
+type RepeaterProps = {
+  showRemove: boolean;
+  itemSettings: {
+    Content: React.ComponentType< {
+      value: { id: string; title: string };
+      index: number;
+      anchorEl: HTMLElement | null;
+      bind: string;
+    } >;
+  };
+};
+
+const mockRepeater = jest.fn< ( props: unknown ) => null >( () => null );
+const mockGetContainer = jest.fn< ( elementId: string ) => unknown >( () => undefined );
+const mockGetElementChildren = jest.fn< ( model: unknown, predicate: unknown ) => unknown[] >(
+  () => []
+);
+const mockUseElementEditorSettings = jest.fn< ( elementId: string ) => { label?: string } >(
+  () => ( {
+    label: 'Item 1',
+  } )
+);
+let capturedRepeaterProps: unknown;
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	__privateUseListenTo: ( _events: unknown[], getValue: () => unknown ) => getValue(),
-	commandEndEvent: ( command: string ) => command,
-	v1ReadyEvent: () => 'ready',
+  __privateUseListenTo: ( _events: unknown[], getValue: () => unknown ) => getValue(),
+  commandEndEvent: ( command: string ) => command,
+  v1ReadyEvent: () => 'ready',
+  windowEvent: ( event: string ) => event,
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => ( {
-	Repeater: ( props: unknown ) => {
-		mockRepeater( props );
-		return null;
-	},
-	ControlFormLabel: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+  Repeater: ( props: unknown ) => {
+    capturedRepeaterProps = props;
+    mockRepeater( props );
+    return null;
+  },
+  ControlFormLabel: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 } ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	getContainer: ( ...args: unknown[] ) => mockGetContainer( ...args ),
-	getElementChildrenWithFallback: ( ...args: unknown[] ) => mockGetElementChildren( ...args ),
-	updateElementEditorSettings: jest.fn(),
-	useElementEditorSettings: ( ...args: unknown[] ) => mockUseElementEditorSettings( ...args ),
+  getContainer: ( elementId: string ) => mockGetContainer( elementId ),
+  getElementChildrenWithFallback: ( model: unknown, predicate: unknown ) =>
+    mockGetElementChildren( model, predicate ),
+  updateElementEditorSettings: jest.fn(),
+  useElementEditorSettings: ( elementId: string ) => mockUseElementEditorSettings( elementId ),
 } ) );
 
 jest.mock( '../../../../contexts/element-context', () => ( {
-	useElement: () => ( { element: { id: 'list-1' } } ),
+  useElement: () => ( { element: { id: 'list-1' } } ),
 } ) );
 
 jest.mock( '../use-actions', () => ( {
-	LIST_ITEM_ELEMENT_TYPE: 'e-list-item',
-	useActions: () => ( {
-		addItem: jest.fn(),
-		duplicateItem: jest.fn(),
-		moveItem: jest.fn(),
-		removeItem: jest.fn(),
-	} ),
+  LIST_ITEM_ELEMENT_TYPE: 'e-list-item',
+  useActions: () => ( {
+    addItem: jest.fn(),
+    duplicateItem: jest.fn(),
+    moveItem: jest.fn(),
+    removeItem: jest.fn(),
+  } ),
 } ) );
 
 describe( 'ListItemsControlContent', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-		mockGetContainer.mockReturnValue( { id: 'list-1', model: {} } );
-		mockUseElementEditorSettings.mockReturnValue( { label: 'Item 1' } );
-	} );
+  beforeEach( () => {
+    jest.clearAllMocks();
+    capturedRepeaterProps = undefined;
+    mockGetContainer.mockReturnValue( { id: 'list-1', model: {} } );
+    mockUseElementEditorSettings.mockReturnValue( { label: 'Item 1' } );
+  } );
 
-	it( 'hides remove when only one item exists', () => {
-		mockGetElementChildren.mockReturnValue( [
-			{
-				model: {
-					get: ( key: string ) => {
-						if ( key === 'id' ) {
-							return 'item-1';
-						}
+  it( 'hides remove when only one item exists', () => {
+    mockGetElementChildren.mockReturnValue( [
+      {
+        model: {
+          get: ( key: string ) => {
+            if ( key === 'id' ) {
+              return 'item-1';
+            }
 
-						if ( key === 'editor_settings' ) {
-							return { label: 'Item 1' };
-						}
+            if ( key === 'editor_settings' ) {
+              return { label: 'Item 1' };
+            }
 
-						return undefined;
-					},
-				},
-			},
-		] );
+            return undefined;
+          },
+        },
+      },
+    ] );
 
-		render( <ListItemsControlContent label="List Items" /> );
+    render( <ListItemsControlContent label="List Items" /> );
 
-		expect( mockRepeater ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				showRemove: false,
-			} )
-		);
-	} );
+    expect( ( capturedRepeaterProps as RepeaterProps ).showRemove ).toBe( false );
+  } );
 
-	it( 'shows remove when multiple items exist', () => {
-		mockGetElementChildren.mockReturnValue( [
-			{
-				model: {
-					get: ( key: string ) => {
-						if ( key === 'id' ) {
-							return 'item-1';
-						}
+  it( 'shows remove when multiple items exist', () => {
+    mockGetElementChildren.mockReturnValue( [
+      {
+        model: {
+          get: ( key: string ) => {
+            if ( key === 'id' ) {
+              return 'item-1';
+            }
 
-						if ( key === 'editor_settings' ) {
-							return { label: 'Item 1' };
-						}
+            if ( key === 'editor_settings' ) {
+              return { label: 'Item 1' };
+            }
 
-						return undefined;
-					},
-				},
-			},
-			{
-				model: {
-					get: ( key: string ) => {
-						if ( key === 'id' ) {
-							return 'item-2';
-						}
+            return undefined;
+          },
+        },
+      },
+      {
+        model: {
+          get: ( key: string ) => {
+            if ( key === 'id' ) {
+              return 'item-2';
+            }
 
-						if ( key === 'editor_settings' ) {
-							return { label: 'Item 2' };
-						}
+            if ( key === 'editor_settings' ) {
+              return { label: 'Item 2' };
+            }
 
-						return undefined;
-					},
-				},
-			},
-		] );
+            return undefined;
+          },
+        },
+      },
+    ] );
 
-		render( <ListItemsControlContent label="List Items" /> );
+    render( <ListItemsControlContent label="List Items" /> );
 
-		expect( mockRepeater ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				showRemove: true,
-			} )
-		);
-	} );
+    expect( ( capturedRepeaterProps as RepeaterProps ).showRemove ).toBe( true );
+  } );
 
-	it( 'populates the popover input with the effective item label when editor settings are empty', () => {
-		mockGetElementChildren.mockReturnValue( [
-			{
-				model: {
-					get: ( key: string ) => {
-						if ( key === 'id' ) {
-							return 'item-1';
-						}
+  it( 'populates the popover input with the effective item label when editor settings are empty', () => {
+    mockGetElementChildren.mockReturnValue( [
+      {
+        model: {
+          get: ( key: string ) => {
+            if ( key === 'id' ) {
+              return 'item-1';
+            }
 
-						if ( key === 'editor_settings' ) {
-							return {};
-						}
+            if ( key === 'editor_settings' ) {
+              return {};
+            }
 
-						return undefined;
-					},
-				},
-			},
-		] );
-		mockUseElementEditorSettings.mockReturnValue( {} );
+            return undefined;
+          },
+        },
+      },
+    ] );
+    mockUseElementEditorSettings.mockReturnValue( {} );
 
-		render( <ListItemsControlContent label="List Items" /> );
+    render( <ListItemsControlContent label="List Items" /> );
 
-		const repeaterProps = mockRepeater.mock.calls[ 0 ][ 0 ] as {
-			itemSettings: {
-				Content: React.ComponentType< {
-					value: { id: string; title: string };
-					index: number;
-					anchorEl: HTMLElement | null;
-					bind: string;
-				} >;
-			};
-		};
+    if ( ! capturedRepeaterProps ) {
+      throw new Error( 'Repeater props were not captured' );
+    }
 
-		const Content = repeaterProps.itemSettings.Content;
+    const Content = ( capturedRepeaterProps as RepeaterProps ).itemSettings.Content;
 
-		render(
-			<Content
-				value={ { id: 'item-1', title: 'Item 1' } }
-				index={ 0 }
-				anchorEl={ null }
-				bind="ignored"
-			/>
-		);
+    render(
+      <Content
+        value={ { id: 'item-1', title: 'Item 1' } }
+        index={ 0 }
+        anchorEl={ null }
+        bind="ignored"
+      />
+    );
 
-		expect( screen.getByDisplayValue( 'Item 1' ) ).toBeInTheDocument();
-	} );
+    expect( screen.getByDisplayValue( 'Item 1' ) ).toBeInTheDocument();
+  } );
 } );
