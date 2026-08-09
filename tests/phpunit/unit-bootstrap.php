@@ -60,15 +60,53 @@ if ( ! class_exists( 'WP_Error' ) ) {
 			return $this->message;
 		}
 
-		public function get_error_data( string $code = '' ) {
-			return $this->data[ $code ][0] ?? null;
+	public function get_error_data( string $code = '' ) {
+		$code = $code !== '' ? $code : $this->code;
+		return $this->data[ $code ][0] ?? null;
+	}
+}
+}
+
+if ( ! class_exists( 'WP_REST_Request' ) ) {
+	class WP_REST_Request {
+		private array $params = [];
+
+		public function get_param( string $key ) {
+			return $this->params[ $key ] ?? null;
+		}
+
+		public function set_param( string $key, $value ): void {
+			$this->params[ $key ] = $value;
+		}
+	}
+}
+
+if ( ! class_exists( 'WP_REST_Response' ) ) {
+	class WP_REST_Response {
+		private $data;
+		private int $status;
+
+		public function __construct( $data = null, int $status = 200 ) {
+			$this->data   = $data;
+			$this->status = $status;
+		}
+
+		public function get_status(): int {
+			return $this->status;
+		}
+
+		public function get_data() {
+			return $this->data;
 		}
 	}
 }
 
 if ( ! class_exists( 'WP_Http' ) ) {
 	class WP_Http {
+		const OK          = 200;
 		const BAD_REQUEST = 400;
+		const UNAUTHORIZED = 401;
+		const FORBIDDEN   = 403;
 		const NOT_FOUND   = 404;
 	}
 }

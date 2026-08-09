@@ -77,17 +77,24 @@ class Mcp_Proxy_REST_API {
 					],
 				],
 			],
-			[
-				'methods'             => 'GET',
-				'callback'            => fn( $request ) => $this->route_wrapper( fn() => $this->handle_resource( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
-				'args'                => [
-					'uri' => [
-						'type'     => 'string',
-						'required' => true,
-					],
+		[
+			'methods'             => 'GET',
+			'callback'            => fn( $request ) => $this->route_wrapper( fn() => $this->handle_get( $request ) ),
+			'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+			'validate_callback'   => fn( $request ) => $this->validate_get_params( $request ),
+			'args'                => [
+				'uri'    => [
+					'type'        => 'string',
+					'required'    => false,
+					'description' => 'Resource URI to fetch.',
+				],
+				'schema' => [
+					'type'        => 'string',
+					'required'    => false,
+					'description' => 'Tool name whose JSON schema to retrieve.',
 				],
 			],
+		],
 		] );
 	}
 
@@ -112,6 +119,45 @@ class Mcp_Proxy_REST_API {
 		$result = $ability->execute( is_array( $input ) ? $input : [] );
 
 		return $this->build_response( $result );
+	}
+
+	private function handle_get( \WP_REST_Request $request ) {
+		if ( $request->get_param( 'schema' ) ) {
+			return $this->handle_schema( $request );
+		}
+
+		return $this->handle_resource( $request );
+	}
+
+	private function handle_schema( \WP_REST_Request $request ) {
+		$tool_name = $request->get_param( 'schema' );
+
+		if ( ! isset( $this->tools[ $tool_name ] ) ) {
+			return Error_Builder::make( 'unknown_tool' )
+				->set_status( \WP_Http::NOT_FOUND )
+				->set_message( sprintf( __( 'Unknown tool: %s', 'elementor' ), $tool_name ) )
+				->build();
+		}
+
+		$ability = ( $this->tools[ $tool_name ] )();
+
+		if ( ! $ability->check_permission() ) {
+			return $this->forbidden_error();
+		}
+
+		return Response_Builder::make( $ability->get_schema() )->set_status( \WP_Http::OK )->build();
+	}
+
+	private function validate_get_params( \WP_REST_Request $request ) {
+		if ( ! $request->get_param( 'schema' ) && ! $request->get_param( 'uri' ) ) {
+			return new \WP_Error(
+				'missing_param',
+				__( 'Request must include either a "schema" or "uri" parameter.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return true;
 	}
 
 	private function handle_resource( \WP_REST_Request $request ) {
