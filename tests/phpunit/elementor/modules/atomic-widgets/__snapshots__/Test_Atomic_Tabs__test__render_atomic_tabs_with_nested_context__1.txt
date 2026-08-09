@@ -43,6 +43,7 @@
     data-interactions="null"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="content1"
     id="tabscontainer-tab-content-0"
     aria-labelledby="tabscontainer-tab-0"
      hidden="true" style="display: none;"        ><div class="e-con e-atomic-element e-tabs-base "
@@ -104,6 +105,7 @@
     data-interactions="null"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="nestedcontent1"
     id="nestedtabscontainer-tab-content-0"
     aria-labelledby="nestedtabscontainer-tab-0"
      hidden="true" style="display: none;"        ></div>
@@ -115,6 +117,7 @@
     data-interactions="null"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="nestedcontent2"
     id="nestedtabscontainer-tab-content-1"
     aria-labelledby="nestedtabscontainer-tab-1"
      hidden="true" style="display: none;"        ></div>
