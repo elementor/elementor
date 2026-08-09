@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WordPress_Best_Practices_Ability extends Abstract_Ability {
+class Wordpress_Best_Practices_Ability extends Abstract_Ability {
 	const URI = 'elementor://wordpress/best-practices';
 	const FILE_PATH = __DIR__ . '/../static-resources/wordpress/best-practices.md';
 
