@@ -7,8 +7,9 @@ const LIST_MARKER_STASH_PREFIX = 'elementor/editor-state';
 const LIST_MARKER_STASH_SEGMENT = 'children-deps';
 
 export default class AtomicListModel extends AtomicElementBaseModel {
-	initialize( attributes, options ) {
+	initialize( attributes = {}, options ) {
 		this.reconcileListMarkersAgainstSchema( attributes );
+		this.syncInitialListAttributes( attributes );
 
 		super.initialize( attributes, options );
 
@@ -21,7 +22,17 @@ export default class AtomicListModel extends AtomicElementBaseModel {
 		this.once( 'destroy', () => this.unbindListMarkersReconcile?.() );
 	}
 
-	reconcileListMarkersAgainstSchema( attributes ) {
+	syncInitialListAttributes( attributes ) {
+		if ( Object.hasOwn( attributes, 'elements' ) ) {
+			this.set( 'elements', attributes.elements );
+		}
+
+		if ( Object.hasOwn( attributes, 'settings' ) ) {
+			this.set( 'settings', attributes.settings );
+		}
+	}
+
+	reconcileListMarkersAgainstSchema( attributes = {} ) {
 		const elements = [ ...( attributes.elements ?? [] ) ];
 		const showMarkers = this.isShowMarkersEnabled( attributes.settings );
 
