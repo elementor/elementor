@@ -11,7 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Classes_Resource_Ability extends Abstract_Ability {
 	const URI = 'elementor://global-classes';
-	const PRIORITY_DESCRIPTION = 'Classes are ordered from highest to lowest priority. When classes on the same element set the same CSS property, the earlier class overrides the later one.';
+
+	private ?Global_Classes_Repository $repository;
+
+	public function __construct( ?Global_Classes_Repository $repository = null ) {
+		$this->repository = $repository;
+	}
 
 	protected function get_ability_id(): string {
 		return 'elementor/global-classes-resource';
@@ -37,10 +42,8 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
 		$classes = [];
-		foreach ( Global_Classes_Repository::make( $kit )->all_labels() as $id => $label ) {
+		foreach ( $this->get_repository()->all_labels() as $id => $label ) {
 			$classes[] = [
 				'id' => $id,
 				'label' => $label,
@@ -48,8 +51,18 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 		}
 
 		return wp_json_encode( [
-			'priority' => self::PRIORITY_DESCRIPTION,
+			'priority_description' => __( 'Classes are ordered from highest to lowest priority. When classes on the same element set the same CSS property, the earlier class overrides the later one.', 'elementor' ),
 			'classes' => $classes,
 		] );
+	}
+
+	private function get_repository(): Global_Classes_Repository {
+		if ( $this->repository ) {
+			return $this->repository;
+		}
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		return Global_Classes_Repository::make( $kit );
 	}
 }

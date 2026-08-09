@@ -45,6 +45,7 @@ class Reorder_Classes_Ability extends Abstract_Ability {
 					],
 					'moves' => [
 						'type' => 'array',
+						'description' => 'Applied moves in order. Each from/to is relative to the array state when that move ran, not the original input order.',
 						'items' => [
 							'type' => 'object',
 							'properties' => [

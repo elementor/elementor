@@ -47,7 +47,7 @@ Resources expose **labels** for author-facing references. Do not use internal pr
 
 | URI | Payload |
 |-----|---------|
-| `global-classes` | `{ priority, classes }`, where `classes` is an ordered `[{ id, label }]` list from highest to lowest CSS priority |
+| `global-classes` | `{ priority_description, classes }`, where `classes` is an ordered `[{ id, label }]` list from highest to lowest CSS priority |
 | `global-variables` | `{ variables, total, watermark }` |
 | `style/best-practices` | Markdown from `static-resources/style/best-practices.md` |
 | `interactions/schema` | LLM JSON Schema for interaction items |

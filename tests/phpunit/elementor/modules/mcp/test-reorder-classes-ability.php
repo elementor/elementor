@@ -140,4 +140,21 @@ class Test_Reorder_Classes_Ability extends TestCase {
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'invalid_input', $result->get_error_code() );
 	}
+
+	public function test_execute__rejects_more_than_max_moves() {
+		$repository = $this->make_repository( [ 'g-a', 'g-b' ] );
+		$repository->expects( $this->never() )->method( 'apply_changes' );
+
+		$moves = array_fill( 0, Reorder_Classes_Ability::MAX_MOVES + 1, [
+			'id' => 'g-a',
+			'position' => 'start',
+		] );
+
+		$result = $this->make_ability( $repository )->execute( [
+			'moves' => $moves,
+		] );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
 }

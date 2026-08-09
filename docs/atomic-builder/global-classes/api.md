@@ -11,7 +11,7 @@ Two surfaces for managing global classes on the **active kit**:
 1. **REST API** (`Global_Classes_REST_API`) — editor `editor-global-classes` package and HTTP clients
 2. **MCP abilities** — `elementor/manage-classes` for bulk create/update/delete via raw CSS and `elementor/reorder-classes` for class priority
 
-Read-only MCP resource: `elementor://global-classes` (`{ priority, classes }`, ordered from highest to lowest CSS priority).
+Read-only MCP resource: `elementor://global-classes` (`{ priority_description, classes }`, ordered from highest to lowest CSS priority).
 
 ## When to use it
 
@@ -72,19 +72,7 @@ Use `elementor://global-classes` for discovery; use **labels** in `build-composi
 
 ### MCP `reorder-classes`
 
-The first class in the global order has the highest priority. When classes applied to the same element declare the same property, the earlier class overrides the later one.
-
-Use relative moves for targeted changes:
-
-```json
-{
-  "moves": [
-    { "id": "g-accent", "position": "before", "ref": "g-base" }
-  ]
-}
-```
-
-Or send an `order` array. Any existing IDs omitted from that array are appended in their current relative order. See [../mcp/abilities/reorder-classes.md](../mcp/abilities/reorder-classes.md).
+Use `elementor/reorder-classes` to change class priority on the active kit. See [../mcp/abilities/reorder-classes.md](../mcp/abilities/reorder-classes.md).
 
 ### Import / export
 
