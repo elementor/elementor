@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use WP\MCP\Core\McpAdapter;
 
@@ -26,6 +27,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		( new Mcp_Proxy_REST_API() )->register_hooks();
+		( new Public_Preview_Handler() )->register();
 
 		if ( ! $this->is_active() ) {
 			return;
@@ -60,8 +62,10 @@ class Module extends BaseModule {
 		( new Abilities\Get_Structure_Ability() )->register();
 		( new Abilities\Update_Settings_Ability() )->register();
 		( new Abilities\Create_Page_Ability() )->register();
+		( new Abilities\Create_Preview_Link_Ability() )->register();
 		( new Abilities\Publish_Document_Ability() )->register();
 		( new Abilities\Style_Best_Practices_Ability() )->register();
+		( new Abilities\Wordpress_Best_Practices_Ability() )->register();
 		( new Abilities\Manage_Variable_Ability() )->register();
 		( new Abilities\Manage_Classes_Ability() )->register();
 		( new Abilities\Manage_Variable_Guide_Ability() )->register();
@@ -118,6 +122,7 @@ class Module extends BaseModule {
 			'elementor/get-page-structure',
 			'elementor/update-page-settings',
 			'elementor/create-page',
+			'elementor/create-preview-link',
 			'elementor/publish-document',
 			'elementor/manage-global-variable',
 			'elementor/manage-classes',
@@ -151,6 +156,7 @@ class Module extends BaseModule {
 	private function get_server_resources(): array {
 		$resources = [
 			'elementor/style-best-practices',
+			'elementor/wordpress-best-practices',
 			'elementor/manage-global-variable-guide',
 			'elementor/global-classes-resource',
 			'elementor/global-variables-resource',
