@@ -176,6 +176,7 @@ class Module extends BaseModule {
 		'editor-interactions',
 		'editor-templates',
 		'editor-design-system',
+		'editor-site-settings',
 	];
 
 	public function get_name() {
