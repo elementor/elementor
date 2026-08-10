@@ -33,10 +33,6 @@ export default function ImportKit() {
 		uploadKit();
 	};
 	const handleCloseError = () => {
-		if ( window.top !== window ) {
-			window.top.$e.run( 'app/close' );
-			return;
-		}
 		if ( attemptRedirect() ) {
 			return;
 		}

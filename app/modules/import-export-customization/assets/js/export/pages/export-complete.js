@@ -69,10 +69,6 @@ export default function ExportComplete() {
 	}, [ includes, exportedData?.manifest, analytics?.customization, kitInfo.description ] );
 
 	const handleDone = () => {
-		if ( window.top !== window ) {
-			window.top.$e.run( 'app/close' );
-			return;
-		}
 		window.top.location = elementorAppConfig.admin_url;
 	};
 
