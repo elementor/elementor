@@ -70,7 +70,6 @@ From `Editor_Loader::EXTENSIONS`:
 |---------|--------|-------|
 | `editor-site-navigation` | `site-navigation` | Pages panel |
 | `editor-widget-creation` | `widget-creation` | Promo gated by `e_widget_creation` |
-| `editor-starter` | `onboarding` | When `should_show_starter()` |
 
 ## Public API
 

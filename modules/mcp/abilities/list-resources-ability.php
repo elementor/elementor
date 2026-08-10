@@ -62,6 +62,12 @@ class List_Resources_Ability extends Abstract_Ability {
 				'mimeType' => 'text/markdown',
 			],
 			[
+				'uri' => Wordpress_Best_Practices_Ability::URI,
+				'name' => 'WordPress Best Practices',
+				'description' => 'Opinionated WordPress patterns for Elementor builds: repeating layouts (single template vs N pages), include-all + exclude-exceptions condition scoping, Post Content placement, dynamic tags.',
+				'mimeType' => 'text/markdown',
+			],
+			[
 				'uri' => Manage_Variable_Guide_Ability::URI,
 				'name' => 'Manage Global Variable Guide',
 				'description' => 'Detailed guide for using the manage-global-variable tool. Covers available types, naming rules, value rules, and operation examples.',
@@ -70,7 +76,7 @@ class List_Resources_Ability extends Abstract_Ability {
 			[
 				'uri' => Global_Classes_Resource_Ability::URI,
 				'name' => 'Global Classes',
-				'description' => 'Reusable CSS classes from the active kit; check FIRST before adding inline styles.',
+				'description' => 'Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority. Check first before adding inline styles.',
 				'mimeType' => 'application/json',
 			],
 			[
