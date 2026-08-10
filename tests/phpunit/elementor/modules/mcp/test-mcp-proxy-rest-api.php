@@ -6,6 +6,7 @@ use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
+use Elementor\Modules\Mcp\Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -18,6 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
+	const TEST_POST_ID         = 999;
+	const EDIT_LOCK_META_KEY   = '_edit_lock';
+	const UNSAVED_TRANSIENT_KEY = '_elementor_editor_unsaved_999';
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -28,6 +33,15 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		( new Mcp_Proxy_REST_API() )->register_hooks();
 
 		do_action( 'rest_api_init' );
+
+		add_filter( 'elementor/mcp/pre_execute_guard', [ new Module(), 'check_mutation_guard' ], 10, 2 );
+	}
+
+	public function tearDown(): void {
+		delete_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY );
+		delete_transient( self::UNSAVED_TRANSIENT_KEY );
+
+		parent::tearDown();
 	}
 
 	public function test_post__rejects_manage_global_variable_for_editor() {
@@ -179,5 +193,51 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertSame( Manage_Variable_Guide_Ability::URI, $result['uri'] );
 		$this->assertNotEmpty( $result['content'] );
+	}
+
+	public function test_mutation_guard__returns_409_when_lock_and_unsaved_exist() {
+		// Arrange
+		update_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY, '1' );
+		set_transient( self::UNSAVED_TRANSIENT_KEY, 1 );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'elementor_editor_unsaved_changes', $result->get_error_code() );
+		$this->assertSame( 409, $result->get_error_data()['status'] );
+	}
+
+	public function test_mutation_guard__returns_null_when_lock_exists_but_no_unsaved() {
+		// Arrange
+		update_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY, '1' );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_no_lock() {
+		// Arrange
+		set_transient( self::UNSAVED_TRANSIENT_KEY, 1 );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_post_id_absent() {
+		// Arrange — nothing
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [] );
+
+		// Assert
+		$this->assertNull( $result );
 	}
 }

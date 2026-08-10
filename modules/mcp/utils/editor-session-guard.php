@@ -23,14 +23,17 @@ class Editor_Session_Guard {
 		if ( $post_id <= 0 ) {
 			return;
 		}
-		set_transient( self::unsaved_key( $post_id ), 1, self::EDITOR_UNSAVED_TTL );
+		set_transient( self::unsaved_key( $post_id ), get_current_user_id(), self::EDITOR_UNSAVED_TTL );
 	}
 
 	public static function clear_editor_unsaved( int $post_id ): void {
 		if ( $post_id <= 0 ) {
 			return;
 		}
-		delete_transient( self::unsaved_key( $post_id ) );
+		$owner = (int) get_transient( self::unsaved_key( $post_id ) );
+		if ( $owner === get_current_user_id() ) {
+			delete_transient( self::unsaved_key( $post_id ) );
+		}
 	}
 
 	public static function has_editor_unsaved( int $post_id ): bool {
