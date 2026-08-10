@@ -50,7 +50,14 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 
 		$widgets = array_filter(
 			Widget_Context_Helper::get_llm_eligible_widgets(),
-			fn( $config ) => Widget_Context_Helper::VERSION_V4 === Widget_Context_Helper::get_widget_version( $config )
+			static function ( $config, $type ) {
+				if ( Widget_Context_Helper::VERSION_V4 === Widget_Context_Helper::get_widget_version( $config ) ) {
+					return true;
+				}
+
+				return Widget_Context_Helper::is_v3_allowlisted( (string) $type );
+			},
+			ARRAY_FILTER_USE_BOTH
 		);
 
 		if ( $summary ) {
