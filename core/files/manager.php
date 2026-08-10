@@ -275,14 +275,18 @@ class Manager {
 	 * When the `e_optimized_css_files` experiment is active, those false alarms are
 	 * skipped. When inactive, behaviour is unchanged: always purge.
 	 *
+	 * WordPress passes the `hook_extra` array directly as the second argument to this
+	 * action (see `WP_Upgrader::run()`), NOT nested under a `hook_extra` key - do not
+	 * confuse this with `WP_Upgrader::$result['hook_extra']` accessed elsewhere.
+	 *
 	 * @since 3.33.0
 	 * @access public
 	 *
-	 * @param \WP_Upgrader|false $upgrader The upgrader instance, or false.
-	 * @param array              $options  Upgrade options, including `hook_extra`.
+	 * @param \WP_Upgrader|false $upgrader   The upgrader instance, or false.
+	 * @param array              $hook_extra The upgrade payload (`action`, `type`, `plugins`/`themes`/`plugin`/`theme`, `translations`, ...).
 	 */
-	public function on_upgrader_process_complete( $upgrader, $options ) {
-		if ( $this->is_optimized_css_files_active() && ! $this->is_genuine_update( $options ) ) {
+	public function on_upgrader_process_complete( $upgrader, $hook_extra ) {
+		if ( $this->is_optimized_css_files_active() && ! $this->is_genuine_update( $hook_extra ) ) {
 			return;
 		}
 
@@ -297,13 +301,11 @@ class Manager {
 	 * @since 3.33.0
 	 * @access private
 	 *
-	 * @param array $options Upgrade options, including `hook_extra`.
+	 * @param array $hook_extra The upgrade payload passed as the hook's second argument.
 	 *
 	 * @return bool
 	 */
-	private function is_genuine_update( $options ) {
-		$hook_extra = is_array( $options ) && isset( $options['hook_extra'] ) ? $options['hook_extra'] : null;
-
+	private function is_genuine_update( $hook_extra ) {
 		if ( empty( $hook_extra ) || ! is_array( $hook_extra ) ) {
 			return false;
 		}

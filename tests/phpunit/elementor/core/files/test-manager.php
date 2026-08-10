@@ -121,6 +121,11 @@ class Test_Files_Manager extends Elementor_Test_Base {
 	}
 
 	/**
+	 * WordPress fires `upgrader_process_complete` with the `hook_extra` array
+	 * passed directly as the action's second argument (see
+	 * `WP_Upgrader::run()` and e.g. `Plugin_Upgrader::bulk_upgrade()`), NOT
+	 * nested under a `hook_extra` key. These fixtures mirror real payloads.
+	 *
 	 * @dataProvider genuine_update_hook_extra_data_provider
 	 */
 	public function test_upgrader_process_complete__experiment_active__genuine_update_purges( array $hook_extra ) {
@@ -129,7 +134,7 @@ class Test_Files_Manager extends Elementor_Test_Base {
 		$purge_count = $this->track_purge_count();
 
 		// Act.
-		$this->files_manager->on_upgrader_process_complete( false, [ 'hook_extra' => $hook_extra ] );
+		$this->files_manager->on_upgrader_process_complete( false, $hook_extra );
 
 		// Assert.
 		$this->assertSame( 1, $purge_count->count );
@@ -149,13 +154,13 @@ class Test_Files_Manager extends Elementor_Test_Base {
 	/**
 	 * @dataProvider false_alarm_hook_extra_data_provider
 	 */
-	public function test_upgrader_process_complete__experiment_active__false_alarm_skips_purge( $options ) {
+	public function test_upgrader_process_complete__experiment_active__false_alarm_skips_purge( $hook_extra ) {
 		// Arrange.
 		$this->set_experiment_state( Experiments_Manager::STATE_ACTIVE );
 		$purge_count = $this->track_purge_count();
 
 		// Act.
-		$this->files_manager->on_upgrader_process_complete( false, $options );
+		$this->files_manager->on_upgrader_process_complete( false, $hook_extra );
 
 		// Assert.
 		$this->assertSame( 0, $purge_count->count );
@@ -163,18 +168,20 @@ class Test_Files_Manager extends Elementor_Test_Base {
 
 	public function false_alarm_hook_extra_data_provider() {
 		return [
-			'empty options array' => [ [] ],
-			'missing hook_extra key' => [ [ 'foo' => 'bar' ] ],
-			'empty hook_extra' => [ [ 'hook_extra' => [] ] ],
-			'non-array hook_extra' => [ [ 'hook_extra' => 'not-an-array' ] ],
+			'null (false-y hook_extra)' => [ null ],
+			'empty array' => [ [] ],
+			'non-array' => [ 'not-an-array' ],
 			'translation update (type)' => [
-				[ 'hook_extra' => [ 'action' => 'update', 'type' => 'translation', 'bulk' => true, 'translations' => [ [ 'language' => 'de_DE' ] ] ] ],
+				[ 'action' => 'update', 'type' => 'translation', 'bulk' => true, 'translations' => [ [ 'language' => 'de_DE' ] ] ],
 			],
 			'bulk plugin update with empty queue' => [
-				[ 'hook_extra' => [ 'action' => 'update', 'type' => 'plugin', 'bulk' => true, 'plugins' => [] ] ],
+				[ 'action' => 'update', 'type' => 'plugin', 'bulk' => true, 'plugins' => [] ],
 			],
 			'bulk theme update with empty queue' => [
-				[ 'hook_extra' => [ 'action' => 'update', 'type' => 'theme', 'bulk' => true, 'themes' => [] ] ],
+				[ 'action' => 'update', 'type' => 'theme', 'bulk' => true, 'themes' => [] ],
+			],
+			'single plugin update missing plugin key' => [
+				[ 'action' => 'update', 'type' => 'plugin' ],
 			],
 		];
 	}
@@ -182,16 +189,58 @@ class Test_Files_Manager extends Elementor_Test_Base {
 	/**
 	 * @dataProvider false_alarm_hook_extra_data_provider
 	 */
-	public function test_upgrader_process_complete__experiment_inactive__always_purges( $options ) {
+	public function test_upgrader_process_complete__experiment_inactive__always_purges( $hook_extra ) {
 		// Arrange.
 		$this->set_experiment_state( Experiments_Manager::STATE_INACTIVE );
 		$purge_count = $this->track_purge_count();
 
 		// Act.
-		$this->files_manager->on_upgrader_process_complete( false, $options );
+		$this->files_manager->on_upgrader_process_complete( false, $hook_extra );
 
 		// Assert - today's behaviour is preserved: purge on every call, regardless of payload shape.
 		$this->assertSame( 1, $purge_count->count );
+	}
+
+	/**
+	 * Integration-style check that a real `do_action( 'upgrader_process_complete', ... )`
+	 * call - as WordPress itself fires it, with the hook_extra array as arg 2 - still
+	 * reaches the registered callback and purges for a genuine update.
+	 */
+	public function test_upgrader_process_complete__real_do_action__genuine_bulk_plugin_update_purges() {
+		// Arrange.
+		$this->set_experiment_state( Experiments_Manager::STATE_ACTIVE );
+		$purge_count = $this->track_purge_count();
+
+		// Act - mirrors Plugin_Upgrader::bulk_upgrade()'s do_action() call exactly.
+		do_action(
+			'upgrader_process_complete',
+			false,
+			[
+				'action' => 'update',
+				'type' => 'plugin',
+				'bulk' => true,
+				'plugins' => [ 'foo/foo.php' ],
+			]
+		);
+
+		// Assert.
+		$this->assertSame( 1, $purge_count->count );
+	}
+
+	/**
+	 * Same real `do_action()` shape as above, but for the false-alarm case WP fires
+	 * on a routine `wp_version_check()` / `wp_maybe_auto_update()` no-op pass.
+	 */
+	public function test_upgrader_process_complete__real_do_action__update_check_does_not_purge() {
+		// Arrange.
+		$this->set_experiment_state( Experiments_Manager::STATE_ACTIVE );
+		$purge_count = $this->track_purge_count();
+
+		// Act.
+		do_action( 'upgrader_process_complete', null, [] );
+
+		// Assert.
+		$this->assertSame( 0, $purge_count->count );
 	}
 
 	public function test_clear_cache__experiment_active__dedupes_within_a_single_request() {
