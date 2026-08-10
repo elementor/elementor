@@ -68,6 +68,10 @@ export default function Layout( props ) {
 		},
 		onClose = () => {
 			eventTracking( 'kit-library/close', 'app_header', null, 'click' );
+			if ( window.top !== window ) {
+				window.top.$e.run( 'app/close' );
+				return;
+			}
 			if ( returnTo && safeRedirect( returnTo ) ) {
 				// Do nothing as the redirect is handled by the safeRedirect function.
 			} else if ( 'kit-library' === sharedContext.data.referrer || 'kit-library' === referrer ) {

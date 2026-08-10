@@ -15,6 +15,10 @@ export default function ImportComplete() {
 	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
 
 	const handleDone = () => {
+		if ( window.top !== window ) {
+			window.top.$e.run( 'app/close' );
+			return;
+		}
 		if ( attemptRedirect() ) {
 			return;
 		}
