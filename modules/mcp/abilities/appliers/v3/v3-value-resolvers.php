@@ -189,6 +189,13 @@ class V3_Value_Resolvers {
 				continue;
 			}
 
+			if ( 'font-family' === $property ) {
+				$value = self::normalize_font_family( $value );
+				if ( '' === $value ) {
+					continue;
+				}
+			}
+
 			$patch[ $key ] = trim( $value );
 		}
 
@@ -309,6 +316,22 @@ class V3_Value_Resolvers {
 			'size' => (float) $matches[1],
 			'unit' => strtolower( $matches[2] ?? self::DEFAULT_UNIT ),
 		];
+	}
+
+	/**
+	 * V3 typography controls accept a single named font; CSS stacks are reduced to the first family.
+	 */
+	private static function normalize_font_family( string $value ): string {
+		$first = trim( explode( ',', $value, 2 )[0] );
+
+		if (
+			( str_starts_with( $first, '"' ) && str_ends_with( $first, '"' ) )
+			|| ( str_starts_with( $first, "'" ) && str_ends_with( $first, "'" ) )
+		) {
+			$first = substr( $first, 1, -1 );
+		}
+
+		return trim( $first );
 	}
 
 	/**

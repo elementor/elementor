@@ -97,6 +97,20 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( [], $patch );
 	}
 
+	public function test_resolve_typography_group__takes_first_font_from_stack() {
+		// Arrange / Act.
+		$patch = V3_Value_Resolvers::resolve_typography_group(
+			[
+				'font-family' => '"Playfair Display", Georgia, serif',
+			],
+			'typography'
+		);
+
+		// Assert.
+		$this->assertSame( 'Playfair Display', $patch['typography_font_family'] );
+		$this->assertSame( 'custom', $patch['typography_typography'] );
+	}
+
 	public function test_resolve_border_shorthand__parses_width_style_color() {
 		// Arrange / Act.
 		$patch = V3_Value_Resolvers::resolve_border_shorthand( '2px solid #ccc', 'image_border' );
