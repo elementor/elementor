@@ -225,12 +225,14 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
+		global $_parent_pages;
+
+		if ( isset( $_parent_pages[ $item_slug ] ) ) {
+			return get_plugin_page_hookname( $item_slug, $_parent_pages[ $item_slug ] );
+		}
+
 		$original_parent = $this->get_original_parent_slug( $item );
 		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
-
-		if ( $this->is_submenu_page_registered( $parent_slug, $item_slug ) ) {
-			return null;
-		}
 
 		$has_page = method_exists( $item, 'render' );
 		$page_title = $has_page ? $item->get_page_title() : '';
@@ -247,24 +249,6 @@ class Elementor_One_Menu_Manager {
 			$callback,
 			$position
 		);
-	}
-
-	private function is_submenu_page_registered( string $parent_slug, string $item_slug ): bool {
-		global $submenu;
-
-		if ( empty( $submenu[ $parent_slug ] ) ) {
-			return false;
-		}
-
-		foreach ( $submenu[ $parent_slug ] as $existing_item ) {
-			$existing_slug = $existing_item[2] ?? '';
-
-			if ( $item_slug === $existing_slug ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {

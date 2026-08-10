@@ -115,6 +115,12 @@ class Settings extends Settings_Page {
 	 * bookmarks, third-party links, or direct hits to the Settings page instead of 404ing.
 	 */
 	private function maybe_redirect_home_screen_to_settings(): void {
+		global $pagenow;
+
+		if ( wp_doing_ajax() || 'admin.php' !== $pagenow ) {
+			return;
+		}
+
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		if ( self::PAGE_ID !== $page ) {
