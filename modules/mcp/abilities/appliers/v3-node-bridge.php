@@ -28,19 +28,10 @@ class V3_Node_Bridge {
 	 * `theme-post-title.title` -> post-title tag) render as their static fallback in the editor
 	 * canvas immediately after mutation and only pick up the dynamic value on a full refresh.
 	 *
-	 * @param array $node          Subtree node (by reference).
-	 * @param array $widget_config Widget config from Widget_Context_Helper::get_widget_config().
+	 * @param array $node     Subtree node (by reference).
+	 * @param array $controls Widget controls from Widget_Base::get_controls().
 	 */
-	public static function seed_dynamic_defaults( array &$node, array $widget_config ): void {
-		if ( ! self::is_v3_node( $node ) ) {
-			return;
-		}
-
-		$controls = $widget_config['controls'] ?? [];
-		if ( empty( $controls ) || ! is_array( $controls ) ) {
-			return;
-		}
-
+	public static function seed_dynamic_defaults( array &$node, array $controls ): void {
 		$existing = $node['settings'][ self::V3_DYNAMIC_SETTING ] ?? [];
 
 		foreach ( $controls as $name => $control ) {

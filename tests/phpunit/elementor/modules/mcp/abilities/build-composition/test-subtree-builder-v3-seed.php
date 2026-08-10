@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +44,30 @@ class Test_Subtree_Builder_V3_Seed extends TestCase {
 		);
 	}
 
-	public function test_build__leaves_v4_atomic_widgets_untouched() {
+	public function test_seed_dynamic_defaults__preserves_caller_provided_dynamic_overrides() {
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [
+				'__dynamic__' => [ 'title' => '[elementor-tag id="custom-title"]' ],
+			],
+		];
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'dynamic' => [ 'default' => '[elementor-tag id="post-title"]' ],
+			],
+		];
+
+		V3_Node_Bridge::seed_dynamic_defaults( $node, $controls );
+
+		$this->assertSame(
+			[ 'title' => '[elementor-tag id="custom-title"]' ],
+			$node['settings']['__dynamic__']
+		);
+	}
+
+	public function test_build__skips_v4_atomic_widgets_even_when_controls_are_present() {
 		$xml_parser = new Xml_Parser();
 		$builder = new Subtree_Builder( $xml_parser );
 
@@ -55,6 +79,12 @@ class Test_Subtree_Builder_V3_Seed extends TestCase {
 				'widgetType' => 'e-heading',
 				'allowed_child_types' => [],
 				'class' => 'FakeAtomicHeadingWidget',
+				'controls' => [
+					'title' => [
+						'type' => 'text',
+						'dynamic' => [ 'default' => '[elementor-tag id="post-title"]' ],
+					],
+				],
 			],
 		];
 

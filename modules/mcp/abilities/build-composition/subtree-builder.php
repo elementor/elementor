@@ -85,8 +85,8 @@ class Subtree_Builder {
 			$element['editor_settings']['title'] = $configuration_id;
 		}
 
-		if ( ! empty( $config['controls'] ) ) {
-			V3_Node_Bridge::seed_dynamic_defaults( $element, [ 'controls' => $config['controls'] ] );
+		if ( ! empty( $config['controls'] ) && V3_Node_Bridge::is_v3_node( $element ) ) {
+			V3_Node_Bridge::seed_dynamic_defaults( $element, $config['controls'] );
 		}
 
 		return $element;
