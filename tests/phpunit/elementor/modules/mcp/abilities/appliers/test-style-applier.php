@@ -291,9 +291,104 @@ namespace {
 			$this->assertSame( '#222222', $node['settings']['title_color'] );
 			$this->assertSame( 'custom', $node['settings']['typography_typography'] );
 			$this->assertSame( [ 'unit' => 'rem', 'size' => 2.0 ], $node['settings']['typography_font_size'] );
-			$this->assertArrayHasKey( 'custom_css', $node['settings'] );
-			$this->assertStringContainsString( 'filter: blur(2px);', $node['settings']['custom_css'] );
 			$this->assertNotEmpty( $result['warnings'] );
+			$this->assertTrue(
+				(bool) array_filter(
+					$result['warnings'],
+					static fn( $warning ) => false !== strpos( (string) $warning, 'filter: blur(2px);' )
+				)
+			);
+
+			if ( \Elementor\Utils::has_pro() ) {
+				$this->assertArrayHasKey( 'custom_css', $node['settings'] );
+				$this->assertStringContainsString( 'filter: blur(2px);', $node['settings']['custom_css'] );
+			} else {
+				$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+			}
+		}
+
+		public function test_apply__v3_replace_clears_mapped_settings_and_custom_css() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [
+					'title' => 'Keep me',
+					'title_color' => '#111111',
+					'typography_typography' => 'custom',
+					'typography_font_size' => [ 'unit' => 'px', 'size' => 40 ],
+					'custom_css' => 'selector { filter: blur(2px); }',
+				],
+				'styles' => [],
+			];
+			$index = [ 'post-title' => &$node ];
+			$widget_configs = [
+				'theme-post-title' => [
+					'controls' => [
+						'title_color' => [ 'type' => 'color' ],
+						'typography_typography' => [ 'type' => 'typography' ],
+						'typography_font_size' => [ 'type' => 'slider' ],
+					],
+				],
+			];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'post-title' => 'color: #abcdef;' ],
+				'replace',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( 'Keep me', $node['settings']['title'] );
+			$this->assertSame( '#abcdef', $node['settings']['title_color'] );
+			$this->assertArrayNotHasKey( 'typography_typography', $node['settings'] );
+			$this->assertArrayNotHasKey( 'typography_font_size', $node['settings'] );
+			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+		}
+
+		public function test_apply__v3_replace_empty_css_wipes_styles() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [
+					'title' => 'Keep me',
+					'title_color' => '#111111',
+					'custom_css' => 'selector { filter: blur(2px); }',
+				],
+				'styles' => [],
+			];
+			$index = [ 'post-title' => &$node ];
+			$widget_configs = [
+				'theme-post-title' => [
+					'controls' => [
+						'title_color' => [ 'type' => 'color' ],
+					],
+				],
+			];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'post-title' => '' ],
+				'replace',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( 'Keep me', $node['settings']['title'] );
+			$this->assertArrayNotHasKey( 'title_color', $node['settings'] );
+			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 		}
 	}
 }

@@ -54,7 +54,38 @@ class V3_Style_Serializer {
 			$this->emit_simple( $blocks, $settings, $property, $state, (string) $rule['setting'], (string) $rule['resolver'], ! empty( $rule['responsive'] ) );
 		}
 
-		return $this->render_blocks( $blocks );
+		$mapped_css = $this->render_blocks( $blocks );
+		$custom_css = $this->unwrap_custom_css( $settings['custom_css'] ?? null );
+
+		if ( '' === $mapped_css ) {
+			return $custom_css;
+		}
+
+		if ( '' === $custom_css ) {
+			return $mapped_css;
+		}
+
+		return $mapped_css . ' ' . $custom_css;
+	}
+
+	/**
+	 * @param mixed $custom_css
+	 */
+	private function unwrap_custom_css( $custom_css ): string {
+		if ( ! is_string( $custom_css ) ) {
+			return '';
+		}
+
+		$custom_css = trim( $custom_css );
+		if ( '' === $custom_css ) {
+			return '';
+		}
+
+		if ( preg_match( '/^\s*selector\s*\{\s*([\s\S]*?)\s*\}\s*$/i', $custom_css, $matches ) ) {
+			return trim( $matches[1] );
+		}
+
+		return $custom_css;
 	}
 
 	private function emit_override( array &$blocks, array $settings, string $property, ?string $state, array $override ): void {
@@ -153,7 +184,13 @@ class V3_Style_Serializer {
 			if ( null === $responsive_width ) {
 				continue;
 			}
-			$this->push( $blocks, $breakpoint, $state, 'border-width', $responsive_width );
+
+			$parts = [ $responsive_width, $style ];
+			if ( null !== $color_value ) {
+				$parts[] = $color_value;
+			}
+
+			$this->push( $blocks, $breakpoint, $state, 'border', implode( ' ', $parts ) );
 		}
 	}
 

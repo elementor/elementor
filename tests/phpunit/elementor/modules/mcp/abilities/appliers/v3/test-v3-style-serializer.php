@@ -132,4 +132,17 @@ class Test_V3_Style_Serializer extends TestCase {
 		$this->assertStringNotContainsString( 'random_unknown_key', $css );
 		$this->assertStringNotContainsString( 'Hello', $css );
 	}
+
+	public function test_serialize__appends_unwrapped_custom_css() {
+		$settings = [
+			'title_color' => '#ff0000',
+			'custom_css' => 'selector { filter: blur(2px); }',
+		];
+
+		$css = ( new V3_Style_Serializer() )->serialize( $settings, 'theme-post-title', $this->heading_config() );
+
+		$this->assertStringContainsString( 'color: #ff0000;', $css );
+		$this->assertStringContainsString( 'filter: blur(2px);', $css );
+		$this->assertStringNotContainsString( 'selector', $css );
+	}
 }

@@ -60,7 +60,7 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$v3_warnings = $this->apply_v3_style( $node, $css_string, $widget_configs );
+				$v3_warnings = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
 				foreach ( $v3_warnings as $warning ) {
 					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
 				}
@@ -132,7 +132,7 @@ class Style_Applier {
 	 * @param array<string, array> $widget_configs
 	 * @return string[] Warnings (without config-id prefix).
 	 */
-	private function apply_v3_style( array &$node, string $css_string, array $widget_configs = [] ): array {
+	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
 		$widget_type = $node['widgetType'] ?? '';
 		$widget_config = [];
@@ -141,6 +141,17 @@ class Style_Applier {
 			$widget_config = $widget_configs[ $widget_type ]
 				?? Widget_Context_Helper::get_widget_config( $widget_type )
 				?? [];
+		}
+
+		$is_empty_css = '' === trim( $css_string );
+		$is_replace = 'replace' === $style_apply_mode;
+
+		if ( $is_replace ) {
+			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
+		}
+
+		if ( $is_empty_css ) {
+			return $warnings;
 		}
 
 		$mapper = new V3_Style_Mapper( $this->css_converter, $this->get_active_breakpoints() );
@@ -155,14 +166,36 @@ class Style_Applier {
 		}
 
 		$unmapped = $result['unmapped_css'] ?? '';
-		$warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped );
-		if ( null !== $warning ) {
-			$warnings[] = $warning;
-		} elseif ( '' !== trim( $unmapped ) ) {
-			$warnings[] = __( 'Some CSS could not be mapped to V3 settings and was written to custom_css.', 'elementor' );
+		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped );
+		if ( null !== $pro_warning ) {
+			$warnings[] = $pro_warning;
+		}
+
+		if ( '' !== trim( $unmapped ) ) {
+			$snippet = self::truncate_css_snippet( $unmapped );
+			$warnings[] = null !== $pro_warning
+				? sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
+					$snippet
+				)
+				: sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
+					$snippet
+				);
 		}
 
 		return $warnings;
+	}
+
+	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {
+		$css = trim( preg_replace( '/\s+/', ' ', $css ) ?? $css );
+		if ( strlen( $css ) <= $max_length ) {
+			return $css;
+		}
+
+		return substr( $css, 0, $max_length - 3 ) . '...';
 	}
 
 	private function get_active_breakpoints(): array {

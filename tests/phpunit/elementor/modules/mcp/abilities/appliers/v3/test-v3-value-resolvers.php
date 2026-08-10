@@ -83,6 +83,20 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( 'Georgia', $patch['typography_font_family'] );
 	}
 
+	public function test_resolve_typography_group__skips_toggle_when_nothing_resolves() {
+		// Arrange / Act.
+		$patch = V3_Value_Resolvers::resolve_typography_group(
+			[
+				'font-size' => 'potato',
+				'line-height' => 'banana',
+			],
+			'typography'
+		);
+
+		// Assert.
+		$this->assertSame( [], $patch );
+	}
+
 	public function test_resolve_border_shorthand__parses_width_style_color() {
 		// Arrange / Act.
 		$patch = V3_Value_Resolvers::resolve_border_shorthand( '2px solid #ccc', 'image_border' );

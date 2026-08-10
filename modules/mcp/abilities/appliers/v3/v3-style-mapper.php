@@ -188,13 +188,10 @@ class V3_Style_Mapper {
 		$key = $setting;
 		if ( ! empty( $override['responsive'] ) && self::DESKTOP_BREAKPOINT !== $breakpoint ) {
 			$suffixed = $setting . '_' . $breakpoint;
-			if ( $this->control_exists( $widget_config, $suffixed ) ) {
-				$key = $suffixed;
-			} elseif ( $this->control_exists( $widget_config, $setting ) ) {
+			if ( ! $this->control_exists( $widget_config, $suffixed ) ) {
 				return null;
-			} else {
-				$key = $suffixed;
 			}
+			$key = $suffixed;
 		}
 
 		return [ $key => $resolved ];
@@ -213,13 +210,10 @@ class V3_Style_Mapper {
 		$key = $rule['setting'];
 		if ( self::DESKTOP_BREAKPOINT !== $breakpoint ) {
 			$suffixed = $key . '_' . $breakpoint;
-			if ( $this->control_exists( $widget_config, $suffixed ) ) {
-				$key = $suffixed;
-			} elseif ( empty( $rule['responsive'] ) ) {
-				return null;
-			} else {
+			if ( ! $this->control_exists( $widget_config, $suffixed ) ) {
 				return null;
 			}
+			$key = $suffixed;
 		}
 
 		return [ $key => $resolved ];

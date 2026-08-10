@@ -161,9 +161,7 @@ class V3_Value_Resolvers {
 	 * @return array<string, mixed>
 	 */
 	public static function resolve_typography_group( array $declarations, string $prefix = 'typography' ): array {
-		$patch = [
-			$prefix . '_typography' => 'custom',
-		];
+		$patch = [];
 
 		$map = [
 			'font-family' => $prefix . '_font_family',
@@ -193,6 +191,12 @@ class V3_Value_Resolvers {
 
 			$patch[ $key ] = trim( $value );
 		}
+
+		if ( empty( $patch ) ) {
+			return [];
+		}
+
+		$patch[ $prefix . '_typography' ] = 'custom';
 
 		return $patch;
 	}
