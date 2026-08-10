@@ -7,6 +7,7 @@
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="{{ id }}"
     id="{{ tab_content_id }}"
     aria-labelledby="{{ tab_id }}"
     {% if not is_active %} hidden="true" style="display: none;"{% endif %}

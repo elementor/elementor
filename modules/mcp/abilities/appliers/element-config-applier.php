@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 
@@ -52,6 +53,17 @@ class Element_Config_Applier {
 
 			if ( self::COMPONENT_INSTANCE_WIDGET_TYPE === $tag ) {
 				$component_entries[ $config_id ] = $settings;
+				continue;
+			}
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				$filter = V3_Non_Style_Allowlist::filter( (string) $tag, $settings );
+				if ( $filter['error'] ) {
+					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
+					continue;
+				}
+
+				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $filter['allowed'] );
 				continue;
 			}
 
