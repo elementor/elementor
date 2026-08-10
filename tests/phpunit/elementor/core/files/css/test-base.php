@@ -488,6 +488,32 @@ class Test_Base extends Elementor_Test_Base {
 		$this->assertEquals( CSS_Base::CSS_STATUS_FILE, $file->get_meta( 'status' ) );
 	}
 
+	public function test_enqueue__self_heals_to_inline_when_missing_file_regen_write_fails() {
+		// Arrange — meta says `file`, the file is missing (self-heal trigger), and the
+		// regeneration attempt itself fails to write (e.g. read-only uploads dir).
+		// Requirement 3 in the plan: a failed regeneration must serve inline CSS on
+		// *this* request rather than enqueueing a URL for a file that still doesn't exist.
+		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$file = $this->make_optimized_css_files_test_file();
+		$this->seed_file_status_meta( $file );
+		$file->set_write_should_fail( true );
+
+		$this->assertFileDoesNotExist( $file->get_path() );
+
+		// Act.
+		ob_start();
+		$file->enqueue();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertFileDoesNotExist( $file->get_path(), 'A failed regen must not leave a partial file behind.' );
+		$this->assertEquals( CSS_Base::CSS_STATUS_INLINE, $file->get_meta( 'status' ), 'Meta must reflect inline, not a `file` status pointing at nothing.' );
+		$this->assertStringContainsString( '<style', $output, 'The inline fallback must actually be printed on this request.' );
+		$this->assertStringContainsString( 'body { color: red; }', $output );
+		$this->assertFalse( wp_style_is( 'elementor-test-optimized-css-files', 'enqueued' ), 'Must not enqueue a stylesheet URL for a file that was never written.' );
+	}
+
 	public function test_update__falls_back_to_inline_status_when_write_fails_and_experiment_active() {
 		// Arrange.
 		$this->set_optimized_css_files_experiment( Experiments_Manager::STATE_ACTIVE );
