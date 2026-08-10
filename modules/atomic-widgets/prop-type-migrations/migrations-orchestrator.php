@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
@@ -18,29 +20,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Orchestrator {
-	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
+	const EXPERIMENT_BC_MIGRATIONS = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const MIGRATIONS_URL = 'https://editor.elementor.com/v1/migrations/';
+	const BUNDLED_MIGRATIONS_DIRECTORY = 'migrations/';
 
 	private static ?self $instance = null;
 
-	private Migrations_Loader $loader;
+	private ?Migrations_Loader $loader = null;
+
+	private ?Migrations_Loader $local_loader = null;
+
+	private ?Migrations_Loader $remote_loader = null;
+
 	private ?string $migrations_path = null;
 
 	private function __construct( ?string $migrations_path = null ) {
 		$this->migrations_path = $migrations_path;
-		$this->loader = Migrations_Loader::make( $this->get_migrations_base_path() );
 	}
 
 	public function register_hooks() {
-		if ( ! self::is_active() ) {
-			return;
-		}
-
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
 	}
 
 	public static function is_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BC_MIGRATIONS );
+		return true;
+	}
+
+	public static function register_affecting_feature_flag_hooks( array $features ): void {
 	}
 
 	public static function make( ?string $migrations_path = null ): self {
@@ -53,17 +59,26 @@ class Migrations_Orchestrator {
 
 	public static function destroy(): void {
 		Migrations_Loader::destroy();
+
+		if ( null !== self::$instance ) {
+			self::$instance->loader = null;
+			self::$instance->local_loader = null;
+			self::$instance->remote_loader = null;
+		}
+
 		self::$instance = null;
 	}
 
-	public static function register_affecting_feature_flag_hooks( array $features ): void {
-		if ( ! self::is_active() ) {
-			return;
+	public static function is_rollback(): bool {
+		/** @var Upgrade_Manager $upgrade_manager */
+		$upgrade_manager = Plugin::$instance->upgrade;
+		$stored_version = get_option( $upgrade_manager->get_version_option_name() );
+
+		if ( ! $stored_version ) {
+			return false;
 		}
 
-		foreach ( $features as $feature ) {
-			add_action( 'elementor/experiments/feature-state-change/' . $feature, [ __CLASS__, 'clear_migration_cache' ], 10, 2 );
-		}
+		return version_compare( ELEMENTOR_VERSION, $stored_version, '<' );
 	}
 
 	public static function clear_migration_cache(): void {
@@ -89,6 +104,8 @@ class Migrations_Orchestrator {
 	 * @param callable $save_callback   Function to persist migrated data if changes occurred
 	 */
 	public function migrate( array &$data, int $entity_id, string $data_identifier, callable $save_callback ): void {
+		$this->loader = $this->get_active_loader();
+
 		try {
 			if ( Migrations_Cache::is_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() ) ) {
 				return;
@@ -335,6 +352,46 @@ class Migrations_Orchestrator {
 		return $prop_value;
 	}
 
+	private function get_active_loader(): Migrations_Loader {
+		if ( $this->migrations_path ) {
+			return Migrations_Loader::make( $this->migrations_path );
+		}
+
+		if ( self::is_rollback() ) {
+			return $this->get_remote_loader();
+		}
+
+		return $this->get_local_loader();
+	}
+
+	private function get_local_loader(): Migrations_Loader {
+		if ( null === $this->local_loader ) {
+			$this->local_loader = Migrations_Loader::make( self::get_local_migrations_path() );
+		}
+
+		return $this->local_loader;
+	}
+
+	private function get_remote_loader(): Migrations_Loader {
+		if ( null === $this->remote_loader ) {
+			$this->remote_loader = Migrations_Loader::make(
+				self::MIGRATIONS_URL,
+				'manifest.json',
+				self::get_local_migrations_path()
+			);
+		}
+
+		return $this->remote_loader;
+	}
+
+	private static function get_local_migrations_path(): string {
+		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
+			return constant( 'ELEMENTOR_MIGRATIONS_PATH' );
+		}
+
+		return ELEMENTOR_PATH . self::BUNDLED_MIGRATIONS_DIRECTORY;
+	}
+
 	private function migrate_doc( array $data, Document $document ): array {
 		$this->migrate(
 			$data,
@@ -353,17 +410,5 @@ class Migrations_Orchestrator {
 		);
 
 		return $data;
-	}
-
-	private function get_migrations_base_path(): string {
-		if ( $this->migrations_path ) {
-			return $this->migrations_path;
-		}
-
-		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
-			return constant( 'ELEMENTOR_MIGRATIONS_PATH' );
-		}
-
-		return self::MIGRATIONS_URL;
 	}
 }

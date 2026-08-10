@@ -66,7 +66,10 @@ export const SearchFilters = ( {
 			gap={ 1.5 }
 			sx={ ( theme ) => ( {
 				position: 'sticky',
-				top: theme.spacing( 10 ),
+				top: 0,
+				'@media screen and (max-width: 782px)': {
+					top: 'calc(var(--e-admin-bar-height, 0px) + var(--e-top-bar-header-height, 0px))',
+				},
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
 				paddingBlock: 2,

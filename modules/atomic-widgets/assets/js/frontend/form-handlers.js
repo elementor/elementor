@@ -3,11 +3,80 @@ import { Alpine } from '@elementor/alpinejs';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
 
+let webmcpFormListenersRegistered = false;
+
 registerBySelector( {
 	id: 'atomic-form-submit-handler',
 	selector: ATOMIC_FORM_SELECTOR,
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
+
+function registerWebmcpFormListeners() {
+	if ( webmcpFormListenersRegistered ) {
+		return;
+	}
+
+	webmcpFormListenersRegistered = true;
+
+	window.addEventListener( 'toolactivated', ( { toolName } ) => {
+		resetWebmcpFormState( toolName );
+	} );
+
+	window.addEventListener( 'toolcancel', ( { toolName } ) => {
+		resetWebmcpFormState( toolName );
+	} );
+}
+
+function resetWebmcpFormState( toolName ) {
+	document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
+		if ( form.getAttribute( 'toolname' ) !== toolName ) {
+			return;
+		}
+
+		delete form.dataset.atomicFormSubmitting;
+		form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
+			button.disabled = false;
+		} );
+	} );
+}
+
+function extractAgentToolData( payload ) {
+	if ( ! payload || 'object' !== typeof payload ) {
+		return null;
+	}
+
+	if ( undefined !== payload.data ) {
+		return payload.data;
+	}
+
+	const { message: ignoredMessage, ...rest } = payload;
+
+	if ( ! Object.keys( rest ).length ) {
+		return null;
+	}
+
+	return rest;
+}
+
+function buildAgentToolResponse( response, state ) {
+	const payload = response?.data ?? null;
+	const message = payload?.message ?? response?.message ?? '';
+
+	return {
+		success: 'success' === state,
+		state,
+		message,
+		data: extractAgentToolData( payload ),
+	};
+}
+
+function respondToAgentIfInvoked( event, response, state ) {
+	if ( ! event?.agentInvoked || 'function' !== typeof event.respondWith ) {
+		return;
+	}
+
+	event.respondWith( Promise.resolve( buildAgentToolResponse( response, state ) ) );
+}
 
 function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
@@ -29,6 +98,7 @@ function registerAtomicFormAlpineData( form ) {
 			event.preventDefault();
 
 			if ( form.dataset.atomicFormSubmitting ) {
+				respondToAgentIfInvoked( event, { success: false, message: 'Form is already submitting.' }, 'error' );
 				return;
 			}
 
@@ -42,27 +112,32 @@ function registerAtomicFormAlpineData( form ) {
 
 			const payload = buildAtomicFormPayload( form );
 
-			if ( payload ) {
-				try {
-					const response = await submitAtomicForm( payload );
-					const state = response?.success ? 'success' : 'error';
-
-					setFormState( form, state );
-
-					if ( response?.success ) {
-						form.reset();
-
-						form.addEventListener( 'input', () => {
-							setFormState( form, 'default' );
-						}, { once: true } );
-					}
-				} catch ( error ) {
-					setFormState( form, 'error' );
-				} finally {
-					clearAtomicFormSubmittingState( form, submitButtons );
-				}
-			} else {
+			if ( ! payload ) {
 				setFormState( form, 'error' );
+				respondToAgentIfInvoked( event, { success: false, message: 'Invalid form payload.' }, 'error' );
+				clearAtomicFormSubmittingState( form, submitButtons );
+				return;
+			}
+
+			try {
+				const response = await submitAtomicForm( payload );
+				const state = response?.success ? 'success' : 'error';
+
+				setFormState( form, state );
+
+				if ( response?.success ) {
+					form.reset();
+
+					form.addEventListener( 'input', () => {
+						setFormState( form, 'default' );
+					}, { once: true } );
+				}
+
+				respondToAgentIfInvoked( event, response, state );
+			} catch ( error ) {
+				setFormState( form, 'error' );
+				respondToAgentIfInvoked( event, { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
+			} finally {
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
@@ -70,6 +145,7 @@ function registerAtomicFormAlpineData( form ) {
 }
 
 function handleAtomicFormSubmit( form ) {
+	registerWebmcpFormListeners();
 	registerAtomicFormAlpineData( form );
 
 	return refreshDom( form );

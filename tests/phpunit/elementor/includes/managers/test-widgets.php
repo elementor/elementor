@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Includes\Managers;
 
 use Elementor\Controls_Manager;
+use Elementor\Elements_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -100,6 +101,53 @@ class Test_Widgets extends Elementor_Test_Base {
 		// Assert.
 		$this->assertArrayHasKey( 'basic', $response['categories'] );
 		$this->assertArrayHasKey( 'title', $response['categories']['basic'] );
+	}
+
+	public function test_ajax_refresh_widgets_config__excludes_wordpress_category() {
+		// Arrange.
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
+
+		// Act.
+		$response = Plugin::$instance->widgets_manager->ajax_refresh_widgets_config( [
+			'editor_post_id' => $post_id,
+		] );
+
+		// Assert.
+		$this->assertArrayNotHasKey( Elements_Manager::CATEGORY_WORDPRESS, $response['categories'] );
+	}
+
+	public function test_ajax_refresh_widgets_config__wordpress_widgets_hide_from_panel() {
+		// Arrange.
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
+
+		// Act.
+		$response = Plugin::$instance->widgets_manager->ajax_refresh_widgets_config( [
+			'editor_post_id' => $post_id,
+		] );
+
+		$wp_widget_config = $this->get_wordpress_widget_config_from_response( $response );
+
+		if ( ! $wp_widget_config ) {
+			$this->markTestSkipped( 'WordPress widget not available in widgets config' );
+		}
+
+		// Assert.
+		$this->assertFalse( $wp_widget_config['show_in_panel'] );
+		$this->assertTrue( $wp_widget_config['hide_on_search'] );
+	}
+
+	private function get_wordpress_widget_config_from_response( array $response ): ?array {
+		foreach ( $response['widgets'] as $widget_key => $widget_config ) {
+			if ( 0 === strpos( $widget_key, 'wp-widget-' ) ) {
+				return $widget_config;
+			}
+		}
+
+		return null;
 	}
 
 	public function test_ajax_get_widgets_default_value_translations__doesnt_return_empty_controls() {

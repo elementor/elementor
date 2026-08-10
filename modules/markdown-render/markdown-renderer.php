@@ -11,28 +11,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Markdown_Renderer {
 
 	public function render( Document $document ): string {
-		$frontmatter = $this->build_frontmatter( $document );
-		$data = $document->get_elements_data();
+		return Module::execute_while_rendering_markdown( function () use ( $document ) {
+			$frontmatter = $this->build_frontmatter( $document );
+			$data = $document->get_elements_data();
 
-		if ( empty( $data ) ) {
-			return $frontmatter;
-		}
-
-		$sections = [];
-
-		foreach ( $data as $element_data ) {
-			$md = $this->render_element( $element_data );
-
-			if ( ! empty( trim( $md ) ) ) {
-				$sections[] = $md;
+			if ( empty( $data ) ) {
+				return $frontmatter;
 			}
-		}
 
-		$body = implode( "\n\n---\n\n", $sections );
+			$sections = [];
 
-		$output = $frontmatter . "\n\n" . $body;
+			foreach ( $data as $element_data ) {
+				$md = $this->render_element( $element_data );
 
-		return apply_filters( 'elementor/markdown/document_output', $output, $document );
+				if ( ! empty( trim( $md ) ) ) {
+					$sections[] = $md;
+				}
+			}
+
+			$body = implode( "\n\n---\n\n", $sections );
+
+			$output = $frontmatter . "\n\n" . $body;
+
+			return apply_filters( 'elementor/markdown/document_output', $output, $document );
+		} );
+	}
+
+	public function render_elements_data( array $elements_data ): string {
+		return Module::execute_while_rendering_markdown( function () use ( $elements_data ) {
+			if ( empty( $elements_data ) ) {
+				return '';
+			}
+
+			$sections = [];
+
+			foreach ( $elements_data as $element_data ) {
+				$md = $this->render_element( $element_data );
+
+				if ( ! empty( trim( $md ) ) ) {
+					$sections[] = $md;
+				}
+			}
+
+			return implode( "\n\n", $sections );
+		} );
 	}
 
 	private function build_frontmatter( Document $document ): string {

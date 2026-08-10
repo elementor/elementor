@@ -50,8 +50,6 @@ For all non-primitive entries in \`propertiesToChange\`, provide the schema \`ke
 
 Use the EXACT PropType schema given, and ALWAYS include the \`key\` from the schema for every property you are changing in \`propertiesToChange\`.
 
-Check \`llm_guidance.default_settings\` in the widget schema — include a key in \`propertiesToChange\` only when the user explicitly asks to change it.
-
 # Dynamic tags
 A value can be made dynamic wherever its schema exposes a variant with "$$type": "dynamic". This may be the property root OR a NESTED field: for example an image is made dynamic on its "src" (the root stays "image"), NOT on the whole "image" value.
 Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" variant, in place of the static variant. The variant's "name" enumerates the tags allowed at that node.
@@ -117,11 +115,10 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 V4 only: If MCP fails, give manual steps using V4 UI.
 
 V4 Editor structure:
-Panel tabs: General (→ Settings section: ID, Tag, Link), Style, Interactions.
+Panel tabs: General (→ Settings section: ID, Tag, and Link where the widget supports it), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
+Note: \`link\` is valid only when the element's PropType schema (which you must already have) includes a \`link\` property. Sending \`link\` to a widget whose schema lacks it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
 ` );
 
 	return configureElementToolPrompt.prompt();
 };
-
-export const CONFIGURE_ELEMENT_GUIDE_TEXT = generatePrompt();

@@ -97,6 +97,50 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_should_persist__returns_true_for_null_override_value() {
+		// Arrange.
+		$component_override = Override_Prop_Type::make();
+		$value = [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-1',
+				'override_value' => null,
+				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		];
+
+		// Act.
+		$result = $component_override->should_persist( $value );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_sanitize__persists_null_override_value() {
+		// Arrange.
+		$component_override = Override_Prop_Type::make();
+
+		// Act.
+		$result = $component_override->sanitize( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-1',
+				'override_value' => null,
+				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		] );
+
+		// Assert.
+		$this->assertEquals( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-1',
+				'override_value' => null,
+				'schema_source' => [ 'type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		], $result );
+	}
+
 	public function invalid_structure_data_provider() {
 		return [
 			'non-array value' => [ 'not-an-array' ],

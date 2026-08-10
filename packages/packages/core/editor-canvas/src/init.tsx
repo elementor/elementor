@@ -54,10 +54,9 @@ export function init() {
 	initCanvasMcp(
 		getMCPByDomain( 'canvas', {
 			instructions: `Everything related to V4 ( Atomic ) canvas.
-# Canvas workflow for new compositions
-- Configure elements settings and styles
-- Build compositions/sections out of V4 atomic elements using context aware designs using the website resources
-- Get and retrieve element configuration values
+# Canvas workflow
+- Configure element settings and styles with configure-element
+- Get page structure and element configuration values
 `,
 			docs: mcpDescription,
 		} )

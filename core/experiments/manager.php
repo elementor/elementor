@@ -343,13 +343,11 @@ class Manager extends Base_Object {
 			'name' => 'container',
 			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
-				/* translators: 1: Link opening tag, 2: Link closing tag, 3: Link opening tag, 4: Link closing tag, 5: Link opening tag, 6: Link closing tag */
-				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
+				/* translators: 1: Link opening tag, 2: Link closing tag, 3: Link opening tag, 4: Link closing tag */
+				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
 				'</a>',
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">',
-				'</a>',
-				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">',
 				'</a>'
 			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
@@ -378,15 +376,6 @@ class Manager extends Base_Object {
 				'default_active' => true,
 				'minimum_installation_version' => '3.30.0',
 			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'e_panel_promotions',
-			'title' => esc_html__( 'Panel Promotions', 'elementor' ),
-			'description' => esc_html__( 'Enable experimental rendering for targeted promotions within the elements panels.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_DEV,
-			'default' => self::STATE_ACTIVE,
-			'type' => self::TYPE_HIDDEN,
 		] );
 	}
 

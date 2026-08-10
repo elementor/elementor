@@ -1,0 +1,14 @@
+{% set classes = ['e-background-video__play', 'e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+<button class="{{ classes }} {{ editor_classes | default('') }}"
+	data-id="{{ id }}"
+	data-element_type="{{ type }}"
+	data-e-type="{{ type }}"
+	data-interaction-id="{{ interaction_id }}"
+	data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+	type="button"
+	aria-label="{{ initial_attributes['aria-label'] | default('Play video') | e('html_attr') }}"
+	x-bind="playButton"
+	{% if settings.attributes is defined and settings.attributes is not empty %}
+		{{ settings.attributes | raw }}
+	{% endif %}
+	{{ editor_attributes | default('') | raw }}><!-- elementor-children-placeholder --></button>

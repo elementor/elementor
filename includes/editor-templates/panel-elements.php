@@ -83,9 +83,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
-		<# } else if ( false === obj.editable && !obj.birthdayEasterEgg ) { #>
+		<# } else if ( false === obj.editable ) { #>
 			<i class="eicon-upgrade-crown-full"></i>
-		<# } else if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
+		<# } else if ( obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">
@@ -97,12 +97,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</button>
 </script>
 
-<?php if ( Plugin::$instance->experiments->is_feature_active( Modules\WidgetCreation\Module::EXPERIMENT_NAME ) ) : ?>
-	<?php
-	$widget_creation_cta_text = Hints::is_plugin_active( 'angie' )
-		? __( 'Create custom widget', 'elementor' )
-		: __( 'Try for free', 'elementor' );
-	?>
+<?php
+$widget_creation_cta_text = Hints::is_plugin_active( 'angie' )
+	? __( 'Create custom widget', 'elementor' )
+	: __( 'Try for free', 'elementor' );
+?>
 <script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-empty-state">
 	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{{ searchTerm }}}"</div>
 	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
@@ -118,7 +117,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<button type="button" class="elementor-panel-elements-widget-creation__cta"><?php echo esc_html( $widget_creation_cta_text ); ?></button>
 	<?php endif; ?>
 </script>
-<?php endif; ?>
 
 <script type="text/template" id="tmpl-elementor-panel-global">
 	<div class="elementor-nerd-box">

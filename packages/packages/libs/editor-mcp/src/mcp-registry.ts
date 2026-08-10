@@ -58,7 +58,7 @@ export const signalMcpReady = (): void => {
 	resolveReady();
 };
 
-export const createAndRegisterAdapters = () => {
+export const createAndRegisterAdapters = async (): Promise< void > => {
 	const modelContext = getModelContext();
 
 	if ( modelContext ) {
@@ -69,7 +69,7 @@ export const createAndRegisterAdapters = () => {
 		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
 	}
 
-	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
+	await Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
 };
 
 // utility function to run a callback on all MCP interfaces
@@ -244,7 +244,9 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 					content: [
 						{
 							type: 'text',
-							text: ( error as Error ).message || 'Unknown error',
+							text:
+								( ( error as Error ).message || 'Unknown error' ) +
+								JSON.stringify( ( error as { response?: { data: unknown } } ).response?.data || error ),
 						},
 					],
 				};
@@ -278,13 +280,11 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 			description: opts.description,
 			inputSchema: inputSchema as object,
 			execute: ( params: Record< string, unknown > ) =>
-				Promise.resolve(
-					toolCallback(
-						params as Parameters< typeof toolCallback >[ 0 ],
-						/* WebMCP: no protocol session — handlers must not rely on `extra` here */
-						{} as RequestHandlerExtra< ServerRequest, ServerNotification >
-					)
-				),
+				toolCallback(
+					params as Parameters< typeof toolCallback >[ 0 ],
+					/* WebMCP: no protocol session — handlers must not rely on `extra` here */
+					{} as RequestHandlerExtra< ServerRequest, ServerNotification >
+				) as Promise< unknown >,
 		};
 		const extraData = {
 			resources: [ `Server resource name: ${ serverName }, Required to fetch!` ],

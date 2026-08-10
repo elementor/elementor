@@ -66,7 +66,43 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 			'single-word' => [
 				[ '$$type' => 'font-family', 'value' => 'Arial' ],
-				'font-family:"Arial";',
+				'font-family:Arial;',
+			],
+			'generic-family sans-serif' => [
+				[ '$$type' => 'font-family', 'value' => 'sans-serif' ],
+				'font-family:sans-serif;',
+			],
+			'generic-family serif' => [
+				[ '$$type' => 'font-family', 'value' => 'serif' ],
+				'font-family:serif;',
+			],
+			'generic-family monospace' => [
+				[ '$$type' => 'font-family', 'value' => 'monospace' ],
+				'font-family:monospace;',
+			],
+			'css-wide-keyword inherit' => [
+				[ '$$type' => 'font-family', 'value' => 'inherit' ],
+				'font-family:inherit;',
+			],
+			'css-wide-keyword initial' => [
+				[ '$$type' => 'font-family', 'value' => 'initial' ],
+				'font-family:initial;',
+			],
+			'css-wide-keyword unset' => [
+				[ '$$type' => 'font-family', 'value' => 'unset' ],
+				'font-family:unset;',
+			],
+			'already-double-quoted' => [
+				[ '$$type' => 'font-family', 'value' => '"Open Sans"' ],
+				'font-family:"Open Sans";',
+			],
+			'already-single-quoted' => [
+				[ '$$type' => 'font-family', 'value' => "'Poppins'" ],
+				"font-family:'Poppins';",
+			],
+			'css-variable-reference' => [
+				[ '$$type' => 'font-family', 'value' => 'var(--primary-font)' ],
+				'font-family:var(--primary-font);',
 			],
 		];
 	}
@@ -1110,7 +1146,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 							'border-radius' => [
-								'$$type' => 'border-radius',
+								'$$type' => 'border-radius-v2',
 								'value' => [
 									'start-start' => [
 										'$$type' => 'size',
@@ -1137,7 +1173,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 							'border-width' => [
-								'$$type' => 'border-width',
+								'$$type' => 'border-width-v2',
 								'value' => [
 									'block-start' => [
 										'$$type' => 'size',

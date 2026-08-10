@@ -85,7 +85,6 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		const parentType = parentWidgetType || container.parent?.type || '';
 
 		const eventData = {
-			app_type: 'editor',
 			window_name: 'editor',
 			interaction_type: 'click',
 			target_type: elType,

@@ -202,9 +202,8 @@ export default function createAtomicElementBaseView( type ) {
 			];
 
 			const isAdministrator = elementor.config.user.is_administrator;
-			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
-			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+			if ( isAdministrator ) {
 				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
 				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );

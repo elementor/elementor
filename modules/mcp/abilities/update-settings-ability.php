@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,13 +18,15 @@ class Update_Settings_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Update Elementor Page Settings', 'elementor' ),
-			__( 'Updates Elementor document-level settings for a post (for example page layout, title visibility, or custom page settings). Pass only the keys you want to change. Use list-pages to resolve IDs and get-page-structure when you also need the element tree. Requires permission to edit the target post.', 'elementor' ),
+			__( 'Updates Elementor document-level settings for a post (for example page layout, title visibility, or custom page settings). Pass only the keys you want to change. Ask the user for the URL or post ID. Use get-page-structure when you also need the element tree. Requires permission to edit the target post.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'success' => [ 'type' => 'boolean' ],
 					'post_id' => [ 'type' => 'integer' ],
+					'preview_url' => Document_Mutation_Links::preview_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
 			],
 			[
@@ -85,6 +88,6 @@ class Update_Settings_Ability extends Abstract_Ability {
 		return [
 			'success' => true,
 			'post_id' => $post_id,
-		];
+		] + Document_Mutation_Links::for_document( $document );
 	}
 }

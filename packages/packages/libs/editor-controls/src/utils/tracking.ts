@@ -17,7 +17,6 @@ type PromotionEventOptions = {
 type MixpanelConfig = ReturnType< typeof getMixpanel >[ 'config' ];
 
 const getBaseEventProperties = ( data: PromotionTrackingData, config: MixpanelConfig ) => ( {
-	app_type: config?.appTypes?.editor ?? 'editor',
 	window_name: config?.appTypes?.editor ?? 'editor',
 	interaction_type: config?.triggers?.click ?? 'Click',
 	target_name: data.target_name,

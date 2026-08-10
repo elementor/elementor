@@ -1,19 +1,12 @@
-import { Schema } from '@elementor/editor-props';
-import { getElementorConfig } from '@elementor/editor-v1-adapters';
+import { httpService } from '@elementor/http-client';
 
 import { DYNAMIC_TAGS_URI, initDynamicTagsResource } from '../dynamic-tags-resource';
 
-jest.mock( '@elementor/editor-props', () => ( {
-	Schema: {
-		propTypeToJsonSchema: jest.fn( () => ( { mocked: true } ) ),
-	},
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	getElementorConfig: jest.fn(),
-} ) );
-
-const mockedGetElementorConfig = getElementorConfig as jest.MockedFunction< typeof getElementorConfig >;
+const mockedHttpService = httpService as jest.MockedFunction< typeof httpService >;
 
 type ResourceHandler = ( uri: URL ) => Promise< { contents: { text: string }[] } >;
 
@@ -26,7 +19,7 @@ const captureHandler = (): ResourceHandler => {
 const readCatalog = async () => {
 	const handler = captureHandler();
 	const result = await handler( new URL( DYNAMIC_TAGS_URI ) );
-	return JSON.parse( result.contents[ 0 ].text );
+	return result.contents[ 0 ].text;
 };
 
 describe( 'dynamic-tags-resource', () => {
@@ -34,52 +27,41 @@ describe( 'dynamic-tags-resource', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns a flat tag list with categories and omits the fallback setting', async () => {
+	it( 'returns the json string fetched from the server', async () => {
 		// Arrange
-		mockedGetElementorConfig.mockReturnValue( {
-			atomicDynamicTags: {
-				tags: {
-					'post-custom-field': {
-						name: 'post-custom-field',
-						label: 'Post Custom Field',
-						group: 'post',
-						categories: [ 'text', 'url' ],
-						props_schema: {
-							key: { kind: 'string', key: 'string' },
-							before: { kind: 'string', key: 'string' },
-							fallback: { kind: 'string', key: 'string' },
-						},
-					},
-				},
-				groups: { post: { title: 'Post' } },
+		const serverJson = JSON.stringify( [
+			{
+				name: 'post-custom-field',
+				label: 'Post Custom Field',
+				categories: [ 'text', 'url' ],
+				settings: { key: { mocked: true }, before: { mocked: true } },
 			},
-		} as never );
+		] );
+
+		const get = jest.fn().mockResolvedValue( {
+			data: { data: serverJson },
+		} );
+		mockedHttpService.mockReturnValue( { get } as never );
 
 		// Act
-		const catalog = await readCatalog();
+		const text = await readCatalog();
 
 		// Assert
-		expect( Array.isArray( catalog ) ).toBe( true );
-		expect( catalog ).toHaveLength( 1 );
-		expect( catalog[ 0 ] ).toMatchObject( {
-			name: 'post-custom-field',
-			label: 'Post Custom Field',
-			categories: [ 'text', 'url' ],
+		expect( get ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+			params: { uri: DYNAMIC_TAGS_URI },
 		} );
-		expect( catalog[ 0 ] ).not.toHaveProperty( 'group' );
-		expect( Object.keys( catalog[ 0 ].settings ) ).toEqual( [ 'key', 'before' ] );
-		expect( catalog[ 0 ].settings ).not.toHaveProperty( 'fallback' );
+		expect( text ).toBe( serverJson );
 	} );
 
-	it( 'returns an empty list when dynamic tags are unavailable', async () => {
+	it( 'returns an empty json array string when the server returns no data', async () => {
 		// Arrange
-		mockedGetElementorConfig.mockReturnValue( {} as never );
+		const get = jest.fn().mockResolvedValue( { data: {} } );
+		mockedHttpService.mockReturnValue( { get } as never );
 
 		// Act
-		const catalog = await readCatalog();
+		const text = await readCatalog();
 
 		// Assert
-		expect( catalog ).toEqual( [] );
-		expect( Schema.propTypeToJsonSchema ).not.toHaveBeenCalled();
+		expect( text ).toBe( '[]' );
 	} );
 } );

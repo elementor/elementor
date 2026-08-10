@@ -1,8 +1,8 @@
 import eventsConfig from './events-config';
-import mixpanel, { Mixpanel } from 'mixpanel-browser';
+import mixpanel from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
 
-/** @type {Mixpanel | null} */
+/** @type {typeof mixpanel | null} */
 let mixpanelInstance = null;
 
 export default class extends elementorModules.Module {
@@ -11,7 +11,6 @@ export default class extends elementorModules.Module {
 
 	onInit() {
 		this.config = eventsConfig;
-
 		if ( ! this.canSendEvents() ) {
 			return;
 		}
@@ -31,7 +30,8 @@ export default class extends elementorModules.Module {
 					debug: elementorCommon.config.editor_events?.debug ?? false,
 					autocapture: false,
 					flags: true,
-					api_host: 'https://api-eu.mixpanel.com',
+					api_host: elementorCommon.config.editor_events?.proxy_api_host,
+					lib_base_path: elementorCommon.config.editor_events?.proxy_lib_base_path,
 					loaded: onLoaded,
 					record_sessions_percent: elementorCommon.config.editor_events?.session_recording_percent ?? 0,
 					record_idle_timeout_ms: 60 * 1000, // 60 Seconds

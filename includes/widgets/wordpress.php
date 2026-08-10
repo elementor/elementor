@@ -32,6 +32,10 @@ class Widget_WordPress extends Widget_Base {
 	 */
 	private $_widget_instance = null;
 
+	public function show_in_panel() {
+		return false;
+	}
+
 	public function hide_on_search() {
 		return true;
 	}

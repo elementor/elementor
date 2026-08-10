@@ -1,4 +1,3 @@
-import BlockBirthdayEasterEggDrop from './hooks/block-birthday-easter-egg-drop';
 import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
@@ -6,8 +5,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 		if ( ! this.hasPromotionWidgets() && ! this.hasIntegrationWidgets() ) {
 			return;
 		}
-
-		new BlockBirthdayEasterEggDrop().register();
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );

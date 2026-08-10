@@ -134,6 +134,9 @@ const CLASS_STATES_MAP: Record< string, { label: string } > = {
 	selected: {
 		label: __( 'selected', 'elementor' ),
 	},
+	disabled: {
+		label: __( 'disabled', 'elementor' ),
+	},
 };
 
 export function useElementStates() {

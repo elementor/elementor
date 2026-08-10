@@ -213,6 +213,65 @@ class Editor {
 	}
 
 	/**
+	 * Whether the current request targets the Elementor editor.
+	 *
+	 * Unlike `is_edit_mode()`, this is not affected by temporary `set_edit_mode()` overrides.
+	 *
+	 * @since 4.1.0
+	 * @access public
+	 *
+	 * @return bool Whether the current request targets the Elementor editor.
+	 */
+	public function is_editor_request() {
+		$common = Plugin::$instance->common;
+
+		if ( $common ) {
+			/** @var Module ajax */
+			$ajax_data = $common->get_component( 'ajax' )->get_current_action_data();
+
+			if ( ! empty( $ajax_data ) && 'get_document_config' === $ajax_data['action'] ) {
+				return true;
+			}
+		}
+
+		if ( $this->is_editor_admin_screen() ) {
+			return true;
+		}
+
+		return $this->is_editor_ajax_request();
+	}
+
+	private function is_editor_admin_screen(): bool {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		return isset( $_GET['action'] ) && 'elementor' === $_GET['action'] && in_array( $screen->base, [ 'post', 'toplevel_page_elementor' ], true );
+	}
+
+	private function is_editor_ajax_request(): bool {
+		$actions = apply_filters( 'elementor/editor/ajax_actions', [
+			'elementor',
+
+			// Templates
+			'elementor_get_templates',
+			'elementor_save_template',
+			'elementor_get_template',
+			'elementor_delete_template',
+			'elementor_import_template',
+			'elementor_library_direct_actions',
+		] );
+
+		return isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions, true );
+	}
+
+	/**
 	 * Whether the edit mode is active.
 	 *
 	 * Used to determine whether we are in the edit mode.

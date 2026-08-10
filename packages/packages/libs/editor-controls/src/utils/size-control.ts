@@ -1,18 +1,23 @@
-export const lengthUnits = [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'ch' ] as const;
-export const angleUnits = [ 'deg', 'rad', 'grad', 'turn' ] as const;
-export const timeUnits = [ 's', 'ms' ] as const;
-const defaultExtendedOptions = [ 'auto', 'custom' ] as const;
+import type { SizePropValue } from '@elementor/editor-props';
 
-export const DEFAULT_UNIT = 'px';
+export type SizeUnit = SizePropValue[ 'value' ][ 'unit' ];
+
+export type ExtendedOption = Extract< SizeUnit, 'auto' | 'custom' >;
+export type Unit = Exclude< SizeUnit, ExtendedOption >;
+
+export const lengthUnits = [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'ch' ] as const satisfies readonly Unit[];
+export const angleUnits = [ 'deg', 'rad', 'grad', 'turn' ] as const satisfies readonly Unit[];
+export const timeUnits = [ 's', 'ms' ] as const satisfies readonly Unit[];
+
+export const DEFAULT_UNIT = 'px' satisfies Unit;
 export const DEFAULT_SIZE = NaN;
 
-export type LengthUnit = ( typeof lengthUnits )[ number ];
+export type LengthUnit = Extract< Unit, ( typeof lengthUnits )[ number ] | 'fr' >;
 export type AngleUnit = ( typeof angleUnits )[ number ];
 export type TimeUnit = ( typeof timeUnits )[ number ];
-export type ExtendedOption = ( typeof defaultExtendedOptions )[ number ];
 
-export type Unit = LengthUnit | AngleUnit | TimeUnit;
+const extendedOptions = [ 'auto', 'custom' ] as const satisfies readonly ExtendedOption[];
 
-export function isUnitExtendedOption( unit: Unit | ExtendedOption ): unit is ExtendedOption {
-	return defaultExtendedOptions.includes( unit as ExtendedOption );
+export function isUnitExtendedOption( unit: SizeUnit ): unit is ExtendedOption {
+	return extendedOptions.includes( unit as ExtendedOption );
 }

@@ -14,6 +14,10 @@ abstract class Abstract_Ability {
 
 	abstract public function execute( $input = [] );
 
+	public function check_permission(): bool {
+		return (bool) call_user_func( $this->get_definition()->permission_callback );
+	}
+
 	public function register(): void {
 		$definition = $this->get_definition()->to_array();
 		$definition['execute_callback'] = [ $this, 'execute' ];

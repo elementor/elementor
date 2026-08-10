@@ -8,7 +8,6 @@ on:
     paths-ignore:
       - '**.md'
       - '**.txt'
-      - '.github/config.json'
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'

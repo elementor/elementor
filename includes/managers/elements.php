@@ -23,6 +23,7 @@ class Elements_Manager {
 	const CATEGORY_ANGIE_WIDGETS = 'angie-widgets';
 	const CATEGORY_CUSTOM_WIDGETS = 'custom-widgets';
 	const CATEGORY_BASIC = 'basic';
+	const CATEGORY_WORDPRESS = 'wordpress';
 
 	/**
 	 * Element types.
@@ -391,12 +392,6 @@ class Elements_Manager {
 
 		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, $after_candidates );
 		$this->promote_category_after( self::CATEGORY_CUSTOM_WIDGETS, $after_candidates );
-
-		$this->categories['wordpress'] = [
-			'title' => esc_html__( 'WordPress', 'elementor' ),
-			'icon' => 'eicon-wordpress',
-			'active' => false,
-		];
 	}
 
 	public function enqueue_elements_styles() {

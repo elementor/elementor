@@ -324,6 +324,40 @@ class Test_Html_V3_Prop_Type extends TestCase {
 
 		// Assert.
 		$this->assertSame( 'Hello', $result['value']['content']['value'] );
-		$this->assertArrayNotHasKey( 'children', $result['value'] );
+		$this->assertSame( [], $result['value']['children'] );
+	}
+
+	public function test_should_persist__false_for_empty_html() {
+		// Arrange.
+		$prop_type = Html_V3_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => null,
+				'children' => [],
+			],
+		] );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function test_should_persist__true_for_non_empty_content() {
+		// Arrange.
+		$prop_type = Html_V3_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => String_Prop_Type::generate( 'Hello' ),
+				'children' => [],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
 	}
 }

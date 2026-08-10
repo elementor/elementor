@@ -12,6 +12,13 @@
       aria-label="{{ settings['form-name'] | e('html_attr') }}"
       data-form-name="{{ settings['form-name'] | e('html_attr') }}"
       {% endif -%}
+      {%- if webmcp_tool_name is not empty %}
+      toolname="{{ webmcp_tool_name | e('html_attr') }}"
+      tooldescription="{{ webmcp_tool_description | e('html_attr') }}"
+      {%- if settings['webmcp-autosubmit'] %}
+      toolautosubmit
+      {% endif -%}
+      {% endif -%}
       {%- if settings['_cssid'] is not empty %}
       id="{{ settings['_cssid'] | e('html_attr') }}"
       {% endif -%}

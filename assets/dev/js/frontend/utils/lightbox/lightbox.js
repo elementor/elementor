@@ -11,7 +11,7 @@ import {
 	loading,
 	pinterest,
 	shareArrow,
-	twitter,
+	xTwitter,
 	zoomInBold,
 	zoomOutBold,
 } from '@elementor/e-icons';
@@ -339,9 +339,9 @@ module.exports = elementorModules.ViewModule.extend( {
 					label: i18n.shareOnFacebook,
 					iconElement: facebook,
 				},
-				twitter: {
-					label: i18n.shareOnTwitter,
-					iconElement: twitter,
+				'x-twitter': {
+					label: i18n.shareOnX,
+					iconElement: xTwitter,
 				},
 				pinterest: {
 					label: i18n.pinIt,

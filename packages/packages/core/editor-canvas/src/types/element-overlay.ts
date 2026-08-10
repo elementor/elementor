@@ -5,12 +5,14 @@ export type ElementOverlayProps = {
 	id: string;
 	isSelected: boolean;
 	isGlobal?: boolean;
+	widgetType?: string;
 };
 
 export type OverlayFilterArgs = {
 	id: string;
 	element: HTMLElement;
 	isSelected: boolean;
+	widgetType?: string;
 };
 
 export type ElementOverlayConfig = {

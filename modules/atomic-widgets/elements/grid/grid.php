@@ -30,6 +30,8 @@ class Grid extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'CSS grid layout. Always set grid-template-rows to match the actual number of rows the children fill. Empty fr row tracks do not collapse and render as an equal-height empty band below the content.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
@@ -81,7 +83,7 @@ class Grid extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
-				->description( 'The HTML tag for the grid container. Could be div, header, section, article, aside, footer, or a (link).' )
+				->description( 'The HTML tag for the grid container. One of: div, header, section, article, aside, footer, a (link), or button.' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),

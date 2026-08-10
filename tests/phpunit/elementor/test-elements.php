@@ -271,6 +271,18 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		return $cb;
 	}
 
+	public function test_wordpress_category_is_not_registered() {
+		// Arrange
+		$manager = $this->elementor()->elements_manager;
+		$this->reset_categories( $manager );
+
+		// Act
+		$categories = $manager->get_categories();
+
+		// Assert
+		$this->assertArrayNotHasKey( Elements_Manager::CATEGORY_WORDPRESS, $categories );
+	}
+
 	public function test_addChildWithNonExistentElementType() {
 		// Arrange
 		$container_data = [

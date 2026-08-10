@@ -49,7 +49,9 @@ if ( ! defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ) {
 	define( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN', '' );
 }
 
-if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
+if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload_packages.php' ) ) {
+	require_once ELEMENTOR_PATH . 'vendor/autoload_packages.php';
+} elseif ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
 	// We need this file because of the DI\create function that we are using.
 	// Autoload classmap doesn't include this file.

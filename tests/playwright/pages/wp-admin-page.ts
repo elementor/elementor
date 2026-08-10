@@ -1,10 +1,11 @@
 import { type APIRequestContext, type Page, Response, type TestInfo } from '@playwright/test';
+import ApiRequests from '../assets/api-requests';
+import { wpCli } from '../assets/wp-cli';
+import { timeouts } from '../config/timeouts';
+import topBarSelectors from '../selectors/top-bar-selectors';
+import { ElementorType, WindowType } from '../types/types';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-import { ElementorType, WindowType } from '../types/types';
-import { wpCli } from '../assets/wp-cli';
-import ApiRequests from '../assets/api-requests';
-import { timeouts } from '../config/timeouts';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -153,9 +154,9 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<EditorPage>}
 	 */
 	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
-		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+		await page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
-		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 		await this.closeAnnouncementsIfVisible();
 
@@ -211,13 +212,15 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageName(): Promise<void> {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		const topbarLocator = this.page.locator( '#elementor-editor-wrapper-v2' );
+
+		await topbarLocator.locator( `button[${ topBarSelectors.pageSettings.attribute }="${ topBarSelectors.pageSettings.attributeValue }"]` ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
 		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
 
-		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
-		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await topbarLocator.locator( `button[${ topBarSelectors.saveOptions.attribute }="${ topBarSelectors.saveOptions.attributeValue }"]` ).click();
+		await this.page.getByRole( 'menuitem', { name: 'Save Draft' } ).click();
 		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
@@ -262,6 +265,16 @@ export default class WpAdminPage extends BasePage {
 	async waitForPanel(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
+		// The DOM signals above hide before the editor bootstrap assigns `window.elementor` and
+		// registers the `document` container, so a test that immediately does
+		// `elementor.getContainer( 'document' )` can get back `undefined` rather than a
+		// `ReferenceError`. Polling the container itself, not just the method, closes that race
+		// deterministically for the common case of adding elements right after the panel loads.
+		await this.page.waitForFunction(
+			() => Boolean( ( window as unknown as { elementor?: { getContainer?: ( id: string ) => unknown } } ).elementor?.getContainer?.( 'document' ) ),
+			null,
+			{ timeout: timeouts.heavyAction },
+		);
 	}
 
 	/**
@@ -435,6 +448,11 @@ export default class WpAdminPage extends BasePage {
 			const editorSessionId = window.EDITOR_SESSION_ID;
 			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
 		} );
+
+		const angieGuideCard = this.page.getByTestId( 'e-angie-guide-card' );
+		if ( await angieGuideCard.isVisible() ) {
+			await angieGuideCard.getByRole( 'button', { name: 'Close' } ).click();
+		}
 	}
 
 	/**

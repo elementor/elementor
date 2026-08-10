@@ -35,8 +35,57 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 		return $this->settings['categories'] ?? [];
 	}
 
+	public function allowed_tag_names( array $tag_names ) {
+		$this->settings['allowed_tag_names'] = $tag_names;
+
+		return $this;
+	}
+
+	public function get_allowed_tag_names(): array {
+		return $this->settings['allowed_tag_names'] ?? [];
+	}
+
 	public static function is_dynamic_prop_value( $value ): bool {
 		return isset( $value['$$type'] ) && self::get_key() === $value['$$type'];
+	}
+
+	public function to_json_schema(): array {
+		$name_schema = [
+			'type' => 'string',
+			'description' => 'Dynamic tag name from "elementor://dynamic-tags".',
+		];
+
+		$allowed_tag_names = $this->get_allowed_tag_names();
+
+		if ( ! empty( $allowed_tag_names ) ) {
+			$name_schema['enum'] = $allowed_tag_names;
+		}
+
+		return [
+			'type' => 'object',
+			'description' =>
+				'Bind THIS value to a dynamic tag instead of a static value (this may be a nested field, ' .
+				'e.g. an image\'s "src"). Look up the chosen tag in the "elementor://dynamic-tags" resource ' .
+				'and populate "settings" exactly as its schema requires.',
+			'properties' => [
+				'$$type' => [
+					'type' => 'string',
+					'const' => self::get_key(),
+				],
+				'value' => [
+					'type' => 'object',
+					'properties' => [
+						'name' => $name_schema,
+						'settings' => [
+							'type' => 'object',
+							'description' => "Tag settings matching the chosen tag's schema in the resource.",
+						],
+					],
+					'required' => [ 'name' ],
+				],
+			],
+			'required' => [ '$$type', 'value' ],
+		];
 	}
 
 	protected function validate_value( $value ): bool {

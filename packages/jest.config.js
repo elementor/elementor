@@ -3,7 +3,18 @@ module.exports = {
 	rootDir: __dirname,
 	testEnvironment: 'jsdom',
 	transform: {
-		'^.+\\.(t|j)sx?$': '@swc/jest',
+		'^.+\\.(t|j)sx?$': [
+			'@swc/jest',
+			{
+				jsc: {
+					transform: {
+						react: {
+							runtime: 'automatic',
+						},
+					},
+				},
+			},
+		],
 	},
 	moduleNameMapper: {
 		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [

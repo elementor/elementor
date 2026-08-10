@@ -24,6 +24,35 @@ describe( 'getComponentDocuments', () => {
 		expect( result.size ).toBe( 0 );
 	} );
 
+	it( 'should ignore undefined elements', async () => {
+		// Arrange
+		const componentId = 123;
+		const mockDocument = createMockDocumentData( { id: componentId } );
+		mockGetComponentDocumentData.mockResolvedValueOnce( mockDocument );
+
+		const elements = [
+			undefined,
+			createMockElementData( {
+				widgetType: 'e-component',
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: {
+							component_id: { $$type: 'number', value: componentId },
+						},
+					},
+				},
+			} ),
+		] as V1ElementData[];
+
+		// Act
+		const result = await getComponentDocuments( { elements } );
+
+		// Assert
+		expect( result.size ).toBe( 1 );
+		expect( result.has( componentId ) ).toBe( true );
+	} );
+
 	it( 'should return empty map for non-component elements', async () => {
 		// Arrange
 		const elements = [

@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -18,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Emails_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -27,6 +29,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -80,6 +83,10 @@ class Atomic_Form extends Atomic_Element_Base {
 		return 'eicon-atomic-form';
 	}
 
+	public static function get_base_props_schema(): array {
+		return self::define_props_schema();
+	}
+
 	protected static function define_props_schema(): array {
 		$submissions_metadata_dependencies = Dependency_Manager::make()
 			->where( [
@@ -104,6 +111,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( [] ),
 			'form-name' => String_Prop_Type::make()
 				->default( __( 'Form', 'elementor' ) ),
+			'webmcp-autosubmit' => Boolean_Prop_Type::make()
+				->default( false ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' )
@@ -154,16 +163,25 @@ class Atomic_Form extends Atomic_Element_Base {
 		$form_action_chips = $email_control_settings['form-action-chips'];
 		$email_controls = $email_control_settings['email-controls'];
 
+		if ( class_exists( '\ElementorPro\License\API' ) ) {
+			$has_form_submissions_feature = \ElementorPro\License\API::is_licence_has_feature( 'form-submissions' );
+
+			if ( $has_form_submissions_feature ) {
+				$form_action_chips = array_merge( $form_action_chips, [
+					[
+						'label' => __( 'Collect submissions', 'elementor' ),
+						'value' => self::ACTION_COLLECT_SUBMISSIONS,
+					],
+				] );
+			}
+		}
+
 		$content_controls = [
 			Text_Control::bind_to( 'form-name' )
 				->set_label( __( 'Form name', 'elementor' ) ),
 			$state_control,
 			Chips_Control::bind_to( 'actions-after-submit' )
 				->set_options( array_merge( $form_action_chips, [
-					[
-						'label' => __( 'Collect submissions', 'elementor' ),
-						'value' => self::ACTION_COLLECT_SUBMISSIONS,
-					],
 					[
 						'label' => __( 'Webhook', 'elementor' ),
 						'value' => self::ACTION_WEBHOOK,
@@ -209,6 +227,8 @@ class Atomic_Form extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
+					Switch_Control::bind_to( 'webmcp-autosubmit' )
+						->set_label( __( 'Agent auto-submit', 'elementor' ) ),
 				] ),
 		];
 	}
@@ -400,7 +420,19 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$context['form_state'] = 'default';
 
+		if ( ! $this->is_webmcp_enabled() ) {
+			return $context;
+		}
+
+		$form_name = (string) ( $this->get_atomic_settings()['form-name'] ?? '' );
+		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
+		$context['webmcp_tool_description'] = Webmcp_Utils::build_tool_description( $form_name );
+
 		return $context;
+	}
+
+	private function is_webmcp_enabled(): bool {
+		return ! Plugin::$instance->editor->is_edit_mode();
 	}
 
 	public static function is_instance_form( $instance ): bool {

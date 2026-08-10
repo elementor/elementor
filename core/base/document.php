@@ -854,9 +854,7 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_save', $this, $data );
 
 		if ( ! current_user_can( 'unfiltered_html' ) ) {
-			$data = map_deep( $data, function ( $value ) {
-				return is_bool( $value ) || is_null( $value ) ? $value : wp_kses_post( $value );
-			} );
+			$data = Utils::kses_post_deep( $data );
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
@@ -1874,6 +1872,10 @@ abstract class Document extends Controls_Stack {
 			if ( $should_store_scripts ) {
 				$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
 				$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
+				$styles_to_queue = array_values( array_filter(
+					$styles_to_queue,
+					[ $this, 'should_enqueue_cached_style' ]
+				) );
 			}
 
 			$cached_data = [
@@ -1896,6 +1898,10 @@ abstract class Document extends Controls_Stack {
 
 			if ( ! empty( $cached_data['styles'] ) ) {
 				foreach ( $cached_data['styles'] as $style_handle ) {
+					if ( ! $this->should_enqueue_cached_style( $style_handle ) ) {
+						continue;
+					}
+
 					wp_enqueue_style( $style_handle );
 				}
 			}
@@ -1910,6 +1916,14 @@ abstract class Document extends Controls_Stack {
 
 			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+	}
+
+	private function should_enqueue_cached_style( $style_handle ): bool {
+		if ( 0 !== strpos( $style_handle, 'elementor-post' ) ) {
+			return true;
+		}
+
+		return (bool) wp_styles()->query( 'elementor-frontend', 'registered' );
 	}
 
 	protected function do_print_elements( $elements_data ) {

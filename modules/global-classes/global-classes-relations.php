@@ -344,13 +344,7 @@ class Global_Classes_Relations {
 		$documents = Plugin::$instance->documents;
 
 		if ( ! $this->is_preview() ) {
-			$document = $documents->get( $post_id );
-
-			if ( ! $document ) {
-				return null;
-			}
-
-			return $document ?? null;
+			return $this->get_document_or_null( $documents->get( $post_id ) );
 		}
 
 		$document = $documents->get_doc_or_auto_save( $post_id, get_current_user_id() );
@@ -359,6 +353,14 @@ class Global_Classes_Relations {
 			$document = $documents->get( $post_id );
 		}
 
-		return $document ?? null;
+		return $this->get_document_or_null( $document );
+	}
+
+	private function get_document_or_null( $document ): ?Document {
+		if ( empty( $document ) ) {
+			return null;
+		}
+
+		return $document;
 	}
 }

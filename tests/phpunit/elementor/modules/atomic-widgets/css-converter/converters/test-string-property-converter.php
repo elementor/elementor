@@ -7,6 +7,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
@@ -82,6 +84,24 @@ class Test_String_Property_Converter extends TestCase {
 		// Assert.
 		$this->assertTrue( $converted );
 		$this->assertSame( [ '$$type' => 'string', 'value' => 'Inter, sans-serif' ], $context->get_prop( 'font-family' ) );
+	}
+
+	public function test_convert__uses_the_provided_type_key_for_subclassed_prop_types() {
+		// Arrange.
+		$converter = new String_Property_Converter( 'font-family', null, Font_Family_Prop_Type::get_key() );
+		$context = new Conversion_Context();
+
+		// Act.
+		$converted = $converter->convert( $context, [ 'property' => 'font-family', 'value' => "'Anton', 'Archivo Black', sans-serif" ] );
+
+		// Assert.
+		$prop_value = $context->get_prop( 'font-family' );
+
+		$this->assertTrue( $converted );
+		$this->assertSame( [ '$$type' => 'font-family', 'value' => "'Anton', 'Archivo Black', sans-serif" ], $prop_value );
+
+		$validation_result = Props_Parser::make( [ 'font-family' => Font_Family_Prop_Type::make() ] )->validate( [ 'font-family' => $prop_value ] );
+		$this->assertTrue( $validation_result->is_valid(), $validation_result->errors()->to_string() );
 	}
 
 	public function test_dispatcher__valid_value_lands_in_props() {
