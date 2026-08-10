@@ -26,7 +26,8 @@ class Manager {
 	private $files = [];
 
 	/**
-	 * Whether `clear_cache()` already ran once during the current request.
+	 * Whether an automatic (non-explicit) purge already ran once during the current
+	 * request, across both `invalidate_cache()` and `clear_cache()`.
 	 *
 	 * Only consulted when the `e_optimized_css_files` experiment is active, to
 	 * collapse the multiple purges a single genuine update can trigger (e.g.
@@ -35,7 +36,7 @@ class Manager {
 	 *
 	 * @var bool
 	 */
-	private $has_cleared_cache_this_request = false;
+	private $has_purged_cache_this_request = false;
 
 	/**
 	 * Files manager constructor.
@@ -109,25 +110,55 @@ class Manager {
 	}
 
 	/**
+	 * Invalidate cache.
+	 *
+	 * Delete all meta containing files data, WITHOUT touching the actual files on
+	 * disk. Used for the "automatic" purge path (site-change hooks, DB upgrades,
+	 * experiment toggles): the meta is cleared so the next render regenerates and
+	 * overwrites the file in place, but nothing goes missing in the meantime.
+	 *
+	 * When the `e_optimized_css_files` experiment is active, repeated calls to
+	 * `invalidate_cache()` or `clear_cache()` within the same request are collapsed
+	 * into a single purge (see `$has_purged_cache_this_request`).
+	 *
+	 * @since 3.33.0
+	 * @access public
+	 */
+	public function invalidate_cache() {
+		if ( $this->is_optimized_css_files_active() ) {
+			if ( $this->has_purged_cache_this_request ) {
+				return;
+			}
+
+			$this->has_purged_cache_this_request = true;
+		}
+
+		$this->invalidate_cache_meta();
+	}
+
+	/**
 	 * Clear cache.
 	 *
 	 * Delete all meta containing files data. And delete the actual
 	 * files from the upload directory.
 	 *
-	 * When the `e_optimized_css_files` experiment is active, repeated calls within
-	 * the same request are collapsed into a single purge.
+	 * When the `e_optimized_css_files` experiment is active, repeated calls to
+	 * `clear_cache()` or `invalidate_cache()` within the same request are collapsed
+	 * into a single purge (see `$has_purged_cache_this_request`).
 	 *
 	 * @since 1.2.0
 	 * @access public
 	 */
 	public function clear_cache() {
 		if ( $this->is_optimized_css_files_active() ) {
-			if ( $this->has_cleared_cache_this_request ) {
+			if ( $this->has_purged_cache_this_request ) {
 				return;
 			}
 
-			$this->has_cleared_cache_this_request = true;
+			$this->has_purged_cache_this_request = true;
 		}
+
+		$this->invalidate_cache_meta();
 
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
@@ -145,6 +176,25 @@ class Manager {
 			}
 		}
 
+		/**
+		 * Elementor clear files.
+		 *
+		 * Fires after Elementor clears files
+		 *
+		 * @since 2.1.0
+		 */
+		do_action( 'elementor/core/files/clear_cache' );
+	}
+
+	/**
+	 * Delete all meta containing files data, without any dedup guard or action hook.
+	 * Shared by `invalidate_cache()` and `clear_cache()`, each of which applies its
+	 * own per-request dedup before calling this.
+	 *
+	 * @since 3.33.0
+	 * @access private
+	 */
+	private function invalidate_cache_meta() {
 		delete_post_meta_by_key( Post_CSS::META_KEY );
 		delete_post_meta_by_key( Document_Base::CACHE_META_KEY );
 		delete_post_meta_by_key( Assets::ASSETS_META_KEY );
@@ -154,13 +204,14 @@ class Manager {
 		$this->reset_assets_data();
 
 		/**
-		 * Elementor clear files.
+		 * Elementor invalidate files cache.
 		 *
-		 * Fires after Elementor clears files
+		 * Fires after Elementor invalidates the files cache meta, without deleting any
+		 * files from disk.
 		 *
-		 * @since 2.1.0
+		 * @since 3.33.0
 		 */
-		do_action( 'elementor/core/files/clear_cache' );
+		do_action( 'elementor/core/files/invalidate_cache' );
 	}
 
 	public function clear_custom_image_sizes() {
@@ -251,18 +302,38 @@ class Manager {
 	 * does not actually govern this purge - it is a files/assets concern.
 	 *
 	 * Ungated: this registration is behaviour-neutral regardless of the
-	 * `e_optimized_css_files` experiment.
+	 * `e_optimized_css_files` experiment. The routing decision (invalidate vs.
+	 * hard delete) happens inside `on_site_changed()` / `on_upgrader_process_complete()`.
 	 *
 	 * @since 3.33.0
 	 * @access private
 	 */
 	private function register_site_changed_hooks() {
-		add_action( 'activated_plugin', [ $this, 'clear_cache' ] );
-		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
-		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
+		add_action( 'activated_plugin', [ $this, 'on_site_changed' ] );
+		add_action( 'deactivated_plugin', [ $this, 'on_site_changed' ] );
+		add_action( 'switch_theme', [ $this, 'on_site_changed' ] );
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_process_complete' ], 10, 2 );
 
-		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'clear_cache' ] );
+		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'on_site_changed' ] );
+	}
+
+	/**
+	 * On site changed.
+	 *
+	 * Automatic, non-user-triggered purge fired by hooks that indicate a site
+	 * change happened (plugin/theme activation or deactivation, the element-cache
+	 * TTL setting changing). Never fired by an explicit user action.
+	 *
+	 * When the `e_optimized_css_files` experiment is active, invalidate the cache
+	 * meta only: files stay on disk, so there is no window in which page-cached
+	 * HTML points at a stylesheet that no longer exists. When the experiment is
+	 * inactive, keep today's behavior (hard delete).
+	 *
+	 * @since 3.33.0
+	 * @access public
+	 */
+	public function on_site_changed() {
+		$this->automatic_purge();
 	}
 
 	/**
@@ -273,7 +344,8 @@ class Manager {
 	 * empty item queue - none of which changed anything Elementor needs to purge for.
 	 *
 	 * When the `e_optimized_css_files` experiment is active, those false alarms are
-	 * skipped. When inactive, behaviour is unchanged: always purge.
+	 * skipped, and a genuine update invalidates the cache meta only (see
+	 * `automatic_purge()`). When inactive, behaviour is unchanged: always hard-delete.
 	 *
 	 * WordPress passes the `hook_extra` array directly as the second argument to this
 	 * action (see `WP_Upgrader::run()`), NOT nested under a `hook_extra` key - do not
@@ -290,7 +362,7 @@ class Manager {
 			return;
 		}
 
-		$this->clear_cache();
+		$this->automatic_purge();
 	}
 
 	/**
@@ -326,6 +398,28 @@ class Manager {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Automatic purge routing.
+	 *
+	 * Shared by every non-explicit purge trigger (site-change hooks, genuine
+	 * upgrader completions). When the `e_optimized_css_files` experiment is active,
+	 * invalidate cache meta only. Otherwise, hard-delete as before. Explicit,
+	 * user-triggered purges (Tools, admin bar, REST `DELETE /elementor/v1/cache`,
+	 * WP-CLI `flush-css`) call `clear_cache()` directly and never go through here.
+	 *
+	 * @since 3.33.0
+	 * @access private
+	 */
+	private function automatic_purge() {
+		if ( $this->is_optimized_css_files_active() ) {
+			$this->invalidate_cache();
+
+			return;
+		}
+
+		$this->clear_cache();
 	}
 
 	/**
