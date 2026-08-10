@@ -21,11 +21,11 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 
 	await expect( page.getByRole( 'button', { name: /re-scan/i } ) ).toBeVisible();
 
-	await page.getByRole( 'tab', { name: /accessibility/i } ).click();
+	await page.getByRole( 'button', { name: /accessibility/i } ).click();
 
-	await expect( page.getByText( /images missing alt text/i ) ).toBeVisible();
+	await expect( page.getByText( /images alt text/i ) ).toBeVisible();
 
-	await page.getByText( /images missing alt text/i ).click();
+	await page.getByText( /images alt text/i ).click();
 	await page
 		.getByRole( 'button' )
 		.filter( { hasText: /image is missing alt text/i } )
