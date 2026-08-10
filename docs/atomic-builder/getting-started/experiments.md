@@ -31,9 +31,10 @@ There are **no separate experiments** for `e_classes`, `e_variables`, `e_compone
 | `e_opt_in_v4` | Editor V4 | `opt-in/opt-in.php` | inactive | **active** | Welcome screen; JS `ContainerHelper.isV4OptIn()` |
 | `e_atomic_elements` | Atomic Widgets | `atomic-widgets` `get_experimental_data()` | inactive | **active** | atomic-widgets + global-classes, variables, components, interactions |
 | `e_icon_button` | Icon Button | `atomic-widgets/module.php` | inactive | — | V4 icon button element (dev) |
+| `agents_llms_txt` | Agents llms.txt | `agents` `get_experimental_data()` | inactive | — | `/llms.txt` endpoint + Agents Site Settings tab |
 | `container` | Container | core | varies | — | Flexbox layout (toggled with opt-in) |
 
-All are `hidden: true` in source. Release status: `e_opt_in_v4` = alpha; `e_atomic_elements` = beta; `e_icon_button` = dev.
+All are `hidden: true` in source. Release status: `e_opt_in_v4` = alpha; `e_atomic_elements` = beta; `e_icon_button` = dev; `agents_llms_txt` = dev.
 
 ### Opt-in bundle
 

@@ -23,6 +23,7 @@ Verified: `abstract-ability.php`.
 | [get-widget-schema.md](get-widget-schema.md) | `elementor/get-widget-schema` |
 | [list-widget-schemas.md](list-widget-schemas.md) | `elementor/list-widget-schemas` |
 | [manage-classes.md](manage-classes.md) | `elementor/manage-classes` |
+| [reorder-classes.md](reorder-classes.md) | `elementor/reorder-classes` |
 | [manage-global-variable.md](manage-global-variable.md) | `elementor/manage-global-variable` |
 | [manage-elements.md](manage-elements.md) | `elementor/manage-elements` |
 | [list-components.md](list-components.md) | `elementor/list-components` |

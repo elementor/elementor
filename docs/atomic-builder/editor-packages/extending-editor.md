@@ -19,6 +19,7 @@ Durable extension surface for Editor V2:
 | `injectIntoPageIndication`, `toolsMenu` | `@elementor/editor-app-bar` | App bar slots and menus |
 | `injectIntoStyleTab`, `registerEditingPanelReplacement` | `@elementor/editor-editing-panel` | Editing panel |
 | `injectTab` | `@elementor/editor-elements-panel` | Elements panel tabs |
+| `injectSiteSettingsTab` | `@elementor/editor-site-settings` | Site Settings tabs |
 | `__registerPanel` | `@elementor/editor-panels` | Slide-in panels |
 | `getMCPByDomain` | `@elementor/editor-mcp` | In-editor MCP domain |
 | `__registerSlice` | `@elementor/store` | Redux slice registration |
@@ -53,6 +54,7 @@ window.elementorV2.{packageName}?.init?.();
 | `@elementor/editor-panels` | `registerPanel` |
 | `@elementor/editor-editing-panel` | `injectIntoStyleTab`, `registerEditingPanelReplacement` |
 | `@elementor/editor-elements-panel` | `injectTab` |
+| `@elementor/editor-site-settings` | `injectSiteSettingsTab` |
 
 ## Extension
 

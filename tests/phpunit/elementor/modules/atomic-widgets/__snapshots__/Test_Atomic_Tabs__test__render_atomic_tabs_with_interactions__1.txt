@@ -57,6 +57,7 @@
     data-interactions="null"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="content1"
     id="tabscontainer-tab-content-0"
     aria-labelledby="tabscontainer-tab-0"
             ></div>
@@ -68,6 +69,7 @@
     data-interactions="null"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="content2"
     id="tabscontainer-tab-content-1"
     aria-labelledby="tabscontainer-tab-1"
      hidden="true" style="display: none;"        ></div>

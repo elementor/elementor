@@ -24,6 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -965,6 +967,108 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'invalid_mode', $result->get_error_message() );
 		$this->assertStringContainsString( 'append', $result->get_error_message() );
 		$this->assertStringContainsString( 'replace_children', $result->get_error_message() );
+	}
+
+	public function test_execute__allowlisted_v3_widget_accepts_raw_settings() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<nav-menu configuration-id="m1"/>',
+			'element_config' => [
+				'm1' => [
+					'menu' => '3',
+					'layout' => 'horizontal',
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['root_element_ids'] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+		$elements = $document->get_elements_data();
+		$this->assertCount( 1, $elements );
+		$this->assertSame( 'widget', $elements[0]['elType'] );
+		$this->assertSame( 'nav-menu', $elements[0]['widgetType'] );
+		$this->assertSame( '3', $elements[0]['settings']['menu'] );
+		$this->assertSame( 'horizontal', $elements[0]['settings']['layout'] );
+	}
+
+	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$this->given_kit_global_class( 'hero-menu', '#111111' );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<nav-menu configuration-id="m1"/>',
+			'classes' => [
+				'm1' => [ 'hero-menu' ],
+			],
+		] );
+
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'hero-menu', $elements[0]['settings']['_css_classes'] ?? null );
+		$this->assertArrayNotHasKey( 'classes', $elements[0]['settings'] );
+	}
+
+	public function test_execute__allowlisted_v3_widget_style_wraps_in_selector_when_pro_active() {
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
+		}
+
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<nav-menu configuration-id="m1"/>',
+			'style' => [
+				'm1' => 'color: red;',
+			],
+		] );
+
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'selector { color: red; }', $elements[0]['settings']['custom_css'] ?? null );
+	}
+
+	public function test_execute__allowlisted_v3_widget_style_warns_when_pro_missing() {
+		if ( \Elementor\Utils::has_pro() ) {
+			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
+		}
+
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<nav-menu configuration-id="m1"/>',
+			'style' => [
+				'm1' => 'color: red;',
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertNotEmpty( $result['warnings'] ?? [] );
+		$this->assertStringContainsString( 'Elementor Pro', $result['warnings'][0] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertArrayNotHasKey( 'custom_css', $elements[0]['settings'] );
+	}
+
+	private function given_fake_v3_widget_registered( string $type ): void {
+		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
 	}
 
 	private function given_document_with_elements( int $post_id, array $elements ): void {
