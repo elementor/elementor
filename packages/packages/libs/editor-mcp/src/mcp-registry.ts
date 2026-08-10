@@ -178,15 +178,17 @@ export const activateProxyTools = async (): Promise< void > => {
         const response = await apiFetch< { data: { inputSchema: object; description: string } } >( {
           path: `/elementor/v1/mcp-proxy?schema=${ encodeURIComponent( name ) }`,
         } );
-        const { inputSchema, description } = response.data;
+        const { inputSchema: rawSchema, description } = response.data;
         const mcpServer = mcpRegistry[ namespace ];
         const { addTool } = createToolRegistry( mcpServer, `editor-${ namespace }`, serverDocsUri );
         addTool( {
           name,
           description: options?.description ?? description,
-          schema: inputSchema as ZodRawShape,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema: rawSchema as any,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           handler: buildProxyHandler( name, options?.hooks ) as any,
+          proxy: true,
         } );
       } catch ( error ) {
         /* eslint-disable-next-line no-console */
@@ -326,6 +328,7 @@ type ToolRegistrationOptions<
   isDestructive?: boolean;
   requiredResources?: ResourceList;
   modelPreferences?: AngieModelPreferences;
+  proxy?: boolean;
 };
 
 function createToolRegistry( server: McpServer, serverName: string, serverDocsUri?: string ) {
@@ -344,6 +347,9 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
     }
     // @ts-ignore: TS is unable to infer the type here
     const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
+    const sdkSchema = opts.proxy
+      ? ( opts.schema as { properties?: ZodRawShape } )?.properties ?? inputSchema
+      : inputSchema;
     const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
       try {
         const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
@@ -392,7 +398,7 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
       opts.name,
       {
         description: opts.description,
-        inputSchema,
+        inputSchema: sdkSchema,
         // TODO: Uncomment this when the outputSchema is stable
         // outputSchema,
         title: opts.name,
