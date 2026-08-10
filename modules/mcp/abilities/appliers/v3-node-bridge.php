@@ -73,7 +73,9 @@ class V3_Node_Bridge {
 	 * Clears all known mapped style settings and custom_css for a V3 widget.
 	 * Mirrors V4 replace semantics (wipe existing style before applying a new one).
 	 *
-	 * @param array<string, mixed> $widget_config
+	 * @param array<string, mixed> $node           Subtree node (by reference).
+	 * @param string               $widget_type    V3 widget type name.
+	 * @param array<string, mixed> $widget_config  Widget config from Widget_Context_Helper::get_widget_config().
 	 */
 	public static function clear_style_settings( array &$node, string $widget_type, array $widget_config = [] ): void {
 		$keys = self::collect_style_setting_keys( $widget_type, $widget_config );
@@ -109,7 +111,8 @@ class V3_Node_Bridge {
 	}
 
 	/**
-	 * @param array<string, mixed> $widget_config
+	 * @param string               $widget_type    V3 widget type name.
+	 * @param array<string, mixed> $widget_config  Widget config from Widget_Context_Helper::get_widget_config().
 	 * @return string[]
 	 */
 	private static function collect_style_setting_keys( string $widget_type, array $widget_config ): array {
