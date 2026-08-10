@@ -34,6 +34,7 @@ From `modules/atomic-widgets/module.php`:
 | `editor-interactions` | Interactions tab |
 | `editor-templates` | Template library |
 | `editor-design-system` | Design system UI |
+| `editor-site-settings` | Site Settings React tab registry and portal host |
 
 Gated by `e_atomic_elements`. Filter:
 
@@ -70,6 +71,7 @@ From `Editor_Loader::EXTENSIONS`:
 |---------|--------|-------|
 | `editor-site-navigation` | `site-navigation` | Pages panel |
 | `editor-widget-creation` | `widget-creation` | Promo gated by `e_widget_creation` |
+| `editor-agents` | `agents` | `agents_llms_txt` |
 
 ## Public API
 
@@ -84,6 +86,8 @@ Per-package `init()` entry points in `packages/packages/core/{package}/src/init.
 | `editor-variables` | Variables UI, variables MCP domain |
 | `editor-components` | Component type, panel tab, instance panel |
 | `editor-interactions` | Interactions repo, interactions MCP domain |
+| `editor-site-settings` | Site Settings tab registry and portal host |
+| `editor-agents` | Agents Site Settings tab (`llms.txt`) |
 
 ## Extension
 
