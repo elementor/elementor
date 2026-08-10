@@ -6,17 +6,7 @@ export class Load extends $e.modules.CommandBase {
 			// Backdrop — click to close.
 			component.backdrop = document.createElement( 'div' );
 			component.backdrop.className = 'elementor-app-backdrop';
-			component.backdrop.style.cssText = '' +
-				'display: none;' +
-				'position: fixed;' +
-				'z-index: 99998;' +
-				'top: 0;' +
-				'left: 0;' +
-				'width: 100%;' +
-				'height: 100%;' +
-				'background: rgba(0, 0, 0, 0.5);' +
-				'opacity: 0;' +
-				'transition: opacity 0.25s ease;';
+			component.backdrop.style.display = 'none';
 			component.backdrop.addEventListener( 'click', () => {
 				$e.run( 'app/close' );
 			} );
@@ -25,27 +15,15 @@ export class Load extends $e.modules.CommandBase {
 			// Iframe — overlay instead of full-screen.
 			component.iframe = document.createElement( 'iframe' );
 			component.iframe.className = 'elementor-app-iframe';
-			component.iframe.style.cssText = '' +
-				'display: none;' +
-				'position: fixed;' +
-				'top: 30px;' +
-				'left: 40px;' +
-				'width: calc(100% - 80px);' +
-				'height: calc(100% - 60px);' +
-				'z-index: 99999; /* Over WP Admin Bar */' +
-				'border-radius: 12px;' +
-				'box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3);' +
-				'background-color: transparent;' +
-				'opacity: 0;' +
-				'transition: opacity 0.25s ease;';
+			component.iframe.style.display = 'none';
 
 			// Fade in both iframe and backdrop once content loads.
 			component.iframe.addEventListener( 'load', () => {
 				if ( component.iframe ) {
-					component.iframe.style.opacity = '1';
+					component.iframe.classList.add( 'elementor-app-iframe--visible' );
 				}
 				if ( component.backdrop ) {
-					component.backdrop.style.opacity = '1';
+					component.backdrop.classList.add( 'elementor-app-backdrop--visible' );
 				}
 			} );
 
