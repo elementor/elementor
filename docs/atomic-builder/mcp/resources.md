@@ -15,6 +15,7 @@ Read-only MCP URIs agents fetch before mutating data. Resources are read by URI;
 | `elementor://global-classes` | `elementor/global-classes-resource` | `application/json` | `Global_Classes_Resource_Ability` |
 | `elementor://global-variables` | `elementor/global-variables-resource` | `application/json` | `Global_Variables_Resource_Ability` |
 | `elementor://style/best-practices` | `elementor/style-best-practices` | `text/markdown` | `Style_Best_Practices_Ability` |
+| `elementor://wordpress/best-practices` | `elementor/wordpress-best-practices` | `text/markdown` | `Wordpress_Best_Practices_Ability` |
 | `elementor://interactions/schema` | `elementor/interactions-schema-resource` | `application/json` | `Interactions_Schema_Resource_Ability` |
 | `elementor://dynamic-tags` | *(JS only)* | `application/json` | `dynamic-tags-resource.ts` |
 | `elementor://variables/tools/manage-global-variable-guide` | `elementor/manage-global-variable-guide` | `text/plain` | `Manage_Variable_Guide_Ability` |
@@ -47,13 +48,16 @@ Resources expose **labels** for author-facing references. Do not use internal pr
 
 | URI | Payload |
 |-----|---------|
-| `global-classes` | id → **label** map from active kit |
+| `global-classes` | `{ priority_description, classes }`, where `classes` is an ordered `[{ id, label }]` list from highest to lowest CSS priority |
 | `global-variables` | `{ variables, total, watermark }` |
 | `style/best-practices` | Markdown from `static-resources/style/best-practices.md` |
+| `wordpress/best-practices` | Markdown from `static-resources/wordpress/best-practices.md` |
 | `interactions/schema` | LLM JSON Schema for interaction items |
 | `dynamic-tags` | `[{ name, label, categories, settings }]` via `list-dynamic-tags` proxy |
 
 Cache `watermark` from global-variables to detect stale reads.
+
+For global classes, the earliest class in `classes` wins when multiple classes on the same element set the same CSS property. Use `elementor/reorder-classes` to change this order.
 
 ## Extension
 

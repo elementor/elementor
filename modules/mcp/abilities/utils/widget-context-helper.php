@@ -28,6 +28,15 @@ class Widget_Context_Helper {
 
 	const VERSION_V4 = 'v4';
 
+	const V3_ALLOWLIST = [
+		'nav-menu',
+		'theme-post-content',
+		'theme-post-title',
+		'theme-post-featured-image',
+		'theme-post-excerpt',
+		'theme-archive-title',
+	];
+
 	const V3_FALLBACK_MESSAGE = 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.';
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
@@ -44,6 +53,10 @@ class Widget_Context_Helper {
 		$eligible = [];
 
 		foreach ( $all_types as $type => $instance ) {
+			if ( self::is_v3_allowlisted( (string) $type ) && method_exists( $instance, 'get_stack' ) ) {
+				$instance->get_stack();
+			}
+
 			$config = $instance->get_config();
 
 			if ( self::is_widget_eligible_for_llm( $config ) ) {
@@ -57,7 +70,15 @@ class Widget_Context_Helper {
 	public static function get_widget_config( string $widget_type ): ?array {
 		$instance = Atomic_Elements_Utils::get_element_instance( $widget_type );
 
-		return $instance ? $instance->get_config() : null;
+		if ( ! $instance ) {
+			return null;
+		}
+
+		if ( self::is_v3_allowlisted( $widget_type ) && method_exists( $instance, 'get_stack' ) ) {
+			$instance->get_stack();
+		}
+
+		return $instance->get_config();
 	}
 
 	public static function is_widget_eligible_for_llm( array $config ): bool {
@@ -82,6 +103,10 @@ class Widget_Context_Helper {
 
 	public static function get_widget_version( array $config ): string {
 		return empty( $config['atomic_props_schema'] ) ? self::VERSION_V3 : self::VERSION_V4;
+	}
+
+	public static function is_v3_allowlisted( string $widget_type ): bool {
+		return in_array( $widget_type, self::V3_ALLOWLIST, true );
 	}
 
 	public static function build_widget_summary( string $widget_type, array $config ): array {
