@@ -11,7 +11,7 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 
 	const editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( 'image' );
+	await editor.addWidget( { widgetType: 'image' } );
 
 	await page.getByRole( 'button', { name: /audit page/i } ).click();
 
