@@ -29,6 +29,7 @@ export default class extends Marionette.ItemView {
 			if ( url.includes( 'page=elementor-app' ) && window.$e ) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
+				$e.run( 'finder/close' );
 				$e.run( 'app/open', { url } );
 			}
 			return;

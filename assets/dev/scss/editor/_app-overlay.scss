@@ -17,7 +17,7 @@
 	left: 40px;
 	width: calc(100% - 80px);
 	height: calc(100% - 60px);
-	z-index: 99999; // Over WP Admin Bar
+	z-index: 100000; // Above Finder (99999) and WP Admin Bar
 	border-radius: 12px;
 	box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3);
 	background-color: transparent;

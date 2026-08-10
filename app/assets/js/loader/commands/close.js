@@ -12,6 +12,8 @@ export class Close extends $e.modules.CommandBase {
 			this.component.backdrop = null;
 		}
 
+		document.body.style.overflow = '';
+
 		return true;
 	}
 }
