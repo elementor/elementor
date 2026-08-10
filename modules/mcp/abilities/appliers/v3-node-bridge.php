@@ -20,6 +20,7 @@ class V3_Node_Bridge {
 	const V3_CSS_CLASSES_SETTING = '_css_classes';
 
 	public static function is_v3_node( array $node ): bool {
+		// V3 non-widget elements (containers/sections) are intentionally not supported at this layer for now.
 		if ( 'widget' !== ( $node['elType'] ?? null ) ) {
 			return false;
 		}
@@ -36,11 +37,6 @@ class V3_Node_Bridge {
 	public static function apply_classes( array &$node, array $labels ): void {
 		$existing = self::split_css_classes( $node['settings'][ self::V3_CSS_CLASSES_SETTING ] ?? '' );
 		$merged = array_values( array_unique( array_merge( $labels, $existing ) ) );
-
-		if ( empty( $merged ) ) {
-			unset( $node['settings'][ self::V3_CSS_CLASSES_SETTING ] );
-			return;
-		}
 
 		$node['settings'][ self::V3_CSS_CLASSES_SETTING ] = implode( ' ', $merged );
 	}
@@ -74,7 +70,7 @@ class V3_Node_Bridge {
 	}
 
 	private static function wrap_with_selector( string $css ): string {
-		if ( false !== strpos( $css, '{' ) ) {
+		if ( 1 === preg_match( '/^\s*[^{}]+\{\s*[\s\S]*\}\s*$/', $css ) ) {
 			return $css;
 		}
 
