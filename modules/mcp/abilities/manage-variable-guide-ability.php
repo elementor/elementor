@@ -18,7 +18,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Variable Guide', 'elementor' ),
-			__( 'Detailed guide for using the manage-global-variable tool.', 'elementor' ),
+			__( 'Detailed guide for using the manage-global-variable tool. Covers available types, naming rules, value rules, and operation examples.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -27,7 +27,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 					'uri' => self::URI,
 					'public' => true,
 					'mimeType' => 'text/plain',
-					'description' => __( 'Detailed guide for using the manage-global-variable tool', 'elementor' ),
+					'description' => __( 'Detailed guide for using the manage-global-variable tool. Covers available types, naming rules, value rules, and operation examples.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'manage_options' )
