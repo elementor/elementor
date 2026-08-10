@@ -45,6 +45,10 @@ on:
         required: false
       SLACK_CHANNEL_RELEASE:
         required: false
+      JIRA_API_EMAIL:
+        required: false
+      JIRA_API_TOKEN:
+        required: false
       NPMJS_CLOUD_DEVOPS_TOKEN:
         required: false
       MAINTAIN_TOKEN:
@@ -128,6 +132,15 @@ jobs:
           DRY_RUN: 'false'
           PACKAGE_VERSION: ${{ inputs.version }}
 
+      - name: Get Jira release URL
+        id: get_jira_release_url
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_NAME }}
+          JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/get-jira-release-url.sh"
+
       - name: Prepare Slack release announcement
         id: prepare_slack_announcement
         env:
@@ -136,6 +149,7 @@ jobs:
           RELEASE_VERSION: ${{ env.RELEASE_NAME }}
           RELEASED_BY: ${{ github.actor }}
           SLACK_RELEASE_ANNOUNCEMENT_COPY: ${{ vars.SLACK_RELEASE_ANNOUNCEMENT_COPY }}
+          JIRA_RELEASE_URL: ${{ steps.get_jira_release_url.outputs.jira_release_url }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/prepare-slack-release-announcement.sh"
 
@@ -176,6 +190,7 @@ jobs:
   publish-packages:
     name: Publish Packages
     needs: publish
+    if: ${{ !inputs.prerelease && github.repository_owner == 'elementor' }}
     permissions:
       contents: read
     uses: ./.github/workflows/publish-packages.yml

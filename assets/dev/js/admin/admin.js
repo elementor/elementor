@@ -121,7 +121,6 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 
 			const campaignNotices = {
 				plugin_image_optimization: 'elementor_image_optimization_campaign',
-				site_mailer_promotion: 'elementor_core_site_mailer_campaign',
 			};
 
 			Object.keys( campaignNotices ).forEach( ( noticeId ) => {
