@@ -4,23 +4,9 @@ namespace Elementor\Modules\Mcp\RestApi;
 
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
-use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
-use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
-use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
-use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Assets_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
-use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\Reorder_Classes_Ability;
-use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
-use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,34 +16,10 @@ class Mcp_Proxy_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE      = 'mcp-proxy';
 
-	/** @var array<string, callable(): Abstract_Ability> */
-	private array $tools = [];
+	private ?Ability_Registry $registry;
 
-	/** @var array<string, callable(): Abstract_Ability> */
-	private array $resources = [];
-
-	public function __construct() {
-		$this->tools = [
-			'manage-global-variable' => fn() => new Manage_Variable_Ability(),
-			'manage-classes' => fn() => new Manage_Classes_Ability(),
-			'reorder-classes' => fn() => new Reorder_Classes_Ability(),
-			'get-widget-schema' => fn() => new Get_Widget_Schema_Ability(),
-			'list-widget-schemas' => fn() => new List_Widget_Schemas_Ability(),
-			'get-page-structure' => fn() => new Get_Structure_Ability(),
-			'manage-elements' => fn() => new Manage_Elements_Ability(),
-			'list-assets' => fn() => new List_Assets_Ability(),
-			'list-resources' => fn() => new List_Resources_Ability(),
-			'read-resource' => fn() => new Read_Resource_Ability(),
-		];
-
-		$this->resources = [
-			Style_Best_Practices_Ability::URI => fn() => new Style_Best_Practices_Ability(),
-			Wordpress_Best_Practices_Ability::URI => fn() => new Wordpress_Best_Practices_Ability(),
-			Manage_Variable_Guide_Ability::URI => fn() => new Manage_Variable_Guide_Ability(),
-			Global_Classes_Resource_Ability::URI => fn() => new Global_Classes_Resource_Ability(),
-			Global_Variables_Resource_Ability::URI => fn() => new Global_Variables_Resource_Ability(),
-			List_Dynamic_Tags_Ability::URI => fn() => new List_Dynamic_Tags_Ability(),
-		];
+	public function __construct( ?Ability_Registry $registry = null ) {
+		$this->registry = $registry;
 	}
 
 	public function register_hooks() {
@@ -99,15 +61,16 @@ class Mcp_Proxy_REST_API {
 		$tool  = $request->get_param( 'tool' );
 		$input = $request->get_param( 'input' );
 
-		if ( ! isset( $this->tools[ $tool ] ) ) {
+		$registry = $this->resolve_registry();
+		$ability = $registry ? $registry->find_by_proxy_slug( (string) $tool ) : null;
+
+		if ( null === $ability ) {
 			return Error_Builder::make( 'unknown_tool' )
 				->set_status( 404 )
 				// translators: By tool name
 				->set_message( sprintf( __( 'Unknown tool: %s', 'elementor' ), $tool ) )
 				->build();
 		}
-
-		$ability = ( $this->tools[ $tool ] )();
 
 		if ( ! $ability->check_permission() ) {
 			return $this->build_response( $this->forbidden_error() );
@@ -121,15 +84,16 @@ class Mcp_Proxy_REST_API {
 	private function handle_resource( \WP_REST_Request $request ) {
 		$uri = $request->get_param( 'uri' );
 
-		if ( ! isset( $this->resources[ $uri ] ) ) {
+		$registry = $this->resolve_registry();
+		$ability = $registry ? $registry->find_resource_by_uri( (string) $uri ) : null;
+
+		if ( null === $ability ) {
 			return Error_Builder::make( 'unknown_resource' )
 				->set_status( 404 )
 				// translators: By resource URI
 				->set_message( sprintf( __( 'Unknown resource: %s', 'elementor' ), $uri ) )
 				->build();
 		}
-
-		$ability = ( $this->resources[ $uri ] )();
 
 		if ( ! $ability->check_permission() ) {
 			return $this->build_response( $this->forbidden_error() );
@@ -138,6 +102,16 @@ class Mcp_Proxy_REST_API {
 		$result = $ability->execute();
 
 		return $this->build_response( $result );
+	}
+
+	private function resolve_registry(): ?Ability_Registry {
+		if ( $this->registry instanceof Ability_Registry ) {
+			return $this->registry;
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
+
+		return $module instanceof Mcp_Module ? $module->registry() : null;
 	}
 
 	private function forbidden_error(): \WP_Error {
