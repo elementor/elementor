@@ -129,6 +129,9 @@ class Style_Applier {
 	}
 
 	/**
+	 * @param array                $node
+	 * @param string               $css_string
+	 * @param string               $style_apply_mode
 	 * @param array<string, array> $widget_configs
 	 * @return string[] Warnings (without config-id prefix).
 	 */

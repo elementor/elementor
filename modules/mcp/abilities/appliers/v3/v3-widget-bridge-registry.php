@@ -101,15 +101,46 @@ class V3_Widget_Bridge_Registry {
 				self::typography_overrides( 'dropdown_typography' ),
 				self::typography_overrides( 'menu_typography' ),
 				[
-					'color' => [ 'setting' => 'color_menu_item', 'resolver' => 'color' ],
-					'color@hover' => [ 'setting' => 'color_menu_item_hover', 'resolver' => 'color' ],
-					'color@active' => [ 'setting' => 'color_menu_item_active', 'resolver' => 'color' ],
-					'background-color@hover' => [ 'setting' => 'pointer_color_menu_item_hover', 'resolver' => 'color' ],
-					'background-color@active' => [ 'setting' => 'pointer_color_menu_item_active', 'resolver' => 'color' ],
-					'padding-left' => [ 'setting' => 'padding_horizontal_menu_item', 'resolver' => 'dimension', 'responsive' => true ],
-					'padding-right' => [ 'setting' => 'padding_horizontal_menu_item', 'resolver' => 'dimension', 'responsive' => true ],
-					'padding-top' => [ 'setting' => 'padding_vertical_menu_item', 'resolver' => 'dimension', 'responsive' => true ],
-					'padding-bottom' => [ 'setting' => 'padding_vertical_menu_item', 'resolver' => 'dimension', 'responsive' => true ],
+					'color' => [
+						'setting' => 'color_menu_item',
+						'resolver' => 'color',
+					],
+					'color@hover' => [
+						'setting' => 'color_menu_item_hover',
+						'resolver' => 'color',
+					],
+					'color@active' => [
+						'setting' => 'color_menu_item_active',
+						'resolver' => 'color',
+					],
+					'background-color@hover' => [
+						'setting' => 'pointer_color_menu_item_hover',
+						'resolver' => 'color',
+					],
+					'background-color@active' => [
+						'setting' => 'pointer_color_menu_item_active',
+						'resolver' => 'color',
+					],
+					'padding-left' => [
+						'setting' => 'padding_horizontal_menu_item',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
+					'padding-right' => [
+						'setting' => 'padding_horizontal_menu_item',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
+					'padding-top' => [
+						'setting' => 'padding_vertical_menu_item',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
+					'padding-bottom' => [
+						'setting' => 'padding_vertical_menu_item',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
 				]
 			),
 		];
@@ -121,8 +152,14 @@ class V3_Widget_Bridge_Registry {
 			'style_overrides' => array_merge(
 				self::typography_overrides( 'typography' ),
 				[
-					'color' => [ 'setting' => 'text_color', 'resolver' => 'color' ],
-					'text-align' => [ 'setting' => 'align', 'resolver' => 'text' ],
+					'color' => [
+						'setting' => 'text_color',
+						'resolver' => 'color',
+					],
+					'text-align' => [
+						'setting' => 'align',
+						'resolver' => 'text',
+					],
 				]
 			),
 		];
@@ -160,9 +197,19 @@ class V3_Widget_Bridge_Registry {
 			'style_overrides' => array_merge(
 				self::typography_overrides( 'typography' ),
 				[
-					'color' => [ 'setting' => 'title_color', 'resolver' => 'color' ],
-					'text-align' => [ 'setting' => 'align', 'resolver' => 'text' ],
-					'margin-bottom' => [ 'setting' => 'paragraph_spacing', 'resolver' => 'dimension', 'responsive' => true ],
+					'color' => [
+						'setting' => 'title_color',
+						'resolver' => 'color',
+					],
+					'text-align' => [
+						'setting' => 'align',
+						'resolver' => 'text',
+					],
+					'margin-bottom' => [
+						'setting' => 'paragraph_spacing',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
 				]
 			),
 		];
@@ -183,15 +230,46 @@ class V3_Widget_Bridge_Registry {
 			'style_overrides' => array_merge(
 				self::typography_overrides( 'caption_typography' ),
 				[
-					'text-align' => [ 'setting' => 'align', 'resolver' => 'text' ],
-					'width' => [ 'setting' => 'width', 'resolver' => 'dimension', 'responsive' => true ],
-					'max-width' => [ 'setting' => 'space', 'resolver' => 'dimension', 'responsive' => true ],
-					'height' => [ 'setting' => 'height', 'resolver' => 'dimension', 'responsive' => true ],
-					'object-fit' => [ 'setting' => 'object_fit', 'resolver' => 'text' ],
-					'object-position' => [ 'setting' => 'object_position', 'resolver' => 'text' ],
-					'opacity' => [ 'setting' => 'opacity', 'resolver' => 'text' ],
-					'opacity@hover' => [ 'setting' => 'opacity_hover', 'resolver' => 'text' ],
-					'border-radius' => [ 'setting' => 'image_border_radius', 'resolver' => 'sides', 'responsive' => true ],
+					'text-align' => [
+						'setting' => 'align',
+						'resolver' => 'text',
+					],
+					'width' => [
+						'setting' => 'width',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
+					'max-width' => [
+						'setting' => 'space',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
+					'height' => [
+						'setting' => 'height',
+						'resolver' => 'dimension',
+						'responsive' => true,
+					],
+					'object-fit' => [
+						'setting' => 'object_fit',
+						'resolver' => 'text',
+					],
+					'object-position' => [
+						'setting' => 'object_position',
+						'resolver' => 'text',
+					],
+					'opacity' => [
+						'setting' => 'opacity',
+						'resolver' => 'text',
+					],
+					'opacity@hover' => [
+						'setting' => 'opacity_hover',
+						'resolver' => 'text',
+					],
+					'border-radius' => [
+						'setting' => 'image_border_radius',
+						'resolver' => 'sides',
+						'responsive' => true,
+					],
 					'border' => [ 'border_prefix' => 'image_border' ],
 					'box-shadow' => [ 'box_shadow_prefix' => 'image_box_shadow' ],
 				]
@@ -208,10 +286,22 @@ class V3_Widget_Bridge_Registry {
 		return array_merge(
 			self::typography_overrides( 'typography' ),
 			[
-				'color' => [ 'setting' => 'title_color', 'resolver' => 'color' ],
-				'color@hover' => [ 'setting' => 'title_hover_color', 'resolver' => 'color' ],
-				'text-align' => [ 'setting' => 'align', 'resolver' => 'text' ],
-				'mix-blend-mode' => [ 'setting' => 'blend_mode', 'resolver' => 'text' ],
+				'color' => [
+					'setting' => 'title_color',
+					'resolver' => 'color',
+				],
+				'color@hover' => [
+					'setting' => 'title_hover_color',
+					'resolver' => 'color',
+				],
+				'text-align' => [
+					'setting' => 'align',
+					'resolver' => 'text',
+				],
+				'mix-blend-mode' => [
+					'setting' => 'blend_mode',
+					'resolver' => 'text',
+				],
 			]
 		);
 	}

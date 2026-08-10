@@ -11,7 +11,7 @@ class V3_Controls_Metadata {
 	const LAYOUT_CONTROL_TYPES = [ 'section', 'tab', 'tabs' ];
 
 	/**
-	 * @param mixed       $controls     Widget controls stack.
+	 * @param mixed         $controls     Widget controls stack.
 	 * @param string[]|null $allowed_keys When provided, only these control keys are emitted.
 	 */
 	public static function extract( $controls, ?array $allowed_keys = null ): array {

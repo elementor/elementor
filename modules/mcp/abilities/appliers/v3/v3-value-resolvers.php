@@ -61,13 +61,19 @@ class V3_Value_Resolvers {
 		$count = count( $sizes );
 
 		if ( 1 === $count ) {
-			$top = $right = $bottom = $left = $sizes[0];
+			$top = $sizes[0];
+			$right = $sizes[0];
+			$bottom = $sizes[0];
+			$left = $sizes[0];
 		} elseif ( 2 === $count ) {
-			$top = $bottom = $sizes[0];
-			$right = $left = $sizes[1];
+			$top = $sizes[0];
+			$bottom = $sizes[0];
+			$right = $sizes[1];
+			$left = $sizes[1];
 		} elseif ( 3 === $count ) {
 			$top = $sizes[0];
-			$right = $left = $sizes[1];
+			$right = $sizes[1];
+			$left = $sizes[1];
 			$bottom = $sizes[2];
 		} else {
 			[ $top, $right, $bottom, $left ] = $sizes;

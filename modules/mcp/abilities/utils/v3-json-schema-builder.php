@@ -111,8 +111,14 @@ class V3_Json_Schema_Builder {
 					'type' => 'object',
 					'properties' => [
 						'url' => [ 'type' => 'string' ],
-						'is_external' => [ 'type' => 'string', 'enum' => [ 'on', '' ] ],
-						'nofollow' => [ 'type' => 'string', 'enum' => [ 'on', '' ] ],
+						'is_external' => [
+							'type' => 'string',
+							'enum' => [ 'on', '' ],
+						],
+						'nofollow' => [
+							'type' => 'string',
+							'enum' => [ 'on', '' ],
+						],
 					],
 				];
 
