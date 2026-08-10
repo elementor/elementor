@@ -20,6 +20,38 @@ class V3_Node_Bridge {
 
 	const V3_CUSTOM_CSS_SETTING = 'custom_css';
 	const V3_CSS_CLASSES_SETTING = '_css_classes';
+	const V3_DYNAMIC_SETTING = '__dynamic__';
+
+	/**
+	 * Seeds each control's `dynamic.default` into the node's `__dynamic__` settings map when the
+	 * caller did not provide one. Without this, controls whose default is a dynamic tag (e.g.
+	 * `theme-post-title.title` -> post-title tag) render as their static fallback in the editor
+	 * canvas immediately after mutation and only pick up the dynamic value on a full refresh.
+	 *
+	 * @param array $node     Subtree node (by reference).
+	 * @param array $controls Widget controls from Widget_Base::get_controls().
+	 */
+	public static function seed_dynamic_defaults( array &$node, array $controls ): void {
+		$existing = $node['settings'][ self::V3_DYNAMIC_SETTING ] ?? [];
+
+		foreach ( $controls as $name => $control ) {
+			$dynamic_default = $control['dynamic']['default'] ?? null;
+
+			if ( ! is_string( $dynamic_default ) || '' === $dynamic_default ) {
+				continue;
+			}
+
+			if ( array_key_exists( $name, $existing ) ) {
+				continue;
+			}
+
+			$existing[ $name ] = $dynamic_default;
+		}
+
+		if ( ! empty( $existing ) ) {
+			$node['settings'][ self::V3_DYNAMIC_SETTING ] = $existing;
+		}
+	}
 
 	const RESPONSIVE_SUFFIXES = [ '_tablet', '_mobile' ];
 
