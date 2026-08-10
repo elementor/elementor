@@ -14,6 +14,15 @@ abstract class Abstract_Ability {
 
 	abstract public function execute( $input = [] );
 
+	public function get_schema(): array {
+		$definition = $this->get_definition();
+		return [
+			'inputSchema'  => $definition->input_schema,
+			'outputSchema' => $definition->output_schema,
+			'description'  => $definition->description,
+		];
+	}
+
 	public function check_permission(): bool {
 		return (bool) call_user_func( $this->get_definition()->permission_callback );
 	}

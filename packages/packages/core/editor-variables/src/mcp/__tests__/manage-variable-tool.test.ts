@@ -1,181 +1,109 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { httpService } from '@elementor/http-client';
-import { isProActive } from '@elementor/utils';
 
 import { applyLocalMutation } from '../../service';
 import { initManageVariableTool } from '../manage-variable-tool';
+import { MANAGE_VARIABLES_GUIDE_URI } from '../variable-tool-prompt';
 
 jest.mock( '@elementor/http-client', () => ( {
-	httpService: jest.fn(),
-} ) );
-
-jest.mock( '@elementor/utils', () => ( {
-	...jest.requireActual( '@elementor/utils' ),
-	isProActive: jest.fn( () => true ),
+  httpService: jest.fn(),
 } ) );
 
 jest.mock( '../../service', () => ( {
-	applyLocalMutation: jest.fn(),
+  applyLocalMutation: jest.fn(),
 } ) );
 
-const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
+type ResourceHandler = ( uri: URL ) => Promise< unknown >;
 
 function createMockRegistry() {
-	let registeredTool: any = null;
-	const registeredResources: Array< { name: string; uri: string; handler: any } > = [];
+  const addProxyToolMock = jest.fn();
+  const registeredResources: Array< { name: string; uri: string; handler: ResourceHandler } > = [];
 
-	const reg = {
-		addTool: ( tool: any ) => {
-			registeredTool = tool;
-		},
-		resource: ( name: string, uri: string, _opts: any, handler: any ) => {
-			registeredResources.push( { name, uri, handler } );
-		},
-		setMCPDescription: jest.fn(),
-		sendResourceUpdated: jest.fn(),
-		waitForReady: jest.fn(),
-	};
+  const reg = {
+    addProxyTool: addProxyToolMock,
+    addTool: jest.fn(),
+    resource: ( name: string, uri: string, _opts: unknown, handler: ResourceHandler ) => {
+      registeredResources.push( { name, uri, handler } );
+    },
+    sendResourceUpdated: jest.fn(),
+    setMCPDescription: jest.fn(),
+    waitForReady: jest.fn(),
+  };
 
-	initManageVariableTool( reg as any );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initManageVariableTool( reg as any );
 
-	return { registeredTool, registeredResources };
+  return { addProxyToolMock, registeredResources };
 }
 
-describe( 'manage-variable-tool (thin proxy wrapper)', () => {
-	let httpMock: { post: jest.Mock; get: jest.Mock };
+describe( 'manage-variable-tool (addProxyTool wrapper)', () => {
+  let httpMock: { get: jest.Mock };
 
-	beforeEach( () => {
-		httpMock = {
-			post: jest.fn().mockResolvedValue( {
-				data: {
-					data: {
-						status: 'ok',
-						variable: { id: 'v-new123', type: 'global-color-variable', label: 'brand', value: '#000' },
-						watermark: 42,
-					},
-				},
-			} ),
-			get: jest.fn().mockResolvedValue( { data: { data: 'guide text' } } ),
-		};
-		( httpService as jest.Mock ).mockReturnValue( httpMock );
-		( isProActive as jest.Mock ).mockReturnValue( true );
-		jest.mocked( applyLocalMutation ).mockClear();
-	} );
+  beforeEach( () => {
+    httpMock = {
+      get: jest.fn().mockResolvedValue( { data: { data: 'guide text' } } ),
+    };
+    ( httpService as jest.Mock ).mockReturnValue( httpMock );
+    jest.mocked( applyLocalMutation ).mockClear();
+  } );
 
-	it( 'proxies create action and mutates storage locally', async () => {
-		const { registeredTool } = createMockRegistry();
+  it( 'registers addProxyTool with manage-global-variable and beforeCall + afterResponse hooks', () => {
+    // Arrange + Act
+    const { addProxyToolMock } = createMockRegistry();
 
-		const result = await registeredTool.handler( {
-			action: 'create',
-			type: 'global-color-variable',
-			label: 'brand',
-			value: '#000',
-		} );
+    // Assert
+    expect( addProxyToolMock ).toHaveBeenCalledWith( 'manage-global-variable', {
+      hooks: { beforeCall: expect.any( Function ), afterResponse: expect.any( Function ) },
+    } );
+  } );
 
-		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
-			tool: 'manage-global-variable',
-			input: {
-				action: 'create',
-				type: 'global-color-variable',
-				label: 'brand',
-				value: '#000',
-			},
-		} );
-		expect( applyLocalMutation ).toHaveBeenCalledWith(
-			'create',
-			{ id: 'v-new123', type: 'global-color-variable', label: 'brand', value: '#000' },
-			42
-		);
-		expect( result ).toEqual( { status: 'ok' } );
-	} );
+  it( 'afterResponse hook calls applyLocalMutation with action captured from beforeCall', async () => {
+    // Arrange
+    const { addProxyToolMock } = createMockRegistry();
+    const [ , options ] = addProxyToolMock.mock.calls[ 0 ] as [
+      string,
+      {
+        hooks: {
+          beforeCall: ( i: unknown ) => Promise< void >;
+          afterResponse: ( r: unknown ) => Promise< void >;
+        };
+      },
+    ];
+    const variable = { id: 'v-1', type: 'global-color-variable', label: 'brand', value: '#000' };
 
-	it( 'proxies update action and mutates storage locally', async () => {
-		const updatedVariable = { id: 'v-abc1234', type: 'global-color-variable', label: 'brand', value: '#fff' };
-		httpMock.post.mockResolvedValueOnce( {
-			data: {
-				data: {
-					status: 'ok',
-					variable: updatedVariable,
-					watermark: 43,
-				},
-			},
-		} );
+    // Act
+    await options.hooks.beforeCall( { action: 'create' } );
+    await options.hooks.afterResponse( { variable, watermark: 42 } );
 
-		const { registeredTool } = createMockRegistry();
+    // Assert
+    expect( applyLocalMutation ).toHaveBeenCalledWith( 'create', variable, 42 );
+  } );
 
-		await registeredTool.handler( { action: 'update', id: 'v-abc1234', label: 'brand', value: '#fff' } );
+  it( 'registers the manage-global-variable-guide resource', () => {
+    // Arrange + Act
+    const { registeredResources } = createMockRegistry();
 
-		expect( httpMock.post ).toHaveBeenLastCalledWith(
-			MCP_PROXY_URL,
-			expect.objectContaining( {
-				tool: 'manage-global-variable',
-				input: expect.objectContaining( { action: 'update', id: 'v-abc1234' } ),
-			} )
-		);
-		expect( applyLocalMutation ).toHaveBeenCalledWith( 'update', updatedVariable, 43 );
-	} );
+    // Assert
+    const guide = registeredResources.find( ( r ) => r.name === 'manage-global-variable-guide' );
+    expect( guide ).toBeDefined();
+    expect( guide?.uri ).toBe( MANAGE_VARIABLES_GUIDE_URI );
+  } );
 
-	it( 'proxies delete action and mutates storage locally', async () => {
-		const deletedVariable = {
-			id: 'v-abc1234',
-			type: 'global-color-variable',
-			label: 'brand',
-			value: '#000',
-			deleted: true,
-		};
-		httpMock.post.mockResolvedValueOnce( {
-			data: {
-				data: {
-					status: 'ok',
-					variable: deletedVariable,
-					watermark: 44,
-				},
-			},
-		} );
+  it( 'fetches the guide resource from mcp-proxy GET', async () => {
+    // Arrange
+    const { registeredResources } = createMockRegistry();
+    const guide = registeredResources.find( ( r ) => r.name === 'manage-global-variable-guide' );
+    const uri = new URL( MANAGE_VARIABLES_GUIDE_URI );
 
-		const { registeredTool } = createMockRegistry();
+    // Act
+    const result = ( await guide?.handler( uri ) ) as {
+      contents: Array< { text: string; mimeType: string } >;
+    };
 
-		await registeredTool.handler( { action: 'delete', id: 'v-abc1234' } );
-
-		expect( httpMock.post ).toHaveBeenLastCalledWith(
-			MCP_PROXY_URL,
-			expect.objectContaining( {
-				input: expect.objectContaining( { action: 'delete', id: 'v-abc1234' } ),
-			} )
-		);
-		expect( applyLocalMutation ).toHaveBeenCalledWith( 'delete', deletedVariable, 44 );
-	} );
-
-	it( 'does not mutate storage when the proxy fails', async () => {
-		httpMock.post.mockRejectedValueOnce( new Error( 'duplicated label' ) );
-
-		const { registeredTool } = createMockRegistry();
-
-		await expect(
-			registeredTool.handler( { action: 'create', type: 'global-color-variable', label: 'brand', value: '#000' } )
-		).rejects.toThrow( 'duplicated label' );
-		expect( applyLocalMutation ).not.toHaveBeenCalled();
-	} );
-
-	it( 'fetches the guide resource from mcp-proxy GET', async () => {
-		const { registeredResources } = createMockRegistry();
-		const guide = registeredResources.find( ( r ) => r.name === 'manage-global-variable-guide' );
-
-		const uri = new URL( 'elementor://variables/tools/manage-global-variable-guide' );
-		const result = await guide?.handler( uri );
-
-		expect( httpMock.get ).toHaveBeenCalledWith( MCP_PROXY_URL, {
-			params: { uri: uri.href },
-		} );
-		expect( result.contents[ 0 ].text ).toBe( 'guide text' );
-		expect( result.contents[ 0 ].mimeType ).toBe( 'text/plain' );
-	} );
-
-	it( 'restricts tool enum to non-Pro types when Pro is inactive', () => {
-		( isProActive as jest.Mock ).mockReturnValueOnce( false );
-		const { registeredTool } = createMockRegistry();
-
-		const typeSchema = registeredTool.schema.type;
-		expect( typeSchema.options ).toEqual( [ 'global-color-variable', 'global-font-variable' ] );
-	} );
+    // Assert
+    expect( httpMock.get ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
+      params: { uri: uri.href },
+    } );
+    expect( result.contents[ 0 ].text ).toBe( 'guide text' );
+    expect( result.contents[ 0 ].mimeType ).toBe( 'text/plain' );
+  } );
 } );
