@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Plugin;
 
@@ -62,15 +63,9 @@ class List_Resources_Ability extends Abstract_Ability {
 	}
 
 	private function build_catalog(): array {
-		$registry = $this->resolve_registry();
-
-		if ( null === $registry ) {
-			return [];
-		}
-
 		$catalog = [];
 
-		foreach ( $registry->resources() as $ability ) {
+		foreach ( $this->resolve_registry()->resources() as $ability ) {
 			if ( ! $ability->is_exposed_via_proxy() ) {
 				continue;
 			}
@@ -86,13 +81,17 @@ class List_Resources_Ability extends Abstract_Ability {
 		return $catalog;
 	}
 
-	private function resolve_registry(): ?Ability_Registry {
+	private function resolve_registry(): Ability_Registry {
 		if ( $this->registry instanceof Ability_Registry ) {
 			return $this->registry;
 		}
 
 		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
 
-		return $module && method_exists( $module, 'registry' ) ? $module->registry() : null;
+		$this->registry = $module instanceof Mcp_Module
+			? $module->registry()
+			: Mcp_Module::build_core_registry();
+
+		return $this->registry;
 	}
 }

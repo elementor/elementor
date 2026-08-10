@@ -30,8 +30,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->registry = new Ability_Registry();
-		$this->populate_registry();
+		$this->registry = self::build_core_registry();
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
@@ -102,14 +101,18 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function populate_registry(): void {
-		foreach ( $this->get_core_abilities() as $ability ) {
-			$this->registry->add( $ability );
+	public static function build_core_registry(): Ability_Registry {
+		$registry = new Ability_Registry();
+
+		foreach ( self::get_core_abilities( $registry ) as $ability ) {
+			$registry->add( $ability );
 		}
+
+		return $registry;
 	}
 
 	/** @return Abstract_Ability[] */
-	private function get_core_abilities(): array {
+	private static function get_core_abilities( Ability_Registry $registry ): array {
 		$abilities = [
 			new Abilities\Get_Structure_Ability(),
 			new Abilities\Update_Settings_Ability(),
@@ -131,18 +134,18 @@ class Module extends BaseModule {
 			new Abilities\List_Assets_Ability(),
 			new Abilities\Global_Variables_Resource_Ability(),
 			new Abilities\Interactions_Schema_Resource_Ability(),
-			new Abilities\List_Resources_Ability( $this->registry ),
-			new Abilities\Read_Resource_Ability( $this->registry ),
+			new Abilities\List_Resources_Ability( $registry ),
+			new Abilities\Read_Resource_Ability( $registry ),
 		];
 
-		if ( $this->is_components_active() ) {
+		if ( self::is_components_active() ) {
 			$abilities[] = new Abilities\List_Components_Ability();
 		}
 
 		return $abilities;
 	}
 
-	private function is_components_active(): bool {
+	private static function is_components_active(): bool {
 		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 

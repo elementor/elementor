@@ -47,11 +47,11 @@ abstract class Abstract_Ability {
 	}
 
 	public function get_resource_description(): ?string {
-		return $this->mcp_meta()['description'] ?? null;
+		return $this->mcp_meta()['description'] ?? $this->definition()->description;
 	}
 
 	public function get_display_name(): string {
-		return $this->definition()->label;
+		return (string) ( $this->mcp_meta()['name'] ?? $this->definition()->label );
 	}
 
 	public function get_proxy_slug(): string {

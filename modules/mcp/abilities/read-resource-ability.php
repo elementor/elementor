@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Plugin;
 
@@ -68,8 +69,7 @@ class Read_Resource_Ability extends Abstract_Ability {
 			);
 		}
 
-		$registry = $this->resolve_registry();
-		$resource = $registry ? $registry->find_resource_by_uri( $uri ) : null;
+		$resource = $this->resolve_registry()->find_resource_by_uri( $uri );
 
 		if ( null === $resource ) {
 			return new \WP_Error(
@@ -104,13 +104,17 @@ class Read_Resource_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function resolve_registry(): ?Ability_Registry {
+	private function resolve_registry(): Ability_Registry {
 		if ( $this->registry instanceof Ability_Registry ) {
 			return $this->registry;
 		}
 
 		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
 
-		return $module && method_exists( $module, 'registry' ) ? $module->registry() : null;
+		$this->registry = $module instanceof Mcp_Module
+			? $module->registry()
+			: Mcp_Module::build_core_registry();
+
+		return $this->registry;
 	}
 }

@@ -56,10 +56,6 @@ class Ability_Registry {
 				continue;
 			}
 
-			if ( ! $ability->is_exposed_via_proxy() ) {
-				continue;
-			}
-
 			if ( $ability->get_uri() === $uri ) {
 				return $ability;
 			}

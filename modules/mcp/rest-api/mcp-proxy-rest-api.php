@@ -61,8 +61,7 @@ class Mcp_Proxy_REST_API {
 		$tool  = $request->get_param( 'tool' );
 		$input = $request->get_param( 'input' );
 
-		$registry = $this->resolve_registry();
-		$ability = $registry ? $registry->find_by_proxy_slug( (string) $tool ) : null;
+		$ability = $this->resolve_registry()->find_by_proxy_slug( (string) $tool );
 
 		if ( null === $ability ) {
 			return Error_Builder::make( 'unknown_tool' )
@@ -84,8 +83,7 @@ class Mcp_Proxy_REST_API {
 	private function handle_resource( \WP_REST_Request $request ) {
 		$uri = $request->get_param( 'uri' );
 
-		$registry = $this->resolve_registry();
-		$ability = $registry ? $registry->find_resource_by_uri( (string) $uri ) : null;
+		$ability = $this->resolve_registry()->find_resource_by_uri( (string) $uri );
 
 		if ( null === $ability ) {
 			return Error_Builder::make( 'unknown_resource' )
@@ -104,14 +102,18 @@ class Mcp_Proxy_REST_API {
 		return $this->build_response( $result );
 	}
 
-	private function resolve_registry(): ?Ability_Registry {
+	private function resolve_registry(): Ability_Registry {
 		if ( $this->registry instanceof Ability_Registry ) {
 			return $this->registry;
 		}
 
 		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
 
-		return $module instanceof Mcp_Module ? $module->registry() : null;
+		$this->registry = $module instanceof Mcp_Module
+			? $module->registry()
+			: Mcp_Module::build_core_registry();
+
+		return $this->registry;
 	}
 
 	private function forbidden_error(): \WP_Error {
