@@ -43,10 +43,10 @@ describe( 'Finder item — app URL interception', () => {
 	it( 'should intercept app URLs and open in overlay', () => {
 		const view = new ItemView();
 		view.model.get.mockImplementation( ( key ) => {
-			if ( key === 'lock' ) {
+			if ( 'lock' === key ) {
 				return null;
 			}
-			if ( key === 'url' ) {
+			if ( 'url' === key ) {
 				return 'http://example.com/wp-admin/admin.php?page=elementor-app#/site-editor';
 			}
 			return undefined;
@@ -66,10 +66,10 @@ describe( 'Finder item — app URL interception', () => {
 	it( 'should not intercept non-app URLs', () => {
 		const view = new ItemView();
 		view.model.get.mockImplementation( ( key ) => {
-			if ( key === 'lock' ) {
+			if ( 'lock' === key ) {
 				return null;
 			}
-			if ( key === 'url' ) {
+			if ( 'url' === key ) {
 				return 'http://example.com/wp-admin/post.php?post=123&action=elementor';
 			}
 			return undefined;
@@ -87,10 +87,10 @@ describe( 'Finder item — app URL interception', () => {
 
 		const view = new ItemView();
 		view.model.get.mockImplementation( ( key ) => {
-			if ( key === 'lock' ) {
+			if ( 'lock' === key ) {
 				return null;
 			}
-			if ( key === 'url' ) {
+			if ( 'url' === key ) {
 				return 'http://example.com/wp-admin/admin.php?page=elementor-app#/site-editor';
 			}
 			return undefined;
