@@ -1,6 +1,7 @@
 export default class Heartbeat {
 	modal = null;
 	document = null;
+	lastStateOfDocumentChange = false;
 
 	constructor( document ) {
 		this.document = document;
@@ -8,6 +9,7 @@ export default class Heartbeat {
 		this.onSend = this.onSend.bind( this );
 		this.onTick = this.onTick.bind( this );
 		this.onRefreshNonce = this.onRefreshNonce.bind( this );
+		this.onDocumentChanged = this.onDocumentChanged.bind( this );
 
 		this.bindEvents();
 
@@ -86,12 +88,28 @@ export default class Heartbeat {
 		}
 	}
 
+	onDocumentChanged() {
+		const newChangeOfDocumentState = this.document.editor.isChanged;
+		if (newChangeOfDocumentState === this.lastStateOfDocumentChange) {
+			return;
+		}
+		if (newChangeOfDocumentState) {
+			wp.heartbeat.enqueue( 'elementor_has_unsaved', this.document.id );
+		} else {
+			wp.heartbeat.enqueue( 'elementor_has_unsaved', null );
+		}
+		wp.heartbeat.connectNow();
+		this.lastStateOfDocumentChange = newChangeOfDocumentState;
+	}
+
 	bindEvents() {
 		jQuery( document ).on( {
 			'heartbeat-send': this.onSend,
 			'heartbeat-tick': this.onTick,
 			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
 		} );
+
+		elementor.channels.editor.on( 'status:change', this.onDocumentChanged );
 	}
 
 	destroy() {
@@ -100,5 +118,7 @@ export default class Heartbeat {
 			'heartbeat-tick': this.onTick,
 			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
 		} );
+
+		elementor.channels.editor.off( 'status:change', this.onDocumentChanged );
 	}
 }
