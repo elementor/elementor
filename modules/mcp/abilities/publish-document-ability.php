@@ -15,6 +15,10 @@ class Publish_Document_Ability extends Abstract_Ability {
 		return 'elementor/publish-document';
 	}
 
+	public function is_exposed_via_proxy(): bool {
+		return false;
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Publish Elementor Document', 'elementor' ),
