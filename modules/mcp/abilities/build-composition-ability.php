@@ -149,7 +149,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch' );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}

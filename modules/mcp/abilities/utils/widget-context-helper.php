@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -37,9 +38,9 @@ class Widget_Context_Helper {
 		'theme-archive-title',
 	];
 
-	const V3_FALLBACK_MESSAGE = 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.';
+	const V3_FALLBACK_MESSAGE = '`properties` lists the only keys accepted in `element_config` / `manage-elements.settings` for this widget. Put all visual styling in the `style` (CSS) input.';
 
-	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
+	const V3_FALLBACK_FIELDS_NOTE = 'All properties are optional. Object-typed properties describe common shapes but do not include exhaustive inner validation.';
 
 	/**
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
@@ -151,11 +152,17 @@ class Widget_Context_Helper {
 				return null;
 			}
 
+			$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
+			$built = V3_Json_Schema_Builder::build( $config['controls'], $allowed_keys );
+
 			return [
+				'type' => 'object',
 				'widget_version' => self::VERSION_V3,
 				'message' => self::V3_FALLBACK_MESSAGE,
 				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
-				'properties' => V3_Controls_Metadata::extract( $config['controls'] ),
+				'properties' => $built['properties'],
+				'required' => $built['required'],
+				'additionalProperties' => false,
 			];
 		}
 

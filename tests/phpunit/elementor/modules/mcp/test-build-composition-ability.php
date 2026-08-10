@@ -1032,14 +1032,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<nav-menu configuration-id="m1"/>',
 			'style' => [
-				'm1' => 'color: red;',
+				'm1' => 'filter: blur(2px);',
 			],
 		] );
 
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( 'selector { color: red; }', $elements[0]['settings']['custom_css'] ?? null );
+		$this->assertSame( 'selector { filter: blur(2px); }', $elements[0]['settings']['custom_css'] ?? null );
 	}
 
 	public function test_execute__allowlisted_v3_widget_style_warns_when_pro_missing() {
@@ -1055,13 +1055,18 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<nav-menu configuration-id="m1"/>',
 			'style' => [
-				'm1' => 'color: red;',
+				'm1' => 'filter: blur(2px);',
 			],
 		] );
 
 		$this->assertIsArray( $result );
 		$this->assertNotEmpty( $result['warnings'] ?? [] );
-		$this->assertStringContainsString( 'Elementor Pro', $result['warnings'][0] );
+		$this->assertTrue(
+			(bool) array_filter(
+				$result['warnings'],
+				static fn( $warning ) => false !== strpos( (string) $warning, 'Elementor Pro' )
+			)
+		);
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
 		$this->assertArrayNotHasKey( 'custom_css', $elements[0]['settings'] );
