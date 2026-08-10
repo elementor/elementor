@@ -76,7 +76,7 @@ class List_Resources_Ability extends Abstract_Ability {
 			[
 				'uri' => Global_Classes_Resource_Ability::URI,
 				'name' => 'Global Classes',
-				'description' => 'Reusable CSS classes from the active kit; check FIRST before adding inline styles.',
+				'description' => 'Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority. Check first before adding inline styles.',
 				'mimeType' => 'application/json',
 			],
 			[
