@@ -50,7 +50,13 @@ class Border_Shorthand_Serializer extends Base_Property_Serializer {
 			if ( null === $responsive_width ) {
 				continue;
 			}
-			$blocks->push( $breakpoint, $state, 'border-width', $responsive_width );
+
+			$responsive_parts = [ $responsive_width, $style ];
+			if ( null !== $color_value ) {
+				$responsive_parts[] = $color_value;
+			}
+
+			$blocks->push( $breakpoint, $state, 'border', implode( ' ', $responsive_parts ) );
 		}
 	}
 }
