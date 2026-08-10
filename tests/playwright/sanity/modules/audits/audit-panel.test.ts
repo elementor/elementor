@@ -11,7 +11,7 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 
 	const editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( { widgetType: 'image' } );
+	const imageWidgetId = await editor.addWidget( { widgetType: 'image' } );
 
 	await page.getByRole( 'button', { name: /audit page/i } ).click();
 
@@ -33,7 +33,7 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 		.click();
 
 	await expect(
-		editor.getPreviewFrame().locator( '.elementor-element.elementor-element-edit-mode' ),
+		editor.getPreviewFrame().locator( `${ editor.getWidgetSelector( imageWidgetId ) }.elementor-element-edit-mode` ),
 	).toBeVisible();
 
 	await wpAdmin.resetExperiments();
