@@ -5,18 +5,18 @@ import { AGENTS_SITE_SETTINGS_TAB_ID, AgentsSettingsTab } from './components/age
 const EXPERIMENT_NAME = 'agents_llms_txt';
 
 function isAgentsExperimentActive(): boolean {
-  const features = window.elementorCommon?.config?.experimentalFeatures ?? {};
+	const features = window.elementorCommon?.config?.experimentalFeatures ?? {};
 
-  return Boolean( features[ EXPERIMENT_NAME ] );
+	return Boolean( features[ EXPERIMENT_NAME ] );
 }
 
 export function init() {
-  if ( ! isAgentsExperimentActive() ) {
-    return;
-  }
+	if ( ! isAgentsExperimentActive() ) {
+		return;
+	}
 
-  injectSiteSettingsTab( {
-    id: AGENTS_SITE_SETTINGS_TAB_ID,
-    component: AgentsSettingsTab,
-  } );
+	injectSiteSettingsTab( {
+		id: AGENTS_SITE_SETTINGS_TAB_ID,
+		component: AgentsSettingsTab,
+	} );
 }
