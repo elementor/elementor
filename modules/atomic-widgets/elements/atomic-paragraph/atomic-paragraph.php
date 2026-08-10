@@ -61,7 +61,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'p', 'span' ] )
-				->default( 'p' ),
+				->default( 'p' )
+				->description( 'The HTML tag for the paragraph element. One of: p or span. Do not use heading or div tags.' ),
 
 			'link' => Link_Prop_Type::make(),
 

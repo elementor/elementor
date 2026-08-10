@@ -1,8 +1,9 @@
 # SITE PARTS (Pro)
-If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered.
+If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
 
 # RESOURCES (Read before use)
-- [elementor://global-classes] - Reusable CSS classes from the active kit; check FIRST before adding inline styles
+- [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
+- [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available v4 widgets
@@ -17,6 +18,7 @@ This tool supports v4 elements only.
 2. Check/create global classes via `elementor/manage-classes`
 3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 4. Use returned element IDs for subsequent configuration changes
+5. (Only after you build everything) use `elementor/create-preview-link` to generate a preview link and use the browser to validate the work you did.
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
@@ -105,7 +107,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
 
 ## GLOBAL CLASSES
-Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use class **labels** from that list — not internal ids.
+Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
 
 **In `classes` (reference-only):** attach existing global classes by label:
 - Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)

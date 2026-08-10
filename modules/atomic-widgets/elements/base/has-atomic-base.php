@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -16,6 +17,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -89,20 +91,27 @@ trait Has_Atomic_Base {
 	private function parse_atomic_styles( array $data ): array {
 		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$validated_styles = [];
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				throw new \Exception(
-					esc_html( $this->format_styles_validation_error_message( $style_id, $data, $style, $result->errors()->to_string() ) )
+				Logger::warning(
+					$this->format_styles_validation_error_message(
+						$style_id,
+						$data,
+						$style,
+						$result->errors()->to_string()
+					)
 				);
+				continue;
 			}
 
-			$styles[ $style_id ] = $result->unwrap();
+			$validated_styles[ $style_id ] = $result->unwrap();
 		}
 
-		return $styles;
+		return $validated_styles;
 	}
 
 	private function format_styles_validation_error_message(
@@ -385,7 +394,9 @@ trait Has_Atomic_Base {
 		$schema = static::define_props_schema();
 
 		if ( ! isset( $schema['_cssid'] ) ) {
-			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+			$schema['_cssid'] = String_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->meta( Prop_Duplication_Behavior::clear() );
 		}
 
 		return apply_filters(
