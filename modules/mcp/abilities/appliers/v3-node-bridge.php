@@ -22,6 +22,28 @@ class V3_Node_Bridge {
 	const V3_CSS_CLASSES_SETTING = '_css_classes';
 	const V3_DYNAMIC_SETTING = '__dynamic__';
 
+	const RESPONSIVE_SUFFIXES = [ '_tablet', '_mobile' ];
+
+	const TYPOGRAPHY_SETTING_SUFFIXES = [
+		'typography',
+		'font_family',
+		'font_weight',
+		'font_style',
+		'text_transform',
+		'text_decoration',
+		'font_size',
+		'line_height',
+		'letter_spacing',
+		'word_spacing',
+	];
+
+	const TYPOGRAPHY_RESPONSIVE_SUFFIXES = [
+		'font_size',
+		'line_height',
+		'letter_spacing',
+		'word_spacing',
+	];
+
 	/**
 	 * Seeds each control's `dynamic.default` into the node's `__dynamic__` settings map when the
 	 * caller did not provide one. Without this, controls whose default is a dynamic tag (e.g.
@@ -52,28 +74,6 @@ class V3_Node_Bridge {
 			$node['settings'][ self::V3_DYNAMIC_SETTING ] = $existing;
 		}
 	}
-
-	const RESPONSIVE_SUFFIXES = [ '_tablet', '_mobile' ];
-
-	const TYPOGRAPHY_SETTING_SUFFIXES = [
-		'typography',
-		'font_family',
-		'font_weight',
-		'font_style',
-		'text_transform',
-		'text_decoration',
-		'font_size',
-		'line_height',
-		'letter_spacing',
-		'word_spacing',
-	];
-
-	const TYPOGRAPHY_RESPONSIVE_SUFFIXES = [
-		'font_size',
-		'line_height',
-		'letter_spacing',
-		'word_spacing',
-	];
 
 	public static function is_v3_node( array $node ): bool {
 		// V3 non-widget elements (containers/sections) are intentionally not supported at this layer for now.

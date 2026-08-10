@@ -26,11 +26,7 @@ class Responsive_Key_Resolver {
 		}
 
 		$suffixed = $setting . '_' . $breakpoint;
-		if ( $meta->has_control( $suffixed ) ) {
-			return $suffixed;
-		}
-
-		if ( $meta->has_control( $setting ) ) {
+		if ( ! $meta->has_control( $suffixed ) ) {
 			return null;
 		}
 
