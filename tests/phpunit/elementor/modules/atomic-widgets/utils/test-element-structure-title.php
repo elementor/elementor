@@ -11,6 +11,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Element_Structure_Title extends TestCase {
 
+	public function test_resolve__returns_editor_settings_label() {
+		// Arrange.
+		$element = [
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'editor_settings' => [ 'label' => 'List Item Label' ],
+		];
+
+		// Act.
+		$title = Element_Structure_Title::resolve( $element );
+
+		// Assert.
+		$this->assertSame( 'List Item Label', $title );
+	}
+
 	public function test_resolve__returns_editor_settings_title() {
 		// Arrange.
 		$element = [
@@ -70,6 +85,24 @@ class Test_Element_Structure_Title extends TestCase {
 
 		// Assert.
 		$this->assertSame( 'Editor Title', $title );
+	}
+
+	public function test_resolve__prefers_editor_settings_label_over_title() {
+		// Arrange.
+		$element = [
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'editor_settings' => [
+				'label' => 'Editor Label',
+				'title' => 'Editor Title',
+			],
+		];
+
+		// Act.
+		$title = Element_Structure_Title::resolve( $element );
+
+		// Assert.
+		$this->assertSame( 'Editor Label', $title );
 	}
 
 	public function test_resolve__extracts_title_from_envelope_setting() {

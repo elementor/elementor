@@ -11,9 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Element_Structure_Title {
 
 	public static function resolve( array $element ): ?string {
-		$editor_title = $element['editor_settings']['title'] ?? null;
+		$editor_label = self::extract_plain_string( $element['editor_settings']['label'] ?? null );
 
-		if ( is_string( $editor_title ) && '' !== $editor_title ) {
+		if ( null !== $editor_label ) {
+			return $editor_label;
+		}
+
+		$editor_title = self::extract_plain_string( $element['editor_settings']['title'] ?? null );
+
+		if ( null !== $editor_title ) {
 			return $editor_title;
 		}
 

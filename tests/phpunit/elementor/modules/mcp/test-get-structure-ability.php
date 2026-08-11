@@ -571,6 +571,30 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Hero Section', $result['elements'][0]['title'] );
 	}
 
+	public function test_execute__includes_editor_settings_label_in_skeleton() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'editor_settings' => [ 'label' => 'Renamed List Item' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Renamed List Item', $result['elements'][0]['title'] );
+	}
+
 	public function test_execute__falls_back_to_title_setting() {
 		// Arrange
 		$this->act_as_admin();
@@ -665,6 +689,34 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( 'Editor Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__prefers_editor_settings_label_over_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'editor_settings' => [
+					'label' => 'Editor Label',
+					'title' => 'Editor Title',
+				],
+				'settings' => [ '_title' => 'Legacy Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Editor Label', $result['elements'][0]['title'] );
 	}
 
 	public function test_execute__extracts_title_from_envelope_setting() {
