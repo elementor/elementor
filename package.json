@@ -228,7 +228,7 @@
       "node scripts/lint-packages-staged.js"
     ],
     "*.{js,jsx,ts,tsx}": [
-      "node scripts/lint-root-staged.js"
+      "eslint --fix"
     ],
     "*.{php,twig}": [
       "bash bin/check-twig-safety.sh"
