@@ -368,8 +368,8 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			$root['settings']
 		);
 		$this->assertSame( 's-abc', $root['styles']['__style_id'] );
-		$this->assertSame( '#fff', $root['styles']['color'] );
-		$this->assertSame( 'outline: none;', $root['styles']['__custom_css'] );
+		$this->assertStringContainsString( 'color: #fff;', $root['styles']['css'] );
+		$this->assertStringContainsString( 'outline: none;', $root['styles']['css'] );
 
 		$child = $root['elements'][0];
 		$this->assertSame( 'widget1', $child['id'] );
@@ -478,10 +478,10 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$styles = $result['elements'][0]['styles'];
 		$this->assertSame( $style_id, $styles['__style_id'] );
-		$this->assertSame( '#123456', $styles['color'] );
+		$this->assertStringContainsString( 'color: #123456;', $styles['css'] );
 	}
 
-	public function test_execute__attaches_other_variants_under_double_underscore_variants() {
+	public function test_execute__serializes_media_and_pseudo_variants_as_raw_css() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
@@ -496,6 +496,11 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#fff' ] ],
 			'custom_css' => null,
 		];
+		$hover_variant = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => 'hover' ],
+			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#0f0' ] ],
+			'custom_css' => null,
+		];
 
 		$elements = [
 			[
@@ -508,7 +513,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 						'id' => 's-xyz',
 						'type' => 'class',
 						'label' => 'local',
-						'variants' => [ $desktop_variant, $mobile_variant ],
+						'variants' => [ $desktop_variant, $hover_variant, $mobile_variant ],
 					],
 				],
 				'elements' => [],
@@ -533,11 +538,13 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$styles = $result['elements'][0]['styles'];
-		$this->assertSame( '#fff', $styles['color'] );
+		$this->assertSame( 's-xyz', $styles['__style_id'] );
+		$this->assertStringContainsString( 'color: #fff;', $styles['css'] );
+		$this->assertStringContainsString( '&:hover { color: #0f0; }', $styles['css'] );
+		$this->assertStringContainsString( '@media(--mobile) {', $styles['css'] );
+		$this->assertStringContainsString( 'color: #000;', $styles['css'] );
+		$this->assertArrayNotHasKey( '__variants', $styles );
 		$this->assertArrayNotHasKey( '__custom_css', $styles );
-		$this->assertCount( 1, $styles['__variants'] );
-		$this->assertSame( 'mobile', $styles['__variants'][0]['meta']['breakpoint'] );
-		$this->assertSame( '#000', $styles['__variants'][0]['color'] );
 	}
 
 	public function test_execute__includes_editor_settings_title_in_skeleton() {
