@@ -36,7 +36,7 @@ test.describe( 'Onboarding @onboarding', () => {
 		await page.goto( ONBOARDING_URL );
 
 		await expect( page.getByTestId( 'login-screen' ) ).toBeVisible();
-		await expect( page.getByRole( 'heading', { name: "Let's get to work." } ) ).toBeVisible();
+		await expect( page.getByRole( 'heading', { name: /Let['’]s get to work\./ } ) ).toBeVisible();
 		await expect( page.getByRole( 'button', { name: 'Upgrade' } ) ).toBeVisible();
 		await expect( page.getByRole( 'button', { name: 'Sign in to Elementor' } ) ).toBeVisible();
 		await expect( page.getByRole( 'link', { name: 'Continue as a guest' } ) ).toBeVisible();
