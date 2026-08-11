@@ -30,7 +30,7 @@ class Global_Variables_Resource_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'application/json',
-					'description' => __( 'Variables list, total count, and watermark from the active kit.', 'elementor' ),
+					'description' => __( 'Design tokens (colors, fonts, sizes) from the active kit; check before styling with variables.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

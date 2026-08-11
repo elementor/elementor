@@ -3,8 +3,10 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,9 +31,11 @@ class Style_Applier {
 	/**
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
+	 * @param string                $style_apply_mode `patch` or `replace`.
+	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
-	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch' ): array {
+	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error'    => null,
@@ -41,6 +45,7 @@ class Style_Applier {
 
 		$active_breakpoints = $this->get_active_breakpoints();
 		$errors             = [];
+		$warnings           = [];
 
 		foreach ( $styles as $config_id => $css_string ) {
 			if ( ! is_string( $css_string ) ) {
@@ -52,7 +57,17 @@ class Style_Applier {
 				continue;
 			}
 
-			$node         = &$config_id_index[ $config_id ];
+			$node = &$config_id_index[ $config_id ];
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				$v3_warnings = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
+				foreach ( $v3_warnings as $warning ) {
+					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
+				}
+				unset( $node );
+				continue;
+			}
+
 			$is_empty_css = '' === trim( $css_string );
 
 			if ( $is_empty_css ) {
@@ -109,8 +124,81 @@ class Style_Applier {
 				implode( ' ', $errors ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			) : null,
-			'warnings' => [],
+			'warnings' => $warnings,
 		];
+	}
+
+	/**
+	 * @param array                $node
+	 * @param string               $css_string
+	 * @param string               $style_apply_mode
+	 * @param array<string, array> $widget_configs
+	 * @return string[] Warnings (without config-id prefix).
+	 */
+	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
+		$warnings = [];
+		$widget_type = $node['widgetType'] ?? '';
+		$widget_config = [];
+
+		if ( is_string( $widget_type ) && '' !== $widget_type ) {
+			$widget_config = $widget_configs[ $widget_type ]
+				?? Widget_Context_Helper::get_widget_config( $widget_type )
+				?? [];
+		}
+
+		$is_empty_css = '' === trim( $css_string );
+		$is_replace = 'replace' === $style_apply_mode;
+
+		if ( $is_replace ) {
+			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
+		}
+
+		if ( $is_empty_css ) {
+			return $warnings;
+		}
+
+		$mapper = new V3_Style_Mapper( $this->css_converter, $this->get_active_breakpoints() );
+		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
+
+		foreach ( $result['warnings'] as $warning ) {
+			$warnings[] = $warning;
+		}
+
+		if ( ! empty( $result['settings_patch'] ) ) {
+			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+		}
+
+		$unmapped = $result['unmapped_css'] ?? '';
+		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped );
+		if ( null !== $pro_warning ) {
+			$warnings[] = $pro_warning;
+		}
+
+		if ( '' !== trim( $unmapped ) ) {
+			$snippet = self::truncate_css_snippet( $unmapped );
+			$warnings[] = null !== $pro_warning
+				? sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
+					$snippet
+				)
+				: sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
+					$snippet
+				);
+		}
+
+		return $warnings;
+	}
+
+	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {
+		$css = trim( preg_replace( '/\s+/', ' ', $css ) ?? $css );
+		if ( strlen( $css ) <= $max_length ) {
+			return $css;
+		}
+
+		return substr( $css, 0, $max_length - 3 ) . '...';
 	}
 
 	private function get_active_breakpoints(): array {

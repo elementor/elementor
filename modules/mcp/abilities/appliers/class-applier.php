@@ -42,42 +42,39 @@ class Class_Applier {
 				continue;
 			}
 
+			$node = &$config_id_index[ $config_id ];
+			$resolved_labels = $this->resolve_labels( $labels, $id_by_label, $config_id, $errors );
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				if ( empty( $labels ) ) {
+					V3_Node_Bridge::clear_classes( $node );
+				} elseif ( ! empty( $resolved_labels ) ) {
+					V3_Node_Bridge::apply_classes( $node, $resolved_labels );
+				}
+
+				unset( $node );
+				continue;
+			}
+
 			if ( empty( $labels ) ) {
-				$node = &$config_id_index[ $config_id ];
 				$node['settings'] = $this->clear_global_classes( $node['settings'] ?? [] );
 				unset( $node );
 				continue;
 			}
 
-			$resolved_ids = [];
-
-			foreach ( $labels as $label ) {
-				if ( ! is_string( $label ) || '' === $label ) {
-					$errors[] = sprintf( '[%s] Each global class label must be a non-empty string.', $config_id );
-					continue;
-				}
-
-				if ( ! isset( $id_by_label[ $label ] ) ) {
-					$errors[] = sprintf(
-						'[%s] Unknown global class label "%s". Available labels: %s',
-						$config_id,
-						$label,
-						! empty( $id_by_label ) ? implode( ', ', array_keys( $id_by_label ) ) : '(none)'
-					);
-					continue;
-				}
-
-				$resolved_ids[] = $id_by_label[ $label ];
-			}
-
-			if ( empty( $resolved_ids ) ) {
+			if ( empty( $resolved_labels ) ) {
+				unset( $node );
 				continue;
 			}
 
-			$node = &$config_id_index[ $config_id ];
+			$resolved_ids = array_map(
+				static fn( string $label ) => $id_by_label[ $label ],
+				$resolved_labels
+			);
+
 			$node['settings'] = $this->prepend_global_classes( $node['settings'] ?? [], $resolved_ids );
+			unset( $node );
 		}
-		unset( $node );
 
 		if ( empty( $errors ) ) {
 			return null;
@@ -88,6 +85,38 @@ class Class_Applier {
 			implode( ' ', $errors ),
 			[ 'status' => \WP_Http::BAD_REQUEST ]
 		);
+	}
+
+	/**
+	 * @param string[]             $labels      Global class labels input for this node.
+	 * @param array<string,string> $id_by_label Map of label => class id (for validation).
+	 * @param string               $config_id   Identifier used in error messages.
+	 * @param string[]             $errors      Collected error messages (by reference).
+	 * @return string[] Validated labels.
+	 */
+	private function resolve_labels( array $labels, array $id_by_label, string $config_id, array &$errors ): array {
+		$resolved_labels = [];
+
+		foreach ( $labels as $label ) {
+			if ( ! is_string( $label ) || '' === $label ) {
+				$errors[] = sprintf( '[%s] Each global class label must be a non-empty string.', $config_id );
+				continue;
+			}
+
+			if ( ! isset( $id_by_label[ $label ] ) ) {
+				$errors[] = sprintf(
+					'[%s] Unknown global class label "%s". Available labels: %s',
+					$config_id,
+					$label,
+					! empty( $id_by_label ) ? implode( ', ', array_keys( $id_by_label ) ) : '(none)'
+				);
+				continue;
+			}
+
+			$resolved_labels[] = $label;
+		}
+
+		return $resolved_labels;
 	}
 
 	private function build_label_to_id_map( array $label_by_id ): array {

@@ -23,6 +23,15 @@ export default class extends Marionette.ItemView {
 
 		if ( ! lockOptions?.is_locked ) {
 			this.trackResultSelect();
+
+			// Open elementor-app URLs in the app overlay instead of navigating away.
+			const url = this.model.get( 'url' ) || '';
+			if ( url.includes( 'page=elementor-app' ) && window.$e ) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				$e.run( 'finder/close' );
+				$e.run( 'app/open', { url } );
+			}
 			return;
 		}
 

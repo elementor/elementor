@@ -6,12 +6,12 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
-- [elementor/list-widget-schemas?summary=true] - Available v4 widgets
+- [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
 - `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
 - `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
 
 # TOOL SUPPORT
-This tool supports v4 elements only.
+Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
 
 # WORKFLOW
 1. Check/create global variables via `elementor/manage-global-variable`
