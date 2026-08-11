@@ -1,14 +1,15 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Inverse of {@see V3_Property_Converter}: reads V3 legacy settings and emits CSS
- * declarations into a {@see V3_Block_Accumulator} grouped by breakpoint / pseudo-state.
+ * Inverse of {@see \Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Converter}:
+ * reads V3 legacy settings and emits CSS declarations into a {@see V3_Block_Accumulator}
+ * grouped by breakpoint / pseudo-state.
  *
  * Each serializer owns a single override shape (typography_prefix, border_prefix,
  * box_shadow_prefix, setting+resolver, or generic index fallback).

@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Block_Accumulator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Formatters;
 
 if ( ! defined( 'ABSPATH' ) ) {

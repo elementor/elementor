@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -157,7 +157,7 @@ class Style_Applier {
 			return $warnings;
 		}
 
-		$mapper = new V3_Style_Mapper( $this->css_converter, $this->get_active_breakpoints() );
+		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
 		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
 
 		foreach ( $result['warnings'] as $warning ) {

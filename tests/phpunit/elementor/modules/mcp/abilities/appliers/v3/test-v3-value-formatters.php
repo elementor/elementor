@@ -20,6 +20,11 @@ class Test_V3_Value_Formatters extends TestCase {
 		$this->assertSame( '2rem', V3_Value_Formatters::format( 'dimension', [ 'size' => 2, 'unit' => 'rem' ] ) );
 	}
 
+	public function test_format_dimension_emits_unitless_when_unit_is_empty() {
+		$this->assertSame( '20', V3_Value_Formatters::format( 'dimension', [ 'size' => 20, 'unit' => '' ] ) );
+		$this->assertSame( '20', V3_Value_Formatters::format( 'dimension', [ 'size' => 20 ] ) );
+	}
+
 	public function test_format_dimension_returns_null_for_empty_size() {
 		$this->assertNull( V3_Value_Formatters::format( 'dimension', [ 'size' => '', 'unit' => 'px' ] ) );
 		$this->assertNull( V3_Value_Formatters::format( 'dimension', null ) );

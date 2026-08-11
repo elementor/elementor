@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Block_Accumulator;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Serializer_Registry;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Serializer_Registry_Factory;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Block_Renderer;
 
 if ( ! defined( 'ABSPATH' ) ) {

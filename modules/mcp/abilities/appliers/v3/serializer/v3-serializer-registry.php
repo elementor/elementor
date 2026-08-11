@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Registration-order iterator of {@see V3_Property_Serializer}. Inverse of
- * {@see V3_Converter_Registry}.
+ * {@see \Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry}.
  */
 class V3_Serializer_Registry {
 

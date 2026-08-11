@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Block_Accumulator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,14 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Block_Renderer {
 
-	const BASE_BREAKPOINT = 'desktop';
-
 	public function render( V3_Block_Accumulator $blocks ): string {
 		$grouped = $blocks->all();
 		$parts = [];
 
-		$default = $grouped[ self::BASE_BREAKPOINT ] ?? [];
-		unset( $grouped[ self::BASE_BREAKPOINT ] );
+		$default = $grouped[ Responsive_Key_Resolver::BASE_BREAKPOINT ] ?? [];
+		unset( $grouped[ Responsive_Key_Resolver::BASE_BREAKPOINT ] );
 
 		$rendered_default = $this->render_state_group( $default );
 		if ( '' !== $rendered_default ) {

@@ -61,12 +61,9 @@ class V3_Value_Formatters {
 			return null;
 		}
 
-		$unit = isset( $value['unit'] ) && '' !== $value['unit'] ? $value['unit'] : self::DEFAULT_UNIT;
-		if ( self::DEFAULT_UNIT !== $unit ) {
-			return self::format_size( $value['size'] ) . $unit;
-		}
+		$unit = isset( $value['unit'] ) ? (string) $value['unit'] : '';
 
-		return self::format_size( $value['size'] ) . self::DEFAULT_UNIT;
+		return self::format_size( $value['size'] ) . $unit;
 	}
 
 	private static function format_sides( $value ): ?string {

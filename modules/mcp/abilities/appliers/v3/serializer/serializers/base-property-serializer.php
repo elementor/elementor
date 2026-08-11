@@ -2,8 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Block_Accumulator;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Property_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Formatters;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +22,7 @@ abstract class Base_Property_Serializer implements V3_Property_Serializer {
 		'_mobile' => 'mobile',
 	];
 
-	const BASE_BREAKPOINT = 'desktop';
+	const BASE_BREAKPOINT = Responsive_Key_Resolver::BASE_BREAKPOINT;
 
 	protected function emit_setting_at_breakpoint(
 		V3_Block_Accumulator $blocks,

@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Unmapped_Css_Serializer {
 
-	const BASE_BREAKPOINT = 'desktop';
-
 	public function serialize_declaration( string $breakpoint, ?string $state, string $property, string $value ): string {
 		$decl = $property . ': ' . $value . ';';
 
@@ -37,7 +35,7 @@ class Unmapped_Css_Serializer {
 			return '';
 		}
 
-		if ( self::BASE_BREAKPOINT === $breakpoint ) {
+		if ( Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ) {
 			return $css;
 		}
 

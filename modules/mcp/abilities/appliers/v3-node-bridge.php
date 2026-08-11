@@ -134,7 +134,7 @@ class V3_Node_Bridge {
 		}
 
 		if ( ! Utils::has_pro() ) {
-			$widget_label = '' !== $widget_type ? $widget_type : 'this V3 widget';
+			$widget_label = '' !== $widget_type ? $widget_type : esc_html__( 'this V3 widget', 'elementor' );
 
 			return sprintf(
 				/* translators: %s: V3 widget type name. */

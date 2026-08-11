@@ -7,7 +7,6 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
@@ -32,8 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class V3_Style_Mapper {
 
-	const BASE_BREAKPOINT = Unmapped_Css_Serializer::BASE_BREAKPOINT;
-
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
 	private V3_Converter_Registry $converter_registry;
@@ -43,18 +40,18 @@ class V3_Style_Mapper {
 
 	public function __construct(
 		Css_Converter $css_converter,
-		array $active_breakpoints = [],
-		?V3_Converter_Registry $converter_registry = null,
-		?Css_Declaration_Parser $declaration_parser = null,
-		?Unmapped_Css_Serializer $unmapped_serializer = null,
-		?Responsive_Key_Resolver $responsive_resolver = null
+		array $active_breakpoints,
+		V3_Converter_Registry $converter_registry,
+		Css_Declaration_Parser $declaration_parser,
+		Unmapped_Css_Serializer $unmapped_serializer,
+		Responsive_Key_Resolver $responsive_resolver
 	) {
 		$this->css_converter = $css_converter;
 		$this->active_breakpoints = $active_breakpoints;
-		$this->converter_registry = $converter_registry ?? V3_Converter_Registry_Factory::create();
-		$this->declaration_parser = $declaration_parser ?? new Css_Declaration_Parser();
-		$this->unmapped_serializer = $unmapped_serializer ?? new Unmapped_Css_Serializer();
-		$this->responsive_resolver = $responsive_resolver ?? new Responsive_Key_Resolver();
+		$this->converter_registry = $converter_registry;
+		$this->declaration_parser = $declaration_parser;
+		$this->unmapped_serializer = $unmapped_serializer;
+		$this->responsive_resolver = $responsive_resolver;
 	}
 
 	/**
@@ -170,7 +167,7 @@ class V3_Style_Mapper {
 				$bucket['prefix']
 			);
 
-			if ( ! empty( $bucket['responsive'] ) && self::BASE_BREAKPOINT !== $bucket['breakpoint'] ) {
+			if ( ! empty( $bucket['responsive'] ) && Responsive_Key_Resolver::BASE_BREAKPOINT !== $bucket['breakpoint'] ) {
 				$group_patch = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );
 			}
 
@@ -197,6 +194,6 @@ class V3_Style_Mapper {
 			return $this->active_breakpoints;
 		}
 
-		return [ self::BASE_BREAKPOINT ];
+		return [ Responsive_Key_Resolver::BASE_BREAKPOINT ];
 	}
 }

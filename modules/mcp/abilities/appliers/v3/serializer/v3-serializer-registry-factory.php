@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers\Border_Shorthand_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers\Box_Shadow_Prefix_Serializer;
