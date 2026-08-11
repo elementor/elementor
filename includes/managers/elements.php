@@ -23,6 +23,8 @@ class Elements_Manager {
 	const CATEGORY_ANGIE_WIDGETS = 'angie-widgets';
 	const CATEGORY_CUSTOM_WIDGETS = 'custom-widgets';
 	const CATEGORY_BASIC = 'basic';
+	const CATEGORY_PRO_ELEMENTS = 'pro-elements';
+	const CATEGORY_WORDPRESS = 'wordpress';
 
 	/**
 	 * Element types.
@@ -303,7 +305,7 @@ class Elements_Manager {
 				'title' => esc_html__( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
-			'pro-elements' => [
+			self::CATEGORY_PRO_ELEMENTS => [
 				'title' => esc_html__( 'Pro', 'elementor' ),
 				'promotion' => [
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
@@ -391,6 +393,15 @@ class Elements_Manager {
 
 		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, $after_candidates );
 		$this->promote_category_after( self::CATEGORY_CUSTOM_WIDGETS, $after_candidates );
+
+		if ( ! Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' ) ) {
+			$this->promote_category_after( self::CATEGORY_PRO_ELEMENTS, [
+				self::CATEGORY_CUSTOM_WIDGETS,
+				self::CATEGORY_ANGIE_WIDGETS,
+				self::CATEGORY_ATOMIC_FORM,
+				self::CATEGORY_ATOMIC_ELEMENTS,
+			] );
+		}
 
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),
