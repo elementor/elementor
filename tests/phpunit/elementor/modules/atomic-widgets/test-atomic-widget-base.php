@@ -662,7 +662,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_meta_breakpoint_validation_error() {
@@ -696,7 +696,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_id_validation_error() {
@@ -732,7 +732,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_type_validation_error() {
@@ -769,7 +769,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_label_validation_error() {
@@ -805,7 +805,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_variant_validation_error() {
@@ -847,7 +847,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_with_element_context() {
@@ -885,7 +885,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__skips_invalid_styles_and_saves_valid_styles() {
@@ -977,7 +977,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertSame( [], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__logs_skipped_invalid_styles() {
