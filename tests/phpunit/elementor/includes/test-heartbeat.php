@@ -30,6 +30,13 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->original_editor = Plugin::$instance->editor;
 		$this->original_common = Plugin::$instance->common;
 
+		add_filter( 'elementor/heartbeat/mutation_marker', function( array $default, int $post_id ): array {
+			return [
+				'post_id'    => $post_id,
+				'mutated_at' => Editor_Session_Guard::get_mcp_mutation_time( $post_id ),
+			];
+		}, 10, 2 );
+
 		$ajax_mock = $this->getMockBuilder( \stdClass::class )
 			->addMethods( [ 'create_nonce' ] )
 			->getMock();
