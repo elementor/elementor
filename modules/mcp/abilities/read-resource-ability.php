@@ -3,12 +3,21 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Read_Resource_Ability extends Abstract_Ability {
+
+	private ?Ability_Registry $registry;
+
+	public function __construct( ?Ability_Registry $registry = null ) {
+		$this->registry = $registry;
+	}
 
 	protected function get_ability_id(): string {
 		return 'elementor/read-resource';
@@ -60,9 +69,9 @@ class Read_Resource_Ability extends Abstract_Ability {
 			);
 		}
 
-		$executors = $this->get_resource_executors();
+		$resource = $this->resolve_registry()->find_resource_by_uri( $uri );
 
-		if ( ! isset( $executors[ $uri ] ) ) {
+		if ( null === $resource ) {
 			return new \WP_Error(
 				'resource_not_found',
 				sprintf(
@@ -74,11 +83,7 @@ class Read_Resource_Ability extends Abstract_Ability {
 			);
 		}
 
-		$executor = $executors[ $uri ];
-		/** @var Abstract_Ability $ability */
-		$ability = $executor['ability'];
-
-		if ( ! $ability->check_permission() ) {
+		if ( ! $resource->check_permission() ) {
 			return new \WP_Error(
 				'rest_forbidden',
 				__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
@@ -86,7 +91,7 @@ class Read_Resource_Ability extends Abstract_Ability {
 			);
 		}
 
-		$content = $ability->execute();
+		$content = $resource->execute();
 
 		if ( is_wp_error( $content ) ) {
 			return $content;
@@ -94,7 +99,7 @@ class Read_Resource_Ability extends Abstract_Ability {
 
 		return [
 			'uri' => $uri,
-			'mimeType' => $executor['mimeType'],
+			'mimeType' => (string) ( $resource->get_mime_type() ?? '' ),
 			'content' => $this->to_content_string( $content ),
 		];
 	}
@@ -116,40 +121,17 @@ class Read_Resource_Ability extends Abstract_Ability {
 		return wp_json_encode( $content );
 	}
 
-	private function get_resource_executors(): array {
-		return [
-			Style_Best_Practices_Ability::URI => [
-				'ability' => new Style_Best_Practices_Ability(),
-				'mimeType' => 'text/markdown',
-			],
-			Wordpress_Best_Practices_Ability::URI => [
-				'ability' => new Wordpress_Best_Practices_Ability(),
-				'mimeType' => 'text/markdown',
-			],
-			Manage_Variable_Guide_Ability::URI => [
-				'ability' => new Manage_Variable_Guide_Ability(),
-				'mimeType' => 'text/plain',
-			],
-			Global_Classes_Resource_Ability::URI => [
-				'ability' => new Global_Classes_Resource_Ability(),
-				'mimeType' => 'application/json',
-			],
-			Global_Variables_Resource_Ability::URI => [
-				'ability' => new Global_Variables_Resource_Ability(),
-				'mimeType' => 'application/json',
-			],
-			List_Dynamic_Tags_Ability::URI => [
-				'ability' => new List_Dynamic_Tags_Ability(),
-				'mimeType' => 'application/json',
-			],
-			Interactions_Schema_Resource_Ability::URI => [
-				'ability' => new Interactions_Schema_Resource_Ability(),
-				'mimeType' => 'application/json',
-			],
-			Suggested_Actions_Ui_Ability::URI => [
-				'ability' => new Suggested_Actions_Ui_Ability(),
-				'mimeType' => Suggested_Actions_Ui_Ability::MIME_TYPE,
-			],
-		];
+	private function resolve_registry(): Ability_Registry {
+		if ( $this->registry instanceof Ability_Registry ) {
+			return $this->registry;
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
+
+		$this->registry = $module instanceof Mcp_Module
+			? $module->registry()
+			: Mcp_Module::build_core_registry();
+
+		return $this->registry;
 	}
 }

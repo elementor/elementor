@@ -65,12 +65,12 @@ class Test_List_Dynamic_Tags_Ability extends TestCase {
 
 	public function test_dynamic_tags_uri_is_in_resource_catalog() {
 		// Arrange
-		$ability = new List_Resources_Ability();
-		$reflection = new \ReflectionMethod( $ability, 'get_resource_catalog' );
-		$reflection->setAccessible( true );
+		$registry = new \Elementor\Modules\Mcp\Registry\Ability_Registry();
+		$registry->add( new List_Dynamic_Tags_Ability() );
+		$ability = new List_Resources_Ability( $registry );
 
 		// Act
-		$catalog = $reflection->invoke( $ability );
+		$catalog = $ability->execute()['resources'];
 		$uris = array_column( $catalog, 'uri' );
 
 		// Assert

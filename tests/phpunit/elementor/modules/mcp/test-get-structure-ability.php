@@ -163,14 +163,12 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 				[
 					'id' => 'container1',
 					'elType' => 'container',
-					'version' => 3,
 					'title' => 'Container',
 					'elements' => [
 						[
 							'id' => 'widget1',
 							'elType' => 'widget',
 							'widgetType' => 'e-heading',
-							'version' => 4,
 							'title' => 'Heading',
 						],
 					],
@@ -211,7 +209,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame(
 			[
-				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'version' => 4, 'title' => 'Button' ],
+				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'title' => 'Button' ],
 			],
 			$result['elements']
 		);
@@ -691,7 +689,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Envelope Title', $result['elements'][0]['title'] );
 	}
 
-	public function test_execute__tags_v3_widget_and_v4_widget_with_version() {
+	public function test_execute__omits_version_from_skeleton() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
@@ -714,12 +712,12 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$container = $result['elements'][0];
-		$this->assertSame( 3, $container['version'] );
-		$this->assertSame( 3, $container['elements'][0]['version'] );
-		$this->assertSame( 4, $container['elements'][1]['version'] );
+		$this->assertArrayNotHasKey( 'version', $container );
+		$this->assertArrayNotHasKey( 'version', $container['elements'][0] );
+		$this->assertArrayNotHasKey( 'version', $container['elements'][1] );
 	}
 
-	public function test_execute__strips_v3_settings_and_styles_when_include_content_true() {
+	public function test_execute__strips_non_allowlisted_v3_settings_and_styles_when_include_content_true() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
@@ -746,9 +744,46 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$node = $result['elements'][0];
-		$this->assertSame( 3, $node['version'] );
+		$this->assertArrayNotHasKey( 'version', $node );
 		$this->assertEquals( (object) [], $node['settings'] );
 		$this->assertEquals( (object) [], $node['styles'] );
+	}
+
+	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'post-title-1',
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [
+					'title' => 'Hello',
+					'title_color' => '#222222',
+					'custom_css' => 'selector { filter: blur(2px); }',
+				],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'post-title-1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$node = $result['elements'][0];
+		$this->assertArrayNotHasKey( 'version', $node );
+		$this->assertArrayNotHasKey( 'styles', $node );
+		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
+		$this->assertStringContainsString( 'color: #222222;', $node['style'] );
+		$this->assertStringContainsString( 'filter: blur(2px);', $node['style'] );
 	}
 
 	public function test_execute__omits_version_for_unknown_type() {

@@ -18,6 +18,10 @@ class List_Components_Ability extends Abstract_Ability {
 		return 'elementor/list-components';
 	}
 
+	public function is_exposed_via_proxy(): bool {
+		return false;
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'List Elementor Components', 'elementor' ),
