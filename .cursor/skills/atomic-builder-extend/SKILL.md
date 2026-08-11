@@ -5,7 +5,7 @@ description: "Pick the right Elementor v4 skill. Use when you want to create a w
 
 # Extend Elementor V4 (router)
 
-Source of truth: [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md). Skills are checklists that link there — do not duplicate the doc tree. Runnable examples: [docs/atomic-builder/examples/](../../../docs/atomic-builder/examples/README.md).
+Source of truth: [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md). Skills are checklists that link there — do not duplicate the doc tree. Runnable examples: [docs/atomic-builder/examples/](../../../docs/atomic-builder/examples/README.md). Consolidated third-party demo: [examples/example-plugin/](../../../examples/example-plugin/).
 
 This router is **not** an implementation capability. It does not define hooks, paths, or a shippable outcome — it only routes intent to a child skill with a binary **External** or **Internal** scope.
 
@@ -20,7 +20,7 @@ This router is **not** an implementation capability. It does not define hooks, p
 
 The marketplace skill `elementor-widget-patterns` is **v3 only** (`Widget_Base`, `Controls_Manager`, `content_template`). For atomic / v4 work, use the child skills below — not legacy widget patterns.
 
-Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not this repo) is also **v3 only** — legacy hooks like `elementor/widgets/register`, `elementor/element/{name}/{section}/before_section_end`. It has no atomic/v4 coverage; for v4 use the decision table below and the `elementor/atomic-widgets/*` hooks documented in the child skills.
+Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not this repo) is also **v3 only** — legacy hooks like `elementor/element/{name}/{section}/before_section_end`. It has no atomic/v4 coverage; for v4 use the decision table below and the `elementor/atomic-widgets/*` hooks documented in the child skills.
 
 ## Decision table
 
@@ -31,19 +31,29 @@ Angie's `extend-elementor` guide (surfaced inside the code-snippet MCP tool, not
 | New widget or container element | [create-atomic-widget](../create-atomic-widget/SKILL.md) | External | [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/atomic-widgets/authoring-widgets.md) |
 | `$$type`, prop schema, validation, transformers | [extend-prop-types](../extend-prop-types/SKILL.md) | External | [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamentals/prop-types.md), [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) |
 | WordPress data source / dynamic binding | [add-dynamic-tag](../add-dynamic-tag/SKILL.md) | External | [dynamic-tags/extending.md](../../../docs/atomic-builder/dynamic-tags/extending.md) |
-| Editor UI, package, slots, in-editor MCP | [add-editor-package](../add-editor-package/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
+| Editor UI, slots, **in-editor** MCP tools | [add-editor-package](../add-editor-package/SKILL.md) | External | [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md) |
 | Design tokens / kit variables | [extend-variables](../extend-variables/SKILL.md) | External | [variables/types.md](../../../docs/atomic-builder/variables/types.md) |
 | Legacy CSS → atomic style props | [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md) | Internal | [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) |
-| Motion / interactions tab | [internal-extend-interactions](../internal-extend-interactions/SKILL.md) | Internal | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
+| Motion / interactions tab (full stack) | [internal-extend-interactions](../internal-extend-interactions/SKILL.md) | Internal | [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md) |
+
+## Cross-skill edges
+
+- **Style prop types** — start with [extend-prop-types](../extend-prop-types/SKILL.md); if legacy CSS import must map the new key, also plan [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md) (Internal).
+- **PHP MCP abilities** (host integration, REST) — see [mcp/overview.md](../../../docs/atomic-builder/mcp/overview.md); **not** [add-editor-package](../add-editor-package/SKILL.md) (that skill is in-editor JS MCP only).
+- **Built-in element catalog changes** — Core-only; external plugins register their own widgets/elements only.
 
 ## Scope: External vs Internal
 
 Before implementing, confirm the child skill's scope — a plugin-only approach cannot ship an **Internal** capability.
 
-- **External** — third-party plugin in its own repo: subclass + WordPress hooks/filters documented in child skills; own npm package for editor JS. Do not modify Elementor Core.
-- **Internal** — requires changing Elementor Core (`modules/atomic-widgets/`, `packages/packages/core/`, `packages/packages/pro/`) via an accepted PR. Editor-only partial integrations via public hooks do not satisfy Internal skills when the full outcome includes published-page behavior.
+- **External** — third-party plugin in its own repo: subclass + WordPress hooks/filters documented in child skills; own npm package or hand-built editor JS bundle. Do not modify Elementor Core.
+- **Internal** — requires changing **Elementor Core** (`modules/`, `packages/packages/core/`) via an accepted PR. **Pro companion only** for Pro-gated interaction fields lives in the **elementor-pro** sibling repo — not in Core and not in a third-party plugin. Editor-only partial integrations via public hooks do not satisfy Internal skills when the full outcome includes published-page behavior.
 
-Full classification, implementation locations, and disclaimer: [docs/atomic-builder/skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+Full classification: [docs/atomic-builder/skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
+
+## No matching skill?
+
+If intent is not in the table, read [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md) section index and [architecture/packages-map.md](../../../docs/atomic-builder/architecture/packages-map.md). There is **no skill yet** for: migration-only work, components module extension, global-classes authoring, or architecture debugging — use docs directly or stop if a Core PR is required.
 
 ## Next step
 

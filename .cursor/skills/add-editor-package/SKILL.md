@@ -9,47 +9,58 @@ description: "External: Add an Editor V2 package from a third-party plugin that 
 
 ## Implementation location
 
-- **Editor TS:** existing or new **third-party plugin repository**; plugin-owned `@elementor/my-editor-feature` package (or equivalent bundle) registered via `elementor/editor/v2/packages` and `init()` in `src/init.ts(x)`.
-- **PHP (package registration only):** same third-party plugin repo — filter `elementor/editor/v2/packages` and optional `elementor/editor/v2/scripts/env`.
+- **Editor JS/TS:** third-party plugin repo — own package bundle with `init()` (npm/webpack **or** hand-built script).
+- **PHP:** filter `elementor/editor/v2/packages` and optional `elementor/editor/v2/scripts/env`; for hand-built bundles also hook `elementor/editor/v2/scripts/register` + `scripts/enqueue`.
 - **Do not modify Elementor Core.** Core packages live in `packages/packages/core/editor-*` — reference only.
+- **Runnable reference:** [examples/example-plugin/](../../../examples/example-plugin/) (`editor-example-feature` plain JS bundle).
 
-Read first: [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md), [mcp/registering-editor-tools.md](../../../docs/atomic-builder/mcp/registering-editor-tools.md), [packages/docs/creating-a-new-package.md](../../../packages/docs/creating-a-new-package.md).
+## Prerequisites
+
+- Experiment `e_atomic_elements` (and often `e_opt_in_v4`) — [getting-started/experiments.md](../../../docs/atomic-builder/getting-started/experiments.md).
+- In-editor MCP has no separate experiment gate beyond editor availability.
+
+Read first: [editor-packages/extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md), [docs/atomic-builder/examples/add-editor-package.md](../../../docs/atomic-builder/examples/add-editor-package.md). Monorepo package creation (Core contributors): [packages/docs/creating-a-new-package.md](../../../packages/docs/creating-a-new-package.md).
 
 ## Checklist
 
-1. **Decide package home** — new package vs extend existing — [creating-a-new-package.md](../../../packages/docs/creating-a-new-package.md).
-2. **PHP: register package name**
+### A. npm / webpack path (preferred for React UI)
 
-```php
-add_filter( 'elementor/editor/v2/packages', function ( array $packages ) {
-    return array_merge( $packages, [ 'my-editor-feature' ] );
-} );
+1. **PHP: register package slug** — append to `elementor/editor/v2/packages` (e.g. `editor-my-feature`). Optional env via `elementor/editor/v2/scripts/env`.
+2. **Build** — webpack (or Vite) with `@elementor/*` as **externals** resolved at runtime via `window.elementorV2.*` — see [packages/docs/architecture.md](../../../packages/docs/architecture.md) and [editor-packages/libs.md](../../../docs/atomic-builder/editor-packages/libs.md).
+3. **Output contract** — bundle exposes `window.elementorV2.{camelCaseSlug}` (e.g. `editor-my-feature` → `editorMyFeature`). Core Vite build footer auto-calls `?.init?.()` for packages built into Core assets.
+4. **`src/init.ts(x)`** — synchronous registration only; re-export from `src/index.ts`.
+
+### B. Hand-built script path (no npm pipeline)
+
+1. Hook **`elementor/editor/v2/scripts/register`** to `wp_register_script()` your plugin JS with deps on required `elementor-v2-*` handles (`editor`, `editor-app-bar`, etc.).
+2. Hook **`elementor/editor/v2/scripts/enqueue`** to enqueue that handle.
+3. **You must call `init()` yourself** — append at end of bundle:
+
+```js
+window.elementorV2.editorMyFeature?.init?.();
 ```
 
-Optional env: `elementor/editor/v2/scripts/env` → `$env['@elementor/my-editor-feature']`.
+Adding the slug to `elementor/editor/v2/packages` alone does **nothing** if no Core `.asset.php` exists for that slug — manual script registration carries the load.
 
-3. **JS: implement `init()` in `src/init.ts(x)`**, re-export from `src/index.ts` — synchronous registration only; Vite footer auto-calls `window.elementorV2.{camelCasePackage}?.init?.()`. Example: [docs/atomic-builder/examples/add-editor-package.md](../../../docs/atomic-builder/examples/add-editor-package.md).
-4. **Pick injection API** (read doc for full list):
-   - Shell: `injectIntoTop`, `injectIntoLogic` (`@elementor/editor`)
-   - App bar: `injectIntoPageIndication`, `toolsMenu` (`@elementor/editor-app-bar`)
-   - Editing panel: `injectIntoStyleTab`, `registerEditingPanelReplacement` (`@elementor/editor-editing-panel`)
-   - Elements panel: `injectTab` (`@elementor/editor-elements-panel`)
-   - Slide-in panels: `__registerPanel` (`@elementor/editor-panels`)
-   - Styles: `stylesRepository.register` (`@elementor/editor-styles-repository`)
-   - Legacy bridge: `registerDataHook`, `blockCommand`, `__privateListenTo( v1ReadyEvent(), fn )` (`@elementor/editor-v1-adapters`)
-5. **MCP (in-editor only)** — in `init()`; Zod from `@elementor/schema`:
+4. **Late-loaded global alternative** — `window.elementorV2.{camelCasePackage}` for scripts enqueued after editor packages; see [extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md).
 
-```ts
-import { getMCPByDomain } from '@elementor/editor-mcp';
-import { z } from '@elementor/schema';
+### C. Common `init()` work
 
-const mcp = getMCPByDomain( 'my_domain', { instructions: '…', docs: '…' } );
-mcp.addTool( { name: 'my_tool', description: '…', schema: { id: z.string() }, handler: async () => '…' } );
-```
+- Pick injection API (read doc for full list):
+  - Shell: `injectIntoTop`, `injectIntoLogic` (`@elementor/editor`)
+  - App bar: `injectIntoPageIndication`, `toolsMenu` (`@elementor/editor-app-bar`)
+  - Editing panel: `injectIntoStyleTab`, `registerEditingPanelReplacement` (`@elementor/editor-editing-panel`)
+  - Elements panel: `injectTab` (`@elementor/editor-elements-panel`)
+  - Slide-in panels: import `__registerPanel as registerPanel` from `@elementor/editor-panels` (public docs use both names)
+  - Styles: `stylesRepository.register` (`@elementor/editor-styles-repository`)
+  - Legacy bridge: `registerDataHook`, `blockCommand`, `__privateListenTo( v1ReadyEvent(), fn )` (`@elementor/editor-v1-adapters`)
+- **In-editor MCP only** — `getMCPByDomain()` + Zod from `@elementor/schema`; namespace `/^[a-z_]+$/`. **Not** PHP `modules/mcp/` abilities — see [mcp/overview.md](../../../docs/atomic-builder/mcp/overview.md).
 
-Namespace: `/^[a-z_]+$/` only. **Not** PHP `modules/mcp/` abilities.
+### Verify
 
-6. **Verify** — `window.elementorV2.editorMyFeature` (camelCase slug); UI in chosen slot; MCP tools when experiment allows.
+- Script loads in editor network tab; `window.elementorV2.{camelCaseSlug}` exists.
+- UI renders in chosen slot.
+- MCP tools visible when Angie / WebMCP is enabled.
 
 ## Minimal init skeleton
 
@@ -66,17 +77,17 @@ Reference: `packages/packages/core/editor-site-navigation/src/init.ts`.
 
 ## External implementation path
 
-- Third-party plugin ships own `@elementor/my-editor-feature` (or bundles equivalent); filter `elementor/editor/v2/packages`.
+- Third-party plugin ships own editor bundle; filter `elementor/editor/v2/packages` (+ manual script hooks for non-Core-built bundles).
 - Register MCP tools only for in-editor agent workflows via `@elementor/editor-mcp`.
 
 ## Core reference paths (do not edit)
 
 - Core packages: `packages/packages/core/editor-*`.
-- Pro extensions: `packages/packages/pro/editor-*-extended` (sibling Pro repo).
-- Loader: `core/editor/loader/`; conditional loading via module filters instead of hardcoding `editor-loader.php` when possible.
+- Pro extensions: `packages/packages/pro/editor-*-extended` (elementor-pro sibling repo).
+- Loader: `core/editor/loader/`.
 
 ## See also
 
 - [editor-packages/overview.md](../../../docs/atomic-builder/editor-packages/overview.md)
-- [editor-packages/libs.md](../../../docs/atomic-builder/editor-packages/libs.md)
-- [mcp/overview.md](../../../docs/atomic-builder/mcp/overview.md) — PHP abilities vs in-editor JS
+- [extend-variables](../extend-variables/SKILL.md) — `registerVariableType` in your package `init()`
+- [mcp/registering-editor-tools.md](../../../docs/atomic-builder/mcp/registering-editor-tools.md)
