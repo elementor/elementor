@@ -178,6 +178,7 @@ export type ElementPosition = {
 };
 
 export type V1ElementEditorSettingsProps = {
+	label?: string;
 	title?: string;
 	initial_position?: number;
 	component_uid?: string;
@@ -207,7 +208,9 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	allowed_child_types?: string[];
 	default_children?: Array< Record< string, TChild > >;
 	children_dependencies?: ChildDependencyRule[];
-	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
+	meta?: {
+		[ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] >;
+	};
 } & T;
 
 type V1Model< T > = {

@@ -1,4 +1,5 @@
 import AtomicElementBaseModel from './atomic-element-base-model';
+import AtomicListModel from './atomic-list-model';
 import AtomicElementBaseType from './atomic-element-base-type';
 import Component from './component';
 import createAtomicElementViewBase from './create-atomic-element-base-view';
@@ -11,6 +12,7 @@ class Module extends elementorModules.editor.utils.Module {
 		$e.components.register( new Component() );
 
 		this.wireChildrenDependenciesAdapter();
+		this.registerCustomElementModels();
 		this.exposeAtomicElementClasses();
 		this.registerAtomicElements();
 	}
@@ -25,6 +27,21 @@ class Module extends elementorModules.editor.utils.Module {
 		AtomicElementBaseModel.setChildrenDependenciesAdapter( {
 			reconcileInitialChildren: api.reconcileInitialChildren,
 			bindSettingsReconcile: api.bindSettingsReconcile,
+			getContainer: api.getContainer,
+			addModelToParent: api.addModelToParent,
+			removeModelFromParent: api.removeModelFromParent,
+		} );
+	}
+
+	registerCustomElementModels() {
+		elementor.hooks.addFilter( 'element/model', ( DefaultModel, attrs ) => {
+			const elementType = attrs.widgetType || attrs.elType;
+
+			if ( 'e-list' === elementType ) {
+				return AtomicListModel;
+			}
+
+			return DefaultModel;
 		} );
 	}
 
