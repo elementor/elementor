@@ -56,4 +56,11 @@ class Editor_Session_Guard {
 		}
 		return (int) get_transient( self::mutation_key( $post_id ) );
 	}
+
+	public static function delete_mcp_mutation( int $post_id ): void {
+		if ( $post_id <= 0 ) {
+			return;
+		}
+		delete_transient( self::mutation_key( $post_id ) );
+	}
 }

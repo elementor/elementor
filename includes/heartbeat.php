@@ -42,15 +42,14 @@ class Heartbeat {
 				$response['locked_user'] = $locked_user->display_name;
 			}
 
-			if ( array_key_exists( 'elementor_has_unsaved', $data ) ) {
+			if ( ! empty( $data['elementor_has_unsaved'] ) ) {
 				do_action( 'elementor/heartbeat/unsaved_signal', $post_id, $data['elementor_has_unsaved'] );
 			}
 
-			$response['elementor_mcp_mutation'] = apply_filters(
-				'elementor/heartbeat/mutation_marker',
-				[ 'post_id' => $post_id, 'mutated_at' => 0 ],
-				$post_id
-			);
+			$mutation_marker = apply_filters( 'elementor/heartbeat/mutation_marker', null, $post_id );
+			if ( $mutation_marker ) {
+				$response['elementor_mcp_mutation'] = $mutation_marker;
+			}
 
 			/** @var Core\Common\Modules\Ajax\Module $ajax */
 			$ajax = Plugin::$instance->common->get_component( 'ajax' );

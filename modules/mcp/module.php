@@ -39,6 +39,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/mcp/pre_execute_guard', [ $this, 'check_mutation_guard' ], 10, 2 );
 		add_action( 'elementor/heartbeat/unsaved_signal', [ $this, 'handle_unsaved_signal' ], 10, 2 );
 		add_filter( 'elementor/heartbeat/mutation_marker', [ $this, 'build_mutation_marker' ], 10, 2 );
+		add_action( 'elementor/document/after_save', [ $this, 'clear_unsaved_signal_on_save' ] );
 
 		if ( ! $this->is_active() ) {
 			return;
@@ -106,6 +107,12 @@ class Module extends BaseModule {
 		}
 	}
 
+	public function clear_unsaved_signal_on_save( $document ): void {
+		$post_id = (int) $document->get_post()->ID;
+		Editor_Session_Guard::clear_editor_unsaved( $post_id );
+		Editor_Session_Guard::delete_mcp_mutation( $post_id );
+	}
+
 	public function handle_unsaved_signal( int $post_id, $signal_value ): void {
 		if ( $signal_value ) {
 			Editor_Session_Guard::set_editor_unsaved( (int) $signal_value );
@@ -114,10 +121,14 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function build_mutation_marker( array $default, int $post_id ): array {
+	public function build_mutation_marker( $default, int $post_id ): ?array {
+		$mutated_at = Editor_Session_Guard::get_mcp_mutation_time( $post_id );
+		if ( ! $mutated_at ) {
+			return null;
+		}
 		return [
 			'post_id'    => $post_id,
-			'mutated_at' => Editor_Session_Guard::get_mcp_mutation_time( $post_id ),
+			'mutated_at' => $mutated_at,
 		];
 	}
 

@@ -8,6 +8,7 @@ export default class Heartbeat {
 	constructor( document ) {
 		this.document = document;
 		this.lastSyncedAt = Math.floor( Date.now() / 1000 );
+		this.lastStateOfDocumentChange = document.editor.isChanged;
 
 		this.onSend = this.onSend.bind( this );
 		this.onTick = this.onTick.bind( this );
@@ -168,12 +169,10 @@ export default class Heartbeat {
 		if (newChangeOfDocumentState === this.lastStateOfDocumentChange) {
 			return;
 		}
-		if (newChangeOfDocumentState) {
+		if ( newChangeOfDocumentState ) {
 			wp.heartbeat.enqueue( 'elementor_has_unsaved', this.document.id );
-		} else {
-			wp.heartbeat.enqueue( 'elementor_has_unsaved', null );
+			wp.heartbeat.connectNow();
 		}
-		wp.heartbeat.connectNow();
 		this.lastStateOfDocumentChange = newChangeOfDocumentState;
 	}
 

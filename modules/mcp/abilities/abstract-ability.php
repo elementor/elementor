@@ -23,9 +23,13 @@ abstract class Abstract_Ability {
 	abstract public function execute( $input = [] );
 
 	final public function execute_guarded( $input = [] ) {
-		$guard = apply_filters( 'elementor/mcp/pre_execute_guard', null, $input );
-		if ( is_wp_error( $guard ) ) {
-			return $guard;
+		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_destructive();
+
+		if ( $is_mutating ) {
+			$guard = apply_filters( 'elementor/mcp/pre_execute_guard', null, $input );
+			if ( is_wp_error( $guard ) ) {
+				return $guard;
+			}
 		}
 
 		$result  = $this->execute( $input );
@@ -33,7 +37,7 @@ abstract class Abstract_Ability {
 
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
 
-		if ( $post_id > 0 && ! $is_failed && self::KIND_TOOL === $this->get_kind() && $this->is_destructive() ) {
+		if ( $is_mutating && $post_id > 0 && ! $is_failed ) {
 			Editor_Session_Guard::set_mcp_mutation( $post_id );
 		}
 
@@ -95,7 +99,7 @@ abstract class Abstract_Ability {
 	}
 
 	private function is_destructive(): bool {
-		return false !== ( $this->mcp_meta()['annotations']['destructive'] ?? true );
+		return false !== ( $this->definition()->meta['annotations']['destructive'] ?? true );
 	}
 
 	protected function definition(): Ability_Definition {
