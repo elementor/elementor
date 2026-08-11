@@ -22,7 +22,9 @@ export function useAuditReport() {
 
     if ( persisted ) {
       dispatch( slice.actions.reportRestored( persisted ) );
-    } else if ( report ) {
+    } else {
+      dispatch( slice.actions.reportCleared() );
+    }
       dispatch( slice.actions.reportCleared() );
     }
   }, [ documentId, report, dispatch ] );
