@@ -30,12 +30,6 @@ if ( ! function_exists( '__' ) ) {
 	}
 }
 
-if ( ! function_exists( 'esc_html__' ) ) {
-	function esc_html__( $text, $domain = 'default' ) {
-		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
-	}
-}
-
 if ( ! function_exists( 'sprintf' ) ) {
 	// sprintf is a PHP built-in; guard is a no-op but kept for symmetry.
 }
