@@ -248,6 +248,34 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		$this->assertLessThan( $basic_pos, $angie_pos, 'angie-widgets should appear before basic when V4 is active' );
 	}
 
+	public function test_init_categories__v4_active__free_user__promotes_pro_before_layout() {
+		// Arrange
+		$experiments = Plugin::$instance->experiments;
+		$cb          = $this->register_test_widget_categories();
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
+
+		$manager = $this->elementor()->elements_manager;
+		$this->reset_categories( $manager );
+
+		// Act
+		$keys = array_keys( $manager->get_categories() );
+
+		// Cleanup
+		remove_action( 'elementor/elements/categories_registered', $cb, 20 );
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
+		$this->reset_categories( $manager );
+
+		// Assert – pro-elements appears after custom-widgets and before layout for free users
+		$custom_pos = array_search( Elements_Manager::CATEGORY_CUSTOM_WIDGETS, $keys, true );
+		$pro_pos    = array_search( 'pro-elements', $keys, true );
+		$layout_pos = array_search( 'layout', $keys, true );
+		$basic_pos  = array_search( 'basic', $keys, true );
+
+		$this->assertGreaterThan( $custom_pos, $pro_pos, 'pro-elements should appear after custom-widgets when V4 is active' );
+		$this->assertLessThan( $layout_pos, $pro_pos, 'pro-elements should appear before layout when V4 is active' );
+		$this->assertLessThan( $basic_pos, $pro_pos, 'pro-elements should appear before basic when V4 is active' );
+	}
+
 	private function invoke_promote_category_after( $manager, string $category_name, array $after_candidates ): void {
 		$method = new \ReflectionMethod( $manager, 'promote_category_after' );
 		$method->setAccessible( true );

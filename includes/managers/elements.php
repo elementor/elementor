@@ -392,6 +392,15 @@ class Elements_Manager {
 
 		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, $after_candidates );
 		$this->promote_category_after( self::CATEGORY_CUSTOM_WIDGETS, $after_candidates );
+
+		if ( ! Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' ) ) {
+			$this->promote_category_after( 'pro-elements', [
+				self::CATEGORY_CUSTOM_WIDGETS,
+				self::CATEGORY_ANGIE_WIDGETS,
+				self::CATEGORY_ATOMIC_FORM,
+				self::CATEGORY_ATOMIC_ELEMENTS,
+			] );
+		}
 	}
 
 	public function enqueue_elements_styles() {
