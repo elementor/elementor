@@ -5,289 +5,283 @@ import { StepId } from '../types';
 import { t } from '../utils/translations';
 
 function createThemeSelectionStep(): Step {
-  return {
-    id: StepId.THEME_SELECTION,
-    label: t( 'steps.theme_selection.title' ),
-    type: 'single',
-  };
+	return {
+		id: StepId.THEME_SELECTION,
+		label: t( 'steps.theme_selection.title' ),
+		type: 'single',
+	};
 }
 
 function getDefaultSteps(): Step[] {
-  return [
-    {
-      id: StepId.SITE_FEATURES,
-      label: t( 'steps.site_features.title' ),
-      type: 'multiple',
-    },
-  ];
+	return [
+		{
+			id: StepId.SITE_FEATURES,
+			label: t( 'steps.site_features.title' ),
+			type: 'multiple',
+		},
+	];
 }
 
 function applyProInstalledSteps( steps: Step[] ): Step[] {
-  const withoutSiteFeatures = steps.filter( ( step ) => step.id !== StepId.SITE_FEATURES );
+	const withoutSiteFeatures = steps.filter( ( step ) => step.id !== StepId.SITE_FEATURES );
 
-  if ( withoutSiteFeatures.some( ( step ) => step.id === StepId.THEME_SELECTION ) ) {
-    return withoutSiteFeatures;
-  }
+	if ( withoutSiteFeatures.some( ( step ) => step.id === StepId.THEME_SELECTION ) ) {
+		return withoutSiteFeatures;
+	}
 
-  return [ ...withoutSiteFeatures, createThemeSelectionStep() ];
+	return [ ...withoutSiteFeatures, createThemeSelectionStep() ];
 }
 
-function parseStepsFromConfig(
-  configSteps?: Array< { id: string; label: string; type?: string } >
-): Step[] {
-  if ( ! configSteps || configSteps.length === 0 ) {
-    return getDefaultSteps();
-  }
+function parseStepsFromConfig( configSteps?: Array< { id: string; label: string; type?: string } > ): Step[] {
+	if ( ! configSteps || configSteps.length === 0 ) {
+		return getDefaultSteps();
+	}
 
-  return configSteps.map( ( step ) => ( {
-    id: step.id as StepIdType,
-    label: step.label,
-    type: ( step.type as StepType ) || 'single',
-  } ) );
+	return configSteps.map( ( step ) => ( {
+		id: step.id as StepIdType,
+		label: step.label,
+		type: ( step.type as StepType ) || 'single',
+	} ) );
 }
 
 function parseCompletedSteps( completedSteps?: string[] ): StepIdType[] {
-  if ( ! completedSteps ) {
-    return [];
-  }
-  return completedSteps as StepIdType[];
+	if ( ! completedSteps ) {
+		return [];
+	}
+	return completedSteps as StepIdType[];
 }
 
 function getDefaultChoices(): OnboardingChoices {
-  return {
-    building_for: null,
-    site_about: [],
-    experience_level: null,
-    theme_selection: null,
-    site_features: [],
-  };
+	return {
+		building_for: null,
+		site_about: [],
+		experience_level: null,
+		theme_selection: null,
+		site_features: [],
+	};
 }
 
 function getEmptyState(): OnboardingState {
-  const steps = getDefaultSteps();
+	const steps = getDefaultSteps();
 
-  return {
-    steps,
-    currentStepId: steps[ 0 ]?.id ?? StepId.SITE_FEATURES,
-    currentStepIndex: 0,
-    completedSteps: [],
-    exitType: null,
-    lastActiveTimestamp: null,
-    startedAt: null,
-    choices: getDefaultChoices(),
-    isLoading: false,
-    error: null,
-    hadUnexpectedExit: false,
-    resumeStepIdForTracking: null,
-    isConnected: false,
-    isGuest: false,
-    userName: '',
-    urls: { dashboard: '', editor: '', connect: '', signUp: '', comparePlans: '', upgradeUrl: '' },
-    shouldShowProInstallScreen: false,
-    hasProInstallScreenDismissed: false,
-  };
+	return {
+		steps,
+		currentStepId: steps[ 0 ]?.id ?? StepId.SITE_FEATURES,
+		currentStepIndex: 0,
+		completedSteps: [],
+		exitType: null,
+		lastActiveTimestamp: null,
+		startedAt: null,
+		choices: getDefaultChoices(),
+		isLoading: false,
+		error: null,
+		hadUnexpectedExit: false,
+		resumeStepIdForTracking: null,
+		isConnected: false,
+		isGuest: false,
+		userName: '',
+		urls: { dashboard: '', editor: '', connect: '', signUp: '', comparePlans: '', upgradeUrl: '' },
+		shouldShowProInstallScreen: false,
+		hasProInstallScreenDismissed: false,
+	};
 }
 
 function buildStateFromConfig(
-  config: NonNullable< typeof window.elementorAppConfig >[ 'onboarding' ]
+	config: NonNullable< typeof window.elementorAppConfig >[ 'onboarding' ]
 ): OnboardingState {
-  if ( ! config ) {
-    return getEmptyState();
-  }
+	if ( ! config ) {
+		return getEmptyState();
+	}
 
-  const steps = parseStepsFromConfig( config.steps );
-  const firstStepId = steps[ 0 ]?.id ?? StepId.SITE_FEATURES;
-  const progress = config.progress ?? {};
-  let currentStepIndex = progress.current_step_index ?? 0;
-  const progressStepId = progress.current_step_id as StepIdType | undefined;
-  const isInvalidStepIndex = currentStepIndex < 0 || currentStepIndex >= steps.length;
-  const isInvalidStepId =
-    Boolean( progressStepId ) && ! steps.some( ( step ) => step.id === progressStepId );
+	const steps = parseStepsFromConfig( config.steps );
+	const firstStepId = steps[ 0 ]?.id ?? StepId.SITE_FEATURES;
+	const progress = config.progress ?? {};
+	let currentStepIndex = progress.current_step_index ?? 0;
+	const progressStepId = progress.current_step_id as StepIdType | undefined;
+	const isInvalidStepIndex = currentStepIndex < 0 || currentStepIndex >= steps.length;
+	const isInvalidStepId = Boolean( progressStepId ) && ! steps.some( ( step ) => step.id === progressStepId );
 
-  if ( isInvalidStepIndex || isInvalidStepId ) {
-    currentStepIndex = 0;
-  }
+	if ( isInvalidStepIndex || isInvalidStepId ) {
+		currentStepIndex = 0;
+	}
 
-  const currentStepId = steps[ currentStepIndex ]?.id ?? firstStepId;
+	const currentStepId = steps[ currentStepIndex ]?.id ?? firstStepId;
 
-  return {
-    steps,
-    currentStepId,
-    currentStepIndex,
-    completedSteps: parseCompletedSteps( progress.completed_steps ),
-    exitType: progress.exit_type ?? null,
-    lastActiveTimestamp: progress.last_active_timestamp ?? null,
-    startedAt: progress.started_at ?? null,
-    choices: { ...getDefaultChoices(), ...config.choices },
-    isLoading: false,
-    error: null,
-    hadUnexpectedExit: false,
-    resumeStepIdForTracking: config.hadUnexpectedExit ? currentStepId : null,
-    isConnected: config.isConnected ?? false,
-    isGuest: false,
-    userName: config.userName ?? '',
-    urls: config.urls ?? {
-      dashboard: '',
-      editor: '',
-      connect: '',
-      signUp: '',
-      comparePlans: '',
-      upgradeUrl: '',
-    },
-    shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
-    hasProInstallScreenDismissed: false,
-  };
+	return {
+		steps,
+		currentStepId,
+		currentStepIndex,
+		completedSteps: parseCompletedSteps( progress.completed_steps ),
+		exitType: progress.exit_type ?? null,
+		lastActiveTimestamp: progress.last_active_timestamp ?? null,
+		startedAt: progress.started_at ?? null,
+		choices: { ...getDefaultChoices(), ...config.choices },
+		isLoading: false,
+		error: null,
+		hadUnexpectedExit: false,
+		resumeStepIdForTracking: config.hadUnexpectedExit ? currentStepId : null,
+		isConnected: config.isConnected ?? false,
+		isGuest: false,
+		userName: config.userName ?? '',
+		urls: config.urls ?? {
+			dashboard: '',
+			editor: '',
+			connect: '',
+			signUp: '',
+			comparePlans: '',
+			upgradeUrl: '',
+		},
+		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
+		hasProInstallScreenDismissed: false,
+	};
 }
 
 export const slice = __createSlice( {
-  name: 'onboarding',
-  initialState: getEmptyState(),
-  reducers: {
-    initFromConfig: ( state ) => {
-      const config = window.elementorAppConfig?.onboarding;
+	name: 'onboarding',
+	initialState: getEmptyState(),
+	reducers: {
+		initFromConfig: ( state ) => {
+			const config = window.elementorAppConfig?.onboarding;
 
-      if ( config ) {
-        return buildStateFromConfig( config );
-      }
+			if ( config ) {
+				return buildStateFromConfig( config );
+			}
 
-      return state;
-    },
+			return state;
+		},
 
-    goToStep: ( state, action: PayloadAction< StepIdType > ) => {
-      const stepId = action.payload;
-      const stepIndex = state.steps.findIndex( ( s ) => s.id === stepId );
+		goToStep: ( state, action: PayloadAction< StepIdType > ) => {
+			const stepId = action.payload;
+			const stepIndex = state.steps.findIndex( ( s ) => s.id === stepId );
 
-      if ( stepIndex !== -1 ) {
-        state.currentStepId = stepId;
-        state.currentStepIndex = stepIndex;
-      }
-    },
+			if ( stepIndex !== -1 ) {
+				state.currentStepId = stepId;
+				state.currentStepIndex = stepIndex;
+			}
+		},
 
-    goToStepIndex: ( state, action: PayloadAction< number > ) => {
-      const index = action.payload;
+		goToStepIndex: ( state, action: PayloadAction< number > ) => {
+			const index = action.payload;
 
-      if ( index >= 0 && index < state.steps.length ) {
-        state.currentStepId = state.steps[ index ].id;
-        state.currentStepIndex = index;
-      }
-    },
+			if ( index >= 0 && index < state.steps.length ) {
+				state.currentStepId = state.steps[ index ].id;
+				state.currentStepIndex = index;
+			}
+		},
 
-    nextStep: ( state ) => {
-      const nextIndex = state.currentStepIndex + 1;
+		nextStep: ( state ) => {
+			const nextIndex = state.currentStepIndex + 1;
 
-      if ( nextIndex < state.steps.length ) {
-        state.currentStepId = state.steps[ nextIndex ].id;
-        state.currentStepIndex = nextIndex;
-      }
-    },
+			if ( nextIndex < state.steps.length ) {
+				state.currentStepId = state.steps[ nextIndex ].id;
+				state.currentStepIndex = nextIndex;
+			}
+		},
 
-    prevStep: ( state ) => {
-      const prevIndex = state.currentStepIndex - 1;
+		prevStep: ( state ) => {
+			const prevIndex = state.currentStepIndex - 1;
 
-      if ( prevIndex >= 0 ) {
-        state.currentStepId = state.steps[ prevIndex ].id;
-        state.currentStepIndex = prevIndex;
-      }
-    },
+			if ( prevIndex >= 0 ) {
+				state.currentStepId = state.steps[ prevIndex ].id;
+				state.currentStepIndex = prevIndex;
+			}
+		},
 
-    completeStep: ( state, action: PayloadAction< StepIdType > ) => {
-      const stepId = action.payload;
+		completeStep: ( state, action: PayloadAction< StepIdType > ) => {
+			const stepId = action.payload;
 
-      if ( ! state.completedSteps.includes( stepId ) ) {
-        state.completedSteps.push( stepId );
-      }
-    },
+			if ( ! state.completedSteps.includes( stepId ) ) {
+				state.completedSteps.push( stepId );
+			}
+		},
 
-    setUserChoice: (
-      state,
-      action: PayloadAction< { key: keyof OnboardingChoices; value: unknown } >
-    ) => {
-      const { key, value } = action.payload;
-      ( state.choices as Record< string, unknown > )[ key ] = value;
-    },
+		setUserChoice: ( state, action: PayloadAction< { key: keyof OnboardingChoices; value: unknown } > ) => {
+			const { key, value } = action.payload;
+			( state.choices as Record< string, unknown > )[ key ] = value;
+		},
 
-    setUserChoices: ( state, action: PayloadAction< Partial< OnboardingChoices > > ) => {
-      state.choices = { ...state.choices, ...action.payload };
-    },
+		setUserChoices: ( state, action: PayloadAction< Partial< OnboardingChoices > > ) => {
+			state.choices = { ...state.choices, ...action.payload };
+		},
 
-    setExitType: ( state, action: PayloadAction< string | null > ) => {
-      state.exitType = action.payload;
-    },
+		setExitType: ( state, action: PayloadAction< string | null > ) => {
+			state.exitType = action.payload;
+		},
 
-    startOnboarding: ( state ) => {
-      state.startedAt = Date.now();
-      state.exitType = null;
-      state.hadUnexpectedExit = false;
-    },
+		startOnboarding: ( state ) => {
+			state.startedAt = Date.now();
+			state.exitType = null;
+			state.hadUnexpectedExit = false;
+		},
 
-    completeOnboarding: ( state ) => {
-      state.exitType = 'user_exit';
-    },
+		completeOnboarding: ( state ) => {
+			state.exitType = 'user_exit';
+		},
 
-    setLoading: ( state, action: PayloadAction< boolean > ) => {
-      state.isLoading = action.payload;
-    },
+		setLoading: ( state, action: PayloadAction< boolean > ) => {
+			state.isLoading = action.payload;
+		},
 
-    setError: ( state, action: PayloadAction< string | null > ) => {
-      state.error = action.payload;
-    },
+		setError: ( state, action: PayloadAction< string | null > ) => {
+			state.error = action.payload;
+		},
 
-    clearUnexpectedExit: ( state ) => {
-      state.hadUnexpectedExit = false;
-    },
+		clearUnexpectedExit: ( state ) => {
+			state.hadUnexpectedExit = false;
+		},
 
-    clearResumeStepIdForTracking: ( state ) => {
-      state.resumeStepIdForTracking = null;
-    },
+		clearResumeStepIdForTracking: ( state ) => {
+			state.resumeStepIdForTracking = null;
+		},
 
-    setConnected: ( state, action: PayloadAction< boolean > ) => {
-      state.isConnected = action.payload;
-    },
+		setConnected: ( state, action: PayloadAction< boolean > ) => {
+			state.isConnected = action.payload;
+		},
 
-    setGuest: ( state, action: PayloadAction< boolean > ) => {
-      state.isGuest = action.payload;
-    },
+		setGuest: ( state, action: PayloadAction< boolean > ) => {
+			state.isGuest = action.payload;
+		},
 
-    setShouldShowProInstallScreen: ( state, action: PayloadAction< boolean > ) => {
-      state.shouldShowProInstallScreen = action.payload;
-    },
+		setShouldShowProInstallScreen: ( state, action: PayloadAction< boolean > ) => {
+			state.shouldShowProInstallScreen = action.payload;
+		},
 
-    dismissProInstallScreen: ( state ) => {
-      state.hasProInstallScreenDismissed = true;
-    },
+		dismissProInstallScreen: ( state ) => {
+			state.hasProInstallScreenDismissed = true;
+		},
 
-    markProInstalled: ( state ) => {
-      state.hasProInstallScreenDismissed = true;
-      state.steps = applyProInstalledSteps( state.steps );
-      state.currentStepIndex = 0;
-      state.currentStepId = state.steps[ 0 ]?.id ?? StepId.THEME_SELECTION;
-    },
-  },
+		markProInstalled: ( state ) => {
+			state.hasProInstallScreenDismissed = true;
+			state.steps = applyProInstalledSteps( state.steps );
+			state.currentStepIndex = 0;
+			state.currentStepId = state.steps[ 0 ]?.id ?? StepId.THEME_SELECTION;
+		},
+	},
 } );
 
 export const {
-  initFromConfig,
-  goToStep,
-  goToStepIndex,
-  nextStep,
-  prevStep,
-  completeStep,
-  setUserChoice,
-  setUserChoices,
-  setExitType,
-  startOnboarding,
-  completeOnboarding,
-  setLoading,
-  setError,
-  clearUnexpectedExit,
-  clearResumeStepIdForTracking,
-  setConnected,
-  setGuest,
-  setShouldShowProInstallScreen,
-  dismissProInstallScreen,
-  markProInstalled,
+	initFromConfig,
+	goToStep,
+	goToStepIndex,
+	nextStep,
+	prevStep,
+	completeStep,
+	setUserChoice,
+	setUserChoices,
+	setExitType,
+	startOnboarding,
+	completeOnboarding,
+	setLoading,
+	setError,
+	clearUnexpectedExit,
+	clearResumeStepIdForTracking,
+	setConnected,
+	setGuest,
+	setShouldShowProInstallScreen,
+	dismissProInstallScreen,
+	markProInstalled,
 } = slice.actions;
 
 export function registerOnboardingSlice() {
-  __registerSlice( slice );
+	__registerSlice( slice );
 }

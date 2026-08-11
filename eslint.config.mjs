@@ -52,6 +52,7 @@ export default [
 			'.eslintrc.js',
 			'scripts/create-version-change.js',
 			'scripts/lint-packages-staged.js',
+			'scripts/lint-root-staged.js',
 			'coverage-report/',
 			'node_modules/',
 			'.sass-cache/',

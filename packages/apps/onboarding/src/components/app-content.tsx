@@ -4,12 +4,7 @@ import { getMixpanel } from '@elementor/events';
 import { Box } from '@elementor/ui';
 
 import type { ConnectSuccessData } from '../analytics';
-import {
-  canSendEvents,
-  initializeAndEnableTracking,
-  setCanSendEvents,
-  updateLibraryConnectConfig,
-} from '../analytics';
+import { canSendEvents, initializeAndEnableTracking, setCanSendEvents, updateLibraryConnectConfig } from '../analytics';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallTheme } from '../hooks/use-install-theme';
@@ -35,562 +30,543 @@ import { TopBar } from './ui/top-bar';
 import { TopBarContent } from './ui/top-bar-content';
 
 const isChoiceEmpty = ( choice: unknown ): boolean => {
-  return (
-    choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 )
-  );
+	return choice === null || choice === undefined || ( Array.isArray( choice ) && choice.length === 0 );
 };
 
-const isContinueDisabled = (
-  stepId: string | null,
-  isLast: boolean,
-  choiceForStep: unknown
-): boolean => {
-  if ( stepId === StepId.THEME_SELECTION ) {
-    return false;
-  }
+const isContinueDisabled = ( stepId: string | null, isLast: boolean, choiceForStep: unknown ): boolean => {
+	if ( stepId === StepId.THEME_SELECTION ) {
+		return false;
+	}
 
-  if ( isLast ) {
-    return false;
-  }
+	if ( isLast ) {
+		return false;
+	}
 
-  return isChoiceEmpty( choiceForStep );
+	return isChoiceEmpty( choiceForStep );
 };
 
 interface AppContentProps {
-  onClose?: () => void;
+	onClose?: () => void;
 }
 
 export function AppContent( { onClose }: AppContentProps ) {
-  const {
-    stepId,
-    stepIndex,
-    isFirst,
-    isLast,
-    totalSteps,
-    resumeStepIdForTracking,
-    isLoading,
-    isConnected,
-    hasPassedLogin,
-    shouldShowProInstall,
-    choices,
-    completedSteps,
-    urls,
-    actions,
-    isGuest,
-  } = useOnboarding();
+	const {
+		stepId,
+		stepIndex,
+		isFirst,
+		isLast,
+		totalSteps,
+		resumeStepIdForTracking,
+		isLoading,
+		isConnected,
+		hasPassedLogin,
+		shouldShowProInstall,
+		choices,
+		completedSteps,
+		urls,
+		actions,
+		isGuest,
+	} = useOnboarding();
 
-  const [ isCompleting, setIsCompleting ] = useState( false );
-  const isCompletingRef = useRef( false );
-  const { showToast } = useToast();
+	const [ isCompleting, setIsCompleting ] = useState( false );
+	const isCompletingRef = useRef( false );
+	const { showToast } = useToast();
 
-  useVideoPreload();
+	useVideoPreload();
 
-  const updateProgress = useUpdateProgress();
-  const updateChoices = useUpdateChoices();
-  const installTheme = useInstallTheme();
+	const updateProgress = useUpdateProgress();
+	const updateChoices = useUpdateChoices();
+	const installTheme = useInstallTheme();
 
-  const {
-    trackOnboardingInitialized,
-    trackLoginType,
-    trackConnect,
-    trackStepViewed,
-    trackProFeaturesSelected,
-    trackBackClicked,
-    trackSkipClicked,
-    trackUpgradeClicked,
-    trackResumeOnboarding,
-    trackSummary,
-    trackThemeSelected,
-    trackErrorReported,
-    activateTracking,
-    flushQueue,
-  } = useOnboardingEvent();
+	const {
+		trackOnboardingInitialized,
+		trackLoginType,
+		trackConnect,
+		trackStepViewed,
+		trackProFeaturesSelected,
+		trackBackClicked,
+		trackSkipClicked,
+		trackUpgradeClicked,
+		trackResumeOnboarding,
+		trackSummary,
+		trackThemeSelected,
+		trackErrorReported,
+		activateTracking,
+		flushQueue,
+	} = useOnboardingEvent();
 
-  const hasTrackedInit = useRef( false );
+	const hasTrackedInit = useRef( false );
 
-  useEffect( () => {
-    if ( ! hasTrackedInit.current ) {
-      hasTrackedInit.current = true;
-      trackOnboardingInitialized();
+	useEffect( () => {
+		if ( ! hasTrackedInit.current ) {
+			hasTrackedInit.current = true;
+			trackOnboardingInitialized();
 
-      if ( resumeStepIdForTracking ) {
-        trackResumeOnboarding( resumeStepIdForTracking );
-        actions.clearResumeStepIdForTracking();
-      } else {
-        trackStepViewed( 'login' );
-      }
-      return;
-    }
+			if ( resumeStepIdForTracking ) {
+				trackResumeOnboarding( resumeStepIdForTracking );
+				actions.clearResumeStepIdForTracking();
+			} else {
+				trackStepViewed( 'login' );
+			}
+			return;
+		}
 
-    if ( hasPassedLogin && stepId && ! isCompletingRef.current ) {
-      trackStepViewed( stepId );
-    }
-  }, [
-    stepId,
-    resumeStepIdForTracking,
-    hasPassedLogin,
-    actions,
-    trackOnboardingInitialized,
-    trackResumeOnboarding,
-    trackStepViewed,
-  ] );
+		if ( hasPassedLogin && stepId && ! isCompletingRef.current ) {
+			trackStepViewed( stepId );
+		}
+	}, [
+		stepId,
+		resumeStepIdForTracking,
+		hasPassedLogin,
+		actions,
+		trackOnboardingInitialized,
+		trackResumeOnboarding,
+		trackStepViewed,
+	] );
 
-  const checkProInstallScreen = useCheckProInstallScreen();
+	const checkProInstallScreen = useCheckProInstallScreen();
 
-  const handleConnectSuccess = useCallback(
-    async ( data: ConnectSuccessData, loginType: 'elementor_login' | 'social_login' ) => {
-      trackConnect( true );
-      trackLoginType( loginType );
+	const handleConnectSuccess = useCallback(
+		async ( data: ConnectSuccessData, loginType: 'elementor_login' | 'social_login' ) => {
+			trackConnect( true );
+			trackLoginType( loginType );
 
-      const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
+			const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
 
-      if ( data.tracking_opted_in ) {
-        setCanSendEvents( true );
-      }
+			if ( data.tracking_opted_in ) {
+				setCanSendEvents( true );
+			}
 
-      updateLibraryConnectConfig( data );
+			updateLibraryConnectConfig( data );
 
-      if ( shouldEnableTracking ) {
-        initializeAndEnableTracking( ( mp ) => {
-          ( mp as { set_config?: ( c: object ) => void } )?.set_config?.( {
-            api_transport: 'sendbeacon',
-          } );
-          activateTracking();
-          flushQueue();
-        } );
-      }
+			if ( shouldEnableTracking ) {
+				initializeAndEnableTracking( ( mp ) => {
+					( mp as { set_config?: ( c: object ) => void } )?.set_config?.( {
+						api_transport: 'sendbeacon',
+					} );
+					activateTracking();
+					flushQueue();
+				} );
+			}
 
-      const result = await checkProInstallScreen();
-      actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
-      actions.setConnected( true );
-    },
-    [ actions, checkProInstallScreen, trackConnect, trackLoginType, activateTracking, flushQueue ]
-  );
+			const result = await checkProInstallScreen();
+			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
+			actions.setConnected( true );
+		},
+		[ actions, checkProInstallScreen, trackConnect, trackLoginType, activateTracking, flushQueue ]
+	);
 
-  const handleConnect = useElementorConnect( {
-    connectUrl: urls.connect,
-    onSuccess: ( data ) => handleConnectSuccess( data, 'elementor_login' ),
-  } );
+	const handleConnect = useElementorConnect( {
+		connectUrl: urls.connect,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'elementor_login' ),
+	} );
 
-  const handleSignUp = useElementorConnect( {
-    connectUrl: urls.signUp,
-    onSuccess: ( data ) => handleConnectSuccess( data, 'social_login' ),
-  } );
+	const handleSignUp = useElementorConnect( {
+		connectUrl: urls.signUp,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'social_login' ),
+	} );
 
-  function handleContinueAsGuest( event: React.SyntheticEvent ) {
-    event.preventDefault();
-    trackLoginType( 'guest' );
-    actions.setGuest( true );
-  }
+	function handleContinueAsGuest( event: React.SyntheticEvent ) {
+		event.preventDefault();
+		trackLoginType( 'guest' );
+		actions.setGuest( true );
+	}
 
-  const handleClose = useCallback( () => {
-    trackSummary( {
-      choices,
-      completedSteps: [ ...completedSteps ],
-      isConnected,
-      isGuest,
-    } );
-    window.dispatchEvent( new CustomEvent( 'onboarding-user-exit' ) );
+	const handleClose = useCallback( () => {
+		trackSummary( {
+			choices,
+			completedSteps: [ ...completedSteps ],
+			isConnected,
+			isGuest,
+		} );
+		window.dispatchEvent( new CustomEvent( 'onboarding-user-exit' ) );
 
-    updateProgress.mutate(
-      { user_exit: true },
-      {
-        onSuccess: () => {
-          actions.setExitType( 'user_exit' );
-          onClose?.();
-        },
-        onError: () => {
-          actions.setExitType( 'user_exit' );
-          onClose?.();
-        },
-      }
-    );
-  }, [
-    actions,
-    choices,
-    completedSteps,
-    isConnected,
-    isGuest,
-    onClose,
-    trackSummary,
-    updateProgress,
-  ] );
+		updateProgress.mutate(
+			{ user_exit: true },
+			{
+				onSuccess: () => {
+					actions.setExitType( 'user_exit' );
+					onClose?.();
+				},
+				onError: () => {
+					actions.setExitType( 'user_exit' );
+					onClose?.();
+				},
+			}
+		);
+	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, trackSummary, updateProgress ] );
 
-  function handleBack() {
-    trackBackClicked( stepId );
+	function handleBack() {
+		trackBackClicked( stepId );
 
-    if ( isFirst ) {
-      actions.setGuest( false );
-    } else {
-      actions.prevStep();
-    }
-  }
+		if ( isFirst ) {
+			actions.setGuest( false );
+		} else {
+			actions.prevStep();
+		}
+	}
 
-  const redirectToNewPage = useCallback( () => {
-    const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
-    const mp = getMixpanel().getMixpanelInstance?.() as
-      | { request_batchers?: { events?: { flush: () => void } } }
-      | undefined;
-    mp?.request_batchers?.events?.flush?.();
-    window.location.href = redirectUrl;
-  }, [ urls ] );
+	const redirectToNewPage = useCallback( () => {
+		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
+		const mp = getMixpanel().getMixpanelInstance?.() as
+			| { request_batchers?: { events?: { flush: () => void } } }
+			| undefined;
+		mp?.request_batchers?.events?.flush?.();
+		window.location.href = redirectUrl;
+	}, [ urls ] );
 
-  const completeAndRedirect = useCallback( () => {
-    updateProgress.mutate(
-      {
-        complete_step: stepId,
-        complete: true,
-        step_index: stepIndex,
-        total_steps: totalSteps,
-      },
-      {
-        onSuccess: redirectToNewPage,
-        onError: () => {
-          redirectToNewPage();
-        },
-      }
-    );
-  }, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage ] );
+	const completeAndRedirect = useCallback( () => {
+		updateProgress.mutate(
+			{
+				complete_step: stepId,
+				complete: true,
+				step_index: stepIndex,
+				total_steps: totalSteps,
+			},
+			{
+				onSuccess: redirectToNewPage,
+				onError: () => {
+					redirectToNewPage();
+				},
+			}
+		);
+	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage ] );
 
-  const handleSkip = useCallback( () => {
-    trackSkipClicked( stepId );
+	const handleSkip = useCallback( () => {
+		trackSkipClicked( stepId );
 
-    if ( isLast ) {
-      trackSummary( {
-        choices,
-        completedSteps: [ ...completedSteps, stepId ],
-        isConnected,
-        isGuest,
-      } );
-      isCompletingRef.current = true;
-      setIsCompleting( true );
-      updateProgress.mutate(
-        {
-          skip_step: true,
-          complete: true,
-          step_index: stepIndex,
-          total_steps: totalSteps,
-        },
-        {
-          onSuccess: redirectToNewPage,
-          onError: () => {
-            redirectToNewPage();
-          },
-        }
-      );
-      return;
-    }
+		if ( isLast ) {
+			trackSummary( {
+				choices,
+				completedSteps: [ ...completedSteps, stepId ],
+				isConnected,
+				isGuest,
+			} );
+			isCompletingRef.current = true;
+			setIsCompleting( true );
+			updateProgress.mutate(
+				{
+					skip_step: true,
+					complete: true,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				},
+				{
+					onSuccess: redirectToNewPage,
+					onError: () => {
+						redirectToNewPage();
+					},
+				}
+			);
+			return;
+		}
 
-    updateProgress.mutate(
-      {
-        skip_step: true,
-        step_index: stepIndex,
-        total_steps: totalSteps,
-      },
-      {
-        onSuccess: () => {
-          actions.nextStep();
-        },
-        onError: () => {
-          actions.nextStep();
-        },
-      }
-    );
-  }, [
-    actions,
-    choices,
-    completedSteps,
-    isConnected,
-    isGuest,
-    isLast,
-    stepId,
-    stepIndex,
-    totalSteps,
-    trackSkipClicked,
-    trackSummary,
-    updateProgress,
-    redirectToNewPage,
-  ] );
+		updateProgress.mutate(
+			{
+				skip_step: true,
+				step_index: stepIndex,
+				total_steps: totalSteps,
+			},
+			{
+				onSuccess: () => {
+					actions.nextStep();
+				},
+				onError: () => {
+					actions.nextStep();
+				},
+			}
+		);
+	}, [
+		actions,
+		choices,
+		completedSteps,
+		isConnected,
+		isGuest,
+		isLast,
+		stepId,
+		stepIndex,
+		totalSteps,
+		trackSkipClicked,
+		trackSummary,
+		updateProgress,
+		redirectToNewPage,
+	] );
 
-  const saveChoicesFireAndForget = useCallback(
-    ( choiceData: Record< string, unknown > ) => {
-      updateChoices.mutate( choiceData );
-    },
-    [ updateChoices ]
-  );
+	const saveChoicesFireAndForget = useCallback(
+		( choiceData: Record< string, unknown > ) => {
+			updateChoices.mutate( choiceData );
+		},
+		[ updateChoices ]
+	);
 
-  const installHelloThemeIfSelected = useCallback(
-    async ( selectedIds: string[] ): Promise< void > => {
-      if ( ! selectedIds.includes( HELLO_THEME_FEATURE_ID ) ) {
-        return;
-      }
+	const installHelloThemeIfSelected = useCallback(
+		async ( selectedIds: string[] ): Promise< void > => {
+			if ( ! selectedIds.includes( HELLO_THEME_FEATURE_ID ) ) {
+				return;
+			}
 
-      try {
-        await installTheme.mutateAsync( 'hello-elementor' );
-      } catch ( error ) {
-        trackErrorReported( {
-          targetType: 'install',
-          targetName: 'install_hello_theme',
-          stepId: 'site_features',
-          errorBody: error instanceof Error ? error.message : 'Failed to install Hello theme',
-        } );
-        showToast( t( 'error.theme_install_failed' ) );
-      }
-    },
-    [ installTheme, trackErrorReported, showToast ]
-  );
+			try {
+				await installTheme.mutateAsync( 'hello-elementor' );
+			} catch ( error ) {
+				trackErrorReported( {
+					targetType: 'install',
+					targetName: 'install_hello_theme',
+					stepId: 'site_features',
+					errorBody: error instanceof Error ? error.message : 'Failed to install Hello theme',
+				} );
+				showToast( t( 'error.theme_install_failed' ) );
+			}
+		},
+		[ installTheme, trackErrorReported, showToast ]
+	);
 
-  const handleContinue = useCallback(
-    ( directChoice?: Record< string, unknown > ) => {
-      if ( stepId === StepId.SITE_FEATURES ) {
-        trackProFeaturesSelected( {
-          targetName: 'continue_with_free',
-          features: ( choices.site_features as string[] ) || [],
-        } );
-      }
+	const handleContinue = useCallback(
+		( directChoice?: Record< string, unknown > ) => {
+			if ( stepId === StepId.SITE_FEATURES ) {
+				trackProFeaturesSelected( {
+					targetName: 'continue_with_free',
+					features: ( choices.site_features as string[] ) || [],
+				} );
+			}
 
-      let effectiveDirectChoice = directChoice;
+			let effectiveDirectChoice = directChoice;
 
-      if ( stepId === StepId.THEME_SELECTION && ! effectiveDirectChoice ) {
-        effectiveDirectChoice = { theme_selection: 'hello-elementor' };
-      }
+			if ( stepId === StepId.THEME_SELECTION && ! effectiveDirectChoice ) {
+				effectiveDirectChoice = { theme_selection: 'hello-elementor' };
+			}
 
-      const storedChoice = choices[ stepId as keyof typeof choices ];
-      const choiceData =
-        effectiveDirectChoice ??
-        ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
+			const storedChoice = choices[ stepId as keyof typeof choices ];
+			const choiceData =
+				effectiveDirectChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
 
-      if ( choiceData ) {
-        saveChoicesFireAndForget( choiceData );
-      }
+			if ( choiceData ) {
+				saveChoicesFireAndForget( choiceData );
+			}
 
-      if ( stepId === StepId.SITE_FEATURES && isLast ) {
-        const selectedFeatures = ( choices.site_features as string[] ) || [];
-        const hasHelloSelected = selectedFeatures.includes( HELLO_THEME_FEATURE_ID );
+			if ( stepId === StepId.SITE_FEATURES && isLast ) {
+				const selectedFeatures = ( choices.site_features as string[] ) || [];
+				const hasHelloSelected = selectedFeatures.includes( HELLO_THEME_FEATURE_ID );
 
-        if ( hasHelloSelected ) {
-          trackThemeSelected( 'hello-elementor', 'site_features' );
-          trackSummary( {
-            choices,
-            completedSteps: [ ...completedSteps, stepId ],
-            isConnected,
-            isGuest,
-          } );
-          isCompletingRef.current = true;
-          setIsCompleting( true );
-          installHelloThemeIfSelected( selectedFeatures ).finally( completeAndRedirect );
-          return;
-        }
-      }
+				if ( hasHelloSelected ) {
+					trackThemeSelected( 'hello-elementor', 'site_features' );
+					trackSummary( {
+						choices,
+						completedSteps: [ ...completedSteps, stepId ],
+						isConnected,
+						isGuest,
+					} );
+					isCompletingRef.current = true;
+					setIsCompleting( true );
+					installHelloThemeIfSelected( selectedFeatures ).finally( completeAndRedirect );
+					return;
+				}
+			}
 
-      if ( stepId === StepId.THEME_SELECTION ) {
-        const themeSlug = ( choiceData?.theme_selection ??
-          choices.theme_selection ??
-          'hello-elementor' ) as string;
+			if ( stepId === StepId.THEME_SELECTION ) {
+				const themeSlug = ( choiceData?.theme_selection ??
+					choices.theme_selection ??
+					'hello-elementor' ) as string;
 
-        if ( themeSlug && isLast ) {
-          trackThemeSelected( themeSlug, 'theme_selection' );
-          isCompletingRef.current = true;
-          setIsCompleting( true );
-          installTheme.mutate( themeSlug, {
-            onSuccess: completeAndRedirect,
-            onError: ( error ) => {
-              trackErrorReported( {
-                targetType: 'install',
-                targetName: 'continue_with_hello',
-                stepId: 'theme_selection',
-                errorBody: error instanceof Error ? error.message : 'Failed to install theme',
-              } );
-              showToast( t( 'error.theme_install_failed' ) );
-              completeAndRedirect();
-            },
-          } );
-          return;
-        }
+				if ( themeSlug && isLast ) {
+					trackThemeSelected( themeSlug, 'theme_selection' );
+					isCompletingRef.current = true;
+					setIsCompleting( true );
+					installTheme.mutate( themeSlug, {
+						onSuccess: completeAndRedirect,
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'install',
+								targetName: 'continue_with_hello',
+								stepId: 'theme_selection',
+								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+							} );
+							showToast( t( 'error.theme_install_failed' ) );
+							completeAndRedirect();
+						},
+					} );
+					return;
+				}
 
-        if ( themeSlug ) {
-          trackThemeSelected( themeSlug, 'theme_selection' );
-          installTheme.mutate( themeSlug, {
-            onError: ( error ) => {
-              trackErrorReported( {
-                targetType: 'install',
-                targetName: 'continue_with_hello',
-                stepId: 'theme_selection',
-                errorBody: error instanceof Error ? error.message : 'Failed to install theme',
-              } );
-              showToast( t( 'error.theme_install_failed' ) );
-            },
-          } );
-        }
-      }
+				if ( themeSlug ) {
+					trackThemeSelected( themeSlug, 'theme_selection' );
+					installTheme.mutate( themeSlug, {
+						onError: ( error ) => {
+							trackErrorReported( {
+								targetType: 'install',
+								targetName: 'continue_with_hello',
+								stepId: 'theme_selection',
+								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
+							} );
+							showToast( t( 'error.theme_install_failed' ) );
+						},
+					} );
+				}
+			}
 
-      if ( isLast ) {
-        trackSummary( {
-          choices,
-          completedSteps: [ ...completedSteps, stepId ],
-          isConnected,
-          isGuest,
-        } );
-        isCompletingRef.current = true;
-        setIsCompleting( true );
-        completeAndRedirect();
-        return;
-      }
+			if ( isLast ) {
+				trackSummary( {
+					choices,
+					completedSteps: [ ...completedSteps, stepId ],
+					isConnected,
+					isGuest,
+				} );
+				isCompletingRef.current = true;
+				setIsCompleting( true );
+				completeAndRedirect();
+				return;
+			}
 
-      updateProgress.mutate(
-        {
-          complete_step: stepId,
-          step_index: stepIndex,
-          total_steps: totalSteps,
-        },
-        {
-          onSuccess: () => {
-            actions.completeStep( stepId );
-            actions.nextStep();
-          },
-          onError: () => {
-            actions.completeStep( stepId );
-            actions.nextStep();
-          },
-        }
-      );
-    },
-    [
-      actions,
-      choices,
-      completedSteps,
-      isConnected,
-      isGuest,
-      isLast,
-      stepId,
-      stepIndex,
-      totalSteps,
-      updateProgress,
-      saveChoicesFireAndForget,
-      installTheme,
-      installHelloThemeIfSelected,
-      showToast,
-      completeAndRedirect,
-      trackErrorReported,
-      trackProFeaturesSelected,
-      trackSummary,
-      trackThemeSelected,
-    ]
-  );
+			updateProgress.mutate(
+				{
+					complete_step: stepId,
+					step_index: stepIndex,
+					total_steps: totalSteps,
+				},
+				{
+					onSuccess: () => {
+						actions.completeStep( stepId );
+						actions.nextStep();
+					},
+					onError: () => {
+						actions.completeStep( stepId );
+						actions.nextStep();
+					},
+				}
+			);
+		},
+		[
+			actions,
+			choices,
+			completedSteps,
+			isConnected,
+			isGuest,
+			isLast,
+			stepId,
+			stepIndex,
+			totalSteps,
+			updateProgress,
+			saveChoicesFireAndForget,
+			installTheme,
+			installHelloThemeIfSelected,
+			showToast,
+			completeAndRedirect,
+			trackErrorReported,
+			trackProFeaturesSelected,
+			trackSummary,
+			trackThemeSelected,
+		]
+	);
 
-  const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
-  const isPending = updateProgress.isPending || isLoading;
+	const rightPanelConfig = useMemo( () => getStepVisualConfig( stepId ), [ stepId ] );
+	const isPending = updateProgress.isPending || isLoading;
 
-  const choiceForStep = choices[ stepId as keyof typeof choices ];
-  const continueDisabled = isContinueDisabled( stepId, isLast, choiceForStep );
-  const isBackDisabled = isFirst && isConnected;
+	const choiceForStep = choices[ stepId as keyof typeof choices ];
+	const continueDisabled = isContinueDisabled( stepId, isLast, choiceForStep );
+	const isBackDisabled = isFirst && isConnected;
 
-  const getContinueLabel = () => {
-    if (
-      stepId === StepId.THEME_SELECTION &&
-      ! completedSteps.includes( StepId.THEME_SELECTION )
-    ) {
-      return t( 'steps.theme_selection.v2.continue_with_theme' );
-    }
+	const getContinueLabel = () => {
+		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
+			return t( 'steps.theme_selection.v2.continue_with_theme' );
+		}
 
-    if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
-      return t( 'steps.site_features.continue_with_free' );
-    }
+		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
+			return t( 'steps.site_features.continue_with_free' );
+		}
 
-    if ( isLast ) {
-      return t( 'common.finish' );
-    }
+		if ( isLast ) {
+			return t( 'common.finish' );
+		}
 
-    return t( 'common.continue' );
-  };
+		return t( 'common.continue' );
+	};
 
-  const renderStepContent = () => {
-    switch ( stepId ) {
-      case StepId.THEME_SELECTION:
-        return <ThemeSelection />;
-      case StepId.SITE_FEATURES:
-        return <SiteFeatures />;
-      default:
-        return <Box sx={ { flex: 1, width: '100%' } } />;
-    }
-  };
+	const renderStepContent = () => {
+		switch ( stepId ) {
+			case StepId.THEME_SELECTION:
+				return <ThemeSelection />;
+			case StepId.SITE_FEATURES:
+				return <SiteFeatures />;
+			default:
+				return <Box sx={ { flex: 1, width: '100%' } } />;
+		}
+	};
 
-  if ( isCompleting ) {
-    return <CompletionScreen />;
-  }
+	if ( isCompleting ) {
+		return <CompletionScreen />;
+	}
 
-  if ( ! hasPassedLogin ) {
-    return (
-      <BaseLayout
-        topBar={
-          <TopBar>
-            <TopBarContent
-              showUpgrade
-              showClose={ false }
-              onUpgrade={ () => {
-                trackUpgradeClicked( 'login' );
-                window.open( urls.upgradeUrl, '_blank' );
-              } }
-            />
-          </TopBar>
-        }
-      >
-        <Login
-          onConnect={ handleConnect }
-          onSignUp={ handleSignUp }
-          onContinueAsGuest={ handleContinueAsGuest }
-        />
-      </BaseLayout>
-    );
-  }
+	if ( ! hasPassedLogin ) {
+		return (
+			<BaseLayout
+				topBar={
+					<TopBar>
+						<TopBarContent
+							showUpgrade
+							showClose={ false }
+							onUpgrade={ () => {
+								trackUpgradeClicked( 'login' );
+								window.open( urls.upgradeUrl, '_blank' );
+							} }
+						/>
+					</TopBar>
+				}
+			>
+				<Login
+					onConnect={ handleConnect }
+					onSignUp={ handleSignUp }
+					onContinueAsGuest={ handleContinueAsGuest }
+				/>
+			</BaseLayout>
+		);
+	}
 
-  if ( shouldShowProInstall ) {
-    return (
-      <BaseLayout
-        topBar={
-          <TopBar>
-            <TopBarContent showUpgrade={ false } showClose={ false } />
-          </TopBar>
-        }
-      >
-        <ProInstall />
-      </BaseLayout>
-    );
-  }
+	if ( shouldShowProInstall ) {
+		return (
+			<BaseLayout
+				topBar={
+					<TopBar>
+						<TopBarContent showUpgrade={ false } showClose={ false } />
+					</TopBar>
+				}
+			>
+				<ProInstall />
+			</BaseLayout>
+		);
+	}
 
-  return (
-    <BaseLayout
-      testId="onboarding-steps"
-      topBar={
-        <TopBar>
-          <TopBarContent
-            showClose={ false }
-            onClose={ handleClose }
-            onUpgrade={ () => {
-              trackUpgradeClicked( stepId );
-              window.open( urls.upgradeUrl, '_blank' );
-            } }
-          />
-        </TopBar>
-      }
-      footer={
-        <Footer>
-          <FooterActions
-            showBack
-            showSkip
-            showContinue
-            isBackDisabled={ isBackDisabled }
-            continueLabel={ getContinueLabel() }
-            continueDisabled={ continueDisabled }
-            continueLoading={ isPending }
-            onBack={ handleBack }
-            onSkip={ handleSkip }
-            onContinue={ () => handleContinue() }
-          />
-        </Footer>
-      }
-    >
-      <SplitLayout left={ renderStepContent() } rightConfig={ rightPanelConfig } />
-    </BaseLayout>
-  );
+	return (
+		<BaseLayout
+			testId="onboarding-steps"
+			topBar={
+				<TopBar>
+					<TopBarContent
+						showClose={ false }
+						onClose={ handleClose }
+						onUpgrade={ () => {
+							trackUpgradeClicked( stepId );
+							window.open( urls.upgradeUrl, '_blank' );
+						} }
+					/>
+				</TopBar>
+			}
+			footer={
+				<Footer>
+					<FooterActions
+						showBack
+						showSkip
+						showContinue
+						isBackDisabled={ isBackDisabled }
+						continueLabel={ getContinueLabel() }
+						continueDisabled={ continueDisabled }
+						continueLoading={ isPending }
+						onBack={ handleBack }
+						onSkip={ handleSkip }
+						onContinue={ () => handleContinue() }
+					/>
+				</Footer>
+			}
+		>
+			<SplitLayout left={ renderStepContent() } rightConfig={ rightPanelConfig } />
+		</BaseLayout>
+	);
 }
