@@ -35,6 +35,24 @@ describe( 'getElementTitle', () => {
 		expect( title ).toBe( 'Custom Editor Title' );
 	} );
 
+	it( 'should return editor_settings.label when set', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue(
+			createMockElement( {
+				model: {
+					widgetType: 'test-widget',
+					editor_settings: { label: 'Custom Editor Label' },
+				},
+			} )
+		);
+
+		// Act.
+		const title = getElementTitle( 'test-id' );
+
+		// Assert.
+		expect( title ).toBe( 'Custom Editor Label' );
+	} );
+
 	it( 'should return _title setting when editor_settings.title is not set', () => {
 		// Arrange.
 		jest.mocked( getContainer ).mockReturnValue(
@@ -125,5 +143,23 @@ describe( 'getElementTitle', () => {
 
 		// Assert.
 		expect( title ).toBe( 'Editor Title' );
+	} );
+
+	it( 'should prefer editor_settings.label over editor_settings.title', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue(
+			createMockElement( {
+				model: {
+					widgetType: 'test-widget',
+					editor_settings: { label: 'Editor Label', title: 'Editor Title' },
+				},
+			} )
+		);
+
+		// Act.
+		const title = getElementTitle( 'test-id' );
+
+		// Assert.
+		expect( title ).toBe( 'Editor Label' );
 	} );
 } );

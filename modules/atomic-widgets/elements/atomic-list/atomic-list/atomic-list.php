@@ -3,12 +3,23 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\List_Items_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_List extends Atomic_Element_Base {
 	use Has_Element_Template;
+
+	const BASE_STYLE_KEY = 'base';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -57,6 +70,16 @@ class Atomic_List extends Atomic_Element_Base {
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
+				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
+				->set_items( [
+					List_Items_Control::make()
+						->set_label( __( 'List Items', 'elementor' ) )
+						->set_meta( [
+							'layout' => 'custom',
+						] ),
+				] ),
+			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
@@ -64,6 +87,66 @@ class Atomic_List extends Atomic_Element_Base {
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
+		];
+	}
+
+	protected function define_base_styles(): array {
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'display' => String_Prop_Type::generate( 'flex' ),
+							'flex-direction' => String_Prop_Type::generate( 'column' ),
+							'list-style-type' => String_Prop_Type::generate( 'none' ),
+							'margin' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
+							'gap' => Size_Prop_Type::generate( [
+								'size' => 12,
+								'unit' => 'px',
+							] ),
+						] )
+				),
+		];
+	}
+
+	protected function define_allowed_child_types() {
+		return [ Atomic_List_Item::get_element_type() ];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_List_Item::generate()
+				->editor_settings( [
+					'label' => 'Item 1',
+					'initial_position' => 1,
+				] )
+				->children( [
+					Atomic_List_Item_Marker::generate()
+						->children( [
+							Widget_Builder::make( Atomic_Svg::get_element_type() )->build(),
+						] )
+						->build(),
+					Atomic_List_Item_Content::generate()
+						->children( [
+							Widget_Builder::make( Atomic_Paragraph::get_element_type() )
+								->settings( [
+									'paragraph' => Html_V3_Prop_Type::generate( [
+										'content' => String_Prop_Type::generate( __( 'List item', 'elementor' ) ),
+										'children' => [],
+									] ),
+								] )
+								->build(),
+						] )
+						->build(),
+				] )
+				->build(),
 		];
 	}
 
