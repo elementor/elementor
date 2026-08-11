@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+define( 'ELEMENTOR_EXAMPLE_PLUGIN_FILE', __FILE__ );
+
 function elementor_example_plugin() {
 	require_once __DIR__ . '/includes/plugin.php';
 
