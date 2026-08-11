@@ -7,37 +7,37 @@ import { type GlobalState, selectError, selectReport, selectStatus, slice } from
 import { getPersistedReport, persistReport } from '../utils/report-storage';
 
 export function useAuditReport() {
-  const status = useSelector( ( state: GlobalState ) => selectStatus( state ) );
-  const report = useSelector( ( state: GlobalState ) => selectReport( state ) );
-  const error = useSelector( ( state: GlobalState ) => selectError( state ) );
-  const dispatch = useDispatch();
-  const documentId = getCurrentDocumentId() ?? 0;
+	const status = useSelector( ( state: GlobalState ) => selectStatus( state ) );
+	const report = useSelector( ( state: GlobalState ) => selectReport( state ) );
+	const error = useSelector( ( state: GlobalState ) => selectError( state ) );
+	const dispatch = useDispatch();
+	const documentId = getCurrentDocumentId() ?? 0;
 
-  useEffect( () => {
-    if ( ! documentId || report?.documentId === documentId ) {
-      return;
-    }
+	useEffect( () => {
+		if ( ! documentId || report?.documentId === documentId ) {
+			return;
+		}
 
-    const persisted = getPersistedReport( documentId );
+		const persisted = getPersistedReport( documentId );
 
-    if ( persisted ) {
-      dispatch( slice.actions.reportRestored( persisted ) );
-    } else if ( report ) {
-      dispatch( slice.actions.reportCleared() );
-    }
-  }, [ documentId, report, dispatch ] );
+		if ( persisted ) {
+			dispatch( slice.actions.reportRestored( persisted ) );
+		} else if ( report ) {
+			dispatch( slice.actions.reportCleared() );
+		}
+	}, [ documentId, report, dispatch ] );
 
-  const run = async ( documentIdToRun: number ) => {
-    dispatch( slice.actions.runStarted() );
+	const run = async ( documentIdToRun: number ) => {
+		dispatch( slice.actions.runStarted() );
 
-    try {
-      const nextReport = await runPageAudit( documentIdToRun );
-      dispatch( slice.actions.runSucceeded( nextReport ) );
-      persistReport( documentIdToRun, nextReport );
-    } catch ( e ) {
-      dispatch( slice.actions.runFailed( e instanceof Error ? e.message : 'Unknown error' ) );
-    }
-  };
+		try {
+			const nextReport = await runPageAudit( documentIdToRun );
+			dispatch( slice.actions.runSucceeded( nextReport ) );
+			persistReport( documentIdToRun, nextReport );
+		} catch ( e ) {
+			dispatch( slice.actions.runFailed( e instanceof Error ? e.message : 'Unknown error' ) );
+		}
+	};
 
-  return { status, report, error, run };
+	return { status, report, error, run };
 }
