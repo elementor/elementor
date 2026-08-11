@@ -1,5 +1,6 @@
 export default class Heartbeat {
 	modal = null;
+	externalChangeModal = null;
 	document = null;
 	lastSyncedAt = 0;
 	lastStateOfDocumentChange = false;
@@ -120,6 +121,10 @@ export default class Heartbeat {
 	}
 
 	showExternalChangeModal() {
+		if ( this.externalChangeModal ) {
+			return;
+		}
+
 		const isDirty = this.document.editor.isChanged;
 
 		const config = isDirty
@@ -144,7 +149,7 @@ export default class Heartbeat {
 				onConfirm: () => this.reloadDocument(),
 			};
 
-		const modal = elementorCommon.dialogsManager.createWidget( isDirty ? 'confirm' : 'alert', {
+		this.externalChangeModal = elementorCommon.dialogsManager.createWidget( isDirty ? 'confirm' : 'alert', {
 			...config,
 			closeButton: false,
 			closeButtonOptions: { iconClass: '' },
@@ -155,7 +160,7 @@ export default class Heartbeat {
 			},
 		} );
 
-		modal.show();
+		this.externalChangeModal.show();
 	}
 
 	onDocumentChanged() {
