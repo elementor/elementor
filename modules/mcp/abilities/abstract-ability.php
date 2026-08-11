@@ -33,7 +33,7 @@ abstract class Abstract_Ability {
 
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
 
-		if ( $post_id > 0 && ! $is_failed && self::KIND_TOOL === $this->get_kind() ) {
+		if ( $post_id > 0 && ! $is_failed && self::KIND_TOOL === $this->get_kind() && $this->is_destructive() ) {
 			Editor_Session_Guard::set_mcp_mutation( $post_id );
 		}
 
@@ -92,6 +92,10 @@ abstract class Abstract_Ability {
 
 	private function is_resource(): bool {
 		return self::KIND_RESOURCE === ( $this->mcp_meta()['type'] ?? null );
+	}
+
+	private function is_destructive(): bool {
+		return false !== ( $this->mcp_meta()['annotations']['destructive'] ?? true );
 	}
 
 	protected function definition(): Ability_Definition {
