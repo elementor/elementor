@@ -31,7 +31,9 @@ abstract class Abstract_Ability {
 		$result  = $this->execute( $input );
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 
-		if ( $post_id > 0 && ! is_wp_error( $result ) && self::KIND_TOOL === $this->get_kind() ) {
+		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
+
+		if ( $post_id > 0 && ! $is_failed && self::KIND_TOOL === $this->get_kind() ) {
 			Editor_Session_Guard::set_mcp_mutation( $post_id );
 		}
 
