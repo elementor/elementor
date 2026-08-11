@@ -4,6 +4,14 @@ import type { OnboardingChoices, OnboardingState, Step, StepIdType, StepType } f
 import { StepId } from '../types';
 import { t } from '../utils/translations';
 
+function createThemeSelectionStep(): Step {
+	return {
+		id: StepId.THEME_SELECTION,
+		label: t( 'steps.theme_selection.title' ),
+		type: 'single',
+	};
+}
+
 function getDefaultSteps(): Step[] {
 	return [
 		{ id: StepId.BUILDING_FOR, label: t( 'steps.building_for.title' ), type: 'single' },
@@ -14,15 +22,31 @@ function getDefaultSteps(): Step[] {
 			type: 'single',
 		},
 		{
-			id: StepId.THEME_SELECTION,
-			label: t( 'steps.theme_selection.title' ),
-			type: 'single',
-		},
-		{
 			id: StepId.SITE_FEATURES,
 			label: t( 'steps.site_features.title' ),
 			type: 'multiple',
 		},
+	];
+}
+
+function applyProInstalledSteps( steps: Step[] ): Step[] {
+	const withoutSiteFeatures = steps.filter( ( step ) => step.id !== StepId.SITE_FEATURES );
+
+	if ( withoutSiteFeatures.some( ( step ) => step.id === StepId.THEME_SELECTION ) ) {
+		return withoutSiteFeatures;
+	}
+
+	const experienceLevelIndex = withoutSiteFeatures.findIndex( ( step ) => step.id === StepId.EXPERIENCE_LEVEL );
+	const themeSelectionStep = createThemeSelectionStep();
+
+	if ( experienceLevelIndex === -1 ) {
+		return [ ...withoutSiteFeatures, themeSelectionStep ];
+	}
+
+	return [
+		...withoutSiteFeatures.slice( 0, experienceLevelIndex + 1 ),
+		themeSelectionStep,
+		...withoutSiteFeatures.slice( experienceLevelIndex + 1 ),
 	];
 }
 
@@ -243,7 +267,7 @@ export const slice = __createSlice( {
 
 		markProInstalled: ( state ) => {
 			state.hasProInstallScreenDismissed = true;
-			state.steps = state.steps.filter( ( step ) => step.id !== StepId.SITE_FEATURES );
+			state.steps = applyProInstalledSteps( state.steps );
 		},
 	},
 } );

@@ -41,25 +41,9 @@ class Test_Module extends Test_Base {
 		$this->assertContains( 'site_features', $step_ids );
 	}
 
-	public function test_steps_exclude_theme_selection_when_elementor_theme_active() {
+	public function test_steps_include_theme_selection_for_pro_even_when_hello_theme_active() {
 		add_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_true' );
-		try {
-			$_GET['page'] = 'elementor-app';
-			do_action( 'elementor/init' );
-
-			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
-			$this->assertIsArray( $settings );
-			$this->assertArrayHasKey( 'steps', $settings );
-
-			$step_ids = array_column( $settings['steps'], 'id' );
-			$this->assertNotContains( 'theme_selection', $step_ids );
-		} finally {
-			remove_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_true' );
-		}
-	}
-
-	public function test_steps_include_theme_selection_when_elementor_theme_not_active() {
-		add_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
+		add_filter( 'elementor/onboarding/is_elementor_pro_installed', '__return_true' );
 		try {
 			$_GET['page'] = 'elementor-app';
 			do_action( 'elementor/init' );
@@ -70,9 +54,58 @@ class Test_Module extends Test_Base {
 
 			$step_ids = array_column( $settings['steps'], 'id' );
 			$this->assertContains( 'theme_selection', $step_ids );
+			$this->assertNotContains( 'site_features', $step_ids );
+		} finally {
+			remove_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_true' );
+			remove_filter( 'elementor/onboarding/is_elementor_pro_installed', '__return_true' );
+		}
+	}
+
+	public function test_steps_include_theme_selection_when_pro_active_and_theme_not_active() {
+		add_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
+		add_filter( 'elementor/onboarding/is_elementor_pro_installed', '__return_true' );
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+			$this->assertIsArray( $settings );
+			$this->assertArrayHasKey( 'steps', $settings );
+
+			$step_ids = array_column( $settings['steps'], 'id' );
+			$this->assertContains( 'theme_selection', $step_ids );
+			$this->assertNotContains( 'site_features', $step_ids );
+		} finally {
+			remove_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
+			remove_filter( 'elementor/onboarding/is_elementor_pro_installed', '__return_true' );
+		}
+	}
+
+	public function test_steps_exclude_theme_selection_when_pro_not_installed() {
+		add_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+			$this->assertIsArray( $settings );
+			$this->assertArrayHasKey( 'steps', $settings );
+
+			$step_ids = array_column( $settings['steps'], 'id' );
+			$this->assertNotContains( 'theme_selection', $step_ids );
+			$this->assertContains( 'site_features', $step_ids );
 		} finally {
 			remove_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
 		}
+	}
+
+	public function test_settings_expose_is_hello_theme_active_flag() {
+		$_GET['page'] = 'elementor-app';
+		do_action( 'elementor/init' );
+
+		$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+		$this->assertArrayHasKey( 'isHelloThemeActive', $settings );
+		$this->assertIsBool( $settings['isHelloThemeActive'] );
 	}
 
 	public function test_get_onboarding_locale_exact_match() {

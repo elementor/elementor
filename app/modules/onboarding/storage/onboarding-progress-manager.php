@@ -14,7 +14,7 @@ class Onboarding_Progress_Manager {
 
 	const PROGRESS_OPTION_KEY = 'elementor_onboarding_progress';
 	const CHOICES_OPTION_KEY = 'elementor_onboarding_choices';
-	const DEFAULT_TOTAL_STEPS = 5;
+	const DEFAULT_TOTAL_STEPS = 4;
 
 	private static ?Onboarding_Progress_Manager $instance = null;
 
