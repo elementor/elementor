@@ -17,34 +17,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The `css` value follows the same raw CSS format that the write-side tools
  * (manage-classes, manage-elements.update.style, build-composition.style)
  * accept as input, so consumers can round-trip styles without transformation.
+ *
+ * Rendering itself is delegated to `Local_Style` / `Local_Style_Variant` so each
+ * domain object owns its own CSS output — the serializer only adapts the shape.
  */
 class Local_Style_Serializer {
 
 	public static function serialize( array $styles ): array {
-		$local_style = self::find_local_style( $styles );
+		$local_style = Local_Style::from_styles_map( $styles );
 
-		if ( ! $local_style || empty( $local_style['variants'] ) ) {
+		if ( null === $local_style ) {
 			return [];
 		}
 
-		$projected = [];
-
-		if ( isset( $local_style['id'] ) ) {
-			$projected['__style_id'] = $local_style['id'];
-		}
-
-		$projected['css'] = Style_Variants_To_Css::to_css( $local_style['variants'] );
-
-		return $projected;
-	}
-
-	private static function find_local_style( array $styles ): ?array {
-		if ( empty( $styles ) ) {
-			return null;
-		}
-
-		$local_style = reset( $styles );
-
-		return is_array( $local_style ) ? $local_style : null;
+		return [
+			'__style_id' => $local_style->id(),
+			'css'        => $local_style->to_css(),
+		];
 	}
 }
