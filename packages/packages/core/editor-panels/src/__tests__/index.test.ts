@@ -1,9 +1,4 @@
-import {
-	__createPanel,
-	__registerPanel,
-	createPanel,
-	registerPanel,
-} from '../index';
+import { __createPanel, __registerPanel, createPanel, registerPanel } from '../index';
 
 describe( 'editor-panels exports', () => {
 	it( 'should expose public and compatibility aliases', () => {
