@@ -96,14 +96,14 @@ class Test_Onboarding_Progress_Manager extends Test_Base {
 	public function test_update_choices_theme_selection_persists_across_loads() {
 		// Arrange
 		$this->progress_manager->update_choices( [
-			'theme_selection' => 'hello-biz',
+			'theme_selection' => 'hello-elementor',
 		] );
 
 		// Act
 		$loaded_choices = $this->progress_manager->get_choices();
 
 		// Assert
-		$this->assertSame( 'hello-biz', $loaded_choices->get_theme_selection() );
+		$this->assertSame( 'hello-elementor', $loaded_choices->get_theme_selection() );
 	}
 
 	public function test_update_choices_theme_selection_preserves_other_choices() {
@@ -132,11 +132,11 @@ class Test_Onboarding_Progress_Manager extends Test_Base {
 
 		// Act
 		$choices = $this->progress_manager->update_choices( [
-			'theme_selection' => 'hello-biz',
+			'theme_selection' => 'hello-elementor-child',
 		] );
 
 		// Assert
-		$this->assertSame( 'hello-biz', $choices->get_theme_selection() );
+		$this->assertSame( 'hello-elementor-child', $choices->get_theme_selection() );
 	}
 
 	public function test_reset_clears_all_data() {

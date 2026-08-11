@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Box, styled } from '@elementor/ui';
 
-import { isVideoPreloaded } from '../../hooks/use-video-preload';
 import { getVideoUrls } from '../../steps/step-visuals';
 import type { StepVisualConfig } from '../../types';
 import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
@@ -10,7 +9,6 @@ import { FOOTER_HEIGHT, LAYOUT_PADDING, TOPBAR_HEIGHT } from './base-layout';
 const PANEL_RADIUS_MULTIPLIER = 2;
 const PANEL_MIN_HEIGHT = 36;
 const VIDEO_TRANSITION_MS = 400;
-const DELAY_BACKGROUND_UNTIL_VIDEO_PLAYS_MS = 500;
 
 const ALL_VIDEO_URLS = getVideoUrls();
 
@@ -38,9 +36,13 @@ const RightPanelRoot = styled( Box, {
 
 const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: string | undefined } ) {
 	const videoRefs = useRef< Map< string, HTMLVideoElement > >( new Map() );
-	const [ visibleUrl, setVisibleUrl ] = useState< string | undefined >( undefined );
+	const [ readyUrls, setReadyUrls ] = useState< Set< string > >( () => new Set() );
 
-	useEffect( () => {
+	// Reset the incoming video to its first frame *before* the browser paints it,
+	// otherwise the element is revealed still showing the last frame from its
+	// previous play and then visibly jumps back to the start. useLayoutEffect
+	// runs after the DOM mutation but before paint, so the seek is never seen.
+	useLayoutEffect( () => {
 		videoRefs.current.forEach( ( element, videoUrl ) => {
 			if ( videoUrl === activeUrl ) {
 				element.currentTime = 0;
@@ -49,9 +51,22 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 				element.pause();
 			}
 		} );
-
-		setVisibleUrl( activeUrl && isVideoPreloaded( activeUrl ) ? activeUrl : undefined );
 	}, [ activeUrl ] );
+
+	const markReady = useCallback( ( videoUrl: string ) => {
+		setReadyUrls( ( prev ) => {
+			if ( prev.has( videoUrl ) ) {
+				return prev;
+			}
+
+			const next = new Set( prev );
+			next.add( videoUrl );
+			return next;
+		} );
+	}, [] );
+
+	// Only reveal the active video once its own element has a decoded frame.
+	const visibleUrl = activeUrl && readyUrls.has( activeUrl ) ? activeUrl : undefined;
 
 	return (
 		<>
@@ -60,8 +75,10 @@ const VideoStack = React.memo( function VideoStack( { activeUrl }: { activeUrl: 
 					key={ videoUrl }
 					component="video"
 					src={ videoUrl }
+					preload="auto"
 					muted
 					playsInline
+					onLoadedData={ () => markReady( videoUrl ) }
 					ref={ ( element: HTMLVideoElement | null ) => {
 						if ( element ) {
 							videoRefs.current.set( videoUrl, element );
@@ -87,23 +104,8 @@ interface RightPanelProps {
 }
 
 export const RightPanel = React.memo( function RightPanel( { config }: RightPanelProps ) {
-	const [ displayedBackground, setDisplayedBackground ] = useState( config.background );
-
-	useEffect( () => {
-		if ( ! config.video ) {
-			setDisplayedBackground( config.background );
-			return;
-		}
-
-		const timeoutId = setTimeout( () => {
-			setDisplayedBackground( config.background );
-		}, DELAY_BACKGROUND_UNTIL_VIDEO_PLAYS_MS );
-
-		return () => clearTimeout( timeoutId );
-	}, [ config.video, config.background ] );
-
 	return (
-		<RightPanelRoot background={ displayedBackground }>
+		<RightPanelRoot background={ config.background }>
 			<VideoStack activeUrl={ config.video } />
 		</RightPanelRoot>
 	);
