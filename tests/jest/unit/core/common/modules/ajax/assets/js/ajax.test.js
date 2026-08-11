@@ -1,4 +1,4 @@
-const jQuery = require( 'jquery' );
+const jQuery = require( './mock/jquery' );
 
 const BATCH_DEBOUNCE = 500;
 
