@@ -214,7 +214,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		$basic_pos  = array_search( 'basic', $keys, true );
 		$angie_pos  = array_search( Elements_Manager::CATEGORY_ANGIE_WIDGETS, $keys, true );
 		$custom_pos = array_search( Elements_Manager::CATEGORY_CUSTOM_WIDGETS, $keys, true );
-		$pro_pos    = array_search( 'pro-elements', $keys, true );
+		$pro_pos    = array_search( Elements_Manager::CATEGORY_PRO_ELEMENTS, $keys, true );
 
 		$this->assertGreaterThan( $basic_pos, $angie_pos, 'angie-widgets should appear after basic' );
 		$this->assertLessThan( $pro_pos, $angie_pos, 'angie-widgets should appear before pro-elements' );
@@ -267,7 +267,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 
 		// Assert – pro-elements appears after custom-widgets and before layout for free users
 		$custom_pos = array_search( Elements_Manager::CATEGORY_CUSTOM_WIDGETS, $keys, true );
-		$pro_pos    = array_search( 'pro-elements', $keys, true );
+		$pro_pos    = array_search( Elements_Manager::CATEGORY_PRO_ELEMENTS, $keys, true );
 		$layout_pos = array_search( 'layout', $keys, true );
 		$basic_pos  = array_search( 'basic', $keys, true );
 
