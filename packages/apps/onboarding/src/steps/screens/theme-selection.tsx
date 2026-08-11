@@ -14,36 +14,40 @@ import { t } from '../../utils/translations';
 import { THEME_SELECTION_FOOTER_HIGHLIGHTS } from '../theme-selection-footer';
 
 export function ThemeSelection() {
-	const { choices, completedSteps } = useOnboarding();
+  const { choices, completedSteps } = useOnboarding();
 
-	const isStepCompleted = completedSteps.includes( StepId.THEME_SELECTION );
-	const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
-	const isInstalled = isHelloThemeActive || ( isStepCompleted && choices.theme_selection === HELLO_THEME.slug );
+  const isStepCompleted = completedSteps.includes( StepId.THEME_SELECTION );
+  const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
+  const isInstalled =
+    isHelloThemeActive || ( isStepCompleted && choices.theme_selection === HELLO_THEME.slug );
 
-	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
+  const greetingText = useMemo( () => getGreetingText( null ), [] );
 
-	return (
-		<Stack spacing={ 7.5 } width="100%" sx={ { flex: 1 } } data-testid="theme-selection-step">
-			<Stack width="100%" maxWidth={ 386 } alignSelf="center">
-				<GreetingBanner>{ greetingText }</GreetingBanner>
-			</Stack>
+  return (
+    <Stack spacing={ 7.5 } width="100%" sx={ { flex: 1 } } data-testid="theme-selection-step">
+      <Stack width="100%" maxWidth={ 386 } alignSelf="center">
+        <GreetingBanner>{ greetingText }</GreetingBanner>
+      </Stack>
 
-			<Stack useFlexGap spacing={ 4 } alignItems="center" width="100%">
-				<Stack spacing={ 1 } textAlign="center" alignItems="center">
-					<StepTitle color="text.primary" variant="h5" align="center">
-						{ t( 'steps.theme_selection.v2.title' ) }
-					</StepTitle>
-					<Typography variant="body1" color="text.secondary">
-						{ t( 'steps.theme_selection.v2.subtitle' ) }
-					</Typography>
-				</Stack>
+      <Stack useFlexGap spacing={ 4 } alignItems="center" width="100%">
+        <Stack spacing={ 1 } textAlign="center" alignItems="center">
+          <StepTitle color="text.primary" variant="h5" align="center">
+            { t( 'steps.theme_selection.v2.title' ) }
+          </StepTitle>
+          <Typography variant="body1" color="text.secondary">
+            { t( 'steps.theme_selection.v2.subtitle' ) }
+          </Typography>
+        </Stack>
 
-				<Stack useFlexGap alignItems="center" width="100%" sx={ { gap: '60px' } }>
-					<HelloThemePreview isInstalled={ isInstalled } />
+        <Stack useFlexGap alignItems="center" width="100%" sx={ { gap: '60px' } }>
+          <HelloThemePreview isInstalled={ isInstalled } />
 
-					<FooterHighlights items={ THEME_SELECTION_FOOTER_HIGHLIGHTS } testId="theme-selection-highlights" />
-				</Stack>
-			</Stack>
-		</Stack>
-	);
+          <FooterHighlights
+            items={ THEME_SELECTION_FOOTER_HIGHLIGHTS }
+            testId="theme-selection-highlights"
+          />
+        </Stack>
+      </Stack>
+    </Stack>
+  );
 }

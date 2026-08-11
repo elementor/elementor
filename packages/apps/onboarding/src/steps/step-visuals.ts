@@ -8,61 +8,52 @@ const CONTENT_MAX_WIDTH_WIDE_ELEMENT = 724;
 const getAssetsBaseUrl = () => window.elementorCommon?.config?.urls?.assets ?? '';
 
 export const getOnboardingAssetUrl = ( fileName: string ) => {
-	const baseUrl = getAssetsBaseUrl();
-	const path = `${ ONBOARDING_ASSETS_PATH }${ fileName }`;
+  const baseUrl = getAssetsBaseUrl();
+  const path = `${ ONBOARDING_ASSETS_PATH }${ fileName }`;
 
-	return baseUrl ? `${ baseUrl }${ path }` : path;
+  return baseUrl ? `${ baseUrl }${ path }` : path;
 };
 
 export const getOnboardingVideoUrl = ( fileName: string ) => `${ VIDEOS_BASE_URL }${ fileName }`;
 
 const buildBackground = ( fileName: string ) => {
-	const imageUrl = getOnboardingAssetUrl( fileName );
+  const imageUrl = getOnboardingAssetUrl( fileName );
 
-	return `url(${ imageUrl }) center / cover no-repeat`;
+  return `url(${ imageUrl }) center / cover no-repeat`;
 };
 
 const DEFAULT_CONFIG: StepVisualConfig = {
-	background: buildBackground( 'step-1.webp' ),
+  background: buildBackground( 'step-1.webp' ),
 };
 
 export const LOGIN_CONFIG: StepVisualConfig = {
-	background: buildBackground( 'login.webp' ),
+  background: buildBackground( 'login.webp' ),
 };
 
 const stepVisuals: Record< StepIdType, StepVisualConfig > = {
-	[ StepId.BUILDING_FOR ]: {
-		background: buildBackground( 'step-1.webp' ),
-	},
-	[ StepId.SITE_ABOUT ]: {
-		background: buildBackground( 'step-1.webp' ),
-		// background: '',
-		video: getOnboardingVideoUrl( 'step-2.webm' ),
-	},
-	[ StepId.EXPERIENCE_LEVEL ]: {
-		background: '',
-		video: getOnboardingVideoUrl( 'step-3.webm' ),
-	},
-	[ StepId.THEME_SELECTION ]: {
-		background: '',
-		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
-		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
-	},
-	[ StepId.SITE_FEATURES ]: {
-		background: '',
-		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
-		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
-	},
+  [ StepId.THEME_SELECTION ]: {
+    background: '',
+    video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
+    contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
+  },
+  [ StepId.SITE_FEATURES ]: {
+    background: '',
+    video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
+    contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
+  },
 };
 
 export const getLoginVisualConfig = (): StepVisualConfig => LOGIN_CONFIG;
 
-export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig => stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
+export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig =>
+  stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
 
 // Deduplicated so shared videos (e.g. steps 4 and 5 use the same clip) yield a
 // single <video> element rather than two with a colliding React key.
 export const getVideoUrls = (): string[] => {
-	const urls = Object.values( stepVisuals ).flatMap( ( config ) => ( config.video ? [ config.video ] : [] ) );
+  const urls = Object.values( stepVisuals ).flatMap( ( config ) =>
+    config.video ? [ config.video ] : []
+  );
 
-	return [ ...new Set( urls ) ];
+  return [ ...new Set( urls ) ];
 };

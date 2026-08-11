@@ -1,143 +1,133 @@
 /* eslint-disable testing-library/no-test-id-queries */
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { mockFetch, PRO_ONBOARDING_STEPS, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
+import {
+  mockFetch,
+  PRO_ONBOARDING_STEPS,
+  renderApp,
+  setupOnboardingTests,
+} from '../../../__tests__/test-utils';
 
 describe( 'ThemeSelection', () => {
-	setupOnboardingTests();
+  setupOnboardingTests();
 
-	const navigateToThemeSelection = () => {
-		renderApp( {
-			steps: PRO_ONBOARDING_STEPS,
-			isConnected: true,
-			progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-		} );
-	};
+  const navigateToThemeSelection = () => {
+    renderApp( {
+      steps: PRO_ONBOARDING_STEPS,
+      isConnected: true,
+      progress: { current_step_id: 'theme_selection', current_step_index: 0 },
+    } );
+  };
 
-	describe( 'Rendering', () => {
-		it( 'renders the step heading and updated subtitle', () => {
-			// Arrange & Act
-			navigateToThemeSelection();
+  describe( 'Rendering', () => {
+    it( 'renders the step heading and updated subtitle', () => {
+      // Arrange & Act
+      navigateToThemeSelection();
 
-			// Assert
-			expect( screen.getByTestId( 'theme-selection-step' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Build faster with Hello Theme' ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( "Use Elementor's lightweight theme for faster setup and full design control." )
-			).toBeInTheDocument();
-		} );
+      // Assert
+      expect( screen.getByTestId( 'theme-selection-step' ) ).toBeInTheDocument();
+      expect( screen.getByText( 'Build faster with Hello Theme' ) ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Use Elementor's lightweight theme for faster setup and full design control."
+        )
+      ).toBeInTheDocument();
+    } );
 
-		it( 'renders the Hello theme preview illustration', () => {
-			navigateToThemeSelection();
+    it( 'renders the Hello theme preview illustration', () => {
+      navigateToThemeSelection();
 
-			expect( screen.getByTestId( 'hello-theme-preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'by Elementor' ) ).toBeInTheDocument();
-		} );
+      expect( screen.getByTestId( 'hello-theme-preview' ) ).toBeInTheDocument();
+      expect( screen.getByText( 'by Elementor' ) ).toBeInTheDocument();
+    } );
 
-		it( 'renders feature highlights in the step content', () => {
-			navigateToThemeSelection();
+    it( 'renders feature highlights in the step content', () => {
+      navigateToThemeSelection();
 
-			expect( screen.getByTestId( 'theme-selection-highlights' ) ).toBeInTheDocument();
-			expect( screen.queryByTestId( 'footer-highlights' ) ).not.toBeInTheDocument();
-			expect( screen.getByText( 'Fast by design' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Responsive from the start' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Built for Elementor' ) ).toBeInTheDocument();
-		} );
+      expect( screen.getByTestId( 'theme-selection-highlights' ) ).toBeInTheDocument();
+      expect( screen.queryByTestId( 'footer-highlights' ) ).not.toBeInTheDocument();
+      expect( screen.getByText( 'Fast by design' ) ).toBeInTheDocument();
+      expect( screen.getByText( 'Responsive from the start' ) ).toBeInTheDocument();
+      expect( screen.getByText( 'Built for Elementor' ) ).toBeInTheDocument();
+    } );
 
-		it( 'does not render Hello Biz, a radiogroup, or a Recommended chip', () => {
-			// Arrange & Act
-			navigateToThemeSelection();
+    it( 'does not render Hello Biz, a radiogroup, or a Recommended chip', () => {
+      // Arrange & Act
+      navigateToThemeSelection();
 
-			// Assert
-			expect( screen.queryByText( 'Hello Biz' ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'radiogroup' ) ).not.toBeInTheDocument();
-			expect( screen.queryAllByRole( 'radio' ) ).toHaveLength( 0 );
-			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
-		} );
-	} );
+      // Assert
+      expect( screen.queryByText( 'Hello Biz' ) ).not.toBeInTheDocument();
+      expect( screen.queryByRole( 'radiogroup' ) ).not.toBeInTheDocument();
+      expect( screen.queryAllByRole( 'radio' ) ).toHaveLength( 0 );
+      expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+    } );
+  } );
 
-	describe( 'Greeting text', () => {
-		it( 'shows beginner greeting when experience_level is beginner', () => {
-			renderApp( {
-				steps: PRO_ONBOARDING_STEPS,
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { experience_level: 'beginner' },
-			} );
+  describe( 'Greeting text', () => {
+    it( 'shows default greeting', () => {
+      navigateToThemeSelection();
 
-			// Assert
-			expect( screen.getByText( "Glad you're here!" ) ).toBeInTheDocument();
-		} );
+      // Assert
+      expect( screen.getByText( "Great. Let's take it to the next step" ) ).toBeInTheDocument();
+    } );
+  } );
 
-		it( 'shows default greeting when experience_level is not beginner', () => {
-			renderApp( {
-				steps: PRO_ONBOARDING_STEPS,
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { experience_level: 'intermediate' },
-			} );
+  describe( 'Continue behavior', () => {
+    it( 'sends hello-elementor on Continue regardless of stored choice', async () => {
+      // Arrange
+      navigateToThemeSelection();
 
-			// Assert
-			expect( screen.getByText( "Great. Let's take it to the next step" ) ).toBeInTheDocument();
-		} );
-	} );
+      // Act
+      fireEvent.click( screen.getByText( 'Continue with Hello' ) );
 
-	describe( 'Continue behavior', () => {
-		it( 'sends hello-elementor on Continue regardless of stored choice', async () => {
-			// Arrange
-			navigateToThemeSelection();
+      // Assert
+      await waitFor( () => {
+        expect( mockFetch ).toHaveBeenCalledWith(
+          expect.stringContaining( 'user-choices' ),
+          expect.objectContaining( {
+            method: 'POST',
+            body: expect.stringContaining( 'hello-elementor' ),
+          } )
+        );
+      } );
+    } );
 
-			// Act
-			fireEvent.click( screen.getByText( 'Continue with Hello' ) );
+    it( 'calls install-theme endpoint with hello-elementor on Continue', async () => {
+      // Arrange
+      navigateToThemeSelection();
 
-			// Assert
-			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalledWith(
-					expect.stringContaining( 'user-choices' ),
-					expect.objectContaining( {
-						method: 'POST',
-						body: expect.stringContaining( 'hello-elementor' ),
-					} )
-				);
-			} );
-		} );
+      // Act
+      fireEvent.click( screen.getByText( 'Continue with Hello' ) );
 
-		it( 'calls install-theme endpoint with hello-elementor on Continue', async () => {
-			// Arrange
-			navigateToThemeSelection();
+      // Assert
+      await waitFor( () => {
+        expect( mockFetch ).toHaveBeenCalledWith(
+          expect.stringContaining( 'install-theme' ),
+          expect.objectContaining( {
+            method: 'POST',
+            body: expect.stringContaining( 'hello-elementor' ),
+          } )
+        );
+      } );
+    } );
+  } );
 
-			// Act
-			fireEvent.click( screen.getByText( 'Continue with Hello' ) );
+  describe( 'Installed state', () => {
+    it( 'shows Installed chip when step is completed and theme is hello-elementor', () => {
+      renderApp( {
+        steps: PRO_ONBOARDING_STEPS,
+        isConnected: true,
+        progress: {
+          current_step_id: 'theme_selection',
+          current_step_index: 0,
+          completed_steps: [ 'theme_selection' ],
+        },
+        choices: { theme_selection: 'hello-elementor' },
+      } );
 
-			// Assert
-			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalledWith(
-					expect.stringContaining( 'install-theme' ),
-					expect.objectContaining( {
-						method: 'POST',
-						body: expect.stringContaining( 'hello-elementor' ),
-					} )
-				);
-			} );
-		} );
-	} );
-
-	describe( 'Installed state', () => {
-		it( 'shows Installed chip when step is completed and theme is hello-elementor', () => {
-			renderApp( {
-				steps: PRO_ONBOARDING_STEPS,
-				isConnected: true,
-				progress: {
-					current_step_id: 'theme_selection',
-					current_step_index: 3,
-					completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection' ],
-				},
-				choices: { theme_selection: 'hello-elementor' },
-			} );
-
-			// Assert
-			expect( screen.getByText( 'Installed' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
-		} );
-	} );
+      // Assert
+      expect( screen.getByText( 'Installed' ) ).toBeInTheDocument();
+      expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+    } );
+  } );
 } );
