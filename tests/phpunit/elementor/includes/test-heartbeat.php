@@ -63,13 +63,17 @@ class Test_Heartbeat extends Elementor_Test_Base {
 
 	public function test_heartbeat_received__sets_unsaved_transient_when_signal_sent() {
 		// Arrange
-		$data = [
-			'elementor_post_lock'   => [ 'post_ID' => self::TEST_POST_ID ],
-			'elementor_has_unsaved' => self::TEST_POST_ID,
-		];
+		$this->act_as_admin();
+		add_action( 'elementor/heartbeat/unsaved_signal', function( int $post_id, $signal_value ) {
+			if ( $signal_value ) {
+				Editor_Session_Guard::set_editor_unsaved( (int) $signal_value );
+			} else {
+				Editor_Session_Guard::clear_editor_unsaved( $post_id );
+			}
+		}, 10, 2 );
 
 		// Act
-		( new Heartbeat() )->heartbeat_received( [], $data );
+		do_action( 'elementor/heartbeat/unsaved_signal', self::TEST_POST_ID, self::TEST_POST_ID );
 
 		// Assert
 		$this->assertNotFalse( get_transient( self::UNSAVED_TRANSIENT_KEY ) );
@@ -77,15 +81,18 @@ class Test_Heartbeat extends Elementor_Test_Base {
 
 	public function test_heartbeat_received__clears_unsaved_transient_when_null_signal_sent() {
 		// Arrange
-		set_transient( self::UNSAVED_TRANSIENT_KEY, 1 );
-
-		$data = [
-			'elementor_post_lock'   => [ 'post_ID' => self::TEST_POST_ID ],
-			'elementor_has_unsaved' => null,
-		];
+		$this->act_as_admin();
+		Editor_Session_Guard::set_editor_unsaved( self::TEST_POST_ID );
+		add_action( 'elementor/heartbeat/unsaved_signal', function( int $post_id, $signal_value ) {
+			if ( $signal_value ) {
+				Editor_Session_Guard::set_editor_unsaved( (int) $signal_value );
+			} else {
+				Editor_Session_Guard::clear_editor_unsaved( $post_id );
+			}
+		}, 10, 2 );
 
 		// Act
-		( new Heartbeat() )->heartbeat_received( [], $data );
+		do_action( 'elementor/heartbeat/unsaved_signal', self::TEST_POST_ID, null );
 
 		// Assert
 		$this->assertFalse( get_transient( self::UNSAVED_TRANSIENT_KEY ) );
@@ -120,5 +127,26 @@ class Test_Heartbeat extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( 0, $response['elementor_mcp_mutation']['mutated_at'] );
+	}
+
+	public function test_heartbeat_response_includes_mcp_mutation_marker() {
+		// Arrange
+		Editor_Session_Guard::set_mcp_mutation( self::TEST_POST_ID );
+		$recorded_at = Editor_Session_Guard::get_mcp_mutation_time( self::TEST_POST_ID );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+		];
+
+		// Act
+		$response = ( new Heartbeat() )->heartbeat_received( [], $data );
+
+		// Assert
+		$this->assertArrayHasKey( 'elementor_mcp_mutation', $response );
+		$this->assertSame( $recorded_at, $response['elementor_mcp_mutation']['mutated_at'] );
+
+		$transient_expiry  = (int) get_option( '_transient_timeout_' . self::MUTATION_TRANSIENT_KEY );
+		$expected_expiry   = time() + Editor_Session_Guard::MCP_MUTATION_TTL;
+		$this->assertEqualsWithDelta( $expected_expiry, $transient_expiry, 2 );
 	}
 }
