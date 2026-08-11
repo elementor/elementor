@@ -120,6 +120,67 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( [], $e_component_node['settings'] );
 	}
 
+	public function test_apply__v3_allowlisted_keys_merge_as_plain_settings() {
+		// Arrange
+		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+		$nav = [
+			'elType' => 'widget',
+			'widgetType' => 'nav-menu',
+			'settings' => [],
+		];
+		$index = [ 'main-nav' => &$nav ];
+
+		// Act
+		$result = $applier->apply(
+			$index,
+			[
+				'main-nav' => [
+					'menu' => 'primary',
+					'layout' => 'horizontal',
+				],
+			],
+			[]
+		);
+
+		// Assert
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'primary', $nav['settings']['menu'] );
+		$this->assertSame( 'horizontal', $nav['settings']['layout'] );
+	}
+
+	public function test_apply__v3_rejects_non_allowlisted_settings() {
+		// Arrange
+		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+		$nav = [
+			'elType' => 'widget',
+			'widgetType' => 'nav-menu',
+			'settings' => [],
+		];
+		$index = [ 'main-nav' => &$nav ];
+
+		// Act
+		$result = $applier->apply(
+			$index,
+			[
+				'main-nav' => [
+					'menu' => 'primary',
+					'color_menu_item' => '#ff0000',
+				],
+			],
+			[]
+		);
+
+		// Assert
+		$this->assertNotNull( $result['error'] );
+		$this->assertSame( 'elementor_invalid_settings', $result['error']->get_error_code() );
+		$this->assertStringContainsString( 'color_menu_item', $result['error']->get_error_message() );
+		$this->assertArrayNotHasKey( 'menu', $nav['settings'] );
+	}
+
 	public function test_apply__reports_settings_and_component_errors_together() {
 		// Arrange
 		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
