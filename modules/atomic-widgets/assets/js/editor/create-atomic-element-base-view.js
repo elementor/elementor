@@ -61,7 +61,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_shouldSkipFullRender() {
-			return this.isRendered && this._hasConnectedChildren();
+			return this.isRendered && this._hasConnectedChildren() && ! this._hasWrapperTagChange();
+		},
+
+		_hasWrapperTagChange() {
+			const settingsModel = this.model?.get?.( 'settings' );
+
+			if ( ! settingsModel ) {
+				return false;
+			}
+
+			return settingsModel.changed?.tag !== undefined || true === settingsModel.hasChanged?.( 'tag' );
 		},
 
 		_hasConnectedChildren() {

@@ -21,7 +21,6 @@ const LIST_ITEM_MARKER_ELEMENT_TYPE = 'e-list-item-marker';
 const LIST_ITEM_CONTENT_ELEMENT_TYPE = 'e-list-item-content';
 const SVG_WIDGET_TYPE = 'e-svg';
 const PARAGRAPH_WIDGET_TYPE = 'e-paragraph';
-
 type ListItemElementModel = {
   elType: string;
   widgetType?: string;
@@ -65,7 +64,7 @@ const createDefaultContentChild = (): ListItemElementModel => ( {
   ],
 } );
 
-const shouldShowMarkers = ( listContainer: V1Element ) =>
+const shouldCreateMarker = ( listContainer: V1Element ) =>
   booleanPropTypeUtil.extract( listContainer.settings.get( 'show_markers' ) ) !== false;
 
 const createDefaultListItemModel = (
@@ -138,7 +137,7 @@ export const useActions = () => {
   } ) => {
     items.forEach( ( { index } ) => {
       const position = index + 1;
-      const showMarkers = shouldShowMarkers( listContainer );
+      const showMarkers = shouldCreateMarker( listContainer );
 
       createElements( {
         title: __( 'List Items', 'elementor' ),

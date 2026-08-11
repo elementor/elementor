@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\List_Items_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -17,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -28,11 +30,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+class Atomic_List_Tag_Prop_Type extends String_Prop_Type {
+	protected function sanitize_value( $value ) {
+		return 'ul';
+	}
+}
+
 class Atomic_List extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
+	const ORDERED_BASE_STYLE_KEY = 'ordered';
 	const DEFAULT_MARKER_ICON_STYLE_ID = 'e-list-default-marker-icon';
+	public static $widget_description = 'Semantic list container. Supports unordered lists with custom marker slots and ordered lists with native numbering.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -60,14 +70,30 @@ class Atomic_List extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$readonly_tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( [
+				'operator' => 'eq',
+				'path' => [ 'tag' ],
+				'value' => '__read_only__',
+				'effect' => 'disable',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-			'tag' => String_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the list wrapper.' ),
+			'tag' => Atomic_List_Tag_Prop_Type::make()
 				->enum( [ 'ul', 'ol' ] )
-				->default( 'ul' ),
-			'show_markers' => Boolean_Prop_Type::make()->default( true ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+				->default( 'ul' )
+				->description( 'Internal HTML tag selection. The UI keeps this control read-only and saved output is currently normalized to unordered lists.' )
+				->set_dependencies( $readonly_tag_dependencies ),
+			'show_markers' => Boolean_Prop_Type::make()
+				->default( true )
+				->description( 'Controls custom marker visibility for unordered lists.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->description( 'Custom HTML attributes applied to the list wrapper.' )
+				->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -89,6 +115,18 @@ class Atomic_List extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
+					Html_Tag_Control::bind_to( 'tag' )
+						->set_options( [
+							[
+								'value' => 'ul',
+								'label' => 'UL',
+							],
+							[
+								'value' => 'ol',
+								'label' => 'OL',
+							],
+						] )
+						->set_label( __( 'HTML Tag', 'elementor' ) ),
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
@@ -115,6 +153,18 @@ class Atomic_List extends Atomic_Element_Base {
 							] ),
 							'gap' => Size_Prop_Type::generate( [
 								'size' => 12,
+								'unit' => 'px',
+							] ),
+						] )
+				),
+			static::ORDERED_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'display' => String_Prop_Type::generate( 'block' ),
+							'list-style-type' => String_Prop_Type::generate( 'decimal' ),
+							'padding-inline-start' => Size_Prop_Type::generate( [
+								'size' => 24,
 								'unit' => 'px',
 							] ),
 						] )
@@ -187,9 +237,68 @@ class Atomic_List extends Atomic_Element_Base {
 		return 'ul';
 	}
 
+	protected function define_render_context(): array {
+		$tag = $this->get_atomic_setting( 'tag' ) ?? 'ul';
+
+		return [
+			[
+				'context' => [
+					'tag' => $tag,
+					'is_ordered' => 'ol' === $tag,
+				],
+			],
+		];
+	}
+
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-list' => __DIR__ . '/atomic-list.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$tag = $this->get_atomic_setting( 'tag' ) ?? 'ul';
+		$items_markdown = [];
+		$list_item_index = 0;
+
+		foreach ( $this->get_children() as $child ) {
+			if ( Atomic_List_Item::get_element_type() !== $child->get_type() ) {
+				continue;
+			}
+
+			$line = $this->render_list_item_markdown( $child );
+
+			if ( '' === trim( $line ) ) {
+				continue;
+			}
+
+			++$list_item_index;
+			$prefix = 'ol' === $tag ? $list_item_index . '. ' : '- ';
+			$items_markdown[] = $prefix . ltrim( $line );
+		}
+
+		return implode( "\n", $items_markdown );
+	}
+
+	private function render_list_item_markdown( $list_item ): string {
+		foreach ( $list_item->get_children() as $child ) {
+			if ( Atomic_List_Item_Content::get_element_type() !== $child->get_type() ) {
+				continue;
+			}
+
+			$parts = [];
+
+			foreach ( $child->get_children() as $content_child ) {
+				$markdown = trim( (string) $content_child->render_markdown() );
+
+				if ( '' !== $markdown ) {
+					$parts[] = $markdown;
+				}
+			}
+
+			return implode( "\n", $parts );
+		}
+
+		return '';
 	}
 }

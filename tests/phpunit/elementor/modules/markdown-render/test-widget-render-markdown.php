@@ -6,6 +6,12 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Widget_Render_Markdown extends Elementor_Test_Base {
 
+	private function create_element( array $data ): ?\Elementor\Element_Base {
+		$element = Plugin::$instance->elements_manager->create_element_instance( $data );
+
+		return $element instanceof \Elementor\Element_Base ? $element : null;
+	}
+
 	private function create_widget( string $widget_type, array $settings ): ?\Elementor\Widget_Base {
 		$data = [
 			'id' => 'test-' . $widget_type,
@@ -428,6 +434,93 @@ class Test_Widget_Render_Markdown extends Elementor_Test_Base {
 		$this->assertIsString( $md );
 		$this->assertStringNotContainsString( '<div', $md );
 		$this->assertStringNotContainsString( '<span', $md );
+	}
+
+	public function test_atomic_list_renders_ordered_markdown_when_tag_is_ol() {
+		$list = $this->create_element( [
+			'id' => 'test-e-list',
+			'elType' => 'e-list',
+			'settings' => [
+				'tag' => [
+					'$$type' => 'string',
+					'value' => 'ol',
+				],
+				'show_markers' => [
+					'$$type' => 'boolean',
+					'value' => true,
+				],
+			],
+			'elements' => [
+				[
+					'id' => 'item-1',
+					'elType' => 'e-list-item',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => 'content-1',
+							'elType' => 'e-list-item-content',
+							'settings' => [],
+							'elements' => [
+								[
+									'id' => 'paragraph-1',
+									'elType' => 'widget',
+									'widgetType' => 'e-paragraph',
+									'settings' => [
+										'paragraph' => [
+											'$$type' => 'html-v3',
+											'value' => [
+												'content' => [
+													'$$type' => 'string',
+													'value' => 'First item',
+												],
+												'children' => [],
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+				[
+					'id' => 'item-2',
+					'elType' => 'e-list-item',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => 'content-2',
+							'elType' => 'e-list-item-content',
+							'settings' => [],
+							'elements' => [
+								[
+									'id' => 'paragraph-2',
+									'elType' => 'widget',
+									'widgetType' => 'e-paragraph',
+									'settings' => [
+										'paragraph' => [
+											'$$type' => 'html-v3',
+											'value' => [
+												'content' => [
+													'$$type' => 'string',
+													'value' => 'Second item',
+												],
+												'children' => [],
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		if ( ! $list ) {
+			$this->markTestSkipped( 'Atomic List element not available' );
+		}
+
+		$this->assertSame( "1. First item\n2. Second item", $list->render_markdown() );
 	}
 
 	public function test_third_party_widget_converts_rendered_html_to_markdown() {

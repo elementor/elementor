@@ -23,6 +23,7 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
+	public static $widget_description = 'Decorative marker slot for an unordered list item. The marker wrapper is aria-hidden and can contain any V4 element used as a custom marker.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );

@@ -23,6 +23,7 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
+	public static $widget_description = 'Content slot for a list item. Holds the editable V4 elements that make up the visible list-item body.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );

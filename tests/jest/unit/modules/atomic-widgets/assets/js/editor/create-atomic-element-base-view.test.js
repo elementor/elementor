@@ -263,4 +263,54 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 			} ),
 		);
 	} );
+
+	it( 'should force a full render when the wrapper tag setting changes', () => {
+		mockModel.get.mockImplementation( ( key ) => {
+			if ( 'settings' === key ) {
+				return {
+					changed: {
+						tag: 'ol',
+					},
+					hasChanged: jest.fn( ( settingKey ) => 'tag' === settingKey ),
+				};
+			}
+
+			return undefined;
+		} );
+		viewInstance.isRendered = true;
+		viewInstance.children = {
+			length: 1,
+			findByIndex: jest.fn( () => ( {
+				$el: {
+					get: jest.fn( () => ( { isConnected: true } ) ),
+				},
+			} ) ),
+		};
+
+		expect( viewInstance._shouldSkipFullRender() ).toBe( false );
+	} );
+
+	it( 'should keep the fast path when connected children exist and tag did not change', () => {
+		mockModel.get.mockImplementation( ( key ) => {
+			if ( 'settings' === key ) {
+				return {
+					changed: {},
+					hasChanged: jest.fn( () => false ),
+				};
+			}
+
+			return undefined;
+		} );
+		viewInstance.isRendered = true;
+		viewInstance.children = {
+			length: 1,
+			findByIndex: jest.fn( () => ( {
+				$el: {
+					get: jest.fn( () => ( { isConnected: true } ) ),
+				},
+			} ) ),
+		};
+
+		expect( viewInstance._shouldSkipFullRender() ).toBe( true );
+	} );
 } );

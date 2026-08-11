@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
@@ -23,6 +25,8 @@ class Atomic_List_Item extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
+	const ORDERED_BASE_STYLE_KEY = 'ordered';
+	public static $widget_description = 'Locked list item container. Holds the marker slot and content slot for one list entry.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -95,6 +99,17 @@ class Atomic_List_Item extends Atomic_Element_Base {
 							] ),
 						] )
 				),
+			static::ORDERED_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'display' => String_Prop_Type::generate( 'list-item' ),
+							'margin-block-end' => Size_Prop_Type::generate( [
+								'size' => 12,
+								'unit' => 'px',
+							] ),
+						] )
+				),
 		];
 	}
 
@@ -113,5 +128,13 @@ class Atomic_List_Item extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-list-item' => __DIR__ . '/atomic-list-item.html.twig',
 		];
+	}
+
+	protected function build_template_context(): array {
+		$list_context = Render_Context::get( Atomic_List::class );
+
+		return array_merge( $this->build_base_template_context(), [
+			'is_ordered' => ! empty( $list_context['is_ordered'] ),
+		] );
 	}
 }

@@ -1,6 +1,7 @@
 {% import 'elementor/macros' as m %}
 {%- set tag = settings.tag | default('ul') -%}
-<{{ tag }} class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
+{%- set extra_classes = 'ol' == tag ? [ base_styles.ordered ] : [] -%}
+<{{ tag }} class="{{ m.render_base_classes(id, base_styles, settings, extra_classes) }} {{ editor_classes | default('') }}"
 	{{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }}
 	{{- m.render_custom_attributes(settings, editor_attributes) }}>
 	<!-- elementor-children-placeholder -->
