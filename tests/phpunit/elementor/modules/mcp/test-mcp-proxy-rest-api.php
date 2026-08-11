@@ -263,8 +263,8 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 	public function test_mutation_guard__does_not_clear_signal_owned_by_different_user() {
 		// Arrange
-		$user_a_id = 11;
-		$user_b_id = 22;
+		$user_a_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		$user_b_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
 
 		wp_set_current_user( $user_a_id );
 		Editor_Session_Guard::set_editor_unsaved( self::TEST_POST_ID );
