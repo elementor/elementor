@@ -25,6 +25,7 @@ class Local_Style {
 	private array $variants;
 
 	/**
+	 * @param string                $id
 	 * @param Local_Style_Variant[] $variants
 	 */
 	private function __construct( string $id, array $variants ) {
