@@ -46,28 +46,24 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	} );
 
 	QUnit.module( 'onDocumentChanged()', () => {
-		QUnit.test( 'false→true: enqueues post_id and calls connectNow', ( assert ) => {
+		QUnit.test( 'false→true: calls connectNow for immediate dirty signal', ( assert ) => {
 			mockDocument.editor.isChanged = true;
 			heartbeat.lastStateOfDocumentChange = false;
 
 			heartbeat.onDocumentChanged();
 
-			assert.equal( mockEnqueue.callCount, 1, 'enqueue called once' );
-			assert.equal( mockEnqueue.calls[ 0 ][ 0 ], 'elementor_has_unsaved' );
-			assert.equal( mockEnqueue.calls[ 0 ][ 1 ], 123 );
 			assert.equal( mockConnectNow.callCount, 1, 'connectNow called once' );
+			assert.equal( mockEnqueue.callCount, 0, 'enqueue not called (onSend handles it)' );
 		} );
 
-		QUnit.test( 'true→false: enqueues null and calls connectNow', ( assert ) => {
+		QUnit.test( 'true→false: no forced beat, onSend handles state on next tick', ( assert ) => {
 			mockDocument.editor.isChanged = false;
 			heartbeat.lastStateOfDocumentChange = true;
 
 			heartbeat.onDocumentChanged();
 
-			assert.equal( mockEnqueue.callCount, 1, 'enqueue called once' );
-			assert.equal( mockEnqueue.calls[ 0 ][ 0 ], 'elementor_has_unsaved' );
-			assert.equal( mockEnqueue.calls[ 0 ][ 1 ], null );
-			assert.equal( mockConnectNow.callCount, 1, 'connectNow called once' );
+			assert.equal( mockEnqueue.callCount, 0, 'enqueue not called' );
+			assert.equal( mockConnectNow.callCount, 0, 'connectNow not called' );
 		} );
 
 		QUnit.test( 'no signal when state is unchanged', ( assert ) => {
@@ -104,16 +100,16 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	} );
 
 	QUnit.module( 'onSend()', () => {
-		QUnit.test( 'includes elementor_has_unsaved when dirty, omits when clean', ( assert ) => {
+		QUnit.test( 'always sends current dirty state for stale-transient cleanup', ( assert ) => {
 			const dirtyData = {};
 			mockDocument.editor.isChanged = true;
 			heartbeat.onSend( null, dirtyData );
-			assert.equal( dirtyData.elementor_has_unsaved, 123, 'includes document id when dirty' );
+			assert.equal( dirtyData.elementor_has_unsaved, 123, 'sends document id when dirty' );
 
 			const cleanData = {};
 			mockDocument.editor.isChanged = false;
 			heartbeat.onSend( null, cleanData );
-			assert.equal( cleanData.elementor_has_unsaved, undefined, 'omits key when clean' );
+			assert.strictEqual( cleanData.elementor_has_unsaved, null, 'sends null when clean to clear server transient' );
 		} );
 	} );
 } );

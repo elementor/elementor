@@ -30,10 +30,14 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->original_editor = Plugin::$instance->editor;
 		$this->original_common = Plugin::$instance->common;
 
-		add_filter( 'elementor/heartbeat/mutation_marker', function( array $default, int $post_id ): array {
+		add_filter( 'elementor/heartbeat/mutation_marker', function( $default, int $post_id ): ?array {
+			$mutated_at = Editor_Session_Guard::get_mcp_mutation_time( $post_id );
+			if ( ! $mutated_at ) {
+				return null;
+			}
 			return [
 				'post_id'    => $post_id,
-				'mutated_at' => Editor_Session_Guard::get_mcp_mutation_time( $post_id ),
+				'mutated_at' => $mutated_at,
 			];
 		}, 10, 2 );
 
@@ -121,7 +125,7 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->assertSame( 1234567890, $response['elementor_mcp_mutation']['mutated_at'] );
 	}
 
-	public function test_heartbeat_received__mutation_marker_is_zero_when_no_mutation_recorded() {
+	public function test_heartbeat_received__mutation_marker_absent_when_no_mutation_recorded() {
 		// Arrange
 		delete_transient( self::MUTATION_TRANSIENT_KEY );
 
@@ -133,7 +137,7 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$response = ( new Heartbeat() )->heartbeat_received( [], $data );
 
 		// Assert
-		$this->assertSame( 0, $response['elementor_mcp_mutation']['mutated_at'] );
+		$this->assertArrayNotHasKey( 'elementor_mcp_mutation', $response );
 	}
 
 	public function test_heartbeat_response_includes_mcp_mutation_marker() {

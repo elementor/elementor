@@ -149,7 +149,10 @@ class Module extends BaseModule {
 		return new \WP_Error(
 			'elementor_editor_unsaved_changes',
 			__( 'The editor has unsaved changes for this document. Ask the user to save or discard their changes in the Elementor editor before retrying this operation.', 'elementor' ),
-			[ 'status' => 409, 'post_id' => $post_id ]
+			[
+				'status'  => 409,
+				'post_id' => $post_id,
+			]
 		);
 	}
 

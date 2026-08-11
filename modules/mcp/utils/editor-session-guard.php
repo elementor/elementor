@@ -31,7 +31,7 @@ class Editor_Session_Guard {
 			return;
 		}
 		$owner = (int) get_transient( self::unsaved_key( $post_id ) );
-		if ( $owner === get_current_user_id() ) {
+		if ( get_current_user_id() === $owner ) {
 			delete_transient( self::unsaved_key( $post_id ) );
 		}
 	}
