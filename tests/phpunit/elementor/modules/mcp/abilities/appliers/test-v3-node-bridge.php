@@ -141,6 +141,32 @@ namespace {
 			$this->assertArrayNotHasKey( V3_Node_Bridge::V3_CUSTOM_CSS_SETTING, $node['settings'] );
 		}
 
+		public function test_apply_custom_css__warning_names_widget_type_when_pro_missing() {
+			if ( ! property_exists( Utils::class, 'force_pro' ) && Utils::has_pro() ) {
+				$this->markTestSkipped( 'Applies only when Pro is inactive.' );
+			}
+
+			$node = [ 'settings' => [] ];
+
+			$warning = V3_Node_Bridge::apply_custom_css( $node, 'color: red;', 'heading' );
+
+			$this->assertIsString( $warning );
+			$this->assertStringContainsString( '`heading`', $warning );
+		}
+
+		public function test_apply_custom_css__warning_falls_back_to_generic_label() {
+			if ( ! property_exists( Utils::class, 'force_pro' ) && Utils::has_pro() ) {
+				$this->markTestSkipped( 'Applies only when Pro is inactive.' );
+			}
+
+			$node = [ 'settings' => [] ];
+
+			$warning = V3_Node_Bridge::apply_custom_css( $node, 'color: red;', '' );
+
+			$this->assertIsString( $warning );
+			$this->assertStringContainsString( 'this V3 widget', $warning );
+		}
+
 		public function test_apply_custom_css__wraps_plain_declarations_when_pro_active() {
 			if ( ! property_exists( Utils::class, 'force_pro' ) && ! Utils::has_pro() ) {
 				$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
