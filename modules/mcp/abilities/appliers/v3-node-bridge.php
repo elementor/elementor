@@ -22,6 +22,28 @@ class V3_Node_Bridge {
 	const V3_CSS_CLASSES_SETTING = '_css_classes';
 	const V3_DYNAMIC_SETTING = '__dynamic__';
 
+	const RESPONSIVE_SUFFIXES = [ '_tablet', '_mobile' ];
+
+	const TYPOGRAPHY_SETTING_SUFFIXES = [
+		'typography',
+		'font_family',
+		'font_weight',
+		'font_style',
+		'text_transform',
+		'text_decoration',
+		'font_size',
+		'line_height',
+		'letter_spacing',
+		'word_spacing',
+	];
+
+	const TYPOGRAPHY_RESPONSIVE_SUFFIXES = [
+		'font_size',
+		'line_height',
+		'letter_spacing',
+		'word_spacing',
+	];
+
 	/**
 	 * Seeds each control's `dynamic.default` into the node's `__dynamic__` settings map when the
 	 * caller did not provide one. Without this, controls whose default is a dynamic tag (e.g.
@@ -52,28 +74,6 @@ class V3_Node_Bridge {
 			$node['settings'][ self::V3_DYNAMIC_SETTING ] = $existing;
 		}
 	}
-
-	const RESPONSIVE_SUFFIXES = [ '_tablet', '_mobile' ];
-
-	const TYPOGRAPHY_SETTING_SUFFIXES = [
-		'typography',
-		'font_family',
-		'font_weight',
-		'font_style',
-		'text_transform',
-		'text_decoration',
-		'font_size',
-		'line_height',
-		'letter_spacing',
-		'word_spacing',
-	];
-
-	const TYPOGRAPHY_RESPONSIVE_SUFFIXES = [
-		'font_size',
-		'line_height',
-		'letter_spacing',
-		'word_spacing',
-	];
 
 	public static function is_v3_node( array $node ): bool {
 		// V3 non-widget elements (containers/sections) are intentionally not supported at this layer for now.
@@ -125,7 +125,7 @@ class V3_Node_Bridge {
 	 *
 	 * @return string|null Warning message when Pro is missing, otherwise null.
 	 */
-	public static function apply_custom_css( array &$node, string $css_string ): ?string {
+	public static function apply_custom_css( array &$node, string $css_string, string $widget_type = '' ): ?string {
 		$css_string = trim( $css_string );
 
 		if ( '' === $css_string ) {
@@ -134,7 +134,13 @@ class V3_Node_Bridge {
 		}
 
 		if ( ! Utils::has_pro() ) {
-			return __( 'V3 widget styles require Elementor Pro (Custom CSS module). Style not applied.', 'elementor' );
+			$widget_label = '' !== $widget_type ? $widget_type : esc_html__( 'this V3 widget', 'elementor' );
+
+			return sprintf(
+				/* translators: %s: V3 widget type name. */
+				__( 'V3 widget styles for `%s` require Elementor Pro (Custom CSS module) and were not applied. Do not retry the `style` field for this widget in the current environment — either fall back to `settings`-only edits, or ask the user to install and activate Elementor Pro.', 'elementor' ),
+				$widget_label
+			);
 		}
 
 		$node['settings'][ self::V3_CUSTOM_CSS_SETTING ] = self::wrap_with_selector( $css_string );
