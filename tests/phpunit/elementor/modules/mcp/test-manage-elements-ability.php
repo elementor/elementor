@@ -864,7 +864,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $v3_id,
-					'style' => 'font-size: 2rem;',
+					'style' => 'filter: blur(2px);',
 				],
 			],
 		] );
@@ -872,7 +872,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 
 		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertSame( 'selector { font-size: 2rem; }', $node['settings']['custom_css'] ?? null );
+		$this->assertSame( 'selector { filter: blur(2px); }', $node['settings']['custom_css'] ?? null );
 		$this->assertArrayNotHasKey( 'styles', $node );
 	}
 
@@ -892,7 +892,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $v3_id,
-					'style' => 'font-size: 2rem;',
+					'style' => 'filter: blur(2px);',
 				],
 			],
 		] );
@@ -900,7 +900,12 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 		$warnings = $result['results'][0]['warnings'] ?? [];
 		$this->assertNotEmpty( $warnings );
-		$this->assertStringContainsString( 'Elementor Pro', $warnings[0] );
+		$this->assertTrue(
+			(bool) array_filter(
+				$warnings,
+				static fn( $warning ) => false !== strpos( (string) $warning, 'Elementor Pro' )
+			)
+		);
 
 		$node = $this->find_element_in_document( $post_id, $v3_id );
 		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );

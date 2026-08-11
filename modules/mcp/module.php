@@ -4,7 +4,9 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
+use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Session_Guard;
 use WP\MCP\Core\McpAdapter;
@@ -14,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
@@ -27,7 +31,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		( new Mcp_Proxy_REST_API() )->register_hooks();
+		$this->registry = self::build_core_registry();
+
+		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 
 		add_filter( 'elementor/mcp/pre_execute_guard', [ $this, 'check_mutation_guard' ], 10, 2 );
@@ -43,6 +49,10 @@ class Module extends BaseModule {
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 		add_action( 'mcp_adapter_init', [ $this, 'register_server' ] );
+	}
+
+	public function registry(): Ability_Registry {
+		return $this->registry;
 	}
 
 	public function register_ability_category() {
@@ -64,32 +74,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Abilities\Get_Structure_Ability() )->register();
-		( new Abilities\Update_Settings_Ability() )->register();
-		( new Abilities\Create_Page_Ability() )->register();
-		( new Abilities\Create_Preview_Link_Ability() )->register();
-		( new Abilities\Publish_Document_Ability() )->register();
-		( new Abilities\Style_Best_Practices_Ability() )->register();
-		( new Abilities\Wordpress_Best_Practices_Ability() )->register();
-		( new Abilities\Manage_Variable_Ability() )->register();
-		( new Abilities\Manage_Classes_Ability() )->register();
-		( new Abilities\Reorder_Classes_Ability() )->register();
-		( new Abilities\Manage_Variable_Guide_Ability() )->register();
-		( new Abilities\Get_Widget_Schema_Ability() )->register();
-		( new Abilities\List_Widget_Schemas_Ability() )->register();
-		( new Abilities\List_Dynamic_Tags_Ability() )->register();
-		( new Abilities\Build_Composition_Ability() )->register();
-		( new Abilities\Manage_Elements_Ability() )->register();
-		( new Abilities\Global_Classes_Resource_Ability() )->register();
-		( new Abilities\List_Assets_Ability() )->register();
-
-		if ( $this->is_components_active() ) {
-			( new Abilities\List_Components_Ability() )->register();
+		foreach ( $this->registry->all() as $ability ) {
+			$ability->register();
 		}
-		( new Abilities\Global_Variables_Resource_Ability() )->register();
-		( new Abilities\Interactions_Schema_Resource_Ability() )->register();
-		( new Abilities\List_Resources_Ability() )->register();
-		( new Abilities\Read_Resource_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -155,37 +142,63 @@ class Module extends BaseModule {
 		);
 	}
 
-	private function is_components_active(): bool {
+	public static function build_core_registry(): Ability_Registry {
+		$registry = new Ability_Registry();
+
+		foreach ( self::get_core_abilities( $registry ) as $ability ) {
+			$registry->add( $ability );
+		}
+
+		return $registry;
+	}
+
+	/** @return Abstract_Ability[] */
+	private static function get_core_abilities( Ability_Registry $registry ): array {
+		$abilities = [
+			new Abilities\Get_Structure_Ability(),
+			new Abilities\Update_Settings_Ability(),
+			new Abilities\Create_Page_Ability(),
+			new Abilities\Create_Preview_Link_Ability(),
+			new Abilities\Publish_Document_Ability(),
+			new Abilities\Style_Best_Practices_Ability(),
+			new Abilities\Wordpress_Best_Practices_Ability(),
+			new Abilities\Manage_Variable_Ability(),
+			new Abilities\Manage_Classes_Ability(),
+			new Abilities\Reorder_Classes_Ability(),
+			new Abilities\Manage_Variable_Guide_Ability(),
+			new Abilities\Get_Widget_Schema_Ability(),
+			new Abilities\List_Widget_Schemas_Ability(),
+			new Abilities\List_Dynamic_Tags_Ability(),
+			new Abilities\Build_Composition_Ability(),
+			new Abilities\Manage_Elements_Ability(),
+			new Abilities\Global_Classes_Resource_Ability(),
+			new Abilities\List_Assets_Ability(),
+			new Abilities\Global_Variables_Resource_Ability(),
+			new Abilities\Interactions_Schema_Resource_Ability(),
+			new Abilities\List_Resources_Ability( $registry ),
+			new Abilities\Read_Resource_Ability( $registry ),
+		];
+
+		if ( self::is_components_active() ) {
+			$abilities[] = new Abilities\List_Components_Ability();
+		}
+
+		return $abilities;
+	}
+
+	private static function is_components_active(): bool {
 		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 
 	private function get_server_tools(): array {
-		$tools = [
-			'elementor/get-page-structure',
-			'elementor/update-page-settings',
-			'elementor/create-page',
-			'elementor/create-preview-link',
-			'elementor/publish-document',
-			'elementor/manage-global-variable',
-			'elementor/manage-classes',
-			'elementor/reorder-classes',
-			'elementor/get-widget-schema',
-			'elementor/list-widget-schemas',
-			'elementor/build-composition',
-			'elementor/manage-elements',
-			'elementor/list-assets',
-			'elementor/list-resources',
-			'elementor/read-resource',
-			...( $this->is_components_active() ? [ 'elementor/list-components' ] : [] ),
-		];
+		$tools = $this->collect_server_ids( $this->registry->tools() );
 
 		/**
 		 * Filters additional MCP tool ability slugs to expose on the Elementor MCP server.
 		 *
-		 * Use this filter to add tool abilities (registered via `wp_register_ability` on the
-		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
-		 * ability id returned by the ability's `get_ability_id()`. Core defaults are always
-		 * included and cannot be removed via this filter.
+		 * Preferred integration path: add abilities directly to the Ability_Registry via
+		 * `Plugin::$instance->modules_manager->get_modules( 'mcp' )->registry()->add( ... )`.
+		 * This filter is retained for backward compatibility with third-party extensions.
 		 *
 		 * @since 4.3.0
 		 *
@@ -197,23 +210,14 @@ class Module extends BaseModule {
 	}
 
 	private function get_server_resources(): array {
-		$resources = [
-			'elementor/style-best-practices',
-			'elementor/wordpress-best-practices',
-			'elementor/manage-global-variable-guide',
-			'elementor/global-classes-resource',
-			'elementor/global-variables-resource',
-			'elementor/list-dynamic-tags',
-			'elementor/interactions-schema-resource',
-		];
+		$resources = $this->collect_server_ids( $this->registry->resources() );
 
 		/**
 		 * Filters additional MCP resource ability slugs to expose on the Elementor MCP server.
 		 *
-		 * Use this filter to add resource abilities (registered via `wp_register_ability` on the
-		 * `wp_abilities_api_init` hook) to the `elementor-mcp-server`. Slugs must match the
-		 * ability id returned by the ability's `get_ability_id()`. Core defaults are always
-		 * included and cannot be removed via this filter.
+		 * Preferred integration path: add abilities directly to the Ability_Registry via
+		 * `Plugin::$instance->modules_manager->get_modules( 'mcp' )->registry()->add( ... )`.
+		 * This filter is retained for backward compatibility with third-party extensions.
 		 *
 		 * @since 4.3.0
 		 *
@@ -222,6 +226,22 @@ class Module extends BaseModule {
 		$additional_resources = apply_filters( 'elementor/mcp/server/resources', [] );
 
 		return $this->normalize_slugs( $resources, $additional_resources );
+	}
+
+	/**
+	 * @param Abstract_Ability[] $abilities
+	 * @return string[]
+	 */
+	private function collect_server_ids( array $abilities ): array {
+		$ids = [];
+
+		foreach ( $abilities as $ability ) {
+			if ( $ability->is_exposed_on_server() ) {
+				$ids[] = $ability->get_id();
+			}
+		}
+
+		return $ids;
 	}
 
 	private function normalize_slugs( array $defaults, $additional ): array {
