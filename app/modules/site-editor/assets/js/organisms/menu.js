@@ -5,6 +5,9 @@ import AddNewButton from 'elementor-app/ui/molecules/add-new-button';
 
 import './menu.scss';
 
+// Consumed by getAppReturnToUrl() in editor-documents/src/sync/utils.ts.
+const RETURN_TO_KEY = 'elementor_app_return_to';
+
 export default function Menu( props ) {
 	const { templateTypes } = React.useContext( TemplateTypesContext ),
 		actionButton = ( itemProps ) => {
@@ -16,7 +19,7 @@ export default function Menu( props ) {
 
 			const goToCreate = () => {
 				if ( window.top !== window ) {
-					sessionStorage.setItem( 'elementor_app_return_to', window.top.location.href );
+					sessionStorage.setItem( RETURN_TO_KEY, window.top.location.href );
 					window.top.location.href = itemProps.urls.create;
 					return;
 				}

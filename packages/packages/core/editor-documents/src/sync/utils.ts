@@ -16,7 +16,7 @@ export function getV1DocumentsManager() {
 	return documentsManager;
 }
 
-const RETURN_TO_KEY = 'elementor_app_return_to';
+export const RETURN_TO_KEY = 'elementor_app_return_to';
 
 let appReturnToUrl: string | null | undefined;
 
@@ -37,13 +37,12 @@ function getAppReturnToUrl(): string | null {
 
 	try {
 		const parsedUrl = new URL( stored );
-		const isSameOrigin = parsedUrl.hostname === window.location.hostname &&
-			( 'http:' === parsedUrl.protocol || 'https:' === parsedUrl.protocol );
+		const isSameOrigin = parsedUrl.origin === window.location.origin;
 
 		if ( isSameOrigin ) {
 			appReturnToUrl = stored;
 		}
-	} catch ( e ) {
+	} catch {
 		// Invalid URL, fall through to default behavior.
 	}
 
