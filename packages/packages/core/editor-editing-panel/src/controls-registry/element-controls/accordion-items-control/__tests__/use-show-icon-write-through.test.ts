@@ -95,6 +95,40 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 			} );
 		} );
 
+		// Regression test: a head whose `show_icon` was never explicitly set (the common case - the
+		// two default accordion items' heads start this way, see `Atomic_Accordion::build_default_item()`)
+		// reports `null`, not a boolean prop object, from `getElementSettings`. The old `undo` guard
+		// (`if ( ! previousValue ) return;`) treated that falsy `null` as "skip this head", so undo
+		// silently did nothing for exactly this case. It must still write the head back (to `null`),
+		// not skip it.
+		it( 'restores a head to null on undo when its show_icon was unset beforehand', () => {
+			// Arrange.
+			jest.mocked( getElementSettings ).mockImplementation( ( elementId: string ) => ( {
+				show_icon: elementId === 'item-1-head' ? null : { $$type: 'boolean', value: false },
+			} ) );
+
+			// Act.
+			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+
+			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT );
+			jest.mocked( updateElementSettings ).mockClear();
+
+			historyMock.instance.undo();
+
+			// Assert.
+			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'item-1-head',
+				props: { show_icon: null },
+				withHistory: false,
+			} );
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'item-2-head',
+				props: { show_icon: { $$type: 'boolean', value: false } },
+				withHistory: false,
+			} );
+		} );
+
 		it( 'does nothing when the accordion has no heads', () => {
 			// Arrange.
 			jest.mocked( getContainer ).mockReturnValue( accordionContainer( [] ) );

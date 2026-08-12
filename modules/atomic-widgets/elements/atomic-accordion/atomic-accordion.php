@@ -234,6 +234,23 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			->editor_settings( [
 				'title' => esc_html__( 'Head', 'elementor' ),
 			] )
+			// Seeded explicitly, mirroring the TS repeater's `buildItemModel()`
+			// (`accordion-items-control/use-actions.ts`) - both sides of the item-building split need
+			// the head's mirrored `show_icon` prop set on creation, not left to its own schema default,
+			// or the two default items this method builds and any item added later through the panel
+			// would start from different `show_icon` states (set vs. unset). See the comment on the
+			// mirrored prop in `Atomic_Accordion_Item_Head` for why the duplication exists at all.
+			//
+			// Reads the *schema's* default here, not `$this->get_atomic_setting( 'show_icon' )`: this
+			// runs while `define_default_children()` is itself building the initial config, before
+			// `ensure_settings()` has finished resolving this element's own settings, so calling
+			// `get_atomic_setting()` here recurses back into the same in-progress settings resolution
+			// and fatals. There is also no "current" root value to seed from yet - the two default
+			// items always start from the schema default, the same as the root's own `show_icon`
+			// control does the first time it renders.
+			->settings( [
+				'show_icon' => self::define_props_schema()['show_icon']->get_default(),
+			] )
 			->children( [ $title, $icon ] )
 			->build();
 

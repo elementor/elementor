@@ -109,11 +109,10 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	/**
 	 * Reads the tag to render as from the accordion's render context.
 	 *
-	 * `title-tag` is `null` until Task 7 adds the `title_tag` prop, and the context itself is `[]`
-	 * when this element renders outside a parent `Atomic_Accordion` pass (e.g. `Render_Element_Action`
-	 * re-rendering a single element) — both cases fall back to `null` here rather than warn on a
-	 * missing array key, and the Twig template's `title_tag | default('span')` turns that into the
-	 * same `span` it already renders today.
+	 * `Render_Context::get()` returns `[]` when this element renders outside a parent
+	 * `Atomic_Accordion` pass (e.g. `Render_Element_Action` re-rendering a single element), so
+	 * `title-tag` may be absent — that falls back to `null` here rather than warn on a missing array
+	 * key, and the Twig template's `title_tag | default('span')` turns that into `span`.
 	 *
 	 * @return array
 	 */

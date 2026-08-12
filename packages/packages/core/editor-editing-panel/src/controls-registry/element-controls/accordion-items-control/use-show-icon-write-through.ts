@@ -48,12 +48,16 @@ export const cascadeShowIconToHeads = undoable< CascadeShowIconPayload, CascadeS
 			return { previous };
 		},
 		undo: ( _payload, { previous } ) => {
+			// Write back whatever `previousValue` actually was, including `null`/`undefined` (a head
+			// whose `show_icon` was never explicitly set before the cascade). Skipping on falsy here
+			// used to only ever skip that unset case - explicit `false` is a *prop object*
+			// (`{ $$type: 'boolean', value: false }`), never itself falsy - so the guard silently ate
+			// the common case (the default two-item tree's heads start with `show_icon` unset) instead
+			// of the one it looked like it was guarding against. An explicit `null` evaluates the same
+			// as "unset" in the `Child_Dependency` reconciler (`extractValue()` -> `?.value` is
+			// `undefined` either way), so this restores the icon exactly as it was.
 			Object.entries( previous ).forEach( ( [ headId, previousValue ] ) => {
-				if ( ! previousValue ) {
-					return;
-				}
-
-				updateElementSettings( { id: headId, props: { show_icon: previousValue }, withHistory: false } );
+				updateElementSettings( { id: headId, props: { show_icon: previousValue ?? null }, withHistory: false } );
 			} );
 		},
 	},

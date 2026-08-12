@@ -36,7 +36,7 @@ register( {
 	elementType: 'e-accordion',
 	id: 'e-accordion-preview-handler',
 	callback: ( { element, signal } ) => {
-		window?.parent.addEventListener( COMMAND_RUN_AFTER_EVENT, ( event ) => {
+		window.parent.addEventListener( COMMAND_RUN_AFTER_EVENT, ( event ) => {
 			if ( event.detail?.command !== SELECT_COMMAND ) {
 				return;
 			}

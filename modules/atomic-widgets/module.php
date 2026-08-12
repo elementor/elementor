@@ -638,9 +638,10 @@ class Module extends BaseModule {
 			// the rotation rule below (already a descendant selector) would still match, so the icon would
 			// render at 65x65 *and rotate* inside the 16x16 slot. `.e-accordion-item-icon-base
 			// .e-svg-base` alone would only tie the base rule's specificity (0-2-0), and the tie is not
-			// hypothetical: `wp_add_inline_style( 'elementor-frontend', … )` for this method is printed at
-			// `includes/frontend.php:671`, while the atomic base/local CSS is enqueued later, at `:703`,
-			// with no dependency between them — so on a same-specificity tie this inline CSS prints
+			// hypothetical: this method (`add_inline_styles()`) runs on the `elementor/frontend/after_enqueue_styles`
+			// hook, while `Atomic_Styles_Manager::enqueue_styles()` (the atomic base/local CSS) runs on
+			// the later `elementor/frontend/after_enqueue_post_styles` hook, with no dependency between
+			// them — so on a same-specificity tie this inline CSS prints
 			// *earlier* and would lose to the base style. The class is doubled to (0-3-0) so this rule
 			// wins outright regardless of that order.
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: 100%; height: 100%; }',
