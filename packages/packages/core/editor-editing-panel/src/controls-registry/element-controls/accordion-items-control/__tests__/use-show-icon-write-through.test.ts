@@ -1,6 +1,6 @@
+import { mockHistoryManager } from 'test-utils';
 import { getContainer, getElementSettings, updateElementSettings, type V1Element } from '@elementor/editor-elements';
 import { renderHook } from '@testing-library/react';
-import { mockHistoryManager } from 'test-utils';
 
 import { HISTORY_DEBOUNCE_WAIT } from '../../../../hooks/use-styles-fields';
 import { cascadeShowIconToHeads, useShowIconWriteThrough } from '../use-show-icon-write-through';
@@ -14,21 +14,21 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 		( {
 			id,
 			model: { get: ( key: string ) => ( key === 'elType' ? 'e-accordion-item-head' : undefined ) },
-		} as unknown as V1Element );
+		} ) as unknown as V1Element;
 
 	const itemContainer = ( id: string ): V1Element =>
 		( {
 			id,
 			model: { get: ( key: string ) => ( key === 'elType' ? 'e-accordion-item' : undefined ) },
 			children: [ headContainer( `${ id }-head` ) ],
-		} as unknown as V1Element );
+		} ) as unknown as V1Element;
 
 	const accordionContainer = ( itemIds: string[] ): V1Element =>
 		( {
 			id: ACCORDION_ID,
 			model: { get: ( key: string ) => ( key === 'elType' ? 'e-accordion' : undefined ) },
 			children: itemIds.map( itemContainer ),
-		} as unknown as V1Element );
+		} ) as unknown as V1Element;
 
 	const historyMock = mockHistoryManager();
 
@@ -191,8 +191,9 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 
 		it( 'cascades once when the value flips', () => {
 			// Arrange.
-			const { rerender } = renderHook( ( { showIcon }: { showIcon: boolean } ) =>
-				useShowIconWriteThrough( ACCORDION_ID, showIcon ), { initialProps: { showIcon: true } }
+			const { rerender } = renderHook(
+				( { showIcon }: { showIcon: boolean } ) => useShowIconWriteThrough( ACCORDION_ID, showIcon ),
+				{ initialProps: { showIcon: true } }
 			);
 
 			// Act.
@@ -201,14 +202,18 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 			// Assert.
 			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
 			expect( updateElementSettings ).toHaveBeenCalledWith(
-				expect.objectContaining( { id: 'item-1-head', props: { show_icon: { $$type: 'boolean', value: false } } } )
+				expect.objectContaining( {
+					id: 'item-1-head',
+					props: { show_icon: { $$type: 'boolean', value: false } },
+				} )
 			);
 		} );
 
 		it( 'does not cascade again when re-rendered with the same value', () => {
 			// Arrange.
-			const { rerender } = renderHook( ( { showIcon }: { showIcon: boolean } ) =>
-				useShowIconWriteThrough( ACCORDION_ID, showIcon ), { initialProps: { showIcon: true } }
+			const { rerender } = renderHook(
+				( { showIcon }: { showIcon: boolean } ) => useShowIconWriteThrough( ACCORDION_ID, showIcon ),
+				{ initialProps: { showIcon: true } }
 			);
 
 			// Act.

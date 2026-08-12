@@ -28,7 +28,7 @@ type CascadeShowIconResult = {
 // once. It does not touch the icon child itself - each head's own `Child_Dependency` (bound to that
 // head's settings `change` event) reacts to the prop flip and attaches/detaches/restashes the icon
 // on its own, exactly as it would if the head's `show_icon` had been changed directly.
-export const cascadeShowIconToHeads = undoable< CascadeShowIconPayload, CascadeShowIconResult, void >(
+export const cascadeShowIconToHeads = undoable< CascadeShowIconPayload, CascadeShowIconResult, undefined >(
 	{
 		do: ( { accordionId, showIcon } ) => {
 			const headIds = getAccordionHeadIds( accordionId );
@@ -57,7 +57,11 @@ export const cascadeShowIconToHeads = undoable< CascadeShowIconPayload, CascadeS
 			// as "unset" in the `Child_Dependency` reconciler (`extractValue()` -> `?.value` is
 			// `undefined` either way), so this restores the icon exactly as it was.
 			Object.entries( previous ).forEach( ( [ headId, previousValue ] ) => {
-				updateElementSettings( { id: headId, props: { show_icon: previousValue ?? null }, withHistory: false } );
+				updateElementSettings( {
+					id: headId,
+					props: { show_icon: previousValue ?? null },
+					withHistory: false,
+				} );
 			} );
 		},
 	},
@@ -87,7 +91,10 @@ function getAccordionHeadIds( accordionId: string ): string[] {
 	);
 
 	const headContainers = itemContainers
-		.map( ( item ) => item.children?.find( ( child ) => child.model.get( 'elType' ) === ACCORDION_ITEM_HEAD_ELEMENT_TYPE ) )
+		.map(
+			( item ) =>
+				item.children?.find( ( child ) => child.model.get( 'elType' ) === ACCORDION_ITEM_HEAD_ELEMENT_TYPE )
+		)
 		.filter( ( head ): head is V1Element => Boolean( head ) );
 
 	return headContainers.map( ( head ) => head.id );

@@ -145,15 +145,42 @@ class Atomic_Accordion extends Atomic_Element_Base {
 					Html_Tag_Control::bind_to( 'title_tag' )
 						->set_label( esc_html__( 'Title HTML Tag', 'elementor' ) )
 						->set_options( [
-							[ 'value' => 'h1', 'label' => 'H1' ],
-							[ 'value' => 'h2', 'label' => 'H2' ],
-							[ 'value' => 'h3', 'label' => 'H3' ],
-							[ 'value' => 'h4', 'label' => 'H4' ],
-							[ 'value' => 'h5', 'label' => 'H5' ],
-							[ 'value' => 'h6', 'label' => 'H6' ],
-							[ 'value' => 'div', 'label' => 'Div' ],
-							[ 'value' => 'p', 'label' => 'P' ],
-							[ 'value' => 'span', 'label' => 'Span' ],
+							[
+								'value' => 'h1',
+								'label' => 'H1',
+							],
+							[
+								'value' => 'h2',
+								'label' => 'H2',
+							],
+							[
+								'value' => 'h3',
+								'label' => 'H3',
+							],
+							[
+								'value' => 'h4',
+								'label' => 'H4',
+							],
+							[
+								'value' => 'h5',
+								'label' => 'H5',
+							],
+							[
+								'value' => 'h6',
+								'label' => 'H6',
+							],
+							[
+								'value' => 'div',
+								'label' => 'Div',
+							],
+							[
+								'value' => 'p',
+								'label' => 'P',
+							],
+							[
+								'value' => 'span',
+								'label' => 'Span',
+							],
 						] ),
 					Switch_Control::bind_to( 'faq_schema' )
 						->set_label( esc_html__( 'FAQ Schema', 'elementor' ) ),
@@ -478,8 +505,8 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 * defensive second pass in case some element's `render_markdown()` ever emits raw HTML.
 	 *
 	 * @param Atomic_Element_Base $item
-	 * @param string|null $via_type
-	 * @param string $target_type
+	 * @param string|null         $via_type
+	 * @param string              $target_type
 	 * @return string
 	 */
 	private function get_faq_item_text( $item, $via_type, string $target_type ): string {

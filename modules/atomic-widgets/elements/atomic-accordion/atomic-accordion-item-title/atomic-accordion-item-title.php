@@ -77,7 +77,7 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 		return 'span';
 	}
 
-	/*
+	/**
 	 * No base styles for this slot (Step 2's table: base styles "none" for the title). Removing
 	 * the override entirely, rather than returning an empty `Style_Definition` list, is safe:
 	 * `Has_Base_Styles::get_base_styles_dictionary()` returns `[]` for a type with no
@@ -85,7 +85,6 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	 * `base_styles.base` — an empty array leaves that lookup `null`, which `join(' ')` renders as
 	 * an empty string alongside the other class names, so the class list still comes out clean.
 	 */
-
 	protected function define_default_children() {
 		return [
 			Atomic_Paragraph::generate()
