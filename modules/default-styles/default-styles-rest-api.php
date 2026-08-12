@@ -47,25 +47,6 @@ class Default_Styles_REST_API {
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-				'args' => [
-					'context' => [
-						'type' => 'string',
-						'required' => false,
-						'default' => Default_Styles_Repository::CONTEXT_FRONTEND,
-						'enum' => [
-							Default_Styles_Repository::CONTEXT_FRONTEND,
-							Default_Styles_Repository::CONTEXT_PREVIEW,
-						],
-					],
-				],
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/publish', [
-			[
-				'methods' => 'POST',
-				'callback' => fn() => $this->route_wrapper( fn() => $this->publish() ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 
@@ -79,15 +60,6 @@ class Default_Styles_REST_API {
 						'type' => 'string',
 						'required' => true,
 					],
-					'context' => [
-						'type' => 'string',
-						'required' => false,
-						'default' => Default_Styles_Repository::CONTEXT_FRONTEND,
-						'enum' => [
-							Default_Styles_Repository::CONTEXT_FRONTEND,
-							Default_Styles_Repository::CONTEXT_PREVIEW,
-						],
-					],
 				],
 			],
 			[
@@ -99,22 +71,13 @@ class Default_Styles_REST_API {
 						'type' => 'string',
 						'required' => true,
 					],
-					'context' => [
-						'type' => 'string',
-						'required' => false,
-						'default' => Default_Styles_Repository::CONTEXT_PREVIEW,
-						'enum' => [
-							Default_Styles_Repository::CONTEXT_FRONTEND,
-							Default_Styles_Repository::CONTEXT_PREVIEW,
-						],
-					],
 					'variants' => [
 						'type' => 'array',
 						'required' => true,
 					],
 					'type' => [
 						'type' => 'string',
-						'enum' => [ 'tag' ],
+						'enum' => [ 'class' ],
 						'required' => false,
 					],
 				],
@@ -128,25 +91,13 @@ class Default_Styles_REST_API {
 						'type' => 'string',
 						'required' => true,
 					],
-					'context' => [
-						'type' => 'string',
-						'required' => false,
-						'default' => Default_Styles_Repository::CONTEXT_PREVIEW,
-						'enum' => [
-							Default_Styles_Repository::CONTEXT_FRONTEND,
-							Default_Styles_Repository::CONTEXT_PREVIEW,
-						],
-					],
 				],
 			],
 		] );
 	}
 
 	private function all( \WP_REST_Request $request ) {
-		$context = $request->get_param( 'context' );
-		$is_preview = Default_Styles_Repository::CONTEXT_PREVIEW === $context;
-
-		$items = $this->get_repository()->set_preview( $is_preview )->all();
+		$items = $this->get_repository()->all();
 
 		return Response_Builder::make( (object) $items )->build();
 	}
@@ -161,9 +112,7 @@ class Default_Styles_REST_API {
 				->build();
 		}
 
-		$context = $request->get_param( 'context' );
-		$is_preview = Default_Styles_Repository::CONTEXT_PREVIEW === $context;
-		$item = $this->get_repository()->set_preview( $is_preview )->get( $tag );
+		$item = $this->get_repository()->get( $tag );
 
 		if ( ! $item ) {
 			return Error_Builder::make( 'not_found' )
@@ -185,10 +134,7 @@ class Default_Styles_REST_API {
 				->build();
 		}
 
-		$context = $request->get_param( 'context' );
-		$is_preview = Default_Styles_Repository::CONTEXT_PREVIEW === $context;
-
-		$this->get_repository()->set_preview( $is_preview )->put(
+		$this->get_repository()->put(
 			$tag,
 			[
 				'type' => 'class',
@@ -196,7 +142,7 @@ class Default_Styles_REST_API {
 			]
 		);
 
-		$item = $this->get_repository()->set_preview( $is_preview )->get( $tag );
+		$item = $this->get_repository()->get( $tag );
 
 		return Response_Builder::make( $item )->build();
 	}
@@ -211,20 +157,9 @@ class Default_Styles_REST_API {
 				->build();
 		}
 
-		$context = $request->get_param( 'context' );
-		$is_preview = Default_Styles_Repository::CONTEXT_PREVIEW === $context;
-
-		$this->get_repository()->set_preview( $is_preview )->delete( $tag );
+		$this->get_repository()->delete( $tag );
 
 		return Response_Builder::make( [ 'deleted' => true ] )->build();
-	}
-
-	private function publish() {
-		$this->get_repository()->publish_all();
-
-		$items = $this->get_repository()->set_preview( false )->all();
-
-		return Response_Builder::make( (object) $items )->build();
 	}
 
 	private function route_wrapper( callable $callback ) {
