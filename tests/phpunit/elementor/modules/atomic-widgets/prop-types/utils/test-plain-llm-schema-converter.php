@@ -236,8 +236,8 @@ class Test_Plain_Llm_Schema_Converter extends TestCase {
 		$plain = Plain_Llm_Schema_Converter::convert( $envelope );
 
 		$this->assertSame( 'union of string and global-color-variable', $plain['description'] );
-		$this->assertCount( 1, $plain['anyOf'], 'identical unwrapped branches should collapse' );
-		$this->assertSame( [ 'type' => 'string' ], $plain['anyOf'][0] );
+		$this->assertArrayNotHasKey( 'anyOf', $plain, 'single collapsed branch should be merged into parent' );
+		$this->assertSame( 'string', $plain['type'] );
 	}
 
 	public function test_convert__union_with_distinct_branches__preserves_all() {
