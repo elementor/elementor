@@ -33,6 +33,14 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		'e-accordion-item-content' => Atomic_Accordion_Item_Content::class,
 	];
 
+	/**
+	 * Backs the `accunitN` fixture ids `expand()` assigns. Kept on the instance, not reset to 0
+	 * per tree, so two `render_accordion()` calls within the same test method get non-overlapping
+	 * ids — real elements get genuinely unique ids in production, and
+	 * `test_render_two_instances_have_distinct_names()` depends on that being true here too.
+	 */
+	private int $render_seq = 0;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -93,23 +101,33 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $type );
 			}
 
-			$defaults = $element_type ? ( $element_type->get_config()['default_children'] ?? [] ) : [];
-			$node['elements'] = array_map( fn( $child ) => $this->expand( $child, $seq, $depth + 1 ), $defaults );
+			$children = $element_type ? ( $element_type->get_config()['default_children'] ?? [] ) : [];
 		} else {
-			$node['elements'] = array_map( fn( $child ) => $this->expand( $child, $seq, $depth + 1 ), $node['elements'] ?? [] );
+			$children = $node['elements'] ?? [];
 		}
+
+		// `array_map( fn( $child ) => $this->expand( $child, $seq, ... ), ... )` looks equivalent
+		// to a loop, but isn't: arrow functions capture `$seq` **by value** at closure-creation
+		// time, once, for the whole `array_map()` call. Each of the callback's several invocations
+		// (one per sibling) starts from that same captured snapshot rather than the previous
+		// sibling's mutated value, so every sibling at a given level collapsed onto the same id.
+		// A plain loop passes `$seq` to `expand()` directly, preserving the real by-reference
+		// parameter binding the counter depends on.
+		$expanded = [];
+		foreach ( $children as $child ) {
+			$expanded[] = $this->expand( $child, $seq, $depth + 1 );
+		}
+		$node['elements'] = $expanded;
 
 		return $node;
 	}
 
 	private function build_default_tree( array $settings ): array {
-		$seq = 0;
-
 		return $this->expand( [
 			'elType' => 'e-accordion',
 			'settings' => $settings,
 			'elements' => Plugin::$instance->elements_manager->get_element_types( 'e-accordion' )->get_config()['default_children'],
-		], $seq );
+		], $this->render_seq );
 	}
 
 	/**
@@ -117,8 +135,6 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	 * Used for tests that need the FAQ schema to be non-empty (which requires content).
 	 */
 	private function build_tree_with_explicit_content( array $settings ): array {
-		$seq = 0;
-
 		$items = Plugin::$instance->elements_manager->get_element_types( 'e-accordion' )->get_config()['default_children'];
 
 		// Add explicit paragraph content to each item's content area
@@ -154,7 +170,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			'elType' => 'e-accordion',
 			'settings' => $settings,
 			'elements' => $items,
-		], $seq );
+		], $this->render_seq );
 	}
 
 	private function render_accordion( array $settings ): string {
