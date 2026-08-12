@@ -134,7 +134,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -363,6 +366,9 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
 			$elements_manager->register_element_type( new Atomic_List() );
+			$elements_manager->register_element_type( new Atomic_List_Item() );
+			$elements_manager->register_element_type( new Atomic_List_Item_Marker() );
+			$elements_manager->register_element_type( new Atomic_List_Item_Content() );
 		}
 
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
@@ -588,6 +594,11 @@ class Module extends BaseModule {
 			// sets one of the state classes from real playback, so exactly one button shows there.
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
+			'.e-list { margin: 0; padding: 0; }',
+			'.e-list-item { list-style: none; }',
+			'.e-list-item__marker { align-self: flex-start; }',
+			'.e-list-item__marker .e-svg-base { width: 1rem; height: 1rem; }',
+			'.e-list-item__content { min-width: 0; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
