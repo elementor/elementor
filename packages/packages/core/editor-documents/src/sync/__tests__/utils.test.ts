@@ -1,5 +1,6 @@
 import { createMockDocumentData } from 'test-utils';
 
+import { type V1Document } from '../../types';
 import { getV1DocumentsManager } from '../utils';
 
 /**
@@ -23,24 +24,24 @@ describe( '@elementor/editor-documents - Sync Utils', () => {
 describe( '@elementor/editor-documents - getV1DocumentsExitTo with return URL', () => {
 	const RETURN_TO_KEY = 'elementor_app_return_to';
 
-	let mockDocument;
+	let mockDocument: V1Document;
 
 	beforeEach( () => {
 		sessionStorage.clear();
 
 		mockDocument = createMockDocumentData( { id: 1 } );
 
-		window.elementor = {
+		( window as Record< string, unknown > ).elementor = {
 			getPreferences: () => 'this_post',
 		};
 	} );
 
 	afterEach( () => {
-		delete window.elementor;
+		delete ( window as Record< string, unknown > ).elementor;
 	} );
 
-	function getFreshExitTo( documentData ) {
-		let result;
+	function getFreshExitTo( documentData: V1Document ): string {
+		let result: string;
 
 		jest.isolateModules( () => {
 			const { getV1DocumentsExitTo } = require( '../utils' );
@@ -109,8 +110,8 @@ describe( '@elementor/editor-documents - getV1DocumentsExitTo with return URL', 
 		sessionStorage.setItem( RETURN_TO_KEY, returnUrl );
 
 		// Act — use the same module instance for both calls.
-		let firstResult;
-		let secondResult;
+		let firstResult: string;
+		let secondResult: string;
 
 		jest.isolateModules( () => {
 			const { getV1DocumentsExitTo } = require( '../utils' );
