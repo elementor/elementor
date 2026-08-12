@@ -4,7 +4,7 @@ import {
   createNestedTemplatedElementView,
 } from './create-nested-templated-element-type';
 import { registerElementType } from './init-legacy-views';
-import type { ElementType, ElementView, RenderContext } from './types';
+import type { ElementType, RenderContext } from './types';
 
 const LIST_TYPE = 'e-list';
 
@@ -44,7 +44,7 @@ function createListView( options: CreateNestedTemplatedElementTypeOptions ) {
   const BaseView = createNestedTemplatedElementView( options );
 
   return BaseView.extend( {
-    initialize( this: ElementView, ...args: unknown[] ) {
+    initialize( ...args: unknown[] ) {
       BaseView.prototype.initialize?.apply( this, args );
 
       const settings = this.model.get( 'settings' );
@@ -55,7 +55,7 @@ function createListView( options: CreateNestedTemplatedElementTypeOptions ) {
       }
     },
 
-    onRender( this: ElementView ) {
+    onRender() {
       BaseView.prototype.onRender?.call( this );
       this._syncShowMarkersToChildren();
     },
@@ -66,7 +66,7 @@ function createListView( options: CreateNestedTemplatedElementTypeOptions ) {
      * This propagates the list-level setting to each item, where children dependencies
      * will conditionally add/remove markers based on the value.
      */
-    _syncShowMarkersToChildren( this: ElementView ) {
+    _syncShowMarkersToChildren() {
       const settings = this.model.get( 'settings' );
       const showMarkersProp = settings?.get?.( 'show_markers' ) as unknown;
       const showMarkers =
@@ -100,7 +100,7 @@ function createListView( options: CreateNestedTemplatedElementTypeOptions ) {
       }
     },
 
-    getRenderContext( this: ElementView ): RenderContext | undefined {
+    getRenderContext(): RenderContext | undefined {
       const parentContext = this._parent?.getRenderContext?.();
       const settings = this.model.get( 'settings' );
       const showMarkersProp = settings?.get?.( 'show_markers' ) as unknown;
@@ -113,7 +113,7 @@ function createListView( options: CreateNestedTemplatedElementTypeOptions ) {
       };
     },
 
-    getResolverRenderContext( this: ElementView ): RenderContext | undefined {
+    getResolverRenderContext(): RenderContext | undefined {
       const parentContext = this._parent?.getResolverRenderContext?.();
       const settings = this.model.get( 'settings' );
       const showMarkersProp = settings?.get?.( 'show_markers' ) as unknown;
