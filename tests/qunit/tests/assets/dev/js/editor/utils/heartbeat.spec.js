@@ -11,12 +11,13 @@ const makeSpy = () => {
 };
 
 QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
-	let heartbeat, mockDocument, mockEnqueue, mockConnectNow, originalChannelsEditor;
+	let heartbeat, mockDocument, mockEnqueue, mockConnectNow, originalChannelsEditor, originalWp;
 
 	hooks.beforeEach( () => {
 		mockEnqueue = makeSpy();
 		mockConnectNow = makeSpy();
 
+		originalWp = window.wp;
 		window.wp = {
 			heartbeat: {
 				enqueue: mockEnqueue,
@@ -42,6 +43,7 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 
 	hooks.afterEach( () => {
 		heartbeat.destroy();
+		window.wp = originalWp;
 		elementor.channels.editor = originalChannelsEditor;
 	} );
 
