@@ -114,9 +114,6 @@ class Atomic_Accordion extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
-					Text_Control::bind_to( '_cssid' )
-						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
 					Toggle_Control::bind_to( 'default_state' )
 						->set_label( esc_html__( 'Default State', 'elementor' ) )
 						->add_options( [
@@ -139,6 +136,9 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->set_full_width( true ),
 					Switch_Control::bind_to( 'faq_schema' )
 						->set_label( esc_html__( 'FAQ Schema', 'elementor' ) ),
+					Text_Control::bind_to( '_cssid' )
+						->set_label( __( 'ID', 'elementor' ) )
+						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
 		];
 	}
