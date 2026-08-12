@@ -19,8 +19,11 @@ class Editor_Sync_State {
 	}
 
 	public function handle_unsaved_signal( int $post_id, $signal_value ): void {
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
 		if ( $signal_value ) {
-			self::set_editor_unsaved( (int) $signal_value );
+			self::set_editor_unsaved( $post_id );
 		} else {
 			self::clear_editor_unsaved( $post_id );
 		}
@@ -44,7 +47,7 @@ class Editor_Sync_State {
 			return null;
 		}
 
-		$has_lock    = ! empty( get_post_meta( $post_id, '_edit_lock', true ) );
+		$has_lock    = (bool) wp_check_post_lock( $post_id );
 		$has_unsaved = self::has_editor_unsaved( $post_id );
 
 		if ( ! $has_lock || ! $has_unsaved ) {

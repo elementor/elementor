@@ -51,6 +51,8 @@ class Heartbeat {
 				$response['elementor_mcp_mutation'] = $mutation_marker;
 			}
 
+			$response['elementor_server_time'] = time();
+
 			/** @var Core\Common\Modules\Ajax\Module $ajax */
 			$ajax = Plugin::$instance->common->get_component( 'ajax' );
 

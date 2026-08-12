@@ -3,11 +3,11 @@ export default class Heartbeat {
 	externalChangeModal = null;
 	document = null;
 	lastSyncedAt = 0;
+	pendingSyncTime = true;
 	lastStateOfDocumentChange = false;
 
 	constructor( document ) {
 		this.document = document;
-		this.lastSyncedAt = Math.floor( Date.now() / 1000 );
 		this.lastStateOfDocumentChange = document.editor.isChanged;
 
 		this.onSend = this.onSend.bind( this );
@@ -66,6 +66,11 @@ export default class Heartbeat {
 	}
 
 	onTick( event, response ) {
+		if ( this.pendingSyncTime && response.elementor_server_time ) {
+			this.lastSyncedAt = response.elementor_server_time;
+			this.pendingSyncTime = false;
+		}
+
 		if ( response.locked_user ) {
 			if ( this.document.editor.isChanged ) {
 				$e.run( 'document/save/auto', {
@@ -102,7 +107,7 @@ export default class Heartbeat {
 	}
 
 	onDocumentLoaded() {
-		this.lastSyncedAt = Math.floor( Date.now() / 1000 );
+		this.pendingSyncTime = true;
 	}
 
 	reloadDocument() {
@@ -115,7 +120,7 @@ export default class Heartbeat {
 	}
 
 	forceSave() {
-		this.lastSyncedAt = Math.floor( Date.now() / 1000 );
+		this.pendingSyncTime = true;
 		$e.run( 'document/save/save', { document: this.document } );
 	}
 

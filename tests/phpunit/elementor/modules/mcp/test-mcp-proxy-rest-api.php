@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 	const TEST_POST_ID         = 999;
-	const EDIT_LOCK_META_KEY   = '_edit_lock';
 	const UNSAVED_TRANSIENT_KEY = '_elementor_editor_unsaved_999';
 
 	public function setUp(): void {
@@ -38,7 +37,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		delete_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY );
+		delete_post_meta( self::TEST_POST_ID, '_edit_lock' );
 		delete_transient( self::UNSAVED_TRANSIENT_KEY );
 
 		parent::tearDown();
@@ -198,7 +197,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	public function test_mutation_guard__returns_409_when_lock_and_unsaved_exist() {
 		// Arrange
 		$this->act_as_admin();
-		update_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY, '1' );
+		wp_set_post_lock( self::TEST_POST_ID );
 		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
 
 		// Act
@@ -212,7 +211,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 	public function test_mutation_guard__returns_null_when_lock_exists_but_no_unsaved() {
 		// Arrange
-		update_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY, '1' );
+		wp_set_post_lock( self::TEST_POST_ID );
 
 		// Act
 		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );

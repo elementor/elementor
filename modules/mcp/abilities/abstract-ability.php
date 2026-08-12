@@ -48,7 +48,7 @@ abstract class Abstract_Ability {
 		return (bool) call_user_func( $this->definition()->permission_callback );
 	}
 
-	final public function register(): void {
+	public function register(): void {
 		$definition = $this->definition()->to_array();
 		$definition['execute_callback'] = [ $this, 'execute_guarded' ];
 		wp_register_ability( $this->get_id(), $definition );
