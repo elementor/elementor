@@ -145,7 +145,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	/**
 	 * Attaches/detaches the icon child as the mirrored `show_icon` prop changes, with `stash( true )`
 	 * so a user's *replaced* SVG (or one with edited styles) comes back exactly as it was on
-	 * OFF -> ON, instead of a fresh default chevron being reseeded over it. Mirrors
+	 * OFF -> ON, instead of a fresh default SVG being reseeded over it. Mirrors
 	 * `Atomic_Background_Video::define_children_dependencies()` for `show_controls` / the
 	 * Controls child.
 	 */

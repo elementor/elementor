@@ -10,7 +10,7 @@ import { ACCORDION_ELEMENT_TYPE, ACCORDION_ITEM_ELEMENT_TYPE, type AccordionItem
 import { useShowIconWriteThrough } from './use-show-icon-write-through';
 
 // Unlike the Tabs control there is no `SettingsField` / `useBoundProp` wrapper here: an accordion
-// item is self-contained (head and content are nested inside the one `e-accordion-item`), so there
+// item is self-contained (header and content are nested inside the one `e-accordion-item`), so there
 // is no per-item prop on the root to bind to. `Repeater` reads no bound prop of its own — its only
 // context dependency is `ControlAdornmentsProvider`, which `SettingsControl` already provides for
 // element controls and which falls back to no adornments when absent.

@@ -558,22 +558,43 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( root.locator( 'details' ).nth( 1 ) ).toHaveAttribute( 'open', '' );
 	} );
 
-	test( 'Title HTML Tag setting is reflected on the frontend', async () => {
-		// Arrange
-		await editor.addElement( { elType: accordionType, settings: { title_tag: 'h3' } }, 'document' );
-
-		// Act
-		await editor.publishAndViewPage();
-
-		// Assert
-		const titleHeading = editor.page.locator( `h3[data-element_type="${ titleType }"]` ).first();
-		await expect( titleHeading ).toBeVisible();
-		await expect( titleHeading ).toContainText( 'Accordion Item 1' );
-	} );
+	// NOTE: The former `'Title HTML Tag setting is reflected on the frontend'` test asserted a
+	// root-level `title_tag` setting that no longer exists — an earlier task in this fix wave
+	// removed the `title_tag` root prop entirely (see `atomic-accordion-item-title.php`: "This
+	// element no longer has a settable `tag` prop of its own"). The tag control now lives solely on
+	// the title's inner Paragraph child (`Atomic_Paragraph`'s own `tag` prop/control, constrained to
+	// `p`/`span`, not heading tags). That Paragraph `tag` control is generic — not accordion-specific
+	// — and this suite has no existing e2e coverage of it anywhere (checked across
+	// `tests/playwright/sanity/modules/v4-tests/`), so a replacement test for it belongs with the
+	// Paragraph element's own suite, not the accordion one; adding one here would be out of scope for
+	// this fix wave. The test is removed rather than replaced.
 
 	test( 'FAQ Schema ON emits FAQPage JSON-LD on the frontend; OFF emits none', async () => {
-		// Arrange & Act — ON.
-		await editor.addElement( { elType: accordionType, settings: { faq_schema: true } }, 'document' );
+		// Arrange — default accordion items ship with an empty content area (an earlier task in this
+		// fix wave removed the default content-area paragraph child), so `build_faq_schema_json()` /
+		// `get_faq_item_text()` (`atomic-accordion.php`) would skip every item as empty and emit no
+		// `<script>` tag at all. Mirrors the equivalent PHPUnit fix's
+		// `build_tree_with_explicit_content()` helper: give each item's content area real text before
+		// asserting, using this suite's established idiom for authoring atomic paragraph content —
+		// `editor.triggerEditingElement()` + inline canvas editing (see
+		// `inline-text-editing/canvas-editing.test.ts`) — rather than a settings shape that isn't
+		// exercised anywhere else in this file.
+		const accordionId = await editor.addElement( { elType: accordionType, settings: { faq_schema: true } }, 'document' );
+		const root = getAccordionRoot( accordionId );
+		const contentIds = await getIdsByType( root, contentType );
+		expect( contentIds ).toHaveLength( 2 );
+
+		const answers = [ 'Answer one content.', 'Answer two content.' ];
+
+		for ( let i = 0; i < contentIds.length; i++ ) {
+			const paragraphId = await editor.addWidget( { widgetType: paragraphType, container: contentIds[ i ] } );
+			const inlineEditor = await editor.triggerEditingElement( paragraphId );
+			await inlineEditor.clear();
+			await editor.page.keyboard.type( answers[ i ] );
+			await editor.page.keyboard.press( 'Escape', { delay: 100 } );
+		}
+
+		// Act
 		await editor.publishAndViewPage();
 
 		// Assert
@@ -581,7 +602,8 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		expect( html ).toContain( 'application/ld+json' );
 		expect( html ).toContain( '"@type":"FAQPage"' );
 		expect( html ).toContain( 'Accordion Item 1' );
-		expect( html ).toContain( 'Content goes here...' );
+		expect( html ).toContain( answers[ 0 ] );
+		expect( html ).toContain( answers[ 1 ] );
 
 		// Arrange & Act — OFF, on a fresh page.
 		editor = await wpAdmin.openNewPage();

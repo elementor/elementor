@@ -145,8 +145,10 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 						];
 					}
 				}
+				unset( $sub );
 			}
 		}
+		unset( $item );
 
 		return $this->expand( [
 			'elType' => 'e-accordion',
@@ -511,7 +513,6 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 
 	public function test_faq_schema_on_emits_faq_page_json_ld() {
 		// Build accordion with explicit content; the content area no longer has default children
-		$seq = 0;
 		$instance = Plugin::$instance->elements_manager->create_element_instance(
 			$this->build_tree_with_explicit_content( [ 'faq_schema' => true ] )
 		);
