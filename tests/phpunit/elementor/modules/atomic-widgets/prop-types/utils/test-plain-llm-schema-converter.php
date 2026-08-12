@@ -240,6 +240,28 @@ class Test_Plain_Llm_Schema_Converter extends TestCase {
 		$this->assertSame( 'string', $plain['type'] );
 	}
 
+	public function test_convert__union__single_collapsed_branch_preserves_parent_description() {
+		$envelope = [
+			'description' => 'parent description',
+			'anyOf' => [
+				[
+					'description' => 'branch description',
+					'type' => 'string',
+				],
+				[
+					'description' => 'branch description',
+					'type' => 'string',
+				],
+			],
+		];
+
+		$plain = Plain_Llm_Schema_Converter::convert( $envelope );
+
+		$this->assertSame( 'parent description', $plain['description'], 'parent description must not be overwritten by branch' );
+		$this->assertSame( 'string', $plain['type'] );
+		$this->assertArrayNotHasKey( 'anyOf', $plain );
+	}
+
 	public function test_convert__union_with_distinct_branches__preserves_all() {
 		$envelope = [
 			'anyOf' => [

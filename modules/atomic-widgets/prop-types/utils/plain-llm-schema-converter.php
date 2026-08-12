@@ -37,7 +37,7 @@ class Plain_Llm_Schema_Converter {
 			if ( count( $schema['anyOf'] ) === 1 ) {
 				$shape = $schema['anyOf'][0];
 				unset( $schema['anyOf'] );
-				$schema = array_merge( $schema, $shape );
+				$schema = array_merge( $shape, $schema );
 			}
 		}
 
