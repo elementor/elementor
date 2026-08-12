@@ -78,20 +78,6 @@ class Llm_Guidance_Builder {
 			return [];
 		}
 
-		$types = [];
-
-		foreach ( $default_children as $child ) {
-			if ( empty( $child['meta']['required'] ) ) {
-				continue;
-			}
-
-			$type = $child['widgetType'] ?? $child['elType'] ?? null;
-
-			if ( $type ) {
-				$types[] = $type;
-			}
-		}
-
-		return $types;
+		return Default_Children_Utils::get_required_child_types( $default_children );
 	}
 }
