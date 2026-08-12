@@ -73,6 +73,7 @@ export const useActions = () => {
 
     items.forEach( ( { index } ) => {
       const position = index + 1;
+      const title = `Item ${ position }`;
 
       createElements( {
         title: __( 'List Items', 'elementor' ),
@@ -83,7 +84,7 @@ export const useActions = () => {
               elType: LIST_ITEM_ELEMENT_TYPE,
               hydrateDefaultChildren: true,
               editor_settings: {
-                label: `Item ${ position }`,
+                title,
                 initial_position: position,
               },
             },

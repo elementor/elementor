@@ -91,6 +91,10 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 		];
 	}
 
+	protected function build_template_context(): array {
+		return $this->build_base_template_context();
+	}
+
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-list-item-marker' => __DIR__ . '/atomic-list-item-marker.html.twig',
