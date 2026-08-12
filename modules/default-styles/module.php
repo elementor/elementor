@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_default_styles';
 
+	const PACKAGES = [
+		'editor-default-styles',
+	];
+
 	public function get_name() {
 		return 'default-styles';
 	}
@@ -43,6 +47,8 @@ class Module extends BaseModule {
 
 		( new Default_Style_Post_Type() )->register();
 		( new Default_Styles_Tag_Post_IDs() )->register_hooks();
+
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 		( new Default_Styles_REST_API() )->register_hooks();
 		( new Atomic_Default_Styles() )->register_hooks();
@@ -77,5 +83,9 @@ class Module extends BaseModule {
 		foreach ( array_keys( $tags ) as $tag ) {
 			Default_Style_Post::clone_to_other_kit( $tag, $previous_kit, $new_kit );
 		}
+	}
+
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
 	}
 }
