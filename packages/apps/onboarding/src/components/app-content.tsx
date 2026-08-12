@@ -13,11 +13,8 @@ import { useOnboardingEvent } from '../hooks/use-onboarding-event';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { useVideoPreload } from '../hooks/use-video-preload';
-import { BuildingFor } from '../steps/screens/building-for';
-import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { ProInstall } from '../steps/screens/pro-install';
-import { SiteAbout } from '../steps/screens/site-about';
 import { HELLO_THEME_FEATURE_ID, SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
@@ -485,12 +482,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const renderStepContent = () => {
 		switch ( stepId ) {
-			case StepId.BUILDING_FOR:
-				return <BuildingFor onComplete={ handleContinue } />;
-			case StepId.SITE_ABOUT:
-				return <SiteAbout />;
-			case StepId.EXPERIENCE_LEVEL:
-				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.THEME_SELECTION:
 				return <ThemeSelection />;
 			case StepId.SITE_FEATURES:
@@ -509,7 +500,14 @@ export function AppContent( { onClose }: AppContentProps ) {
 			<BaseLayout
 				topBar={
 					<TopBar>
-						<TopBarContent showUpgrade={ false } showClose={ false } />
+						<TopBarContent
+							showUpgrade
+							showClose={ false }
+							onUpgrade={ () => {
+								trackUpgradeClicked( 'login' );
+								window.open( urls.upgradeUrl, '_blank' );
+							} }
+						/>
 					</TopBar>
 				}
 			>
@@ -568,11 +566,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				</Footer>
 			}
 		>
-			<SplitLayout
-				left={ renderStepContent() }
-				rightConfig={ rightPanelConfig }
-				progress={ { currentStep: stepIndex, totalSteps } }
-			/>
+			<SplitLayout left={ renderStepContent() } rightConfig={ rightPanelConfig } />
 		</BaseLayout>
 	);
 }
