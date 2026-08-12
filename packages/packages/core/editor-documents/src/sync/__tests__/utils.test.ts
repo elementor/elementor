@@ -1,5 +1,6 @@
-import { getV1DocumentsManager } from '../utils';
 import { createMockDocumentData } from 'test-utils';
+
+import { getV1DocumentsManager } from '../utils';
 
 /**
  * This test exists only because this function is being used only inside event handlers,
