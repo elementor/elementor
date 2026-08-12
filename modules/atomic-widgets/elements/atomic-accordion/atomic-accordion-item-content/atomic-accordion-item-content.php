@@ -4,12 +4,10 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accor
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -96,20 +94,6 @@ class Atomic_Accordion_Item_Content extends Atomic_Element_Base {
 							] ),
 						] )
 				),
-		];
-	}
-
-	protected function define_default_children() {
-		return [
-			Atomic_Paragraph::generate()
-				->settings( [
-					'paragraph' => Html_V3_Prop_Type::generate( [
-						'content' => String_Prop_Type::generate( esc_html__( 'Content goes here...', 'elementor' ) ),
-						'children' => [],
-					] ),
-					'tag' => String_Prop_Type::generate( 'p' ),
-				] )
-				->build(),
 		];
 	}
 

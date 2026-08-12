@@ -495,7 +495,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			$this->assertSame( 'Question', $entity['@type'] );
 			$this->assertSame( 'Accordion Item ' . ( $i + 1 ), $entity['name'] );
 			$this->assertSame( 'Answer', $entity['acceptedAnswer']['@type'] );
-			$this->assertSame( 'Content goes here...', $entity['acceptedAnswer']['text'] );
+			$this->assertSame( '', $entity['acceptedAnswer']['text'] );
 		}
 	}
 
@@ -515,7 +515,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 
 		$markdown = $instance->render_markdown();
 
-		$expected = "### Accordion Item 1\n\nContent goes here...\n\n### Accordion Item 2\n\nContent goes here...";
+		$expected = "### Accordion Item 1\n\n\n\n### Accordion Item 2\n\n";
 		$this->assertSame( $expected, $markdown );
 	}
 }
