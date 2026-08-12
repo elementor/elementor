@@ -4,18 +4,13 @@ import { apiClient } from './api';
 import { slice } from './store';
 
 export async function loadDefaultStyles() {
-	const [ previewResponse, frontendResponse ] = await Promise.all( [
-		apiClient.all( 'preview' ),
-		apiClient.all( 'frontend' ),
-	] );
+  const response = await apiClient.all();
 
-	const previewItems = previewResponse.data.data;
-	const frontendItems = frontendResponse.data.data;
+  const items = response.data.data;
 
-	dispatch(
-		slice.actions.load( {
-			preview: previewItems,
-			frontend: frontendItems,
-		} )
-	);
+  dispatch(
+    slice.actions.load( {
+      data: items,
+    } )
+  );
 }

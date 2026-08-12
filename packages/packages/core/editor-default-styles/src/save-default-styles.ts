@@ -1,65 +1,63 @@
-import { type AllowedHtmlTag } from './allowed-tags';
-import { apiClient, type ApiContext } from './api';
-import {
-	selectData,
-	selectFrontendInitialData,
-	selectPreviewInitialData,
-	slice,
-	type StateWithDefaultStyles,
-} from './store';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { hash } from '@elementor/utils';
 
-function getChangedTags( state: StateWithDefaultStyles, context: ApiContext ): AllowedHtmlTag[] {
-	const current = selectData( state );
-	const initial =
-		context === 'frontend' ? selectFrontendInitialData( state ) : selectPreviewInitialData( state );
+import { type AllowedHtmlTag } from './allowed-tags';
+import { apiClient } from './api';
+import {
+  selectData,
+  selectInitialData,
+  selectIsDirty,
+  slice,
+  type StateWithDefaultStyles,
+} from './store';
 
-	const changed: AllowedHtmlTag[] = [];
+function getChangedTags( state: StateWithDefaultStyles ): AllowedHtmlTag[] {
+  const current = selectData( state );
+  const initial = selectInitialData( state );
 
-	Object.keys( current ).forEach( ( tag ) => {
-		const currentStyle = current[ tag ];
-		const initialStyle = initial[ tag ];
+  const changed: AllowedHtmlTag[] = [];
 
-		if ( ! initialStyle || hash( currentStyle ) !== hash( initialStyle ) ) {
-			changed.push( tag as AllowedHtmlTag );
-		}
-	});
+  Object.keys( current ).forEach( ( tag ) => {
+    const currentStyle = current[ tag ];
+    const initialStyle = initial[ tag ];
 
-	Object.keys( initial ).forEach( ( tag ) => {
-		if ( ! current[ tag ] ) {
-			changed.push( tag as AllowedHtmlTag );
-		}
-	} );
+    if ( ! initialStyle || hash( currentStyle ) !== hash( initialStyle ) ) {
+      changed.push( tag as AllowedHtmlTag );
+    }
+  } );
 
-	return changed;
+  Object.keys( initial ).forEach( ( tag ) => {
+    if ( ! current[ tag ] ) {
+      changed.push( tag as AllowedHtmlTag );
+    }
+  } );
+
+  return changed;
 }
 
-export async function saveDefaultStyles( context: ApiContext ) {
-	const state = getState() as StateWithDefaultStyles;
-	const data = selectData( state );
-	const changedTags = getChangedTags( state, context );
+export async function saveDefaultStyles() {
+  const state = getState() as StateWithDefaultStyles;
 
-	if ( context === 'frontend' ) {
-		await apiClient.publish();
-		dispatch( slice.actions.reset( { context: 'frontend' } ) );
+  if ( ! selectIsDirty( state ) ) {
+    return;
+  }
 
-		return;
-	}
+  const data = selectData( state );
+  const changedTags = getChangedTags( state );
 
-	await Promise.all(
-		changedTags.map( async ( tag ) => {
-			const style = data[ tag ];
+  await Promise.all(
+    changedTags.map( async ( tag ) => {
+      const style = data[ tag ];
 
-			if ( ! style || style.variants.length === 0 ) {
-				await apiClient.delete( tag, 'preview' );
+      if ( ! style || style.variants.length === 0 ) {
+        await apiClient.delete( tag );
 
-				return;
-			}
+        return;
+      }
 
-			await apiClient.put( tag, style.variants, 'preview' );
-		} )
-	);
+      await apiClient.put( tag, style.variants );
+    } )
+  );
 
-	dispatch( slice.actions.reset( { context: 'preview' } ) );
+  dispatch( slice.actions.commit() );
 }

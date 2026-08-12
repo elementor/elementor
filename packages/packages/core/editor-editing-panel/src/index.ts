@@ -1,4 +1,10 @@
-export { type ValidationEvent, type ValidationResult } from './components/creatable-autocomplete';
+export {
+  CreatableAutocomplete,
+  type CreatableAutocompleteProps,
+  type Option,
+  type ValidationEvent,
+  type ValidationResult,
+} from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
 export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
@@ -29,18 +35,25 @@ export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
-export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
+export {
+  getFieldIndicators,
+  registerFieldIndicator,
+  FIELD_TYPE,
+} from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
-export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
+export {
+  registerElementPanelDefaults,
+  type ElementPanelDefaults,
+} from './hooks/use-default-panel-settings';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { setLicenseConfig } from './hooks/use-license-config';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
 export { isDynamicPropValue } from './dynamics/utils';
 export {
-	extractDependencyEffect,
-	type DependencyEffect,
-	getElementSettingsWithDefaults,
-	getUpdatedValues,
-	extractOrderedDependencies,
+  extractDependencyEffect,
+  type DependencyEffect,
+  getElementSettingsWithDefaults,
+  getUpdatedValues,
+  extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
