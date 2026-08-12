@@ -1,8 +1,8 @@
 import { injectIntoLogic } from '@elementor/editor';
 import {
-	type CreateTemplatedElementTypeOptions,
-	registerElementType,
-	settingsTransformersRegistry,
+  type CreateTemplatedElementTypeOptions,
+  registerElementType,
+  settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
@@ -32,62 +32,71 @@ import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-d
 import { type ExtendedWindow } from './types';
 
 export function init() {
-	registerSlice( slice );
+  registerSlice( slice );
 
-	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
-		createComponentType( {
-			...options,
-			showLockedByModal: openEditModeDialog,
-			showDetachConfirmDialog: openDetachConfirmDialog,
-		} )
-	);
+  registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+    createComponentType( {
+      ...options,
+      showLockedByModal: openEditModeDialog,
+      showDetachConfirmDialog: openDetachConfirmDialog,
+    } )
+  );
 
-	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
+  const extendedWindow = window as unknown as ExtendedWindow;
+  const previousBeforeSave = extendedWindow.elementorCommon.__beforeSave as
+    | ( ( options: Parameters< typeof beforeSave >[ 0 ] ) => unknown )
+    | undefined;
+  extendedWindow.elementorCommon.__beforeSave = async (
+    options: Parameters< typeof beforeSave >[ 0 ]
+  ) => {
+    await previousBeforeSave?.( options );
+    await beforeSave( options );
+  };
 
-	injectTab( {
-		id: 'components',
-		label: __( 'Components', 'elementor' ),
-		component: Components,
-		position: 1,
-	} );
+  injectTab( {
+    id: 'components',
+    label: __( 'Components', 'elementor' ),
+    component: Components,
+    position: 1,
+  } );
 
-	injectIntoLogic( {
-		id: 'components-populate-store',
-		component: PopulateStore,
-	} );
+  injectIntoLogic( {
+    id: 'components-populate-store',
+    component: PopulateStore,
+  } );
 
-	registerDataHook( 'after', 'editor/documents/attach-preview', () => {
-		const { id, config } = getV1CurrentDocument() ?? {};
+  registerDataHook( 'after', 'editor/documents/attach-preview', () => {
+    const { id, config } = getV1CurrentDocument() ?? {};
 
-		if ( ! id ) {
-			return;
-		}
+    if ( ! id ) {
+      return;
+    }
 
-		removeComponentStyles( id );
+    removeComponentStyles( id );
 
-		void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
-	} );
+    void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
+  } );
 
-	embeddedDocumentsManager.onDocumentLoad( ( _documentId, data ) => {
-		void loadComponentsAssets( data.elements ?? [] );
-	} );
+  embeddedDocumentsManager.onDocumentLoad( ( _documentId, data ) => {
+    void loadComponentsAssets( data.elements ?? [] );
+  } );
 
-	injectIntoLogic( {
-		id: 'templates',
-		component: LoadTemplateComponents,
-	} );
+  injectIntoLogic( {
+    id: 'templates',
+    component: LoadTemplateComponents,
+  } );
 
-	registerEditingPanelReplacement( {
-		id: 'component-instance-edit-panel',
-		condition: ( _, elementType ) => elementType.key === 'e-component',
-		component: InstanceEditingPanel,
-	} );
+  registerEditingPanelReplacement( {
+    id: 'component-instance-edit-panel',
+    condition: ( _, elementType ) => elementType.key === 'e-component',
+    component: InstanceEditingPanel,
+  } );
 
-	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
-	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
-	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
+  settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
+  settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
+  settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
 
-	initCircularNestingPrevention();
+  initCircularNestingPrevention();
 
-	initLoadComponentDataAfterInstanceAdded();
+  initLoadComponentDataAfterInstanceAdded();
 }
