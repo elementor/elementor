@@ -150,10 +150,13 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 								'widgetType' => 'e-paragraph',
 								'settings' => [
 									'paragraph' => [
+										'$$type' => 'html-v3',
 										'value' => [
 											'content' => [
+												'$$type' => 'string',
 												'value' => 'Answer ' . $item_num,
 											],
+											'children' => [],
 										],
 									],
 								],
