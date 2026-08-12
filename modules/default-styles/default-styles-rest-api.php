@@ -134,13 +134,18 @@ class Default_Styles_REST_API {
 				->build();
 		}
 
-		$this->get_repository()->put(
+		if ( ! $this->get_repository()->put(
 			$tag,
 			[
 				'type' => 'class',
 				'variants' => $request->get_param( 'variants' ),
 			]
-		);
+		) ) {
+			return Error_Builder::make( 'persist_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to save default style.', 'elementor' ) )
+				->build();
+		}
 
 		$item = $this->get_repository()->get( $tag );
 
@@ -168,7 +173,7 @@ class Default_Styles_REST_API {
 		} catch ( \Throwable $e ) {
 			return Error_Builder::make( 'default_styles_error' )
 				->set_status( 500 )
-				->set_message( $e->getMessage() )
+				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();
 		}
 	}

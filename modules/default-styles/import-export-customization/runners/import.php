@@ -59,7 +59,10 @@ class Import extends Import_Runner_Base {
 				continue;
 			}
 
-			$repository->put( $tag, $style_data );
+			if ( ! $repository->put( $tag, $style_data ) ) {
+				continue;
+			}
+
 			$imported_tags[] = $tag;
 		}
 

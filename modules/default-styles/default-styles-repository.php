@@ -65,29 +65,39 @@ class Default_Styles_Repository {
 		}
 	}
 
-	public function put( string $tag, array $data ): void {
+	public function put( string $tag, array $data ): bool {
 		if ( ! self::is_allowed_tag( $tag ) ) {
-			return;
+			return false;
 		}
 
 		$post = Default_Style_Post::find_by_tag( $tag, $this->get_kit() );
 		$normalized = Default_Style_Data_Normalizer::normalize_style_fields( $data );
 
 		if ( $post ) {
-			$post->update_data( $normalized );
+			if ( false === $post->update_data( $normalized ) ) {
+				return false;
+			}
+
 			clean_post_cache( $post->get_post_id() );
 		} else {
 			$created = Default_Style_Post::create( $tag, [], $this->get_kit() );
 
-			if ( $created ) {
-				$created->update_data( $normalized );
-				clean_post_cache( $created->get_post_id() );
+			if ( ! $created ) {
+				return false;
 			}
+
+			if ( false === $created->update_data( $normalized ) ) {
+				return false;
+			}
+
+			clean_post_cache( $created->get_post_id() );
 		}
 
 		$this->cache = null;
 
 		do_action( 'elementor/default_styles/update', [ 'tag' => $tag ] );
+
+		return true;
 	}
 
 	public function delete( string $tag ): void {
