@@ -78,10 +78,22 @@ function createListView( options: CreateNestedTemplatedElementTypeOptions ) {
           const model = childModel as { get: ( key: string ) => unknown };
           if ( model.get( 'elType' ) === 'e-list-item' ) {
             const childSettings = model.get( 'settings' ) as {
+              get?: ( key: string ) => unknown;
               set?: ( key: string, value: unknown ) => void;
             };
             if ( childSettings?.set ) {
-              childSettings.set( 'show_markers', showMarkers );
+              // Check current value to avoid unnecessary updates
+              const currentProp = childSettings.get?.( 'show_markers' );
+              const currentValue =
+                ( currentProp as { value?: boolean } )?.value ?? currentProp ?? true;
+
+              if ( currentValue !== showMarkers ) {
+                // Set as prop-value object to match the schema
+                childSettings.set( 'show_markers', {
+                  $$type: 'boolean',
+                  value: showMarkers,
+                } );
+              }
             }
           }
         } );

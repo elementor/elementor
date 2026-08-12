@@ -7,9 +7,9 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -141,7 +141,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 				->position( Element_Position::first() )
 				->stash( true )
 				->default_model(
-					Widget_Builder::make( Atomic_List_Item_Marker::get_element_type() )
+					Element_Builder::make( Atomic_List_Item_Marker::get_element_type() )
 						->hydrate_default_children( true )
 						->build()
 				),
