@@ -1,16 +1,16 @@
 import {
-	type BackboneModel,
-	type BackboneModelConstructor,
-	type ContextMenuAction,
-	type ContextMenuEventData,
-	type CreateTemplatedElementTypeOptions,
-	createTemplatedElementView,
-	type ElementModel,
-	type ElementType,
-	type LegacyWindow,
-	type NamespacedRenderContext,
-	type RenderContext,
-	type TemplatedElementView,
+  type BackboneModel,
+  type BackboneModelConstructor,
+  type ContextMenuAction,
+  type ContextMenuEventData,
+  type CreateTemplatedElementTypeOptions,
+  createTemplatedElementView,
+  type ElementModel,
+  type ElementType,
+  type LegacyWindow,
+  type NamespacedRenderContext,
+  type RenderContext,
+  type TemplatedElementView,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
@@ -25,40 +25,43 @@ import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { detachComponentInstance } from './utils/detach-component-instance';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
-import { isProComponentsSupported, isProOutdatedForComponents } from './utils/is-pro-components-supported';
+import {
+  isProComponentsSupported,
+  isProOutdatedForComponents,
+} from './utils/is-pro-components-supported';
 import { reconcileComponentInstanceElements } from './utils/reconcile-component-instance-elements';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuGroupConfig = {
-	disable: Record< string, string[] >;
-	add: Record< string, { index: number; actions: ContextMenuAction[] } >;
+  disable: Record< string, string[] >;
+  add: Record< string, { index: number; actions: ContextMenuAction[] } >;
 };
 
 type ContextMenuGroup = {
-	name: string;
-	actions: ContextMenuAction[];
+  name: string;
+  actions: ContextMenuAction[];
 };
 
 type ComponentModel = ElementModel & {
-	componentId?: number | string;
-	isGlobal: boolean;
+  componentId?: number | string;
+  isGlobal: boolean;
 };
 
 type ComponentModelInstance = BackboneModel< ComponentModel > & {
-	trigger: ( event: string, ...args: unknown[] ) => void;
-	getTitle: () => string;
-	getComponentId: () => number | null;
-	getComponentName: () => string;
-	getComponentUid: () => string | null;
+  trigger: ( event: string, ...args: unknown[] ) => void;
+  getTitle: () => string;
+  getComponentId: () => number | null;
+  getComponentName: () => string;
+  getComponentUid: () => string | null;
 };
 
 export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const EDIT_COMPONENT_DB_CLICK_UPGRADE_URL =
-	'https://go.elementor.com/go-pro-components-Instance-edit-canvas-double-click/';
+  'https://go.elementor.com/go-pro-components-Instance-edit-canvas-double-click/';
 const EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL =
-	'https://go.elementor.com/go-pro-components-Instance-edit-context-menu/';
+  'https://go.elementor.com/go-pro-components-Instance-edit-context-menu/';
 
 const UPDATE_PLUGINS_URL = '/wp-admin/plugins.php';
 
@@ -68,447 +71,457 @@ const COMPONENT_EDIT_UPDATE_NOTIFICATION_ID = 'component-edit-update';
 const COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION = 2000;
 
 function notifyComponentEditUpgrade() {
-	notify( {
-		type: 'promotion',
-		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
-		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
-		autoHideDuration: COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION,
-		additionalActionProps: [
-			{
-				size: 'small',
-				variant: 'contained',
-				color: 'promotion',
-				href: EDIT_COMPONENT_DB_CLICK_UPGRADE_URL,
-				target: '_blank',
-				children: __( 'Upgrade Now', 'elementor' ),
-			},
-		],
-	} );
+  notify( {
+    type: 'promotion',
+    id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
+    message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
+    autoHideDuration: COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION,
+    additionalActionProps: [
+      {
+        size: 'small',
+        variant: 'contained',
+        color: 'promotion',
+        href: EDIT_COMPONENT_DB_CLICK_UPGRADE_URL,
+        target: '_blank',
+        children: __( 'Upgrade Now', 'elementor' ),
+      },
+    ],
+  } );
 }
 
 function notifyComponentEditUpdate() {
-	notify( {
-		type: 'info',
-		id: COMPONENT_EDIT_UPDATE_NOTIFICATION_ID,
-		message: __( 'To edit components, update Elementor Pro to the latest version.', 'elementor' ),
-		additionalActionProps: [
-			{
-				size: 'small',
-				variant: 'contained',
-				color: 'info',
-				href: UPDATE_PLUGINS_URL,
-				target: '_blank',
-				children: __( 'Update Now', 'elementor' ),
-			},
-		],
-	} );
+  notify( {
+    type: 'info',
+    id: COMPONENT_EDIT_UPDATE_NOTIFICATION_ID,
+    message: __( 'To edit components, update Elementor Pro to the latest version.', 'elementor' ),
+    additionalActionProps: [
+      {
+        size: 'small',
+        variant: 'contained',
+        color: 'info',
+        href: UPDATE_PLUGINS_URL,
+        target: '_blank',
+        children: __( 'Update Now', 'elementor' ),
+      },
+    ],
+  } );
 }
 
-const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
-	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
-	const addMap = new Map( Object.entries( config.add ?? {} ) );
+const updateGroups = (
+  groups: ContextMenuGroup[],
+  config: ContextMenuGroupConfig
+): ContextMenuGroup[] => {
+  const disableMap = new Map( Object.entries( config.disable ?? {} ) );
+  const addMap = new Map( Object.entries( config.add ?? {} ) );
 
-	return groups.map( ( group ) => {
-		const disabledActions = disableMap.get( group.name ) ?? [];
-		const addConfig = addMap.get( group.name );
+  return groups.map( ( group ) => {
+    const disabledActions = disableMap.get( group.name ) ?? [];
+    const addConfig = addMap.get( group.name );
 
-		// Update disabled actions
-		const updatedActions = group.actions.map( ( action ) =>
-			disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
-		);
+    // Update disabled actions
+    const updatedActions = group.actions.map( ( action ) =>
+      disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
+    );
 
-		// Insert additional actions if needed
-		if ( addConfig ) {
-			updatedActions.splice( addConfig.index, 0, ...addConfig.actions );
-		}
+    // Insert additional actions if needed
+    if ( addConfig ) {
+      updatedActions.splice( addConfig.index, 0, ...addConfig.actions );
+    }
 
-		return { ...group, actions: updatedActions };
-	} );
+    return { ...group, actions: updatedActions };
+  } );
 };
 
 type ComponentTypeOptions = CreateTemplatedElementTypeOptions & {
-	showLockedByModal?: ( lockedBy: string ) => void;
-	showDetachConfirmDialog?: ( onConfirm: () => void ) => void;
+  showLockedByModal?: ( lockedBy: string ) => void;
+  showDetachConfirmDialog?: ( onConfirm: () => void ) => void;
 };
 
 export function createComponentType( options: ComponentTypeOptions ): typeof ElementType {
-	const legacyWindow = window as unknown as LegacyWindow;
-	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+  const legacyWindow = window as unknown as LegacyWindow;
+  const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
-	const view = createComponentView( { ...options } );
+  const view = createComponentView( { ...options } );
 
-	return class extends WidgetType {
-		getType() {
-			return options.type;
-		}
+  return class extends WidgetType {
+    getType() {
+      return options.type;
+    }
 
-		getView() {
-			return view;
-		}
+    getView() {
+      return view;
+    }
 
-		getModel(): BackboneModelConstructor< ComponentModel > {
-			return createComponentModel();
-		}
-	};
+    getModel(): BackboneModelConstructor< ComponentModel > {
+      return createComponentModel();
+    }
+  };
 }
 
 function createComponentView( options: ComponentTypeOptions ): typeof TemplatedElementView {
-	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+  const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 
-	return class extends createTemplatedElementView( options ) {
-		eventsManagerConfig = legacyWindow.elementorCommon.eventsManager.config;
-		#componentRenderContext: ComponentRenderContext | undefined;
+  return class extends createTemplatedElementView( options ) {
+    eventsManagerConfig = legacyWindow.elementorCommon.eventsManager.config;
+    #componentRenderContext: ComponentRenderContext | undefined;
 
-		isComponentCurrentlyEdited() {
-			const currentDocument = getCurrentDocument();
+    isComponentCurrentlyEdited() {
+      const currentDocument = getCurrentDocument();
 
-			return currentDocument?.id === this.getComponentId();
-		}
+      return currentDocument?.id === this.getComponentId();
+    }
 
-		getRenderContext(): NamespacedRenderContext | undefined {
-			const namespaceKey = this.getNamespaceKey();
-			const parentContext = this._parent?.getRenderContext?.();
-			const parentComponentContext = parentContext?.[ namespaceKey ];
+    getRenderContext(): NamespacedRenderContext | undefined {
+      const namespaceKey = this.getNamespaceKey();
+      const parentContext = this._parent?.getRenderContext?.();
+      const parentComponentContext = parentContext?.[ namespaceKey ];
 
-			if ( ! this.#componentRenderContext ) {
-				return parentContext;
-			}
+      if ( ! this.#componentRenderContext ) {
+        return parentContext;
+      }
 
-			const ownOverrides = this.#componentRenderContext.overrides ?? {};
-			const parentOverrides = parentComponentContext?.overrides ?? {};
+      const ownOverrides = this.#componentRenderContext.overrides ?? {};
+      const parentOverrides = parentComponentContext?.overrides ?? {};
 
-			return {
-				...parentContext,
-				[ namespaceKey ]: {
-					overrides: {
-						...parentOverrides,
-						...ownOverrides,
-					},
-				},
-			};
-		}
+      return {
+        ...parentContext,
+        [ namespaceKey ]: {
+          overrides: {
+            ...parentOverrides,
+            ...ownOverrides,
+          },
+        },
+      };
+    }
 
-		getResolverRenderContext(): RenderContext | undefined {
-			const namespaceKey = this.getNamespaceKey();
-			const context = this.getRenderContext();
-			const ownContext = context?.[ namespaceKey ];
+    getResolverRenderContext(): RenderContext | undefined {
+      const namespaceKey = this.getNamespaceKey();
+      const context = this.getRenderContext();
+      const ownContext = context?.[ namespaceKey ];
 
-			if ( ! ownContext ) {
-				return this._parent?.getResolverRenderContext?.();
-			}
+      if ( ! ownContext ) {
+        return this._parent?.getResolverRenderContext?.();
+      }
 
-			const parentResolverContext = this._parent?.getResolverRenderContext?.();
+      const parentResolverContext = this._parent?.getResolverRenderContext?.();
 
-			return {
-				...parentResolverContext,
-				...ownContext,
-			};
-		}
+      return {
+        ...parentResolverContext,
+        ...ownContext,
+      };
+    }
 
-		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			const componentInstance = settings.component_instance as
-				| {
-						overrides?: Record< string, unknown >;
-						elements?: V1ElementData[];
-				  }
-				| undefined;
+    afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
+      const componentInstance = settings.component_instance as
+        | {
+            overrides?: Record< string, unknown >;
+            elements?: V1ElementData[];
+          }
+        | undefined;
 
-			if ( componentInstance ) {
-				this.#componentRenderContext = {
-					overrides: componentInstance.overrides ?? {},
-				};
+      if ( componentInstance ) {
+        this.#componentRenderContext = {
+          overrides: componentInstance.overrides ?? {},
+        };
 
-				const instanceId = this.model.get( 'id' );
-				const elements = componentInstance.elements ?? [];
-				const reconciledElements = reconcileComponentInstanceElements(
-					elements,
-					componentInstance.overrides ?? {}
-				);
-				const formattedElements = formatComponentElementsId( reconciledElements, [ instanceId ] );
+        const instanceId = this.model.get( 'id' );
+        const elements = componentInstance.elements ?? [];
+        const reconciledElements = reconcileComponentInstanceElements(
+          elements,
+          componentInstance.overrides ?? {}
+        );
+        const formattedElements = formatComponentElementsId( reconciledElements, [ instanceId ] );
 
-				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
+        this.collection =
+          legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
 
-				this.collection.models.forEach( setInactiveRecursively );
+        this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component_instance = '<template data-children-placeholder></template>';
-				settings.__componentOverridesFingerprint = JSON.stringify( componentInstance.overrides ?? {} );
-			}
+        settings.component_instance = '<template data-children-placeholder></template>';
+      }
 
-			return settings;
-		}
+      return settings;
+    }
 
-		getDomElement() {
-			// Component does not have a DOM element, so we return the first child's DOM element.
-			return this.children.findByIndex( 0 )?.getDomElement() ?? this.$el;
-		}
+    getDomElement() {
+      // Component does not have a DOM element, so we return the first child's DOM element.
+      return this.children.findByIndex( 0 )?.getDomElement() ?? this.$el;
+    }
 
-		attachBuffer( collectionView: this, buffer: DocumentFragment ): void {
-			const childrenPlaceholder = collectionView.$el.find( '[data-children-placeholder]' ).get( 0 );
+    attachBuffer( collectionView: this, buffer: DocumentFragment ): void {
+      const childrenPlaceholder = collectionView.$el.find( '[data-children-placeholder]' ).get( 0 );
 
-			if ( ! childrenPlaceholder ) {
-				super.attachBuffer( collectionView, buffer );
+      if ( ! childrenPlaceholder ) {
+        super.attachBuffer( collectionView, buffer );
 
-				return;
-			}
+        return;
+      }
 
-			childrenPlaceholder.replaceWith( buffer );
-		}
+      childrenPlaceholder.replaceWith( buffer );
+    }
 
-		getComponentId() {
-			const componentInstance = (
-				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
-			 )?.value;
+    getComponentId() {
+      const componentInstance = (
+        this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
+       )?.value;
 
-			return componentInstance.component_id.value;
-		}
+      return componentInstance.component_id.value;
+    }
 
-		getContextMenuGroups() {
-			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId();
-			if ( ! componentId ) {
-				return filteredGroups;
-			}
+    getContextMenuGroups() {
+      const filteredGroups = super
+        .getContextMenuGroups()
+        .filter( ( group ) => group.name !== 'save' );
+      const componentId = this.getComponentId();
+      if ( ! componentId ) {
+        return filteredGroups;
+      }
 
-			const newGroups = updateGroups(
-				filteredGroups as ContextMenuGroup[],
-				this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
-			);
-			return newGroups;
-		}
+      const newGroups = updateGroups(
+        filteredGroups as ContextMenuGroup[],
+        this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
+      );
+      return newGroups;
+    }
 
-		_getContextMenuConfig() {
-			const isAdministrator = isUserAdministrator();
-			const hasPro = hasProInstalled();
-			const isOutdated = isProOutdatedForComponents();
-			const showPromoBadge = ! hasPro && ! isOutdated;
+    _getContextMenuConfig() {
+      const isAdministrator = isUserAdministrator();
+      const hasPro = hasProInstalled();
+      const isOutdated = isProOutdatedForComponents();
+      const showPromoBadge = ! hasPro && ! isOutdated;
 
-			const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
-			const proBadge = `<a href="${ EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+      const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+      const proBadge = `<a href="${ EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
 
-			const editComponentAction: ContextMenuAction = {
-				name: 'edit component',
-				icon: 'eicon-edit',
-				title: () => __( 'Edit Component', 'elementor' ),
-				...( showPromoBadge && { shortcut: proBadge, hasShortcutAction: true } ),
-				isEnabled: () => isProComponentsSupported() || isOutdated,
-				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
-			};
+      const editComponentAction: ContextMenuAction = {
+        name: 'edit component',
+        icon: 'eicon-edit',
+        title: () => __( 'Edit Component', 'elementor' ),
+        ...( showPromoBadge && { shortcut: proBadge, hasShortcutAction: true } ),
+        isEnabled: () => isProComponentsSupported() || isOutdated,
+        callback: ( _: unknown, eventData: ContextMenuEventData ) =>
+          this.editComponent( eventData ),
+      };
 
-			const detachInstanceAction: ContextMenuAction = {
-				name: 'detach instance',
-				icon: 'eicon-chain-broken',
-				title: () => __( 'Detach from Component', 'elementor' ),
-				isEnabled: () => true,
-				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.detachInstance( eventData ),
-			};
+      const detachInstanceAction: ContextMenuAction = {
+        name: 'detach instance',
+        icon: 'eicon-chain-broken',
+        title: () => __( 'Detach from Component', 'elementor' ),
+        isEnabled: () => true,
+        callback: ( _: unknown, eventData: ContextMenuEventData ) =>
+          this.detachInstance( eventData ),
+      };
 
-			const actions = isAdministrator ? [ editComponentAction, detachInstanceAction ] : [ detachInstanceAction ];
+      const actions = isAdministrator
+        ? [ editComponentAction, detachInstanceAction ]
+        : [ detachInstanceAction ];
 
-			const addedGroup = {
-				general: {
-					index: 1,
-					actions,
-				},
-			};
+      const addedGroup = {
+        general: {
+          index: 1,
+          actions,
+        },
+      };
 
-			const disabledGroup = {
-				clipboard: [ 'pasteStyle', 'resetStyle' ],
-			};
+      const disabledGroup = {
+        clipboard: [ 'pasteStyle', 'resetStyle' ],
+      };
 
-			return { add: addedGroup, disable: disabledGroup };
-		}
+      return { add: addedGroup, disable: disabledGroup };
+    }
 
-		async switchDocument() {
-			//todo: handle unpublished
-			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
-				this.getComponentId() as number
-			);
+    async switchDocument() {
+      //todo: handle unpublished
+      const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
+        this.getComponentId() as number
+      );
 
-			if ( ! isAllowedToSwitchDocument ) {
-				options.showLockedByModal?.( lockedBy || '' );
-			} else {
-				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ), this.el );
-			}
-		}
+      if ( ! isAllowedToSwitchDocument ) {
+        options.showLockedByModal?.( lockedBy || '' );
+      } else {
+        switchToComponent( this.getComponentId() as number, this.model.get( 'id' ), this.el );
+      }
+    }
 
-		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			if ( isProOutdatedForComponents() ) {
-				notifyComponentEditUpdate();
-				return;
-			}
+    editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+      if ( isProOutdatedForComponents() ) {
+        notifyComponentEditUpdate();
+        return;
+      }
 
-			if ( ! isProComponentsSupported() || this.isComponentCurrentlyEdited() ) {
-				return;
-			}
+      if ( ! isProComponentsSupported() || this.isComponentCurrentlyEdited() ) {
+        return;
+      }
 
-			this.switchDocument();
+      this.switchDocument();
 
-			const editorSettings = this.model.get( 'editor_settings' );
+      const editorSettings = this.model.get( 'editor_settings' );
 
-			trackComponentEvent( {
-				action: 'edited',
-				executedBy: 'user',
-				component_uid: editorSettings?.component_uid,
-				component_name: editorSettings?.title,
-				location,
-				secondary_location: secondaryLocation,
-				trigger,
-			} );
-		}
+      trackComponentEvent( {
+        action: 'edited',
+        executedBy: 'user',
+        component_uid: editorSettings?.component_uid,
+        component_name: editorSettings?.title,
+        location,
+        secondary_location: secondaryLocation,
+        trigger,
+      } );
+    }
 
-		detachInstance( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			const componentId = this.getComponentId();
-			const instanceId = this.model.get( 'id' );
+    detachInstance( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+      const componentId = this.getComponentId();
+      const instanceId = this.model.get( 'id' );
 
-			if ( ! componentId || ! instanceId ) {
-				return;
-			}
+      if ( ! componentId || ! instanceId ) {
+        return;
+      }
 
-			const handleConfirm = async () => {
-				try {
-					await detachComponentInstance( {
-						instanceId,
-						componentId,
-						trackingInfo: { location, secondaryLocation, trigger },
-					} );
-				} catch {
-					notify( {
-						type: 'error',
-						message: __( 'Failed to detach component instance.', 'elementor' ),
-						id: 'detach-component-instance-failed',
-					} );
-				}
-			};
+      const handleConfirm = async () => {
+        try {
+          await detachComponentInstance( {
+            instanceId,
+            componentId,
+            trackingInfo: { location, secondaryLocation, trigger },
+          } );
+        } catch {
+          notify( {
+            type: 'error',
+            message: __( 'Failed to detach component instance.', 'elementor' ),
+            id: 'detach-component-instance-failed',
+          } );
+        }
+      };
 
-			options.showDetachConfirmDialog?.( handleConfirm );
-		}
+      options.showDetachConfirmDialog?.( handleConfirm );
+    }
 
-		handleDblClick( e: MouseEvent ) {
-			e.stopPropagation();
+    handleDblClick( e: MouseEvent ) {
+      e.stopPropagation();
 
-			if ( ! isUserAdministrator() ) {
-				return;
-			}
+      if ( ! isUserAdministrator() ) {
+        return;
+      }
 
-			if ( isProOutdatedForComponents() ) {
-				notifyComponentEditUpdate();
-				return;
-			}
+      if ( isProOutdatedForComponents() ) {
+        notifyComponentEditUpdate();
+        return;
+      }
 
-			if ( ! hasProInstalled() ) {
-				notifyComponentEditUpgrade();
-				return;
-			}
+      if ( ! hasProInstalled() ) {
+        notifyComponentEditUpgrade();
+        return;
+      }
 
-			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
+      const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
 
-			this.editComponent( {
-				trigger: triggers.doubleClick,
-				location: locations.canvas,
-				secondaryLocation: secondaryLocations.canvasElement,
-			} );
-		}
+      this.editComponent( {
+        trigger: triggers.doubleClick,
+        location: locations.canvas,
+        secondaryLocation: secondaryLocations.canvasElement,
+      } );
+    }
 
-		events() {
-			return {
-				...super.events(),
-				dblclick: this.handleDblClick,
-			};
-		}
+    events() {
+      return {
+        ...super.events(),
+        dblclick: this.handleDblClick,
+      };
+    }
 
-		attributes() {
-			return {
-				...super.attributes(),
-				'data-elementor-id': this.getComponentId(),
-			};
-		}
-	};
+    attributes() {
+      return {
+        ...super.attributes(),
+        'data-elementor-id': this.getComponentId(),
+      };
+    }
+  };
 }
 
 function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
-	const editSettings = model.get( 'editSettings' );
+  const editSettings = model.get( 'editSettings' );
 
-	if ( editSettings ) {
-		editSettings.set( 'inactive', true );
-	}
+  if ( editSettings ) {
+    editSettings.set( 'inactive', true );
+  }
 
-	const elements = model.get( 'elements' );
+  const elements = model.get( 'elements' );
 
-	if ( elements ) {
-		elements.forEach( ( childModel ) => {
-			setInactiveRecursively( childModel );
-		} );
-	}
+  if ( elements ) {
+    elements.forEach( ( childModel ) => {
+      setInactiveRecursively( childModel );
+    } );
+  }
 }
 
 function isUserAdministrator() {
-	const legacyWindow = window as unknown as LegacyWindow;
+  const legacyWindow = window as unknown as LegacyWindow;
 
-	return legacyWindow.elementor.config?.user?.is_administrator ?? false;
+  return legacyWindow.elementor.config?.user?.is_administrator ?? false;
 }
 
 function createComponentModel(): BackboneModelConstructor< ComponentModel > {
-	const legacyWindow = window as unknown as LegacyWindow;
-	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
-	const widgetTypeInstance = new WidgetType() as unknown as BackboneModelConstructor< ElementModel >;
-	const BaseWidgetModel = widgetTypeInstance.getModel();
+  const legacyWindow = window as unknown as LegacyWindow;
+  const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+  const widgetTypeInstance =
+    new WidgetType() as unknown as BackboneModelConstructor< ElementModel >;
+  const BaseWidgetModel = widgetTypeInstance.getModel();
 
-	return BaseWidgetModel.extend( {
-		initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
-			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
+  return BaseWidgetModel.extend( {
+    initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
+      BaseWidgetModel.prototype.initialize.call( this, attributes, options );
 
-			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
-				| ComponentInstanceProp
-				| undefined;
-			if ( componentInstance?.value ) {
-				const componentId = componentInstance.value.component_id?.value;
-				if ( componentId && typeof componentId === 'number' ) {
-					this.set( 'componentId', componentId );
-				}
-			}
+      const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
+        | ComponentInstanceProp
+        | undefined;
+      if ( componentInstance?.value ) {
+        const componentId = componentInstance.value.component_id?.value;
+        if ( componentId && typeof componentId === 'number' ) {
+          this.set( 'componentId', componentId );
+        }
+      }
 
-			this.set( 'isGlobal', true );
-		},
+      this.set( 'isGlobal', true );
+    },
 
-		getTitle( this: ComponentModelInstance ): string {
-			const editorSettings = this.get( 'editor_settings' ) as
-				| {
-						title?: string;
-						component_uid?: string;
-				  }
-				| undefined;
+    getTitle( this: ComponentModelInstance ): string {
+      const editorSettings = this.get( 'editor_settings' ) as
+        | {
+            title?: string;
+            component_uid?: string;
+          }
+        | undefined;
 
-			const instanceTitle = editorSettings?.title;
-			if ( instanceTitle ) {
-				return instanceTitle;
-			}
+      const instanceTitle = editorSettings?.title;
+      if ( instanceTitle ) {
+        return instanceTitle;
+      }
 
-			const componentUid = editorSettings?.component_uid;
-			if ( componentUid ) {
-				const component = selectComponentByUid( getState() as ComponentsSlice, componentUid );
-				if ( component?.name ) {
-					return component.name;
-				}
-			}
+      const componentUid = editorSettings?.component_uid;
+      if ( componentUid ) {
+        const component = selectComponentByUid( getState() as ComponentsSlice, componentUid );
+        if ( component?.name ) {
+          return component.name;
+        }
+      }
 
-			return ( window as unknown as LegacyWindow ).elementor.getElementData( this ).title;
-		},
+      return ( window as unknown as LegacyWindow ).elementor.getElementData( this ).title;
+    },
 
-		getComponentId( this: ComponentModelInstance ): number | null {
-			return ( this.get( 'componentId' ) as number | undefined ) || null;
-		},
+    getComponentId( this: ComponentModelInstance ): number | null {
+      return ( this.get( 'componentId' ) as number | undefined ) || null;
+    },
 
-		getComponentName( this: ComponentModelInstance ): string {
-			return this.getTitle();
-		},
+    getComponentName( this: ComponentModelInstance ): string {
+      return this.getTitle();
+    },
 
-		getComponentUid( this: ComponentModelInstance ): string | null {
-			const editorSettings = this.get( 'editor_settings' ) as
-				| {
-						component_uid?: string;
-				  }
-				| undefined;
-			return editorSettings?.component_uid || null;
-		},
-	} );
+    getComponentUid( this: ComponentModelInstance ): string | null {
+      const editorSettings = this.get( 'editor_settings' ) as
+        | {
+            component_uid?: string;
+          }
+        | undefined;
+      return editorSettings?.component_uid || null;
+    },
+  } );
 }

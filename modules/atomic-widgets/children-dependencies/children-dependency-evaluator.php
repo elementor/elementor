@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\ChildrenDependencies;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -51,6 +53,12 @@ class Children_Dependency_Evaluator {
 	}
 
 	private static function compare( string $operator, $actual_value, $expected_value ): bool {
+		// Fail closed: an operator outside `Manager::OPERATORS` hides the conditional child
+		// instead of silently keeping it visible.
+		if ( ! in_array( $operator, Dependency_Manager::OPERATORS, true ) ) {
+			return false;
+		}
+
 		switch ( $operator ) {
 			case 'eq':
 			case 'ne':
@@ -97,7 +105,7 @@ class Children_Dependency_Evaluator {
 				return ( 'exists' === $operator ) === $exists;
 
 			default:
-				return true;
+				return false;
 		}
 	}
 

@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
-use Elementor\Modules\AtomicWidgets\Utils\Format_Element_Ids;
 use Elementor\Modules\Components\Utils\Reconcile_Component_Instance_Elements;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -252,16 +251,13 @@ class Test_Reconcile_Component_Instance_Elements extends Elementor_Test_Base {
 		// Act.
 		$inserted = Reconcile_Component_Instance_Elements::apply( $elements )[0]['elements'][0];
 
-		// Assert.
-		$expected_id = Format_Element_Ids::hash_string(
-			'parent1_' . Reconcile_Test_Child::get_element_type(),
-			7
-		);
-
-		$this->assertSame( $expected_id, $inserted['id'] );
+		// Assert: these hashes are asserted verbatim in the TS counterpart
+		// (`packages/packages/core/editor-components/src/utils/__tests__/reconcile-component-instance-elements.test.ts`)
+		// so the render and canvas element ids stay identical.
+		$this->assertSame( '0f3lpg5', $inserted['id'] );
 		$this->assertCount( 2, $inserted['elements'] );
-		$this->assertSame( Format_Element_Ids::hash_string( $expected_id . '_0', 7 ), $inserted['elements'][0]['id'] );
-		$this->assertSame( Format_Element_Ids::hash_string( $expected_id . '_1', 7 ), $inserted['elements'][1]['id'] );
+		$this->assertSame( '0p2wcv5', $inserted['elements'][0]['id'] );
+		$this->assertSame( '1ed1jog', $inserted['elements'][1]['id'] );
 	}
 
 	public function test_apply__derives_stable_ids_across_runs() {

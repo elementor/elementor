@@ -101,12 +101,12 @@ class Test_Children_Dependency_Evaluator extends TestCase {
 		];
 	}
 
-	public function test_is_met__returns_true_for_unknown_operator() {
+	public function test_is_met__returns_false_for_unknown_operator() {
 		// Arrange.
 		$when = $this->when( [ $this->term( 'no_such_operator', [ 'prop' ], 'anything' ) ] );
 
 		// Act & Assert.
-		$this->assertTrue( Children_Dependency_Evaluator::is_met( $when, [ 'prop' => 'value' ] ) );
+		$this->assertFalse( Children_Dependency_Evaluator::is_met( $when, [ 'prop' => 'value' ] ) );
 	}
 
 	public function test_is_met__treats_missing_path_as_null() {

@@ -279,11 +279,13 @@
 	}
 }
 
-:where( .e-atomic-element ):has( .elementor-empty-view ) {
-	min-height: 120px;
-}
-
 .e-atomic-element {
+	// Scoped to a direct child: the 120px canvas placeholder must not leak onto ancestor
+	// atomic elements, where it beat the element's own `min-height` (Settings -> Size).
+	&:has( > .elementor-empty-view ) {
+		min-height: 120px;
+	}
+
 	& > .elementor-empty-view.elementor-empty-view {
 		min-height: inherit;
 	}

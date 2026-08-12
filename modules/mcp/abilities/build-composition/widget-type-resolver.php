@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 
@@ -153,7 +154,7 @@ class Widget_Type_Resolver {
 		$parent_tag = $this->xml_parser->get_tag_name( $node );
 		$parent_config = $widget_configs[ $parent_tag ] ?? null;
 		$default_children = is_array( $parent_config ) ? ( $parent_config['default_children'] ?? [] ) : [];
-		$required_types = $this->get_required_child_types( $default_children );
+		$required_types = Default_Children_Utils::get_required_child_types( $default_children );
 
 		if ( ! empty( $required_types ) ) {
 			$actual_child_types = array_map(
@@ -176,23 +177,5 @@ class Widget_Type_Resolver {
 		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
 			$this->collect_required_child_errors( $child, $widget_configs, $errors );
 		}
-	}
-
-	private function get_required_child_types( array $default_children ): array {
-		$types = [];
-
-		foreach ( $default_children as $child ) {
-			if ( empty( $child['meta']['required'] ) ) {
-				continue;
-			}
-
-			$type = $child['widgetType'] ?? $child['elType'] ?? null;
-
-			if ( $type ) {
-				$types[] = $type;
-			}
-		}
-
-		return $types;
 	}
 }
