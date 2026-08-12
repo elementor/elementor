@@ -19,11 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
-	const TEST_POST_ID         = 999;
-	const UNSAVED_TRANSIENT_KEY = '_elementor_editor_unsaved_999';
+	private int $test_post_id;
 
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->test_post_id = self::factory()->post->create();
 
 		global $wp_rest_server;
 
@@ -37,8 +38,8 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		delete_post_meta( self::TEST_POST_ID, '_edit_lock' );
-		delete_transient( self::UNSAVED_TRANSIENT_KEY );
+		delete_post_meta( $this->test_post_id, '_edit_lock' );
+		delete_transient( "_elementor_editor_unsaved_{$this->test_post_id}" );
 
 		parent::tearDown();
 	}
@@ -198,13 +199,13 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		// Arrange - lock must be owned by a different user than the MCP caller
 		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
 		wp_set_current_user( $editor_user_id );
-		wp_set_post_lock( self::TEST_POST_ID );
-		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
+		wp_set_post_lock( $this->test_post_id );
+		Editor_Sync_State::set_editor_unsaved( $this->test_post_id );
 
 		$this->act_as_admin();
 
 		// Act
-		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
 
 		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $result );
@@ -216,12 +217,12 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		// Arrange - lock owned by another user, but no unsaved signal
 		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
 		wp_set_current_user( $editor_user_id );
-		wp_set_post_lock( self::TEST_POST_ID );
+		wp_set_post_lock( $this->test_post_id );
 
 		$this->act_as_admin();
 
 		// Act
-		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
 
 		// Assert
 		$this->assertNull( $result );
@@ -230,10 +231,10 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	public function test_mutation_guard__returns_null_when_no_lock() {
 		// Arrange
 		$this->act_as_admin();
-		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::set_editor_unsaved( $this->test_post_id );
 
 		// Act
-		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
 
 		// Assert
 		$this->assertNull( $result );
@@ -256,14 +257,14 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 		// Act + Assert — no lock, no unsaved signal: all calls pass the guard.
 		for ( $i = 0; $i < $call_count; $i++ ) {
-			$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
+			$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
 
 			$this->assertNull( $result, "Call $i should not be blocked" );
 
-			Editor_Sync_State::set_mcp_mutation( self::TEST_POST_ID );
+			Editor_Sync_State::set_mcp_mutation( $this->test_post_id );
 		}
 
-		$this->assertGreaterThan( 0, Editor_Sync_State::get_mcp_mutation_time( self::TEST_POST_ID ) );
+		$this->assertGreaterThan( 0, Editor_Sync_State::get_mcp_mutation_time( $this->test_post_id ) );
 	}
 
 	public function test_mutation_guard__does_not_clear_signal_owned_by_different_user() {
@@ -272,14 +273,14 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		$user_b_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
 
 		wp_set_current_user( $user_a_id );
-		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::set_editor_unsaved( $this->test_post_id );
 
 		wp_set_current_user( $user_b_id );
 
 		// Act
-		Editor_Sync_State::clear_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::clear_editor_unsaved( $this->test_post_id );
 
 		// Assert
-		$this->assertSame( $user_a_id, (int) get_transient( self::UNSAVED_TRANSIENT_KEY ) );
+		$this->assertSame( $user_a_id, (int) get_transient( "_elementor_editor_unsaved_{$this->test_post_id}" ) );
 	}
 }
