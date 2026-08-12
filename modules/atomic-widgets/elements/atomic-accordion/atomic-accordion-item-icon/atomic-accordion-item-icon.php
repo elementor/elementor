@@ -13,8 +13,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -28,11 +26,11 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	const CHEVRON_SVG = 'modules/atomic-widgets/elements/atomic-accordion/assets/chevron.svg';
+	const ICON_WIDTH = 200;
 
-	const ICON_SIZE = 16;
+	const ICON_HEIGHT = 20;
 
-	public static $widget_description = 'The open/closed indicator slot of an accordion item header. Decorative (aria-hidden), and rotated by CSS when the item is open. Holds an e-svg chevron by default; the SVG can be replaced.';
+	public static $widget_description = 'The open/closed indicator slot of an accordion item header. Decorative (aria-hidden), and rotated by CSS when the item is open. Holds an e-svg (defaulting to Atomic_Svg\'s own default SVG) by default; the SVG can be replaced.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -86,8 +84,13 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 	 * replaced SVG picks up the slot's size automatically.
 	 */
 	protected function define_base_styles(): array {
-		$size = Size_Prop_Type::generate( [
-			'size' => self::ICON_SIZE,
+		$width = Size_Prop_Type::generate( [
+			'size' => self::ICON_WIDTH,
+			'unit' => 'px',
+		] );
+
+		$height = Size_Prop_Type::generate( [
+			'size' => self::ICON_HEIGHT,
 			'unit' => 'px',
 		] );
 
@@ -104,8 +107,8 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 							// main-axis size is governed by `flex-basis`, not `width`, unless the basis
 							// is `auto`. `flexShrink: 0` alone resolves to `flex: 0 0` — CSS treats an
 							// omitted basis as `0`, i.e. `flex-basis: 0%` — which would override the
-							// `width` below. Passing `flexBasis: auto` keeps the declared 16px width in
-							// the main axis while still preventing the icon from shrinking.
+							// `width` below. Passing `flexBasis: auto` keeps the declared width in the
+							// main axis while still preventing the icon from shrinking.
 							'flex' => Flex_Prop_Type::generate( [
 								'flexShrink' => Number_Prop_Type::generate( 0 ),
 								'flexBasis' => Size_Prop_Type::generate( [
@@ -113,8 +116,8 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 									'unit' => 'custom',
 								] ),
 							] ),
-							'width' => $size,
-							'height' => $size,
+							'width' => $width,
+							'height' => $height,
 						] )
 				),
 		];
@@ -123,12 +126,6 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 	protected function define_default_children() {
 		return [
 			Atomic_Svg::generate()
-				->settings( [
-					'svg' => Svg_Src_Prop_Type::generate( [
-						'id' => null,
-						'url' => Url_Prop_Type::generate( ELEMENTOR_URL . self::CHEVRON_SVG ),
-					] ),
-				] )
 				->build(),
 		];
 	}

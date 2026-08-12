@@ -631,12 +631,12 @@ class Module extends BaseModule {
 			// and the inner <svg> itself already gets an inline `width: 100%; height: 100%` from
 			// Svg_Src_Transformer, which resolves against its containing block: the wrapper. So the
 			// wrapper's fixed 65px, not the svg, is what needs neutralising to let the already-100% svg
-			// fill the 16x16 slot. A descendant combinator is used, not a direct child combinator: the
+			// fill the 200x20 slot. A descendant combinator is used, not a direct child combinator: the
 			// icon slot has no `define_allowed_child_types()` restriction, so a user can drop a container
 			// into it before the e-svg, putting the wrapper an extra level deep
 			// (`icon-slot > container > .e-svg-base`) — a `>` selector would miss exactly that case while
 			// the rotation rule below (already a descendant selector) would still match, so the icon would
-			// render at 65x65 *and rotate* inside the 16x16 slot. `.e-accordion-item-icon-base
+			// render at 65x65 *and rotate* inside the 200x20 slot. `.e-accordion-item-icon-base
 			// .e-svg-base` alone would only tie the base rule's specificity (0-2-0), and the tie is not
 			// hypothetical: this method (`add_inline_styles()`) runs on the `elementor/frontend/after_enqueue_styles`
 			// hook, while `Atomic_Styles_Manager::enqueue_styles()` (the atomic base/local CSS) runs on
