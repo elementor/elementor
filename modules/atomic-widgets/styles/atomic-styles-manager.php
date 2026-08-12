@@ -179,12 +179,22 @@ class Atomic_Styles_Manager {
 			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
 				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
+				if ( empty( $breakpoint ) ) {
+					$breakpoint = self::DEFAULT_BREAKPOINT;
+				}
+
 				if ( ! isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
-					$group[ $breakpoint ][ $style['id'] ] = [
+					$style_for_breakpoint = [
 						'id' => $style['id'],
 						'type' => $style['type'],
 						'variants' => [],
 					];
+
+					if ( isset( $style['cssName'] ) ) {
+						$style_for_breakpoint['cssName'] = $style['cssName'];
+					}
+
+					$group[ $breakpoint ][ $style['id'] ] = $style_for_breakpoint;
 				}
 
 				$group[ $breakpoint ][ $style['id'] ]['variants'][] = $variant;
