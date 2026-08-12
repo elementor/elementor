@@ -6,7 +6,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head\Atomic_Accordion_Item_Head;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Plugin;
@@ -27,7 +27,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 
 	const SUB_ELEMENT_CLASSES_BY_TYPE = [
 		'e-accordion-item' => Atomic_Accordion_Item::class,
-		'e-accordion-item-head' => Atomic_Accordion_Item_Head::class,
+		'e-accordion-item-header' => Atomic_Accordion_Item_Header::class,
 		'e-accordion-item-title' => Atomic_Accordion_Item_Title::class,
 		'e-accordion-item-icon' => Atomic_Accordion_Item_Icon::class,
 		'e-accordion-item-content' => Atomic_Accordion_Item_Content::class,
@@ -226,10 +226,10 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			$this->assertSame( 'e-accordion-item', $item['elType'] );
 			$this->assertSame( 'Accordion Item ' . ( $i + 1 ), $item['editor_settings']['title'] );
 
-			[ $head, $content ] = $item['elements'];
+			[ $header, $content ] = $item['elements'];
 
-			$this->assertSame( 'e-accordion-item-head', $head['elType'] );
-			[ $title, $icon ] = $head['elements'];
+			$this->assertSame( 'e-accordion-item-header', $header['elType'] );
+			[ $title, $icon ] = $header['elements'];
 
 			$this->assertSame( 'e-accordion-item-title', $title['elType'] );
 			$paragraph = $title['elements'][0];
@@ -255,12 +255,12 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	public function test_allowed_child_types_per_level() {
 		$this->assertSame( [ 'e-accordion-item' ], $this->get_config( 'e-accordion' )['allowed_child_types'] );
 		$this->assertSame(
-			[ 'e-accordion-item-head', 'e-accordion-item-content' ],
+			[ 'e-accordion-item-header', 'e-accordion-item-content' ],
 			$this->get_config( 'e-accordion-item' )['allowed_child_types']
 		);
 		$this->assertSame(
 			[ 'e-accordion-item-title', 'e-accordion-item-icon' ],
-			$this->get_config( 'e-accordion-item-head' )['allowed_child_types']
+			$this->get_config( 'e-accordion-item-header' )['allowed_child_types']
 		);
 		$this->assertEmpty( $this->get_config( 'e-accordion-item-title' )['allowed_child_types'] );
 		$this->assertEmpty( $this->get_config( 'e-accordion-item-icon' )['allowed_child_types'] );
@@ -271,8 +271,8 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	// children_dependencies
 	// ---------------------------------------------------------------------
 
-	public function test_head_children_dependencies_shape() {
-		$config = $this->get_config( 'e-accordion-item-head' );
+	public function test_header_children_dependencies_shape() {
+		$config = $this->get_config( 'e-accordion-item-header' );
 
 		$this->assertCount( 1, $config['children_dependencies'] );
 
@@ -311,13 +311,13 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		// `_cssid` and `display-conditions` are framework-injected by
 		// `Has_Atomic_Base::get_props_schema()` / the `elementor/atomic-widgets/props-schema`
 		// filter, never declared by the element — do not assert their absence (Step 2's
-		// correction). `e-accordion-item-head` additionally carries the mirrored `show_icon` prop
+		// correction). `e-accordion-item-header` additionally carries the mirrored `show_icon` prop
 		// (see that class) — every other sub-element exposes only the four framework/plumbing
 		// props.
 		foreach ( self::SUB_ELEMENT_CLASSES_BY_TYPE as $type => $class ) {
 			$schema_keys = array_keys( $class::get_props_schema() );
 
-			$expected = 'e-accordion-item-head' === $type
+			$expected = 'e-accordion-item-header' === $type
 				? [ 'classes', 'attributes', 'show_icon', '_cssid', 'display-conditions' ]
 				: [ 'classes', 'attributes', '_cssid', 'display-conditions' ];
 

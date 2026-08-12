@@ -26,7 +26,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 
 	const accordionType = 'e-accordion';
 	const itemType = 'e-accordion-item';
-	const headType = 'e-accordion-item-head';
+	const headerType = 'e-accordion-item-header';
 	const titleType = 'e-accordion-item-title';
 	const iconType = 'e-accordion-item-icon';
 	const contentType = 'e-accordion-item-content';
@@ -41,8 +41,8 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		return root.locator( `.e-con[data-element_type="${ itemType }"]` );
 	};
 
-	const getHeads = ( root: Locator ): Locator => {
-		return root.locator( `.e-con[data-element_type="${ headType }"]` );
+	const getHeaders = ( root: Locator ): Locator => {
+		return root.locator( `.e-con[data-element_type="${ headerType }"]` );
 	};
 
 	const getIcons = ( root: Locator ): Locator => {
@@ -123,7 +123,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( root.locator( `[data-widget_type="${ paragraphType }.default"]` ).first() ).toContainText( 'Accordion Item 1' );
 	} );
 
-	test( 'Add item via repeater creates a self-contained item with head, title, icon and content', async () => {
+	test( 'Add item via repeater creates a self-contained item with header, title, icon and content', async () => {
 		// Arrange
 		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
 		const root = getAccordionRoot( accordionId );
@@ -143,7 +143,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		expect( newItemIds ).toEqual( expect.arrayContaining( initialItemIds ) );
 
 		const lastItem = getItems( root ).nth( newItemIds.length - 1 );
-		await expect( lastItem.locator( `[data-element_type="${ headType }"]` ) ).toHaveCount( 1 );
+		await expect( lastItem.locator( `[data-element_type="${ headerType }"]` ) ).toHaveCount( 1 );
 		await expect( lastItem.locator( `[data-element_type="${ titleType }"]` ) ).toHaveCount( 1 );
 		await expect( lastItem.locator( `[data-element_type="${ iconType }"]` ) ).toHaveCount( 1 );
 		await expect( lastItem.locator( `[data-element_type="${ contentType }"]` ) ).toHaveCount( 1 );
@@ -282,14 +282,14 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// Arrange — first_expanded + one is the schema default: item 0 starts open.
 		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
 		const root = getAccordionRoot( accordionId );
-		const heads = getHeads( root );
+		const headers = getHeaders( root );
 		const details = root.locator( 'details' );
 
 		await expect( details.nth( 0 ) ).toHaveAttribute( 'open', '' );
 
 		// Act — native <details name="..."> exclusivity: opening the second item's <summary>
 		// closes the first via the browser itself, no JS involved.
-		await heads.nth( 1 ).click();
+		await headers.nth( 1 ).click();
 
 		// Assert
 		await expect( details.nth( 1 ) ).toHaveAttribute( 'open', '' );
@@ -303,13 +303,13 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 			'document',
 		);
 		const root = getAccordionRoot( accordionId );
-		const heads = getHeads( root );
+		const headers = getHeaders( root );
 		const details = root.locator( 'details' );
 
 		await expect( details.nth( 0 ) ).toHaveAttribute( 'open', '' );
 
 		// Act
-		await heads.nth( 1 ).click();
+		await headers.nth( 1 ).click();
 
 		// Assert — both stay open, unlike the "one" case above.
 		await expect( details.nth( 0 ) ).toHaveAttribute( 'open', '' );
@@ -336,7 +336,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 
 		// … and gone from the Structure panel too. Every sub-element gets its own navigator row
 		// titled from its `editor_settings.title` (`assets/dev/js/editor/regions/navigator/element.js`);
-		// the icon slot is titled "Icon" (`Atomic_Accordion_Item_Head::define_default_children()`),
+		// the icon slot is titled "Icon" (`Atomic_Accordion_Item_Header::define_default_children()`),
 		// so its absence from the whole tree is a reliable proxy for "no icon node in Structure".
 		await editor.page.locator( '#elementor-editor-wrapper-v2 button[value="Structure"]' ).click();
 		const navigatorPanel = editor.page.locator( '#elementor-navigator' );
@@ -370,7 +370,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// sufficient for the pseudo-element case).
 		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
 		const root = getAccordionRoot( accordionId );
-		const heads = getHeads( root );
+		const headers = getHeaders( root );
 		const icons = getIcons( root );
 		const details = root.locator( 'details' );
 		const secondContent = getContents( root ).nth( 1 );
@@ -388,7 +388,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		expect( closedIconStyle.transform ).toBe( 'none' );
 
 		// Act
-		await heads.nth( 1 ).click();
+		await headers.nth( 1 ).click();
 		await expect( details.nth( 1 ) ).toHaveAttribute( 'open', '' );
 
 		// Assert — exactly `rotate(180deg)`, computed as the 2D rotation matrix
@@ -431,7 +431,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( innerDetails ).toHaveCount( 2 );
 
 		// Act — open the inner accordion's second item.
-		await getHeads( innerRoot ).nth( 1 ).click();
+		await getHeaders( innerRoot ).nth( 1 ).click();
 
 		// Assert — the inner accordion's own exclusivity applies …
 		await expect( innerDetails.nth( 1 ) ).toHaveAttribute( 'open', '' );
@@ -452,7 +452,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( secondRoot.locator( 'details' ).nth( 0 ) ).toHaveAttribute( 'open', '' );
 
 		// Act — open the second item of the first accordion only.
-		await getHeads( firstRoot ).nth( 1 ).click();
+		await getHeaders( firstRoot ).nth( 1 ).click();
 
 		// Assert — first accordion's exclusivity kicked in, second accordion is untouched.
 		await expect( firstRoot.locator( 'details' ).nth( 1 ) ).toHaveAttribute( 'open', '' );
@@ -465,13 +465,13 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// Arrange
 		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
 		const root = getAccordionRoot( accordionId );
-		const heads = getHeads( root );
+		const headers = getHeaders( root );
 		const details = root.locator( 'details' );
 
 		await expect( details.nth( 0 ) ).toHaveAttribute( 'open', '' );
 
 		// Act — Tab to the second summary and activate it with Enter.
-		await heads.nth( 0 ).focus();
+		await headers.nth( 0 ).focus();
 		await editor.page.keyboard.press( 'Tab' );
 		await editor.page.keyboard.press( 'Enter' );
 
@@ -521,22 +521,22 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// task could confirm by execution.
 		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
 		const root = getAccordionRoot( accordionId );
-		const heads = getHeads( root );
+		const headers = getHeaders( root );
 		const details = root.locator( 'details' );
 
 		await expect( details.nth( 0 ) ).toHaveAttribute( 'open', '' );
-		const openSnapshot = await heads.nth( 0 ).ariaSnapshot();
+		const openSnapshot = await headers.nth( 0 ).ariaSnapshot();
 
 		expect( openSnapshot.toLowerCase() ).toContain( 'button' );
 		expect( openSnapshot ).toContain( 'Accordion Item 1' );
 
 		// Act — close the first item by opening the second (max_expanded defaults to "one").
-		await heads.nth( 1 ).click();
+		await headers.nth( 1 ).click();
 		await expect( details.nth( 0 ) ).not.toHaveAttribute( 'open', '' );
 
 		// Assert — the accessibility tree reflects the state change; the browser derives this from
 		// `[open]` alone, nothing here writes `aria-expanded` by hand.
-		const closedSnapshot = await heads.nth( 0 ).ariaSnapshot();
+		const closedSnapshot = await headers.nth( 0 ).ariaSnapshot();
 		expect( closedSnapshot ).not.toBe( openSnapshot );
 	} );
 
@@ -553,8 +553,8 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( getItems( root ) ).toHaveCount( 2 );
 		await expect( root.locator( 'details' ).nth( 0 ) ).toHaveAttribute( 'open', '' );
 
-		const heads = getHeads( root );
-		await heads.nth( 1 ).click();
+		const headers = getHeaders( root );
+		await headers.nth( 1 ).click();
 		await expect( root.locator( 'details' ).nth( 1 ) ).toHaveAttribute( 'open', '' );
 	} );
 

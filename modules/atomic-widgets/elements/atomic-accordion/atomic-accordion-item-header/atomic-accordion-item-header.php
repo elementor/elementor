@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Accordion_Item_Head extends Atomic_Element_Base {
+class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
@@ -38,19 +38,19 @@ class Atomic_Accordion_Item_Head extends Atomic_Element_Base {
 	}
 
 	public static function get_type() {
-		return Atomic_Accordion::ELEMENT_TYPE_HEAD;
+		return Atomic_Accordion::ELEMENT_TYPE_HEADER;
 	}
 
 	public static function get_element_type(): string {
-		return Atomic_Accordion::ELEMENT_TYPE_HEAD;
+		return Atomic_Accordion::ELEMENT_TYPE_HEADER;
 	}
 
 	public function get_title() {
-		return esc_html__( 'Head', 'elementor' );
+		return esc_html__( 'Header', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'accordion', 'head', 'summary' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'accordion', 'header', 'summary' ];
 	}
 
 	public function get_icon() {
@@ -70,7 +70,7 @@ class Atomic_Accordion_Item_Head extends Atomic_Element_Base {
 			// control). This copy exists only so `define_children_dependencies()` below has something
 			// on *this* element's own settings to evaluate: the children-dependencies reconciler reads
 			// only the declaring element's own settings and can only attach/detach its own direct
-			// children, so a root-level prop can never drive whether *this* head's icon child is
+			// children, so a root-level prop can never drive whether *this* header's icon child is
 			// present. The editor writes this prop through from the root whenever the root's `show_icon`
 			// changes (see `useShowIconWriteThrough` alongside the accordion items repeater control) -
 			// it is never surfaced in the panel and must never grow a per-item control of its own.
@@ -170,7 +170,7 @@ class Atomic_Accordion_Item_Head extends Atomic_Element_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-accordion-item-head' => __DIR__ . '/atomic-accordion-item-head.html.twig',
+			'elementor/elements/atomic-accordion-item-header' => __DIR__ . '/atomic-accordion-item-header.html.twig',
 		];
 	}
 }

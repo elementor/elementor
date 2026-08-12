@@ -84,7 +84,7 @@ describe( 'accordion-items-control actions', () => {
 			expect( addedTitles() ).toEqual( [ 'Accordion Item 3', 'Accordion Item 4' ] );
 		} );
 
-		it( 'should build the head/title/icon/content subtree of the added item', () => {
+		it( 'should build the header/title/icon/content subtree of the added item', () => {
 			// Arrange.
 			const { result } = renderHook( () => useActions() );
 
@@ -98,19 +98,19 @@ describe( 'accordion-items-control actions', () => {
 
 			// Assert.
 			const model = getCreatedItemModel();
-			const [ head, content ] = model.elements ?? [];
-			const [ title, icon ] = head?.elements ?? [];
+			const [ header, content ] = model.elements ?? [];
+			const [ title, icon ] = header?.elements ?? [];
 
-			expect( head.elType ).toBe( 'e-accordion-item-head' );
+			expect( header.elType ).toBe( 'e-accordion-item-header' );
 			expect( content.elType ).toBe( 'e-accordion-item-content' );
 			expect( content.hydrateDefaultChildren ).toBe( true );
 			expect( title.elType ).toBe( 'e-accordion-item-title' );
 			expect( icon.elType ).toBe( 'e-accordion-item-icon' );
 			expect( icon.hydrateDefaultChildren ).toBe( true );
-			expect( head.settings ).toEqual( { show_icon: { $$type: 'boolean', value: true } } );
+			expect( header.settings ).toEqual( { show_icon: { $$type: 'boolean', value: true } } );
 		} );
 
-		it( "should seed the new item's head from the root's current show_icon value, not the schema default", () => {
+		it( "should seed the new item's header from the root's current show_icon value, not the schema default", () => {
 			// Arrange.
 			const { result } = renderHook( () => useActions() );
 
@@ -124,9 +124,9 @@ describe( 'accordion-items-control actions', () => {
 
 			// Assert.
 			const model = getCreatedItemModel();
-			const [ head ] = model.elements ?? [];
+			const [ header ] = model.elements ?? [];
 
-			expect( head.settings ).toEqual( { show_icon: { $$type: 'boolean', value: false } } );
+			expect( header.settings ).toEqual( { show_icon: { $$type: 'boolean', value: false } } );
 		} );
 
 		it( 'should number the rendered title paragraph the same way the default tree does', () => {

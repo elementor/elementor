@@ -3,24 +3,24 @@ import { getContainer, getElementSettings, updateElementSettings, type V1Element
 import { renderHook } from '@testing-library/react';
 
 import { HISTORY_DEBOUNCE_WAIT } from '../../../../hooks/use-styles-fields';
-import { cascadeShowIconToHeads, useShowIconWriteThrough } from '../use-show-icon-write-through';
+import { cascadeShowIconToHeaders, useShowIconWriteThrough } from '../use-show-icon-write-through';
 
 jest.mock( '@elementor/editor-elements' );
 
-describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
+describe( 'useShowIconWriteThrough / cascadeShowIconToHeaders', () => {
 	const ACCORDION_ID = 'accordion-1';
 
-	const headContainer = ( id: string ): V1Element =>
+	const headerContainer = ( id: string ): V1Element =>
 		( {
 			id,
-			model: { get: ( key: string ) => ( key === 'elType' ? 'e-accordion-item-head' : undefined ) },
+			model: { get: ( key: string ) => ( key === 'elType' ? 'e-accordion-item-header' : undefined ) },
 		} ) as unknown as V1Element;
 
 	const itemContainer = ( id: string ): V1Element =>
 		( {
 			id,
 			model: { get: ( key: string ) => ( key === 'elType' ? 'e-accordion-item' : undefined ) },
-			children: [ headContainer( `${ id }-head` ) ],
+			children: [ headerContainer( `${ id }-header` ) ],
 		} ) as unknown as V1Element;
 
 	const accordionContainer = ( itemIds: string[] ): V1Element =>
@@ -42,7 +42,7 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 		);
 
 		jest.mocked( getElementSettings ).mockImplementation( ( elementId: string ) => ( {
-			show_icon: { $$type: 'boolean', value: elementId === 'item-1-head' ? true : false },
+			show_icon: { $$type: 'boolean', value: elementId === 'item-1-header' ? true : false },
 		} ) );
 	} );
 
@@ -51,28 +51,28 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 		jest.useRealTimers();
 	} );
 
-	describe( 'cascadeShowIconToHeads', () => {
-		it( 'updates every head under the accordion in one call', () => {
+	describe( 'cascadeShowIconToHeaders', () => {
+		it( 'updates every header under the accordion in one call', () => {
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 
 			// Assert.
 			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
-				id: 'item-1-head',
+				id: 'item-1-header',
 				props: { show_icon: { $$type: 'boolean', value: false } },
 				withHistory: false,
 			} );
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
-				id: 'item-2-head',
+				id: 'item-2-header',
 				props: { show_icon: { $$type: 'boolean', value: false } },
 				withHistory: false,
 			} );
 		} );
 
-		it( 'restores every head to its previous value with a single undo', () => {
+		it( 'restores every header to its previous value with a single undo', () => {
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 
 			// The history push is debounced (see the "debounce timing" tests below) - flush it before
 			// undo can see anything on the stack.
@@ -84,31 +84,31 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 			// Assert.
 			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
-				id: 'item-1-head',
+				id: 'item-1-header',
 				props: { show_icon: { $$type: 'boolean', value: true } },
 				withHistory: false,
 			} );
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
-				id: 'item-2-head',
+				id: 'item-2-header',
 				props: { show_icon: { $$type: 'boolean', value: false } },
 				withHistory: false,
 			} );
 		} );
 
-		// Regression test: a head whose `show_icon` was never explicitly set (the common case - the
-		// two default accordion items' heads start this way, see `Atomic_Accordion::build_default_item()`)
+		// Regression test: a header whose `show_icon` was never explicitly set (the common case - the
+		// two default accordion items' headers start this way, see `Atomic_Accordion::build_default_item()`)
 		// reports `null`, not a boolean prop object, from `getElementSettings`. The old `undo` guard
-		// (`if ( ! previousValue ) return;`) treated that falsy `null` as "skip this head", so undo
-		// silently did nothing for exactly this case. It must still write the head back (to `null`),
+		// (`if ( ! previousValue ) return;`) treated that falsy `null` as "skip this header", so undo
+		// silently did nothing for exactly this case. It must still write the header back (to `null`),
 		// not skip it.
-		it( 'restores a head to null on undo when its show_icon was unset beforehand', () => {
+		it( 'restores a header to null on undo when its show_icon was unset beforehand', () => {
 			// Arrange.
 			jest.mocked( getElementSettings ).mockImplementation( ( elementId: string ) => ( {
-				show_icon: elementId === 'item-1-head' ? null : { $$type: 'boolean', value: false },
+				show_icon: elementId === 'item-1-header' ? null : { $$type: 'boolean', value: false },
 			} ) );
 
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 
 			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT );
 			jest.mocked( updateElementSettings ).mockClear();
@@ -118,41 +118,41 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 			// Assert.
 			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
-				id: 'item-1-head',
+				id: 'item-1-header',
 				props: { show_icon: null },
 				withHistory: false,
 			} );
 			expect( updateElementSettings ).toHaveBeenCalledWith( {
-				id: 'item-2-head',
+				id: 'item-2-header',
 				props: { show_icon: { $$type: 'boolean', value: false } },
 				withHistory: false,
 			} );
 		} );
 
-		it( 'does nothing when the accordion has no heads', () => {
+		it( 'does nothing when the accordion has no headers', () => {
 			// Arrange.
 			jest.mocked( getContainer ).mockReturnValue( accordionContainer( [] ) );
 
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 
 			// Assert.
 			expect( updateElementSettings ).not.toHaveBeenCalled();
 		} );
 	} );
 
-	describe( 'cascadeShowIconToHeads history debounce timing', () => {
+	describe( 'cascadeShowIconToHeaders history debounce timing', () => {
 		// `settings-field.tsx`'s `useUndoableUpdateElementProp` (the pipeline the root's plain
 		// `Switch_Control` goes through) debounces its history push by `HISTORY_DEBOUNCE_WAIT`. Before
-		// this fix, `cascadeShowIconToHeads` pushed its own history entry immediately/undebounced, so it
+		// this fix, `cascadeShowIconToHeaders` pushed its own history entry immediately/undebounced, so it
 		// would always land on the undo stack *before* the root's - the opposite of the order the spec
-		// wants (heads reverted together on the first Undo, root on the second). These tests exercise
+		// wants (headers reverted together on the first Undo, root on the second). These tests exercise
 		// the timing directly against `getHistoryManager`'s `addItem`, since the fake history util used
 		// elsewhere in this file only retains a single item and can't itself demonstrate two-entry
 		// stack ordering - see the task report for what this test suite can and cannot prove.
 		it( 'does not push a history entry synchronously', () => {
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 
 			// Assert - the settings write happens synchronously ...
 			expect( updateElementSettings ).toHaveBeenCalled();
@@ -162,7 +162,7 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 
 		it( 'still has not pushed a history entry just before the debounce window elapses', () => {
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT - 1 );
 
 			// Assert.
@@ -171,7 +171,7 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 
 		it( 'pushes the history entry once the same wait used by the root switch elapses', () => {
 			// Act.
-			cascadeShowIconToHeads( { accordionId: ACCORDION_ID, showIcon: false } );
+			cascadeShowIconToHeaders( { accordionId: ACCORDION_ID, showIcon: false } );
 			jest.advanceTimersByTime( HISTORY_DEBOUNCE_WAIT );
 
 			// Assert.
@@ -203,7 +203,7 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeads', () => {
 			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
 			expect( updateElementSettings ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					id: 'item-1-head',
+					id: 'item-1-header',
 					props: { show_icon: { $$type: 'boolean', value: false } },
 				} )
 			);

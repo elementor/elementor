@@ -34,14 +34,14 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	const ELEMENT_TYPE_ITEM = 'e-accordion-item';
-	const ELEMENT_TYPE_HEAD = 'e-accordion-item-head';
+	const ELEMENT_TYPE_HEADER = 'e-accordion-item-header';
 	const ELEMENT_TYPE_TITLE = 'e-accordion-item-title';
 	const ELEMENT_TYPE_ICON = 'e-accordion-item-icon';
 	const ELEMENT_TYPE_CONTENT = 'e-accordion-item-content';
 
 	const DEFAULT_ITEM_COUNT = 2;
 
-	public static $widget_description = 'Create collapsible content sections using native <details>/<summary> semantics, with no JavaScript needed for the toggle. Structure: e-accordion contains e-accordion-item elements; each item contains an e-accordion-item-head (holding e-accordion-item-title and an optional e-accordion-item-icon) and an e-accordion-item-content that accepts any element.';
+	public static $widget_description = 'Create collapsible content sections using native <details>/<summary> semantics, with no JavaScript needed for the toggle. Structure: e-accordion contains e-accordion-item elements; each item contains an e-accordion-item-header (holding e-accordion-item-title and an optional e-accordion-item-icon) and an e-accordion-item-content that accepts any element.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -83,7 +83,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 				->description( 'How many items can be open at the same time. Valid values: one, multiple' ),
 			// Single, global, user-facing toggle - there is no per-item Show Icon (confirmed with the
 			// PM: users want icons on every item or on none, never mixed). It is exposable as a
-			// component property, so no `Overridable_Prop_Type::ignore()`. Every `e-accordion-item-head`
+			// component property, so no `Overridable_Prop_Type::ignore()`. Every `e-accordion-item-header`
 			// carries its own mirrored `show_icon` prop (see that class) purely because the children-
 			// dependencies reconciler evaluates a rule against the *declaring* element's own settings
 			// and can only attach/detach that element's *direct* children - a root-level prop here can
@@ -176,7 +176,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 * Each level of `default_children` is hydrated independently client-side
 	 * (`Atomic_Element_Base_Model::onElementCreate()`, driven by `hydrateDefaultChildren: true`),
 	 * so the title slot's own `define_default_children()` has no way to know which item it
-	 * belongs to. Building the item → head → title → paragraph chain explicitly here lets the
+	 * belongs to. Building the item → header → title → paragraph chain explicitly here lets the
 	 * numbered text ("Accordion Item 1", "Accordion Item 2") reach the rendered paragraph. The
 	 * icon and content branches don't need per-index content, so they keep using their own
 	 * `define_default_children()` via `hydrate_default_children( true )`.
@@ -212,16 +212,16 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			] )
 			->build();
 
-		$head = Element_Builder::make( self::ELEMENT_TYPE_HEAD )
+		$header = Element_Builder::make( self::ELEMENT_TYPE_HEADER )
 			->editor_settings( [
-				'title' => esc_html__( 'Head', 'elementor' ),
+				'title' => esc_html__( 'Header', 'elementor' ),
 			] )
 			// Seeded explicitly, mirroring the TS repeater's `buildItemModel()`
 			// (`accordion-items-control/use-actions.ts`) - both sides of the item-building split need
-			// the head's mirrored `show_icon` prop set on creation, not left to its own schema default,
+			// the header's mirrored `show_icon` prop set on creation, not left to its own schema default,
 			// or the two default items this method builds and any item added later through the panel
 			// would start from different `show_icon` states (set vs. unset). See the comment on the
-			// mirrored prop in `Atomic_Accordion_Item_Head` for why the duplication exists at all.
+			// mirrored prop in `Atomic_Accordion_Item_Header` for why the duplication exists at all.
 			//
 			// Reads the *schema's* default here, not `$this->get_atomic_setting( 'show_icon' )`: this
 			// runs while `define_default_children()` is itself building the initial config, before
@@ -248,7 +248,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 				'title' => $numbered_title,
 				'initial_position' => $index,
 			] )
-			->children( [ $head, $content ] )
+			->children( [ $header, $content ] )
 			->build();
 	}
 
@@ -277,7 +277,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 *
 	 * `Element_Base::render_markdown()` (the inherited default - fact 6) already recurses
 	 * `get_children()` and joins every non-empty result with a blank line, with no regard for
-	 * structure. Left unchanged, item -> head -> title -> paragraph and item -> content -> paragraph
+	 * structure. Left unchanged, item -> header -> title -> paragraph and item -> content -> paragraph
 	 * would all flatten into one undifferentiated string per item ("Title\n\nContent"), and there is
 	 * no delimiter left in that output to tell where the title ends and the content begins - the
 	 * heading marker has to be added *before* the two are joined, not recovered afterwards. That
@@ -314,22 +314,22 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	}
 
 	/**
-	 * Markdown of an item's title, via `e-accordion-item` -> `e-accordion-item-head` ->
+	 * Markdown of an item's title, via `e-accordion-item` -> `e-accordion-item-header` ->
 	 * `e-accordion-item-title` -> `render_markdown()`.
 	 *
 	 * @param Atomic_Element_Base $item
 	 * @return string
 	 */
 	private function get_item_title_markdown( $item ): string {
-		$head = Collection::make( $item->get_children() )
-			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_HEAD )
+		$header = Collection::make( $item->get_children() )
+			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_HEADER )
 			->first();
 
-		if ( null === $head ) {
+		if ( null === $header ) {
 			return '';
 		}
 
-		$title = Collection::make( $head->get_children() )
+		$title = Collection::make( $header->get_children() )
 			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TITLE )
 			->first();
 
@@ -421,7 +421,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_ITEM );
 
 		foreach ( $items as $item ) {
-			$question = $this->get_faq_item_text( $item, self::ELEMENT_TYPE_HEAD, self::ELEMENT_TYPE_TITLE );
+			$question = $this->get_faq_item_text( $item, self::ELEMENT_TYPE_HEADER, self::ELEMENT_TYPE_TITLE );
 			$answer = $this->get_faq_item_text( $item, null, self::ELEMENT_TYPE_CONTENT );
 
 			if ( '' === $question || '' === $answer ) {
@@ -453,7 +453,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	 * Plain text of a sub-element within an `e-accordion-item`, found by element type.
 	 *
 	 * When `$via_type` is given, the target is looked up one level deeper (e.g. the title lives
-	 * inside the head, not directly on the item). `render_markdown()` is `Element_Base`'s existing
+	 * inside the header, not directly on the item). `render_markdown()` is `Element_Base`'s existing
 	 * recursive default (fact 6) — reused as-is, not re-implemented. Its output is markdown syntax
 	 * (`**bold**`, `[text](url)`, …), not HTML, so `strip_markdown_syntax()` — not
 	 * `wp_strip_all_tags()` — does the real cleanup; `wp_strip_all_tags()` stays only as a
@@ -567,7 +567,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 
 	/**
 	 * Exposes the accordion's identity and per-item lookup to descendants that render inside its
-	 * pass (item, head, title, icon, content) via `Render_Context::get( self::class )`.
+	 * pass (item, header, title, icon, content) via `Render_Context::get( self::class )`.
 	 *
 	 * @return array
 	 */

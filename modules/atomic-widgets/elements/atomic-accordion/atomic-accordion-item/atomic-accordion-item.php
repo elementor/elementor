@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accor
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head\Atomic_Accordion_Item_Head;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
@@ -25,7 +25,7 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'A single collapsible accordion item, rendered as <details>. Contains an e-accordion-item-head (the clickable <summary>) and an e-accordion-item-content holding the collapsible body.';
+	public static $widget_description = 'A single collapsible accordion item, rendered as <details>. Contains an e-accordion-item-header (the clickable <summary>) and an e-accordion-item-content holding the collapsible body.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -97,17 +97,17 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 
 	protected function define_allowed_child_types() {
 		return [
-			Atomic_Accordion::ELEMENT_TYPE_HEAD,
+			Atomic_Accordion::ELEMENT_TYPE_HEADER,
 			Atomic_Accordion::ELEMENT_TYPE_CONTENT,
 		];
 	}
 
 	protected function define_default_children() {
 		return [
-			Atomic_Accordion_Item_Head::generate()
+			Atomic_Accordion_Item_Header::generate()
 				->hydrate_default_children( true )
 				->editor_settings( [
-					'title' => esc_html__( 'Head', 'elementor' ),
+					'title' => esc_html__( 'Header', 'elementor' ),
 				] )
 				->build(),
 			Atomic_Accordion_Item_Content::generate()

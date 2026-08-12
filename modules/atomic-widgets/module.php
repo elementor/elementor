@@ -31,7 +31,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Head\Atomic_Accordion_Item_Head;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
@@ -369,7 +369,7 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ACCORDION ) ) {
 			$elements_manager->register_element_type( new Atomic_Accordion() );
 			$elements_manager->register_element_type( new Atomic_Accordion_Item() );
-			$elements_manager->register_element_type( new Atomic_Accordion_Item_Head() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
 			$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
 			$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
 			$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
@@ -598,14 +598,14 @@ class Module extends BaseModule {
 			// sets one of the state classes from real playback, so exactly one button shows there.
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
-			// Accordion: `<summary>` already loses its native marker via `display: flex` on the head's
+			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's
 			// base style in Chrome/Firefox, but Safari renders `::-webkit-details-marker` regardless of
 			// `display`, so a stray triangle would sit next to our chevron unless the pseudo-element is
 			// killed explicitly. `list-style: none` is kept for completeness (browsers that box the
 			// marker as a list-item marker box), the `::-webkit-details-marker` rule is what actually
 			// fixes Safari.
-			'.e-accordion-item-head-base { list-style: none; }',
-			'.e-accordion-item-head-base::-webkit-details-marker { display: none; }',
+			'.e-accordion-item-header-base { list-style: none; }',
+			'.e-accordion-item-header-base::-webkit-details-marker { display: none; }',
 			// Animated expand/collapse via `::details-content` (block-size 0 -> auto) needs
 			// `interpolate-size: allow-keywords` on the <details> element to let `block-size: auto`
 			// participate in the transition. Graceful degradation is deliberate here, but the two failure

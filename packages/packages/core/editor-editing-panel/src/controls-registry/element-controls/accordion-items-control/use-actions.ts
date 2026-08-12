@@ -20,7 +20,7 @@ export type AccordionItem = {
 export const ACCORDION_ELEMENT_TYPE = 'e-accordion';
 export const ACCORDION_ITEM_ELEMENT_TYPE = 'e-accordion-item';
 
-const ACCORDION_ITEM_HEAD_ELEMENT_TYPE = 'e-accordion-item-head';
+const ACCORDION_ITEM_HEADER_ELEMENT_TYPE = 'e-accordion-item-header';
 const ACCORDION_ITEM_TITLE_ELEMENT_TYPE = 'e-accordion-item-title';
 const ACCORDION_ITEM_ICON_ELEMENT_TYPE = 'e-accordion-item-icon';
 const ACCORDION_ITEM_CONTENT_ELEMENT_TYPE = 'e-accordion-item-content';
@@ -71,7 +71,7 @@ const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 // Each level of an atomic element's default children is hydrated independently
 // (`AtomicElementBaseModel.onElementCreate()`), so the title slot's own defaults cannot know which
 // item they belong to and would render an unnumbered "Accordion Item". Spelling the
-// item -> head -> title -> paragraph chain out here is what lets the numbered text reach the
+// item -> header -> title -> paragraph chain out here is what lets the numbered text reach the
 // rendered paragraph, exactly as the default two-item tree does. The icon and content branches need
 // no per-index content, so they keep hydrating their own defaults.
 //
@@ -87,13 +87,13 @@ const buildItemModel = ( position: number, showIcon: boolean ): V1ElementData =>
 		editor_settings: { title: numberedTitle, initial_position: position },
 		elements: [
 			{
-				elType: ACCORDION_ITEM_HEAD_ELEMENT_TYPE,
+				elType: ACCORDION_ITEM_HEADER_ELEMENT_TYPE,
 				id: generateElementId(),
-				editor_settings: { title: __( 'Head', 'elementor' ) },
+				editor_settings: { title: __( 'Header', 'elementor' ) },
 				// Seeded from the root's *current* `show_icon` value, not the schema default: if a user
 				// has already turned Show Icon off, a newly added item must start with its icon hidden
 				// too, not re-show one just because the item itself is brand new. See the comment on
-				// the mirrored prop in `Atomic_Accordion_Item_Head` for why this duplication exists.
+				// the mirrored prop in `Atomic_Accordion_Item_Header` for why this duplication exists.
 				settings: { show_icon: booleanPropTypeUtil.create( showIcon ) },
 				elements: [
 					{
@@ -148,7 +148,7 @@ export const useActions = () => {
 		accordionId: string;
 		existingTitles: ( string | undefined )[];
 		items: ItemsActionPayload< AccordionItem >;
-		// The root's *current* `show_icon` value, so the new item's head starts in sync with it
+		// The root's *current* `show_icon` value, so the new item's header starts in sync with it
 		// instead of the schema default - see the comment on `buildItemModel`.
 		showIcon: boolean;
 	} ) => {
