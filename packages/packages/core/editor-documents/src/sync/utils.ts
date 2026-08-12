@@ -16,7 +16,47 @@ export function getV1DocumentsManager() {
 	return documentsManager;
 }
 
+const RETURN_TO_KEY = 'elementor_app_return_to';
+
+let appReturnToUrl: string | null | undefined;
+
+function getAppReturnToUrl(): string | null {
+	if ( appReturnToUrl !== undefined ) {
+		return appReturnToUrl;
+	}
+
+	appReturnToUrl = null;
+
+	const stored = sessionStorage.getItem( RETURN_TO_KEY );
+
+	if ( ! stored ) {
+		return appReturnToUrl;
+	}
+
+	sessionStorage.removeItem( RETURN_TO_KEY );
+
+	try {
+		const parsedUrl = new URL( stored );
+		const isSameOrigin = parsedUrl.hostname === window.location.hostname &&
+			( 'http:' === parsedUrl.protocol || 'https:' === parsedUrl.protocol );
+
+		if ( isSameOrigin ) {
+			appReturnToUrl = stored;
+		}
+	} catch ( e ) {
+		// Invalid URL, fall through to default behavior.
+	}
+
+	return appReturnToUrl;
+}
+
 export function getV1DocumentsExitTo( documentData: V1Document ) {
+	const returnTo = getAppReturnToUrl();
+
+	if ( returnTo ) {
+		return returnTo;
+	}
+
 	const exitPreference =
 		( window as unknown as ExtendedWindow ).elementor?.getPreferences?.( 'exit_to' ) || 'this_post';
 

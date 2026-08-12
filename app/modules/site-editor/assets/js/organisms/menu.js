@@ -15,6 +15,12 @@ export default function Menu( props ) {
 			}
 
 			const goToCreate = () => {
+				if ( window.top !== window ) {
+					sessionStorage.setItem( 'elementor_app_return_to', window.top.location.href );
+					window.top.location.href = itemProps.urls.create;
+					return;
+				}
+
 				location.href = itemProps.urls.create;
 			};
 
