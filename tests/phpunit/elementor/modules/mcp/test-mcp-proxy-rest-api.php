@@ -195,10 +195,13 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	}
 
 	public function test_mutation_guard__returns_409_when_lock_and_unsaved_exist() {
-		// Arrange
-		$this->act_as_admin();
+		// Arrange - lock must be owned by a different user than the MCP caller
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $editor_user_id );
 		wp_set_post_lock( self::TEST_POST_ID );
 		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
+
+		$this->act_as_admin();
 
 		// Act
 		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
@@ -210,8 +213,12 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	}
 
 	public function test_mutation_guard__returns_null_when_lock_exists_but_no_unsaved() {
-		// Arrange
+		// Arrange - lock owned by another user, but no unsaved signal
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $editor_user_id );
 		wp_set_post_lock( self::TEST_POST_ID );
+
+		$this->act_as_admin();
 
 		// Act
 		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
