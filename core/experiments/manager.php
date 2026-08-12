@@ -377,6 +377,16 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.30.0',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_css_files',
+			'title' => esc_html__( 'Optimized CSS Files', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Keeps external CSS files available and consistent for sites behind page caching or a CDN.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'generator_tag' => true,
+		] );
 	}
 
 	/**

@@ -26,7 +26,7 @@ Optional env: `elementor/editor/v2/scripts/env` → `$env['@elementor/my-editor-
    - App bar: `injectIntoPageIndication`, `toolsMenu` (`@elementor/editor-app-bar`)
    - Editing panel: `injectIntoStyleTab`, `registerEditingPanelReplacement` (`@elementor/editor-editing-panel`)
    - Elements panel: `injectTab` (`@elementor/editor-elements-panel`)
-   - Slide-in panels: `__registerPanel` (`@elementor/editor-panels`)
+   - Slide-in panels: `registerPanel` (`@elementor/editor-panels`)
    - Styles: `stylesRepository.register` (`@elementor/editor-styles-repository`)
    - Legacy bridge: `registerDataHook`, `blockCommand`, `listenTo( v1ReadyEvent() )` (`@elementor/editor-v1-adapters`)
 5. **MCP (in-editor only)** — in `init()`:
