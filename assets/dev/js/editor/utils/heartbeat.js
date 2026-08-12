@@ -128,32 +128,34 @@ export default class Heartbeat {
 
 		const isDirty = this.document.editor.isChanged;
 
+		const baseConfig = {
+			headerMessage: __( 'Page Updated by AI', 'elementor' ),
+			defaultOption: 'confirm',
+			onConfirm: () => this.reloadDocument(),
+		};
+
 		const config = isDirty
 			? {
-				headerMessage: __( 'Page Updated by AI', 'elementor' ),
+				...baseConfig,
 				message: __( 'This page was changed externally. Save your changes or reload to get the latest version.', 'elementor' ),
 				strings: {
 					confirm: __( 'Force Save', 'elementor' ),
 					cancel: __( 'Reload', 'elementor' ),
 				},
-				defaultOption: 'confirm',
 				onConfirm: () => this.forceSave(),
 				onCancel: () => this.reloadDocument(),
 			}
 			: {
-				headerMessage: __( 'Page Updated by AI', 'elementor' ),
+				...baseConfig,
 				message: __( 'This page was changed externally. Reload to get the latest version.', 'elementor' ),
 				strings: {
 					confirm: __( 'Reload', 'elementor' ),
 				},
-				defaultOption: 'confirm',
-				onConfirm: () => this.reloadDocument(),
 			};
 
 		this.externalChangeModal = elementorCommon.dialogsManager.createWidget( isDirty ? 'confirm' : 'alert', {
 			...config,
 			closeButton: false,
-			closeButtonOptions: { iconClass: '' },
 			hide: {
 				onOutsideClick: false,
 				onEscKeyPress: false,
