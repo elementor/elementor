@@ -53,6 +53,18 @@ class Default_Styles_Repository {
 		return $post ? $post->to_array() : null;
 	}
 
+	public function each_item( callable $cb, bool $skip_migration = false ): void {
+		$tag_post_ids = Default_Styles_Tag_Post_IDs::make( $this->get_kit() )->get_all();
+
+		foreach ( $tag_post_ids as $post_id ) {
+			$post = Default_Style_Post::from_post_id( $post_id );
+
+			if ( $post ) {
+				$cb( $post->to_array( $skip_migration ) );
+			}
+		}
+	}
+
 	public function put( string $tag, array $data ): void {
 		if ( ! self::is_allowed_tag( $tag ) ) {
 			return;
@@ -90,7 +102,13 @@ class Default_Styles_Repository {
 
 		$this->cache = null;
 
-		do_action( 'elementor/default_styles/update', [ 'tag' => $tag, 'deleted' => true ] );
+		do_action(
+			'elementor/default_styles/update',
+			[
+				'tag'     => $tag,
+				'deleted' => true,
+			]
+		);
 	}
 
 	public static function is_allowed_tag( string $tag ): bool {

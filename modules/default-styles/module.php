@@ -5,6 +5,7 @@ namespace Elementor\Modules\DefaultStyles;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\DefaultStyles\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,6 +46,7 @@ class Module extends BaseModule {
 
 		( new Default_Styles_REST_API() )->register_hooks();
 		( new Atomic_Default_Styles() )->register_hooks();
+		( new Import_Export_Customization() )->register_hooks();
 
 		add_filter(
 			'elementor/kit/meta_to_preserve_on_kit_import',
