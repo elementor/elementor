@@ -1,4 +1,5 @@
-{% set classes = ['e-con', 'e-atomic-element', base_styles.base, 'e-default-button'] | merge(settings.classes | default([])) | join(' ') %}
+{% import 'elementor/macros' as m %}
+{% set classes = ['e-con', 'e-atomic-element', base_styles.base, m.default_tag_class('button')] | merge(settings.classes | default([])) | join(' ') %}
 <button class="{{ classes }} {{ editor_classes | default('') }}{{ is_active ? ' e--selected' : '' }}"
     data-id="{{ id }}"
     data-element_type="{{ type }}"

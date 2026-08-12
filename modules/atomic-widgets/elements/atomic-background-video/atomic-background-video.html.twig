@@ -1,7 +1,8 @@
+{% import 'elementor/macros' as m %}
 {% set state_class = '' %}
 {% if settings.state == 'playing' %}{% set state_class = 'e-background-video--playing' %}{% endif %}
 {% if settings.state == 'paused' %}{% set state_class = 'e-background-video--paused' %}{% endif %}
-{% set classes = ['e-background-video', 'e-con', 'e-atomic-element', base_styles.base, state_class, 'e-default-div'] | merge(settings.classes | default([])) | join(' ') %}
+{% set classes = ['e-background-video', 'e-con', 'e-atomic-element', base_styles.base, state_class, m.default_tag_class('div')] | merge(settings.classes | default([])) | join(' ') %}
 <div class="{{ classes }} {{ editor_classes | default('') }}"
 	data-id="{{ id }}"
 	data-element_type="{{ type }}"

@@ -6,7 +6,7 @@
 		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }} {{ m.default_tag_class(link_tag) }}" data-interaction-id="{{ interaction_id }}"
 	>
 {%- endif %}
-<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
+<img class="{{ base_styles['base'] }} {{ m.default_tag_class('img') }} {{ settings.classes | join(' ') }}"
 	{%- if not has_link %} data-interaction-id="{{ interaction_id }}"{% endif -%}
 	{{- m.render_custom_attributes(settings) }}
 	{%- for attr, value in settings.image -%}

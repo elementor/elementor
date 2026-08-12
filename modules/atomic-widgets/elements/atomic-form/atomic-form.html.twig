@@ -1,5 +1,6 @@
+{% import 'elementor/macros' as m %}
 {%- set form_state = form_state | default(settings['form-state']) | default('default') -%}
-{%- set classes = ['e-con', 'e-atomic-element', base_styles.base, 'form-state-' ~ form_state, 'e-default-form'] | merge(settings.classes | default([])) | join(' ') -%}
+{%- set classes = ['e-con', 'e-atomic-element', base_styles.base, 'form-state-' ~ form_state, m.default_tag_class('form')] | merge(settings.classes | default([])) | join(' ') -%}
 <form class="{{ classes }} {{ editor_classes | default('') }}"
       data-id="{{ id }}"
       data-element_type="{{ type }}"

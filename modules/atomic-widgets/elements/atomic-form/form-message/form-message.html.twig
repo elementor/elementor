@@ -1,4 +1,5 @@
-{%- set classes = ['e-con', 'e-atomic-element', base_styles.base, 'e-default-div'] | merge(settings.classes | default([])) | join(' ') %}
+{% import 'elementor/macros' as m %}
+{%- set classes = ['e-con', 'e-atomic-element', base_styles.base, m.default_tag_class('div')] | merge(settings.classes | default([])) | join(' ') %}
 {%- set message_type = type == 'e-form-success-message' ? 'message-success' : 'message-error' %}
 {%- set aria_attr = type == 'e-form-success-message' ? 'aria-live="polite"'  : 'role="alert"' %}
 <div class="{{ classes }} {{ message_type }} {{ editor_classes | default('') }}"

@@ -3,7 +3,8 @@
 {% set e_settings = {
     'default-active-tab': default_active_tab_id,
 } %}
-{% set classes = ['e-con', 'e-atomic-element', base_styles.base, 'e-default-div'] | merge(settings.classes | default([])) | join(' ') %}
+{% import 'elementor/macros' as m %}
+{% set classes = ['e-con', 'e-atomic-element', base_styles.base, m.default_tag_class('div')] | merge(settings.classes | default([])) | join(' ') %}
 <div class="{{ classes }} {{ editor_classes | default('') }}"
     data-id="{{ id }}"
     data-element_type="{{ type }}"
