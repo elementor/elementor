@@ -7,7 +7,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -21,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	use Has_Element_Template;
 
-	public static $widget_description = 'The title slot of an accordion item header. Its HTML tag is controlled by the accordion\'s Title HTML Tag setting. Accepts any element as its content.';
+	public static $widget_description = 'The title slot of an accordion item header. Always renders as a fixed, non-semantic wrapper; the visible HTML tag is controlled by the inner Paragraph element\'s own Tag setting. Accepts any element as its content.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -70,8 +69,10 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	}
 
 	/**
-	 * Editor-side default only. On render the tag comes from the accordion's `title_tag`
-	 * setting through the render context.
+	 * Editor-side default only, reported via `to_config()['default_html_tag']`. This element no
+	 * longer has a settable `tag` prop of its own — the twig always renders a fixed `span` wrapper
+	 * (`title_tag | default('span')` with `title_tag` never supplied) regardless of this value; the
+	 * visible tag is controlled solely by the inner Paragraph child's own `tag` setting.
 	 */
 	protected function define_default_html_tag() {
 		return 'span';
@@ -103,23 +104,5 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 		return [
 			'elementor/elements/atomic-accordion-item-title' => __DIR__ . '/atomic-accordion-item-title.html.twig',
 		];
-	}
-
-	/**
-	 * Reads the tag to render as from the accordion's render context.
-	 *
-	 * `Render_Context::get()` returns `[]` when this element renders outside a parent
-	 * `Atomic_Accordion` pass (e.g. `Render_Element_Action` re-rendering a single element), so
-	 * `title-tag` may be absent — that falls back to `null` here rather than warn on a missing array
-	 * key, and the Twig template's `title_tag | default('span')` turns that into `span`.
-	 *
-	 * @return array
-	 */
-	protected function build_template_context(): array {
-		$accordion_context = Render_Context::get( Atomic_Accordion::class );
-
-		return array_merge( $this->build_base_template_context(), [
-			'title_tag' => $accordion_context['title-tag'] ?? null,
-		] );
 	}
 }

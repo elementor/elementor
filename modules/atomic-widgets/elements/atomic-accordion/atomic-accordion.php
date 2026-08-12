@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Accordion_Items_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
@@ -82,10 +81,6 @@ class Atomic_Accordion extends Atomic_Element_Base {
 				->enum( [ 'one', 'multiple' ] )
 				->default( 'one' )
 				->description( 'How many items can be open at the same time. Valid values: one, multiple' ),
-			'title_tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'span' ] )
-				->default( 'span' )
-				->description( 'The HTML tag used to render every item title. Valid values: h1, h2, h3, h4, h5, h6, div, p, span' ),
 			// Single, global, user-facing toggle - there is no per-item Show Icon (confirmed with the
 			// PM: users want icons on every item or on none, never mixed). It is exposable as a
 			// component property, so no `Overridable_Prop_Type::ignore()`. Every `e-accordion-item-head`
@@ -142,46 +137,6 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->set_convert_options( true )
 						->set_size( 'tiny' )
 						->set_full_width( true ),
-					Html_Tag_Control::bind_to( 'title_tag' )
-						->set_label( esc_html__( 'Title HTML Tag', 'elementor' ) )
-						->set_options( [
-							[
-								'value' => 'h1',
-								'label' => 'H1',
-							],
-							[
-								'value' => 'h2',
-								'label' => 'H2',
-							],
-							[
-								'value' => 'h3',
-								'label' => 'H3',
-							],
-							[
-								'value' => 'h4',
-								'label' => 'H4',
-							],
-							[
-								'value' => 'h5',
-								'label' => 'H5',
-							],
-							[
-								'value' => 'h6',
-								'label' => 'H6',
-							],
-							[
-								'value' => 'div',
-								'label' => 'Div',
-							],
-							[
-								'value' => 'p',
-								'label' => 'P',
-							],
-							[
-								'value' => 'span',
-								'label' => 'Span',
-							],
-						] ),
 					Switch_Control::bind_to( 'faq_schema' )
 						->set_label( esc_html__( 'FAQ Schema', 'elementor' ) ),
 				] ),
@@ -624,7 +579,6 @@ class Atomic_Accordion extends Atomic_Element_Base {
 					'get-item-index' => fn( $item_id ) => $this->get_item_index( $item_id ),
 					'default-state' => $this->get_atomic_setting( 'default_state' ),
 					'max-expanded' => $this->get_atomic_setting( 'max_expanded' ),
-					'title-tag' => $this->get_atomic_setting( 'title_tag' ),
 				],
 			],
 		];

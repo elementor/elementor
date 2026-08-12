@@ -173,7 +173,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$schema = $this->get_define_props_schema( Atomic_Accordion::class );
 
 		$this->assertEqualsCanonicalizing(
-			[ 'classes', 'attributes', 'default_state', 'max_expanded', 'title_tag', 'show_icon', 'faq_schema' ],
+			[ 'classes', 'attributes', 'default_state', 'max_expanded', 'show_icon', 'faq_schema' ],
 			array_keys( $schema )
 		);
 
@@ -183,12 +183,6 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( 'one', $schema['max_expanded']->get_default()['value'] );
 		$this->assertSame( [ 'one', 'multiple' ], $schema['max_expanded']->get_enum() );
 
-		$this->assertSame( 'span', $schema['title_tag']->get_default()['value'] );
-		$this->assertSame(
-			[ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'span' ],
-			$schema['title_tag']->get_enum()
-		);
-
 		$this->assertTrue( $schema['show_icon']->get_default()['value'] );
 		$this->assertFalse( $schema['faq_schema']->get_default()['value'] );
 	}
@@ -196,7 +190,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	public function test_functional_props_have_descriptions_classes_and_attributes_do_not() {
 		$schema = $this->get_define_props_schema( Atomic_Accordion::class );
 
-		foreach ( [ 'default_state', 'max_expanded', 'title_tag', 'show_icon', 'faq_schema' ] as $key ) {
+		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'faq_schema' ] as $key ) {
 			$description = $schema[ $key ]->get_meta()['description'] ?? '';
 			$this->assertNotSame( '', $description, "Expected {$key} to have a non-empty description." );
 		}
@@ -214,7 +208,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'overridable', $schema['attributes']->get_meta() );
 		$this->assertFalse( $schema['attributes']->get_meta()['overridable'] );
 
-		foreach ( [ 'default_state', 'max_expanded', 'title_tag', 'show_icon', 'faq_schema' ] as $key ) {
+		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'faq_schema' ] as $key ) {
 			$this->assertArrayNotHasKey( 'overridable', $schema[ $key ]->get_meta(), "Did not expect {$key} to be marked non-overridable." );
 		}
 	}
@@ -387,27 +381,21 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider title_tag_provider
+	 * `title_tag` has been removed from the root's props schema — the title wrapper
+	 * (`e-accordion-item-title`) has no settable tag of its own any more and always renders as a
+	 * fixed, non-semantic `<span>` (the Twig's `title_tag | default('span')` falls through to its
+	 * default since `title_tag` is never supplied). The actual visible tag is controlled by the
+	 * inner Paragraph child's own `tag` setting, which is out of scope for this test file.
 	 */
-	public function test_render_title_tag_follows_setting( string $tag ) {
-		$html = $this->render_accordion( [ 'title_tag' => $tag ] );
+	public function test_render_title_wrapper_tag_is_always_the_fixed_span_default() {
+		$html = $this->render_accordion( [] );
 
 		preg_match_all( '/<([a-z0-9]+)[^>]*data-element_type="e-accordion-item-title"[^>]*>/i', $html, $matches );
 
 		$this->assertCount( 2, $matches[1] );
 		foreach ( $matches[1] as $rendered_tag ) {
-			$this->assertSame( $tag, $rendered_tag );
+			$this->assertSame( 'span', $rendered_tag );
 		}
-	}
-
-	public function title_tag_provider(): array {
-		return [
-			'span (schema default)' => [ 'span' ],
-			'h3' => [ 'h3' ],
-			'div' => [ 'div' ],
-			'h1' => [ 'h1' ],
-			'p' => [ 'p' ],
-		];
 	}
 
 	public function test_render_icon_has_aria_hidden() {
