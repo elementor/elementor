@@ -112,6 +112,49 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		], $seq );
 	}
 
+	/**
+	 * Build accordion tree with explicit paragraph content in each item's content area.
+	 * Used for tests that need the FAQ schema to be non-empty (which requires content).
+	 */
+	private function build_tree_with_explicit_content( array $settings ): array {
+		$seq = 0;
+
+		$items = Plugin::$instance->elements_manager->get_element_types( 'e-accordion' )->get_config()['default_children'];
+
+		// Add explicit paragraph content to each item's content area
+		foreach ( $items as &$item ) {
+			if ( isset( $item['elements'] ) ) {
+				foreach ( $item['elements'] as &$sub ) {
+					if ( ( $sub['elType'] ?? '' ) === 'e-accordion-item-content' ) {
+						// Add a paragraph child with answer content
+						$item_num = array_search( $item, $items ) + 1;
+						$sub['elements'] = [
+							[
+								'elType' => 'widget',
+								'widgetType' => 'e-paragraph',
+								'settings' => [
+									'paragraph' => [
+										'value' => [
+											'content' => [
+												'value' => 'Answer ' . $item_num,
+											],
+										],
+									],
+								],
+							],
+						];
+					}
+				}
+			}
+		}
+
+		return $this->expand( [
+			'elType' => 'e-accordion',
+			'settings' => $settings,
+			'elements' => $items,
+		], $seq );
+	}
+
 	private function render_accordion( array $settings ): string {
 		$instance = Plugin::$instance->elements_manager->create_element_instance( $this->build_default_tree( $settings ) );
 		$this->assertNotNull( $instance, 'Failed to create accordion element instance.' );
@@ -479,7 +522,16 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	// ---------------------------------------------------------------------
 
 	public function test_faq_schema_on_emits_faq_page_json_ld() {
-		$html = $this->render_accordion( [ 'faq_schema' => true ] );
+		// Build accordion with explicit content; the content area no longer has default children
+		$seq = 0;
+		$instance = Plugin::$instance->elements_manager->create_element_instance(
+			$this->build_tree_with_explicit_content( [ 'faq_schema' => true ] )
+		);
+		$this->assertNotNull( $instance, 'Failed to create accordion element instance.' );
+
+		ob_start();
+		$instance->print_element();
+		$html = ob_get_clean();
 
 		$this->assertMatchesRegularExpression( '#<script type="application/ld\+json">.*?</script>#s', $html );
 
@@ -495,7 +547,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			$this->assertSame( 'Question', $entity['@type'] );
 			$this->assertSame( 'Accordion Item ' . ( $i + 1 ), $entity['name'] );
 			$this->assertSame( 'Answer', $entity['acceptedAnswer']['@type'] );
-			$this->assertSame( '', $entity['acceptedAnswer']['text'] );
+			$this->assertSame( 'Answer ' . ( $i + 1 ), $entity['acceptedAnswer']['text'] );
 		}
 	}
 
