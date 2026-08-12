@@ -105,6 +105,10 @@ const buildItemModel = ( position: number, showIcon: boolean ): V1ElementData =>
 								elType: 'widget',
 								widgetType: PARAGRAPH_WIDGET_TYPE,
 								id: generateElementId(),
+								// A leaf still needs an explicit empty `elements`: `ElementModel.initialize()` only
+								// turns the attribute into a collection when it is defined, and v1 code walking a
+								// subtree (`deselectRecursive()` on delete) calls `.forEach()` on it unguarded.
+								elements: [],
 								settings: {
 									paragraph: {
 										$$type: 'html-v3',

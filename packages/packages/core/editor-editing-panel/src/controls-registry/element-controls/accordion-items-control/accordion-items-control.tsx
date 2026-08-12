@@ -6,15 +6,28 @@ import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
+import { SettingsField } from '../../settings-field';
 import { ACCORDION_ELEMENT_TYPE, ACCORDION_ITEM_ELEMENT_TYPE, type AccordionItem, useActions } from './use-actions';
 import { useShowIconWriteThrough } from './use-show-icon-write-through';
 
-// Unlike the Tabs control there is no `SettingsField` / `useBoundProp` wrapper here: an accordion
-// item is self-contained (header and content are nested inside the one `e-accordion-item`), so there
-// is no per-item prop on the root to bind to. `Repeater` reads no bound prop of its own — its only
-// context dependency is `ControlAdornmentsProvider`, which `SettingsControl` already provides for
-// element controls and which falls back to no adornments when absent.
+// An accordion item is self-contained (header and content are nested inside the one
+// `e-accordion-item`), so there is no per-item prop on the root the repeater itself needs to bind
+// to — but the framework auto-attaches a settings-field indicator (`registerFieldIndicator`,
+// FIELD_TYPE.SETTINGS) to every settings field regardless of whether that field's own component
+// calls `useBoundProp`; that indicator always calls `useBoundProp` unconditionally and throws
+// without a `PropKeyProvider` in its ancestry. Tabs' equivalent repeater wraps in `SettingsField`
+// for exactly this reason (bound to `default-active-tab`, a value `TabsControlContent` never
+// reads) — mirrored here with `default_state`, an existing root prop unrelated to what the
+// repeater actually does, purely to supply the context the indicator needs.
 export const AccordionItemsControl = ( { label }: { label: string } ) => {
+	return (
+		<SettingsField bind="default_state" propDisplayName={ __( 'Accordion Items', 'elementor' ) }>
+			<AccordionItemsControlContent label={ label } />
+		</SettingsField>
+	);
+};
+
+const AccordionItemsControlContent = ( { label }: { label: string } ) => {
 	const { element, settings } = useElement();
 	const { addItem, duplicateItem, moveItem, removeItem } = useActions();
 
