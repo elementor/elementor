@@ -81,10 +81,10 @@ class Atomic_Background_Video_Content extends Atomic_Element_Base {
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
 							'z-index' => Number_Prop_Type::generate( 1 ),
-							// Symmetric padding so the first-add target and any dropped content get even
-							// breathing room on all sides (overrides the asymmetric `.e-con` default).
+							// Root owns the default container padding (Flexbox parity); keep content
+							// padding at 0 so spacing is not doubled and empty-state outlines align.
 							'padding' => Size_Prop_Type::generate( [
-								'size' => 10,
+								'size' => 0,
 								'unit' => 'px',
 							] ),
 							'width' => Size_Prop_Type::generate( [
@@ -95,8 +95,8 @@ class Atomic_Background_Video_Content extends Atomic_Element_Base {
 								'flexGrow' => Number_Prop_Type::generate( 1 ),
 								'flexShrink' => Number_Prop_Type::generate( 1 ),
 								'flexBasis' => Size_Prop_Type::generate( [
-									'size' => 0,
-									'unit' => 'px',
+									'size' => 'auto',
+									'unit' => 'custom',
 								] ),
 							] ),
 						] )
