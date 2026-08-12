@@ -16,7 +16,6 @@ import {
 	PERSONA_VALUE_MAP,
 	STEP_NUMBERS,
 	STEP_SPEC_NAMES,
-	TARGET_NAME_PERSONA,
 	THEME_VALUE_MAP,
 } from './events';
 
@@ -115,48 +114,6 @@ export function trackStepViewed( isActive: boolean, viewedStepId: string ): void
 		target_location: 'onboarding',
 		location_l1: STEP_NUMBERS[ viewedStepId ],
 		interaction_description: 'onboarding step loaded',
-	} );
-}
-
-export function trackPersonaSelected( isActive: boolean, value: string ): void {
-	trackEvent( isActive, OnboardingEventName.PERSONA_SELECTED, {
-		interaction_type: 'click',
-		target_type: 'button',
-		target_name: TARGET_NAME_PERSONA,
-		interaction_result: 'selected_and_next',
-		target_value: PERSONA_VALUE_MAP[ value ] ?? value,
-		target_location: 'onboarding',
-		location_l1: 'select_persona',
-		location_l2: STEP_NUMBERS.building_for,
-		interaction_description: 'user chooses persona type and automatically being redirected to next step',
-	} );
-}
-
-export function trackSiteTopicSelected( isActive: boolean, topics: string[] ): void {
-	trackEvent( isActive, OnboardingEventName.SITE_TOPIC_SELECTED, {
-		interaction_type: 'click',
-		target_type: 'cards',
-		target_name: 'what_is_your_site_about',
-		interaction_result: 'selected',
-		target_value: topics,
-		target_location: 'onboarding',
-		location_l1: 'site_topic',
-		location_l2: STEP_NUMBERS.site_about,
-		interaction_description: 'user multiselects site topics',
-	} );
-}
-
-export function trackExperienceSelected( isActive: boolean, level: string ): void {
-	trackEvent( isActive, OnboardingEventName.EXPERIENCE_SELECTED, {
-		interaction_type: 'click',
-		target_type: 'button',
-		target_name: 'how_experienced_are_you',
-		interaction_result: 'selected_and_next',
-		target_value: EXPERIENCE_VALUE_MAP[ level ] ?? level,
-		target_location: 'onboarding',
-		location_l1: 'select_experience',
-		location_l2: STEP_NUMBERS.experience_level,
-		interaction_description: 'user chooses experience_level and automatically being redirected to next step',
 	} );
 }
 

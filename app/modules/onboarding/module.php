@@ -136,19 +136,26 @@ class Module extends BaseModule {
 
 	private function validate_progress_for_steps( User_Progress $progress, array $steps ): array {
 		$progress_data = $progress->to_array();
+		$step_ids = array_column( $steps, 'id' );
 		$step_count = count( $steps );
+		$fallback_step_id = $steps[0]['id'] ?? 'site_features';
 		$current_step_index = $progress->get_current_step_index() ?? 0;
-		$current_step_id = $progress->get_current_step_id() ?? $steps[0]['id'] ?? 'building_for';
+		$current_step_id = $progress->get_current_step_id() ?? $fallback_step_id;
 
 		$is_invalid_step_index = $current_step_index < 0 || $current_step_index >= $step_count;
+		$is_invalid_step_id = ! in_array( $current_step_id, $step_ids, true );
 
-		if ( $is_invalid_step_index ) {
-			$current_step_id = $steps[0]['id'];
+		if ( $is_invalid_step_index || $is_invalid_step_id ) {
+			$current_step_id = $fallback_step_id;
 			$current_step_index = 0;
 		}
 
 		$progress_data['current_step_id'] = $current_step_id;
 		$progress_data['current_step_index'] = $current_step_index;
+		$progress_data['completed_steps'] = array_values( array_filter(
+			$progress->get_completed_steps(),
+			static fn( $step_id ) => in_array( $step_id, $step_ids, true )
+		) );
 
 		return $progress_data;
 	}
@@ -310,37 +317,21 @@ class Module extends BaseModule {
 	}
 
 	private function get_steps_config(): array {
-		$steps = [
-			[
-				'id' => 'building_for',
-				'label' => __( 'Who are you building for?', 'elementor' ),
-				'type' => 'single',
-			],
-			[
-				'id' => 'site_about',
-				'label' => __( 'What is your site about?', 'elementor' ),
-				'type' => 'multiple',
-			],
-			[
-				'id' => 'experience_level',
-				'label' => __( 'How much experience do you have with Elementor?', 'elementor' ),
-				'type' => 'single',
-			],
-		];
-
 		if ( self::is_elementor_pro_installed() ) {
-			$steps[] = [
-				'id' => 'theme_selection',
-				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
-				'type' => 'single',
+			$steps = [
+				[
+					'id' => 'theme_selection',
+					'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
+					'type' => 'single',
+				],
 			];
-		}
-
-		if ( ! self::is_elementor_pro_installed() ) {
-			$steps[] = [
-				'id' => 'site_features',
-				'label' => __( 'What do you want to include in your site?', 'elementor' ),
-				'type' => 'multiple',
+		} else {
+			$steps = [
+				[
+					'id' => 'site_features',
+					'label' => __( 'What do you want to include in your site?', 'elementor' ),
+					'type' => 'multiple',
+				],
 			];
 		}
 
