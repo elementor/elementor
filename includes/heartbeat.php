@@ -42,7 +42,7 @@ class Heartbeat {
 				$response['locked_user'] = $locked_user->display_name;
 			}
 
-			if ( ! empty( $data['elementor_has_unsaved'] ) ) {
+			if ( array_key_exists( 'elementor_has_unsaved', $data ) ) {
 				do_action( 'elementor/heartbeat/unsaved_signal', $post_id, $data['elementor_has_unsaved'] );
 			}
 
