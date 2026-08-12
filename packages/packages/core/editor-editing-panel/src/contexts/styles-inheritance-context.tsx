@@ -5,13 +5,12 @@ import {
   classesPropTypeUtil,
   type ClassesPropValue,
   type PropValue,
-  stringPropTypeUtil,
-  type StringPropValue,
 } from '@elementor/editor-props';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 
+import { useDefaultStyleTagFromPreview } from '../hooks/use-default-style-tag-from-preview';
 import { useStylesRerender } from '../hooks/use-styles-rerender';
 import { createStylesInheritance } from '../styles-inheritance/create-styles-inheritance';
 import {
@@ -121,19 +120,8 @@ const useBaseStyles = () => {
   return Object.keys( widgetCache?.base_styles ?? {} );
 };
 
-const TAG_PROP_KEY = 'tag';
-
 const useDefaultTagStyleId = () => {
-  const { elementType } = useElement();
-  const tagProp = usePanelElementSetting< StringPropValue >( TAG_PROP_KEY );
+  const { element } = useElement();
 
-  const fromSettings = stringPropTypeUtil.extract( tagProp );
-
-  if ( fromSettings ) {
-    return fromSettings;
-  }
-
-  const schemaDefault = elementType.propsSchema?.[ TAG_PROP_KEY ]?.default ?? null;
-
-  return stringPropTypeUtil.extract( schemaDefault );
+  return useDefaultStyleTagFromPreview( element.id );
 };
