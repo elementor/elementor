@@ -47,6 +47,10 @@ class Atomic_List extends Atomic_Element_Base {
 		return [];
 	}
 
+	protected function define_allowed_child_types() {
+		return [ 'e-list-item' ];
+	}
+
 	protected function define_default_html_tag() {
 		return 'ul';
 	}
