@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Default_Styles_Repository extends Elementor_Test_Base {
 	private ?\Elementor\Core\Kits\Documents\Kit $kit = null;
 
-	public function set_up() {
-		parent::set_up();
+	public function setUp(): void {
+		parent::setUp();
 
 		Default_Style_Post_Type::ensure_registered();
 
@@ -55,8 +55,8 @@ class Test_Default_Styles_Repository extends Elementor_Test_Base {
 class Test_Default_Styles_Rendering extends Elementor_Test_Base {
 	private ?\Elementor\Core\Kits\Documents\Kit $kit = null;
 
-	public function set_up() {
-		parent::set_up();
+	public function setUp(): void {
+		parent::setUp();
 
 		Default_Style_Post_Type::ensure_registered();
 
@@ -97,8 +97,8 @@ class Test_Default_Styles_Rendering extends Elementor_Test_Base {
 class Test_Atomic_Default_Styles extends Elementor_Test_Base {
 	private MockObject $mock_styles_manager;
 
-	public function set_up() {
-		parent::set_up();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->mock_styles_manager = $this->createMock( Atomic_Styles_Manager::class );
 		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
@@ -112,7 +112,7 @@ class Test_Atomic_Default_Styles extends Elementor_Test_Base {
 			->method( 'register' )
 			->with(
 				[ Atomic_Default_Styles::STYLES_KEY ],
-				$this->isCallable()
+				$this->isType( 'callable' )
 			);
 
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [] );
