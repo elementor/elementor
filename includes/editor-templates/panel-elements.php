@@ -84,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
 		<# } else if ( false === obj.editable ) { #>
-			<i class="eicon-upgrade-crown-full"></i>
+			<i class="eicon-lock"></i>
 		<# } else if ( obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>

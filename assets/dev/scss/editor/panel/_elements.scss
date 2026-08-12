@@ -123,8 +123,8 @@
 			background-color: var(--e-a-bg-hover);
 			border-color: var(--e-a-border-color-bold);
 
-			> .eicon-upgrade-crown-full {
-				color: var(--e-a-color-accent-promotion);
+			> .eicon-lock {
+				color: var(--e-a-color-accent);
 			}
 
 			> .eicon-plug {
@@ -148,17 +148,10 @@
 			font-size: 12px;
 		}
 
-		> .eicon-upgrade-crown-full, .eicon-plug {
+		> .eicon-lock, .eicon-plug {
 			position: absolute;
 			inset-block-start: 5px;
 			inset-inline-end: 5px;
-		}
-
-		> .eicon-upgrade-crown-full {
-			color: var(--e-a-color-accent-promotion-disabled);
-		}
-
-		> .eicon-plug {
 			color: var(--e-a-color-txt-disabled);
 		}
 
