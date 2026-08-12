@@ -1,3 +1,5 @@
+import { isContainerElement, isInnerContainer } from '../utils/is-inner';
+
 export class Create extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
@@ -71,12 +73,16 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
 			}
 
+			const modelToCreate = isContainerElement( model )
+				? { ...model, isInner: isInnerContainer( container.model ) }
+				: model;
+
 			if ( ! container?.view || container.view.isDestroyed ) {
-				$e.components.get( 'document' ).utils.addModelToParent( container.id, model, options );
+				$e.components.get( 'document' ).utils.addModelToParent( container.id, modelToCreate, options );
 				return;
 			}
 
-			const createdContainer = container.view.addElement( model, options ).getContainer();
+			const createdContainer = container.view.addElement( modelToCreate, options ).getContainer();
 
 			result.push( createdContainer );
 

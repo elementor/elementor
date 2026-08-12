@@ -50,6 +50,30 @@ export const Move = () => {
 					'Widget were moved/created at the second column.' );
 			} );
 
+			QUnit.test( 'Container updates isInner when moving between nesting levels', ( assert ) => {
+				const parentContainer = ElementsHelper.createContainer(),
+					childContainer = ElementsHelper.createContainer(),
+					done = assert.async();
+
+				ElementsHelper.move( childContainer, parentContainer );
+
+				setTimeout( () => {
+					const nestedContainer = childContainer.lookup();
+
+					assert.true( nestedContainer.model.get( 'isInner' ),
+						'Container moved into another container becomes inner.' );
+
+					ElementsHelper.move( nestedContainer, elementor.getPreviewContainer() );
+
+					setTimeout( () => {
+						assert.false( childContainer.lookup().model.get( 'isInner' ),
+							'Container moved to the document becomes top-level.' );
+
+						done();
+					} );
+				} );
+			} );
+
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Section', ( assert ) => {
 					// Create Section at 0.

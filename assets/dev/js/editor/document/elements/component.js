@@ -1,6 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands-internal/';
+import { isContainerElement } from './utils/is-inner';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -47,6 +48,10 @@ export default class Component extends ComponentBase {
 				}
 
 				if ( 'column' === targetElType && 'column' === sourceElType ) {
+					return true;
+				}
+
+				if ( isContainerElement( sourceModel ) ) {
 					return true;
 				}
 
