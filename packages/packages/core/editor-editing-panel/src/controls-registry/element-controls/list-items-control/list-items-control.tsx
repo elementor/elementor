@@ -69,7 +69,7 @@ const ListItemsControlContent = ( { label }: { label: string } ) => {
 
   const repeaterValues: RepeaterItem< ListItem >[] = listItems.map( ( item, index ) => ( {
     id: item.id,
-    title: getEffectiveListItemLabel( item.editorSettings?.label, `Item ${ index + 1 }` ),
+    title: getEffectiveListItemLabel( item.editorSettings?.title, `Item ${ index + 1 }` ),
     index,
   } ) );
 
@@ -147,7 +147,7 @@ const ListItemLabelControl = ( {
   fallbackLabel: string;
 } ) => {
   const editorSettings = useElementEditorSettings( elementId );
-  const label = getEffectiveListItemLabel( editorSettings?.label, fallbackLabel );
+  const label = getEffectiveListItemLabel( editorSettings?.title, fallbackLabel );
 
   return (
     <Stack gap={ 1 }>
@@ -158,7 +158,7 @@ const ListItemLabelControl = ( {
         onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
           updateElementEditorSettings( {
             elementId,
-            settings: { label: target.value },
+            settings: { title: target.value },
           } );
         } }
       />

@@ -83,7 +83,7 @@ export const useActions = () => {
               elType: LIST_ITEM_ELEMENT_TYPE,
               hydrateDefaultChildren: true,
               editor_settings: {
-                label: `Item ${ position }`,
+                title: `Item ${ position }`,
                 initial_position: position,
               },
             },
