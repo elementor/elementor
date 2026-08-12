@@ -169,7 +169,15 @@ export const useActions = () => {
 				elements: [
 					{
 						container: accordion,
-						model: buildItemModel( position, showIcon ) as unknown as CreateElementParams[ 'model' ],
+						// `buildItemModel()` returns `V1ElementData`, whose `elements` field is plain nested
+						// data (`V1ElementData[]`) - correct for a tree we're constructing to send as a
+						// creation payload. `CreateElementParams['model']` is derived from
+						// `V1ElementModelProps`, whose `elements` field is typed as `V1Model<...>[]` - live
+						// Backbone-model wrappers with `get`/`set`/`toJSON`, the shape for reading an
+						// *existing* element out of the document, not for describing one to create. A single
+						// cast is enough (the two types overlap enough for TS to allow it directly); no
+						// `unknown` escape hatch needed.
+						model: buildItemModel( position, showIcon ) as CreateElementParams[ 'model' ],
 					},
 				],
 			} );

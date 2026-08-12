@@ -55,7 +55,7 @@ register( {
 				return;
 			}
 
-			const selectedNode = element.querySelector( `[data-id="${ selectedId }"]` );
+			const selectedNode = element.querySelector( `[data-id="${ CSS.escape( selectedId ) }"]` );
 
 			if ( ! selectedNode ) {
 				return;

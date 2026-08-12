@@ -62,6 +62,20 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	}
 
 	/**
+	 * `strip_markdown_syntax()` is `private` — the only way to exercise it in isolation, rather
+	 * than only indirectly through a full `faq_schema` render, is reflection.
+	 */
+	private function invoke_strip_markdown_syntax( string $markdown ): string {
+		$instance = Plugin::$instance->elements_manager->get_element_types( 'e-accordion' );
+		$this->assertNotNull( $instance );
+
+		$reflection = new \ReflectionMethod( Atomic_Accordion::class, 'strip_markdown_syntax' );
+		$reflection->setAccessible( true );
+
+		return $reflection->invoke( $instance, $markdown );
+	}
+
+	/**
 	 * Expands one level of `default_children` recursively, the way the editor's client-side
 	 * `buildElement()` does (see VERIFY.md's "Rendering caveat"), so a mock tree can be rendered
 	 * server-side through `create_element_instance()` + `print_element()`. Mirrors the scratchpad
@@ -362,6 +376,102 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		foreach ( $matches[0] as $tag ) {
 			$this->assertStringContainsString( 'aria-hidden="true"', $tag );
 		}
+	}
+
+	// ---------------------------------------------------------------------
+	// strip_markdown_syntax() — the constructs documented on the method itself
+	// ---------------------------------------------------------------------
+
+	public function test_strip_markdown_syntax_plain_text_is_untouched() {
+		$this->assertSame( 'Plain text, nothing to strip.', $this->invoke_strip_markdown_syntax( 'Plain text, nothing to strip.' ) );
+	}
+
+	public function test_strip_markdown_syntax_removes_bold_and_italic() {
+		$this->assertSame(
+			'See bold and italic and strikethrough here.',
+			$this->invoke_strip_markdown_syntax( 'See **bold** and _italic_ and ~~strikethrough~~ here.' )
+		);
+		$this->assertSame( 'Alt bold and alt italic.', $this->invoke_strip_markdown_syntax( '__Alt bold__ and *alt italic*.' ) );
+	}
+
+	public function test_strip_markdown_syntax_link_keeps_visible_text_drops_url() {
+		$this->assertSame(
+			'See a link here.',
+			$this->invoke_strip_markdown_syntax( 'See [a link](https://example.com) here.' )
+		);
+	}
+
+	public function test_strip_markdown_syntax_image_keeps_alt_text_drops_src() {
+		$this->assertSame(
+			'See a picture here.',
+			$this->invoke_strip_markdown_syntax( 'See ![a picture](https://example.com/x.png) here.' )
+		);
+	}
+
+	public function test_strip_markdown_syntax_inline_code_and_fenced_block_keep_only_content() {
+		$this->assertSame( 'Run npm install now.', $this->invoke_strip_markdown_syntax( 'Run `npm install` now.' ) );
+		$this->assertSame(
+			'Before code after.',
+			$this->invoke_strip_markdown_syntax( "Before\n```\ncode\n```\nafter." )
+		);
+	}
+
+	public function test_strip_markdown_syntax_heading_and_list_markers_are_removed() {
+		$this->assertSame( 'Title', $this->invoke_strip_markdown_syntax( '### Title' ) );
+		$this->assertSame( 'One Two', $this->invoke_strip_markdown_syntax( "- One\n- Two" ) );
+		$this->assertSame( 'First Second', $this->invoke_strip_markdown_syntax( "1. First\n2. Second" ) );
+	}
+
+	public function test_strip_markdown_syntax_blockquote_marker_is_removed_including_nested() {
+		$this->assertSame(
+			'A quoted policy statement.',
+			$this->invoke_strip_markdown_syntax( '> A quoted policy statement.' )
+		);
+		$this->assertSame(
+			'A nested quote.',
+			$this->invoke_strip_markdown_syntax( '> > A nested quote.' )
+		);
+	}
+
+	/**
+	 * The Round 1→2 regression this method's docblock documents: `Html_To_Markdown::escape_text()`
+	 * backslash-escapes literal markdown-special characters in ordinary text, so a real (non-
+	 * formatting) asterisk survives `render_markdown()` as `\*`. Stripping must undo that escape
+	 * and must NOT treat the pair as a `*...*` italic delimiter — the earlier, buggy version of
+	 * this method ate the text between two such literal asterisks and left stray backslashes.
+	 */
+	public function test_strip_markdown_syntax_preserves_escaped_literal_characters() {
+		$this->assertSame(
+			'Buy 2 get 1* free* today',
+			$this->invoke_strip_markdown_syntax( 'Buy 2 get 1\* free\* today' )
+		);
+		$this->assertSame(
+			'Use the `ls` command, then pwd next',
+			$this->invoke_strip_markdown_syntax( 'Use the \`ls\` command, then pwd next' )
+		);
+	}
+
+	/**
+	 * The discriminating case: real formatting and a literal escaped character in the *same*
+	 * string, so a regex that merely ignores escaping entirely (rather than excluding only the
+	 * escaped occurrences) can't pass by accident.
+	 */
+	public function test_strip_markdown_syntax_distinguishes_real_formatting_from_escaped_literal() {
+		$this->assertSame(
+			'This is really important, buy 1* free* today',
+			$this->invoke_strip_markdown_syntax( 'This is **really** important, buy 1\* free\* today' )
+		);
+	}
+
+	public function test_strip_markdown_syntax_collapses_leftover_whitespace() {
+		// The blockquote marker must be at true line-start to be stripped at all (matching how
+		// `Html_To_Markdown::convert()` places a converted `<blockquote>` on its own line) — this
+		// verifies the blank line/newline left behind by removing it collapses into single spaces
+		// rather than surviving as a stray line break in the JSON-LD text field.
+		$this->assertSame(
+			'Intro text. A quoted policy statement about returns. Closing text.',
+			$this->invoke_strip_markdown_syntax( "Intro text.\n> A quoted policy statement about returns.\nClosing text." )
+		);
 	}
 
 	// ---------------------------------------------------------------------

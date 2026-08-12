@@ -14,9 +14,11 @@ type CascadeShowIconPayload = {
 	showIcon: boolean;
 };
 
+// A head's `show_icon` is either an explicit boolean prop value (`booleanPropTypeUtil.create`'s
+// return shape) or `null`/absent when it was never set - see `undo()` below for why both must
+// round-trip correctly.
 type CascadeShowIconResult = {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	previous: Record< string, any >;
+	previous: Record< string, ReturnType< typeof booleanPropTypeUtil.create > | null | undefined >;
 };
 
 // `show_icon` is global on the root (`Atomic_Accordion::define_props_schema()`); every
@@ -34,7 +36,15 @@ export const cascadeShowIconToHeads = undoable< CascadeShowIconPayload, CascadeS
 			const headIds = getAccordionHeadIds( accordionId );
 
 			const previous = Object.fromEntries(
-				headIds.map( ( headId ) => [ headId, getElementSettings( headId, [ 'show_icon' ] ).show_icon ] )
+				headIds.map(
+					( headId ) =>
+						[
+							headId,
+							getElementSettings< ReturnType< typeof booleanPropTypeUtil.create > >( headId, [
+								'show_icon',
+							] ).show_icon,
+						] as const
+				)
 			);
 
 			headIds.forEach( ( headId ) => {
