@@ -8,7 +8,7 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
-use Elementor\Modules\Mcp\Utils\Editor_Session_Guard;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,11 +35,7 @@ class Module extends BaseModule {
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
-
-		add_filter( 'elementor/mcp/pre_execute_guard', [ $this, 'check_mutation_guard' ], 10, 2 );
-		add_action( 'elementor/heartbeat/unsaved_signal', [ $this, 'handle_unsaved_signal' ], 10, 2 );
-		add_filter( 'elementor/heartbeat/mutation_marker', [ $this, 'build_mutation_marker' ], 10, 2 );
-		add_action( 'elementor/document/after_save', [ $this, 'clear_unsaved_signal_on_save' ] );
+		( new Editor_Sync_State() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
@@ -105,55 +101,6 @@ class Module extends BaseModule {
 			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
 			return;
 		}
-	}
-
-	public function clear_unsaved_signal_on_save( $document ): void {
-		$post_id = (int) $document->get_post()->ID;
-		Editor_Session_Guard::clear_editor_unsaved( $post_id );
-		Editor_Session_Guard::delete_mcp_mutation( $post_id );
-	}
-
-	public function handle_unsaved_signal( int $post_id, $signal_value ): void {
-		if ( $signal_value ) {
-			Editor_Session_Guard::set_editor_unsaved( (int) $signal_value );
-		} else {
-			Editor_Session_Guard::clear_editor_unsaved( $post_id );
-		}
-	}
-
-	public function build_mutation_marker( $default, int $post_id ): ?array {
-		$mutated_at = Editor_Session_Guard::get_mcp_mutation_time( $post_id );
-		if ( ! $mutated_at ) {
-			return null;
-		}
-		return [
-			'post_id'    => $post_id,
-			'mutated_at' => $mutated_at,
-		];
-	}
-
-	public function check_mutation_guard( $error, $input ): ?\WP_Error {
-		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
-
-		if ( $post_id <= 0 ) {
-			return null;
-		}
-
-		$has_lock    = ! empty( get_post_meta( $post_id, '_edit_lock', true ) );
-		$has_unsaved = Editor_Session_Guard::has_editor_unsaved( $post_id );
-
-		if ( ! $has_lock || ! $has_unsaved ) {
-			return null;
-		}
-
-		return new \WP_Error(
-			'elementor_editor_unsaved_changes',
-			__( 'The editor has unsaved changes for this document. Ask the user to save or discard their changes in the Elementor editor before retrying this operation.', 'elementor' ),
-			[
-				'status'  => 409,
-				'post_id' => $post_id,
-			]
-		);
 	}
 
 	public static function build_core_registry(): Ability_Registry {

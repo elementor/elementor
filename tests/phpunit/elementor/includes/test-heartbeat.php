@@ -4,7 +4,7 @@ namespace Elementor\Testing\Includes;
 
 use Elementor\Core\Editor\Editor;
 use Elementor\Heartbeat;
-use Elementor\Modules\Mcp\Utils\Editor_Session_Guard;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -31,7 +31,7 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->original_common = Plugin::$instance->common;
 
 		add_filter( 'elementor/heartbeat/mutation_marker', function( $default, int $post_id ): ?array {
-			$mutated_at = Editor_Session_Guard::get_mcp_mutation_time( $post_id );
+			$mutated_at = Editor_Sync_State::get_mcp_mutation_time( $post_id );
 			if ( ! $mutated_at ) {
 				return null;
 			}
@@ -77,9 +77,9 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->act_as_admin();
 		add_action( 'elementor/heartbeat/unsaved_signal', function( int $post_id, $signal_value ) {
 			if ( $signal_value ) {
-				Editor_Session_Guard::set_editor_unsaved( (int) $signal_value );
+				Editor_Sync_State::set_editor_unsaved( (int) $signal_value );
 			} else {
-				Editor_Session_Guard::clear_editor_unsaved( $post_id );
+				Editor_Sync_State::clear_editor_unsaved( $post_id );
 			}
 		}, 10, 2 );
 
@@ -93,12 +93,12 @@ class Test_Heartbeat extends Elementor_Test_Base {
 	public function test_heartbeat_received__clears_unsaved_transient_when_null_signal_sent() {
 		// Arrange
 		$this->act_as_admin();
-		Editor_Session_Guard::set_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
 		add_action( 'elementor/heartbeat/unsaved_signal', function( int $post_id, $signal_value ) {
 			if ( $signal_value ) {
-				Editor_Session_Guard::set_editor_unsaved( (int) $signal_value );
+				Editor_Sync_State::set_editor_unsaved( (int) $signal_value );
 			} else {
-				Editor_Session_Guard::clear_editor_unsaved( $post_id );
+				Editor_Sync_State::clear_editor_unsaved( $post_id );
 			}
 		}, 10, 2 );
 
@@ -142,8 +142,8 @@ class Test_Heartbeat extends Elementor_Test_Base {
 
 	public function test_heartbeat_response_includes_mcp_mutation_marker() {
 		// Arrange
-		Editor_Session_Guard::set_mcp_mutation( self::TEST_POST_ID );
-		$recorded_at = Editor_Session_Guard::get_mcp_mutation_time( self::TEST_POST_ID );
+		Editor_Sync_State::set_mcp_mutation( self::TEST_POST_ID );
+		$recorded_at = Editor_Sync_State::get_mcp_mutation_time( self::TEST_POST_ID );
 
 		$data = [
 			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
@@ -157,7 +157,7 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->assertSame( $recorded_at, $response['elementor_mcp_mutation']['mutated_at'] );
 
 		$transient_expiry  = (int) get_option( '_transient_timeout_' . self::MUTATION_TRANSIENT_KEY );
-		$expected_expiry   = time() + Editor_Session_Guard::MCP_MUTATION_TTL;
+		$expected_expiry   = time() + Editor_Sync_State::MCP_MUTATION_TTL;
 		$this->assertEqualsWithDelta( $expected_expiry, $transient_expiry, 2 );
 	}
 }

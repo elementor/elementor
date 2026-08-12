@@ -6,9 +6,8 @@ use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
-use Elementor\Modules\Mcp\Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
-use Elementor\Modules\Mcp\Utils\Editor_Session_Guard;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +34,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 		do_action( 'rest_api_init' );
 
-		add_filter( 'elementor/mcp/pre_execute_guard', [ new Module(), 'check_mutation_guard' ], 10, 2 );
+		add_filter( 'elementor/mcp/pre_execute_guard', [ new Editor_Sync_State(), 'check_mutation_guard' ], 10, 2 );
 	}
 
 	public function tearDown(): void {
@@ -200,7 +199,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		update_post_meta( self::TEST_POST_ID, self::EDIT_LOCK_META_KEY, '1' );
-		Editor_Session_Guard::set_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
 
 		// Act
 		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
@@ -225,7 +224,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	public function test_mutation_guard__returns_null_when_no_lock() {
 		// Arrange
 		$this->act_as_admin();
-		Editor_Session_Guard::set_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
 
 		// Act
 		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => self::TEST_POST_ID ] );
@@ -255,10 +254,10 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 			$this->assertNull( $result, "Call $i should not be blocked" );
 
-			Editor_Session_Guard::set_mcp_mutation( self::TEST_POST_ID );
+			Editor_Sync_State::set_mcp_mutation( self::TEST_POST_ID );
 		}
 
-		$this->assertGreaterThan( 0, Editor_Session_Guard::get_mcp_mutation_time( self::TEST_POST_ID ) );
+		$this->assertGreaterThan( 0, Editor_Sync_State::get_mcp_mutation_time( self::TEST_POST_ID ) );
 	}
 
 	public function test_mutation_guard__does_not_clear_signal_owned_by_different_user() {
@@ -267,12 +266,12 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		$user_b_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
 
 		wp_set_current_user( $user_a_id );
-		Editor_Session_Guard::set_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::set_editor_unsaved( self::TEST_POST_ID );
 
 		wp_set_current_user( $user_b_id );
 
 		// Act
-		Editor_Session_Guard::clear_editor_unsaved( self::TEST_POST_ID );
+		Editor_Sync_State::clear_editor_unsaved( self::TEST_POST_ID );
 
 		// Assert
 		$this->assertSame( $user_a_id, (int) get_transient( self::UNSAVED_TRANSIENT_KEY ) );

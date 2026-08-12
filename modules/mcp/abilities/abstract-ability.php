@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\Mcp\Utils\Editor_Session_Guard;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,7 +38,7 @@ abstract class Abstract_Ability {
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
 
 		if ( $is_mutating && $post_id > 0 && ! $is_failed ) {
-			Editor_Session_Guard::set_mcp_mutation( $post_id );
+			Editor_Sync_State::set_mcp_mutation( $post_id );
 		}
 
 		return $result;
