@@ -108,13 +108,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 	}
 
 	protected function parse_editor_settings( array $data ): array {
-		$editor_data = parent::parse_editor_settings( $data );
-
-		if ( isset( $data['label'] ) && is_string( $data['label'] ) ) {
-			$editor_data['label'] = sanitize_text_field( $data['label'] );
-		}
-
-		return $editor_data;
+		return parent::parse_editor_settings( $data );
 	}
 
 	protected function get_templates(): array {

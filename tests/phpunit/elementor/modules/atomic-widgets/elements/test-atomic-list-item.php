@@ -9,7 +9,7 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		$instance = new Atomic_List_Item( [
 			'id' => 'list-item-1',
 			'editor_settings' => [
-				'label' => '<b>Primary item</b>',
+				'title' => '<b>Primary item</b>',
 			],
 		] );
 
@@ -19,7 +19,7 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame(
 			[
-				'label' => 'Primary item',
+				'title' => 'Primary item',
 			],
 			$data_for_save['editor_settings']
 		);

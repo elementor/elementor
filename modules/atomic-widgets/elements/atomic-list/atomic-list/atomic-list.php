@@ -117,7 +117,7 @@ class Atomic_List extends Atomic_Element_Base {
 			Atomic_List_Item::generate()
 				->hydrate_default_children( true )
 				->editor_settings( [
-					'label' => esc_html__( 'Item 1', 'elementor' ),
+					'title' => esc_html__( 'Item 1', 'elementor' ),
 					'initial_position' => 1,
 				] )
 				->build(),
