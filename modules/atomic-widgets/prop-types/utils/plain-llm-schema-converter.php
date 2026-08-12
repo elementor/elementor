@@ -34,9 +34,6 @@ class Plain_Llm_Schema_Converter {
 
 		if ( isset( $schema['anyOf'] ) && is_array( $schema['anyOf'] ) ) {
 			$schema['anyOf'] = $this->walk_any_of( $schema['anyOf'] );
-			if ( count( $schema['anyOf'] ) === 1 ) {
-				return $schema['anyOf'][0];
-			}
 		}
 
 		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {

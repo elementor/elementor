@@ -62,9 +62,7 @@ export default class Heartbeat {
 			post_ID: this.document.id,
 		};
 
-		if ( this.document.editor.isChanged ) {
-			data.elementor_has_unsaved = this.document.id;
-		}
+		data.elementor_has_unsaved = this.document.editor.isChanged ? this.document.id : null;
 	}
 
 	onTick( event, response ) {
@@ -172,7 +170,6 @@ export default class Heartbeat {
 			return;
 		}
 		if ( newChangeOfDocumentState ) {
-			wp.heartbeat.enqueue( 'elementor_has_unsaved', this.document.id );
 			wp.heartbeat.connectNow();
 		}
 		this.lastStateOfDocumentChange = newChangeOfDocumentState;
