@@ -31,17 +31,17 @@ describe( '@elementor/editor-documents - getV1DocumentsExitTo with return URL', 
 
 		mockDocument = createMockDocumentData( { id: 1 } );
 
-		( window as Record< string, unknown > ).elementor = {
+		( window as unknown as Record< string, unknown > ).elementor = {
 			getPreferences: () => 'this_post',
 		};
 	} );
 
 	afterEach( () => {
-		delete ( window as Record< string, unknown > ).elementor;
+		delete ( window as unknown as Record< string, unknown > ).elementor;
 	} );
 
 	function getFreshExitTo( documentData: V1Document ): string {
-		let result: string;
+		let result = '';
 
 		jest.isolateModules( () => {
 			const { getV1DocumentsExitTo } = require( '../utils' );
@@ -110,8 +110,8 @@ describe( '@elementor/editor-documents - getV1DocumentsExitTo with return URL', 
 		sessionStorage.setItem( RETURN_TO_KEY, returnUrl );
 
 		// Act — use the same module instance for both calls.
-		let firstResult: string;
-		let secondResult: string;
+		let firstResult = '';
+		let secondResult = '';
 
 		jest.isolateModules( () => {
 			const { getV1DocumentsExitTo } = require( '../utils' );
