@@ -6,6 +6,11 @@ import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 import { isInnerContainer } from '../../document/elements/utils/is-inner';
+import { getDraggedContainerView, isNestedContainer } from 'elementor-editor-utils/dragged-container';
+
+// Distance from a top-level Container's outer edge that drops at the document level
+// instead of nesting, so a nested Container can be moved out to a specific position.
+const DOCUMENT_LEVEL_EDGE_THRESHOLD = 16;
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -238,6 +243,17 @@ const ContainerView = BaseElementView.extend( {
 						currentTargetParentContainer = currentTargetParentContainer.parent;
 					}
 
+					const draggedContainerView = getDraggedContainerView(),
+						documentLevelDropSide = draggedContainerView && isNestedContainer( draggedContainerView )
+							? this.getDocumentLevelDropSide( event )
+							: null;
+
+					if ( documentLevelDropSide ) {
+						this.moveToDocumentLevel( draggedContainerView, documentLevelDropSide );
+
+						return;
+					}
+
 					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
 
@@ -256,6 +272,69 @@ const ContainerView = BaseElementView.extend( {
 				this.onDrop( event, { at: newIndex } );
 			},
 		};
+	},
+
+	/**
+	 * The document's direct child that this Container lives under.
+	 *
+	 * @return {Container|undefined} The top-level ancestor.
+	 */
+	getTopLevelAncestor() {
+		const ancestry = this.getContainer().getParentAncestry();
+
+		return ancestry[ ancestry.length - 2 ];
+	},
+
+	/**
+	 * Whether a drop near the top-level ancestor's outer edge means "place the dragged
+	 * Container beside me at the document level" rather than "nest it inside me".
+	 *
+	 * @param {Object} event The drop event.
+	 *
+	 * @return {string|null} `top`, `bottom`, or `null` when the drop should nest as usual.
+	 */
+	getDocumentLevelDropSide( event ) {
+		const element = this.getTopLevelAncestor()?.view?.el,
+			pointerY = event.originalEvent?.clientY ?? event.clientY;
+
+		if ( ! element || undefined === pointerY ) {
+			return null;
+		}
+
+		const { top, bottom } = element.getBoundingClientRect();
+
+		if ( pointerY - top <= DOCUMENT_LEVEL_EDGE_THRESHOLD ) {
+			return 'top';
+		}
+
+		if ( bottom - pointerY <= DOCUMENT_LEVEL_EDGE_THRESHOLD ) {
+			return 'bottom';
+		}
+
+		return null;
+	},
+
+	moveToDocumentLevel( draggedContainerView, side ) {
+		const documentContainer = elementor.getPreviewContainer(),
+			topLevelChildren = documentContainer.children,
+			targetIndex = topLevelChildren.indexOf( this.getTopLevelAncestor() );
+
+		if ( -1 === targetIndex ) {
+			return;
+		}
+
+		// Exclude the dragged element from the indexing calculations.
+		const draggedIndex = topLevelChildren.indexOf( draggedContainerView.getContainer() ),
+			isDraggedBeforeTarget = -1 !== draggedIndex && draggedIndex < targetIndex,
+			at = ( isDraggedBeforeTarget ? targetIndex - 1 : targetIndex ) + ( 'bottom' === side ? 1 : 0 );
+
+		elementor.channels.editor.reply( 'element:dragged', null );
+
+		$e.run( 'document/elements/move', {
+			container: draggedContainerView.getContainer(),
+			target: documentContainer,
+			options: { at },
+		} );
 	},
 
 	/**

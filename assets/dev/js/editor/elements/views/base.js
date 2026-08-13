@@ -1182,7 +1182,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Init the draggable only for Containers and their children.
-		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
+		if ( ! this.$el.hasClass( 'e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
 			return;
 		}
 
