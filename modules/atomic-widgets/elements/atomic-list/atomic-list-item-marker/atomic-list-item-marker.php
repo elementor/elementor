@@ -78,7 +78,7 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_props( [
 							'width' => Size_Prop_Type::generate( [
-								'size' => null,
+								'size' => '',
 								'unit' => 'auto',
 							] ),
 						] )
