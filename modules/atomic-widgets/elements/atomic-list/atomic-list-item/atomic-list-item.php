@@ -60,7 +60,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 	/**
 	 * Define props schema for list items.
 	 *
-	 * show_markers is a hidden prop (not shown in panel) that's automatically
+	 * The show_markers is a hidden prop (not shown in panel) that's automatically
 	 * synced from the parent list's show_markers setting. It's used by
 	 * children_dependencies to conditionally show/hide markers.
 	 */
