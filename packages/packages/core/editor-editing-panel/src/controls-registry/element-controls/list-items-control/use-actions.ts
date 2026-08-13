@@ -15,89 +15,80 @@ export type ListItem = {
 
 export const LIST_ITEM_ELEMENT_TYPE = 'e-list-item';
 
-export const useActions = () => {
-	const duplicateItem = ( { items }: { items: ItemsActionPayload< ListItem > } ) => {
-		duplicateElements( {
-			elementIds: items.map( ( { item } ) => item.id ),
-			title: __( 'Duplicate List Item', 'elementor' ),
-		} );
-	};
+export const duplicateItem = ( { items }: { items: ItemsActionPayload< ListItem > } ) => {
+	duplicateElements( {
+		elementIds: items.map( ( { item } ) => item.id ),
+		title: __( 'Duplicate List Item', 'elementor' ),
+	} );
+};
 
-	const moveItem = ( {
-		toIndex,
-		listContainerId,
-		movedElementId,
-	}: {
-		toIndex: number;
-		listContainerId: string;
-		movedElementId: string;
-	} ) => {
-		const movedElement = getContainer( movedElementId );
-		const listContainer = getContainer( listContainerId );
+export const moveItem = ( {
+	toIndex,
+	listContainerId,
+	movedElementId,
+}: {
+	toIndex: number;
+	listContainerId: string;
+	movedElementId: string;
+} ) => {
+	const movedElement = getContainer( movedElementId );
+	const listContainer = getContainer( listContainerId );
 
-		if ( ! movedElement || ! listContainer ) {
-			throw new Error( 'List item or list container not found' );
-		}
+	if ( ! movedElement || ! listContainer ) {
+		throw new Error( 'List item or list container not found' );
+	}
 
-		moveElements( {
-			title: __( 'Reorder List Items', 'elementor' ),
-			moves: [
+	moveElements( {
+		title: __( 'Reorder List Items', 'elementor' ),
+		moves: [
+			{
+				element: movedElement,
+				targetContainer: listContainer,
+				options: { at: toIndex },
+			},
+		],
+	} );
+};
+
+export const removeItem = ( { items }: { items: ItemsActionPayload< ListItem > } ) => {
+	removeElements( {
+		title: __( 'List Items', 'elementor' ),
+		elementIds: items.map( ( { item } ) => item.id ),
+	} );
+};
+
+export const addItem = ( {
+	listContainerId,
+	items,
+}: {
+	listContainerId: string;
+	items: ItemsActionPayload< ListItem >;
+} ) => {
+	const listContainer = getContainer( listContainerId );
+
+	if ( ! listContainer ) {
+		throw new Error( 'List container not found' );
+	}
+
+	items.forEach( ( { index } ) => {
+		const position = index + 1;
+
+		createElements( {
+			title: __( 'List Items', 'elementor' ),
+			elements: [
 				{
-					element: movedElement,
-					targetContainer: listContainer,
-					options: { at: toIndex },
+					container: listContainer,
+					model: {
+						elType: LIST_ITEM_ELEMENT_TYPE,
+						hydrateDefaultChildren: true,
+						editor_settings: {
+							title: `Item ${ position }`,
+							initial_position: position,
+						},
+					},
+					options: { at: index },
 				},
 			],
 		} );
-	};
-
-	const removeItem = ( { items }: { items: ItemsActionPayload< ListItem > } ) => {
-		removeElements( {
-			title: __( 'List Items', 'elementor' ),
-			elementIds: items.map( ( { item } ) => item.id ),
-		} );
-	};
-
-	const addItem = ( {
-		listContainerId,
-		items,
-	}: {
-		listContainerId: string;
-		items: ItemsActionPayload< ListItem >;
-	} ) => {
-		const listContainer = getContainer( listContainerId );
-
-		if ( ! listContainer ) {
-			throw new Error( 'List container not found' );
-		}
-
-		items.forEach( ( { index } ) => {
-			const position = index + 1;
-
-			createElements( {
-				title: __( 'List Items', 'elementor' ),
-				elements: [
-					{
-						container: listContainer,
-						model: {
-							elType: LIST_ITEM_ELEMENT_TYPE,
-							hydrateDefaultChildren: true,
-							editor_settings: {
-								title: `Item ${ position }`,
-								initial_position: position,
-							},
-						},
-						options: { at: index },
-					},
-				],
-			} );
-		} );
-	};
-
-	return {
-		duplicateItem,
-		moveItem,
-		removeItem,
-		addItem,
-	};
+	} );
 };
