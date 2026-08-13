@@ -1,6 +1,5 @@
 import AtomicElementBaseModel from './atomic-element-base-model';
 import AtomicElementBaseType from './atomic-element-base-type';
-import AtomicListModel from './atomic-list-model';
 import Component from './component';
 import createAtomicElementViewBase from './create-atomic-element-base-view';
 import createDivBlockType from './atomic-element-types/create-div-block-type';
@@ -39,21 +38,6 @@ class Module extends elementorModules.editor.utils.Module {
 		this.registerAtomicElementTypeIfAbsent( createDivBlockType() );
 		this.registerAtomicElementTypeIfAbsent( createFlexboxType() );
 		this.registerAtomicElementTypeIfAbsent( createGridType() );
-
-		this.registerListModelFilter();
-	}
-
-	registerListModelFilter() {
-		elementor.hooks.addFilter(
-			'element/model',
-			'elementor/atomic-list/model',
-			( Model, view ) => {
-				if ( 'e-list' === view?.model?.get?.( 'elType' ) ) {
-					return AtomicListModel;
-				}
-				return Model;
-			},
-		);
 	}
 
 	registerAtomicElementTypeIfAbsent( elementType ) {

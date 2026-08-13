@@ -59,7 +59,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 
 	/**
 	 * Define props schema for list items.
-	 * 
+	 *
 	 * show_markers is a hidden prop (not shown in panel) that's automatically
 	 * synced from the parent list's show_markers setting. It's used by
 	 * children_dependencies to conditionally show/hide markers.
@@ -108,7 +108,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 
 	/**
 	 * Define default children for list items.
-	 * 
+	 *
 	 * Markers are now managed via children_dependencies (see below) and are
 	 * conditionally added/removed based on the show_markers setting.
 	 * Only the content slot is included as a default child.
@@ -123,7 +123,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 
 	/**
 	 * Define children dependencies for conditional marker rendering.
-	 * 
+	 *
 	 * Markers are added when show_markers === true and removed when false.
 	 * Stashing preserves all marker customizations when toggled off, allowing
 	 * restoration when toggled back on.
@@ -150,7 +150,7 @@ class Atomic_List_Item extends Atomic_Element_Base {
 
 	/**
 	 * Sync show_markers setting from parent list via render context.
-	 * 
+	 *
 	 * This propagates the list-level setting to each item, where children
 	 * dependencies use it to determine marker visibility.
 	 */
