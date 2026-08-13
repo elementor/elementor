@@ -125,4 +125,79 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 
 		$this->assertSame( 'Go to the menus screen', $result['properties']['menu']['description'] );
 	}
+
+	public function test_check_value_shape__passes_plain_scalar() {
+		$entry = [ 'type' => 'string' ];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( 'Hello world', $entry ) );
+	}
+
+	public function test_check_value_shape__rejects_array_on_scalar_slot() {
+		$entry = [ 'type' => 'string' ];
+
+		$result = V3_Json_Schema_Builder::check_value_shape( [ 'not' => 'a scalar' ], $entry );
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'invalid shape', $result );
+		$this->assertStringContainsString( 'expected string', $result );
+		$this->assertStringContainsString( 'got object', $result );
+	}
+
+	public function test_check_value_shape__rejects_enum_violation() {
+		$entry = [
+			'type' => 'string',
+			'enum' => [ 'h1', 'h2', 'h3' ],
+		];
+
+		$result = V3_Json_Schema_Builder::check_value_shape( 'h9', $entry );
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'value must be one of', $result );
+	}
+
+	public function test_check_value_shape__rejects_nested_property_type_mismatch() {
+		$entry = [
+			'type' => 'object',
+			'properties' => [
+				'url' => [ 'type' => 'string' ],
+				'id' => [ 'type' => 'number' ],
+			],
+		];
+
+		$result = V3_Json_Schema_Builder::check_value_shape(
+			[
+				'url' => 'https://example.com',
+				'id' => 'not-a-number',
+			],
+			$entry
+		);
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'invalid shape at "id"', $result );
+	}
+
+	public function test_check_settings_shape__collects_valid_and_errors() {
+		$schema = V3_Json_Schema_Builder::build(
+			[
+				'title' => [ 'type' => 'text' ],
+				'header_size' => [
+					'type' => 'select',
+					'options' => [ 'h1' => 'H1', 'h2' => 'H2' ],
+				],
+			],
+			[ 'title', 'header_size' ]
+		);
+
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'title' => 'Hello',
+				'header_size' => 'h9',
+			],
+			$schema
+		);
+
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'header_size', $result['valid'] );
+		$this->assertArrayHasKey( 'header_size', $result['errors'] );
+	}
 }

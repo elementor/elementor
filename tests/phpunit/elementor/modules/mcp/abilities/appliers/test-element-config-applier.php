@@ -201,7 +201,7 @@ class Test_Element_Config_Applier extends TestCase {
 			],
 		];
 
-		// Act — array without a `name` key on a scalar slot is invalid.
+		// Act — array on a scalar slot is invalid.
 		$result = $applier->apply(
 			$index,
 			[

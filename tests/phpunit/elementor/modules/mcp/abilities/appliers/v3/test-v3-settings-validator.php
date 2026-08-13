@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
+use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,8 +40,8 @@ class Test_V3_Settings_Validator extends TestCase {
 		$this->assertSame( 'h2', $result['allowed']['header_size'] );
 	}
 
-	public function test_validate__rejects_array_value_on_a_scalar_slot_with_shape_error() {
-		// Arrange — array smuggled into a scalar slot.
+	public function test_validate__rejects_array_value_on_scalar_slot() {
+		// Arrange.
 		$settings = [
 			'title' => [ 'not' => 'a scalar' ],
 		];
@@ -55,31 +56,44 @@ class Test_V3_Settings_Validator extends TestCase {
 		$this->assertArrayNotHasKey( 'title', $result['allowed'] );
 	}
 
-	public function test_validate__rejects_enum_violation() {
+	public function test_validate__rejects_non_allowlisted_key_and_shape_error_together() {
 		// Arrange.
-		$settings = [ 'header_size' => 'h9' ];
+		$settings = [
+			'title' => [ 'not' => 'a scalar' ],
+			'color_menu_item' => '#ff0000',
+		];
 
 		// Act.
 		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $this->theme_post_title_config() );
 
 		// Assert.
 		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'color_menu_item', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
+		$this->assertArrayNotHasKey( 'title', $result['allowed'] );
 	}
 
-	public function test_validate__rejects_unknown_key_via_allowlist() {
-		// Arrange.
+	public function test_validate__shape_check_matches_builder_for_advertised_schema() {
+		// Arrange — same controls stack `Widget_Context_Helper` feeds to `V3_Json_Schema_Builder::build()`.
+		$widget_config = $this->theme_post_title_config();
 		$settings = [
-			'title_color' => '#ff0000',
-			'title' => 'Hello',
+			'title' => [ 'not' => 'a scalar' ],
+			'header_size' => 'h9',
 		];
+		$allowed_keys = [ 'title', 'header_size' ];
+
+		$advertised_schema = V3_Json_Schema_Builder::build( $widget_config['controls'], $allowed_keys );
+		$shape = V3_Json_Schema_Builder::check_settings_shape( $settings, $advertised_schema );
 
 		// Act.
-		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $this->theme_post_title_config() );
+		$validator = V3_Settings_Validator::validate( 'theme-post-title', $settings, $widget_config );
 
-		// Assert — allowlist error is folded into the aggregate.
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( 'title_color', $result['error']->get_error_message() );
-		$this->assertSame( 'Hello', $result['allowed']['title'] );
+		// Assert — builder shape check and validator agree on rejected keys.
+		$this->assertArrayHasKey( 'title', $shape['errors'] );
+		$this->assertArrayHasKey( 'header_size', $shape['errors'] );
+		$this->assertInstanceOf( \WP_Error::class, $validator['error'] );
+		$this->assertArrayNotHasKey( 'title', $validator['allowed'] );
+		$this->assertArrayNotHasKey( 'header_size', $validator['allowed'] );
 	}
 }
