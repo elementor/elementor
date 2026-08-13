@@ -105,10 +105,6 @@ class Atomic_List extends Atomic_Element_Base {
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
-							'gap' => Size_Prop_Type::generate( [
-								'size' => 8,
-								'unit' => 'px',
-							] ),
 							'list-style-type' => String_Prop_Type::generate( 'none' ),
 							'margin' => Size_Prop_Type::generate( [
 								'size' => 0,
@@ -117,10 +113,6 @@ class Atomic_List extends Atomic_Element_Base {
 							'padding' => Size_Prop_Type::generate( [
 								'size' => 0,
 								'unit' => 'px',
-							] ),
-							'width' => Size_Prop_Type::generate( [
-								'size' => 100,
-								'unit' => '%',
 							] ),
 						] )
 				),

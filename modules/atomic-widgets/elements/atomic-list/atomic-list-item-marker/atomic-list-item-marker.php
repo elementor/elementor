@@ -77,13 +77,7 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'flex' ),
-							'width' => Size_Prop_Type::generate( [
-								'size' => 'auto',
-								'unit' => 'custom',
-							] ),
 							'flex-shrink' => Number_Prop_Type::generate( 0 ),
-							'align-self' => String_Prop_Type::generate( 'flex-start' ),
 						] )
 				),
 		];

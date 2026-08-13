@@ -79,8 +79,6 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'flex' ),
-							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'min-width' => Size_Prop_Type::generate( [
 								'size' => 0,
 								'unit' => 'px',
