@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
@@ -22,13 +22,16 @@ class Element_Config_Applier {
 
 	private Widget_Type_Resolver $type_resolver;
 	private Plain_Values_Resolver $plain_values_resolver;
+	private ?V3_Dynamic_Hoister $v3_dynamic_hoister;
 
 	public function __construct(
 		Widget_Type_Resolver $type_resolver,
-		Plain_Values_Resolver $plain_values_resolver
+		Plain_Values_Resolver $plain_values_resolver,
+		?V3_Dynamic_Hoister $v3_dynamic_hoister = null
 	) {
 		$this->type_resolver = $type_resolver;
 		$this->plain_values_resolver = $plain_values_resolver;
+		$this->v3_dynamic_hoister = $v3_dynamic_hoister;
 	}
 
 	/**
@@ -69,32 +72,18 @@ class Element_Config_Applier {
 					? $widget_configs[ $widget_type ]['controls']
 					: [];
 
-				$dynamic_patch = [];
-				$primitives = [];
+				$hoister = $this->v3_dynamic_hoister ?? new V3_Dynamic_Hoister();
+				$hoist_outcome = $hoister->hoist( $widget_type, $filter['allowed'], $controls );
 
-				foreach ( $filter['allowed'] as $key => $value ) {
-					$control = is_array( $controls[ $key ] ?? null ) ? $controls[ $key ] : [];
-					$outcome = V3_Dynamic_Resolver::try_resolve( $key, $value, $control );
-
-					if ( ! $outcome['matched'] ) {
-						$primitives[ $key ] = $value;
-						continue;
-					}
-
-					if ( isset( $outcome['error'] ) ) {
-						$errors[] = sprintf( '[%s] V3 widget "%s" property "%s": %s', $config_id, $widget_type, $key, $outcome['error']->get_error_message() );
-						continue;
-					}
-
-					$dynamic_patch[ $key ] = $outcome['shortcode'];
-					$primitives[ $key ] = $outcome['primitive'];
+				foreach ( $hoist_outcome['errors'] as $error_message ) {
+					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $primitives );
+				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $hoist_outcome['primitives'] );
 
-				if ( ! empty( $dynamic_patch ) ) {
+				if ( ! empty( $hoist_outcome['shortcodes'] ) ) {
 					$existing = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
-					$node['settings']['__dynamic__'] = array_merge( $existing, $dynamic_patch );
+					$node['settings']['__dynamic__'] = array_merge( $existing, $hoist_outcome['shortcodes'] );
 				}
 
 				continue;

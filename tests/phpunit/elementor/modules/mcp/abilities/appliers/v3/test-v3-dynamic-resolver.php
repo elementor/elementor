@@ -11,127 +11,94 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_V3_Dynamic_Resolver extends TestCase {
 
-	protected function setUp(): void {
-		parent::setUp();
-		V3_Dynamic_Resolver::set_tag_info_resolver( function ( $name ) {
-			$catalog = [
-				'post-title' => [ 'name' => 'post-title', 'categories' => [ 'text' ] ],
-				'post-url' => [ 'name' => 'post-url', 'categories' => [ 'url' ] ],
-				'wrong-cat' => [ 'name' => 'wrong-cat', 'categories' => [ 'gallery' ] ],
-			];
-			return $catalog[ $name ] ?? null;
-		} );
-		V3_Dynamic_Resolver::set_shortcode_builder( function ( $id, $name, $settings ) {
-			return sprintf( '[elementor-tag id="%s" name="%s" settings="%s"]', $id, $name, rawurlencode( json_encode( $settings ) ) );
-		} );
-	}
-
-	protected function tearDown(): void {
-		V3_Dynamic_Resolver::set_tag_info_resolver( null );
-		V3_Dynamic_Resolver::set_shortcode_builder( null );
-		parent::tearDown();
-	}
-
-	public function test_try_resolve__returns_unmatched_when_control_is_not_dynamic_capable() {
+	public function test_is_dynamic_capable__returns_false_when_control_has_no_dynamic_config() {
 		// Arrange.
 		$control = [ 'type' => 'text' ];
 
 		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'title', [ 'name' => 'post-title' ], $control );
+		$result = V3_Dynamic_Resolver::is_dynamic_capable( $control );
 
 		// Assert.
-		$this->assertFalse( $result['matched'] );
+		$this->assertFalse( $result );
 	}
 
-	public function test_try_resolve__returns_unmatched_when_value_is_a_plain_scalar() {
+	public function test_is_dynamic_capable__returns_true_when_dynamic_active_is_true() {
+		// Arrange.
+		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true ] ];
+
+		// Act.
+		$result = V3_Dynamic_Resolver::is_dynamic_capable( $control );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_dynamic_capable__returns_true_when_dynamic_default_is_non_empty_string() {
+		// Arrange.
+		$control = [ 'type' => 'text', 'dynamic' => [ 'default' => 'post-title' ] ];
+
+		// Act.
+		$result = V3_Dynamic_Resolver::is_dynamic_capable( $control );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_extract_input__returns_null_for_scalar_value() {
 		// Arrange.
 		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true, 'categories' => [ 'text' ] ] ];
 
 		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'title', 'Hello world', $control );
+		$result = V3_Dynamic_Resolver::extract_input( 'Hello world', null );
 
 		// Assert.
-		$this->assertFalse( $result['matched'] );
+		$this->assertNull( $result );
 	}
 
-	public function test_try_resolve__coerces_top_level_dynamic_into_shortcode_and_neutral_primitive() {
+	public function test_extract_input__extracts_top_level_dynamic_shape() {
 		// Arrange.
-		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true, 'categories' => [ 'text' ] ] ];
+		$value = [ 'name' => 'post-title', 'settings' => [ 'fallback' => 'Hi' ] ];
 
 		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'title', [ 'name' => 'post-title', 'settings' => [] ], $control );
+		$result = V3_Dynamic_Resolver::extract_input( $value, null );
 
 		// Assert.
-		$this->assertTrue( $result['matched'] );
-		$this->assertArrayNotHasKey( 'error', $result );
-		$this->assertStringContainsString( 'name="post-title"', $result['shortcode'] );
-		$this->assertSame( '', $result['primitive'] );
-	}
-
-	public function test_try_resolve__accepts_nested_dynamic_on_url_control_property() {
-		// Arrange.
-		$control = [
-			'type' => 'url',
-			'dynamic' => [
-				'active' => true,
-				'categories' => [ 'url' ],
-				'property' => 'url',
+		$this->assertSame(
+			[
+				'name' => 'post-title',
+				'settings' => [ 'fallback' => 'Hi' ],
 			],
-		];
+			$result
+		);
+	}
 
+	public function test_extract_input__extracts_nested_dynamic_on_url_control_property() {
+		// Arrange.
 		$value = [
 			'url' => [ 'name' => 'post-url', 'settings' => [] ],
 		];
 
 		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'link', $value, $control );
+		$result = V3_Dynamic_Resolver::extract_input( $value, 'url' );
 
 		// Assert.
-		$this->assertTrue( $result['matched'] );
-		$this->assertArrayNotHasKey( 'error', $result );
-		$this->assertStringContainsString( 'name="post-url"', $result['shortcode'] );
 		$this->assertSame(
-			[ 'url' => '', 'is_external' => '', 'nofollow' => '' ],
-			$result['primitive']
+			[
+				'name' => 'post-url',
+				'settings' => [],
+			],
+			$result
 		);
 	}
 
-	public function test_try_resolve__errors_when_tag_is_not_registered() {
+	public function test_extract_input__returns_null_when_nested_property_is_missing() {
 		// Arrange.
-		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true, 'categories' => [ 'text' ] ] ];
+		$value = [ 'is_external' => 'on' ];
 
 		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'title', [ 'name' => 'not-a-tag' ], $control );
+		$result = V3_Dynamic_Resolver::extract_input( $value, 'url' );
 
 		// Assert.
-		$this->assertTrue( $result['matched'] );
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( 'not registered', $result['error']->get_error_message() );
-	}
-
-	public function test_try_resolve__errors_when_tag_categories_do_not_intersect_control() {
-		// Arrange.
-		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true, 'categories' => [ 'text' ] ] ];
-
-		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'title', [ 'name' => 'wrong-cat' ], $control );
-
-		// Assert.
-		$this->assertTrue( $result['matched'] );
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( 'not compatible', $result['error']->get_error_message() );
-	}
-
-	public function test_try_resolve__accepts_any_registered_tag_when_control_declares_no_categories() {
-		// Arrange.
-		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true ] ];
-
-		// Act.
-		$result = V3_Dynamic_Resolver::try_resolve( 'title', [ 'name' => 'post-title' ], $control );
-
-		// Assert.
-		$this->assertTrue( $result['matched'] );
-		$this->assertArrayNotHasKey( 'error', $result );
-		$this->assertStringContainsString( 'name="post-title"', $result['shortcode'] );
+		$this->assertNull( $result );
 	}
 }

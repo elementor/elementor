@@ -84,18 +84,18 @@ class V3_Json_Schema_Builder {
 		}
 
 		$description = isset( $control['description'] ) && is_string( $control['description'] )
-			? trim( function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $control['description'] ) : strip_tags( $control['description'] ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- DB-less test fallback.
+			? trim( strip_tags( $control['description'] ) )
 			: null;
 
-		if ( ! self::is_dynamic_capable( $control ) ) {
-			if ( null !== $description ) {
-				$entry['description'] = $description;
-			}
-
-			return $entry;
+		if ( self::is_dynamic_capable( $control ) ) {
+			return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
 		}
 
-		return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
+		if ( null !== $description ) {
+			$entry['description'] = $description;
+		}
+
+		return $entry;
 	}
 
 	private static function is_dynamic_capable( array $control ): bool {
