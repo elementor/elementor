@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses;
+namespace Elementor\Modules\DefaultStyles;
 
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Utils\Kit_Utils;
 use WP_Post;
 
@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Global_Classes_Post_IDs {
+class Default_Styles_Tag_Post_IDs {
 	use Has_Kit_Dependency;
 
-	const META_KEY = '_elementor_global_classes_post_ids';
+	const META_KEY = '_elementor_default_styles_post_ids';
 
 	private ?array $cache = null;
 
@@ -33,7 +33,7 @@ class Global_Classes_Post_IDs {
 	}
 
 	public static function on_deleted_post( int $post_id, WP_Post $post ): void {
-		if ( Global_Class_Post_Type::CPT !== $post->post_type ) {
+		if ( Default_Style_Post_Type::CPT !== $post->post_type ) {
 			return;
 		}
 
@@ -42,14 +42,14 @@ class Global_Classes_Post_IDs {
 		}
 	}
 
-	public function get_post_id( string $class_id ): ?int {
+	public function get_post_id( string $tag ): ?int {
 		$map = $this->read_map();
 
-		if ( ! isset( $map[ $class_id ] ) ) {
+		if ( ! isset( $map[ $tag ] ) ) {
 			return null;
 		}
 
-		$post_id = (int) $map[ $class_id ];
+		$post_id = (int) $map[ $tag ];
 
 		if ( get_post( $post_id ) ) {
 			return $post_id;
@@ -60,23 +60,15 @@ class Global_Classes_Post_IDs {
 		return null;
 	}
 
-	public function get_post_ids( array $class_ids ): array {
-		if ( empty( $class_ids ) ) {
-			return [];
-		}
-
-		$map      = $this->read_map();
+	public function get_all(): array {
+		$map = $this->read_map();
 		$resolved = [];
 
-		foreach ( $class_ids as $class_id ) {
-			if ( ! isset( $map[ $class_id ] ) ) {
-				continue;
-			}
-
-			$post_id = (int) $map[ $class_id ];
+		foreach ( $map as $tag => $post_id ) {
+			$post_id = (int) $post_id;
 
 			if ( get_post( $post_id ) ) {
-				$resolved[ $class_id ] = $post_id;
+				$resolved[ $tag ] = $post_id;
 			} else {
 				$this->remove_post_id( $post_id );
 			}
@@ -85,44 +77,25 @@ class Global_Classes_Post_IDs {
 		return $resolved;
 	}
 
-	public function set( string $class_id, int $post_id ): void {
-		$this->set_many( [ $class_id => $post_id ] );
-	}
+	public function set( string $tag, int $post_id ): void {
+		$map = $this->read_map();
 
-	public function set_many( array $class_id_to_post_id ): void {
-		if ( empty( $class_id_to_post_id ) ) {
+		if ( $post_id <= 0 || '' === $tag ) {
 			return;
 		}
 
-		$map = $this->read_map();
-		$changed = false;
-
-		foreach ( $class_id_to_post_id as $class_id => $post_id ) {
-			$post_id = (int) $post_id;
-
-			if ( ! is_string( $class_id ) || '' === $class_id || $post_id <= 0 ) {
-				continue;
-			}
-
-			if ( ! isset( $map[ $class_id ] ) || (int) $map[ $class_id ] !== $post_id ) {
-				$map[ $class_id ] = $post_id;
-				$changed = true;
-			}
-		}
-
-		if ( $changed ) {
-			$this->write_map( $map );
-		}
+		$map[ $tag ] = $post_id;
+		$this->write_map( $map );
 	}
 
-	public function remove_class_id( string $class_id ): void {
+	public function remove_tag( string $tag ): void {
 		$map = $this->read_map();
 
-		if ( ! isset( $map[ $class_id ] ) ) {
+		if ( ! isset( $map[ $tag ] ) ) {
 			return;
 		}
 
-		unset( $map[ $class_id ] );
+		unset( $map[ $tag ] );
 		$this->write_map( $map );
 	}
 

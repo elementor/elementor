@@ -126,6 +126,7 @@ class Modules_Manager {
 			'content-sanitizer',
 			'atomic-widgets',
 			'global-classes',
+			'default-styles',
 			'variables',
 			'design-system-sync',
 			'wc-product-editor',
