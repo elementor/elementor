@@ -46,7 +46,7 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-editor-paragraph';
+		return 'eicon-layout';
 	}
 
 	public function should_show_in_panel() {
