@@ -18,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
-import { LIST_ITEM_ELEMENT_TYPE, type ListItem, useActions } from './use-actions';
+import { addItem, duplicateItem, LIST_ITEM_ELEMENT_TYPE, type ListItem, moveItem, removeItem } from './list-actions';
 
 const getEffectiveListItemLabel = ( label: string | undefined, fallbackLabel: string ) => {
 	return label?.trim() ? label : fallbackLabel;
@@ -59,7 +59,6 @@ export const ListItemsControl = ( { label }: { label: string } ) => {
 
 const ListItemsControlContent = ( { label }: { label: string } ) => {
 	const { element } = useElement();
-	const { addItem, duplicateItem, moveItem, removeItem } = useActions();
 	const listItems = useListItems( element.id );
 
 	const repeaterValues: RepeaterItem< ListItem >[] = listItems.map( ( item, index ) => ( {

@@ -178,10 +178,6 @@ class Atomic_List_Item extends Atomic_Element_Base {
 		];
 	}
 
-	protected function parse_editor_settings( array $data ): array {
-		return parent::parse_editor_settings( $data );
-	}
-
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-list-item' => __DIR__ . '/atomic-list-item.html.twig',

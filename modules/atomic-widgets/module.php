@@ -599,11 +599,6 @@ class Module extends BaseModule {
 			// sets one of the state classes from real playback, so exactly one button shows there.
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
-			'.e-list { margin: 0; padding: 0; }',
-			'.e-list-item { list-style: none; display: flex; flex-direction: row; align-items: flex-start; gap: 8px; }',
-			'.e-list-item__marker { align-self: flex-start; flex: 0 0 auto; width: auto; }',
-			'.e-list-item__marker .e-svg-base { width: 1rem; height: 1rem; }',
-			'.e-list-item__content { min-width: 0; flex: 1 1 0%; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
