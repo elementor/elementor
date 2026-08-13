@@ -83,11 +83,69 @@ class V3_Json_Schema_Builder {
 			$entry['default'] = $control['default'];
 		}
 
-		if ( isset( $control['description'] ) && is_string( $control['description'] ) ) {
-			$entry['description'] = trim( strip_tags( $control['description'] ) );
+		$description = isset( $control['description'] ) && is_string( $control['description'] )
+			? trim( function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $control['description'] ) : strip_tags( $control['description'] ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- DB-less test fallback.
+			: null;
+
+		if ( ! self::is_dynamic_capable( $control ) ) {
+			if ( null !== $description ) {
+				$entry['description'] = $description;
+			}
+
+			return $entry;
 		}
 
-		return $entry;
+		return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
+	}
+
+	private static function is_dynamic_capable( array $control ): bool {
+		return true === ( $control['dynamic']['active'] ?? false );
+	}
+
+	/**
+	 * Wraps a primitive schema entry in an `anyOf` union with the plain dynamic-tag shape,
+	 * mirroring how V4 atomic prop types advertise dynamic bindings. Kept aligned with the
+	 * static resource `elementor://dynamic-tags`: the LLM picks a tag from there whose
+	 * categories intersect the ones declared on this control.
+	 *
+	 * @param array<string, mixed> $primitive_entry Primitive schema entry.
+	 * @param array<int, string>   $categories      Dynamic-tag categories accepted by this control.
+	 * @param string|null          $description     Optional shared description hoisted to the wrapper.
+	 */
+	private static function wrap_with_dynamic_branch( array $primitive_entry, array $categories, ?string $description ): array {
+		$dynamic_entry = [
+			'type' => 'object',
+			'required' => [ 'name' ],
+			'properties' => [
+				'name' => [ 'type' => 'string' ],
+				'settings' => [ 'type' => 'object' ],
+			],
+			'description' => self::dynamic_branch_description( $categories ),
+		];
+
+		$wrapped = [
+			'anyOf' => [
+				$primitive_entry,
+				$dynamic_entry,
+			],
+		];
+
+		if ( null !== $description ) {
+			$wrapped['description'] = $description;
+		}
+
+		return $wrapped;
+	}
+
+	private static function dynamic_branch_description( array $categories ): string {
+		if ( empty( $categories ) ) {
+			return 'Bind THIS value to a dynamic tag from elementor://dynamic-tags. Shape: { "name": "<tag>", "settings": { ... } }.';
+		}
+
+		return sprintf(
+			'Bind THIS value to a dynamic tag from elementor://dynamic-tags whose categories intersect [%s]. Shape: { "name": "<tag>", "settings": { ... } }.',
+			implode( ', ', array_map( 'strval', $categories ) )
+		);
 	}
 
 	private static function type_entry( array $control, ?string $control_type ): array {

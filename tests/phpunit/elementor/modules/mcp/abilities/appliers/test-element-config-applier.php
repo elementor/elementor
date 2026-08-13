@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use PHPUnit\Framework\TestCase;
@@ -179,6 +180,56 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( 'elementor_invalid_settings', $result['error']->get_error_code() );
 		$this->assertStringContainsString( 'color_menu_item', $result['error']->get_error_message() );
 		$this->assertArrayNotHasKey( 'menu', $nav['settings'] );
+	}
+
+	public function test_apply__v3_dynamic_tag_on_url_control_is_hoisted_into__dynamic__() {
+		V3_Dynamic_Resolver::set_tag_info_resolver( function ( $name ) {
+			return 'post-url' === $name ? [ 'name' => 'post-url', 'categories' => [ 'url' ] ] : null;
+		} );
+		V3_Dynamic_Resolver::set_shortcode_builder( function ( $id, $name, $settings ) {
+			return sprintf( '[elementor-tag id="%s" name="%s"]', $id, $name );
+		} );
+
+		try {
+			$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+			$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+			$node = [
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [],
+			];
+			$index = [ 'title' => &$node ];
+
+			$widget_configs = [
+				'theme-post-title' => [
+					'controls' => [
+						'link' => [
+							'type' => 'url',
+							'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
+						],
+					],
+				],
+			];
+
+			$result = $applier->apply(
+				$index,
+				[
+					'title' => [
+						'link' => [ 'url' => [ 'name' => 'post-url', 'settings' => [] ] ],
+					],
+				],
+				$widget_configs
+			);
+
+			$this->assertNull( $result['error'] );
+			$this->assertSame( [ 'url' => '', 'is_external' => '', 'nofollow' => '' ], $node['settings']['link'] );
+			$this->assertArrayHasKey( '__dynamic__', $node['settings'] );
+			$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
+		} finally {
+			V3_Dynamic_Resolver::set_tag_info_resolver( null );
+			V3_Dynamic_Resolver::set_shortcode_builder( null );
+		}
 	}
 
 	public function test_apply__reports_settings_and_component_errors_together() {

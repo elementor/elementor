@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
@@ -57,13 +58,45 @@ class Element_Config_Applier {
 			}
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$filter = V3_Non_Style_Allowlist::filter( (string) $tag, $settings );
+				$widget_type = (string) $tag;
+				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
 					continue;
 				}
 
-				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $filter['allowed'] );
+				$controls = is_array( $widget_configs[ $widget_type ]['controls'] ?? null )
+					? $widget_configs[ $widget_type ]['controls']
+					: [];
+
+				$dynamic_patch = [];
+				$primitives = [];
+
+				foreach ( $filter['allowed'] as $key => $value ) {
+					$control = is_array( $controls[ $key ] ?? null ) ? $controls[ $key ] : [];
+					$outcome = V3_Dynamic_Resolver::try_resolve( $key, $value, $control );
+
+					if ( ! $outcome['matched'] ) {
+						$primitives[ $key ] = $value;
+						continue;
+					}
+
+					if ( isset( $outcome['error'] ) ) {
+						$errors[] = sprintf( '[%s] V3 widget "%s" property "%s": %s', $config_id, $widget_type, $key, $outcome['error']->get_error_message() );
+						continue;
+					}
+
+					$dynamic_patch[ $key ] = $outcome['shortcode'];
+					$primitives[ $key ] = $outcome['primitive'];
+				}
+
+				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $primitives );
+
+				if ( ! empty( $dynamic_patch ) ) {
+					$existing = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+					$node['settings']['__dynamic__'] = array_merge( $existing, $dynamic_patch );
+				}
+
 				continue;
 			}
 
