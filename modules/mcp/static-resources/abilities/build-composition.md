@@ -115,10 +115,12 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
 # DYNAMIC TAGS
-- A value can be made dynamic wherever the widget schema allows a dynamic variant (often a union on the prop or a nested field such as an image's `src`).
+- A value can be made dynamic wherever the widget schema allows a dynamic variant (often an `anyOf` on the prop or a nested field such as an image's `src`).
 - Put the plain dynamic object at that node, in place of the static variant. Read [elementor://dynamic-tags] for allowed tag names and each tag's settings schema.
 - Plain dynamic shape: `{ "name": "<allowed tag>", "settings": { ... } }`
 - Example (image `src`): `"image": { "src": { "name": "<image tag>", "settings": { ... } }, "size": "full" }`
+- V3 widgets (e.g. `theme-post-title`, `theme-post-featured-image`) accept the SAME dynamic shape at the field's slot. On URL controls the dynamic goes on the inner `url` slot: `"link": { "url": { "name": "post-url", "settings": {} } }`. The server rewrites it into V3's `__dynamic__` map — do NOT hand-craft `__dynamic__` shortcodes yourself.
+- The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps.
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.

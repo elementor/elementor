@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 
@@ -57,13 +57,26 @@ class Element_Config_Applier {
 			}
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$filter = V3_Non_Style_Allowlist::filter( (string) $tag, $settings );
-				if ( $filter['error'] ) {
-					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
+				$widget_type = (string) $tag;
+				$widget_config = is_array( $widget_configs[ $widget_type ] ?? null ) ? $widget_configs[ $widget_type ] : [];
+
+				$validated = V3_Settings_Validator::validate( $widget_type, $settings, $widget_config );
+
+				if ( $validated['error'] ) {
+					$errors[] = sprintf( '[%s] %s', $config_id, $validated['error']->get_error_message() );
 					continue;
 				}
 
-				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $filter['allowed'] );
+				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $validated['allowed'] );
+
+				if ( ! empty( $validated['dynamic_patch'] ) ) {
+					$existing_dynamic = $node['settings']['__dynamic__'] ?? [];
+					$node['settings']['__dynamic__'] = array_merge(
+						is_array( $existing_dynamic ) ? $existing_dynamic : [],
+						$validated['dynamic_patch']
+					);
+				}
+
 				continue;
 			}
 
