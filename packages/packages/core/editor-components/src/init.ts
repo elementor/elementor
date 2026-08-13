@@ -42,16 +42,7 @@ export function init() {
     } )
   );
 
-  const extendedWindow = window as unknown as ExtendedWindow;
-  const previousBeforeSave = extendedWindow.elementorCommon.__beforeSave as
-    | ( ( options: Parameters< typeof beforeSave >[ 0 ] ) => unknown )
-    | undefined;
-  extendedWindow.elementorCommon.__beforeSave = async (
-    options: Parameters< typeof beforeSave >[ 0 ]
-  ) => {
-    await previousBeforeSave?.( options );
-    await beforeSave( options );
-  };
+  ( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
   injectTab( {
     id: 'components',
