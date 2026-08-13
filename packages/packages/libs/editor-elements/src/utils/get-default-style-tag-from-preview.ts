@@ -1,12 +1,8 @@
 import { getContainer } from '../sync/get-container';
 import { getPreviewElementDOM } from '../sync/get-preview-element-dom';
+import { type V1Element } from '../sync/types';
 
 export const DEFAULT_STYLE_CLASS_PREFIX = 'e-default-';
-
-type AtomicElementView = {
-  getDomElement?: () => { get: ( index: number ) => HTMLElement | undefined };
-  el?: HTMLElement;
-};
 
 export function parseDefaultStyleTagFromClassList( classList: DOMTokenList ): string | null {
   for ( const className of classList ) {
@@ -32,7 +28,7 @@ function getAtomicElementRenderRoot( elementId: string ): HTMLElement | null {
   const view = getContainerView( elementId );
 
   if ( view?.getDomElement ) {
-    const domElement = view.getDomElement().get( 0 );
+    const domElement = view.getDomElement().get?.( 0 );
 
     if ( domElement ) {
       return domElement;
@@ -58,6 +54,6 @@ function getAtomicElementRenderRoot( elementId: string ): HTMLElement | null {
   return wrapper;
 }
 
-function getContainerView( elementId: string ): AtomicElementView | null {
+function getContainerView( elementId: string ): V1Element[ 'view' ] | null {
   return getContainer( elementId )?.view ?? null;
 }

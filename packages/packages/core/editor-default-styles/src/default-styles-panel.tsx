@@ -7,11 +7,7 @@ import {
   __privateOpenRoute as openRoute,
   routeCloseEvent,
 } from '@elementor/editor-v1-adapters';
-import {
-  __dispatch as dispatch,
-  __getState as getState,
-  __useSelector as useSelector,
-} from '@elementor/store';
+import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { DialogHeader } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -29,7 +25,6 @@ export const { panel, usePanelStatus, usePanelActions } = createPanel( {
 
 function DefaultStylesPanelRoot() {
   const { close } = usePanelActions();
-  const isDirty = useSelector( selectIsDirty );
   const {
     open: openSaveChangesDialog,
     close: closeSaveChangesDialog,
@@ -50,8 +45,6 @@ function DefaultStylesPanelRoot() {
 
     void close();
   }, [ close, openSaveChangesDialog ] );
-
-  usePreventUnload( isDirty );
 
   useEffect( () => {
     const unsubscribe = listenTo( routeCloseEvent( V2_PANEL_ROUTE ), () => {
@@ -107,20 +100,4 @@ function DefaultStylesPanelRoot() {
       ) }
     </>
   );
-}
-
-function usePreventUnload( isDirty: boolean ) {
-  useEffect( () => {
-    const handleBeforeUnload = ( event: BeforeUnloadEvent ) => {
-      if ( isDirty ) {
-        event.preventDefault();
-      }
-    };
-
-    window.addEventListener( 'beforeunload', handleBeforeUnload );
-
-    return () => {
-      window.removeEventListener( 'beforeunload', handleBeforeUnload );
-    };
-  }, [ isDirty ] );
 }

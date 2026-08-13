@@ -1,17 +1,38 @@
-import * as React from 'react';
 import { useEffect } from 'react';
-import { registerDataHook } from '@elementor/editor-v1-adapters';
+import {
+  __privateListenTo as listenTo,
+  registerDataHook,
+  routeCloseEvent,
+} from '@elementor/editor-v1-adapters';
+import { __getState as getState } from '@elementor/store';
 
 import { loadDefaultStyles } from '../load-default-styles';
+import { selectIsDirty } from '../store';
+
+const V2_PANEL_ROUTE = 'panel/v2';
 
 export function PopulateStore() {
-	useEffect( () => {
-		void loadDefaultStyles();
+  useEffect( () => {
+    void loadDefaultStyles();
 
-		registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
-			await loadDefaultStyles();
-		} );
-	}, [] );
+    registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+      if ( selectIsDirty( getState() ) ) {
+        return;
+      }
 
-	return null;
+      await loadDefaultStyles();
+    } );
+
+    const unsubscribe = listenTo( routeCloseEvent( V2_PANEL_ROUTE ), () => {
+      if ( selectIsDirty( getState() ) ) {
+        return;
+      }
+
+      void loadDefaultStyles();
+    } );
+
+    return unsubscribe;
+  }, [] );
+
+  return null;
 }

@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ControlActionsProvider,
   ControlReplacementsProvider,
@@ -28,7 +27,7 @@ import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/ed
 import { ThemeProvider } from '@elementor/editor-ui';
 import { controlActionsMenu } from '@elementor/menus';
 import { useMutation } from '@elementor/query';
-import { SessionStorageProvider } from '@elementor/session';
+import { SessionStorageProvider, useSessionStorage } from '@elementor/session';
 import { __useSelector as useSelector } from '@elementor/store';
 import {
   type AutocompleteChangeReason,
@@ -42,7 +41,12 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ALLOWED_HTML_WRAPPER_TAGS, type AllowedHtmlTag } from '../allowed-tags';
+import {
+  type AllowedHtmlTag,
+  getAllowedDefaultStyleTags,
+  getDefaultActiveTag,
+  isAllowedDefaultStyleTag,
+} from '../allowed-tags';
 import { saveDefaultStyles } from '../save-default-styles';
 import { selectIsDirty } from '../store';
 import { TagChip } from './tag-chip';
@@ -52,11 +56,8 @@ const { useMenuItems } = controlActionsMenu;
 const SHIM_ELEMENT_ID = 'default-styles-editor-shim';
 const SHIM_CLASSES_PROP = '__default_styles_classes__';
 const TAG_SELECTOR_ID = 'default-styles-tag-selector';
-
-const TAG_OPTIONS: Option[] = ALLOWED_HTML_WRAPPER_TAGS.map( ( tag ) => ( {
-  label: tag,
-  value: tag,
-} ) );
+const LAST_ACTIVE_TAG_SESSION_PREFIX = 'default-styles';
+const LAST_ACTIVE_TAG_SESSION_KEY = 'last-active-tag';
 
 function toTagChip( tag: AllowedHtmlTag ): Option {
   return { label: tag, value: tag, fixed: true };
@@ -79,13 +80,32 @@ type DefaultStylesPanelContentProps = {
 };
 
 export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPanelContentProps ) {
-  const [ selectedTag, setSelectedTag ] = useState< AllowedHtmlTag >( 'h1' );
+  const allowedTags = useMemo( () => getAllowedDefaultStyleTags(), [] );
+  const tagOptions = useMemo< Option[] >(
+    () => allowedTags.map( ( tag ) => ( { label: tag, value: tag } ) ),
+    [ allowedTags ]
+  );
+  const [ storedTag, saveTag ] = useSessionStorage< AllowedHtmlTag >(
+    LAST_ACTIVE_TAG_SESSION_KEY,
+    LAST_ACTIVE_TAG_SESSION_PREFIX
+  );
+  const selectedTag = useMemo( () => {
+    if ( storedTag && isAllowedDefaultStyleTag( storedTag, allowedTags ) ) {
+      return storedTag;
+    }
+
+    return getDefaultActiveTag( allowedTags );
+  }, [ allowedTags, storedTag ] );
   const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
   const breakpoint = useActiveBreakpoint();
   const menuItems = useMenuItems().default;
   const controlReplacements = getControlReplacements();
   const isDirty = useSelector( selectIsDirty );
   const { mutateAsync: save, isPending: isSaving } = useSave();
+
+  const setSelectedTag = ( tag: AllowedHtmlTag ) => {
+    saveTag( tag );
+  };
 
   const handleTagSelect = (
     _selected: Option[],
@@ -136,7 +156,7 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
                       id={ TAG_SELECTOR_ID }
                       size="tiny"
                       placeholder={ __( 'Type tag name', 'elementor' ) }
-                      options={ TAG_OPTIONS }
+                      options={ tagOptions }
                       selected={ [ toTagChip( selectedTag ) ] }
                       onSelect={ handleTagSelect }
                       renderTags={ ( values, getTagProps ) =>

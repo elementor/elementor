@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\DefaultStyles\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -49,6 +50,7 @@ class Module extends BaseModule {
 		( new Default_Styles_Tag_Post_IDs() )->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_editor_localize_settings( $settings ) );
 
 		( new Default_Styles_REST_API() )->register_hooks();
 		( new Atomic_Default_Styles() )->register_hooks();
@@ -87,5 +89,17 @@ class Module extends BaseModule {
 
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
+	}
+
+	private function add_editor_localize_settings( array $settings ): array {
+		if ( ! isset( $settings['atomic'] ) ) {
+			$settings['atomic'] = [];
+		}
+
+		$settings['atomic']['default_styles'] = [
+			'allowed_tags' => Utils::ALLOWED_HTML_WRAPPER_TAGS,
+		];
+
+		return $settings;
 	}
 }

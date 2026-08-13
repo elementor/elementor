@@ -9,6 +9,20 @@ import { slice } from '../store';
 
 describe( 'defaultStylesStylesProvider', () => {
   beforeEach( () => {
+    (
+      window as unknown as {
+        elementor: { config: { atomic: { default_styles: { allowed_tags: string[] } } } };
+      }
+     ).elementor = {
+      config: {
+        atomic: {
+          default_styles: {
+            allowed_tags: [ 'h1', 'h2' ],
+          },
+        },
+      },
+    };
+
     registerSlice( slice );
     createStore();
     stylesRepository.register( defaultStylesStylesProvider );

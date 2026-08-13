@@ -48,6 +48,44 @@ describe( 'saveDefaultStyles', () => {
     expect( selectInitialData( getState() ) ).toEqual( { h2: style } );
   } );
 
+  it( 'should persist edits to pre-loaded tags', async () => {
+    const style = createMockStyleDefinitionWithVariants( {
+      id: 'h2',
+      variants: [
+        {
+          meta: { breakpoint: 'desktop', state: null },
+          props: { 'font-size': '12px' },
+          custom_css: null,
+        },
+      ],
+    } );
+
+    dispatch(
+      slice.actions.load( {
+        data: { h2: style },
+      } )
+    );
+
+    dispatch(
+      slice.actions.updateProps( {
+        id: 'h2',
+        meta: { breakpoint: 'desktop', state: null },
+        props: { 'font-size': '24px' },
+      } )
+    );
+
+    await saveDefaultStyles();
+
+    expect( apiClient.put ).toHaveBeenCalledWith( 'h2', [
+      {
+        meta: { breakpoint: 'desktop', state: null },
+        props: { 'font-size': '24px' },
+        custom_css: null,
+      },
+    ] );
+    expect( selectIsDirty( getState() ) ).toBe( false );
+  } );
+
   it( 'should delete tags removed from the store', async () => {
     const style = createMockStyleDefinitionWithVariants( { id: 'h2' } );
 

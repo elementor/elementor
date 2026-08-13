@@ -17,6 +17,17 @@ export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleSections } from './components/style-sections';
+export {
+  STYLE_SECTION_NAMES,
+  STYLE_SECTIONS,
+  type StyleSectionDefinition,
+} from './components/style-sections-definition';
+export {
+  DEFAULT_PSEUDO_STATES,
+  type PseudoStateOption,
+} from './components/style-states/pseudo-states';
+export { PseudoStateMenuItems } from './components/style-states/pseudo-state-menu-items';
+export { usePseudoStates } from './components/style-states/use-pseudo-states';
 export { injectIntoGridFields } from './components/style-sections/layout-section/layout-section';
 export { StyleTabSection } from './components/style-tab-section';
 export { ClassesPropProvider, useClassesProp } from './contexts/classes-prop-context';

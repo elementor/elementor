@@ -38,8 +38,8 @@ export const slice = createSlice( {
       state,
       { payload: { data } }: PayloadAction< { data: Record< StyleDefinitionID, StyleDefinition > } >
     ) {
-      state.initialData = data;
-      state.data = data;
+      state.initialData = structuredClone( data );
+      state.data = structuredClone( data );
       state.isDirty = false;
     },
 
@@ -96,12 +96,12 @@ export const slice = createSlice( {
     },
 
     reset( state ) {
-      state.data = state.initialData;
+      state.data = structuredClone( state.initialData );
       state.isDirty = false;
     },
 
     commit( state ) {
-      state.initialData = state.data;
+      state.initialData = structuredClone( state.data );
       state.isDirty = false;
     },
 
