@@ -59,11 +59,16 @@ jobs:
               return;
             }
 
-            const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: run.id,
-            });
+            const artifacts = await github.paginate(
+              github.rest.actions.listWorkflowRunArtifacts,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+                per_page: 100,
+              },
+              (response) => response.data.artifacts,
+            );
 
             const pluginArtifact = artifacts.find((artifact) => artifact.name.startsWith('elementor-'));
             if (!pluginArtifact) {
