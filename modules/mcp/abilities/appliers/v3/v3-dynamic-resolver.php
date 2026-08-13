@@ -56,7 +56,9 @@ class V3_Dynamic_Resolver {
 			return [ 'matched' => false ];
 		}
 
-		$dynamic_input = self::extract_dynamic_input( $value, $control['dynamic']['property'] ?? null );
+		$dynamic = self::resolve_dynamic_config( $control );
+		$property = $dynamic['property'] ?? self::default_dynamic_property_for_type( $control['type'] ?? null );
+		$dynamic_input = self::extract_dynamic_input( $value, $property );
 		if ( null === $dynamic_input ) {
 			return [ 'matched' => false ];
 		}
@@ -72,7 +74,7 @@ class V3_Dynamic_Resolver {
 			];
 		}
 
-		$category_error = self::validate_categories( $key, $dynamic_input['name'], $tag_info, $control['dynamic']['categories'] ?? [] );
+		$category_error = self::validate_categories( $key, $dynamic_input['name'], $tag_info, $dynamic['categories'] ?? [] );
 		if ( $category_error ) {
 			return [
 				'matched' => true,
@@ -99,7 +101,53 @@ class V3_Dynamic_Resolver {
 	}
 
 	public static function is_dynamic_capable( array $control ): bool {
-		return true === ( $control['dynamic']['active'] ?? false );
+		$dynamic = self::resolve_dynamic_config( $control );
+
+		if ( true === ( $dynamic['active'] ?? false ) ) {
+			return true;
+		}
+
+		if ( ! empty( $dynamic['categories'] ) ) {
+			return true;
+		}
+
+		return is_string( $dynamic['default'] ?? null ) && '' !== $dynamic['default'];
+	}
+
+	/**
+	 * Merges per-control `dynamic` args with the control-type defaults from Controls_Manager.
+	 * Widget stacks often only set `dynamic.active` or `dynamic.default`; URL controls rely on
+	 * the type default for `categories` + `property` (`url`).
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function resolve_dynamic_config( array $control ): array {
+		$dynamic = is_array( $control['dynamic'] ?? null ) ? $control['dynamic'] : [];
+		$type = $control['type'] ?? null;
+
+		if ( ! is_string( $type ) || '' === $type || ! isset( Plugin::$instance->controls_manager ) ) {
+			return $dynamic;
+		}
+
+		$control_obj = Plugin::$instance->controls_manager->get_control( $type );
+		if ( ! $control_obj || ! method_exists( $control_obj, 'get_settings' ) ) {
+			return $dynamic;
+		}
+
+		$type_dynamic = $control_obj->get_settings( 'dynamic' );
+		if ( ! is_array( $type_dynamic ) || empty( $type_dynamic ) ) {
+			return $dynamic;
+		}
+
+		return array_merge( $type_dynamic, $dynamic );
+	}
+
+	private static function default_dynamic_property_for_type( ?string $control_type ): ?string {
+		if ( 'url' === $control_type ) {
+			return 'url';
+		}
+
+		return null;
 	}
 
 	/**

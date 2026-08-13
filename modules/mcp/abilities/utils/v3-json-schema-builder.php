@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -87,7 +89,7 @@ class V3_Json_Schema_Builder {
 			? trim( strip_tags( $control['description'] ) )
 			: null;
 
-		if ( ! self::is_dynamic_capable( $control ) ) {
+		if ( ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
 			if ( null !== $description ) {
 				$entry['description'] = $description;
 			}
@@ -95,11 +97,13 @@ class V3_Json_Schema_Builder {
 			return $entry;
 		}
 
-		return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
+		$dynamic = V3_Dynamic_Resolver::resolve_dynamic_config( $control );
+
+		return self::wrap_with_dynamic_branch( $entry, $dynamic['categories'] ?? [], $description );
 	}
 
 	private static function is_dynamic_capable( array $control ): bool {
-		return true === ( $control['dynamic']['active'] ?? false );
+		return V3_Dynamic_Resolver::is_dynamic_capable( $control );
 	}
 
 	/**

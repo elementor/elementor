@@ -96,6 +96,27 @@ class Test_V3_Dynamic_Resolver extends TestCase {
 		);
 	}
 
+	public function test_try_resolve__accepts_nested_dynamic_on_url_control_without_explicit_property_in_stack() {
+		// Arrange — mirrors real widget stacks: only `dynamic.active` is set on the control;
+		// `property` and `categories` come from the URL control type defaults at runtime.
+		$control = [
+			'type' => 'url',
+			'dynamic' => [ 'active' => true ],
+		];
+
+		$value = [
+			'url' => [ 'name' => 'post-url', 'settings' => [] ],
+		];
+
+		// Act.
+		$result = V3_Dynamic_Resolver::try_resolve( 'link', $value, $control );
+
+		// Assert — without WP boot, property is still inferred from the nested `url` key shape.
+		$this->assertTrue( $result['matched'] );
+		$this->assertArrayNotHasKey( 'error', $result );
+		$this->assertStringContainsString( 'name="post-url"', $result['shortcode'] );
+	}
+
 	public function test_try_resolve__errors_when_tag_is_not_registered() {
 		// Arrange.
 		$control = [ 'type' => 'text', 'dynamic' => [ 'active' => true, 'categories' => [ 'text' ] ] ];
