@@ -40,7 +40,7 @@ describe( 'list-items-control actions', () => {
               elType: 'e-list-item',
               hydrateDefaultChildren: true,
               editor_settings: expect.objectContaining( {
-                label: 'Item 3',
+                title: 'Item 3',
                 initial_position: 3,
               } ),
             } ),
