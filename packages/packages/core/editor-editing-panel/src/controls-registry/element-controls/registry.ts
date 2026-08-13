@@ -11,7 +11,7 @@ const controlTypes = {
 
 export const registerElementControls = () => {
 	Object.entries< ( typeof controlTypes )[ keyof typeof controlTypes ] >( controlTypes ).forEach(
-		( [type, { component, layout } ] ) => {
+		( [ type, { component, layout } ] ) => {
 			controlsRegistry.register( type, component, layout );
 		}
 	);

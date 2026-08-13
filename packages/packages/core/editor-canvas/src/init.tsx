@@ -19,50 +19,50 @@ import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
 
 export function init() {
-  initStyleTransformers();
-  initStyleCommands();
+	initStyleTransformers();
+	initStyleCommands();
 
-  initLinkInLinkPrevention();
-  initFormNestingPrevention();
-  initFormAncestorEnforcement();
+	initLinkInLinkPrevention();
+	initFormNestingPrevention();
+	initFormAncestorEnforcement();
 
-  initViewReplacements();
+	initViewReplacements();
 
-  initTabsModelExtensions();
-  initListType();
+	initTabsModelExtensions();
+	initListType();
 
-  initLegacyViews();
+	initLegacyViews();
 
-  initSettingsTransformers();
+	initSettingsTransformers();
 
-  injectIntoTop( {
-    id: 'elements-overlays',
-    component: ElementsOverlays,
-  } );
+	injectIntoTop( {
+		id: 'elements-overlays',
+		component: ElementsOverlays,
+	} );
 
-  injectIntoTop( {
-    id: 'canvas-style-render',
-    component: StyleRenderer,
-  } );
+	injectIntoTop( {
+		id: 'canvas-style-render',
+		component: StyleRenderer,
+	} );
 
-  injectIntoTop( {
-    id: 'canvas-interactions-render',
-    component: InteractionsRenderer,
-  } );
+	injectIntoTop( {
+		id: 'canvas-interactions-render',
+		component: InteractionsRenderer,
+	} );
 
-  injectIntoLogic( {
-    id: 'classes-rename',
-    component: ClassesRename,
-  } );
+	injectIntoLogic( {
+		id: 'classes-rename',
+		component: ClassesRename,
+	} );
 
-  initCanvasMcp(
-    getMCPByDomain( 'canvas', {
-      instructions: `Everything related to V4 ( Atomic ) canvas.
+	initCanvasMcp(
+		getMCPByDomain( 'canvas', {
+			instructions: `Everything related to V4 ( Atomic ) canvas.
 # Canvas workflow
 - Configure element settings and styles with configure-element
 - Get page structure and element configuration values
 `,
-      docs: mcpDescription,
-    } )
-  );
+			docs: mcpDescription,
+		} )
+	);
 }
