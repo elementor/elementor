@@ -7,7 +7,7 @@ import {
 	type V1Element,
 } from '@elementor/editor-elements';
 
-import { addItem, duplicateItem, moveItem, removeItem } from '../use-actions';
+import { addItem, duplicateItem, moveItem, removeItem } from '../list-actions';
 
 jest.mock( '@elementor/editor-elements' );
 

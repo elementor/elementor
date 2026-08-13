@@ -18,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
-import { addItem, duplicateItem, LIST_ITEM_ELEMENT_TYPE, type ListItem, moveItem, removeItem } from './use-actions';
+import { addItem, duplicateItem, LIST_ITEM_ELEMENT_TYPE, type ListItem, moveItem, removeItem } from './list-actions';
 
 const getEffectiveListItemLabel = ( label: string | undefined, fallbackLabel: string ) => {
 	return label?.trim() ? label : fallbackLabel;
