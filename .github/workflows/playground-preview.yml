@@ -52,7 +52,6 @@ jobs:
                 run_id: Number('${{ steps.runctx.outputs.build-run-id }}'),
                 per_page: 100,
               },
-              (response) => response.data.artifacts,
             );
             const hit = artifacts.find(a => a.name.startsWith('elementor-'));
             if (!hit) {
