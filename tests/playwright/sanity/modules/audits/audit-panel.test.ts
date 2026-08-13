@@ -1,0 +1,40 @@
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+
+test( 'audit panel opens, runs, lists a violation, and deep-links to the offending element', async ( {
+	page,
+	apiRequests,
+}, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	await wpAdmin.setExperiments( { e_page_audit: 'active' } );
+
+	const editor = await wpAdmin.openNewPage();
+
+	const imageWidgetId = await editor.addWidget( { widgetType: 'image' } );
+
+	await page.getByRole( 'button', { name: /audit page/i } ).click();
+
+	await expect( page.getByRole( 'button', { name: /run page audit/i } ) ).toBeVisible();
+
+	await page.getByRole( 'button', { name: /run page audit/i } ).click();
+
+	await expect( page.getByRole( 'button', { name: /re-scan/i } ) ).toBeVisible();
+
+	await page.getByRole( 'button', { name: /accessibility/i } ).click();
+
+	await expect( page.getByText( /images alt text/i ) ).toBeVisible();
+
+	await page.getByText( /images alt text/i ).click();
+	await page
+		.getByRole( 'button' )
+		.filter( { hasText: /image is missing alt text/i } )
+		.first()
+		.click();
+
+	await expect(
+		editor.getPreviewFrame().locator( `${ editor.getWidgetSelector( imageWidgetId ) }.elementor-element-edit-mode` ),
+	).toBeVisible();
+
+	await wpAdmin.resetExperiments();
+} );
