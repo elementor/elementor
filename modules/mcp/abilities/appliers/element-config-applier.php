@@ -68,6 +68,15 @@ class Element_Config_Applier {
 				}
 
 				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $validated['allowed'] );
+
+				if ( ! empty( $validated['dynamic_patch'] ) ) {
+					$existing_dynamic = $node['settings']['__dynamic__'] ?? [];
+					$node['settings']['__dynamic__'] = array_merge(
+						is_array( $existing_dynamic ) ? $existing_dynamic : [],
+						$validated['dynamic_patch']
+					);
+				}
+
 				continue;
 			}
 

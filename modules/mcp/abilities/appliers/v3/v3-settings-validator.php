@@ -9,18 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Value-level gate for V3 element_config entries. Composes two concerns:
+ * Value-level gate for V3 element_config entries. Composes three concerns:
  *
- *   1. `V3_Non_Style_Allowlist` — key gate (which keys the widget accepts at all).
- *   2. Shape check              — validates values against the JSON Schema entry
- *                                 emitted by `V3_Json_Schema_Builder`, so the applier
- *                                 never merges an array into a scalar field (the
- *                                 original bug: `link` merged as `{name, settings}`
- *                                 and `esc_url()` blew up on the array at render).
- *
- * Shape check is intentionally shallow (one level): V3 has no runtime `Props_Parser`,
- * and one level catches the array-vs-scalar and unknown-enum classes of bugs without
- * inventing a general JSON-Schema validator.
+ *   1. `V3_Non_Style_Allowlist`  — key gate (which keys the widget accepts at all).
+ *   2. `V3_Dynamic_Resolver`     — routes `{ name, settings }` (or its nested variant on
+ *                                  URL/media controls) into `__dynamic__[key]` shortcodes
+ *                                  so the LLM cannot smuggle a V4-shaped dynamic into a
+ *                                  V3 primitive slot.
+ *   3. Shape check               — validates remaining primitive values against the JSON
+ *                                  Schema entry emitted by `V3_Json_Schema_Builder` so
+ *                                  the applier never merges an array into a scalar field
+ *                                  (the original bug: `link` merged as `{name, settings}`
+ *                                  and `esc_url()` blew up on the array).
  */
 class V3_Settings_Validator {
 
@@ -31,6 +31,7 @@ class V3_Settings_Validator {
 	 *
 	 * @return array{
 	 *     allowed: array<string, mixed>,
+	 *     dynamic_patch: array<string, string>,
 	 *     error: \WP_Error|null,
 	 * }
 	 */
@@ -46,10 +47,24 @@ class V3_Settings_Validator {
 		$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $key_filter['allowed'] ) );
 
 		$allowed = [];
+		$dynamic_patch = [];
 
 		foreach ( $key_filter['allowed'] as $key => $value ) {
-			$shape_error = self::validate_primitive( $value, $schema['properties'][ $key ] ?? null );
+			$control = is_array( $controls[ $key ] ?? null ) ? $controls[ $key ] : [];
 
+			$dynamic_outcome = V3_Dynamic_Resolver::try_resolve( $key, $value, $control );
+			if ( $dynamic_outcome['matched'] ) {
+				if ( isset( $dynamic_outcome['error'] ) ) {
+					$errors[] = self::format_error( $widget_type, $key, $dynamic_outcome['error']->get_error_message() );
+					continue;
+				}
+
+				$dynamic_patch[ $key ] = $dynamic_outcome['shortcode'];
+				$allowed[ $key ] = $dynamic_outcome['primitive'];
+				continue;
+			}
+
+			$shape_error = self::validate_primitive( $value, $schema['properties'][ $key ] ?? null );
 			if ( null !== $shape_error ) {
 				$errors[] = self::format_error( $widget_type, $key, $shape_error );
 				continue;
@@ -60,9 +75,10 @@ class V3_Settings_Validator {
 
 		return [
 			'allowed' => $allowed,
+			'dynamic_patch' => $dynamic_patch,
 			'error' => empty( $errors ) ? null : new \WP_Error(
 				'elementor_invalid_settings',
-				implode( '; ', $errors ),
+				implode( ' ', $errors ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			),
 		];
@@ -72,24 +88,62 @@ class V3_Settings_Validator {
 		return sprintf( 'V3 widget "%s" property "%s": %s', $widget_type, $key, $reason );
 	}
 
+	/**
+	 * Best-effort JSON-Schema shape check. Unlike `Props_Parser` (V4), V3 has no runtime
+	 * parser, so we walk one level deep — enough to catch the array-vs-scalar and unknown
+	 * enum-value classes of bugs, without inventing a general JSON-Schema validator.
+	 */
 	private static function validate_primitive( $value, ?array $entry_schema ): ?string {
 		if ( ! is_array( $entry_schema ) ) {
 			return null;
 		}
 
-		$expected_type = $entry_schema['type'] ?? null;
+		$primitive_schema = self::unwrap_primitive_branch( $entry_schema );
+
+		return self::validate_against_schema( $value, $primitive_schema );
+	}
+
+	private static function unwrap_primitive_branch( array $entry_schema ): array {
+		if ( ! isset( $entry_schema['anyOf'] ) || ! is_array( $entry_schema['anyOf'] ) ) {
+			return $entry_schema;
+		}
+
+		foreach ( $entry_schema['anyOf'] as $branch ) {
+			if ( is_array( $branch ) && ! self::is_dynamic_branch( $branch ) ) {
+				return $branch;
+			}
+		}
+
+		return $entry_schema;
+	}
+
+	private static function is_dynamic_branch( array $branch ): bool {
+		if ( 'object' !== ( $branch['type'] ?? null ) ) {
+			return false;
+		}
+
+		$required = $branch['required'] ?? [];
+		if ( ! is_array( $required ) || ! in_array( 'name', $required, true ) ) {
+			return false;
+		}
+
+		return isset( $branch['properties']['name'] );
+	}
+
+	private static function validate_against_schema( $value, array $schema ): ?string {
+		$expected_type = $schema['type'] ?? null;
 		$actual_type = self::json_type_of( $value );
 
 		if ( $expected_type && $expected_type !== $actual_type ) {
 			return sprintf( 'invalid shape (expected %s, got %s).', $expected_type, $actual_type );
 		}
 
-		if ( isset( $entry_schema['enum'] ) && is_array( $entry_schema['enum'] ) && ! in_array( $value, $entry_schema['enum'], true ) ) {
-			return sprintf( 'value must be one of [%s].', implode( ', ', array_map( 'strval', $entry_schema['enum'] ) ) );
+		if ( isset( $schema['enum'] ) && is_array( $schema['enum'] ) && ! in_array( $value, $schema['enum'], true ) ) {
+			return sprintf( 'value must be one of [%s].', implode( ', ', array_map( 'strval', $schema['enum'] ) ) );
 		}
 
-		if ( 'object' === $expected_type && is_array( $value ) && isset( $entry_schema['properties'] ) && is_array( $entry_schema['properties'] ) ) {
-			foreach ( $entry_schema['properties'] as $prop_key => $prop_schema ) {
+		if ( 'object' === $expected_type && is_array( $value ) && isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
+			foreach ( $schema['properties'] as $prop_key => $prop_schema ) {
 				if ( ! is_string( $prop_key ) || ! array_key_exists( $prop_key, $value ) ) {
 					continue;
 				}

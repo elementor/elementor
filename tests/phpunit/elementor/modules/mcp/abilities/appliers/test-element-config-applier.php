@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use PHPUnit\Framework\TestCase;
@@ -181,6 +182,61 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertArrayNotHasKey( 'menu', $nav['settings'] );
 	}
 
+	public function test_apply__v3_dynamic_tag_on_url_control_is_hoisted_into__dynamic__() {
+		// Arrange — reproduces the reported bug: LLM sent { url: { name, settings } } on the
+		// V3 `link` control of theme-post-title. The old path merged the array into the primitive
+		// slot, causing esc_url() to receive an array at render.
+		V3_Dynamic_Resolver::set_tag_info_resolver( function ( $name ) {
+			return 'post-url' === $name ? [ 'name' => 'post-url', 'categories' => [ 'url' ] ] : null;
+		} );
+		V3_Dynamic_Resolver::set_shortcode_builder( function ( $id, $name, $settings ) {
+			return sprintf( '[elementor-tag id="%s" name="%s"]', $id, $name );
+		} );
+
+		try {
+			$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+			$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+			$node = [
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [],
+			];
+			$index = [ 'title' => &$node ];
+
+			$widget_configs = [
+				'theme-post-title' => [
+					'controls' => [
+						'link' => [
+							'type' => 'url',
+							'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
+						],
+					],
+				],
+			];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[
+					'title' => [
+						'link' => [ 'url' => [ 'name' => 'post-url', 'settings' => [] ] ],
+					],
+				],
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( [ 'url' => '', 'is_external' => '', 'nofollow' => '' ], $node['settings']['link'] );
+			$this->assertArrayHasKey( '__dynamic__', $node['settings'] );
+			$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
+		} finally {
+			V3_Dynamic_Resolver::set_tag_info_resolver( null );
+			V3_Dynamic_Resolver::set_shortcode_builder( null );
+		}
+	}
+
 	public function test_apply__v3_rejects_array_value_on_scalar_slot_shape_check() {
 		// Arrange.
 		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
@@ -201,7 +257,7 @@ class Test_Element_Config_Applier extends TestCase {
 			],
 		];
 
-		// Act — array without a `name` key on a scalar slot is invalid.
+		// Act — array without a `name` key is neither dynamic nor a valid string.
 		$result = $applier->apply(
 			$index,
 			[
