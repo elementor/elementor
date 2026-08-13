@@ -26,6 +26,9 @@ export const slice = __createSlice( {
 			state.status = 'error';
 			state.error = action.payload;
 		},
+		runAborted( state ) {
+			state.status = state.report ? 'ready' : 'idle';
+		},
 		reportRestored( state, action: PayloadAction< PageAuditReport > ) {
 			state.status = 'ready';
 			state.report = action.payload;
