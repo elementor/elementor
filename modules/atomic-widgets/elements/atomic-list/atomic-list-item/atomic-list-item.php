@@ -95,6 +95,11 @@ class Atomic_List_Item extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
+							'flex-direction' => String_Prop_Type::generate( 'row' ),
+							'gap' => Size_Prop_Type::generate( [
+								'size' => 8,
+								'unit' => 'px',
+							] ),
 						] )
 				),
 		];

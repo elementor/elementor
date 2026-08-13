@@ -79,17 +79,8 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'min-width' => Size_Prop_Type::generate( [
-								'size' => 0,
-								'unit' => 'px',
-							] ),
 							'flex' => Flex_Prop_Type::generate( [
 								'flexGrow' => Number_Prop_Type::generate( 1 ),
-								'flexShrink' => Number_Prop_Type::generate( 1 ),
-								'flexBasis' => Size_Prop_Type::generate( [
-									'size' => 0,
-									'unit' => 'px',
-								] ),
 							] ),
 						] )
 				),

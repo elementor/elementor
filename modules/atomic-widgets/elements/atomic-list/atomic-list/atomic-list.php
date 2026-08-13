@@ -103,17 +103,7 @@ class Atomic_List extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'flex' ),
-							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'list-style-type' => String_Prop_Type::generate( 'none' ),
-							'margin' => Size_Prop_Type::generate( [
-								'size' => 0,
-								'unit' => 'px',
-							] ),
-							'padding' => Size_Prop_Type::generate( [
-								'size' => 0,
-								'unit' => 'px',
-							] ),
 						] )
 				),
 		];
