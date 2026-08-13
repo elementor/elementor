@@ -67,7 +67,6 @@ jobs:
                 run_id: run.id,
                 per_page: 100,
               },
-              (response) => response.data.artifacts,
             );
 
             const pluginArtifact = artifacts.find((artifact) => artifact.name.startsWith('elementor-'));
