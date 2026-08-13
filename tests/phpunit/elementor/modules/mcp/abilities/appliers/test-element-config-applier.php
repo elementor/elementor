@@ -181,6 +181,44 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertArrayNotHasKey( 'menu', $nav['settings'] );
 	}
 
+	public function test_apply__v3_rejects_array_value_on_scalar_slot_shape_check() {
+		// Arrange.
+		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'title' => [ 'type' => 'text' ],
+				],
+			],
+		];
+
+		// Act — array without a `name` key on a scalar slot is invalid.
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'title' => [ 'not' => 'a scalar' ],
+				],
+			],
+			$widget_configs
+		);
+
+		// Assert.
+		$this->assertNotNull( $result['error'] );
+		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
+		$this->assertArrayNotHasKey( 'title', $node['settings'] );
+	}
+
 	public function test_apply__reports_settings_and_component_errors_together() {
 		// Arrange
 		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
