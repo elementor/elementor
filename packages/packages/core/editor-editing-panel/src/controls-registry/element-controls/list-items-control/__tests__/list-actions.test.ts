@@ -6,9 +6,8 @@ import {
 	removeElements,
 	type V1Element,
 } from '@elementor/editor-elements';
-import { renderHook } from '@testing-library/react';
 
-import { useActions } from '../use-actions';
+import { addItem, duplicateItem, moveItem, removeItem } from '../list-actions';
 
 jest.mock( '@elementor/editor-elements' );
 
@@ -22,10 +21,9 @@ describe( 'list-items-control actions', () => {
 		jest.mocked( getContainer ).mockReturnValue( {
 			id: 'list-123',
 		} as unknown as V1Element );
-		const { result } = renderHook( () => useActions() );
 
 		// Act.
-		result.current.addItem( {
+		addItem( {
 			listContainerId: 'list-123',
 			items: [ { item: { id: 'new-item' }, index: 2 } ],
 		} );
@@ -52,11 +50,8 @@ describe( 'list-items-control actions', () => {
 	} );
 
 	it( 'duplicates the selected list item subtree', () => {
-		// Arrange.
-		const { result } = renderHook( () => useActions() );
-
 		// Act.
-		result.current.duplicateItem( {
+		duplicateItem( {
 			items: [ { item: { id: 'item-1' }, index: 0 } ],
 		} );
 
@@ -69,11 +64,8 @@ describe( 'list-items-control actions', () => {
 	} );
 
 	it( 'removes the selected list items', () => {
-		// Arrange.
-		const { result } = renderHook( () => useActions() );
-
 		// Act.
-		result.current.removeItem( {
+		removeItem( {
 			items: [
 				{ item: { id: 'item-1' }, index: 0 },
 				{ item: { id: 'item-2' }, index: 1 },
@@ -105,10 +97,8 @@ describe( 'list-items-control actions', () => {
 			return null;
 		} );
 
-		const { result } = renderHook( () => useActions() );
-
 		// Act.
-		result.current.moveItem( {
+		moveItem( {
 			toIndex: 0,
 			listContainerId: 'list-123',
 			movedElementId: 'item-2',
