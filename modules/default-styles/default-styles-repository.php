@@ -80,13 +80,9 @@ class Default_Styles_Repository {
 
 			clean_post_cache( $post->get_post_id() );
 		} else {
-			$created = Default_Style_Post::create( $tag, [], $this->get_kit() );
+			$created = Default_Style_Post::create( $tag, $normalized, $this->get_kit() );
 
 			if ( ! $created ) {
-				return false;
-			}
-
-			if ( false === $created->update_data( $normalized ) ) {
 				return false;
 			}
 

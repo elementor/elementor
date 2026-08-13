@@ -98,6 +98,14 @@ class Default_Style_Post {
 
 	public function update_data( array $data, string $version = ELEMENTOR_VERSION ): bool {
 		$normalized_data = Default_Style_Data_Normalizer::normalize_style_fields( $data );
+		$existing_data = get_post_meta( $this->post->ID, self::META_KEY_DATA, true );
+		$existing_data = is_array( $existing_data ) ? $existing_data : [];
+
+		if ( $existing_data === $normalized_data ) {
+			update_post_meta( $this->post->ID, self::META_KEY_VERSION, $version );
+
+			return true;
+		}
 
 		$result = update_post_meta( $this->post->ID, self::META_KEY_DATA, $normalized_data );
 
