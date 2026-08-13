@@ -55,8 +55,12 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			'classes' => Classes_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the content slot container.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes applied to the content slot element.' ),
 		];
 	}
 

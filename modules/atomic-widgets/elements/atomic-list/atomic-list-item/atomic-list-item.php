@@ -66,11 +66,16 @@ class Atomic_List_Item extends Atomic_Element_Base {
 	 */
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Classes_Prop_Type::make()->default( [] ),
+			'classes' => Classes_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the list item container.' ),
 			'show_markers' => Boolean_Prop_Type::make()
 				->default( true )
-				->meta( Overridable_Prop_Type::ignore() ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Hidden prop automatically synced from the parent list. Controls whether markers are shown via children dependencies. Do not set manually.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes applied to the list item element.' ),
 		];
 	}
 
