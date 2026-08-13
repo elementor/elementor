@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\DefaultStyles;
 
+use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\DefaultStyles\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\DefaultStyles\Utils\Default_Style_Data_Normalizer;
 use Elementor\Utils;
 
