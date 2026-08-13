@@ -177,12 +177,16 @@ class Atomic_List extends Atomic_Element_Base {
 			foreach ( $item_children as $item_child ) {
 				if ( $item_child::get_element_type() === Atomic_List_Item_Content::get_element_type() ) {
 					$content_children = $item_child->get_children();
+					$content_parts = [];
 					foreach ( $content_children as $content_child ) {
 						if ( method_exists( $content_child, 'render_markdown' ) ) {
-							$content_text = $content_child->render_markdown();
-							break;
+							$md = $content_child->render_markdown();
+							if ( ! empty( trim( $md ) ) ) {
+								$content_parts[] = $md;
+							}
 						}
 					}
+					$content_text = implode( ' ', $content_parts );
 					break;
 				}
 			}
