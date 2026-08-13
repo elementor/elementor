@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\Concerns;
+namespace Elementor\Core\Kits\Concerns;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
