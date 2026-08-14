@@ -1,0 +1,23 @@
+{% import 'elementor/macros' as m %}
+{% set classes = ['e-carousel', 'e-con', 'e-atomic-element', base_styles.base, m.default_tag_class('div')] | merge(settings.classes | default([])) | join(' ') %}
+<div class="{{ classes }} {{ editor_classes | default('') }}"
+	data-id="{{ id }}"
+	data-element_type="{{ type }}"
+	data-e-type="{{ type }}"
+	data-interaction-id="{{ interaction_id }}"
+	data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+	data-e-settings="{{ settings | json_encode | e('html_attr') }}"
+	{% if is_editor %}data-e-carousel-editor="true"{% endif %}
+	style="--e-carousel-slides-per-view: {{ slides_per_view }}"
+	{# Inline, so it is a single value across breakpoints. Per-breakpoint Slides Per View needs
+	   the variable to come from a style prop; recorded as R9 in the research doc. #}
+	role="region"
+	aria-roledescription="carousel"
+	aria-label="{{ aria_label | e('html_attr') }}"
+	{% if settings._cssid is defined and settings._cssid is not empty %}
+		id="{{ settings._cssid | e('html_attr') }}"
+	{% endif %}
+	{% if settings.attributes is defined and settings.attributes is not empty %}
+		{{ settings.attributes | raw }}
+	{% endif %}
+	{{ editor_attributes | default('') | raw }}><!-- elementor-children-placeholder --></div>

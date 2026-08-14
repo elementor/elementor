@@ -90,6 +90,7 @@ export const FRONTEND_ENTRIES = {
 	'tabs-preview-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js',
 	'background-video-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-handler.js',
 	'background-video-preview-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-preview-handler.js',
+	'carousel-handler': 'modules/atomic-widgets/elements/atomic-carousel/handlers/carousel-handler.js',
 	'atomic-widgets-action-link-handler': 'modules/atomic-widgets/assets/js/frontend/action-link-handlers.js',
 	'atomic-widgets-form-handler': 'modules/atomic-widgets/assets/js/frontend/form-handlers.js',
 };

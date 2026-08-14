@@ -128,6 +128,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Back
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Controls\Atomic_Background_Video_Controls;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel_Arrow_Next\Atomic_Carousel_Arrow_Next;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel_Arrow_Prev\Atomic_Carousel_Arrow_Prev;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel_Container\Atomic_Carousel_Container;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel_Pagination\Atomic_Carousel_Pagination;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel_Slide\Atomic_Carousel_Slide;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Atomic_Carousel_Viewport\Atomic_Carousel_Viewport;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
@@ -164,6 +171,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_LIST = 'e_list';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
+	const EXPERIMENT_CAROUSEL = 'e_carousel';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -193,6 +201,7 @@ class Module extends BaseModule {
 		$this->register_list_experiment();
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
+		$this->register_carousel_experiment();
 
 		$this->register_hooks();
 
@@ -271,6 +280,17 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ACCORDION,
 			'title' => esc_html__( 'Accordion', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_carousel_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_CAROUSEL,
+			'title' => esc_html__( 'Carousel', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Carousel element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -365,6 +385,16 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_CAROUSEL ) ) {
+			$elements_manager->register_element_type( new Atomic_Carousel() );
+			$elements_manager->register_element_type( new Atomic_Carousel_Viewport() );
+			$elements_manager->register_element_type( new Atomic_Carousel_Container() );
+			$elements_manager->register_element_type( new Atomic_Carousel_Slide() );
+			$elements_manager->register_element_type( new Atomic_Carousel_Arrow_Prev() );
+			$elements_manager->register_element_type( new Atomic_Carousel_Arrow_Next() );
+			$elements_manager->register_element_type( new Atomic_Carousel_Pagination() );
+		}
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
