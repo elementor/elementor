@@ -521,6 +521,160 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
+		$fields['clip'] = [
+			'label' => esc_html__( 'Clip', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'responsive' => true,
+			'default' => '',
+			'options' => [
+				'' => esc_html__( 'Default', 'elementor' ),
+				'border-box' => esc_html__( 'Border Edges', 'elementor' ),
+				'padding-box' => esc_html__( 'Padding Edges', 'elementor' ),
+				'content-box' => esc_html__( 'Content Edges', 'elementor' ),
+				'text' => esc_html__( 'Text', 'elementor' ),
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => 'background-clip: {{VALUE}};',
+			],
+			'conditions' => [
+				'relation' => 'or',
+				'terms' => [
+					[
+						'name' => 'background',
+						'operator' => '===',
+						'value' => 'gradient',
+					],
+					[
+						'relation' => 'and',
+						'terms' => [
+							[
+								'name' => 'background',
+								'operator' => '===',
+								'value' => 'classic',
+							],
+							[
+								'relation' => 'or',
+								'terms' => [
+									[
+										'name' => 'color',
+										'operator' => '!==',
+										'value' => '',
+									],
+									[
+										'name' => 'image[url]',
+										'operator' => '!==',
+										'value' => '',
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$fields['clip_box_notice'] = [
+			'type' => Controls_Manager::RAW_HTML,
+			'content_classes' => 'elementor-control-field-description',
+			'raw' => esc_html__( 'Note: This works only if padding or border values are set.', 'elementor' ),
+			'conditions' => [
+				'relation' => 'and',
+				'terms' => [
+					[
+						'relation' => 'or',
+						'terms' => [
+							[
+								'name' => 'background',
+								'operator' => '===',
+								'value' => 'gradient',
+							],
+							[
+								'relation' => 'and',
+								'terms' => [
+									[
+										'name' => 'background',
+										'operator' => '===',
+										'value' => 'classic',
+									],
+									[
+										'relation' => 'or',
+										'terms' => [
+											[
+												'name' => 'color',
+												'operator' => '!==',
+												'value' => '',
+											],
+											[
+												'name' => 'image[url]',
+												'operator' => '!==',
+												'value' => '',
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+					[
+						'name' => 'clip',
+						'operator' => 'in',
+						'value' => [ 'border-box', 'padding-box', 'content-box' ],
+					],
+				],
+			],
+		];
+
+		$fields['clip_text_notice'] = [
+			'type' => Controls_Manager::RAW_HTML,
+			'content_classes' => 'elementor-control-field-description',
+			'raw' => esc_html__( 'Note: Clipping text works only if the text is transparent.', 'elementor' ),
+			'conditions' => [
+				'relation' => 'and',
+				'terms' => [
+					[
+						'relation' => 'or',
+						'terms' => [
+							[
+								'name' => 'background',
+								'operator' => '===',
+								'value' => 'gradient',
+							],
+							[
+								'relation' => 'and',
+								'terms' => [
+									[
+										'name' => 'background',
+										'operator' => '===',
+										'value' => 'classic',
+									],
+									[
+										'relation' => 'or',
+										'terms' => [
+											[
+												'name' => 'color',
+												'operator' => '!==',
+												'value' => '',
+											],
+											[
+												'name' => 'image[url]',
+												'operator' => '!==',
+												'value' => '',
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+					[
+						'name' => 'clip',
+						'operator' => '===',
+						'value' => 'text',
+					],
+				],
+			],
+		];
+
 		$fields['video_link'] = [
 			'label' => esc_html__( 'Video Link', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
