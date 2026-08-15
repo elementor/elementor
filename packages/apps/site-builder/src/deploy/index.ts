@@ -18,6 +18,14 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 	const mode = payload.mode === 'incremental' ? 'incremental' : 'full';
 
 	if ( mode === 'incremental' ) {
+		if ( payload.globalVariables ) {
+			try {
+				await deployGlobalVariables( payload.globalVariables );
+			} catch ( e ) {
+				errors.push( `global_variables: ${ ( e as Error ).message }` );
+			}
+		}
+
 		let pageIdMap: Record< string, number > = {};
 		try {
 			( { pageIdMap } = await createPages( payload.pages ) );
