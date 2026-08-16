@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import {
 	AccessibilityToolsIcon,
 	AIGeneratorIcon,
@@ -13,15 +12,13 @@ import {
 	CorePlaceholderIcon,
 	CustomCodeIcon,
 	EmailDeliverabilityIcon,
-	HelloThemeIcon,
 	ImageOptimizationIcon,
+	InteractionsIcon,
 	ThemeBuilderIcon,
 } from '../../icons';
-import { getConfig } from '../../utils/get-config';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption } from '../components/site-features';
 
-export const HELLO_THEME_FEATURE_ID = 'hello_theme';
 export const COOKIE_CONSENT_FEATURE_ID = 'cookie_consent';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
@@ -32,10 +29,10 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		licenseType: 'core',
 	},
 	{
-		id: HELLO_THEME_FEATURE_ID,
-		labelKey: 'steps.site_features.option_hello_theme',
-		Icon: HelloThemeIcon,
-		licenseType: 'installable',
+		id: 'interactions',
+		labelKey: 'steps.site_features.option_interactions',
+		Icon: InteractionsIcon,
+		licenseType: 'core',
 	},
 	{
 		id: 'theme_builder',
@@ -93,21 +90,10 @@ export const CORE_FEATURE_IDS = new Set(
 
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
-export const isInstallable = ( id: string ): boolean =>
-	FEATURE_OPTIONS.some( ( option ) => option.id === id && option.licenseType === 'installable' );
-
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
-	const { trackThemeUnselected } = useOnboardingEvent();
 
 	const theme = useTheme();
-
-	const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
-
-	const visibleOptions = useMemo(
-		() => FEATURE_OPTIONS.filter( ( option ) => ! ( option.id === HELLO_THEME_FEATURE_ID && isHelloThemeActive ) ),
-		[ isHelloThemeActive ]
-	);
 
 	const rawSiteFeatures = choices.site_features as string[] | undefined;
 
@@ -117,28 +103,10 @@ export function SiteFeatures() {
 		[ rawSiteFeatures ]
 	);
 
-	const hasInitializedDefaults = useRef( false );
-
-	useEffect( () => {
-		if ( hasInitializedDefaults.current || isHelloThemeActive ) {
-			return;
-		}
-
-		hasInitializedDefaults.current = true;
-
-		if ( storedSelectableFeatures.length > 0 ) {
-			return;
-		}
-
-		actions.setUserChoice( 'site_features', [ HELLO_THEME_FEATURE_ID ] );
-	}, [ storedSelectableFeatures, isHelloThemeActive, actions ] );
-
 	const selectedValues = useMemo( () => {
 		const combined = [ ...CORE_FEATURE_IDS, ...storedSelectableFeatures ];
-		return combined
-			.filter( ( id, index ) => combined.indexOf( id ) === index )
-			.filter( ( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isHelloThemeActive ) );
-	}, [ storedSelectableFeatures, isHelloThemeActive ] );
+		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
+	}, [ storedSelectableFeatures ] );
 
 	function handleFeatureClick( id: string ) {
 		if ( CORE_FEATURE_IDS.has( id ) ) {
@@ -149,10 +117,6 @@ export function SiteFeatures() {
 		const updatedSelectableFeatures = isCurrentlySelected
 			? storedSelectableFeatures.filter( ( featureId ) => featureId !== id )
 			: [ ...storedSelectableFeatures, id ];
-
-		if ( id === HELLO_THEME_FEATURE_ID && isCurrentlySelected ) {
-			trackThemeUnselected();
-		}
 
 		actions.setUserChoice( 'site_features', updatedSelectableFeatures );
 	}
@@ -169,7 +133,7 @@ export function SiteFeatures() {
 			</Stack>
 
 			<FeatureGrid
-				options={ visibleOptions }
+				options={ FEATURE_OPTIONS }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
 			/>
