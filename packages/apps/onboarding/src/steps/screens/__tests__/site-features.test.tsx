@@ -7,7 +7,7 @@ import { COOKIE_CONSENT_FEATURE_ID, FEATURE_OPTIONS, HELLO_THEME_FEATURE_ID } fr
 
 const SITE_FEATURES_PROGRESS = {
 	current_step_id: 'site_features',
-	current_step_index: 3,
+	current_step_index: 0,
 };
 
 const STEP_TITLE = 'What do you want to include in your site?';
@@ -292,7 +292,9 @@ describe( 'SiteFeatures', () => {
 				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 			} );
-			const unselectedButton = screen.getByRole( 'button', { name: t( unselectedOption.labelKey ) } );
+			const unselectedButton = screen.getByRole( 'button', {
+				name: t( unselectedOption.labelKey ),
+			} );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

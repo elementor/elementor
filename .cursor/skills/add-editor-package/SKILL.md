@@ -51,7 +51,8 @@ Adding the slug to `elementor/editor/v2/packages` alone does **nothing** if no C
   - App bar: `injectIntoPageIndication`, `toolsMenu` (`@elementor/editor-app-bar`)
   - Editing panel: `injectIntoStyleTab`, `registerEditingPanelReplacement` (`@elementor/editor-editing-panel`)
   - Elements panel: `injectTab` (`@elementor/editor-elements-panel`)
-  - Slide-in panels: import `__registerPanel as registerPanel` from `@elementor/editor-panels` (public docs use both names)
+  - Site Settings: `injectSiteSettingsTab` (`@elementor/editor-site-settings`)
+  - Slide-in panels: `registerPanel` (`@elementor/editor-panels`; `__registerPanel` is a legacy alias)
   - Styles: `stylesRepository.register` (`@elementor/editor-styles-repository`)
   - Legacy bridge: `registerDataHook`, `blockCommand`, `__privateListenTo( v1ReadyEvent(), fn )` (`@elementor/editor-v1-adapters`)
 - **In-editor MCP only** — `getMCPByDomain()` + Zod from `@elementor/schema`; namespace `/^[a-z_]+$/`. **Not** PHP `modules/mcp/` abilities — see [mcp/overview.md](../../../docs/atomic-builder/mcp/overview.md).

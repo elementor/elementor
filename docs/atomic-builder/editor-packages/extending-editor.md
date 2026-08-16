@@ -19,7 +19,8 @@ Durable extension surface for Editor V2:
 | `injectIntoPageIndication`, `toolsMenu` | `@elementor/editor-app-bar` | App bar slots and menus |
 | `injectIntoStyleTab`, `registerEditingPanelReplacement` | `@elementor/editor-editing-panel` | Editing panel |
 | `injectTab` | `@elementor/editor-elements-panel` | Elements panel tabs |
-| `__registerPanel` | `@elementor/editor-panels` | Slide-in panels |
+| `injectSiteSettingsTab` | `@elementor/editor-site-settings` | Site Settings tabs |
+| `registerPanel` | `@elementor/editor-panels` | Slide-in panels |
 | `getMCPByDomain` | `@elementor/editor-mcp` | In-editor MCP domain |
 | `__registerSlice` | `@elementor/store` | Redux slice registration |
 | `stylesRepository.register` | `@elementor/editor-styles-repository` | Style provider |
@@ -53,6 +54,7 @@ window.elementorV2.{packageName}?.init?.();
 | `@elementor/editor-panels` | `registerPanel` |
 | `@elementor/editor-editing-panel` | `injectIntoStyleTab`, `registerEditingPanelReplacement` |
 | `@elementor/editor-elements-panel` | `injectTab` |
+| `@elementor/editor-site-settings` | `injectSiteSettingsTab` |
 
 ## Extension
 
@@ -97,7 +99,7 @@ Reference: `packages/packages/core/editor-site-navigation/src/init.ts`.
 
 ```ts
 import { injectIntoStyleTab, registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
-import { __registerPanel as registerPanel } from '@elementor/editor-panels';
+import { registerPanel } from '@elementor/editor-panels';
 
 injectIntoStyleTab( { id: 'my-style-section', component: MyStyleSection } );
 registerPanel( { id: 'my-panel', component: MyPanel } );

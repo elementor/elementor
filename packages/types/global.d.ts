@@ -47,6 +47,12 @@ interface OnboardingConfig {
 
 declare global {
 	interface Window {
+		$e?: {
+			routes?: {
+				getCurrent?: () => Record< string, string > | undefined;
+				register?: ( component: string, route: string, callback: () => unknown ) => unknown;
+			};
+		};
 		elementorCommon?: {
 			eventsManager?: {
 				dispatchEvent?: ( name: string, data: unknown, options?: Record< string, unknown > ) => void;
@@ -132,6 +138,11 @@ declare global {
 					url: string;
 					message: string;
 					button_text: string;
+				};
+				user?: {
+					top_bar?: {
+						connect_url?: string;
+					};
 				};
 			};
 			dynamicTags?: DynamicTagsManager;
