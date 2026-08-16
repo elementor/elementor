@@ -33,7 +33,6 @@ class Menu_Config {
 		// elementor pro slugs
 		$default_slugs = [
 			'elementor-theme-builder',
-			'e-form-submissions',
 			'elementor-pro-notes-proxy',
 			self::EDITOR_MENU_SLUG,
 		];
