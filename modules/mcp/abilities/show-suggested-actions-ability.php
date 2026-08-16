@@ -107,24 +107,49 @@ class Show_Suggested_Actions_Ability extends Abstract_Ability {
 		$normalized = [];
 
 		foreach ( $actions as $action ) {
-			if ( ! is_array( $action ) ) {
-				continue;
-			}
+			$item = $this->normalize_action( $action );
 
-			$item = [
-				'label'  => (string) ( $action['label'] ?? '' ),
-				'prompt' => (string) ( $action['prompt'] ?? '' ),
-			];
-
-			$icon = $action['icon'] ?? null;
-
-			if ( is_string( $icon ) && in_array( $icon, self::ALLOWED_ICONS, true ) ) {
-				$item['icon'] = $icon;
+			if ( is_wp_error( $item ) ) {
+				return $item;
 			}
 
 			$normalized[] = $item;
 		}
 
 		return [ 'actions' => $normalized ];
+	}
+
+	private function normalize_action( $action ) {
+		if ( ! is_array( $action ) ) {
+			return $this->invalid_action_error();
+		}
+
+		$label = is_string( $action['label'] ?? null ) ? trim( $action['label'] ) : '';
+		$prompt = is_string( $action['prompt'] ?? null ) ? trim( $action['prompt'] ) : '';
+
+		if ( '' === $label || '' === $prompt ) {
+			return $this->invalid_action_error();
+		}
+
+		$item = [
+			'label'  => $label,
+			'prompt' => $prompt,
+		];
+
+		$icon = $action['icon'] ?? null;
+
+		if ( is_string( $icon ) && in_array( $icon, self::ALLOWED_ICONS, true ) ) {
+			$item['icon'] = $icon;
+		}
+
+		return $item;
+	}
+
+	private function invalid_action_error(): \WP_Error {
+		return new \WP_Error(
+			'invalid_actions',
+			__( 'Each action must be an object with a non-empty label and prompt.', 'elementor' ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 }

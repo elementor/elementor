@@ -105,6 +105,39 @@ class Test_Show_Suggested_Actions_Ability extends TestCase {
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data( 'invalid_actions' )['status'] );
 	}
 
+	public function test_execute_returns_wp_error_when_action_is_not_an_object() {
+		// Arrange
+		$ability = new Show_Suggested_Actions_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'actions' => [ 'not-an-object' ] ] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invalid_actions', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data( 'invalid_actions' )['status'] );
+	}
+
+	public function test_execute_returns_wp_error_when_label_or_prompt_is_blank() {
+		// Arrange
+		$ability = new Show_Suggested_Actions_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'actions' => [
+				[
+					'label'  => '   ',
+					'prompt' => 'Do something',
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invalid_actions', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data( 'invalid_actions' )['status'] );
+	}
+
 	public function test_execute_strips_unknown_icon_values() {
 		// Arrange
 		$ability = new Show_Suggested_Actions_Ability();

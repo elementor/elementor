@@ -9,14 +9,14 @@ const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const MIN_SUGGESTED_ACTIONS = 1;
 const MAX_SUGGESTED_ACTIONS = 5;
 
-type SuggestedAction = {
-	label: string;
-	prompt: string;
-	icon?: 'sparkles' | 'grid' | 'branch';
-};
+const suggestedActionSchema = z.object( {
+	label: z.string().describe( 'Chip label shown to the user' ),
+	prompt: z.string().describe( 'User message sent to the agent when the chip is clicked' ),
+	icon: z.enum( [ 'sparkles', 'grid', 'branch' ] ).optional(),
+} );
 
 type ShowSuggestedActionsResponse = {
-	actions: SuggestedAction[];
+	actions: z.infer< typeof suggestedActionSchema >[];
 };
 
 export const initShowSuggestedActionsTool = ( reg: MCPRegistryEntry ) => {
@@ -28,19 +28,13 @@ export const initShowSuggestedActionsTool = ( reg: MCPRegistryEntry ) => {
 			'Renders interactive suggested next-step action chips in the chat UI (MCP Apps). Call after completing a meaningful editor step to offer follow-up prompts the user can click.',
 		schema: {
 			actions: z
-				.array(
-					z.object( {
-						label: z.string().describe( 'Chip label shown to the user' ),
-						prompt: z.string().describe( 'User message sent to the agent when the chip is clicked' ),
-						icon: z.enum( [ 'sparkles', 'grid', 'branch' ] ).optional(),
-					} )
-				)
+				.array( suggestedActionSchema )
 				.min( MIN_SUGGESTED_ACTIONS )
 				.max( MAX_SUGGESTED_ACTIONS )
 				.describe( '1-5 suggested actions' ),
 		},
 		outputSchema: {
-			actions: z.array( z.any() ),
+			actions: z.array( suggestedActionSchema ),
 		},
 		ui: {
 			resourceUri: SUGGESTED_ACTIONS_URI,
