@@ -29,17 +29,9 @@ class V3_Dynamic_Resolver {
 			return null;
 		}
 
-		$name = $value['name'] ?? null;
-		if ( is_string( $name ) && '' !== $name ) {
-			$settings = $value['settings'] ?? [];
-			if ( ! is_array( $settings ) ) {
-				$settings = [];
-			}
-
-			return [
-				'name' => $name,
-				'settings' => $settings,
-			];
+		$top_level = self::normalize_dynamic_input( $value );
+		if ( null !== $top_level ) {
+			return $top_level;
 		}
 
 		if ( ! is_string( $property ) || '' === $property ) {
@@ -51,18 +43,41 @@ class V3_Dynamic_Resolver {
 			return null;
 		}
 
-		$nested_name = $nested['name'] ?? null;
-		if ( ! is_string( $nested_name ) || '' === $nested_name ) {
+		return self::normalize_dynamic_input( $nested );
+	}
+
+	/**
+	 * @param array<string, mixed> $value
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function extract_primitive_remainder( array $value, ?string $property ): array {
+		if ( ! is_string( $property ) || '' === $property || ! array_key_exists( $property, $value ) ) {
+			return [];
+		}
+
+		$remainder = $value;
+		unset( $remainder[ $property ] );
+
+		return $remainder;
+	}
+
+	/**
+	 * @return array{name: string, settings: array<string, mixed>}|null
+	 */
+	private static function normalize_dynamic_input( array $candidate ): ?array {
+		$name = $candidate['name'] ?? null;
+		if ( ! is_string( $name ) || '' === $name ) {
 			return null;
 		}
 
-		$settings = $nested['settings'] ?? [];
+		$settings = $candidate['settings'] ?? [];
 		if ( ! is_array( $settings ) ) {
 			$settings = [];
 		}
 
 		return [
-			'name' => $nested_name,
+			'name' => $name,
 			'settings' => $settings,
 		];
 	}

@@ -229,6 +229,48 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
 	}
 
+	public function test_apply__v3_dynamic_on_url_control_keeps_sibling_primitive_fields() {
+		$manager = new Stub_Dynamic_Tags_Manager();
+		$manager->add_stub_tag( 'post-url', [ 'url' ] );
+		$hoister = new V3_Dynamic_Hoister( $manager );
+		$applier = $this->make_applier( $hoister );
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'link' => [
+						'type' => 'url',
+						'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
+					],
+				],
+			],
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'link' => [
+						'url' => [ 'name' => 'post-url', 'settings' => [] ],
+						'is_external' => 'on',
+					],
+				],
+			],
+			$widget_configs
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'on', $node['settings']['link']['is_external'] );
+		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
+	}
+
 	public function test_apply__reports_settings_and_component_errors_together() {
 		// Arrange
 		$applier = $this->make_applier();

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -87,7 +89,7 @@ class V3_Json_Schema_Builder {
 			? trim( strip_tags( $control['description'] ) )
 			: null;
 
-		if ( self::is_dynamic_capable( $control ) ) {
+		if ( V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
 			return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
 		}
 
@@ -98,27 +100,17 @@ class V3_Json_Schema_Builder {
 		return $entry;
 	}
 
-	private static function is_dynamic_capable( array $control ): bool {
-		return true === ( $control['dynamic']['active'] ?? false );
-	}
-
-	/**
-	 * Wraps a primitive schema entry in an `anyOf` union with the plain dynamic-tag shape,
-	 * mirroring how V4 atomic prop types advertise dynamic bindings. Kept aligned with the
-	 * static resource `elementor://dynamic-tags`: the LLM picks a tag from there whose
-	 * categories intersect the ones declared on this control.
-	 *
-	 * @param array<string, mixed> $primitive_entry Primitive schema entry.
-	 * @param array<int, string>   $categories      Dynamic-tag categories accepted by this control.
-	 * @param string|null          $description     Optional shared description hoisted to the wrapper.
-	 */
 	private static function wrap_with_dynamic_branch( array $primitive_entry, array $categories, ?string $description ): array {
 		$dynamic_entry = [
 			'type' => 'object',
 			'required' => [ 'name' ],
+			'additionalProperties' => false,
 			'properties' => [
 				'name' => [ 'type' => 'string' ],
-				'settings' => [ 'type' => 'object' ],
+				'settings' => [
+					'type' => 'object',
+					'additionalProperties' => true,
+				],
 			],
 			'description' => self::dynamic_branch_description( $categories ),
 		];

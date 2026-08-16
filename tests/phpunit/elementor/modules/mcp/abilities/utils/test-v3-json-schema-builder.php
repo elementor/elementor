@@ -139,6 +139,21 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertSame( 'string', $entry['anyOf'][1]['properties']['name']['type'] );
 		$this->assertStringContainsString( 'text', $entry['anyOf'][1]['description'] );
 		$this->assertStringContainsString( 'post_meta', $entry['anyOf'][1]['description'] );
+		$this->assertFalse( $entry['anyOf'][1]['additionalProperties'] );
+	}
+
+	public function test_build__wraps_control_with_dynamic_default_only() {
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'dynamic' => [ 'default' => 'post-title', 'categories' => [ 'text' ] ],
+			],
+		];
+
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		$this->assertArrayHasKey( 'anyOf', $result['properties']['title'] );
+		$this->assertFalse( $result['properties']['title']['anyOf'][1]['additionalProperties'] );
 	}
 
 	public function test_build__does_not_wrap_non_dynamic_control() {

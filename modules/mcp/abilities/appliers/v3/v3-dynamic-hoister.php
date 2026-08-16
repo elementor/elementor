@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class V3_Dynamic_Hoister {
 
-	private Manager $manager;
+	/** @var Manager */
+	private $manager;
 
 	public function __construct( ?Manager $manager = null ) {
 		$this->manager = $manager ?? Plugin::$instance->dynamic_tags;
@@ -37,13 +38,20 @@ class V3_Dynamic_Hoister {
 				continue;
 			}
 
-			$input = V3_Dynamic_Resolver::extract_input( $value, $control['dynamic']['property'] ?? null );
+			$control_dynamic = is_array( $control['dynamic'] ?? null ) ? $control['dynamic'] : [];
+			$property = is_string( $control_dynamic['property'] ?? null ) ? $control_dynamic['property'] : null;
+
+			$input = V3_Dynamic_Resolver::extract_input( $value, $property );
 			if ( null === $input ) {
 				$primitives[ $key ] = $value;
 				continue;
 			}
 
-			$tag = $this->manager->create_tag( $this->generate_tag_id(), $input['name'], $input['settings'] );
+			$tag = $this->manager->create_tag(
+				$this->generate_tag_id( $widget_type, $key, $input ),
+				$input['name'],
+				$input['settings']
+			);
 			if ( ! $tag ) {
 				$errors[] = sprintf(
 					'V3 widget "%s" property "%s": dynamic tag "%s" is not registered.',
@@ -54,7 +62,7 @@ class V3_Dynamic_Hoister {
 				continue;
 			}
 
-			$control_categories = $control['dynamic']['categories'] ?? [];
+			$control_categories = $control_dynamic['categories'] ?? [];
 			if ( ! empty( $control_categories ) && empty( array_intersect( $tag->get_categories(), $control_categories ) ) ) {
 				$errors[] = sprintf(
 					'V3 widget "%s" property "%s": dynamic tag "%s" (categories: [%s]) is not compatible with field "%s" (allowed categories: [%s]).',
@@ -80,6 +88,13 @@ class V3_Dynamic_Hoister {
 			}
 
 			$shortcodes[ $key ] = $shortcode;
+
+			if ( is_array( $value ) ) {
+				$remainder = V3_Dynamic_Resolver::extract_primitive_remainder( $value, $property );
+				if ( ! empty( $remainder ) ) {
+					$primitives[ $key ] = $remainder;
+				}
+			}
 		}
 
 		return [
@@ -89,7 +104,18 @@ class V3_Dynamic_Hoister {
 		];
 	}
 
-	private function generate_tag_id(): string {
-		return substr( md5( uniqid( 'mcp-v3-dyn', true ) ), 0, 7 );
+	/**
+	 * @param string $widget_type
+	 * @param string $key
+	 * @param array  $input
+	 */
+	private function generate_tag_id( string $widget_type, string $key, array $input ): string {
+		$encoded_settings = wp_json_encode( $input['settings'] );
+
+		return substr(
+			md5( $widget_type . ':' . $key . ':' . $input['name'] . ':' . $encoded_settings ),
+			0,
+			7
+		);
 	}
 }

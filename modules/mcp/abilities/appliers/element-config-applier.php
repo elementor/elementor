@@ -72,8 +72,7 @@ class Element_Config_Applier {
 					? $widget_configs[ $widget_type ]['controls']
 					: [];
 
-				$hoister = $this->v3_dynamic_hoister ?? new V3_Dynamic_Hoister();
-				$hoist_outcome = $hoister->hoist( $widget_type, $filter['allowed'], $controls );
+				$hoist_outcome = $this->get_v3_dynamic_hoister()->hoist( $widget_type, $filter['allowed'], $controls );
 
 				foreach ( $hoist_outcome['errors'] as $error_message ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
@@ -236,5 +235,13 @@ class Element_Config_Applier {
 		$result = Props_Parser::make( $schema )->parse( $settings );
 
 		return $result->is_valid() ? null : $result->errors()->to_string();
+	}
+
+	private function get_v3_dynamic_hoister(): V3_Dynamic_Hoister {
+		if ( null === $this->v3_dynamic_hoister ) {
+			$this->v3_dynamic_hoister = new V3_Dynamic_Hoister();
+		}
+
+		return $this->v3_dynamic_hoister;
 	}
 }

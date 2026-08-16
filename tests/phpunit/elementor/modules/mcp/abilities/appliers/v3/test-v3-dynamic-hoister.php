@@ -147,4 +147,72 @@ class Test_V3_Dynamic_Hoister extends TestCase {
 		$this->assertArrayHasKey( 'title', $result['shortcodes'] );
 		$this->assertSame( [], $result['errors'] );
 	}
+
+	public function test_hoist__keeps_url_sibling_fields_when_nested_dynamic_is_hoisted() {
+		$manager = new Stub_Dynamic_Tags_Manager();
+		$manager->add_stub_tag( 'post-url', [ 'url' ] );
+		$hoister = new V3_Dynamic_Hoister( $manager );
+		$controls = [
+			'link' => [
+				'type' => 'url',
+				'dynamic' => [
+					'active' => true,
+					'categories' => [ 'url' ],
+					'property' => 'url',
+				],
+			],
+		];
+
+		$result = $hoister->hoist(
+			'theme-post-title',
+			[
+				'link' => [
+					'url' => [ 'name' => 'post-url', 'settings' => [] ],
+					'is_external' => 'on',
+				],
+			],
+			$controls
+		);
+
+		$this->assertArrayHasKey( 'link', $result['shortcodes'] );
+		$this->assertSame( [ 'is_external' => 'on' ], $result['primitives']['link'] );
+		$this->assertSame( [], $result['errors'] );
+	}
+
+	public function test_hoist__coerces_control_with_dynamic_default_only() {
+		$manager = new Stub_Dynamic_Tags_Manager();
+		$manager->add_stub_tag( 'post-title', [ 'text' ] );
+		$hoister = new V3_Dynamic_Hoister( $manager );
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'dynamic' => [ 'default' => 'post-title', 'categories' => [ 'text' ] ],
+			],
+		];
+
+		$result = $hoister->hoist(
+			'theme-post-title',
+			[ 'title' => [ 'name' => 'post-title', 'settings' => [] ] ],
+			$controls
+		);
+
+		$this->assertSame( [], $result['primitives'] );
+		$this->assertArrayHasKey( 'title', $result['shortcodes'] );
+		$this->assertSame( [], $result['errors'] );
+	}
+
+	public function test_hoist__stable_shortcode_for_identical_input() {
+		$manager = new Stub_Dynamic_Tags_Manager();
+		$manager->add_stub_tag( 'post-title', [ 'text' ] );
+		$hoister = new V3_Dynamic_Hoister( $manager );
+		$controls = [
+			'title' => [ 'type' => 'text', 'dynamic' => [ 'active' => true, 'categories' => [ 'text' ] ] ],
+		];
+		$allowed = [ 'title' => [ 'name' => 'post-title', 'settings' => [] ] ];
+
+		$first = $hoister->hoist( 'theme-post-title', $allowed, $controls );
+		$second = $hoister->hoist( 'theme-post-title', $allowed, $controls );
+
+		$this->assertSame( $first['shortcodes']['title'], $second['shortcodes']['title'] );
+	}
 }
