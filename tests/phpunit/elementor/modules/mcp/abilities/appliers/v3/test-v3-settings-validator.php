@@ -96,4 +96,38 @@ class Test_V3_Settings_Validator extends TestCase {
 		$this->assertArrayNotHasKey( 'title', $validator['allowed'] );
 		$this->assertArrayNotHasKey( 'header_size', $validator['allowed'] );
 	}
+
+	public function test_validate__rejects_allowlisted_key_without_control_entry() {
+		$widget_config = [
+			'controls' => [
+				'title' => [ 'type' => 'text' ],
+			],
+		];
+		$settings = [
+			'title' => 'Hello',
+			'link' => [ 'url' => 'https://example.com' ],
+		];
+
+		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $widget_config );
+
+		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
+		$this->assertStringContainsString( 'link', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'no schema for allowlisted key', $result['error']->get_error_message() );
+		$this->assertSame( 'Hello', $result['allowed']['title'] );
+		$this->assertArrayNotHasKey( 'link', $result['allowed'] );
+	}
+
+	public function test_validate__rejects_all_keys_when_controls_are_missing() {
+		$settings = [
+			'title' => 'Hello',
+			'header_size' => 'h2',
+		];
+
+		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, [] );
+
+		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
+		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertSame( [], $result['allowed'] );
+	}
 }

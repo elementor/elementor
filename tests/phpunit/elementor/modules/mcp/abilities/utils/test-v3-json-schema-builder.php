@@ -200,4 +200,53 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertArrayNotHasKey( 'header_size', $result['valid'] );
 		$this->assertArrayHasKey( 'header_size', $result['errors'] );
 	}
+
+	public function test_check_value_shape__accepts_empty_array_for_array_and_object_types() {
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], [ 'type' => 'array' ] ) );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], [ 'type' => 'object' ] ) );
+	}
+
+	public function test_check_value_shape__accepts_numeric_string_for_number_type() {
+		$entry = [ 'type' => 'number' ];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( '123', $entry ) );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( '1.5', $entry ) );
+	}
+
+	public function test_check_value_shape__accepts_loose_enum_scalar_match() {
+		$entry = [
+			'type' => 'string',
+			'enum' => [ '1', '2', '3' ],
+		];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( 1, $entry ) );
+	}
+
+	public function test_json_type_of__empty_array_is_array() {
+		$schema = V3_Json_Schema_Builder::build( [ 'items' => [ 'type' => 'repeater' ] ] );
+
+		$this->assertSame( 'array', $schema['properties']['items']['type'] );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], $schema['properties']['items'] ) );
+	}
+
+	public function test_check_settings_shape__rejects_allowlisted_key_without_schema_entry() {
+		$schema = V3_Json_Schema_Builder::build(
+			[
+				'title' => [ 'type' => 'text' ],
+			],
+			[ 'title' ]
+		);
+
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'title' => 'Hello',
+				'missing_control' => 'value',
+			],
+			$schema
+		);
+
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'missing_control', $result['valid'] );
+		$this->assertSame( 'no schema for allowlisted key.', $result['errors']['missing_control'] );
+	}
 }

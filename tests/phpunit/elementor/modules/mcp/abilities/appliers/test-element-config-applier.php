@@ -141,7 +141,14 @@ class Test_Element_Config_Applier extends TestCase {
 					'layout' => 'horizontal',
 				],
 			],
-			[]
+			[
+				'nav-menu' => [
+					'controls' => [
+						'menu' => [ 'type' => 'select', 'options' => [ 'primary' => 'Primary' ] ],
+						'layout' => [ 'type' => 'select', 'options' => [ 'horizontal' => 'Horizontal', 'vertical' => 'Vertical' ] ],
+					],
+				],
+			]
 		);
 
 		// Assert
@@ -217,6 +224,46 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
 		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
 		$this->assertArrayNotHasKey( 'title', $node['settings'] );
+	}
+
+	public function test_apply__v3_merges_valid_keys_and_reports_invalid_keys() {
+		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
+		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'title' => [ 'type' => 'text' ],
+					'header_size' => [
+						'type' => 'select',
+						'options' => [ 'h1' => 'H1', 'h2' => 'H2' ],
+					],
+				],
+			],
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'title' => 'Hello world',
+					'header_size' => 'h9',
+				],
+			],
+			$widget_configs
+		);
+
+		$this->assertNotNull( $result['error'] );
+		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertSame( 'Hello world', $node['settings']['title'] );
+		$this->assertArrayNotHasKey( 'header_size', $node['settings'] );
 	}
 
 	public function test_apply__reports_settings_and_component_errors_together() {

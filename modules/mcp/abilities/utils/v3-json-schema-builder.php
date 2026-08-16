@@ -93,14 +93,17 @@ class V3_Json_Schema_Builder {
 		}
 
 		$expected_type = $entry_schema['type'] ?? null;
-		$actual_type = self::json_type_of( $value );
 
-		if ( $expected_type && $expected_type !== $actual_type ) {
-			return sprintf( 'invalid shape (expected %s, got %s).', $expected_type, $actual_type );
+		if ( isset( $entry_schema['enum'] ) && is_array( $entry_schema['enum'] ) ) {
+			if ( ! self::value_matches_enum( $value, $entry_schema['enum'] ) ) {
+				return sprintf( 'value must be one of [%s].', implode( ', ', array_map( 'strval', $entry_schema['enum'] ) ) );
+			}
+
+			return null;
 		}
 
-		if ( isset( $entry_schema['enum'] ) && is_array( $entry_schema['enum'] ) && ! in_array( $value, $entry_schema['enum'], true ) ) {
-			return sprintf( 'value must be one of [%s].', implode( ', ', array_map( 'strval', $entry_schema['enum'] ) ) );
+		if ( $expected_type && ! self::value_matches_type( $value, $expected_type ) ) {
+			return sprintf( 'invalid shape (expected %s, got %s).', $expected_type, self::json_type_of( $value ) );
 		}
 
 		if ( 'object' === $expected_type && is_array( $value ) && isset( $entry_schema['properties'] ) && is_array( $entry_schema['properties'] ) ) {
@@ -110,10 +113,9 @@ class V3_Json_Schema_Builder {
 				}
 
 				$sub_expected = $prop_schema['type'] ?? null;
-				$sub_actual = self::json_type_of( $value[ $prop_key ] );
 
-				if ( $sub_expected && $sub_expected !== $sub_actual ) {
-					return sprintf( 'invalid shape at "%s" (expected %s, got %s).', $prop_key, $sub_expected, $sub_actual );
+				if ( $sub_expected && ! self::value_matches_type( $value[ $prop_key ], $sub_expected ) ) {
+					return sprintf( 'invalid shape at "%s" (expected %s, got %s).', $prop_key, $sub_expected, self::json_type_of( $value[ $prop_key ] ) );
 				}
 			}
 		}
@@ -135,7 +137,14 @@ class V3_Json_Schema_Builder {
 				continue;
 			}
 
-			$shape_error = self::check_value_shape( $value, $schema['properties'][ $key ] ?? null );
+			$entry_schema = $schema['properties'][ $key ] ?? null;
+
+			if ( ! is_array( $entry_schema ) ) {
+				$errors[ $key ] = 'no schema for allowlisted key.';
+				continue;
+			}
+
+			$shape_error = self::check_value_shape( $value, $entry_schema );
 
 			if ( null !== $shape_error ) {
 				$errors[ $key ] = $shape_error;
@@ -170,13 +179,47 @@ class V3_Json_Schema_Builder {
 
 		if ( is_array( $value ) ) {
 			if ( empty( $value ) ) {
-				return 'object';
+				return 'array';
 			}
 
 			return array_keys( $value ) === range( 0, count( $value ) - 1 ) ? 'array' : 'object';
 		}
 
 		return gettype( $value );
+	}
+
+	private static function value_matches_type( $value, string $expected_type ): bool {
+		if ( is_array( $value ) && [] === $value && in_array( $expected_type, [ 'array', 'object' ], true ) ) {
+			return true;
+		}
+
+		if ( 'number' === $expected_type && is_numeric( $value ) ) {
+			return true;
+		}
+
+		return self::json_type_of( $value ) === $expected_type;
+	}
+
+	private static function value_matches_enum( $value, array $allowed_values ): bool {
+		foreach ( $allowed_values as $allowed ) {
+			if ( self::values_equal_loosely( $value, $allowed ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static function values_equal_loosely( $left, $right ): bool {
+		if ( $left === $right ) {
+			return true;
+		}
+
+		if ( is_scalar( $left ) && is_scalar( $right ) ) {
+			return (string) $left === (string) $right;
+		}
+
+		return false;
 	}
 
 	private static function build_entry( array $control, ?string $control_type ): ?array {

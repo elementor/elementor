@@ -62,12 +62,13 @@ class Element_Config_Applier {
 
 				$validated = V3_Settings_Validator::validate( $widget_type, $settings, $widget_config );
 
-				if ( $validated['error'] ) {
-					$errors[] = sprintf( '[%s] %s', $config_id, $validated['error']->get_error_message() );
-					continue;
+				if ( ! empty( $validated['allowed'] ) ) {
+					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $validated['allowed'] );
 				}
 
-				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $validated['allowed'] );
+				if ( $validated['error'] ) {
+					$errors[] = sprintf( '[%s] %s', $config_id, $validated['error']->get_error_message() );
+				}
 				continue;
 			}
 
