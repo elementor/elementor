@@ -20,7 +20,8 @@ class Editor_One_Submissions_Menu extends Base_Promotion_Template implements Men
 	}
 
 	public function get_parent_slug(): string {
-		return Menu_Config::ELEMENTOR_MENU_SLUG;
+		// Register under the visible top-level so free users see it in the expanded sidebar [ED-25245].
+		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 	}
 
 	public function get_label(): string {

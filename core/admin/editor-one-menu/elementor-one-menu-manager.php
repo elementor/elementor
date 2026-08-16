@@ -8,7 +8,6 @@ use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
-use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -106,18 +105,19 @@ class Elementor_One_Menu_Manager {
 			70
 		);
 
-		// Free users get the rendered Submissions promotion; active Pro serves the real page.
-		$submissions_callback = $is_free ? [ new Editor_One_Submissions_Menu(), 'render' ] : '';
-
-		add_submenu_page(
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			esc_html__( 'Submissions', 'elementor' ),
-			esc_html__( 'Submissions', 'elementor' ),
-			'edit_posts',
-			'e-form-submissions',
-			$submissions_callback,
-			80
-		);
+		// Free users get the Submissions promotion from Editor_One_Submissions_Menu;
+		// only active Pro registers the real page here.
+		if ( $has_active_pro ) {
+			add_submenu_page(
+				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+				esc_html__( 'Submissions', 'elementor' ),
+				esc_html__( 'Submissions', 'elementor' ),
+				'edit_posts',
+				'e-form-submissions',
+				'',
+				80
+			);
+		}
 	}
 
 	public function remove_all_submenus_for_edit_posts_users(): void {
