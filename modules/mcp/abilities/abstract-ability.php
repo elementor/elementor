@@ -51,6 +51,11 @@ abstract class Abstract_Ability {
 	public function register(): void {
 		$definition = $this->definition()->to_array();
 		$definition['execute_callback'] = [ $this, 'execute_guarded' ];
+		$meta = is_array( $definition['meta'] ?? null ) ? $definition['meta'] : [];
+		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
+		$mcp['public'] = true;
+		$meta['mcp'] = $mcp;
+		$definition['meta'] = $meta;
 		wp_register_ability( $this->get_id(), $definition );
 	}
 
