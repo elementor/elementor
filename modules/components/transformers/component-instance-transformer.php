@@ -9,6 +9,7 @@ use Elementor\Plugin;
 use Elementor\Core\Base\Document as Component_Document;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
+use Elementor\Modules\Components\Utils\Reconcile_Component_Instance_Elements;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,6 +58,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
+		$data = Reconcile_Component_Instance_Elements::apply( $data );
 		$data = Format_Component_Elements_Id::format( $data, [ $instance_element_id ] );
 
 		$content = '';
