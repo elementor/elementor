@@ -299,11 +299,6 @@ class Menu_Data_Provider {
 		// Theme Builder is now shown in the admin sidebar for free users via register_pro_submenus()
 		// so we don't need to add it to the flyout menu anymore [ED-25245]
 
-		// Filter out Theme Builder and Submissions from the flyout menu
-		$items = array_values( array_filter( $items, function( $item ) {
-			return ! in_array( $item['slug'], [ 'elementor-theme-builder', 'e-form-submissions' ], true );
-		} ) );
-
 		return $items;
 	}
 

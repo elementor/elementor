@@ -298,10 +298,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function hide_flyout_items_from_wp_menu(): void {
+		// Theme Builder and Submissions are now in the admin sidebar for free users,
+		// so they should be hidden from the flyout menu [ED-25245]
 		$protected_wp_menu_slugs = [
 			Menu_Config::EDITOR_MENU_SLUG,
-			'elementor-theme-builder',
-			'e-form-submissions',
 		];
 
 		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( $protected_wp_menu_slugs ) {
