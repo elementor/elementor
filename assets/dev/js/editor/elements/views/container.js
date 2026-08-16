@@ -6,10 +6,11 @@ import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 import { isInnerContainer } from '../../document/elements/utils/is-inner';
-import { getDraggedContainerView, isNestedContainer } from 'elementor-editor-utils/dragged-container';
+import { getDraggedContainerView } from 'elementor-editor-utils/dragged-container';
 
-// Distance from a top-level Container's outer edge that drops at the document level
-// instead of nesting, so a nested Container can be moved out to a specific position.
+// Distance from a top-level Container's outer edge that drops at the document level instead
+// of nesting. This is what lets a Container be placed beside another one rather than inside
+// it, whether it is being reordered or moved out of a parent.
 const DOCUMENT_LEVEL_EDGE_THRESHOLD = 16;
 
 const DOCUMENT_LEVEL_PLACEHOLDER_CLASS = 'e-document-level';
@@ -188,14 +189,23 @@ const ContainerView = BaseElementView.extend( {
 		return axisMap[ currentDirection ];
 	},
 
-	getDroppableOptions() {
-		const items = this.isBoxedWidth()
-			? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
+	/**
+	 * The children a drop can be positioned against. Relative to the Container's outer
+	 * element, so that a boxed Container's gutters belong to it as well.
+	 *
+	 * @return {string} The items selector.
+	 */
+	getDroppableItems() {
+		return this.isBoxedWidth()
+			? '> .e-con-inner > .elementor-widget, > .e-con-inner > .e-con-full, > .e-con-inner > .e-con > .e-con-inner, > .e-con-inner > .elementor-empty-view > .elementor-first-add'
 			: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+	},
 
+	getDroppableOptions() {
 		return {
 			axis: this.getDroppableAxis(),
-			items,
+			items: this.getDroppableItems(),
+			getFallbackItem: ( event ) => this.getDroppableFallbackItem( event ),
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5, // TODO: Stop the magic.
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -275,6 +285,34 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
+	 * The child a drop should be positioned against when the pointer is inside the Container
+	 * but not over any of its children, such as a boxed Container's gutters or its padding.
+	 * Without this those bands reject the drop even though the Container is under the cursor.
+	 *
+	 * @param {Object} event The drag event.
+	 *
+	 * @return {HTMLElement|null} The nearest child, or `null` when there is nothing to aim at.
+	 */
+	getDroppableFallbackItem( event ) {
+		const pointerY = event.originalEvent?.clientY ?? event.clientY,
+			items = this.$el.find( this.getDroppableItems() ).toArray();
+
+		if ( undefined === pointerY || ! items.length ) {
+			return null;
+		}
+
+		const distanceToPointer = ( item ) => {
+			const { top, bottom } = item.getBoundingClientRect();
+
+			return Math.max( top - pointerY, pointerY - bottom, 0 );
+		};
+
+		return items.reduce( ( nearest, item ) => (
+			distanceToPointer( item ) < distanceToPointer( nearest ) ? item : nearest
+		) );
+	},
+
+	/**
 	 * The document's direct child that this Container lives under.
 	 *
 	 * @return {Container|undefined} The top-level ancestor.
@@ -303,6 +341,9 @@ const ContainerView = BaseElementView.extend( {
 
 		const { top, bottom } = element.getBoundingClientRect();
 
+		// A pointer past an edge counts as being on it. The side is measured against the
+		// top-level ancestor, which the pointer can be outside of when the drop is handed to
+		// a neighbouring Container as the placeholder shifts things around.
 		if ( pointerY - top <= DOCUMENT_LEVEL_EDGE_THRESHOLD ) {
 			return 'top';
 		}
@@ -315,9 +356,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
-	 * Where a dragged Container should land at the document level, if this drag qualifies
-	 * to be un-nested at all. Drives both the drop itself and its placeholder preview, so
-	 * what the user sees while dragging matches what happens on release.
+	 * Where a dragged Container should land at the document level, if the pointer is near
+	 * enough to an edge to mean "beside" rather than "inside". Drives both the drop itself
+	 * and its placeholder preview, so what the user sees while dragging matches what
+	 * happens on release.
 	 *
 	 * @param {Object} event The drag event.
 	 *
@@ -327,13 +369,15 @@ const ContainerView = BaseElementView.extend( {
 	getDocumentLevelDropTarget( event ) {
 		const draggedContainerView = getDraggedContainerView();
 
-		if ( ! draggedContainerView || ! isNestedContainer( draggedContainerView ) ) {
+		if ( ! draggedContainerView ) {
 			return null;
 		}
 
-		const element = this.getTopLevelAncestor()?.view?.el;
+		const topLevelAncestor = this.getTopLevelAncestor(),
+			element = topLevelAncestor?.view?.el;
 
-		if ( ! element ) {
+		// Dropping onto a descendant of the dragged Container would place it beside itself.
+		if ( ! element || topLevelAncestor === draggedContainerView.getContainer() ) {
 			return null;
 		}
 
@@ -563,7 +607,7 @@ const ContainerView = BaseElementView.extend( {
 				this.reInitEmptyView();
 			}
 
-			this.droppableInitialize( this.container.settings );
+			this.droppableInitialize();
 		} );
 	},
 
@@ -593,7 +637,7 @@ const ContainerView = BaseElementView.extend( {
 			}
 
 			this.droppableDestroy();
-			this.droppableInitialize( settings );
+			this.droppableInitialize();
 		}
 
 		if ( settings.changed.container_type ) {
@@ -634,7 +678,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	onDragEnd() {
-		this.droppableInitialize( this.container.settings );
+		this.droppableInitialize();
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -686,15 +730,10 @@ const ContainerView = BaseElementView.extend( {
 
 	droppableDestroy() {
 		this.$el.html5Droppable( 'destroy' );
-		this.$el.find( '> .e-con-inner' ).html5Droppable( 'destroy' );
 	},
 
-	droppableInitialize( settings ) {
-		if ( 'boxed' === settings.get( 'content_width' ) ) {
-			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
-		} else {
-			this.$el.html5Droppable( this.getDroppableOptions() );
-		}
+	droppableInitialize() {
+		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 
 	handleGridEmptyView() {

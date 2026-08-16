@@ -3,7 +3,11 @@ import HistoryHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/docu
 import AddSectionView from 'elementor-views/add-section/independent';
 import InlineAddSectionView from 'elementor-views/add-section/inline';
 import NavigatorElement from 'elementor/assets/dev/js/editor/regions/navigator/element';
-import { getDraggedContainerView, isNestedContainer } from 'elementor/assets/dev/js/editor/utils/dragged-container';
+import { getDraggedContainerView } from 'elementor/assets/dev/js/editor/utils/dragged-container';
+
+const stubVerticalBand = ( element, top, bottom ) => {
+	element.getBoundingClientRect = () => ( { top, bottom, left: 0, right: 100 } );
+};
 
 export const Move = () => {
 	QUnit.module( 'Move', () => {
@@ -201,21 +205,91 @@ export const Move = () => {
 					'Away from the edges the regular nesting placeholder is used.' );
 			} );
 
-			QUnit.test( 'Canvas edge previews nothing for a top-level container', ( assert ) => {
+			QUnit.test( 'Canvas edge reorders a top-level container instead of nesting it', ( assert ) => {
 				const firstContainer = ElementsHelper.createContainer(),
 					secondContainer = ElementsHelper.createContainer();
 
 				const secondView = secondContainer.lookup().view,
 					{ getPlaceholderOverride } = secondView.getDroppableOptions();
 
+				// The test document has no layout, so the target needs a measurable band of its own.
+				stubVerticalBand( secondView.el, 0, 200 );
+
 				elementor.channels.editor.reply( 'element:dragged', firstContainer.lookup().view );
 
-				const override = getPlaceholderOverride( 'top', { clientY: secondView.el.getBoundingClientRect().top } );
+				const topOverride = getPlaceholderOverride( 'top', { clientY: 4 } ),
+					middleOverride = getPlaceholderOverride( 'top', { clientY: 100 } ),
+					bottomOverride = getPlaceholderOverride( 'top', { clientY: 196 } );
+
+				elementor.channels.editor.reply( 'element:dragged', null );
+
+				assert.equal( topOverride?.element, secondView.el,
+					'At the edge a top-level container is previewed beside its sibling, so it can be reordered.' );
+				assert.equal( topOverride?.side, 'top',
+					'The preview sits on the side the container will land on.' );
+				assert.equal( bottomOverride?.side, 'bottom',
+					'The opposite edge places it after its sibling.' );
+				assert.equal( middleOverride, null,
+					'Away from the edges it nests as usual.' );
+			} );
+
+			QUnit.test( 'Canvas edge ignores a container dropped on its own descendant', ( assert ) => {
+				const parentContainer = ElementsHelper.createContainer(),
+					childContainer = ElementsHelper.createContainer();
+
+				ElementsHelper.move( childContainer, parentContainer );
+
+				const childView = childContainer.lookup().view,
+					{ getPlaceholderOverride } = childView.getDroppableOptions();
+
+				elementor.channels.editor.reply( 'element:dragged', parentContainer.lookup().view );
+
+				const override = getPlaceholderOverride( 'top', { clientY: childView.el.getBoundingClientRect().top } );
 
 				elementor.channels.editor.reply( 'element:dragged', null );
 
 				assert.equal( override, null,
-					'A top-level container shows the nesting placeholder, since it has nothing to un-nest.' );
+					'A container is never previewed beside itself.' );
+			} );
+
+			QUnit.test( 'Containers are moved by drag & drop rather than by the document sortable', ( assert ) => {
+				const { items } = elementor.getPreviewView().getSortableOptions();
+
+				assert.notOk( items.includes( '.e-con' ),
+					'The document sortable leaves containers to the drag & drop system, which can also nest them.' );
+			} );
+
+			QUnit.test( 'A boxed container accepts drops across its full width', ( assert ) => {
+				const container = ElementsHelper.createContainer(),
+					view = container.lookup().view;
+
+				container.settings.set( 'content_width', 'boxed' );
+
+				assert.true( view.getDroppableItems().startsWith( '> .e-con-inner' ),
+					'A boxed container addresses its drop targets from the outer element, so its gutters belong to it too.' );
+
+				container.settings.set( 'content_width', 'full' );
+
+				assert.true( view.getDroppableItems().startsWith( '> .elementor-element' ),
+					'A full-width container has no gutters and addresses its children directly.' );
+			} );
+
+			QUnit.test( 'A drop outside the children falls back to the nearest one', ( assert ) => {
+				const container = ElementsHelper.createContainer(),
+					firstWidget = ElementsHelper.createWidgetButton( container ),
+					secondWidget = ElementsHelper.createWidgetButton( container ),
+					view = container.lookup().view;
+
+				// The test document has no layout, so the children need measurable bands of their own.
+				stubVerticalBand( firstWidget.view.el, 0, 50 );
+				stubVerticalBand( secondWidget.view.el, 50, 100 );
+
+				assert.equal( view.getDroppableFallbackItem( { clientY: 10 } ), firstWidget.view.el,
+					'A drop beside the first child resolves to it.' );
+				assert.equal( view.getDroppableFallbackItem( { clientY: 90 } ), secondWidget.view.el,
+					'A drop beside the last child resolves to it.' );
+				assert.equal( view.getDroppableFallbackItem( { clientY: 500 } ), secondWidget.view.el,
+					'A drop past the last child resolves to it rather than being rejected.' );
 			} );
 
 			QUnit.test( 'Canvas edge ignores widgets dragged from an existing container', ( assert ) => {
@@ -230,18 +304,6 @@ export const Move = () => {
 
 				assert.equal( draggedContainerView, null,
 					'Only containers can be moved to the document level from the canvas edge.' );
-			} );
-
-			QUnit.test( 'Only nested containers can be un-nested from the canvas edge', ( assert ) => {
-				const topContainer = ElementsHelper.createContainer(),
-					nestedContainer = ElementsHelper.createContainer();
-
-				ElementsHelper.move( nestedContainer, topContainer );
-
-				assert.false( isNestedContainer( topContainer.view ),
-					'A top-level container nests as usual and is never un-nested from the edge.' );
-				assert.true( isNestedContainer( nestedContainer.lookup().view ),
-					'A nested container can be moved out to the document level.' );
 			} );
 
 			QUnit.test( 'Structure root accepts nestable elements', ( assert ) => {
