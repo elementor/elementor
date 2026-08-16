@@ -294,8 +294,6 @@ class Menu_Data_Provider {
 	}
 
 	private function build_flyout_items_with_expanded_third_party(): array {
-		// Theme Builder and Submissions live in the admin sidebar for free users, so they are
-		// intentionally excluded from the flyout (see Menu_Config::get_excluded_level3_slugs()) [ED-25245].
 		return $this->build_flyout_items( true );
 	}
 
