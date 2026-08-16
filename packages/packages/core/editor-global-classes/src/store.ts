@@ -117,7 +117,6 @@ export const slice = createSlice( {
       const mergedData = {
         ...style,
         ...payload.style,
-        classLables: state.classLabels,
       };
 
       if ( oldLabel && payload.style.label && payload.style.label !== oldLabel ) {
