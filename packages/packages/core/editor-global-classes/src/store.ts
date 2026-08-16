@@ -1,18 +1,18 @@
 import { type Props } from '@elementor/editor-props';
 import {
-	type CustomCss,
-	getVariantByMeta,
-	type StyleDefinition,
-	type StyleDefinitionID,
-	type StyleDefinitionsMap,
-	type StyleDefinitionVariant,
+  type CustomCss,
+  getVariantByMeta,
+  type StyleDefinition,
+  type StyleDefinitionID,
+  type StyleDefinitionsMap,
+  type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
 import { type UpdateActionPayload } from '@elementor/editor-styles-repository';
 import {
-	__createSelector as createSelector,
-	__createSlice as createSlice,
-	type PayloadAction,
-	type SliceState,
+  __createSelector as createSelector,
+  __createSlice as createSlice,
+  type PayloadAction,
+  type SliceState,
 } from '@elementor/store';
 
 import type { ApiContext } from './api';
@@ -20,37 +20,37 @@ import { GlobalClassNotFoundError } from './errors';
 import { SnapshotHistory } from './utils/snapshot-history';
 
 export type GlobalClasses = {
-	items: StyleDefinitionsMap;
-	order: StyleDefinitionID[];
+  items: StyleDefinitionsMap;
+  order: StyleDefinitionID[];
 };
 
 type GlobalClassesState = {
-	data: GlobalClasses;
-	classLabels: Record< StyleDefinitionID, string >;
-	initialData: {
-		frontend: GlobalClasses;
-		preview: GlobalClasses;
-	};
-	isDirty: boolean;
+  data: GlobalClasses;
+  classLabels: Record< StyleDefinitionID, string >;
+  initialData: {
+    frontend: GlobalClasses;
+    preview: GlobalClasses;
+  };
+  isDirty: boolean;
 };
 
 export type ModifiedLabels = {
-	[ id: string ]: {
-		original: string;
-		modified: string;
-	};
+  [ id: string ]: {
+    original: string;
+    modified: string;
+  };
 };
 
 const localHistory = SnapshotHistory.get< GlobalClasses >( 'global-classes' );
 
 const initialState: GlobalClassesState = {
-	data: { items: {}, order: [] },
-	classLabels: {},
-	initialData: {
-		frontend: { items: {}, order: [] },
-		preview: { items: {}, order: [] },
-	},
-	isDirty: false,
+  data: { items: {}, order: [] },
+  classLabels: {},
+  initialData: {
+    frontend: { items: {}, order: [] },
+    preview: { items: {}, order: [] },
+  },
+  isDirty: false,
 };
 
 export type StateWithGlobalClasses = SliceState< typeof slice >;
@@ -59,262 +59,291 @@ export type StateWithGlobalClasses = SliceState< typeof slice >;
 const SLICE_NAME = 'globalClasses';
 
 export const slice = createSlice( {
-	name: SLICE_NAME,
-	initialState,
-	reducers: {
-		load(
-			state,
-			{
-				payload: { frontend, preview, classLabels },
-			}: PayloadAction< {
-				frontend: GlobalClasses;
-				preview: GlobalClasses;
-				classLabels: Record< StyleDefinitionID, string >;
-			} >
-		) {
-			state.initialData.frontend = frontend;
-			state.initialData.preview = preview;
-			state.data = preview;
-			state.classLabels = classLabels;
+  name: SLICE_NAME,
+  initialState,
+  reducers: {
+    load(
+      state,
+      {
+        payload: { frontend, preview, classLabels },
+      }: PayloadAction< {
+        frontend: GlobalClasses;
+        preview: GlobalClasses;
+        classLabels: Record< StyleDefinitionID, string >;
+      } >
+    ) {
+      state.initialData.frontend = frontend;
+      state.initialData.preview = preview;
+      state.data = preview;
+      state.classLabels = classLabels;
 
-			state.isDirty = false;
-		},
+      state.isDirty = false;
+    },
 
-		add( state, { payload }: PayloadAction< StyleDefinition > ) {
-			localHistory.next( state.data );
-			state.data.items[ payload.id ] = payload;
-			state.data.order.unshift( payload.id );
-			state.classLabels[ payload.id ] = payload.label;
+    add( state, { payload }: PayloadAction< StyleDefinition > ) {
+      localHistory.next( state.data );
+      state.data.items[ payload.id ] = payload;
+      state.data.order.unshift( payload.id );
+      state.classLabels[ payload.id ] = payload.label;
 
-			state.isDirty = true;
-		},
+      state.isDirty = true;
+    },
 
-		delete( state, { payload }: PayloadAction< StyleDefinitionID > ) {
-			localHistory.next( state.data );
-			state.data.items = Object.fromEntries(
-				Object.entries( state.data.items ).filter( ( [ id ] ) => id !== payload )
-			);
+    delete( state, { payload }: PayloadAction< StyleDefinitionID > ) {
+      localHistory.next( state.data );
+      state.data.items = Object.fromEntries(
+        Object.entries( state.data.items ).filter( ( [ id ] ) => id !== payload )
+      );
 
-			state.data.order = state.data.order.filter( ( id ) => id !== payload );
-			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete state.classLabels[ payload ];
+      state.data.order = state.data.order.filter( ( id ) => id !== payload );
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete state.classLabels[ payload ];
 
-			state.isDirty = true;
-		},
+      state.isDirty = true;
+    },
 
-		setOrder( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
-			localHistory.next( state.data );
-			state.data.order = payload;
+    setOrder( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
+      localHistory.next( state.data );
+      state.data.order = payload;
 
-			state.isDirty = true;
-		},
+      state.isDirty = true;
+    },
 
-		update( state, { payload }: PayloadAction< { style: UpdateActionPayload } > ) {
-			localHistory.next( state.data );
-			const style = state.data.items[ payload.style.id ];
+    update( state, { payload }: PayloadAction< { style: UpdateActionPayload } > ) {
+      const oldLabel = state.classLabels[ payload.style.id ];
+      localHistory.next( state.data );
+      const style = state.data.items[ payload.style.id ];
 
-			const mergedData = {
-				...style,
-				...payload.style,
-			};
+      const mergedData = {
+        ...style,
+        ...payload.style,
+        classLables: state.classLabels,
+      };
 
-			state.data.items[ payload.style.id ] = mergedData;
+      if ( oldLabel ) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete state.classLabels[ oldLabel ];
+      }
+      state.classLabels[ payload.style.id ] = payload.style.label || oldLabel;
 
-			state.isDirty = true;
-		},
+      state.data.items[ payload.style.id ] = mergedData;
 
-		updateMultiple( state, { payload }: PayloadAction< ModifiedLabels > ) {
-			localHistory.next( state.data );
-			Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
-				state.data.items[ id ].label = modified;
-				state.classLabels[ id ] = modified;
-			} );
+      state.isDirty = true;
+    },
 
-			state.isDirty = false;
-		},
-		updateProps(
-			state,
-			{
-				payload,
-			}: PayloadAction< {
-				id: StyleDefinitionID;
-				meta: StyleDefinitionVariant[ 'meta' ];
-				props: Props;
-				custom_css?: CustomCss | null;
-				mode?: 'merge' | 'replace';
-			} >
-		) {
-			const style = state.data.items[ payload.id ];
+    updateMultiple( state, { payload }: PayloadAction< ModifiedLabels > ) {
+      localHistory.next( state.data );
+      Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
+        state.data.items[ id ].label = modified;
+        state.classLabels[ id ] = modified;
+      } );
 
-			if ( ! style ) {
-				throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
-			}
+      state.isDirty = false;
+    },
+    updateProps(
+      state,
+      {
+        payload,
+      }: PayloadAction< {
+        id: StyleDefinitionID;
+        meta: StyleDefinitionVariant[ 'meta' ];
+        props: Props;
+        custom_css?: CustomCss | null;
+        mode?: 'merge' | 'replace';
+      } >
+    ) {
+      const style = state.data.items[ payload.id ];
 
-			localHistory.next( state.data );
+      if ( ! style ) {
+        throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
+      }
 
-			const variant = getVariantByMeta( style, payload.meta );
-			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
-			customCss = customCss?.raw ? customCss : null;
+      localHistory.next( state.data );
 
-			if ( variant ) {
-				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
-				const mode = payload.mode ?? 'merge';
+      const variant = getVariantByMeta( style, payload.meta );
+      let customCss =
+        ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
+      customCss = customCss?.raw ? customCss : null;
 
-				if ( mode === 'replace' ) {
-					variant.props = payloadProps;
-				} else {
-					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
-					variant.props = mergeProps( variantProps, payloadProps );
-				}
+      if ( variant ) {
+        const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
+        const mode = payload.mode ?? 'merge';
 
-				variant.custom_css = customCss;
+        if ( mode === 'replace' ) {
+          variant.props = payloadProps;
+        } else {
+          const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
+          variant.props = mergeProps( variantProps, payloadProps );
+        }
 
-				style.variants = getNonEmptyVariants( style );
-			} else {
-				style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
-			}
+        variant.custom_css = customCss;
 
-			state.isDirty = true;
-		},
+        style.variants = getNonEmptyVariants( style );
+      } else {
+        style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
+      }
 
-		reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
-			if ( context === 'frontend' ) {
-				localHistory.reset();
-				state.initialData.frontend = state.data;
+      state.isDirty = true;
+    },
 
-				state.isDirty = false;
-			}
+    reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
+      if ( context === 'frontend' ) {
+        localHistory.reset();
+        state.initialData.frontend = state.data;
 
-			state.initialData.preview = state.data;
-		},
+        state.isDirty = false;
+      }
 
-		undo( state ) {
-			if ( localHistory.isLast() ) {
-				localHistory.next( state.data ); // store current before undo
-			}
-			const data = localHistory.prev();
-			if ( data ) {
-				state.data = data;
-				state.isDirty = true;
-			} else {
-				state.data = state.initialData.preview;
-			}
-		},
+      state.initialData.preview = state.data;
+    },
 
-		resetToInitialState( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
-			localHistory.reset();
-			state.data = state.initialData[ context ];
-			state.isDirty = false;
-		},
+    undo( state ) {
+      if ( localHistory.isLast() ) {
+        localHistory.next( state.data ); // store current before undo
+      }
+      const data = localHistory.prev();
+      if ( data ) {
+        state.data = data;
+        state.isDirty = true;
+      } else {
+        state.data = state.initialData.preview;
+      }
+    },
 
-		redo( state ) {
-			const data = localHistory.next();
-			if ( localHistory.isLast() ) {
-				localHistory.prev();
-			}
-			if ( data ) {
-				state.data = data;
-				state.isDirty = true;
-			}
-		},
+    resetToInitialState(
+      state,
+      { payload: { context } }: PayloadAction< { context: ApiContext } >
+    ) {
+      localHistory.reset();
+      state.data = state.initialData[ context ];
+      state.isDirty = false;
+    },
 
-		mergeExistingClasses(
-			state,
-			{
-				payload: { preview, frontend },
-			}: PayloadAction< { preview: GlobalClasses[ 'items' ]; frontend: GlobalClasses[ 'items' ] } >
-		) {
-			Object.entries( preview ).forEach( ( [ id, previewClassData ] ) => {
-				const frontendClassData = frontend[ id ];
+    redo( state ) {
+      const data = localHistory.next();
+      if ( localHistory.isLast() ) {
+        localHistory.prev();
+      }
+      if ( data ) {
+        state.data = data;
+        state.isDirty = true;
+      }
+    },
 
-				if ( previewClassData === null || previewClassData === undefined ) {
-					return;
-				}
-				if ( ! ( id in state.data.items ) ) {
-					state.data.items[ id ] = previewClassData;
-				}
-				if ( ! ( id in state.initialData.frontend.items ) ) {
-					state.initialData.frontend.items[ id ] = frontendClassData;
-				}
-				if ( ! ( id in state.initialData.preview.items ) ) {
-					state.initialData.preview.items[ id ] = previewClassData;
-				}
-				if ( ! ( id in state.classLabels ) ) {
-					state.classLabels[ id ] = previewClassData.label;
-				}
-			} );
-		},
+    mergeExistingClasses(
+      state,
+      {
+        payload: { preview, frontend },
+      }: PayloadAction< { preview: GlobalClasses[ 'items' ]; frontend: GlobalClasses[ 'items' ] } >
+    ) {
+      Object.entries( preview ).forEach( ( [ id, previewClassData ] ) => {
+        const frontendClassData = frontend[ id ];
 
-		setOrderWithoutHistory( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
-			state.data.order = payload;
-		},
+        if ( previewClassData === null || previewClassData === undefined ) {
+          return;
+        }
+        if ( ! ( id in state.data.items ) ) {
+          state.data.items[ id ] = previewClassData;
+        }
+        if ( ! ( id in state.initialData.frontend.items ) ) {
+          state.initialData.frontend.items[ id ] = frontendClassData;
+        }
+        if ( ! ( id in state.initialData.preview.items ) ) {
+          state.initialData.preview.items[ id ] = previewClassData;
+        }
+        if ( ! ( id in state.classLabels ) ) {
+          state.classLabels[ id ] = previewClassData.label;
+        }
+      } );
+    },
 
-		updateAfterTemplateImport(
-			state,
-			{
-				payload,
-			}: PayloadAction< {
-				addedItems: StyleDefinitionsMap;
-				addedIdsOrder: StyleDefinitionID[];
-				addedClassLabels: Record< StyleDefinitionID, string >;
-			} >
-		) {
-			// Update initial data
-			state.initialData.frontend.items = { ...state.initialData.frontend.items, ...payload.addedItems };
-			state.initialData.frontend.order = [ ...state.initialData.frontend.order, ...payload.addedIdsOrder ];
+    setOrderWithoutHistory( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
+      state.data.order = payload;
+    },
 
-			state.initialData.preview.items = { ...state.initialData.preview.items, ...payload.addedItems };
-			state.initialData.preview.order = [ ...state.initialData.preview.order, ...payload.addedIdsOrder ];
+    updateAfterTemplateImport(
+      state,
+      {
+        payload,
+      }: PayloadAction< {
+        addedItems: StyleDefinitionsMap;
+        addedIdsOrder: StyleDefinitionID[];
+        addedClassLabels: Record< StyleDefinitionID, string >;
+      } >
+    ) {
+      // Update initial data
+      state.initialData.frontend.items = {
+        ...state.initialData.frontend.items,
+        ...payload.addedItems,
+      };
+      state.initialData.frontend.order = [
+        ...state.initialData.frontend.order,
+        ...payload.addedIdsOrder,
+      ];
 
-			// Update current data
-			state.data.items = { ...state.data.items, ...payload.addedItems };
-			state.data.order = [ ...state.data.order, ...payload.addedIdsOrder ];
+      state.initialData.preview.items = {
+        ...state.initialData.preview.items,
+        ...payload.addedItems,
+      };
+      state.initialData.preview.order = [
+        ...state.initialData.preview.order,
+        ...payload.addedIdsOrder,
+      ];
 
-			// Update class labels
-			state.classLabels = { ...state.classLabels, ...payload.addedClassLabels };
-		},
-	},
+      // Update current data
+      state.data.items = { ...state.data.items, ...payload.addedItems };
+      state.data.order = [ ...state.data.order, ...payload.addedIdsOrder ];
+
+      // Update class labels
+      state.classLabels = { ...state.classLabels, ...payload.addedClassLabels };
+    },
+  },
 } );
 
 const mergeProps = ( current: Props, updates: Props ): Props => {
-	// edge case, the server returns an array instead of an object when empty props because of PHP array / object conversion
-	const props = Array.isArray( current ) ? {} : current;
+  // edge case, the server returns an array instead of an object when empty props because of PHP array / object conversion
+  const props = Array.isArray( current ) ? {} : current;
 
-	Object.entries( updates ).forEach( ( [ key, value ] ) => {
-		if ( value === null || value === undefined ) {
-			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete props[ key ];
-		} else {
-			props[ key ] = value;
-		}
-	} );
+  Object.entries( updates ).forEach( ( [ key, value ] ) => {
+    if ( value === null || value === undefined ) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete props[ key ];
+    } else {
+      props[ key ] = value;
+    }
+  } );
 
-	return props;
+  return props;
 };
 
 const getNonEmptyVariants = ( style: StyleDefinition ) => {
-	return style.variants.filter(
-		( { props, custom_css: customCss }: StyleDefinitionVariant ) => Object.keys( props ).length || customCss?.raw
-	);
+  return style.variants.filter(
+    ( { props, custom_css: customCss }: StyleDefinitionVariant ) =>
+      Object.keys( props ).length || customCss?.raw
+  );
 };
 
-export const placeholderDefinition = ( id: StyleDefinitionID, label: string ): StyleDefinition => ( {
-	id,
-	type: 'class',
-	label,
-	variants: [],
+export const placeholderDefinition = (
+  id: StyleDefinitionID,
+  label: string
+): StyleDefinition => ( {
+  id,
+  type: 'class',
+  label,
+  variants: [],
 } );
 
 // Selectors
 export const selectData = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].data;
 
-export const selectClassLabels = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].classLabels;
+export const selectClassLabels = ( state: SliceState< typeof slice > ) =>
+  state[ SLICE_NAME ].classLabels;
 
 export const selectFrontendInitialData = ( state: SliceState< typeof slice > ) =>
-	state[ SLICE_NAME ].initialData.frontend;
+  state[ SLICE_NAME ].initialData.frontend;
 
 export const selectPreviewInitialData = ( state: SliceState< typeof slice > ) =>
-	state[ SLICE_NAME ].initialData.preview;
+  state[ SLICE_NAME ].initialData.preview;
 
 export const selectOrder = createSelector( selectData, ( { order } ) => order );
 
@@ -322,27 +351,30 @@ export const selectGlobalClasses = createSelector( selectData, ( { items } ) => 
 
 export const selectIsDirty = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].isDirty;
 
-export const selectOrderedClasses = createSelector( selectData, selectClassLabels, ( { items, order }, classLabels ) =>
-	order
-		.map( ( id ) => {
-			const loaded = items[ id ];
-			if ( loaded ) {
-				return loaded;
-			}
-			const label = classLabels[ id ];
-			return label !== undefined ? placeholderDefinition( id, label ) : null;
-		} )
-		.filter( ( s ): s is StyleDefinition => s !== null )
+export const selectOrderedClasses = createSelector(
+  selectData,
+  selectClassLabels,
+  ( { items, order }, classLabels ) =>
+    order
+      .map( ( id ) => {
+        const loaded = items[ id ];
+        if ( loaded ) {
+          return loaded;
+        }
+        const label = classLabels[ id ];
+        return label !== undefined ? placeholderDefinition( id, label ) : null;
+      } )
+      .filter( ( s ): s is StyleDefinition => s !== null )
 );
 
 export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
-	state[ SLICE_NAME ].data.items[ id ] ?? null;
+  state[ SLICE_NAME ].data.items[ id ] ?? null;
 
 export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
-	Object.values( items ).filter( ( cssClass ) => ( cssClass.variants?.length ?? 0 ) === 0 )
+  Object.values( items ).filter( ( cssClass ) => ( cssClass.variants?.length ?? 0 ) === 0 )
 );
 
 export const selectIsClassFetched = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
-	!! state[ SLICE_NAME ].initialData.preview.items[ id ] ||
-	!! state[ SLICE_NAME ].initialData.frontend.items[ id ] ||
-	false;
+  !! state[ SLICE_NAME ].initialData.preview.items[ id ] ||
+  !! state[ SLICE_NAME ].initialData.frontend.items[ id ] ||
+  false;
