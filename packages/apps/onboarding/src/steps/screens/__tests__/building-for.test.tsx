@@ -12,7 +12,7 @@ describe( 'BuildingFor', () => {
 			renderApp( { isConnected: false } );
 
 			// Act - continue as guest to reach the building_for step
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			// Assert
 			expect( screen.getByTestId( 'building-for-step' ) ).toBeInTheDocument();
