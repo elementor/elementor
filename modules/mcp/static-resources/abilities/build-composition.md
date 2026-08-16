@@ -119,6 +119,7 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Put the plain dynamic object at that node, in place of the static variant. Read [elementor://dynamic-tags] for allowed tag names and each tag's settings schema.
 - Plain dynamic shape: `{ "name": "<allowed tag>", "settings": { ... } }`
 - Example (image `src`): `"image": { "src": { "name": "<image tag>", "settings": { ... } }, "size": "full" }`
+- The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps. A category mismatch returns an error for that field and skips merging it.
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.

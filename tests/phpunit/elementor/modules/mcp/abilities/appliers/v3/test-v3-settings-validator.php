@@ -24,110 +24,92 @@ class Test_V3_Settings_Validator extends TestCase {
 		];
 	}
 
-	public function test_validate__passes_plain_valid_primitive_through() {
-		// Arrange.
-		$settings = [
+	public function test_validate_shape__passes_plain_valid_primitive_through() {
+		$primitives = [
 			'title' => 'Hello world',
 			'header_size' => 'h2',
 		];
 
-		// Act.
-		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $this->theme_post_title_config() );
+		$result = V3_Settings_Validator::validate_shape( 'theme-post-title', $primitives, $this->theme_post_title_config() );
 
-		// Assert.
 		$this->assertNull( $result['error'] );
-		$this->assertSame( 'Hello world', $result['allowed']['title'] );
-		$this->assertSame( 'h2', $result['allowed']['header_size'] );
+		$this->assertSame( 'Hello world', $result['valid']['title'] );
+		$this->assertSame( 'h2', $result['valid']['header_size'] );
 	}
 
-	public function test_validate__rejects_array_value_on_scalar_slot() {
-		// Arrange.
-		$settings = [
-			'title' => [ 'not' => 'a scalar' ],
-		];
+	public function test_validate_shape__rejects_array_value_on_scalar_slot() {
+		$primitives = [ 'title' => [ 'not' => 'a scalar' ] ];
 
-		// Act.
-		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $this->theme_post_title_config() );
+		$result = V3_Settings_Validator::validate_shape( 'theme-post-title', $primitives, $this->theme_post_title_config() );
 
-		// Assert.
 		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
 		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
 		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
-		$this->assertArrayNotHasKey( 'title', $result['allowed'] );
+		$this->assertArrayNotHasKey( 'title', $result['valid'] );
 	}
 
-	public function test_validate__rejects_non_allowlisted_key_and_shape_error_together() {
-		// Arrange.
-		$settings = [
-			'title' => [ 'not' => 'a scalar' ],
-			'color_menu_item' => '#ff0000',
+	public function test_validate_shape__merges_valid_keys_and_reports_invalid_together() {
+		$primitives = [
+			'title' => 'Hello world',
+			'header_size' => 'h9',
 		];
 
-		// Act.
-		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $this->theme_post_title_config() );
+		$result = V3_Settings_Validator::validate_shape( 'theme-post-title', $primitives, $this->theme_post_title_config() );
 
-		// Assert.
 		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( 'color_menu_item', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
-		$this->assertArrayNotHasKey( 'title', $result['allowed'] );
+		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertSame( 'Hello world', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'header_size', $result['valid'] );
 	}
 
-	public function test_validate__shape_check_matches_builder_for_advertised_schema() {
-		// Arrange — same controls stack `Widget_Context_Helper` feeds to `V3_Json_Schema_Builder::build()`.
+	public function test_validate_shape__matches_builder_for_advertised_schema() {
 		$widget_config = $this->theme_post_title_config();
-		$settings = [
+		$primitives = [
 			'title' => [ 'not' => 'a scalar' ],
 			'header_size' => 'h9',
 		];
-		$allowed_keys = [ 'title', 'header_size' ];
 
-		$advertised_schema = V3_Json_Schema_Builder::build( $widget_config['controls'], $allowed_keys );
-		$shape = V3_Json_Schema_Builder::check_settings_shape( $settings, $advertised_schema );
+		$advertised_schema = V3_Json_Schema_Builder::build( $widget_config['controls'], array_keys( $primitives ) );
+		$shape = V3_Json_Schema_Builder::check_settings_shape( $primitives, $advertised_schema );
 
-		// Act.
-		$validator = V3_Settings_Validator::validate( 'theme-post-title', $settings, $widget_config );
+		$validator = V3_Settings_Validator::validate_shape( 'theme-post-title', $primitives, $widget_config );
 
-		// Assert — builder shape check and validator agree on rejected keys.
 		$this->assertArrayHasKey( 'title', $shape['errors'] );
 		$this->assertArrayHasKey( 'header_size', $shape['errors'] );
 		$this->assertInstanceOf( \WP_Error::class, $validator['error'] );
-		$this->assertArrayNotHasKey( 'title', $validator['allowed'] );
-		$this->assertArrayNotHasKey( 'header_size', $validator['allowed'] );
+		$this->assertArrayNotHasKey( 'title', $validator['valid'] );
+		$this->assertArrayNotHasKey( 'header_size', $validator['valid'] );
 	}
 
-	public function test_validate__rejects_allowlisted_key_without_control_entry() {
+	public function test_validate_shape__rejects_primitive_key_without_control_entry() {
 		$widget_config = [
-			'controls' => [
-				'title' => [ 'type' => 'text' ],
-			],
+			'controls' => [ 'title' => [ 'type' => 'text' ] ],
 		];
-		$settings = [
+		$primitives = [
 			'title' => 'Hello',
 			'link' => [ 'url' => 'https://example.com' ],
 		];
 
-		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, $widget_config );
+		$result = V3_Settings_Validator::validate_shape( 'theme-post-title', $primitives, $widget_config );
 
 		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
 		$this->assertStringContainsString( 'link', $result['error']->get_error_message() );
 		$this->assertStringContainsString( 'no schema for allowlisted key', $result['error']->get_error_message() );
-		$this->assertSame( 'Hello', $result['allowed']['title'] );
-		$this->assertArrayNotHasKey( 'link', $result['allowed'] );
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'link', $result['valid'] );
 	}
 
-	public function test_validate__rejects_all_keys_when_controls_are_missing() {
-		$settings = [
+	public function test_validate_shape__rejects_all_keys_when_controls_are_missing() {
+		$primitives = [
 			'title' => 'Hello',
 			'header_size' => 'h2',
 		];
 
-		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, [] );
+		$result = V3_Settings_Validator::validate_shape( 'theme-post-title', $primitives, [] );
 
 		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
 		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
 		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
-		$this->assertSame( [], $result['allowed'] );
+		$this->assertSame( [], $result['valid'] );
 	}
 }

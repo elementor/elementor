@@ -9,46 +9,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Value-level gate for V3 element_config entries. Composes:
+ * Shallow shape guard for the primitive remainder of a V3 element_config entry.
  *
- *   1. `V3_Non_Style_Allowlist` — key gate (which keys the widget accepts at all).
- *   2. Shallow shape check — `V3_Json_Schema_Builder::check_settings_shape()` against the
- *      schema emitted by `build()`, so the applier never merges an array into a scalar field.
+ * Called after `V3_Non_Style_Allowlist` (key gate) and `V3_Dynamic_Hoister`
+ * (splits dynamic shortcodes from primitives). Delegates to
+ * `V3_Json_Schema_Builder::check_settings_shape()` — enforces only `type`,
+ * `enum`, and one-level nested `properties.type` so the applier never merges
+ * an array into a scalar field.
  */
 class V3_Settings_Validator {
 
 	/**
 	 * @param string               $widget_type   V3 widget type (e.g. `theme-post-title`).
-	 * @param array<string, mixed> $settings      Raw settings for a single element_config entry.
+	 * @param array<string, mixed> $primitives    Primitive settings (after hoisting removed __dynamic__ entries).
 	 * @param array<string, mixed> $widget_config Widget config from `Widget_Type_Resolver::resolve_type_config()`.
 	 *
 	 * @return array{
-	 *     allowed: array<string, mixed>,
+	 *     valid: array<string, mixed>,
 	 *     error: \WP_Error|null,
 	 * }
 	 */
-	public static function validate( string $widget_type, array $settings, array $widget_config ): array {
-		$key_filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
-
+	public static function validate_shape( string $widget_type, array $primitives, array $widget_config ): array {
 		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
-		$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $key_filter['allowed'] ) );
-		$shape = V3_Json_Schema_Builder::check_settings_shape( $key_filter['allowed'], $schema );
+		$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $primitives ) );
+		$shape = V3_Json_Schema_Builder::check_settings_shape( $primitives, $schema );
 
-		$errors = [];
-
-		if ( $key_filter['error'] ) {
-			$errors[] = $key_filter['error']->get_error_message();
+		if ( empty( $shape['errors'] ) ) {
+			return [
+				'valid' => $shape['valid'],
+				'error' => null,
+			];
 		}
 
+		$messages = [];
 		foreach ( $shape['errors'] as $key => $reason ) {
-			$errors[] = sprintf( 'V3 widget "%s" property "%s": %s', $widget_type, $key, $reason );
+			$messages[] = sprintf( 'V3 widget "%s" property "%s": %s', $widget_type, $key, $reason );
 		}
 
 		return [
-			'allowed' => $shape['valid'],
-			'error' => empty( $errors ) ? null : new \WP_Error(
+			'valid' => $shape['valid'],
+			'error' => new \WP_Error(
 				'elementor_invalid_settings',
-				implode( '; ', $errors ),
+				implode( '; ', $messages ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			),
 		];

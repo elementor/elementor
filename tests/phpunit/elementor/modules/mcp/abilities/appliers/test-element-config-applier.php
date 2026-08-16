@@ -12,13 +12,17 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
+use Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Stub_Dynamic_Tags_Manager;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+require_once __DIR__ . '/v3/stub-dynamic-tags-manager.php';
 
 class Test_Element_Config_Applier extends TestCase {
 
@@ -32,9 +36,16 @@ class Test_Element_Config_Applier extends TestCase {
 		return new Plain_Values_Resolver( $registry );
 	}
 
+	private function make_applier( ?V3_Dynamic_Hoister $hoister = null ): Element_Config_Applier {
+		return new Element_Config_Applier(
+			new Widget_Type_Resolver( new Xml_Parser() ),
+			$this->make_plain_values_resolver(),
+			$hoister ?? new V3_Dynamic_Hoister( new Stub_Dynamic_Tags_Manager() )
+		);
+	}
+
 	public function test_apply__resolves_plain_scalar_settings_to_envelopes() {
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$hero_title = [
 			'widgetType' => 'mock-widget',
@@ -89,8 +100,7 @@ class Test_Element_Config_Applier extends TestCase {
 
 	public function test_apply__errors_when_e_component_entry_has_no_document_context() {
 		// Arrange
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$e_component_node = [
 			'elType' => 'widget',
@@ -122,8 +132,7 @@ class Test_Element_Config_Applier extends TestCase {
 
 	public function test_apply__v3_allowlisted_keys_merge_as_plain_settings() {
 		// Arrange
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$nav = [
 			'elType' => 'widget',
@@ -159,8 +168,7 @@ class Test_Element_Config_Applier extends TestCase {
 
 	public function test_apply__v3_rejects_non_allowlisted_settings() {
 		// Arrange
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$nav = [
 			'elType' => 'widget',
@@ -189,9 +197,7 @@ class Test_Element_Config_Applier extends TestCase {
 	}
 
 	public function test_apply__v3_rejects_array_value_on_scalar_slot_shape_check() {
-		// Arrange.
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$node = [
 			'elType' => 'widget',
@@ -208,7 +214,6 @@ class Test_Element_Config_Applier extends TestCase {
 			],
 		];
 
-		// Act — array on a scalar slot is invalid.
 		$result = $applier->apply(
 			$index,
 			[
@@ -219,7 +224,6 @@ class Test_Element_Config_Applier extends TestCase {
 			$widget_configs
 		);
 
-		// Assert.
 		$this->assertNotNull( $result['error'] );
 		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
 		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
@@ -227,8 +231,7 @@ class Test_Element_Config_Applier extends TestCase {
 	}
 
 	public function test_apply__v3_merges_valid_keys_and_reports_invalid_keys() {
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$node = [
 			'elType' => 'widget',
@@ -266,10 +269,91 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertArrayNotHasKey( 'header_size', $node['settings'] );
 	}
 
+	public function test_apply__v3_dynamic_tag_on_url_control_is_hoisted_into__dynamic__() {
+		$manager = new Stub_Dynamic_Tags_Manager();
+		$manager->add_stub_tag( 'post-url', [ 'url' ] );
+		$hoister = new V3_Dynamic_Hoister( $manager );
+		$applier = $this->make_applier( $hoister );
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'link' => [
+						'type' => 'url',
+						'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
+					],
+				],
+			],
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'link' => [ 'url' => [ 'name' => 'post-url', 'settings' => [] ] ],
+				],
+			],
+			$widget_configs
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertArrayNotHasKey( 'link', $node['settings'] );
+		$this->assertArrayHasKey( '__dynamic__', $node['settings'] );
+		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
+	}
+
+	public function test_apply__v3_dynamic_on_url_control_keeps_sibling_primitive_fields() {
+		$manager = new Stub_Dynamic_Tags_Manager();
+		$manager->add_stub_tag( 'post-url', [ 'url' ] );
+		$hoister = new V3_Dynamic_Hoister( $manager );
+		$applier = $this->make_applier( $hoister );
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'link' => [
+						'type' => 'url',
+						'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
+					],
+				],
+			],
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'link' => [
+						'url' => [ 'name' => 'post-url', 'settings' => [] ],
+						'is_external' => 'on',
+					],
+				],
+			],
+			$widget_configs
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'on', $node['settings']['link']['is_external'] );
+		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
+	}
+
 	public function test_apply__reports_settings_and_component_errors_together() {
 		// Arrange
-		$type_resolver = new Widget_Type_Resolver( new Xml_Parser() );
-		$applier = new Element_Config_Applier( $type_resolver, $this->make_plain_values_resolver() );
+		$applier = $this->make_applier();
 
 		$hero_title = [
 			'widgetType' => 'mock-widget',
