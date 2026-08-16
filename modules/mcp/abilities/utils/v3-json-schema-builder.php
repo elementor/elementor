@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -83,11 +85,59 @@ class V3_Json_Schema_Builder {
 			$entry['default'] = $control['default'];
 		}
 
-		if ( isset( $control['description'] ) && is_string( $control['description'] ) ) {
-			$entry['description'] = trim( strip_tags( $control['description'] ) );
+		$description = isset( $control['description'] ) && is_string( $control['description'] )
+			? trim( strip_tags( $control['description'] ) )
+			: null;
+
+		if ( V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
+			return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
+		}
+
+		if ( null !== $description ) {
+			$entry['description'] = $description;
 		}
 
 		return $entry;
+	}
+
+	private static function wrap_with_dynamic_branch( array $primitive_entry, array $categories, ?string $description ): array {
+		$dynamic_entry = [
+			'type' => 'object',
+			'required' => [ 'name' ],
+			'additionalProperties' => false,
+			'properties' => [
+				'name' => [ 'type' => 'string' ],
+				'settings' => [
+					'type' => 'object',
+					'additionalProperties' => true,
+				],
+			],
+			'description' => self::dynamic_branch_description( $categories ),
+		];
+
+		$wrapped = [
+			'anyOf' => [
+				$primitive_entry,
+				$dynamic_entry,
+			],
+		];
+
+		if ( null !== $description ) {
+			$wrapped['description'] = $description;
+		}
+
+		return $wrapped;
+	}
+
+	private static function dynamic_branch_description( array $categories ): string {
+		if ( empty( $categories ) ) {
+			return 'Bind THIS value to a dynamic tag from elementor://dynamic-tags. Shape: { "name": "<tag>", "settings": { ... } }.';
+		}
+
+		return sprintf(
+			'Bind THIS value to a dynamic tag from elementor://dynamic-tags whose categories intersect [%s]. Shape: { "name": "<tag>", "settings": { ... } }.',
+			implode( ', ', array_map( 'strval', $categories ) )
+		);
 	}
 
 	private static function type_entry( array $control, ?string $control_type ): array {
