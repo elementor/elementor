@@ -118,19 +118,22 @@ describe( 'panels api', () => {
 		renderPanel( mockPanel );
 
 		// Assert.
-		expect( screen.queryByText( 'Test Panel Body', { hidden: true } ) ).toBeInTheDocument();
+		const mountedPanelBody = screen.getByText( 'Test Panel Body' );
+		expect( mountedPanelBody ).toBeInTheDocument();
+		expect( mountedPanelBody ).not.toBeVisible();
 
 		// Act.
 		fireEvent.click( screen.getByText( 'Open Panel' ) );
 
 		// Assert.
-		expect( screen.getByText( 'Test Panel Body' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Test Panel Body' ) ).toBeVisible();
 
 		// Act.
 		fireEvent.click( screen.getByText( 'Close Panel' ) );
 
 		// Assert.
-		expect( screen.getByText( 'Test Panel Body', { hidden: true } ) ).toBeInTheDocument();
+		expect( mountedPanelBody ).toBeInTheDocument();
+		expect( mountedPanelBody ).not.toBeVisible();
 	} );
 
 	it( 'should not open the panel if the panel was not registered', () => {
