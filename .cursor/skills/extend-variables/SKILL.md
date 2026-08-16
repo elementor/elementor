@@ -24,13 +24,19 @@ Read first: [variables/types.md](../../../docs/atomic-builder/variables/types.md
 
 ## Checklist
 
-1. **PHP variable type** — typically extends `String_Prop_Type` (or other `Transformable_Prop_Type`) with stable `get_key()` (e.g. `global-shadow-variable`):
+1. **PHP variable type** — typically extends `String_Prop_Type` (or other `Transformable_Prop_Type`) with stable `get_key()`:
 
 ```php
+class Shadow_Variable_Prop_Type extends String_Prop_Type {
+    public static function get_key(): string {
+        return 'global-shadow-variable';
+    }
+}
+
 add_action( 'elementor/variables/register', function (
     \Elementor\Modules\Variables\Classes\Variable_Types_Registry $registry
 ) {
-    $registry->register( 'global-shadow-variable', \My\Shadow_Variable_Prop_Type::make() );
+    $registry->register( Shadow_Variable_Prop_Type::get_key(), Shadow_Variable_Prop_Type::make() );
 } );
 ```
 
@@ -46,10 +52,12 @@ add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema )
 } );
 ```
 
-3. **PHP render transformer** — `elementor/atomic-widgets/styles/transformers/register` if frontend must resolve stored **id** → `var(--label)`. Pattern: `Global_Variable_Transformer` (color/font). PropValues store **id**; CSS uses **label** — see [api.md](../../../docs/atomic-builder/variables/api.md) and [usage-in-props.md](../../../docs/atomic-builder/variables/usage-in-props.md). Label rules: max 50 chars, no spaces.
+   If `$schema[ $key ]` is already a `Union_Prop_Type` (e.g. `padding`, `margin`, `gap` in `Style_Schema`), call `->add_prop_type()` on it; do not wrap with `Union_Prop_Type::create_from()` — mirror `Style_Schema::update_font_family()`.
+
+3. **PHP render transformer** — `elementor/atomic-widgets/styles/transformers/register` if frontend must resolve stored **id** → `var(--label)`. **Reuse** `\Elementor\Modules\Variables\Transformers\Global_Variable_Transformer` (Core shares one instance for color/font); subclass only when resolution differs. PropValues store **id**; CSS uses **label** — see [api.md](../../../docs/atomic-builder/variables/api.md) and [usage-in-props.md](../../../docs/atomic-builder/variables/usage-in-props.md). Label rules: max 50 chars, no spaces.
 4. **JS editor type (required for "Add Variable" UI)** — `registerVariableType` with `key`, `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, `variableType`, plus `defaultValue` / `valueField` / `styleTransformer` as needed. Call from **your** editor v2 package `init()` (not core `register-variable-types.tsx`). Example: [docs/atomic-builder/examples/extend-variables.md](../../../docs/atomic-builder/examples/extend-variables.md).
    - Skip JS → PHP-only type works via REST / MCP / CSS but **never appears in the Add Variable dropdown**.
-   - Hand-built bundle: call `init()` yourself and use `window.elementorV2.editorVariables.registerVariableType` — see [add-editor-package](../add-editor-package/SKILL.md).
+   - Hand-built bundle: call `init()` yourself; `registerVariableType` via `window.elementorV2.editorVariables`; `createPropUtils` via `window.elementorV2.editorProps.createPropUtils` (not an import) — see [add-editor-package](../add-editor-package/SKILL.md).
 5. **Storage adapter** — extend `Adapters\Prop_Type_Adapter` if value encoding is non-standard.
 6. **Verify on active kit** — REST `elementor/v1/variables/*` and MCP `elementor/manage-global-variable` **confirm** types already registered; they do not define new types.
 

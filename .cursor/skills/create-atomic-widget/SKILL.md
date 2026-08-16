@@ -26,9 +26,9 @@ Read first: [atomic-widgets/authoring-widgets.md](../../../docs/atomic-builder/a
    - Leaf widget → `Atomic_Widget_Base` + `Has_Template` when using Twig.
    - Container → `Atomic_Element_Base` + `Has_Element_Template`; set `$this->meta( 'is_container', true )` in constructor.
 2. **Implement required API**
-   - `define_props_schema()` — prop types with `->default()`; values are PropValue `{ $$type, value }`.
-   - `define_atomic_controls()` — `Section::make()->set_items([ Control::bind_to( 'key' ) ])`; use `Select_Control` for enum prop types.
-   - `get_element_type()` — stable id (e.g. `e-my-widget`).
+   - `define_props_schema()` — prop types with `->default()`; values are PropValue `{ $$type, value }`. Most widgets also declare `classes` (`Classes_Prop_Type`) and `attributes` (`Attributes_Prop_Type`) — see built-ins under `modules/atomic-widgets/elements/`.
+   - `define_atomic_controls()` — `Section::make()->set_items([ ... ])` with concrete controls from `Elementor\Modules\AtomicWidgets\Controls\Types\` (e.g. `Text_Control`, `Select_Control`) via `::bind_to( 'key' )`. Enum props: pair `String_Prop_Type::make()->enum([...])->default(...)` with `Select_Control::bind_to( 'key' )->set_options([ ['value' => 'h1', 'label' => 'H1'], ... ])` (options are `[['value' => ..., 'label' => ...], ...]`).
+   - **Widget** (`Atomic_Widget_Base`): `get_element_type()` — stable id (e.g. `e-my-widget`). **Container** (`Atomic_Element_Base`): `get_element_type()` and `get_type()` (same id); `generate()` uses `get_element_type()` on widgets, `get_type()` on elements.
 3. **Optional layers**
    - Twig: `get_templates()`, `.html.twig` files.
    - `define_base_styles()` → `Style_Definition` maps.
@@ -48,7 +48,7 @@ Full corrected walkthrough: [docs/atomic-builder/examples/create-atomic-widget.m
 
 Key fixes vs older snippets: base classes under `Elements\Base\`; primitives under `PropTypes\Primitives\`; `Section::make()->set_items()` not `add_control()`.
 
-Test/MCP JSON: `My_Widget::generate()` (widget) or `My_Container::generate()` (element; uses `get_type()`, not `get_element_type()`).
+Test/MCP JSON: `My_Widget::generate()` or `My_Container::generate()` — see id methods above.
 
 ## External implementation path
 

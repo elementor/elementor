@@ -23,7 +23,7 @@ Read first: [fundamentals/prop-types.md](../../../docs/atomic-builder/fundamenta
 ## Checklist
 
 1. **Start with the prop type** — storage shape, validation, JSON Schema (`to_json_schema()`). Add a **transformer** only when render/import/export needs a different output from the stored shape.
-2. **PHP prop type** — extend `Plain_Prop_Type`, `Object_Prop_Type`, or `Array_Prop_Type`; compose unions via `Union_Prop_Type::make()->add_prop_type()` or `Union_Prop_Type::create_from()`. Implement `get_key()`, `define_shape()` (objects), `validate_value()`, `sanitize_value()`. Example: [docs/atomic-builder/examples/extend-prop-types.md](../../../docs/atomic-builder/examples/extend-prop-types.md).
+2. **PHP prop type** — extend a base from `Elementor\Modules\AtomicWidgets\PropTypes\Base\` (`Plain_Prop_Type`, `Object_Prop_Type`, `Array_Prop_Type`); primitives from `PropTypes\Primitives\` (e.g. `String_Prop_Type`); unions via `PropTypes\Union_Prop_Type::make()->add_prop_type()` (use `Union_Prop_Type::create_from( $existing )` to widen a key that is not already a union — see [extend-variables](../extend-variables/SKILL.md) step 2 for the already-a-union case). Implement `get_key()`, `define_shape()` (objects), `validate_value()`, `sanitize_value()`. **Object `validate_value()`:** each shape key in `$value` is a nested PropValue (`$field['value']`), not a plain scalar — see `Html_V3_Prop_Type`. Example: [docs/atomic-builder/examples/extend-prop-types.md](../../../docs/atomic-builder/examples/extend-prop-types.md).
 3. **Wire schema — pick one scope**
    - **Widget-only:** `define_props_schema()` on the widget class (preferred for type-specific props).
    - **Global:** filter `elementor/atomic-widgets/props-schema` (all elements).
@@ -42,13 +42,37 @@ Contexts: `settings`, `styles`, `import`, `export`, `plain` — hook pattern:
 
 `elementor/atomic-widgets/{context}/transformers/register`
 
-**Note:** `plain` is documented in [transformers.md](../../../docs/atomic-builder/fundamentals/transformers.md) but omitted from the verified list in [hooks.md](../../../docs/atomic-builder/atomic-widgets/hooks.md) — confirm at runtime if you depend on it.
+**Note:** `plain` is registered in Core (`elementor/atomic-widgets/plain/transformers/register` in `modules/atomic-widgets/module.php`) alongside `settings`, `styles`, `import`, and `export` — valid even though [hooks.md](../../../docs/atomic-builder/atomic-widgets/hooks.md) omits it from its list.
 
 5. **TypeScript mirror (when editor validation/UI needs it)** — `createPropUtils()` + `propTypeToJsonSchema()` in your editor package `init()`. There is **no** global editor registry like `registerVariableType` — unlike variables, general prop types rely on custom controls (`elementor/atomic-widgets/controls` filter) and/or your package exports.
 6. **If this prop type is used in styles** — legacy CSS import also needs [internal-extend-css-converter](../internal-extend-css-converter/SKILL.md) (Internal; no public discovery hook). Style schema + transformer alone do not cover import.
 7. **Editor controls** — match control to prop shape (e.g. `Select_Control` for enums); filter `elementor/atomic-widgets/controls` when built-ins are insufficient.
 8. **MCP** — filter `elementor/atomic-widgets/llm-json-schema` to post-process single-prop JSON Schema.
 9. **Verify** — PropValue `{ $$type, value }`; transformer receives **inner** payload; chained transform depth ≤ 3; `disabled: true` → `null`.
+
+## Object prop type skeleton
+
+```php
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+
+class My_Object_Prop_Type extends Object_Prop_Type {
+    public static function get_key(): string {
+        return 'my-object';
+    }
+
+    protected function define_shape(): array {
+        return [
+            'label' => String_Prop_Type::make(),
+        ];
+    }
+
+    protected function validate_value( $value ): bool {
+        // Each $value['label'] is ['$$type' => 'string', 'value' => '...'] — not a bare string.
+        return parent::validate_value( $value );
+    }
+}
+```
 
 ## Transformer skeleton
 

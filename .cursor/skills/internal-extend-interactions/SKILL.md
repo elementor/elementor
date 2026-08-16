@@ -20,8 +20,8 @@ Read first: [interactions/editor.md](../../../docs/atomic-builder/interactions/e
 
 ## Checklist (Internal-first — Core PR path)
 
-1. **Understand data model** — `interactions` prop: `version` + `items[]` of `interaction-item` PropValues. See [schema.md](../../../docs/atomic-builder/interactions/schema.md).
-2. **PHP (Core)** — extend `Presets`, `Validation`, prop types under `modules/interactions/props/` when allowed values or shape change. Filter `elementor/atomic-widgets/interactions/schema` alone is insufficient for full outcome.
+1. **Understand data model** — `interactions` prop: `version` + `items[]` of `interaction-item` PropValues. See [schema.md](../../../docs/atomic-builder/interactions/schema.md). `timing_config` is a `timing-config` PropValue; `duration` and `delay` live inside its `value` (not as siblings of `value`) — see `timing-config-prop-type.php` / `validation.php::is_valid_timing_config()`.
+2. **PHP (Core)** — extend `Presets`, `Validation`, prop types under `modules/interactions/props/` when allowed values or shape change. `Validation`: call `sanitize($document)` then `validate()` on the **same instance** (`sanitize` drops invalid items; `validate` throws on per-element count limits). Filter `elementor/atomic-widgets/interactions/schema` alone is insufficient for full outcome.
 3. **Editor (Core package)** — `registerInteractionsControl( { type, component, options? } )` in **`packages/packages/core/editor-interactions/src/init.ts`**; options must match `Presets` enums.
 4. **Editor preview (Core)** — update `editor-interactions.js` preview path when trigger/effect behavior changes — [interactions/editor.md](../../../docs/atomic-builder/interactions/editor.md).
 5. **Frontend runtime (Core PR required)** — extend `isSupportedInteraction()` and `getKeyframes()` in `interactions-utils.js`; trigger handling in `interactions.js`. **No public WordPress hook.**

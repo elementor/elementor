@@ -11,7 +11,7 @@ This router is **not** an implementation capability. It does not define hooks, p
 
 ## Checklist
 
-1. Confirm v4 context: experiments `e_atomic_elements` (and often `e_opt_in_v4`) — see [getting-started/experiments.md](../../../docs/atomic-builder/getting-started/experiments.md).
+1. Confirm v4 context: experiments `e_atomic_elements` (and often `e_opt_in_v4`) — see [getting-started/experiments.md](../../../docs/atomic-builder/getting-started/experiments.md). **No separate `e_classes` experiment** — global-classes gates on `e_atomic_elements` only (`modules/global-classes/module.php`); trust experiments.md over [global-classes/overview.md](../../../docs/atomic-builder/global-classes/overview.md) on this point.
 2. Map intent using the decision table below.
 3. **Read the matching child skill** under `.cursor/skills/` and follow its workflow.
 4. Read linked `docs/atomic-builder/...` pages before implementing.
@@ -53,7 +53,12 @@ Full classification: [docs/atomic-builder/skills-scope.md](../../../docs/atomic-
 
 ## No matching skill?
 
-If intent is not in the table, read [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md) section index and [architecture/packages-map.md](../../../docs/atomic-builder/architecture/packages-map.md). There is **no skill yet** for: migration-only work, components module extension, global-classes authoring, or architecture debugging — use docs directly or stop if a Core PR is required.
+If intent is not in the table, read [docs/atomic-builder/README.md](../../../docs/atomic-builder/README.md) section index. There is **no skill yet** for these — use docs directly or stop if a Core PR is required:
+
+- **Migration** — [migration/README.md](../../../docs/atomic-builder/migration/README.md) → [prop-type-migrations.md](../../../docs/atomic-builder/migration/prop-type-migrations.md)
+- **Components** — [components/README.md](../../../docs/atomic-builder/components/README.md) → [overview.md](../../../docs/atomic-builder/components/overview.md)
+- **Global classes** — [global-classes/README.md](../../../docs/atomic-builder/global-classes/README.md) → [overview.md](../../../docs/atomic-builder/global-classes/overview.md)
+- **Architecture / debugging** — [architecture/README.md](../../../docs/atomic-builder/architecture/README.md) → [packages-map.md](../../../docs/atomic-builder/architecture/packages-map.md)
 
 ## Next step
 

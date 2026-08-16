@@ -7,8 +7,6 @@ description: "Internal: Extend the atomic CSS converter in a Core fork and submi
 
 > **Scope: Internal** — there is **no public registration hook**. The full documented outcome requires a PR against Elementor Core (`Converter_Registry_Factory` / `Expander_Registry_Factory`), or a private `Css_Converter` instance not integrated into core import. Full split + disclaimer: [skills-scope.md](../../../docs/atomic-builder/skills-scope.md).
 
-> **Doc note:** [css-converter/extension.md](../../../docs/atomic-builder/css-converter/extension.md) frontmatter says "Audience: external" but factory registration is Core-only — trust this skill's Internal banner.
-
 ## Implementation location
 
 - **Fork/clone** [elementor/elementor](https://github.com/elementor/elementor).
@@ -30,8 +28,8 @@ Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-conver
 
 1. **Confirm need** — converter maps legacy CSS longhands/shorthands → atomic `Style_Schema` PropValues; **not** the same as style transformers at render time.
 2. **No public discovery hook** — Core factory registration **or** private `Css_Converter` with custom registries (not wired to core import UI).
-3. **Shorthand → longhand** — subclass `Shorthand_Expander_Base`; register in `Expander_Registry_Factory::create()` — **order matters** (first match wins).
-4. **Longhand → PropValue** — subclass `Property_Converter_Base`; register in `Converter_Registry_Factory::real_converters()`.
+3. **Shorthand → longhand** — subclass `Shorthand_Expander_Base`; register in `Expander_Registry_Factory::create()` — **order matters** (first match wins). Input rule: `['property' => string, 'value' => string|null]`. Each expanded rule must include `property`, `value`, and `declaration` (e.g. `'border-top-width: 1px'`) — see `shorthand-expander-base.php` / `border-shorthand-expander.php`.
+4. **Longhand → PropValue** — subclass `Property_Converter_Base`; register in `Converter_Registry_Factory::real_converters()`. Return PropValues via the matching prop type's `::generate()` (e.g. `String_Prop_Type::generate()` for strings, not only `Size_Prop_Type::generate()`).
 5. **Update coverage constants** — add property to family constant: `STRING_PROPERTIES`, `SIZE_PROPERTIES`, `UNITLESS_SIZE_PROPERTIES`, `OTHER_PROPERTIES`, etc.; `covered_properties()` merges them. CI: `test-css-converter-rest-api.php::test_coverage__every_style_schema_property_is_hardcoded_as_covered`.
 6. **PHPUnit** — under `tests/phpunit/elementor/modules/atomic-widgets/css-converter/`. Fast loop: `tests/phpunit/run-unit.sh tests/phpunit/.../test-*.php`.
 7. **Verify** — `POST /wp-json/elementor/v1/css-to-atomic` with sample CSS; full suite: `composer run test` with `--filter` as needed.
@@ -46,7 +44,7 @@ Read first: [css-converter/extension.md](../../../docs/atomic-builder/css-conver
 Third-party plugins **cannot** register via WordPress filter. Options:
 
 - Open a **core PR** adding expander/converter to factory classes.
-- Instantiate custom `Css_Converter` with privately built registries for plugin-internal migration tooling.
+- Instantiate custom `Css_Converter` with privately built registries for plugin-internal migration tooling. Constructor requires a `Conversion_Failure_Reporter` — use `new Null_Failure_Reporter()` for tests/tooling (`css-converter.php`).
 
 ## Internal implementation path
 

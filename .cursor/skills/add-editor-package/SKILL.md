@@ -27,12 +27,13 @@ Read first: [editor-packages/extending-editor.md](../../../docs/atomic-builder/e
 
 1. **PHP: register package slug** — append to `elementor/editor/v2/packages` (e.g. `editor-my-feature`). Optional env via `elementor/editor/v2/scripts/env`.
 2. **Build** — webpack (or Vite) with `@elementor/*` as **externals** resolved at runtime via `window.elementorV2.*` — see [packages/docs/architecture.md](../../../packages/docs/architecture.md) and [editor-packages/libs.md](../../../docs/atomic-builder/editor-packages/libs.md).
-3. **Output contract** — bundle exposes `window.elementorV2.{camelCaseSlug}` (e.g. `editor-my-feature` → `editorMyFeature`). Core Vite build footer auto-calls `?.init?.()` for packages built into Core assets.
-4. **`src/init.ts(x)`** — synchronous registration only; re-export from `src/index.ts`.
+3. **Output contract** — bundle exposes `window.elementorV2.{camelCaseSlug}` (e.g. `editor-my-feature` → `editorMyFeature`). Slug → global: `kebabToCamelCase` in `scripts/vite/shared/packages-externals.mjs` (drop hyphens, uppercase the following letter). Core Vite build footer auto-calls `?.init?.()` for packages built into Core assets.
+4. **Enqueue your bundle** — `wp_register_script()` / `wp_enqueue_script()` with the plugin's own URL (e.g. `plugins_url( 'assets/js/my-bundle.js', MY_PLUGIN_FILE )`); the packages filter does not load third-party JS.
+5. **`src/init.ts(x)`** — synchronous registration only; re-export from `src/index.ts`.
 
 ### B. Hand-built script path (no npm pipeline)
 
-1. Hook **`elementor/editor/v2/scripts/register`** to `wp_register_script()` your plugin JS with deps on required `elementor-v2-*` handles (`editor`, `editor-app-bar`, etc.).
+1. Hook **`elementor/editor/v2/scripts/register`** to `wp_register_script()` your plugin JS (URL via `plugins_url( ..., MY_PLUGIN_FILE )`) with deps on required `elementor-v2-*` handles. Common verified handles (from `core/editor/loader/editor-loader.php` + `scripts/vite/build-packages.mjs` `elementor-v2-${name}`): `elementor-v2-editor`, `elementor-v2-editor-app-bar`, `elementor-v2-editor-panels`, `elementor-v2-ui`, `elementor-v2-icons`.
 2. Hook **`elementor/editor/v2/scripts/enqueue`** to enqueue that handle.
 3. **You must call `init()` yourself** — append at end of bundle:
 
@@ -42,7 +43,9 @@ window.elementorV2.editorMyFeature?.init?.();
 
 Adding the slug to `elementor/editor/v2/packages` alone does **nothing** if no Core `.asset.php` exists for that slug — manual script registration carries the load.
 
-4. **Late-loaded global alternative** — `window.elementorV2.{camelCasePackage}` for scripts enqueued after editor packages; see [extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md).
+4. **No JSX build step** — use `window.React` + `React.createElement` (React is externalized as global `React` in `scripts/vite/shared/packages-externals.mjs`).
+5. **Slug → global** — same `kebabToCamelCase` rule as path A (e.g. `editor-my-feature` → `window.elementorV2.editorMyFeature`).
+6. **Late-loaded global alternative** — `window.elementorV2.{camelCasePackage}` for scripts enqueued after editor packages; see [extending-editor.md](../../../docs/atomic-builder/editor-packages/extending-editor.md).
 
 ### C. Common `init()` work
 
