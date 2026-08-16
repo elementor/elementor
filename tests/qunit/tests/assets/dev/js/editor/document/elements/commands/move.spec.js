@@ -141,13 +141,14 @@ export const Move = () => {
 				ElementsHelper.move( nestedContainer, topContainer );
 
 				const nestedView = nestedContainer.lookup().view,
-					{ top, bottom } = topContainer.view.el.getBoundingClientRect();
+					element = topContainer.view.el,
+					{ top, bottom } = element.getBoundingClientRect();
 
-				assert.equal( nestedView.getDocumentLevelDropSide( { clientY: top } ), 'top',
+				assert.equal( nestedView.getDocumentLevelDropSide( element, { clientY: top } ), 'top',
 					'Dropping at the top edge places the container above the top-level ancestor.' );
-				assert.equal( nestedView.getDocumentLevelDropSide( { clientY: bottom } ), 'bottom',
+				assert.equal( nestedView.getDocumentLevelDropSide( element, { clientY: bottom } ), 'bottom',
 					'Dropping at the bottom edge places the container below the top-level ancestor.' );
-				assert.equal( nestedView.getDocumentLevelDropSide( { clientY: ( top + bottom ) / 2 } ), null,
+				assert.equal( nestedView.getDocumentLevelDropSide( element, { clientY: ( top + bottom ) / 2 } ), null,
 					'Dropping away from the edges nests as usual.' );
 			} );
 
@@ -162,7 +163,7 @@ export const Move = () => {
 
 				elementor.channels.editor.reply( 'element:dragged', draggedView );
 
-				parentContainer.view.moveToDocumentLevel( draggedView, 'top' );
+				parentContainer.view.moveToDocumentLevel( { view: draggedView, side: 'top' } );
 
 				const movedContainer = childContainer.lookup(),
 					topLevelChildren = elementor.getPreviewContainer().children;
@@ -173,6 +174,48 @@ export const Move = () => {
 					'Nested container is placed right above the container it was dropped on.' );
 
 				elementor.channels.editor.reply( 'element:dragged', null );
+			} );
+
+			QUnit.test( 'Canvas edge previews the document-level drop on the top-level ancestor', ( assert ) => {
+				const parentContainer = ElementsHelper.createContainer(),
+					childContainer = ElementsHelper.createContainer();
+
+				ElementsHelper.move( childContainer, parentContainer );
+
+				const parentView = parentContainer.lookup().view,
+					{ getPlaceholderOverride } = parentView.getDroppableOptions(),
+					{ top, bottom } = parentView.el.getBoundingClientRect();
+
+				elementor.channels.editor.reply( 'element:dragged', childContainer.lookup().view );
+
+				const edgeOverride = getPlaceholderOverride( 'top', { clientY: top } ),
+					centerOverride = getPlaceholderOverride( 'top', { clientY: ( top + bottom ) / 2 } );
+
+				elementor.channels.editor.reply( 'element:dragged', null );
+
+				assert.equal( edgeOverride?.element, parentView.el,
+					'The placeholder previews beside the top-level ancestor, not inside it.' );
+				assert.equal( edgeOverride?.side, 'top',
+					'The placeholder previews on the side the container will land on.' );
+				assert.equal( centerOverride, null,
+					'Away from the edges the regular nesting placeholder is used.' );
+			} );
+
+			QUnit.test( 'Canvas edge previews nothing for a top-level container', ( assert ) => {
+				const firstContainer = ElementsHelper.createContainer(),
+					secondContainer = ElementsHelper.createContainer();
+
+				const secondView = secondContainer.lookup().view,
+					{ getPlaceholderOverride } = secondView.getDroppableOptions();
+
+				elementor.channels.editor.reply( 'element:dragged', firstContainer.lookup().view );
+
+				const override = getPlaceholderOverride( 'top', { clientY: secondView.el.getBoundingClientRect().top } );
+
+				elementor.channels.editor.reply( 'element:dragged', null );
+
+				assert.equal( override, null,
+					'A top-level container shows the nesting placeholder, since it has nothing to un-nest.' );
 			} );
 
 			QUnit.test( 'Canvas edge ignores widgets dragged from an existing container', ( assert ) => {

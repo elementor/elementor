@@ -12,6 +12,8 @@ import { getDraggedContainerView, isNestedContainer } from 'elementor-editor-uti
 // instead of nesting, so a nested Container can be moved out to a specific position.
 const DOCUMENT_LEVEL_EDGE_THRESHOLD = 16;
 
+const DOCUMENT_LEVEL_PLACEHOLDER_CLASS = 'e-document-level';
+
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
@@ -201,6 +203,7 @@ const ContainerView = BaseElementView.extend( {
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'e-dragging-over',
 			getDropContainer: () => this.getContainer(),
+			getPlaceholderOverride: ( side, event ) => this.getDocumentLevelDropTarget( event ),
 			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
@@ -243,13 +246,10 @@ const ContainerView = BaseElementView.extend( {
 						currentTargetParentContainer = currentTargetParentContainer.parent;
 					}
 
-					const draggedContainerView = getDraggedContainerView(),
-						documentLevelDropSide = draggedContainerView && isNestedContainer( draggedContainerView )
-							? this.getDocumentLevelDropSide( event )
-							: null;
+					const documentLevelDropTarget = this.getDocumentLevelDropTarget( event );
 
-					if ( documentLevelDropSide ) {
-						this.moveToDocumentLevel( draggedContainerView, documentLevelDropSide );
+					if ( documentLevelDropTarget ) {
+						this.moveToDocumentLevel( documentLevelDropTarget );
 
 						return;
 					}
@@ -286,18 +286,18 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
-	 * Whether a drop near the top-level ancestor's outer edge means "place the dragged
-	 * Container beside me at the document level" rather than "nest it inside me".
+	 * Whether the pointer is close enough to an element's outer edge to mean "place the
+	 * dragged Container beside it" rather than "nest it inside".
 	 *
-	 * @param {Object} event The drop event.
+	 * @param {HTMLElement} element The element to measure against.
+	 * @param {Object}      event   The drag event.
 	 *
 	 * @return {string|null} `top`, `bottom`, or `null` when the drop should nest as usual.
 	 */
-	getDocumentLevelDropSide( event ) {
-		const element = this.getTopLevelAncestor()?.view?.el,
-			pointerY = event.originalEvent?.clientY ?? event.clientY;
+	getDocumentLevelDropSide( element, event ) {
+		const pointerY = event.originalEvent?.clientY ?? event.clientY;
 
-		if ( ! element || undefined === pointerY ) {
+		if ( undefined === pointerY ) {
 			return null;
 		}
 
@@ -314,7 +314,44 @@ const ContainerView = BaseElementView.extend( {
 		return null;
 	},
 
-	moveToDocumentLevel( draggedContainerView, side ) {
+	/**
+	 * Where a dragged Container should land at the document level, if this drag qualifies
+	 * to be un-nested at all. Drives both the drop itself and its placeholder preview, so
+	 * what the user sees while dragging matches what happens on release.
+	 *
+	 * @param {Object} event The drag event.
+	 *
+	 * @return {{view: Backbone.View, element: HTMLElement, side: string, className: string}|null}
+	 * The resolved document-level target, or `null` when the drop should nest as usual.
+	 */
+	getDocumentLevelDropTarget( event ) {
+		const draggedContainerView = getDraggedContainerView();
+
+		if ( ! draggedContainerView || ! isNestedContainer( draggedContainerView ) ) {
+			return null;
+		}
+
+		const element = this.getTopLevelAncestor()?.view?.el;
+
+		if ( ! element ) {
+			return null;
+		}
+
+		const side = this.getDocumentLevelDropSide( element, event );
+
+		if ( ! side ) {
+			return null;
+		}
+
+		return {
+			view: draggedContainerView,
+			element,
+			side,
+			className: DOCUMENT_LEVEL_PLACEHOLDER_CLASS,
+		};
+	},
+
+	moveToDocumentLevel( { view, side } ) {
 		const documentContainer = elementor.getPreviewContainer(),
 			topLevelChildren = documentContainer.children,
 			targetIndex = topLevelChildren.indexOf( this.getTopLevelAncestor() );
@@ -324,14 +361,14 @@ const ContainerView = BaseElementView.extend( {
 		}
 
 		// Exclude the dragged element from the indexing calculations.
-		const draggedIndex = topLevelChildren.indexOf( draggedContainerView.getContainer() ),
+		const draggedIndex = topLevelChildren.indexOf( view.getContainer() ),
 			isDraggedBeforeTarget = -1 !== draggedIndex && draggedIndex < targetIndex,
 			at = ( isDraggedBeforeTarget ? targetIndex - 1 : targetIndex ) + ( 'bottom' === side ? 1 : 0 );
 
 		elementor.channels.editor.reply( 'element:dragged', null );
 
 		$e.run( 'document/elements/move', {
-			container: draggedContainerView.getContainer(),
+			container: view.getContainer(),
 			target: documentContainer,
 			options: { at },
 		} );

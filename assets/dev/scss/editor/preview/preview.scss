@@ -434,6 +434,19 @@ html.elementor-html {
 		width: var(--e-placeholder-width);
 		min-width: 200px;
 	}
+
+	// Shown between top-level Containers while a nested Container is dragged out to the
+	// document level. The negative block margins cancel its own height, so showing it
+	// doesn't push the Containers around and make the drop target move under the cursor.
+	&.e-document-level {
+		margin-block: calc(-0.5 * #{$widget-placeholder-size});
+
+		// As the last child its bottom margin collapses out of the wrapper instead of
+		// shrinking it, so the whole height has to be taken off the top.
+		&:last-child {
+			margin-block: calc(-1 * #{$widget-placeholder-size}) 0;
+		}
+	}
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,

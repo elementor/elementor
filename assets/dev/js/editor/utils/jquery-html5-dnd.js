@@ -16,6 +16,39 @@
 		}
 	};
 
+	// A droppable can place its placeholder outside itself (see `getPlaceholderOverride`),
+	// where the per-droppable cleanup can't reach it. Only one such placeholder should ever
+	// be visible, so it's tracked across droppables and cleared by whoever draws next.
+	var overridePlaceholder = null;
+
+	var clearOverridePlaceholder = function() {
+		if ( ! overridePlaceholder ) {
+			return;
+		}
+
+		overridePlaceholder.$placeholder.removeClass( overridePlaceholder.className ).remove();
+
+		overridePlaceholder = null;
+	};
+
+	// `dragleave` on the droppable being left can fire after `dragenter` on the one being
+	// entered, so a droppable may only clean up a placeholder it owns.
+	var clearOwnOverridePlaceholder = function( $placeholder ) {
+		if ( overridePlaceholder?.$placeholder.is( $placeholder ) ) {
+			clearOverridePlaceholder();
+		}
+	};
+
+	var setOverridePlaceholder = function( $placeholder, override ) {
+		const insertMethod = 'bottom' === override.side ? 'after' : 'before';
+
+		$placeholder.addClass( override.className );
+
+		$( override.element )[ insertMethod ]( $placeholder );
+
+		overridePlaceholder = { $placeholder, className: override.className };
+	};
+
 	var Draggable = function( userSettings ) {
 		var self = this,
 			settings = {},
@@ -91,6 +124,7 @@
 			elementsCache = {},
 			currentElement,
 			currentSide,
+			currentPlaceholderOverride = null,
 			isDroppingAllowedState = false,
 			originalCurrentElementOpacity = null,
 			placeholderContext = {},
@@ -106,6 +140,7 @@
 				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
 				isDroppingAllowed: null,
+				getPlaceholderOverride: null,
 				onDragEnter: null,
 				onDragging: null,
 				onDropping: null,
@@ -211,12 +246,36 @@
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
-		var insertPlaceholder = function() {
+		// Lets a droppable place the placeholder outside its own subtree, so a drop that
+		// targets a different level than the hovered element can still be previewed.
+		var getPlaceholderOverride = function( event ) {
+			if ( 'function' !== typeof settings.getPlaceholderOverride ) {
+				return null;
+			}
+
+			return settings.getPlaceholderOverride.call( currentElement, currentSide, event, self );
+		};
+
+		var isSamePlaceholderOverride = function( override ) {
+			return override?.element === currentPlaceholderOverride?.element &&
+				override?.side === currentPlaceholderOverride?.side;
+		};
+
+		var insertPlaceholder = function( override = null ) {
 			if ( ! settings.placeholder ) {
 				return;
 			}
 
 			clearPreviousPlaceholder();
+			clearOverridePlaceholder();
+
+			currentPlaceholderOverride = override;
+
+			if ( override ) {
+				setOverridePlaceholder( elementsCache.$placeholder, override );
+
+				return;
+			}
 
 			const insertMode = getInsertMode();
 
@@ -567,7 +626,7 @@
 					$( document ).on( 'dragend', onDocumentDragEnd );
 				}
 
-				insertPlaceholder();
+				insertPlaceholder( getPlaceholderOverride( event ) );
 
 				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
 
@@ -596,8 +655,10 @@
 
 			event.preventDefault();
 
-			if ( oldSide !== currentSide ) {
-				insertPlaceholder();
+			const placeholderOverride = getPlaceholderOverride( event );
+
+			if ( oldSide !== currentSide || ! isSamePlaceholderOverride( placeholderOverride ) ) {
+				insertPlaceholder( placeholderOverride );
 			}
 
 			if ( 'function' === typeof settings.onDragging ) {
@@ -668,6 +729,8 @@
 		};
 
 		this.doDragLeave = function() {
+			clearOwnOverridePlaceholder( elementsCache.$placeholder );
+
 			if ( settings.placeholder ) {
 				elementsCache.$placeholder.remove();
 			}
@@ -682,6 +745,7 @@
 			}
 
 			currentElement = currentSide = null;
+			currentPlaceholderOverride = null;
 		};
 
 		this.destroy = function() {
