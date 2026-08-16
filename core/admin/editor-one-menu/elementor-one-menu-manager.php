@@ -80,11 +80,14 @@ class Elementor_One_Menu_Manager {
 	 * TODO: This can be removed in v4.1.0 [ED-22806]
 	 */
 	public function register_pro_submenus(): void {
-		if ( ! $this->is_pro_module_enabled &&
+		$has_active_pro = ! $this->is_pro_module_enabled &&
 			Utils::has_pro() &&
 			class_exists( '\ElementorPro\License\API' ) &&
-			\ElementorPro\License\API::is_license_active()
-		) {
+			\ElementorPro\License\API::is_license_active();
+
+		// Register Theme Builder and Submissions for both Pro and Free users
+		// For Free users, these will link to promotional pages
+		if ( $has_active_pro || ! Utils::has_pro() ) {
 			add_submenu_page(
 				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 				esc_html__( 'Theme Builder', 'elementor' ),
