@@ -4,7 +4,7 @@ import { __createStore as createStore, __registerSlice as registerSlice } from '
 import {
   DEFAULT_STYLES_PROVIDER_KEY,
   defaultStylesStylesProvider,
-} from '../default-styles-styles-provider';
+} from '../default-styles-provider';
 import { slice } from '../store';
 
 describe( 'defaultStylesStylesProvider', () => {
