@@ -13,32 +13,32 @@ import { useDefaultStylesActionProps } from './hooks/use-default-styles-action-p
 import { slice } from './store';
 
 export function init() {
-  registerSlice( slice );
+	registerSlice(slice);
 
-  registerElementPanelDefaults( 'default-style', {
-    defaultTab: 'style',
-    defaultSectionsExpanded: {
-      style: [ ...STYLE_SECTION_NAMES ],
-    },
-  } );
+	registerElementPanelDefaults('default-style', {
+		defaultTab: 'style',
+		defaultSectionsExpanded: {
+			style: [...STYLE_SECTION_NAMES],
+		},
+	});
 
-  registerPanel( panel );
+	registerPanel(panel);
 
-  stylesRepository.register( defaultStylesStylesProvider );
+	stylesRepository.register(defaultStylesStylesProvider);
 
-  toolsMenu.registerAction( {
-    id: 'default-styles-button',
-    priority: 4,
-    useProps: useDefaultStylesActionProps,
-  } );
+	toolsMenu.registerAction({
+		id: 'default-styles-button',
+		priority: 4,
+		useProps: useDefaultStylesActionProps,
+	});
 
-  injectIntoLogic( {
-    id: 'default-styles-populate-store',
-    component: PopulateStore,
-  } );
+	injectIntoLogic({
+		id: 'default-styles-populate-store',
+		component: PopulateStore,
+	});
 
-  injectIntoLogic( {
-    id: 'default-styles-open-gate',
-    component: DefaultStylesOpenGate,
-  } );
+	injectIntoLogic({
+		id: 'default-styles-open-gate',
+		component: DefaultStylesOpenGate,
+	});
 }
