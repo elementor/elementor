@@ -51,8 +51,8 @@ abstract class Fake_V3_Widget extends Widget_Base {
 	 */
 	protected function get_test_controls(): array {
 		return [
-			'menu' => [ 'label' => 'Menu', 'type' => Controls_Manager::TEXT ],
-			'layout' => [ 'label' => 'Layout', 'type' => Controls_Manager::TEXT ],
+			'menu' => [ 'name' => 'menu', 'label' => 'Menu', 'type' => Controls_Manager::TEXT ],
+			'layout' => [ 'name' => 'layout', 'label' => 'Layout', 'type' => Controls_Manager::TEXT ],
 		];
 	}
 
