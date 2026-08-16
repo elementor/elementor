@@ -249,4 +249,18 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertArrayNotHasKey( 'missing_control', $result['valid'] );
 		$this->assertSame( 'no schema for allowlisted key.', $result['errors']['missing_control'] );
 	}
+
+	public function test_check_settings_shape__passes_keys_when_schema_has_no_properties() {
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'menu' => '3',
+				'layout' => 'horizontal',
+			],
+			V3_Json_Schema_Builder::build( [], [ 'menu', 'layout' ] )
+		);
+
+		$this->assertSame( [], $result['errors'] );
+		$this->assertSame( '3', $result['valid']['menu'] );
+		$this->assertSame( 'horizontal', $result['valid']['layout'] );
+	}
 }

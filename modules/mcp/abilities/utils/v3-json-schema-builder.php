@@ -131,6 +131,7 @@ class V3_Json_Schema_Builder {
 	public static function check_settings_shape( array $settings, array $schema ): array {
 		$valid = [];
 		$errors = [];
+		$has_schema_properties = ! empty( $schema['properties'] );
 
 		foreach ( $settings as $key => $value ) {
 			if ( ! is_string( $key ) ) {
@@ -140,7 +141,12 @@ class V3_Json_Schema_Builder {
 			$entry_schema = $schema['properties'][ $key ] ?? null;
 
 			if ( ! is_array( $entry_schema ) ) {
-				$errors[ $key ] = 'no schema for allowlisted key.';
+				if ( $has_schema_properties ) {
+					$errors[ $key ] = 'no schema for allowlisted key.';
+					continue;
+				}
+
+				$valid[ $key ] = $value;
 				continue;
 			}
 
