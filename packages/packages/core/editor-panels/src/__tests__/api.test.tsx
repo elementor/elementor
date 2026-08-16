@@ -103,6 +103,39 @@ describe( 'panels api', () => {
 		expect( screen.queryByText( 'Test Panel Body' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should keep the panel mounted when keepMounted is true', () => {
+		// Arrange.
+		const mockPanel = createMockPanel( { keepMounted: true } );
+
+		registerPanel( mockPanel.panel );
+
+		jest.mocked( useRouteStatus ).mockReturnValue( {
+			isActive: true,
+			isBlocked: false,
+		} );
+
+		// Act.
+		renderPanel( mockPanel );
+
+		// Assert.
+		const mountedPanelBody = screen.getByText( 'Test Panel Body' );
+		expect( mountedPanelBody ).toBeInTheDocument();
+		expect( mountedPanelBody ).not.toBeVisible();
+
+		// Act.
+		fireEvent.click( screen.getByText( 'Open Panel' ) );
+
+		// Assert.
+		expect( screen.getByText( 'Test Panel Body' ) ).toBeVisible();
+
+		// Act.
+		fireEvent.click( screen.getByText( 'Close Panel' ) );
+
+		// Assert.
+		expect( mountedPanelBody ).toBeInTheDocument();
+		expect( mountedPanelBody ).not.toBeVisible();
+	} );
+
 	it( 'should not open the panel if the panel was not registered', () => {
 		// Arrange.
 		const mockPanel = createMockPanel();
