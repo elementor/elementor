@@ -52,7 +52,7 @@
                 "has_divider_before": false,
                 "event_id": "role_manager"
             },
-			{
+            {
                 "slug": "e-form-submissions",
                 "label": "Submissions",
                 "url": "/wp-admin/admin.php?page=e-form-submissions",
