@@ -15,7 +15,6 @@ export const DEFAULT_STRINGS: Record< string, string > = {
 	'login.title': "Let's get to work.",
 	'login.sign_in': 'Sign in to Elementor',
 	'login.continue_another_way': 'Continue another way',
-	'login.continue_as_guest': 'Continue as a guest',
 	'steps.building_for.title': 'Who are you building for?',
 	'steps.building_for.greeting_with_name': "Hey %1$s %2$s Let's get your site set up.",
 	'steps.building_for.greeting_without_name': "Hey%s Let's get your site set up.",

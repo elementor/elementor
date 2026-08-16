@@ -132,7 +132,7 @@ describe( 'App', () => {
 			expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should navigate to first step after clicking "Continue as a guest"', async () => {
+		it( 'should navigate to first step after clicking "Skip"', async () => {
 			// Arrange
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: false,
