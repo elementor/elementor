@@ -117,7 +117,7 @@ class Test_V3_Settings_Validator extends TestCase {
 		$this->assertArrayNotHasKey( 'link', $result['allowed'] );
 	}
 
-	public function test_validate__passes_keys_when_controls_are_missing() {
+	public function test_validate__rejects_all_keys_when_controls_are_missing() {
 		$settings = [
 			'title' => 'Hello',
 			'header_size' => 'h2',
@@ -125,7 +125,9 @@ class Test_V3_Settings_Validator extends TestCase {
 
 		$result = V3_Settings_Validator::validate( 'theme-post-title', $settings, [] );
 
-		$this->assertNull( $result['error'] );
-		$this->assertSame( $settings, $result['allowed'] );
+		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
+		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertSame( [], $result['allowed'] );
 	}
 }
