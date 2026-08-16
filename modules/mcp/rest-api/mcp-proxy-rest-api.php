@@ -75,7 +75,7 @@ class Mcp_Proxy_REST_API {
 			return $this->build_response( $this->forbidden_error() );
 		}
 
-		$result = $ability->execute( is_array( $input ) ? $input : [] );
+		$result = $ability->execute_guarded( is_array( $input ) ? $input : [] );
 
 		return $this->build_response( $result );
 	}
