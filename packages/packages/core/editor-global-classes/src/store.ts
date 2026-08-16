@@ -120,11 +120,11 @@ export const slice = createSlice( {
         classLables: state.classLabels,
       };
 
-      if ( oldLabel ) {
+      if ( oldLabel && payload.style.label && payload.style.label !== oldLabel ) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete state.classLabels[ oldLabel ];
+        delete state.classLabels[ payload.style.id ];
+        state.classLabels[ payload.style.id ] = payload.style.label;
       }
-      state.classLabels[ payload.style.id ] = payload.style.label || oldLabel;
 
       state.data.items[ payload.style.id ] = mergedData;
 
