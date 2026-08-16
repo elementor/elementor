@@ -73,7 +73,7 @@ final class Plugin {
 	public function register_dynamic_tags( $dynamic_tags_manager ): void {
 		require_once __DIR__ . '/dynamic-tags/site-name-tag.php';
 
-		\Elementor\Plugin::$instance->dynamic_tags->register_group(
+		$dynamic_tags_manager->register_group(
 			'elementor-example-plugin',
 			[
 				'title' => esc_html__( 'Elementor Examples', 'elementor-example-plugin' ),

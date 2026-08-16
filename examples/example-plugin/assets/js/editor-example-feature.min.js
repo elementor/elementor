@@ -1,13 +1,13 @@
-( function () {
+( function() {
 	window.elementorV2 = window.elementorV2 || {};
 
 	window.elementorV2.editorExampleFeature = {
-		init: function () {
+		init() {
 			var appBar = window.elementorV2.editorAppBar;
 			var React = window.React;
 
 			if ( appBar && appBar.injectIntoPageIndication && React ) {
-				var ExampleIndicator = function () {
+				var ExampleIndicator = function() {
 					return React.createElement(
 						'span',
 						{
@@ -17,7 +17,7 @@
 								opacity: 0.85,
 							},
 						},
-						'Example Plugin'
+						'Example Plugin',
 					);
 				};
 
@@ -36,16 +36,16 @@
 
 			var shadowVariablePropTypeUtil = {
 				key: 'global-shadow-variable',
-				create: function ( value ) {
+				create( value ) {
 					return {
 						$$type: 'global-shadow-variable',
-						value: value,
+						value,
 					};
 				},
-				validate: function ( propValue ) {
-					return propValue && propValue.$$type === 'global-shadow-variable' && 'string' === typeof propValue.value;
+				validate( propValue ) {
+					return propValue && 'global-shadow-variable' === propValue.$$type && 'string' === typeof propValue.value;
 				},
-				generate: function ( value ) {
+				generate( value ) {
 					return this.create( value );
 				},
 			};
