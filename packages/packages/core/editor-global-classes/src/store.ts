@@ -120,8 +120,6 @@ export const slice = createSlice( {
 			};
 
 			if ( oldLabel && payload.style.label && payload.style.label !== oldLabel ) {
-				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-				delete state.classLabels[ payload.style.id ];
 				state.classLabels[ payload.style.id ] = payload.style.label;
 			}
 
