@@ -52,6 +52,16 @@
                 "has_divider_before": false,
                 "event_id": "role_manager"
             },
+			{
+                "slug": "e-form-submissions",
+                "label": "Submissions",
+                "url": "/wp-admin/admin.php?page=e-form-submissions",
+                "icon": "send",
+                "group_id": "",
+                "priority": 70,
+                "has_divider_before": false,
+                "event_id": "e_form_submissions"
+            },
             {
                 "slug": "elementor-custom-elements",
                 "label": "Custom Elements",
