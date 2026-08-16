@@ -18,13 +18,22 @@ import { selectIsDirty, slice } from './store';
 const PANEL_ID = 'default-styles';
 const V2_PANEL_ROUTE = 'panel/v2';
 
+function DefaultStylesPanelRoot() {
+  const { close } = usePanelActions();
+
+  return <DefaultStylesPanelEmbedded onRequestClose={ close } />;
+}
+
 export const { panel, usePanelStatus, usePanelActions } = createPanel( {
   id: PANEL_ID,
   component: DefaultStylesPanelRoot,
 } );
 
-function DefaultStylesPanelRoot() {
-  const { close } = usePanelActions();
+export type DefaultStylesPanelEmbeddedProps = {
+  onRequestClose: () => void | Promise< void >;
+};
+
+export function DefaultStylesPanelEmbedded( { onRequestClose }: DefaultStylesPanelEmbeddedProps ) {
   const {
     open: openSaveChangesDialog,
     close: closeSaveChangesDialog,
@@ -34,8 +43,8 @@ function DefaultStylesPanelRoot() {
   const resetAndClosePanel = useCallback( () => {
     dispatch( slice.actions.reset() );
     closeSaveChangesDialog();
-    void close();
-  }, [ close, closeSaveChangesDialog ] );
+    void onRequestClose();
+  }, [ onRequestClose, closeSaveChangesDialog ] );
 
   const handleClosePanel = useCallback( () => {
     if ( selectIsDirty( getState() ) ) {
@@ -43,8 +52,8 @@ function DefaultStylesPanelRoot() {
       return;
     }
 
-    void close();
-  }, [ close, openSaveChangesDialog ] );
+    void onRequestClose();
+  }, [ onRequestClose, openSaveChangesDialog ] );
 
   useEffect( () => {
     const unsubscribe = listenTo( routeCloseEvent( V2_PANEL_ROUTE ), () => {
@@ -89,9 +98,14 @@ function DefaultStylesPanelRoot() {
               confirm: {
                 label: __( 'Save & Continue', 'elementor' ),
                 action: async () => {
-                  await saveDefaultStyles();
+                  try {
+                    await saveDefaultStyles();
+                  } catch {
+                    return;
+                  }
+
                   closeSaveChangesDialog();
-                  void close();
+                  void onRequestClose();
                 },
               },
             } }
