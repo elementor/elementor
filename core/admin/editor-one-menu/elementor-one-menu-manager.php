@@ -105,8 +105,6 @@ class Elementor_One_Menu_Manager {
 			70
 		);
 
-		// Free users get the Submissions promotion from Editor_One_Submissions_Menu;
-		// only active Pro registers the real page here.
 		if ( $has_active_pro ) {
 			add_submenu_page(
 				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
