@@ -93,8 +93,6 @@ class Elementor_One_Menu_Manager {
 			return;
 		}
 
-		// For free users the slug URL is rewritten to the promotion page in
-		// fix_theme_builder_submenu_url(); active Pro serves the real page.
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Theme Builder', 'elementor' ),
