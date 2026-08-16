@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
@@ -21,13 +22,16 @@ class Element_Config_Applier {
 
 	private Widget_Type_Resolver $type_resolver;
 	private Plain_Values_Resolver $plain_values_resolver;
+	private ?V3_Dynamic_Hoister $v3_dynamic_hoister;
 
 	public function __construct(
 		Widget_Type_Resolver $type_resolver,
-		Plain_Values_Resolver $plain_values_resolver
+		Plain_Values_Resolver $plain_values_resolver,
+		?V3_Dynamic_Hoister $v3_dynamic_hoister = null
 	) {
 		$this->type_resolver = $type_resolver;
 		$this->plain_values_resolver = $plain_values_resolver;
+		$this->v3_dynamic_hoister = $v3_dynamic_hoister;
 	}
 
 	/**
@@ -57,13 +61,30 @@ class Element_Config_Applier {
 			}
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$filter = V3_Non_Style_Allowlist::filter( (string) $tag, $settings );
+				$widget_type = (string) $tag;
+				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
 					continue;
 				}
 
-				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $filter['allowed'] );
+				$controls = is_array( $widget_configs[ $widget_type ]['controls'] ?? null )
+					? $widget_configs[ $widget_type ]['controls']
+					: [];
+
+				$hoist_outcome = $this->get_v3_dynamic_hoister()->hoist( $widget_type, $filter['allowed'], $controls );
+
+				foreach ( $hoist_outcome['errors'] as $error_message ) {
+					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
+				}
+
+				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $hoist_outcome['primitives'] );
+
+				if ( ! empty( $hoist_outcome['shortcodes'] ) ) {
+					$existing = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+					$node['settings']['__dynamic__'] = array_merge( $existing, $hoist_outcome['shortcodes'] );
+				}
+
 				continue;
 			}
 
@@ -214,5 +235,13 @@ class Element_Config_Applier {
 		$result = Props_Parser::make( $schema )->parse( $settings );
 
 		return $result->is_valid() ? null : $result->errors()->to_string();
+	}
+
+	private function get_v3_dynamic_hoister(): V3_Dynamic_Hoister {
+		if ( null === $this->v3_dynamic_hoister ) {
+			$this->v3_dynamic_hoister = new V3_Dynamic_Hoister();
+		}
+
+		return $this->v3_dynamic_hoister;
 	}
 }
