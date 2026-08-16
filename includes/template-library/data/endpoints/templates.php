@@ -58,18 +58,30 @@ class Templates extends Endpoint {
 	 * @return array
 	 */
 	private function reorder_categories( array $library_data ): array {
-		$not_found_category = '404 page';
+	$not_found_category = '404 page';
 
-		$key = array_search( $not_found_category, $library_data['config']['block']['categories'] );
-		if ( false === $key ) {
-			return $library_data;
-		}
-
-		array_splice( $library_data['config']['block']['categories'], $key, 1 );
-		$library_data['config']['block']['categories'][] = $not_found_category;
-
+	if (
+		empty( $library_data['config']['block']['categories'] ) ||
+		! is_array( $library_data['config']['block']['categories'] )
+	) {
 		return $library_data;
 	}
+
+	$key = array_search(
+		$not_found_category,
+		$library_data['config']['block']['categories'],
+		true
+	);
+
+	if ( false === $key ) {
+		return $library_data;
+	}
+
+	array_splice( $library_data['config']['block']['categories'], $key, 1 );
+	$library_data['config']['block']['categories'][] = $not_found_category;
+
+	return $library_data;
+}
 
 	public function create_items( $request ) {
 		/** @var Source_Local $source */
