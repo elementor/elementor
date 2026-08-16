@@ -6,6 +6,7 @@ import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { PopulateStore } from './components/populate-store';
+import { DefaultStylesOpenGate } from './default-styles-open-gate';
 import { panel } from './default-styles-panel';
 import { defaultStylesStylesProvider } from './default-styles-styles-provider';
 import { useDefaultStylesActionProps } from './hooks/use-default-styles-action-props';
@@ -34,5 +35,10 @@ export function init() {
   injectIntoLogic( {
     id: 'default-styles-populate-store',
     component: PopulateStore,
+  } );
+
+  injectIntoLogic( {
+    id: 'default-styles-open-gate',
+    component: DefaultStylesOpenGate,
   } );
 }

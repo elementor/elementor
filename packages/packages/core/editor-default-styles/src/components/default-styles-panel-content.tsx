@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ControlActionsProvider,
   ControlReplacementsProvider,
@@ -24,11 +25,11 @@ import {
 } from '@elementor/editor-panels';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { controlActionsMenu } from '@elementor/menus';
 import { useMutation } from '@elementor/query';
-import { SessionStorageProvider, useSessionStorage } from '@elementor/session';
-import { __useSelector as useSelector } from '@elementor/store';
+import { getSessionStorageItem, SessionStorageProvider, setSessionStorageItem } from '@elementor/session';
+import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import {
   type AutocompleteChangeReason,
   Box,
@@ -48,7 +49,8 @@ import {
   isAllowedDefaultStyleTag,
 } from '../allowed-tags';
 import { saveDefaultStyles } from '../save-default-styles';
-import { selectIsDirty } from '../store';
+import { selectIsDirty, slice } from '../store';
+import { blockPanelInteractions, unblockPanelInteractions } from '../panel-interactions';
 import { TagChip } from './tag-chip';
 
 const { useMenuItems } = controlActionsMenu;
@@ -58,6 +60,17 @@ const SHIM_CLASSES_PROP = '__default_styles_classes__';
 const TAG_SELECTOR_ID = 'default-styles-tag-selector';
 const LAST_ACTIVE_TAG_SESSION_PREFIX = 'default-styles';
 const LAST_ACTIVE_TAG_SESSION_KEY = 'last-active-tag';
+const LAST_ACTIVE_TAG_STORAGE_KEY = `${ LAST_ACTIVE_TAG_SESSION_PREFIX }/${ LAST_ACTIVE_TAG_SESSION_KEY }`;
+
+function readStoredActiveTag( allowedTags: AllowedHtmlTag[] ): AllowedHtmlTag {
+  const storedTag = getSessionStorageItem< AllowedHtmlTag >( LAST_ACTIVE_TAG_STORAGE_KEY );
+
+  if ( storedTag && isAllowedDefaultStyleTag( storedTag, allowedTags ) ) {
+    return storedTag;
+  }
+
+  return getDefaultActiveTag( allowedTags );
+}
 
 function toTagChip( tag: AllowedHtmlTag ): Option {
   return { label: tag, value: tag, fixed: true };
@@ -85,27 +98,44 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
     () => allowedTags.map( ( tag ) => ( { label: tag, value: tag } ) ),
     [ allowedTags ]
   );
-  const [ storedTag, saveTag ] = useSessionStorage< AllowedHtmlTag >(
-    LAST_ACTIVE_TAG_SESSION_KEY,
-    LAST_ACTIVE_TAG_SESSION_PREFIX
+  const [ selectedTag, setSelectedTagState ] = useState< AllowedHtmlTag >( () =>
+    readStoredActiveTag( allowedTags )
   );
-  const selectedTag = useMemo( () => {
-    if ( storedTag && isAllowedDefaultStyleTag( storedTag, allowedTags ) ) {
-      return storedTag;
-    }
-
-    return getDefaultActiveTag( allowedTags );
-  }, [ allowedTags, storedTag ] );
   const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
   const breakpoint = useActiveBreakpoint();
   const menuItems = useMenuItems().default;
   const controlReplacements = getControlReplacements();
   const isDirty = useSelector( selectIsDirty );
   const { mutateAsync: save, isPending: isSaving } = useSave();
+  const {
+    open: openSaveChangesDialog,
+    close: closeSaveChangesDialog,
+    isOpen: isSaveChangesDialogOpen,
+  } = useDialog();
 
   const setSelectedTag = ( tag: AllowedHtmlTag ) => {
-    saveTag( tag );
+    setSelectedTagState( tag );
+    setSessionStorageItem( LAST_ACTIVE_TAG_STORAGE_KEY, tag );
   };
+
+  const handleClosePanel = useCallback( () => {
+    if ( isDirty ) {
+      openSaveChangesDialog();
+      return;
+    }
+
+    onRequestClose();
+  }, [ isDirty, onRequestClose, openSaveChangesDialog ] );
+
+  useEffect( () => {
+    blockPanelInteractions();
+
+    return () => {
+      unblockPanelInteractions();
+    };
+  }, [] );
+
+  usePreventUnload( isDirty );
 
   const handleTagSelect = (
     _selected: Option[],
@@ -118,6 +148,23 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 
     setSelectedTag( option.value as AllowedHtmlTag );
     setActiveStyleState( null );
+  };
+
+  const resetAndClosePanel = () => {
+    dispatch( slice.actions.reset() );
+    closeSaveChangesDialog();
+    onRequestClose();
+  };
+
+  const handleSaveAndContinue = async () => {
+    try {
+      await save();
+    } catch {
+      return;
+    }
+
+    closeSaveChangesDialog();
+    onRequestClose();
   };
 
   return (
@@ -142,7 +189,7 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
                   <CloseButton
                     aria-label={ __( 'Close', 'elementor' ) }
                     sx={ { flexShrink: 0 } }
-                    onClick={ onRequestClose }
+                    onClick={ handleClosePanel }
                   />
                 </Stack>
               </PanelHeader>
@@ -213,6 +260,37 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
             </Panel>
           </ControlReplacementsProvider>
         </ControlActionsProvider>
+
+        { isSaveChangesDialogOpen && (
+          <SaveChangesDialog>
+            <SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
+              { __( 'You have unsaved changes', 'elementor' ) }
+            </SaveChangesDialog.Title>
+            <SaveChangesDialog.Content>
+              <SaveChangesDialog.ContentText>
+                { __( 'You have unsaved changes in Default Styles.', 'elementor' ) }
+              </SaveChangesDialog.ContentText>
+              <SaveChangesDialog.ContentText>
+                { __(
+                  'To avoid losing your updates, save your changes before leaving.',
+                  'elementor'
+                ) }
+              </SaveChangesDialog.ContentText>
+            </SaveChangesDialog.Content>
+            <SaveChangesDialog.Actions
+              actions={ {
+                discard: {
+                  label: __( 'Discard', 'elementor' ),
+                  action: resetAndClosePanel,
+                },
+                confirm: {
+                  label: __( 'Save & Continue', 'elementor' ),
+                  action: handleSaveAndContinue,
+                },
+              } }
+            />
+          </SaveChangesDialog>
+        ) }
       </ThemeProvider>
     </ErrorBoundary>
   );
@@ -222,4 +300,20 @@ function useSave() {
   return useMutation( {
     mutationFn: () => saveDefaultStyles(),
   } );
+}
+
+function usePreventUnload( isDirty: boolean ) {
+  useEffect( () => {
+    const handleBeforeUnload = ( event: BeforeUnloadEvent ) => {
+      if ( isDirty ) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener( 'beforeunload', handleBeforeUnload );
+
+    return () => {
+      window.removeEventListener( 'beforeunload', handleBeforeUnload );
+    };
+  }, [ isDirty ] );
 }
