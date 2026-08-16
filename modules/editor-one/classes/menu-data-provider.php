@@ -294,30 +294,9 @@ class Menu_Data_Provider {
 	}
 
 	private function build_flyout_items_with_expanded_third_party(): array {
-		$items = $this->build_flyout_items( true );
-
-		// Theme Builder is now shown in the admin sidebar for free users via register_pro_submenus()
-		// so we don't need to add it to the flyout menu anymore [ED-25245]
-
-		// Filter out Theme Builder and Submissions from the flyout menu
-		$items = array_values( array_filter( $items, function( $item ) {
-			return ! in_array( $item['slug'], [ 'elementor-theme-builder', 'e-form-submissions' ], true );
-		} ) );
-
-		return $items;
-	}
-
-	private function build_theme_builder_flyout_item(): array {
-		return [
-			'slug' => 'elementor-theme-builder',
-			'label' => esc_html__( 'Theme Builder', 'elementor' ),
-			'url' => $this->get_theme_builder_url(),
-			'icon' => 'theme-builder',
-			'group_id' => '',
-			'priority' => 50,
-			'has_divider_before' => false,
-			'event_id' => 'theme_builder',
-		];
+		// Theme Builder and Submissions live in the admin sidebar for free users via
+		// register_pro_submenus(), so they are intentionally absent from the flyout [ED-25245].
+		return $this->build_flyout_items( true );
 	}
 
 	private function build_flyout_items( bool $expand_third_party ): array {

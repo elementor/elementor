@@ -8,6 +8,7 @@ use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -80,34 +81,43 @@ class Elementor_One_Menu_Manager {
 	 * TODO: This can be removed in v4.1.0 [ED-22806]
 	 */
 	public function register_pro_submenus(): void {
-		$has_active_pro = ! $this->is_pro_module_enabled &&
-			Utils::has_pro() &&
+		if ( $this->is_pro_module_enabled ) {
+			return;
+		}
+
+		$is_free = ! Utils::has_pro();
+		$has_active_pro = Utils::has_pro() &&
 			class_exists( '\ElementorPro\License\API' ) &&
 			\ElementorPro\License\API::is_license_active();
 
-		// Register Theme Builder and Submissions for both Pro and Free users
-		// For Free users, these will link to promotional pages
-		if ( $has_active_pro || ! Utils::has_pro() ) {
-			add_submenu_page(
-				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-				esc_html__( 'Theme Builder', 'elementor' ),
-				esc_html__( 'Theme Builder', 'elementor' ),
-				Menu_Config::CAPABILITY_EDIT_POSTS,
-				'elementor-theme-builder',
-				'',
-				70
-			);
-
-			add_submenu_page(
-				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-				esc_html__( 'Submissions', 'elementor' ),
-				esc_html__( 'Submissions', 'elementor' ),
-				'edit_posts',
-				'e-form-submissions',
-				'',
-				80
-			);
+		if ( ! $is_free && ! $has_active_pro ) {
+			return;
 		}
+
+		// For free users the slug URL is rewritten to the promotion page in
+		// fix_theme_builder_submenu_url(); active Pro serves the real page.
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			Menu_Config::CAPABILITY_EDIT_POSTS,
+			'elementor-theme-builder',
+			'',
+			70
+		);
+
+		// Free users get the rendered Submissions promotion; active Pro serves the real page.
+		$submissions_callback = $is_free ? [ new Editor_One_Submissions_Menu(), 'render' ] : '';
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			'edit_posts',
+			'e-form-submissions',
+			$submissions_callback,
+			80
+		);
 	}
 
 	public function remove_all_submenus_for_edit_posts_users(): void {
@@ -298,10 +308,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function hide_flyout_items_from_wp_menu(): void {
-		// Theme Builder and Submissions are now in the admin sidebar for free users,
-		// so they should be hidden from the flyout menu [ED-25245]
 		$protected_wp_menu_slugs = [
 			Menu_Config::EDITOR_MENU_SLUG,
+			'elementor-theme-builder',
+			'e-form-submissions',
 		];
 
 		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( $protected_wp_menu_slugs ) {

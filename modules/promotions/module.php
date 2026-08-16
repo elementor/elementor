@@ -11,7 +11,6 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
-use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Conversion_Banner;
@@ -136,8 +135,7 @@ class Module extends Base_Module {
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
-		// Submissions is now shown in the admin sidebar for free users via register_pro_submenus() [ED-25245]
-		// $menu_data_provider->register_menu( new Editor_One_Submissions_Menu() );
+		// Submissions is registered in the admin sidebar for free users via register_pro_submenus() [ED-25245].
 		$menu_data_provider->register_menu( new Editor_One_Fonts_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
