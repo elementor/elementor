@@ -150,7 +150,14 @@ class Test_Element_Config_Applier extends TestCase {
 					'layout' => 'horizontal',
 				],
 			],
-			[]
+			[
+				'nav-menu' => [
+					'controls' => [
+						'menu' => [ 'type' => 'select', 'options' => [ 'primary' => 'Primary' ] ],
+						'layout' => [ 'type' => 'select', 'options' => [ 'horizontal' => 'Horizontal', 'vertical' => 'Vertical' ] ],
+					],
+				],
+			]
 		);
 
 		// Assert
@@ -187,6 +194,79 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( 'elementor_invalid_settings', $result['error']->get_error_code() );
 		$this->assertStringContainsString( 'color_menu_item', $result['error']->get_error_message() );
 		$this->assertArrayNotHasKey( 'menu', $nav['settings'] );
+	}
+
+	public function test_apply__v3_rejects_array_value_on_scalar_slot_shape_check() {
+		$applier = $this->make_applier();
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'title' => [ 'type' => 'text' ],
+				],
+			],
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'title' => [ 'not' => 'a scalar' ],
+				],
+			],
+			$widget_configs
+		);
+
+		$this->assertNotNull( $result['error'] );
+		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
+		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
+		$this->assertArrayNotHasKey( 'title', $node['settings'] );
+	}
+
+	public function test_apply__v3_merges_valid_keys_and_reports_invalid_keys() {
+		$applier = $this->make_applier();
+
+		$node = [
+			'elType' => 'widget',
+			'widgetType' => 'theme-post-title',
+			'settings' => [],
+		];
+		$index = [ 'title' => &$node ];
+
+		$widget_configs = [
+			'theme-post-title' => [
+				'controls' => [
+					'title' => [ 'type' => 'text' ],
+					'header_size' => [
+						'type' => 'select',
+						'options' => [ 'h1' => 'H1', 'h2' => 'H2' ],
+					],
+				],
+			],
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'title' => [
+					'title' => 'Hello world',
+					'header_size' => 'h9',
+				],
+			],
+			$widget_configs
+		);
+
+		$this->assertNotNull( $result['error'] );
+		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertSame( 'Hello world', $node['settings']['title'] );
+		$this->assertArrayNotHasKey( 'header_size', $node['settings'] );
 	}
 
 	public function test_apply__v3_dynamic_tag_on_url_control_is_hoisted_into__dynamic__() {

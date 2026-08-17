@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 
@@ -68,9 +69,8 @@ class Element_Config_Applier {
 					continue;
 				}
 
-				$controls = is_array( $widget_configs[ $widget_type ]['controls'] ?? null )
-					? $widget_configs[ $widget_type ]['controls']
-					: [];
+				$widget_config = is_array( $widget_configs[ $widget_type ] ?? null ) ? $widget_configs[ $widget_type ] : [];
+				$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
 
 				$hoist_outcome = $this->get_v3_dynamic_hoister()->hoist( $widget_type, $filter['allowed'], $controls );
 
@@ -78,7 +78,15 @@ class Element_Config_Applier {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $hoist_outcome['primitives'] );
+				$shape = V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
+
+				if ( ! empty( $shape['valid'] ) ) {
+					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
+				}
+
+				if ( $shape['error'] ) {
+					$errors[] = sprintf( '[%s] %s', $config_id, $shape['error']->get_error_message() );
+				}
 
 				if ( ! empty( $hoist_outcome['shortcodes'] ) ) {
 					$existing = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
