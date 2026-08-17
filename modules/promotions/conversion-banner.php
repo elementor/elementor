@@ -185,11 +185,11 @@ class Conversion_Banner {
 		}
 
 		return [
-			'title' => esc_html__( 'Go Pro, Go Limitless', 'elementor' ),
-			'text' => esc_html__( 'Unlock the theme builder, popup builder, 100+ widgets and more advanced tools to take your website to the next level.', 'elementor' ),
+			'title' => esc_html__( 'Build more with Elementor Pro', 'elementor' ),
+			'text' => esc_html__( 'Add the theme builder, popup builder, and 100+ advanced widgets to your Elementor editor.', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+					'text' => esc_html__( 'Upgrade now', 'elementor' ),
 					'link' => Go_Pro_Promotion_Item::get_url(),
 					'target' => '_blank',
 				],
