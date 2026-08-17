@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Promotions;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -20,6 +19,7 @@ class Conversion_Banner {
 	const DISMISS_KEY = 'conversion_banner_go_pro';
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
+	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
@@ -176,12 +176,12 @@ class Conversion_Banner {
 		}
 
 		return [
-			'title' => esc_html__( 'Go Pro, Go Limitless', 'elementor' ),
-			'text' => esc_html__( 'Unlock the theme builder, popup builder, 100+ widgets and more advanced tools to take your website to the next level.', 'elementor' ),
+			'title' => esc_html__( 'Build more with Elementor Pro', 'elementor' ),
+			'text' => esc_html__( 'Add the theme builder, popup builder, and 85+ advanced widgets to your Elementor Editor.', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
-					'link' => Go_Pro_Promotion_Item::get_url(),
+					'text' => esc_html__( 'Upgrade now', 'elementor' ),
+					'link' => self::UPGRADE_URL,
 					'target' => '_blank',
 				],
 			],
