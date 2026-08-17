@@ -9,6 +9,7 @@ describe( 'panels location', () => {
 		// Arrange.
 		const FirstPanel = () => <div>First</div>;
 		const SecondPanel = () => <div>Second</div>;
+		const warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 		injectIntoPanels( {
 			id: 'duplicate-panel',
@@ -22,6 +23,8 @@ describe( 'panels location', () => {
 			component: SecondPanel,
 			keepMounted: false,
 		} );
+
+		warnSpy.mockRestore();
 
 		const { result } = renderHook( () => usePanelsInjections() );
 
