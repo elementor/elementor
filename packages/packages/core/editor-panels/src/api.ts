@@ -14,6 +14,7 @@ export type PanelDeclaration< TOnOpenReturn = unknown > = {
 	id: string;
 	component: ComponentType;
 	isOpenPreviousElement?: boolean;
+	keepMounted?: boolean;
 } & UseActionsOptions< TOnOpenReturn > &
 	UseRouteStatusOptions;
 
@@ -25,6 +26,7 @@ export function createPanel< TOnOpenReturn >( {
 	allowedEditModes,
 	blockOnKitRoutes,
 	isOpenPreviousElement = false,
+	keepMounted = false,
 }: PanelDeclaration< TOnOpenReturn > ) {
 	const usePanelStatus = createUseStatus( id, {
 		allowedEditModes,
@@ -45,16 +47,22 @@ export function createPanel< TOnOpenReturn >( {
 		panel: {
 			id,
 			component,
+			keepMounted,
 		},
 		usePanelStatus,
 		usePanelActions,
 	};
 }
 
-export function registerPanel( { id, component }: Pick< PanelDeclaration, 'id' | 'component' > ) {
+export function registerPanel( {
+	id,
+	component,
+	keepMounted,
+}: Pick< PanelDeclaration, 'id' | 'component' | 'keepMounted' > ) {
 	injectIntoPanels( {
 		id,
 		component,
+		keepMounted,
 	} );
 }
 
