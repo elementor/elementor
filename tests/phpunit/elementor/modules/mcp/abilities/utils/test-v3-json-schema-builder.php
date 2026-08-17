@@ -203,4 +203,128 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 
 		$this->assertSame( 'Go to the menus screen', $result['properties']['menu']['description'] );
 	}
+
+	public function test_check_value_shape__passes_plain_scalar() {
+		$entry = [ 'type' => 'string' ];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( 'Hello world', $entry ) );
+	}
+
+	public function test_check_value_shape__rejects_array_on_scalar_slot() {
+		$entry = [ 'type' => 'string' ];
+
+		$result = V3_Json_Schema_Builder::check_value_shape( [ 'not' => 'a scalar' ], $entry );
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'invalid shape', $result );
+		$this->assertStringContainsString( 'expected string', $result );
+		$this->assertStringContainsString( 'got object', $result );
+	}
+
+	public function test_check_value_shape__rejects_enum_violation() {
+		$entry = [
+			'type' => 'string',
+			'enum' => [ 'h1', 'h2', 'h3' ],
+		];
+
+		$result = V3_Json_Schema_Builder::check_value_shape( 'h9', $entry );
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'value must be one of', $result );
+	}
+
+	public function test_check_value_shape__rejects_nested_property_type_mismatch() {
+		$entry = [
+			'type' => 'object',
+			'properties' => [
+				'url' => [ 'type' => 'string' ],
+				'id' => [ 'type' => 'number' ],
+			],
+		];
+
+		$result = V3_Json_Schema_Builder::check_value_shape(
+			[
+				'url' => 'https://example.com',
+				'id' => 'not-a-number',
+			],
+			$entry
+		);
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'invalid shape at "id"', $result );
+	}
+
+	public function test_check_settings_shape__collects_valid_and_errors() {
+		$schema = V3_Json_Schema_Builder::build(
+			[
+				'title' => [ 'type' => 'text' ],
+				'header_size' => [
+					'type' => 'select',
+					'options' => [ 'h1' => 'H1', 'h2' => 'H2' ],
+				],
+			],
+			[ 'title', 'header_size' ]
+		);
+
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'title' => 'Hello',
+				'header_size' => 'h9',
+			],
+			$schema
+		);
+
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'header_size', $result['valid'] );
+		$this->assertArrayHasKey( 'header_size', $result['errors'] );
+	}
+
+	public function test_check_value_shape__accepts_empty_array_for_array_and_object_types() {
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], [ 'type' => 'array' ] ) );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], [ 'type' => 'object' ] ) );
+	}
+
+	public function test_check_value_shape__accepts_numeric_string_for_number_type() {
+		$entry = [ 'type' => 'number' ];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( '123', $entry ) );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( '1.5', $entry ) );
+	}
+
+	public function test_check_value_shape__accepts_loose_enum_scalar_match() {
+		$entry = [
+			'type' => 'string',
+			'enum' => [ '1', '2', '3' ],
+		];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( 1, $entry ) );
+	}
+
+	public function test_json_type_of__empty_array_is_array() {
+		$schema = V3_Json_Schema_Builder::build( [ 'items' => [ 'type' => 'repeater' ] ] );
+
+		$this->assertSame( 'array', $schema['properties']['items']['type'] );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], $schema['properties']['items'] ) );
+	}
+
+	public function test_check_settings_shape__rejects_allowlisted_key_without_schema_entry() {
+		$schema = V3_Json_Schema_Builder::build(
+			[
+				'title' => [ 'type' => 'text' ],
+			],
+			[ 'title' ]
+		);
+
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'title' => 'Hello',
+				'missing_control' => 'value',
+			],
+			$schema
+		);
+
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'missing_control', $result['valid'] );
+		$this->assertSame( 'no schema for allowlisted key.', $result['errors']['missing_control'] );
+	}
 }
