@@ -53,7 +53,10 @@ test.describe( 'Onboarding @onboarding', () => {
 		const { installThemeRequests } = await mockOnboardingApi( page );
 		await navigateAndPassLogin( page );
 
-		await page.getByRole( 'button', { name: 'Continue with Hello' } ).click();
+		await Promise.all( [
+			page.waitForRequest( ( req ) => req.url().includes( 'install-theme' ) ),
+			page.getByRole( 'button', { name: 'Continue with Hello' } ).click(),
+		] );
 		await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
 		await expect(
 			page.getByRole( 'heading', { name: 'What do you want to include in your site?' } ),

@@ -4,14 +4,8 @@ import { Box, Chip, styled, Typography, useTheme } from '@elementor/ui';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
 import { t } from '../../../utils/translations';
+import { type FeatureOption } from './feature-options';
 import { ProPlanNotice } from './pro-plan-notice';
-
-export interface FeatureOption {
-	id: string;
-	labelKey: string;
-	Icon: React.ElementType;
-	licenseType: 'core' | 'pro' | 'one';
-}
 
 interface FeatureCardProps {
 	isSelected: boolean;

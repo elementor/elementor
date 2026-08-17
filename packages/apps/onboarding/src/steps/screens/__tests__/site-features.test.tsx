@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { DEFAULT_TEST_URLS, mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
 import { t } from '../../../utils/translations';
-import { COOKIE_CONSENT_FEATURE_ID, FEATURE_OPTIONS } from '../site-features';
+import { COOKIE_CONSENT_FEATURE_ID, FEATURE_OPTIONS } from '../../components/site-features';
 
 const SITE_FEATURES_PROGRESS = {
 	current_step_id: 'site_features',
