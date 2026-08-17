@@ -63,6 +63,7 @@ class Test_Conversion_Banner extends TestCase {
 			$config['text']
 		);
 		$this->assertSame( 'Upgrade now', $config['buttons'][0]['text'] );
+		$this->assertSame( Conversion_Banner::UPGRADE_URL, $config['buttons'][0]['link'] );
 	}
 }
 

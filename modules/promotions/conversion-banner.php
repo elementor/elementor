@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Promotions;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -20,6 +19,7 @@ class Conversion_Banner {
 	const DISMISS_KEY = 'conversion_banner_go_pro';
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
+	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
@@ -190,7 +190,7 @@ class Conversion_Banner {
 			'buttons' => [
 				[
 					'text' => esc_html__( 'Upgrade now', 'elementor' ),
-					'link' => Go_Pro_Promotion_Item::get_url(),
+					'link' => self::UPGRADE_URL,
 					'target' => '_blank',
 				],
 			],
