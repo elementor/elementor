@@ -113,6 +113,84 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertSame( [], $result['properties'] );
 	}
 
+	public function test_build__wraps_dynamic_capable_control_in_anyOf_union() {
+		// Arrange.
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'default' => 'Hello',
+				'dynamic' => [ 'active' => true, 'categories' => [ 'text', 'post_meta' ] ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		// Assert.
+		$entry = $result['properties']['title'];
+		$this->assertArrayHasKey( 'anyOf', $entry );
+		$this->assertCount( 2, $entry['anyOf'] );
+
+		$this->assertSame( 'string', $entry['anyOf'][0]['type'] );
+		$this->assertSame( 'Hello', $entry['anyOf'][0]['default'] );
+
+		$this->assertSame( 'object', $entry['anyOf'][1]['type'] );
+		$this->assertSame( [ 'name' ], $entry['anyOf'][1]['required'] );
+		$this->assertSame( 'string', $entry['anyOf'][1]['properties']['name']['type'] );
+		$this->assertStringContainsString( 'text', $entry['anyOf'][1]['description'] );
+		$this->assertStringContainsString( 'post_meta', $entry['anyOf'][1]['description'] );
+		$this->assertFalse( $entry['anyOf'][1]['additionalProperties'] );
+	}
+
+	public function test_build__wraps_control_with_dynamic_default_only() {
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'dynamic' => [ 'default' => 'post-title', 'categories' => [ 'text' ] ],
+			],
+		];
+
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		$this->assertArrayHasKey( 'anyOf', $result['properties']['title'] );
+		$this->assertFalse( $result['properties']['title']['anyOf'][1]['additionalProperties'] );
+	}
+
+	public function test_build__does_not_wrap_non_dynamic_control() {
+		// Arrange.
+		$controls = [
+			'size' => [
+				'type' => 'select',
+				'options' => [ 'a' => 'A', 'b' => 'B' ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'anyOf', $result['properties']['size'] );
+		$this->assertSame( 'string', $result['properties']['size']['type'] );
+	}
+
+	public function test_build__hoists_description_above_anyOf_when_control_is_dynamic() {
+		// Arrange.
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'description' => 'Heading text.',
+				'dynamic' => [ 'active' => true ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		// Assert.
+		$this->assertSame( 'Heading text.', $result['properties']['title']['description'] );
+		$this->assertArrayHasKey( 'anyOf', $result['properties']['title'] );
+	}
+
 	public function test_build__preserves_description_stripped_of_tags() {
 		$controls = [
 			'menu' => [
