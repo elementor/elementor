@@ -18,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -151,6 +152,14 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
+							// Neutralises the 10px inline padding that `.e-con` (added to every atomic
+							// element by `render_base_classes`) resolves from the container defaults.
+							// The item's own 10px lives on the header and the content slot, so any
+							// padding here or on the item would just inset the whole accordion.
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
 						] )
 				),
 		];

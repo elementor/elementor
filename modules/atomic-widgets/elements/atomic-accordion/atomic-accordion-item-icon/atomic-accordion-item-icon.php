@@ -80,8 +80,8 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 
 	/**
 	 * The slot — not the SVG inside it — is the sizing box. `e-svg` ships a fixed 65x65 base
-	 * style, which the accordion's inline CSS neutralises to 100% inside this slot, so a
-	 * replaced SVG picks up the slot's size automatically.
+	 * style, which the accordion's inline CSS neutralises inside this slot so a replaced SVG
+	 * takes the slot's height and keeps its own aspect ratio, pinned to the slot's trailing edge.
 	 */
 	protected function define_base_styles(): array {
 		$width = Size_Prop_Type::generate( [
@@ -101,7 +101,15 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'inline-flex' ),
 							'align-items' => String_Prop_Type::generate( 'center' ),
-							'justify-content' => String_Prop_Type::generate( 'center' ),
+							// The indicator belongs at the header's trailing edge, and the slot is far
+							// wider than the icon it holds (200px, so it stays a usable drop target once
+							// the default SVG is deleted), so its content — not the slot itself, which the
+							// header's `space-between` already pushes to the end — is what has to be
+							// pinned. Declared here, on the permanently locked slot, rather than on the
+							// SVG child: a child carries its styles with it when the user deletes it, so
+							// the next element dropped in would fall back to centred. `flex-end`, not
+							// `right`, so RTL flips it in step with the header's `space-between`.
+							'justify-content' => String_Prop_Type::generate( 'flex-end' ),
 							// The style schema has no `flex-shrink` longhand — only the composite
 							// `flex`. This slot is a flex item of the header (`display: flex`), so the
 							// main-axis size is governed by `flex-basis`, not `width`, unless the basis
@@ -118,6 +126,14 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 							] ),
 							'width' => $width,
 							'height' => $height,
+							// `.e-con`'s container default would add a 10px inline padding here, which
+							// (with `box-sizing: border-box`) both shrinks the SVG inside the declared
+							// width and pushes the chevron 10px further from the header's padding edge
+							// than the title is from the opposite one.
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
 						] )
 				),
 		];

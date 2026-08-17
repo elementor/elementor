@@ -11,6 +11,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	use Has_Element_Template;
+
+	const BASE_STYLE_KEY = 'base';
 
 	public static $widget_description = 'The title slot of an accordion item header. Always renders as a fixed, non-semantic wrapper; the visible HTML tag is controlled by the inner Paragraph element\'s own Tag setting. Accepts any element as its content.';
 
@@ -79,13 +84,29 @@ class Atomic_Accordion_Item_Title extends Atomic_Element_Base {
 	}
 
 	/**
-	 * No base styles for this slot (Step 2's table: base styles "none" for the title). Removing
-	 * the override entirely, rather than returning an empty `Style_Definition` list, is safe:
-	 * `Has_Base_Styles::get_base_styles_dictionary()` returns `[]` for a type with no
-	 * `define_base_styles()` override, and the `render_base_classes` Twig macro reads
-	 * `base_styles.base` — an empty array leaves that lookup `null`, which `join(' ')` renders as
-	 * an empty string alongside the other class names, so the class list still comes out clean.
+	 * Padding `0` is the *whole* base style here, and it is not redundant: `render_base_classes`
+	 * puts `e-con` on every atomic element, and `.e-con` declares
+	 * `padding-inline-start/end: var(--padding-inline-start/end)`, resolving to the container
+	 * default of 10px. A slot that declares no padding of its own therefore silently inherits a
+	 * 10px inline inset from that rule, which pushed the title text 10px to the right of the
+	 * content slot's children (the header already owns the item's 10px padding, so the title must
+	 * add none). Same reasoning as `Atomic_Background_Video_Content`'s explicit `padding: 0`.
 	 */
+	protected function define_base_styles(): array {
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
+						] )
+				),
+		];
+	}
+
 	protected function define_default_children() {
 		return [
 			Atomic_Paragraph::generate()

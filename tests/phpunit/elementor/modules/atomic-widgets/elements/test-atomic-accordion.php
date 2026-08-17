@@ -289,6 +289,67 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	}
 
 	// ---------------------------------------------------------------------
+	// Base styles
+	// ---------------------------------------------------------------------
+
+	/**
+	 * Every level must declare its own `padding`, including the levels that want none. The Twig
+	 * macro `render_base_classes()` puts `e-con` on every atomic element, and `.e-con` resolves
+	 * `padding-inline-start/end` from the container defaults (10px), so a level that declares no
+	 * padding does not end up at 0 — it silently inherits a 10px inline inset. That is what made
+	 * the title text sit 10px to the right of the content slot's children: only the header and the
+	 * content declared a padding, so the root, the item, the title and the icon each added a stray
+	 * 10px of their own.
+	 */
+	public function test_every_level_declares_padding_so_the_container_default_cannot_leak_in() {
+		$expected_padding_px = [
+			'e-accordion' => 0,
+			'e-accordion-item' => 0,
+			'e-accordion-item-header' => 10,
+			'e-accordion-item-title' => 0,
+			'e-accordion-item-icon' => 0,
+			'e-accordion-item-content' => 10,
+		];
+
+		foreach ( $expected_padding_px as $type => $size ) {
+			$base_styles = $this->get_config( $type )['base_styles'];
+			$props = $base_styles[ $type . '-base' ]['variants'][0]['props'] ?? [];
+
+			$this->assertArrayHasKey( 'padding', $props, "{$type} must declare a padding base style." );
+			$this->assertSame(
+				[
+					'$$type' => 'size',
+					'value' => [
+						'size' => $size,
+						'unit' => 'px',
+					],
+				],
+				$props['padding'],
+				"{$type} padding mismatch."
+			);
+		}
+	}
+
+	/**
+	 * The icon slot is far wider than the icon it holds (200x20, wide enough to stay a usable drop
+	 * target once the default SVG is deleted), so what keeps the indicator at the header's trailing
+	 * edge is the slot's own alignment, not the icon's. It has to live here, on the permanently
+	 * locked slot, and not on the SVG child: a child takes its styles with it when the user deletes
+	 * it, so the next element dropped into the slot would fall back to centred.
+	 */
+	public function test_icon_slot_pins_its_content_to_the_trailing_edge() {
+		$props = $this->get_config( 'e-accordion-item-icon' )['base_styles']['e-accordion-item-icon-base']['variants'][0]['props'];
+
+		$this->assertSame(
+			[
+				'$$type' => 'string',
+				'value' => 'flex-end',
+			],
+			$props['justify-content']
+		);
+	}
+
+	// ---------------------------------------------------------------------
 	// children_dependencies
 	// ---------------------------------------------------------------------
 

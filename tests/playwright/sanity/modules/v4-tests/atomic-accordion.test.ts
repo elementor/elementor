@@ -350,6 +350,79 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( getIcons( root ) ).toHaveCount( 2 );
 	} );
 
+	test( 'Icon stays flush with the header trailing edge, including after the SVG is replaced', async () => {
+		// Two rules together produce this, and each fails in a way the other cannot catch:
+		// `justify-content: flex-end` on the slot's base style
+		// (`Atomic_Accordion_Item_Icon::define_base_styles()`) and the height-only icon sizing in
+		// `module.php::add_inline_styles()`. The slot is 200px wide — far wider than the icon — so that
+		// it stays a usable drop target once the default SVG is deleted; if the icon were stretched to
+		// that width again, its *element box* would still end flush with the slot while
+		// `preserveAspectRatio` centred the glyph ~90px short of the edge. Hence the width assertion
+		// alongside the edge one. The second half deletes the default e-svg and drops a fresh one in,
+		// because alignment declared on the child instead of the slot would not survive that.
+		const trailingEdgeGeometry = async ( slot: Locator ) => {
+			return await slot.evaluate( ( slotEl ) => {
+				// The <svg> itself is rotated 180deg while the item is open, which inflates its
+				// axis-aligned box mid-transition; its wrapper is what the sizing rule targets and it
+				// never rotates.
+				const icon = slotEl.querySelector( '.e-svg-base' ) ?? slotEl.firstElementChild;
+				const header = slotEl.closest( '[data-element_type="e-accordion-item-header"]' );
+				const headerStyle = getComputedStyle( header );
+				const headerContentRight = header.getBoundingClientRect().right -
+					parseFloat( headerStyle.paddingRight ) -
+					parseFloat( headerStyle.borderRightWidth );
+				const slotRect = slotEl.getBoundingClientRect();
+				const iconRect = icon.getBoundingClientRect();
+
+				return {
+					gapToSlotEdge: slotRect.right - iconRect.right,
+					gapToHeaderContentEdge: headerContentRight - iconRect.right,
+					iconWidth: iconRect.width,
+					iconHeight: iconRect.height,
+					slotWidth: slotRect.width,
+				};
+			} );
+		};
+
+		// Arrange
+		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
+		const root = getAccordionRoot( accordionId );
+		const iconSlot = getIcons( root ).first();
+
+		await expect( iconSlot ).toBeVisible();
+		await expect( iconSlot ).toHaveCSS( 'justify-content', 'flex-end' );
+
+		// Assert — the default SVG is square, sized from the slot's height, and ends exactly where the
+		// header's content box does.
+		const withDefaultSvg = await trailingEdgeGeometry( iconSlot );
+
+		expect( withDefaultSvg.gapToSlotEdge ).toBeLessThanOrEqual( 1 );
+		expect( withDefaultSvg.gapToHeaderContentEdge ).toBeLessThanOrEqual( 1 );
+		expect( withDefaultSvg.iconWidth ).toBeLessThan( withDefaultSvg.slotWidth );
+		expect( withDefaultSvg.iconWidth ).toBeCloseTo( withDefaultSvg.iconHeight, 0 );
+
+		// Act — delete the default SVG and drop a fresh one into the same slot.
+		const iconSlotId = ( await getIdsByType( root, iconType ) )[ 0 ];
+		const defaultSvgId = await iconSlot.evaluate( ( el ) => {
+			return el.querySelector( '[data-element_type="widget"]' )?.getAttribute( 'data-id' );
+		} );
+
+		expect( defaultSvgId ).toBeTruthy();
+
+		await editor.removeElement( defaultSvgId! );
+		await expect( iconSlot.locator( 'svg' ) ).toHaveCount( 0 );
+
+		await editor.addWidget( { widgetType: 'e-svg', container: iconSlotId } );
+		await expect( iconSlot.locator( 'svg' ) ).toHaveCount( 1 );
+
+		// Assert — the replacement lands in exactly the same place.
+		const withReplacedSvg = await trailingEdgeGeometry( iconSlot );
+
+		expect( withReplacedSvg.gapToSlotEdge ).toBeLessThanOrEqual( 1 );
+		expect( withReplacedSvg.gapToHeaderContentEdge ).toBeLessThanOrEqual( 1 );
+		expect( withReplacedSvg.iconWidth ).toBeLessThan( withReplacedSvg.slotWidth );
+	} );
+
 	test( 'Icon and content animate via CSS transition on open/close, not JavaScript', async () => {
 		// Grounded directly in `modules/atomic-widgets/module.php::add_inline_styles()`, the only
 		// place this animation is defined (there is no frontend JS handler for the toggle — the

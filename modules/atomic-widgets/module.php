@@ -630,32 +630,9 @@ class Module extends BaseModule {
 			'transition: block-size .3s ease, content-visibility .3s ease allow-discrete;',
 			'}',
 			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
-			// Icon slot sizing: `e-svg`'s base style is `.elementor .e-svg-base { width: 65px; height:
-			// 65px; ... }` (0-2-0 specificity). The rendered DOM is
-			// `.e-accordion-item-icon-base ... .e-svg-base ... svg` — the wrapper carries `e-svg-base`,
-			// and the inner <svg> itself already gets an inline `width: 100%; height: 100%` from
-			// Svg_Src_Transformer, which resolves against its containing block: the wrapper. So the
-			// wrapper's fixed 65px, not the svg, is what needs neutralising to let the already-100% svg
-			// fill the 200x20 slot. A descendant combinator is used, not a direct child combinator: the
-			// icon slot has no `define_allowed_child_types()` restriction, so a user can drop a container
-			// into it before the e-svg, putting the wrapper an extra level deep
-			// (`icon-slot > container > .e-svg-base`) — a `>` selector would miss exactly that case while
-			// the rotation rule below (already a descendant selector) would still match, so the icon would
-			// render at 65x65 *and rotate* inside the 200x20 slot. `.e-accordion-item-icon-base
-			// .e-svg-base` alone would only tie the base rule's specificity (0-2-0), and the tie is not
-			// hypothetical: this method (`add_inline_styles()`) runs on the `elementor/frontend/after_enqueue_styles`
-			// hook, while `Atomic_Styles_Manager::enqueue_styles()` (the atomic base/local CSS) runs on
-			// the later `elementor/frontend/after_enqueue_post_styles` hook, with no dependency between
-			// them — so on a same-specificity tie this inline CSS prints
-			// *earlier* and would lose to the base style. The class is doubled to (0-3-0) so this rule
-			// wins outright regardless of that order.
-			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: 100%; height: 100%; }',
-			// Rotation targets the <svg> element itself, not the slot or its wrapper, so that non-icon
-			// content dropped into the slot (e.g. a text/paragraph element, which never renders an <svg>
-			// tag) is structurally excluded from rotating. A descendant combinator is used rather than a
-			// direct child combinator because the real DOM nests the <svg> two levels below the slot
-			// (icon slot > e-svg wrapper > svg), and deeper still if a user wraps the e-svg in another
-			// container (see the sizing rule above) — a `>` selector here would silently miss those cases.
+			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 		] );
