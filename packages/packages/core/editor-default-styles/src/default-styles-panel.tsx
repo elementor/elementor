@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { __createPanel as createPanel } from '@elementor/editor-panels';
-import { selectOpenId } from '@elementor/editor-panels/src/store';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { __getState as getState, __useSelector as useSelector } from '@elementor/store';
 
 import { DefaultStylesPanelContent } from './components/default-styles-panel-content';
 
@@ -31,14 +29,4 @@ function DefaultStylesPanelRoot() {
 			} }
 		/>
 	);
-}
-
-export function useDefaultStylesPanelOpenInStore() {
-	const openPanelId = useSelector( selectOpenId );
-
-	return openPanelId === DEFAULT_STYLES_PANEL_ID;
-}
-
-export function isDefaultStylesPanelOpenInStore() {
-	return selectOpenId( getState() ) === DEFAULT_STYLES_PANEL_ID;
 }
