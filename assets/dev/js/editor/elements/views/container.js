@@ -10,8 +10,10 @@ import { getDraggedContainerView } from 'elementor-editor-utils/dragged-containe
 
 // Distance from a top-level Container's outer edge that drops at the document level instead
 // of nesting. This is what lets a Container be placed beside another one rather than inside
-// it, whether it is being reordered or moved out of a parent.
+// it, whether it is being reordered or moved out of a parent. Kept to a share of the height
+// as well, so a short Container is left with a middle big enough to aim at for nesting.
 const DOCUMENT_LEVEL_EDGE_THRESHOLD = 16;
+const DOCUMENT_LEVEL_EDGE_MAX_SHARE = 0.25;
 
 const DOCUMENT_LEVEL_PLACEHOLDER_CLASS = 'e-document-level';
 
@@ -339,16 +341,17 @@ const ContainerView = BaseElementView.extend( {
 			return null;
 		}
 
-		const { top, bottom } = element.getBoundingClientRect();
+		const { top, bottom, height } = element.getBoundingClientRect(),
+			threshold = Math.min( DOCUMENT_LEVEL_EDGE_THRESHOLD, height * DOCUMENT_LEVEL_EDGE_MAX_SHARE );
 
 		// A pointer past an edge counts as being on it. The side is measured against the
 		// top-level ancestor, which the pointer can be outside of when the drop is handed to
 		// a neighbouring Container as the placeholder shifts things around.
-		if ( pointerY - top <= DOCUMENT_LEVEL_EDGE_THRESHOLD ) {
+		if ( pointerY - top <= threshold ) {
 			return 'top';
 		}
 
-		if ( bottom - pointerY <= DOCUMENT_LEVEL_EDGE_THRESHOLD ) {
+		if ( bottom - pointerY <= threshold ) {
 			return 'bottom';
 		}
 

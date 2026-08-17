@@ -6,7 +6,7 @@ import NavigatorElement from 'elementor/assets/dev/js/editor/regions/navigator/e
 import { getDraggedContainerView } from 'elementor/assets/dev/js/editor/utils/dragged-container';
 
 const stubVerticalBand = ( element, top, bottom ) => {
-	element.getBoundingClientRect = () => ( { top, bottom, left: 0, right: 100 } );
+	element.getBoundingClientRect = () => ( { top, bottom, height: bottom - top, left: 0, right: 100, width: 100 } );
 };
 
 export const Move = () => {
@@ -231,6 +231,29 @@ export const Move = () => {
 					'The opposite edge places it after its sibling.' );
 				assert.equal( middleOverride, null,
 					'Away from the edges it nests as usual.' );
+			} );
+
+			QUnit.test( 'Canvas edge leaves a short container a middle to nest into', ( assert ) => {
+				const firstContainer = ElementsHelper.createContainer(),
+					secondContainer = ElementsHelper.createContainer();
+
+				const secondView = secondContainer.lookup().view,
+					{ getPlaceholderOverride } = secondView.getDroppableOptions();
+
+				// Short enough that fixed-width edges would leave almost nothing between them.
+				stubVerticalBand( secondView.el, 0, 40 );
+
+				elementor.channels.editor.reply( 'element:dragged', firstContainer.lookup().view );
+
+				const edgeOverride = getPlaceholderOverride( 'top', { clientY: 8 } ),
+					insideOverride = getPlaceholderOverride( 'top', { clientY: 12 } );
+
+				elementor.channels.editor.reply( 'element:dragged', null );
+
+				assert.equal( edgeOverride?.side, 'top',
+					'The edge still reorders.' );
+				assert.equal( insideOverride, null,
+					'The edge shrinks with the container, so its middle can still be aimed at.' );
 			} );
 
 			QUnit.test( 'Canvas edge ignores a container dropped on its own descendant', ( assert ) => {

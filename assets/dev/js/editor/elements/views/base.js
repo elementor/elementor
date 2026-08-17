@@ -7,6 +7,9 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+// Set on the preview body for as long as an element is being dragged.
+const DRAGGING_CLASS = 'elementor-element-dragging';
+
 /**
  * @typedef {{}} DataBinding
  * @property {DOMStringMap} dataset The dataset of the element.
@@ -1173,6 +1176,10 @@ BaseElementView = BaseContainer.extend( {
 		return this.$el;
 	},
 
+	toggleDraggingClass( isDragging ) {
+		this.$el.closest( 'body' ).toggleClass( DRAGGING_CLASS, isDragging );
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1218,12 +1225,16 @@ BaseElementView = BaseContainer.extend( {
 					helper.remove();
 				} );
 
+				this.toggleDraggingClass( true );
+
 				this.onDragStart( e );
 
 				elementor.channels.editor.reply( 'element:dragged', this );
 			},
 			onDragEnd: ( e ) => {
 				e.stopPropagation();
+
+				this.toggleDraggingClass( false );
 
 				this.onDragEnd( e );
 			},

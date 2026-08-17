@@ -725,21 +725,6 @@
 			}
 		};
 
-		var isPointerOutside = function( element, event ) {
-			var { left, right, top, bottom } = element.getBoundingClientRect(),
-				{ clientX, clientY } = event.originalEvent || event;
-
-			return clientX < left || clientX >= right || clientY < top || clientY >= bottom;
-		};
-
-		// Moving from an item out into the Droppable itself fires `dragenter` on the Droppable
-		// before the item's `dragleave`, so the item is still current and the enter is ignored.
-		var releaseStaleCurrentElement = function( event ) {
-			if ( currentElement && isPointerOutside( currentElement, event ) ) {
-				self.doDragLeave();
-			}
-		};
-
 		// Runs only when no item matched, because a delegated handler stops propagation before
 		// the event reaches the Droppable itself. Lets a drop that lands inside the Droppable
 		// but outside any of its items still resolve to one.
@@ -755,13 +740,20 @@
 			};
 		};
 
-		// Only while tracking the pointer: on drop the element resolved by the last `dragover`
-		// is the one to use, even though the pointer sits on the placeholder rather than on it.
-		var withFreshFallbackItem = function( handler ) {
+		// Moving from an item out into the Droppable itself fires `dragenter` on the Droppable
+		// before the item's `dragleave`, so the item is still current and the enter is ignored.
+		// Only a change of item releases it: a fallback item is the one nearest the pointer
+		// rather than the one under it, so releasing on every event would leave the Droppable
+		// entering and leaving itself for the whole drag.
+		var withFallbackItemChange = function( handler ) {
 			var withItem = withFallbackItem( handler );
 
 			return function( event ) {
-				releaseStaleCurrentElement( event );
+				var item = settings.getFallbackItem( event );
+
+				if ( currentElement && item && currentElement !== item ) {
+					self.doDragLeave();
+				}
 
 				return withItem.call( this, event );
 			};
@@ -781,8 +773,8 @@
 			}
 
 			fallbackHandlers = {
-				dragenter: withFreshFallbackItem( onDragEnter ),
-				dragover: withFreshFallbackItem( onDragOver ),
+				dragenter: withFallbackItemChange( onDragEnter ),
+				dragover: withFallbackItemChange( onDragOver ),
 				drop: withFallbackItem( onDrop ),
 			};
 
