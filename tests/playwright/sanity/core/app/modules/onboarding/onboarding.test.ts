@@ -39,9 +39,9 @@ test.describe( 'Onboarding @onboarding', () => {
 		await expect( page.getByRole( 'heading', { name: /Let['']s get to work\./ } ) ).toBeVisible();
 		await expect( page.getByRole( 'button', { name: 'Upgrade' } ) ).toBeVisible();
 		await expect( page.getByRole( 'button', { name: 'Sign in to Elementor' } ) ).toBeVisible();
-		await expect( page.getByRole( 'link', { name: 'Continue as a guest' } ) ).toBeVisible();
+		await expect( page.getByRole( 'link', { name: 'Skip' } ) ).toBeVisible();
 
-		await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
+		await page.getByRole( 'link', { name: 'Skip' } ).click();
 
 		await expect( page.getByTestId( 'theme-selection-step' ) ).toBeVisible();
 		await expect( page.getByTestId( 'building-for-step' ) ).toBeHidden();
@@ -50,7 +50,7 @@ test.describe( 'Onboarding @onboarding', () => {
 	} );
 
 	test( 'Theme selection Continue with Hello reaches site features', async ( { page } ) => {
-		await mockOnboardingApi( page );
+		const { installThemeRequests } = await mockOnboardingApi( page );
 		await navigateAndPassLogin( page );
 
 		await page.getByRole( 'button', { name: 'Continue with Hello' } ).click();
@@ -58,6 +58,19 @@ test.describe( 'Onboarding @onboarding', () => {
 		await expect(
 			page.getByRole( 'heading', { name: 'What do you want to include in your site?' } ),
 		).toBeVisible();
+
+		expect( installThemeRequests ).toContainEqual(
+			expect.objectContaining( { theme_slug: 'hello-elementor' } ),
+		);
+	} );
+
+	test( 'Skip on theme_selection reaches site features without installing theme', async ( { page } ) => {
+		const { installThemeRequests } = await mockOnboardingApi( page );
+		await navigateAndPassLogin( page );
+
+		await page.getByRole( 'button', { name: 'Skip' } ).click();
+		await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
+		expect( installThemeRequests ).toHaveLength( 0 );
 	} );
 
 	test( 'Skip on site_features shows completion screen and redirects to new page', async ( { page } ) => {
