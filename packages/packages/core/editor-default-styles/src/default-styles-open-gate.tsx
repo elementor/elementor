@@ -4,27 +4,18 @@ import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
-import {
-	SaveChangesDialog,
-	ThemeProvider,
-	useDialog,
-} from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePanelActions } from './default-styles-panel';
 
-export const EVENT_REQUEST_OPEN_DEFAULT_STYLES =
-	'elementor/default-styles/request-open';
+export const EVENT_REQUEST_OPEN_DEFAULT_STYLES = 'elementor/default-styles/request-open';
 
 export function DefaultStylesOpenGate() {
 	const { open } = usePanelActions();
 	const document = useActiveDocument();
 	const { save: saveDocument } = useActiveDocumentActions();
-	const {
-		open: openSaveDialog,
-		close: closeSaveDialog,
-		isOpen: isSaveDialogOpen,
-	} = useDialog();
+	const { open: openSaveDialog, close: closeSaveDialog, isOpen: isSaveDialogOpen } = useDialog();
 
 	const documentRef = useRef( document );
 	documentRef.current = document;
@@ -70,10 +61,7 @@ export function DefaultStylesOpenGate() {
 		window.addEventListener( EVENT_REQUEST_OPEN_DEFAULT_STYLES, handler );
 
 		return () => {
-			window.removeEventListener(
-				EVENT_REQUEST_OPEN_DEFAULT_STYLES,
-				handler
-			);
+			window.removeEventListener( EVENT_REQUEST_OPEN_DEFAULT_STYLES, handler );
 		};
 	}, [ gatedOpen, open ] );
 
@@ -84,9 +72,7 @@ export function DefaultStylesOpenGate() {
 	return (
 		<ThemeProvider>
 			<SaveChangesDialog>
-				<SaveChangesDialog.Title>
-					{ __( 'You have unsaved changes', 'elementor' ) }
-				</SaveChangesDialog.Title>
+				<SaveChangesDialog.Title>{ __( 'You have unsaved changes', 'elementor' ) }</SaveChangesDialog.Title>
 				<SaveChangesDialog.Content>
 					<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
 						{ __(

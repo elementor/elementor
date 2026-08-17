@@ -20,7 +20,5 @@ export function blockPanelInteractions() {
 export function unblockPanelInteractions() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	extendedWindow.$e?.components
-		?.get?.( 'panel' )
-		?.unblockUserInteractions?.();
+	extendedWindow.$e?.components?.get?.( 'panel' )?.unblockUserInteractions?.();
 }

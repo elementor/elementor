@@ -25,12 +25,7 @@ type TagChipProps = {
 	onSelectState: ( state: StyleDefinitionState | null ) => void;
 };
 
-export function TagChip( {
-	label,
-	chipProps,
-	activeState,
-	onSelectState,
-}: TagChipProps ) {
+export function TagChip( { label, chipProps, activeState, onSelectState }: TagChipProps ) {
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'tag-state-menu',
@@ -70,22 +65,12 @@ export function TagChip( {
 					} ) }
 				/>
 				<Chip
-					icon={
-						isShowingState ? undefined : (
-							<DotsVerticalIcon fontSize="tiny" />
-						)
-					}
+					icon={ isShowingState ? undefined : <DotsVerticalIcon fontSize="tiny" /> }
 					size={ CHIP_SIZE }
 					label={
 						isShowingState ? (
-							<Stack
-								direction="row"
-								gap={ 0.5 }
-								alignItems="center"
-							>
-								<Typography variant="inherit">
-									{ activeState }
-								</Typography>
+							<Stack direction="row" gap={ 0.5 } alignItems="center">
+								<Typography variant="inherit">{ activeState }</Typography>
 								<DotsVerticalIcon fontSize="tiny" />
 							</Stack>
 						) : undefined
@@ -99,9 +84,7 @@ export function TagChip( {
 						borderRadius: `${ theme.shape.borderRadius * 0.75 }px`,
 						paddingRight: 0,
 						...( ! isShowingState ? { paddingLeft: 0 } : {} ),
-						'.MuiChip-label': isShowingState
-							? { paddingRight: 0 }
-							: { padding: 0 },
+						'.MuiChip-label': isShowingState ? { paddingRight: 0 } : { padding: 0 },
 					} ) }
 				/>
 			</UnstableChipGroup>

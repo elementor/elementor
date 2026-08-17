@@ -1,7 +1,4 @@
-import {
-	type StyleDefinition,
-	type StyleDefinitionID,
-} from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -16,8 +13,7 @@ import { selectData, slice } from './store';
 export const DEFAULT_STYLES_PROVIDER_KEY = 'default-styles';
 export const DEFAULT_STYLES_CSS_NAME_PREFIX = 'e-default-';
 
-const resolveCssName = ( id: StyleDefinitionID ) =>
-	`${ DEFAULT_STYLES_CSS_NAME_PREFIX }${ id }`;
+const resolveCssName = ( id: StyleDefinitionID ) => `${ DEFAULT_STYLES_CSS_NAME_PREFIX }${ id }`;
 
 const placeholderDefinition = ( id: StyleDefinitionID ): StyleDefinition => ( {
 	id,
@@ -44,16 +40,12 @@ export const defaultStylesStylesProvider = createStylesProvider( {
 			getAllowedDefaultStyleTags().map( ( tag ) => {
 				const style = selectData( getState() )[ tag ];
 
-				return style
-					? asClassDefinition( style )
-					: placeholderDefinition( tag );
+				return style ? asClassDefinition( style ) : placeholderDefinition( tag );
 			} ),
 		get: ( id ) => {
 			const style = selectData( getState() )[ id ];
 
-			return style
-				? asClassDefinition( style )
-				: placeholderDefinition( id );
+			return style ? asClassDefinition( style ) : placeholderDefinition( id );
 		},
 		resolveCssName,
 		update: ( payload ) => {
@@ -90,10 +82,7 @@ export const defaultStylesStylesProvider = createStylesProvider( {
 } );
 
 const subscribeWithStates = (
-	cb: (
-		previous: Record< string, StyleDefinition >,
-		current: Record< string, StyleDefinition >
-	) => void
+	cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
 ) => {
 	let previousState = selectData( getState() );
 

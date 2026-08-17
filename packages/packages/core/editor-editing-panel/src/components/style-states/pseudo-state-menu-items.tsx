@@ -13,12 +13,7 @@ type PseudoStateMenuItemsProps = {
 	onClose?: () => void;
 };
 
-export function PseudoStateMenuItems( {
-	states,
-	activeState,
-	onSelectState,
-	onClose,
-}: PseudoStateMenuItemsProps ) {
+export function PseudoStateMenuItems( { states, activeState, onSelectState, onClose }: PseudoStateMenuItemsProps ) {
 	return (
 		<>
 			<MenuSubheader

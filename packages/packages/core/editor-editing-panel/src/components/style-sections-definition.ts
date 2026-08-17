@@ -97,12 +97,7 @@ export const STYLE_SECTIONS: StyleSectionDefinition[] = [
 		name: 'Border',
 		title: __( 'Border', 'elementor' ),
 		component: BorderSection,
-		fields: [
-			'border-radius',
-			'border-width',
-			'border-color',
-			'border-style',
-		],
+		fields: [ 'border-radius', 'border-width', 'border-color', 'border-style' ],
 	},
 	{
 		name: 'Effects',
@@ -121,6 +116,4 @@ export const STYLE_SECTIONS: StyleSectionDefinition[] = [
 	},
 ];
 
-export const STYLE_SECTION_NAMES = STYLE_SECTIONS.map(
-	( section ) => section.name
-);
+export const STYLE_SECTION_NAMES = STYLE_SECTIONS.map( ( section ) => section.name );

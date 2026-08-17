@@ -10,8 +10,7 @@ type ExtendedWindow = Window & {
 	};
 };
 
-const getElementorConfig = () =>
-	( window as unknown as ExtendedWindow ).elementor?.config ?? {};
+const getElementorConfig = () => ( window as unknown as ExtendedWindow ).elementor?.config ?? {};
 
 export const getAllowedDefaultStyleTags = (): string[] => {
 	const tags = getElementorConfig().atomic?.default_styles?.allowed_tags;
@@ -33,7 +32,5 @@ export const getDefaultActiveTag = ( tags: string[] ): AllowedHtmlTag => {
 	return tags[ 0 ] ?? '';
 };
 
-export const isAllowedDefaultStyleTag = (
-	tag: string,
-	tags = getAllowedDefaultStyleTags()
-): tag is AllowedHtmlTag => tags.includes( tag );
+export const isAllowedDefaultStyleTag = ( tag: string, tags = getAllowedDefaultStyleTags() ): tag is AllowedHtmlTag =>
+	tags.includes( tag );

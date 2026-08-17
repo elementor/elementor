@@ -16,34 +16,14 @@ import {
 	StyleSections,
 } from '@elementor/editor-editing-panel';
 import { type Element, type ElementType } from '@elementor/editor-elements';
-import {
-	Panel,
-	PanelBody,
-	PanelFooter,
-	PanelHeader,
-	PanelHeaderTitle,
-} from '@elementor/editor-panels';
+import { Panel, PanelBody, PanelFooter, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
-import {
-	type StyleDefinitionID,
-	type StyleDefinitionState,
-} from '@elementor/editor-styles';
-import {
-	SaveChangesDialog,
-	ThemeProvider,
-	useDialog,
-} from '@elementor/editor-ui';
+import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { controlActionsMenu } from '@elementor/menus';
 import { useMutation } from '@elementor/query';
-import {
-	getSessionStorageItem,
-	SessionStorageProvider,
-	setSessionStorageItem,
-} from '@elementor/session';
-import {
-	__dispatch as dispatch,
-	__useSelector as useSelector,
-} from '@elementor/store';
+import { getSessionStorageItem, SessionStorageProvider, setSessionStorageItem } from '@elementor/session';
+import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import {
 	type AutocompleteChangeReason,
 	Box,
@@ -62,12 +42,9 @@ import {
 	getDefaultActiveTag,
 	isAllowedDefaultStyleTag,
 } from '../allowed-tags';
+import { blockPanelInteractions, unblockPanelInteractions } from '../panel-interactions';
 import { saveDefaultStyles } from '../save-default-styles';
 import { selectIsDirty, slice } from '../store';
-import {
-	blockPanelInteractions,
-	unblockPanelInteractions,
-} from '../panel-interactions';
 import { TagChip } from './tag-chip';
 
 const { useMenuItems } = controlActionsMenu;
@@ -80,9 +57,7 @@ const LAST_ACTIVE_TAG_SESSION_KEY = 'last-active-tag';
 const LAST_ACTIVE_TAG_STORAGE_KEY = `${ LAST_ACTIVE_TAG_SESSION_PREFIX }/${ LAST_ACTIVE_TAG_SESSION_KEY }`;
 
 function readStoredActiveTag( allowedTags: AllowedHtmlTag[] ): AllowedHtmlTag {
-	const storedTag = getSessionStorageItem< AllowedHtmlTag >(
-		LAST_ACTIVE_TAG_STORAGE_KEY
-	);
+	const storedTag = getSessionStorageItem< AllowedHtmlTag >( LAST_ACTIVE_TAG_STORAGE_KEY );
 
 	if ( storedTag && isAllowedDefaultStyleTag( storedTag, allowedTags ) ) {
 		return storedTag;
@@ -111,29 +86,20 @@ type DefaultStylesPanelContentProps = {
 	onRequestClose: () => void;
 };
 
-export function DefaultStylesPanelContent( {
-	onRequestClose,
-}: DefaultStylesPanelContentProps ) {
+export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPanelContentProps ) {
 	const allowedTags = useMemo( () => getAllowedDefaultStyleTags(), [] );
 	const tagOptions = useMemo< Option[] >(
 		() => allowedTags.map( ( tag ) => ( { label: tag, value: tag } ) ),
 		[ allowedTags ]
 	);
-	const [ selectedTag, setSelectedTagState ] = useState< AllowedHtmlTag >(
-		() => readStoredActiveTag( allowedTags )
-	);
-	const [ activeStyleState, setActiveStyleState ] =
-		useState< StyleDefinitionState | null >( null );
+	const [ selectedTag, setSelectedTagState ] = useState< AllowedHtmlTag >( () => readStoredActiveTag( allowedTags ) );
+	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
 	const menuItems = useMenuItems().default;
 	const controlReplacements = getControlReplacements();
 	const isDirty = useSelector( selectIsDirty );
 	const { mutateAsync: save, isPending: isSaving } = useSave();
-	const {
-		open: openSaveChangesDialog,
-		close: closeSaveChangesDialog,
-		isOpen: isSaveChangesDialogOpen,
-	} = useDialog();
+	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
 	const setSelectedTag = ( tag: AllowedHtmlTag ) => {
 		setSelectedTagState( tag );
@@ -159,11 +125,7 @@ export function DefaultStylesPanelContent( {
 
 	usePreventUnload( isDirty );
 
-	const handleTagSelect = (
-		_selected: Option[],
-		reason: AutocompleteChangeReason,
-		option: Option
-	) => {
+	const handleTagSelect = ( _selected: Option[], reason: AutocompleteChangeReason, option: Option ) => {
 		if ( reason !== 'selectOption' || ! option.value ) {
 			return;
 		}
@@ -193,9 +155,7 @@ export function DefaultStylesPanelContent( {
 		<ErrorBoundary fallback={ null }>
 			<ThemeProvider>
 				<ControlActionsProvider items={ menuItems }>
-					<ControlReplacementsProvider
-						replacements={ controlReplacements }
-					>
+					<ControlReplacementsProvider replacements={ controlReplacements }>
 						<Panel>
 							<PanelHeader>
 								<Stack
@@ -207,16 +167,11 @@ export function DefaultStylesPanelContent( {
 									justifyContent="space-between"
 									spacing={ 0.5 }
 								>
-									<PanelHeaderTitle
-										sx={ { flex: 1, minWidth: 0 } }
-									>
+									<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
 										{ __( 'Default Styles', 'elementor' ) }
 									</PanelHeaderTitle>
 									<CloseButton
-										aria-label={ __(
-											'Close',
-											'elementor'
-										) }
+										aria-label={ __( 'Close', 'elementor' ) }
 										sx={ { flexShrink: 0 } }
 										onClick={ handleClosePanel }
 									/>
@@ -225,51 +180,26 @@ export function DefaultStylesPanelContent( {
 							<PanelBody>
 								<Stack sx={ { px: 2, pt: 1, gap: 1 } }>
 									<FormControl fullWidth size="small">
-										<FormLabel
-											htmlFor={ TAG_SELECTOR_ID }
-											size="small"
-											sx={ { mb: 1 } }
-										>
+										<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 1 } }>
 											{ __( 'Tag', 'elementor' ) }
 										</FormLabel>
 										<CreatableAutocomplete< Option >
 											id={ TAG_SELECTOR_ID }
 											size="tiny"
-											placeholder={ __(
-												'Type tag name',
-												'elementor'
-											) }
+											placeholder={ __( 'Type tag name', 'elementor' ) }
 											options={ tagOptions }
-											selected={ [
-												toTagChip( selectedTag ),
-											] }
+											selected={ [ toTagChip( selectedTag ) ] }
 											onSelect={ handleTagSelect }
-											renderTags={ (
-												values,
-												getTagProps
-											) =>
-												values.map(
-													( value, index ) => (
-														<TagChip
-															key={
-																value.value ??
-																value.label
-															}
-															label={
-																value.label
-															}
-															chipProps={ getTagProps(
-																{ index }
-															) }
-															activeState={
-																activeStyleState
-															}
-															onSelectState={
-																setActiveStyleState
-															}
-														/>
-													)
-												)
+											renderTags={ ( values, getTagProps ) =>
+												values.map( ( value, index ) => (
+													<TagChip
+														key={ value.value ?? value.label }
+														label={ value.label }
+														chipProps={ getTagProps( { index } ) }
+														activeState={ activeStyleState }
+														onSelectState={ setActiveStyleState }
+													/>
+												) )
 											}
 										/>
 									</FormControl>
@@ -279,23 +209,17 @@ export function DefaultStylesPanelContent( {
 									elementType={ shimElementType }
 									settings={ {} }
 								>
-									<ClassesPropProvider
-										prop={ SHIM_CLASSES_PROP }
-									>
+									<ClassesPropProvider prop={ SHIM_CLASSES_PROP }>
 										<StyleProvider
 											meta={ {
 												breakpoint,
 												state: activeStyleState,
 											} }
-											id={
-												selectedTag as StyleDefinitionID
-											}
+											id={ selectedTag as StyleDefinitionID }
 											setId={ () => {} }
 											setMetaState={ setActiveStyleState }
 										>
-											<SessionStorageProvider
-												prefix={ selectedTag }
-											>
+											<SessionStorageProvider prefix={ selectedTag }>
 												<StyleInheritanceProvider>
 													<SectionsList>
 														<StyleSections />
@@ -330,23 +254,15 @@ export function DefaultStylesPanelContent( {
 
 				{ isSaveChangesDialogOpen && (
 					<SaveChangesDialog>
-						<SaveChangesDialog.Title
-							onClose={ closeSaveChangesDialog }
-						>
+						<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
 							{ __( 'You have unsaved changes', 'elementor' ) }
 						</SaveChangesDialog.Title>
 						<SaveChangesDialog.Content>
 							<SaveChangesDialog.ContentText>
-								{ __(
-									'You have unsaved changes in Default Styles.',
-									'elementor'
-								) }
+								{ __( 'You have unsaved changes in Default Styles.', 'elementor' ) }
 							</SaveChangesDialog.ContentText>
 							<SaveChangesDialog.ContentText>
-								{ __(
-									'To avoid losing your updates, save your changes before leaving.',
-									'elementor'
-								) }
+								{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
 							</SaveChangesDialog.ContentText>
 						</SaveChangesDialog.Content>
 						<SaveChangesDialog.Actions

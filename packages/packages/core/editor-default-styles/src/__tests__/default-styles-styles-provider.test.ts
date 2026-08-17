@@ -1,13 +1,7 @@
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import {
-	__createStore as createStore,
-	__registerSlice as registerSlice,
-} from '@elementor/store';
+import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
 
-import {
-	DEFAULT_STYLES_PROVIDER_KEY,
-	defaultStylesStylesProvider,
-} from '../default-styles-provider';
+import { DEFAULT_STYLES_PROVIDER_KEY, defaultStylesStylesProvider } from '../default-styles-provider';
 import { slice } from '../store';
 
 describe( 'defaultStylesStylesProvider', () => {
@@ -37,9 +31,7 @@ describe( 'defaultStylesStylesProvider', () => {
 	it( 'registers with priority between base and global', () => {
 		const provider = stylesRepository
 			.getProviders()
-			.find(
-				( entry ) => entry.getKey() === DEFAULT_STYLES_PROVIDER_KEY
-			);
+			.find( ( entry ) => entry.getKey() === DEFAULT_STYLES_PROVIDER_KEY );
 
 		expect( provider ).toBeDefined();
 		expect( provider?.priority ).toBe( 15 );
@@ -51,8 +43,8 @@ describe( 'defaultStylesStylesProvider', () => {
 		expect( all.length ).toBeGreaterThan( 0 );
 		expect( all[ 0 ].type ).toBe( 'class' );
 		expect( all[ 0 ].id ).toBeTruthy();
-		expect(
-			defaultStylesStylesProvider.actions.resolveCssName( all[ 0 ].id )
-		).toBe( `e-default-${ all[ 0 ].id }` );
+		expect( defaultStylesStylesProvider.actions.resolveCssName( all[ 0 ].id ) ).toBe(
+			`e-default-${ all[ 0 ].id }`
+		);
 	} );
 } );

@@ -1,9 +1,5 @@
 import { getDefaultStyleTagFromPreviewElement } from '@elementor/editor-elements';
-import {
-	__privateUseListenTo as useListenTo,
-	commandEndEvent,
-	windowEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateUseListenTo as useListenTo, commandEndEvent, windowEvent } from '@elementor/editor-v1-adapters';
 
 export function useDefaultStyleTagFromPreview( elementId: string ) {
 	return useListenTo(

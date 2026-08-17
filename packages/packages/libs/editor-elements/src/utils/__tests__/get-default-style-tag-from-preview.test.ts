@@ -26,9 +26,7 @@ describe( 'parseDefaultStyleTagFromClassList', () => {
 			},
 		} as DOMTokenList;
 
-		expect( parseDefaultStyleTagFromClassList( classList ) ).toBe(
-			'button'
-		);
+		expect( parseDefaultStyleTagFromClassList( classList ) ).toBe( 'button' );
 	} );
 
 	it( 'should return null when no default style class exists', () => {
@@ -63,9 +61,7 @@ describe( 'getDefaultStyleTagFromPreviewElement', () => {
 			},
 		} as never );
 
-		expect( getDefaultStyleTagFromPreviewElement( 'element-1' ) ).toBe(
-			'button'
-		);
+		expect( getDefaultStyleTagFromPreviewElement( 'element-1' ) ).toBe( 'button' );
 	} );
 
 	it( 'should read the default style tag from a preview element with data-id', () => {
@@ -76,8 +72,6 @@ describe( 'getDefaultStyleTagFromPreviewElement', () => {
 		mockGetContainer.mockReturnValue( null );
 		mockGetPreviewElementDOM.mockReturnValue( div );
 
-		expect( getDefaultStyleTagFromPreviewElement( 'element-2' ) ).toBe(
-			'div'
-		);
+		expect( getDefaultStyleTagFromPreviewElement( 'element-2' ) ).toBe( 'div' );
 	} );
 } );

@@ -19,10 +19,7 @@ export type LinkInLinkRestriction =
 			elementId?: never;
 	  };
 
-export function getLinkInLinkRestriction(
-	elementId: string,
-	resolvedValue?: LinkValue
-): LinkInLinkRestriction {
+export function getLinkInLinkRestriction( elementId: string, resolvedValue?: LinkValue ): LinkInLinkRestriction {
 	const anchoredDescendantId = getAnchoredDescendantId( elementId );
 
 	if ( anchoredDescendantId ) {
@@ -65,9 +62,7 @@ export function getAnchoredDescendantId( elementId: string ): string | null {
 		return null;
 	}
 
-	for ( const childAnchorElement of Array.from(
-		element.querySelectorAll( ANCHOR_SELECTOR )
-	) ) {
+	for ( const childAnchorElement of Array.from( element.querySelectorAll( ANCHOR_SELECTOR ) ) ) {
 		// Ensure the child is not in the current element's scope
 		const childElementId = findElementIdOf( childAnchorElement );
 
@@ -127,10 +122,7 @@ function findElementIdOf( element: Element ): string | null {
 	return element.closest< HTMLElement >( '[data-id]' )?.dataset.id || null;
 }
 
-function checkForInlineLink(
-	elementId: string,
-	resolvedValue?: LinkValue
-): boolean {
+function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boolean {
 	const element = getElementDOM( elementId );
 
 	if ( ! element ) {
@@ -141,9 +133,7 @@ function checkForInlineLink(
 		return false;
 	}
 
-	const linkSetting =
-		resolvedValue ??
-		getElementSetting< LinkPropValue >( elementId, 'link' )?.value;
+	const linkSetting = resolvedValue ?? getElementSetting< LinkPropValue >( elementId, 'link' )?.value;
 
 	if ( linkSetting?.destination ) {
 		return false;

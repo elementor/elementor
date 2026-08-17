@@ -1,16 +1,7 @@
 import * as React from 'react';
-import {
-	createContext,
-	type PropsWithChildren,
-	useContext,
-	useMemo,
-} from 'react';
+import { createContext, type PropsWithChildren, useContext, useMemo } from 'react';
 import { getWidgetsCache } from '@elementor/editor-elements';
-import {
-	classesPropTypeUtil,
-	type ClassesPropValue,
-	type PropValue,
-} from '@elementor/editor-props';
+import { classesPropTypeUtil, type ClassesPropValue, type PropValue } from '@elementor/editor-props';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -34,16 +25,9 @@ export function StyleInheritanceProvider( { children }: PropsWithChildren ) {
 
 	const breakpointsTree = getBreakpointsTree();
 
-	const { getSnapshot, getInheritanceChain } = createStylesInheritance(
-		styleDefs,
-		breakpointsTree
-	);
+	const { getSnapshot, getInheritanceChain } = createStylesInheritance( styleDefs, breakpointsTree );
 
-	return (
-		<Context.Provider value={ { getSnapshot, getInheritanceChain } }>
-			{ children }
-		</Context.Provider>
-	);
+	return <Context.Provider value={ { getSnapshot, getInheritanceChain } }>{ children }</Context.Provider>;
 }
 
 export function useStylesInheritanceSnapshot(): StylesInheritanceSnapshot | null {
@@ -51,9 +35,7 @@ export function useStylesInheritanceSnapshot(): StylesInheritanceSnapshot | null
 	const { meta } = useStyle();
 
 	if ( ! context ) {
-		throw new Error(
-			'useStylesInheritanceSnapshot must be used within a StyleInheritanceProvider'
-		);
+		throw new Error( 'useStylesInheritanceSnapshot must be used within a StyleInheritanceProvider' );
 	}
 
 	if ( ! meta ) {
@@ -63,15 +45,11 @@ export function useStylesInheritanceSnapshot(): StylesInheritanceSnapshot | null
 	return context.getSnapshot( meta ) ?? null;
 }
 
-export function useStylesInheritanceChain(
-	path: string[]
-): SnapshotPropValue[] {
+export function useStylesInheritanceChain( path: string[] ): SnapshotPropValue[] {
 	const context = useContext( Context );
 
 	if ( ! context ) {
-		throw new Error(
-			'useStylesInheritanceChain must be used within a StyleInheritanceProvider'
-		);
+		throw new Error( 'useStylesInheritanceChain must be used within a StyleInheritanceProvider' );
 	}
 
 	const schema = getStylesSchema();
@@ -89,9 +67,7 @@ export function useStylesInheritanceChain(
 
 const EMPTY_INHERITED_VALUES: Record< string, PropValue > = {};
 
-export function useInheritedValues(
-	propKeys: string[]
-): Record< string, PropValue > {
+export function useInheritedValues( propKeys: string[] ): Record< string, PropValue > {
 	const snapshot = useStylesInheritanceSnapshot();
 
 	return useMemo( () => {
@@ -99,12 +75,7 @@ export function useInheritedValues(
 			return EMPTY_INHERITED_VALUES;
 		}
 
-		return Object.fromEntries(
-			propKeys.map( ( key ) => [
-				key,
-				snapshot[ key ]?.[ 0 ]?.value ?? null,
-			] )
-		);
+		return Object.fromEntries( propKeys.map( ( key ) => [ key, snapshot[ key ]?.[ 0 ]?.value ?? null ] ) );
 	}, [ snapshot, propKeys ] );
 }
 
@@ -115,20 +86,13 @@ const useAppliedStyles = () => {
 
 	useStylesRerender();
 
-	const classesProp =
-		usePanelElementSetting< ClassesPropValue >( currentClassesProp );
+	const classesProp = usePanelElementSetting< ClassesPropValue >( currentClassesProp );
 
 	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
 
-	const applicableIds = [
-		...baseStyles,
-		...appliedStyles,
-		...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ),
-	];
+	const applicableIds = [ ...baseStyles, ...appliedStyles, ...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ) ];
 
-	return stylesRepository
-		.all()
-		.filter( ( style ) => applicableIds.includes( style.id ) );
+	return stylesRepository.all().filter( ( style ) => applicableIds.includes( style.id ) );
 };
 
 const useBaseStyles = () => {

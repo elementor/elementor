@@ -21,15 +21,12 @@ export function getPreviewElementDOM( id: string ): HTMLElement | null {
 }
 
 function queryPreviewDOMByElementId( id: string ): HTMLElement | null {
-	const previewDocument = (
-		window as unknown as ExtendedWindow
-	 ).elementor?.getPreviewContainer?.()?.view?.el?.ownerDocument;
+	const previewDocument = ( window as unknown as ExtendedWindow ).elementor?.getPreviewContainer?.()?.view?.el
+		?.ownerDocument;
 
 	if ( ! previewDocument ) {
 		return null;
 	}
 
-	return previewDocument.querySelector< HTMLElement >(
-		`[data-id="${ id }"]`
-	);
+	return previewDocument.querySelector< HTMLElement >( `[data-id="${ id }"]` );
 }

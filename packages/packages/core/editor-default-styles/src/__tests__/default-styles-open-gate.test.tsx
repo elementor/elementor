@@ -1,31 +1,19 @@
 import * as React from 'react';
-import {
-	act,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import {
-	DefaultStylesOpenGate,
-	EVENT_REQUEST_OPEN_DEFAULT_STYLES,
-} from '../default-styles-open-gate';
+import { DefaultStylesOpenGate, EVENT_REQUEST_OPEN_DEFAULT_STYLES } from '../default-styles-open-gate';
 
 const mockSaveDocument = jest.fn().mockResolvedValue( undefined );
 const mockUseActiveDocument = jest.fn().mockReturnValue( null );
 
 jest.mock( '@elementor/editor-documents', () => ( {
-	__useActiveDocument: ( ...args: unknown[] ) =>
-		mockUseActiveDocument( ...args ),
+	__useActiveDocument: ( ...args: unknown[] ) => mockUseActiveDocument( ...args ),
 	__useActiveDocumentActions: () => ( { save: mockSaveDocument } ),
 } ) );
 
 jest.mock( '@elementor/editor-ui', () => ( {
 	...jest.requireActual( '@elementor/editor-ui' ),
-	ThemeProvider: ( { children }: { children: React.ReactNode } ) => (
-		<>{ children }</>
-	),
+	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 	useDialog: jest.fn(),
 } ) );
 
@@ -42,9 +30,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 function dispatchRequestOpen() {
-	window.dispatchEvent(
-		new CustomEvent( EVENT_REQUEST_OPEN_DEFAULT_STYLES )
-	);
+	window.dispatchEvent( new CustomEvent( EVENT_REQUEST_OPEN_DEFAULT_STYLES ) );
 }
 
 describe( 'DefaultStylesOpenGate', () => {
@@ -125,9 +111,7 @@ describe( 'DefaultStylesOpenGate', () => {
 			dispatchRequestOpen();
 		} );
 
-		fireEvent.click(
-			screen.getByRole( 'button', { name: 'Save & Continue' } )
-		);
+		fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
 
 		await waitFor( () => {
 			expect( mockSaveDocument ).toHaveBeenCalled();

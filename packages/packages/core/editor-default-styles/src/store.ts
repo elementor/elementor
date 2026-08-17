@@ -47,10 +47,7 @@ export const slice = createSlice( {
 			state.isDirty = false;
 		},
 
-		update(
-			state,
-			{ payload }: PayloadAction< { style: UpdateActionPayload } >
-		) {
+		update( state, { payload }: PayloadAction< { style: UpdateActionPayload } > ) {
 			state.data[ payload.style.id ] = {
 				...state.data[ payload.style.id ],
 				...payload.style,
@@ -78,24 +75,17 @@ export const slice = createSlice( {
 			};
 
 			const variant = getVariantByMeta( style, payload.meta );
-			let customCss =
-				( 'custom_css' in payload
-					? payload.custom_css
-					: variant?.custom_css ) ?? null;
+			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
 			customCss = customCss?.raw ? customCss : null;
 
 			if ( variant ) {
-				const payloadProps = JSON.parse(
-					JSON.stringify( payload.props )
-				) as Props;
+				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
 				const mode = payload.mode ?? 'merge';
 
 				if ( mode === 'replace' ) {
 					variant.props = payloadProps;
 				} else {
-					const variantProps = JSON.parse(
-						JSON.stringify( variant.props )
-					) as Props;
+					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
 					variant.props = { ...variantProps, ...payloadProps };
 				}
 
@@ -146,9 +136,6 @@ export const selectInitialData = createSelector(
 );
 
 export const selectTagStyle = createSelector(
-	[
-		selectData,
-		( _state: StateWithDefaultStyles, id: StyleDefinitionID ) => id,
-	],
+	[ selectData, ( _state: StateWithDefaultStyles, id: StyleDefinitionID ) => id ],
 	( data, id ) => data[ id ]
 );

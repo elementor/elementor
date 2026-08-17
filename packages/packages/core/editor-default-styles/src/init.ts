@@ -1,9 +1,6 @@
 import { injectIntoLogic } from '@elementor/editor';
 import { toolsMenu } from '@elementor/editor-app-bar';
-import {
-	registerElementPanelDefaults,
-	STYLE_SECTION_NAMES,
-} from '@elementor/editor-editing-panel';
+import { registerElementPanelDefaults, STYLE_SECTION_NAMES } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';

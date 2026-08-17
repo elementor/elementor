@@ -9,9 +9,7 @@ export function useDefaultStylesActionProps(): ActionProps {
 		title: __( 'Default Styles', 'elementor' ),
 		icon: TextIcon,
 		onClick: () => {
-			window.dispatchEvent(
-				new CustomEvent( EVENT_REQUEST_OPEN_DEFAULT_STYLES )
-			);
+			window.dispatchEvent( new CustomEvent( EVENT_REQUEST_OPEN_DEFAULT_STYLES ) );
 		},
 	};
 }

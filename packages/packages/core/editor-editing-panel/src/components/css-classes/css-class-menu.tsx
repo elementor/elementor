@@ -7,14 +7,7 @@ import {
 	useUserStylesCapability,
 } from '@elementor/editor-styles-repository';
 import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
-import {
-	bindMenu,
-	Divider,
-	Menu,
-	MenuSubheader,
-	type PopupState,
-	Stack,
-} from '@elementor/ui';
+import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../contexts/element-context';
@@ -35,11 +28,7 @@ type CssClassMenuProps = {
 	fixed?: boolean;
 };
 
-export function CssClassMenu( {
-	popupState,
-	anchorEl,
-	fixed,
-}: CssClassMenuProps ) {
+export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps ) {
 	const { provider } = useCssClass();
 	const isLocalStyle = provider ? isElementsStylesProvider( provider ) : true;
 	const pseudoStates = usePseudoStates();
@@ -105,10 +94,7 @@ function ClassStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
 	}
 
 	/* translators: %s: Element type title. */
-	const customTitle = __( '%s States', 'elementor' ).replace(
-		'%s',
-		elementTitle
-	);
+	const customTitle = __( '%s States', 'elementor' ).replace( '%s', elementTitle );
 
 	return (
 		<>
@@ -163,24 +149,18 @@ export function useElementStates() {
 	};
 }
 
-function useModifiedStates(
-	styleId: string | null
-): Partial< Record< StyleDefinitionStateWithNormal, true > > {
+function useModifiedStates( styleId: string | null ): Partial< Record< StyleDefinitionStateWithNormal, true > > {
 	const { meta } = useStyle();
-	const styleDef = stylesRepository
-		.all()
-		.find( ( style ) => style.id === styleId );
+	const styleDef = stylesRepository.all().find( ( style ) => style.id === styleId );
 
 	return Object.fromEntries(
 		styleDef?.variants
 			.filter(
 				( variant ) =>
 					meta.breakpoint === variant.meta.breakpoint &&
-					( ! isEmpty( variant.props ) ||
-						Boolean( variant.custom_css?.raw?.trim() ) )
+					( ! isEmpty( variant.props ) || Boolean( variant.custom_css?.raw?.trim() ) )
 			)
-			.map( ( variant ) => [ variant.meta.state ?? 'normal', true ] ) ??
-			[]
+			.map( ( variant ) => [ variant.meta.state ?? 'normal', true ] ) ?? []
 	);
 }
 
@@ -205,18 +185,9 @@ function getMenuItemsByProvider( {
 	const canUnapply = ! fixed;
 
 	const actions = [
-		canUpdate && (
-			<RenameClassMenuItem key="rename-class" closeMenu={ closeMenu } />
-		),
-		canDuplicate && (
-			<DuplicateClassMenuItem
-				key="duplicate-class"
-				closeMenu={ closeMenu }
-			/>
-		),
-		canUnapply && (
-			<UnapplyClassMenuItem key="unapply-class" closeMenu={ closeMenu } />
-		),
+		canUpdate && <RenameClassMenuItem key="rename-class" closeMenu={ closeMenu } />,
+		canDuplicate && <DuplicateClassMenuItem key="duplicate-class" closeMenu={ closeMenu } />,
+		canUnapply && <UnapplyClassMenuItem key="unapply-class" closeMenu={ closeMenu } />,
 	].filter( Boolean );
 
 	if ( actions.length ) {
@@ -246,19 +217,9 @@ type StateMenuItemProps = {
 	closeMenu: () => void;
 };
 
-function StateMenuItem( {
-	state,
-	label,
-	closeMenu,
-	...props
-}: StateMenuItemProps ) {
+function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProps ) {
 	const { id: styleId, provider } = useCssClass();
-	const {
-		id: activeId,
-		setId: setActiveId,
-		setMetaState: setActiveMetaState,
-		meta,
-	} = useStyle();
+	const { id: activeId, setId: setActiveId, setMetaState: setActiveMetaState, meta } = useStyle();
 	const { state: activeState } = meta;
 	const { userCan } = useUserStylesCapability();
 
@@ -292,18 +253,13 @@ function StateMenuItem( {
 		>
 			<MenuItemInfotip
 				showInfoTip={ disabled }
-				content={ __(
-					'With your current role, you can only use existing states.',
-					'elementor'
-				) }
+				content={ __( 'With your current role, you can only use existing states.', 'elementor' ) }
 			>
 				<Stack gap={ 0.75 } direction="row" alignItems="center">
 					{ isStyled && (
 						<StyleIndicator
 							aria-label={ __( 'Has style', 'elementor' ) }
-							getColor={ getTempStylesProviderThemeColor(
-								provider ?? ''
-							) }
+							getColor={ getTempStylesProviderThemeColor( provider ?? '' ) }
 						/>
 					) }
 					{ label }
@@ -313,12 +269,7 @@ function StateMenuItem( {
 	);
 }
 
-function UnapplyClassMenuItem( {
-	closeMenu,
-	...props
-}: {
-	closeMenu: () => void;
-} ) {
+function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void } ) {
 	const { id: classId, label: classLabel, provider } = useCssClass();
 	const unapplyClass = useUndoableUnapplyClass();
 

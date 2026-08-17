@@ -1,9 +1,5 @@
 import { useEffect } from 'react';
-import {
-	__privateListenTo as listenTo,
-	registerDataHook,
-	routeCloseEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, registerDataHook, routeCloseEvent } from '@elementor/editor-v1-adapters';
 import { __getState as getState } from '@elementor/store';
 
 import { loadDefaultStyles } from '../load-default-styles';
@@ -15,17 +11,13 @@ export function PopulateStore() {
 	useEffect( () => {
 		void loadDefaultStyles();
 
-		registerDataHook(
-			'after',
-			'editor/documents/attach-preview',
-			async () => {
-				if ( selectIsDirty( getState() ) ) {
-					return;
-				}
-
-				await loadDefaultStyles();
+		registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+			if ( selectIsDirty( getState() ) ) {
+				return;
 			}
-		);
+
+			await loadDefaultStyles();
+		} );
 
 		const unsubscribe = listenTo( routeCloseEvent( V2_PANEL_ROUTE ), () => {
 			if ( selectIsDirty( getState() ) ) {

@@ -2,10 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { CLASSES_PROP_KEY } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
-import {
-	type StyleDefinitionID,
-	type StyleDefinitionState,
-} from '@elementor/editor-styles';
+import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
 import { createLocation } from '@elementor/locations';
 import { SessionStorageProvider } from '@elementor/session';
 import { Box, Divider, Stack } from '@elementor/ui';
@@ -22,8 +19,7 @@ import { StyleSections } from './style-sections';
 
 const TABS_HEADER_HEIGHT = '37px';
 
-export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } =
-	createLocation();
+export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
 
 export const stickyHeaderStyles = {
 	position: 'sticky',
@@ -35,11 +31,8 @@ export const stickyHeaderStyles = {
 
 export const StyleTab = () => {
 	const currentClassesProp = useCurrentClassesProp();
-	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId(
-		currentClassesProp ?? ''
-	);
-	const [ activeStyleState, setActiveStyleState ] =
-		useState< StyleDefinitionState | null >( null );
+	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp ?? '' );
+	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
 
 	if ( ! currentClassesProp ) {
@@ -94,8 +87,7 @@ function useCurrentClassesProp(): string | null {
 	const { elementType } = useElement();
 
 	const prop = Object.entries( elementType.propsSchema ).find(
-		( [ , propType ] ) =>
-			propType.kind === 'plain' && propType.key === CLASSES_PROP_KEY
+		( [ , propType ] ) => propType.kind === 'plain' && propType.key === CLASSES_PROP_KEY
 	);
 
 	if ( ! prop ) {

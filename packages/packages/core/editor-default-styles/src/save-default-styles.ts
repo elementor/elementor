@@ -1,18 +1,9 @@
-import {
-	__dispatch as dispatch,
-	__getState as getState,
-} from '@elementor/store';
+import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { hash } from '@elementor/utils';
 
 import { type AllowedHtmlTag } from './allowed-tags';
 import { apiClient } from './api';
-import {
-	selectData,
-	selectInitialData,
-	selectIsDirty,
-	slice,
-	type StateWithDefaultStyles,
-} from './store';
+import { selectData, selectInitialData, selectIsDirty, slice, type StateWithDefaultStyles } from './store';
 
 function getChangedTags( state: StateWithDefaultStyles ): AllowedHtmlTag[] {
 	const current = selectData( state );

@@ -4,9 +4,7 @@ import { type V1Element } from '../sync/types';
 
 export const DEFAULT_STYLE_CLASS_PREFIX = 'e-default-';
 
-export function parseDefaultStyleTagFromClassList(
-	classList: DOMTokenList
-): string | null {
+export function parseDefaultStyleTagFromClassList( classList: DOMTokenList ): string | null {
 	for ( const className of classList ) {
 		if ( className.startsWith( DEFAULT_STYLE_CLASS_PREFIX ) ) {
 			return className.slice( DEFAULT_STYLE_CLASS_PREFIX.length );
@@ -16,9 +14,7 @@ export function parseDefaultStyleTagFromClassList(
 	return null;
 }
 
-export function getDefaultStyleTagFromPreviewElement(
-	elementId: string
-): string | null {
+export function getDefaultStyleTagFromPreviewElement( elementId: string ): string | null {
 	const renderRoot = getAtomicElementRenderRoot( elementId );
 
 	if ( ! renderRoot ) {

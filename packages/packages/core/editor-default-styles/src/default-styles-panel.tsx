@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { __createPanel as createPanel } from '@elementor/editor-panels';
+import { selectOpenId } from '@elementor/editor-panels/src/store';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { selectOpenId } from '../../editor-panels/src/store';
-import {
-	__getState as getState,
-	__useSelector as useSelector,
-} from '@elementor/store';
+import { __getState as getState, __useSelector as useSelector } from '@elementor/store';
 
 import { DefaultStylesPanelContent } from './components/default-styles-panel-content';
 
