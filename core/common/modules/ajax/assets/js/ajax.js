@@ -130,6 +130,22 @@ export default class extends elementorModules.Module {
 
 			options.deferred.jqXhr = this.sendBatch( requests );
 		} else {
+			const pendingRequest = this.requests[ options.unique_id ];
+
+			if ( pendingRequest ) {
+				// A batch holds a single request per unique id, so without settling the displaced
+				// deferred its caller would wait forever.
+				if ( this.getCacheKey( pendingRequest.options ) === this.getCacheKey( options ) ) {
+					pendingRequest.options.deferred
+						.done( ( data ) => options.deferred.resolve( data ) )
+						.fail( ( data ) => options.deferred.reject( data ) );
+
+					return options.deferred;
+				}
+
+				pendingRequest.options.deferred.reject( 'Request replaced' );
+			}
+
 			this.requests[ options.unique_id ] = request;
 
 			this.debounceSendBatch();
