@@ -4,27 +4,36 @@ import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
-import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import {
+	SaveChangesDialog,
+	ThemeProvider,
+	useDialog,
+} from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePanelActions } from './default-styles-panel';
 
-export const EVENT_REQUEST_OPEN_DEFAULT_STYLES = 'elementor/default-styles/request-open';
+export const EVENT_REQUEST_OPEN_DEFAULT_STYLES =
+	'elementor/default-styles/request-open';
 
 export function DefaultStylesOpenGate() {
 	const { open } = usePanelActions();
 	const document = useActiveDocument();
 	const { save: saveDocument } = useActiveDocumentActions();
-	const { open: openSaveDialog, close: closeSaveDialog, isOpen: isSaveDialogOpen } = useDialog();
+	const {
+		open: openSaveDialog,
+		close: closeSaveDialog,
+		isOpen: isSaveDialogOpen,
+	} = useDialog();
 
-	const documentRef = useRef(document);
+	const documentRef = useRef( document );
 	documentRef.current = document;
 
-	const pendingOpenRef = useRef<(() => void) | null>(null);
+	const pendingOpenRef = useRef< ( () => void ) | null >( null );
 
 	const gatedOpen = useCallback(
-		(onClean: () => void) => {
-			if (documentRef.current?.isDirty) {
+		( onClean: () => void ) => {
+			if ( documentRef.current?.isDirty ) {
 				pendingOpenRef.current = onClean;
 				openSaveDialog();
 				return;
@@ -32,10 +41,10 @@ export function DefaultStylesOpenGate() {
 
 			onClean();
 		},
-		[openSaveDialog]
+		[ openSaveDialog ]
 	);
 
-	const handleSaveAndContinue = useCallback(async () => {
+	const handleSaveAndContinue = useCallback( async () => {
 		try {
 			await saveDocument();
 			closeSaveDialog();
@@ -44,51 +53,59 @@ export function DefaultStylesOpenGate() {
 		} catch {
 			// Keep dialog open.
 		}
-	}, [saveDocument, closeSaveDialog]);
+	}, [ saveDocument, closeSaveDialog ] );
 
-	const handleStayHere = useCallback(() => {
+	const handleStayHere = useCallback( () => {
 		closeSaveDialog();
 		pendingOpenRef.current = null;
-	}, [closeSaveDialog]);
+	}, [ closeSaveDialog ] );
 
-	useEffect(() => {
+	useEffect( () => {
 		const handler = () => {
-			gatedOpen(() => {
+			gatedOpen( () => {
 				void open();
-			});
+			} );
 		};
 
-		window.addEventListener(EVENT_REQUEST_OPEN_DEFAULT_STYLES, handler);
+		window.addEventListener( EVENT_REQUEST_OPEN_DEFAULT_STYLES, handler );
 
 		return () => {
-			window.removeEventListener(EVENT_REQUEST_OPEN_DEFAULT_STYLES, handler);
+			window.removeEventListener(
+				EVENT_REQUEST_OPEN_DEFAULT_STYLES,
+				handler
+			);
 		};
-	}, [gatedOpen, open]);
+	}, [ gatedOpen, open ] );
 
-	if (!isSaveDialogOpen) {
+	if ( ! isSaveDialogOpen ) {
 		return null;
 	}
 
 	return (
 		<ThemeProvider>
 			<SaveChangesDialog>
-				<SaveChangesDialog.Title>{__('You have unsaved changes', 'elementor')}</SaveChangesDialog.Title>
+				<SaveChangesDialog.Title>
+					{ __( 'You have unsaved changes', 'elementor' ) }
+				</SaveChangesDialog.Title>
 				<SaveChangesDialog.Content>
-					<SaveChangesDialog.ContentText sx={{ mb: 2 }}>
-						{__("To open Default Styles, save your page first. You can't continue without saving.", 'elementor')}
+					<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
+						{ __(
+							"To open Default Styles, save your page first. You can't continue without saving.",
+							'elementor'
+						) }
 					</SaveChangesDialog.ContentText>
 				</SaveChangesDialog.Content>
 				<SaveChangesDialog.Actions
-					actions={{
+					actions={ {
 						cancel: {
-							label: __('Stay here', 'elementor'),
+							label: __( 'Stay here', 'elementor' ),
 							action: handleStayHere,
 						},
 						confirm: {
-							label: __('Save & Continue', 'elementor'),
+							label: __( 'Save & Continue', 'elementor' ),
 							action: handleSaveAndContinue,
 						},
-					}}
+					} }
 				/>
 			</SaveChangesDialog>
 		</ThemeProvider>

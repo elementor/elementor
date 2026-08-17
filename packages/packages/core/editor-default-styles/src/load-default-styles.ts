@@ -9,8 +9,8 @@ export async function loadDefaultStyles() {
 	const items = response.data.data;
 
 	dispatch(
-		slice.actions.load({
+		slice.actions.load( {
 			data: items,
-		})
+		} )
 	);
 }

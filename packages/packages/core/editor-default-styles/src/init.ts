@@ -1,6 +1,9 @@
 import { injectIntoLogic } from '@elementor/editor';
 import { toolsMenu } from '@elementor/editor-app-bar';
-import { registerElementPanelDefaults, STYLE_SECTION_NAMES } from '@elementor/editor-editing-panel';
+import {
+	registerElementPanelDefaults,
+	STYLE_SECTION_NAMES,
+} from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
@@ -13,32 +16,32 @@ import { useDefaultStylesActionProps } from './hooks/use-default-styles-action-p
 import { slice } from './store';
 
 export function init() {
-	registerSlice(slice);
+	registerSlice( slice );
 
-	registerElementPanelDefaults('default-style', {
+	registerElementPanelDefaults( 'default-style', {
 		defaultTab: 'style',
 		defaultSectionsExpanded: {
-			style: [...STYLE_SECTION_NAMES],
+			style: [ ...STYLE_SECTION_NAMES ],
 		},
-	});
+	} );
 
-	registerPanel(panel);
+	registerPanel( panel );
 
-	stylesRepository.register(defaultStylesStylesProvider);
+	stylesRepository.register( defaultStylesStylesProvider );
 
-	toolsMenu.registerAction({
+	toolsMenu.registerAction( {
 		id: 'default-styles-button',
 		priority: 4,
 		useProps: useDefaultStylesActionProps,
-	});
+	} );
 
-	injectIntoLogic({
+	injectIntoLogic( {
 		id: 'default-styles-populate-store',
 		component: PopulateStore,
-	});
+	} );
 
-	injectIntoLogic({
+	injectIntoLogic( {
 		id: 'default-styles-open-gate',
 		component: DefaultStylesOpenGate,
-	});
+	} );
 }

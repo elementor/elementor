@@ -6,10 +6,12 @@ import { EVENT_REQUEST_OPEN_DEFAULT_STYLES } from '../default-styles-open-gate';
 
 export function useDefaultStylesActionProps(): ActionProps {
 	return {
-		title: __('Default Styles', 'elementor'),
+		title: __( 'Default Styles', 'elementor' ),
 		icon: TextIcon,
 		onClick: () => {
-			window.dispatchEvent(new CustomEvent(EVENT_REQUEST_OPEN_DEFAULT_STYLES));
+			window.dispatchEvent(
+				new CustomEvent( EVENT_REQUEST_OPEN_DEFAULT_STYLES )
+			);
 		},
 	};
 }

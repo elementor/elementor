@@ -6,17 +6,17 @@ import { StyleTabSection } from './style-tab-section';
 export const StyleSections = () => {
 	return (
 		<>
-			{STYLE_SECTIONS.map((section) => (
+			{ STYLE_SECTIONS.map( ( section ) => (
 				<StyleTabSection
-					key={section.name}
-					section={{
+					key={ section.name }
+					section={ {
 						component: section.component,
 						name: section.name,
 						title: section.title,
-					}}
-					fields={section.fields}
+					} }
+					fields={ section.fields }
 				/>
-			))}
+			) ) }
 		</>
 	);
 };

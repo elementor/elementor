@@ -7,7 +7,14 @@ import {
 	useUserStylesCapability,
 } from '@elementor/editor-styles-repository';
 import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
-import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
+import {
+	bindMenu,
+	Divider,
+	Menu,
+	MenuSubheader,
+	type PopupState,
+	Stack,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../contexts/element-context';
@@ -28,75 +35,114 @@ type CssClassMenuProps = {
 	fixed?: boolean;
 };
 
-export function CssClassMenu({ popupState, anchorEl, fixed }: CssClassMenuProps) {
+export function CssClassMenu( {
+	popupState,
+	anchorEl,
+	fixed,
+}: CssClassMenuProps ) {
 	const { provider } = useCssClass();
-	const isLocalStyle = provider ? isElementsStylesProvider(provider) : true;
+	const isLocalStyle = provider ? isElementsStylesProvider( provider ) : true;
 	const pseudoStates = usePseudoStates();
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+	const handleKeyDown = ( e: React.KeyboardEvent< HTMLElement > ) => {
 		e.stopPropagation();
 	};
 
 	return (
 		<Menu
-			MenuListProps={{ dense: true, sx: { minWidth: '160px' } }}
-			{...bindMenu(popupState)}
-			anchorEl={anchorEl}
-			anchorOrigin={{
+			MenuListProps={ { dense: true, sx: { minWidth: '160px' } } }
+			{ ...bindMenu( popupState ) }
+			anchorEl={ anchorEl }
+			anchorOrigin={ {
 				vertical: 'bottom',
 				horizontal: 'left',
-			}}
-			transformOrigin={{
+			} }
+			transformOrigin={ {
 				horizontal: 'left',
 				vertical: -4,
-			}}
-			onKeyDown={handleKeyDown}
+			} }
+			onKeyDown={ handleKeyDown }
 			// Workaround for focus-visible issue.
 			disableAutoFocusItem
 		>
-			{isLocalStyle && <LocalClassSubMenu popupState={popupState} />}
-			{/* It has to be an array since MUI menu doesn't accept a Fragment as a child, and wrapping the items with an HTML element disrupts keyboard navigation */}
-			{getMenuItemsByProvider({ provider, closeMenu: popupState.close, fixed })}
-			<MenuSubheader sx={{ typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 }}>
-				{__('States', 'elementor')}
+			{ isLocalStyle && <LocalClassSubMenu popupState={ popupState } /> }
+			{ /* It has to be an array since MUI menu doesn't accept a Fragment as a child, and wrapping the items with an HTML element disrupts keyboard navigation */ }
+			{ getMenuItemsByProvider( {
+				provider,
+				closeMenu: popupState.close,
+				fixed,
+			} ) }
+			<MenuSubheader
+				sx={ {
+					typography: 'caption',
+					color: 'text.secondary',
+					pb: 0.5,
+					pt: 1,
+				} }
+			>
+				{ __( 'States', 'elementor' ) }
 			</MenuSubheader>
-			{pseudoStates.map((state) => {
-				return <StateMenuItem key={state.key} state={state.value} label={state.label} closeMenu={popupState.close} />;
-			})}
-			<ClassStatesMenu closeMenu={popupState.close} />
+			{ pseudoStates.map( ( state ) => {
+				return (
+					<StateMenuItem
+						key={ state.key }
+						state={ state.value }
+						label={ state.label }
+						closeMenu={ popupState.close }
+					/>
+				);
+			} ) }
+			<ClassStatesMenu closeMenu={ popupState.close } />
 		</Menu>
 	);
 }
 
-function ClassStatesMenu({ closeMenu }: { closeMenu: () => void }) {
+function ClassStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
 	const { elementStates, elementTitle } = useElementStates();
 
-	if (!elementStates.length) {
+	if ( ! elementStates.length ) {
 		return null;
 	}
 
 	/* translators: %s: Element type title. */
-	const customTitle = __('%s States', 'elementor').replace('%s', elementTitle);
+	const customTitle = __( '%s States', 'elementor' ).replace(
+		'%s',
+		elementTitle
+	);
 
 	return (
 		<>
 			<Divider />
-			<MenuSubheader sx={{ typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 }}>
-				{customTitle}
+			<MenuSubheader
+				sx={ {
+					typography: 'caption',
+					color: 'text.secondary',
+					pb: 0.5,
+					pt: 1,
+				} }
+			>
+				{ customTitle }
 			</MenuSubheader>
-			{elementStates.map((state) => {
-				return <StateMenuItem key={state.key} state={state.value} label={state.label} closeMenu={closeMenu} />;
-			})}
+			{ elementStates.map( ( state ) => {
+				return (
+					<StateMenuItem
+						key={ state.key }
+						state={ state.value }
+						label={ state.label }
+						closeMenu={ closeMenu }
+					/>
+				);
+			} ) }
 		</>
 	);
 }
 
-const CLASS_STATES_MAP: Record<string, { label: string }> = {
+const CLASS_STATES_MAP: Record< string, { label: string } > = {
 	selected: {
-		label: __('selected', 'elementor'),
+		label: __( 'selected', 'elementor' ),
 	},
 	disabled: {
-		label: __('disabled', 'elementor'),
+		label: __( 'disabled', 'elementor' ),
 	},
 };
 
@@ -105,11 +151,11 @@ export function useElementStates() {
 
 	const { styleStates = [] } = elementType;
 
-	const elementStates = styleStates.map(({ value, name }) => ({
+	const elementStates = styleStates.map( ( { value, name } ) => ( {
 		key: value,
 		value,
-		label: CLASS_STATES_MAP[value]?.label ?? name,
-	}));
+		label: CLASS_STATES_MAP[ value ]?.label ?? name,
+	} ) );
 
 	return {
 		elementStates,
@@ -117,22 +163,28 @@ export function useElementStates() {
 	};
 }
 
-function useModifiedStates(styleId: string | null): Partial<Record<StyleDefinitionStateWithNormal, true>> {
+function useModifiedStates(
+	styleId: string | null
+): Partial< Record< StyleDefinitionStateWithNormal, true > > {
 	const { meta } = useStyle();
-	const styleDef = stylesRepository.all().find((style) => style.id === styleId);
+	const styleDef = stylesRepository
+		.all()
+		.find( ( style ) => style.id === styleId );
 
 	return Object.fromEntries(
 		styleDef?.variants
 			.filter(
-				(variant) =>
+				( variant ) =>
 					meta.breakpoint === variant.meta.breakpoint &&
-					(!isEmpty(variant.props) || Boolean(variant.custom_css?.raw?.trim()))
+					( ! isEmpty( variant.props ) ||
+						Boolean( variant.custom_css?.raw?.trim() ) )
 			)
-			.map((variant) => [variant.meta.state ?? 'normal', true]) ?? []
+			.map( ( variant ) => [ variant.meta.state ?? 'normal', true ] ) ??
+			[]
 	);
 }
 
-function getMenuItemsByProvider({
+function getMenuItemsByProvider( {
 	provider,
 	closeMenu,
 	fixed,
@@ -140,40 +192,49 @@ function getMenuItemsByProvider({
 	provider: string | null;
 	closeMenu: () => void;
 	fixed?: boolean;
-}) {
-	if (!provider) {
+} ) {
+	if ( ! provider ) {
 		return [];
 	}
 
-	const providerInstance = stylesRepository.getProviderByKey(provider);
+	const providerInstance = stylesRepository.getProviderByKey( provider );
 	const providerActions = providerInstance?.actions;
 
 	const canUpdate = providerActions?.update;
 	const canDuplicate = providerActions?.create && providerActions?.get;
-	const canUnapply = !fixed;
+	const canUnapply = ! fixed;
 
 	const actions = [
-		canUpdate && <RenameClassMenuItem key="rename-class" closeMenu={closeMenu} />,
-		canDuplicate && <DuplicateClassMenuItem key="duplicate-class" closeMenu={closeMenu} />,
-		canUnapply && <UnapplyClassMenuItem key="unapply-class" closeMenu={closeMenu} />,
-	].filter(Boolean);
+		canUpdate && (
+			<RenameClassMenuItem key="rename-class" closeMenu={ closeMenu } />
+		),
+		canDuplicate && (
+			<DuplicateClassMenuItem
+				key="duplicate-class"
+				closeMenu={ closeMenu }
+			/>
+		),
+		canUnapply && (
+			<UnapplyClassMenuItem key="unapply-class" closeMenu={ closeMenu } />
+		),
+	].filter( Boolean );
 
-	if (actions.length) {
+	if ( actions.length ) {
 		actions.unshift(
 			<MenuSubheader
 				key="provider-label"
-				sx={{
+				sx={ {
 					typography: 'caption',
 					color: 'text.secondary',
 					pb: 0.5,
 					pt: 1,
 					textTransform: 'capitalize',
-				}}
+				} }
 			>
-				{providerInstance?.labels?.singular}
+				{ providerInstance?.labels?.singular }
 			</MenuSubheader>
 		);
-		actions.push(<Divider key="provider-actions-divider" />);
+		actions.push( <Divider key="provider-actions-divider" /> );
 	}
 
 	return actions;
@@ -185,103 +246,126 @@ type StateMenuItemProps = {
 	closeMenu: () => void;
 };
 
-function StateMenuItem({ state, label, closeMenu, ...props }: StateMenuItemProps) {
+function StateMenuItem( {
+	state,
+	label,
+	closeMenu,
+	...props
+}: StateMenuItemProps ) {
 	const { id: styleId, provider } = useCssClass();
-	const { id: activeId, setId: setActiveId, setMetaState: setActiveMetaState, meta } = useStyle();
+	const {
+		id: activeId,
+		setId: setActiveId,
+		setMetaState: setActiveMetaState,
+		meta,
+	} = useStyle();
 	const { state: activeState } = meta;
 	const { userCan } = useUserStylesCapability();
 
-	const modifiedStates = useModifiedStates(styleId);
+	const modifiedStates = useModifiedStates( styleId );
 
-	const isUpdateAllowed = !state || userCan(provider ?? '').updateProps;
+	const isUpdateAllowed = ! state || userCan( provider ?? '' ).updateProps;
 
-	const isStyled = modifiedStates[state ?? 'normal'] ?? false;
-	const disabled = !isUpdateAllowed && !isStyled;
+	const isStyled = modifiedStates[ state ?? 'normal' ] ?? false;
+	const disabled = ! isUpdateAllowed && ! isStyled;
 	const isActive = styleId === activeId;
 	const isSelected = state === activeState && isActive;
 
 	return (
 		<MenuListItem
-			{...props}
-			selected={isSelected}
-			disabled={disabled}
-			sx={{ textTransform: 'capitalize' }}
-			onClick={() => {
-				if (!isActive) {
-					setActiveId(styleId);
+			{ ...props }
+			selected={ isSelected }
+			disabled={ disabled }
+			sx={ { textTransform: 'capitalize' } }
+			onClick={ () => {
+				if ( ! isActive ) {
+					setActiveId( styleId );
 				}
-				trackStyles(provider ?? '', 'classStateClicked', {
+				trackStyles( provider ?? '', 'classStateClicked', {
 					classId: styleId,
 					type: label,
 					source: styleId ? 'global' : 'local',
-				});
-				setActiveMetaState(state);
+				} );
+				setActiveMetaState( state );
 				closeMenu();
-			}}
+			} }
 		>
 			<MenuItemInfotip
-				showInfoTip={disabled}
-				content={__('With your current role, you can only use existing states.', 'elementor')}
+				showInfoTip={ disabled }
+				content={ __(
+					'With your current role, you can only use existing states.',
+					'elementor'
+				) }
 			>
-				<Stack gap={0.75} direction="row" alignItems="center">
-					{isStyled && (
+				<Stack gap={ 0.75 } direction="row" alignItems="center">
+					{ isStyled && (
 						<StyleIndicator
-							aria-label={__('Has style', 'elementor')}
-							getColor={getTempStylesProviderThemeColor(provider ?? '')}
+							aria-label={ __( 'Has style', 'elementor' ) }
+							getColor={ getTempStylesProviderThemeColor(
+								provider ?? ''
+							) }
 						/>
-					)}
-					{label}
+					) }
+					{ label }
 				</Stack>
 			</MenuItemInfotip>
 		</MenuListItem>
 	);
 }
 
-function UnapplyClassMenuItem({ closeMenu, ...props }: { closeMenu: () => void }) {
+function UnapplyClassMenuItem( {
+	closeMenu,
+	...props
+}: {
+	closeMenu: () => void;
+} ) {
 	const { id: classId, label: classLabel, provider } = useCssClass();
 	const unapplyClass = useUndoableUnapplyClass();
 
 	return classId ? (
 		<MenuListItem
-			{...props}
-			onClick={() => {
-				unapplyClass({ classId, classLabel });
-				trackStyles(provider ?? '', 'classRemoved', {
+			{ ...props }
+			onClick={ () => {
+				unapplyClass( { classId, classLabel } );
+				trackStyles( provider ?? '', 'classRemoved', {
 					classId,
 					classTitle: classLabel,
 					source: 'style-tab',
-				});
+				} );
 				closeMenu();
-			}}
+			} }
 		>
-			{__('Remove', 'elementor')}
+			{ __( 'Remove', 'elementor' ) }
 		</MenuListItem>
 	) : null;
 }
 
-function RenameClassMenuItem({ closeMenu }: { closeMenu: () => void }) {
+function RenameClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 	const { handleRename, provider } = useCssClass();
 	const { userCan } = useUserStylesCapability();
 
-	if (!provider) {
+	if ( ! provider ) {
 		return null;
 	}
 
-	const isAllowed = userCan(provider).update;
+	const isAllowed = userCan( provider ).update;
 
 	return (
 		<MenuListItem
-			disabled={!isAllowed}
-			onClick={() => {
+			disabled={ ! isAllowed }
+			onClick={ () => {
 				closeMenu();
 				handleRename();
-			}}
+			} }
 		>
 			<MenuItemInfotip
-				showInfoTip={!isAllowed}
-				content={__("With your current role, you can use existing classes but can't modify them.", 'elementor')}
+				showInfoTip={ ! isAllowed }
+				content={ __(
+					"With your current role, you can use existing classes but can't modify them.",
+					'elementor'
+				) }
 			>
-				{__('Rename', 'elementor')}
+				{ __( 'Rename', 'elementor' ) }
 			</MenuItemInfotip>
 		</MenuListItem>
 	);
