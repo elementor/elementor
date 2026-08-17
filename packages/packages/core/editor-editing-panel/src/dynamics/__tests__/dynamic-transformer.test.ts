@@ -128,6 +128,56 @@ describe( 'dynamicTransformer', () => {
 		expect( value ).toBe( 'default-value' );
 	} );
 
+	it( 'should wrap a resolved url in the src prop type it is bound to', async () => {
+		// Arrange.
+		window.elementor = ELEMENTOR_MOCK;
+
+		const propType = {
+			kind: 'union',
+			prop_types: { 'image-src': {}, dynamic: {} },
+		} as unknown as PropType;
+
+		// Act.
+		const valueFromServer = dynamicTransformer(
+			{ name: 'test-tag', settings: { url: 'a' } },
+			{ key: 'test', propType }
+		);
+
+		// Assert.
+		await expect( valueFromServer ).resolves.toEqual( {
+			$$type: 'image-src',
+			value: { url: 'test-tag-{"url":"a"}' },
+		} );
+
+		// Act - the second call is resolved synchronously from the cache.
+		const valueFromCache = dynamicTransformer(
+			{ name: 'test-tag', settings: { url: 'a' } },
+			{ key: 'test', propType }
+		);
+
+		// Assert.
+		expect( valueFromCache ).toEqual( {
+			$$type: 'image-src',
+			value: { url: 'test-tag-{"url":"a"}' },
+		} );
+	} );
+
+	it( 'should not wrap a resolved url when the prop is not a src prop', async () => {
+		// Arrange.
+		window.elementor = ELEMENTOR_MOCK;
+
+		const propType = {
+			kind: 'union',
+			prop_types: { string: {}, dynamic: {} },
+		} as unknown as PropType;
+
+		// Act.
+		const value = dynamicTransformer( { name: 'test-tag', settings: { url: 'b' } }, { key: 'test', propType } );
+
+		// Assert.
+		await expect( value ).resolves.toBe( 'test-tag-{"url":"b"}' );
+	} );
+
 	it( 'should return default value for null dynamic values', async () => {
 		// Arrange & Act.
 		const value = dynamicTransformer( null as never, {
