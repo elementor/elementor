@@ -360,6 +360,10 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.2.9 - 2026-08-17 =
+
+* Fix: Test Editor top bar integrations may not appear in non-English languages
+
 = 4.2.2 - 2026-08-06 =
 
 * Fix: Editor top bar integrations may not appear in non-English languages
