@@ -186,7 +186,7 @@ class Conversion_Banner {
 
 		return [
 			'title' => esc_html__( 'Build more with Elementor Pro', 'elementor' ),
-			'text' => esc_html__( 'Add the theme builder, popup builder, and 100+ advanced widgets to your Elementor editor.', 'elementor' ),
+			'text' => esc_html__( 'Add the theme builder, popup builder, and 85+ advanced widgets to your Elementor Editor.', 'elementor' ),
 			'buttons' => [
 				[
 					'text' => esc_html__( 'Upgrade now', 'elementor' ),

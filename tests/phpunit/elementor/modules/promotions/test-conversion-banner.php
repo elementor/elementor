@@ -59,7 +59,7 @@ class Test_Conversion_Banner extends TestCase {
 		// Assert
 		$this->assertSame( 'Build more with Elementor Pro', $config['title'] );
 		$this->assertSame(
-			'Add the theme builder, popup builder, and 100+ advanced widgets to your Elementor editor.',
+			'Add the theme builder, popup builder, and 85+ advanced widgets to your Elementor Editor.',
 			$config['text']
 		);
 		$this->assertSame( 'Upgrade now', $config['buttons'][0]['text'] );
