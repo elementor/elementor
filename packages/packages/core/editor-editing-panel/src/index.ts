@@ -1,9 +1,9 @@
 export {
-  CreatableAutocomplete,
-  type CreatableAutocompleteProps,
-  type Option,
-  type ValidationEvent,
-  type ValidationResult,
+	CreatableAutocomplete,
+	type CreatableAutocompleteProps,
+	type Option,
+	type ValidationEvent,
+	type ValidationResult,
 } from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
 export { ControlLabel } from './components/control-label';
@@ -19,14 +19,11 @@ export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleSections } from './components/style-sections';
 export {
-  STYLE_SECTION_NAMES,
-  STYLE_SECTIONS,
-  type StyleSectionDefinition,
+	STYLE_SECTION_NAMES,
+	STYLE_SECTIONS,
+	type StyleSectionDefinition,
 } from './components/style-sections-definition';
-export {
-  DEFAULT_PSEUDO_STATES,
-  type PseudoStateOption,
-} from './components/style-states/pseudo-states';
+export { DEFAULT_PSEUDO_STATES, type PseudoStateOption } from './components/style-states/pseudo-states';
 export { PseudoStateMenuItems } from './components/style-states/pseudo-state-menu-items';
 export { usePseudoStates } from './components/style-states/use-pseudo-states';
 export { injectIntoGridFields } from './components/style-sections/layout-section/layout-section';
@@ -47,25 +44,18 @@ export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
-export {
-  getFieldIndicators,
-  registerFieldIndicator,
-  FIELD_TYPE,
-} from './field-indicators-registry';
+export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
-export {
-  registerElementPanelDefaults,
-  type ElementPanelDefaults,
-} from './hooks/use-default-panel-settings';
+export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { setLicenseConfig } from './hooks/use-license-config';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
 export { isDynamicPropValue } from './dynamics/utils';
 export {
-  extractDependencyEffect,
-  type DependencyEffect,
-  getElementSettingsWithDefaults,
-  getUpdatedValues,
-  extractOrderedDependencies,
+	extractDependencyEffect,
+	type DependencyEffect,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
