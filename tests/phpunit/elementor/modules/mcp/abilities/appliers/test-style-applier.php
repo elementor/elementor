@@ -390,5 +390,210 @@ namespace {
 			$this->assertArrayNotHasKey( 'title_color', $node['settings'] );
 			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 		}
+
+		private function nav_menu_widget_config(): array {
+			return [
+				'controls' => [
+					'color_menu_item' => [
+						'type' => 'color',
+						'selectors' => [
+							'{{WRAPPER}} .elementor-item' => 'color: {{VALUE}};',
+						],
+					],
+					'color_menu_item_hover' => [
+						'type' => 'color',
+						'selectors' => [
+							'{{WRAPPER}} .elementor-item:hover' => 'color: {{VALUE}};',
+						],
+					],
+					'color_menu_item_active' => [
+						'type' => 'color',
+						'selectors' => [
+							'{{WRAPPER}} .elementor-item.elementor-item-active' => 'color: {{VALUE}};',
+						],
+					],
+					'color_dropdown_item' => [
+						'type' => 'color',
+						'selectors' => [
+							'{{WRAPPER}} .sub-menu .elementor-item' => 'color: {{VALUE}};',
+						],
+					],
+					'color_dropdown_item_active' => [
+						'type' => 'color',
+						'selectors' => [
+							'{{WRAPPER}} .sub-menu .elementor-item-active' => 'color: {{VALUE}};',
+						],
+					],
+					'toggle_color' => [
+						'type' => 'color',
+						'selectors' => [
+							'{{WRAPPER}} .elementor-menu-toggle' => 'color: {{VALUE}};',
+						],
+					],
+					'padding_horizontal_menu_item' => [
+						'type' => 'slider',
+						'selectors' => [
+							'{{WRAPPER}} .elementor-item' => 'padding-left: {{SIZE}}{{UNIT}};',
+						],
+					],
+					'padding_horizontal_menu_item_tablet' => [ 'type' => 'slider' ],
+					'padding_horizontal_menu_item_mobile' => [ 'type' => 'slider' ],
+				],
+			];
+		}
+
+		public function test_apply__nav_menu_maps_nested_inner_element_scopes() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[
+					'main-nav' => 'main-menu { color: #111111; } dropdown { color: #222222; } toggle { color: #333333; }',
+				],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( '#111111', $node['settings']['color_menu_item'] );
+			$this->assertSame( '#222222', $node['settings']['color_dropdown_item'] );
+			$this->assertSame( '#333333', $node['settings']['toggle_color'] );
+		}
+
+		public function test_apply__nav_menu_maps_state_scopes() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[
+					'main-nav' => 'main-menu:hover { color: #aaaaaa; } dropdown:active { color: #bbbbbb; }',
+				],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( '#aaaaaa', $node['settings']['color_menu_item_hover'] );
+			$this->assertSame( '#bbbbbb', $node['settings']['color_dropdown_item_active'] );
+		}
+
+		public function test_apply__nav_menu_wrapper_fallback_targets_default_inner_element() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'main-nav' => 'color: #cccccc;' ],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( '#cccccc', $node['settings']['color_menu_item'] );
+		}
+
+		public function test_apply__nav_menu_responsive_scope_maps_tablet_suffix() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[
+					'main-nav' => 'main-menu { @media(--tablet) { padding-left: 5px; } }',
+				],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( [ 'unit' => 'px', 'size' => 5.0 ], $node['settings']['padding_horizontal_menu_item_tablet'] );
+		}
+
+		public function test_apply__nav_menu_replace_clears_inner_element_settings() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [
+					'menu' => 'primary',
+					'color_menu_item' => '#111111',
+					'color_dropdown_item' => '#222222',
+					'toggle_color' => '#333333',
+					'custom_css' => 'selector { filter: blur(2px); }',
+				],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'main-nav' => 'main-menu { color: #abcdef; }' ],
+				'replace',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( 'primary', $node['settings']['menu'] );
+			$this->assertSame( '#abcdef', $node['settings']['color_menu_item'] );
+			$this->assertArrayNotHasKey( 'color_dropdown_item', $node['settings'] );
+			$this->assertArrayNotHasKey( 'toggle_color', $node['settings'] );
+			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+		}
 	}
 }

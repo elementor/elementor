@@ -58,16 +58,17 @@ class V3_Style_Mapper {
 	 * @param string $css_string
 	 * @param string $widget_type
 	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
+	 * @param array{overrides?: array<string, array>, generic_index?: array<string, array>}|null $mapping Optional pre-resolved mapping.
 	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[]}
 	 */
-	public function apply( string $css_string, string $widget_type, array $widget_config ): array {
+	public function apply( string $css_string, string $widget_type, array $widget_config, ?array $mapping = null ): array {
 		$css_string = trim( $css_string );
 
 		if ( '' === $css_string ) {
 			return $this->empty_result();
 		}
 
-		$meta = $this->build_meta( $widget_type, $widget_config );
+		$meta = $this->build_meta( $widget_type, $widget_config, $mapping );
 		$ctx = new V3_Conversion_Context();
 
 		$split = ( new Css_Media_Splitter( $this->get_active_breakpoints() ) )->split( $css_string );
@@ -150,7 +151,14 @@ class V3_Style_Mapper {
 		return false;
 	}
 
-	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
+	private function build_meta( string $widget_type, array $widget_config, ?array $mapping = null ): V3_Context_Meta {
+		if ( null !== $mapping ) {
+			$overrides = is_array( $mapping['overrides'] ?? null ) ? $mapping['overrides'] : [];
+			$generic_index = is_array( $mapping['generic_index'] ?? null ) ? $mapping['generic_index'] : [];
+
+			return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
+		}
+
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$controls = $widget_config['controls'] ?? [];
 		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );

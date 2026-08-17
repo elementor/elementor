@@ -3,7 +3,10 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Scoped_Css_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -157,6 +160,18 @@ class Style_Applier {
 			return $warnings;
 		}
 
+		$inner_elements = V3_Widget_Bridge_Registry::get_inner_elements( (string) $widget_type );
+		if ( ! empty( $inner_elements ) ) {
+			return $this->apply_v3_inner_element_styles(
+				$node,
+				$css_string,
+				(string) $widget_type,
+				$widget_config,
+				$inner_elements,
+				$warnings
+			);
+		}
+
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
 		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
 
@@ -175,6 +190,95 @@ class Style_Applier {
 		}
 
 		if ( '' !== trim( $unmapped ) ) {
+			$snippet = self::truncate_css_snippet( $unmapped );
+			$warnings[] = null !== $pro_warning
+				? sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
+					$snippet
+				)
+				: sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
+					$snippet
+				);
+		}
+
+		return $warnings;
+	}
+
+	/**
+	 * @param array<string, mixed>              $node
+	 * @param array<string, array<string,mixed>> $inner_elements
+	 * @param string[]                          $warnings
+	 * @return string[]
+	 */
+	private function apply_v3_inner_element_styles(
+		array &$node,
+		string $css_string,
+		string $widget_type,
+		array $widget_config,
+		array $inner_elements,
+		array $warnings
+	): array {
+		$split = V3_Scoped_Css_Splitter::split( $css_string, array_keys( $inner_elements ) );
+		$default_inner_element = V3_Widget_Bridge_Registry::get_default_inner_element( $widget_type );
+
+		if ( null !== $default_inner_element && '' !== trim( $split['wrapper'] ) ) {
+			$split['scopes'][ $default_inner_element ] = trim(
+				( $split['scopes'][ $default_inner_element ] ?? '' ) . ' ' . $split['wrapper']
+			);
+			$split['wrapper'] = '';
+		}
+
+		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
+		$settings_patch = [];
+		$unmapped_parts = [];
+
+		if ( '' !== trim( $split['wrapper'] ) ) {
+			$result = $mapper->apply( $split['wrapper'], $widget_type, $widget_config );
+			$settings_patch = array_merge( $settings_patch, $result['settings_patch'] );
+			$warnings = array_merge( $warnings, $result['warnings'] );
+			if ( '' !== trim( $result['unmapped_css'] ?? '' ) ) {
+				$unmapped_parts[] = $result['unmapped_css'];
+			}
+		}
+
+		foreach ( $split['scopes'] as $scope_key => $scope_css ) {
+			if ( '' === trim( $scope_css ) ) {
+				continue;
+			}
+
+			$scope_alias = explode( ':', $scope_key, 2 )[0];
+			$inner_element = $inner_elements[ $scope_alias ] ?? null;
+			if ( null === $inner_element ) {
+				$unmapped_parts[] = $scope_key . ' { ' . $scope_css . ' }';
+				continue;
+			}
+
+			$mapping = V3_Auto_Mapper::for_scope( $widget_config, $inner_element );
+			$mapper_css = V3_Scoped_Css_Splitter::scope_to_mapper_css( $scope_key, $scope_css );
+			$result = $mapper->apply( $mapper_css, $widget_type, $widget_config, $mapping );
+
+			$settings_patch = array_merge( $settings_patch, $result['settings_patch'] );
+			$warnings = array_merge( $warnings, $result['warnings'] );
+
+			if ( '' !== trim( $result['unmapped_css'] ?? '' ) ) {
+				$unmapped_parts[] = $scope_key . ' { ' . $result['unmapped_css'] . ' }';
+			}
+		}
+
+		if ( ! empty( $settings_patch ) ) {
+			$node['settings'] = array_merge( $node['settings'] ?? [], $settings_patch );
+		}
+
+		$unmapped = trim( implode( ' ', $unmapped_parts ) );
+		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, $widget_type );
+		if ( null !== $pro_warning ) {
+			$warnings[] = $pro_warning;
+		}
+
+		if ( '' !== $unmapped ) {
 			$snippet = self::truncate_css_snippet( $unmapped );
 			$warnings[] = null !== $pro_warning
 				? sprintf(
