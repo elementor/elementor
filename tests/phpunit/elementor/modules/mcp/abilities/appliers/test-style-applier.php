@@ -256,6 +256,35 @@ namespace {
 			$this->assertStringContainsString( 'nonexistent', $result['error']->get_error_message() );
 		}
 
+		public function test_apply__v3_settings_first_drops_css_with_warning() {
+			// Arrange.
+			$applier = $this->make_applier( $this->make_converter() );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'post-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'post-title' => 'color: red;' ],
+				'patch',
+				[],
+				true
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertNotEmpty( $result['warnings'] );
+			$this->assertStringContainsString( 'ignores the "style" input', $result['warnings'][0] );
+			$this->assertArrayNotHasKey( 'title_color', $node['settings'] );
+			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+		}
+
 		public function test_apply__v3_maps_css_to_settings_and_falls_back_unmapped_to_custom_css() {
 			// Arrange.
 			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );

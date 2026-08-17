@@ -7,7 +7,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Advanced_Basics_Schema;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Setting_Keys;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -36,9 +37,12 @@ class Widget_Context_Helper {
 		'theme-post-featured-image',
 		'theme-post-excerpt',
 		'theme-archive-title',
+		'slides',
+		'price-table',
+		'call-to-action',
 	];
 
-	const V3_FALLBACK_MESSAGE = '`properties` lists the only keys accepted in `element_config` / `manage-elements.settings` for this widget. Put all visual styling in the `style` (CSS) input.';
+	const V3_FALLBACK_MESSAGE = '`properties` lists Content, Style, and core Advanced-tab keys accepted in `element_config`. Set behavior and visual styling there directly. Do NOT send a `style` CSS string for V3 widgets.';
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All properties are optional. Object-typed properties describe common shapes but do not include exhaustive inner validation.';
 
@@ -152,15 +156,21 @@ class Widget_Context_Helper {
 				return null;
 			}
 
-			$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
-			$built = V3_Json_Schema_Builder::build( $config['controls'], $allowed_keys );
+			$controls = is_array( $config['controls'] ) ? $config['controls'] : [];
+			$schema_keys = V3_Style_Setting_Keys::content_and_style_keys_from_controls( $controls );
+			$built = V3_Json_Schema_Builder::build( $controls, $schema_keys );
+			$properties = array_merge(
+				$built['properties'],
+				V3_Advanced_Basics_Schema::property_refs_for_controls( $controls )
+			);
 
 			return [
 				'type' => 'object',
 				'widget_version' => self::VERSION_V3,
 				'message' => self::V3_FALLBACK_MESSAGE,
 				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
-				'properties' => $built['properties'],
+				'advanced_basics_ref' => V3_Advanced_Basics_Schema::RESOURCE_URI,
+				'properties' => $properties,
 				'required' => $built['required'],
 				'additionalProperties' => false,
 			];

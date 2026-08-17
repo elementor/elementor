@@ -35,22 +35,24 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__includes_allowlisted_v3_and_excludes_other_v3() {
+	public function test_execute__full_schemas_exclude_v3_but_summary_includes_them() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets( [
 			'nav-menu' => [ 'menu' => [ 'type' => 'select' ] ],
 			'fake-v3' => [ 'title' => [ 'type' => 'text' ] ],
 		] );
 
-		$result = $this->ability->execute( [] );
+		$full = $this->ability->execute( [] );
+		$this->assertIsArray( $full );
+		$this->assertArrayNotHasKey( 'nav-menu', $full );
 
-		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'nav-menu', $result );
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['nav-menu']['widget_version'] );
-		$this->assertArrayNotHasKey( 'fake-v3', $result );
+		$summary = $this->ability->execute( [ 'summary' => true ] );
+		$types = array_column( $summary['widgets'], 'type' );
+		$this->assertContains( 'nav-menu', $types );
+		$this->assertNotContains( 'fake-v3', $types );
 	}
 
-	public function test_execute__summary_includes_allowlisted_v3_type() {
+	public function test_execute__includes_allowlisted_v3_in_summary_only() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets( [
 			'nav-menu' => [ 'menu' => [ 'type' => 'select' ] ],

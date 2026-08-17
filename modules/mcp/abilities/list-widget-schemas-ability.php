@@ -48,8 +48,25 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 		$input = is_array( $input ) ? $input : [];
 		$summary = ! empty( $input['summary'] );
 
-		$widgets = array_filter(
-			Widget_Context_Helper::get_llm_eligible_widgets(),
+		$widgets = Widget_Context_Helper::get_llm_eligible_widgets();
+
+		if ( $summary ) {
+			$widgets = $this->filter_widgets_for_summary( $widgets );
+			return $this->build_summaries( $widgets );
+		}
+
+		$widgets = $this->filter_widgets_for_full_schemas( $widgets );
+
+		return $this->build_schemas( $widgets );
+	}
+
+	/**
+	 * @param array<string, array> $widgets
+	 * @return array<string, array>
+	 */
+	private function filter_widgets_for_summary( array $widgets ): array {
+		return array_filter(
+			$widgets,
 			static function ( $config, $type ) {
 				if ( Widget_Context_Helper::VERSION_V4 === Widget_Context_Helper::get_widget_version( $config ) ) {
 					return true;
@@ -59,12 +76,21 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 			},
 			ARRAY_FILTER_USE_BOTH
 		);
+	}
 
-		if ( $summary ) {
-			return $this->build_summaries( $widgets );
-		}
-
-		return $this->build_schemas( $widgets );
+	/**
+	 * Full schema dump: V4 only. V3 schemas are large — fetch per type via get-widget-schema.
+	 *
+	 * @param array<string, array> $widgets
+	 * @return array<string, array>
+	 */
+	private function filter_widgets_for_full_schemas( array $widgets ): array {
+		return array_filter(
+			$widgets,
+			static function ( $config ) {
+				return Widget_Context_Helper::VERSION_V4 === Widget_Context_Helper::get_widget_version( $config );
+			}
+		);
 	}
 
 	private function build_summaries( array $widgets ): array {
@@ -75,6 +101,7 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 			$summaries[] = [
 				'type' => $full_summary['type'],
 				'description' => $full_summary['description'] ?? null,
+				'version' => $full_summary['version'] ?? null,
 			];
 		}
 

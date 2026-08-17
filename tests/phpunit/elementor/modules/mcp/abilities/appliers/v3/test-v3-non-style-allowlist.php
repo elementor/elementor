@@ -12,15 +12,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_V3_Non_Style_Allowlist extends TestCase {
 
-	public function test_filter__allows_whitelisted_keys_for_nav_menu() {
+	private function nav_menu_controls(): array {
+		return [
+			'menu' => [
+				'type' => 'text',
+				'tab' => 'content',
+			],
+			'layout' => [
+				'type' => 'text',
+				'tab' => 'content',
+			],
+			'menu_typography_font_size' => [
+				'type' => 'slider',
+				'tab' => 'style',
+			],
+			'_padding' => [
+				'type' => 'dimensions',
+				'tab' => 'advanced',
+			],
+		];
+	}
+
+	public function test_filter__allows_content_tab_keys() {
 		// Arrange.
 		$settings = [
 			'menu' => 'primary',
 			'layout' => 'horizontal',
 		];
+		$controls = $this->nav_menu_controls();
 
 		// Act.
-		$result = V3_Non_Style_Allowlist::filter( 'nav-menu', $settings );
+		$result = V3_Non_Style_Allowlist::filter( 'nav-menu', $settings, $controls );
 
 		// Assert.
 		$this->assertNull( $result['error'] );
@@ -28,33 +50,63 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 		$this->assertEmpty( $result['rejected'] );
 	}
 
-	public function test_filter__rejects_unknown_and_style_keys() {
+	public function test_filter__allows_style_and_advanced_basic_keys() {
+		// Arrange.
+		$settings = [
+			'menu_typography_font_size' => [ 'unit' => 'px', 'size' => 20 ],
+			'_padding' => [
+				'top' => '10',
+				'right' => '10',
+				'bottom' => '10',
+				'left' => '10',
+				'unit' => 'px',
+				'isLinked' => true,
+			],
+		];
+		$controls = $this->nav_menu_controls();
+
+		// Act.
+		$result = V3_Non_Style_Allowlist::filter( 'nav-menu', $settings, $controls );
+
+		// Assert.
+		$this->assertNull( $result['error'] );
+		$this->assertSame( $settings, $result['allowed'] );
+		$this->assertEmpty( $result['rejected'] );
+	}
+
+	public function test_filter__rejects_unknown_keys() {
 		// Arrange.
 		$settings = [
 			'menu' => 'primary',
-			'title_color' => '#ff0000',
-			'typography_font_size' => [ 'unit' => 'px', 'size' => 16 ],
+			'made_up_key' => 'value',
 		];
+		$controls = $this->nav_menu_controls();
 
 		// Act.
-		$result = V3_Non_Style_Allowlist::filter( 'nav-menu', $settings );
+		$result = V3_Non_Style_Allowlist::filter( 'nav-menu', $settings, $controls );
 
 		// Assert.
 		$this->assertNotNull( $result['error'] );
 		$this->assertSame( 'elementor_invalid_settings', $result['error']->get_error_code() );
 		$this->assertSame( [ 'menu' => 'primary' ], $result['allowed'] );
-		$this->assertContains( 'title_color', $result['rejected'] );
-		$this->assertContains( 'typography_font_size', $result['rejected'] );
+		$this->assertContains( 'made_up_key', $result['rejected'] );
 	}
 
-	public function test_filter__theme_post_content_has_no_non_style_keys() {
-		// Arrange / Act.
-		$result = V3_Non_Style_Allowlist::filter( 'theme-post-content', [ 'align' => 'center' ] );
+	public function test_filter__theme_post_content_allows_style_tab_align() {
+		// Arrange.
+		$controls = [
+			'align' => [
+				'type' => 'choose',
+				'tab' => 'style',
+			],
+		];
+
+		// Act.
+		$result = V3_Non_Style_Allowlist::filter( 'theme-post-content', [ 'align' => 'center' ], $controls );
 
 		// Assert.
-		$this->assertNotNull( $result['error'] );
-		$this->assertEmpty( $result['allowed'] );
-		$this->assertSame( [], V3_Widget_Bridge_Registry::get_non_style_keys( 'theme-post-content' ) );
+		$this->assertNull( $result['error'] );
+		$this->assertSame( [ 'align' => 'center' ], $result['allowed'] );
 	}
 
 	public function test_registry__covers_all_allowlisted_widgets() {
@@ -65,11 +117,13 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 			'theme-post-featured-image',
 			'theme-post-excerpt',
 			'theme-archive-title',
+			'slides',
+			'price-table',
+			'call-to-action',
 		];
 
 		foreach ( $types as $type ) {
 			$this->assertNotNull( V3_Widget_Bridge_Registry::get( $type ), "Missing registry entry for {$type}" );
-			$this->assertIsArray( V3_Widget_Bridge_Registry::get_style_overrides( $type ) );
 		}
 	}
 }

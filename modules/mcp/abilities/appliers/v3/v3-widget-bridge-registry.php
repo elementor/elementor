@@ -72,6 +72,19 @@ class V3_Widget_Bridge_Registry {
 			'theme-post-featured-image' => self::theme_post_featured_image(),
 			'theme-post-excerpt' => self::theme_post_excerpt(),
 			'theme-archive-title' => self::theme_archive_title(),
+			'slides' => self::empty_entry(),
+			'price-table' => self::empty_entry(),
+			'call-to-action' => self::empty_entry(),
+		];
+	}
+
+	/**
+	 * @return array{non_style_keys: string[], style_overrides: array<string, array>}
+	 */
+	private static function empty_entry(): array {
+		return [
+			'non_style_keys' => [],
+			'style_overrides' => [],
 		];
 	}
 

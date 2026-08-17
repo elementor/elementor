@@ -32,10 +32,17 @@ class Style_Applier {
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
 	 * @param string                $style_apply_mode `patch` or `replace`.
-	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
+	 * @param array<string, array>  $widget_configs       Optional widget_type => config map (used for V3 mapping).
+	 * @param bool                  $v3_settings_first    When true, V3 widgets ignore CSS style input (build-composition POC).
 	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
-	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
+	public function apply(
+		array $config_id_index,
+		array $styles,
+		string $style_apply_mode = 'patch',
+		array $widget_configs = [],
+		bool $v3_settings_first = false
+	): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error'    => null,
@@ -60,7 +67,7 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$v3_warnings = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
+				$v3_warnings = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs, $v3_settings_first );
 				foreach ( $v3_warnings as $warning ) {
 					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
 				}
@@ -135,9 +142,27 @@ class Style_Applier {
 	 * @param array<string, array> $widget_configs
 	 * @return string[] Warnings (without config-id prefix).
 	 */
-	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
+	private function apply_v3_style(
+		array &$node,
+		string $css_string,
+		string $style_apply_mode = 'patch',
+		array $widget_configs = [],
+		bool $v3_settings_first = false
+	): array {
 		$warnings = [];
 		$widget_type = $node['widgetType'] ?? '';
+		$is_empty_css = '' === trim( $css_string );
+
+		if ( $v3_settings_first && ! $is_empty_css ) {
+			$warnings[] = sprintf(
+				/* translators: %s: V3 widget type name. */
+				__( 'V3 widget "%s" ignores the "style" input — put visual styling directly in element_config (keys visible in elementor/get-widget-schema).', 'elementor' ),
+				is_string( $widget_type ) ? $widget_type : ''
+			);
+
+			return $warnings;
+		}
+
 		$widget_config = [];
 
 		if ( is_string( $widget_type ) && '' !== $widget_type ) {
@@ -146,7 +171,6 @@ class Style_Applier {
 				?? [];
 		}
 
-		$is_empty_css = '' === trim( $css_string );
 		$is_replace = 'replace' === $style_apply_mode;
 
 		if ( $is_replace ) {

@@ -5,6 +5,8 @@ export const CANVAS_SERVER_NAME = 'editor-canvas';
 
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const WIDGET_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ WIDGET_SCHEMA_URI }`;
+export const V3_ADVANCED_BASICS_WIDGET_TYPE = 'v3-advanced-basics';
+export const V3_ADVANCED_BASICS_SCHEMA_URI = `elementor://widgets/schema/${ V3_ADVANCED_BASICS_WIDGET_TYPE }`;
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
 export const BEST_PRACTICES_URI = 'elementor://style/best-practices';
 export const BEST_PRACTICES_FULL_URI = `${ CANVAS_SERVER_NAME }_${ BEST_PRACTICES_URI }`;
@@ -47,12 +49,17 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 			list: async () => {
 				const widgetTypes = await listWidgetTypes();
 
-				return {
-					resources: widgetTypes.map( ( widgetType ) => ( {
-						uri: `elementor://widgets/schema/${ widgetType }`,
-						name: 'Widget schema for ' + widgetType,
-					} ) ),
-				};
+				const resources = widgetTypes.map( ( widgetType ) => ( {
+					uri: `elementor://widgets/schema/${ widgetType }`,
+					name: 'Widget schema for ' + widgetType,
+				} ) );
+
+				resources.push( {
+					uri: V3_ADVANCED_BASICS_SCHEMA_URI,
+					name: 'Shared V3 Advanced-tab basics schema',
+				} );
+
+				return { resources };
 			},
 		} ),
 		{

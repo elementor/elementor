@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Advanced_Basics_Schema;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -54,6 +55,10 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 				__( 'widget_type is required.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
+		}
+
+		if ( V3_Advanced_Basics_Schema::WIDGET_TYPE === $widget_type ) {
+			return V3_Advanced_Basics_Schema::build();
 		}
 
 		$config = Widget_Context_Helper::get_widget_config( $widget_type );

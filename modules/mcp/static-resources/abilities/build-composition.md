@@ -85,6 +85,31 @@ Some elements have internal tree structures (nesting). When using these elements
 - Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
+## V4 layout & sizing live in `style`, not `element_config`
+On V4 elements (`e-flexbox`, `e-div-block`, `e-button`, `e-heading`, `e-paragraph`, etc.), layout, spacing, color, and typography are **CSS** — put them in the `style` parameter. Do **NOT** send legacy V3 container or style keys in `element_config`; they are skipped with a warning that names the correct `style` property.
+
+**Not valid on V4 `element_config`:** `flex_direction`, `flex_align_items`, `flex_justify_content`, `gap`, `flex_gap`, `content_width`, `width`, `align`, `size` (button), `padding_*` groups, `margin_*` groups, `background_*` groups.
+
+**Use in `style` instead:** `flex-direction`, `align-items`, `justify-content`, `gap`, `max-width`, `text-align`, `padding`, `margin`, `background`, `font-size`.
+
+```json
+"element_config": {
+  "hero-section": {}
+},
+"style": {
+  "hero-section": "flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; padding: 7rem 2rem; background-color: #1b4332;"
+}
+```
+
+## V3 WIDGETS (legacy)
+V3 widgets (`widget_version: "v3"` in `elementor/get-widget-schema`) accept **all Content and Style tab settings** plus core Advanced-tab basics (`_padding`, `_margin`, border, background) directly in `element_config`. Keys are derived from the widget controls stack — use `elementor/get-widget-schema` for the full list.
+
+- Put behavior AND visual styling in `element_config` using flat V3 setting keys (e.g. `menu_typography_font_size`, `color_menu_item`, `_padding`).
+- **Do NOT send `style` CSS for V3 widgets** — it is dropped with a warning. Use native V3 setting keys so inner elements receive styles automatically.
+- Responsive variants use V3 suffixes: `padding_horizontal_menu_item_tablet`, `_padding_mobile`, etc. There is no `@media` on this path.
+- Advanced-tab basics (`_padding`, `_margin`, border, background) use `$ref` to `elementor://widgets/schema/v3-advanced-basics` in each widget schema — fetch that URI once for full shapes.
+- Typography group gates: set `menu_typography_typography` to `"custom"` before font subkeys apply.
+
 ## element_config FORMAT
 Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
@@ -228,7 +253,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
     }
   },
   "style": {
-    "Main Section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "Main Section": "display: flex; flex-direction: column; align-items: center; gap: 1.5rem; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
     "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }

@@ -271,6 +271,91 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
 	}
 
+	public function test_apply__v4_unknown_property_warning_includes_legacy_key_hint() {
+		$applier = $this->make_applier();
+
+		$hero_section = [
+			'widgetType' => 'e-flexbox',
+			'settings' => [],
+		];
+		$index = [ 'hero-section' => &$hero_section ];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-section' => [
+					'flex_direction' => 'column',
+				],
+			],
+			[
+				'e-flexbox' => [ 'class' => Optional_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertCount( 1, $result['warnings'] );
+		$this->assertStringContainsString( 'flex_direction', $result['warnings'][0] );
+		$this->assertStringContainsString( 'flex-direction', $result['warnings'][0] );
+		$this->assertStringContainsString( 'style', $result['warnings'][0] );
+	}
+
+	public function test_apply__v4_button_size_warning_includes_style_hint() {
+		$applier = $this->make_applier();
+
+		$hero_cta = [
+			'widgetType' => 'e-button',
+			'settings' => [],
+		];
+		$index = [ 'hero-cta' => &$hero_cta ];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-cta' => [
+					'size' => 'lg',
+				],
+			],
+			[
+				'e-button' => [ 'class' => Optional_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertCount( 1, $result['warnings'] );
+		$this->assertStringContainsString( 'size', $result['warnings'][0] );
+		$this->assertStringContainsString( 'padding and font-size', $result['warnings'][0] );
+		$this->assertStringContainsString( 'style', $result['warnings'][0] );
+	}
+
+	public function test_apply__v4_unknown_property_warning_stays_terse() {
+		$applier = $this->make_applier();
+
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [],
+		];
+		$index = [ 'hero-title' => &$hero_title ];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-title' => [
+					'xyz_foo' => 'bar',
+				],
+			],
+			[
+				'mock-widget' => [ 'class' => Optional_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertCount( 1, $result['warnings'] );
+		$this->assertSame(
+			'[hero-title] Property "xyz_foo" is not supported on element type "mock-widget" and was skipped.',
+			$result['warnings'][0]
+		);
+	}
+
 	public function test_apply__reports_settings_and_component_errors_together() {
 		// Arrange
 		$applier = $this->make_applier();
@@ -316,6 +401,14 @@ class Plain_Settings_Widget {
 			'title' => String_Prop_Type::make()->required(),
 			'count' => Number_Prop_Type::make(),
 			'visible' => Boolean_Prop_Type::make(),
+		];
+	}
+}
+
+class Optional_Settings_Widget {
+	public static function get_props_schema(): array {
+		return [
+			'count' => Number_Prop_Type::make(),
 		];
 	}
 }

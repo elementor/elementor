@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Advanced_Basics_Schema;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -43,6 +44,35 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::BAD_REQUEST, $data['status'] );
 		$this->assertSame( 'fake-v3', $data['widget_type'] );
 		$this->assertSame( 'v3', $data['version'] );
+	}
+
+	public function test_execute__returns_v3_advanced_basics_schema() {
+		$this->act_as_admin();
+
+		$result = $this->ability->execute( [ 'widget_type' => V3_Advanced_Basics_Schema::WIDGET_TYPE ] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
+		$this->assertArrayHasKey( 'properties', $result );
+		$this->assertNotEmpty( $result['properties'] );
+	}
+
+	public function test_execute__allowlisted_v3_schema_uses_advanced_basics_ref() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_fake_v3_widget( 'nav-menu', [
+			'menu' => [ 'type' => 'select', 'default' => '' ],
+			'_padding' => [ 'type' => 'dimensions', 'tab' => 'advanced' ],
+		] );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'nav-menu' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( V3_Advanced_Basics_Schema::RESOURCE_URI, $result['advanced_basics_ref'] );
+		$this->assertArrayHasKey( '_padding', $result['properties'] );
+		$this->assertSame(
+			V3_Advanced_Basics_Schema::RESOURCE_URI . '#/properties/_padding',
+			$result['properties']['_padding']['$ref']
+		);
 	}
 
 	public function test_execute__returns_v3_fallback_for_allowlisted_widget() {
