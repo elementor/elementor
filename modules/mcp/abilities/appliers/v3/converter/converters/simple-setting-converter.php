@@ -43,7 +43,7 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 		}
 
 		$resolver = $override['resolver'] ?? 'text';
-		$resolved = V3_Value_Resolvers::resolve( (string) $resolver, (string) $rule['value'] );
+		$resolved = V3_Value_Resolvers::resolve( (string) $resolver, (string) $rule['value'], $override );
 		if ( null === $resolved ) {
 			return false;
 		}

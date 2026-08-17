@@ -224,24 +224,27 @@ class Style_Applier {
 		$split = V3_Scoped_Css_Splitter::split( $css_string, array_keys( $inner_elements ) );
 		$default_inner_element = V3_Widget_Bridge_Registry::get_default_inner_element( $widget_type );
 
-		if ( null !== $default_inner_element && '' !== trim( $split['wrapper'] ) ) {
-			$split['scopes'][ $default_inner_element ] = trim(
-				( $split['scopes'][ $default_inner_element ] ?? '' ) . ' ' . $split['wrapper']
-			);
-			$split['wrapper'] = '';
-		}
-
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
 		$settings_patch = [];
 		$unmapped_parts = [];
+		$wrapper_unmapped = '';
 
 		if ( '' !== trim( $split['wrapper'] ) ) {
 			$result = $mapper->apply( $split['wrapper'], $widget_type, $widget_config );
 			$settings_patch = array_merge( $settings_patch, $result['settings_patch'] );
 			$warnings = array_merge( $warnings, $result['warnings'] );
-			if ( '' !== trim( $result['unmapped_css'] ?? '' ) ) {
-				$unmapped_parts[] = $result['unmapped_css'];
-			}
+			$wrapper_unmapped = trim( $result['unmapped_css'] ?? '' );
+		}
+
+		if ( null !== $default_inner_element && '' !== $wrapper_unmapped ) {
+			$split['scopes'][ $default_inner_element ] = trim(
+				( $split['scopes'][ $default_inner_element ] ?? '' ) . ' ' . $wrapper_unmapped
+			);
+			$wrapper_unmapped = '';
+		}
+
+		if ( '' !== $wrapper_unmapped ) {
+			$unmapped_parts[] = $wrapper_unmapped;
 		}
 
 		foreach ( $split['scopes'] as $scope_key => $scope_css ) {
@@ -264,7 +267,7 @@ class Style_Applier {
 			$warnings = array_merge( $warnings, $result['warnings'] );
 
 			if ( '' !== trim( $result['unmapped_css'] ?? '' ) ) {
-				$unmapped_parts[] = $scope_key . ' { ' . $result['unmapped_css'] . ' }';
+				$unmapped_parts[] = self::format_scope_unmapped_css( $scope_key, $result['unmapped_css'] );
 			}
 		}
 
@@ -272,7 +275,7 @@ class Style_Applier {
 			$node['settings'] = array_merge( $node['settings'] ?? [], $settings_patch );
 		}
 
-		$unmapped = trim( implode( ' ', $unmapped_parts ) );
+		$unmapped = trim( implode( ' ', array_filter( $unmapped_parts, static fn( $part ) => '' !== trim( $part ) ) ) );
 		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, $widget_type );
 		if ( null !== $pro_warning ) {
 			$warnings[] = $pro_warning;
@@ -294,6 +297,20 @@ class Style_Applier {
 		}
 
 		return $warnings;
+	}
+
+	private static function format_scope_unmapped_css( string $scope_key, string $unmapped_css ): string {
+		$unmapped_css = trim( $unmapped_css );
+
+		if ( '' === $unmapped_css ) {
+			return '';
+		}
+
+		if ( preg_match( '/&:(?:hover|active|focus)\s*\{/', $unmapped_css ) ) {
+			return $unmapped_css;
+		}
+
+		return $scope_key . ' { ' . $unmapped_css . ' }';
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {

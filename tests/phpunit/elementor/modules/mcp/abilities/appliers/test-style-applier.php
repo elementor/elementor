@@ -146,6 +146,37 @@ namespace {
 			$this->assertCount( 1, $mobile_vars );
 		}
 
+		public function test_apply__v4_combined_hover_and_breakpoint_create_separate_variants() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'hero-title' => &$node ];
+			$css = 'color: red; &:hover { color: blue; } @media(--mobile) { font-size: 1rem; }';
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$style_id = array_key_first( $node['styles'] );
+			$variants = $node['styles'][ $style_id ]['variants'];
+			$variant_keys = array_map(
+				static fn( array $variant ): string => ( $variant['meta']['breakpoint'] ?? 'desktop' ) . '|' . ( $variant['meta']['state'] ?? '' ),
+				$variants
+			);
+
+			$this->assertContains( 'desktop|', $variant_keys );
+			$this->assertContains( 'desktop|hover', $variant_keys );
+			$this->assertContains( 'mobile|', $variant_keys );
+		}
+
 		public function test_apply__patch_mode_preserves_existing_variants_for_other_breakpoints() {
 			// Arrange.
 			$mobile_variant = [ 'meta' => [ 'breakpoint' => 'mobile', 'state' => null ], 'props' => [ 'fontSize' => [ '$$type' => 'string', 'value' => '1rem' ] ], 'custom_css' => null ];
@@ -438,8 +469,66 @@ namespace {
 					],
 					'padding_horizontal_menu_item_tablet' => [ 'type' => 'slider' ],
 					'padding_horizontal_menu_item_mobile' => [ 'type' => 'slider' ],
+					'_margin' => [
+						'type' => 'dimensions',
+						'selectors' => [
+							'{{WRAPPER}}' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+						],
+					],
+					'_margin_tablet' => [ 'type' => 'dimensions' ],
+					'_margin_mobile' => [ 'type' => 'dimensions' ],
 				],
 			];
+		}
+
+		public function test_apply__nav_menu_manage_elements_payload_shape() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+			$css = 'margin-top: 0.5rem; main-menu { color: #111111; } main-menu:hover { color: #aaaaaa; letter-spacing: 1px; } dropdown { color: #222222; }';
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'main-nav' => $css ],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( '#111111', $node['settings']['color_menu_item'] );
+			$this->assertSame( '#aaaaaa', $node['settings']['color_menu_item_hover'] );
+			$this->assertSame( '#222222', $node['settings']['color_dropdown_item'] );
+			$this->assertSame(
+				[
+					'top' => '0.5',
+					'right' => '',
+					'bottom' => '',
+					'left' => '',
+					'unit' => 'rem',
+					'isLinked' => false,
+				],
+				$node['settings']['_margin']
+			);
+
+			$warnings = $result['warnings'] ?? [];
+			foreach ( $warnings as $warning ) {
+				$this->assertStringNotContainsString( 'Unsupported nested selector', (string) $warning );
+			}
+
+			$custom_css = $node['settings']['custom_css'] ?? '';
+			$this->assertStringNotContainsString( 'main-menu { main-menu {', $custom_css );
+			// letter-spacing on main-menu:hover has no separate V3 control; it may remain in custom_css.
 		}
 
 		public function test_apply__nav_menu_maps_nested_inner_element_scopes() {
@@ -557,6 +646,99 @@ namespace {
 			// Assert.
 			$this->assertNull( $result['error'] );
 			$this->assertSame( [ 'unit' => 'px', 'size' => 5.0 ], $node['settings']['padding_horizontal_menu_item_tablet'] );
+		}
+
+		public function test_apply__nav_menu_wrapper_responsive_margin_maps_tablet_suffix() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[
+					'main-nav' => '@media(--tablet) { margin-top: 1rem; } main-menu { color: #111111; }',
+				],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame( '#111111', $node['settings']['color_menu_item'] );
+			$this->assertSame(
+				[
+					'top' => '1',
+					'right' => '',
+					'bottom' => '',
+					'left' => '',
+					'unit' => 'rem',
+					'isLinked' => false,
+				],
+				$node['settings']['_margin_tablet']
+			);
+		}
+
+		public function test_apply__nav_menu_combined_wrapper_state_and_breakpoint() {
+			// Arrange.
+			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+			$applier = $this->make_applier( $converter );
+			$node = [
+				'id' => 'elem-1',
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [],
+				'styles' => [],
+			];
+			$index = [ 'main-nav' => &$node ];
+			$widget_configs = [ 'nav-menu' => $this->nav_menu_widget_config() ];
+			$css = 'margin-top: 0.5rem; @media(--tablet) { margin-top: 1rem; } main-menu { color: #111111; @media(--mobile) { padding-left: 4px; } } main-menu:hover { color: #aaaaaa; } dropdown:active { color: #bbbbbb; }';
+
+			// Act.
+			$result = $applier->apply(
+				$index,
+				[ 'main-nav' => $css ],
+				'patch',
+				$widget_configs
+			);
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertSame(
+				[
+					'top' => '0.5',
+					'right' => '',
+					'bottom' => '',
+					'left' => '',
+					'unit' => 'rem',
+					'isLinked' => false,
+				],
+				$node['settings']['_margin']
+			);
+			$this->assertSame(
+				[
+					'top' => '1',
+					'right' => '',
+					'bottom' => '',
+					'left' => '',
+					'unit' => 'rem',
+					'isLinked' => false,
+				],
+				$node['settings']['_margin_tablet']
+			);
+			$this->assertSame( '#111111', $node['settings']['color_menu_item'] );
+			$this->assertSame( [ 'unit' => 'px', 'size' => 4.0 ], $node['settings']['padding_horizontal_menu_item_mobile'] );
+			$this->assertSame( '#aaaaaa', $node['settings']['color_menu_item_hover'] );
+			$this->assertSame( '#bbbbbb', $node['settings']['color_dropdown_item_active'] );
 		}
 
 		public function test_apply__nav_menu_replace_clears_inner_element_settings() {

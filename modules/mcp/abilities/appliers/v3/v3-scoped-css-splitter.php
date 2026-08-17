@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Block_Scanner_Trait;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -11,7 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class V3_Scoped_Css_Splitter {
 
+	use Css_Block_Scanner_Trait;
+
 	const SUPPORTED_STATES = [ 'hover', 'active', 'focus' ];
+
+	private static ?self $instance = null;
 
 	/**
 	 * @param string   $css_string
@@ -53,22 +59,32 @@ class V3_Scoped_Css_Splitter {
 				continue;
 			}
 
-			$selector_end = strpos( $css_string, '{', $offset );
-			if ( false === $selector_end ) {
-				$wrapper_parts[] = trim( substr( $css_string, $offset ) );
+			$next_alias = self::find_next_alias_block( $css_string, $offset, $length, $alias_lookup );
+
+			if ( null === $next_alias ) {
+				$remainder = trim( substr( $css_string, $offset ) );
+				if ( '' !== $remainder ) {
+					$wrapper_parts[] = $remainder;
+				}
 				break;
 			}
 
-			$selector = trim( substr( $css_string, $offset, $selector_end - $offset ) );
-			$block = self::read_braced_block( $css_string, $selector_end, $length );
+			if ( $next_alias['start'] > $offset ) {
+				$declarations = trim( substr( $css_string, $offset, $next_alias['start'] - $offset ) );
+				if ( '' !== $declarations ) {
+					$wrapper_parts[] = $declarations;
+				}
+			}
+
+			$block = self::read_braced_block( $css_string, $next_alias['brace_pos'], $length );
 			if ( null === $block ) {
-				$wrapper_parts[] = trim( substr( $css_string, $offset ) );
+				$wrapper_parts[] = trim( substr( $css_string, $next_alias['start'] ) );
 				break;
 			}
 
-			$scope_key = self::resolve_scope_key( $selector, $alias_lookup );
+			$scope_key = self::resolve_scope_key( $next_alias['selector'], $alias_lookup );
 			if ( null === $scope_key ) {
-				$wrapper_parts[] = trim( $selector . ' { ' . $block['body'] . ' }' );
+				$wrapper_parts[] = trim( $next_alias['selector'] . ' { ' . $block['body'] . ' }' );
 			} else {
 				$scopes[ $scope_key ] = trim(
 					( $scopes[ $scope_key ] ?? '' ) . ( '' === ( $scopes[ $scope_key ] ?? '' ) ? '' : ' ' ) . $block['body']
@@ -137,6 +153,103 @@ class V3_Scoped_Css_Splitter {
 		return '&:' . $state . ' { ' . $css_body . ' }';
 	}
 
+	/**
+	 * @param array<string, true> $alias_lookup
+	 * @return array{start: int, brace_pos: int, selector: string}|null
+	 */
+	private static function find_next_alias_block( string $css, int $offset, int $length, array $alias_lookup ): ?array {
+		$aliases = array_keys( $alias_lookup );
+		$at_offset_match = self::match_alias_block_at_offset( $css, $offset, $length, $aliases );
+		if ( null !== $at_offset_match ) {
+			return $at_offset_match;
+		}
+
+		$pattern = self::build_alias_block_pattern( $aliases );
+
+		if ( 1 !== preg_match( $pattern, $css, $matches, PREG_OFFSET_CAPTURE, $offset ) ) {
+			return null;
+		}
+
+		return self::build_alias_block_match( $css, $matches );
+	}
+
+	/**
+	 * @param string[] $aliases
+	 * @return array{start: int, brace_pos: int, selector: string}|null
+	 */
+	private static function match_alias_block_at_offset( string $css, int $offset, int $length, array $aliases ): ?array {
+		if ( $offset >= $length ) {
+			return null;
+		}
+
+		$pattern = self::build_alias_at_offset_pattern( $aliases );
+
+		if ( 1 !== preg_match( $pattern, substr( $css, $offset ), $matches, PREG_OFFSET_CAPTURE ) ) {
+			return null;
+		}
+
+		$match_start = $offset + (int) $matches[0][1];
+		$matches[0][1] = $match_start;
+		$matches['alias'][1] = $offset + (int) $matches['alias'][1];
+		if ( isset( $matches['state'][1] ) ) {
+			$matches['state'][1] = $offset + (int) $matches['state'][1];
+		}
+
+		return self::build_alias_block_match( $css, $matches );
+	}
+
+	/**
+	 * @return array{start: int, brace_pos: int, selector: string}|null
+	 */
+	private static function build_alias_block_match( string $css, array $matches ): ?array {
+		$match_start = (int) $matches[0][1];
+		$match_text = (string) $matches[0][0];
+		$alias = (string) $matches['alias'][0];
+		$state = isset( $matches['state'][0] ) ? (string) $matches['state'][0] : '';
+		$selector = $alias . $state;
+		$brace_pos = $match_start + strlen( $match_text ) - 1;
+
+		if ( '{' !== $css[ $brace_pos ] ) {
+			return null;
+		}
+
+		return [
+			'start' => $match_start,
+			'brace_pos' => $brace_pos,
+			'selector' => $selector,
+		];
+	}
+
+	/**
+	 * @param string[] $aliases
+	 */
+	private static function build_alias_block_pattern( array $aliases ): string {
+		$alias_group = self::build_quoted_alias_group( $aliases );
+
+		return '/(?:^|[\s;}])(?P<alias>' . $alias_group . ')(?P<state>:(?:hover|active|focus))?\s*\{/i';
+	}
+
+	/**
+	 * @param string[] $aliases
+	 */
+	private static function build_alias_at_offset_pattern( array $aliases ): string {
+		$alias_group = self::build_quoted_alias_group( $aliases );
+
+		return '/^(?P<alias>' . $alias_group . ')(?P<state>:(?:hover|active|focus))?\s*\{/i';
+	}
+
+	/**
+	 * @param string[] $aliases
+	 */
+	private static function build_quoted_alias_group( array $aliases ): string {
+		$quoted_aliases = array_map(
+			static fn( string $alias ): string => preg_quote( $alias, '/' ),
+			$aliases
+		);
+
+		return implode( '|', $quoted_aliases );
+	}
+
 	private static function skip_whitespace( string $css, int &$offset, int $length ): void {
 		while ( $offset < $length && ctype_space( $css[ $offset ] ) ) {
 			++$offset;
@@ -151,33 +264,15 @@ class V3_Scoped_Css_Splitter {
 			return null;
 		}
 
-		$depth = 0;
-
-		for ( $index = $open_brace; $index < $length; ++$index ) {
-			$char = $css[ $index ];
-
-			if ( '{' === $char ) {
-				++$depth;
-				continue;
-			}
-
-			if ( '}' !== $char ) {
-				continue;
-			}
-
-			--$depth;
-
-			if ( 0 !== $depth ) {
-				continue;
-			}
-
-			return [
-				'body' => trim( substr( $css, $open_brace + 1, $index - $open_brace - 1 ) ),
-				'end' => $index + 1,
-			];
+		$end = self::scanner()->find_block_end( $css, $open_brace + 1, $length );
+		if ( null === $end ) {
+			return null;
 		}
 
-		return null;
+		return [
+			'body' => trim( substr( $css, $open_brace + 1, $end - $open_brace - 2 ) ),
+			'end' => $end,
+		];
 	}
 
 	/**
@@ -198,5 +293,13 @@ class V3_Scoped_Css_Splitter {
 			'raw' => trim( substr( $css, $offset, $block['end'] - $offset ) ),
 			'end' => $block['end'],
 		];
+	}
+
+	private static function scanner(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 }

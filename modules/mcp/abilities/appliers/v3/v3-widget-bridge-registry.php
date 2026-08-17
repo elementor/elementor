@@ -184,14 +184,107 @@ class V3_Widget_Bridge_Registry {
 				'dropdown' => [
 					'label' => 'Dropdown / sub-menu',
 					'control_pattern' => '/dropdown/',
-					'style_overrides' => self::typography_overrides( 'dropdown_typography' ),
+					'style_overrides' => array_merge(
+						self::typography_overrides( 'dropdown_typography' ),
+						[
+							'color' => [
+								'setting' => 'color_dropdown_item',
+								'resolver' => 'color',
+							],
+							'color@hover' => [
+								'setting' => 'color_dropdown_item_hover',
+								'resolver' => 'color',
+							],
+							'color@active' => [
+								'setting' => 'color_dropdown_item_active',
+								'resolver' => 'color',
+							],
+							'background-color' => [
+								'setting' => 'background_color_dropdown_item',
+								'resolver' => 'color',
+							],
+							'background-color@hover' => [
+								'setting' => 'background_color_dropdown_item_hover',
+								'resolver' => 'color',
+							],
+							'background-color@active' => [
+								'setting' => 'background_color_dropdown_item_active',
+								'resolver' => 'color',
+							],
+							'border' => [ 'border_prefix' => 'dropdown_border' ],
+							'border-radius' => [
+								'setting' => 'dropdown_border_radius',
+								'resolver' => 'sides',
+								'responsive' => true,
+							],
+							'box-shadow' => [ 'box_shadow_prefix' => 'dropdown_box_shadow' ],
+						]
+					),
 				],
 				'toggle' => [
 					'label' => 'Mobile toggle button',
 					'control_pattern' => '/^toggle_(?:color|background|size|border)/',
+					'style_overrides' => [
+						'color' => [
+							'setting' => 'toggle_color',
+							'resolver' => 'color',
+						],
+						'color@hover' => [
+							'setting' => 'toggle_color_hover',
+							'resolver' => 'color',
+						],
+						'background-color' => [
+							'setting' => 'toggle_background_color',
+							'resolver' => 'color',
+						],
+						'background-color@hover' => [
+							'setting' => 'toggle_background_color_hover',
+							'resolver' => 'color',
+						],
+						'border-width' => [
+							'setting' => 'toggle_border_width',
+							'resolver' => 'dimension',
+							'responsive' => true,
+						],
+						'border-radius' => [
+							'setting' => 'toggle_border_radius',
+							'resolver' => 'dimension',
+							'responsive' => true,
+						],
+					],
 				],
 			],
-			'style_overrides' => [],
+			'style_overrides' => [
+				'margin' => [
+					'setting' => '_margin',
+					'resolver' => 'sides',
+					'responsive' => true,
+				],
+				'margin-top' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'top',
+					'responsive' => true,
+				],
+				'margin-right' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'right',
+					'responsive' => true,
+				],
+				'margin-bottom' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'bottom',
+					'responsive' => true,
+				],
+				'margin-left' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'left',
+					'responsive' => true,
+				],
+			],
 		];
 	}
 
