@@ -4,14 +4,8 @@ import { Box, Chip, styled, Typography, useTheme } from '@elementor/ui';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
 import { t } from '../../../utils/translations';
+import { type FeatureOption } from './feature-options';
 import { ProPlanNotice } from './pro-plan-notice';
-
-export interface FeatureOption {
-	id: string;
-	labelKey: string;
-	Icon: React.ElementType;
-	licenseType: 'core' | 'installable' | 'pro' | 'one';
-}
 
 interface FeatureCardProps {
 	isSelected: boolean;
@@ -103,7 +97,6 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 				const isOptionPaid = isPaid( option.licenseType );
 				const BadgeIcon = isOptionPaid ? CrownFilledIcon : CheckIcon;
 				const isCore = option.licenseType === 'core';
-				const isInstallable = option.licenseType === 'installable';
 
 				const handleClick = () => onFeatureClick( option.id );
 
@@ -125,7 +118,6 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 						aria-label={ isCore ? undefined : t( option.labelKey ) }
 					>
 						{ isCore && <CornerChip label={ t( 'steps.site_features.included' ) } size="small" /> }
-						{ isInstallable && <CornerChip label={ t( 'common.recommended' ) } size="small" /> }
 						{ isSelected && (
 							<SelectionBadge icon={ BadgeIcon } variant={ isOptionPaid ? 'paid' : 'free' } />
 						) }

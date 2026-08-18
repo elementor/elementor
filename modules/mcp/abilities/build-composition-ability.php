@@ -64,7 +64,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			fn() => current_user_can( 'edit_posts' ),

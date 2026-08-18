@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -46,7 +47,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	const ELEMENT_TYPE_PLAY = 'e-background-video-play';
 	const ELEMENT_TYPE_PAUSE = 'e-background-video-pause';
 
-	public static $widget_description = 'Create a section with a looping video background and content layered on top. Structure: e-background-video contains e-background-video-content (for any widgets) and e-background-video-controls (with e-background-video-play and e-background-video-pause buttons).';
+	public static $widget_description = 'Create a section with a looping video background and content layered on top. REQUIRED direct children: e-background-video-content (content area) and e-background-video-controls (play/pause controls). The controls container MUST include e-background-video-play and e-background-video-pause, each with a required e-paragraph child for the button label.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -88,6 +89,10 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->default( 'div' )
+				->description( 'The HTML tag for the background video container. Could be div, header, section, article, aside, or footer.' ),
 			'source' => Video_Src_Prop_Type::make()->alias( 'video', 'src' ),
 			'start_time' => Number_Prop_Type::make()
 				->default( null )
@@ -148,11 +153,37 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
+					Html_Tag_Control::bind_to( 'tag' )
+						->set_options( [
+							[
+								'value' => 'div',
+								'label' => 'Div',
+							],
+							[
+								'value' => 'header',
+								'label' => 'Header',
+							],
+							[
+								'value' => 'section',
+								'label' => 'Section',
+							],
+							[
+								'value' => 'article',
+								'label' => 'Article',
+							],
+							[
+								'value' => 'aside',
+								'label' => 'Aside',
+							],
+							[
+								'value' => 'footer',
+								'label' => 'Footer',
+							],
+						] )
+						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( [
-							'layout' => 'two-columns',
-						] ),
+						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
 		];
 	}
@@ -167,10 +198,11 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'position' => String_Prop_Type::generate( 'relative' ),
 							'overflow' => String_Prop_Type::generate( 'hidden' ),
-							// The root is a full-bleed video background; content spacing belongs to the
-							// content area, so override the inherited `.e-con` container padding to 0.
+							// Match Flexbox/container default padding so the empty-state outline and
+							// stacking gaps match other layout elements. Absolute video still covers
+							// the full padding box (abspos containing block = padding edge).
 							'padding' => Size_Prop_Type::generate( [
-								'size' => 0,
+								'size' => 10,
 								'unit' => 'px',
 							] ),
 							'width' => Size_Prop_Type::generate( [
@@ -184,28 +216,20 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		$content = Atomic_Background_Video_Content::generate()
+			->meta( [ 'required' => true ] )
 			->editor_settings( [
 				'title' => esc_html__( 'Content Area', 'elementor' ),
 			] )
 			->build();
 
 		$controls = Atomic_Background_Video_Controls::generate()
+			->meta( [ 'required' => true ] )
 			->editor_settings( [
 				'title' => esc_html__( 'Controls', 'elementor' ),
 			] )
 			->children( [
-				Atomic_Background_Video_Play::generate()
-					->hydrate_default_children( true )
-					->editor_settings( [
-						'title' => esc_html__( 'Play Button', 'elementor' ),
-					] )
-					->build(),
-				Atomic_Background_Video_Pause::generate()
-					->hydrate_default_children( true )
-					->editor_settings( [
-						'title' => esc_html__( 'Pause Button', 'elementor' ),
-					] )
-					->build(),
+				Atomic_Background_Video_Play::build_default_element( true ),
+				Atomic_Background_Video_Pause::build_default_element( true ),
 			] )
 			->build();
 

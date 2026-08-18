@@ -113,6 +113,84 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertSame( [], $result['properties'] );
 	}
 
+	public function test_build__wraps_dynamic_capable_control_in_anyOf_union() {
+		// Arrange.
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'default' => 'Hello',
+				'dynamic' => [ 'active' => true, 'categories' => [ 'text', 'post_meta' ] ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		// Assert.
+		$entry = $result['properties']['title'];
+		$this->assertArrayHasKey( 'anyOf', $entry );
+		$this->assertCount( 2, $entry['anyOf'] );
+
+		$this->assertSame( 'string', $entry['anyOf'][0]['type'] );
+		$this->assertSame( 'Hello', $entry['anyOf'][0]['default'] );
+
+		$this->assertSame( 'object', $entry['anyOf'][1]['type'] );
+		$this->assertSame( [ 'name' ], $entry['anyOf'][1]['required'] );
+		$this->assertSame( 'string', $entry['anyOf'][1]['properties']['name']['type'] );
+		$this->assertStringContainsString( 'text', $entry['anyOf'][1]['description'] );
+		$this->assertStringContainsString( 'post_meta', $entry['anyOf'][1]['description'] );
+		$this->assertFalse( $entry['anyOf'][1]['additionalProperties'] );
+	}
+
+	public function test_build__wraps_control_with_dynamic_default_only() {
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'dynamic' => [ 'default' => 'post-title', 'categories' => [ 'text' ] ],
+			],
+		];
+
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		$this->assertArrayHasKey( 'anyOf', $result['properties']['title'] );
+		$this->assertFalse( $result['properties']['title']['anyOf'][1]['additionalProperties'] );
+	}
+
+	public function test_build__does_not_wrap_non_dynamic_control() {
+		// Arrange.
+		$controls = [
+			'size' => [
+				'type' => 'select',
+				'options' => [ 'a' => 'A', 'b' => 'B' ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'anyOf', $result['properties']['size'] );
+		$this->assertSame( 'string', $result['properties']['size']['type'] );
+	}
+
+	public function test_build__hoists_description_above_anyOf_when_control_is_dynamic() {
+		// Arrange.
+		$controls = [
+			'title' => [
+				'type' => 'text',
+				'description' => 'Heading text.',
+				'dynamic' => [ 'active' => true ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build( $controls );
+
+		// Assert.
+		$this->assertSame( 'Heading text.', $result['properties']['title']['description'] );
+		$this->assertArrayHasKey( 'anyOf', $result['properties']['title'] );
+	}
+
 	public function test_build__preserves_description_stripped_of_tags() {
 		$controls = [
 			'menu' => [
@@ -124,5 +202,129 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$result = V3_Json_Schema_Builder::build( $controls );
 
 		$this->assertSame( 'Go to the menus screen', $result['properties']['menu']['description'] );
+	}
+
+	public function test_check_value_shape__passes_plain_scalar() {
+		$entry = [ 'type' => 'string' ];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( 'Hello world', $entry ) );
+	}
+
+	public function test_check_value_shape__rejects_array_on_scalar_slot() {
+		$entry = [ 'type' => 'string' ];
+
+		$result = V3_Json_Schema_Builder::check_value_shape( [ 'not' => 'a scalar' ], $entry );
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'invalid shape', $result );
+		$this->assertStringContainsString( 'expected string', $result );
+		$this->assertStringContainsString( 'got object', $result );
+	}
+
+	public function test_check_value_shape__rejects_enum_violation() {
+		$entry = [
+			'type' => 'string',
+			'enum' => [ 'h1', 'h2', 'h3' ],
+		];
+
+		$result = V3_Json_Schema_Builder::check_value_shape( 'h9', $entry );
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'value must be one of', $result );
+	}
+
+	public function test_check_value_shape__rejects_nested_property_type_mismatch() {
+		$entry = [
+			'type' => 'object',
+			'properties' => [
+				'url' => [ 'type' => 'string' ],
+				'id' => [ 'type' => 'number' ],
+			],
+		];
+
+		$result = V3_Json_Schema_Builder::check_value_shape(
+			[
+				'url' => 'https://example.com',
+				'id' => 'not-a-number',
+			],
+			$entry
+		);
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'invalid shape at "id"', $result );
+	}
+
+	public function test_check_settings_shape__collects_valid_and_errors() {
+		$schema = V3_Json_Schema_Builder::build(
+			[
+				'title' => [ 'type' => 'text' ],
+				'header_size' => [
+					'type' => 'select',
+					'options' => [ 'h1' => 'H1', 'h2' => 'H2' ],
+				],
+			],
+			[ 'title', 'header_size' ]
+		);
+
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'title' => 'Hello',
+				'header_size' => 'h9',
+			],
+			$schema
+		);
+
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'header_size', $result['valid'] );
+		$this->assertArrayHasKey( 'header_size', $result['errors'] );
+	}
+
+	public function test_check_value_shape__accepts_empty_array_for_array_and_object_types() {
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], [ 'type' => 'array' ] ) );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], [ 'type' => 'object' ] ) );
+	}
+
+	public function test_check_value_shape__accepts_numeric_string_for_number_type() {
+		$entry = [ 'type' => 'number' ];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( '123', $entry ) );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( '1.5', $entry ) );
+	}
+
+	public function test_check_value_shape__accepts_loose_enum_scalar_match() {
+		$entry = [
+			'type' => 'string',
+			'enum' => [ '1', '2', '3' ],
+		];
+
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( 1, $entry ) );
+	}
+
+	public function test_json_type_of__empty_array_is_array() {
+		$schema = V3_Json_Schema_Builder::build( [ 'items' => [ 'type' => 'repeater' ] ] );
+
+		$this->assertSame( 'array', $schema['properties']['items']['type'] );
+		$this->assertNull( V3_Json_Schema_Builder::check_value_shape( [], $schema['properties']['items'] ) );
+	}
+
+	public function test_check_settings_shape__rejects_allowlisted_key_without_schema_entry() {
+		$schema = V3_Json_Schema_Builder::build(
+			[
+				'title' => [ 'type' => 'text' ],
+			],
+			[ 'title' ]
+		);
+
+		$result = V3_Json_Schema_Builder::check_settings_shape(
+			[
+				'title' => 'Hello',
+				'missing_control' => 'value',
+			],
+			$schema
+		);
+
+		$this->assertSame( 'Hello', $result['valid']['title'] );
+		$this->assertArrayNotHasKey( 'missing_control', $result['valid'] );
+		$this->assertSame( 'no schema for allowlisted key.', $result['errors']['missing_control'] );
 	}
 }

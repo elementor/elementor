@@ -2,11 +2,12 @@
 namespace Elementor\Modules\System_Info;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\System_Info\Reporters\Base;
-use Elementor\Modules\System_Info\Helpers\Model_Helper;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Info_Menu;
 use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Menu;
+use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Modules\System_Info\Rest\Rest_Api;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -125,6 +126,42 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
+	}
+
+	public function register_rest_routes(): void {
+		( new Rest_Api() )->register_routes();
+	}
+
+	public function get_reports_data(): array {
+		$reports = $this->load_reports( self::get_allowed_reports() );
+
+		return $this->build_reports_data( $reports );
+	}
+
+	private function build_reports_data( array $reports ): array {
+		$data = [];
+
+		foreach ( $reports as $report_name => $report_details ) {
+			$report = $report_details['report']->get_report();
+
+			if ( is_wp_error( $report ) ) {
+				continue;
+			}
+
+			$report_data = [
+				'label' => $report_details['label'],
+				'report' => $report,
+			];
+
+			if ( ! empty( $report_details['sub'] ) ) {
+				$report_data['sub'] = $this->build_reports_data( $report_details['sub'] );
+			}
+
+			$data[ $report_name ] = $report_data;
+		}
+
+		return $data;
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
