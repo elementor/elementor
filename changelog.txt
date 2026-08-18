@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 4.2.7 - 2026-08-18 =
+
+* Fix: Test Test Editor top bar integrations may not appear in non-English languages
+
 = 4.2.2 - 2026-08-06 =
 
 * Fix: Editor top bar integrations may not appear in non-English languages
