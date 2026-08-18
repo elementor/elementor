@@ -37,7 +37,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			function () {

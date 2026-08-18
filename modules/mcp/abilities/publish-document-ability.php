@@ -38,7 +38,7 @@ class Publish_Document_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => true,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			function () {
