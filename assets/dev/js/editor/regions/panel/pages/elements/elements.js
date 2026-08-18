@@ -1,3 +1,5 @@
+import { isWidgetNew as checkIsWidgetNew } from './utils/is-widget-new';
+
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
@@ -161,16 +163,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	isWidgetNew( item ) {
-		const untilVersion = item.new_until_version;
-
-		if ( ! untilVersion ) {
-			return false;
-		}
-
-		const [ curMajor, curMinor ] = elementor.config.version.split( '.' ).map( Number );
-		const [ untilMajor, untilMinor ] = untilVersion.split( '.' ).map( Number );
-
-		return curMajor < untilMajor || ( curMajor === untilMajor && curMinor <= untilMinor );
+		return checkIsWidgetNew( item, elementor.config.version );
 	},
 
 	getCollectionItem( item ) {
