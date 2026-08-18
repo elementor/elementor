@@ -42,8 +42,10 @@ export const slice = createSlice( {
 				data: Record< StyleDefinitionID, StyleDefinition >;
 			} >
 		) {
-			state.initialData = structuredClone( data );
-			state.data = structuredClone( data );
+			const normalizedData = Array.isArray( data ) ? {} : data;
+
+			state.initialData = structuredClone( normalizedData );
+			state.data = structuredClone( normalizedData );
 			state.isDirty = false;
 		},
 
