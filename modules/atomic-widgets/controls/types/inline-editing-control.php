@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Inline_Editing_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
+	private ?bool $enable_angie_generate = null;
 
 	public function get_type(): string {
 		return 'inline-editing';
@@ -20,9 +21,16 @@ class Inline_Editing_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
+	public function set_enable_angie_generate( bool $enable ): self {
+		$this->enable_angie_generate = $enable;
+
+		return $this;
+	}
+
 	public function get_props(): array {
 		return [
 			'placeholder' => $this->placeholder,
+			'enableAngieGenerate' => $this->enable_angie_generate,
 		];
 	}
 }
