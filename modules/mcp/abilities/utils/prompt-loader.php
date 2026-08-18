@@ -27,9 +27,9 @@ class Prompt_Loader {
 		$extra_file = null !== $extra_path ? $extra_path . $name . '.md' : null;
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$content = file_exists( $core_file ) ? rtrim( file_get_contents( $core_file ) ) : '';
+		$content = file_exists( $core_file ) ? rtrim( (string) file_get_contents( $core_file ) ) : '';
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$extra = ( null !== $extra_file && file_exists( $extra_file ) ) ? rtrim( file_get_contents( $extra_file ) ) : '';
+		$extra = ( null !== $extra_file && file_exists( $extra_file ) ) ? rtrim( (string) file_get_contents( $extra_file ) ) : '';
 
 		return implode( "\n\n", array_filter( [ $content, $extra ] ) );
 	}
