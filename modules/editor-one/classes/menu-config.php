@@ -40,6 +40,15 @@ class Menu_Config {
 		return apply_filters( 'elementor/editor-one/menu/excluded_level3_slugs', $default_slugs );
 	}
 
+	public static function get_excluded_flyout_menu_level3_slugs(): array {
+		$default_slugs = [
+			'e-form-submissions',
+		];
+
+		return apply_filters( 'elementor/editor-one/menu/excluded_flyout_menu_level3_slugs', $default_slugs );
+	}
+
+
 	public static function get_legacy_slug_mapping(): array {
 		$default_mapping = [
 			self::LEGACY_TEMPLATES_SLUG => self::TEMPLATES_GROUP_ID,
