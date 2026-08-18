@@ -290,36 +290,22 @@ class Menu_Data_Provider {
 	}
 
 	private function build_level3_flyout_items(): array {
-		return $this->build_flyout_items( false );
+		return $this->build_flyout_items( false, Menu_Config::get_excluded_level3_slugs() );
 	}
 
 	private function build_flyout_items_with_expanded_third_party(): array {
-		$items = $this->build_flyout_items( true );
-
-		if ( ! Utils::has_pro() ) {
-			$items[] = $this->build_theme_builder_flyout_item();
-		}
-
-		return $items;
+		return $this->build_flyout_items(
+			true,
+			array_merge(
+				Menu_Config::get_excluded_level3_slugs(),
+				Menu_Config::get_excluded_flyout_menu_level3_slugs()
+			)
+		);
 	}
 
-	private function build_theme_builder_flyout_item(): array {
-		return [
-			'slug' => 'elementor-theme-builder',
-			'label' => esc_html__( 'Theme Builder', 'elementor' ),
-			'url' => $this->get_theme_builder_url(),
-			'icon' => 'theme-builder',
-			'group_id' => '',
-			'priority' => 50,
-			'has_divider_before' => false,
-			'event_id' => 'theme_builder',
-		];
-	}
-
-	private function build_flyout_items( bool $expand_third_party ): array {
+	private function build_flyout_items( bool $expand_third_party, array $excluded_slugs ): array {
 		$items = [];
 		$existing_slugs = [];
-		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
 		$excluded_level4_slugs = $expand_third_party ? Menu_Config::get_excluded_level4_slugs() : [];
 
 		foreach ( $this->level3_items as $group_items ) {
