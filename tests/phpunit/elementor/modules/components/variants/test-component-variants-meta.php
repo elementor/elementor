@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../mocks/mock-pro-license-api.php';
+
 class Test_Component_Variants_Meta extends Elementor_Test_Base {
 
 	private string $original_atomic_widgets_experiment_state;
@@ -54,6 +56,8 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 			'public'   => false,
 			'supports' => Component_Document::get_supported_features(),
 		] );
+
+		\Mock_Pro_License_API::set_license_state( true );
 	}
 
 	public function tearDown(): void {
@@ -237,18 +241,22 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 
 		$this->set_main_doc_as_older_than_autosave( $main_id );
 
+		$document = Plugin::$instance->documents->get( $main_id, false );
 		$autosave = $document->get_autosave( get_current_user_id(), true );
 		$autosave_id = $autosave->get_post()->ID;
+
+		$this->set_autosave_as_newer_than_main( $autosave_id );
 
 		$autosave_variants = $this->build_valid_variants();
 		update_metadata( 'post', $autosave_id, Component_Document::VARIANTS_META_KEY, wp_json_encode( $autosave_variants ) );
 
 		// Act - publish flow copies whitelisted meta keys from autosave -> main.
 		$repository = new \Elementor\Modules\Components\Components_Repository();
-		$main_component = $repository->get( $main_id, false );
-		$repository->publish_component( $main_component );
+		$main_component = Plugin::$instance->documents->get( $main_id, false );
+		$published = $repository->publish_component( $main_component );
 
 		// Assert - variants are now on the main post.
+		$this->assertTrue( $published );
 		$refreshed_main = Plugin::$instance->documents->get( $main_id, false );
 		$saved = $refreshed_main->get_json_meta( Component_Document::VARIANTS_META_KEY );
 		$this->assertEquals( 'v_g8k3nq00', $saved['variants'][0]['id'] );
