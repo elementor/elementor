@@ -19,6 +19,16 @@ class Prompt_Loader_Stub extends Prompt_Loader {
 	}
 }
 
+class Prompt_Loader_Stub_No_Extra extends Prompt_Loader {
+	protected static function get_core_path(): string {
+		return __DIR__ . '/../../../../../resources/prompts/';
+	}
+
+	protected static function resolve_extra_path(): ?string {
+		return null;
+	}
+}
+
 class Test_Prompt_Loader extends TestCase {
 
 	public function test_load__returns_empty_string_when_core_file_missing() {
@@ -45,11 +55,19 @@ class Test_Prompt_Loader extends TestCase {
 		$this->assertStringContainsString( "core-1\n\nextra-1", $result );
 	}
 
-	public function test_load__skips_extra_when_core_file_missing() {
+	public function test_load__returns_only_core_when_extra_path_is_null() {
+		// Act — both files exist but extra path resolver returns null.
+		$result = Prompt_Loader_Stub_No_Extra::load( 'stub' );
+
+		// Assert.
+		$this->assertSame( 'core-1', $result );
+	}
+
+	public function test_load__returns_extra_content_when_core_file_missing() {
 		// Act — extra file exists for 'stub-extra-only' but core does not.
 		$result = Prompt_Loader_Stub::load( 'stub-extra-only' );
 
 		// Assert.
-		$this->assertSame( '', $result );
+		$this->assertSame( 'extra-2', $result );
 	}
 }

@@ -22,22 +22,15 @@ class Prompt_Loader {
 	}
 
 	public static function load( string $name ): string {
-		$path = static::get_core_path() . $name . '.md';
-
-		if ( ! file_exists( $path ) ) {
-			return '';
-		}
+		$core_file  = static::get_core_path() . $name . '.md';
+		$extra_path = static::resolve_extra_path();
+		$extra_file = null !== $extra_path ? $extra_path . $name . '.md' : null;
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$content = file_get_contents( $path );
+		$content = file_exists( $core_file ) ? rtrim( file_get_contents( $core_file ) ) : '';
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$extra = ( null !== $extra_file && file_exists( $extra_file ) ) ? rtrim( file_get_contents( $extra_file ) ) : '';
 
-		$extra_path = static::resolve_extra_path();
-
-		if ( '' !== $content && null !== $extra_path && file_exists( $extra_path . $name . '.md' ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			$content .= "\n\n" . file_get_contents( $extra_path . $name . '.md' );
-		}
-
-		return $content;
+		return implode( "\n\n", array_filter( [ $content, $extra ] ) );
 	}
 }
