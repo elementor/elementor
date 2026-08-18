@@ -48,5 +48,23 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		$this->assertStringContainsString( 'Page::instance()', $source );
 		$this->assertStringContainsString( 'ELEMENTOR_HOME_MENU_SLUG', $source );
 		$this->assertStringContainsString( "'extension'", $source );
+		$this->assertStringContainsString( 'return 25;', $source );
+	}
+
+	public function test_editor_one_mcp_menu_registers_after_submissions(): void {
+		$source = file_get_contents(
+			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
+		);
+
+		$this->assertStringContainsString(
+			"add_action( 'elementor/editor-one/menu/register', [ \$this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );",
+			$source
+		);
+
+		$menu_source = file_get_contents(
+			dirname( __DIR__, 5 ) . '/modules/mcp/admin-menu-items/editor-one-mcp-menu.php'
+		);
+
+		$this->assertStringContainsString( 'const REGISTER_PRIORITY_AFTER_SUBMISSIONS = 11;', $menu_source );
 	}
 }

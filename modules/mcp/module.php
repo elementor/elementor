@@ -48,7 +48,7 @@ class Module extends BaseModule {
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
-		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ] );
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
 	}
 
 	public function registry(): Ability_Registry {

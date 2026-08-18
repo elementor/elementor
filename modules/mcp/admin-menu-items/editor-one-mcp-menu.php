@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu_Item_With_Page {
 
+	const REGISTER_PRIORITY_AFTER_SUBMISSIONS = 11;
+
 	private Page $page;
 
 	public function __construct() {
@@ -40,7 +42,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function get_position(): int {
-		return 100;
+		return 25;
 	}
 
 	public function get_slug(): string {
