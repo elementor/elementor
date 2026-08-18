@@ -77,7 +77,6 @@ describe( 'InlineEditingControl Generate button', () => {
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: expect.stringContaining( ELEMENT_ID ),
 			context: { source: 'atomic-heading-title-control' },
-			options: { newChat: true },
 		} );
 		expect( mockTriggerAngie.mock.calls[ 0 ][ 0 ].prompt ).toContain( 'Current heading' );
 	} );

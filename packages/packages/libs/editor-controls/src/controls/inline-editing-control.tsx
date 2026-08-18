@@ -74,7 +74,6 @@ export const InlineEditingControl = createControl(
 				.triggerAngie( {
 					prompt,
 					context: { source: ANGIE_TITLE_GENERATION_SOURCE },
-					options: { newChat: true },
 				} )
 				.catch( () => undefined );
 		}, [ content, elementId ] );
