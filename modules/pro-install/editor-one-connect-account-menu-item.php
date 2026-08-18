@@ -33,10 +33,6 @@ class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 	}
 
 	public function get_label(): string {
-		return esc_html__( 'License', 'elementor' );
-	}
-
-	public function get_wp_menu_label(): string {
 		return esc_html__( 'Connect Account', 'elementor' );
 	}
 
