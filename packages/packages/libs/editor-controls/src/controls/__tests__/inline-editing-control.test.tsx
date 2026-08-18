@@ -13,7 +13,7 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 	getAngieSdk: () => ( {
 		triggerAngie: mockTriggerAngie,
 	} ),
-	sendPromptToAngie: mockSendPromptToAngie,
+	sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
 } ) );
 
 jest.mock( '../../components/inline-editor', () => ( {
