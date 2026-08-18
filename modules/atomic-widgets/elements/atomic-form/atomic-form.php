@@ -284,7 +284,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [ 'atomic-form' ];
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'form';
 	}
 

@@ -184,9 +184,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings ): void {
 		$base_styles = is_array( $config['base_styles'] ?? null ) ? $config['base_styles'] : [];
 		$props_schema = is_array( $config['atomic_props_schema'] ?? null ) ? $config['atomic_props_schema'] : [];
-		$element_type = Atomic_Elements_Utils::get_element_type( $node );
-		$element_instance = $element_type ? Atomic_Elements_Utils::get_element_instance( $element_type ) : null;
-		$tag = Element_Tag_Resolver::resolve( $resolved_settings, $props_schema, $element_instance );
+		$tag = $this->resolve_html_tag( $node, $props_schema, $resolved_settings );
 
 		$default_styles_css = Element_Default_Styles_Builder::render(
 			$base_styles,
@@ -201,6 +199,13 @@ class Get_Structure_Ability extends Abstract_Ability {
 		if ( '' !== $default_styles_css ) {
 			$skeleton['default_styles'] = $default_styles_css;
 		}
+	}
+
+	private function resolve_html_tag( array $node, array $props_schema, array $resolved_settings ): ?string {
+		$type = Atomic_Elements_Utils::get_element_type( $node );
+		$instance = $type ? Atomic_Elements_Utils::get_element_instance( $type ) : null;
+
+		return Element_Tag_Resolver::resolve( $resolved_settings, $props_schema, $instance );
 	}
 
 	private function get_default_styles_repository(): ?Default_Styles_Repository {

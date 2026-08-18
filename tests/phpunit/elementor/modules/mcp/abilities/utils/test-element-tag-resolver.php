@@ -12,6 +12,18 @@ use PHPUnit\Framework\TestCase;
 // under `includes/utils.php`, so require it explicitly.
 require_once dirname( rtrim( ABSPATH, '/' ), 2 ) . '/includes/utils.php';
 
+class Html_Tag_Resolver_Button_Fixture {
+	public static function get_computed_html_tag( array $settings ): string {
+		return 'button';
+	}
+}
+
+class Html_Tag_Resolver_Img_Fixture {
+	public static function get_computed_html_tag( array $settings ): string {
+		return 'img';
+	}
+}
+
 class Test_Element_Tag_Resolver extends TestCase {
 
 	private function make_tag_prop_type( ?string $default_value ): Prop_Type {
@@ -23,117 +35,37 @@ class Test_Element_Tag_Resolver extends TestCase {
 		return $prop_type;
 	}
 
-	public function test_resolves_scalar_tag_from_settings() {
-		// Arrange.
-		$settings = [ 'tag' => 'h3' ];
-		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
+	public function test_delegates_to_element_instance() {
+		$result = Element_Tag_Resolver::resolve( [ 'tag' => 'h2' ], [], new Html_Tag_Resolver_Button_Fixture() );
 
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertSame( 'h3', $result );
-	}
-
-	public function test_resolves_transformable_tag_envelope_from_settings() {
-		// Arrange: settings may still be in `{ $$type, value }` form when unresolved.
-		$settings = [ 'tag' => [ '$$type' => 'string', 'value' => 'h4' ] ];
-		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertSame( 'h4', $result );
-	}
-
-	public function test_falls_back_to_schema_default_when_settings_missing_tag() {
-		// Arrange.
-		$settings = [];
-		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertSame( 'h2', $result );
-	}
-
-	public function test_returns_null_when_settings_and_schema_default_both_missing() {
-		// Arrange.
-		$settings = [];
-		$schema = [ 'tag' => $this->make_tag_prop_type( null ) ];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertNull( $result );
-	}
-
-	public function test_returns_null_when_resolved_tag_is_not_in_allowlist() {
-		// Arrange: `script` is explicitly not part of ALLOWED_HTML_WRAPPER_TAGS.
-		$settings = [ 'tag' => 'script' ];
-		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertNull( $result );
-	}
-
-	public function test_returns_null_when_schema_has_no_tag_prop() {
-		// Arrange.
-		$settings = [];
-		$schema = [];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertNull( $result );
-	}
-
-	public function test_ignores_empty_string_tag_in_settings() {
-		// Arrange.
-		$settings = [ 'tag' => '' ];
-		$schema = [ 'tag' => $this->make_tag_prop_type( 'p' ) ];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema );
-
-		// Assert.
-		$this->assertSame( 'p', $result );
-	}
-
-	public function test_prefers_element_instance_over_schema() {
-		// Arrange.
-		$instance = $this->getMockBuilder( \stdClass::class )
-			->addMethods( [ 'get_computed_html_tag' ] )
-			->getMock();
-		$instance->method( 'get_computed_html_tag' )->willReturn( 'button' );
-		$settings = [ 'tag' => 'h2' ];
-		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
-
-		// Act.
-		$result = Element_Tag_Resolver::resolve( $settings, $schema, $instance );
-
-		// Assert.
 		$this->assertSame( 'button', $result );
 	}
 
 	public function test_filters_disallowed_tag_from_element_instance() {
-		// Arrange.
-		$instance = $this->getMockBuilder( \stdClass::class )
-			->addMethods( [ 'get_computed_html_tag' ] )
-			->getMock();
-		$instance->method( 'get_computed_html_tag' )->willReturn( 'img' );
+		$result = Element_Tag_Resolver::resolve( [], [], new Html_Tag_Resolver_Img_Fixture() );
 
-		// Act.
-		$result = Element_Tag_Resolver::resolve( [], [], $instance );
-
-		// Assert.
 		$this->assertNull( $result );
+	}
+
+	public function test_falls_back_to_schema_default_when_instance_missing() {
+		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
+
+		$this->assertSame( 'h2', Element_Tag_Resolver::resolve( [], $schema ) );
+	}
+
+	public function test_returns_null_when_instance_missing_and_schema_default_missing() {
+		$schema = [ 'tag' => $this->make_tag_prop_type( null ) ];
+
+		$this->assertNull( Element_Tag_Resolver::resolve( [], $schema ) );
+	}
+
+	public function test_returns_null_when_schema_has_no_tag_prop() {
+		$this->assertNull( Element_Tag_Resolver::resolve( [], [] ) );
+	}
+
+	public function test_filters_disallowed_schema_default() {
+		$schema = [ 'tag' => $this->make_tag_prop_type( 'script' ) ];
+
+		$this->assertNull( Element_Tag_Resolver::resolve( [], $schema ) );
 	}
 }

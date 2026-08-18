@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Has_Html_Tag {
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'div';
 	}
 
-	public function get_computed_html_tag( array $settings ): string {
+	public static function get_computed_html_tag( array $settings ): string {
 		if ( static::settings_have_active_link( $settings ) ) {
 			return static::extract_link_html_tag( $settings['link'] ?? [] );
 		}
@@ -25,7 +25,7 @@ trait Has_Html_Tag {
 			return $settings_tag;
 		}
 
-		return $this->define_default_html_tag();
+		return static::define_default_html_tag();
 	}
 
 	protected static function settings_have_active_link( array $settings ): bool {

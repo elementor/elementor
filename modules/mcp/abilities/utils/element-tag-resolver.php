@@ -10,74 +10,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Resolves the rendered HTML wrapper tag for a V4 atomic element.
- *
- * Atomic elements render with `e-default-<tag>` classes (see modules/atomic-widgets/elements/base/_macros.html.twig).
- * The tag comes from the element's `define_default_html_tag()` / `resolve_html_tag_from_settings()` when an instance
- * is available; otherwise from `settings.tag` or the schema default. Only tags that the default-styles module
- * considers valid are returned so callers can safely look them up in Default_Styles_Repository.
+ * Resolves the rendered HTML wrapper tag for a V4 atomic element so callers can
+ * look it up in Default_Styles_Repository. Delegates to the element's
+ * Has_Html_Tag trait when an instance is available; otherwise falls back to the
+ * schema's default value.
  */
 class Element_Tag_Resolver {
 
 	public static function resolve( array $resolved_settings, array $props_schema, $element_instance = null ): ?string {
-		$candidate = self::resolve_from_element_instance( $element_instance, $resolved_settings );
+		$tag = self::compute_tag( $resolved_settings, $props_schema, $element_instance );
 
-		if ( null === $candidate ) {
-			$candidate = self::extract_settings_tag( $resolved_settings );
-		}
-
-		if ( null === $candidate ) {
-			$candidate = self::extract_schema_default_tag( $props_schema );
-		}
-
-		if ( null === $candidate ) {
-			return null;
-		}
-
-		return self::is_supported_tag( $candidate ) ? $candidate : null;
+		return ( null !== $tag && self::is_allowed_tag( $tag ) ) ? $tag : null;
 	}
 
-	private static function resolve_from_element_instance( $element_instance, array $resolved_settings ): ?string {
-		if ( ! is_object( $element_instance ) || ! method_exists( $element_instance, 'get_computed_html_tag' ) ) {
-			return null;
+	private static function compute_tag( array $settings, array $schema, $instance ): ?string {
+		if ( is_object( $instance ) && method_exists( $instance, 'get_computed_html_tag' ) ) {
+			$tag = $instance::get_computed_html_tag( $settings );
+
+			return ( is_string( $tag ) && '' !== $tag ) ? $tag : null;
 		}
 
-		$tag = $element_instance->get_computed_html_tag( $resolved_settings );
-
-		return ( is_string( $tag ) && '' !== $tag ) ? $tag : null;
+		return self::schema_default_tag( $schema );
 	}
 
-	private static function extract_settings_tag( array $settings ): ?string {
-		$tag = $settings['tag'] ?? null;
+	private static function schema_default_tag( array $schema ): ?string {
+		$prop_type = $schema['tag'] ?? null;
+		$default = $prop_type instanceof Prop_Type ? $prop_type->get_default() : null;
+		$value = is_array( $default ) ? ( $default['value'] ?? null ) : null;
 
-		if ( is_array( $tag ) && isset( $tag['value'] ) && is_string( $tag['value'] ) ) {
-			$tag = $tag['value'];
-		}
-
-		return ( is_string( $tag ) && '' !== $tag ) ? $tag : null;
+		return ( is_string( $value ) && '' !== $value ) ? $value : null;
 	}
 
-	private static function extract_schema_default_tag( array $props_schema ): ?string {
-		$prop_type = $props_schema['tag'] ?? null;
-
-		if ( ! $prop_type instanceof Prop_Type || ! method_exists( $prop_type, 'get_default' ) ) {
-			return null;
-		}
-
-		$default = $prop_type->get_default();
-
-		if ( is_array( $default ) && isset( $default['value'] ) && is_string( $default['value'] ) && '' !== $default['value'] ) {
-			return $default['value'];
-		}
-
-		return null;
-	}
-
-	private static function is_supported_tag( string $tag ): bool {
-		if ( ! class_exists( Default_Styles_Repository::class ) ) {
-			return false;
-		}
-
-		return Default_Styles_Repository::is_allowed_tag( $tag );
+	private static function is_allowed_tag( string $tag ): bool {
+		return class_exists( Default_Styles_Repository::class ) && Default_Styles_Repository::is_allowed_tag( $tag );
 	}
 }

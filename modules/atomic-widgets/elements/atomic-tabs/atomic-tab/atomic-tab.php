@@ -151,7 +151,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 		];
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'button';
 	}
 
