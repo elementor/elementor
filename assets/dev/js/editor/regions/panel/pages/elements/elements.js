@@ -160,6 +160,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.elementsCollection = elementsCollection;
 	},
 
+	isWidgetNew( item ) {
+		const untilVersion = item.new_until_version;
+
+		if ( ! untilVersion ) {
+			return false;
+		}
+
+		const [ curMajor, curMinor ] = elementor.config.version.split( '.' ).map( Number );
+		const [ untilMajor, untilMinor ] = untilVersion.split( '.' ).map( Number );
+
+		return curMajor < untilMajor || ( curMajor === untilMajor && curMinor <= untilMinor );
+	},
+
 	getCollectionItem( item ) {
 		return {
 			title: item.title,
@@ -171,6 +184,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			custom: item.custom,
 			editable: item.editable,
 			hideOnSearch: item.hide_on_search,
+			isNew: this.isWidgetNew( item ),
 		};
 	},
 

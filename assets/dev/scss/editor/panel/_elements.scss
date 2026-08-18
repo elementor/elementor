@@ -111,11 +111,28 @@
 			}
 		}
 
-		.eicon-atomic {
+		.eicon-atomic,
+		.e-widget-new-badge {
 			position: absolute;
 			inset-block-start: 5px;
 			inset-inline-end: 5px;
+		}
+
+		.eicon-atomic {
 			color: var(--e-a-color-txt);
+		}
+
+		.e-widget-new-badge {
+			border-radius: var(--e-a-border-radius);
+			background-color: var(--e-a-btn-bg);
+			color: var(--e-a-btn-color-invert);
+			padding: 2px 5px;
+			font-size: 9px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+			line-height: 1.4;
+			pointer-events: none;
 		}
 
 		&:hover,

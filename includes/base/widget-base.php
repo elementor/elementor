@@ -256,6 +256,21 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get new until version.
+	 *
+	 * Returns the version until which the widget is considered "new" in the panel.
+	 * The "New" badge displays as long as the current Elementor version matches
+	 * the major.minor returned here. Override in a widget class to mark it as new.
+	 *
+	 * @access public
+	 *
+	 * @return string Version string in "major.minor" format, e.g. "4.3". Empty string = no badge.
+	 */
+	public function get_new_until_version(): string {
+		return '';
+	}
+
+	/**
 	 * Start widget controls section.
 	 *
 	 * Used to add a new section of controls to the widget. Regular controls and
@@ -381,6 +396,7 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
+			'new_until_version' => $this->get_new_until_version(),
 			'upsale_data' => null,
 			'is_dynamic_content' => $this->is_dynamic_content(),
 			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
