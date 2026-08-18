@@ -40,11 +40,13 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		$this->fail( 'elementor/elementor-mcp-composer was not found in composer.lock.' );
 	}
 
-	public function test_editor_one_mcp_menu_passes_elementor_url_to_page(): void {
+	public function test_editor_one_mcp_menu_uses_home_menu_and_extension_icon(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/admin-menu-items/editor-one-mcp-menu.php'
 		);
 
 		$this->assertStringContainsString( 'Page::instance()', $source );
+		$this->assertStringContainsString( 'ELEMENTOR_HOME_MENU_SLUG', $source );
+		$this->assertStringContainsString( "'extension'", $source );
 	}
 }

@@ -24,7 +24,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function get_parent_slug(): string {
-		return Menu_Config::ELEMENTOR_MENU_SLUG;
+		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 	}
 
 	public function is_visible(): bool {
@@ -40,7 +40,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function get_position(): int {
-		return 70;
+		return 75;
 	}
 
 	public function get_slug(): string {
@@ -48,7 +48,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function get_icon(): string {
-		return $this->page->get_icon();
+		return 'extension';
 	}
 
 	public function has_children(): bool {

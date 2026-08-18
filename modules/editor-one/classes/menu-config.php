@@ -43,6 +43,7 @@ class Menu_Config {
 	public static function get_excluded_flyout_menu_level3_slugs(): array {
 		$default_slugs = [
 			'e-form-submissions',
+			'elementor-mcp',
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/excluded_flyout_menu_level3_slugs', $default_slugs );
@@ -95,6 +96,10 @@ class Menu_Config {
 			'e-form-submissions' => [
 				'position' => 70,
 				'icon' => 'send',
+			],
+			'elementor-mcp' => [
+				'position' => 75,
+				'icon' => 'extension',
 			],
 		];
 
