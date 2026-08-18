@@ -99,7 +99,7 @@ class Default_Styles_REST_API {
 	private function all( \WP_REST_Request $request ) {
 		$items = $this->get_repository()->all();
 
-		return Response_Builder::make( empty( $items ) ? [] : (object) $items )->build();
+		return Response_Builder::make( (object) $items )->build();
 	}
 
 	private function get_one( \WP_REST_Request $request ) {
