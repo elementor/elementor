@@ -360,6 +360,10 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.2.6 - 2026-08-18 =
+
+* Fix: Bla bla bla
+
 = 4.2.2 - 2026-08-06 =
 
 * Fix: Editor top bar integrations may not appear in non-English languages
