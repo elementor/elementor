@@ -51,24 +51,6 @@ abstract class Widget_Base extends Element_Base {
 	public static $registered_runtime_widgets = [];
 
 	/**
-	 * New widgets list.
-	 *
-	 * Maps widget names to the Elementor minor version in which they shipped.
-	 * The "New" badge appears in the panel as long as the current major.minor
-	 * version is less than or equal to the listed version.
-	 * To mark a widget as new, add its name here — no changes needed in the
-	 * widget class itself.
-	 *
-	 * @since 3.28.0
-	 * @access private
-	 *
-	 * @var array<string, string>
-	 */
-	private const NEW_ATOMIC_ELEMENTS = [
-		'e-background-video' => '4.3',
-	];
-
-	/**
 	 * Get element type.
 	 *
 	 * Retrieve the element type, in this case `widget`.
@@ -399,7 +381,6 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
-			'new_until_version' => self::NEW_ATOMIC_ELEMENTS[ $this->get_name() ] ?? '',
 			'upsale_data' => null,
 			'is_dynamic_content' => $this->is_dynamic_content(),
 			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
