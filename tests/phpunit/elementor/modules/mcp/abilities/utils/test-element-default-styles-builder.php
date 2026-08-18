@@ -149,6 +149,45 @@ class Test_Element_Default_Styles_Builder extends TestCase {
 		$this->assertSame( '', $result );
 	}
 
+	public function test_render_kit_default_returns_css_for_tag() {
+		$kit_item = [
+			'id' => 'button',
+			'type' => 'class',
+			'cssName' => 'e-default-button',
+			'variants' => [ [ 'props' => [ 'background-color' => '#8a6262' ] ] ],
+		];
+		$repository = new Stub_Default_Styles_Repository( [ 'button' => $kit_item ] );
+
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->once() )
+			->method( 'render' )
+			->with( [ $kit_item ] )
+			->willReturn( 'DEFAULT_CSS' );
+
+		$result = Element_Default_Styles_Builder::render_kit_default( 'button', $repository, $renderer );
+
+		$this->assertSame( 'DEFAULT_CSS', $result );
+	}
+
+	public function test_render_kit_default_returns_empty_when_repository_null() {
+		$this->assertSame( '', Element_Default_Styles_Builder::render_kit_default( 'h1', null ) );
+	}
+
+	public function test_render_kit_default_returns_empty_when_tag_null() {
+		$repository = new Stub_Default_Styles_Repository( [ 'h1' => [ 'variants' => [] ] ] );
+
+		$this->assertSame( '', Element_Default_Styles_Builder::render_kit_default( null, $repository ) );
+	}
+
+	public function test_render_kit_default_returns_empty_when_tag_missing_in_repository() {
+		$repository = new Stub_Default_Styles_Repository();
+
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->never() )->method( 'render' );
+
+		$this->assertSame( '', Element_Default_Styles_Builder::render_kit_default( 'h1', $repository, $renderer ) );
+	}
+
 	public function test_render_skips_kit_layer_when_repository_is_null() {
 		// Arrange.
 		$base_styles = [

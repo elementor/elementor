@@ -126,6 +126,7 @@ class Module extends BaseModule {
 			new Abilities\Manage_Variable_Ability(),
 			new Abilities\Manage_Classes_Ability(),
 			new Abilities\Manage_Default_Styles_Ability(),
+			new Abilities\Get_Default_Styles_Ability(),
 			new Abilities\Reorder_Classes_Ability(),
 			new Abilities\Manage_Variable_Guide_Ability(),
 			new Abilities\Get_Widget_Schema_Ability(),

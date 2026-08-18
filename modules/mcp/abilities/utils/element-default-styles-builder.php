@@ -32,15 +32,15 @@ class Element_Default_Styles_Builder {
 			? $renderer->render( array_values( $widget_base_style_defs ) )
 			: '';
 
-		$default_css = self::render_kit_default( $renderer, $tag, $repository );
+		$default_css = self::render_kit_default( $tag, $repository, $renderer );
 
 		return trim( $base_css . "\n" . $default_css );
 	}
 
-	private static function render_kit_default(
-		Styles_Renderer $renderer,
+	public static function render_kit_default(
 		?string $tag,
-		?Default_Styles_Repository $repository
+		?Default_Styles_Repository $repository,
+		?Styles_Renderer $renderer = null
 	): string {
 		if ( null === $tag || null === $repository ) {
 			return '';
@@ -51,6 +51,8 @@ class Element_Default_Styles_Builder {
 		if ( ! is_array( $item ) ) {
 			return '';
 		}
+
+		$renderer = $renderer ?? Styles_Renderer::make( Plugin::$instance->breakpoints->get_breakpoints_config() );
 
 		return $renderer->render( [ $item ] );
 	}
