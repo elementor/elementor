@@ -132,7 +132,7 @@ describe( 'App', () => {
 			expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should navigate to first step after clicking "Continue as a guest"', async () => {
+		it( 'should navigate to first step after clicking "Skip"', async () => {
 			// Arrange
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: false,
@@ -141,7 +141,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			// Assert - should now show the onboarding steps, not login
 			await waitFor( () => {
@@ -173,7 +173,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// First, continue as guest to get past login
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
@@ -352,7 +352,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Act - continue as guest
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			// Assert - should go to steps, not pro install (guests are not connected)
 			expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
