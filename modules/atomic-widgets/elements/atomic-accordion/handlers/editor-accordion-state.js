@@ -4,6 +4,7 @@ const ACCORDION_ELEMENT_TYPE = 'e-accordion';
 const ITEM_ELEMENT_TYPE = 'e-accordion-item';
 const HEADER_ELEMENT_TYPE = 'e-accordion-item-header';
 const MAX_EXPANDED_ONE = 'one';
+const DEFAULT_STATE_FIRST_EXPANDED = 'first_expanded';
 const SELECT_COMMAND = 'document/elements/select';
 const COMMAND_RUN_AFTER_EVENT = 'elementor/commands/run/after';
 
@@ -32,7 +33,7 @@ const COMMAND_RUN_AFTER_EVENT = 'elementor/commands/run/after';
 register( {
 	elementType: ACCORDION_ELEMENT_TYPE,
 	id: 'e-accordion-preview-handler',
-	callback: ( { element, signal } ) => {
+	callback: ( { element, signal, listenToChildren } ) => {
 		const getOwnAccordion = ( node ) => node.closest( `[data-element_type="${ ACCORDION_ELEMENT_TYPE }"]` );
 
 		const belongsToThisAccordion = ( node ) => getOwnAccordion( node ) === element;
@@ -43,16 +44,26 @@ register( {
 			Array.from( element.querySelectorAll( `[data-element_type="${ ITEM_ELEMENT_TYPE }"]` ) )
 				.filter( belongsToThisAccordion );
 
-		// Reads the live root setting instead of the DOM: the `name` attribute the frontend relies on
-		// for exclusivity is never rendered in the editor (see the docblock). Settings are prop values
-		// (`{ $$type, value }`), and the key is absent until the user touches the control, so the
-		// fallback repeats the schema default of `max_expanded`.
-		const isExclusive = () => {
+		// Reads a live root setting instead of the DOM: neither `open` nor the `name` attribute the
+		// frontend relies on for exclusivity is ever rendered in the editor (see the docblock).
+		// Settings are prop values (`{ $$type, value }`), and a key is absent until the user touches
+		// its control, hence the caller-supplied fallback repeating the schema default.
+		//
+		// Once the prop is exposed as a component property its value is replaced by the overridable
+		// wrapper (`{ override_key, origin_value: { $$type, value } }`), so the actual value sits one
+		// level deeper - without unwrapping it, an exposed `default_state`/`max_expanded` would read as
+		// an object and silently fall back to "not first_expanded" / "not exclusive".
+		const getRootSetting = ( key, fallback ) => {
 			const container = window.parent?.elementor?.getContainer?.( element.dataset.id );
-			const maxExpanded = container?.settings?.get?.( 'max_expanded' )?.value ?? MAX_EXPANDED_ONE;
+			const settingValue = container?.settings?.get?.( key )?.value;
+			const value = settingValue && 'object' === typeof settingValue
+				? settingValue.origin_value?.value
+				: settingValue;
 
-			return MAX_EXPANDED_ONE === maxExpanded;
+			return value ?? fallback;
 		};
+
+		const isExclusive = () => MAX_EXPANDED_ONE === getRootSetting( 'max_expanded', MAX_EXPANDED_ONE );
 
 		const openItem = ( item ) => {
 			if ( isExclusive() ) {
@@ -65,6 +76,57 @@ register( {
 
 			item.setAttribute( 'open', '' );
 		};
+
+		// Whether a human has already decided this accordion's open state in the current DOM
+		// generation. `Default State` describes how the accordion *first* renders, so once someone
+		// toggles an item by hand, a later re-render of a single child (a title, an icon) must not
+		// re-apply it over their choice. Re-rendering the accordion itself re-runs this whole callback
+		// with a fresh flag, which is exactly when the default becomes relevant again.
+		let userToggledAnItem = false;
+
+		// Items whose freshly rendered node the default state was already evaluated against, so it is
+		// applied once per node and not on every sibling's render event.
+		const defaultStateEvaluated = new WeakSet();
+
+		/**
+		 * Applies the accordion's `Default State` in the editor preview, which nothing else can:
+		 * `open` is derived from `Render_Context` in the PHP pass only, and the editor renders each
+		 * element client-side from Twig without it (see the docblock), so every `<details>` arrives
+		 * collapsed no matter what the setting says. `first_expanded` is therefore honoured here, the
+		 * same way this handler already stands in for the native toggle and for `name`-based
+		 * exclusivity.
+		 */
+		const applyDefaultState = () => {
+			if ( userToggledAnItem ) {
+				return;
+			}
+
+			const items = getItems();
+			const shouldExpandFirst = DEFAULT_STATE_FIRST_EXPANDED === getRootSetting( 'default_state', DEFAULT_STATE_FIRST_EXPANDED );
+			const hasOpenItem = items.some( ( item ) => item.hasAttribute( 'open' ) );
+
+			items.forEach( ( item, index ) => {
+				if ( defaultStateEvaluated.has( item ) ) {
+					return;
+				}
+
+				defaultStateEvaluated.add( item );
+
+				if ( shouldExpandFirst && 0 === index && ! hasOpenItem ) {
+					item.setAttribute( 'open', '' );
+				}
+			} );
+		};
+
+		applyDefaultState();
+
+		// The accordion's own render event can arrive before its items exist in the DOM (the item
+		// views render as separate children), so the default is re-evaluated as they come in.
+		listenToChildren( [ ITEM_ELEMENT_TYPE ] ).render( ( event ) => {
+			if ( belongsToThisAccordion( event.detail.element ) ) {
+				applyDefaultState();
+			}
+		} );
 
 		// The item toggled by the click currently being dispatched, if any. Clicking a header also
 		// selects it, and the selection listener below reacts to that by opening the item it lives in
@@ -84,6 +146,7 @@ register( {
 			}
 
 			itemToggledByClick = item;
+			userToggledAnItem = true;
 			setTimeout( () => {
 				itemToggledByClick = null;
 			} );
