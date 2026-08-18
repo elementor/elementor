@@ -626,7 +626,7 @@ class Content_Generator {
 	/**
 	 * @return string|false Cached content, or false on miss / version mismatch.
 	 */
-	private function read_inline_meta_cache( int $post_id ): string|false {
+	private function read_inline_meta_cache( int $post_id ) {
 		$meta = get_post_meta( $post_id, self::INLINE_META_KEY, true );
 
 		if ( ! is_array( $meta ) ) {

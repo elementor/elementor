@@ -27,7 +27,7 @@ class Llms_Cache {
 	 *
 	 * @return string|false Cached string, or false on cache miss.
 	 */
-	public function get_llms(): string|false {
+	public function get_llms() {
 		return get_transient( self::TRANSIENT_LLMs );
 	}
 
@@ -36,7 +36,7 @@ class Llms_Cache {
 	 *
 	 * @return string|false Cached string, or false on cache miss.
 	 */
-	public function get_llms_full(): string|false {
+	public function get_llms_full() {
 		return get_transient( self::TRANSIENT_LLMs_FULL );
 	}
 
