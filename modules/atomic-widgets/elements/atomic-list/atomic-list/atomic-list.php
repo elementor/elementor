@@ -112,6 +112,9 @@ class Atomic_List extends Atomic_Element_Base {
 	protected function define_default_children() {
 		return [
 			Atomic_List_Item::generate()
+				->settings( [
+					'show_markers' => true,
+				] )
 				->hydrate_default_children( true )
 				->editor_settings( [
 					'title' => esc_html__( 'Item 1', 'elementor' ),
