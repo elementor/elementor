@@ -123,14 +123,12 @@
 		}
 
 		.e-widget-new-badge {
-			border-radius: var(--e-a-border-radius);
-			background-color: var(--e-a-btn-bg);
-			color: var(--e-a-btn-color-invert);
-			padding: 2px 5px;
-			font-size: 9px;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.3px;
+			border-radius: 100px;
+			background-color: color-mix(in srgb, var(--e-a-color-info) 12%, white);
+			color: var(--e-a-color-info);
+			padding: 3px 8px;
+			font-size: 10px;
+			font-weight: 500;
 			line-height: 1.4;
 			pointer-events: none;
 		}
