@@ -147,4 +147,10 @@ class Test_Agent_Link_Relations extends Elementor_Test_Base {
 		] ) );
 		$this->flush_documents_cache();
 	}
+
+	private function flush_documents_cache(): void {
+		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
+		$reflection->setAccessible( true );
+		$reflection->setValue( Plugin::$instance->documents, [] );
+	}
 }
