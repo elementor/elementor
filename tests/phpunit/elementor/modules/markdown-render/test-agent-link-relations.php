@@ -15,6 +15,8 @@ class Test_Agent_Link_Relations extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
 		$this->original_agents_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Agents_Module::EXPERIMENT_NAME )['default'];
 	}
@@ -58,6 +60,7 @@ class Test_Agent_Link_Relations extends Elementor_Test_Base {
 		$this->set_post_built_with_elementor( $post->ID );
 
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$this->flush_documents_cache();
 		$kit = Plugin::$instance->documents->get( $kit_id );
 		$kit->update_settings( [
 			'agents' => [
