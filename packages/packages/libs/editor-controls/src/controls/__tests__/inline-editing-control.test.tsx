@@ -6,13 +6,14 @@ import { fireEvent, screen } from '@testing-library/react';
 import { InlineEditingControl } from '../inline-editing-control';
 
 const ELEMENT_ID = 'heading-el-1';
+const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+const ANGIE_TITLE_GENERATION_ENTRY_POINT = 'atomic_heading_title';
+
+const mockIsAngieAvailable = jest.fn();
 const mockSendPromptToAngie = jest.fn();
-const mockTriggerAngie = jest.fn().mockResolvedValue( undefined );
 
 jest.mock( '@elementor/editor-mcp', () => ( {
-	getAngieSdk: () => ( {
-		triggerAngie: mockTriggerAngie,
-	} ),
+	isAngieAvailable: () => mockIsAngieAvailable(),
 	sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
 } ) );
 
@@ -37,10 +38,17 @@ const renderInlineEditingControl = ( enableAngieGenerate?: boolean ) =>
 		}
 	);
 
+const getExpectedPrompt = () =>
+	expect.stringMatching(
+		new RegExp(
+			`Generate or update the heading title for element ID ${ ELEMENT_ID }\\. Current title: "Current heading"`
+		)
+	);
+
 describe( 'InlineEditingControl Generate button', () => {
 	beforeEach( () => {
-		mockSendPromptToAngie.mockClear();
-		mockTriggerAngie.mockClear();
+		mockIsAngieAvailable.mockReset();
+		mockSendPromptToAngie.mockReset();
 	} );
 
 	it( 'renders the Generate button when enableAngieGenerate is true', () => {
@@ -65,8 +73,9 @@ describe( 'InlineEditingControl Generate button', () => {
 		expect( generateButton ).not.toBeInTheDocument();
 	} );
 
-	it( 'calls Angie SDK triggerAngie with prompt and context when Generate is clicked', () => {
+	it( 'calls sendPromptToAngie with the heading prompt when Angie is available', () => {
 		// Arrange
+		mockIsAngieAvailable.mockReturnValue( true );
 		renderInlineEditingControl( true );
 
 		// Act
@@ -74,23 +83,29 @@ describe( 'InlineEditingControl Generate button', () => {
 
 		// Assert
 		expect( mockSendPromptToAngie ).toHaveBeenCalledTimes( 1 );
-		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
-			prompt: expect.stringContaining( ELEMENT_ID ),
-			context: { source: 'atomic-heading-title-control' },
-		} );
-		expect( mockTriggerAngie.mock.calls[ 0 ][ 0 ].prompt ).toContain( 'Current heading' );
+		expect( mockSendPromptToAngie ).toHaveBeenCalledWith( getExpectedPrompt() );
 	} );
 
-	it( 'does not create an unhandled rejection when triggerAngie rejects', async () => {
+	it( 'dispatches create-widget event when Angie is not available', () => {
 		// Arrange
-		mockTriggerAngie.mockRejectedValueOnce( new Error( 'Angie unavailable' ) );
+		mockIsAngieAvailable.mockReturnValue( false );
+		const handler = jest.fn();
+		window.addEventListener( CREATE_WIDGET_EVENT, handler );
 		renderInlineEditingControl( true );
 
 		// Act
 		fireEvent.click( screen.getByRole( 'button', { name: 'Generate' } ) );
 
 		// Assert
-		const triggerPromise = mockTriggerAngie.mock.results[ 0 ].value as Promise< unknown >;
-		await expect( triggerPromise.catch( () => undefined ) ).resolves.toBeUndefined();
+		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
+		expect( handler ).toHaveBeenCalledTimes( 1 );
+		expect( handler.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+			detail: {
+				entry_point: ANGIE_TITLE_GENERATION_ENTRY_POINT,
+				prompt: getExpectedPrompt(),
+			},
+		} );
+
+		window.removeEventListener( CREATE_WIDGET_EVENT, handler );
 	} );
 } );

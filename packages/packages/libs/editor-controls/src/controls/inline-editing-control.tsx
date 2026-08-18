@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
-import { getAngieSdk, sendPromptToAngie } from '@elementor/editor-mcp';
+import { isAngieAvailable, sendPromptToAngie } from '@elementor/editor-mcp';
 import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
 import { Box, Button, Stack, type SxProps, type Theme } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
@@ -13,7 +13,8 @@ import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
 
 const CHILDREN_PARSE_DEBOUNCE_MS = 300;
-const ANGIE_TITLE_GENERATION_SOURCE = 'atomic-heading-title-control';
+const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+const ANGIE_TITLE_GENERATION_ENTRY_POINT = 'atomic_heading_title';
 
 type Props = ControlProps< {
 	enableAngieGenerate?: boolean;
@@ -68,14 +69,19 @@ export const InlineEditingControl = createControl(
 		const handleGenerateClick = useCallback( () => {
 			const prompt = buildHeadingTitleGenerationPrompt( elementId, content );
 
-			sendPromptToAngie();
+			if ( isAngieAvailable() ) {
+				sendPromptToAngie( prompt );
+				return;
+			}
 
-			void getAngieSdk()
-				.triggerAngie( {
-					prompt,
-					context: { source: ANGIE_TITLE_GENERATION_SOURCE },
+			window.dispatchEvent(
+				new CustomEvent( CREATE_WIDGET_EVENT, {
+					detail: {
+						entry_point: ANGIE_TITLE_GENERATION_ENTRY_POINT,
+						prompt,
+					},
 				} )
-				.catch( () => undefined );
+			);
 		}, [ content, elementId ] );
 
 		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );
