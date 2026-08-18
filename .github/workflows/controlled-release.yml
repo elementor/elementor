@@ -10,11 +10,15 @@ on:
       prerelease:
         required: false
         type: boolean
-        default: false
+        default: true
         description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
 
 permissions:
   contents: write
+
+concurrency:
+  group: controlled-release-${{ github.repository }}
+  cancel-in-progress: false
 
 jobs:
   # ── Job 1 ────────────────────────────────────────────────────────────────
@@ -25,11 +29,12 @@ jobs:
     name: Validate (Dry Run)
     if: github.repository_owner == 'elementor'
     permissions:
-      contents: read
-    uses: .github/workflows/release-tag-creation.yml@main
+      contents: write
+    uses: ./.github/workflows/release-tag-creation.yml
     with:
       version: ${{ inputs.version }}
       dry_run: true
+      prerelease: ${{ inputs.prerelease }}
     secrets:
       MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
       MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
@@ -57,7 +62,7 @@ jobs:
   tag:
     name: Create Release Tag
     needs: approve-tag
-    uses: .github/workflows/release-tag-creation.yml@main
+    uses: ./.github/workflows/release-tag-creation.yml
     with:
       version: ${{ inputs.version }}
       dry_run: false
@@ -81,6 +86,11 @@ jobs:
         run: |
           {
             echo "### 📦 Draft release created: \`${{ inputs.version }}\`"
+            echo ""
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| **Version** | \`${{ inputs.version }}\` |"
+            echo "| **Pre-release** | ${{ inputs.prerelease && '✅ Yes (publish workflow skipped)' || 'No' }} |"
             echo ""
             echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
             echo ""
@@ -142,7 +152,7 @@ jobs:
   build-draft:
     name: Build & Draft Release
     needs: tag
-    uses: .github/workflows/build-draft-release.yml@main
+    uses: ./.github/workflows/build-draft-release.yml
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
@@ -193,7 +203,7 @@ jobs:
   publish:
     name: Publish Release
     needs: [approve-publish, build-draft, tag]
-    uses: .github/workflows/publish-release.yml@main
+    uses: ./.github/workflows/publish-release.yml
     with:
       version: ${{ inputs.version }}
       prerelease: ${{ inputs.prerelease }}
@@ -204,5 +214,7 @@ jobs:
       SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
       SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       SLACK_CHANNEL_RELEASE: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

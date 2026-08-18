@@ -6,6 +6,7 @@ import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 
+import { useDefaultStyleTagFromPreview } from '../hooks/use-default-style-tag-from-preview';
 import { useStylesRerender } from '../hooks/use-styles-rerender';
 import { createStylesInheritance } from '../styles-inheritance/create-styles-inheritance';
 import {
@@ -81,6 +82,7 @@ export function useInheritedValues( propKeys: string[] ): Record< string, PropVa
 const useAppliedStyles = () => {
 	const currentClassesProp = useClassesProp();
 	const baseStyles = useBaseStyles();
+	const defaultTagStyleId = useDefaultTagStyleId();
 
 	useStylesRerender();
 
@@ -88,7 +90,9 @@ const useAppliedStyles = () => {
 
 	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
 
-	return stylesRepository.all().filter( ( style ) => [ ...baseStyles, ...appliedStyles ].includes( style.id ) );
+	const applicableIds = [ ...baseStyles, ...appliedStyles, ...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ) ];
+
+	return stylesRepository.all().filter( ( style ) => applicableIds.includes( style.id ) );
 };
 
 const useBaseStyles = () => {
@@ -97,4 +101,10 @@ const useBaseStyles = () => {
 	const widgetCache = widgetsCache?.[ elementType.key ];
 
 	return Object.keys( widgetCache?.base_styles ?? {} );
+};
+
+const useDefaultTagStyleId = () => {
+	const { element } = useElement();
+
+	return useDefaultStyleTagFromPreview( element.id );
 };

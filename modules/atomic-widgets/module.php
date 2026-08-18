@@ -163,7 +163,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_LIST = 'e_list';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
+	const EXPERIMENT_ACCORDION = 'e_accordion';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -176,6 +178,7 @@ class Module extends BaseModule {
 		'editor-interactions',
 		'editor-templates',
 		'editor-design-system',
+		'editor-site-settings',
 	];
 
 	public function get_name() {
@@ -189,7 +192,9 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_list_experiment();
 		$this->register_icon_button_experiment();
+		$this->register_accordion_experiment();
 
 		$this->register_hooks();
 
@@ -234,6 +239,21 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Dev-only gate that keeps the V4 List element off trunk while it is built across
+	 * several pull requests. Remove it once the element passes QA.
+	 */
+	private function register_list_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_LIST,
+			'title' => esc_html__( 'List', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 List element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	/**
 	 * Dev-only gate that keeps the V4 Icon Button element off trunk while it is built across
 	 * several pull requests. Remove it once the element passes QA.
 	 */
@@ -242,6 +262,17 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ICON_BUTTON,
 			'title' => esc_html__( 'Icon Button', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Icon Button element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_accordion_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ACCORDION,
+			'title' => esc_html__( 'Accordion', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -567,7 +598,12 @@ class Module extends BaseModule {
 			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
 			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
-			'.e-background-video__content { position: relative; z-index: 1; flex: 1; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; }',
+			// Editor empty state: content is a nested flex child inside padded root (overflow:hidden).
+			// Let content shrink to the inner flex area, then grow the empty-view to fill it.
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view.elementor-empty-view { position: relative; flex: 1 1 auto; min-height: 120px; height: auto; width: 100%; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view > .elementor-first-add { position: absolute; inset: 0; width: 100%; height: 100%; }',
 			'.e-background-video__controls { z-index: 2; }',
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',

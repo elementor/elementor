@@ -4,20 +4,9 @@ namespace Elementor\Modules\Mcp\RestApi;
 
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
-use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
-use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
-use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Assets_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
-use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
-use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
-use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,29 +16,10 @@ class Mcp_Proxy_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE      = 'mcp-proxy';
 
-	private array $tools     = [];
-	private array $resources = [];
+	private ?Ability_Registry $registry;
 
-	public function __construct() {
-		$this->tools = [
-			'manage-global-variable' => fn( array $input ) => ( new Manage_Variable_Ability() )->execute( $input ),
-			'manage-classes' => fn( array $input ) => ( new Manage_Classes_Ability() )->execute( $input ),
-			'get-widget-schema' => fn( array $input ) => ( new Get_Widget_Schema_Ability() )->execute( $input ),
-			'list-widget-schemas' => fn( array $input ) => ( new List_Widget_Schemas_Ability() )->execute( $input ),
-			'get-page-structure' => fn( array $input ) => ( new Get_Structure_Ability() )->execute( $input ),
-			'manage-elements' => fn( array $input ) => ( new Manage_Elements_Ability() )->execute( $input ),
-			'list-assets' => fn( array $input ) => ( new List_Assets_Ability() )->execute( $input ),
-			'list-resources' => fn( array $input ) => ( new List_Resources_Ability() )->execute( $input ),
-			'read-resource' => fn( array $input ) => ( new Read_Resource_Ability() )->execute( $input ),
-		];
-
-		$this->resources = [
-			Style_Best_Practices_Ability::URI => fn() => ( new Style_Best_Practices_Ability() )->execute(),
-			Manage_Variable_Guide_Ability::URI => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
-			Global_Classes_Resource_Ability::URI => fn() => ( new Global_Classes_Resource_Ability() )->execute(),
-			Global_Variables_Resource_Ability::URI => fn() => ( new Global_Variables_Resource_Ability() )->execute(),
-			List_Dynamic_Tags_Ability::URI => fn() => ( new List_Dynamic_Tags_Ability() )->execute(),
-		];
+	public function __construct( ?Ability_Registry $registry = null ) {
+		$this->registry = $registry;
 	}
 
 	public function register_hooks() {
@@ -91,7 +61,9 @@ class Mcp_Proxy_REST_API {
 		$tool  = $request->get_param( 'tool' );
 		$input = $request->get_param( 'input' );
 
-		if ( ! isset( $this->tools[ $tool ] ) ) {
+		$ability = $this->resolve_registry()->find_by_proxy_slug( (string) $tool );
+
+		if ( null === $ability ) {
 			return Error_Builder::make( 'unknown_tool' )
 				->set_status( 404 )
 				// translators: By tool name
@@ -99,7 +71,11 @@ class Mcp_Proxy_REST_API {
 				->build();
 		}
 
-		$result = ( $this->tools[ $tool ] )( is_array( $input ) ? $input : [] );
+		if ( ! $ability->check_permission() ) {
+			return $this->build_response( $this->forbidden_error() );
+		}
+
+		$result = $ability->execute_guarded( is_array( $input ) ? $input : [] );
 
 		return $this->build_response( $result );
 	}
@@ -107,7 +83,9 @@ class Mcp_Proxy_REST_API {
 	private function handle_resource( \WP_REST_Request $request ) {
 		$uri = $request->get_param( 'uri' );
 
-		if ( ! isset( $this->resources[ $uri ] ) ) {
+		$ability = $this->resolve_registry()->find_resource_by_uri( (string) $uri );
+
+		if ( null === $ability ) {
 			return Error_Builder::make( 'unknown_resource' )
 				->set_status( 404 )
 				// translators: By resource URI
@@ -115,9 +93,35 @@ class Mcp_Proxy_REST_API {
 				->build();
 		}
 
-		$result = ( $this->resources[ $uri ] )();
+		if ( ! $ability->check_permission() ) {
+			return $this->build_response( $this->forbidden_error() );
+		}
+
+		$result = $ability->execute();
 
 		return $this->build_response( $result );
+	}
+
+	private function resolve_registry(): Ability_Registry {
+		if ( $this->registry instanceof Ability_Registry ) {
+			return $this->registry;
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
+
+		$this->registry = $module instanceof Mcp_Module
+			? $module->registry()
+			: Mcp_Module::build_core_registry();
+
+		return $this->registry;
+	}
+
+	private function forbidden_error(): \WP_Error {
+		return new \WP_Error(
+			'rest_forbidden',
+			__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
+			[ 'status' => \WP_Http::FORBIDDEN ]
+		);
 	}
 
 	private function build_response( $result ) {
@@ -131,7 +135,20 @@ class Mcp_Proxy_REST_API {
 				->build();
 		}
 
-		return Response_Builder::make( $result )->build();
+		$http_status = $this->resolve_http_status( $result );
+
+		return Response_Builder::make( $result )->set_status( $http_status )->build();
+	}
+
+	private function resolve_http_status( $result ): int {
+		$status = is_array( $result ) ? ( $result['status'] ?? 'ok' ) : 'ok';
+
+		$status_map = [
+			'error'         => 422,
+			'partial_error' => 207,
+		];
+
+		return $status_map[ $status ] ?? 200;
 	}
 
 	private function route_wrapper( callable $cb ) {

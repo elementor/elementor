@@ -56,8 +56,7 @@
     "packages:release": "turbo build && npm run release -w elementor-packages",
     "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
     "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
-    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\"",
-    "prepare": "husky"
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\""
   },
   "engines": {
     "node": ">=24.15.0",
@@ -85,6 +84,8 @@
     "@babel/runtime-corejs3": "^7.26.0",
     "@elementor/wp-lite-env": "^0.0.20",
     "@emotion/babel-plugin": "^11.13.5",
+    "@eslint/compat": "^2.0.0",
+    "@eslint/eslintrc": "^3.3.6",
     "@jest/globals": "~29.7.0",
     "@playwright/test": "~1.62.0",
     "@swc/core": "^1.10.1",
@@ -98,11 +99,10 @@
     "@types/pixelmatch": "^5.2.6",
     "@types/pngjs": "^6.0.5",
     "@types/react-dom": "^18.3.1",
-    "@typescript-eslint/eslint-plugin": "8.56.1",
-    "@typescript-eslint/parser": "^8.6.0",
+    "@typescript-eslint/parser": "^8.65.0",
     "@wordpress/babel-plugin-import-jsx-pragma": "^5.9.0",
     "@wordpress/babel-preset-default": "^3.0.2",
-    "@wordpress/eslint-plugin": "^21.1.0",
+    "@wordpress/eslint-plugin": "^25.8.0",
     "@wp-playground/client": "^2.0.13",
     "allure-commandline": "2.41.0",
     "allure-playwright": "^2.10.0",
@@ -116,20 +116,20 @@
     "cspell": "^8.17.1",
     "cssnano": "^7.0.6",
     "dotenv": "^16.4.7",
-    "eslint": "^8.57.1",
-    "eslint-import-resolver-typescript": "^3.6.3",
-    "eslint-plugin-babel": "^5.3.1",
+    "eslint": "^10.8.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jest-dom": "^5.4.0",
+    "eslint-plugin-jest-dom": "^5.10.1",
     "eslint-plugin-local-rules": "^3.0.2",
     "eslint-plugin-no-jquery": "^2.7.0",
+    "eslint-plugin-playwright": "^2.11.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-compiler": "latest",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-testing-library": "^7.2.0",
-    "eslint-plugin-unicorn": "^56.0.1",
+    "eslint-plugin-unicorn": "^72.0.0",
     "glob": "^11.0.3",
-    "husky": "^9.1.7",
+    "globals": "^16.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "karma": "^6.4.4",
@@ -143,7 +143,6 @@
     "karma-remap-coverage": "0.1.5",
     "knip": "^5.54.1",
     "lighthouse": "^12.3.0",
-    "lint-staged": "^16.2.7",
     "msw": "^2.6.8",
     "path": "^0.12.7",
     "pixelmatch": "^7.2.0",
@@ -161,7 +160,8 @@
     "ts-node": "^10.9.2",
     "tsup": "^8.3.5",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
     "vite-plus": "^0.2.6",
     "webpack": "^5.97.1"
   },
@@ -194,9 +194,6 @@
     "validator": "^13.11.0"
   },
   "overrides": {
-    "@wordpress/eslint-plugin": {
-      "eslint-plugin-jest": "^28.14.0"
-    },
     "nwsapi": "2.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -206,17 +203,21 @@
     "date-fns": "^3.6.0",
     "scheduler": "^0.20.0",
     "form-data": "4.0.4",
-    "baseline-browser-mapping": "^2.9.19"
-  },
-  "lint-staged": {
-    "packages/**/*.{js,jsx,ts,tsx}": [
-      "node scripts/lint-packages-staged.js"
-    ],
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
-    ],
-    "*.{php,twig}": [
-      "bash bin/check-twig-safety.sh"
-    ]
+    "baseline-browser-mapping": "^2.9.19",
+    "zod-validation-error": "^4.0.2",
+    "@babel/eslint-parser": { "eslint": "$eslint" },
+    "eslint-plugin-import": { "eslint": "$eslint" },
+    "eslint-plugin-react": { "eslint": "$eslint" },
+    "eslint-plugin-jsx-a11y": { "eslint": "$eslint" },
+    "eslint-plugin-jsdoc": { "eslint": "$eslint" },
+    "eslint-plugin-jest-dom": { "eslint": "$eslint" },
+    "eslint-plugin-testing-library": { "eslint": "$eslint" },
+    "eslint-plugin-local-rules": { "eslint": "$eslint" },
+    "eslint-plugin-no-jquery": { "eslint": "$eslint" },
+    "eslint-plugin-playwright": { "eslint": "$eslint" },
+    "eslint-plugin-simple-import-sort": { "eslint": "$eslint" },
+    "eslint-import-resolver-typescript": { "eslint": "$eslint" },
+    "@tanstack/eslint-plugin-query": { "eslint": "$eslint" },
+    "eslint-plugin-react-compiler": { "eslint": "$eslint" }
   }
 }

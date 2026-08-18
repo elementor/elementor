@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Promotions;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -20,10 +19,12 @@ class Conversion_Banner {
 	const DISMISS_KEY = 'conversion_banner_go_pro';
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
+	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
+	const THEME_SETTINGS_PAGE_SUFFIX = '-settings';
 	const GO_PRO_TITLE_PREFIX = 'Go Pro';
 
 	public function __construct() {
@@ -81,7 +82,15 @@ class Conversion_Banner {
 
 		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query_args );
 
-		return in_array( $query_args['page'] ?? '', self::THEME_SLUGS );
+		$page = $query_args['page'] ?? '';
+
+		foreach ( self::THEME_SLUGS as $theme_slug ) {
+			if ( $page === $theme_slug || $page === $theme_slug . self::THEME_SETTINGS_PAGE_SUFFIX ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function ajax_dismiss_banner(): void {
@@ -176,12 +185,12 @@ class Conversion_Banner {
 		}
 
 		return [
-			'title' => esc_html__( 'Go Pro, Go Limitless', 'elementor' ),
-			'text' => esc_html__( 'Unlock the theme builder, popup builder, 100+ widgets and more advanced tools to take your website to the next level.', 'elementor' ),
+			'title' => esc_html__( 'Build more with Elementor Pro', 'elementor' ),
+			'text' => esc_html__( 'Add the theme builder, popup builder, and 85+ advanced widgets to your Elementor Editor.', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
-					'link' => Go_Pro_Promotion_Item::get_url(),
+					'text' => esc_html__( 'Upgrade now', 'elementor' ),
+					'link' => self::UPGRADE_URL,
 					'target' => '_blank',
 				],
 			],

@@ -3,12 +3,21 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Read_Resource_Ability extends Abstract_Ability {
+
+	private ?Ability_Registry $registry;
+
+	public function __construct( ?Ability_Registry $registry = null ) {
+		$this->registry = $registry;
+	}
 
 	protected function get_ability_id(): string {
 		return 'elementor/read-resource';
@@ -60,9 +69,9 @@ class Read_Resource_Ability extends Abstract_Ability {
 			);
 		}
 
-		$executors = $this->get_resource_executors();
+		$resource = $this->resolve_registry()->find_resource_by_uri( $uri );
 
-		if ( ! isset( $executors[ $uri ] ) ) {
+		if ( null === $resource ) {
 			return new \WP_Error(
 				'resource_not_found',
 				sprintf(
@@ -74,8 +83,15 @@ class Read_Resource_Ability extends Abstract_Ability {
 			);
 		}
 
-		$executor = $executors[ $uri ];
-		$content = $executor['execute']();
+		if ( ! $resource->check_permission() ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'Sorry, you are not allowed to perform this action.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
+		$content = $resource->execute();
 
 		if ( is_wp_error( $content ) ) {
 			return $content;
@@ -83,37 +99,22 @@ class Read_Resource_Ability extends Abstract_Ability {
 
 		return [
 			'uri' => $uri,
-			'mimeType' => $executor['mimeType'],
+			'mimeType' => (string) ( $resource->get_mime_type() ?? '' ),
 			'content' => is_string( $content ) ? $content : wp_json_encode( $content ),
 		];
 	}
 
-	private function get_resource_executors(): array {
-		return [
-			Style_Best_Practices_Ability::URI => [
-				'execute' => fn() => ( new Style_Best_Practices_Ability() )->execute(),
-				'mimeType' => 'text/markdown',
-			],
-			Manage_Variable_Guide_Ability::URI => [
-				'execute' => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
-				'mimeType' => 'text/plain',
-			],
-			Global_Classes_Resource_Ability::URI => [
-				'execute' => fn() => ( new Global_Classes_Resource_Ability() )->execute(),
-				'mimeType' => 'application/json',
-			],
-			Global_Variables_Resource_Ability::URI => [
-				'execute' => fn() => ( new Global_Variables_Resource_Ability() )->execute(),
-				'mimeType' => 'application/json',
-			],
-			List_Dynamic_Tags_Ability::URI => [
-				'execute' => fn() => ( new List_Dynamic_Tags_Ability() )->execute(),
-				'mimeType' => 'application/json',
-			],
-			Interactions_Schema_Resource_Ability::URI => [
-				'execute' => fn() => ( new Interactions_Schema_Resource_Ability() )->execute(),
-				'mimeType' => 'application/json',
-			],
-		];
+	private function resolve_registry(): Ability_Registry {
+		if ( $this->registry instanceof Ability_Registry ) {
+			return $this->registry;
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
+
+		$this->registry = $module instanceof Mcp_Module
+			? $module->registry()
+			: Mcp_Module::build_core_registry();
+
+		return $this->registry;
 	}
 }

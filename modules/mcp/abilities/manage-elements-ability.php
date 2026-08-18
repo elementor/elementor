@@ -23,7 +23,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
-use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -51,17 +51,24 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). Only V4 elements (see elementor/get-page-structure -> version) can be the operation target; targeting a V3 legacy element_id returns elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, raw-CSS style, global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source.', 'elementor' ),
+			sprintf(
+				/* translators: %s: comma-separated list of V3-allowlisted widget types. */
+				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
+				implode( ', ', Widget_Context_Helper::V3_ALLOWLIST )
+			),
 			'elementor',
 			[
 				'type' => 'object',
-				'required' => [ 'status', 'results', 'post_id', 'preview_url', 'llm_instructions' ],
+				'required' => [ 'status', 'results', 'post_id', 'edit_url' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
 					'results' => [ 'type' => 'array' ],
 					'post_id' => [ 'type' => 'integer' ],
-					'preview_url' => Document_Mutation_Links::preview_schema_property(),
-					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
+					'edit_url' => [
+						'type' => 'string',
+						'format' => 'uri',
+						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
+					],
 					'version' => [ 'type' => 'string' ],
 				],
 			],
@@ -95,8 +102,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
 								],
 								'style' => [
-									'type' => 'object',
-									'description' => 'update only: raw CSS declarations (property → value); null resets a property.',
+									'type' => 'string',
+									'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour.',
+								],
+								'style_apply_mode' => [
+									'type' => 'string',
+									'enum' => [ 'patch', 'replace' ],
+									'default' => 'patch',
+									'description' => 'patch (default): merge incoming style variants with existing. replace: discard existing variants for the affected breakpoints before writing new ones. Pass an empty string with replace to wipe all local style variants.',
 								],
 								'classes' => [
 									'type' => 'array',
@@ -215,7 +228,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$response['post_id'] = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
-			return $this->with_mutation_links( $response, $document );
+			return $this->with_edit_url( $response, $document );
 		}
 
 		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
@@ -225,7 +238,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				? $save_result->get_error_message()
 				: __( 'Could not save document.', 'elementor' );
 
-			return $this->with_mutation_links( $response, $document );
+			return $this->with_edit_url( $response, $document );
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
@@ -233,11 +246,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$post = get_post( $document->get_main_id() );
 		$response['version'] = $post ? $post->post_modified_gmt : current_time( 'mysql', true );
 
-		return $this->with_mutation_links( $response, $document );
+		return $this->with_edit_url( $response, $document );
 	}
 
-	private function with_mutation_links( array $response, Document $document ): array {
-		return array_merge( $response, Document_Mutation_Links::for_document( $document ) );
+	private function with_edit_url( array $response, Document $document ): array {
+		$response['edit_url'] = $document->get_edit_url();
+
+		return $response;
 	}
 
 	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {
@@ -275,6 +290,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$type = $node['widgetType'] ?? $node['elType'] ?? null;
 		if ( ! is_string( $type ) || '' === $type ) {
+			return null;
+		}
+
+		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
 			return null;
 		}
 
@@ -339,14 +358,20 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
-		$style = $this->as_map( $operation['style'] ?? [] );
+		$style = $operation['style'] ?? null;
+		$has_style = isset( $operation['style'] );
 		$has_classes = array_key_exists( 'classes', $operation );
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || ! empty( $style ) || $has_classes || null !== $interactions;
+		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions;
 		if ( ! $has_change ) {
 			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
+		}
+
+		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
+		if ( ! in_array( $style_apply_mode, [ 'patch', 'replace' ], true ) ) {
+			return new \WP_Error( 'invalid_input', __( 'style_apply_mode must be "patch" or "replace".', 'elementor' ) );
 		}
 
 		if ( null === $this->get_mutator()->find_by_id( $tree, $element_id ) ) {
@@ -408,9 +433,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		if ( ! empty( $style ) ) {
-			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-			$style_result = $style_applier->apply( $index, [ $element_id => $style ], [ $element_id => $element_type ] );
+		if ( $has_style ) {
+			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
+			$style_result = $style_applier->apply( $index, [ $element_id => $style ], $style_apply_mode, $widget_configs );
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}
@@ -531,5 +556,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	private function get_active_breakpoints(): array {
+		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 	}
 }
