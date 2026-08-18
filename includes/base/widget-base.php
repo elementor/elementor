@@ -65,7 +65,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @var array<string, string>
 	 */
 	private const NEW_ATOMIC_ELEMENTS = [
-		'e-divider' => '4.3',
+		'e-background-video' => '4.3',
 	];
 
 	/**
