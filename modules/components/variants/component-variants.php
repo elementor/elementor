@@ -10,12 +10,8 @@ class Component_Variants {
 	/** @var Component_Variant[] */
 	public array $variants;
 
-	private function __construct( $variants_meta ) {
-		if ( is_string( $variants_meta ) && ! empty( $variants_meta ) ) {
-			$variants_meta = json_decode( $variants_meta, true );
-		}
-
-		if ( empty( $variants_meta ) || empty( $variants_meta['variants'] ) ) {
+	private function __construct( array $variants_meta ) {
+		if ( empty( $variants_meta['variants'] ) ) {
 			$this->variants = [];
 
 			return;

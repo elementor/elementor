@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *             'widgets' => [
  *                 'e-button-123' => [
  *                     'settings' => [ 'classes' => [ 'add' => [ 'g_abc123' ] ] ],
- *                     'variant'  => 'v_btn_succ',
+ *                     'variant'  => 'v_btnsucc0',
  *                 ],
  *             ],
  *         ],

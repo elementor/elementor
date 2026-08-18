@@ -29,7 +29,7 @@ class Test_Component_Variants_Parser extends Elementor_Test_Base {
 					'widgets' => [
 						'e-button-123' => [
 							'settings' => [ 'classes' => [ 'add' => [ 'g_abc123' ] ] ],
-							'variant'  => 'v_btn_succ',
+							'variant'  => 'v_btnsucc0',
 						],
 					],
 				],
@@ -46,7 +46,7 @@ class Test_Component_Variants_Parser extends Elementor_Test_Base {
 		$this->assertEquals( 'v_g8k3nq00', $unwrapped['variants'][0]['id'] );
 		$this->assertEquals( 'Green', $unwrapped['variants'][0]['label'] );
 		$this->assertEquals( [ 'g_abc123' ], $unwrapped['variants'][0]['widgets']['e-button-123']['settings']['classes']['add'] );
-		$this->assertEquals( 'v_btn_succ', $unwrapped['variants'][0]['widgets']['e-button-123']['variant'] );
+		$this->assertEquals( 'v_btnsucc0', $unwrapped['variants'][0]['widgets']['e-button-123']['variant'] );
 	}
 
 	public function test_parse__with_empty_data__returns_empty() {

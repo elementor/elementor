@@ -144,24 +144,24 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 
 		$document->update_variants( [
 			'variants' => [
-				[ 'id' => 'v_first_000', 'label' => 'First', 'widgets' => [] ],
-				[ 'id' => 'v_secondxx0', 'label' => 'Second', 'widgets' => [] ],
+				[ 'id' => 'v_first000', 'label' => 'First', 'widgets' => [] ],
+				[ 'id' => 'v_secondx0', 'label' => 'Second', 'widgets' => [] ],
 			],
 		] );
 
 		// Act - rename first, swap order.
 		$document->update_variants( [
 			'variants' => [
-				[ 'id' => 'v_secondxx0', 'label' => 'Second Renamed', 'widgets' => [] ],
-				[ 'id' => 'v_first_000', 'label' => 'First Renamed', 'widgets' => [] ],
+				[ 'id' => 'v_secondx0', 'label' => 'Second Renamed', 'widgets' => [] ],
+				[ 'id' => 'v_first000', 'label' => 'First Renamed', 'widgets' => [] ],
 			],
 		] );
 
 		// Assert - ids preserved verbatim, labels updated.
 		$variants = $document->get_variants();
-		$this->assertEquals( 'v_secondxx0', $variants->variants[0]->id );
+		$this->assertEquals( 'v_secondx0', $variants->variants[0]->id );
 		$this->assertEquals( 'Second Renamed', $variants->variants[0]->label );
-		$this->assertEquals( 'v_first_000', $variants->variants[1]->id );
+		$this->assertEquals( 'v_first000', $variants->variants[1]->id );
 		$this->assertEquals( 'First Renamed', $variants->variants[1]->label );
 	}
 
@@ -201,7 +201,7 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 		$autosave_variants = [
 			'variants' => [
 				[
-					'id'    => 'v_autosaveX',
+					'id'    => 'v_autosav0',
 					'label' => 'Autosave Only',
 					'widgets' => [],
 				],
@@ -224,7 +224,7 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 		$this->assertEquals( $autosave_id, $resolved->get_post()->ID );
 		$variants = $resolved->get_variants();
 		$this->assertCount( 1, $variants->variants );
-		$this->assertEquals( 'v_autosaveX', $variants->variants[0]->id );
+		$this->assertEquals( 'v_autosav0', $variants->variants[0]->id );
 	}
 
 	public function test_publish__promotes_variants_from_autosave_to_main() {
@@ -289,7 +289,7 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 					'widgets' => [
 						'e-button-123' => [
 							'settings' => [ 'classes' => [ 'add' => [ 'g_abc123' ] ] ],
-							'variant'  => 'v_btn_succ',
+							'variant'  => 'v_btnsucc0',
 						],
 					],
 				],
