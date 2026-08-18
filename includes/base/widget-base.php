@@ -64,7 +64,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @var array<string, string>
 	 */
-	private const NEW_WIDGETS = [
+	private const NEW_ATOMIC_ELEMENTS = [
 		'e-divider' => '4.3',
 	];
 
@@ -399,7 +399,7 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
-			'new_until_version' => self::NEW_WIDGETS[ $this->get_name() ] ?? '',
+			'new_until_version' => self::NEW_ATOMIC_ELEMENTS[ $this->get_name() ] ?? '',
 			'upsale_data' => null,
 			'is_dynamic_content' => $this->is_dynamic_content(),
 			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
