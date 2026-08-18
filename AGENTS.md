@@ -12,6 +12,10 @@ Longer human onboarding: [CONTRIBUTING.md](.github/CONTRIBUTING.md), Playwright 
 
 For v4 or atomic extension tasks: load [atomic-builder-extend](.cursor/skills/atomic-builder-extend/SKILL.md) first, then the matching domain skill it routes to.
 
+## Release changelog skill
+
+For any "create changelog" / release-notes task in Core or Pro, load [release-changelog](.cursor/skills/release-changelog/SKILL.md) first. It covers the entry format per repo, the `changelog-<version>-to-main` / `changelog-<version>-to-<line>` branch names, and the CI verifier.
+
 ## Layout (Core + Pro)
 
 Clone as siblings so Pro can see Core at `../elementor`:
