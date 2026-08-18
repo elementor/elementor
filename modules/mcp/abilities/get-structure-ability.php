@@ -37,14 +37,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles (as { __style_id, css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode), interactions, its rendered HTML tag when known, and default_styles (a CSS map of the widget base_styles merged with the kit\'s site-wide default style for that tag — the effective styling before any inline/global overrides). V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles (as { __style_id, css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode), interactions, its rendered HTML tag when known, and default_styles (a raw CSS string of the widget base layer followed by the kit\'s site-wide default layer for that tag, in browser cascade order — includes selectors, @media(--breakpoint) blocks, and pseudo-states as the frontend renders them). V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (widget base_styles merged with the kit\'s site-wide default style for that tag, as a CSS property map). V3 nodes always have empty settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). V3 nodes always have empty settings and styles.',
 					],
 				],
 			],
@@ -73,7 +73,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each V4 node\'s settings, styles (as { __style_id, css } — raw CSS string), interactions, rendered tag, and default_styles (widget base + kit site-wide default merged, as a CSS map). The styles.css value is round-trippable to build-composition.style / manage-elements.update.style in replace mode. Requires element_id.',
+						'description' => 'If true, includes each V4 node\'s settings, styles (as { __style_id, css } — raw CSS string), interactions, rendered tag, and default_styles (raw CSS string: base layer + kit default for that tag). The styles.css value is round-trippable to build-composition.style / manage-elements.update.style in replace mode. Requires element_id.',
 					],
 				],
 			]
@@ -186,14 +186,18 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$props_schema = is_array( $config['atomic_props_schema'] ?? null ) ? $config['atomic_props_schema'] : [];
 		$tag = Element_Tag_Resolver::resolve( $resolved_settings, $props_schema );
 
-		$default_styles = Element_Default_Styles_Builder::build( $base_styles, $tag, $this->get_default_styles_repository() );
+		$default_styles_css = Element_Default_Styles_Builder::render(
+			$base_styles,
+			$tag,
+			$this->get_default_styles_repository()
+		);
 
 		if ( null !== $tag ) {
 			$skeleton['tag'] = $tag;
 		}
 
-		if ( ! empty( $default_styles ) ) {
-			$skeleton['default_styles'] = $default_styles;
+		if ( '' !== $default_styles_css ) {
+			$skeleton['default_styles'] = $default_styles_css;
 		}
 	}
 

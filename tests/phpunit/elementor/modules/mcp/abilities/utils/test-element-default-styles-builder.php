@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use PHPUnit\Framework\TestCase;
@@ -28,122 +29,146 @@ class Stub_Default_Styles_Repository extends Default_Styles_Repository {
 
 class Test_Element_Default_Styles_Builder extends TestCase {
 
-	public function test_collect_base_style_props_flattens_all_variants() {
+	public function test_render_concatenates_base_and_kit_default_css_in_cascade_order() {
 		// Arrange.
 		$base_styles = [
-			'base' => [
-				'variants' => [
-					[ 'props' => [ 'margin' => 'M1', 'color' => 'C1' ] ],
-					[ 'props' => [ 'padding' => 'P1' ] ],
-				],
-			],
-			'link-base' => [
-				'variants' => [
-					[ 'props' => [ 'all' => 'unset' ] ],
-				],
+			'e-heading-base' => [
+				'id' => 'e-heading-base',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'margin' => 'M1' ] ] ],
 			],
 		];
-
-		// Act.
-		$props = Element_Default_Styles_Builder::collect_base_style_props( $base_styles );
-
-		// Assert.
-		$this->assertSame(
-			[ 'margin' => 'M1', 'color' => 'C1', 'padding' => 'P1', 'all' => 'unset' ],
-			$props
-		);
-	}
-
-	public function test_collect_merged_props_returns_only_base_when_no_repository() {
-		// Arrange.
-		$base_styles = [
-			'base' => [ 'variants' => [ [ 'props' => [ 'margin' => 'M1' ] ] ] ],
+		$kit_item = [
+			'id' => 'h1',
+			'type' => 'class',
+			'cssName' => 'e-default-h1',
+			'variants' => [ [ 'props' => [ 'color' => 'red' ] ] ],
 		];
+		$repository = new Stub_Default_Styles_Repository( [ 'h1' => $kit_item ] );
+
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->exactly( 2 ) )
+			->method( 'render' )
+			->withConsecutive(
+				[ array_values( $base_styles ) ],
+				[ [ $kit_item ] ]
+			)
+			->willReturnOnConsecutiveCalls( 'BASE_CSS', 'DEFAULT_CSS' );
 
 		// Act.
-		$merged = Element_Default_Styles_Builder::collect_merged_props( $base_styles, 'h1', null );
+		$result = Element_Default_Styles_Builder::render( $base_styles, 'h1', $repository, $renderer );
 
 		// Assert.
-		$this->assertSame( [ 'margin' => 'M1' ], $merged );
+		$this->assertSame( 'BASE_CSS' . "\n" . 'DEFAULT_CSS', $result );
 	}
 
-	public function test_collect_merged_props_returns_only_base_when_tag_null() {
+	public function test_render_returns_only_base_css_when_tag_is_null() {
 		// Arrange.
 		$base_styles = [
-			'base' => [ 'variants' => [ [ 'props' => [ 'color' => 'C1' ] ] ] ],
+			'e-heading-base' => [
+				'id' => 'e-heading-base',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'margin' => 'M1' ] ] ],
+			],
 		];
 		$repository = new Stub_Default_Styles_Repository( [
 			'h1' => [ 'variants' => [ [ 'props' => [ 'color' => 'KIT' ] ] ] ],
 		] );
 
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->once() )
+			->method( 'render' )
+			->with( array_values( $base_styles ) )
+			->willReturn( 'BASE_CSS' );
+
 		// Act.
-		$merged = Element_Default_Styles_Builder::collect_merged_props( $base_styles, null, $repository );
+		$result = Element_Default_Styles_Builder::render( $base_styles, null, $repository, $renderer );
 
 		// Assert.
-		$this->assertSame( [ 'color' => 'C1' ], $merged );
+		$this->assertSame( 'BASE_CSS', $result );
 	}
 
-	public function test_collect_merged_props_kit_default_overrides_base_on_conflict() {
+	public function test_render_returns_only_base_css_when_kit_tag_missing() {
 		// Arrange.
 		$base_styles = [
-			'base' => [
-				'variants' => [
-					[ 'props' => [ 'margin' => 'BASE_MARGIN', 'color' => 'BASE_COLOR' ] ],
-				],
+			'e-heading-base' => [
+				'id' => 'e-heading-base',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'margin' => 'M1' ] ] ],
 			],
 		];
-		$repository = new Stub_Default_Styles_Repository( [
-			'h1' => [
-				'variants' => [
-					[ 'props' => [ 'color' => 'KIT_COLOR', 'font-size' => 'KIT_FONT' ] ],
-				],
-			],
-		] );
+		$repository = new Stub_Default_Styles_Repository();
+
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->once() )
+			->method( 'render' )
+			->with( array_values( $base_styles ) )
+			->willReturn( 'BASE_CSS' );
 
 		// Act.
-		$merged = Element_Default_Styles_Builder::collect_merged_props( $base_styles, 'h1', $repository );
-
-		// Assert: kit wins on conflict (color), base preserved for uncontended keys (margin), kit adds new keys (font-size).
-		$this->assertSame(
-			[ 'margin' => 'BASE_MARGIN', 'color' => 'KIT_COLOR', 'font-size' => 'KIT_FONT' ],
-			$merged
-		);
-	}
-
-	public function test_collect_merged_props_ignores_missing_tag_in_repository() {
-		// Arrange.
-		$base_styles = [
-			'base' => [ 'variants' => [ [ 'props' => [ 'margin' => 'M1' ] ] ] ],
-		];
-		$repository = new Stub_Default_Styles_Repository( [] );
-
-		// Act.
-		$merged = Element_Default_Styles_Builder::collect_merged_props( $base_styles, 'h1', $repository );
+		$result = Element_Default_Styles_Builder::render( $base_styles, 'h1', $repository, $renderer );
 
 		// Assert.
-		$this->assertSame( [ 'margin' => 'M1' ], $merged );
+		$this->assertSame( 'BASE_CSS', $result );
 	}
 
-	public function test_collect_merged_props_returns_empty_when_nothing_to_merge() {
+	public function test_render_returns_only_kit_default_when_base_styles_empty() {
+		// Arrange.
+		$kit_item = [
+			'id' => 'p',
+			'type' => 'class',
+			'cssName' => 'e-default-p',
+			'variants' => [ [ 'props' => [ 'color' => 'blue' ] ] ],
+		];
+		$repository = new Stub_Default_Styles_Repository( [ 'p' => $kit_item ] );
+
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->once() )
+			->method( 'render' )
+			->with( [ $kit_item ] )
+			->willReturn( 'DEFAULT_CSS' );
+
+		// Act.
+		$result = Element_Default_Styles_Builder::render( [], 'p', $repository, $renderer );
+
+		// Assert.
+		$this->assertSame( 'DEFAULT_CSS', $result );
+	}
+
+	public function test_render_returns_empty_string_when_no_layers() {
 		// Arrange.
 		$repository = new Stub_Default_Styles_Repository();
 
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->never() )->method( 'render' );
+
 		// Act.
-		$merged = Element_Default_Styles_Builder::collect_merged_props( [], null, $repository );
+		$result = Element_Default_Styles_Builder::render( [], null, $repository, $renderer );
 
 		// Assert.
-		$this->assertSame( [], $merged );
+		$this->assertSame( '', $result );
 	}
 
-	public function test_build_returns_empty_map_when_no_props() {
+	public function test_render_skips_kit_layer_when_repository_is_null() {
 		// Arrange.
-		$repository = new Stub_Default_Styles_Repository();
+		$base_styles = [
+			'e-heading-base' => [
+				'id' => 'e-heading-base',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'margin' => 'M1' ] ] ],
+			],
+		];
+
+		$renderer = $this->createMock( Styles_Renderer::class );
+		$renderer->expects( $this->once() )
+			->method( 'render' )
+			->with( array_values( $base_styles ) )
+			->willReturn( 'BASE_CSS' );
 
 		// Act.
-		$result = Element_Default_Styles_Builder::build( [], null, $repository );
+		$result = Element_Default_Styles_Builder::render( $base_styles, 'h1', null, $renderer );
 
-		// Assert: build() short-circuits before Style_Props_To_Css::to_map when there are no props,
-		// so we can safely assert on the empty return without needing WordPress boot.
-		$this->assertSame( [], $result );
+		// Assert.
+		$this->assertSame( 'BASE_CSS', $result );
 	}
 }

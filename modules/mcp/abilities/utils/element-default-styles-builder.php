@@ -2,80 +2,56 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
-use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Builds the effective default-style CSS map that the browser would apply to a V4 atomic
+ * Renders the effective default-style CSS that the browser would apply to a V4 atomic
  * element before any inline/global class overrides.
  *
- * Merge order mirrors the render-time class order in
- * modules/atomic-widgets/elements/base/_macros.html.twig — widget `base_styles` first,
- * then the kit's site-wide default style for the element's rendered tag on top (kit wins on conflict).
+ * Each layer is rendered via Styles_Renderer (same pipeline as frontend enqueue), then
+ * concatenated in cascade order: widget base_styles first, kit site-wide default for the
+ * element's rendered tag second.
  */
 class Element_Default_Styles_Builder {
 
-	public static function build( array $base_styles, ?string $tag, ?Default_Styles_Repository $repository ): array {
-		$props = self::collect_merged_props( $base_styles, $tag, $repository );
+	public static function render(
+		array $widget_base_style_defs,
+		?string $tag,
+		?Default_Styles_Repository $repository,
+		?Styles_Renderer $renderer = null
+	): string {
+		$renderer = $renderer ?? Styles_Renderer::make( Plugin::$instance->breakpoints->get_breakpoints_config() );
 
-		if ( empty( $props ) ) {
-			return [];
-		}
+		$base_css = ! empty( $widget_base_style_defs )
+			? $renderer->render( array_values( $widget_base_style_defs ) )
+			: '';
 
-		return Style_Props_To_Css::to_map( $props );
+		$default_css = self::render_kit_default( $renderer, $tag, $repository );
+
+		return trim( $base_css . "\n" . $default_css );
 	}
 
-	public static function collect_merged_props( array $base_styles, ?string $tag, ?Default_Styles_Repository $repository ): array {
-		$props = self::collect_base_style_props( $base_styles );
-
-		$kit_props = self::collect_kit_default_props( $tag, $repository );
-
-		if ( ! empty( $kit_props ) ) {
-			$props = array_merge( $props, $kit_props );
-		}
-
-		return $props;
-	}
-
-	public static function collect_base_style_props( array $base_styles ): array {
-		$props = [];
-
-		foreach ( $base_styles as $style ) {
-			$props = array_merge( $props, self::collect_variant_props( $style['variants'] ?? [] ) );
-		}
-
-		return $props;
-	}
-
-	private static function collect_kit_default_props( ?string $tag, ?Default_Styles_Repository $repository ): array {
+	private static function render_kit_default(
+		Styles_Renderer $renderer,
+		?string $tag,
+		?Default_Styles_Repository $repository
+	): string {
 		if ( null === $tag || null === $repository ) {
-			return [];
+			return '';
 		}
 
 		$item = $repository->get( $tag );
 
 		if ( ! is_array( $item ) ) {
-			return [];
+			return '';
 		}
 
-		return self::collect_variant_props( $item['variants'] ?? [] );
-	}
-
-	private static function collect_variant_props( array $variants ): array {
-		$props = [];
-
-		foreach ( $variants as $variant ) {
-			$variant_props = $variant['props'] ?? [];
-
-			if ( is_array( $variant_props ) ) {
-				$props = array_merge( $props, $variant_props );
-			}
-		}
-
-		return $props;
+		return $renderer->render( [ $item ] );
 	}
 }
