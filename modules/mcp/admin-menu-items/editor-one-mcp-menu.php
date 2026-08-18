@@ -16,7 +16,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	private Page $page;
 
 	public function __construct() {
-		$this->page = Page::instance();
+		$this->page = Page::instance( ELEMENTOR_URL );
 	}
 
 	public function get_capability(): string {
