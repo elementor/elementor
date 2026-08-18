@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\CSS_Files_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_Filesystem_Base;
 
@@ -25,9 +27,17 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		$wp_filesystem = $this->filesystemMock;
 
 		$this->cache_validity = new Cache_Validity();
+
+		remove_all_filters( 'elementor/files/base_dir' );
+		remove_all_filters( 'elementor/files/base_url' );
 	}
 
 	public function tearDown(): void {
+		remove_all_filters( 'elementor/files/base_dir' );
+		remove_all_filters( 'elementor/files/base_url' );
+
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_INACTIVE );
+
 		parent::tearDown();
 
 		global $wp_filesystem;
@@ -149,6 +159,33 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertNotNull( $file );
 		$this->assertEquals( 'cached-style', $file->get_handle() );
+	}
+
+	public function test_get__uses_filtered_elementor_base_dir_and_url_when_optimized_css_files_is_active() {
+		// Arrange.
+		$custom_dir = trailingslashit( WP_CONTENT_DIR ) . 'atomic-css/';
+		$custom_url = trailingslashit( content_url( 'atomic-css' ) );
+
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_ACTIVE );
+
+		add_filter( 'elementor/files/base_dir', fn() => $custom_dir );
+		add_filter( 'elementor/files/base_url', fn() => $custom_url );
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'move' )->willReturn( true );
+
+		// Act.
+		$file = $this->make_manager()->get(
+			'filtered-style',
+			'all',
+			fn() => 'body { color: red; }',
+			[ 'atomic-test', 'filtered' ]
+		);
+
+		// Assert.
+		$this->assertNotNull( $file );
+		$this->assertSame( $custom_dir . CSS_Files_Manager::DEFAULT_CSS_DIR . 'filtered-style.css', $file->get_path() );
+		$this->assertSame( $custom_url . CSS_Files_Manager::DEFAULT_CSS_DIR . 'filtered-style.css', $file->get_url() );
 	}
 
 	public function test_get__returns_null_without_rendering_when_should_exist_is_false() {
