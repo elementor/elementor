@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
-import { isAngieAvailable, sendPromptToAngie } from '@elementor/editor-mcp';
+import { openAngieFloatingChat } from '@elementor/editor-mcp';
 import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
 import { Box, Button, Stack, type SxProps, type Theme } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
@@ -13,8 +13,9 @@ import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
 
 const CHILDREN_PARSE_DEBOUNCE_MS = 300;
-const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
-const ANGIE_TITLE_GENERATION_ENTRY_POINT = 'atomic_heading_title';
+const ANGIE_TITLE_GENERATION_APP_ID = 'elementor-editor-title-generation';
+const ANGIE_TITLE_GENERATION_SOURCE = 'atomic_heading_title';
+const TITLE_GENERATION_MCP_SERVER_NAME = 'editor-title_generation';
 
 type Props = ControlProps< {
 	enableAngieGenerate?: boolean;
@@ -69,19 +70,51 @@ export const InlineEditingControl = createControl(
 		const handleGenerateClick = useCallback( () => {
 			const prompt = buildHeadingTitleGenerationPrompt( elementId, content );
 
-			if ( isAngieAvailable() ) {
-				sendPromptToAngie( prompt );
-				return;
-			}
-
-			window.dispatchEvent(
-				new CustomEvent( CREATE_WIDGET_EVENT, {
-					detail: {
-						entry_point: ANGIE_TITLE_GENERATION_ENTRY_POINT,
-						prompt,
+			void openAngieFloatingChat( {
+				appId: ANGIE_TITLE_GENERATION_APP_ID,
+				prompt,
+				source: ANGIE_TITLE_GENERATION_SOURCE,
+				aiContext: {
+					whatUserSees: {
+						screen: __( 'Elementor editor — heading title control', 'elementor' ),
+						elementId,
+						currentTitle: content,
 					},
-				} )
-			);
+					whatUserCanDo: [
+						__( 'Generate a new heading title', 'elementor' ),
+						__( 'Rewrite the current heading title', 'elementor' ),
+					],
+				},
+				widgetConfig: {
+					title: __( 'Generate a title', 'elementor' ),
+					subtitle: __( 'Describe the title you want, or pick a starter.', 'elementor' ),
+					suggestions: {
+						items: [
+							{
+								label: __( 'Write a punchy title', 'elementor' ),
+								value: __( 'Write a punchy title', 'elementor' ),
+							},
+							{
+								label: __( 'Make it shorter', 'elementor' ),
+								value: __( 'Make it shorter', 'elementor' ),
+							},
+						],
+					},
+					closeButton: 'close',
+					featuredMcpServer: TITLE_GENERATION_MCP_SERVER_NAME,
+					localServers: { skipLoading: true },
+					planning: { enabled: false },
+					userProfileMenu: { enabled: false },
+					promptLibrary: { enabled: false },
+					fileUpload: { enabled: false },
+					feedback: { enabled: false },
+					commands: { enabled: false },
+					testMode: { enabled: false },
+					betaBanner: { enabled: false },
+					modeSwitcher: { enabled: false, default: 'agent' },
+					aiContextGuidance: { enabled: true },
+				},
+			} ).catch( () => {} );
 		}, [ content, elementId ] );
 
 		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );

@@ -58,7 +58,7 @@ describe( 'update-heading-title tool', () => {
 
 	it( 'throws when the element does not exist', () => {
 		// Arrange
-		jest.mocked( getContainer ).mockReturnValue( undefined );
+		jest.mocked( getContainer ).mockReturnValue( null );
 		const handler = getHandler();
 
 		// Act

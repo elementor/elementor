@@ -6,15 +6,14 @@ import { fireEvent, screen } from '@testing-library/react';
 import { InlineEditingControl } from '../inline-editing-control';
 
 const ELEMENT_ID = 'heading-el-1';
-const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
-const ANGIE_TITLE_GENERATION_ENTRY_POINT = 'atomic_heading_title';
+const ANGIE_TITLE_GENERATION_APP_ID = 'elementor-editor-title-generation';
+const ANGIE_TITLE_GENERATION_SOURCE = 'atomic_heading_title';
+const TITLE_GENERATION_MCP_SERVER_NAME = 'editor-title_generation';
 
-const mockIsAngieAvailable = jest.fn();
-const mockSendPromptToAngie = jest.fn();
+const mockOpenAngieFloatingChat = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => ( {
-	isAngieAvailable: () => mockIsAngieAvailable(),
-	sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
+	openAngieFloatingChat: ( ...args: unknown[] ) => mockOpenAngieFloatingChat( ...args ),
 } ) );
 
 jest.mock( '../../components/inline-editor', () => ( {
@@ -47,8 +46,8 @@ const getExpectedPrompt = () =>
 
 describe( 'InlineEditingControl Generate button', () => {
 	beforeEach( () => {
-		mockIsAngieAvailable.mockReset();
-		mockSendPromptToAngie.mockReset();
+		mockOpenAngieFloatingChat.mockReset();
+		mockOpenAngieFloatingChat.mockResolvedValue( undefined );
 	} );
 
 	it( 'renders the Generate button when enableAngieGenerate is true', () => {
@@ -73,39 +72,24 @@ describe( 'InlineEditingControl Generate button', () => {
 		expect( generateButton ).not.toBeInTheDocument();
 	} );
 
-	it( 'calls sendPromptToAngie with the heading prompt when Angie is available', () => {
+	it( 'calls openAngieFloatingChat with the heading prompt and Angie config when Generate is clicked', () => {
 		// Arrange
-		mockIsAngieAvailable.mockReturnValue( true );
 		renderInlineEditingControl( true );
 
 		// Act
 		fireEvent.click( screen.getByRole( 'button', { name: 'Generate' } ) );
 
 		// Assert
-		expect( mockSendPromptToAngie ).toHaveBeenCalledTimes( 1 );
-		expect( mockSendPromptToAngie ).toHaveBeenCalledWith( getExpectedPrompt() );
-	} );
-
-	it( 'dispatches create-widget event when Angie is not available', () => {
-		// Arrange
-		mockIsAngieAvailable.mockReturnValue( false );
-		const handler = jest.fn();
-		window.addEventListener( CREATE_WIDGET_EVENT, handler );
-		renderInlineEditingControl( true );
-
-		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Generate' } ) );
-
-		// Assert
-		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
-		expect( handler ).toHaveBeenCalledTimes( 1 );
-		expect( handler.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
-			detail: {
-				entry_point: ANGIE_TITLE_GENERATION_ENTRY_POINT,
+		expect( mockOpenAngieFloatingChat ).toHaveBeenCalledTimes( 1 );
+		expect( mockOpenAngieFloatingChat ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				appId: ANGIE_TITLE_GENERATION_APP_ID,
+				source: ANGIE_TITLE_GENERATION_SOURCE,
 				prompt: getExpectedPrompt(),
-			},
-		} );
-
-		window.removeEventListener( CREATE_WIDGET_EVENT, handler );
+				widgetConfig: expect.objectContaining( {
+					featuredMcpServer: TITLE_GENERATION_MCP_SERVER_NAME,
+				} ),
+			} )
+		);
 	} );
 } );

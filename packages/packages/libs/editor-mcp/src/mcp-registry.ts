@@ -30,6 +30,21 @@ const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefine
 const registrationAdapters: IMcpRegistrationAdapter[] = [];
 const bufferedTools: Parameters< IMcpRegistrationAdapter[ 'onToolRegistered' ] >[] = [];
 const bufferedResources: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] >[] = [];
+const adapterActivationPromises = new Map< IMcpRegistrationAdapter, Promise< void > >();
+
+let angieMcpAdapter: AngieMcpAdapter | null = null;
+let ensureAngieMcpAdapterPromise: Promise< void > | null = null;
+
+const activateAdapter = ( adapter: IMcpRegistrationAdapter ): Promise< void > => {
+	let activationPromise = adapterActivationPromises.get( adapter );
+
+	if ( ! activationPromise ) {
+		activationPromise = adapter.activate();
+		adapterActivationPromises.set( adapter, activationPromise );
+	}
+
+	return activationPromise;
+};
 
 let resolveReady!: () => void;
 const readyPromise = new Promise< void >( ( resolve ) => {
@@ -58,6 +73,23 @@ export const signalMcpReady = (): void => {
 	resolveReady();
 };
 
+export const ensureAngieMcpAdapter = (): Promise< void > => {
+	if ( ensureAngieMcpAdapterPromise ) {
+		return ensureAngieMcpAdapterPromise;
+	}
+
+	ensureAngieMcpAdapterPromise = ( async () => {
+		if ( ! angieMcpAdapter ) {
+			angieMcpAdapter = new AngieMcpAdapter( getSDK(), getRegisteredMcpServers );
+			registerMcpAdapter( angieMcpAdapter );
+		}
+
+		await activateAdapter( angieMcpAdapter );
+	} )();
+
+	return ensureAngieMcpAdapterPromise;
+};
+
 export const createAndRegisterAdapters = async (): Promise< void > => {
 	const modelContext = getModelContext();
 
@@ -65,11 +97,13 @@ export const createAndRegisterAdapters = async (): Promise< void > => {
 		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
 	}
 
+	const activations = registrationAdapters.map( activateAdapter );
+
 	if ( isAngieAvailable() ) {
-		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
+		activations.push( ensureAngieMcpAdapter() );
 	}
 
-	await Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
+	await Promise.all( activations );
 };
 
 // utility function to run a callback on all MCP interfaces
