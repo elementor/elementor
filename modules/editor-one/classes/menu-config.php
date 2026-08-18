@@ -98,7 +98,7 @@ class Menu_Config {
 				'icon' => 'send',
 			],
 			'elementor-mcp' => [
-				'position' => 75,
+				'position' => 100,
 				'icon' => 'extension',
 			],
 		];

@@ -40,7 +40,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function get_position(): int {
-		return 75;
+		return 100;
 	}
 
 	public function get_slug(): string {
