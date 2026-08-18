@@ -47,7 +47,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return 'eicon-svg';
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'div';
 	}
 

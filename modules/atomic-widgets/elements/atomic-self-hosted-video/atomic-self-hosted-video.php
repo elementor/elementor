@@ -64,7 +64,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return 'eicon-video';
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'video';
 	}
 

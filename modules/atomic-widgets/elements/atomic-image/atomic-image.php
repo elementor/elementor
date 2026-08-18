@@ -44,12 +44,12 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return 'eicon-e-image';
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'img';
 	}
 
-	public function get_computed_html_tag( array $settings ): string {
-		return $this->define_default_html_tag();
+	public static function get_computed_html_tag( array $settings ): string {
+		return static::define_default_html_tag();
 	}
 
 	protected static function define_props_schema(): array {

@@ -44,7 +44,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return 'eicon-e-button';
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'button';
 	}
 

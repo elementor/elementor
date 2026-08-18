@@ -46,7 +46,7 @@ class Atomic_Divider extends Atomic_Widget_Base {
 		return 'eicon-e-divider';
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'hr';
 	}
 

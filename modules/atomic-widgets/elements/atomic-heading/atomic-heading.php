@@ -45,14 +45,14 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return 'eicon-e-heading';
 	}
 
-	protected function define_default_html_tag() {
+	protected static function define_default_html_tag() {
 		return 'h2';
 	}
 
-	public function get_computed_html_tag( array $settings ): string {
+	public static function get_computed_html_tag( array $settings ): string {
 		$tag = static::extract_html_tag_value( $settings['tag'] ?? null );
 
-		return ( null !== $tag && '' !== $tag ) ? $tag : $this->define_default_html_tag();
+		return ( null !== $tag && '' !== $tag ) ? $tag : static::define_default_html_tag();
 	}
 
 	protected static function define_props_schema(): array {
