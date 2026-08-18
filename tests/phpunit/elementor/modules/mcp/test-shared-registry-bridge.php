@@ -24,7 +24,7 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		$this->assertFileExists( $package_root . '/runner.php' );
 	}
 
-	public function test_composer_lock_pins_mcp_composer_1_0_3_or_higher(): void {
+	public function test_composer_lock_pins_mcp_composer_1_0_4_or_higher(): void {
 		$lock = json_decode( (string) file_get_contents( dirname( __DIR__, 5 ) . '/composer.lock' ), true );
 		$packages = $lock['packages'] ?? [];
 
@@ -33,7 +33,7 @@ class Test_Shared_Registry_Bridge extends TestCase {
 				continue;
 			}
 
-			$this->assertGreaterThanOrEqual( '1.0.3', $package['version'] );
+			$this->assertGreaterThanOrEqual( '1.0.4', $package['version'] );
 			return;
 		}
 
@@ -45,6 +45,6 @@ class Test_Shared_Registry_Bridge extends TestCase {
 			dirname( __DIR__, 5 ) . '/modules/mcp/admin-menu-items/editor-one-mcp-menu.php'
 		);
 
-		$this->assertStringContainsString( 'Page::instance( ELEMENTOR_URL )', $source );
+		$this->assertStringContainsString( 'Page::instance()', $source );
 	}
 }
