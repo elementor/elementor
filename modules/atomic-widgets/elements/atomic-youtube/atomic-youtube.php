@@ -47,6 +47,10 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 		return 'eicon-e-youtube';
 	}
 
+	protected function define_default_html_tag() {
+		return 'div';
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()

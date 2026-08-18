@@ -46,6 +46,16 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return 'eicon-paragraph';
 	}
 
+	protected function define_default_html_tag() {
+		return 'p';
+	}
+
+	public function get_computed_html_tag( array $settings ): string {
+		$tag = static::extract_html_tag_value( $settings['tag'] ?? null );
+
+		return ( null !== $tag && '' !== $tag ) ? $tag : $this->define_default_html_tag();
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()

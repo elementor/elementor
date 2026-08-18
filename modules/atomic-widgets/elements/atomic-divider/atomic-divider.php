@@ -46,6 +46,10 @@ class Atomic_Divider extends Atomic_Widget_Base {
 		return 'eicon-e-divider';
 	}
 
+	protected function define_default_html_tag() {
+		return 'hr';
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()

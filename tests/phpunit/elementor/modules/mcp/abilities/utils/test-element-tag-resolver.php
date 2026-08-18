@@ -106,4 +106,34 @@ class Test_Element_Tag_Resolver extends TestCase {
 		// Assert.
 		$this->assertSame( 'p', $result );
 	}
+
+	public function test_prefers_element_instance_over_schema() {
+		// Arrange.
+		$instance = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'get_computed_html_tag' ] )
+			->getMock();
+		$instance->method( 'get_computed_html_tag' )->willReturn( 'button' );
+		$settings = [ 'tag' => 'h2' ];
+		$schema = [ 'tag' => $this->make_tag_prop_type( 'h2' ) ];
+
+		// Act.
+		$result = Element_Tag_Resolver::resolve( $settings, $schema, $instance );
+
+		// Assert.
+		$this->assertSame( 'button', $result );
+	}
+
+	public function test_filters_disallowed_tag_from_element_instance() {
+		// Arrange.
+		$instance = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'get_computed_html_tag' ] )
+			->getMock();
+		$instance->method( 'get_computed_html_tag' )->willReturn( 'img' );
+
+		// Act.
+		$result = Element_Tag_Resolver::resolve( [], [], $instance );
+
+		// Assert.
+		$this->assertNull( $result );
+	}
 }

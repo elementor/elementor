@@ -13,14 +13,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Resolves the rendered HTML wrapper tag for a V4 atomic element.
  *
  * Atomic elements render with `e-default-<tag>` classes (see modules/atomic-widgets/elements/base/_macros.html.twig).
- * `<tag>` comes from `settings.tag` when the user set it, or from the widget schema's default otherwise.
- * Only tags that the default-styles module considers valid are returned so callers can safely look them
- * up in Default_Styles_Repository.
+ * The tag comes from the element's `define_default_html_tag()` / `resolve_html_tag_from_settings()` when an instance
+ * is available; otherwise from `settings.tag` or the schema default. Only tags that the default-styles module
+ * considers valid are returned so callers can safely look them up in Default_Styles_Repository.
  */
 class Element_Tag_Resolver {
 
-	public static function resolve( array $resolved_settings, array $props_schema ): ?string {
-		$candidate = self::extract_settings_tag( $resolved_settings );
+	public static function resolve( array $resolved_settings, array $props_schema, $element_instance = null ): ?string {
+		$candidate = self::resolve_from_element_instance( $element_instance, $resolved_settings );
+
+		if ( null === $candidate ) {
+			$candidate = self::extract_settings_tag( $resolved_settings );
+		}
 
 		if ( null === $candidate ) {
 			$candidate = self::extract_schema_default_tag( $props_schema );
@@ -31,6 +35,16 @@ class Element_Tag_Resolver {
 		}
 
 		return self::is_supported_tag( $candidate ) ? $candidate : null;
+	}
+
+	private static function resolve_from_element_instance( $element_instance, array $resolved_settings ): ?string {
+		if ( ! is_object( $element_instance ) || ! method_exists( $element_instance, 'get_computed_html_tag' ) ) {
+			return null;
+		}
+
+		$tag = $element_instance->get_computed_html_tag( $resolved_settings );
+
+		return ( is_string( $tag ) && '' !== $tag ) ? $tag : null;
 	}
 
 	private static function extract_settings_tag( array $settings ): ?string {

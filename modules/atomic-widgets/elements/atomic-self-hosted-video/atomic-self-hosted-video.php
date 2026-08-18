@@ -64,6 +64,10 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return 'eicon-video';
 	}
 
+	protected function define_default_html_tag() {
+		return 'video';
+	}
+
 	protected static function define_props_schema(): array {
 		$playsinline_dependencies = Dependency_Manager::make()
 			->where([

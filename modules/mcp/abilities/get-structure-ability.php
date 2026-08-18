@@ -178,13 +178,15 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$skeleton['settings'] = $resolved_settings ? $resolved_settings : (object) [];
 		$skeleton['styles'] = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 
-		$this->populate_default_styles( $skeleton, $config, is_array( $resolved_settings ) ? $resolved_settings : [] );
+		$this->populate_default_styles( $skeleton, $node, $config, is_array( $resolved_settings ) ? $resolved_settings : [] );
 	}
 
-	private function populate_default_styles( array &$skeleton, array $config, array $resolved_settings ): void {
+	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings ): void {
 		$base_styles = is_array( $config['base_styles'] ?? null ) ? $config['base_styles'] : [];
 		$props_schema = is_array( $config['atomic_props_schema'] ?? null ) ? $config['atomic_props_schema'] : [];
-		$tag = Element_Tag_Resolver::resolve( $resolved_settings, $props_schema );
+		$element_type = Atomic_Elements_Utils::get_element_type( $node );
+		$element_instance = $element_type ? Atomic_Elements_Utils::get_element_instance( $element_type ) : null;
+		$tag = Element_Tag_Resolver::resolve( $resolved_settings, $props_schema, $element_instance );
 
 		$default_styles_css = Element_Default_Styles_Builder::render(
 			$base_styles,

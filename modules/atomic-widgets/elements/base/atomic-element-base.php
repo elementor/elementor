@@ -147,10 +147,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return $config;
 	}
 
-	protected function define_default_html_tag() {
-		return 'div';
-	}
-
 	protected function define_initial_attributes() {
 		return [];
 	}
@@ -194,14 +190,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * @return string
 	 */
 	protected function get_html_tag(): string {
-		$settings = $this->get_atomic_settings();
-		$default_html_tag = $this->define_default_html_tag();
-
-		if ( ! empty( $settings['link']['tag'] ) ) {
-			return $settings['link']['tag'];
-		}
-
-		return $settings['tag'] ?? $default_html_tag;
+		return $this->get_computed_html_tag( $this->get_atomic_settings() );
 	}
 
 	/**

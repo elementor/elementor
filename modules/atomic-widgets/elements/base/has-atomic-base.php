@@ -32,6 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+	use Has_Html_Tag;
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
