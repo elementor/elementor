@@ -541,7 +541,7 @@ jobs:
       - js-qunit
       - phpunit
       - playwright
-    if: always()
+    if: always() && !cancelled()
     steps:
       - name: Validate required checks
         env:
