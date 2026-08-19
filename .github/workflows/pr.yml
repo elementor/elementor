@@ -41,9 +41,7 @@ jobs:
   detect-changes:
     name: Detect changes
     runs-on: ubuntu-22.04
-    if: |
-      startsWith( github.repository, 'elementor/' ) &&
-      (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility')
+    if: startsWith( github.repository, 'elementor/' )
     outputs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
@@ -96,9 +94,7 @@ jobs:
   install:
     name: Install dependencies
     runs-on: ubuntu-22.04
-    if: |
-      startsWith( github.repository, 'elementor/' ) &&
-      (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility')
+    if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -236,7 +232,6 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
-      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -261,7 +256,6 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
-      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.php == 'true'
     steps:
       - name: Mask GitHub token
@@ -328,7 +322,6 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
-      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -351,7 +344,6 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
-      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -375,7 +367,6 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
-      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.php == 'true'
     uses: ./.github/workflows/phpunit-runner.yml
     with:
@@ -509,9 +500,7 @@ jobs:
       - js-qunit
       - phpunit
       - playwright
-    if: |
-      always() && !cancelled() &&
-      (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility')
+    if: always() && !cancelled()
     steps:
       - name: Validate required checks
         env:
@@ -523,8 +512,10 @@ jobs:
           QUNIT_RESULT: ${{ needs.js-qunit.result }}
           PHPUNIT_RESULT: ${{ needs.phpunit.result }}
           PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+          JS_CHANGED: ${{ needs.detect-changes.outputs.js == 'true' }}
+          PHP_CHANGED: ${{ needs.detect-changes.outputs.php == 'true' }}
+          PLAYWRIGHT_ONLY_EVENT: ${{ github.event.action == 'ready_for_review' }}
           PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
-          CODE_CHECKS_REQUIRED: ${{ github.event.action != 'ready_for_review' && github.event.action != 'labeled' }}
         run: |
           is_ok() {
             case "$1" in
@@ -534,28 +525,31 @@ jobs:
           }
 
           FAILED=0
-          if [ "$CODE_CHECKS_REQUIRED" = "true" ]; then
-            for RESULT in \
-              "$INSTALL_RESULT" \
-              "$BUILD_RESULT" \
-              "$LINT_JS_RESULT" \
-              "$LINT_PHP_RESULT" \
-              "$JEST_RESULT" \
-              "$QUNIT_RESULT" \
-              "$PHPUNIT_RESULT"
-            do
-              if ! is_ok "$RESULT"; then
-                echo "Check failed with result: $RESULT"
-                FAILED=1
-              fi
-            done
-          else
-            for RESULT in "$INSTALL_RESULT" "$BUILD_RESULT"; do
-              if ! is_ok "$RESULT"; then
-                echo "Check failed with result: $RESULT"
-                FAILED=1
-              fi
-            done
+          for RESULT in "$INSTALL_RESULT" "$BUILD_RESULT"; do
+            if ! is_ok "$RESULT"; then
+              echo "Check failed with result: $RESULT"
+              FAILED=1
+            fi
+          done
+
+          if [ "$PLAYWRIGHT_ONLY_EVENT" != "true" ]; then
+            if [ "$JS_CHANGED" = "true" ]; then
+              for RESULT in "$LINT_JS_RESULT" "$JEST_RESULT" "$QUNIT_RESULT"; do
+                if ! is_ok "$RESULT"; then
+                  echo "Check failed with result: $RESULT"
+                  FAILED=1
+                fi
+              done
+            fi
+
+            if [ "$PHP_CHANGED" = "true" ]; then
+              for RESULT in "$LINT_PHP_RESULT" "$PHPUNIT_RESULT"; do
+                if ! is_ok "$RESULT"; then
+                  echo "Check failed with result: $RESULT"
+                  FAILED=1
+                fi
+              done
+            fi
           fi
 
           if [ "$PLAYWRIGHT_REQUIRED" = "true" ]; then
