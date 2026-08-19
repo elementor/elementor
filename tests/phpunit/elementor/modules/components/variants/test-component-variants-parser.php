@@ -154,11 +154,17 @@ class Test_Component_Variants_Parser extends Elementor_Test_Base {
 		$this->assertEquals( [ 'add' => [ 'g_abc123' ] ], $classes );
 	}
 
-	public function test_parse__rejects_invalid_variant_id_format() {
-		// Arrange.
+	public function test_parse__accepts_opaque_variant_id() {
+		// Arrange - id format is not enforced; any non-empty sanitize_key-compatible string is accepted.
 		$data = [
 			'variants' => [
-				[ 'id' => 'not-a-valid-id', 'label' => 'X', 'widgets' => [] ],
+				[
+					'id'    => 'green',
+					'label' => 'Green',
+					'widgets' => [
+						'e-button-123' => [ 'variant' => 'nested-variant-42' ],
+					],
+				],
 			],
 		];
 
@@ -166,19 +172,21 @@ class Test_Component_Variants_Parser extends Elementor_Test_Base {
 		$result = $this->parser->parse( $data );
 
 		// Assert.
-		$this->assertFalse( $result->is_valid() );
-		$this->assertStringContainsString( 'invalid_format', $result->errors()->to_string() );
+		$this->assertTrue( $result->is_valid(), $result->errors()->to_string() );
+		$unwrapped = $result->unwrap();
+		$this->assertEquals( 'green', $unwrapped['variants'][0]['id'] );
+		$this->assertEquals( 'nested-variant-42', $unwrapped['variants'][0]['widgets']['e-button-123']['variant'] );
 	}
 
-	public function test_parse__rejects_invalid_nested_variant_id() {
-		// Arrange.
+	public function test_parse__rejects_non_string_nested_variant() {
+		// Arrange - nested variant reference must be a non-empty string.
 		$data = [
 			'variants' => [
 				[
 					'id'    => 'v_g8k3nq00',
 					'label' => 'X',
 					'widgets' => [
-						'e-button-123' => [ 'variant' => 'not-a-valid-id' ],
+						'e-button-123' => [ 'variant' => 42 ],
 					],
 				],
 			],

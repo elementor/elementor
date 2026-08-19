@@ -11,9 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component_Variant_Parser {
 	const REQUIRED_FIELDS = [ 'id', 'label' ];
-	const CLASS_ACTION_ADD = 'add';
+	const ACTION_ADD = 'add';
 	const NESTED_VARIANT_KEY = 'variant';
-	const VARIANT_ID_PATTERN = '/^v_[a-z0-9]{8}$/';
 
 	public static function make(): self {
 		return new self();
@@ -32,12 +31,6 @@ class Component_Variant_Parser {
 			return $result;
 		}
 
-		if ( ! preg_match( self::VARIANT_ID_PATTERN, $variant['id'] ) ) {
-			$result->errors()->add( 'id', 'invalid_format' );
-
-			return $result;
-		}
-
 		$widgets_result = $this->parse_widgets( $variant['widgets'] ?? [] );
 
 		if ( ! $widgets_result->is_valid() ) {
@@ -47,7 +40,7 @@ class Component_Variant_Parser {
 		}
 
 		return $result->wrap( [
-			'id' => sanitize_text_field( $variant['id'] ),
+			'id' => sanitize_key( $variant['id'] ),
 			'label' => sanitize_text_field( $variant['label'] ),
 			'widgets' => $widgets_result->unwrap(),
 		] );
@@ -108,13 +101,13 @@ class Component_Variant_Parser {
 		if ( isset( $entry[ self::NESTED_VARIANT_KEY ] ) ) {
 			$nested = $entry[ self::NESTED_VARIANT_KEY ];
 
-			if ( ! is_string( $nested ) || ! preg_match( self::VARIANT_ID_PATTERN, $nested ) ) {
+			if ( ! is_string( $nested ) || '' === $nested ) {
 				$result->errors()->add( self::NESTED_VARIANT_KEY, 'invalid_variant_id' );
 
 				return $result;
 			}
 
-			$sanitized[ self::NESTED_VARIANT_KEY ] = $nested;
+			$sanitized[ self::NESTED_VARIANT_KEY ] = sanitize_key( $nested );
 		}
 
 		return $result->wrap( $sanitized );
@@ -153,14 +146,14 @@ class Component_Variant_Parser {
 	private function parse_classes( array $classes ): Parse_Result {
 		$result = Parse_Result::make();
 
-		if ( ! isset( $classes[ self::CLASS_ACTION_ADD ] ) ) {
+		if ( ! isset( $classes[ self::ACTION_ADD ] ) ) {
 			return $result->wrap( [] );
 		}
 
-		$add_list = $classes[ self::CLASS_ACTION_ADD ];
+		$add_list = $classes[ self::ACTION_ADD ];
 
 		if ( ! is_array( $add_list ) ) {
-			$result->errors()->add( self::CLASS_ACTION_ADD, 'invalid_structure' );
+			$result->errors()->add( self::ACTION_ADD, 'invalid_structure' );
 
 			return $result;
 		}
@@ -173,7 +166,7 @@ class Component_Variant_Parser {
 		$classes_prop_type = Classes_Prop_Type::make();
 
 		if ( ! $classes_prop_type->validate( $transformable ) ) {
-			$result->errors()->add( self::CLASS_ACTION_ADD, 'invalid_class_id' );
+			$result->errors()->add( self::ACTION_ADD, 'invalid_class_id' );
 
 			return $result;
 		}
@@ -181,7 +174,7 @@ class Component_Variant_Parser {
 		$sanitized = $classes_prop_type->sanitize( $transformable );
 
 		return $result->wrap( [
-			self::CLASS_ACTION_ADD => array_values( $sanitized['value'] ),
+			self::ACTION_ADD => array_values( $sanitized['value'] ),
 		] );
 	}
 }
