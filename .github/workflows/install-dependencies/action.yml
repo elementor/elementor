@@ -15,18 +15,7 @@ runs:
     - name: Remove Composer GitHub OAuth token
       shell: bash
       run: composer config --global --unset github-oauth.github.com || true
-    - name: Restore dependency cache
-      uses: actions/cache@v5
-      id: deps-cache
+    - name: Restore and install dependencies
+      uses: ./.github/actions/restore-dependencies-cache
       with:
-        path: |
-          node_modules
-          packages/node_modules
-          vendor
-        key: deps-v2-${{ runner.os }}-${{ hashFiles('package-lock.json', 'composer.lock') }}
-    - name: Install dependencies
-      if: steps.deps-cache.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-        npm run install:ci
-        npm run composer:no-dev
+        install-on-miss: 'true'
