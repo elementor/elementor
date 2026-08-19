@@ -29,7 +29,7 @@ export function mutateElementStyles( elementId: ElementID, mutator: Mutator ) {
 		newIds,
 	} );
 
-	notifyChanges();
+	notifyChanges( elementId );
 
 	return styles;
 }
@@ -87,11 +87,15 @@ function getClassesProps( container: V1Element ) {
 	} );
 }
 
-function notifyChanges() {
-	dispatchChangeEvent();
+function notifyChanges( elementId: ElementID ) {
+	dispatchChangeEvent( elementId );
 	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 }
 
-function dispatchChangeEvent() {
-	window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
+function dispatchChangeEvent( elementId: ElementID ) {
+	window.dispatchEvent(
+		new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT, {
+			detail: { elementId },
+		} )
+	);
 }

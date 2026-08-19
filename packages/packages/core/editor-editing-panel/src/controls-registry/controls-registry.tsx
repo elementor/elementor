@@ -1,19 +1,16 @@
 import {
-	AttachmentTypeControl,
 	ChipsControl,
 	type ControlComponent,
-	DateRangeControl,
 	DateTimeControl,
 	EmailFormActionControl,
+	GridControl,
 	HtmlTagControl,
 	ImageControl,
 	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
-	QueryChipsControl,
 	QueryControl,
-	QueryFilterRepeaterControl,
 	RepeatableControl,
 	SelectControlWrapper,
 	SizeControl,
@@ -21,7 +18,6 @@ import {
 	SwitchControl,
 	TextAreaControl,
 	TextControl,
-	TimeRangeControl,
 	ToggleControl,
 	UrlControl,
 	VideoMediaControl,
@@ -29,29 +25,24 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
-	createArrayPropUtils,
-	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
-	emailsPropTypeUtil,
+	emailPropTypeUtil,
+	gridPropTypeUtil,
 	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
+	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
-	queryFilterArrayPropTypeUtil,
 	queryPropTypeUtil,
 	sizePropTypeUtil,
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
-	svgSrcPropTypeUtil,
-	timeRangePropTypeUtil,
 	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
-
-const queryArrayPropTypeUtil = createArrayPropUtils( queryPropTypeUtil.key, queryPropTypeUtil.schema );
 
 export type ControlRegistry = Record<
 	string,
@@ -61,7 +52,7 @@ export type ControlRegistry = Record<
 
 const controlTypes = {
 	image: { component: ImageControl, layout: 'custom', propTypeUtil: imagePropTypeUtil },
-	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: svgSrcPropTypeUtil },
+	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
@@ -69,12 +60,6 @@ const controlTypes = {
 	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
-	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
-	'query-filter-repeater': {
-		component: QueryFilterRepeaterControl,
-		layout: 'full',
-		propTypeUtil: queryFilterArrayPropTypeUtil,
-	},
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
@@ -85,18 +70,8 @@ const controlTypes = {
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
-	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
-	'date-range': {
-		component: DateRangeControl,
-		layout: 'custom',
-		propTypeUtil: dateRangePropTypeUtil,
-	},
-	'time-range': {
-		component: TimeRangeControl,
-		layout: 'custom',
-		propTypeUtil: timeRangePropTypeUtil,
-	},
-	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
+	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	grid: { component: GridControl, layout: 'full', propTypeUtil: gridPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

@@ -24,6 +24,8 @@ export { QueryChipsControl } from './controls/query-chips-control';
 export { QueryControl } from './controls/query-control';
 export { QueryFilterRepeaterControl } from './controls/query-filter-repeater-control';
 export { GapControl } from './controls/gap-control';
+export { GridControl, createDefaultGridInner } from './controls/grid-control';
+export type { GridControlProps } from './controls/grid-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
 export { VideoMediaControl } from './controls/video-media-control';

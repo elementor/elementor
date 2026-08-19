@@ -7,6 +7,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 	const tests: { label: string, elementType: ElementType }[] = [
 		{ label: 'Div block', elementType: 'e-div-block' },
 		{ label: 'Flexbox', elementType: 'e-flexbox' },
+		{ label: 'Grid', elementType: 'e-grid' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -15,6 +16,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
+			e_atomic_grid_control: 'active',
 		} );
 	} );
 

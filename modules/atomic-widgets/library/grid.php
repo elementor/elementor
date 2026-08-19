@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor Grid library document.
  *
  * Elementor grid library document handler class is responsible for
- * handling a document of a grid type.
+ * handling a document of a grid container type.
  *
- * @since 3.29.0
+ * @since 3.34.0
  */
 class Grid extends Library_Document {
 
@@ -25,42 +25,14 @@ class Grid extends Library_Document {
 		return $properties;
 	}
 
-	/**
-	 * Get document name.
-	 *
-	 * Retrieve the document name.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @return string Document name.
-	 */
 	public function get_name() {
 		return 'e-grid';
 	}
 
-	/**
-	 * Get document title.
-	 *
-	 * Retrieve the document title.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 * @static
-	 *
-	 * @return string Document title.
-	 */
 	public static function get_title() {
 		return esc_html__( 'Grid', 'elementor' );
 	}
 
-	/**
-	 * Get Type
-	 *
-	 * Return the grid document type.
-	 *
-	 * @return string
-	 */
 	public static function get_type() {
 		return 'e-grid';
 	}

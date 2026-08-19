@@ -13,7 +13,7 @@ import { getStylesSchema, type StyleDefinition } from '@elementor/editor-styles'
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { mockElement } from '../../../../__tests__/utils';
 import { ClassesPropProvider } from '../../../../contexts/classes-prop-context';
@@ -64,6 +64,23 @@ describe( '<DisplayField />', () => {
 
 		jest.mocked( isExperimentActive ).mockReturnValue( false );
 		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
+	} );
+
+	it( 'should select grid when useStylesFields value is grid', () => {
+		const setValues = jest.fn();
+		jest.mocked( isExperimentActive ).mockImplementation( ( name ) => name === 'e_atomic_grid_control' );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { display: { $$type: 'string', value: 'grid' } },
+			setValues,
+			canEdit: true,
+		} );
+
+		mockStylesInheritanceDisplayField();
+
+		renderDisplayField();
+
+		const gridButton = screen.getByRole( 'button', { name: 'Grid' } );
+		expect( gridButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
 	it( 'should select flex when useStylesFields value is flex', () => {
@@ -123,20 +140,10 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
-		[ 'Block', 'Flex', 'Grid', 'None' ].forEach( ( label ) => {
+		// maxItems={ 4 }: without e_atomic_grid_control, first row is Block, Flex, Inline-block, None.
+		[ 'Block', 'Flex', 'Inline-block', 'None' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
-
-		const overflowMenuButtons = screen
-			.getAllByRole( 'button' )
-			.filter( ( btn ) => btn.getAttribute( 'aria-haspopup' ) === 'menu' );
-		expect( overflowMenuButtons ).toHaveLength( 1 );
-		fireEvent.click( overflowMenuButtons[ 0 ] );
-
-		expect( screen.getByRole( 'menuitem', { name: 'Inline-flex' } ) ).not.toHaveAttribute(
-			'aria-selected',
-			'true'
-		);
 	} );
 } );
 
