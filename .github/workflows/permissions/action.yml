@@ -25,7 +25,9 @@ runs:
           echo "Pass validation in the development environment"
           exit 0
         fi
-        if ! echo "${{ inputs.DEPLOYMENT_PERMITTED }}" | grep -iq "${{ github.actor }}"; then
+        permitted=",$(echo "${{ inputs.DEPLOYMENT_PERMITTED }}" | tr -d '[:space:]'),"
+        actor=",${{ github.actor }},"
+        if ! echo "$permitted" | grep -Fiq "$actor"; then
          echo "::error::No deployment permissions have been granted to the user : ${{ github.actor }}"
          exit 1
         fi
