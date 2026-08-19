@@ -1624,7 +1624,9 @@
     // using a template-loader plugin as described here:
     // https://github.com/marionettejs/backbone.marionette/wiki/Using-marionette-with-requirejs
     loadTemplate: function(templateId, options) {
-      var $template = Backbone.$('script' + templateId);
+      var $template = '#' === templateId.charAt(0)
+        ? Backbone.$('script' + templateId)
+        : Backbone.$(templateId);
 
       if (!$template.length) {
         throw new Marionette.Error({

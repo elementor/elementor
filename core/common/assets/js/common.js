@@ -13,7 +13,9 @@ import Notifications from 'elementor-utils/notifications';
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
 		Marionette.TemplateCache.prototype.loadTemplate = ( templateId ) => {
-			const $template = Backbone.$( 'script' + templateId );
+			const $template = '#' === templateId.charAt( 0 )
+				? Backbone.$( 'script' + templateId )
+				: Backbone.$( templateId );
 
 			if ( ! $template.length ) {
 				throw new Marionette.Error( {
