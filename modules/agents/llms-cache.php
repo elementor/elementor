@@ -19,8 +19,8 @@ class Llms_Cache {
 	const TRANSIENT_LLMs_FULL = 'elementor_agents_llms_full_txt';
 	const TRANSIENT_MODIFIED  = 'elementor_agents_llms_modified';
 
-	/** Default TTL: 1 hour. Long enough to be useful, short enough to self-heal. */
-	const DEFAULT_TTL = HOUR_IN_SECONDS;
+	/** Default TTL: 1 hour (3600 s). Long enough to be useful, short enough to self-heal. */
+	const DEFAULT_TTL = 3600;
 
 	/**
 	 * Retrieve cached llms.txt content.
