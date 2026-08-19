@@ -1,4 +1,5 @@
 const LAYOUT_FLOATING_CHAT = 'floating-chat';
+const DEFAULT_CONTAINER_ID = 'angie-sidebar-container';
 const mockGetAngieIframe = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
 const mockLoadSidebarV2 = jest.fn();
@@ -6,6 +7,7 @@ const mockTriggerAngie = jest.fn();
 const mockEnsureAngieMcpAdapter = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
+	DEFAULT_CONTAINER_ID,
 	LAYOUT_FLOATING_CHAT,
 	getAngieIframe: () => mockGetAngieIframe(),
 	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
@@ -73,6 +75,36 @@ describe( 'openAngieFloatingChat', () => {
 			context: { source: SOURCE },
 			options: { newChat: true },
 		} );
+	} );
+
+	it( 'positions the chat next to the anchor element', async () => {
+		// Arrange
+		const CHAT_WIDTH = 360;
+		const CHAT_GAP = 8;
+		const ANCHOR_RIGHT = 200;
+		const ANCHOR_TOP = 120;
+
+		mockGetAngieIframe.mockReturnValue( document.createElement( 'iframe' ) );
+
+		const container = document.createElement( 'div' );
+		container.id = DEFAULT_CONTAINER_ID;
+		document.body.appendChild( container );
+
+		const anchorElement = document.createElement( 'button' );
+		anchorElement.getBoundingClientRect = () => ( { right: ANCHOR_RIGHT, top: ANCHOR_TOP } ) as DOMRect;
+
+		const { openAngieFloatingChat } = await import( '../open-angie-floating-chat' );
+
+		// Act
+		await openAngieFloatingChat( { ...defaultArgs, anchorElement } );
+
+		// Assert
+		expect( container.style.left ).toBe( `${ ANCHOR_RIGHT + CHAT_GAP }px` );
+		expect( container.style.top ).toBe( `${ ANCHOR_TOP }px` );
+		expect( container.style.width ).toBe( `${ CHAT_WIDTH }px` );
+		expect( container.style.getPropertyPriority( 'left' ) ).toBe( 'important' );
+
+		container.remove();
 	} );
 
 	it( 'does not boot Angie again on a second call but still triggers a new chat', async () => {

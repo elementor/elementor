@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
+import { type ComponentProps, useCallback, useEffect, useMemo, useRef } from 'react';
 import { openAngieFloatingChat } from '@elementor/editor-mcp';
 import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
 import { Box, Button, Stack, type SxProps, type Theme } from '@elementor/ui';
@@ -39,6 +39,7 @@ export const InlineEditingControl = createControl(
 	( { enableAngieGenerate, sx, attributes, props, context: { elementId } }: Props ) => {
 		const { value, setValue, placeholder } = useBoundProp( htmlV3PropTypeUtil );
 		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
+		const generateButtonRef = useRef< HTMLButtonElement >( null );
 
 		const debouncedParse = useMemo(
 			() =>
@@ -74,6 +75,7 @@ export const InlineEditingControl = createControl(
 				appId: ANGIE_TITLE_GENERATION_APP_ID,
 				prompt,
 				source: ANGIE_TITLE_GENERATION_SOURCE,
+				anchorElement: generateButtonRef.current,
 				aiContext: {
 					whatUserSees: {
 						screen: __( 'Elementor editor — heading title control', 'elementor' ),
@@ -124,7 +126,7 @@ export const InlineEditingControl = createControl(
 				<Stack gap={ 0.8 }>
 					{ enableAngieGenerate ? (
 						<Box sx={ { display: 'flex', justifyContent: 'flex-end' } }>
-							<Button size="small" variant="outlined" onClick={ handleGenerateClick }>
+							<Button ref={ generateButtonRef } size="small" variant="outlined" onClick={ handleGenerateClick }>
 								{ __( 'Generate', 'elementor' ) }
 							</Button>
 						</Box>
