@@ -7,7 +7,6 @@ runs:
     - name: Mask GitHub token
       shell: bash
       run: echo "::add-mask::${{ github.token }}"
-    # Using PHP 7.4 to make sure it'll bundle the polyfills for PHP >= 8.0
     - name: Setup PHP 7.4
       id: setup-php
       uses: shivammathur/setup-php@v2
@@ -16,7 +15,18 @@ runs:
     - name: Remove Composer GitHub OAuth token
       shell: bash
       run: composer config --global --unset github-oauth.github.com || true
-    - shell: bash
+    - name: Restore dependency cache
+      uses: actions/cache@v5
+      id: deps-cache
+      with:
+        path: |
+          node_modules
+          packages/node_modules
+          vendor
+        key: deps-v2-${{ runner.os }}-${{ hashFiles('package-lock.json', 'composer.lock') }}
+    - name: Install dependencies
+      if: steps.deps-cache.outputs.cache-hit != 'true'
+      shell: bash
       run: |
         npm run install:ci
         npm run composer:no-dev

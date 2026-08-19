@@ -20,8 +20,63 @@ permissions:
   deployments: write
 
 jobs:
+  cancel-previous-runs:
+    name: Cancel superseded PR runs
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+    steps:
+      - name: Cancel older PR workflow runs on this branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const currentRunId = context.runId;
+            const branch = context.payload.pull_request.head.ref;
+
+            for (const status of ['in_progress', 'queued', 'pending']) {
+              let page = 1;
+
+              while (true) {
+                const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                  owner,
+                  repo,
+                  workflow_id: 'pr.yml',
+                  branch,
+                  status,
+                  per_page: 100,
+                  page,
+                });
+
+                for (const run of data.workflow_runs) {
+                  if (run.id === currentRunId) {
+                    continue;
+                  }
+
+                  core.info(`Cancelling superseded PR workflow run ${run.id} (${status})`);
+
+                  try {
+                    await github.rest.actions.cancelWorkflowRun({
+                      owner,
+                      repo,
+                      run_id: run.id,
+                    });
+                  } catch (error) {
+                    core.warning(`Failed to cancel run ${run.id}: ${error.message}`);
+                  }
+                }
+
+                if (data.workflow_runs.length < 100) {
+                  break;
+                }
+
+                page += 1;
+              }
+            }
+
   set-pending-playwright-on-draft:
     name: Set Pending Playwright Status on Draft
+    needs: [cancel-previous-runs]
     if: github.event.pull_request.draft == true
     runs-on: ubuntu-22.04
     permissions:
@@ -42,6 +97,7 @@ jobs:
 
   detect-changes:
     name: Detect changes
+    needs: [cancel-previous-runs]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -95,6 +151,7 @@ jobs:
 
   install:
     name: Install dependencies
+    needs: [cancel-previous-runs]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     steps:
@@ -111,23 +168,12 @@ jobs:
           php-version: '7.4'
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
-      - name: Restore dependency cache
-        uses: actions/cache@v5
-        id: deps-cache
-        with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
       - name: Install dependencies
-        if: steps.deps-cache.outputs.cache-hit != 'true'
-        run: |
-          npm run install:ci
-          npm run composer:no-dev
+        uses: ./.github/workflows/install-dependencies
 
   build:
     name: Build plugin
+    needs: [cancel-previous-runs, install]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -139,7 +185,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: 'npm'
+          package-manager-cache: false
       - name: Set ENV variables
         id: set_env
         run: |
@@ -154,8 +200,10 @@ jobs:
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
           echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
-      - name: Install dependencies
-        uses: ./.github/workflows/install-dependencies
+      - name: Restore dependency cache
+        uses: ./.github/actions/restore-dependencies-cache
+        with:
+          fail-on-cache-miss: 'true'
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -243,14 +291,9 @@ jobs:
           node-version: 24.15.0
           package-manager-cache: false
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: 'true'
       - name: Build tools
         run: npm run build:tools
       - name: Run Lint
@@ -273,14 +316,9 @@ jobs:
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: 'true'
       - name: Install PHP lint dependencies
         run: |
           composer install
@@ -339,14 +377,9 @@ jobs:
           node-version: 24.15.0
           package-manager-cache: false
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: 'true'
       - name: Run Jest
         run: npm run test
 
@@ -364,14 +397,9 @@ jobs:
           node-version: 24.15.0
           package-manager-cache: false
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: 'true'
       - name: Build tools
         run: npm run build:tools
       - name: Run QUnit
