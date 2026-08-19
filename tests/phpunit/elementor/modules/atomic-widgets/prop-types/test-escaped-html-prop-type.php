@@ -96,22 +96,18 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result['value'] );
 	}
 
-	public function test_sanitize__keeps_non_operational_attributes_and_strips_event_handlers() {
+	public function test_sanitize__strips_id_attribute_from_inline_elements() {
 		// Arrange.
 		$prop_type = Escaped_Html_Prop_Type::make();
 
 		// Act.
 		$result = $prop_type->sanitize( [
 			'$$type' => 'escaped-html',
-			'value' => 'Hello <strong id="e-abc" class="x" data-foo="bar" onclick="evil()">world</strong>',
+			'value' => 'Hello <strong id="e-abc">world</strong>',
 		] );
 
 		// Assert.
-		$this->assertStringContainsString( 'id="e-abc"', $result['value'] );
-		$this->assertStringContainsString( 'class="x"', $result['value'] );
-		$this->assertStringContainsString( 'data-foo="bar"', $result['value'] );
-		$this->assertStringNotContainsString( 'onclick', $result['value'] );
-		$this->assertStringContainsString( 'world', $result['value'] );
+		$this->assertSame( 'Hello <strong>world</strong>', $result['value'] );
 	}
 
 	public function test_sanitize__preserves_allowed_inline_tags_and_link_attributes() {

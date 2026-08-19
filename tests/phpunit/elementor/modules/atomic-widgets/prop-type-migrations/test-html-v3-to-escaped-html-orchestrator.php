@@ -76,4 +76,16 @@ class Test_Html_V3_To_Escaped_Html_Orchestrator extends Elementor_Test_Base {
 		$this->assertSame( 'Hello <strong>world</strong>', $document_data[0]['settings']['title']['value'] );
 		$this->assertIsString( $document_data[0]['settings']['title']['value'] );
 	}
+
+	public function test_find_migration_path__escaped_html_to_html_v3_uses_down() {
+		$loader = \Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader::make(
+			dirname( __DIR__, 6 ) . '/migrations/'
+		);
+
+		$result = $loader->find_migration_path( 'escaped-html', 'html-v3' );
+
+		$this->assertNotNull( $result );
+		$this->assertSame( 'down', $result['direction'] );
+		$this->assertSame( 'html-v3-to-escaped-html', $result['migrations'][0]['id'] );
+	}
 }

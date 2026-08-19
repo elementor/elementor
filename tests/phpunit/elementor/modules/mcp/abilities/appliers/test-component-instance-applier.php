@@ -323,7 +323,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$by_key = $this->overrides_by_key( $overrides );
 		$this->assertArrayHasKey( 'prop-uuid-1', $by_key );
 		$this->assertArrayHasKey( 'prop-uuid-2', $by_key );
-		$this->assertSame( 'Updated', $by_key['prop-uuid-1']['value']['override_value']['value'] );
+		$this->assertSame( 'Updated', $by_key['prop-uuid-1']['value']['override_value']['value']['content']['value'] );
 		$this->assertSame( 'h2', $by_key['prop-uuid-2']['value']['override_value']['value'] );
 	}
 

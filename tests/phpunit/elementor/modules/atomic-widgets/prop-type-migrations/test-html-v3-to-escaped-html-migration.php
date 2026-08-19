@@ -54,22 +54,7 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'content', $result );
 	}
 
-	public function test_up__unwraps_primitive_content_to_plain_string() {
-		$data = [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => 'Should chain: html-v3 -> html-v2',
-				'children' => [],
-			],
-		];
-
-		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
-
-		$this->assertSame( 'escaped-html', $result['$$type'] );
-		$this->assertSame( 'Should chain: html-v3 -> html-v2', $result['value'] );
-	}
-
-	public function test_up__drops_children() {
+	public function test_up__stashes_children_for_rollback() {
 		$data = [
 			'$$type' => 'html-v3',
 			'value' => [
@@ -86,25 +71,10 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
 
 		$this->assertSame( 'Hello', $result['value'] );
-		$this->assertArrayNotHasKey( 'children', $result );
-	}
-
-	public function test_up__children_without_content_becomes_null_value() {
-		$data = [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => null,
-				'children' => [
-					[ 'id' => 'e-1', 'type' => 'strong', 'content' => 'world' ],
-				],
-			],
-		];
-
-		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
-
-		$this->assertSame( 'escaped-html', $result['$$type'] );
-		$this->assertNull( $result['value'] );
-		$this->assertArrayNotHasKey( 'children', $result );
+		$this->assertSame(
+			[ [ 'id' => 'e-1', 'type' => 'strong', 'content' => 'world' ] ],
+			$result['_html_v3_children']
+		);
 	}
 
 	public function test_up__null_content_becomes_null_value() {
@@ -149,7 +119,27 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$this->assertSame( [], $result['value']['children'] );
 	}
 
-	public function test_roundtrip__up_then_down_preserves_content_drops_children() {
+	public function test_down__restores_stashed_children() {
+		$data = [
+			'$$type' => 'escaped-html',
+			'value' => 'Hello',
+			'_html_v3_children' => [
+				[ 'id' => 'e-1', 'type' => 'strong', 'content' => 'world' ],
+			],
+		];
+
+		$result = Migration_Interpreter::run( $this->migration, $data, 'down' );
+
+		$this->assertSame( 'html-v3', $result['$$type'] );
+		$this->assertSame( 'Hello', $result['value']['content']['value'] );
+		$this->assertSame(
+			[ [ 'id' => 'e-1', 'type' => 'strong', 'content' => 'world' ] ],
+			$result['value']['children']
+		);
+		$this->assertArrayNotHasKey( '_html_v3_children', $result );
+	}
+
+	public function test_roundtrip__up_then_down_preserves_content_and_children() {
 		$original = [
 			'$$type' => 'html-v3',
 			'value' => [
@@ -168,6 +158,9 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 
 		$this->assertSame( 'html-v3', $down['$$type'] );
 		$this->assertSame( 'Roundtrip test', $down['value']['content']['value'] );
-		$this->assertSame( [], $down['value']['children'] );
+		$this->assertSame(
+			[ [ 'id' => 'e-1', 'type' => 'em', 'content' => 'test' ] ],
+			$down['value']['children']
+		);
 	}
 }

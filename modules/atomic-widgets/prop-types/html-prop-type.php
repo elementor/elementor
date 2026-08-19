@@ -30,33 +30,15 @@ class Html_Prop_Type extends String_Prop_Type {
 
 	public static function get_base_allowed_tags(): array {
 		$allowed = [];
-		$non_operational_attrs = self::get_allowed_non_operational_attrs();
 
 		foreach ( Utils::get_allowed_html_wrapper_tags() as $tag ) {
-			$allowed[ $tag ] = 'a' === $tag
-				? array_merge(
-					[
-						'href'   => true,
-						'target' => true,
-					],
-					$non_operational_attrs
-				)
-				: $non_operational_attrs;
+			$allowed[ $tag ] = 'a' === $tag ? [
+				'href'   => true,
+				'target' => true,
+			] : [];
 		}
 
 		return $allowed;
-	}
-
-	private static function get_allowed_non_operational_attrs(): array {
-		return [
-			'class'  => true,
-			'id'     => true,
-			'style'  => true,
-			'title'  => true,
-			'lang'   => true,
-			'dir'    => true,
-			'data-*' => true,
-		];
 	}
 
 	public static function sanitize_allowed_html( string $value ): string {

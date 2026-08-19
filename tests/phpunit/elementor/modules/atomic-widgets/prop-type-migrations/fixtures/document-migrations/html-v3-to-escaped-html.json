@@ -1,6 +1,9 @@
 {
   "up": [
     {
+      "op": { "fn": "move", "src": "value.children", "dest": "_html_v3_children", "clean": false }
+    },
+    {
       "op": { "fn": "move", "src": "value.content.value", "dest": "value" },
       "condition": { "fn": "exists", "path": "value.content.value" }
     },
@@ -41,7 +44,12 @@
       "condition": { "fn": "not_exists", "path": "value.content.value" }
     },
     {
-      "op": { "fn": "set", "path": "value.children", "value": [], "merge": false }
+      "op": { "fn": "move", "src": "_html_v3_children", "dest": "value.children" },
+      "condition": { "fn": "exists", "path": "_html_v3_children" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.children", "value": [], "merge": false },
+      "condition": { "fn": "not_exists", "path": "value.children" }
     },
     {
       "op": { "fn": "set", "path": "$$type", "value": "html-v3" }
