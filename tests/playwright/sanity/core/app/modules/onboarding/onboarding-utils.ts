@@ -74,10 +74,12 @@ export async function doAndWaitForProgress( page: Page, action: () => Promise< v
 export async function navigateAndPassLogin( page: Page ) {
 	await page.goto( ONBOARDING_URL );
 	await expect( page.getByTestId( 'login-screen' ) ).toBeVisible();
-	await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
-	await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
+	await page.getByRole( 'link', { name: 'Skip' } ).click();
+	await expect( page.getByTestId( 'theme-selection-step' ) ).toBeVisible();
 }
 
 export async function navigateToSiteFeaturesStep( page: Page ) {
 	await navigateAndPassLogin( page );
+	await page.getByRole( 'button', { name: 'Continue with Hello' } ).click();
+	await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
 }
