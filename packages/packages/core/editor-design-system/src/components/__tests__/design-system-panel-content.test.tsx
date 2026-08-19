@@ -1,11 +1,22 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { getInitialDesignSystemTab, notifyDesignSystemTabChange, persistDesignSystemTab } from '../../initial-tab';
 
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 import { DesignSystemPanelContent } from '../design-system-panel-content';
+
+const mockDefaultStylesTabEmbedded = jest.fn();
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	isExperimentActive: jest.fn( () => true ),
+} ) );
+
+jest.mock( '@elementor/editor-default-styles', () => ( {
+	DefaultStylesTabEmbedded: ( props: unknown ) => mockDefaultStylesTabEmbedded( props ),
+} ) );
 
 jest.mock( '../design-system-header-menu', () => ( {
 	DesignSystemHeaderMenu: () => null,
@@ -39,15 +50,10 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 jest.mock( '../../initial-tab', () => ( {
+	...jest.requireActual( '../../initial-tab' ),
 	getInitialDesignSystemTab: jest.fn( () => 'defaults' ),
 	notifyDesignSystemTabChange: jest.fn(),
 	persistDesignSystemTab: jest.fn(),
-} ) );
-
-const mockDefaultStylesTabEmbedded = jest.fn();
-
-jest.mock( '@elementor/editor-default-styles', () => ( {
-	DefaultStylesTabEmbedded: ( props: unknown ) => mockDefaultStylesTabEmbedded( props ),
 } ) );
 
 const mockTrackGlobalClasses = jest.fn();
@@ -108,6 +114,7 @@ describe( 'DesignSystemPanelContent', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		capturedTabsOnChange = undefined;
+		jest.mocked( isExperimentActive ).mockReturnValue( true );
 		jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'defaults' );
 
 		mockDefaultStylesTabEmbedded.mockImplementation(
@@ -198,6 +205,18 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( mockDefaultStylesTabEmbedded ).toHaveBeenCalled();
 			expect( mockVariablesManagerPanelEmbedded ).toHaveBeenCalled();
 			expect( mockClassManagerPanelEmbedded ).toHaveBeenCalled();
+		} );
+
+		it( 'should hide Defaults tab and panel when default styles experiment is inactive', () => {
+			jest.mocked( isExperimentActive ).mockReturnValue( false );
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			const tabs = screen.getAllByRole( 'tab' );
+			expect( tabs ).toHaveLength( 2 );
+			expect( tabs[ 0 ] ).toHaveTextContent( 'Variables' );
+			expect( tabs[ 1 ] ).toHaveTextContent( 'Classes' );
+			expect( mockDefaultStylesTabEmbedded ).not.toHaveBeenCalled();
 		} );
 	} );
 

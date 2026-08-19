@@ -5,13 +5,16 @@ import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { DEFAULT_STYLES_EXPERIMENT } from '../default-styles-experiment';
 import {
 	type DesignSystemTab,
 	getInitialDesignSystemTab,
+	normalizeDesignSystemTab,
 	notifyDesignSystemTabChange,
 	persistDesignSystemTab,
 } from '../initial-tab';
@@ -43,6 +46,7 @@ const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
 };
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
+	const isDefaultStylesEnabled = isExperimentActive( DEFAULT_STYLES_EXPERIMENT );
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
 	const defaultsCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
@@ -73,7 +77,11 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	}, [ onRequestClose ] );
 
 	const chainedThroughDefaults = useCallback( () => {
-		if ( ! isChainingRef.current && defaultsCloseAttemptRef.current ) {
+		if (
+			isDefaultStylesEnabled &&
+			! isChainingRef.current &&
+			defaultsCloseAttemptRef.current
+		) {
 			isChainingRef.current = true;
 			defaultsCloseAttemptRef.current();
 			isChainingRef.current = false;
@@ -81,7 +89,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		}
 
 		void onRequestClose();
-	}, [ onRequestClose ] );
+	}, [ isDefaultStylesEnabled, onRequestClose ] );
 
 	useEffect( () => {
 		notifyDesignSystemTabChange( currentTab );
@@ -93,10 +101,11 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			if ( ! tab ) {
 				return;
 			}
-			setCurrentTab( tab );
-			persistDesignSystemTab( tab );
-			notifyDesignSystemTabChange( tab );
-			trackDesignSystemTabOpened( tab );
+			const normalizedTab = normalizeDesignSystemTab( tab );
+			setCurrentTab( normalizedTab );
+			persistDesignSystemTab( normalizedTab );
+			notifyDesignSystemTabChange( normalizedTab );
+			trackDesignSystemTabOpened( normalizedTab );
 		};
 
 		window.addEventListener( EVENT_SET_TAB, handler as EventListener );
@@ -107,7 +116,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	}, [] );
 
 	const handleHeaderClose = () => {
-		if ( currentTab === 'defaults' && defaultsCloseAttemptRef.current ) {
+		if ( currentTab === 'defaults' && isDefaultStylesEnabled && defaultsCloseAttemptRef.current ) {
 			defaultsCloseAttemptRef.current();
 			return;
 		}
@@ -165,12 +174,14 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 									trackDesignSystemTabOpened( newValue );
 								} }
 							>
-								<Tab
-									label={ __( 'Defaults', 'elementor' ) }
-									icon={ <TextIcon fontSize="small" /> }
-									iconPosition="start"
-									{ ...getTabProps( 'defaults' ) }
-								/>
+								{ isDefaultStylesEnabled ? (
+									<Tab
+										label={ __( 'Defaults', 'elementor' ) }
+										icon={ <TextIcon fontSize="small" /> }
+										iconPosition="start"
+										{ ...getTabProps( 'defaults' ) }
+									/>
+								) : null }
 								<Tab
 									label={ __( 'Variables', 'elementor' ) }
 									icon={ <ColorFilterIcon fontSize="small" /> }
@@ -186,25 +197,27 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							</Tabs>
 							<Divider />
 						</Stack>
-						<Box
-							role="tabpanel"
-							{ ...getTabPanelProps( 'defaults' ) }
-							sx={ {
-								flex: 1,
-								minHeight: 0,
-								display: currentTab === 'defaults' ? 'flex' : 'none',
-								flexDirection: 'column',
-								overflow: 'hidden',
-								pt: 1,
-							} }
-						>
-							<DefaultStylesTabEmbedded
-								onRequestClose={ chainedThroughVariables }
-								onExposeCloseAttempt={ ( fn ) => {
-									defaultsCloseAttemptRef.current = fn;
+						{ isDefaultStylesEnabled ? (
+							<Box
+								role="tabpanel"
+								{ ...getTabPanelProps( 'defaults' ) }
+								sx={ {
+									flex: 1,
+									minHeight: 0,
+									display: currentTab === 'defaults' ? 'flex' : 'none',
+									flexDirection: 'column',
+									overflow: 'hidden',
+									pt: 1,
 								} }
-							/>
-						</Box>
+							>
+								<DefaultStylesTabEmbedded
+									onRequestClose={ chainedThroughVariables }
+									onExposeCloseAttempt={ ( fn ) => {
+										defaultsCloseAttemptRef.current = fn;
+									} }
+								/>
+							</Box>
+						) : null }
 						<Box
 							role="tabpanel"
 							{ ...getTabPanelProps( 'variables' ) }
@@ -237,7 +250,9 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							} }
 						>
 							<ClassManagerPanelEmbedded
-								onRequestClose={ chainedThroughDefaults }
+								onRequestClose={
+									isDefaultStylesEnabled ? chainedThroughDefaults : chainedThroughVariables
+								}
 								onExposeCloseAttempt={ ( fn ) => {
 									classesCloseAttemptRef.current = fn;
 								} }
