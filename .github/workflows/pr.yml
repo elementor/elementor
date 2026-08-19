@@ -2,7 +2,7 @@ name: PR
 
 on:
   pull_request:
-    types: [opened, synchronize, ready_for_review]
+    types: [opened, synchronize, ready_for_review, labeled]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
@@ -41,7 +41,9 @@ jobs:
   detect-changes:
     name: Detect changes
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility')
     outputs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
@@ -94,7 +96,9 @@ jobs:
   install:
     name: Install dependencies
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility')
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -168,7 +172,8 @@ jobs:
       - name: Find existing comment on PR (Elementor repo)
         if: |
           startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') &&
-          github.event.action != 'ready_for_review'
+          github.event.action != 'ready_for_review' &&
+          github.event.action != 'labeled'
         uses: peter-evans/find-comment@v4
         id: find
         with:
@@ -178,7 +183,8 @@ jobs:
       - name: Comment build info on PR (Elementor repo)
         if: |
           startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') &&
-          github.event.action != 'ready_for_review'
+          github.event.action != 'ready_for_review' &&
+          github.event.action != 'labeled'
         uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -212,7 +218,8 @@ jobs:
       always() &&
       needs.build.result == 'success' &&
       startsWith(github.repository, 'elementor/') &&
-      github.event.action != 'ready_for_review'
+      github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled'
     permissions:
       contents: read
       actions: read
@@ -229,6 +236,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -253,6 +261,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.php == 'true'
     steps:
       - name: Mask GitHub token
@@ -319,6 +328,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -341,6 +351,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -364,6 +375,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled' &&
       needs.detect-changes.outputs.php == 'true'
     uses: ./.github/workflows/phpunit-runner.yml
     with:
@@ -497,7 +509,9 @@ jobs:
       - js-qunit
       - phpunit
       - playwright
-    if: always() && !cancelled()
+    if: |
+      always() && !cancelled() &&
+      (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility')
     steps:
       - name: Validate required checks
         env:
@@ -510,7 +524,7 @@ jobs:
           PHPUNIT_RESULT: ${{ needs.phpunit.result }}
           PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
           PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
-          CODE_CHECKS_REQUIRED: ${{ github.event.action != 'ready_for_review' }}
+          CODE_CHECKS_REQUIRED: ${{ github.event.action != 'ready_for_review' && github.event.action != 'labeled' }}
         run: |
           is_ok() {
             case "$1" in
