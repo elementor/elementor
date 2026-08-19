@@ -77,6 +77,25 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_up__does_not_stash_empty_children() {
+		$data = [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => [
+					'$$type' => 'string',
+					'value' => 'Hello',
+				],
+				'children' => [],
+			],
+		];
+
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		$this->assertSame( 'escaped-html', $result['$$type'] );
+		$this->assertSame( 'Hello', $result['value'] );
+		$this->assertArrayNotHasKey( '_html_v3_children', $result );
+	}
+
 	public function test_up__null_content_becomes_null_value() {
 		$data = [
 			'$$type' => 'html-v3',

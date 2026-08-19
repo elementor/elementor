@@ -67,4 +67,38 @@ describe( 'sanitizeEscapedHtml', () => {
 		expect( result ).not.toMatch( /<a\s+href=/i );
 		expect( result ).toContain( 'click' );
 	} );
+
+	it( 'preserves non-operational attributes', () => {
+		// Arrange.
+		const value = '<span id="e-1" class="foo bar" style="color: red;" title="t" lang="en" dir="ltr" role="text" data-x="1" aria-label="label">world</span>';
+
+		// Act.
+		const result = sanitizeEscapedHtml( value );
+
+		// Assert.
+		expect( result ).toContain( 'id="e-1"' );
+		expect( result ).toContain( 'class="foo bar"' );
+		expect( result ).toContain( 'style="color: red;"' );
+		expect( result ).toContain( 'title="t"' );
+		expect( result ).toContain( 'lang="en"' );
+		expect( result ).toContain( 'dir="ltr"' );
+		expect( result ).toContain( 'role="text"' );
+		expect( result ).toContain( 'data-x="1"' );
+		expect( result ).toContain( 'aria-label="label"' );
+		expect( result ).toContain( 'world' );
+	} );
+
+	it( 'strips functional event-handler attributes', () => {
+		// Arrange.
+		const value = '<span id="e-1" onclick="evil()" onmouseover="evil()">world</span>';
+
+		// Act.
+		const result = sanitizeEscapedHtml( value );
+
+		// Assert.
+		expect( result ).toContain( 'id="e-1"' );
+		expect( result ).not.toContain( 'onclick' );
+		expect( result ).not.toContain( 'onmouseover' );
+		expect( result ).toContain( 'world' );
+	} );
 } );

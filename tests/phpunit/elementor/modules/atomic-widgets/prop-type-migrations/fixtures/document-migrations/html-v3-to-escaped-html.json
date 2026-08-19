@@ -4,6 +4,10 @@
       "op": { "fn": "move", "src": "value.children", "dest": "_html_v3_children", "clean": false }
     },
     {
+      "op": { "fn": "delete", "path": "_html_v3_children" },
+      "condition": { "fn": "equals", "path": "_html_v3_children", "value": [] }
+    },
+    {
       "op": { "fn": "move", "src": "value.content.value", "dest": "value" },
       "condition": { "fn": "exists", "path": "value.content.value" }
     },
