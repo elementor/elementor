@@ -6,6 +6,7 @@ use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\MCP\Composer\Admin\Page;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\Mcp\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,7 +31,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function is_visible(): bool {
-		return true;
+		return Module::is_connector_page_active();
 	}
 
 	public function get_group_id(): string {

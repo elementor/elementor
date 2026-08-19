@@ -59,6 +59,23 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		$this->assertStringContainsString( 'return 25;', $source );
 	}
 
+	public function test_connector_page_is_gated_by_hidden_inactive_experiment(): void {
+		$module_source = file_get_contents(
+			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
+		);
+
+		$this->assertStringContainsString( "const CONNECTOR_EXPERIMENT_NAME = 'mcp_connector';", $module_source );
+		$this->assertStringContainsString( "'hidden' => true,", $module_source );
+		$this->assertStringContainsString( 'Experiments_Manager::STATE_INACTIVE', $module_source );
+		$this->assertStringContainsString( 'if ( ! self::is_connector_page_active() ) {', $module_source );
+
+		$menu_source = file_get_contents(
+			dirname( __DIR__, 5 ) . '/modules/mcp/admin-menu-items/editor-one-mcp-menu.php'
+		);
+
+		$this->assertStringContainsString( 'Module::is_connector_page_active()', $menu_source );
+	}
+
 	public function test_editor_one_mcp_menu_registers_after_submissions(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
