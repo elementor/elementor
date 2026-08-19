@@ -28,6 +28,10 @@ export default class DesignSystemPage {
 		return this.panel.getByRole( 'button', { name: 'Close' } );
 	}
 
+	get defaultsTab(): Locator {
+		return this.panel.getByRole( 'tab', { name: 'Defaults' } );
+	}
+
 	get variablesTab(): Locator {
 		return this.panel.getByRole( 'tab', { name: 'Variables' } );
 	}
@@ -46,6 +50,14 @@ export default class DesignSystemPage {
 
 	get variablesSearchInput(): Locator {
 		return this.panel.getByPlaceholder( 'Search' );
+	}
+
+	get defaultsTagSelector(): Locator {
+		return this.panel.getByLabel( 'Tag' );
+	}
+
+	get defaultsSaveButton(): Locator {
+		return this.panel.getByRole( 'tabpanel' ).getByRole( 'button', { name: 'Save changes' } );
 	}
 
 	get classesSaveButton(): Locator {
@@ -146,6 +158,11 @@ export default class DesignSystemPage {
 	async closePanel(): Promise< void > {
 		await this.closeButton.click();
 		await this.panelHeading.waitFor( { state: 'hidden' } );
+	}
+
+	async switchToDefaultsTab(): Promise< void > {
+		await this.defaultsTab.click();
+		await expect( this.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
 	}
 
 	async switchToVariablesTab(): Promise< void > {

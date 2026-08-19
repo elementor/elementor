@@ -16,7 +16,6 @@ import {
 	StyleSections,
 } from '@elementor/editor-editing-panel';
 import { type Element, type ElementType } from '@elementor/editor-elements';
-import { Panel, PanelBody, PanelFooter, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
@@ -28,7 +27,6 @@ import {
 	type AutocompleteChangeReason,
 	Box,
 	Button,
-	CloseButton,
 	ErrorBoundary,
 	FormControl,
 	FormLabel,
@@ -42,7 +40,6 @@ import {
 	getDefaultActiveTag,
 	isAllowedDefaultStyleTag,
 } from '../allowed-tags';
-import { blockPanelInteractions, unblockPanelInteractions } from '../panel-interactions';
 import { saveDefaultStyles } from '../save-default-styles';
 import { selectIsDirty, slice } from '../store';
 import { TagChip } from './tag-chip';
@@ -82,11 +79,15 @@ const shimElementType: ElementType = {
 	title: __( 'Default Style', 'elementor' ),
 };
 
-type DefaultStylesPanelContentProps = {
-	onRequestClose: () => void;
+export type DefaultStylesTabEmbeddedProps = {
+	onRequestClose: () => void | Promise< void >;
+	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPanelContentProps ) {
+export function DefaultStylesTabEmbedded( {
+	onRequestClose,
+	onExposeCloseAttempt,
+}: DefaultStylesTabEmbeddedProps ) {
 	const allowedTags = useMemo( () => getAllowedDefaultStyleTags(), [] );
 	const tagOptions = useMemo< Option[] >(
 		() => allowedTags.map( ( tag ) => ( { label: tag, value: tag } ) ),
@@ -112,16 +113,18 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 			return;
 		}
 
-		onRequestClose();
+		void onRequestClose();
 	}, [ isDirty, onRequestClose, openSaveChangesDialog ] );
 
 	useEffect( () => {
-		blockPanelInteractions();
+		if ( ! onExposeCloseAttempt ) {
+			return;
+		}
 
-		return () => {
-			unblockPanelInteractions();
-		};
-	}, [] );
+		onExposeCloseAttempt( () => handleClosePanel() );
+
+		return () => onExposeCloseAttempt( null );
+	}, [ onExposeCloseAttempt, handleClosePanel ] );
 
 	usePreventUnload( isDirty );
 
@@ -137,7 +140,7 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 	const resetAndClosePanel = () => {
 		dispatch( slice.actions.reset() );
 		closeSaveChangesDialog();
-		onRequestClose();
+		void onRequestClose();
 	};
 
 	const handleSaveAndContinue = async () => {
@@ -148,7 +151,7 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 		}
 
 		closeSaveChangesDialog();
-		onRequestClose();
+		void onRequestClose();
 	};
 
 	return (
@@ -156,28 +159,16 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 			<ThemeProvider>
 				<ControlActionsProvider items={ menuItems }>
 					<ControlReplacementsProvider replacements={ controlReplacements }>
-						<Panel>
-							<PanelHeader>
-								<Stack
-									p={ 1 }
-									pl={ 2 }
-									width="100%"
-									direction="row"
-									alignItems="center"
-									justifyContent="space-between"
-									spacing={ 0.5 }
-								>
-									<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
-										{ __( 'Default Styles', 'elementor' ) }
-									</PanelHeaderTitle>
-									<CloseButton
-										aria-label={ __( 'Close', 'elementor' ) }
-										sx={ { flexShrink: 0 } }
-										onClick={ handleClosePanel }
-									/>
-								</Stack>
-							</PanelHeader>
-							<PanelBody>
+						<Stack
+							sx={ {
+								flex: 1,
+								minHeight: 0,
+								overflow: 'hidden',
+								display: 'flex',
+								flexDirection: 'column',
+							} }
+						>
+							<Box sx={ { flex: 1, minHeight: 0, overflow: 'auto' } }>
 								<Stack sx={ { px: 2, pt: 1, gap: 1 } }>
 									<FormControl fullWidth size="small">
 										<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 1 } }>
@@ -234,8 +225,8 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 										</StyleProvider>
 									</ClassesPropProvider>
 								</ElementProvider>
-							</PanelBody>
-							<PanelFooter>
+							</Box>
+							<Box sx={ { flexShrink: 0, px: 2, py: 1.5 } }>
 								<Button
 									fullWidth
 									size="small"
@@ -247,8 +238,8 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 								>
 									{ __( 'Save changes', 'elementor' ) }
 								</Button>
-							</PanelFooter>
-						</Panel>
+							</Box>
+						</Stack>
 					</ControlReplacementsProvider>
 				</ControlActionsProvider>
 
