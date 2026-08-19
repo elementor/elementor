@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -45,14 +46,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return 'eicon-e-heading';
 	}
 
-	protected static function define_default_html_tag() {
-		return 'h2';
-	}
-
 	public static function get_computed_html_tag( array $settings ): string {
-		$tag = static::extract_html_tag_value( $settings['tag'] ?? null );
-
-		return ( null !== $tag && '' !== $tag ) ? $tag : static::define_default_html_tag();
+		return Html_Tag_Computer::compute( $settings, 'h2', [ Html_Tag_Computer::FOLLOW_LINK_OPTION => false ] );
 	}
 
 	protected static function define_props_schema(): array {

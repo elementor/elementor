@@ -8,34 +8,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-trait Has_Html_Tag {
+class Html_Tag_Computer {
 
-	protected static function define_default_html_tag() {
-		return 'div';
-	}
+	public const FOLLOW_LINK_OPTION = 'follow_link';
 
-	public static function get_computed_html_tag( array $settings ): string {
-		if ( static::settings_have_active_link( $settings ) ) {
-			return static::extract_link_html_tag( $settings['link'] ?? [] );
+	public static function compute( array $settings, string $default, array $options = [] ): string {
+		$follow_link = $options[ self::FOLLOW_LINK_OPTION ] ?? true;
+
+		if ( $follow_link && self::settings_have_active_link( $settings ) ) {
+			return self::extract_link_html_tag( $settings['link'] ?? [] );
 		}
 
-		$settings_tag = static::extract_html_tag_value( $settings['tag'] ?? null );
+		$settings_tag = self::extract_html_tag_value( $settings['tag'] ?? null );
 
 		if ( null !== $settings_tag && '' !== $settings_tag ) {
 			return $settings_tag;
 		}
 
-		return static::define_default_html_tag();
+		return $default;
 	}
 
-	protected static function settings_have_active_link( array $settings ): bool {
+	public static function settings_have_active_link( array $settings ): bool {
 		$link = $settings['link'] ?? null;
 
 		if ( ! is_array( $link ) ) {
 			return false;
 		}
 
-		$href = static::extract_html_tag_value( $link['href'] ?? null );
+		$href = self::extract_html_tag_value( $link['href'] ?? null );
 
 		if ( null !== $href && '' !== $href ) {
 			return true;
@@ -50,8 +50,8 @@ trait Has_Html_Tag {
 		return false;
 	}
 
-	protected static function extract_link_html_tag( array $link ): string {
-		$tag = static::extract_html_tag_value( $link['tag'] ?? null );
+	public static function extract_link_html_tag( array $link ): string {
+		$tag = self::extract_html_tag_value( $link['tag'] ?? null );
 
 		if ( null !== $tag && '' !== $tag ) {
 			return $tag;
@@ -60,7 +60,7 @@ trait Has_Html_Tag {
 		return Link_Prop_Type::DEFAULT_TAG;
 	}
 
-	protected static function extract_html_tag_value( $value ): ?string {
+	public static function extract_html_tag_value( $value ): ?string {
 		if ( is_array( $value ) && isset( $value['value'] ) && is_string( $value['value'] ) ) {
 			return $value['value'];
 		}
