@@ -2,14 +2,14 @@ name: PR
 
 on:
   pull_request:
-    types: [labeled, opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, ready_for_review]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event.action == 'synchronize' }}
 
 permissions:
   contents: read
@@ -27,6 +27,7 @@ jobs:
       actions: write
     steps:
       - name: Cancel older PR workflow runs on this branch
+        if: github.event.action == 'synchronize'
         uses: actions/github-script@v7
         with:
           script: |
@@ -77,7 +78,9 @@ jobs:
   set-pending-playwright-on-draft:
     name: Set Pending Playwright Status on Draft
     needs: [cancel-previous-runs]
-    if: github.event.pull_request.draft == true
+    if: |
+      github.event.pull_request.draft == true &&
+      github.event.action != 'ready_for_review'
     runs-on: ubuntu-22.04
     permissions:
       statuses: write
@@ -225,7 +228,9 @@ jobs:
           compression-level: 9
           retention-days: 3
       - name: Find existing comment on PR (Elementor repo)
-        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: |
+          startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') &&
+          github.event.action != 'ready_for_review'
         uses: peter-evans/find-comment@v4
         id: find
         with:
@@ -233,7 +238,9 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: 'Elementor Build'
       - name: Comment build info on PR (Elementor repo)
-        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: |
+          startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') &&
+          github.event.action != 'ready_for_review'
         uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -266,7 +273,8 @@ jobs:
     if: |
       always() &&
       needs.build.result == 'success' &&
-      startsWith(github.repository, 'elementor/')
+      startsWith(github.repository, 'elementor/') &&
+      github.event.action != 'ready_for_review'
     permissions:
       contents: read
       actions: read
@@ -281,7 +289,9 @@ jobs:
     name: Lint JS
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.js == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -303,7 +313,9 @@ jobs:
     name: Lint PHP
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.php == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.php == 'true'
     steps:
       - name: Mask GitHub token
         run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
@@ -367,7 +379,9 @@ jobs:
     name: Jest
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.js == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -387,7 +401,9 @@ jobs:
     name: QUnit
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.js == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -408,7 +424,9 @@ jobs:
   phpunit:
     name: PHPUnit
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.php == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.php == 'true'
     uses: ./.github/workflows/phpunit-runner.yml
     with:
       job_name: PHPUnit (PR)
@@ -554,6 +572,7 @@ jobs:
           PHPUNIT_RESULT: ${{ needs.phpunit.result }}
           PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
           PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
+          CODE_CHECKS_REQUIRED: ${{ github.event.action != 'ready_for_review' }}
         run: |
           is_ok() {
             case "$1" in
@@ -563,20 +582,29 @@ jobs:
           }
 
           FAILED=0
-          for RESULT in \
-            "$INSTALL_RESULT" \
-            "$BUILD_RESULT" \
-            "$LINT_JS_RESULT" \
-            "$LINT_PHP_RESULT" \
-            "$JEST_RESULT" \
-            "$QUNIT_RESULT" \
-            "$PHPUNIT_RESULT"
-          do
-            if ! is_ok "$RESULT"; then
-              echo "Check failed with result: $RESULT"
-              FAILED=1
-            fi
-          done
+          if [ "$CODE_CHECKS_REQUIRED" = "true" ]; then
+            for RESULT in \
+              "$INSTALL_RESULT" \
+              "$BUILD_RESULT" \
+              "$LINT_JS_RESULT" \
+              "$LINT_PHP_RESULT" \
+              "$JEST_RESULT" \
+              "$QUNIT_RESULT" \
+              "$PHPUNIT_RESULT"
+            do
+              if ! is_ok "$RESULT"; then
+                echo "Check failed with result: $RESULT"
+                FAILED=1
+              fi
+            done
+          else
+            for RESULT in "$INSTALL_RESULT" "$BUILD_RESULT"; do
+              if ! is_ok "$RESULT"; then
+                echo "Check failed with result: $RESULT"
+                FAILED=1
+              fi
+            done
+          fi
 
           if [ "$PLAYWRIGHT_REQUIRED" = "true" ]; then
             if [ "$PLAYWRIGHT_RESULT" != "success" ]; then
