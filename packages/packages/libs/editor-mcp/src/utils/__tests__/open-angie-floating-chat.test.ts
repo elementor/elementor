@@ -4,7 +4,7 @@ const mockGetAngieIframe = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
 const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
-const mockEnsureAngieMcpAdapter = jest.fn();
+const mockRegisterAngieMcpServers = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	DEFAULT_CONTAINER_ID,
@@ -14,7 +14,7 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 } ) );
 
 jest.mock( '../../mcp-registry', () => ( {
-	ensureAngieMcpAdapter: () => mockEnsureAngieMcpAdapter(),
+	registerAngieMcpServers: ( ...args: unknown[] ) => mockRegisterAngieMcpServers( ...args ),
 } ) );
 
 jest.mock( '../get-sdk', () => ( {
@@ -28,11 +28,13 @@ const APP_ID = 'elementor-editor-title-generation';
 const SOURCE = 'atomic_heading_title';
 const PROMPT = 'Generate a heading title';
 const WIDGET_CONFIG = { title: 'Generate a title' };
+const MCP_NAMESPACE = 'title_generation';
 
 const defaultArgs = {
 	appId: APP_ID,
 	prompt: PROMPT,
 	source: SOURCE,
+	mcpServers: [ MCP_NAMESPACE ],
 	widgetConfig: WIDGET_CONFIG,
 };
 
@@ -43,10 +45,10 @@ describe( 'openAngieFloatingChat', () => {
 		mockToggleAngieSidebar.mockReset();
 		mockLoadSidebarV2.mockReset();
 		mockTriggerAngie.mockReset();
-		mockEnsureAngieMcpAdapter.mockReset();
+		mockRegisterAngieMcpServers.mockReset();
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( undefined );
-		mockEnsureAngieMcpAdapter.mockResolvedValue( undefined );
+		mockRegisterAngieMcpServers.mockResolvedValue( undefined );
 	} );
 
 	it( 'boots Angie, activates the adapter, opens the chat, and triggers a new chat', async () => {
@@ -68,7 +70,7 @@ describe( 'openAngieFloatingChat', () => {
 			},
 			widgetConfig: WIDGET_CONFIG,
 		} );
-		expect( mockEnsureAngieMcpAdapter ).toHaveBeenCalledTimes( 1 );
+		expect( mockRegisterAngieMcpServers ).toHaveBeenCalledWith( [ MCP_NAMESPACE ] );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: PROMPT,
@@ -99,9 +101,11 @@ describe( 'openAngieFloatingChat', () => {
 		await openAngieFloatingChat( { ...defaultArgs, anchorElement } );
 
 		// Assert
-		expect( container.style.left ).toBe( `${ ANCHOR_RIGHT + CHAT_GAP }px` );
-		expect( container.style.top ).toBe( `${ ANCHOR_TOP }px` );
-		expect( container.style.width ).toBe( `${ CHAT_WIDTH }px` );
+		expect( container ).toHaveStyle( {
+			left: `${ ANCHOR_RIGHT + CHAT_GAP }px`,
+			top: `${ ANCHOR_TOP }px`,
+			width: `${ CHAT_WIDTH }px`,
+		} );
 		expect( container.style.getPropertyPriority( 'left' ) ).toBe( 'important' );
 
 		container.remove();
@@ -119,7 +123,7 @@ describe( 'openAngieFloatingChat', () => {
 
 		// Assert
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledTimes( 1 );
-		expect( mockEnsureAngieMcpAdapter ).toHaveBeenCalledTimes( 2 );
+		expect( mockRegisterAngieMcpServers ).toHaveBeenCalledTimes( 2 );
 		expect( mockTriggerAngie ).toHaveBeenCalledTimes( 2 );
 		expect( mockTriggerAngie ).toHaveBeenLastCalledWith( {
 			prompt: 'Second prompt',

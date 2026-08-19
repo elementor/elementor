@@ -8,7 +8,8 @@ import { InlineEditingControl } from '../inline-editing-control';
 const ELEMENT_ID = 'heading-el-1';
 const ANGIE_TITLE_GENERATION_APP_ID = 'elementor-editor-title-generation';
 const ANGIE_TITLE_GENERATION_SOURCE = 'atomic_heading_title';
-const TITLE_GENERATION_MCP_SERVER_NAME = 'editor-title_generation';
+const TITLE_GENERATION_MCP_NAMESPACE = 'title_generation';
+const TITLE_GENERATION_MCP_SERVER_NAME = `editor-${ TITLE_GENERATION_MCP_NAMESPACE }`;
 
 const mockOpenAngieFloatingChat = jest.fn();
 
@@ -86,6 +87,7 @@ describe( 'InlineEditingControl Generate button', () => {
 				appId: ANGIE_TITLE_GENERATION_APP_ID,
 				source: ANGIE_TITLE_GENERATION_SOURCE,
 				prompt: getExpectedPrompt(),
+				mcpServers: [ TITLE_GENERATION_MCP_NAMESPACE ],
 				widgetConfig: expect.objectContaining( {
 					featuredMcpServer: TITLE_GENERATION_MCP_SERVER_NAME,
 				} ),

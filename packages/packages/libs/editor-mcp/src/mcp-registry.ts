@@ -32,6 +32,8 @@ const bufferedTools: Parameters< IMcpRegistrationAdapter[ 'onToolRegistered' ] >
 const bufferedResources: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] >[] = [];
 const adapterActivationPromises = new Map< IMcpRegistrationAdapter, Promise< void > >();
 
+const scopedAngieRegistrations = new Map< string, Promise< void > >();
+
 let angieMcpAdapter: AngieMcpAdapter | null = null;
 let ensureAngieMcpAdapterPromise: Promise< void > | null = null;
 
@@ -88,6 +90,22 @@ export const ensureAngieMcpAdapter = (): Promise< void > => {
 	} )();
 
 	return ensureAngieMcpAdapterPromise;
+};
+
+export const registerAngieMcpServers = ( namespaces: string[] ): Promise< void > => {
+	const scope = [ ...namespaces ].sort().join( ',' );
+	let registration = scopedAngieRegistrations.get( scope );
+
+	if ( ! registration ) {
+		const adapter = new AngieMcpAdapter( getSDK(), () =>
+			getRegisteredMcpServers().filter( ( [ namespace ] ) => namespaces.includes( namespace ) )
+		);
+
+		registration = adapter.activate();
+		scopedAngieRegistrations.set( scope, registration );
+	}
+
+	return registration;
 };
 
 export const createAndRegisterAdapters = async (): Promise< void > => {

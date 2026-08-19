@@ -6,13 +6,14 @@ import {
 	type WidgetConfig,
 } from '@elementor-external/angie-sdk';
 
-import { ensureAngieMcpAdapter } from '../mcp-registry';
+import { registerAngieMcpServers } from '../mcp-registry';
 import { getSDK } from './get-sdk';
 
 export type OpenAngieFloatingChatArgs = {
 	appId: string;
 	prompt: string;
 	source: string;
+	mcpServers: string[];
 	anchorElement?: HTMLElement | null;
 	aiContext?: Record< string, unknown >;
 	widgetConfig?: WidgetConfig;
@@ -58,6 +59,7 @@ export const openAngieFloatingChat = async ( {
 	appId,
 	prompt,
 	source,
+	mcpServers,
 	anchorElement,
 	aiContext,
 	widgetConfig,
@@ -89,7 +91,7 @@ export const openAngieFloatingChat = async ( {
 		toggleAngieSidebar( iframe, true );
 	}
 
-	await ensureAngieMcpAdapter();
+	await registerAngieMcpServers( mcpServers );
 
 	await getSDK().triggerAngie( {
 		prompt,

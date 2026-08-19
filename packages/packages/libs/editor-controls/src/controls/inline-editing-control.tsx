@@ -15,7 +15,8 @@ import { type ControlProps } from '../utils/types';
 const CHILDREN_PARSE_DEBOUNCE_MS = 300;
 const ANGIE_TITLE_GENERATION_APP_ID = 'elementor-editor-title-generation';
 const ANGIE_TITLE_GENERATION_SOURCE = 'atomic_heading_title';
-const TITLE_GENERATION_MCP_SERVER_NAME = 'editor-title_generation';
+const TITLE_GENERATION_MCP_NAMESPACE = 'title_generation';
+const TITLE_GENERATION_MCP_SERVER_NAME = `editor-${ TITLE_GENERATION_MCP_NAMESPACE }`;
 
 type Props = ControlProps< {
 	enableAngieGenerate?: boolean;
@@ -75,6 +76,7 @@ export const InlineEditingControl = createControl(
 				appId: ANGIE_TITLE_GENERATION_APP_ID,
 				prompt,
 				source: ANGIE_TITLE_GENERATION_SOURCE,
+				mcpServers: [ TITLE_GENERATION_MCP_NAMESPACE ],
 				anchorElement: generateButtonRef.current,
 				aiContext: {
 					whatUserSees: {
@@ -126,7 +128,12 @@ export const InlineEditingControl = createControl(
 				<Stack gap={ 0.8 }>
 					{ enableAngieGenerate ? (
 						<Box sx={ { display: 'flex', justifyContent: 'flex-end' } }>
-							<Button ref={ generateButtonRef } size="small" variant="outlined" onClick={ handleGenerateClick }>
+							<Button
+								ref={ generateButtonRef }
+								size="small"
+								variant="outlined"
+								onClick={ handleGenerateClick }
+							>
 								{ __( 'Generate', 'elementor' ) }
 							</Button>
 						</Box>
