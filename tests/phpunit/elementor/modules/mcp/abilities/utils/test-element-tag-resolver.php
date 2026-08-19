@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
 use PHPUnit\Framework\TestCase;
 
-require_once dirname( rtrim( ABSPATH, '/' ), 2 ) . '/includes/utils.php';
+require_once dirname( __DIR__, 7 ) . '/includes/utils.php';
 
 class Html_Tag_Resolver_Button_Fixture {
 	public static function get_computed_html_tag( array $settings ): string {

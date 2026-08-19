@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 // Elementor\Utils is not resolved by the unit-bootstrap autoloader because its file lives under
 // includes/utils.php; Default_Styles_Repository::is_allowed_tag depends on it transitively.
-require_once dirname( rtrim( ABSPATH, '/' ), 2 ) . '/includes/utils.php';
+require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
 
 class Stub_Manage_Default_Styles_Repository extends Default_Styles_Repository {
 
