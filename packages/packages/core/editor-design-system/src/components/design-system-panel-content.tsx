@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { DefaultStylesTabEmbedded } from '@elementor/editor-default-styles';
 import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
-import { ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
+import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -44,7 +43,6 @@ const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
-	const defaultsCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const classesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const isChainingRef = useRef( false );
@@ -65,17 +63,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		if ( ! isChainingRef.current && variablesCloseAttemptRef.current ) {
 			isChainingRef.current = true;
 			variablesCloseAttemptRef.current();
-			isChainingRef.current = false;
-			return;
-		}
-
-		void onRequestClose();
-	}, [ onRequestClose ] );
-
-	const chainedThroughDefaults = useCallback( () => {
-		if ( ! isChainingRef.current && defaultsCloseAttemptRef.current ) {
-			isChainingRef.current = true;
-			defaultsCloseAttemptRef.current();
 			isChainingRef.current = false;
 			return;
 		}
@@ -107,11 +94,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	}, [] );
 
 	const handleHeaderClose = () => {
-		if ( currentTab === 'defaults' && defaultsCloseAttemptRef.current ) {
-			defaultsCloseAttemptRef.current();
-			return;
-		}
-
 		if ( currentTab === 'variables' && variablesCloseAttemptRef.current ) {
 			variablesCloseAttemptRef.current();
 			return;
@@ -166,12 +148,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								} }
 							>
 								<Tab
-									label={ __( 'Defaults', 'elementor' ) }
-									icon={ <TextIcon fontSize="small" /> }
-									iconPosition="start"
-									{ ...getTabProps( 'defaults' ) }
-								/>
-								<Tab
 									label={ __( 'Variables', 'elementor' ) }
 									icon={ <ColorFilterIcon fontSize="small" /> }
 									iconPosition="start"
@@ -186,25 +162,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							</Tabs>
 							<Divider />
 						</Stack>
-						<Box
-							role="tabpanel"
-							{ ...getTabPanelProps( 'defaults' ) }
-							sx={ {
-								flex: 1,
-								minHeight: 0,
-								display: currentTab === 'defaults' ? 'flex' : 'none',
-								flexDirection: 'column',
-								overflow: 'hidden',
-								pt: 1,
-							} }
-						>
-							<DefaultStylesTabEmbedded
-								onRequestClose={ chainedThroughVariables }
-								onExposeCloseAttempt={ ( fn ) => {
-									defaultsCloseAttemptRef.current = fn;
-								} }
-							/>
-						</Box>
 						<Box
 							role="tabpanel"
 							{ ...getTabPanelProps( 'variables' ) }
@@ -237,7 +194,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							} }
 						>
 							<ClassManagerPanelEmbedded
-								onRequestClose={ chainedThroughDefaults }
+								onRequestClose={ chainedThroughVariables }
 								onExposeCloseAttempt={ ( fn ) => {
 									classesCloseAttemptRef.current = fn;
 								} }

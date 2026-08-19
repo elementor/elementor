@@ -18,8 +18,8 @@ beforeEach( () => {
 } );
 
 describe( 'getInitialDesignSystemTab — reading from localStorage', () => {
-	it( 'returns "defaults" when localStorage is empty', () => {
-		expect( mod.getInitialDesignSystemTab() ).toBe( 'defaults' );
+	it( 'returns "variables" when localStorage is empty', () => {
+		expect( mod.getInitialDesignSystemTab() ).toBe( 'variables' );
 	} );
 
 	it( 'returns "classes" when localStorage contains "classes"', () => {
@@ -28,22 +28,16 @@ describe( 'getInitialDesignSystemTab — reading from localStorage', () => {
 		expect( mod.getInitialDesignSystemTab() ).toBe( 'classes' );
 	} );
 
-	it( 'returns "defaults" when localStorage contains "defaults"', () => {
-		localStorage.setItem( STORAGE_KEY, 'defaults' );
-		mod = loadModule();
-		expect( mod.getInitialDesignSystemTab() ).toBe( 'defaults' );
-	} );
-
 	it( 'returns "variables" when localStorage contains "variables"', () => {
 		localStorage.setItem( STORAGE_KEY, 'variables' );
 		mod = loadModule();
 		expect( mod.getInitialDesignSystemTab() ).toBe( 'variables' );
 	} );
 
-	it( 'falls back to "defaults" for an unrecognised stored value', () => {
+	it( 'falls back to "variables" for an unrecognised stored value', () => {
 		localStorage.setItem( STORAGE_KEY, 'something-invalid' );
 		mod = loadModule();
-		expect( mod.getInitialDesignSystemTab() ).toBe( 'defaults' );
+		expect( mod.getInitialDesignSystemTab() ).toBe( 'variables' );
 	} );
 } );
 
@@ -117,6 +111,6 @@ describe( 'persistDesignSystemTab', () => {
 	it( 'does NOT update activeTabInMemory (only notifyDesignSystemTabChange does that)', () => {
 		mod.persistDesignSystemTab( 'classes' );
 
-		expect( mod.getActiveDesignSystemTab() ).toBe( 'defaults' );
+		expect( mod.getActiveDesignSystemTab() ).toBe( 'variables' );
 	} );
 } );

@@ -40,8 +40,7 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await expect( designSystem.panelHeading ).toHaveText( 'Design system' );
 		} );
 
-		await test.step( 'All three tabs are rendered', async () => {
-			await expect( designSystem.defaultsTab ).toBeVisible();
+		await test.step( 'Both tabs are rendered', async () => {
 			await expect( designSystem.variablesTab ).toBeVisible();
 			await expect( designSystem.classesTab ).toBeVisible();
 		} );
@@ -59,7 +58,7 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Defaults tab is active by default when panel opens from toolbar', async () => {
+	test( 'Variables tab is active by default when panel opens from toolbar', async () => {
 		await test.step( 'Open panel from top bar with no prior preference', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
@@ -68,26 +67,26 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await designSystem.openFromToolbar();
 		} );
 
-		await test.step( 'Defaults tab is selected', async () => {
-			await expect( designSystem.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await test.step( 'Variables tab is selected', async () => {
+			await expect( designSystem.variablesTab ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
-		await test.step( 'Defaults tab content (tag selector) is displayed', async () => {
-			await expect( designSystem.defaultsTagSelector ).toBeVisible();
+		await test.step( 'Variables tab content (empty state) is displayed', async () => {
+			await expect( designSystem.variablesEmptyState ).toBeVisible();
 		} );
 
-		await test.step( 'Variables tab is not selected', async () => {
-			await expect( designSystem.variablesTab ).toHaveAttribute( 'aria-selected', 'false' );
+		await test.step( 'Classes tab is not selected', async () => {
+			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'false' );
 		} );
 	} );
 
 	test( 'Clicking Classes tab shows Class Manager content', async () => {
-		await test.step( 'Open panel (starts on Defaults tab)', async () => {
+		await test.step( 'Open panel (starts on Variables tab)', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await expect( designSystem.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
+			await expect( designSystem.variablesTab ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
 		await test.step( 'Switch to Classes tab', async () => {
@@ -103,7 +102,7 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 
 		await test.step( 'Variables Manager content is no longer displayed', async () => {
-			await expect( designSystem.defaultsTagSelector ).toBeHidden();
+			await expect( designSystem.variablesEmptyState ).toBeHidden();
 		} );
 	} );
 
@@ -172,7 +171,7 @@ test.describe( 'Design System Panel @v4-tests', () => {
 	} );
 
 	test( 'Toolbar button toggles panel closed when same tab is already active', async () => {
-		await test.step( 'Open panel on Defaults tab', async () => {
+		await test.step( 'Open panel on Variables tab', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
@@ -187,12 +186,11 @@ test.describe( 'Design System Panel @v4-tests', () => {
 	} );
 
 	test( 'Variables tab shows create menu when Add variable button is clicked', async () => {
-		await test.step( 'Open panel and switch to Variables tab', async () => {
+		await test.step( 'Open panel on Variables tab', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await designSystem.switchToVariablesTab();
 		} );
 
 		await test.step( 'Click "Add variable" button', async () => {
@@ -207,12 +205,11 @@ test.describe( 'Design System Panel @v4-tests', () => {
 	} );
 
 	test( 'Design System panel screenshot — Variables tab', async () => {
-		await test.step( 'Open panel and switch to Variables tab', async () => {
+		await test.step( 'Open panel on Variables tab', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await designSystem.switchToVariablesTab();
 		} );
 
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot(
