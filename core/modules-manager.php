@@ -144,6 +144,8 @@ class Modules_Manager {
 			'agents',
 			'elementor-capabilities-mcp',
 			'assets-manager',
+
+			'builder-mcp',
 		];
 	}
 
