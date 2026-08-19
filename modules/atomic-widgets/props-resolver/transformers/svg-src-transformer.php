@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Svg_Src_Transformer extends Transformer_Base {
 	const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
+	const SVG_MIME_TYPE = 'image/svg+xml';
 
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$id = isset( $value['id'] ) ? (int) $value['id'] : null;
@@ -36,6 +37,10 @@ class Svg_Src_Transformer extends Transformer_Base {
 	}
 
 	private function fetch_svg_content( ?int $id, ?string $url ): ?string {
+		if ( $id && ! $this->is_svg_attachment( $id ) ) {
+			return null;
+		}
+
 		if ( $id ) {
 			$path = get_attached_file( $id );
 			$content = $path ? Utils::file_get_contents( $path ) : null;
@@ -61,11 +66,36 @@ class Svg_Src_Transformer extends Transformer_Base {
 
 		$response = wp_safe_remote_get( $url );
 
-		if ( ! is_wp_error( $response ) ) {
+		if ( ! is_wp_error( $response ) && $this->is_svg_response( $response ) ) {
 			return $response['body'];
 		}
 
 		return null;
+	}
+
+	/**
+	 * Image dynamic tags may resolve into a non-SVG attachment (e.g. JPG/PNG),
+	 * which should not be inlined into the document.
+	 */
+	private function is_svg_attachment( int $id ): bool {
+		$mime_type = get_post_mime_type( $id );
+
+		// Unknown mime types are not blocked, to keep supporting ids that are resolved by third parties.
+		return ! $mime_type || self::SVG_MIME_TYPE === $mime_type;
+	}
+
+	private function is_svg_response( $response ): bool {
+		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
+
+		if ( is_array( $content_type ) ) {
+			$content_type = reset( $content_type );
+		}
+
+		if ( ! is_string( $content_type ) || '' === $content_type ) {
+			return true;
+		}
+
+		return false !== strpos( $content_type, 'svg' ) || false !== strpos( $content_type, 'xml' );
 	}
 
 	private function resolve_local_path( string $url ): ?string {
