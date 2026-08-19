@@ -70,7 +70,8 @@ describe( 'sanitizeEscapedHtml', () => {
 
 	it( 'preserves non-operational attributes', () => {
 		// Arrange.
-		const value = '<span id="e-1" class="foo bar" style="color: red;" title="t" lang="en" dir="ltr" role="text" data-x="1" aria-label="label">world</span>';
+		const value =
+			'<span id="e-1" class="foo bar" style="color: red;" title="t" lang="en" dir="ltr" role="text" data-x="1" aria-label="label">world</span>';
 
 		// Act.
 		const result = sanitizeEscapedHtml( value );
