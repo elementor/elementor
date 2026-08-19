@@ -84,10 +84,7 @@ export type DefaultStylesTabEmbeddedProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-export function DefaultStylesTabEmbedded( {
-	onRequestClose,
-	onExposeCloseAttempt,
-}: DefaultStylesTabEmbeddedProps ) {
+export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt }: DefaultStylesTabEmbeddedProps ) {
 	const allowedTags = useMemo( () => getAllowedDefaultStyleTags(), [] );
 	const tagOptions = useMemo< Option[] >(
 		() => allowedTags.map( ( tag ) => ( { label: tag, value: tag } ) ),

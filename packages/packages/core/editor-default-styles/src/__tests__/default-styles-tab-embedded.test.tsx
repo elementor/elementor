@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
 import { renderWithStore } from 'test-utils';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { setSessionStorageItem } from '@elementor/session';
 import { __createStore as createStore, __registerSlice as registerSlice, type Store } from '@elementor/store';
+import { act, screen } from '@testing-library/react';
 
 import { DefaultStylesTabEmbedded } from '../components/default-styles-tab-embedded';
 import { slice } from '../store';
