@@ -43,7 +43,7 @@ const HelloCard = styled( Box )( ( { theme } ) => ( {
 	paddingBlockStart: theme.spacing( 5.5 ),
 	paddingBlockEnd: theme.spacing( 2.5 ),
 	borderRadius: theme.spacing( 1.25 ),
-	border: `2px solid ${ theme.palette.common.black }`,
+	border: `2px solid ${ theme.palette.text.primary }`,
 	backgroundColor: theme.palette.background.paper,
 	marginInlineStart: `-${ CARDS_OVERLAP }px`,
 	flexShrink: 0,
@@ -110,7 +110,7 @@ export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewPro
 						</HelloBadge>
 					) }
 
-					<HelloLayoutIcon sx={ { fontSize: theme.spacing( 6 ), color: 'common.black' } } />
+					<HelloLayoutIcon sx={ { fontSize: theme.spacing( 6 ), color: 'text.primary' } } />
 
 					<Typography variant="caption" color="text.secondary">
 						{ t( 'steps.theme_selection.by_elementor' ) }
@@ -118,7 +118,12 @@ export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewPro
 				</HelloCard>
 
 				<PlusOverlay>
-					<PlusIcon sx={ { width: PLUS_SIZE, height: PLUS_SIZE, color: 'common.black' } } />
+					<PlusIcon
+						sx={ { width: PLUS_SIZE, height: PLUS_SIZE, color: 'text.primary' } }
+						strokeColor={
+							theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white
+						}
+					/>
 				</PlusOverlay>
 			</PreviewRoot>
 		</Stack>
