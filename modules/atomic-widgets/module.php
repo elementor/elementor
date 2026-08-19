@@ -306,6 +306,7 @@ class Module extends BaseModule {
 			'blockquote',
 			'del',
 			'br',
+			'span',
 			'strong',
 			'sup',
 			'sub',

@@ -34,15 +34,24 @@ class Test_Escaped_Html_Transformer extends TestCase {
 		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result );
 	}
 
-	public function test_transform__strips_disallowed_attributes() {
+	public function test_transform__keeps_non_operational_attributes_and_strips_event_handlers() {
 		// Arrange.
 		$transformer = new Escaped_Html_Transformer();
 
 		// Act.
-		$result = $transformer->transform( '<strong id="e-abc" onclick="evil()">world</strong>', Props_Resolver_Context::make() );
+		$result = $transformer->transform(
+			'<strong id="e-abc" class="x" data-foo="bar" style="color:red" title="t" onclick="evil()">world</strong>',
+			Props_Resolver_Context::make()
+		);
 
 		// Assert.
-		$this->assertSame( '<strong>world</strong>', $result );
+		$this->assertStringContainsString( 'id="e-abc"', $result );
+		$this->assertStringContainsString( 'class="x"', $result );
+		$this->assertStringContainsString( 'data-foo="bar"', $result );
+		$this->assertStringContainsString( 'style=', $result );
+		$this->assertStringContainsString( 'title="t"', $result );
+		$this->assertStringNotContainsString( 'onclick', $result );
+		$this->assertStringContainsString( 'world', $result );
 	}
 
 	public function test_transform__strips_javascript_href_from_links() {

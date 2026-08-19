@@ -67,4 +67,21 @@ describe( 'sanitizeEscapedHtml', () => {
 		expect( result ).not.toMatch( /<a\s+href=/i );
 		expect( result ).toContain( 'click' );
 	} );
+
+	it( 'keeps non-operational attributes and strips event handlers', () => {
+		// Arrange.
+		const value = '<span id="e-1" class="x" data-foo="bar" style="color:red" onclick="evil()" title="t">text</span>';
+
+		// Act.
+		const result = sanitizeEscapedHtml( value );
+
+		// Assert.
+		expect( result ).toContain( 'id="e-1"' );
+		expect( result ).toContain( 'class="x"' );
+		expect( result ).toContain( 'data-foo="bar"' );
+		expect( result ).toContain( 'style=' );
+		expect( result ).toContain( 'title="t"' );
+		expect( result ).not.toContain( 'onclick' );
+		expect( result ).toContain( 'text' );
+	} );
 } );
