@@ -1,6 +1,7 @@
 import { expect, type Download, type Locator, type Page } from '@playwright/test';
 import * as path from 'path';
 import EditorPage from '../../../../pages/editor-page';
+import { timeouts } from '../../../../config/timeouts';
 import { dismissClassManagerIntro } from '../global-classes/utils';
 
 export type ConflictStrategy = 'keep' | 'replace';
@@ -53,7 +54,7 @@ export default class DesignSystemPage {
 	}
 
 	get defaultsTagSelector(): Locator {
-		return this.panel.getByLabel( 'Tag' );
+		return this.panel.locator( '#default-styles-tag-selector' );
 	}
 
 	get defaultsSaveButton(): Locator {
@@ -133,12 +134,12 @@ export default class DesignSystemPage {
 	}
 
 	async openFromToolbar(): Promise< void > {
-		const isInToolbar = await this.toolbarButton.isVisible( { timeout: 2_000 } ).catch( () => false );
+		const isInToolbar = await this.toolbarButton.isVisible( { timeout: timeouts.longAction } ).catch( () => false );
 
 		if ( isInToolbar ) {
 			await this.toolbarButton.click();
 		} else {
-			await this.page.getByRole( 'button', { name: 'More', exact: true } ).click();
+			await this.page.getByLabel( 'More' ).first().click();
 			await this.page.getByRole( 'menuitem', { name: 'Design System', exact: true } ).click();
 		}
 
@@ -183,6 +184,8 @@ export default class DesignSystemPage {
 		await this.dismissUnsavedChangesDialogIfVisible();
 		await dismissClassManagerIntro( this.page );
 		await this.panelHeading.waitFor( { state: 'visible' } );
+		await expect( this.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( this.classesSaveButton ).toBeVisible();
 	}
 
 	async dismissUnsavedChangesDialogIfVisible(): Promise< void > {
