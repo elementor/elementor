@@ -206,24 +206,6 @@ jobs:
           echo "  Size: $(du -sh elementor | cut -f1)"
           echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}"
 
-  playground-preview:
-    needs: [build]
-    if: |
-      always() &&
-      needs.build.result == 'success' &&
-      startsWith(github.repository, 'elementor/') &&
-      github.event.action != 'ready_for_review' &&
-      github.event.action != 'labeled'
-    permissions:
-      contents: read
-      actions: read
-      deployments: write
-    uses: ./.github/workflows/playground-preview.yml
-    with:
-      artifact_name: ${{ needs.build.outputs.artifact_name }}
-      pr_number: ${{ github.event.pull_request.number }}
-      head_sha: ${{ github.event.pull_request.head.sha }}
-
   lint-js:
     name: Lint JS
     runs-on: ubuntu-22.04
