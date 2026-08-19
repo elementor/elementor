@@ -46,7 +46,7 @@ class Test_Default_Styles_REST_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( [], $response->get_data()['data'] );
+		$this->assertEquals( (object) [], $response->get_data()['data'] );
 	}
 
 	public function test_all__returns_saved_styles() {
