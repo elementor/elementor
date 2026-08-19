@@ -143,6 +143,8 @@ jobs:
           echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
       - name: Restore dependency cache
         uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -223,6 +225,8 @@ jobs:
           package-manager-cache: false
       - name: Restore dependency cache
         uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Build tools
         run: npm run build:tools
       - name: Run Lint
@@ -248,6 +252,8 @@ jobs:
         run: composer config --global --unset github-oauth.github.com || true
       - name: Restore dependency cache
         uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Install PHP lint dependencies
         run: |
           composer install
@@ -309,6 +315,8 @@ jobs:
           package-manager-cache: false
       - name: Restore dependency cache
         uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Run Jest
         run: npm run test
 
@@ -329,6 +337,8 @@ jobs:
           package-manager-cache: false
       - name: Restore dependency cache
         uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Build tools
         run: npm run build:tools
       - name: Run QUnit
