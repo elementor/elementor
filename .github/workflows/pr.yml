@@ -7,10 +7,6 @@ on:
       - main
       - '[0-9].[0-9][0-9]'
 
-concurrency:
-  group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: ${{ github.event.action == 'synchronize' }}
-
 permissions:
   contents: read
   pull-requests: write
@@ -20,64 +16,8 @@ permissions:
   deployments: write
 
 jobs:
-  cancel-previous-runs:
-    name: Cancel superseded PR runs
-    runs-on: ubuntu-22.04
-    permissions:
-      actions: write
-    steps:
-      - name: Cancel older PR workflow runs on this branch
-        if: github.event.action == 'synchronize'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const currentRunId = context.runId;
-            const branch = context.payload.pull_request.head.ref;
-
-            for (const status of ['in_progress', 'queued', 'pending']) {
-              let page = 1;
-
-              while (true) {
-                const { data } = await github.rest.actions.listWorkflowRunsForRepo({
-                  owner,
-                  repo,
-                  workflow_id: 'pr.yml',
-                  branch,
-                  status,
-                  per_page: 100,
-                  page,
-                });
-
-                for (const run of data.workflow_runs) {
-                  if (run.id === currentRunId) {
-                    continue;
-                  }
-
-                  core.info(`Cancelling superseded PR workflow run ${run.id} (${status})`);
-
-                  try {
-                    await github.rest.actions.cancelWorkflowRun({
-                      owner,
-                      repo,
-                      run_id: run.id,
-                    });
-                  } catch (error) {
-                    core.warning(`Failed to cancel run ${run.id}: ${error.message}`);
-                  }
-                }
-
-                if (data.workflow_runs.length < 100) {
-                  break;
-                }
-
-                page += 1;
-              }
-            }
-
   set-pending-playwright-on-draft:
     name: Set Pending Playwright Status on Draft
-    needs: [cancel-previous-runs]
     if: |
       github.event.pull_request.draft == true &&
       github.event.action != 'ready_for_review'
@@ -100,7 +40,6 @@ jobs:
 
   detect-changes:
     name: Detect changes
-    needs: [cancel-previous-runs]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -154,7 +93,6 @@ jobs:
 
   install:
     name: Install dependencies
-    needs: [cancel-previous-runs]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     steps:
@@ -176,7 +114,7 @@ jobs:
 
   build:
     name: Build plugin
-    needs: [cancel-previous-runs, install]
+    needs: [install]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
