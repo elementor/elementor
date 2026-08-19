@@ -3,13 +3,13 @@
 namespace Elementor\Modules\BuilderMcp;
 
 use Elementor\MCP\Composer\Admin\Page;
-use ElementorPro\Base\Module_Base;
+use Elementor\Core\Base\Module as BaseModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Module extends Module_Base {
+class Module extends BaseModule {
 
 	public function get_name() {
 		return 'builder-mcp';
