@@ -11,11 +11,15 @@ import EventsManager from 'elementor-common-modules/events-manager/assets/js/mod
 import Notifications from 'elementor-utils/notifications';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
+	getMarionetteTemplateElement( templateId ) {
+		return '#' === templateId.charAt( 0 )
+			? Backbone.$( 'script' + templateId )
+			: Backbone.$( templateId );
+	}
+
 	setMarionetteTemplateCompiler() {
 		Marionette.TemplateCache.prototype.loadTemplate = ( templateId ) => {
-			const $template = '#' === templateId.charAt( 0 )
-				? Backbone.$( 'script' + templateId )
-				: Backbone.$( templateId );
+			const $template = this.getMarionetteTemplateElement( templateId );
 
 			if ( ! $template.length ) {
 				throw new Marionette.Error( {
