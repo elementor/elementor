@@ -70,6 +70,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'vendor/composer/**',
 	'vendor/elementor/wp-one-package/**',
 	'vendor/elementor/wp-notifications-package/**',
+	'vendor/elementor/elementor-mcp-composer/**',
 	'vendor/jetpack-autoloader/**',
 	'vendor/wordpress/**',
 ];
