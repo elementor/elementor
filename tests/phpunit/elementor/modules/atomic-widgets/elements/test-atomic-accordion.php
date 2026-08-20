@@ -248,9 +248,10 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			$paragraph = $title['elements'][0];
 			$this->assertSame( 'widget', $paragraph['elType'] );
 			$this->assertSame( 'e-paragraph', $paragraph['widgetType'] );
+			$this->assertSame( 'escaped-html', $paragraph['settings']['paragraph']['$$type'] );
 			$this->assertSame(
 				'Accordion Item ' . ( $i + 1 ),
-				$paragraph['settings']['paragraph']['value']['content']['value']
+				$paragraph['settings']['paragraph']['value']
 			);
 
 			$this->assertSame( 'e-accordion-item-icon', $icon['elType'] );
