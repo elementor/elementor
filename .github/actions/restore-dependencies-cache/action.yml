@@ -15,9 +15,6 @@ outputs:
   cache-hit:
     description: Whether an exact cache key match was restored.
     value: ${{ steps.deps-cache.outputs.cache-hit }}
-  cache-key:
-    description: The cache key used for restore and save.
-    value: ${{ steps.deps-cache.outputs.cache-primary-key }}
 
 runs:
   using: composite
@@ -46,4 +43,4 @@ runs:
           node_modules
           packages/node_modules
           vendor
-        key: ${{ steps.deps-cache.outputs.cache-primary-key }}
+        key: deps-v2-${{ runner.os }}-${{ hashFiles('package-lock.json', 'composer.lock') }}
