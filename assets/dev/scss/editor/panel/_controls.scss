@@ -219,6 +219,10 @@
 		background-color: var(--e-a-bg-chip);
 		border-radius: 100px;
 		padding: 5px 8px;
+		border: none;
+		cursor: pointer;
+		text-decoration: none;
+		color: var(--e-a-color-txt-accent);
 
 		i {
 			margin-inline-start: 4px;

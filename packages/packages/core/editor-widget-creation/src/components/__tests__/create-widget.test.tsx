@@ -292,7 +292,10 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				} );
 			} );
 
-			expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( 'My prompt' );
+			expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( {
+				prompt: 'My prompt',
+				openCommunityLibrary: undefined,
+			} );
 		} );
 
 		it( 'redirects to app admin even when no prompt is provided', async () => {
@@ -313,7 +316,10 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Assert — redirect still fires even without a prompt.
 			await waitFor( () => {
-				expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( undefined );
+				expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( {
+					prompt: undefined,
+					openCommunityLibrary: undefined,
+				} );
 			} );
 		} );
 
