@@ -16,6 +16,7 @@
 	},
 	"config": {
 		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
+		"ELEMENTOR_TESTS": true,
 		"SCRIPT_DEBUG": false,
 		"WP_DEBUG": false
 	}

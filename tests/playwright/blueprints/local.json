@@ -15,6 +15,7 @@
                 "WP_DEBUG": true,
                 "WP_DEBUG_DISPLAY": true,
                 "SCRIPT_DEBUG": true,
+                "ELEMENTOR_TESTS": true,
                 "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
             }
         },

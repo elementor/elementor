@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
+use Elementor\Modules\AtomicWidgets\Utils\New_Badge;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,16 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
 	use Has_Meta;
-
-	/**
-	 * Maps atomic element type → the minor version when the "New" badge expires.
-	 * Format: 'element-type' => 'major.minor'  (patch is ignored during comparison).
-	 *
-	 * @var array<string, string>
-	 */
-	private const NEW_ATOMIC_ELEMENTS = [
-		'e-background-video' => '4.3',
-	];
 
 	protected $version = '0.0';
 	protected $styles = [];
@@ -110,7 +101,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['default_html_tag'] = $this->define_default_html_tag();
 		$config['meta'] = $this->get_meta();
 		$config['allowed_child_types'] = $this->define_allowed_child_types();
-		$config['new_until_version'] = self::NEW_ATOMIC_ELEMENTS[ $this->get_name() ] ?? '';
+		$config['is_new'] = New_Badge::should_show_for_element( $this->get_name(), ELEMENTOR_VERSION );
 
 		return $config;
 	}
