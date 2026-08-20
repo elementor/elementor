@@ -55,7 +55,10 @@ register( {
 		// an object and silently fall back to "not first_expanded" / "not exclusive".
 		const getRootSetting = ( key, fallback ) => {
 			const container = window.parent?.elementor?.getContainer?.( element.dataset.id );
-			const settingValue = container?.settings?.get?.( key )?.value;
+			const setting = container?.settings?.get?.( key );
+			const settingValue = setting && 'object' === typeof setting && 'value' in setting
+				? setting.value
+				: setting;
 			const value = settingValue && 'object' === typeof settingValue
 				? settingValue.origin_value?.value
 				: settingValue;

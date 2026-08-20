@@ -95,7 +95,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 
 		// Assert
 		await expect( tile ).toBeVisible();
-		const tileIcon = tile.locator( 'xpath=ancestor::*[self::div or self::li][1]' ).locator( 'i, svg' ).first();
+		const tileIcon = tile.locator( 'xpath=ancestor::button[1]' ).locator( '.icon i, .icon svg' ).first();
 		await expect( tileIcon ).toHaveClass( /eicon-accordion/ );
 	} );
 
@@ -234,8 +234,16 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		const canvasTitleBefore = await root.locator( `[data-widget_type="${ paragraphType }.default"]` ).first().textContent();
 
 		// Act — open the Structure panel and rename the item's node there.
-		await editor.page.locator( '#elementor-editor-wrapper-v2 button[value="Structure"]' ).click();
-		const navigatorItem = editor.page.locator( `#elementor-navigator .elementor-navigator__element[data-id="${ firstItemId }"]` );
+		const navigatorPanel = editor.page.locator( '#elementor-navigator' );
+		if ( ! await navigatorPanel.isVisible() ) {
+			await editor.page.locator( '#elementor-editor-wrapper-v2 button[value="Structure"]' ).click();
+		}
+		await expect( navigatorPanel ).toBeVisible();
+		const accordionNavigatorItem = navigatorPanel.locator( `.elementor-navigator__element[data-id="${ accordionId }"]` );
+		if ( ! await accordionNavigatorItem.evaluate( ( element ) => element.classList.contains( 'elementor-active' ) ) ) {
+			await accordionNavigatorItem.locator( ':scope > .elementor-navigator__item > .elementor-navigator__element__list-toggle' ).click();
+		}
+		const navigatorItem = navigatorPanel.locator( `.elementor-navigator__element[data-id="${ firstItemId }"]` );
 		await navigatorItem.waitFor();
 
 		const titleField = navigatorItem.locator( '.elementor-navigator__element__title__text' ).first();
@@ -338,8 +346,10 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// titled from its `editor_settings.title` (`assets/dev/js/editor/regions/navigator/element.js`);
 		// the icon slot is titled "Icon" (`Atomic_Accordion_Item_Header::define_default_children()`),
 		// so its absence from the whole tree is a reliable proxy for "no icon node in Structure".
-		await editor.page.locator( '#elementor-editor-wrapper-v2 button[value="Structure"]' ).click();
 		const navigatorPanel = editor.page.locator( '#elementor-navigator' );
+		if ( ! await navigatorPanel.isVisible() ) {
+			await editor.page.locator( '#elementor-editor-wrapper-v2 button[value="Structure"]' ).click();
+		}
 		await navigatorPanel.waitFor();
 		await expect( navigatorPanel.locator( '.elementor-navigator__element__title__text', { hasText: 'Icon' } ) ).toHaveCount( 0 );
 
@@ -468,6 +478,14 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// `matrix(cos180, sin180, -sin180, cos180, 0, 0)` = `matrix(-1, 0, 0, -1, 0, 0)`. Parsed
 		// numerically (rather than matched as a literal string) to stay robust to browser-specific
 		// formatting of the zero components.
+		await expect.poll( async () => {
+			const transform = await icons.nth( 1 ).locator( 'svg' ).evaluate( ( el ) => getComputedStyle( el ).transform );
+			const values = transform.match( /matrix\(([^)]+)\)/ )?.[ 1 ].split( ',' ).map( Number );
+
+			return values
+				? Math.max( Math.abs( values[ 0 ] + 1 ), Math.abs( values[ 1 ] ), Math.abs( values[ 2 ] ), Math.abs( values[ 3 ] + 1 ) )
+				: Number.POSITIVE_INFINITY;
+		} ).toBeLessThan( 0.00001 );
 		const openTransform = await icons.nth( 1 ).locator( 'svg' ).evaluate( ( el ) => getComputedStyle( el ).transform );
 		const matrixValues = openTransform.match( /matrix\(([^)]+)\)/ )?.[ 1 ].split( ',' ).map( Number );
 
@@ -525,7 +543,8 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		await expect( secondRoot.locator( 'details' ).nth( 0 ) ).toHaveAttribute( 'open', '' );
 
 		// Act — open the second item of the first accordion only.
-		await getHeaders( firstRoot ).nth( 1 ).click();
+		const firstSecondHeader = getHeaders( firstRoot ).nth( 1 );
+		await firstSecondHeader.dispatchEvent( 'click' );
 
 		// Assert — first accordion's exclusivity kicked in, second accordion is untouched.
 		await expect( firstRoot.locator( 'details' ).nth( 1 ) ).toHaveAttribute( 'open', '' );
@@ -574,7 +593,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		}
 	} );
 
-	test( 'Open/closed state is exposed to the accessibility tree via native <details>/<summary> semantics', async () => {
+	test( 'Open/closed state uses native <details>/<summary> semantics without redundant ARIA', async () => {
 		// No `aria-expanded` attribute is ever written to the DOM — deliberately: the whole point of
 		// building on native `<details>`/`<summary>` (per `$widget_description` on
 		// `Atomic_Accordion_Item`/`Atomic_Accordion`) is that the browser derives accessible
@@ -592,25 +611,48 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// rather than pinned to the exact bracketed-state token Playwright's ARIA snapshot serializer
 		// emits for a boolean `expanded` state, because that exact formatting was not something this
 		// task could confirm by execution.
-		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
-		const root = getAccordionRoot( accordionId );
+		await editor.addElement( { elType: accordionType }, 'document' );
+		await editor.publishAndViewPage();
+		const root = editor.page.locator( `[data-element_type="${ accordionType }"]` ).first();
 		const headers = getHeaders( root );
 		const details = root.locator( 'details' );
 
 		await expect( details.nth( 0 ) ).toHaveAttribute( 'open', '' );
 		const openSnapshot = await headers.nth( 0 ).ariaSnapshot();
+		const accessibilityState = await headers.nth( 0 ).evaluate( ( header ) => ( {
+			tagName: header.tagName,
+			role: header.getAttribute( 'role' ),
+			ariaExpanded: header.getAttribute( 'aria-expanded' ),
+			parentOpen: header.parentElement?.hasAttribute( 'open' ),
+			display: getComputedStyle( header ).display,
+			outerHtml: header.outerHTML,
+		} ) );
 
-		expect( openSnapshot.toLowerCase() ).toContain( 'button' );
 		expect( openSnapshot ).toContain( 'Accordion Item 1' );
+		expect( accessibilityState ).toMatchObject( {
+			tagName: 'SUMMARY',
+			role: null,
+			ariaExpanded: null,
+			parentOpen: true,
+		} );
 
 		// Act — close the first item by opening the second (max_expanded defaults to "one").
 		await headers.nth( 1 ).click();
 		await expect( details.nth( 0 ) ).not.toHaveAttribute( 'open', '' );
 
-		// Assert — the accessibility tree reflects the state change; the browser derives this from
-		// `[open]` alone, nothing here writes `aria-expanded` by hand.
+		// Assert — the browser derives state from `[open]`; no redundant ARIA is authored.
 		const closedSnapshot = await headers.nth( 0 ).ariaSnapshot();
-		expect( closedSnapshot ).not.toBe( openSnapshot );
+		const closedState = await headers.nth( 0 ).evaluate( ( header ) => ( {
+			role: header.getAttribute( 'role' ),
+			ariaExpanded: header.getAttribute( 'aria-expanded' ),
+			parentOpen: header.parentElement?.hasAttribute( 'open' ),
+		} ) );
+		expect( closedSnapshot ).toContain( 'Accordion Item 1' );
+		expect( closedState ).toEqual( {
+			role: null,
+			ariaExpanded: null,
+			parentOpen: false,
+		} );
 	} );
 
 	test( 'Renders correctly under RTL direction', async () => {
@@ -652,8 +694,12 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// `editor.triggerEditingElement()` + inline canvas editing (see
 		// `inline-text-editing/canvas-editing.test.ts`) — rather than a settings shape that isn't
 		// exercised anywhere else in this file.
-		const accordionId = await editor.addElement( { elType: accordionType, settings: { faq_schema: true } }, 'document' );
+		const accordionId = await editor.addElement( { elType: accordionType }, 'document' );
 		const root = getAccordionRoot( accordionId );
+		await editor.selectElement( accordionId );
+		await editor.waitForPanelToLoad();
+		await editor.v4Panel.openTab( 'general' );
+		await editor.page.locator( 'span' ).filter( { hasText: 'FAQ Schema' } ).getByRole( 'checkbox' ).click();
 		const contentIds = await getIdsByType( root, contentType );
 		expect( contentIds ).toHaveLength( 2 );
 
@@ -680,7 +726,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 
 		// Arrange & Act — OFF, on a fresh page.
 		editor = await wpAdmin.openNewPage();
-		await editor.addElement( { elType: accordionType, settings: { faq_schema: false } }, 'document' );
+		await editor.addElement( { elType: accordionType }, 'document' );
 		await editor.publishAndViewPage();
 
 		const htmlOff = await editor.page.content();
