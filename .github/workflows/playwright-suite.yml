@@ -85,6 +85,8 @@ jobs:
           package-manager-cache: false
       - name: Restore dependency cache
         uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Download build artifact
         uses: actions/download-artifact@v8
         with:
