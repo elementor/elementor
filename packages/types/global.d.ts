@@ -159,6 +159,7 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				enqueueIconFonts?: ( iconType: string ) => void;
 				hasPro?: () => boolean;
 			};
 			hooks?: {

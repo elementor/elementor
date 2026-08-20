@@ -9,6 +9,7 @@ import { htmlV3Transformer } from './transformers/settings/html-v3-transformer';
 import { linkTransformer } from './transformers/settings/link-transformer';
 import { queryTransformer } from './transformers/settings/query-transformer';
 import { timeRangeTransformer } from './transformers/settings/time-range-transformer';
+import { iconTransformer } from './transformers/shared/icon-transformer';
 import { imageSrcTransformer } from './transformers/shared/image-src-transformer';
 import { imageTransformer } from './transformers/shared/image-transformer';
 import { plainTransformer } from './transformers/shared/plain-transformer';
@@ -23,6 +24,7 @@ export function initSettingsTransformers() {
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'svg-src', svgSrcTransformer )
+		.register( 'icon', iconTransformer )
 		.register( 'video-src', videoSrcTransformer )
 		.register( 'attributes', attributesTransformer )
 		.register( 'date-time', dateTimeTransformer )

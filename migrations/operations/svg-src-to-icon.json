@@ -1,0 +1,26 @@
+{
+  "up": [],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "svg-src"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "value",
+        "merge": false,
+        "value": {
+          "id": null,
+          "url": {
+            "$$type": "url",
+            "value": null
+          }
+        }
+      }
+    }
+  ]
+}

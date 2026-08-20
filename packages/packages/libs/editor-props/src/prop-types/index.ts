@@ -8,6 +8,7 @@ export * from './font-family';
 export * from './image';
 export * from './image-attachment-id';
 export * from './image-src';
+export * from './icon';
 export * from './svg-src';
 export * from './video-attachment-id';
 export * from './video-src';
