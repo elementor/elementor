@@ -5,6 +5,7 @@ import {
 	createTemplatedElementType,
 	createTemplatedElementView,
 } from '../create-templated-element-type';
+import { type ElementView } from '../types';
 
 const MOCK_ELEMENT_TYPE = 'test-element';
 const MOCK_HTML = '<div>Element</div>';
@@ -134,7 +135,9 @@ describe( 'createTemplatedElementView', () => {
 				},
 			} );
 
-			const view = new ViewClass();
+			const view = new ViewClass() as unknown as ElementView & {
+				_abortController: AbortController;
+			};
 			view.model = {
 				get: ( key: string ) => {
 					if ( key === 'id' ) {
@@ -147,12 +150,12 @@ describe( 'createTemplatedElementView', () => {
 
 					return undefined;
 				},
-			};
+			} as unknown as ElementView[ 'model' ];
 			view.isRendered = false;
 			view._abortController = new AbortController();
 			view.triggerMethod = jest.fn();
 			view.bindUIElements = jest.fn();
-			view.$el = { html: jest.fn() };
+			view.$el = { html: jest.fn() } as unknown as ElementView[ '$el' ];
 			view._ensureViewIsIntact = jest.fn();
 			view.resetChildViewContainer = jest.fn();
 

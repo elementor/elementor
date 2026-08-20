@@ -3,11 +3,6 @@ import { join } from 'path';
 
 import { computeHtmlTag } from '../compute-html-tag';
 
-const FIXTURES_PATH = join(
-	__dirname,
-	'../../../../../../../tests/fixtures/html-tag-computer-cases.json'
-);
-
 type HtmlTagComputerCase = {
 	settings: Record< string, unknown >;
 	default: string;
@@ -15,7 +10,9 @@ type HtmlTagComputerCase = {
 	expected: string;
 };
 
-const contractCases: HtmlTagComputerCase[] = JSON.parse( readFileSync( FIXTURES_PATH, 'utf8' ) );
+const contractCases: HtmlTagComputerCase[] = JSON.parse(
+	readFileSync( join( __dirname, 'fixtures/html-tag-computer-cases.json' ), 'utf8' )
+);
 
 describe( 'computeHtmlTag', () => {
 	it.each( contractCases )(

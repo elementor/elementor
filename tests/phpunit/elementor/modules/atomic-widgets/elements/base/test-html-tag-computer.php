@@ -74,7 +74,7 @@ class Test_Html_Tag_Computer extends TestCase {
 	}
 
 	public function test_contract_fixtures() {
-		$fixtures_path = ELEMENTOR_PATH . 'tests/fixtures/html-tag-computer-cases.json';
+		$fixtures_path = __DIR__ . '/fixtures/html-tag-computer-cases.json';
 		$cases = json_decode( file_get_contents( $fixtures_path ), true );
 
 		$this->assertIsArray( $cases );
@@ -98,5 +98,16 @@ class Test_Html_Tag_Computer extends TestCase {
 				'Failed contract case: ' . wp_json_encode( $case )
 			);
 		}
+	}
+
+	public function test_ts_fixture_matches_php_fixture() {
+		$php_fixture = __DIR__ . '/fixtures/html-tag-computer-cases.json';
+		$ts_fixture = dirname( __DIR__, 7 ) . '/packages/packages/core/editor-canvas/src/renderers/__tests__/fixtures/html-tag-computer-cases.json';
+
+		$this->assertSame(
+			md5_file( $php_fixture ),
+			md5_file( $ts_fixture ),
+			'TS and PHP contract fixtures have drifted. Update both.'
+		);
 	}
 }
