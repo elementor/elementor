@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	ControlActionsProvider,
 	ControlReplacementsProvider,
@@ -7,9 +7,7 @@ import {
 } from '@elementor/editor-controls';
 import {
 	ClassesPropProvider,
-	CreatableAutocomplete,
 	ElementProvider,
-	type Option,
 	SectionsList,
 	StyleInheritanceProvider,
 	StyleProvider,
@@ -25,6 +23,8 @@ import { useMutation } from '@elementor/query';
 import { getSessionStorageItem, SessionStorageProvider, setSessionStorageItem } from '@elementor/session';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import {
+	Autocomplete,
+	type AutocompleteChangeDetails,
 	type AutocompleteChangeReason,
 	Box,
 	Button,
@@ -33,6 +33,7 @@ import {
 	FormControl,
 	FormLabel,
 	Stack,
+	TextField,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -66,8 +67,13 @@ function readStoredActiveTag( allowedTags: AllowedHtmlTag[] ): AllowedHtmlTag {
 	return getDefaultActiveTag( allowedTags );
 }
 
-function toTagChip( tag: AllowedHtmlTag ): Option {
-	return { label: tag, value: tag, fixed: true };
+type TagOption = {
+	label: string;
+	value: string;
+};
+
+function toTagOption( tag: AllowedHtmlTag ): TagOption {
+	return { label: tag, value: tag };
 }
 
 const shimElement: Element = {
@@ -88,11 +94,12 @@ type DefaultStylesPanelContentProps = {
 
 export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPanelContentProps ) {
 	const allowedTags = useMemo( () => getAllowedDefaultStyleTags(), [] );
-	const tagOptions = useMemo< Option[] >(
-		() => allowedTags.map( ( tag ) => ( { label: tag, value: tag } ) ),
+	const tagOptions = useMemo< TagOption[] >(
+		() => allowedTags.map( ( tag ) => toTagOption( tag ) ),
 		[ allowedTags ]
 	);
 	const [ selectedTag, setSelectedTagState ] = useState< AllowedHtmlTag >( () => readStoredActiveTag( allowedTags ) );
+	const selectedTagOption = useMemo( () => toTagOption( selectedTag ), [ selectedTag ] );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
 	const menuItems = useMenuItems().default;
@@ -125,8 +132,19 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 
 	usePreventUnload( isDirty );
 
-	const handleTagSelect = ( _selected: Option[], reason: AutocompleteChangeReason, option: Option ) => {
-		if ( reason !== 'selectOption' || ! option.value ) {
+	const handleTagChange = (
+		_: SyntheticEvent,
+		_newValue: TagOption[],
+		reason: AutocompleteChangeReason,
+		details?: AutocompleteChangeDetails< TagOption >
+	) => {
+		if ( reason !== 'selectOption' ) {
+			return;
+		}
+
+		const option = details?.option;
+
+		if ( ! option || typeof option === 'string' || ! option.value ) {
 			return;
 		}
 
@@ -183,17 +201,28 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 										<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 1 } }>
 											{ __( 'Tag', 'elementor' ) }
 										</FormLabel>
-										<CreatableAutocomplete< Option >
+										<Autocomplete
 											id={ TAG_SELECTOR_ID }
+											fullWidth
+											multiple
+											disableClearable
+											filterSelectedOptions
 											size="tiny"
-											placeholder={ __( 'Type tag name', 'elementor' ) }
 											options={ tagOptions }
-											selected={ [ toTagChip( selectedTag ) ] }
-											onSelect={ handleTagSelect }
+											value={ [ selectedTagOption ] }
+											onChange={ handleTagChange }
+											getOptionLabel={ ( option ) => option.label }
+											isOptionEqualToValue={ ( option, value ) => option.value === value.value }
+											renderInput={ ( params ) => (
+												<TextField
+													{ ...params }
+													placeholder={ __( 'Select tag', 'elementor' ) }
+												/>
+											) }
 											renderTags={ ( values, getTagProps ) =>
 												values.map( ( value, index ) => (
 													<TagChip
-														key={ value.value ?? value.label }
+														key={ value.value }
 														label={ value.label }
 														chipProps={ getTagProps( { index } ) }
 														activeState={ activeStyleState }

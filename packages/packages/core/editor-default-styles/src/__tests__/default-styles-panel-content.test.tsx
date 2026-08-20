@@ -16,7 +16,6 @@ jest.mock( '@elementor/editor-controls', () => ( {
 
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	ClassesPropProvider: ( { children }: React.PropsWithChildren ) => children,
-	CreatableAutocomplete: ( { selected }: { selected: { label: string }[] } ) => <div>{ selected[ 0 ]?.label }</div>,
 	ElementProvider: ( { children }: React.PropsWithChildren ) => children,
 	SectionsList: ( { children }: React.PropsWithChildren ) => children,
 	StyleInheritanceProvider: ( { children }: React.PropsWithChildren ) => children,
