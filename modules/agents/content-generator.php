@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\Agents;
 
-use Elementor\Modules\MarkdownRender\Markdown_Renderer;
-use Elementor\Modules\MarkdownRender\Module as Markdown_Module;
+use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
+use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -579,44 +579,32 @@ class Content_Generator {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Generate inline content for a single post (no caching — callers cache).
+	 * Generate inline content for a single post using the Content_Extractor chain.
 	 *
-	 * For Elementor documents the Markdown_Renderer is used when the
-	 * markdown-rendering experiment is active; otherwise we fall back to
-	 * excerpt + stripped post_content.
+	 * Handles Elementor, Gutenberg, classic, and third-party builder content.
+	 * No caching — callers handle cache read/write.
+	 *
+	 * @param int $post_id
+	 * @return string Markdown-formatted content including frontmatter, or '' if unavailable.
 	 */
 	private function generate_inline_content( int $post_id ): string {
-		$document = Plugin::$instance->documents->get( $post_id );
+		$post = get_post( $post_id );
 
-		if (
-			$document &&
-			$document->is_built_with_elementor() &&
-			class_exists( Markdown_Module::class ) &&
-			Plugin::$instance->experiments->is_feature_active( Markdown_Module::EXPERIMENT_NAME )
-		) {
-			try {
-				return Markdown_Module::execute_while_rendering_markdown(
-					fn() => ( new Markdown_Renderer() )->render( $document )
-				);
-			} catch ( \Throwable $e ) {
-				// Fall through to plain-text fallback.
-			}
-		}
-
-		// Fallback: title + excerpt + stripped content.
-		$title   = $this->clean_title( get_the_title( $post_id ) );
-		$excerpt = get_post_field( 'post_excerpt', $post_id );
-		$content = get_post_field( 'post_content', $post_id );
-		$content = wp_strip_all_tags( apply_filters( 'the_content', $content ) );
-
-		$parts = array_filter( [ $excerpt, $content ] );
-		$body  = implode( "\n\n", $parts );
-
-		if ( '' === trim( $body ) ) {
+		if ( ! ( $post instanceof \WP_Post ) ) {
 			return '';
 		}
 
-		return "# {$title}\n\n" . $this->sanitizer->sanitize( $body );
+		$extractor    = new Content_Extractor();
+		$extractor_id = $extractor->get_extractor_id( $post );
+		$body         = $extractor->extract( $post );
+
+		if ( '' === $body ) {
+			return '';
+		}
+
+		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extractor_id );
+
+		return $frontmatter . "\n\n" . $body;
 	}
 
 	// -------------------------------------------------------------------------

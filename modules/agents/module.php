@@ -6,6 +6,10 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Classes\Feature_Registry;
+use Elementor\Modules\Agents\Classes\Request_Path;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -15,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'agents_llms_txt';
+	const EXPERIMENT_NAME = 'agent_ready';
 
 	const PACKAGES = [
 		'editor-agents',
@@ -37,6 +41,7 @@ class Module extends BaseModule {
 	 */
 	const OPTION_OVERRIDES = 'elementor_agents_llms_overrides';
 
+	private Feature_Registry $feature_registry;
 	private Llms_Cache $cache;
 	private Content_Generator $generator;
 	private Robots_Txt_Handler $robots_handler;
@@ -48,8 +53,8 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name'           => self::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Agents llms.txt', 'elementor' ),
-			'description'    => esc_html__( 'Auto-generate /llms.txt and /llms-full.txt from your site content for AI agents.', 'elementor' ),
+			'title'          => esc_html__( 'Agent Ready', 'elementor' ),
+			'description'    => esc_html__( 'Make your site fully discoverable and readable by AI agents: auto-generated llms.txt, markdown endpoints for every page, and per-bot robots.txt controls.', 'elementor' ),
 			'hidden'         => true,
 			'default'        => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -86,6 +91,12 @@ class Module extends BaseModule {
 
 		// robots.txt coordination.
 		$this->robots_handler->register();
+
+		// Initialise the feature registry.
+		$this->feature_registry = new Feature_Registry();
+
+		// Register readability components.
+		$this->register_component( new Markdown_Endpoint() );
 
 		// SEO plugin co-existence check (runs after plugins are loaded).
 		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
@@ -575,29 +586,7 @@ class Module extends BaseModule {
 	 * @param string $filename e.g. 'llms.txt' or 'llms-full.txt'
 	 */
 	private function is_request_for( string $filename ): bool {
-		$request_uri = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
-			: '';
-
-		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
-
-		if ( ! is_string( $path ) ) {
-			return false;
-		}
-
-		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
-
-		if ( is_string( $home_path ) && '' !== $home_path && '/' !== $home_path ) {
-			$home_path = untrailingslashit( $home_path );
-
-			if ( 0 === strpos( $path, $home_path ) ) {
-				$path = substr( $path, strlen( $home_path ) );
-			}
-		}
-
-		$path = untrailingslashit( $path );
-
-		return '/' . $filename === $path || $filename === ltrim( $path, '/' );
+		return Request_Path::matches( $filename );
 	}
 
 	/**
@@ -606,5 +595,25 @@ class Module extends BaseModule {
 	 */
 	private function is_llms_txt_request(): bool {
 		return $this->is_request_for( 'llms.txt' );
+	}
+
+	/**
+	 * Return the feature registry so external code can query registered components.
+	 */
+	public function get_feature_registry(): Feature_Registry {
+		return $this->feature_registry;
+	}
+
+	/**
+	 * Add a feature component to the registry and to the base module's
+	 * component store, then call register() if the component is enabled.
+	 */
+	private function register_component( Feature_Component $component ): void {
+		$this->feature_registry->register( $component );
+		$this->add_component( $component->get_id(), $component );
+
+		if ( $component->is_enabled() ) {
+			$component->register();
+		}
 	}
 }
