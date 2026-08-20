@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
 import { comparePngBuffers } from '../assets/image-comparator';
-import { expect, type Page, type Frame, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
+import { expect, type Page, type Frame, type Response, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
@@ -17,6 +17,23 @@ let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
+
+function isPublishSaveBuilderResponse( response: Response ): boolean {
+	if ( ! response.url().includes( 'admin-ajax.php' ) || 'POST' !== response.request().method() ) {
+		return false;
+	}
+
+	const rawPostData = response.request().postData() ?? '';
+	let postData = rawPostData;
+
+	try {
+		postData = decodeURIComponent( rawPostData );
+	} catch {
+		postData = rawPostData;
+	}
+
+	return postData.includes( 'save_builder' ) && postData.includes( '"status":"publish"' );
+}
 
 /**
  * Helper design contract:
@@ -957,9 +974,18 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage(): Promise<void> {
+		const saveResponsePromise = this.page.waitForResponse(
+			isPublishSaveBuilderResponse,
+			{ timeout: timeouts.heavyAction },
+		);
+
 		await this.clickTopBarItem( TopBarSelectors.publish );
-		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.heavyAction } );
+
+		const saveResponse = await saveResponsePromise;
+
+		if ( ! saveResponse.ok() ) {
+			throw new Error( `Publish save_builder failed with HTTP ${ saveResponse.status() }` );
+		}
 	}
 
 	/**

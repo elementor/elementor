@@ -121,6 +121,9 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+      - name: Set WP_VERSION for nightly snapshots
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
+        run: echo "WP_VERSION=nightly" >> $GITHUB_ENV
       - name: Update WordPress database
         if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
         run: |
