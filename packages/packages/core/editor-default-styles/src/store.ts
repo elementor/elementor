@@ -105,12 +105,12 @@ export const slice = createSlice( {
 		},
 
 		reset( state ) {
-			state.data = structuredClone( state.initialData );
+			state.data = JSON.parse( JSON.stringify( state.initialData ) );
 			state.isDirty = false;
 		},
 
 		commit( state ) {
-			state.initialData = structuredClone( state.data );
+			state.initialData = JSON.parse( JSON.stringify( state.data ) );
 			state.isDirty = false;
 		},
 

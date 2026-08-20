@@ -60,4 +60,49 @@ describe( 'defaultStyles store', () => {
 		expect( style?.variants[ 0 ]?.props ).toEqual( { display: 'block' } );
 		expect( selectIsDirty( getState() ) ).toBe( true );
 	} );
+
+	it( 'should reset dirty data back to initialData', () => {
+		dispatch(
+			slice.actions.load( {
+				data: {},
+			} )
+		);
+
+		updateDisplayProp( 'h1' );
+
+		expect( selectIsDirty( getState() ) ).toBe( true );
+
+		dispatch( slice.actions.reset() );
+
+		expect( selectData( getState() ) ).toEqual( {} );
+		expect( selectIsDirty( getState() ) ).toBe( false );
+	} );
+
+	it( 'should commit current data as initialData', () => {
+		dispatch(
+			slice.actions.load( {
+				data: {},
+			} )
+		);
+
+		updateDisplayProp( 'h1' );
+
+		dispatch( slice.actions.commit() );
+
+		expect( selectData( getState() ) ).toEqual( {
+			h1: {
+				id: 'h1',
+				label: 'h1',
+				type: 'class',
+				variants: [
+					{
+						meta: DESKTOP_META,
+						props: { display: 'block' },
+						custom_css: null,
+					},
+				],
+			},
+		} );
+		expect( selectIsDirty( getState() ) ).toBe( false );
+	} );
 } );
