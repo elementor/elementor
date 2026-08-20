@@ -88,6 +88,7 @@ export const FRONTEND_ENTRIES = {
 	'youtube-handler': 'modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js',
 	'tabs-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js',
 	'tabs-preview-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js',
+	'accordion-preview-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/editor-accordion-state.js',
 	'background-video-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-handler.js',
 	'background-video-preview-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-preview-handler.js',
 	'atomic-widgets-action-link-handler': 'modules/atomic-widgets/assets/js/frontend/action-link-handlers.js',
