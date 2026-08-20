@@ -28,8 +28,6 @@ class Module extends BaseModule {
 	}
 
 	public static function execute_while_rendering_markdown( callable $callback ) {
-		// Markdown rendering must not enqueue editor CSS or parse post stylesheets.
-		// The render mode lets CSS and document cache layers skip those side effects while widgets render.
 		return Widget_Content_Render_Mode::execute_as( Widget_Content_Render_Mode::MARKDOWN, $callback );
 	}
 
@@ -55,6 +53,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		add_action( 'template_redirect', [ $this, 'maybe_serve_markdown' ], 1 );
+		add_action( 'wp_head', [ $this, 'print_agent_link_relations' ], 2 );
 
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'clear_all_markdown_cache' ] );
 		add_action( 'save_post', [ $this, 'clear_post_markdown_cache' ] );
@@ -72,15 +71,52 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_serve_markdown() {
-		if ( ! $this->is_markdown_request() ) {
+		$post_id = $this->resolve_requested_post_id();
+
+		if ( ! $post_id ) {
 			return;
 		}
 
-		if ( ! is_singular() ) {
+		$this->serve_markdown_for_post( $post_id );
+	}
+
+	public function print_agent_link_relations() {
+		if ( is_admin() || ! is_singular() ) {
 			return;
 		}
 
 		$post_id = get_the_ID();
+
+		if ( ! $this->can_serve_markdown_for_post( $post_id ) ) {
+			return;
+		}
+
+		$relations = Agent_Link_Relations::for_post( $post_id );
+
+		if ( ! $relations || $relations->is_empty() ) {
+			return;
+		}
+
+		$relations->print_html_link_tags();
+	}
+
+	private function resolve_requested_post_id(): int {
+		if ( $this->is_markdown_path_request() ) {
+			return Markdown_Url::resolve_post_id_from_request_path( Markdown_Url::get_request_path() );
+		}
+
+		if ( ! $this->is_content_negotiation_markdown_request() ) {
+			return 0;
+		}
+
+		if ( ! is_singular() ) {
+			return 0;
+		}
+
+		return (int) get_the_ID();
+	}
+
+	private function serve_markdown_for_post( int $post_id ): void {
 		$post = get_post( $post_id );
 
 		if ( ! $post ) {
@@ -117,13 +153,39 @@ class Module extends BaseModule {
 				}
 			}
 
-			Utils::do_not_cache();
-			status_header( 200 );
-			header( 'Content-Type: text/markdown; charset=utf-8' );
-			header( 'X-Content-Type-Options: nosniff' );
-			Utils::print_unescaped_internal_string( $markdown );
-			exit;
+			$this->send_markdown_response( $post_id, $markdown );
 		} );
+	}
+
+	private function send_markdown_response( int $post_id, string $markdown ): void {
+		$relations = Agent_Link_Relations::for_post( $post_id );
+		$link_header = $relations ? $relations->get_markdown_response_link_header_value() : '';
+
+		Utils::do_not_cache();
+		status_header( 200 );
+		header( 'Content-Type: text/markdown; charset=utf-8' );
+		header( 'X-Content-Type-Options: nosniff' );
+
+		if ( '' !== $link_header ) {
+			header( 'Link: ' . $link_header );
+		}
+
+		Utils::print_unescaped_internal_string( $markdown );
+		exit;
+	}
+
+	private function can_serve_markdown_for_post( int $post_id ): bool {
+		if ( 'publish' !== get_post_status( $post_id ) ) {
+			return false;
+		}
+
+		if ( post_password_required( $post_id ) ) {
+			return false;
+		}
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		return $document && $document->is_built_with_elementor();
 	}
 
 	private function is_valid_preview_request( int $post_id ): bool {
@@ -141,7 +203,11 @@ class Module extends BaseModule {
 		return current_user_can( 'edit_post', $post_id );
 	}
 
-	private function is_markdown_request(): bool {
+	private function is_markdown_path_request(): bool {
+		return Markdown_Url::is_markdown_request_path( Markdown_Url::get_request_path() );
+	}
+
+	private function is_content_negotiation_markdown_request(): bool {
 		if ( isset( $_GET['format'] ) && 'markdown' === $_GET['format'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
