@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
-
 class Test_New_Badge extends TestCase {
 
 	/**
@@ -36,6 +34,8 @@ class Test_New_Badge extends TestCase {
 			$this->markTestSkipped( 'ELEMENTOR_TESTS is already enabled.' );
 		}
 
+		$this->ensure_utils_loaded();
+
 		$this->assertTrue( New_Badge::should_show_for_element( 'e-background-video', '4.3.0' ) );
 	}
 
@@ -43,6 +43,8 @@ class Test_New_Badge extends TestCase {
 		if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
 			$this->markTestSkipped( 'ELEMENTOR_TESTS is already enabled.' );
 		}
+
+		$this->ensure_utils_loaded();
 
 		$this->assertFalse( New_Badge::should_show_for_element( 'e-heading', '4.3.0' ) );
 	}
@@ -59,5 +61,11 @@ class Test_New_Badge extends TestCase {
 		require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
 
 		$this->assertFalse( New_Badge::should_show_for_element( 'e-background-video', '4.3.0' ) );
+	}
+
+	private function ensure_utils_loaded(): void {
+		if ( ! class_exists( '\Elementor\Utils' ) ) {
+			require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
+		}
 	}
 }
