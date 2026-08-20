@@ -1,0 +1,13 @@
+{% import 'elementor/macros' as m %}
+{%- set tag = settings.tag | default('button') -%}
+{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+	{%- set tag = settings.link.tag | default('a') -%}
+{%- endif -%}
+<{{ tag | e('html_tag') }} class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
+	{{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }}
+	{#- A bare <button> defaults to type=submit, which would submit an enclosing e-form. -#}
+	{%- if 'button' == tag %} type="button"{% endif -%}
+	{{- m.render_link_attributes(settings.link | default(null)) }}
+	{{- m.render_custom_attributes(settings, editor_attributes) }}>
+	<!-- elementor-children-placeholder -->
+</{{ tag | e('html_tag') }}>

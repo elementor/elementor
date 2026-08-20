@@ -19,7 +19,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -42,6 +44,14 @@ class Atomic_Button extends Atomic_Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-e-button';
+	}
+
+	/**
+	 * The V4 Icon Button element replaces this leaf button in the widgets panel. The widget stays
+	 * registered so existing documents keep rendering — only the panel tile is hidden.
+	 */
+	public function show_in_panel() {
+		return ! Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_ICON_BUTTON );
 	}
 
 	protected static function define_props_schema(): array {

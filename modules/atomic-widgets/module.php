@@ -128,6 +128,9 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Back
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Controls\Atomic_Background_Video_Controls;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Icon_Button\Atomic_Icon_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Icon_Button\Atomic_Icon_Button_Content\Atomic_Icon_Button_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Icon_Button\Atomic_Icon_Button_Icon\Atomic_Icon_Button_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
@@ -200,6 +203,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_icon_button_to_button_position( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
@@ -338,6 +342,53 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	/**
+	 * Icon Button is a container element, so core lists it among the atomic *elements*, which always
+	 * precede the atomic *widgets* in the widgets panel — `Document::get_config()` builds the panel
+	 * list as `array_merge( $elements_config, $widget_types_config )` (see `core/base/document.php`),
+	 * and the panel renders tiles in that insertion order (there is no per-tile ordering field). Left
+	 * alone, a nested element therefore always sorts ahead of every atomic widget. The spec requires
+	 * the Icon Button tile to take the old Button's slot, which sits among the widgets (Heading,
+	 * Image, Paragraph, SVG, Button, Video...), so we re-insert its config right after SVG — Button's
+	 * historical neighbour — in the initial document's widget list that seeds the editor cache.
+	 */
+	private function move_icon_button_to_button_position( $settings ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ICON_BUTTON ) ) {
+			return $settings;
+		}
+
+		$type = Atomic_Icon_Button::get_element_type();
+
+		if ( empty( $settings['initial_document']['widgets'][ $type ] ) ) {
+			return $settings;
+		}
+
+		$widgets = $settings['initial_document']['widgets'];
+		$anchor = Atomic_Svg::get_element_type();
+
+		if ( ! isset( $widgets[ $anchor ] ) ) {
+			return $settings;
+		}
+
+		$config = $widgets[ $type ];
+
+		unset( $widgets[ $type ] );
+
+		$reordered = [];
+
+		foreach ( $widgets as $key => $widget ) {
+			$reordered[ $key ] = $widget;
+
+			if ( $anchor === $key ) {
+				$reordered[ $type ] = $config;
+			}
+		}
+
+		$settings['initial_document']['widgets'] = $reordered;
+
+		return $settings;
+	}
+
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
@@ -365,6 +416,12 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ICON_BUTTON ) ) {
+			$elements_manager->register_element_type( new Atomic_Icon_Button() );
+			$elements_manager->register_element_type( new Atomic_Icon_Button_Content() );
+			$elements_manager->register_element_type( new Atomic_Icon_Button_Icon() );
+		}
 
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
