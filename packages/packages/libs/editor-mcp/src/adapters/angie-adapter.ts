@@ -1,20 +1,24 @@
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 
-import { getRegisteredMcpServers, toMCPTitle } from '../mcp-registry';
+import { type getRegisteredMcpServers as _getRegisteredMcpServers } from '../mcp-registry';
+import { toMCPTitle } from '../utils/to-mcp-title';
 import { type IMcpRegistrationAdapter } from './types';
 
 const MAX_RETRIES = 3;
 
 export class AngieMcpAdapter implements IMcpRegistrationAdapter {
-	constructor( private readonly sdk: AngieMcpSdk ) {}
+	constructor(
+		private readonly sdk: AngieMcpSdk,
+		private readonly getRegisteredMcpServers: typeof _getRegisteredMcpServers
+	) {}
 
 	async activate(): Promise< void > {
 		await this.sdk.waitForReady();
-		await this.registerEntries( getRegisteredMcpServers(), MAX_RETRIES );
+		await this.registerEntries( this.getRegisteredMcpServers(), MAX_RETRIES );
 	}
 
 	private async registerEntries(
-		entries: ReturnType< typeof getRegisteredMcpServers >,
+		entries: ReturnType< typeof _getRegisteredMcpServers >,
 		retry: number
 	): Promise< void > {
 		if ( retry === 0 ) {

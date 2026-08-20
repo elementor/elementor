@@ -1,7 +1,7 @@
 import { type LinkPropValue } from '@elementor/editor-props';
 
-import { getContainer } from './sync/get-container';
 import { getElementSetting } from './sync/get-element-setting';
+import { getPreviewElementDOM } from './sync/get-preview-element-dom';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
 
@@ -24,8 +24,8 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 
 	if ( anchoredDescendantId ) {
 		return {
-			shouldRestrict: true,
-			reason: 'descendant',
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
 			elementId: anchoredDescendantId,
 		};
 	}
@@ -34,8 +34,8 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 
 	if ( hasInlineLink ) {
 		return {
-			shouldRestrict: true,
-			reason: 'descendant',
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
 			elementId,
 		};
 	}
@@ -44,8 +44,8 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 
 	if ( ancestor ) {
 		return {
-			shouldRestrict: true,
-			reason: 'ancestor',
+			shouldRestrict: true as const,
+			reason: 'ancestor' as const,
 			elementId: ancestor,
 		};
 	}
@@ -143,11 +143,7 @@ function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boo
 }
 
 function getElementDOM( id: string ) {
-	try {
-		return getContainer( id )?.view?.el || null;
-	} catch {
-		return null;
-	}
+	return getPreviewElementDOM( id );
 }
 
 function isElementorElement( element: Element ): boolean {

@@ -15,7 +15,7 @@ import { getMultiPropsValue, isMultiProps } from './multi-props';
 type CreatePropResolverArgs = {
 	transformers: TransformersRegistry;
 	schema: PropsSchema;
-	onPropResolve?: ( args: { key: string; value: unknown } ) => void;
+	onPropResolve?: ( args: { key: string; value: unknown; propValue: unknown; propType: PropType } ) => void;
 };
 
 type ResolveArgs = {
@@ -48,7 +48,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 				const value = props[ key ] ?? type.default;
 				const transformed = ( await transform( { value, key, type, signal, renderContext } ) ) as PropValue;
 
-				onPropResolve?.( { key, value: transformed } );
+				onPropResolve?.( { key, value: transformed, propValue: value, propType: type } );
 
 				if ( isMultiProps( transformed ) ) {
 					return getMultiPropsValue( transformed );

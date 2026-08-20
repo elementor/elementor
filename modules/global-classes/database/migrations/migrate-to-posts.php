@@ -3,11 +3,15 @@
 namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
-use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
-use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\GlobalClasses\Global_Classes_Post_IDs;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
+use Elementor\Modules\GlobalClasses\Utils\Kit_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,93 +22,64 @@ class Migrate_To_Posts extends Base_Migration {
 	use Has_Kit_Dependency;
 
 	public function up() {
-		$this->ensure_cpt_registered();
+		Global_Class_Post_Type::ensure_registered();
 
-		$migrated = $this->migrate_global_classes_to_posts();
+		$active_kit = $this->get_kit();
 
-		if ( ! $migrated ) {
-			return;
+		foreach ( Kit_Utils::get_all_kit_documents() as $kit ) {
+			$migrated = $this->migrate_kit( $kit );
+
+			if ( $migrated && $active_kit && $kit->get_id() === $active_kit->get_id() ) {
+				self::run_document_tracking( $kit );
+			}
 		}
-
-		$this->update_document_tracking();
 
 		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
 		// $this->cleanup_kit_meta();
 	}
 
-	private function ensure_cpt_registered(): void {
-		if ( ! post_type_exists( Global_Class_Post_Type::CPT ) ) {
-			( new Global_Class_Post_Type() )->register_post_type();
-		}
-	}
-
-	private function migrate_global_classes_to_posts(): bool {
-		$kit = $this->get_kit();
-
-		if ( ! $kit ) {
-			return false;
-		}
-
-		$global_classes = $kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+	public static function migrate_kit( Kit $kit ): bool {
+		$global_classes = self::get_aggregate_global_classes( $kit );
 
 		if ( empty( $global_classes ) || empty( $global_classes['items'] ) ) {
 			return false;
 		}
 
-		$existing_posts = $this->get_existing_class_posts();
+		$existing_order = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 
-		if ( ! empty( $existing_posts ) ) {
+		if ( ! empty( $existing_order ) ) {
 			return false;
 		}
 
 		$raw_items = $global_classes['items'];
 		$order = $global_classes['order'] ?? array_keys( $raw_items );
 
-		$items = $this->normalize_items( $raw_items );
+		$items = Global_Class_Data_Normalizer::normalize_styles( $raw_items );
 
 		Global_Classes_Repository::make( $kit )->put( $items, $order );
 
 		return true;
 	}
 
-	private function normalize_items( array $raw_items ): array {
-		$items = [];
+	public static function get_aggregate_global_classes( ?Kit $kit = null ): array {
+		$empty_result = [
+			'items' => [],
+			'order' => [],
+		];
 
-		foreach ( $raw_items as $class_id => $class_data ) {
-			$item = [
-				'id' => $class_id,
-				'label' => $class_data['label'] ?? $class_id,
-				'type' => $class_data['type'] ?? 'class',
-				'variants' => $class_data['variants'] ?? [],
-			];
-
-			if ( array_key_exists( 'sync_to_v3', $class_data ) ) {
-				$item['sync_to_v3'] = (bool) $class_data['sync_to_v3'];
-			}
-
-			$items[ $class_id ] = $item;
+		if ( ! $kit ) {
+			return $empty_result;
 		}
 
-		return $items;
+		return $kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND ) ?? $empty_result;
 	}
 
-	private function get_existing_class_posts(): array {
-		return get_posts( [
-			'post_type' => Global_Class_Post_Type::CPT,
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'fields' => 'ids',
-		] );
-	}
-
-	private function update_document_tracking(): void {
-		$kit = $this->get_kit();
-
+	public static function run_document_tracking( ?Kit $kit ): void {
 		if ( ! $kit ) {
 			return;
 		}
 
-		$valid_class_ids = Global_Classes_Order::make( $kit )->get_order();
+		$valid_class_ids = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 
 		if ( empty( $valid_class_ids ) ) {
 			return;

@@ -40,7 +40,7 @@
                   },
                   "props": {
                     "font-family": {
-                      "$$type": "string",
+                      "$$type": "font-family",
                       "value": "Helvetica"
                     },
                     "font-size": {

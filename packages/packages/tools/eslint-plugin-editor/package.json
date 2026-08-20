@@ -1,7 +1,7 @@
 {
   "name": "@elementor/eslint-plugin-editor",
   "description": "Elementor Editor ESLint plugin",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -37,15 +37,15 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.6.0"
+    "@typescript-eslint/utils": "^8.65.0"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^8.6.0",
+    "@typescript-eslint/rule-tester": "^8.65.0",
     "tsup": "^8.3.5"
   },
   "peerDependencies": {
-    "@typescript-eslint/parser": "^8.6.0",
-    "eslint": "^8.57.1",
-    "typescript": "^5.7.2"
+    "@typescript-eslint/parser": "^8.65.0",
+    "eslint": "^8.57.1 || ^9.0.0 || ^10.0.0",
+    "typescript": "^6.0.3"
   }
 }

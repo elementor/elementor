@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
@@ -132,7 +133,8 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
-			'font-family' => String_Prop_Type::make()->description( 'The font family of the text content.' ),
+			'font-family' => Font_Family_Prop_Type::make()
+				->description( 'The font family of the text content.' ),
 			'font-weight' => String_Prop_Type::make()->enum( [
 				'100',
 				'200',
@@ -353,6 +355,12 @@ class Style_Schema {
 			'grid-auto-flow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
+			'grid-auto-rows' => Size_Prop_Type::make()
+				->units( Size_Constants::grid_auto_track() )
+				->default_unit( Size_Constants::UNIT_FR ),
+			'grid-auto-columns' => Size_Prop_Type::make()
+				->units( Size_Constants::grid_auto_track() )
+				->default_unit( Size_Constants::UNIT_FR ),
 			'grid-column' => Span_Prop_Type::make()
 				->regex( '/^(?!.*https?:\/\/)(?!.*;).*$/' )
 				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value. Disallows URLs and semicolons.' ),

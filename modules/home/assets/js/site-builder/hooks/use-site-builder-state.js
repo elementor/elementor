@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getDeployedToPluginStep } from '../utils/planner-step-utils';
 
 const SETTINGS_PATH = 'elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
@@ -54,7 +55,10 @@ const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
 	if ( ! snapshotEntry ) {
 		return false;
 	}
-	if ( null !== snapshotStep && snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN ) {
+	if ( null === snapshotStep ) {
+		return false;
+	}
+	if ( snapshotStep >= getDeployedToPluginStep( plannerSteps ) ) {
 		return Array.isArray( snapshotEntry.pageSuggestions ) && snapshotEntry.pageSuggestions.length > 0;
 	}
 	return true;

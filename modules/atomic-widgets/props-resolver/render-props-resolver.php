@@ -24,6 +24,7 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	const CONTEXT_SETTINGS = 'settings';
 	const CONTEXT_STYLES = 'styles';
+	const CONTEXT_PLAIN = 'plain';
 
 	public static function for_styles(): self {
 		return static::instance( self::CONTEXT_STYLES );
@@ -31,6 +32,16 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	public static function for_settings(): self {
 		return static::instance( self::CONTEXT_SETTINGS );
+	}
+
+	public static function for_plain(): self {
+		return static::instance( self::CONTEXT_PLAIN );
+	}
+
+	public function resolve_value( $value, Prop_Type $prop_type ) {
+		$value = $this->get_validated_value( $prop_type, $value );
+
+		return $this->resolve_item( $value, null, $prop_type );
 	}
 
 	public function resolve( array $schema, array $props ): array {

@@ -4,7 +4,6 @@ namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
@@ -30,7 +29,6 @@ class Module extends BaseModule {
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			$this->add_component( 'top-bar-handler', new Top_Bar_Handler() );
-			$this->add_component( 'editor-one-pointer', new Editor_One_Pointer() );
 		}
 
 		add_action( 'current_screen', function () {

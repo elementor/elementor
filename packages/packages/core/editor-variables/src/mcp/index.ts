@@ -4,6 +4,12 @@ import { initManageVariableTool } from './manage-variable-tool';
 import { initVariablesResource } from './variables-resource';
 
 export function initMcp( reg: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) {
-	initManageVariableTool( reg );
-	initVariablesResource( reg, canvasMcpEntry );
+	window.addEventListener(
+		'elementor/init',
+		() => {
+			initManageVariableTool( reg );
+			initVariablesResource( reg, canvasMcpEntry );
+		},
+		{ once: true }
+	);
 }

@@ -1,8 +1,7 @@
-import { useRef, useEffect, useState } from 'react';
+import { lazy, Suspense, useRef, useEffect, useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
 import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
@@ -19,6 +18,8 @@ import PromptLibraryLink from '../../components/prompt-library-link';
 import { useRequestIds } from '../../context/requests-ids';
 import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
 import { splitText } from './splitTextResult';
+
+const ReactMarkdown = lazy( () => import( /* webpackChunkName: 'ai-react-markdown' */ 'react-markdown' ) );
 
 const generateUniqueId = () => `custom-css-${ Math.random().toString( 36 ).substr( 2, 9 ) }`;
 
@@ -171,13 +172,15 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 			{ data.result && (
 				<CodeDisplayWrapper>
-					<ReactMarkdown components={ {
-						code: ( props ) => (
-							<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
-						),
-					} }>
-						{ code }
-					</ReactMarkdown>
+					<Suspense fallback={ <Loader /> }>
+						<ReactMarkdown components={ {
+							code: ( props ) => (
+								<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
+							),
+						} }>
+							{ code }
+						</ReactMarkdown>
+					</Suspense>
 					{ details }
 					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 

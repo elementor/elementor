@@ -42,4 +42,5 @@ export type TagInstance = {
 	model: {
 		toJSON: () => Record< string, unknown >;
 	};
+	editorRenderPostId?: number;
 };

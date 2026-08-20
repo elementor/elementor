@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import type { PropTypeKey } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { VariableTypeProvider } from '../context/variable-type-context';
@@ -10,7 +9,6 @@ import { useQuotaPermissions } from '../hooks/use-quota-permissions';
 import { type Variable } from '../types';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
-import { usePanelActions } from './variables-manager/variables-manager-panel';
 import { VariablesSelection } from './variables-selection';
 
 const VIEW_LIST = 'list';
@@ -28,18 +26,11 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
-	const { open: openStandaloneVariablesPanel } = usePanelActions();
-	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
-		? () => {
-				if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
-					window.dispatchEvent(
-						new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
-					);
-				} else {
-					openStandaloneVariablesPanel();
-				}
-		  }
-		: undefined;
+	const onSettingsAvailable = () => {
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
+		);
+	};
 
 	return (
 		<VariableTypeProvider propTypeKey={ propTypeKey }>

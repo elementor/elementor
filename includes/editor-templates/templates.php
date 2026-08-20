@@ -551,7 +551,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						#>
 						<span class="upgrade-badge">
 							<a href="{{{ goLink }}}" target="_blank">
-								<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+								<i class="eicon-upgrade-crown-full"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 							</a>
 						</span>
 						<i class="eicon-info upgrade-tooltip" aria-hidden="true"></i>
@@ -647,7 +647,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						#>
 					<span class="upgrade-badge">
 						<a href="{{{ goLink }}}" target="_blank">
-							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+							<i class="eicon-upgrade-crown-full"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 						</a>
 					</span>
 					<# } else { #>

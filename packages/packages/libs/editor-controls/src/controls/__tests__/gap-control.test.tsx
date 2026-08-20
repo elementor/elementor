@@ -203,6 +203,39 @@ describe( 'GapControl', () => {
 		} );
 	} );
 
+	it( 'should not nest layout-direction when editing a cleared value that has a layout-direction placeholder', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const bind = 'gap';
+		const label = 'Gaps';
+
+		const placeholder = {
+			$$type: 'layout-direction',
+			value: {
+				column: { $$type: 'size', value: { unit: 'px', size: 20 } },
+				row: { $$type: 'size', value: { unit: 'px', size: 20 } },
+			},
+		};
+
+		const props = { setValue, value: null, placeholder, bind, propType };
+
+		renderControl( <GapControl label={ label } />, props );
+
+		const columnInput = screen.getAllByRole( 'spinbutton' )[ 0 ];
+
+		// Act.
+		fireEvent.input( columnInput, { target: { value: 100 } } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'layout-direction',
+			value: {
+				column: { $$type: 'size', value: { unit: 'px', size: 100 } },
+				row: { $$type: 'size', value: { unit: 'px', size: 20 } },
+			},
+		} );
+	} );
+
 	it( 'should return undefined size props when clicking toggle link button with null layout direction props', () => {
 		// Arrange.
 		const setValue = jest.fn();

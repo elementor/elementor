@@ -14,13 +14,14 @@ class Post_Query_Builder extends Query_Builder_Base {
 		$config = $this->config;
 
 		$params = Post_Query::build_query_params( [
-			Post_Query::KEYS_CONVERSION_MAP_KEY => $config[ Query_Base::KEYS_CONVERSION_MAP_KEY ] ?? null,
-			Post_Query::INCLUDED_TYPE_KEY => $config[ Query_Base::INCLUDED_TYPE_KEY ] ?? null,
-			Post_Query::EXCLUDED_TYPE_KEY => $config[ Query_Base::EXCLUDED_TYPE_KEY ] ?? null,
-			Post_Query::META_QUERY_KEY => $config[ Query_Base::META_QUERY_KEY ] ?? null,
-			Post_Query::TAX_QUERY_KEY => $config[ Query_Base::TAX_QUERY_KEY ] ?? null,
-			Post_Query::IS_PUBLIC_KEY => $config[ Query_Base::IS_PUBLIC_KEY ] ?? null,
-			Post_Query::ITEMS_COUNT_KEY => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
+			Post_Query::KEYS_CONVERSION_MAP_KEY  => $config[ Query_Base::KEYS_CONVERSION_MAP_KEY ] ?? null,
+			Post_Query::INCLUDED_TYPE_KEY        => $config[ Query_Base::INCLUDED_TYPE_KEY ] ?? null,
+			Post_Query::EXCLUDED_TYPE_KEY        => $config[ Query_Base::EXCLUDED_TYPE_KEY ] ?? null,
+			Post_Query::META_QUERY_KEY           => $config[ Query_Base::META_QUERY_KEY ] ?? null,
+			Post_Query::TAX_QUERY_KEY            => $config[ Query_Base::TAX_QUERY_KEY ] ?? null,
+			Post_Query::IS_PUBLIC_KEY            => $config[ Query_Base::IS_PUBLIC_KEY ] ?? null,
+			Post_Query::ITEMS_COUNT_KEY          => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
+			Post_Query::SEARCH_IN_CONTENT_KEY    => $config[ Post_Query::SEARCH_IN_CONTENT_KEY ] ?? null,
 		] );
 
 		$endpoint = $config['endpoint'] ?? Post_Query::ENDPOINT;

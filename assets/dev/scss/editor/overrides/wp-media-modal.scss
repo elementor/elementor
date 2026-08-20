@@ -1,0 +1,9 @@
+.elementor-editor-active {
+	.embed-media-settings {
+		.setting.caption { display: none; }
+		.setting.align { display: none; }
+		fieldset.setting-group {
+			display: none;
+		}
+	}
+}

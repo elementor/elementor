@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { numberPropTypeUtil, type QueryPropValue, stringPropTypeUtil } from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { debounce } from '@elementor/utils';
@@ -7,7 +7,7 @@ import { type CategorizedOption, type FlatOption, isCategorizedOptionPool } from
 
 type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
 
-type FetchOptionsParams = Record< string, unknown > & { term: string };
+type FetchOptionsParams = Record< string, unknown > & { term?: string };
 
 type UseQueryAutocompleteOptions = {
 	url: string;
@@ -47,14 +47,22 @@ export function useQueryAutocomplete( {
 		[ url, excludeIdSet ]
 	);
 
-	const updateOptions = ( term: string | null ) => {
-		setOptions( [] );
+	useEffect( () => {
+		if ( minInputLength === 0 && url ) {
+			fetchOptions( url, { ...params, term: '' } ).then( ( newOptions ) => {
+				setOptions( formatOptions( filterExcludedOptions( newOptions, excludeIdSet ) ) );
+			} );
+		}
+	}, [ url, minInputLength, excludeIdSet, params ] );
 
-		if ( ! term || ! url || term.length < minInputLength ) {
+	const updateOptions = ( term: string | null ) => {
+		const termStr = term ?? '';
+
+		if ( ! url || termStr.length < minInputLength ) {
 			return;
 		}
 
-		debounceFetch( { ...params, term } );
+		debounceFetch( { ...params, term: termStr } );
 	};
 
 	return { options, updateOptions };

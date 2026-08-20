@@ -60,6 +60,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Svg_Control::bind_to( 'svg' )
 						->set_label( __( 'SVG', 'elementor' ) ),

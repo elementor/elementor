@@ -17,12 +17,13 @@ export class EditorOneEventManager {
 	}
 
 	static dispatchEvent( eventName, payload ) {
-		if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
-			return false;
-		}
-
 		try {
-			return this.getEventsManager().dispatchEvent( eventName, payload );
+			if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
+				return false;
+			}
+
+			this.getEventsManager().dispatchEvent( eventName, payload );
+			return true;
 		} catch ( error ) {
 			return false;
 		}
@@ -60,7 +61,6 @@ export class EditorOneEventManager {
 	static createBasePayload( overrides = {} ) {
 		const config = this.getConfig();
 		return {
-			app_type: config?.appTypes?.editor ?? 'editor',
 			window_name: config?.appTypes?.editor ?? 'editor',
 			...overrides,
 		};
@@ -277,6 +277,94 @@ export class EditorOneEventManager {
 		}
 
 		return this.dispatchEvent( config?.names?.editorOne?.widgetPanelSearch, payload );
+	}
+
+	static createWpDashPayload( overrides = {} ) {
+		const config = this.getConfig();
+		return this.createBasePayload( {
+			window_name: config?.appTypes?.wpDash ?? 'wpdash',
+			target_location: this.toLowerSnake( config?.locations?.wpDashAdmin ),
+			location_l2: '',
+			...overrides,
+		} );
+	}
+
+	static sendWpDashElementorMenuClick() {
+		const config = this.getConfig();
+		return this.dispatchEvent( config?.names?.editorOne?.wpDashElementorMenuClick, this.createWpDashPayload( {
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
+			target_type: config?.targetTypes?.wpDashAdminMenuItem,
+			target_name: 'elementor_menu_item',
+			interaction_result: config?.interactionResults?.elementorSideMenuOpened,
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.wpDashElementorCoreMenu ),
+			interaction_description: 'core_user_clicked_elementor_menu_item',
+		} ) );
+	}
+
+	static sendWpDashEditorSubMenuHover() {
+		const config = this.getConfig();
+		return this.dispatchEvent( config?.names?.editorOne?.wpDashEditorSubMenuHover, this.createWpDashPayload( {
+			interaction_type: this.toLowerSnake( config?.triggers?.hover ),
+			target_type: config?.targetTypes?.wpDashEditorMenu,
+			target_name: 'wpdash_editor_sub_menu',
+			interaction_result: config?.interactionResults?.editorSubMenuOpened,
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.wpDashElementorCoreSubMenu ),
+			interaction_description: 'core_user_hovered_sub_menu',
+		} ) );
+	}
+
+	static sendWpDashThemeBuilderClick() {
+		const config = this.getConfig();
+		return this.dispatchEvent( config?.names?.editorOne?.wpDashThemeBuilderClick, this.createWpDashPayload( {
+			interaction_type: this.toLowerSnake( config?.triggers?.click ),
+			target_type: config?.targetTypes?.wpDashSubMenuItem,
+			target_name: 'theme_builder_menu_item',
+			interaction_result: config?.interactionResults?.themeBuilderPromotionWindow,
+			location_l1: this.toLowerSnake( config?.secondaryLocations?.wpDashThemeBuilder ),
+			interaction_description: 'core_user_clicked_theme_builder_menu_item',
+		} ) );
+	}
+
+	static sendSidebarMenuItemClicked( { eventId, groupEventId } ) {
+		try {
+			const config = this.getConfig();
+			const payload = this.createBasePayload( {
+				window_name: config?.windowNames?.sidebarMenu,
+				interaction_type: this.toLowerSnake( config?.triggers?.click ),
+				target_type: config?.targetTypes?.link,
+				target_name: eventId,
+				interaction_result: config?.interactionResults?.pageOpened,
+				target_location: this.toLowerSnake( config?.locations?.sidebar ),
+			} );
+
+			if ( groupEventId ) {
+				payload.location_l1 = groupEventId;
+			}
+
+			return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
+		} catch ( error ) {
+			return false;
+		}
+	}
+
+	static sendSidebarMenuGroupToggled( { eventId, isExpanded } ) {
+		try {
+			const config = this.getConfig();
+			const interactionResult = isExpanded
+				? config?.interactionResults?.expanded
+				: config?.interactionResults?.collapsed;
+
+			return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuGroupToggled, this.createBasePayload( {
+				window_name: config?.windowNames?.sidebarMenu,
+				interaction_type: this.toLowerSnake( config?.triggers?.click ),
+				target_type: config?.targetTypes?.toggle,
+				target_name: eventId,
+				interaction_result: interactionResult,
+				target_location: this.toLowerSnake( config?.locations?.sidebar ),
+			} ) );
+		} catch ( error ) {
+			return false;
+		}
 	}
 }
 

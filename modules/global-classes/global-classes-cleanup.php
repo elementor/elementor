@@ -17,23 +17,23 @@ class Global_Classes_Cleanup {
 
 	public function register_hooks() {
 		add_action(
-			'elementor/global_classes/update',
-			fn( $context, $changes ) => $this->on_classes_update( $changes ),
+			'elementor/global_classes/cleanup',
+			fn( array $deleted_class_ids, array $affected_post_ids ) => $this->on_classes_deleted( $deleted_class_ids, $affected_post_ids ),
 			10,
 			2
 		);
 	}
 
-	private function on_classes_update( array $changes ) {
-		$deleted_classes_ids = $changes['deleted'] ?? [];
-		$additional_post_types = apply_filters( 'elementor/global_classes/additional_post_types', [] );
+	private function on_classes_deleted( array $deleted_class_ids, array $affected_post_ids ) {
+		foreach ( $affected_post_ids as $post_id ) {
+			$document = Plugin::$instance->documents->get( $post_id );
 
-		if ( ! empty( $deleted_classes_ids ) ) {
-			Plugin::$instance->db->iterate_elementor_documents(
-				fn( $document, $elements_data ) => $this->unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ),
-				100,
-				$additional_post_types
-			);
+			if ( ! $document ) {
+				continue;
+			}
+
+			$elements_data = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+			$this->unapply_deleted_classes( $document, $elements_data, $deleted_class_ids );
 		}
 	}
 

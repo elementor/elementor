@@ -64,7 +64,6 @@ function getV1PanelElements() {
 		'#elementor-panel-header-wrapper',
 		'#elementor-panel-content-wrapper',
 		'#elementor-panel-state-loading',
-		'#elementor-panel-footer',
 	].join( ', ' );
 
 	return document.querySelectorAll( v1ElementsSelector );

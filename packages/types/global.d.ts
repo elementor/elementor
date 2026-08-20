@@ -1,8 +1,8 @@
-import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
-import type { ControlItem, V1Element } from '@elementor/editor-elements';
-import type { PropsSchema } from '@elementor/editor-props';
-import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
+import type { DynamicTag, DynamicTags, DynamicTagsManager, InteractionsConfig } from '@elementor/editor-editing-panel';
+import type { ControlItem, V1Element } from '@elementor/editor-elements';
+import type { PropsSchema, PropValue } from '@elementor/editor-props';
+import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 
 interface OnboardingConfig {
 	version: string;
@@ -29,11 +29,11 @@ interface OnboardingConfig {
 	userName?: string;
 	uiTheme?: 'auto' | 'dark' | 'light';
 	translations?: Record< string, string >;
-	steps: Array<{
+	steps: Array< {
 		id: string;
 		label: string;
 		type: 'single' | 'multiple';
-	}>;
+	} >;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -47,28 +47,35 @@ interface OnboardingConfig {
 
 declare global {
 	interface Window {
-		elementorCommon?: {
-		eventsManager?: {
-			dispatchEvent?: (name: string, data: unknown, options?: Record<string, unknown>) => void;
-			canSendEvents?: () => boolean;
-			initializeMixpanel?: (onLoaded: ( mpInstance?: unknown ) => void) => void;
-			enableTracking?: () => void;
-			isMixpanelReady?: () => boolean;
-			trackingEnabled?: boolean;
-			getMixpanelInstance?: () => unknown;
-			config?: {
-				locations?: Record<string, string>;
-				secondaryLocations?: Record<string, string>;
-				names?: Record<string, Record<string, string>>;
-				triggers?: Record<string, string>;
-				elements?: Record<string, string>;
-				appTypes?: Record<string, string>;
-				targetTypes?: Record<string, string>;
-				interactionResults?: Record<string, string>;
-				targetNames?: Record<string, Record<string, string>>;
+		$e?: {
+			routes?: {
+				getCurrent?: () => Record< string, string > | undefined;
+				register?: ( component: string, route: string, callback: () => unknown ) => unknown;
 			};
 		};
+		elementorCommon?: {
+			eventsManager?: {
+				dispatchEvent?: ( name: string, data: unknown, options?: Record< string, unknown > ) => void;
+				canSendEvents?: () => boolean;
+				initializeMixpanel?: ( onLoaded: ( mpInstance?: unknown ) => void ) => void;
+				enableTracking?: () => void;
+				isMixpanelReady?: () => boolean;
+				trackingEnabled?: boolean;
+				getMixpanelInstance?: () => unknown;
+				config?: {
+					locations?: Record< string, string >;
+					secondaryLocations?: Record< string, string >;
+					names?: Record< string, Record< string, string > >;
+					triggers?: Record< string, string >;
+					elements?: Record< string, string >;
+					appTypes?: Record< string, string >;
+					targetTypes?: Record< string, string >;
+					interactionResults?: Record< string, string >;
+					targetNames?: Record< string, Record< string, string > >;
+				};
+			};
 			config?: {
+				allowedHTMLWrapperTags?: string[];
 				experimentalFeatures?: Record< string, boolean >;
 				urls?: {
 					assets?: string;
@@ -96,10 +103,16 @@ declare global {
 		};
 		elementor?: {
 			$preview?: [ HTMLIFrameElement ];
+			changeEditMode?: ( newMode: string ) => void;
+			channels?: {
+				dataEditMode?: {
+					request: ( key: 'activeMode' ) => string;
+				};
+			};
 			selection?: {
 				getElements: () => V1Element[];
 			};
-			getContainer?: (id: string) => V1Element | undefined;
+			getContainer?: ( id: string ) => V1Element | undefined;
 			config?: {
 				angie?: {
 					autoShow?: boolean;
@@ -119,8 +132,18 @@ declare global {
 					angle?: string[];
 					time?: string[];
 					extended_units?: string[];
-				}
+				};
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
+				editingPanelStickyPromotion?: {
+					url: string;
+					message: string;
+					button_text: string;
+				};
+				user?: {
+					top_bar?: {
+						connect_url?: string;
+					};
+				};
 			};
 			dynamicTags?: DynamicTagsManager;
 			widgetsCache?: Record<
@@ -128,6 +151,7 @@ declare global {
 				{
 					atomic_controls?: ControlItem[];
 					atomic_props_schema?: PropsSchema;
+					base_settings?: Record< string, PropValue >;
 					controls: object;
 					title: string;
 				}
@@ -142,7 +166,7 @@ declare global {
 					filterName: string,
 					callback: (
 						regionViews: Record< string, unknown >,
-						options: { notice: unknown, elements: unknown }
+						options: { notice: unknown; elements: unknown }
 					) => Record< string, unknown >
 				) => void;
 			};
@@ -164,27 +188,24 @@ declare global {
 			};
 		};
 		elementorAppConfig?: {
-			'onboarding'?: OnboardingConfig;
-		'site-builder'?: {
-			iframeUrl?: string;
-			isAdmin?: boolean;
-			exitTo?: string;
-			elementorAiCurrentContext?: {
-				siteTitle: string;
-				siteAbout: unknown;
-			};
-			connectAuth?: {
-					signature: string;
-					accessToken: string;
-					clientId: string;
-					homeUrl: string;
-					siteKey: string;
+			onboarding?: OnboardingConfig;
+			'site-builder'?: {
+				iframeUrl?: string;
+				isAdmin?: boolean;
+				exitTo?: string;
+				elementorAiCurrentContext?: {
+					siteTitle: string;
+					siteAbout: unknown;
 				};
 			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;
 		ElementorVariablesQuotaConfigExtended?: Record< string, number >;
+		wpApiSettings?: {
+			root: string;
+			nonce: string;
+		};
 	}
 }
 

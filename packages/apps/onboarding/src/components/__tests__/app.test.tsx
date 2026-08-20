@@ -63,26 +63,6 @@ const defaultConfig: OnboardingConfig = {
 	nonce: 'test-nonce',
 	steps: [
 		{
-			id: 'building_for',
-			label: 'Who are you building for?',
-			type: 'single',
-		},
-		{
-			id: 'site_about',
-			label: 'What is your site about?',
-			type: 'multiple',
-		},
-		{
-			id: 'experience_level',
-			label: 'Experience level',
-			type: 'single',
-		},
-		{
-			id: 'theme_selection',
-			label: 'Theme selection',
-			type: 'single',
-		},
-		{
 			id: 'site_features',
 			label: 'Site features',
 			type: 'multiple',
@@ -90,7 +70,7 @@ const defaultConfig: OnboardingConfig = {
 	],
 	translations: DEFAULT_STRINGS,
 	progress: {
-		current_step_id: 'building_for',
+		current_step_id: 'site_features',
 		current_step_index: 0,
 		completed_steps: [],
 	},
@@ -152,7 +132,7 @@ describe( 'App', () => {
 			expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should navigate to first step after clicking "Continue as a guest"', async () => {
+		it( 'should navigate to first step after clicking "Skip"', async () => {
 			// Arrange
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: false,
@@ -161,7 +141,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			// Assert - should now show the onboarding steps, not login
 			await waitFor( () => {
@@ -193,7 +173,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// First, continue as guest to get past login
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			await waitFor( () => {
 				expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
@@ -237,7 +217,7 @@ describe( 'App', () => {
 
 			// Assert
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Continue' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Continue with Free' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Back' ) ).toBeInTheDocument();
 		} );
@@ -246,13 +226,13 @@ describe( 'App', () => {
 			// Arrange
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
-				choices: { building_for: 'myself' },
+				choices: { site_features: [ 'theme_builder' ] },
 			} );
 
 			render( <App /> );
 
 			// Act
-			fireEvent.click( screen.getByText( 'Continue' ) );
+			fireEvent.click( screen.getByText( 'Continue with Free' ) );
 
 			// Assert - API should be called with complete_step
 			await waitFor( () => {
@@ -266,14 +246,14 @@ describe( 'App', () => {
 			} );
 		} );
 
-		it( 'should show "Finish" button on last step', () => {
+		it( 'should show "Continue with Free" button on last step', () => {
 			// Arrange - start on last step
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
 				progress: {
 					current_step_id: 'site_features',
-					current_step_index: 4,
-					completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection' ],
+					current_step_index: 0,
+					completed_steps: [],
 				},
 			} );
 
@@ -303,8 +283,8 @@ describe( 'App', () => {
 				choices: { site_features: [ 'contact_form' ] },
 				progress: {
 					current_step_id: 'site_features',
-					current_step_index: 4,
-					completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection' ],
+					current_step_index: 0,
+					completed_steps: [],
 				},
 			} );
 
@@ -372,7 +352,7 @@ describe( 'App', () => {
 			render( <App /> );
 
 			// Act - continue as guest
-			fireEvent.click( screen.getByText( 'Continue as a guest' ) );
+			fireEvent.click( screen.getByText( 'Skip' ) );
 
 			// Assert - should go to steps, not pro install (guests are not connected)
 			expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
@@ -446,8 +426,8 @@ describe( 'App', () => {
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should remove site_features step after successful Pro installation', async () => {
-			// Arrange - user is on theme_selection (step 4 of 5), Pro install screen is pending
+		it( 'should switch to theme_selection after successful Pro installation on free config', async () => {
+			// Arrange
 			mockFetch.mockResolvedValue( {
 				ok: true,
 				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
@@ -456,35 +436,33 @@ describe( 'App', () => {
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
 				shouldShowProInstallScreen: true,
+				steps: [
+					{
+						id: 'site_features',
+						label: 'Site features',
+						type: 'multiple',
+					},
+				],
 				progress: {
-					current_step_id: 'theme_selection',
-					current_step_index: 3,
-					completed_steps: [ 'building_for', 'site_about', 'experience_level' ],
+					current_step_id: 'site_features',
+					current_step_index: 0,
+					completed_steps: [],
 				},
 			} );
 
 			render( <App /> );
 			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
 
-			// Act - install Pro
+			// Act
 			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
 
-			// Assert - pro screen dismissed, onboarding steps shown
+			// Assert
 			await waitFor( () => {
 				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
 			} );
 
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
-			fireEvent.click( screen.getByText( 'Skip' ) );
-
-			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalledWith(
-					expect.stringContaining( 'user-progress' ),
-					expect.objectContaining( {
-						body: expect.stringContaining( '"complete":true' ),
-					} )
-				);
-			} );
+			expect( screen.getByText( 'Build faster with Hello Theme' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -507,11 +485,47 @@ describe( 'App', () => {
 				'_blank'
 			);
 		} );
+
+		it( 'should show Upgrade on the Connect screen', () => {
+			const mockOpen = jest.fn();
+			window.open = mockOpen;
+
+			window.elementorAppConfig = createMockConfig( { isConnected: false } );
+
+			render( <App /> );
+
+			expect( screen.getByTestId( 'login-screen' ) ).toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Upgrade' ) );
+
+			expect( mockOpen ).toHaveBeenCalledWith(
+				'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=2.0.0',
+				'_blank'
+			);
+		} );
 	} );
 
 	describe( 'Progress restoration', () => {
 		it( 'should restore user to saved step index', () => {
-			// Arrange - user was on step 2
+			// Arrange - user was on the only remaining step
+			window.elementorAppConfig = createMockConfig( {
+				isConnected: true,
+				progress: {
+					current_step_id: 'site_features',
+					current_step_index: 0,
+					completed_steps: [],
+				},
+			} );
+
+			// Act
+			render( <App /> );
+
+			// Assert - should show onboarding steps, not login
+			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
+			expect( screen.getByTestId( 'site-features-step' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should fall back to first step when saved progress points to a removed step', () => {
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
 				progress: {
@@ -521,13 +535,9 @@ describe( 'App', () => {
 				},
 			} );
 
-			// Act
 			render( <App /> );
 
-			// Assert - should show onboarding steps, not login
-			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
-			// And Skip should be visible since we're not on last step
-			expect( screen.getByText( 'Skip' ) ).toBeInTheDocument();
+			expect( screen.getByTestId( 'site-features-step' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

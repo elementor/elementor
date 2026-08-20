@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
+import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import { ChecklistHelper } from './helper';
@@ -12,7 +13,10 @@ test.describe( 'Launchpad checklist tests', () => {
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await wpAdmin.setExperiments( { 'launchpad-checklist': 'active' } );
 
 		await checklistHelper.resetStepsInDb( request, { e_editor_counter: 0 } );
 
@@ -21,28 +25,41 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests, request } ) => {
+	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await apiRequests.deleteUser( request, newTestUser.id );
 		await apiRequests.cleanUpTestPages( request, false );
 
+		await wpAdmin.resetExperiments();
+
 		await page.close();
 	} );
 
-	test( 'Checklist automatically opens on the 2nd visit to the editor', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Checklist automatically opens on the 2nd visit to the editor', async ( { page, apiRequests, request }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.resetEditorVisitCounter( request, 0 );
+
+		const firstVisitProgress = checklistHelper.waitForUserProgressResponse( page, false );
 
 		await wpAdmin.openNewPage();
-
-		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+		await firstVisitProgress;
 
 		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeFalsy();
 
-		await page.reload();
-		await page.locator( selectors.popup ).waitFor();
+		await checklistHelper.enableChecklistVisibilityPreference();
+		await checklistHelper.resetEditorVisitCounter( request, 1 );
 
-		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeTruthy();
+		const shouldOpenResponse = checklistHelper.waitForUserProgressResponse( page, true );
+
+		await page.reload();
+		await wpAdmin.waitForPanel();
+		await shouldOpenResponse;
+
+		await expect( page.locator( selectors.popup ) ).toBeVisible( { timeout: timeouts.heavyAction } );
 	} );
 
 	test( 'Checklist module general test', async ( { page, apiRequests }, testInfo ) => {

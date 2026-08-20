@@ -10,6 +10,8 @@ type EventMap = {
 	confirmed: { conflict_choice: ConflictStrategy };
 	imported: object;
 	importFailed: object;
+	export: object;
+	opened: object;
 };
 
 export type DesignSystemTrackingEvent = {

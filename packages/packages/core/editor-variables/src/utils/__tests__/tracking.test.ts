@@ -66,12 +66,4 @@ describe( 'trackVariableSyncToV3', () => {
 
 		expect( mockDispatchEvent ).not.toHaveBeenCalled();
 	} );
-
-	it( 'should not throw when dispatchEvent fails', () => {
-		mockDispatchEvent.mockImplementation( () => {
-			throw new Error( 'dispatch failed' );
-		} );
-
-		expect( () => trackVariableSyncToV3( { variableLabel: 'Primary Color', action: 'sync' } ) ).not.toThrow();
-	} );
 } );

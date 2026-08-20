@@ -31,6 +31,10 @@ class Form_Error_Message extends Form_Message {
 		return '#870000';
 	}
 
+	protected static function get_default_status_paragraph_text(): string {
+		return __( 'We couldn’t process your submission. Please retry', 'elementor' );
+	}
+
 	protected function get_css_id_control_meta(): array {
 		return [
 			'layout' => 'two-columns',

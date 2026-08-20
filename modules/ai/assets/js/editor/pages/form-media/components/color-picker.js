@@ -6,7 +6,7 @@ import { HexColorPicker } from 'react-colorful';
 
 const ColorInput = ( { label, color, onChange, disabled } ) => {
 	const [ isOpened, setIsOpened ] = useState( false );
-	const anchorEl = useRef( );
+	const anchorEl = useRef();
 	const [ zIndex, setZIndex ] = useState( 170001 );
 	const isRTL = elementorCommon?.config?.isRTL ?? true;
 

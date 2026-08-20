@@ -1,5 +1,5 @@
 import type * as Types from '../../../types';
-import { propTypeToJsonSchema } from '../../props-to-llm-schema';
+import { propTypeToJsonSchema, setDynamicTagNamesResolver } from '../../props-to-llm-schema';
 import { STUBS } from '../../test-utils/stubs';
 import { validatePropValue } from '../../validate-prop-value';
 
@@ -87,6 +87,185 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 						expect( errors ).toHaveLength( 0 );
 					} );
 				} );
+			} );
+		} );
+
+		describe( 'Dynamic union member', () => {
+			const dynamicPropType = STUBS.dynamicText;
+
+			const getDynamicVariant = ( jsonSchema: ReturnType< typeof propTypeToJsonSchema > ) =>
+				( jsonSchema.anyOf ?? [] ).find( ( variant ) => variant.properties?.$$type?.const === 'dynamic' );
+
+			afterEach( () => {
+				setDynamicTagNamesResolver( null );
+			} );
+
+			it( 'requires only the tag name from the LLM (group is resolved by the host)', () => {
+				// Arrange & Act
+				const jsonSchema = propTypeToJsonSchema( dynamicPropType );
+				const dynamicVariant = getDynamicVariant( jsonSchema );
+
+				// Assert
+				expect( dynamicVariant ).toBeDefined();
+				expect( dynamicVariant?.properties?.value?.required ).toEqual( [ 'name' ] );
+				expect( dynamicVariant?.properties?.value?.properties ).not.toHaveProperty( 'group' );
+			} );
+
+			it( 'constrains the tag name to the host-provided allowed tags', () => {
+				// Arrange
+				setDynamicTagNamesResolver( () => [ 'post-title', 'site-title' ] );
+
+				// Act
+				const dynamicVariant = getDynamicVariant( propTypeToJsonSchema( dynamicPropType ) );
+
+				// Assert
+				expect( dynamicVariant?.properties?.value?.properties?.name?.enum ).toEqual( [
+					'post-title',
+					'site-title',
+				] );
+			} );
+
+			it( 'never inlines the dynamic tags catalog (settings stays an open object)', () => {
+				// Arrange & Act
+				const dynamicVariant = getDynamicVariant( propTypeToJsonSchema( dynamicPropType ) );
+				const settingsSchema = dynamicVariant?.properties?.value?.properties?.settings;
+
+				// Assert
+				expect( settingsSchema?.type ).toBe( 'object' );
+				expect( settingsSchema?.properties ).toBeUndefined();
+			} );
+
+			it( 'still drops the overridable union member', () => {
+				// Arrange & Act
+				const jsonSchema = propTypeToJsonSchema( dynamicPropType );
+
+				// Assert
+				const overridableVariant = ( jsonSchema.anyOf ?? [] ).find(
+					( variant ) => variant.properties?.$$type?.const === 'overridable'
+				);
+				expect( overridableVariant ).toBeUndefined();
+			} );
+
+			it( 'accepts a dynamic PropValue carrying just a name', () => {
+				// Arrange
+				const propValue = { $$type: 'dynamic', value: { name: 'post-title' } };
+
+				// Act
+				const { valid, errorMessages } = validatePropValue( dynamicPropType, propValue );
+
+				// Assert
+				expect( errorMessages ).toBe( '' );
+				expect( valid ).toBe( true );
+			} );
+
+			it( 'still accepts the non-dynamic member of the union', () => {
+				// Arrange
+				const propValue = { $$type: 'string', value: 'static text' };
+
+				// Act
+				const { valid } = validatePropValue( dynamicPropType, propValue );
+
+				// Assert
+				expect( valid ).toBe( true );
+			} );
+
+			it( 'rejects a dynamic PropValue missing the tag name', () => {
+				// Arrange
+				const propValue = { $$type: 'dynamic', value: { settings: {} } };
+
+				// Act
+				const { valid } = validatePropValue( dynamicPropType, propValue );
+
+				// Assert
+				expect( valid ).toBe( false );
+			} );
+		} );
+
+		describe( 'Dynamic is a whole-value replacement (outermost only)', () => {
+			const titlePropType = STUBS.htmlV3Title;
+
+			const findVariant = ( variants: ReturnType< typeof propTypeToJsonSchema >[ 'anyOf' ], constKey: string ) =>
+				( variants ?? [] ).find( ( variant ) => variant.properties?.$$type?.const === constKey );
+
+			it( 'offers dynamic at the property root', () => {
+				// Arrange & Act
+				const jsonSchema = propTypeToJsonSchema( titlePropType );
+
+				// Assert
+				expect( findVariant( jsonSchema.anyOf, 'dynamic' ) ).toBeDefined();
+			} );
+
+			it( 'does not duplicate dynamic on a nested field once the root offers it', () => {
+				// Arrange & Act
+				const jsonSchema = propTypeToJsonSchema( titlePropType );
+				const htmlVariant = findVariant( jsonSchema.anyOf, 'html-v3' );
+				const contentVariants = htmlVariant?.properties?.value?.properties?.content?.anyOf;
+
+				// Assert
+				expect( findVariant( contentVariants, 'string' ) ).toBeDefined();
+				expect( findVariant( contentVariants, 'dynamic' ) ).toBeUndefined();
+			} );
+
+			it( 'still accepts a whole-property dynamic value', () => {
+				// Arrange
+				const propValue = {
+					$$type: 'dynamic',
+					value: { name: 'post-title', group: 'post', settings: {} },
+				};
+
+				// Act
+				const { valid } = validatePropValue( titlePropType, propValue );
+
+				// Assert
+				expect( valid ).toBe( true );
+			} );
+		} );
+
+		describe( 'Dynamic on a nested field (image src)', () => {
+			const imagePropType = STUBS.dynamicImage;
+
+			const findVariant = ( variants: ReturnType< typeof propTypeToJsonSchema >[ 'anyOf' ], constKey: string ) =>
+				( variants ?? [] ).find( ( variant ) => variant.properties?.$$type?.const === constKey );
+
+			it( 'offers dynamic on the nested src, not on the image root', () => {
+				// Arrange & Act
+				const jsonSchema = propTypeToJsonSchema( imagePropType );
+				const srcSchema = jsonSchema.properties?.value?.properties?.src;
+
+				// Assert
+				expect( jsonSchema.anyOf ).toBeUndefined();
+				expect( jsonSchema.properties?.$$type?.const ).toBe( 'image' );
+				expect( findVariant( srcSchema?.anyOf, 'dynamic' ) ).toBeDefined();
+				expect( findVariant( srcSchema?.anyOf, 'image-src' ) ).toBeDefined();
+			} );
+
+			it( 'accepts an image whose src is dynamic', () => {
+				// Arrange
+				const propValue = {
+					$$type: 'image',
+					value: {
+						src: { $$type: 'dynamic', value: { name: 'featured-image' } },
+						size: { $$type: 'string', value: 'full' },
+					},
+				};
+
+				// Act
+				const { valid, errorMessages } = validatePropValue( imagePropType, propValue );
+
+				// Assert
+				expect( errorMessages ).toBe( '' );
+				expect( valid ).toBe( true );
+			} );
+
+			it( 'rejects a dynamic value placed at the image root', () => {
+				// Arrange
+				const propValue = { $$type: 'dynamic', value: { name: 'featured-image' } };
+
+				// Act
+				const { valid } = validatePropValue( imagePropType, propValue );
+
+				// Assert
+				expect( valid ).toBe( false );
 			} );
 		} );
 	} );

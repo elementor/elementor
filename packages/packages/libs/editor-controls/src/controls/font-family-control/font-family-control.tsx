@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { stringPropTypeUtil } from '@elementor/editor-props';
+import { fontFamilyPropTypeUtil } from '@elementor/editor-props';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -30,7 +30,7 @@ export const FontFamilyControl = createControl(
 			setValue: setFontFamily,
 			disabled,
 			placeholder,
-		} = useBoundProp( stringPropTypeUtil );
+		} = useBoundProp( fontFamilyPropTypeUtil );
 
 		const popoverState = usePopupState( { variant: 'popover' } );
 		const isShowingPlaceholder = ! fontFamily && placeholder;

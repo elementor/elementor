@@ -77,6 +77,7 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
+				->description( 'The HTML tag for the div block container. One of: div, header, section, article, aside, footer, a (link), or button. Do not use heading or paragraph tags.' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),

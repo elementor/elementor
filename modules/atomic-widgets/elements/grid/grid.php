@@ -1,9 +1,13 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Grid;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -25,6 +29,8 @@ class Grid extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
+
+	public static $widget_description = 'CSS grid layout. Always set grid-template-rows to match the actual number of rows the children fill. Empty fr row tracks do not collapse and render as an equal-height empty band below the content.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -77,7 +83,7 @@ class Grid extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
-				->description( 'The HTML tag for the grid container. Could be div, header, section, article, aside, footer, or a (link).' )
+				->description( 'The HTML tag for the grid container. One of: div, header, section, article, aside, footer, a (link), or button.' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -135,14 +141,39 @@ class Grid extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'grid' );
-
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
+						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP )
+						->add_prop( 'display', String_Prop_Type::generate( 'grid' ) )
 						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'grid-template-columns', Grid_Track_Size_Prop_Type::generate( [
+							'size' => 3,
+							'unit' => 'fr',
+						] ) )
+						->add_prop( 'grid-template-rows', Grid_Track_Size_Prop_Type::generate( [
+							'size' => 2,
+							'unit' => 'fr',
+						] ) )
+						->add_prop( 'gap', Layout_Direction_Prop_Type::generate( [
+							'column' => Size_Prop_Type::generate( [
+								'size' => 20,
+								'unit' => 'px',
+							] ),
+							'row' => Size_Prop_Type::generate( [
+								'size' => 20,
+								'unit' => 'px',
+							] ),
+						] ) )
+				)
+				->add_variant(
+					Style_Variant::make()
+						->set_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE )
+						->add_prop( 'grid-template-columns', Grid_Track_Size_Prop_Type::generate( [
+							'size' => 1,
+							'unit' => 'fr',
+						] ) )
 				),
 		];
 	}

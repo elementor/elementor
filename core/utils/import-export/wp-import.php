@@ -27,7 +27,7 @@ if ( ! class_exists( 'WP_Importer' ) ) {
 	$class_wp_importer = ABSPATH . 'wp-admin/includes/class-wp-importer.php';
 
 	if ( file_exists( $class_wp_importer ) ) {
-		require $class_wp_importer;
+		require_once $class_wp_importer;
 	}
 }
 

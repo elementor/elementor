@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ControlToggleButtonGroup, type ToggleButtonGroupItem } from '@elementor/editor-controls';
+import { ControlToggleButtonGroup, type ToggleButtonGroupItem, useBoundProp } from '@elementor/editor-controls';
 import { type StringPropValue } from '@elementor/editor-props';
 import { ArrowDownSmallIcon, ArrowRightIcon, LayoutDashboardIcon } from '@elementor/icons';
 import { Grid, ToggleButton, Tooltip, withDirection } from '@elementor/ui';
@@ -32,9 +32,9 @@ const directionOptions: ToggleButtonGroupItem< AutoFlowDirection >[] = [
 	},
 ];
 
-const parseAutoFlow = ( value: string | null ): { direction: AutoFlowDirection; dense: boolean } => {
+const parseAutoFlow = ( value: string | null ): { direction: AutoFlowDirection | null; dense: boolean } => {
 	if ( ! value ) {
-		return { direction: 'row', dense: false };
+		return { direction: null, dense: false };
 	}
 	const dense = value.includes( 'dense' );
 	const direction = value.replace( /\s*dense\s*/, '' ).trim() as AutoFlowDirection;
@@ -46,21 +46,25 @@ const composeAutoFlow = ( direction: AutoFlowDirection, dense: boolean ): string
 };
 
 const GridAutoFlowFieldContent = () => {
-	const { value, setValue } = useStylesField< StringPropValue | null >( 'grid-auto-flow', {
+	const { value, setValue, canEdit } = useStylesField< StringPropValue | null >( 'grid-auto-flow', {
 		history: { propDisplayName: AUTO_FLOW_LABEL },
 	} );
+	const { placeholder } = useBoundProp();
 
 	const { direction, dense } = parseAutoFlow( value?.value ?? null );
+	const directionPlaceholder = parseAutoFlow( ( placeholder as StringPropValue | null )?.value ?? null ).direction;
 
 	const handleDirectionChange = ( newDirection: AutoFlowDirection | null ) => {
 		if ( ! newDirection ) {
+			setValue( null );
 			return;
 		}
 		setValue( { $$type: 'string', value: composeAutoFlow( newDirection, dense ) } );
 	};
 
 	const handleDenseToggle = () => {
-		setValue( { $$type: 'string', value: composeAutoFlow( direction, ! dense ) } );
+		const nextDirection = direction ?? 'row';
+		setValue( { $$type: 'string', value: composeAutoFlow( nextDirection, ! dense ) } );
 	};
 
 	return (
@@ -70,9 +74,11 @@ const GridAutoFlowFieldContent = () => {
 					<ControlToggleButtonGroup
 						items={ directionOptions }
 						value={ direction }
+						placeholder={ directionPlaceholder }
 						onChange={ handleDirectionChange }
 						exclusive={ true }
 						fullWidth={ true }
+						disabled={ ! canEdit }
 					/>
 				</Grid>
 				<Grid item>
@@ -83,6 +89,7 @@ const GridAutoFlowFieldContent = () => {
 							onChange={ handleDenseToggle }
 							size="tiny"
 							aria-label={ DENSE_LABEL }
+							disabled={ ! canEdit }
 						>
 							<LayoutDashboardIcon fontSize="tiny" />
 						</ToggleButton>

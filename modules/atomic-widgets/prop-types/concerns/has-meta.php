@@ -38,7 +38,25 @@ trait Has_Meta {
 		return $this;
 	}
 
+	public function alias( string ...$aliases ): self {
+		$existing = $this->meta['aliases'] ?? [];
+
+		if ( ! is_array( $existing ) ) {
+			$existing = [];
+		}
+
+		$this->meta['aliases'] = array_values( array_unique( array_merge( $existing, $aliases ) ) );
+
+		return $this;
+	}
+
 	public function get_meta_item( $key, $default_value = null ) {
 		return array_key_exists( $key, $this->meta ) ? $this->meta[ $key ] : $default_value;
+	}
+
+	public function get_aliases(): array {
+		$aliases = $this->meta['aliases'] ?? [];
+
+		return is_array( $aliases ) ? $aliases : [];
 	}
 }

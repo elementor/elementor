@@ -18,10 +18,39 @@ describe( 'getComponentDocuments', () => {
 		const elements: V1ElementData[] = [];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 0 );
+	} );
+
+	it( 'should ignore undefined elements', async () => {
+		// Arrange
+		const componentId = 123;
+		const mockDocument = createMockDocumentData( { id: componentId } );
+		mockGetComponentDocumentData.mockResolvedValueOnce( mockDocument );
+
+		const elements = [
+			undefined,
+			createMockElementData( {
+				widgetType: 'e-component',
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: {
+							component_id: { $$type: 'number', value: componentId },
+						},
+					},
+				},
+			} ),
+		] as V1ElementData[];
+
+		// Act
+		const result = await getComponentDocuments( { elements } );
+
+		// Assert
+		expect( result.size ).toBe( 1 );
+		expect( result.has( componentId ) ).toBe( true );
 	} );
 
 	it( 'should return empty map for non-component elements', async () => {
@@ -38,7 +67,7 @@ describe( 'getComponentDocuments', () => {
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 0 );
@@ -65,7 +94,7 @@ describe( 'getComponentDocuments', () => {
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 1 );
@@ -94,7 +123,7 @@ describe( 'getComponentDocuments', () => {
 		const elements = [ element ];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 1 );
@@ -136,7 +165,7 @@ describe( 'getComponentDocuments', () => {
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 2 );
@@ -175,7 +204,7 @@ describe( 'getComponentDocuments', () => {
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 1 );
@@ -221,11 +250,57 @@ describe( 'getComponentDocuments', () => {
 		} );
 
 		// Act
-		const result = await getComponentDocuments( [ parentElement ] );
+		const result = await getComponentDocuments( { elements: [ parentElement ] } );
 
 		// Assert
 		expect( result.size ).toBe( 2 );
 		expect( [ ...result.keys() ] ).toEqual( [ parentComponentId, childComponentId ] );
+	} );
+
+	it( 'should not process nested components when isRecursive is false', async () => {
+		// Arrange
+		const parentComponentId = 400;
+		const childComponentId = 500;
+
+		const childElement = createMockElementData( {
+			widgetType: 'e-component',
+			settings: {
+				component_instance: {
+					$$type: 'component-instance',
+					value: {
+						component_id: { $$type: 'number', value: childComponentId },
+					},
+				},
+			},
+		} );
+
+		const parentDocument = {
+			...createMockDocumentData( { id: parentComponentId } ),
+			elements: [ childElement ],
+		};
+
+		mockGetComponentDocumentData.mockResolvedValueOnce( parentDocument );
+
+		const parentElement = createMockElementData( {
+			widgetType: 'e-component',
+			settings: {
+				component_instance: {
+					$$type: 'component-instance',
+					value: {
+						component_id: { $$type: 'number', value: parentComponentId },
+					},
+				},
+			},
+		} );
+
+		// Act
+		const result = await getComponentDocuments( { elements: [ parentElement ], isRecursive: false } );
+
+		// Assert
+		expect( result.size ).toBe( 1 );
+		expect( [ ...result.keys() ] ).toEqual( [ parentComponentId ] );
+		expect( mockGetComponentDocumentData ).toHaveBeenCalledTimes( 1 );
+		expect( mockGetComponentDocumentData ).toHaveBeenCalledWith( parentComponentId );
 	} );
 
 	it( 'should recursively process nested child elements', async () => {
@@ -291,7 +366,7 @@ describe( 'getComponentDocuments', () => {
 			.mockResolvedValueOnce( document3 );
 
 		// Act
-		const result = await getComponentDocuments( [ parent ] );
+		const result = await getComponentDocuments( { elements: [ parent ] } );
 
 		// Assert
 		expect( result.size ).toBe( 3 );
@@ -321,7 +396,7 @@ describe( 'getComponentDocuments', () => {
 		];
 
 		// Act
-		const result = await getComponentDocuments( elements );
+		const result = await getComponentDocuments( { elements } );
 
 		// Assert
 		expect( result.size ).toBe( 1 );

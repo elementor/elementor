@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
-	const URL = 'https://go.elementor.com/pro-admin-menu/';
+	const URL = 'https://go.elementor.com/go-pro-upgrade-one-wp-menu/';
 
 	public function get_name() {
 		return 'admin_menu_promo';

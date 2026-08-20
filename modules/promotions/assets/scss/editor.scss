@@ -6,8 +6,8 @@
 		justify-content: space-between;
 
 		&:hover {
-			.eicon-lock.e-control-display-conditions-promotion {
-				color: var(--e-a-color-accent)
+			.eicon-upgrade-crown-full.e-control-display-conditions-promotion {
+				color: var(--e-a-color-accent-promotion)
 			}
 		}
 	}
@@ -26,6 +26,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		.eicon-upgrade-crown-full {
+			color: var(--e-a-color-accent-promotion-disabled);
+		}
 	}
 
 	&.eicon-flow {
@@ -45,8 +49,8 @@
 .e-control-motion-effects-promotion, .e-control-promotion {
 	&__wrapper {
 		&:hover {
-			.eicon-lock {
-				color: var(--e-a-color-accent)
+			.eicon-upgrade-crown-full {
+				color: var(--e-a-color-accent-promotion)
 			}
 		}
 
@@ -77,6 +81,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		.eicon-upgrade-crown-full {
+			color: var(--e-a-color-accent-promotion-disabled);
+		}
 	}
 }
 

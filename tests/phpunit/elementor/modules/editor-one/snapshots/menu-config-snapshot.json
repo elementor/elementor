@@ -9,7 +9,8 @@
                 "icon": "home",
                 "group_id": "",
                 "priority": 10,
-                "has_divider_before": false
+                "has_divider_before": false,
+                "event_id": "elementor"
             },
             {
                 "slug": "elementor-settings",
@@ -18,7 +19,8 @@
                 "icon": "settings",
                 "group_id": "",
                 "priority": 20,
-                "has_divider_before": false
+                "has_divider_before": false,
+                "event_id": "settings"
             },
             {
                 "slug": "elementor-tools",
@@ -27,25 +29,8 @@
                 "icon": "tool",
                 "group_id": "",
                 "priority": 30,
-                "has_divider_before": false
-            },
-            {
-                "slug": "elementor-role-manager",
-                "label": "Role Manager",
-                "url": "/wp-admin/admin.php?page=elementor-role-manager",
-                "icon": "users",
-                "group_id": "",
-                "priority": 40,
-                "has_divider_before": false
-            },
-            {
-                "slug": "e-form-submissions",
-                "label": "Submissions",
-                "url": "/wp-admin/admin.php?page=e-form-submissions",
-                "icon": "send",
-                "group_id": "",
-                "priority": 50,
-                "has_divider_before": false
+                "has_divider_before": false,
+                "event_id": "tools"
             },
             {
                 "slug": "elementor-templates",
@@ -53,8 +38,29 @@
                 "url": "/wp-admin/edit.php?post_type=elementor_library&tabs_group=library",
                 "icon": "folder",
                 "group_id": "elementor-editor-templates",
+                "priority": 40,
+                "has_divider_before": false,
+                "event_id": "templates"
+            },
+            {
+                "slug": "elementor-role-manager",
+                "label": "Role Manager",
+                "url": "/wp-admin/admin.php?page=elementor-role-manager",
+                "icon": "users",
+                "group_id": "",
                 "priority": 60,
-                "has_divider_before": false
+                "has_divider_before": false,
+                "event_id": "role_manager"
+            },
+            {
+                "slug": "e-form-submissions",
+                "label": "Submissions",
+                "url": "/wp-admin/admin.php?page=e-form-submissions",
+                "icon": "send",
+                "group_id": "",
+                "priority": 70,
+                "has_divider_before": false,
+                "event_id": "e_form_submissions"
             },
             {
                 "slug": "elementor-custom-elements",
@@ -62,8 +68,9 @@
                 "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
                 "icon": "adjustments",
                 "group_id": "elementor-editor-custom-elements",
-                "priority": 70,
-                "has_divider_before": false
+                "priority": 80,
+                "has_divider_before": false,
+                "event_id": "custom_elements"
             },
             {
                 "slug": "elementor-system",
@@ -71,8 +78,9 @@
                 "url": "/wp-admin/admin.php?page=elementor-system-info",
                 "icon": "file-settings",
                 "group_id": "elementor-editor-system",
-                "priority": 80,
-                "has_divider_before": false
+                "priority": 90,
+                "has_divider_before": false,
+                "event_id": "system"
             }
         ]
     },
@@ -83,13 +91,15 @@
                     "slug": "elementor-system-info",
                     "label": "System Info",
                     "url": "/wp-admin/admin.php?page=elementor-system-info",
-                    "priority": 10
+                    "priority": 10,
+                    "event_id": "system_info"
                 },
                 {
                     "slug": "elementor-element-manager",
                     "label": "Element Manager",
                     "url": "/wp-admin/admin.php?page=elementor-element-manager",
-                    "priority": 20
+                    "priority": 20,
+                    "event_id": "element_manager"
                 }
             ]
         },
@@ -99,19 +109,22 @@
                     "slug": "elementor_custom_fonts",
                     "label": "Fonts",
                     "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
-                    "priority": 10
+                    "priority": 10,
+                    "event_id": "elementor_custom_fonts"
                 },
                 {
                     "slug": "elementor_custom_icons",
                     "label": "Icons",
                     "url": "/wp-admin/admin.php?page=elementor_custom_icons",
-                    "priority": 20
+                    "priority": 20,
+                    "event_id": "elementor_custom_icons"
                 },
                 {
                     "slug": "elementor_custom_code",
                     "label": "Code",
                     "url": "/wp-admin/admin.php?page=elementor_custom_code",
-                    "priority": 40
+                    "priority": 40,
+                    "event_id": "elementor_custom_code"
                 }
             ]
         },
@@ -121,31 +134,36 @@
                     "slug": "edit.php?post_type=elementor_library",
                     "label": "Saved Templates",
                     "url": "/wp-admin/edit.php?post_type=elementor_library&tabs_group=library",
-                    "priority": 10
+                    "priority": 10,
+                    "event_id": "saved_templates"
                 },
                 {
                     "slug": "elementor-app",
                     "label": "Theme Builder",
                     "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor#site-editor/promotion",
-                    "priority": 15
+                    "priority": 15,
+                    "event_id": "theme_builder"
                 },
                 {
                     "slug": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor&source=wp_db_templates_menu#/kit-library",
                     "label": "Website Templates",
                     "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor&source=wp_db_templates_menu#/kit-library",
-                    "priority": 30
+                    "priority": 30,
+                    "event_id": "http://example.org/wp_admin/admin.php"
                 },
                 {
                     "slug": "edit.php?post_type=e-floating-buttons",
                     "label": "Floating Elements",
                     "url": "/wp-admin/edit.php?post_type=e-floating-buttons",
-                    "priority": 40
+                    "priority": 40,
+                    "event_id": "edit.php"
                 },
                 {
                     "slug": "popup_templates",
                     "label": "Popups",
                     "url": "/wp-admin/admin.php?page=popup_templates",
-                    "priority": 50
+                    "priority": 50,
+                    "event_id": "popup_templates"
                 }
             ]
         }

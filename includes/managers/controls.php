@@ -1270,7 +1270,7 @@ class Controls_Manager {
 					<?php echo esc_html__( 'Display Conditions', 'elementor' ); ?>
 				</span>
 				<span class="e-control-display-conditions-promotion__lock-wrapper">
-					<i class="eicon-lock e-control-display-conditions-promotion"></i>
+					<i class="eicon-upgrade-crown-full e-control-display-conditions-promotion"></i>
 				</span>
 			</div>
 			<i class="eicon-flow e-control-display-conditions-promotion"></i>
@@ -1336,7 +1336,7 @@ class Controls_Manager {
 						' . $title . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
-						<i class="eicon-lock"></i>
+						<i class="eicon-upgrade-crown-full"></i>
 					</span>
 					<div class="elementor-control-input-wrapper">
 						<label class="elementor-switch elementor-control-unit-2 e-control-' . $id . '-promotion">
@@ -1358,7 +1358,7 @@ class Controls_Manager {
 						' . $title . '
 					</label>
 					<span class="e-control-motion-effects-promotion__lock-wrapper">
-						<i class="eicon-lock"></i>
+						<i class="eicon-upgrade-crown-full"></i>
 					</span>
 					<div class="elementor-control-input-wrapper elementor-control-unit-5 e-control-' . $id . '-promotion">
 					<div class="select-promotion elementor-control-unit-5">' . esc_html__( 'None', 'elementor' ) . '</div>

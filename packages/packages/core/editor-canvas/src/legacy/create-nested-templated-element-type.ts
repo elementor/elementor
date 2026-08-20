@@ -11,7 +11,7 @@ import {
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import { type ElementType, type ElementView, type LegacyWindow, type NestedTemplatedElementViewClass } from './types';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -90,7 +90,7 @@ export function createNestedTemplatedElementView( {
 	type,
 	renderer,
 	element,
-}: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
+}: CreateNestedTemplatedElementViewOptions ): NestedTemplatedElementViewClass {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
@@ -181,7 +181,8 @@ export function createNestedTemplatedElementView( {
 					} );
 				} )
 				.then( async ( settings ) => {
-					const settingsHash = JSON.stringify( settings );
+					const resolvedSettings = this.afterSettingsResolve( settings );
+					const settingsHash = JSON.stringify( resolvedSettings );
 					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
 
 					if ( ! settingsChanged && this.isRendered ) {
@@ -196,10 +197,11 @@ export function createNestedTemplatedElementView( {
 						id: model.get( 'id' ),
 						interaction_id: this.getInteractionId(),
 						type,
-						settings,
+						settings: resolvedSettings,
 						base_styles: baseStylesDictionary,
 						editor_attributes: buildEditorAttributes( model ),
 						editor_classes: buildEditorClasses( model ),
+						...( this.getResolverRenderContext?.() ?? {} ),
 					};
 
 					return renderer.render( templateKey, context );
@@ -217,6 +219,10 @@ export function createNestedTemplatedElementView( {
 			this.bindUIElements();
 
 			this.triggerMethod( 'render:template' );
+		},
+
+		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
+			return settings;
 		},
 
 		getRenderContext() {
@@ -396,5 +402,5 @@ export function createNestedTemplatedElementView( {
 
 			return originId ?? id;
 		},
-	} ) as unknown as typeof ElementView;
+	} ) as NestedTemplatedElementViewClass;
 }

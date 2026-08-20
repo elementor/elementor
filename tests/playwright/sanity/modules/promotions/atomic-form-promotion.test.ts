@@ -40,6 +40,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
 
 		const formWidget = category.locator( '.elementor-element' ).filter( { hasText: 'Form' } ).first();
+		await formWidget.evaluate( ( el ) => el.scrollIntoView( { block: 'center', behavior: 'instant' } ) );
 		await formWidget.click( { force: true } );
 
 		const popover = page.locator( '.MuiTooltip-tooltip > .MuiBox-root' );
@@ -47,6 +48,9 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
 
-		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png' );
+		// Screenshot could have a different position on a single run - under the top-bar
+		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png', {
+			mask: [ popover.getByTestId( 'e-atomic-form-animation' ) ],
+		} );
 	} );
 } );

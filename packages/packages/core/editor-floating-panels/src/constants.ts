@@ -1,0 +1,1 @@
+export const FLOATING_PANEL_Z_INDEX_BASE = 1000;

@@ -4,19 +4,19 @@ import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
 import { useTypingBuffer } from '../../hooks/use-typing-buffer';
-import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
+import { isUnitExtendedOption, type SizeUnit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
 type SizeInputProps = {
-	unit: Unit | ExtendedOption;
+	unit: SizeUnit;
 	size: number | string;
 	placeholder?: string;
 	startIcon?: React.ReactNode;
-	units: ( Unit | ExtendedOption )[];
+	units: SizeUnit[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
-	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
+	handleUnitChange: ( unit: SizeUnit ) => void;
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;

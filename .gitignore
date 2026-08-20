@@ -16,6 +16,10 @@ http-playground/
 data/languages
 tests/data
 
+graphify-out/
+.superpowers/
+docs/superpowers/
+
 # build outputs
 build/
 assets/css/
@@ -45,9 +49,19 @@ coverage/
 .npmrc
 
 # Code agents
-.cursor/
+.cursor/*
+!.cursor/README.md
 !.cursor/rules/
+!.cursor/rules/**
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/system-prompts/
+!.cursor/system-prompts/**
+.cursor/rules/LOCAL_RULES.md
+.cursor/skills/create-ship-deploy/
+.cursor/plans/
 .claude/
+docs/superpowers/
 
 # PHPunit and PHPlint cache files
 *.cache
@@ -62,3 +76,5 @@ tests/playwright/blob-report
 playwright-test-results
 **/.env
 docker-output/
+.wp-env.override.json
+tests/wp-env/plugins/

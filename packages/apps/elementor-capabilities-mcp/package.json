@@ -1,7 +1,7 @@
 {
   "name": "@elementor/elementor-capabilities-mcp",
   "description": "Elementor Capabilities MCP module",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": true,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -26,10 +26,9 @@
     "url": "https://github.com/elementor/elementor/issues"
   },
   "dependencies": {
-    "@elementor/editor-mcp": "4.2.0",
-    "@elementor/elementor-mcp-common": "4.2.0",
-    "@elementor/schema": "4.2.0",
-    "@modelcontextprotocol/sdk": "1.27.1"
+    "@elementor/editor-mcp": "4.3.0",
+    "@elementor/elementor-mcp-common": "4.3.0",
+    "@elementor/schema": "4.3.0"
   },
   "files": [
     "README.md",

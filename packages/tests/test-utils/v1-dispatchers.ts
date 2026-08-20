@@ -1,3 +1,5 @@
+import { __privateSetReady } from '@elementor/editor-v1-adapters';
+
 export function dispatchCommandBefore( command: string, args: Record< string, unknown > = {} ) {
 	window.dispatchEvent(
 		new CustomEvent( 'elementor/commands/run/before', {
@@ -56,6 +58,7 @@ export function dispatchEditModeChange() {
 }
 
 export function dispatchV1ReadyEvent() {
+	__privateSetReady( true );
 	dispatchWindowEvent( 'elementor/initialized' );
 }
 

@@ -77,4 +77,31 @@ describe( 'useQueryAutocomplete', () => {
 			{ timeout: 1000 }
 		);
 	} );
+
+	it( 'fetches initial options on mount when minInputLength is 0', async () => {
+		// Act.
+		const { result } = renderHook( () => useQueryAutocomplete( { url: '/api', minInputLength: 0 } ) );
+
+		// Assert.
+		await waitFor(
+			() => {
+				expect( result.current.options ).toEqual( [
+					{ id: 1, label: 'Apple' },
+					{ id: 2, label: 'Banana' },
+					{ id: 3, label: 'Cherry' },
+				] );
+			},
+			{ timeout: 1000 }
+		);
+	} );
+
+	it( 'does not fetch on mount when minInputLength is greater than 0', async () => {
+		// Act.
+		renderHook( () => useQueryAutocomplete( { url: '/api', minInputLength: 2 } ) );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
+
+		// Assert.
+		expect( httpService ).not.toHaveBeenCalled();
+	} );
 } );

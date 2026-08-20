@@ -30,7 +30,7 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"], a[href*="admin.php?page=elementor-one-upgrade"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
@@ -121,7 +121,6 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 
 			const campaignNotices = {
 				plugin_image_optimization: 'elementor_image_optimization_campaign',
-				site_mailer_promotion: 'elementor_core_site_mailer_campaign',
 			};
 
 			Object.keys( campaignNotices ).forEach( ( noticeId ) => {
@@ -283,14 +282,12 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 				click( event ) {
 					event.preventDefault();
 
-					event.currentTarget.focus(); // Safari does not focus the tab automatically
+					self.activateSettingsTab( event.currentTarget );
+
+					event.currentTarget.focus();
 				},
-				focus() { // Using focus event to enable navigation by tab key
-					var hrefWithoutHash = location.href.replace( /#.*/, '' );
-
-					history.pushState( {}, '', hrefWithoutHash + this.hash );
-
-					self.goToSettingsTabFromHash();
+				focus() {
+					self.activateSettingsTab( this );
 				},
 			} );
 
@@ -506,6 +503,18 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 
 		animateLoader() {
 			this.elements.$goToEditLink.addClass( 'elementor-animate' );
+		},
+
+		activateSettingsTab( tabElement ) {
+			if ( ! tabElement?.hash ) {
+				return;
+			}
+
+			const hrefWithoutHash = location.href.replace( /#.*/, '' );
+
+			history.pushState( {}, '', hrefWithoutHash + tabElement.hash );
+
+			this.goToSettingsTabFromHash();
 		},
 
 		goToSettingsTabFromHash() {

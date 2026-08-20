@@ -1,9 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import type { DeployPage, WpPost } from '../types';
+import type { CreatePagesResult, DeployPage, WpPost } from '../types';
 
-export async function createPages( pages: DeployPage[] ) {
+export async function createPages( pages: DeployPage[] ): Promise< CreatePagesResult > {
 	const pageIdMap: Record< string, number > = {};
+	const pageUrlMap: Record< string, string > = {};
 
 	for ( const page of pages ) {
 		const created = await apiFetch< WpPost >( {
@@ -21,9 +22,12 @@ export async function createPages( pages: DeployPage[] ) {
 		} );
 
 		pageIdMap[ page.id ] = created.id;
+		if ( created.link ) {
+			pageUrlMap[ page.id ] = created.link;
+		}
 	}
 
-	return pageIdMap;
+	return { pageIdMap, pageUrlMap };
 }
 
 export async function setHomePage( homePageWpId: number ) {

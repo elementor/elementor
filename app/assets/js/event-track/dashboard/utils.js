@@ -1,15 +1,17 @@
+import WpDashboardTracking from '../wp-dashboard-tracking';
+
 export const DashboardUtils = {
 	isElementorPage() {
 		const urlParams = new URLSearchParams( window.location.search );
 		const page = urlParams.get( 'page' );
 
-		if ( page && ( page.startsWith( 'elementor' ) || page.includes( 'elementor' ) ) ) {
+		if ( page && WpDashboardTracking.elementorPages.some( ( p ) => page.includes( p ) ) ) {
 			return true;
 		}
 
 		const postType = urlParams.get( 'post_type' );
 
-		if ( 'elementor_library' === postType || 'e-floating-buttons' === postType ) {
+		if ( WpDashboardTracking.elementorPostTypes.includes( postType ) ) {
 			return true;
 		}
 

@@ -1,9 +1,9 @@
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
+import { WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
 const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
 
 export const mcpDescription = `Elementor Canvas MCP
-This MCP enables creation, configuration, and styling of elements on the Elementor canvas using the build_composition tool.
+This MCP enables configuration and styling of existing V4 elements on the Elementor canvas using the configure-element tool.
 
 # Core Concepts
 
@@ -21,77 +21,61 @@ The \`$$type\` defines how Elementor interprets the value. Providing the correct
 - **Global Variables**: Reusable colors, sizes, and fonts (\`elementor://global-variables\`)
 - **Global Classes**: Reusable style sets that can be applied to elements (\`elementor://global-classes\`)
 - **Widget Schemas**: Configuration options for each widget type (\`${ WIDGET_SCHEMA_URI }\`)
-- **Style Schema**: Common styles shared across all widgets and containers (\`${ STYLE_SCHEMA_URI }\`)
 
-# Building Compositions with build_composition
+# Configuring Elements with configure-element
 
-The \`build_composition\` tool is the primary way to create elements. It accepts structure (XML), configuration, and styling in a single operation.
+The \`configure-element\` tool updates settings and styles on existing V4 elements. Read the configure-element guide resource before use.
 
 ## Complete Workflow
 
 ### 1. Parse User Requirements
-Understand what needs to be built: structure, content, and styling.
+Understand what needs to change: content, settings, or styling on existing elements.
 
 ### 2. Check Global Resources FIRST
-Always check existing resources before building:
+Always check existing resources before styling:
 - List \`elementor://global-variables\` for available variables (colors, sizes, fonts)
 - List \`elementor://global-classes\` for available style sets
 - **Always prefer using existing global resources over creating inline styles**
 
 ### 3. Retrieve Widget Schemas
-For each widget you'll use:
+For each element you will configure:
 - List \`${ WIDGET_SCHEMA_URI }\` to see available widgets
 - Retrieve configuration schema from \`${ ELEMENT_SCHEMA_URI }\` for each widget
-- Check the \`llm_guidance\` property to understand if a widget is a container (can have children)
+- Check the \`llm_guidance\` property for container nesting, \`default_styles\`, and \`default_settings\`
 
-### 4. Build XML Structure
-Create valid XML with configuration-ids:
-- Each element must have a unique \`configuration-id\` attribute
-- No text nodes, classes, or IDs in XML - structure only
-- Example:
-\`\`\`xml
-<e-container configuration-id="container-1">
-  <e-heading configuration-id="heading-1" />
-  <e-text configuration-id="text-1" />
-</e-container>
-\`\`\`
+### 4. Get Current Element State
+Use page structure and element configuration resources to find element IDs and current values.
 
-### 5. Create elementConfig
-Map each configuration-id to its widget properties using PropValues:
+### 5. Create propertiesToChange
+Map property names to PropValues using the widget schema:
 - Use correct \`$$type\` matching the widget's schema
 - Use global variables in PropValues where applicable
 - Example:
 \`\`\`json
 {
-  "heading-1": {
-    "text": { "$$type": "string", "value": "Welcome" },
-    "tag": { "$$type": "string", "value": "h1" }
-  }
+  "text": { "$$type": "string", "value": "Welcome" },
+  "tag": { "$$type": "string", "value": "h1" }
 }
 \`\`\`
 
-### 6. Create stylesConfig
-Map each configuration-id to style PropValues from \`${ STYLE_SCHEMA_URI }\`:
-- Use global variables for colors, sizes, and fonts
-- Example using global variable:
+### 6. Create style
+Provide raw CSS declarations (property → value strings). The server converts them to native styles and stores any unconvertible declarations as the element custom CSS.
+- Example:
 \`\`\`json
 {
-  "heading-1": {
-    "color": { "$$type": "global-color-variable", "value": "primary-color-id" },
-    "font-size": { "$$type": "size", "value": "2rem" }
-  }
+  "color": "#1a1a1a",
+  "font-size": "2rem"
 }
 \`\`\`
 
-### 7. Execute build_composition
-Call the tool with your XML structure, elementConfig, and stylesConfig. The response will contain the created element IDs.
-At the response you will also find llm_instructions for you to do afterwards, read and follow them!
+### 7. Execute configure-element
+Call the tool with elementId, elementType, propertiesToChange, and style as needed.
 
 ## Key Points
 
 - **PropValue Types**: Arrays that accept union types are typed as mixed arrays
-- **Visual Sizing**: Widget sizes MUST be defined in stylesConfig. Widget properties like image "size" control resolution, not visual appearance
-- **Global Variables**: Reference by ID in PropValues (e.g., \`{ "$$type": "global-color-variable", "value": "variable-id" }\`)
+- **Visual Sizing**: Widget sizes MUST be defined via the style parameter (raw CSS). Widget properties like image "size" control resolution, not visual appearance
+- **Global Variables**: Reference by label/name: (e.g. var(--card-background-color)
 - **Naming Conventions**: Use meaningful, purpose-based names (e.g., "primary-button", "heading-large"), not value-based names (e.g., "blue-style", "20px-padding")
 
 ## Example: e-image PropValue Structure
@@ -109,5 +93,5 @@ At the response you will also find llm_instructions for you to do afterwards, re
   }
 }
 \`\`\`
-Note: The "size" property controls image resolution/loading, not visual size. Set visual dimensions in stylesConfig.
+Note: The "size" property controls image resolution/loading, not visual size. Set visual dimensions via the style parameter (raw CSS).
 `;

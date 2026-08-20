@@ -20,7 +20,7 @@ const propType = createMockPropType( { kind: 'plain' } );
 
 const defaultProps = {
 	setValue: jest.fn(),
-	value: { $$type: 'string', value: 'Arial' },
+	value: { $$type: 'font-family', value: 'Arial' },
 	bind: 'fontFamily',
 	propType,
 };
@@ -131,7 +131,7 @@ describe( 'FontFamilyControl', () => {
 
 		// Assert
 		expect( defaultProps.setValue ).toHaveBeenCalledWith( {
-			$$type: 'string',
+			$$type: 'font-family',
 			value: 'Roboto',
 		} );
 	} );
@@ -140,7 +140,7 @@ describe( 'FontFamilyControl', () => {
 		// Arrange.
 		const propsWithValue = {
 			...defaultProps,
-			value: { $$type: 'string', value: 'Helvetica' },
+			value: { $$type: 'font-family', value: 'Helvetica' },
 		};
 
 		// Act.
@@ -155,8 +155,8 @@ describe( 'FontFamilyControl', () => {
 		// Arrange.
 		const propsWithPlaceholder = {
 			...defaultProps,
-			value: { $$type: 'string', value: null },
-			placeholder: { $$type: 'string', value: 'Arial' },
+			value: { $$type: 'font-family', value: null },
+			placeholder: { $$type: 'font-family', value: 'Arial' },
 		};
 
 		// Act.
@@ -174,7 +174,7 @@ describe( 'FontFamilyControl', () => {
 		// Arrange.
 		const propsWithoutValueOrPlaceholder = {
 			...defaultProps,
-			value: { $$type: 'string', value: null },
+			value: { $$type: 'font-family', value: null },
 			placeholder: undefined,
 		};
 
@@ -201,8 +201,8 @@ describe( 'FontFamilyControl', () => {
 		const propsWithPlaceholder = {
 			...defaultProps,
 			setValue,
-			value: { $$type: 'string', value: null },
-			placeholder: { $$type: 'string', value: 'Choose a font' },
+			value: { $$type: 'font-family', value: null },
+			placeholder: { $$type: 'font-family', value: 'Choose a font' },
 		};
 
 		renderControl(
@@ -220,7 +220,7 @@ describe( 'FontFamilyControl', () => {
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
-			$$type: 'string',
+			$$type: 'font-family',
 			value: 'Lato',
 		} );
 	} );
@@ -229,8 +229,8 @@ describe( 'FontFamilyControl', () => {
 		// Arrange.
 		const propsWithValue = {
 			...defaultProps,
-			value: { $$type: 'string', value: 'Roboto' },
-			placeholder: { $$type: 'string', value: 'Select font family' },
+			value: { $$type: 'font-family', value: 'Roboto' },
+			placeholder: { $$type: 'font-family', value: 'Select font family' },
 		};
 
 		// Act.
@@ -244,8 +244,8 @@ describe( 'FontFamilyControl', () => {
 		// Arrange.
 		const propsWithPlaceholder = {
 			...defaultProps,
-			value: { $$type: 'string', value: null },
-			placeholder: { $$type: 'string', value: 'Select font family' },
+			value: { $$type: 'font-family', value: null },
+			placeholder: { $$type: 'font-family', value: 'Select font family' },
 		};
 
 		// Act.

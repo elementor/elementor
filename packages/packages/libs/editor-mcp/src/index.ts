@@ -22,3 +22,8 @@ export { installAngiePlugin, type InstallAngieResult } from './utils/install-ang
 export { saveAngieConsent } from './utils/save-angie-consent';
 export const getAngieSdk = () => getSDK();
 export * from './init';
+export {
+	dispatchMcpStylesAppliedEvent,
+	MCP_STYLES_APPLIED_EVENT,
+	type McpStylesAppliedPayload,
+} from './events/mcp-styles-applied-event';

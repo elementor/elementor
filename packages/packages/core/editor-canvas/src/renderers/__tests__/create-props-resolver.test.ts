@@ -287,8 +287,18 @@ describe( 'createPropsResolver', () => {
 
 		// Assert.
 		expect( onResolve ).toHaveBeenCalledTimes( 2 );
-		expect( onResolve ).toHaveBeenNthCalledWith( 1, { key: 'int', value: 2 } );
-		expect( onResolve ).toHaveBeenNthCalledWith( 2, { key: 'int2', value: 4 } );
+		expect( onResolve ).toHaveBeenNthCalledWith( 1, {
+			key: 'int',
+			value: 2,
+			propValue: { $$type: 'int', value: 1 },
+			propType: createMockPropType( { kind: 'plain', key: 'int' } ),
+		} );
+		expect( onResolve ).toHaveBeenNthCalledWith( 2, {
+			key: 'int2',
+			value: 4,
+			propValue: { $$type: 'int', value: 3 },
+			propType: createMockPropType( { kind: 'plain', key: 'int' } ),
+		} );
 	} );
 
 	it( 'should pass renderContext to transformers', async () => {

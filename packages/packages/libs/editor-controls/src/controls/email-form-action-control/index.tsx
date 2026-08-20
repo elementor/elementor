@@ -4,7 +4,7 @@ import { CollapsibleContent } from '@elementor/editor-ui';
 import { Box, Divider, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
+import { PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlLabel } from '../../components/control-label';
 import { createControl } from '../../create-control';
 import {
@@ -30,9 +30,7 @@ export const EmailFormActionControl = createControl(
 					<ControlLabel>
 						{ label ? label + ' ' + __( 'settings', 'elementor' ) : __( 'Email settings', 'elementor' ) }
 					</ControlLabel>
-					<PropKeyProvider bind="to">
-						<SendToField placeholder={ toPlaceholder } />
-					</PropKeyProvider>
+					<SendToField placeholder={ toPlaceholder } />
 					<SubjectField />
 					<MessageField />
 					<FromEmailField />

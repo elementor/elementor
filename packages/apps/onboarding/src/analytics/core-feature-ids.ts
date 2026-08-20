@@ -1,1 +1,1 @@
-export const CORE_FEATURE_IDS = new Set( [ 'classes_variables', 'core_placeholder' ] );
+export { CORE_FEATURE_IDS } from '../steps/components/site-features/feature-options';

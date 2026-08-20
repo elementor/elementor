@@ -22,7 +22,7 @@ export interface IMcpRegistrationAdapter {
 	/**
 	 * Called once at startup to activate the adapter's server registrations.
 	 */
-	activate: () => void | Promise< void >;
+	activate: () => Promise< void >;
 
 	/**
 	 * Called once per tool when addTool() is invoked.

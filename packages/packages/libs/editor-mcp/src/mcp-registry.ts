@@ -3,7 +3,9 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { AngieMcpAdapter } from './adapters/angie-adapter';
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
+import { WebMCPAdapter } from './adapters/web-mcp-adapter';
 import {
 	ANGIE_MODEL_PREFERENCES,
 	ANGIE_REQUIRED_RESOURCES,
@@ -11,8 +13,12 @@ import {
 	createDefaultModelPreferences,
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { getModelContext } from './utils/get-model-context';
+import { getSDK } from './utils/get-sdk';
+import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
+import { toMCPTitle } from './utils/to-mcp-title';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -48,11 +54,26 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 	}
 };
 
-export const signalMcpReady = (): void => resolveReady();
+export const signalMcpReady = (): void => {
+	resolveReady();
+};
 
-export const activateAdapters = (): void => callAdapters( ( adapter ) => adapter.activate() );
+export const createAndRegisterAdapters = async (): Promise< void > => {
+	const modelContext = getModelContext();
 
-function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void ): void {
+	if ( modelContext ) {
+		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
+	}
+
+	if ( isAngieAvailable() ) {
+		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
+	}
+
+	await Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
+};
+
+// utility function to run a callback on all MCP interfaces
+function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
 	for ( const adapter of registrationAdapters ) {
 		try {
 			fn( adapter );
@@ -77,11 +98,6 @@ const isAlphabet = ( str: string ): string | never => {
 		throw new Error( 'Not alphabet' );
 	}
 	return str;
-};
-
-export const toMCPTitle = ( namespace: string ): string => {
-	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
-	return `Editor ${ capitalized }`;
 };
 
 /**
@@ -228,7 +244,9 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 					content: [
 						{
 							type: 'text',
-							text: ( error as Error ).message || 'Unknown error',
+							text:
+								( ( error as Error ).message || 'Unknown error' ) +
+								JSON.stringify( ( error as { response?: { data: unknown } } ).response?.data || error ),
 						},
 					],
 				};
@@ -262,13 +280,11 @@ function createToolRegistry( server: McpServer, serverName: string, serverDocsUr
 			description: opts.description,
 			inputSchema: inputSchema as object,
 			execute: ( params: Record< string, unknown > ) =>
-				Promise.resolve(
-					toolCallback(
-						params as Parameters< typeof toolCallback >[ 0 ],
-						/* WebMCP: no protocol session — handlers must not rely on `extra` here */
-						{} as RequestHandlerExtra< ServerRequest, ServerNotification >
-					)
-				),
+				toolCallback(
+					params as Parameters< typeof toolCallback >[ 0 ],
+					/* WebMCP: no protocol session — handlers must not rely on `extra` here */
+					{} as RequestHandlerExtra< ServerRequest, ServerNotification >
+				) as Promise< unknown >,
 		};
 		const extraData = {
 			resources: [ `Server resource name: ${ serverName }, Required to fetch!` ],

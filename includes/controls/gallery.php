@@ -155,18 +155,18 @@ class Control_Gallery extends Base_Data_Control {
 
 		if ( $one_subscription ) {
 			if ( ! $is_installed ) {
-				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimizer is included in your ONE subscription.', 'elementor' );
+				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimization is included in your ONE subscription.', 'elementor' );
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = Hints::get_plugin_install_url( $plugin_slug );
 				$source = 'io-editor-gallery-one-install';
 			} elseif ( ! $is_active ) {
-				$content = esc_html__( 'Image Optimizer is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
+				$content = esc_html__( 'Image Optimization is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
 				$button_text = esc_html__( 'Activate now', 'elementor' );
 				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
 				$source = 'io-editor-gallery-one-activate';
 			}
 		} else {
-			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimization.', 'elementor' );
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = Hints::get_plugin_install_url( $plugin_slug );

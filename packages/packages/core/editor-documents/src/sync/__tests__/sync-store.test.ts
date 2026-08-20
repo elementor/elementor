@@ -1,4 +1,5 @@
 import { createMockDocumentData, dispatchCommandAfter, dispatchCommandBefore, dispatchV1ReadyEvent } from 'test-utils';
+import { __privateSetReady } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice, type SliceState, type Store } from '@elementor/store';
 
 import { slice } from '../../store';
@@ -21,7 +22,9 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		__registerSlice( slice );
 		store = __createStore();
 
+		__privateSetReady( false );
 		syncStore();
+		__privateSetReady( true );
 	} );
 
 	afterEach( () => {

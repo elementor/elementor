@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 const ProductImageUnification = ( { onClose } ) => {
 	const { setGenerate } = useRequestIds();
 	const { editImage: products } = useEditImage();
-	const { settings, updateSettings } = usePromptSettings( );
+	const { settings, updateSettings } = usePromptSettings();
 	const [ productsData, setProductsData ] = useState( {} );
 	const [ loadingMap, setLoadingMap ] = useState( {} );
 	const [ errorMap, setErrorMap ] = useState( {} );
@@ -110,7 +110,7 @@ const ProductImageUnification = ( { onClose } ) => {
 			} );
 		}
 
-		productsToUnify.forEach( ( product ) => product.req().catch( ( ) => {} ) );
+		productsToUnify.forEach( ( product ) => product.req().catch( () => {} ) );
 	}, [ checkboxColorMap, errorlessProducts, generatedBgColor, productsData, setGenerate ] );
 
 	const getCols = ( dataLength = 1 ) => {

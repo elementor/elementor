@@ -2,6 +2,11 @@ const eventsConfig = {
 	appTypes: {
 		editor: 'editor',
 		wpAdmin: 'wpadmin',
+		wpDash: 'wpdash',
+	},
+
+	windowNames: {
+		sidebarMenu: 'sidebar_menu',
 	},
 
 	targetTypes: {
@@ -13,6 +18,10 @@ const eventsConfig = {
 		searchResult: 'search_result',
 		buttons: 'buttons',
 		searchWidget: 'search_widget',
+		wpDashAdminMenuItem: 'wpdash_admin_menu_item',
+		wpDashEditorMenu: 'wpdash_editor_menu',
+		wpDashSubMenuItem: 'wpdash_sub_menu_item',
+		link: 'link',
 	},
 
 	interactionResults: {
@@ -29,6 +38,12 @@ const eventsConfig = {
 		selected: 'selected',
 		promotionViewed: 'promotion_viewed',
 		upgradeNow: 'upgrade_now',
+		elementorSideMenuOpened: 'elementor_side_menu_opened',
+		editorSubMenuOpened: 'wpdash_editor_sub_menu_opened',
+		themeBuilderPromotionWindow: 'theme_builder_promotion_window',
+		pageOpened: 'page_opened',
+		expanded: 'expanded',
+		collapsed: 'collapsed',
 	},
 
 	targetNames: {
@@ -56,6 +71,7 @@ const eventsConfig = {
 		typing: 'Typing',
 		tabSelect: 'Tab Select',
 		insert: 'Insert',
+		hover: 'Hover',
 	},
 
 	locations: {
@@ -75,6 +91,7 @@ const eventsConfig = {
 		variables: 'Variables Panel',
 		variablesManager: 'Variables Manager',
 		admin: 'WP admin',
+		wpDashAdmin: 'wpdash_admin',
 		structurePanel: 'Structure Panel',
 		canvas: 'Canvas',
 		leftPanel: 'Left Panel',
@@ -165,6 +182,9 @@ const eventsConfig = {
 		finderResults: 'Finder Results',
 		libraryTabs: 'Library Tabs',
 		assetCard: 'Asset Card',
+		wpDashElementorCoreMenu: 'elementor_editor_core_menu',
+		wpDashElementorCoreSubMenu: 'elementor_editor_core_sub_menu',
+		wpDashThemeBuilder: 'wpdash_core_sub_menu_theme_builder',
 	},
 
 	elements: {
@@ -232,6 +252,7 @@ const eventsConfig = {
 			add: 'add_new_variable',
 			connect: 'connect_variable',
 			save: 'save_new_variable',
+			update: 'update_variable',
 			openManager: 'open_variables_manager',
 			saveChanges: 'save_variables_changes',
 			delete: 'delete_variable',
@@ -245,6 +266,8 @@ const eventsConfig = {
 			confirmed: 'design_system_import_confirmed',
 			imported: 'design_system_imported',
 			importFailed: 'design_system_import_failed',
+			export: 'design_system_export',
+			opened: 'design_system_opened',
 		},
 		components: {
 			createClicked: 'component_create_clicked',
@@ -293,6 +316,11 @@ const eventsConfig = {
 			finderResultSelect: 'finder_result_select',
 			canvasEmptyBoxAction: 'canvas_empty_box_action',
 			widgetPanelSearch: 'widget_panel_search',
+			wpDashElementorMenuClick: 'wpdash_elementor_menu_click',
+			wpDashEditorSubMenuHover: 'wpdash_editor_sub_menu_hover',
+			wpDashThemeBuilderClick: 'wpdash_theme_builder_click',
+			sidebarMenuItemClicked: 'sidebar_menu_item_clicked',
+			sidebarMenuGroupToggled: 'sidebar_menu_group_toggled',
 		},
 		interactions: {
 			created: 'interactions_created',

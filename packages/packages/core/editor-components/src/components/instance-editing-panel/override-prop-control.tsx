@@ -117,7 +117,6 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	}
 
 	const { propValue, baseValue: resolvedBaseValue } = resolveOverrideValues(
-		matchingOverride,
 		overrideValue,
 		resolvedOriginValues,
 		propKey
@@ -226,7 +225,6 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 }
 
 function resolveOverrideValues(
-	matchingOverride: ComponentInstanceOverride | null,
 	overrideValue: AnyTransformable | null,
 	resolvedOriginValues: ElementSettings,
 	propKey: string
@@ -235,10 +233,10 @@ function resolveOverrideValues(
 	const inheritedValue = unwrappedSettings[ propKey ] ?? null;
 	const isInheritedDynamic = isDynamicPropValue( inheritedValue );
 
-	const shouldUseInheritedAsValue = isInheritedDynamic && ! matchingOverride;
+	const shouldUseInheritedAsValue = isInheritedDynamic && ! overrideValue;
 
 	const propValue = shouldUseInheritedAsValue ? inheritedValue : overrideValue;
-	const baseValue = matchingOverride || isInheritedDynamic ? null : inheritedValue;
+	const baseValue = overrideValue || isInheritedDynamic ? null : inheritedValue;
 
 	return { propValue, baseValue };
 }

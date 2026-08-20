@@ -203,6 +203,77 @@ class Test_Variables_Service extends TestCase {
 
 		$this->assertTrue( true );
 	}
+
+	public function test_process_batch__lenient_mode_continues_after_failure_and_saves_successes() {
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Primary',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$data = [
+			[
+				'type' => 'create',
+				'variable' => [
+					'type' => 'global-color',
+					'label' => 'New-Color',
+					'value' => '#FF0000',
+				],
+			],
+			[
+				'type' => 'update',
+				'id' => 'missing-id',
+				'variable' => [
+					'label' => 'Updated',
+					'value' => '#0000FF',
+				],
+			],
+		];
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->expects( $this->once() )->method( 'save' )->willReturn( 6 );
+
+		$result = $this->service->process_batch( $data, true );
+
+		$this->assertTrue( $result['success'] );
+		$this->assertEquals( 6, $result['watermark'] );
+		$this->assertCount( 2, $result['results'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'New-Color', $result['results'][0]['label'] );
+		$this->assertSame( 'error', $result['results'][1]['status'] );
+		$this->assertSame( 'variable_not_found', $result['results'][1]['code'] );
+	}
+
+	public function test_process_batch__lenient_mode_does_not_save_when_all_operations_fail() {
+		$collection = Variables_Collection::default();
+
+		$data = [
+			[
+				'type' => 'update',
+				'id' => 'missing-id',
+				'variable' => [
+					'label' => 'Updated',
+					'value' => '#0000FF',
+				],
+			],
+		];
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->expects( $this->never() )->method( 'save' );
+
+		$result = $this->service->process_batch( $data, true );
+
+		$this->assertFalse( $result['success'] );
+		$this->assertSame( 'error', $result['results'][0]['status'] );
+		$this->assertSame( 'variable_not_found', $result['results'][0]['code'] );
+	}
+
 	public function test_create__successfully_creates_variable() {
 		// Arrange
 		$data = [
@@ -570,6 +641,70 @@ class Test_Variables_Service extends TestCase {
 		$this->assertArrayHasKey( 'id-2', $result );
 		$this->assertArrayNotHasKey( 'deleted_at', $result['id-1'] );
 		$this->assertArrayHasKey( 'deleted_at', $result['id-2'] );
+	}
+
+	public function test_find_by_label_or_id__finds_by_id() {
+		$service = $this->service_with_variables_list( [
+			'id-2' => [
+				'type' => 'global-color-var',
+				'label' => 'Secondary',
+				'value' => '#000000',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( 'id-2' );
+
+		$this->assertSame( 'id-2', $result['id'] );
+		$this->assertSame( 'Secondary', $result['label'] );
+	}
+
+	public function test_find_by_label_or_id__finds_by_label_case_insensitive() {
+		$service = $this->service_with_variables_list( [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( 'primary' );
+
+		$this->assertSame( 'id-1', $result['id'] );
+	}
+
+	public function test_find_by_label_or_id__strips_leading_dashes() {
+		$service = $this->service_with_variables_list( [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( '--primary' );
+
+		$this->assertSame( 'id-1', $result['id'] );
+	}
+
+	public function test_find_by_label_or_id__returns_null_for_unknown() {
+		$service = $this->service_with_variables_list( [] );
+
+		$this->assertNull( $service->find_by_label_or_id( 'nope' ) );
+	}
+
+	private function service_with_variables_list( array $variables ): Variables_Service {
+		return new class( $this->repository, new Batch_Processor(), $variables ) extends Variables_Service {
+			private array $variables;
+
+			public function __construct( $repository, $batch_processor, array $variables ) {
+				parent::__construct( $repository, $batch_processor );
+				$this->variables = $variables;
+			}
+
+			public function get_variables_list(): array {
+				return $this->variables;
+			}
+		};
 	}
 
 }

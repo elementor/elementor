@@ -2,7 +2,6 @@
 namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
@@ -17,13 +16,14 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
 use Elementor\Modules\Components\Widgets\Component_Instance;
+use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_components';
+	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const PACKAGES        = [ 'editor-components' ];
 
 	public function get_name() {
@@ -33,7 +33,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! $this->is_experiment_active() ) {
+		if ( ! self::is_experiment_active() ) {
 			return;
 		}
 
@@ -50,25 +50,18 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 		add_action( 'elementor/document/after_migrate', fn( Document $document, array $data ) => $this->after_component_migrate( $document, $data ), 10, 2 );
 
+		add_filter(
+			'elementor/atomic-widgets/llm-json-schema',
+			fn( array $schema ) => ( new Overridable_LLM_Filter() )->apply( $schema )
+		);
+
 		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
 	}
 
-	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name'           => self::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Components', 'elementor' ),
-			'description'    => esc_html__( 'Enable components.', 'elementor' ),
-			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		];
+	public static function is_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public function get_widgets() {

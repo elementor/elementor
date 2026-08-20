@@ -134,9 +134,34 @@ export default function createAtomicElementBaseView( type ) {
 
 			// Defer to wait for everything to render.
 			setTimeout( () => {
+				if ( this.isAtomicGridContainer() ) {
+					this.reInitEmptyView();
+				}
+
 				this.droppableInitialize();
 				this.updateHandlesPosition();
 			} );
+		},
+
+		destroyEmptyView() {
+			if ( this.isAtomicGridContainer() ) {
+				return;
+			}
+
+			return Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		},
+
+		isAtomicGridContainer() {
+			return 'e-grid' === type;
+		},
+
+		reInitEmptyView() {
+			if ( this.el?.querySelector( ':scope > .elementor-empty-view' ) ) {
+				return;
+			}
+
+			delete this._showingEmptyView;
+			this.showEmptyView();
 		},
 
 		onDestroy() {
@@ -177,9 +202,8 @@ export default function createAtomicElementBaseView( type ) {
 			];
 
 			const isAdministrator = elementor.config.user.is_administrator;
-			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
-			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+			if ( isAdministrator ) {
 				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
 				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
@@ -300,7 +324,7 @@ export default function createAtomicElementBaseView( type ) {
 			const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 			return {
-				axis: null,
+				axis: this.isAtomicGridContainer() ? 'vertical' : null,
 				items,
 				groups: [ 'elementor-element' ],
 				horizontalThreshold: 0,
@@ -317,34 +341,18 @@ export default function createAtomicElementBaseView( type ) {
 
 					const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 						draggedElement = draggedView?.getContainer().view.el,
-						containerElement = event.currentTarget.parentElement,
+						isEmptyViewTarget = this.emptyViewIsCurrentlyBeingDraggedOver(),
+						containerElement = isEmptyViewTarget ? this.el : event.currentTarget.parentElement,
 						elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
 
-					let targetIndex = elements.indexOf( event.currentTarget );
+					let targetIndex = isEmptyViewTarget ? elements.length : elements.indexOf( event.currentTarget );
 
 					if ( this.isPanelElement( draggedView, draggedElement ) ) {
-						if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+						if ( this.draggingOnBottomOrRightSide( side ) && ! isEmptyViewTarget ) {
 							targetIndex++;
 						}
 
 						this.onDrop( event, { at: targetIndex } );
-
-						if ( elementorCommon?.eventsManager?.dispatchEvent ) {
-							const selectedElement = elementor.channels.panelElements.request( 'element:selected' );
-
-							if ( selectedElement ) {
-								const elType = selectedElement.model?.get( 'elType' ) ?? '';
-								const widgetType = selectedElement.model?.get( 'widgetType' ) ?? '';
-								const elementName = 'widget' === elType ? widgetType : elType;
-
-								elementorCommon.eventsManager.dispatchEvent( 'add_element', {
-									location: 'editor_panel',
-									element_name: elementName,
-									element_type: elType,
-									widget_type: widgetType,
-								} );
-							}
-						}
 
 						return;
 					}
@@ -353,8 +361,8 @@ export default function createAtomicElementBaseView( type ) {
 						return;
 					}
 
-					if ( this.emptyViewIsCurrentlyBeingDraggedOver() ) {
-						this.moveDroppedItem( draggedView, 0 );
+					if ( isEmptyViewTarget ) {
+						this.moveDroppedItem( draggedView, targetIndex );
 						return;
 					}
 

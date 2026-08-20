@@ -3,7 +3,7 @@ import { useBoundProp } from '@elementor/editor-controls';
 import { type PropKey } from '@elementor/editor-props';
 
 import { useVariableType } from '../context/variable-type-context';
-import { service } from '../service';
+import { type CreateVariableOptions, service, type UpdateVariableOptions } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 import { filterBySearch } from '../utils/filter-by-search';
 import { toNormalizedVariable, variablesToList } from '../utils/variables-to-list';
@@ -100,15 +100,16 @@ const normalizeVariables = ( propKey: string ): NormalizedVariable[] => {
 
 const extractId = ( { id }: { id: string } ): string => id;
 
-export const createVariable = ( newVariable: Variable ): Promise< string > => {
-	return service.create( newVariable ).then( extractId );
+export const createVariable = ( newVariable: Variable, options: CreateVariableOptions ): Promise< string > => {
+	return service.create( newVariable, options ).then( extractId );
 };
 
 export const updateVariable = (
 	updateId: string,
-	{ value, label, type }: { value: string; label: string; type?: string }
+	{ value, label, type }: { value: string; label: string; type?: string },
+	options?: UpdateVariableOptions
 ): Promise< string > => {
-	return service.update( updateId, { value, label, type } ).then( extractId );
+	return service.update( updateId, { value, label, type }, options ).then( extractId );
 };
 
 export const deleteVariable = ( deleteId: string ): Promise< string > => {

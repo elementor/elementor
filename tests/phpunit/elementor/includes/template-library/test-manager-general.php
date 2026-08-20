@@ -3,6 +3,8 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Core\RoleManager\Role_Manager;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\TemplateLibrary\Source_Local;
@@ -525,5 +527,190 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				]
 			), 'arguments_not_specified'
 		);
+	}
+
+	public function test_import_from_json__returns_wp_error_when_args_missing() {
+		$this->assertWPError(
+			self::$manager->import_from_json(
+				[
+					'editor_post_id' => 123,
+				]
+			),
+			'arguments_not_specified'
+		);
+
+		$this->assertWPError(
+			self::$manager->import_from_json(
+				[
+					'elements' => wp_json_encode( [] ),
+				]
+			),
+			'arguments_not_specified'
+		);
+	}
+
+	public function test_import_from_json__returns_wp_error_when_document_not_found() {
+		$this->assertWPError(
+			self::$manager->import_from_json(
+				[
+					'editor_post_id' => PHP_INT_MAX,
+					'elements' => wp_json_encode( [] ),
+				]
+			),
+			'template_error'
+		);
+	}
+
+	public function test_import_from_json__plain_elements_pass_through() {
+		// Arrange
+		$document = $this->factory()->documents->create_and_get();
+		$elements = [
+			[
+				'id' => 'a1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'elements' => [],
+				'settings' => [
+					'title' => 'Heading title',
+					'selected_editor' => 'classic',
+					'title_tag' => 'h2',
+				],
+			],
+		];
+
+		// Act
+		$result = self::$manager->import_from_json(
+			[
+				'editor_post_id' => $document->get_id(),
+				'elements' => wp_json_encode( $elements ),
+			]
+		);
+
+		// Assert
+		$this->assertEquals( $elements[0]['widgetType'], $result[0]['widgetType'] );
+		$this->assertEquals( $elements[0]['settings'], $result[0]['settings'] );
+		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
+	}
+
+	public function test_import_from_json__strips_html_cache() {
+		// Arrange
+		$document = $this->factory()->documents->create_and_get();
+		$elements = [
+			[
+				'id' => 'a1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'elements' => [],
+				'htmlCache' => '<div>foreign preview</div>',
+				'settings' => [
+					'title' => 'Heading title',
+				],
+			],
+		];
+
+		// Act
+		$result = self::$manager->import_from_json(
+			[
+				'editor_post_id' => $document->get_id(),
+				'elements' => wp_json_encode( $elements ),
+			]
+		);
+
+		// Assert
+		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
+	}
+
+	public function test_import_from_json__strips_html_cache_in_nested_elements() {
+		// Arrange
+		$document = $this->factory()->documents->create_and_get();
+		$elements = [
+			[
+				'id' => 'container-1',
+				'elType' => 'container',
+				'widgetType' => 'container',
+				'elements' => [
+					[
+						'id' => 'b1',
+						'elType' => 'widget',
+						'widgetType' => 'heading',
+						'elements' => [],
+						'htmlCache' => '<div>nested foreign preview</div>',
+						'settings' => [
+							'title' => 'Nested heading',
+						],
+					],
+				],
+				'settings' => [],
+			],
+		];
+
+		// Act
+		$result = self::$manager->import_from_json(
+			[
+				'editor_post_id' => $document->get_id(),
+				'elements' => wp_json_encode( $elements ),
+			]
+		);
+
+		// Assert
+		$this->assertArrayNotHasKey( 'htmlCache', $result[0]['elements'][0] );
+	}
+
+	private function mock_json_upload_capability_revoked() {
+		// Role_Manager::user_can() returns true when the capability is restricted
+		// (i.e. the "Enable the option to upload JSON files" checkbox is unchecked).
+		$role_manager_mock = $this->getMockBuilder( Role_Manager::class )
+			->disableOriginalConstructor()
+			->onlyMethods( [ 'user_can' ] )
+			->getMock();
+
+		$role_manager_mock->method( 'user_can' )->willReturn( true );
+
+		return $role_manager_mock;
+	}
+
+	public function test_import_template__denies_upload_when_json_upload_capability_revoked() {
+		// Arrange
+		$this->act_as_editor();
+
+		$original_role_manager = Plugin::$instance->role_manager;
+		Plugin::$instance->role_manager = $this->mock_json_upload_capability_revoked();
+
+		// Act
+		$result = self::$manager->import_template( [ 'source' => 'local' ] );
+
+		// Cleanup
+		Plugin::$instance->role_manager = $original_role_manager;
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( Manager::ERROR_JSON_UPLOAD_NOT_ALLOWED, $result->get_error_message() );
+	}
+
+	public function test_handle_ajax_request__denies_import_template_when_json_upload_capability_revoked() {
+		// Arrange
+		$this->act_as_editor();
+
+		$original_role_manager = Plugin::$instance->role_manager;
+		Plugin::$instance->role_manager = $this->mock_json_upload_capability_revoked();
+
+		$reflection = new \ReflectionClass( self::$manager );
+		$method = $reflection->getMethod( 'handle_ajax_request' );
+		$method->setAccessible( true );
+
+		// Act
+		try {
+			$method->invoke( self::$manager, 'import_template', [] );
+			$exception = null;
+		} catch ( \Exception $exception ) {
+			// Caught below, after the role manager is restored.
+		}
+
+		// Cleanup
+		Plugin::$instance->role_manager = $original_role_manager;
+
+		// Assert
+		$this->assertInstanceOf( \Exception::class, $exception );
+		$this->assertEquals( 'Access denied.', $exception->getMessage() );
 	}
 }

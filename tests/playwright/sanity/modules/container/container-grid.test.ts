@@ -601,6 +601,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Empty item should not be presented', async () => {
 			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
+
 		//
 		await test.step( 'Empty item should not be present in tablet', async () => {
 			await editor.changeResponsiveView( 'tablet' );
@@ -689,10 +690,10 @@ async function testPreset( frame, editor, rows, cols ) {
 		];
 	} );
 
-	await container.evaluate( ( el, rowsCount, colsCount ) => {
+	await container.evaluate( ( el, { rowsCount, colsCount } ) => {
 		el.style.setProperty( 'grid-template-rows', `repeat(${ rowsCount }, 1fr)` );
 		el.style.setProperty( 'grid-template-columns', `repeat(${ colsCount }, 1fr)` );
-	}, rows, cols );
+	}, { rowsCount: rows, colsCount: cols } );
 
 	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
 	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );

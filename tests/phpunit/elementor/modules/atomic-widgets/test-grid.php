@@ -12,12 +12,6 @@ class Test_Grid extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		// Grid is registered behind the e_css_grid experiment, which defaults to inactive.
-		// Register it directly so the elements manager can instantiate it for the test.
-		if ( ! Plugin::$instance->elements_manager->get_element_types( Grid::get_element_type() ) ) {
-			Plugin::$instance->elements_manager->register_element_type( new Grid() );
-		}
-
 		$mock = [
 			'id' => 'e8e55a1',
 			'elType' => Grid::get_element_type(),

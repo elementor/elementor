@@ -136,7 +136,10 @@ function extractElementData( element: UnknownVersionElementInstanceData ): Recor
 		version: resolveElementVersion( element ),
 	};
 
-	const title = model.title || element.model?.editor_settings?.title;
+	const title =
+		model.title ||
+		element.model?.editor_settings?.title ||
+		( element.model as unknown as Record< string, CallableFunction > ).getTitle?.();
 
 	if ( title ) {
 		result.title = title;

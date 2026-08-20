@@ -64,6 +64,24 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => Atomic_Image::get_element_type(),
 				],
 			],
+			'Atomic Image action link' => [
+				[
+					'id' => 'e8e55a1',
+					'elType' => 'widget',
+					'settings' => [
+						'image' => [
+							'id' => 123,
+							'src' => 'https://example.com/image.jpg',
+						],
+						'link' => [
+							'href' => 'https://very.dynamic.content.elementor',
+							'target' => '_blank',
+							'tag' => 'button',
+						],
+					],
+					'widgetType' => Atomic_Image::get_element_type(),
+				],
+			],
 			'Atomic Paragraph default' => [
 				[
 					'id' => 'e8e55a1',

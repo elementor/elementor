@@ -48,7 +48,7 @@ export function useOverrideControlDependencies( {
 		const dependents = extractOrderedDependencies( elementType.dependenciesPerTargetMapping ?? {} );
 
 		const settingsWithDepsNewValues = getUpdatedValues(
-			settingsForDepsNewValuesCalculation,
+			{ [ propKey ]: existingOverrideValue },
 			dependents,
 			elementType.propsSchema,
 			resolvedSettingsWithDefaults,

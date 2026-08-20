@@ -53,14 +53,15 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
 				->default( 'h2' )
-				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
+				->description( 'The HTML tag for the heading element. One of: h1, h2, h3, h4, h5, or h6. Do not use p, span, or div.' ),
 
 			'title' => Html_V3_Prop_Type::make()
 				->default( [
 					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text content of the heading.' ),
+				->description( 'The text content of the heading.' )
+				->alias( 'text', 'content', 'heading' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -71,6 +72,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function define_atomic_controls(): array {
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
+			->set_id( 'content' )
 			->set_items( [
 				Inline_Editing_Control::bind_to( 'title' )
 					->set_placeholder( __( 'Type your title here', 'elementor' ) )

@@ -25,6 +25,11 @@ class ScreenViewTracking extends BaseTracking {
 			return;
 		}
 
+		const screenData = this.getScreenData();
+		if ( screenData ) {
+			this.trackScreen( screenData.screenId, screenData.screenType );
+		}
+
 		this.attachTabChangeTracking();
 	}
 

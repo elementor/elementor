@@ -32,6 +32,7 @@ trait Post_Query {
 	protected function init() {
 		$this->register_post_types();
 		$this->create_posts();
+		$this->set_deterministic_modified_times();
 		$this->create_and_set_post_term();
 	}
 
@@ -80,6 +81,23 @@ trait Post_Query {
 			'post_status' => $status,
 			'post_type' => $post_type,
 		], $extra_args ) );
+	}
+
+	private function set_deterministic_modified_times() {
+		global $wpdb;
+
+		foreach ( $this->posts as $index => $post ) {
+			$time = gmdate( 'Y-m-d H:i:s', strtotime( "-{$index} minutes" ) );
+			$wpdb->update(
+				$wpdb->posts,
+				[
+					'post_modified' => $time,
+					'post_modified_gmt' => $time,
+				],
+				[ 'ID' => $post->ID ]
+			);
+			clean_post_cache( $post->ID );
+		}
 	}
 
 	private function create_and_set_post_term() {
@@ -312,6 +330,34 @@ trait Post_Query {
 						'id' => $this->posts[3]->ID,
 					],
 				],
+			],
+			'content_search_on_finds_match_in_post_content_when_title_does_not_match' => [
+				'params' => $this->build_params( [
+					Post_Query_Class::INCLUDED_TYPE_KEY => [ 'movie' ],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::SEARCH_IN_CONTENT_KEY => true,
+					Post_Query_Class::SEARCH_TERM_KEY => 'thriller',
+				] ),
+				'expected' => [
+					[
+						'id' => $this->posts[9]->ID,
+						'label' => $this->posts[9]->post_title,
+					],
+				],
+			],
+			'content_search_off_by_default_does_not_match_content_only_term' => [
+				'params' => $this->build_params( [
+					Post_Query_Class::INCLUDED_TYPE_KEY => [ 'movie' ],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::SEARCH_TERM_KEY => 'thriller',
+				] ),
+				'expected' => [],
 			],
 		];
 	}

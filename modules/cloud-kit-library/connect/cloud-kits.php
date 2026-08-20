@@ -45,6 +45,7 @@ class Cloud_Kits extends Library {
 
 		return $this->http_request( 'GET', 'quota/kits', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			'with_error_data' => true,
 		] );
 	}
 

@@ -24,12 +24,6 @@ export const componentsActions = {
 	resetUnpublished() {
 		dispatch( slice.actions.resetUnpublished() );
 	},
-	removeStyles( id: ComponentId ) {
-		dispatch( slice.actions.removeStyles( { id } ) );
-	},
-	addStyles( styles: Record< string, unknown > ) {
-		dispatch( slice.actions.addStyles( styles ) );
-	},
 	addCreatedThisSession( uid: string ) {
 		dispatch( slice.actions.addCreatedThisSession( uid ) );
 	},

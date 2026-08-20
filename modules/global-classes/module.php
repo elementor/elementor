@@ -18,10 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const NAME = 'e_classes';
-	const ENFORCE_CAPABILITIES_EXPERIMENT = 'global_classes_should_enforce_capabilities';
-
-	// TODO: Add global classes package
+	const NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
 	const PACKAGES = [
 		'editor-global-classes',
 	];
@@ -33,14 +30,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_features();
-
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::NAME );
 		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 
-		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
-		if ( $is_feature_active && $is_atomic_widgets_active ) {
+		if ( $is_atomic_widgets_active ) {
 			( new Global_Class_Post_Type() )->register();
+			( new Global_Classes_Post_IDs() )->register_hooks();
 
 			$relations = new Global_Classes_Relations();
 			$relations->register_hooks();
@@ -80,40 +74,51 @@ class Module extends BaseModule {
 				'elementor/kit/meta_to_preserve_on_kit_import',
 				[ $this, 'add_meta_to_preserve_on_kit_import' ]
 			);
+
+			add_action( 'elementor/kit/after_new_kit_created', [ $this, 'create_global_classes_posts_for_new_kit' ], 10, 1 );
 		}
 	}
 
 	public function add_meta_to_preserve_on_kit_import( array $meta_keys ): array {
 		return array_merge( $meta_keys, [
 			Global_Classes_Order::META_KEY,
+			Global_Classes_Order::META_KEY_PREVIEW,
 			Global_Classes_Labels::META_KEY_FRONTEND,
 			Global_Classes_Labels::META_KEY_PREVIEW,
+			Global_Classes_Relations::META_KEY_FRONTEND,
+			Global_Classes_Relations::META_KEY_PREVIEW,
+			Global_Classes_Relations::META_KEY_USAGE_INDEXED_FRONTEND,
+			Global_Classes_Relations::META_KEY_USAGE_INDEXED_PREVIEW,
+			Global_Classes_Relations::META_KEY_CLASS_RELATED_POSTS_FRONTEND,
+			Global_Classes_Relations::META_KEY_CLASS_RELATED_POSTS_PREVIEW,
 			Global_Classes_Sync_Map::META_KEY,
 		] );
 	}
 
-	private function register_features() {
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::NAME,
-			'title' => esc_html__( 'Global Classes', 'elementor' ),
-			'description' => esc_html__( 'Enable global CSS classes.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '4.0.0',
-			],
-		]);
+	/**
+	 * Duplicates global classes posts from the previous kit to the new kit, after a new kit is created.
+	 * So each kit has its own, separate, global classes posts, and editing one kit's classes will not affect the other kits.
+	 *
+	 * @param array $params The parameters passed to the action - 'new_kit_id' and 'previous_kit_id'.
+	 * @return void
+	 */
+	public function create_global_classes_posts_for_new_kit( array $params ): void {
+		[ 'new_kit_id' => $new_kit_id, 'previous_kit_id' => $previous_kit_id ] = $params;
 
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
-			'title' => esc_html__( 'Enforce global classes capabilities', 'elementor' ),
-			'description' => esc_html__( 'Enforce global classes capabilities.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
+		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
+		$new_kit = Plugin::$instance->kits_manager->get_kit( $new_kit_id );
+
+		if ( ! $previous_kit || ! $new_kit ) {
+			return;
+		}
+
+		$preview_order = Global_Classes_Order::make( $previous_kit )->set_preview( true )->get_order();
+		$frontend_order = Global_Classes_Order::make( $previous_kit )->set_preview( false )->get_order();
+		$all_classes = array_unique( array_merge( $preview_order, $frontend_order ) );
+
+		foreach ( $all_classes as $class_id ) {
+			Global_Class_Post::clone_to_other_kit( $class_id, $previous_kit, $new_kit );
+		}
 	}
 
 	private function add_packages( $packages ) {

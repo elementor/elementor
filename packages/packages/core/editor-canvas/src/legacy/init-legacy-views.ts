@@ -1,5 +1,5 @@
 import { getWidgetsCache, type V1ElementConfig } from '@elementor/editor-elements';
-import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { __privateIsReady as isV1Ready, __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer, type DomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
@@ -30,26 +30,36 @@ export function registerElementType(
 	elementTypeGenerator: ElementLegacyType[ keyof ElementLegacyType ]
 ) {
 	elementsLegacyTypes[ type ] = elementTypeGenerator;
+
+	if ( isV1Ready() ) {
+		registerElementInLegacyManager( type, createDomRenderer() );
+	}
 }
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
 		const widgetsCache = getWidgetsCache() ?? {};
-		const legacyWindow = window as unknown as LegacyWindow;
 		const renderer = createDomRenderer();
 
 		registerProPromotionTypes( widgetsCache );
 
-		Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
-			if ( ! element.atomic ) {
-				return;
-			}
-
-			const ResolvedElementType = resolveElementType( type, renderer, element );
-
-			tryRegisterElement( legacyWindow, type, element, ResolvedElementType );
+		Object.keys( widgetsCache ).forEach( ( type ) => {
+			registerElementInLegacyManager( type, renderer );
 		} );
 	} );
+}
+
+function registerElementInLegacyManager( type: string, renderer: DomRenderer ) {
+	const element = ( getWidgetsCache() ?? {} )[ type ];
+
+	if ( ! element?.atomic ) {
+		return;
+	}
+
+	const legacyWindow = window as unknown as LegacyWindow;
+	const ResolvedElementType = resolveElementType( type, renderer, element );
+
+	tryRegisterElement( legacyWindow, type, element, ResolvedElementType );
 }
 
 function registerProPromotionTypes( widgetsCache: Record< string, V1ElementConfig > ) {

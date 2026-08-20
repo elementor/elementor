@@ -17,79 +17,65 @@ export default class PromotionBehavior extends Marionette.Behavior {
 		};
 	}
 
+	dispatchPromotionEvent( widgetType, promotion ) {
+		document.dispatchEvent( new CustomEvent( 'widget-promotion:open', {
+			detail: {
+				target: this.el,
+				widgetType,
+				...promotion,
+			},
+		} ) );
+	}
+
 	onClickControlButtonDisplayConditions( event ) {
 		event.stopPropagation();
 
-		const dialogOptions = {
+		this.dispatchPromotionEvent( 'displayConditions', {
 			title: __( 'Display Conditions', 'elementor' ),
 			content: __(
 				'Upgrade to Elementor Pro Advanced to get the Display Conditions Feature as well as additional professional and ecommerce widgets',
 				'elementor',
 			),
-			targetElement: this.el,
-			actionButton: {
-				url: 'https://go.elementor.com/go-pro-display-conditions/',
-				text: __( 'Upgrade Now', 'elementor' ),
-			},
-		};
-
-		elementor.promotion.showDialog( dialogOptions );
+			ctaUrl: 'https://go.elementor.com/go-pro-display-conditions/',
+		} );
 	}
 
 	onClickControlButtonScrollingEffects( event ) {
 		event.stopPropagation();
 
-		const dialogOptions = {
+		this.dispatchPromotionEvent( 'scrollingEffects', {
 			title: __( 'Scrolling Effects', 'elementor' ),
 			content: __(
-				'Get Scrolling Effects such as <br /> vertical/horizontal scroll, transparency,<br /> and more with Elementor Pro.',
+				'Get Scrolling Effects such as vertical/horizontal scroll, transparency, and more with Elementor Pro.',
 				'elementor',
 			),
-			targetElement: this.el,
-			actionButton: {
-				url: 'https://go.elementor.com/go-pro-scrolling-effects-advanced/',
-				text: __( 'Upgrade Now', 'elementor' ),
-			},
-		};
-
-		elementor.promotion.showDialog( dialogOptions );
+			ctaUrl: 'https://go.elementor.com/go-pro-scrolling-effects-advanced/',
+		} );
 	}
 
 	onClickControlButtonMouseEffects( event ) {
 		event.stopPropagation();
 
-		const dialogOptions = {
+		this.dispatchPromotionEvent( 'mouseEffects', {
 			title: __( 'Mouse Effects', 'elementor' ),
 			content: __(
-				'Add a Mouse Track or 3d Tilt effect with<br />Elementor Pro.',
+				'Add a Mouse Track or 3d Tilt effect with Elementor Pro.',
 				'elementor',
 			),
-			targetElement: this.el,
-			actionButton: {
-				url: 'https://go.elementor.com/go-pro-motion-effects-advanced/',
-				text: __( 'Upgrade Now', 'elementor' ),
-			},
-		};
-
-		elementor.promotion.showDialog( dialogOptions );
+			ctaUrl: 'https://go.elementor.com/go-pro-motion-effects-advanced/',
+		} );
 	}
 
 	onClickControlButtonStickyEffects( event ) {
 		event.stopPropagation();
 
-		const dialogOptions = {
+		this.dispatchPromotionEvent( 'sticky', {
 			title: __( 'Sticky', 'elementor' ),
 			content: __(
-				'Make any element on your page sticky and<br />keep them in sight at the top or bottom of<br />the screen.',
+				'Make any element on your page sticky and keep them in sight at the top or bottom of the screen.',
 				'elementor',
 			),
-			targetElement: this.el,
-			actionButton: {
-				url: 'https://go.elementor.com/go-pro-sticky-element-advanced/',
-				text: __( 'Upgrade Now', 'elementor' ),
-			},
-		};
-
-		elementor.promotion.showDialog( dialogOptions );
+			ctaUrl: 'https://go.elementor.com/go-pro-sticky-element-advanced/',
+		} );
 	}
 }

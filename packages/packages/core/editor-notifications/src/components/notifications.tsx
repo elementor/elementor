@@ -98,6 +98,7 @@ const Wrapper = () => {
 		<SnackbarProvider
 			maxSnack={ 3 }
 			autoHideDuration={ AUTO_HIDE_DURATION }
+			disableWindowBlurListener
 			anchorOrigin={ { horizontal: 'center', vertical: 'bottom' } }
 			Components={ muiToEuiMapper }
 		>

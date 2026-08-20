@@ -58,6 +58,7 @@ export const DesignSystemHeaderMenu = () => {
 
 	const handleExport = () => {
 		popupState.close();
+		trackDesignSystem( { event: 'export' } );
 		void runExport();
 	};
 
@@ -101,13 +102,13 @@ export const DesignSystemHeaderMenu = () => {
 			>
 				<MenuItem onClick={ handleImport } disabled={ isImporting }>
 					<ListItemIcon>
-						<UploadIcon fontSize="tiny" />
+						<DownloadIcon fontSize="tiny" />
 					</ListItemIcon>
 					<ListItemText>{ __( 'Import', 'elementor' ) }</ListItemText>
 				</MenuItem>
 				<MenuItem onClick={ handleExport } disabled={ isExporting }>
 					<ListItemIcon>
-						<DownloadIcon fontSize="tiny" />
+						<UploadIcon fontSize="tiny" />
 					</ListItemIcon>
 					<ListItemText>{ __( 'Export', 'elementor' ) }</ListItemText>
 				</MenuItem>

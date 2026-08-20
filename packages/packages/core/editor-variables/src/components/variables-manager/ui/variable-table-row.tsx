@@ -162,7 +162,7 @@ export const VariableRow = (
 							value,
 							onChange,
 							onPropTypeKeyChange: ( type ) => {
-								if ( ! isDisabled ) {
+								if ( ! isDisabled && type !== row.type ) {
 									handleOnChange( {
 										...variables,
 										[ row.id ]: { ...variables[ row.id ], type },

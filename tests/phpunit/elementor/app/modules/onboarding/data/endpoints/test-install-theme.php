@@ -25,8 +25,8 @@ class Test_Install_Theme extends Test_Base {
 
 	public function test_allowed_themes_constant_contains_expected_themes() {
 		$this->assertContains( 'hello-elementor', Install_Theme::ALLOWED_THEMES );
-		$this->assertContains( 'hello-biz', Install_Theme::ALLOWED_THEMES );
-		$this->assertCount( 2, Install_Theme::ALLOWED_THEMES );
+		$this->assertNotContains( 'hello-biz', Install_Theme::ALLOWED_THEMES );
+		$this->assertCount( 1, Install_Theme::ALLOWED_THEMES );
 	}
 
 	public function test_rejects_empty_theme_slug() {

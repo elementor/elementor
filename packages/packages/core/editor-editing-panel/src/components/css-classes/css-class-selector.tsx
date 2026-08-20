@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ReactElement, useRef, useState } from 'react';
+import { type ReactElement, useCallback, useRef, useState } from 'react';
 import { type ClassesPropValue } from '@elementor/editor-props';
 import {
 	isElementsStylesProvider,
@@ -11,7 +11,6 @@ import {
 	validateStyleLabel,
 } from '@elementor/editor-styles-repository';
 import { InfoAlert, WarningInfotip } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { ColorSwatchIcon, MapPinIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
 import {
@@ -40,25 +39,24 @@ import {
 	type ValidationResult,
 } from '../creatable-autocomplete';
 import { CssClassItem } from './css-class-item';
-import { useApplyClass, useCreateAndApplyClass, useUnapplyClass } from './use-apply-and-unapply-class';
+import { MissingClassesAlert } from './missing-classes-alert';
+import {
+	useCreateAndApplyClass,
+	useUnapplyClasses,
+	useUndoableApplyClass,
+	useUndoableUnapplyClass,
+} from './use-apply-and-unapply-class';
+import { useMissingClassesIds } from './use-missing-classes';
 
 const ID = 'elementor-css-class-selector';
 const TAGS_LIMIT = 50;
 
-const EVENT_OPEN_GLOBAL_CLASSES_MANAGER = 'elementor/open-global-classes-manager';
-const EVENT_TOGGLE_DESIGN_SYSTEM = 'elementor/toggle-design-system';
-
 function openClassManagerPanel() {
-	if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
-		window.dispatchEvent(
-			new CustomEvent( EVENT_TOGGLE_DESIGN_SYSTEM, {
-				detail: { tab: 'classes' as const },
-			} )
-		);
-		return;
-	}
-
-	window.dispatchEvent( new CustomEvent( EVENT_OPEN_GLOBAL_CLASSES_MANAGER ) );
+	window.dispatchEvent(
+		new CustomEvent( 'elementor/toggle-design-system', {
+			detail: { tab: 'classes' as const },
+		} )
+	);
 }
 
 type StyleDefOption = Option & {
@@ -102,6 +100,15 @@ export function CssClassSelector() {
 	const { userCan } = useUserStylesCapability();
 
 	const canEdit = active.provider ? userCan( active.provider ).updateProps : true;
+
+	const missingClassesIds = useMissingClassesIds();
+	const hasMissingClasses = missingClassesIds.length > 0;
+
+	const unapplyClasses = useUnapplyClasses();
+
+	const clearMissingClasses = useCallback( () => {
+		unapplyClasses( missingClassesIds );
+	}, [ missingClassesIds, unapplyClasses ] );
 
 	return (
 		<Stack p={ 2 }>
@@ -181,6 +188,7 @@ export function CssClassSelector() {
 					}
 				/>
 			</WarningInfotip>
+			{ hasMissingClasses && <MissingClassesAlert onDismiss={ clearMissingClasses } /> }
 			{ ! canEdit && (
 				<InfoAlert sx={ { mt: 1 } }>
 					{ __( 'With your current role, you can use existing classes but can’t modify them.', 'elementor' ) }
@@ -374,8 +382,8 @@ function useAppliedOptions( options: StyleDefOption[] ) {
 }
 
 function useHandleSelect() {
-	const apply = useApplyClass();
-	const unapply = useUnapplyClass();
+	const apply = useUndoableApplyClass();
+	const unapply = useUndoableUnapplyClass();
 
 	return ( _selectedOptions: StyleDefOption[], reason: AutocompleteChangeReason, option: StyleDefOption ) => {
 		if ( ! option.value ) {

@@ -1,8 +1,10 @@
 import { invalidateDocumentData, switchToDocument } from '@elementor/editor-documents';
 
+import { loadComponentsOverridableProps } from '../../store/actions/load-components-overridable-props';
 import { buildUniqueSelector, switchToComponent } from '../switch-to-component';
 
 jest.mock( '@elementor/editor-documents' );
+jest.mock( '../../store/actions/load-components-overridable-props' );
 
 const COMPONENT_A_INSTANCE_1_ID = 'component-a-instance-1';
 const COMPONENT_A_INSTANCE_2_ID = 'component-a-instance-2';
@@ -168,6 +170,10 @@ describe( 'buildUniqueSelector', () => {
 } );
 
 describe( 'switchToComponent', () => {
+	beforeEach( () => {
+		jest.mocked( loadComponentsOverridableProps ).mockResolvedValue( undefined );
+	} );
+
 	it( 'should invalidate document cache before switching to ensure fresh data is loaded', async () => {
 		// Arrange
 		const componentId = 1234;
@@ -187,5 +193,16 @@ describe( 'switchToComponent', () => {
 		expect( invalidateDocumentData ).toHaveBeenCalledWith( componentId );
 		expect( switchToDocument ).toHaveBeenCalledWith( componentId, expect.objectContaining( { mode: 'autosave' } ) );
 		expect( callOrder ).toEqual( [ 'invalidateCache', 'switch' ] );
+	} );
+
+	it( 'should force-refresh the overridable props of the component being switched to', async () => {
+		// Arrange
+		const componentId = 1234;
+
+		// Act
+		await switchToComponent( componentId );
+
+		// Assert
+		expect( loadComponentsOverridableProps ).toHaveBeenCalledWith( [ componentId ], { force: true } );
 	} );
 } );

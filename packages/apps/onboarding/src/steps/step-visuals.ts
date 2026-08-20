@@ -31,25 +31,14 @@ export const LOGIN_CONFIG: StepVisualConfig = {
 };
 
 const stepVisuals: Record< StepIdType, StepVisualConfig > = {
-	[ StepId.BUILDING_FOR ]: {
-		background: buildBackground( 'step-1.webp' ),
-	},
-	[ StepId.SITE_ABOUT ]: {
-		background: buildBackground( 'step-2.webp' ),
-		video: getOnboardingVideoUrl( 'step-2.webm' ),
-	},
-	[ StepId.EXPERIENCE_LEVEL ]: {
-		background: buildBackground( 'step-3.webp' ),
-		video: getOnboardingVideoUrl( 'step-3.webm' ),
-	},
 	[ StepId.THEME_SELECTION ]: {
-		background: buildBackground( 'step-4.webp' ),
-		video: getOnboardingVideoUrl( 'step-4.webm' ),
+		background: '',
+		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 	[ StepId.SITE_FEATURES ]: {
-		background: buildBackground( 'step-5.webp' ),
-		video: getOnboardingVideoUrl( 'step-5.webm' ),
+		background: '',
+		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 };
@@ -58,5 +47,10 @@ export const getLoginVisualConfig = (): StepVisualConfig => LOGIN_CONFIG;
 
 export const getStepVisualConfig = ( stepId: StepIdType ): StepVisualConfig => stepVisuals[ stepId ] ?? DEFAULT_CONFIG;
 
-export const getVideoUrls = (): string[] =>
-	Object.values( stepVisuals ).flatMap( ( config ) => ( config.video ? [ config.video ] : [] ) );
+// Deduplicated so shared videos (e.g. steps 4 and 5 use the same clip) yield a
+// single <video> element rather than two with a colliding React key.
+export const getVideoUrls = (): string[] => {
+	const urls = Object.values( stepVisuals ).flatMap( ( config ) => ( config.video ? [ config.video ] : [] ) );
+
+	return [ ...new Set( urls ) ];
+};

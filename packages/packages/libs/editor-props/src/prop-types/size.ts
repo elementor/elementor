@@ -4,11 +4,12 @@ import { createPropUtils } from '../utils/create-prop-utils';
 
 const sizeNumberOrEmpty = z.union( [ z.number(), z.literal( '' ) ] );
 
+// NOTE: The schema differs from the PHP schema, check size-prop-type.php for the actual schema.
 export const sizePropTypeUtil = createPropUtils(
 	'size',
 	z
 		.strictObject( {
-			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'ch' ] ),
+			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'ch', 'fr' ] ),
 			size: sizeNumberOrEmpty,
 		} )
 		.or(

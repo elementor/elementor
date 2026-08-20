@@ -67,6 +67,9 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	} ),
 } ) );
 
+jest.mock( '../../../load-existing-classes', () => ( {
+	loadExistingClasses: jest.fn().mockResolvedValue( undefined ),
+} ) );
 jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
@@ -138,7 +141,9 @@ describe( 'GlobalClassesList', () => {
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		} );
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classRenamed',
 			classId: 'class-1',
@@ -213,7 +218,9 @@ describe( 'GlobalClassesList', () => {
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		} );
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classRenamed',
 			classId: 'class-1',

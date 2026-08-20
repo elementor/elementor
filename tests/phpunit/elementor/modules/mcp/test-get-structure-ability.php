@@ -120,12 +120,29 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 	}
 
-	public function test_execute__returns_elements_on_success() {
+	public function test_execute__returns_pruned_skeleton_on_success() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
 
-		$elements = [ [ 'id' => 'abc123', 'elType' => 'container' ] ];
+		$elements = [
+			[
+				'id' => 'container1',
+				'elType' => 'container',
+				'settings' => [ 'padding' => '20px', 'color' => '#fff' ],
+				'styles' => [ 's-1' => [ 'variants' => [] ] ],
+				'elements' => [
+					[
+						'id' => 'widget1',
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [ 'title' => 'Hello' ],
+						'styles' => [],
+						'elements' => [],
+					],
+				],
+			],
+		];
 
 		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
 		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
@@ -141,8 +158,86 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'elements', $result );
-		$this->assertSame( $elements, $result['elements'] );
+		$this->assertSame(
+			[
+				[
+					'id' => 'container1',
+					'elType' => 'container',
+					'title' => 'Container',
+					'elements' => [
+						[
+							'id' => 'widget1',
+							'elType' => 'widget',
+							'widgetType' => 'e-heading',
+							'title' => 'Heading',
+						],
+					],
+				],
+			],
+			$result['elements']
+		);
+	}
+
+	public function test_execute__returns_only_matching_subtree_when_element_id_given() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'container1',
+				'elType' => 'container',
+				'elements' => [
+					[ 'id' => 'widget1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [ 'x' => 1 ] ],
+					[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'settings' => [ 'x' => 2 ] ],
+				],
+			],
+		];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id, 'element_id' => 'widget2' ] );
+
+		// Assert
+		$this->assertSame(
+			[
+				[ 'id' => 'widget2', 'elType' => 'widget', 'widgetType' => 'e-button', 'title' => 'Button' ],
+			],
+			$result['elements']
+		);
+	}
+
+	public function test_execute__returns_404_when_element_id_not_found() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [ [ 'id' => 'container1', 'elType' => 'container', 'elements' => [] ] ];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id, 'element_id' => 'missing' ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'element_not_found', $result->get_error_code() );
+		$this->assertSame( \WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
 	}
 
 	public function test_execute__returns_empty_elements_array_when_null() {
@@ -164,5 +259,571 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( [], $result['elements'] );
+	}
+
+	public function test_execute__returns_400_when_include_content_without_element_id() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( [] );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id, 'include_content' => true ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function test_execute__includes_settings_and_styles_for_subtree_when_include_content_true() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$custom_css_raw = base64_encode( 'outline: none;' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Test fixture.
+
+		$elements = [
+			[
+				'id' => 'container1',
+				'elType' => 'widget',
+				'widgetType' => 'e-flexbox',
+				'settings' => [
+					'tag' => [
+						'$$type' => 'string',
+						'value' => 'section',
+					],
+				],
+				'styles' => [
+					's-abc' => [
+						'id' => 's-abc',
+						'type' => 'class',
+						'label' => 'local',
+						'variants' => [
+							[
+								'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+								'props' => [
+									'color' => [ '$$type' => 'color', 'value' => '#fff' ],
+								],
+								'custom_css' => [ 'raw' => $custom_css_raw ],
+							],
+						],
+					],
+				],
+				'elements' => [
+					[
+						'id' => 'widget1',
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [
+							'title' => [
+								'$$type' => 'html-v3',
+								'value' => [
+									'content' => [
+										'$$type' => 'string',
+										'value' => 'Hello',
+									],
+									'children' => [],
+								],
+							],
+						],
+						'styles' => [],
+						'elements' => [],
+					],
+				],
+			],
+		];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'container1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$root = $result['elements'][0];
+
+		$this->assertSame( 'container1', $root['id'] );
+		$this->assertSame(
+			[ 'tag' => 'section' ],
+			$root['settings']
+		);
+		$this->assertSame( 's-abc', $root['styles']['__style_id'] );
+		$this->assertStringContainsString( 'color: #fff;', $root['styles']['css'] );
+		$this->assertStringContainsString( 'outline: none;', $root['styles']['css'] );
+
+		$child = $root['elements'][0];
+		$this->assertSame( 'widget1', $child['id'] );
+		$this->assertSame(
+			[ 'title' => 'Hello' ],
+			$child['settings']
+		);
+		$this->assertSame( [], $child['styles'] );
+	}
+
+	public function test_execute__styles_empty_when_only_global_class_refs() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'classes' => [
+						'$$type' => 'classes',
+						'value' => [ 'g-abc' ],
+					],
+				],
+				'styles' => [],
+				'elements' => [],
+			],
+		];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'widget1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$node = $result['elements'][0];
+		$this->assertSame(
+			[ 'classes' => [ 'g-abc' ] ],
+			$node['settings']
+		);
+		$this->assertSame( [], $node['styles'] );
+	}
+
+	public function test_execute__serializes_realistic_local_style_id_with_e_prefix() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$style_id = 'e-widget1-abc1234';
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'styles' => [
+					$style_id => [
+						'id' => $style_id,
+						'type' => 'class',
+						'label' => 'local',
+						'variants' => [
+							[
+								'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+								'props' => [
+									'color' => [ '$$type' => 'color', 'value' => '#123456' ],
+								],
+								'custom_css' => null,
+							],
+						],
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'widget1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$styles = $result['elements'][0]['styles'];
+		$this->assertSame( $style_id, $styles['__style_id'] );
+		$this->assertStringContainsString( 'color: #123456;', $styles['css'] );
+	}
+
+	public function test_execute__serializes_media_and_pseudo_variants_as_raw_css() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$mobile_variant = [
+			'meta' => [ 'breakpoint' => 'mobile', 'state' => null ],
+			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#000' ] ],
+			'custom_css' => null,
+		];
+		$desktop_variant = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#fff' ] ],
+			'custom_css' => null,
+		];
+		$hover_variant = [
+			'meta' => [ 'breakpoint' => 'desktop', 'state' => 'hover' ],
+			'props' => [ 'color' => [ '$$type' => 'color', 'value' => '#0f0' ] ],
+			'custom_css' => null,
+		];
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'styles' => [
+					's-xyz' => [
+						'id' => 's-xyz',
+						'type' => 'class',
+						'label' => 'local',
+						'variants' => [ $desktop_variant, $hover_variant, $mobile_variant ],
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'widget1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$styles = $result['elements'][0]['styles'];
+		$this->assertSame( 's-xyz', $styles['__style_id'] );
+		$this->assertStringContainsString( 'color: #fff;', $styles['css'] );
+		$this->assertStringContainsString( '&:hover { color: #0f0; }', $styles['css'] );
+		$this->assertStringContainsString( '@media(--mobile) {', $styles['css'] );
+		$this->assertStringContainsString( 'color: #000;', $styles['css'] );
+		$this->assertArrayNotHasKey( '__variants', $styles );
+		$this->assertArrayNotHasKey( '__custom_css', $styles );
+	}
+
+	public function test_execute__includes_editor_settings_title_in_skeleton() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'editor_settings' => [ 'title' => 'Hero Section' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Hero Section', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__falls_back_to_title_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [ '_title' => 'Legacy Custom Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Legacy Custom Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__falls_back_to_preset_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [ 'presetTitle' => 'Preset Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Preset Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__falls_back_to_widget_type_label() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Heading', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__prefers_editor_settings_title_over_title_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'editor_settings' => [ 'title' => 'Editor Title' ],
+				'settings' => [ '_title' => 'Legacy Title' ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Editor Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__extracts_title_from_envelope_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'_title' => [
+						'$$type' => 'string',
+						'value' => 'Envelope Title',
+					],
+				],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( 'Envelope Title', $result['elements'][0]['title'] );
+	}
+
+	public function test_execute__omits_version_from_skeleton() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'container1',
+				'elType' => 'container',
+				'elements' => [
+					[ 'id' => 'v3', 'elType' => 'widget', 'widgetType' => 'heading', 'settings' => [] ],
+					[ 'id' => 'v4', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [] ],
+				],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$container = $result['elements'][0];
+		$this->assertArrayNotHasKey( 'version', $container );
+		$this->assertArrayNotHasKey( 'version', $container['elements'][0] );
+		$this->assertArrayNotHasKey( 'version', $container['elements'][1] );
+	}
+
+	public function test_execute__strips_non_allowlisted_v3_settings_and_styles_when_include_content_true() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'legacy1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [ 'title' => 'Legacy value', 'align' => 'center' ],
+				'styles' => [ 's-1' => [ 'variants' => [] ] ],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'legacy1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$node = $result['elements'][0];
+		$this->assertArrayNotHasKey( 'version', $node );
+		$this->assertEquals( (object) [], $node['settings'] );
+		$this->assertEquals( (object) [], $node['styles'] );
+	}
+
+	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'post-title-1',
+				'elType' => 'widget',
+				'widgetType' => 'theme-post-title',
+				'settings' => [
+					'title' => 'Hello',
+					'title_color' => '#222222',
+					'custom_css' => 'selector { filter: blur(2px); }',
+				],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'post-title-1',
+			'include_content' => true,
+		] );
+
+		// Assert
+		$node = $result['elements'][0];
+		$this->assertArrayNotHasKey( 'version', $node );
+		$this->assertArrayNotHasKey( 'styles', $node );
+		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
+		$this->assertStringContainsString( 'color: #222222;', $node['style'] );
+		$this->assertStringContainsString( 'filter: blur(2px);', $node['style'] );
+	}
+
+	public function test_execute__omits_version_for_unknown_type() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'unknown1',
+				'elType' => 'widget',
+				'widgetType' => 'this-type-does-not-exist',
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'version', $result['elements'][0] );
+	}
+
+	private function mock_document_with_elements( int $post_id, array $elements ): void {
+		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
+		$mock_document->method( 'is_built_with_elementor' )->willReturn( true );
+		$mock_document->method( 'is_editable_by_current_user' )->willReturn( true );
+		$mock_document->method( 'get_elements_data' )->willReturn( $elements );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get' )->willReturn( $mock_document );
+		Plugin::$instance->documents = $mock_docs;
 	}
 }

@@ -2,6 +2,7 @@ import { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from '@elementor/
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
+import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { APPLY_GLOBAL_CLASS_GUIDE_URI, generateApplyGlobalClassGuidePrompt } from './apply-global-class-guide-prompt';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
 
@@ -43,9 +44,16 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			const { classId, elementId } = params;
 			const appliedClasses = doGetAppliedClasses( elementId );
 			doApplyClasses( elementId, [ ...appliedClasses, classId ] );
+
+			globalClassesStylesProvider.actions.tracking?.( {
+				event: 'classApplied',
+				executedBy: 'mcp_tool',
+				classId,
+			} );
+
 			return {
 				llm_instructions:
-					'Please check the element-configuration, find DUPLICATES in the style schema that are in the class, and remove them',
+					'Please check the element configuration, find inline styles duplicated by the applied global class, and remove them',
 				result: `Class ${ classId } applied to element ${ elementId } successfully.`,
 			};
 		},

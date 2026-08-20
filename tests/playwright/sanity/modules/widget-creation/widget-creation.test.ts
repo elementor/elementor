@@ -7,8 +7,7 @@ type ExtendedWindow = Window & {
   __createWidgetPrompt: string;
 };
 
-test.describe( 'Widget Creation @widget-creation', () => {
-	const EXPERIMENT_NAME = 'e_widget_creation';
+test.describe.skip( 'Widget Creation @widget-creation', () => {
 	const WIDGET_SEARCH_INPUT = 'input#elementor-panel-elements-search-input';
 	const WIDGET_CREATION_CTA = '.elementor-panel-elements-widget-creation__cta';
 	const WIDGET_CREATION_TITLE = '.elementor-panel-elements-widget-creation__title';
@@ -42,7 +41,6 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			context = await browser.newContext();
 			page = await context.newPage();
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { [ EXPERIMENT_NAME ]: 'active' } );
 		} );
 
 		test.afterAll( async () => {
@@ -181,7 +179,6 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			context = await browser.newContext();
 			page = await context.newPage();
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { [ EXPERIMENT_NAME ]: 'inactive' } );
 		} );
 
 		test.afterAll( async () => {

@@ -5,7 +5,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Element_Base;
-use Elementor\Modules\Ai\Feature_Intro\Product_Image_Unification_Intro;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
@@ -125,7 +124,6 @@ class Module extends BaseModule {
 				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
 				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
 				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
-				Product_Image_Unification_Intro::add_hooks();
 			}
 		}
 
@@ -1586,6 +1584,12 @@ class Module extends BaseModule {
 	}
 
 	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
+		if ( Plugin::instance()->experiments->is_feature_active( 'site-builder' ) ) {
+			$home_screen_data['create_with_ai'] = null;
+
+			return $home_screen_data;
+		}
+
 		if ( $this->should_display_create_with_ai_banner() ) {
 			$home_screen_data['create_with_ai'] = $this->get_create_with_ai_banner_data();
 		} else {

@@ -3,13 +3,12 @@
   "author": "Elementor Team",
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">=20.19.0",
-    "npm": ">=10.0.0"
+    "node": ">=24.15.0",
+    "npm": ">=11.0.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.6.0",
-    "@typescript-eslint/parser": "^8.6.0",
-    "@wordpress/eslint-plugin": "^21.1.0",
+    "@wordpress/eslint-plugin": "^25.8.0",
+    "typescript-eslint": "^8.65.0",
     "tsup": "^8.3.5"
   },
   "scripts": {

@@ -2,7 +2,7 @@ import { getAngieSdk, McpServer, ResourceTemplate } from '@elementor/editor-mcp'
 import { callWpApi, requireConfirmationMessage, waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { z } from '@elementor/schema';
 
-import { addKitDescriptionResource, KIT_DESCRIPTION, KIT_DESCRIPTION_URI } from './mcp-description-resource';
+import { addKitDescriptionResource, KIT_DESCRIPTION_URI } from './mcp-description-resource';
 
 const RESOURCE_NAME_KIT_FONTS = 'elementor-kit-fonts';
 const RESOURCE_URI_KIT_FONTS = 'elementor://kit/fonts';
@@ -143,6 +143,7 @@ const generalPatchSchema = z
 		'General patch object for any other Elementor kit settings like spacing, buttons, forms, layout settings, etc.'
 	);
 
+const SERVER_INSTRUCTIONS = 'Manages Elementor global design system: colors, typography, and site identity.';
 export async function createElementorKitServer(): Promise< McpServer > {
 	await waitForElementorEditor();
 	const server = new McpServer(
@@ -152,7 +153,7 @@ export async function createElementorKitServer(): Promise< McpServer > {
 			title: 'Elementor Kit',
 		},
 		{
-			instructions: 'Manages Elementor global design system: colors, typography, and site identity.',
+			instructions: SERVER_INSTRUCTIONS,
 			capabilities: {
 				resources: {
 					subscribe: true,
@@ -212,12 +213,11 @@ export async function createElementorKitServer(): Promise< McpServer > {
 		}
 	);
 
-	const availableTabs = await getAvailableTabs();
-
 	server.registerResource(
 		RESOURCE_NAME_KIT_SCHEMA,
 		new ResourceTemplate( RESOURCE_URI_KIT_SCHEMA_TEMPLATE, {
 			list: async () => {
+				const availableTabs = await getAvailableTabs();
 				return {
 					resources: availableTabs.map( ( tab ) => {
 						return {
@@ -376,7 +376,7 @@ The tool will permanently update the site's global design settings and return a 
 	sdk.registerLocalServer( {
 		server,
 		version: VERSION,
-		description: KIT_DESCRIPTION,
+		description: SERVER_INSTRUCTIONS,
 		name: 'elementor-kit-server',
 	} );
 	return server;

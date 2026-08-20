@@ -8,6 +8,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\GlobalClasses\Global_Classes_Post_IDs;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -19,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Migrate_To_Posts extends Elementor_Test_Base {
 	private Kit $kit;
 	private array $created_post_ids = [];
+	private array $extra_kit_ids = [];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -33,6 +35,7 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Post_IDs::META_KEY );
 
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
@@ -49,9 +52,28 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 			wp_delete_post( $post_id, true );
 		}
 
+		$this->force_delete_kits( $this->extra_kit_ids );
+
 		$this->created_post_ids = [];
+		$this->extra_kit_ids    = [];
 
 		parent::tearDown();
+	}
+
+	private function force_delete_kits( array $kit_ids ): void {
+		if ( empty( $kit_ids ) ) {
+			return;
+		}
+
+		$skip_confirmation = new \ReflectionProperty( Plugin::$instance->kits_manager, 'should_skip_trash_kit_confirmation' );
+		$skip_confirmation->setAccessible( true );
+		$skip_confirmation->setValue( Plugin::$instance->kits_manager, true );
+
+		foreach ( $kit_ids as $kit_id ) {
+			wp_delete_post( $kit_id, true );
+		}
+
+		$skip_confirmation->setValue( Plugin::$instance->kits_manager, false );
 	}
 
 	public function test_migration__creates_posts_from_kit_meta() {
@@ -186,7 +208,7 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->assertEmpty( $posts );
 	}
 
-	public function test_migration__skips_when_posts_already_exist() {
+	public function test_migration__skips_when_kit_already_migrated() {
 		// Arrange
 		$global_classes = [
 			'items' => [
@@ -197,7 +219,8 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $global_classes );
 
-		$existing_post = Global_Class_Post::create( 'g-existing', 'existing-class', [ 'type' => 'class', 'variants' => [] ] );
+		$existing_post = Global_Class_Post::create( 'g-1', 'test', [ 'type' => 'class', 'variants' => [] ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
 
 		// Act
 		$migration = new Migrate_To_Posts();
@@ -214,5 +237,53 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->assertSame( $existing_post->get_post_id(), $posts[0]->ID );
 
 		$this->assertNotEmpty( $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND ) );
+	}
+
+	public function test_migration__migrates_all_kits_on_fresh_install() {
+		// Arrange — active kit AND a second draft kit both have aggregate data; no CPTs exist yet.
+		$second_kit_id = Plugin::$instance->kits_manager->create( [ 'post_title' => 'Draft Kit' ] );
+		$second_kit    = Plugin::$instance->kits_manager->get_kit( $second_kit_id );
+		$this->extra_kit_ids[] = $second_kit_id;
+
+		$active_classes = [
+			'items' => [
+				'g-active-1' => [ 'id' => 'g-active-1', 'label' => 'active-class', 'type' => 'class', 'variants' => [] ],
+			],
+			'order' => [ 'g-active-1' ],
+		];
+
+		$draft_classes = [
+			'items' => [
+				'g-draft-1' => [ 'id' => 'g-draft-1', 'label' => 'draft-class', 'type' => 'class', 'variants' => [] ],
+			],
+			'order' => [ 'g-draft-1' ],
+		];
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $active_classes );
+		$second_kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $draft_classes );
+
+		// Act
+		$migration = new Migrate_To_Posts();
+		$migration->up();
+
+		// Assert — both kits have CPT posts and isolated post-id maps.
+		$active_post = Global_Class_Post::find_by_class_id( 'g-active-1', false, $this->kit );
+		$draft_post  = Global_Class_Post::find_by_class_id( 'g-draft-1', false, $second_kit );
+
+		$this->assertNotNull( $active_post, 'Active kit class must be migrated' );
+		$this->assertNotNull( $draft_post, 'Draft kit class must be migrated' );
+		$this->assertSame( 'active-class', $active_post->get_label() );
+		$this->assertSame( 'draft-class', $draft_post->get_label() );
+
+		// Maps must be disjoint.
+		$map_active = $this->kit->get_meta( Global_Classes_Post_IDs::META_KEY );
+		$map_draft  = $second_kit->get_meta( Global_Classes_Post_IDs::META_KEY );
+
+		$this->assertIsArray( $map_active );
+		$this->assertIsArray( $map_draft );
+		$this->assertEmpty(
+			array_intersect( array_values( $map_active ), array_values( $map_draft ) ),
+			'Post-id maps of different kits must not share post IDs'
+		);
 	}
 }

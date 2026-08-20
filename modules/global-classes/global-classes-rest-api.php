@@ -20,8 +20,6 @@ class Global_Classes_REST_API {
 	const API_BASE_POST = self::API_BASE . '/post';
 	const API_BASE_STYLES = self::API_BASE . '/styles';
 	const MAX_ITEMS = 1000;
-	const LABEL_PREFIX = 'DUP_';
-	const MAX_LABEL_LENGTH = 50;
 	private ?Global_Classes_Repository $repository = null;
 	private ?Global_Classes_Relations $relations = null;
 	private ?Kit $kit = null;
@@ -365,6 +363,13 @@ class Global_Classes_REST_API {
 
 		$final_item_ids = array_keys( $this->merge_touched_with_existing_labels( $all_label_by_id, $touched_items, $deleted_ids ) );
 
+		$final_item_ids_set = array_flip( $final_item_ids );
+		$order_set = array_flip( $order );
+
+		$order = array_values( array_filter( $order, fn( $id ) => isset( $final_item_ids_set[ $id ] ) ) );
+		$missing_from_order = array_values( array_filter( $final_item_ids, fn( $id ) => ! isset( $order_set[ $id ] ) ) );
+		$order = array_merge( $order, $missing_from_order );
+
 		$order_result = $parser->parse_order( $order, $final_item_ids );
 
 		if ( ! $order_result->is_valid() ) {
@@ -454,7 +459,7 @@ class Global_Classes_REST_API {
 			$item_id = $duplicate_label['item_id'];
 			$original_label = $duplicate_label['label'];
 
-			$modified_label = $this->generate_unique_label( $original_label, $existing_labels );
+			$modified_label = Global_Classes_Labels::generate_unique_label( $original_label, $existing_labels );
 
 			$modified_labels[ $item_id ] = [
 				'original' => $original_label,
@@ -463,55 +468,5 @@ class Global_Classes_REST_API {
 		}
 
 		return $modified_labels;
-	}
-
-
-	private function generate_unique_label( $original_label, $existing_labels ) {
-		$prefix = self::LABEL_PREFIX;
-		$max_length = self::MAX_LABEL_LENGTH;
-
-		$has_prefix = strpos( $original_label, $prefix ) === 0;
-
-		if ( $has_prefix ) {
-			$base_label = substr( $original_label, strlen( $prefix ) );
-
-			$counter = 1;
-			$new_label = $prefix . $base_label . $counter;
-
-			while ( in_array( $new_label, $existing_labels, true ) ) {
-				++$counter;
-				$new_label = $prefix . $base_label . $counter;
-			}
-
-			if ( strlen( $new_label ) > $max_length ) {
-				$available_length = $max_length - strlen( $prefix . $counter );
-				$base_label = substr( $base_label, 0, $available_length );
-				$new_label = $prefix . $base_label . $counter;
-			}
-		} else {
-			$new_label = $prefix . $original_label;
-
-			if ( strlen( $new_label ) > $max_length ) {
-				$available_length = $max_length - strlen( $prefix );
-				$new_label = $prefix . substr( $original_label, 0, $available_length );
-			}
-
-			$counter = 1;
-			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
-
-			while ( in_array( $new_label, $existing_labels, true ) ) {
-				$new_label = $prefix . $base_label . $counter;
-
-				if ( strlen( $new_label ) > $max_length ) {
-					$available_length = $max_length - strlen( $prefix . $counter );
-					$base_label = substr( $original_label, 0, $available_length );
-					$new_label = $prefix . $base_label . $counter;
-				}
-
-				++$counter;
-			}
-		}
-
-		return $new_label;
 	}
 }

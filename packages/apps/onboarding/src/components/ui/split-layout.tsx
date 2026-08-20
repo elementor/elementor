@@ -4,7 +4,6 @@ import { Box, styled } from '@elementor/ui';
 
 import type { StepVisualConfig } from '../../types';
 import { LAYOUT_PADDING } from './base-layout';
-import { ProgressBar } from './progress-bar';
 import { RightPanel } from './right-panel';
 
 const LAYOUT_GAP = 4;
@@ -51,12 +50,18 @@ const LeftPanel = styled( Box, {
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
-	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
+	minHeight: 0,
+	paddingBlockStart: LEFT_PANEL_PADDING_TOP,
+	paddingInline: LEFT_PANEL_PADDING_X,
 	'& > *': {
 		width: '100%',
 	},
 	'& > *:last-of-type': {
 		maxWidth: contentMaxWidth,
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'column',
+		minHeight: 0,
 	},
 	[ theme.breakpoints.down( 'sm' ) ]: {
 		padding: 0,
@@ -67,30 +72,17 @@ const LeftPanel = styled( Box, {
 	},
 } ) );
 
-interface ProgressInfo {
-	currentStep: number;
-	totalSteps: number;
-}
-
 interface SplitLayoutProps {
 	left: ReactNode;
 	rightConfig: StepVisualConfig;
-	progress?: ProgressInfo;
 }
 
-export function SplitLayout( { left, rightConfig, progress }: SplitLayoutProps ) {
+export function SplitLayout( { left, rightConfig }: SplitLayoutProps ) {
 	const contentMaxWidth = rightConfig.contentMaxWidth ?? LEFT_PANEL_CONTENT_WIDTH;
 
 	return (
 		<SplitLayoutRoot>
-			<LeftPanel contentMaxWidth={ contentMaxWidth }>
-				{ progress && (
-					<Box sx={ { maxWidth: LEFT_PANEL_CONTENT_WIDTH, width: '100%' } }>
-						<ProgressBar currentStep={ progress.currentStep } totalSteps={ progress.totalSteps } />
-					</Box>
-				) }
-				{ left }
-			</LeftPanel>
+			<LeftPanel contentMaxWidth={ contentMaxWidth }>{ left }</LeftPanel>
 			<RightPanel config={ rightConfig } />
 		</SplitLayoutRoot>
 	);

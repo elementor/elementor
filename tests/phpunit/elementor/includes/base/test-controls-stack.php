@@ -80,4 +80,18 @@ class Elementor_Test_Controls_Stack extends Elementor_Test_Base {
 		 */
 		$this->cleanup_is_control_visible_test( $initial_duplication_mode );
 	}
+
+	public function test_reset_render_state_clears_render_attributes_and_settings_cache() {
+		// Arrange.
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( self::$element_with_conditions_mock );
+		$widget_instance->get_settings_for_display();
+		$widget_instance->add_render_attribute( 'test-element', 'class', 'cached-class' );
+
+		// Act.
+		$widget_instance->reset_render_state();
+
+		// Assert.
+		$this->assertNull( $widget_instance->get_render_attributes( 'test-element' ) );
+		$this->assertSame( 'Click here', $widget_instance->get_settings_for_display( 'text' ) );
+	}
 }

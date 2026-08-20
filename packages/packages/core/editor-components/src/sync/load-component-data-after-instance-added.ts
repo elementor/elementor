@@ -14,7 +14,14 @@ export function initLoadComponentDataAfterInstanceAdded() {
 }
 
 function load( result: V1Element | V1Element[] ) {
-	const containers = Array.isArray( result ) ? result : [ result ];
+	if ( ! result ) {
+		return;
+	}
 
-	loadComponentsAssets( containers.map( ( container ) => container.model.toJSON() as V1ElementData ) );
+	const containers = Array.isArray( result ) ? result : [ result ];
+	const elements = containers
+		.map( ( container ) => container.model?.toJSON() as V1ElementData | undefined )
+		.filter( ( element ): element is V1ElementData => !! element );
+
+	loadComponentsAssets( elements );
 }

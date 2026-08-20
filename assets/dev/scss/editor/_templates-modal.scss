@@ -55,7 +55,7 @@ $remote-templates-items-space: 30px;
 	&:has(#elementor-template-library-save-template-variant-b) {
 
 		.dialog-message {
-			overflow-y: hidden;
+			overflow-y: auto;
 		}
 	}
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { ClassManagerPanelEmbedded } from '@elementor/editor-global-classes';
+import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
+import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -28,11 +28,47 @@ export type DesignSystemPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
 };
 
+const EVENT_SET_TAB = 'elementor/design-system/set-tab';
+
+const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
+	switch ( tab ) {
+		case 'classes':
+			trackGlobalClasses( { event: 'classManagerOpened', source: 'system-panel' } );
+			break;
+		case 'variables':
+			trackVariablesManagerEvent( { action: 'openManager', source: 'system-panel' } );
+			break;
+	}
+};
+
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const classesCloseAttemptRef = useRef< ( () => void ) | null >( null );
+	const isChainingRef = useRef( false );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
+
+	const chainedThroughClasses = useCallback( () => {
+		if ( ! isChainingRef.current && classesCloseAttemptRef.current ) {
+			isChainingRef.current = true;
+			classesCloseAttemptRef.current();
+			isChainingRef.current = false;
+			return;
+		}
+
+		void onRequestClose();
+	}, [ onRequestClose ] );
+
+	const chainedThroughVariables = useCallback( () => {
+		if ( ! isChainingRef.current && variablesCloseAttemptRef.current ) {
+			isChainingRef.current = true;
+			variablesCloseAttemptRef.current();
+			isChainingRef.current = false;
+			return;
+		}
+
+		void onRequestClose();
+	}, [ onRequestClose ] );
 
 	useEffect( () => {
 		notifyDesignSystemTabChange( currentTab );
@@ -47,12 +83,13 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			setCurrentTab( tab );
 			persistDesignSystemTab( tab );
 			notifyDesignSystemTabChange( tab );
+			trackDesignSystemTabOpened( tab );
 		};
 
-		window.addEventListener( 'elementor/design-system/set-tab', handler as EventListener );
+		window.addEventListener( EVENT_SET_TAB, handler as EventListener );
 
 		return () => {
-			window.removeEventListener( 'elementor/design-system/set-tab', handler as EventListener );
+			window.removeEventListener( EVENT_SET_TAB, handler as EventListener );
 		};
 	}, [] );
 
@@ -102,11 +139,12 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								size="small"
 								sx={ { mt: 0.5 } }
 								{ ...getTabsProps() }
-								onChange={ ( e: React.SyntheticEvent, newValue: DesignSystemTab ) => {
+								onChange={ ( e: SyntheticEvent, newValue: DesignSystemTab ) => {
 									getTabsProps().onChange( e, newValue );
 									setCurrentTab( newValue );
 									persistDesignSystemTab( newValue );
 									notifyDesignSystemTabChange( newValue );
+									trackDesignSystemTabOpened( newValue );
 								} }
 							>
 								<Tab
@@ -126,32 +164,42 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 						</Stack>
 						<Box
 							role="tabpanel"
-							{ ...getTabPanelProps( currentTab ) }
+							{ ...getTabPanelProps( 'variables' ) }
 							sx={ {
 								flex: 1,
 								minHeight: 0,
-								display: 'flex',
+								display: currentTab === 'variables' ? 'flex' : 'none',
 								flexDirection: 'column',
 								overflow: 'hidden',
 								pt: 1,
 							} }
 						>
-							{ currentTab === 'variables' && (
-								<VariablesManagerPanelEmbedded
-									onRequestClose={ onRequestClose }
-									onExposeCloseAttempt={ ( fn ) => {
-										variablesCloseAttemptRef.current = fn;
-									} }
-								/>
-							) }
-							{ currentTab === 'classes' && (
-								<ClassManagerPanelEmbedded
-									onRequestClose={ onRequestClose }
-									onExposeCloseAttempt={ ( fn ) => {
-										classesCloseAttemptRef.current = fn;
-									} }
-								/>
-							) }
+							<VariablesManagerPanelEmbedded
+								onRequestClose={ chainedThroughClasses }
+								onExposeCloseAttempt={ ( fn ) => {
+									variablesCloseAttemptRef.current = fn;
+								} }
+							/>
+						</Box>
+						<Box
+							role="tabpanel"
+							{ ...getTabPanelProps( 'classes' ) }
+							sx={ {
+								flex: 1,
+								minHeight: 0,
+								display: currentTab === 'classes' ? 'flex' : 'none',
+								flexDirection: 'column',
+								overflow: 'hidden',
+								pt: 1,
+							} }
+						>
+							<ClassManagerPanelEmbedded
+								onRequestClose={ chainedThroughVariables }
+								onExposeCloseAttempt={ ( fn ) => {
+									classesCloseAttemptRef.current = fn;
+								} }
+								isActive={ currentTab === 'classes' }
+							/>
 						</Box>
 					</Stack>
 				</PanelBody>
