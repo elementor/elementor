@@ -11,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -66,11 +66,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' )
 				->description( 'The HTML tag for the heading element. One of: h1, h2, h3, h4, h5, or h6. Do not use p, span, or div.' ),
 
-			'title' => Html_V3_Prop_Type::make()
-				->default( [
-					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
-					'children' => [],
-				] )
+			'title' => Escaped_Html_Prop_Type::make()
+				->default( __( 'This is a title', 'elementor' ) )
 				->description( 'The text content of the heading.' )
 				->alias( 'text', 'content', 'heading' ),
 

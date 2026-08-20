@@ -46,6 +46,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Svg_Src_Transform
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Escaped_Html_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V2_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V3_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
@@ -93,6 +94,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Time_Range_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
@@ -288,6 +290,28 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+
+		add_filter( 'elementor/allowed_html_wrapper_tags', [ $this, 'add_inline_html_tags' ] );
+	}
+
+	public function add_inline_html_tags( array $tags ): array {
+		return array_merge( $tags, [
+			'b',
+			'i',
+			'em',
+			'u',
+			'ul',
+			'ol',
+			'li',
+			'blockquote',
+			'del',
+			'br',
+			'span',
+			'strong',
+			'sup',
+			'sub',
+			's',
+		] );
 	}
 
 	private function add_packages( $packages ) {
@@ -394,6 +418,7 @@ class Module extends BaseModule {
 		$transformers->register( Time_Range_Prop_Type::get_key(), new Time_Range_Transformer() );
 		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
 		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
+		$transformers->register( Escaped_Html_Prop_Type::get_key(), new Escaped_Html_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -515,6 +540,7 @@ class Module extends BaseModule {
 
 		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
 		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
+		$registry->register( Escaped_Html_Prop_Type::get_key(), new String_Plain_Resolver() );
 
 		return $resolver;
 	}
