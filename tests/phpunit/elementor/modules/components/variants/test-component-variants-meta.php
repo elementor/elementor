@@ -187,6 +187,40 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 		$this->assertEquals( 'v_g8k3nq00', $variants->variants[0]->id );
 	}
 
+	public function test_extract_class_ids_filter__contributes_variant_class_ids_for_component_post() {
+		// Arrange.
+		$this->act_as_admin();
+		$document = $this->create_component();
+		$document->update_variants( $this->build_valid_variants() );
+
+		// Act.
+		$ids = apply_filters(
+			'elementor/global_classes/extract_class_ids_from_post',
+			[ 'g-existing' ],
+			$document->get_main_id()
+		);
+
+		// Assert.
+		$this->assertContains( 'g-existing', $ids );
+		$this->assertContains( 'g_abc123', $ids );
+	}
+
+	public function test_extract_class_ids_filter__leaves_non_component_posts_untouched() {
+		// Arrange.
+		$this->act_as_admin();
+		$page_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		// Act.
+		$ids = apply_filters(
+			'elementor/global_classes/extract_class_ids_from_post',
+			[ 'g-existing' ],
+			$page_id
+		);
+
+		// Assert.
+		$this->assertSame( [ 'g-existing' ], $ids );
+	}
+
 	public function test_publish_promotion__includes_variants_in_custom_meta_keys() {
 		// Regression guard: the whitelist is what carries variants from autosave to main on publish.
 		$this->assertContains(
