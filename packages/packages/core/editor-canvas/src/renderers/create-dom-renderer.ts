@@ -28,8 +28,12 @@ function getAllowedHtmlWrapperTags(): readonly string[] {
 }
 
 function escapeHtmlTag( value: string ) {
+	if ( value == null || value === '' ) {
+		return 'div';
+	}
+
 	const allowedTags = getAllowedHtmlWrapperTags();
-	const normalizedTag = value?.toLowerCase?.() ?? '';
+	const normalizedTag = value.toLowerCase();
 
 	return allowedTags.includes( normalizedTag ) ? value : 'div';
 }

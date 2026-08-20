@@ -109,6 +109,21 @@ describe( 'createDomRenderer', () => {
 		expect( result ).toBe( '<custom-tag></custom-tag>' );
 	} );
 
+	it.each( [
+		{ title: 'null tag', tag: null },
+		{ title: 'undefined tag', tag: undefined },
+		{ title: 'empty tag', tag: '' },
+	] )( 'should render div when html_tag input is $title', async ( { tag } ) => {
+		const domRenderer = createDomRenderer();
+		const template = `<{{ tag | default( 'div' ) | e( 'html_tag' ) }}></{{ tag | default( 'div' ) | e( 'html_tag' ) }}>`;
+
+		domRenderer.register( 'test-template', template );
+
+		const result = await domRenderer.render( 'test-template', { tag } );
+
+		expect( result ).toBe( '<div></div>' );
+	} );
+
 	it( 'should fail closed to div when the localized config is missing, even for an otherwise-safe tag', async () => {
 		// Arrange.
 		delete window.elementorCommon;
