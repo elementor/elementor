@@ -98,6 +98,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
 		$config['default_html_tag'] = static::get_computed_html_tag( [] );
+		$config['html_tag_follows_link'] = static::html_tag_follows_link();
 		$config['meta'] = $this->get_meta();
 		$config['allowed_child_types'] = $this->define_allowed_child_types();
 

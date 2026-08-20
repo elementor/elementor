@@ -33,8 +33,14 @@ trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
 
+	public static function html_tag_follows_link(): bool {
+		return true;
+	}
+
 	public static function get_computed_html_tag( array $settings ): string {
-		return Html_Tag_Computer::compute( $settings, 'div' );
+		return Html_Tag_Computer::compute( $settings, 'div', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
 	}
 
 	public function has_widget_inner_wrapper(): bool {

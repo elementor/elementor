@@ -45,8 +45,14 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return 'eicon-e-image';
 	}
 
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
 	public static function get_computed_html_tag( array $settings ): string {
-		return Html_Tag_Computer::compute( $settings, 'img', [ Html_Tag_Computer::FOLLOW_LINK_OPTION => false ] );
+		return Html_Tag_Computer::compute( $settings, 'img', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
 	}
 
 	protected static function define_props_schema(): array {

@@ -72,4 +72,31 @@ class Test_Html_Tag_Computer extends TestCase {
 
 		$this->assertSame( 'span', $result );
 	}
+
+	public function test_contract_fixtures() {
+		$fixtures_path = ELEMENTOR_PATH . 'tests/fixtures/html-tag-computer-cases.json';
+		$cases = json_decode( file_get_contents( $fixtures_path ), true );
+
+		$this->assertIsArray( $cases );
+
+		foreach ( $cases as $case ) {
+			$options = [];
+
+			if ( isset( $case['followLink'] ) && false === $case['followLink'] ) {
+				$options[ Html_Tag_Computer::FOLLOW_LINK_OPTION ] = false;
+			}
+
+			$result = Html_Tag_Computer::compute(
+				$case['settings'],
+				$case['default'],
+				$options
+			);
+
+			$this->assertSame(
+				$case['expected'],
+				$result,
+				'Failed contract case: ' . wp_json_encode( $case )
+			);
+		}
+	}
 }
