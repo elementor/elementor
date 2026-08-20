@@ -1,5 +1,5 @@
 name: Restore dependency cache
-description: Restore node_modules, packages/node_modules, and vendor from the PR CI cache.
+description: Restore node_modules, packages/node_modules, vendor, and vendor_prefixed from the PR CI cache.
 
 inputs:
   fail-on-cache-miss:
@@ -30,7 +30,8 @@ runs:
           node_modules
           packages/node_modules
           vendor
-        key: deps-v2-${{ runner.os }}-${{ hashFiles('package-lock.json', 'composer.lock') }}
+          vendor_prefixed
+        key: deps-v3-${{ runner.os }}-${{ hashFiles('package-lock.json', 'composer.lock') }}
         fail-on-cache-miss: ${{ inputs.fail-on-cache-miss == 'true' }}
     - name: Install dependencies on cache miss
       if: inputs.install-on-miss == 'true' && steps.deps-cache.outputs.cache-hit != 'true'
@@ -46,4 +47,5 @@ runs:
           node_modules
           packages/node_modules
           vendor
+          vendor_prefixed
         key: ${{ steps.deps-cache.outputs.cache-primary-key }}
