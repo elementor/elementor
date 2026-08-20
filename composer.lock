@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc102c01e65d6c29d6436e01f58b20c9",
+    "content-hash": "b7a332adec7f9371e00bf92205a8f0bb",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -69,6 +69,47 @@
                 "source": "https://github.com/Automattic/jetpack-autoloader/tree/v5.0.21"
             },
             "time": "2026-07-13T23:33:42+00:00"
+        },
+        {
+            "name": "elementor/elementor-mcp-composer",
+            "version": "1.0.4",
+            "dist": {
+                "type": "zip",
+                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.4"
+            },
+            "require": {
+                "automattic/jetpack-autoloader": "^5",
+                "php": ">=7.4",
+                "wordpress/mcp-adapter": "^0.5.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+                "phpunit/phpunit": "^9.6",
+                "squizlabs/php_codesniffer": "^3.10",
+                "wp-coding-standards/wpcs": "^3.1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "./runner.php"
+                ]
+            },
+            "scripts": {
+                "lint": [
+                    "vendor/bin/phpcs --standard=./phpcs.xml ./src/ ./runner.php"
+                ],
+                "lint:fix": [
+                    "vendor/bin/phpcbf --standard=./phpcs.xml ./src/ ./runner.php"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Reusable Composer package for Elementor MCP integrations.",
+            "time": "2026-08-18T11:22:13+00:00"
         },
         {
             "name": "elementor/wp-notifications-package",
@@ -4859,5 +4900,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
