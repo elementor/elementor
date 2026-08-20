@@ -18,9 +18,7 @@ describe( 'computeHtmlTag', () => {
 	it.each( contractCases )(
 		'contract case: default=$default followLink=$followLink expected=$expected',
 		( { settings, default: defaultTag, followLink, expected } ) => {
-			expect(
-				computeHtmlTag( settings, defaultTag, { followLink } )
-			).toBe( expected );
+			expect( computeHtmlTag( settings, defaultTag, { followLink } ) ).toBe( expected );
 		}
 	);
 
@@ -37,7 +35,7 @@ describe( 'computeHtmlTag', () => {
 				'div'
 			)
 		).toBe( 'a' );
-	});
+	} );
 
 	it( 'ignores link when followLink is false', () => {
 		expect(

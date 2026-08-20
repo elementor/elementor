@@ -7,7 +7,8 @@ import { type ElementView, type RenderContext } from './types';
 
 export type TwigElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
-> & Pick< V1ElementConfig, 'default_html_tag' | 'html_tag_follows_link' >;
+> &
+	Pick< V1ElementConfig, 'default_html_tag' | 'html_tag_follows_link' >;
 
 export type SetupTwigRendererOptions = {
 	type: string;

@@ -123,10 +123,10 @@ describe( 'createTemplatedElementView', () => {
 	describe( 'render context', () => {
 		it( 'should inject computed tag into the twig render context', async () => {
 			// Arrange
-			const renderer = createMockRenderer();
+			const utils = createMockRenderer();
 			const ViewClass = createTemplatedElementView( {
 				type: MOCK_ELEMENT_TYPE,
-				renderer,
+				renderer: utils,
 				element: {
 					...createMockElementConfig(),
 					twig_templates: {
@@ -163,10 +163,7 @@ describe( 'createTemplatedElementView', () => {
 			await view._renderTemplate();
 
 			// Assert
-			expect( renderer.render ).toHaveBeenCalledWith(
-				'main',
-				expect.objectContaining( { tag: 'div' } )
-			);
+			expect( utils.render ).toHaveBeenCalledWith( 'main', expect.objectContaining( { tag: 'div' } ) );
 		} );
 	} );
 } );
