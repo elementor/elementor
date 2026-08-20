@@ -21,8 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/fixtures/fake-v3-widget.php';
-
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -179,10 +177,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 		$this->assertSame( $root_id, $result['results'][0]['element_id'] );
 		$this->assertNotEmpty( $result['version'] );
-		$this->assertArrayHasKey( 'edit_url', $result );
-		$this->assertNotEmpty( $result['edit_url'] );
-		$this->assertArrayNotHasKey( 'preview_url', $result );
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
@@ -260,7 +259,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => 'New Title',
+						'title' => [
+							'content' => 'New Title',
+							'children' => [],
+						],
 					],
 				],
 			],
@@ -296,7 +298,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $warnings[0] );
 	}
 
-	public function test_update__unknown_css_property_applies_without_error() {
+	public function test_update__unhandled_style_declaration_warns_with_declaration_and_url_hint() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -307,12 +309,22 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'style' => 'background: url(https://example.com/x.png) center/cover no-repeat;',
+					'style' => [
+						'background' => 'url(/wp-content/uploads/x.png) center/cover no-repeat',
+					],
 				],
 			],
 		] );
 
 		$this->assertOkOperation( $result, 0 );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+
+		$warning = $warnings[0];
+		$this->assertStringContainsString( 'background:', $warning );
+		$this->assertStringContainsString( 'url(', $warning );
+		$this->assertStringContainsString( 'URLs must be absolute', $warning );
+		$this->assertStringContainsString( 'elementor://widgets/schema/', $warning );
 	}
 
 	public function test_update__applies_style_and_attaches_global_class_by_label() {
@@ -327,16 +339,16 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-				'style' => 'font-size: 2rem;',
-				'classes' => [ 'hero-heading' ],
+					'style' => [ 'font-size' => '2rem' ],
+					'classes' => [ 'hero-heading' ],
+				],
 			],
-		],
-	] );
+		] );
 
-	$this->assertOkOperation( $result, 0 );
+		$this->assertOkOperation( $result, 0 );
 
-	$node = $this->find_element_in_document( $post_id, $heading_id );
-	$this->assertNotNull( $node );
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotNull( $node );
 
 		$class_values = $node['settings']['classes']['value'] ?? [];
 		$this->assertContains( $class_id, $class_values );
@@ -353,15 +365,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'operations' => [
 				[
-			'action' => 'update',
-				'element_id' => $heading_id,
-				'style' => 'font-size: 2rem;',
-				'classes' => [ 'hero-heading' ],
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'style' => [ 'font-size' => '2rem' ],
+					'classes' => [ 'hero-heading' ],
+				],
 			],
-		],
-	] );
+		] );
 
-	$this->assertOkOperation( $attach, 0 );
+		$this->assertOkOperation( $attach, 0 );
 
 		$node_before = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node_before );
@@ -604,7 +616,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'settings' => [ 'title' => [ 'content' => 'not-a-valid-escaped-html-shape', 'children' => [] ] ],
+					'settings' => [ 'title' => 123 ],
 				],
 			],
 		] );
@@ -622,7 +634,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<e-heading configuration-id="h1"/>',
 			'parent_id' => 'document',
-			'style' => [ 'h1' => 'color: #ff0000;' ],
+			'style' => [ 'h1' => [ 'color' => '#ff0000' ] ],
 		] );
 		$this->assertIsArray( $build_result, 'build-composition failed: ' . ( is_wp_error( $build_result ) ? $build_result->get_error_message() : 'unknown' ) );
 		$this->assertTrue( $build_result['success'] ?? false );
@@ -634,7 +646,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'style' => 'font-size: 24px;',
+					'style' => [ 'font-size' => '24px' ],
 				],
 			],
 		] );
@@ -664,7 +676,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => 'Bulk Title',
+						'title' => [ 'content' => 'Bulk Title', 'children' => [] ],
 					],
 				],
 				[
@@ -693,7 +705,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertCount( 3, $elements );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Bulk Title', $node['settings']['title']['value'] );
+		$this->assertSame( 'Bulk Title', $node['settings']['title']['value']['content']['value'] );
 	}
 
 	public function test_execute__rejects_v3_update_per_op() {
@@ -780,7 +792,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $v4_id,
-					'settings' => [ 'title' => 'Survived' ],
+					'settings' => [ 'title' => [ 'content' => 'Survived', 'children' => [] ] ],
 				],
 			],
 		] );
@@ -792,137 +804,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertNotNull( $this->find_element_in_document( $post_id, $v3_id ) );
 		$node = $this->find_element_in_document( $post_id, $v4_id );
-		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
-	}
-
-	public function test_execute__allowlisted_v3_update_merges_raw_settings() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'settings' => [ 'menu' => '3', 'layout' => 'horizontal' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertNotNull( $node );
-		$this->assertSame( '3', $node['settings']['menu'] );
-		$this->assertSame( 'horizontal', $node['settings']['layout'] );
-	}
-
-	public function test_execute__allowlisted_v3_classes_write_to_css_classes() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
-		$this->given_kit_global_class( 'menu-primary', '#111111' );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'classes' => [ 'menu-primary' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertSame( 'menu-primary', $node['settings']['_css_classes'] ?? null );
-		$this->assertArrayNotHasKey( 'classes', $node['settings'] );
-	}
-
-	public function test_execute__allowlisted_v3_style_bridged_to_custom_css_when_pro_active() {
-		if ( ! \Elementor\Utils::has_pro() ) {
-			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
-		}
-
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'style' => 'filter: blur(2px);',
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertSame( 'selector { filter: blur(2px); }', $node['settings']['custom_css'] ?? null );
-		$this->assertArrayNotHasKey( 'styles', $node );
-	}
-
-	public function test_execute__allowlisted_v3_style_warns_when_pro_missing() {
-		if ( \Elementor\Utils::has_pro() ) {
-			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
-		}
-
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'style' => 'filter: blur(2px);',
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$warnings = $result['results'][0]['warnings'] ?? [];
-		$this->assertNotEmpty( $warnings );
-		$this->assertTrue(
-			(bool) array_filter(
-				$warnings,
-				static fn( $warning ) => false !== strpos( (string) $warning, 'Elementor Pro' )
-			)
-		);
-
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
-	}
-
-	public function test_execute__allowlisted_v3_delete_succeeds() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'theme-post-content' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'theme-post-content' );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[ 'action' => 'delete', 'element_id' => $v3_id ],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$this->assertNull( $this->find_element_in_document( $post_id, $v3_id ) );
+		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
 	}
 
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
@@ -938,7 +820,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => 'Survived',
+						'title' => [ 'content' => 'Survived', 'children' => [] ],
 					],
 				],
 			],
@@ -952,103 +834,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['version'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
-	}
-
-	public function test_update__css_string_creates_desktop_variant_in_local_style() {
-		// Arrange.
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_heading_on_document( $post_id );
-
-		// Act.
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'style' => 'color: #ff0000;',
-				],
-			],
-		] );
-
-		// Assert.
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertNotEmpty( $node['styles'] ?? [] );
-
-		$style = reset( $node['styles'] );
-		$this->assertSame( 'local', $style['label'] );
-		$this->assertNotEmpty( $style['variants'] );
-
-		$desktop_variant = $style['variants'][0] ?? [];
-		$this->assertSame( 'desktop', $desktop_variant['meta']['breakpoint'] ?? null );
-		$this->assertArrayHasKey( 'color', $desktop_variant['props'] ?? [] );
-	}
-
-	public function test_update__style_apply_mode_replace_wipes_existing_variants() {
-		// Arrange.
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_heading_on_document( $post_id );
-
-		( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'style' => 'color: #ff0000; font-size: 2rem;',
-				],
-			],
-		] );
-
-		// Act.
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'style' => '',
-					'style_apply_mode' => 'replace',
-				],
-			],
-		] );
-
-		// Assert.
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$style = reset( $node['styles'] );
-		$this->assertEmpty( $style['variants'] ?? [], 'replace + empty CSS must wipe all variants.' );
-	}
-
-	public function test_update__invalid_style_apply_mode_returns_error() {
-		// Arrange.
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_heading_on_document( $post_id );
-
-		// Act.
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'style' => 'color: red;',
-					'style_apply_mode' => 'overwrite',
-				],
-			],
-		] );
-
-		// Assert.
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
 	}
 
 	private function assertOkOperation( $result, int $index ): void {
@@ -1121,26 +907,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		return $id;
 	}
 
-	private function given_allowlisted_v3_widget_on_document( int $post_id, string $widget_type ): string {
-		$id = $this->random_element_id();
-
-		$this->append_elements_to_document( $post_id, [
-			[
-				'id' => $id,
-				'elType' => 'widget',
-				'widgetType' => $widget_type,
-				'settings' => [],
-				'elements' => [],
-			],
-		] );
-
-		return $id;
-	}
-
-	private function given_fake_v3_widget_registered( string $type ): void {
-		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
-	}
-
 	private function given_v3_container_on_document( int $post_id ): string {
 		$id = $this->random_element_id();
 
@@ -1205,7 +971,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function given_kit_global_class( string $label, string $color ): string {
 		( new Global_Class_Post_Type() )->register_post_type();
-		$class_id = 'g-testcls';
+
+		$class_id = 'g-' . strtolower( substr( md5( $label ), 0, 6 ) );
 		$data = [
 			'type' => 'class',
 			'variants' => [
