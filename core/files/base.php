@@ -129,7 +129,61 @@ abstract class Base {
 	public function get_url() {
 		$url = set_url_scheme( self::get_base_uploads_url() . $this->files_dir . $this->file_name );
 
-		return add_query_arg( [ 'ver' => $this->get_meta( 'time' ) ], $url );
+		return add_query_arg( [ 'ver' => $this->get_version() ], $url );
+	}
+
+	/**
+	 * Get the version to use for the `ver` query arg on the file URL.
+	 *
+	 * When the `e_optimized_css_files` experiment is active, use a content hash so that
+	 * regenerating the file with unchanged content produces an identical version (and
+	 * therefore an identical URL), avoiding unnecessary CDN cache invalidation. Falls back
+	 * to the `time` meta when no hash meta exists yet (e.g. meta written before the
+	 * experiment was active, or by older code), until the file is regenerated.
+	 *
+	 * When the experiment is inactive, preserves the original behavior of using `time`.
+	 *
+	 * @since 3.33.0
+	 * @access protected
+	 *
+	 * @return string|int
+	 */
+	protected function get_version() {
+		if ( $this->is_optimized_css_files_active() ) {
+			$hash = $this->get_meta( 'hash' );
+
+			if ( ! empty( $hash ) ) {
+				return $hash;
+			}
+		}
+
+		return $this->get_meta( 'time' );
+	}
+
+	/**
+	 * Whether the "Optimized CSS Files" experiment is active.
+	 *
+	 * @since 3.33.0
+	 * @access protected
+	 *
+	 * @return bool
+	 */
+	protected function is_optimized_css_files_active() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_files' );
+	}
+
+	/**
+	 * Generate a content hash to use as a stable file version.
+	 *
+	 * @since 3.33.0
+	 * @access protected
+	 *
+	 * @param string $content The content to hash.
+	 *
+	 * @return string
+	 */
+	protected function generate_content_hash( $content ) {
+		return md5( (string) $content );
 	}
 
 	/**
@@ -168,6 +222,10 @@ abstract class Base {
 		$meta = $this->get_meta();
 
 		$meta['time'] = time();
+
+		if ( $this->is_optimized_css_files_active() ) {
+			$meta['hash'] = $this->generate_content_hash( $this->content );
+		}
 
 		$this->update_meta( $meta );
 	}
@@ -285,6 +343,7 @@ abstract class Base {
 	protected function get_default_meta() {
 		return [
 			'time' => 0,
+			'hash' => '',
 		];
 	}
 
