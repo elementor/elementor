@@ -60,8 +60,10 @@ export default function GoProPopover( props ) {
 				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
 			);
 
-			// Run the callback for when the upload succeeds.
+			// Run the callback for when the upload succeeds. Remove any previously
+			// registered handler first, so repeated clicks don't stack listeners.
 			elementorCommon.elements.$body
+				.off( 'elementor/upload-and-install-pro/success' )
 				.on( 'elementor/upload-and-install-pro/success', () => {
 					updateState( {
 						hasPro: true,
