@@ -15,7 +15,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -204,10 +204,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			->children( [
 				Atomic_Paragraph::generate()
 					->settings( [
-						'paragraph' => Html_V3_Prop_Type::generate( [
-							'content' => String_Prop_Type::generate( $numbered_title ),
-							'children' => [],
-						] ),
+						'paragraph' => Escaped_Html_Prop_Type::generate( $numbered_title ),
 						'tag' => String_Prop_Type::generate( 'span' ),
 					] )
 					->build(),

@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
@@ -149,16 +150,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 								'elType' => 'widget',
 								'widgetType' => 'e-paragraph',
 								'settings' => [
-									'paragraph' => [
-										'$$type' => 'html-v3',
-										'value' => [
-											'content' => [
-												'$$type' => 'string',
-												'value' => 'Answer ' . $item_num,
-											],
-											'children' => [],
-										],
-									],
+									'paragraph' => Escaped_Html_Prop_Type::generate( 'Answer ' . $item_num ),
 								],
 							],
 						];

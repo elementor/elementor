@@ -151,11 +151,8 @@ describe( 'accordion-items-control actions', () => {
 					widgetType: 'e-paragraph',
 					settings: {
 						paragraph: {
-							$$type: 'html-v3',
-							value: {
-								content: { $$type: 'string', value: 'Accordion Item 3' },
-								children: [],
-							},
+							$$type: 'escaped-html',
+							value: 'Accordion Item 3',
 						},
 						tag: { $$type: 'string', value: 'span' },
 					},
@@ -224,9 +221,9 @@ describe( 'accordion-items-control actions', () => {
 				title: model.editor_settings?.title,
 				paragraphContent: (
 					model.elements?.[ 0 ].elements?.[ 0 ].elements?.[ 0 ].settings?.paragraph as {
-						value: { content: { value: string } };
+						value: string;
 					}
-				 ).value.content.value,
+				 ).value,
 			};
 		};
 

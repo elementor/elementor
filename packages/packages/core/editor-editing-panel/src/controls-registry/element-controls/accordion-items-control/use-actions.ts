@@ -9,7 +9,7 @@ import {
 	removeElements,
 	type V1ElementData,
 } from '@elementor/editor-elements';
-import { booleanPropTypeUtil } from '@elementor/editor-props';
+import { booleanPropTypeUtil, escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { __, sprintf } from '@wordpress/i18n';
 
 export type AccordionItem = {
@@ -110,13 +110,7 @@ const buildItemModel = ( position: number, showIcon: boolean ): V1ElementData =>
 								// subtree (`deselectRecursive()` on delete) calls `.forEach()` on it unguarded.
 								elements: [],
 								settings: {
-									paragraph: {
-										$$type: 'html-v3',
-										value: {
-											content: { $$type: 'string', value: numberedTitle },
-											children: [],
-										},
-									},
+									paragraph: escapedHtmlPropTypeUtil.create( numberedTitle ),
 									tag: { $$type: 'string', value: 'span' },
 								},
 							},
