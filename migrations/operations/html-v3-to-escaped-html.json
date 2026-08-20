@@ -5,6 +5,16 @@
       "condition": { "fn": "exists", "path": "value.content.value" }
     },
     {
+      "op": { "fn": "move", "src": "value.content", "dest": "value" },
+      "condition": {
+        "fn": "and",
+        "conditions": [
+          { "fn": "is_primitive", "path": "value.content" },
+          { "fn": "not_exists", "path": "value.content.value" }
+        ]
+      }
+    },
+    {
       "op": { "fn": "set", "path": "value", "value": null },
       "condition": {
         "fn": "and",

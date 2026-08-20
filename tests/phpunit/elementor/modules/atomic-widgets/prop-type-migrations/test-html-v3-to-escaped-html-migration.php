@@ -54,6 +54,24 @@ class Test_Html_V3_To_Escaped_Html_Migration extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'content', $result );
 	}
 
+	public function test_up__unwraps_primitive_content_to_plain_string() {
+		// Arrange
+		$data = [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => 'Already correct type',
+				'children' => [],
+			],
+		];
+
+		// Act
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		// Assert
+		$this->assertSame( 'escaped-html', $result['$$type'] );
+		$this->assertSame( 'Already correct type', $result['value'] );
+	}
+
 	public function test_up__drops_children() {
 		$data = [
 			'$$type' => 'html-v3',
