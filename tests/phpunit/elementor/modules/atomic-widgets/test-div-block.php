@@ -116,37 +116,22 @@ class Test_Div_Block extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_div_block_with_main_tag(): void {
-		// Arrange.
-		$mock = [
-			'id' => 'e8e55a1',
-			'elType' => Div_Block::get_element_type(),
-			'settings' => [
-				'tag' => 'main',
-			],
-			'widgetType' => Div_Block::get_element_type(),
+	public function semantic_tags_provider(): array {
+		return [
+			'main tag' => [ 'main' ],
+			'nav tag'  => [ 'nav' ],
 		];
-
-		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
-
-		// Act.
-		ob_start();
-		$widget_instance->print_element();
-		$rendered_output = ob_get_clean();
-
-		// Assert.
-		$this->assertMatchesSnapshot( $rendered_output );
-		$this->assertStringContainsString( '<main', $rendered_output );
 	}
 
-	public function test__render_div_block_with_nav_tag(): void {
+	/**
+	 * @dataProvider semantic_tags_provider
+	 */
+	public function test__render_div_block_with_semantic_tag( string $tag ): void {
 		// Arrange.
 		$mock = [
 			'id' => 'e8e55a1',
 			'elType' => Div_Block::get_element_type(),
-			'settings' => [
-				'tag' => 'nav',
-			],
+			'settings' => [ 'tag' => $tag ],
 			'widgetType' => Div_Block::get_element_type(),
 		];
 
@@ -159,7 +144,7 @@ class Test_Div_Block extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
-		$this->assertStringContainsString( '<nav', $rendered_output );
+		$this->assertStringContainsString( "<$tag", $rendered_output );
 	}
 
 	public function test__add_child_with_non_existent_widget_type(): void {
