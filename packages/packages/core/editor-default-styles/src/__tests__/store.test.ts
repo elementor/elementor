@@ -5,7 +5,7 @@ import {
 	__registerSlice as registerSlice,
 } from '@elementor/store';
 
-import { selectData, selectIsDirty, slice } from '../store';
+import { selectData, selectInitialData, selectIsDirty, slice } from '../store';
 
 const DESKTOP_META = { breakpoint: 'desktop', state: null } as const;
 
@@ -104,5 +104,30 @@ describe( 'defaultStyles store', () => {
 			},
 		} );
 		expect( selectIsDirty( getState() ) ).toBe( false );
+	} );
+
+	it( 'should not leak subsequent updates into initialData after commit', () => {
+		dispatch(
+			slice.actions.load( {
+				data: {},
+			} )
+		);
+
+		updateDisplayProp( 'h1' );
+		dispatch( slice.actions.commit() );
+
+		const initialAfterCommit = selectInitialData( getState() );
+
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h1',
+				meta: DESKTOP_META,
+				props: { display: 'flex' },
+			} )
+		);
+
+		expect( selectInitialData( getState() ) ).toBe( initialAfterCommit );
+		expect( initialAfterCommit.h1?.variants[ 0 ]?.props ).toEqual( { display: 'block' } );
+		expect( selectData( getState() ).h1?.variants[ 0 ]?.props ).toEqual( { display: 'flex' } );
 	} );
 } );
