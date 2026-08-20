@@ -23,9 +23,10 @@ type TagChipProps = {
 	chipProps: ReturnType< AutocompleteRenderGetTagProps >;
 	activeState: StyleDefinitionState | null;
 	onSelectState: ( state: StyleDefinitionState | null ) => void;
+	onLabelClick: () => void;
 };
 
-export function TagChip( { label, chipProps, activeState, onSelectState }: TagChipProps ) {
+export function TagChip( { label, chipProps, activeState, onSelectState, onLabelClick }: TagChipProps ) {
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'tag-state-menu',
@@ -34,6 +35,7 @@ export function TagChip( { label, chipProps, activeState, onSelectState }: TagCh
 
 	const { onDelete: _onDelete, ...chipGroupProps } = chipProps;
 	const isShowingState = Boolean( activeState );
+	const menuTriggerProps = bindTrigger( popupState );
 
 	return (
 		<>
@@ -42,11 +44,10 @@ export function TagChip( { label, chipProps, activeState, onSelectState }: TagCh
 				{ ...chipGroupProps }
 				aria-label={ `Edit ${ label }` }
 				role="group"
-				sx={ ( theme: Theme ) => ( {
-					'&.MuiChipGroup-root.MuiAutocomplete-tag': {
-						margin: theme.spacing( 0.125 ),
-					},
-				} ) }
+				sx={ {
+					flexShrink: 0,
+					margin: 0,
+				} }
 			>
 				<Chip
 					size={ CHIP_SIZE }
@@ -54,10 +55,9 @@ export function TagChip( { label, chipProps, activeState, onSelectState }: TagCh
 					variant={ isShowingState ? 'standard' : 'filled' }
 					shape="rounded"
 					color="default"
-					onClick={ () => {
-						if ( isShowingState ) {
-							onSelectState( null );
-						}
+					onClick={ ( event ) => {
+						event.stopPropagation();
+						onLabelClick();
 					} }
 					sx={ ( theme: Theme ) => ( {
 						lineHeight: 1,
@@ -78,11 +78,16 @@ export function TagChip( { label, chipProps, activeState, onSelectState }: TagCh
 					variant="filled"
 					shape="rounded"
 					color="default"
-					{ ...bindTrigger( popupState ) }
+					{ ...menuTriggerProps }
+					onClick={ ( event ) => {
+						menuTriggerProps.onClick?.( event );
+						event.stopPropagation();
+					} }
 					aria-label={ __( 'Open tag state menu', 'elementor' ) }
 					sx={ ( theme: Theme ) => ( {
 						borderRadius: `${ theme.shape.borderRadius * 0.75 }px`,
 						paddingRight: 0,
+						marginRight: 0,
 						...( ! isShowingState ? { paddingLeft: 0 } : {} ),
 						'.MuiChip-label': isShowingState ? { paddingRight: 0 } : { padding: 0 },
 					} ) }

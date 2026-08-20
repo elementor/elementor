@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { type SyntheticEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	ControlActionsProvider,
 	ControlReplacementsProvider,
@@ -24,13 +24,11 @@ import { getSessionStorageItem, SessionStorageProvider, setSessionStorageItem } 
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import {
 	Autocomplete,
-	type AutocompleteChangeDetails,
 	type AutocompleteChangeReason,
 	Box,
 	Button,
 	CloseButton,
 	ErrorBoundary,
-	FormControl,
 	FormLabel,
 	Stack,
 	TextField,
@@ -100,6 +98,8 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 	);
 	const [ selectedTag, setSelectedTagState ] = useState< AllowedHtmlTag >( () => readStoredActiveTag( allowedTags ) );
 	const selectedTagOption = useMemo( () => toTagOption( selectedTag ), [ selectedTag ] );
+	const [ isTagSelectionMode, setIsTagSelectionMode ] = useState( false );
+	const tagSelectorRef = useRef< HTMLDivElement | null >( null );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
 	const menuItems = useMenuItems().default;
@@ -132,24 +132,36 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 
 	usePreventUnload( isDirty );
 
-	const handleTagChange = (
-		_: SyntheticEvent,
-		_newValue: TagOption[],
-		reason: AutocompleteChangeReason,
-		details?: AutocompleteChangeDetails< TagOption >
-	) => {
-		if ( reason !== 'selectOption' ) {
+	const openTagSelection = useCallback( () => {
+		setIsTagSelectionMode( true );
+	}, [] );
+
+	const closeTagSelection = useCallback( () => {
+		setIsTagSelectionMode( false );
+	}, [] );
+
+	useEffect( () => {
+		if ( ! isTagSelectionMode ) {
 			return;
 		}
 
-		const option = details?.option;
+		requestAnimationFrame( () => {
+			tagSelectorRef.current?.querySelector< HTMLInputElement >( 'input' )?.focus();
+		} );
+	}, [ isTagSelectionMode ] );
 
-		if ( ! option || typeof option === 'string' || ! option.value ) {
+	const handleTagChange = (
+		_: SyntheticEvent,
+		option: TagOption | null,
+		reason: AutocompleteChangeReason
+	) => {
+		if ( reason !== 'selectOption' || ! option?.value ) {
 			return;
 		}
 
 		setSelectedTag( option.value as AllowedHtmlTag );
 		setActiveStyleState( null );
+		setIsTagSelectionMode( false );
 	};
 
 	const resetAndClosePanel = () => {
@@ -196,42 +208,50 @@ export function DefaultStylesPanelContent( { onRequestClose }: DefaultStylesPane
 								</Stack>
 							</PanelHeader>
 							<PanelBody>
-								<Stack sx={ { px: 2, pt: 1, gap: 1 } }>
-									<FormControl fullWidth size="small">
-										<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 1 } }>
-											{ __( 'Tag', 'elementor' ) }
-										</FormLabel>
-										<Autocomplete
-											id={ TAG_SELECTOR_ID }
-											fullWidth
-											multiple
-											disableClearable
-											filterSelectedOptions
-											size="tiny"
-											options={ tagOptions }
-											value={ [ selectedTagOption ] }
-											onChange={ handleTagChange }
-											getOptionLabel={ ( option ) => option.label }
-											isOptionEqualToValue={ ( option, value ) => option.value === value.value }
-											renderInput={ ( params ) => (
-												<TextField
-													{ ...params }
-													placeholder={ __( 'Select tag', 'elementor' ) }
-												/>
-											) }
-											renderTags={ ( values, getTagProps ) =>
-												values.map( ( value, index ) => (
-													<TagChip
-														key={ value.value }
-														label={ value.label }
-														chipProps={ getTagProps( { index } ) }
-														activeState={ activeStyleState }
-														onSelectState={ setActiveStyleState }
+								<Stack direction="row" alignItems="center" gap={ 1 } sx={ { px: 2, pt: 1 } }>
+									<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 0, flexShrink: 0 } }>
+										{ __( 'Tag', 'elementor' ) }
+									</FormLabel>
+									<Box sx={ { flex: 1, minWidth: 0 } }>
+										{ isTagSelectionMode ? (
+											<Autocomplete
+												ref={ tagSelectorRef }
+												id={ TAG_SELECTOR_ID }
+												fullWidth
+												disableClearable
+												clearOnBlur
+												forcePopupIcon={ false }
+												open={ isTagSelectionMode }
+												onClose={ closeTagSelection }
+												size="tiny"
+												options={ tagOptions }
+												value={ null }
+												onChange={ handleTagChange }
+												getOptionLabel={ ( option ) => option.label }
+												isOptionEqualToValue={ ( option, value ) => option.value === value.value }
+												renderInput={ ( params ) => (
+													<TextField
+														{ ...params }
+														placeholder={ __( 'Select tag', 'elementor' ) }
 													/>
-												) )
-											}
-										/>
-									</FormControl>
+												) }
+											/>
+										) : (
+											<TagChip
+												label={ selectedTagOption.label }
+												chipProps={ {
+													key: selectedTag,
+													tabIndex: -1,
+													disabled: false,
+													'data-tag-index': 0,
+													onDelete: () => {},
+												} }
+												activeState={ activeStyleState }
+												onSelectState={ setActiveStyleState }
+												onLabelClick={ openTagSelection }
+											/>
+										) }
+									</Box>
 								</Stack>
 								<ElementProvider
 									element={ shimElement }
