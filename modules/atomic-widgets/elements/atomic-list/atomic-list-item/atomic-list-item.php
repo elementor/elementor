@@ -66,11 +66,16 @@ class Atomic_List_Item extends Atomic_Element_Base {
 	 */
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Classes_Prop_Type::make()->default( [] ),
+			'classes' => Classes_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the list item container.' ),
 			'show_markers' => Boolean_Prop_Type::make()
 				->default( true )
-				->meta( Overridable_Prop_Type::ignore() ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Hidden prop automatically synced from the parent list. Controls whether markers are shown via children dependencies. Do not set manually.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes applied to the list item element.' ),
 		];
 	}
 
@@ -91,15 +96,9 @@ class Atomic_List_Item extends Atomic_Element_Base {
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
 							'flex-direction' => String_Prop_Type::generate( 'row' ),
-							'align-items' => String_Prop_Type::generate( 'flex-start' ),
 							'gap' => Size_Prop_Type::generate( [
 								'size' => 8,
 								'unit' => 'px',
-							] ),
-							'list-style-type' => String_Prop_Type::generate( 'none' ),
-							'width' => Size_Prop_Type::generate( [
-								'size' => 100,
-								'unit' => '%',
 							] ),
 						] )
 				),

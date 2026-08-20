@@ -46,7 +46,7 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-editor-paragraph';
+		return 'eicon-layout';
 	}
 
 	public function should_show_in_panel() {
@@ -55,8 +55,12 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			'classes' => Classes_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the content slot container.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes applied to the content slot element.' ),
 		];
 	}
 
@@ -75,19 +79,8 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'flex' ),
-							'flex-direction' => String_Prop_Type::generate( 'column' ),
-							'min-width' => Size_Prop_Type::generate( [
-								'size' => 0,
-								'unit' => 'px',
-							] ),
 							'flex' => Flex_Prop_Type::generate( [
 								'flexGrow' => Number_Prop_Type::generate( 1 ),
-								'flexShrink' => Number_Prop_Type::generate( 1 ),
-								'flexBasis' => Size_Prop_Type::generate( [
-									'size' => 0,
-									'unit' => 'px',
-								] ),
 							] ),
 						] )
 				),

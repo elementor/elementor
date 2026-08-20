@@ -53,8 +53,12 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			'classes' => Classes_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the marker slot container.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes applied to the marker slot element.' ),
 		];
 	}
 
@@ -73,13 +77,10 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'flex' ),
 							'width' => Size_Prop_Type::generate( [
-								'size' => 'auto',
-								'unit' => 'custom',
+								'size' => '',
+								'unit' => 'auto',
 							] ),
-							'flex-shrink' => Number_Prop_Type::generate( 0 ),
-							'align-self' => String_Prop_Type::generate( 'flex-start' ),
 						] )
 				),
 		];
