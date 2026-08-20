@@ -10,6 +10,7 @@ import { initFormNestingPrevention } from './form-structure/prevent-form-nesting
 import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
 import { initLegacyViews } from './legacy/init-legacy-views';
+import { initListType } from './legacy/list-type';
 import { initViewReplacements } from './legacy/replacements/manager';
 import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
@@ -26,6 +27,9 @@ export function init() {
 	initFormAncestorEnforcement();
 
 	initViewReplacements();
+
+	initTabsModelExtensions();
+	initListType();
 
 	initLegacyViews();
 
@@ -61,6 +65,4 @@ export function init() {
 			docs: mcpDescription,
 		} )
 	);
-
-	initTabsModelExtensions();
 }

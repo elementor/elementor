@@ -174,6 +174,10 @@ export declare class ElementView {
 	once: ( event: string, callback: () => void ) => void;
 
 	getContainer(): V1Element;
+
+	initialize?( ...args: unknown[] ): void;
+
+	listenTo( target: unknown, event: string, callback: () => void ): void;
 }
 
 export declare class TemplatedElementView extends ElementView {

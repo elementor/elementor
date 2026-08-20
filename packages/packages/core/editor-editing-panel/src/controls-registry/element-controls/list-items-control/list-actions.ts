@@ -80,6 +80,9 @@ export const addItem = ( {
 					container: listContainer,
 					model: {
 						elType: LIST_ITEM_ELEMENT_TYPE,
+						settings: {
+							show_markers: true,
+						},
 						hydrateDefaultChildren: true,
 						editor_settings: {
 							title: `Item ${ position }`,

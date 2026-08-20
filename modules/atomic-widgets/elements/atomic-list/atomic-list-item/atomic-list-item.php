@@ -1,17 +1,24 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item;
 
+use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,9 +57,19 @@ class Atomic_List_Item extends Atomic_Element_Base {
 		return false;
 	}
 
+	/**
+	 * Define props schema for list items.
+	 *
+	 * The show_markers is a hidden prop (not shown in panel) that's automatically
+	 * synced from the parent list's show_markers setting. It's used by
+	 * children_dependencies to conditionally show/hide markers.
+	 */
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
+			'show_markers' => Boolean_Prop_Type::make()
+				->default( true )
+				->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
@@ -89,14 +106,63 @@ class Atomic_List_Item extends Atomic_Element_Base {
 		];
 	}
 
+	/**
+	 * Define default children for list items.
+	 *
+	 * Markers are now managed via children_dependencies (see below) and are
+	 * conditionally added/removed based on the show_markers setting.
+	 * Only the content slot is included as a default child.
+	 */
 	protected function define_default_children() {
 		return [
-			Atomic_List_Item_Marker::generate()
-				->hydrate_default_children( true )
-				->build(),
 			Atomic_List_Item_Content::generate()
 				->hydrate_default_children( true )
 				->build(),
+		];
+	}
+
+	/**
+	 * Define children dependencies for conditional marker rendering.
+	 *
+	 * Markers are added when show_markers === true and removed when false.
+	 * Stashing preserves all marker customizations when toggled off, allowing
+	 * restoration when toggled back on.
+	 */
+	protected function define_children_dependencies(): array {
+		return [
+			Child_Dependency::for( Atomic_List_Item_Marker::get_element_type() )
+				->when(
+					Dependency_Manager::make()->where( [
+						'operator' => 'eq',
+						'path' => [ 'show_markers' ],
+						'value' => true,
+					] )
+				)
+				->position( Element_Position::first() )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_List_Item_Marker::get_element_type() )
+						->hydrate_default_children( true )
+						->build()
+				),
+		];
+	}
+
+	/**
+	 * Sync show_markers setting from parent list via render context.
+	 *
+	 * This propagates the list-level setting to each item, where children
+	 * dependencies use it to determine marker visibility.
+	 */
+	protected function define_render_context(): array {
+		$list_context = Render_Context::get( Atomic_List::class );
+
+		return [
+			[
+				'context' => [
+					'show_markers' => $list_context['show_markers'] ?? true,
+				],
+			],
 		];
 	}
 
