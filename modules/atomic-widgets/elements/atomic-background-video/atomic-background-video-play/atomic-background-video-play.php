@@ -10,7 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -134,10 +134,7 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 		return Atomic_Paragraph::generate()
 			->meta( [ 'required' => true ] )
 			->settings( [
-				'paragraph' => Html_V3_Prop_Type::generate( [
-					'content'  => String_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
-					'children' => [],
-				] ),
+				'paragraph' => Escaped_Html_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
 				'tag' => String_Prop_Type::generate( 'span' ),
 			] )
 			->build();

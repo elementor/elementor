@@ -325,14 +325,8 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 						'widgetType' => 'e-heading',
 						'settings' => [
 							'title' => [
-								'$$type' => 'html-v3',
-								'value' => [
-									'content' => [
-										'$$type' => 'string',
-										'value' => 'Hello',
-									],
-									'children' => [],
-								],
+								'$$type' => 'escaped-html',
+								'value' => 'Hello',
 							],
 						],
 						'styles' => [],
