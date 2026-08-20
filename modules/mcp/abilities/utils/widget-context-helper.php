@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -38,7 +39,7 @@ class Widget_Context_Helper {
 		'theme-archive-title',
 	];
 
-	const V3_FALLBACK_MESSAGE = '`properties` lists the only keys accepted in `element_config` / `manage-elements.settings` for this widget. Put all visual styling in the `style` (CSS) input.';
+	const V3_FALLBACK_MESSAGE = '`properties` lists the only keys accepted in `element_config` / `manage-elements.settings` for this widget. Put visual styling in the `style` (CSS) input; when `inner_elements` is present, scope rules per alias (e.g. `main-menu { color: red; }`) — see `inner_elements` descriptions.';
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All properties are optional. Object-typed properties describe common shapes but do not include exhaustive inner validation.';
 
@@ -154,8 +155,9 @@ class Widget_Context_Helper {
 
 			$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
 			$built = V3_Json_Schema_Builder::build( $config['controls'], $allowed_keys );
+			$inner_elements = self::build_inner_elements_schema( $widget_type, $config );
 
-			return [
+			return self::filter_nulls( [
 				'type' => 'object',
 				'widget_version' => self::VERSION_V3,
 				'message' => self::V3_FALLBACK_MESSAGE,
@@ -163,7 +165,8 @@ class Widget_Context_Helper {
 				'properties' => $built['properties'],
 				'required' => $built['required'],
 				'additionalProperties' => false,
-			];
+				'inner_elements' => $inner_elements,
+			] );
 		}
 
 		$properties = self::build_configurable_properties_schema( $props_schema );
@@ -310,5 +313,47 @@ class Widget_Context_Helper {
 
 	private static function filter_nulls( array $data ): array {
 		return array_filter( $data, fn( $value ) => null !== $value );
+	}
+
+	/**
+	 * @param array<string, mixed> $config
+	 * @return array<string, array<string, mixed>>|null
+	 */
+	private static function build_inner_elements_schema( string $widget_type, array $config ): ?array {
+		$inner_elements = V3_Widget_Bridge_Registry::get_inner_elements( $widget_type );
+
+		if ( empty( $inner_elements ) ) {
+			return null;
+		}
+
+		$schema = [];
+
+		foreach ( $inner_elements as $alias => $inner_element ) {
+			if ( ! is_string( $alias ) || ! is_array( $inner_element ) ) {
+				continue;
+			}
+
+			$label = $inner_element['label'] ?? $alias;
+			$states = V3_Auto_Mapper::supported_states( $config, $inner_element );
+			$state_hint = empty( $states )
+				? ''
+				: sprintf(
+					' Supports :%s.',
+					implode( ', :', $states )
+				);
+
+			$schema[ $alias ] = [
+				'label' => is_string( $label ) ? $label : $alias,
+				'description' => sprintf(
+					'Style with `%s { ... }` inside the widget `style` string.%s Supports @media breakpoints.',
+					$alias,
+					$state_hint
+				),
+				'accepted_css_properties' => V3_Auto_Mapper::accepted_css_properties( $config, $inner_element ),
+				'supported_states' => $states,
+			];
+		}
+
+		return empty( $schema ) ? null : $schema;
 	}
 }

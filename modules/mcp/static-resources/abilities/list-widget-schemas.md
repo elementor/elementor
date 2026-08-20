@@ -4,4 +4,4 @@ Default mode: Returns a map of `widget_type` to JSON Schema. Prefer `elementor/g
 
 With `summary=true`: Returns `{ widgets: [{ type, description }, ...] }` for widget discovery. Use this mode first to discover which widget types exist before fetching full schemas or building compositions.
 
-Values in the returned schemas are plain JSON. Send settings in `build-composition.element_config` and `manage-elements.settings` using this shape directly. Only keys listed under `properties` are accepted; put all visual styling in the `style` (CSS) input.
+Values in the returned schemas are plain JSON. Send settings in `build-composition.element_config` and `manage-elements.settings` using this shape directly. Only keys listed under `properties` are accepted; put visual styling in the `style` (CSS) input. V3 schemas may include `inner_elements` — use alias blocks in `style` (see `elementor/get-widget-schema` for per-alias `accepted_css_properties` and states).

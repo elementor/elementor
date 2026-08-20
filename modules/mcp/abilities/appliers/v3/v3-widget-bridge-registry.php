@@ -12,6 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Entry shape:
  * [
  *   'non_style_keys' => string[],
+ *   'default_inner_element' => string, // optional; unscoped CSS targets this inner element alias
+ *   'inner_elements' => [
+ *     'main-menu' => [
+ *       'label' => 'Main menu items',
+ *       'control_pattern' => '/(menu_item|menu_typography|pointer|animation_)/',
+ *       'style_overrides' => [], // optional escape hatch per inner element
+ *     ],
+ *   ],
  *   'style_overrides' => [
  *     // Match key: "css-property" or "css-property@pseudo" (pseudo: hover|focus|active)
  *     'color' => [
@@ -62,6 +70,31 @@ class V3_Widget_Bridge_Registry {
 	}
 
 	/**
+	 * @return array<string, array<string, mixed>>
+	 */
+	public static function get_inner_elements( string $widget_type ): array {
+		$entry = self::get( $widget_type );
+
+		return is_array( $entry['inner_elements'] ?? null ) ? $entry['inner_elements'] : [];
+	}
+
+	public static function get_default_inner_element( string $widget_type ): ?string {
+		$entry = self::get( $widget_type );
+		$default = $entry['default_inner_element'] ?? null;
+
+		return is_string( $default ) && '' !== $default ? $default : null;
+	}
+
+	/**
+	 * @return array<string, array>|null
+	 */
+	public static function get_inner_element( string $widget_type, string $alias ): ?array {
+		$inner_elements = self::get_inner_elements( $widget_type );
+
+		return $inner_elements[ $alias ] ?? null;
+	}
+
+	/**
 	 * @return array<string, array{non_style_keys: string[], style_overrides: array<string, array>}>
 	 */
 	private static function entries(): array {
@@ -97,52 +130,161 @@ class V3_Widget_Bridge_Registry {
 				'toggle_icon_active',
 				'toggle_align',
 			],
-			'style_overrides' => array_merge(
-				self::typography_overrides( 'dropdown_typography' ),
-				self::typography_overrides( 'menu_typography' ),
-				[
-					'color' => [
-						'setting' => 'color_menu_item',
-						'resolver' => 'color',
+			'default_inner_element' => 'main-menu',
+			'inner_elements' => [
+				'main-menu' => [
+					'label' => 'Main menu items',
+					'control_pattern' => '/(menu_item|menu_typography|pointer|animation_)/',
+					'style_overrides' => array_merge(
+						self::typography_overrides( 'menu_typography' ),
+						[
+							'color' => [
+								'setting' => 'color_menu_item',
+								'resolver' => 'color',
+							],
+							'color@hover' => [
+								'setting' => 'color_menu_item_hover',
+								'resolver' => 'color',
+							],
+							'color@active' => [
+								'setting' => 'color_menu_item_active',
+								'resolver' => 'color',
+							],
+							'background-color@hover' => [
+								'setting' => 'pointer_color_menu_item_hover',
+								'resolver' => 'color',
+							],
+							'background-color@active' => [
+								'setting' => 'pointer_color_menu_item_active',
+								'resolver' => 'color',
+							],
+							'padding-left' => [
+								'setting' => 'padding_horizontal_menu_item',
+								'resolver' => 'dimension',
+								'responsive' => true,
+							],
+							'padding-right' => [
+								'setting' => 'padding_horizontal_menu_item',
+								'resolver' => 'dimension',
+								'responsive' => true,
+							],
+							'padding-top' => [
+								'setting' => 'padding_vertical_menu_item',
+								'resolver' => 'dimension',
+								'responsive' => true,
+							],
+							'padding-bottom' => [
+								'setting' => 'padding_vertical_menu_item',
+								'resolver' => 'dimension',
+								'responsive' => true,
+							],
+						]
+					),
+				],
+				'dropdown' => [
+					'label' => 'Dropdown / sub-menu',
+					'control_pattern' => '/dropdown/',
+					'style_overrides' => array_merge(
+						self::typography_overrides( 'dropdown_typography' ),
+						[
+							'color' => [
+								'setting' => 'color_dropdown_item',
+								'resolver' => 'color',
+							],
+							'color@hover' => [
+								'setting' => 'color_dropdown_item_hover',
+								'resolver' => 'color',
+							],
+							'color@active' => [
+								'setting' => 'color_dropdown_item_active',
+								'resolver' => 'color',
+							],
+							'background-color' => [
+								'setting' => 'background_color_dropdown_item',
+								'resolver' => 'color',
+							],
+							'background-color@hover' => [
+								'setting' => 'background_color_dropdown_item_hover',
+								'resolver' => 'color',
+							],
+							'background-color@active' => [
+								'setting' => 'background_color_dropdown_item_active',
+								'resolver' => 'color',
+							],
+							'border' => [ 'border_prefix' => 'dropdown_border' ],
+							'border-radius' => [
+								'setting' => 'dropdown_border_radius',
+								'resolver' => 'sides',
+								'responsive' => true,
+							],
+							'box-shadow' => [ 'box_shadow_prefix' => 'dropdown_box_shadow' ],
+						]
+					),
+				],
+				'toggle' => [
+					'label' => 'Mobile toggle button',
+					'control_pattern' => '/^toggle_(?:color|background|size|border)/',
+					'style_overrides' => [
+						'color' => [
+							'setting' => 'toggle_color',
+							'resolver' => 'color',
+						],
+						'color@hover' => [
+							'setting' => 'toggle_color_hover',
+							'resolver' => 'color',
+						],
+						'background-color' => [
+							'setting' => 'toggle_background_color',
+							'resolver' => 'color',
+						],
+						'background-color@hover' => [
+							'setting' => 'toggle_background_color_hover',
+							'resolver' => 'color',
+						],
+						'border-width' => [
+							'setting' => 'toggle_border_width',
+							'resolver' => 'dimension',
+							'responsive' => true,
+						],
+						'border-radius' => [
+							'setting' => 'toggle_border_radius',
+							'resolver' => 'dimension',
+							'responsive' => true,
+						],
 					],
-					'color@hover' => [
-						'setting' => 'color_menu_item_hover',
-						'resolver' => 'color',
-					],
-					'color@active' => [
-						'setting' => 'color_menu_item_active',
-						'resolver' => 'color',
-					],
-					'background-color@hover' => [
-						'setting' => 'pointer_color_menu_item_hover',
-						'resolver' => 'color',
-					],
-					'background-color@active' => [
-						'setting' => 'pointer_color_menu_item_active',
-						'resolver' => 'color',
-					],
-					'padding-left' => [
-						'setting' => 'padding_horizontal_menu_item',
-						'resolver' => 'dimension',
-						'responsive' => true,
-					],
-					'padding-right' => [
-						'setting' => 'padding_horizontal_menu_item',
-						'resolver' => 'dimension',
-						'responsive' => true,
-					],
-					'padding-top' => [
-						'setting' => 'padding_vertical_menu_item',
-						'resolver' => 'dimension',
-						'responsive' => true,
-					],
-					'padding-bottom' => [
-						'setting' => 'padding_vertical_menu_item',
-						'resolver' => 'dimension',
-						'responsive' => true,
-					],
-				]
-			),
+				],
+			],
+			'style_overrides' => [
+				'margin' => [
+					'setting' => '_margin',
+					'resolver' => 'sides',
+					'responsive' => true,
+				],
+				'margin-top' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'top',
+					'responsive' => true,
+				],
+				'margin-right' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'right',
+					'responsive' => true,
+				],
+				'margin-bottom' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'bottom',
+					'responsive' => true,
+				],
+				'margin-left' => [
+					'setting' => '_margin',
+					'resolver' => 'dimension_side',
+					'side' => 'left',
+					'responsive' => true,
+				],
+			],
 		];
 	}
 
