@@ -175,15 +175,20 @@ abstract class Base {
 	/**
 	 * @since 2.1.0
 	 * @access public
+	 *
+	 * @return bool True if the content was written successfully, or if there was no
+	 *              content to write. False if a write was attempted and failed.
 	 */
 	public function update_file() {
 		$this->content = $this->parse_content();
 
 		if ( $this->content ) {
-			$this->write();
-		} else {
-			$this->delete();
+			return false !== $this->write();
 		}
+
+		$this->delete();
+
+		return true;
 	}
 
 	/**
@@ -191,7 +196,49 @@ abstract class Base {
 	 * @access public
 	 */
 	public function write() {
-		return file_put_contents( $this->path, $this->content );
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_files' ) ) {
+			return file_put_contents( $this->path, $this->content );
+		}
+
+		return $this->write_atomically();
+	}
+
+	/**
+	 * Write the file atomically.
+	 *
+	 * Writes to a temporary file first and then renames it into place, so a concurrent
+	 * request can never read a half-written or zero-byte file. Falls back to a direct
+	 * write if the temp file could not be created or the rename fails.
+	 *
+	 * @since 3.33.0
+	 * @access protected
+	 *
+	 * @return bool True if the write succeeded, False otherwise.
+	 */
+	protected function write_atomically() {
+		$tmp_path = $this->path . '.tmp-' . wp_generate_password( 8, false, false );
+
+		$is_written = false !== file_put_contents( $tmp_path, $this->content );
+
+		if ( ! $is_written ) {
+			if ( file_exists( $tmp_path ) ) {
+				unlink( $tmp_path );
+			}
+
+			return false;
+		}
+
+		if ( ! rename( $tmp_path, $this->path ) ) {
+			$fallback = false !== file_put_contents( $this->path, $this->content );
+
+			if ( file_exists( $tmp_path ) ) {
+				unlink( $tmp_path );
+			}
+
+			return $fallback;
+		}
+
+		return true;
 	}
 
 	/**
