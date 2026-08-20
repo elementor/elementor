@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
+
 class Test_New_Badge extends TestCase {
 
 	/**
@@ -29,10 +31,32 @@ class Test_New_Badge extends TestCase {
 		];
 	}
 
+	public function test_should_show_for_registered_element(): void {
+		if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
+			$this->markTestSkipped( 'ELEMENTOR_TESTS is already enabled.' );
+		}
+
+		$this->assertTrue( New_Badge::should_show_for_element( 'e-background-video', '4.3.0' ) );
+	}
+
+	public function test_should_show_for_unknown_element(): void {
+		if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
+			$this->markTestSkipped( 'ELEMENTOR_TESTS is already enabled.' );
+		}
+
+		$this->assertFalse( New_Badge::should_show_for_element( 'e-heading', '4.3.0' ) );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
 	public function test_should_show_for_element_is_false_in_test_mode(): void {
 		if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 			define( 'ELEMENTOR_TESTS', true );
 		}
+
+		require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
 
 		$this->assertFalse( New_Badge::should_show_for_element( 'e-background-video', '4.3.0' ) );
 	}

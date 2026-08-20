@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\Utils;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,7 +21,7 @@ class New_Badge {
 	];
 
 	public static function should_show_for_element( string $element_name, string $current_version ): bool {
-		if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
+		if ( Utils::is_elementor_tests() ) {
 			return false;
 		}
 
