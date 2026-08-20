@@ -12,6 +12,10 @@ on:
         required: false
         default: ''
 
+concurrency:
+  group: ${{ inputs.pull_request_number != '' && format('pr-{0}-playwright', inputs.pull_request_number) || format('playwright-suite-{0}', github.ref) }}
+  cancel-in-progress: ${{ inputs.pull_request_number != '' }}
+
 permissions:
   contents: read
 
@@ -46,7 +50,6 @@ jobs:
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    timeout-minutes: 20
     needs: [build-plugin, prepare-caller-build, get-php-version]
     permissions:
       contents: read
@@ -82,11 +85,10 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          package-manager-cache: false
-      - name: Restore dependency cache
-        uses: ./.github/actions/restore-dependencies-cache
-        with:
-          fail-on-cache-miss: 'true'
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm run install:ci
       - name: Download build artifact
         uses: actions/download-artifact@v8
         with:

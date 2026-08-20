@@ -27,7 +27,6 @@ jobs:
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-22.04
-    timeout-minutes: 20
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     steps:

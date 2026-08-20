@@ -96,7 +96,6 @@ jobs:
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    timeout-minutes: 20
     needs: [build-plugin, get-php-version]
     permissions:
       contents: read
