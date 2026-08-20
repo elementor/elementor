@@ -289,6 +289,12 @@ class Global_Classes_Relations {
 			);
 		} );
 
+		$used_class_ids = apply_filters(
+			'elementor/global_classes/extract_class_ids_from_post',
+			$used_class_ids,
+			$post_id
+		);
+
 		return array_values( array_unique( $used_class_ids ) );
 	}
 
