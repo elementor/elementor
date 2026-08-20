@@ -46,7 +46,7 @@ jobs:
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     needs: [build-plugin, prepare-caller-build, get-php-version]
     permissions:
       contents: read
@@ -371,14 +371,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate a token
         id: generate-token
-        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) && secrets.TEST_CONFIGURATION_APP_ID != '' }}
         uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
           owner: elementor
       - name: Checkout private action repository
-        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) && secrets.TEST_CONFIGURATION_APP_ID != '' }}
         uses: actions/checkout@v6
         with:
           repository: elementor/elementor-tests-configuration
@@ -388,7 +388,7 @@ jobs:
           ref: main
       - name: Map GitHub user to Slack
         id: map_user
-        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) && secrets.TEST_CONFIGURATION_APP_ID != '' }}
         uses: ./elementor-tests-configuration/.github/actions/map-github-to-slack
         with:
           github_user: ${{ github.actor }}
@@ -396,7 +396,7 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) && secrets.TEST_CONFIGURATION_APP_ID != '' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}

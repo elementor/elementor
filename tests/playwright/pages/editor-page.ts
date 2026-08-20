@@ -957,9 +957,19 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage(): Promise<void> {
+		const saveResponsePromise = this.page.waitForResponse(
+			( response ) =>
+				response.url().includes( 'admin-ajax.php' ) &&
+				'POST' === response.request().method() &&
+				( response.request().postData() ?? '' ).includes( 'save_builder' ),
+			{ timeout: timeouts.longAction },
+		);
+
 		await this.clickTopBarItem( TopBarSelectors.publish );
-		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.heavyAction } );
+		await saveResponsePromise;
+
+		const publishButton = this.page.locator( EditorSelectors.panels.topBar.wrapper ).getByRole( 'button', { name: TopBarSelectors.publish.attributeValue } );
+		await expect( publishButton ).toBeDisabled();
 	}
 
 	/**
