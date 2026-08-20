@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "b818fdf39a6cd2bdaedbca57a960dc33",
+=======
+    "content-hash": "bc102c01e65d6c29d6436e01f58b20c9",
+>>>>>>> 43d8bc247a (Internal: Update wp-coding-standards/wpcs to 3.4.1 for CVE-2026-45293 [ED-25116] (#36701))
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -4492,6 +4496,7 @@
             "time": "2025-10-29T15:56:20+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "wordpress/mcp-adapter",
             "version": "v0.5.0",
             "source": {
@@ -4629,6 +4634,17 @@
             },
             "dist": {
                 "type": "zip",
+=======
+            "name": "wp-coding-standards/wpcs",
+            "version": "3.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
+                "reference": "ec2ff942335f33683a5957a85d138753876a05cf"
+            },
+            "dist": {
+                "type": "zip",
+>>>>>>> 43d8bc247a (Internal: Update wp-coding-standards/wpcs to 3.4.1 for CVE-2026-45293 [ED-25116] (#36701))
                 "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/ec2ff942335f33683a5957a85d138753876a05cf",
                 "reference": "ec2ff942335f33683a5957a85d138753876a05cf",
                 "shasum": ""
@@ -4761,5 +4777,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
