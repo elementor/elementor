@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { getInitialDesignSystemTab, notifyDesignSystemTabChange, persistDesignSystemTab } from '../../initial-tab';
+import { DesignSystemPanelContent } from '../design-system-panel-content';
 
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
-import { DesignSystemPanelContent } from '../design-system-panel-content';
 
 const mockDefaultStylesTabEmbedded = jest.fn();
 

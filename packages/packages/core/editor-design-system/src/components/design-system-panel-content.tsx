@@ -4,8 +4,8 @@ import { DefaultStylesTabEmbedded } from '@elementor/editor-default-styles';
 import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -77,11 +77,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	}, [ onRequestClose ] );
 
 	const chainedThroughDefaults = useCallback( () => {
-		if (
-			isDefaultStylesEnabled &&
-			! isChainingRef.current &&
-			defaultsCloseAttemptRef.current
-		) {
+		if ( isDefaultStylesEnabled && ! isChainingRef.current && defaultsCloseAttemptRef.current ) {
 			isChainingRef.current = true;
 			defaultsCloseAttemptRef.current();
 			isChainingRef.current = false;
