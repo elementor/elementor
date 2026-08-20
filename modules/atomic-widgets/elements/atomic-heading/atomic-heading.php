@@ -76,6 +76,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			->set_items( [
 				Inline_Editing_Control::bind_to( 'title' )
 					->set_placeholder( __( 'Type your title here', 'elementor' ) )
+					->set_enable_angie_generate( true )
 					->set_label( __( 'Title', 'elementor' ) ),
 			] );
 

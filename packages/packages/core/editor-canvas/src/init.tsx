@@ -14,6 +14,8 @@ import { initViewReplacements } from './legacy/replacements/manager';
 import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
+import { initTitleGenerationMcp } from './mcp/title-generation';
+import { TITLE_GENERATION_MCP_DESCRIPTION } from './mcp/title-generation/constants';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
 
@@ -59,6 +61,15 @@ export function init() {
 - Get page structure and element configuration values
 `,
 			docs: mcpDescription,
+		} )
+	);
+
+	initTitleGenerationMcp(
+		getMCPByDomain( 'title_generation', {
+			instructions: `Generate and update V4 atomic heading titles.
+- Use update-heading-title to write a heading title for a specific e-heading element
+`,
+			docs: TITLE_GENERATION_MCP_DESCRIPTION,
 		} )
 	);
 
