@@ -106,10 +106,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'xml_structure' => $xml_structure,
 			'element_config' => [
 				'newspaper-title' => [
-					'title' => [
-						'content' => 'Daily Herald',
-						'children' => [],
-					],
+					'title' => 'Daily Herald',
 				],
 				'post-title-heading' => [
 					'title' => [
@@ -118,10 +115,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 					],
 				],
 			'masthead-eyebrow' => [
-				'paragraph' => [
-					'content' => 'Breaking News',
-					'children' => [],
-				],
+				'paragraph' => 'Breaking News',
 			],
 			'post-image' => [
 				'image' => [
@@ -340,10 +334,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			],
 			'unresolvable title type' => [
 				[
-					'title' => [
-						'content' => [ 'not', 'a', 'string' ],
-						'children' => [],
-					],
+					'title' => [ 'foo' => 'bar' ],
 				],
 				[ 'title', 'could not be resolved' ],
 			],
