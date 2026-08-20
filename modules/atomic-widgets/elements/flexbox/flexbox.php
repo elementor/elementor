@@ -75,7 +75,7 @@ class Flexbox extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button', 'main', 'nav' ] )
 				->default( 'div' )
 				->description( 'The HTML tag for the flexbox container. One of: div, header, section, article, aside, footer, a (link), or button.' )
 				->set_dependencies( $tag_dependencies ),
@@ -117,6 +117,14 @@ class Flexbox extends Atomic_Element_Base {
 							[
 								'value' => 'footer',
 								'label' => 'Footer',
+							],
+							[
+								'value' => 'main',
+								'label' => 'Main',
+							],
+							[
+								'value' => 'nav',
+								'label' => 'Nav',
 							],
 						])
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
