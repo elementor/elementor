@@ -245,7 +245,7 @@ class Module extends BaseModule {
 		?>
 		<div class="tab-import-export-kit__container">
 			<div class="tab-import-export-kit__box">
-				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+				<h3><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h3>
 			</div>
 			<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
 
