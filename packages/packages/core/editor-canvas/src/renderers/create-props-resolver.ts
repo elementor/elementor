@@ -10,6 +10,7 @@ import {
 
 import { type RenderContext } from '../legacy/types';
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
+import { applySchemaDefaults } from './apply-schema-defaults';
 import { getMultiPropsValue, isMultiProps } from './multi-props';
 
 type CreatePropResolverArgs = {
@@ -42,10 +43,11 @@ const TRANSFORM_DEPTH_LIMIT = 3;
 export function createPropsResolver( { transformers, schema: initialSchema, onPropResolve }: CreatePropResolverArgs ) {
 	async function resolve( { props, schema, signal, renderContext }: ResolveArgs ): Promise< ResolvedProps > {
 		schema = schema ?? initialSchema;
+		const propsWithDefaults = applySchemaDefaults( props, schema );
 
 		const promises = Promise.all(
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
-				const value = props[ key ] ?? type.default;
+				const value = propsWithDefaults[ key ] ?? type.default;
 				const transformed = ( await transform( { value, key, type, signal, renderContext } ) ) as PropValue;
 
 				onPropResolve?.( { key, value: transformed, propValue: value, propType: type } );
