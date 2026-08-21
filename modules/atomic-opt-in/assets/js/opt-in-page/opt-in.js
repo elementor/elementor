@@ -151,7 +151,7 @@ export const OptIn = ( { state } ) => {
 			flexDirection: { xs: 'column-reverse', md: 'row' },
 		} }>
 			<Stack sx={ { flex: 1, maxWidth: { md: '580px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
-				<TextNode variant="h4" width="fit-content" >
+				<TextNode variant="h4" component="h2">
 					<span>{ i18n.title }</span>
 				</TextNode>
 				<Stack direction="column" gap={ 1 }>
