@@ -136,8 +136,14 @@ export const navigateToHomeScreen = async ( page: Page ) => {
 	return page.locator( '#e-home-screen' );
 };
 
+const WP_NIGHTLY_SNAPSHOT_SUFFIX = '-wp-nightly';
+
 export const expectScreenshot = async ( locator: Locator, baseName: string ): Promise<void> => {
-	await expect( locator ).toHaveScreenshot( baseName );
+	const snapshotName = 'nightly' === process.env.WP_VERSION
+		? baseName.replace( /(\.[^.]+)$/, `${ WP_NIGHTLY_SNAPSHOT_SUFFIX }$1` )
+		: baseName;
+
+	await expect( locator ).toHaveScreenshot( snapshotName );
 };
 
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
