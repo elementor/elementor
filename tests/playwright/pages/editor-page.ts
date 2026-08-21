@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
 import { comparePngBuffers } from '../assets/image-comparator';
-import { expect, type Page, type Frame, type Response, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
+import { expect, type Page, type Frame, type Request, type Response, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
@@ -18,21 +18,81 @@ let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
 
+const ADMIN_AJAX_PATH = 'admin-ajax.php';
+const SAVE_BUILDER_ACTION = 'save_builder';
+const PUBLISH_STATUS = 'publish';
+
+type AjaxBatchAction = {
+	action?: string;
+	data?: {
+		status?: string;
+	};
+};
+
+type AjaxBatchResponse = {
+	success?: boolean;
+	data?: unknown;
+};
+
+function parseAjaxBatchActions( request: Request ): Record<string, AjaxBatchAction> | null {
+	try {
+		const postData = request.postDataJSON() as { actions?: string | Record<string, AjaxBatchAction> } | null;
+		if ( ! postData?.actions ) {
+			return null;
+		}
+
+		if ( 'string' === typeof postData.actions ) {
+			return JSON.parse( postData.actions ) as Record<string, AjaxBatchAction>;
+		}
+
+		return postData.actions;
+	} catch {
+		return null;
+	}
+}
+
+function isPublishSaveBuilderAction( action: AjaxBatchAction ): boolean {
+	return SAVE_BUILDER_ACTION === action.action && PUBLISH_STATUS === action.data?.status;
+}
+
 function isPublishSaveBuilderResponse( response: Response ): boolean {
-	if ( ! response.url().includes( 'admin-ajax.php' ) || 'POST' !== response.request().method() ) {
+	if ( ! response.url().includes( ADMIN_AJAX_PATH ) || 'POST' !== response.request().method() ) {
 		return false;
 	}
 
-	const rawPostData = response.request().postData() ?? '';
-	let postData = rawPostData;
-
-	try {
-		postData = decodeURIComponent( rawPostData );
-	} catch {
-		postData = rawPostData;
+	const actions = parseAjaxBatchActions( response.request() );
+	if ( ! actions ) {
+		return false;
 	}
 
-	return postData.includes( 'save_builder' ) && postData.includes( '"status":"publish"' );
+	return Object.values( actions ).some( isPublishSaveBuilderAction );
+}
+
+async function assertPublishSaveBuilderSucceeded( saveResponse: Response ): Promise<void> {
+	let body: { data?: { responses?: Record<string, AjaxBatchResponse> } };
+
+	try {
+		body = await saveResponse.json();
+	} catch {
+		throw new Error( `Publish save_builder failed: HTTP ${ saveResponse.status() } (non-JSON body)` );
+	}
+
+	const actions = parseAjaxBatchActions( saveResponse.request() ) ?? {};
+	const responses = body?.data?.responses ?? {};
+	const publishSaveIds = Object.entries( actions )
+		.filter( ( [ , action ] ) => isPublishSaveBuilderAction( action ) )
+		.map( ( [ id ] ) => id );
+	const failedSave = publishSaveIds.find( ( id ) => ! responses[ id ]?.success );
+
+	if ( saveResponse.ok() && ! failedSave && publishSaveIds.length > 0 ) {
+		return;
+	}
+
+	const failedPayload = failedSave ? responses[ failedSave ]?.data : responses[ SAVE_BUILDER_ACTION ]?.data;
+
+	throw new Error(
+		`Publish save_builder failed: HTTP ${ saveResponse.status() } ${ JSON.stringify( failedPayload ) }`,
+	);
 }
 
 /**
@@ -983,9 +1043,7 @@ export default class EditorPage extends BasePage {
 
 		const saveResponse = await saveResponsePromise;
 
-		if ( ! saveResponse.ok() ) {
-			throw new Error( `Publish save_builder failed with HTTP ${ saveResponse.status() }` );
-		}
+		await assertPublishSaveBuilderSucceeded( saveResponse );
 	}
 
 	/**
