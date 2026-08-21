@@ -252,7 +252,7 @@ class Editor {
 			return false;
 		}
 
-		return isset( $_GET['action'] ) && 'elementor' === $_GET['action'] && in_array( $screen->base, [ 'post', 'toplevel_page_elementor' ], true );
+		return isset( $_GET['action'] ) && 'elementor' === $_GET['action'] && 'post' === $screen->base;
 	}
 
 	private function is_editor_ajax_request(): bool {
@@ -602,6 +602,28 @@ class Editor {
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
 
 		add_filter( 'replace_editor', [ $this, 'filter_replace_editor' ], 10, 2 );
+
+		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
+	}
+
+	/**
+	 * Propagate the `active-document` / `active-tab` query args of the current request onto
+	 * generated document edit URLs, so navigating between documents (e.g. page ↔ kit settings)
+	 * keeps the same panel context open.
+	 */
+	public function add_active_document_to_edit_link( $edit_link ) {
+		$active_document = Utils::get_super_global_value( $_GET, 'active-document' ) ?? null;
+		$active_tab = Utils::get_super_global_value( $_GET, 'active-tab' ) ?? null;
+
+		if ( $active_document ) {
+			$edit_link = add_query_arg( 'active-document', $active_document, $edit_link );
+		}
+
+		if ( $active_tab ) {
+			$edit_link = add_query_arg( 'active-tab', $active_tab, $edit_link );
+		}
+
+		return $edit_link;
 	}
 
 	/**

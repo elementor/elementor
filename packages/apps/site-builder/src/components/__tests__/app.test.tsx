@@ -33,7 +33,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 			'site-builder': {
 				iframeUrl: 'https://planner.elementor.com/chat.html',
 				isAdmin: true,
-				exitTo: '/wp-admin/admin.php?page=elementor',
+				exitTo: '/wp-admin/admin.php?page=elementor-settings',
 			},
 		};
 

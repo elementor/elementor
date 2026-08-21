@@ -10,6 +10,7 @@ class Menu_Config {
 	const ELEMENTOR_MENU_SLUG = 'elementor';
 	const ELEMENTOR_HOME_MENU_SLUG = 'elementor-home';
 	const EDITOR_MENU_SLUG = 'elementor-editor';
+	const SETTINGS_PAGE_SLUG = 'elementor-settings';
 	const TEMPLATES_GROUP_ID = 'elementor-editor-templates';
 	const SETTINGS_GROUP_ID = 'elementor-editor-settings';
 	const EDITOR_GROUP_ID = 'elementor-editor-items';
@@ -118,7 +119,7 @@ class Menu_Config {
 	}
 
 	public static function get_elementor_home_url(): string {
-		return admin_url( 'admin.php?page=' . self::ELEMENTOR_MENU_SLUG );
+		return admin_url( 'admin.php?page=' . self::SETTINGS_PAGE_SLUG );
 	}
 
 	public static function get_elementor_post_types(): array {

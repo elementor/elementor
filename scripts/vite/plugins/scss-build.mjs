@@ -39,7 +39,6 @@ const SASS_TARGETS = [
 	{ cwd: 'modules/ai/assets/scss', src: '*.scss', dest: 'assets/css/modules/ai' },
 	{ cwd: 'modules/apps/assets/scss', src: 'admin.scss', dest: 'assets/css/modules/apps' },
 	{ cwd: 'modules/editor-one/assets/scss', src: '*.scss', dest: 'assets/css/modules/editor-one' },
-	{ cwd: 'modules/home/assets/scss', src: 'e-home-screen.scss', dest: 'assets/css/modules/home' },
 	{ cwd: 'modules/promotions/assets/scss', src: 'conversion-banner.scss', dest: 'assets/css/modules/promotions' },
 	{ cwd: 'assets/dev/scss/frontend', src: 'admin-bar.scss', dest: 'assets/css' },
 	{ cwd: 'assets/dev/scss/frontend/conditionals', src: '*.scss', dest: 'assets/css/conditionals' },

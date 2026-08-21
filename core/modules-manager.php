@@ -120,7 +120,6 @@ class Modules_Manager {
 			'styleguide',
 			'element-cache',
 			'apps',
-			'home',
 			'link-in-bio',
 			'floating-buttons',
 			'content-sanitizer',

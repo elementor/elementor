@@ -5,7 +5,6 @@ use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,6 +25,11 @@ class Settings extends Settings_Page {
 	 * Settings page ID for Elementor settings.
 	 */
 	const PAGE_ID = 'elementor';
+
+	/**
+	 * Settings page ID for the Editor One "Settings" menu item.
+	 */
+	const SETTINGS_PAGE_ID = 'elementor-settings';
 
 	/**
 	 * Upgrade menu priority.
@@ -81,22 +85,14 @@ class Settings extends Settings_Page {
 			esc_html__( 'Elementor', 'elementor' ),
 			self::MENU_CAPABILITY_EDIT_POSTS,
 			self::PAGE_ID,
-			[ $this, 'display_home_screen' ],
+			'',
 			'',
 			'58.5'
 		);
 	}
 
-	public function display_home_screen() {
-		echo '<div id="e-home-screen"></div>';
-	}
-
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Settings_Menu() );
-	}
-
-	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_data_provider->register_menu( new Editor_One_Home_Menu() );
 	}
 
 	/**
@@ -110,7 +106,29 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function on_admin_init() {
+		$this->maybe_redirect_home_screen_to_settings();
 		$this->maybe_remove_all_admin_notices();
+	}
+
+	/**
+	 * The Editor Home / Quick Start screen (`page=elementor`) was removed; redirect any
+	 * bookmarks, third-party links, or direct hits to the Settings page instead of 404ing.
+	 */
+	private function maybe_redirect_home_screen_to_settings(): void {
+		global $pagenow;
+
+		if ( wp_doing_ajax() || 'admin.php' !== $pagenow ) {
+			return;
+		}
+
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+
+		if ( self::PAGE_ID !== $page ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . self::SETTINGS_PAGE_ID ) );
+		exit;
 	}
 
 	/**
@@ -449,7 +467,6 @@ class Settings extends Settings_Page {
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_settings_menu( $menu_data_provider );
-			$this->register_editor_one_home_menu( $menu_data_provider );
 		} );
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];

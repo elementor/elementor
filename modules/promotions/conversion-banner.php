@@ -252,10 +252,6 @@ class Conversion_Banner {
 
 		return [
 			'dashboard' => [ 'selector' => '#wpbody #wpbody-content .wrap h1' ],
-			'toplevel_page_elementor' => [
-				'selector' => '#e-home-screen',
-				'before' => true,
-			],
 			'elementor_page_elementor-settings' => $default,
 			'elementor_page_elementor-tools' => $default,
 			'elementor_page_elementor-role-manager' => $default,

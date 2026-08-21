@@ -62,7 +62,6 @@ export const BASE_ENTRIES = {
 	'ai-admin': 'modules/ai/assets/js/admin/index.js',
 	styleguide: 'modules/styleguide/assets/js/styleguide.js',
 	'styleguide-app-initiator': 'modules/styleguide/assets/js/styleguide-app-initiator.js',
-	'e-home-screen': 'modules/home/assets/js/app.js',
 	'editor-one-sidebar-navigation': 'modules/editor-one/assets/js/sidebar-navigation/app.js',
 	'editor-one-top-bar': 'modules/editor-one/assets/js/top-bar/app.js',
 	'editor-one-menu': 'modules/editor-one/assets/js/admin-menu/app.js',

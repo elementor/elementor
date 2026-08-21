@@ -42,11 +42,9 @@ export class SidebarMenuHandler {
 		const searchParams = currentUrl.searchParams;
 		const page = searchParams.get( 'page' );
 
-		let targetSlug = 'elementor';
+		let targetSlug = 'elementor-settings';
 
-		if ( 'elementor' === page || 'elementor-home' === page ) {
-			targetSlug = 'elementor';
-		} else if ( 'e-form-submissions' === page ) {
+		if ( 'e-form-submissions' === page ) {
 			targetSlug = 'e-form-submissions';
 		} else if ( 'elementor-mcp' === page ) {
 			targetSlug = 'elementor-mcp';

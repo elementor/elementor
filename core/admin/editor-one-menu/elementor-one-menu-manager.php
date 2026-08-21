@@ -2,13 +2,14 @@
 
 namespace Elementor\Core\Admin\EditorOneMenu;
 
-use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,7 +52,6 @@ class Elementor_One_Menu_Manager {
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_old_elementor_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_menu_assets' ] );
-		add_action( 'admin_print_scripts-toplevel_page_elementor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
 	}
 
 	public function check_if_pro_module_is_enabled(): void {
@@ -68,8 +68,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
-			Menu_Config::ELEMENTOR_MENU_SLUG,
-			[ $this, 'render_editor_page' ],
+			Settings::SETTINGS_PAGE_ID,
+			[ Plugin::$instance->settings, 'display_settings_page' ],
 			20
 		);
 
@@ -144,10 +144,6 @@ class Elementor_One_Menu_Manager {
 		}
 	}
 
-	public function render_editor_page(): void {
-		Plugin::instance()->settings->display_home_screen();
-	}
-
 	public function override_elementor_page_for_edit_posts_users(): void {
 		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
 
@@ -156,21 +152,15 @@ class Elementor_One_Menu_Manager {
 		}
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-		if ( Menu_Config::ELEMENTOR_MENU_SLUG !== $page ) {
+		$redirected_pages = [ Menu_Config::ELEMENTOR_MENU_SLUG, Settings::SETTINGS_PAGE_ID ];
+
+		if ( ! in_array( $page, $redirected_pages, true ) ) {
 			return;
 		}
 
 		$templates_url = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
 		wp_safe_redirect( $templates_url );
 		exit;
-	}
-
-	public function enqueue_home_screen_on_editor_page(): void {
-		$home_module = Plugin::instance()->modules_manager->get_modules( 'home' );
-
-		if ( $home_module && method_exists( $home_module, 'enqueue_home_screen_scripts' ) ) {
-			$home_module->enqueue_home_screen_scripts();
-		}
 	}
 
 	public function fix_theme_builder_submenu_url( $menu ) {
@@ -245,8 +235,15 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
+		global $_parent_pages;
+
+		if ( isset( $_parent_pages[ $item_slug ] ) ) {
+			return get_plugin_page_hookname( $item_slug, $_parent_pages[ $item_slug ] );
+		}
+
 		$original_parent = $this->get_original_parent_slug( $item );
 		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
+
 		$has_page = method_exists( $item, 'render' );
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
@@ -307,6 +304,7 @@ class Elementor_One_Menu_Manager {
 	public function hide_flyout_items_from_wp_menu(): void {
 		$protected_wp_menu_slugs = [
 			Menu_Config::EDITOR_MENU_SLUG,
+			Settings::SETTINGS_PAGE_ID,
 			'elementor-theme-builder',
 			'e-form-submissions',
 			'elementor-mcp',

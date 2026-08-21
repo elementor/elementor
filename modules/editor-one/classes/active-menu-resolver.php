@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Active_Menu_Resolver {
 
-	private const HOME_SLUG = 'elementor';
+	private const HOME_SLUG = 'elementor-settings';
 
 	private Url_Matcher $url_matcher;
 

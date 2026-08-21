@@ -181,7 +181,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 			$this->original_server_request_uri = $_SERVER['REQUEST_URI'];
 		}
 
-		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor';
+		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor-settings';
 	}
 
 	private function restore_request_uri(): void {
