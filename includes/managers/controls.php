@@ -902,11 +902,21 @@ class Controls_Manager {
 			return true;
 		}
 
-		if ( empty( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			return new \WP_Error( 'Cannot remove not-exists control.' );
+		$removed = false;
+
+		if ( ! empty( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
+			unset( $this->stacks[ $stack_id ]['controls'][ $control_id ] );
+			$removed = true;
 		}
 
-		unset( $this->stacks[ $stack_id ]['controls'][ $control_id ] );
+		if ( ! empty( $this->stacks[ $stack_id ]['style_controls'][ $control_id ] ) ) {
+			unset( $this->stacks[ $stack_id ]['style_controls'][ $control_id ] );
+			$removed = true;
+		}
+
+		if ( ! $removed ) {
+			return new \WP_Error( 'Cannot remove not-exists control.' );
+		}
 
 		return true;
 	}
