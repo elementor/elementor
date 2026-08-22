@@ -232,6 +232,9 @@ class Shapes {
 			],
 		];
 
+		// filter native shapes, so that they can for example be removed in a customized environment.
+		$native_shapes = apply_filters( 'elementor/shapes/native_shapes', $native_shapes );
+
 		self::$shapes = array_merge( $native_shapes, self::get_additional_shapes() );
 	}
 
