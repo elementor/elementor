@@ -17,7 +17,12 @@ export type GlobalClassIndexEntry = {
 	label: string;
 };
 
-export type GlobalClassesIndexHttpResponse = HttpResponse< GlobalClassIndexEntry[], Record< string, never > >;
+export type GlobalClassesIndexHttpResponse = HttpResponse<
+	GlobalClassIndexEntry[],
+	{
+		version: number;
+	}
+>;
 
 export type StyleDefinitionsNullableMap = Record< StyleDefinitionID, StyleDefinition | null >;
 
@@ -34,6 +39,10 @@ type UpdatePayload = GlobalClasses & {
 		deleted: StyleDefinitionID[];
 		modified: StyleDefinitionID[];
 	};
+	// Optimistic-concurrency token returned by the last index read. The server rejects
+	// a save with a 409 when the stored version has advanced past this one, which means
+	// this edit was based on a stale snapshot and must be retried against fresh data.
+	version?: number;
 };
 
 export type ApiContext = 'preview' | 'frontend';
@@ -69,4 +78,9 @@ export const apiClient = {
 
 export const API_ERROR_CODES = {
 	DUPLICATED_LABEL: 'DUPLICATED_LABEL',
+	CONFLICT: 'global_classes_conflict',
 };
+
+export function isConflictError( error: unknown ): boolean {
+	return ( error as { response?: { status?: number } } )?.response?.status === 409;
+}
