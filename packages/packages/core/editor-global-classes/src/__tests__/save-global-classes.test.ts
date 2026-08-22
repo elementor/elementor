@@ -1,18 +1,39 @@
 import { createMockStyleDefinition } from 'test-utils';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { getCurrentUser } from '@elementor/editor-current-user';
 import {
 	__createStore as createStore,
 	__dispatch as dispatch,
+	__getState as getState,
 	__registerSlice as registerSlice,
 } from '@elementor/store';
 
-import { apiClient } from '../api';
+import { apiClient, isConflictError } from '../api';
+import { selectVersion } from '../store';
 import { UPDATE_CLASS_CAPABILITY_KEY } from '../capabilities';
 import { saveGlobalClasses } from '../save-global-classes';
 import { slice } from '../store';
 
-jest.mock( '../api' );
+// Keep the real guards/helpers so a 409 error still routes into the retry path;
+// only the HTTP client (apiClient) is mocked.
+jest.mock( '../api', () => {
+	const actual = jest.requireActual( '../api' );
+
+	return {
+		__esModule: true,
+		API_ERROR_CODES: actual.API_ERROR_CODES,
+		isConflictError: actual.isConflictError,
+		apiClient: {
+			all: jest.fn(),
+			getByIds: jest.fn(),
+			getStylesForPost: jest.fn(),
+			publish: jest.fn(),
+			saveDraft: jest.fn(),
+		},
+	};
+} );
 jest.mock( '@elementor/editor-current-user' );
+jest.mock( '@elementor/editor-documents' );
 
 const classLabelsFor = ( order: string[], items: Record< string, ReturnType< typeof createMockStyleDefinition > > ) =>
 	Object.fromEntries( order.map( ( id ) => [ id, items[ id ]?.label ?? id ] ) );
@@ -28,6 +49,8 @@ describe( 'saveGlobalClasses', () => {
 
 		jest.mocked( apiClient.publish ).mockResolvedValue( {} as never );
 		jest.mocked( apiClient.saveDraft ).mockResolvedValue( {} as never );
+
+		jest.mocked( getCurrentDocument ).mockReturnValue( { id: 123 } as never );
 	} );
 
 	it( 'should not mark lazily loaded classes as added', async () => {
@@ -67,6 +90,7 @@ describe( 'saveGlobalClasses', () => {
 				modified: [],
 				order: false,
 			},
+			version: 0,
 		} );
 	} );
 
@@ -98,6 +122,7 @@ describe( 'saveGlobalClasses', () => {
 				modified: [],
 				order: true,
 			},
+			version: 0,
 		} );
 	} );
 
@@ -171,5 +196,59 @@ describe( 'saveGlobalClasses', () => {
 				},
 			} )
 		);
+	} );
+
+	it( 'should rebase, update the version and retry once when the server rejects with a conflict', async () => {
+		// Arrange
+		const staleClass = createMockStyleDefinition( { id: 'class-1', label: 'Stale' } );
+		const freshClass = createMockStyleDefinition( { id: 'class-1', label: 'Fresh' } );
+		const order = [ 'class-1' ];
+		const freshVersion = 7;
+
+		const freshIndex = {
+			data: {
+				data: [ { id: 'class-1', label: 'Fresh' } ],
+				meta: { version: freshVersion },
+			},
+		} as never;
+
+		const freshStyles = {
+			data: {
+				data: { 'class-1': freshClass },
+				meta: { order },
+			},
+		} as never;
+
+		jest.mocked( apiClient.publish )
+			.mockRejectedValueOnce( { response: { status: 409 } } as never )
+			.mockResolvedValueOnce( {} as never );
+
+		jest.mocked( apiClient.all ).mockResolvedValue( freshIndex );
+		jest.mocked( apiClient.getStylesForPost ).mockResolvedValue( freshStyles );
+
+		dispatch(
+			slice.actions.load( {
+				frontend: { items: { 'class-1': staleClass }, order },
+				preview: { items: { 'class-1': staleClass }, order },
+				classLabels: classLabelsFor( order, { 'class-1': staleClass } ),
+				version: { frontend: 3, preview: 3 },
+			} )
+		);
+
+		const conflictSpy = jest.spyOn( window, 'dispatchEvent' );
+
+		// Act
+		await saveGlobalClasses( { context: 'frontend' } );
+
+		// Assert - two publish attempts, rebased onto the fresh version.
+		expect( apiClient.publish ).toHaveBeenCalledTimes( 2 );
+		expect( apiClient.publish ).toHaveBeenNthCalledWith(
+			2,
+			expect.objectContaining( { version: freshVersion } )
+		);
+		expect( selectVersion( getState(), 'frontend' ) ).toBe( freshVersion );
+
+		// The conflict was announced so the UI can surface a non-blocking notice.
+		expect( conflictSpy ).toHaveBeenCalledWith( expect.objectContaining( { type: 'classes:conflict' } ) );
 	} );
 } );

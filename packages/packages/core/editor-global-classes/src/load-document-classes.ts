@@ -61,6 +61,10 @@ export async function loadCurrentDocumentClasses() {
 			preview: { items: previewItems, order: previewOrder },
 			frontend: { items: frontendItems, order: frontendOrder },
 			classLabels,
+			version: {
+				preview: previewIndexRes.data.meta.version ?? 0,
+				frontend: frontendIndexRes.data.meta.version ?? 0,
+			},
 		} )
 	);
 }

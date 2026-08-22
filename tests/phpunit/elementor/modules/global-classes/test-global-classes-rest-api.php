@@ -94,6 +94,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_VERSION );
 		$this->delete_all_global_class_posts();
 	}
 
@@ -120,7 +121,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		];
 
 		$this->assertEquals( $expected_list, $response->get_data()['data'] );
-		$this->assertEquals( [], $response->get_data()['meta'] );
+		$this->assertEquals( [ 'version' => 0 ], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -149,7 +150,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		];
 
 		$this->assertEquals( $expected_list, $response->get_data()['data'] );
-		$this->assertEquals( [], $response->get_data()['meta'] );
+		$this->assertEquals( [ 'version' => 0 ], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -163,7 +164,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( [], $response->get_data()['data'] );
-		$this->assertEquals( [], $response->get_data()['meta'] );
+		$this->assertEquals( [ 'version' => 0 ], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -1289,7 +1290,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		];
 
 		$this->assertEquals( $expected_list, $response->get_data()['data'] );
-		$this->assertEquals( [], $response->get_data()['meta'] );
+		$this->assertEquals( [ 'version' => 0 ], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -1406,6 +1407,200 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertNotNull( $data['data']->{'g-4-123'} );
 		$this->assertTrue( property_exists( $data['data'], 'g-missing' ) );
 		$this->assertNull( $data['data']->{'g-missing'} );
+	}
+
+	public function test_put__without_version_succeeds_and_bumps() {
+		// Arrange - old clients send no version token; the save must still work (back-compat).
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$request->set_body_params( [
+			'items' => [ 'g-1' => $class_1 ],
+			'order' => [ 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-1' ],
+				'deleted' => [],
+				'modified' => [],
+			],
+		] );
+
+		// Act.
+		$response = rest_do_request( $request );
+
+		// Assert - 204, class persisted, version advanced for newer clients.
+		$this->assertSame( 204, $response->get_status() );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+		$this->assertArrayHasKey( 'g-1', $classes['items'] );
+		$this->assertSame( 1, Global_Classes_Repository::make()->get_version() );
+	}
+
+	public function test_put__with_matching_version_succeeds_and_bumps() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+		$this->seed_global_classes_posts( [ 'items' => [ 'g-1' => $class_1 ], 'order' => [ 'g-1' ] ] );
+		Global_Classes_Repository::make()->bump_version();
+
+		$class_2 = $this->create_global_class( 'g-2' );
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$request->set_body_params( [
+			'items' => [ 'g-2' => $class_2 ],
+			'order' => [ 'g-1', 'g-2' ],
+			'changes' => [
+				'added' => [ 'g-2' ],
+				'deleted' => [],
+				'modified' => [],
+			],
+			'version' => 1,
+		] );
+
+		// Act.
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertSame( 2, Global_Classes_Repository::make()->get_version() );
+	}
+
+	public function test_put__with_stale_version_returns_409_and_does_not_mutate() {
+		// Arrange - a save sent a version that no longer matches the stored one.
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+		$this->seed_global_classes_posts( [ 'items' => [ 'g-1' => $class_1 ], 'order' => [ 'g-1' ] ] );
+		Global_Classes_Repository::make()->bump_version();
+
+		$class_2 = $this->create_global_class( 'g-2' );
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$request->set_body_params( [
+			'items' => [ 'g-2' => $class_2 ],
+			'order' => [ 'g-1', 'g-2' ],
+			'changes' => [
+				'added' => [ 'g-2' ],
+				'deleted' => [],
+				'modified' => [],
+			],
+			// Client edited against the pre-bump snapshot -> must be rejected.
+			'version' => 0,
+		] );
+
+		// Act.
+		$response = rest_do_request( $request );
+
+		// Assert - 409 conflict, nothing persisted, version untouched.
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertSame( 'global_classes_conflict', $response->get_data()['code'] );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+		$this->assertArrayNotHasKey( 'g-2', $classes['items'] );
+		$this->assertSame( 1, Global_Classes_Repository::make()->get_version() );
+	}
+
+	public function test_get__returns_current_version() {
+		// Arrange.
+		$this->act_as_admin();
+		Global_Classes_Repository::make()->bump_version();
+		Global_Classes_Repository::make()->bump_version();
+
+		// Act.
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 2, $response->get_data()['meta']['version'] );
+	}
+
+	/**
+	 * Regression for #36961 / #36852: a save based on a stale snapshot must not
+	 * silently drop a class that a concurrent save just committed. When the stale
+	 * client sends its (old) version, the write is rejected with a 409 instead of
+	 * clobbering the newer order/labels.
+	 */
+	public function test_put__interleaved_stale_snapshot_does_not_lose_class() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$class_a = $this->create_global_class( 'g-a' );
+		$class_b = $this->create_global_class( 'g-b' );
+
+		// Both saves read this baseline (g-a + g-b present).
+		$this->seed_global_classes_posts( [
+			'items' => [ 'g-a' => $class_a, 'g-b' => $class_b ],
+			'order' => [ 'g-a', 'g-b' ],
+		] );
+		$repo = Global_Classes_Repository::make();
+		$repo->bump_version(); // baseline version = 1
+
+		// First save (newer) commits with version=1.
+		$first = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$first->set_body_params( [
+			'items' => [],
+			'order' => [ 'g-a', 'g-b' ],
+			'changes' => [ 'added' => [], 'deleted' => [ 'g-b' ], 'modified' => [] ],
+			'version' => 1,
+		] );
+		rest_do_request( $first );
+
+		// Second save (stale client still on version=1 - now stale) tries to drop g-a.
+		$second = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$second->set_body_params( [
+			'items' => [],
+			'order' => [ 'g-a' ],
+			'changes' => [ 'added' => [], 'deleted' => [ 'g-a' ], 'modified' => [] ],
+			'version' => 1,
+		] );
+
+		// Act.
+		$response = rest_do_request( $second );
+
+		// Assert - stale write rejected; the newer state (g-b dropped, g-a kept) intact.
+		$this->assertSame( 409, $response->get_status() );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+		$this->assertSame( [ 'g-a' ], $classes['order'] );
+	}
+
+	public function test_put__preview_then_frontend_publish_with_version() {
+		// Arrange - draft save bumps the shared version, a frontend publish against the
+		// now-stale version is rejected rather than overwriting the draft-only class.
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+		$this->seed_global_classes_posts( [ 'items' => [ 'g-1' => $class_1 ], 'order' => [ 'g-1' ] ] );
+		$repo = Global_Classes_Repository::make();
+		$repo->bump_version(); // version = 1
+
+		$draft_class = $this->create_global_class( 'g-draft' );
+
+		$preview = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$preview->set_body_params( [
+			'context' => Global_Classes_Repository::CONTEXT_PREVIEW,
+			'items' => [ 'g-draft' => $draft_class ],
+			'order' => [ 'g-1', 'g-draft' ],
+			'changes' => [ 'added' => [ 'g-draft' ], 'deleted' => [], 'modified' => [] ],
+			'version' => 1,
+		] );
+		rest_do_request( $preview );
+
+		// Frontend publish still on version=1 (stale now) - rejected.
+		$frontend = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$frontend->set_body_params( [
+			'items' => [],
+			'order' => [ 'g-1' ],
+			'changes' => [ 'added' => [], 'deleted' => [], 'modified' => [] ],
+			'version' => 1,
+		] );
+
+		// Act.
+		$response = rest_do_request( $frontend );
+
+		// Assert.
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertSame( 2, Global_Classes_Repository::make()->get_version() );
 	}
 
 	public function test_register_routes__endpoints_exist() {
