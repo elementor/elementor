@@ -1,6 +1,7 @@
 import { expect, type Download, type Locator, type Page } from '@playwright/test';
 import * as path from 'path';
 import EditorPage from '../../../../pages/editor-page';
+import { timeouts } from '../../../../config/timeouts';
 import { dismissClassManagerIntro } from '../global-classes/utils';
 
 export type ConflictStrategy = 'keep' | 'replace';
@@ -28,6 +29,10 @@ export default class DesignSystemPage {
 		return this.panel.getByRole( 'button', { name: 'Close' } );
 	}
 
+	get defaultsTab(): Locator {
+		return this.panel.getByRole( 'tab', { name: 'Defaults' } );
+	}
+
 	get variablesTab(): Locator {
 		return this.panel.getByRole( 'tab', { name: 'Variables' } );
 	}
@@ -46,6 +51,14 @@ export default class DesignSystemPage {
 
 	get variablesSearchInput(): Locator {
 		return this.panel.getByPlaceholder( 'Search' );
+	}
+
+	get defaultsTagSelector(): Locator {
+		return this.panel.locator( '#default-styles-tag-selector' );
+	}
+
+	get defaultsSaveButton(): Locator {
+		return this.panel.getByRole( 'tabpanel' ).getByRole( 'button', { name: 'Save changes' } );
 	}
 
 	get classesSaveButton(): Locator {
@@ -121,12 +134,12 @@ export default class DesignSystemPage {
 	}
 
 	async openFromToolbar(): Promise< void > {
-		const isInToolbar = await this.toolbarButton.isVisible( { timeout: 2_000 } ).catch( () => false );
+		const isInToolbar = await this.toolbarButton.isVisible( { timeout: timeouts.longAction } ).catch( () => false );
 
 		if ( isInToolbar ) {
 			await this.toolbarButton.click();
 		} else {
-			await this.page.getByRole( 'button', { name: 'More', exact: true } ).click();
+			await this.page.getByLabel( 'More' ).first().click();
 			await this.page.getByRole( 'menuitem', { name: 'Design System', exact: true } ).click();
 		}
 
@@ -148,6 +161,11 @@ export default class DesignSystemPage {
 		await this.panelHeading.waitFor( { state: 'hidden' } );
 	}
 
+	async switchToDefaultsTab(): Promise< void > {
+		await this.defaultsTab.click();
+		await expect( this.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
+	}
+
 	async switchToVariablesTab(): Promise< void > {
 		await this.variablesTab.click();
 		await this.addVariableButton.waitFor( { state: 'visible' } );
@@ -166,6 +184,8 @@ export default class DesignSystemPage {
 		await this.dismissUnsavedChangesDialogIfVisible();
 		await dismissClassManagerIntro( this.page );
 		await this.panelHeading.waitFor( { state: 'visible' } );
+		await expect( this.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( this.classesSaveButton ).toBeVisible();
 	}
 
 	async dismissUnsavedChangesDialogIfVisible(): Promise< void > {
