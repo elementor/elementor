@@ -191,6 +191,15 @@ class Style_Schema {
 				'lowercase',
 			] )
 				->description( 'Controls the capitalization of text. CSS values: none, capitalize, uppercase, lowercase' ),
+			'white-space' => String_Prop_Type::make()->enum( [
+				'normal',
+				'nowrap',
+				'pre',
+				'pre-line',
+				'pre-wrap',
+				'break-spaces',
+			] )
+				->description( 'Controls how white space inside the text is handled. CSS values: normal, nowrap, pre, pre-line, pre-wrap, break-spaces' ),
 			'direction' => String_Prop_Type::make()->enum( [
 				'ltr',
 				'rtl',
