@@ -13,6 +13,7 @@ import {
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	shouldResetElementStyles,
 } from './interactions-shared-utils.js';
 
 function isSupportedInteraction( animationConfig ) {
@@ -47,6 +48,7 @@ export {
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	shouldResetElementStyles,
 };
 
 export function getKeyframes( effect, type, direction ) {
