@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
@@ -44,6 +45,16 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-paragraph';
+	}
+
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'p', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
 	}
 
 	protected static function define_props_schema(): array {
