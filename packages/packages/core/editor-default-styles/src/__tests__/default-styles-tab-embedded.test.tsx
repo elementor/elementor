@@ -22,6 +22,7 @@ jest.mock( '@elementor/editor-editing-panel', () => ( {
 	StyleInheritanceProvider: ( { children }: React.PropsWithChildren ) => children,
 	StyleProvider: ( { children }: React.PropsWithChildren ) => children,
 	StyleSections: () => null,
+	StyleTabSlot: () => null,
 } ) );
 
 jest.mock( '@elementor/editor-responsive', () => ( {
