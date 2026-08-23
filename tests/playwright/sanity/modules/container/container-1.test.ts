@@ -3,8 +3,13 @@ import { parallelTest as test } from '../../../parallelTest';
 import { getElementSelector } from '../../../assets/elements-utils';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Container tests #1 @container', () => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
+	} );
+
 	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
