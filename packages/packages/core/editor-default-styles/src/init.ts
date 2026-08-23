@@ -1,5 +1,5 @@
 import { injectIntoLogic } from '@elementor/editor';
-import { registerElementPanelDefaults, STYLE_SECTION_NAMES } from '@elementor/editor-editing-panel';
+import { registerElementPanelDefaults } from '@elementor/editor-editing-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
@@ -20,7 +20,7 @@ export function init() {
 	registerElementPanelDefaults( 'default-style', {
 		defaultTab: 'style',
 		defaultSectionsExpanded: {
-			style: [ ...STYLE_SECTION_NAMES ],
+			style: [],
 		},
 	} );
 
