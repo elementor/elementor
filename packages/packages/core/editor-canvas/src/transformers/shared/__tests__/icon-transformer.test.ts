@@ -40,10 +40,7 @@ describe( 'iconTransformer', () => {
 		} );
 
 		// Act.
-		const result = await iconTransformer(
-			{ value: 'fas fa-star', library: 'fa-solid' },
-			{ key: 'svg' }
-		);
+		const result = await iconTransformer( { value: 'fas fa-star', library: 'fa-solid' }, { key: 'svg' } );
 
 		// Assert.
 		expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/assets/lib/font-awesome/json/solid.json', {
@@ -61,10 +58,7 @@ describe( 'iconTransformer', () => {
 		mockFetch( { icons: {} } );
 
 		// Act.
-		const result = await iconTransformer(
-			{ value: 'fas fa-missing', library: 'fa-solid' },
-			{ key: 'svg' }
-		);
+		const result = await iconTransformer( { value: 'fas fa-missing', library: 'fa-solid' }, { key: 'svg' } );
 
 		// Assert.
 		expect( result ).toEqual( { html: null, url: null } );

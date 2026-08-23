@@ -3,7 +3,17 @@ import { useEffect, useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { iconPropTypeUtil, svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
-import { Box, Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
+import {
+	Box,
+	Button,
+	Card,
+	CardMedia,
+	CardOverlay,
+	CircularProgress,
+	Stack,
+	styled,
+	ThemeProvider,
+} from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
