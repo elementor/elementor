@@ -198,7 +198,7 @@ export default class DesignSystemPage {
 	}
 
 	async openHeaderMenu(): Promise< void > {
-		await this.headerMenuButton.click();
+		await this.headerMenuButton.click( { force: true } );
 		await this.importMenuItem.waitFor( { state: 'visible' } );
 	}
 
