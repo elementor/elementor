@@ -51,11 +51,11 @@ class Test_Default_Styles_Repository extends Elementor_Test_Base {
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'img' ) );
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'details' ) );
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'input' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'main' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'nav' ) );
 	}
 
 	public function test_is_allowed_tag_rejects_unsupported_tags() {
-		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'main' ) );
-		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'nav' ) );
 		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'b' ) );
 		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'script' ) );
 	}

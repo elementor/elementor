@@ -25,6 +25,8 @@ class Default_Styles_Allowed_Tags {
 		'article',
 		'aside',
 		'footer',
+		'main',
+		'nav',
 		'form',
 		'img',
 		'video',
