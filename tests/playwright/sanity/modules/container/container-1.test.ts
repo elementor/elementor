@@ -239,4 +239,42 @@ test.describe( 'Container tests #1 @container', () => {
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
 		await expect.soft( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
 	} );
+
+	test( 'Container nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const childContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const childLocator = editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` );
+
+		// Act - Nest the child container inside the parent container.
+		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childContainer ),
+			getElementSelector( parentContainer ),
+		);
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childContainer ),
+			getElementSelector( parentContainer ),
+		);
+
+		// Assert.
+		await expect.soft( childLocator ).toHaveClass( /e-con-full/ );
+		await expect.soft( childLocator ).toHaveClass( /e-child/ );
+
+		// Act - Un-nest the child container to the document root.
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childContainer ),
+			'.elementor-add-section.elementor-visible-desktop',
+		);
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childContainer ),
+			'.elementor-add-section.elementor-visible-desktop',
+		);
+
+		// Assert.
+		await expect.soft( childLocator ).toHaveClass( /e-parent/ );
+		await expect.soft( childLocator ).not.toHaveClass( /e-child/ );
+	} );
 } );

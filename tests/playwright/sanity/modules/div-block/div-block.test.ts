@@ -41,6 +41,50 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
+	test( 'Div block nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+		const childDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const getParentDivBlockId = async ( elementId: string ) => {
+			const elementHandle = await editor.getElementHandle( elementId );
+
+			return elementHandle.evaluate( ( node ) => {
+				const parentElement = node.closest( '.elementor-element' )?.parentElement?.closest( '.elementor-element' );
+
+				return parentElement?.getAttribute( 'data-id' ) ?? null;
+			} );
+		};
+
+		// Act - Nest the child div block inside the parent div block.
+		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childDivBlock ),
+			getElementSelector( parentDivBlock ),
+		);
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childDivBlock ),
+			getElementSelector( parentDivBlock ),
+		);
+
+		// Assert.
+		expect( await getParentDivBlockId( childDivBlock ) ).toBe( parentDivBlock );
+
+		// Act - Un-nest the child div block to the document root.
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childDivBlock ),
+			'.elementor-add-section.elementor-visible-desktop',
+		);
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( childDivBlock ),
+			'.elementor-add-section.elementor-visible-desktop',
+		);
+
+		// Assert.
+		expect( await getParentDivBlockId( childDivBlock ) ).toBeNull();
+	} );
+
 	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
