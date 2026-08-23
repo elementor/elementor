@@ -1,16 +1,28 @@
 import * as React from 'react';
 import { useEffect } from 'react';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { getInitialDesignSystemTab, notifyDesignSystemTabChange, persistDesignSystemTab } from '../../initial-tab';
+import { DesignSystemPanelContent } from '../design-system-panel-content';
 
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
-import { DesignSystemPanelContent } from '../design-system-panel-content';
+
+const mockDefaultStylesTabEmbedded = jest.fn();
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	isExperimentActive: jest.fn( () => true ),
+} ) );
+
+jest.mock( '@elementor/editor-default-styles', () => ( {
+	DefaultStylesTabEmbedded: ( props: unknown ) => mockDefaultStylesTabEmbedded( props ),
+} ) );
 
 jest.mock( '../design-system-header-menu', () => ( {
 	DesignSystemHeaderMenu: () => null,
 } ) );
 
+const mockDefaultsCloseAttempt = jest.fn();
 const mockVariablesCloseAttempt = jest.fn();
 const mockClassesCloseAttempt = jest.fn();
 
@@ -30,6 +42,7 @@ jest.mock( '@elementor/editor-ui', () => ( {
 jest.mock( '@elementor/icons', () => ( {
 	ColorFilterIcon: () => <span aria-hidden="true" />,
 	ColorSwatchIcon: () => <span aria-hidden="true" />,
+	TextIcon: () => <span aria-hidden="true" />,
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( {
@@ -37,7 +50,8 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 jest.mock( '../../initial-tab', () => ( {
-	getInitialDesignSystemTab: jest.fn( () => 'variables' ),
+	...jest.requireActual( '../../initial-tab' ),
+	getInitialDesignSystemTab: jest.fn( () => 'defaults' ),
 	notifyDesignSystemTabChange: jest.fn(),
 	persistDesignSystemTab: jest.fn(),
 } ) );
@@ -100,7 +114,27 @@ describe( 'DesignSystemPanelContent', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		capturedTabsOnChange = undefined;
-		jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
+		jest.mocked( isExperimentActive ).mockReturnValue( true );
+		jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'defaults' );
+
+		mockDefaultStylesTabEmbedded.mockImplementation(
+			( {
+				onExposeCloseAttempt,
+			}: {
+				onRequestClose: () => void;
+				onExposeCloseAttempt?: ( fn: ( () => void ) | null ) => void;
+			} ) => {
+				useEffect( () => {
+					onExposeCloseAttempt?.( mockDefaultsCloseAttempt );
+					return () => onExposeCloseAttempt?.( null );
+				}, [ onExposeCloseAttempt ] );
+				return (
+					<div role="region" aria-label="Default Styles">
+						Default Styles Content
+					</div>
+				);
+			}
+		);
 
 		mockVariablesManagerPanelEmbedded.mockImplementation(
 			( {
@@ -149,13 +183,14 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent( 'Design system' );
 		} );
 
-		it( 'should render Variables and Classes tabs', () => {
+		it( 'should render Defaults, Variables and Classes tabs', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			const tabs = screen.getAllByRole( 'tab' );
-			expect( tabs ).toHaveLength( 2 );
-			expect( tabs[ 0 ] ).toHaveTextContent( 'Variables' );
-			expect( tabs[ 1 ] ).toHaveTextContent( 'Classes' );
+			expect( tabs ).toHaveLength( 3 );
+			expect( tabs[ 0 ] ).toHaveTextContent( 'Defaults' );
+			expect( tabs[ 1 ] ).toHaveTextContent( 'Variables' );
+			expect( tabs[ 2 ] ).toHaveTextContent( 'Classes' );
 		} );
 
 		it( 'should render a close button', () => {
@@ -164,25 +199,48 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( screen.getByRole( 'button', { name: 'Close' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'should always mount both panels (inactive one hidden via display:none)', () => {
+		it( 'should always mount all three panels (inactive ones hidden via display:none)', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
+			expect( mockDefaultStylesTabEmbedded ).toHaveBeenCalled();
 			expect( mockVariablesManagerPanelEmbedded ).toHaveBeenCalled();
 			expect( mockClassManagerPanelEmbedded ).toHaveBeenCalled();
+		} );
+
+		it( 'should hide Defaults tab and panel when default styles experiment is inactive', () => {
+			jest.mocked( isExperimentActive ).mockReturnValue( false );
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			const tabs = screen.getAllByRole( 'tab' );
+			expect( tabs ).toHaveLength( 2 );
+			expect( tabs[ 0 ] ).toHaveTextContent( 'Variables' );
+			expect( tabs[ 1 ] ).toHaveTextContent( 'Classes' );
+			expect( mockDefaultStylesTabEmbedded ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'initial tab (top-bar open behavior)', () => {
-		it( 'should show Variables content and hide Classes when no preference is stored', () => {
+		it( 'should show Defaults content and hide other tabs when no preference is stored', () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'defaults' );
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			expect( screen.getByRole( 'region', { name: 'Default Styles' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager', hidden: true } ) ).not.toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager', hidden: true } ) ).not.toBeVisible();
+		} );
+
+		it( 'should show Variables content and hide other tabs when variables was persisted', () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
 
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
-			expect( screen.getByRole( 'region', { name: 'Classes Manager', hidden: true } ) ).not.toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Default Styles', hidden: true } ) ).not.toBeVisible();
 		} );
 
-		it( 'should show Classes content and hide Variables when classes was persisted', () => {
+		it( 'should show Classes content and hide Defaults when classes was persisted', () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
 
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
@@ -192,11 +250,11 @@ describe( 'DesignSystemPanelContent', () => {
 		} );
 
 		it( 'should notify tab change on mount with the initial tab', () => {
-			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'defaults' );
 
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
-			expect( jest.mocked( notifyDesignSystemTabChange ) ).toHaveBeenCalledWith( 'variables' );
+			expect( jest.mocked( notifyDesignSystemTabChange ) ).toHaveBeenCalledWith( 'defaults' );
 		} );
 	} );
 
@@ -316,7 +374,7 @@ describe( 'DesignSystemPanelContent', () => {
 				window.dispatchEvent( new CustomEvent( EVENT_SET_TAB ) );
 			} );
 
-			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Default Styles' } ) ).toBeVisible();
 		} );
 
 		it( 'should clean up the set-tab event listener on unmount', () => {
@@ -333,7 +391,20 @@ describe( 'DesignSystemPanelContent', () => {
 	} );
 
 	describe( 'close button behavior', () => {
+		it( 'should delegate close to the defaults close attempt when on defaults tab', async () => {
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			await screen.findByRole( 'region', { name: 'Default Styles' } );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+			expect( mockDefaultsCloseAttempt ).toHaveBeenCalled();
+			expect( onRequestClose ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should delegate close to the variables close attempt when on variables tab', async () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
+
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			await screen.findByRole( 'region', { name: 'Variables Manager' } );
@@ -358,6 +429,15 @@ describe( 'DesignSystemPanelContent', () => {
 		} );
 
 		it( 'should call onRequestClose directly when no close attempt is registered', async () => {
+			mockDefaultStylesTabEmbedded.mockImplementationOnce(
+				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
+					useEffect( () => {
+						onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Default Styles" />;
+				}
+			);
+
 			mockVariablesManagerPanelEmbedded.mockImplementationOnce(
 				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
 					useEffect( () => {
@@ -379,7 +459,7 @@ describe( 'DesignSystemPanelContent', () => {
 			const freshOnRequestClose = jest.fn();
 			render( <DesignSystemPanelContent onRequestClose={ freshOnRequestClose } /> );
 
-			await screen.findByRole( 'region', { name: 'Variables Manager' } );
+			await screen.findByRole( 'region', { name: 'Default Styles' } );
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
@@ -388,28 +468,55 @@ describe( 'DesignSystemPanelContent', () => {
 
 		it( 'should switch close delegation target when tab changes', async () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+			await screen.findByRole( 'region', { name: 'Default Styles' } );
+
+			fireEvent.click( screen.getByRole( 'tab', { name: 'Variables' } ) );
+
 			await screen.findByRole( 'region', { name: 'Variables Manager' } );
-
-			act( () => {
-				window.dispatchEvent(
-					new CustomEvent( EVENT_SET_TAB, {
-						detail: { tab: 'classes' },
-					} )
-				);
-			} );
-
-			await screen.findByRole( 'region', { name: 'Classes Manager' } );
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
-			expect( mockClassesCloseAttempt ).toHaveBeenCalled();
-			expect( mockVariablesCloseAttempt ).not.toHaveBeenCalled();
+			expect( mockVariablesCloseAttempt ).toHaveBeenCalled();
+			expect( mockDefaultsCloseAttempt ).not.toHaveBeenCalled();
 			expect( onRequestClose ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'cross-tab close chaining', () => {
+		it( 'should chain defaults onRequestClose through variables close attempt', async () => {
+			let capturedOnRequestClose: ( () => void ) | undefined;
+
+			mockDefaultStylesTabEmbedded.mockImplementation(
+				( {
+					onRequestClose: onReqClose,
+					onExposeCloseAttempt,
+				}: {
+					onRequestClose: () => void;
+					onExposeCloseAttempt?: ( fn: ( () => void ) | null ) => void;
+				} ) => {
+					capturedOnRequestClose = onReqClose;
+					useEffect( () => {
+						onExposeCloseAttempt?.( mockDefaultsCloseAttempt );
+						return () => onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Default Styles" />;
+				}
+			);
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+			await screen.findByRole( 'region', { name: 'Default Styles' } );
+
+			act( () => {
+				capturedOnRequestClose?.();
+			} );
+
+			expect( mockVariablesCloseAttempt ).toHaveBeenCalled();
+			expect( onRequestClose ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should chain variables onRequestClose through class manager close attempt', async () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
+
 			let capturedOnRequestClose: ( () => void ) | undefined;
 
 			mockVariablesManagerPanelEmbedded.mockImplementation(
@@ -440,7 +547,7 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( onRequestClose ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should chain classes onRequestClose through variables close attempt', async () => {
+		it( 'should chain classes onRequestClose through defaults close attempt', async () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
 
 			let capturedOnRequestClose: ( () => void ) | undefined;
@@ -469,11 +576,13 @@ describe( 'DesignSystemPanelContent', () => {
 				capturedOnRequestClose?.();
 			} );
 
-			expect( mockVariablesCloseAttempt ).toHaveBeenCalled();
+			expect( mockDefaultsCloseAttempt ).toHaveBeenCalled();
 			expect( onRequestClose ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should fall back to onRequestClose when class manager close attempt is null', async () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
+
 			mockClassManagerPanelEmbedded.mockImplementation(
 				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
 					useEffect( () => {
@@ -512,8 +621,17 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( onRequestClose ).toHaveBeenCalled();
 		} );
 
-		it( 'should fall back to onRequestClose when variables close attempt is null', async () => {
+		it( 'should fall back to onRequestClose when defaults close attempt is null', async () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
+
+			mockDefaultStylesTabEmbedded.mockImplementation(
+				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
+					useEffect( () => {
+						onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Default Styles" />;
+				}
+			);
 
 			mockVariablesManagerPanelEmbedded.mockImplementation(
 				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
