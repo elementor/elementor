@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -91,8 +92,8 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	 * Like `details`, `summary` is absent from `Utils::ALLOWED_HTML_WRAPPER_TAGS` and would be
 	 * coerced to `div` by `Utils::validate_html_tag()`. The Twig template hardcodes the tag.
 	 */
-	protected function define_default_html_tag() {
-		return 'summary';
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'summary' );
 	}
 
 	protected function define_base_styles(): array {
