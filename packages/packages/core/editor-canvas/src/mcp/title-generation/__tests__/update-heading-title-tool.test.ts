@@ -1,4 +1,5 @@
 import { getContainer } from '@elementor/editor-elements';
+import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { initUpdateHeadingTitleTool } from '../tools/update-heading-title-tool';
@@ -52,6 +53,7 @@ describe( 'update-heading-title tool', () => {
 				elementId: ELEMENT_ID,
 				elementType: 'e-heading',
 				propertyName: 'title',
+				propertyValue: escapedHtmlPropTypeUtil.create( GENERATED_TITLE ),
 			} )
 		);
 	} );

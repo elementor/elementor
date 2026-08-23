@@ -1,6 +1,6 @@
 import { getContainer } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { htmlV3PropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
@@ -42,10 +42,7 @@ export const initUpdateHeadingTitleTool = ( reg: MCPRegistryEntry ) => {
 				);
 			}
 
-			const propertyValue = htmlV3PropTypeUtil.create( {
-				content: stringPropTypeUtil.create( title ),
-				children: [],
-			} );
+			const propertyValue = escapedHtmlPropTypeUtil.create( title );
 
 			doUpdateElementProperty( {
 				elementId,

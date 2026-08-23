@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { htmlV3PropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { InlineEditingControl } from '../inline-editing-control';
@@ -21,19 +21,16 @@ jest.mock( '../../components/inline-editor', () => ( {
 	InlineEditor: ( { value }: { value: string } ) => <div data-testid="inline-editor">{ value }</div>,
 } ) );
 
-const htmlV3PropType = createMockPropType( { kind: 'plain', key: htmlV3PropTypeUtil.key } );
+const escapedHtmlPropType = createMockPropType( { kind: 'plain', key: escapedHtmlPropTypeUtil.key } );
 
-const defaultValue = htmlV3PropTypeUtil.create( {
-	content: stringPropTypeUtil.create( 'Current heading' ),
-	children: [],
-} );
+const defaultValue = escapedHtmlPropTypeUtil.create( 'Current heading' );
 
 const renderInlineEditingControl = ( enableAngieGenerate?: boolean ) =>
 	renderControl(
 		<InlineEditingControl enableAngieGenerate={ enableAngieGenerate } context={ { elementId: ELEMENT_ID } } />,
 		{
 			bind: 'title',
-			propType: htmlV3PropType,
+			propType: escapedHtmlPropType,
 			value: defaultValue,
 		}
 	);

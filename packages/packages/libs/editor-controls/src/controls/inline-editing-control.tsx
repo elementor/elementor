@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback, useEffect, useMemo, useRef } from 'react';
+import { type ComponentProps, useCallback, useRef } from 'react';
 import { openAngieFloatingChat } from '@elementor/editor-mcp';
-import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
+import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { Box, Button, Stack, type SxProps, type Theme } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { useBoundProp } from '../bound-prop-context';
+import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { extractInlineHtmlContent } from '../utils/inline-editing';
 import { type ControlProps } from '../utils/types';
 
-const CHILDREN_PARSE_DEBOUNCE_MS = 300;
 const ANGIE_TITLE_GENERATION_APP_ID = 'elementor-editor-title-generation';
 const ANGIE_TITLE_GENERATION_SOURCE = 'atomic_heading_title';
 const TITLE_GENERATION_MCP_NAMESPACE = 'title_generation';
@@ -38,35 +37,18 @@ const buildHeadingTitleGenerationPrompt = ( elementId: string, currentTitle: str
 
 export const InlineEditingControl = createControl(
 	( { enableAngieGenerate, sx, attributes, props, context: { elementId } }: Props ) => {
-		const { value, setValue, placeholder } = useBoundProp( htmlV3PropTypeUtil );
-		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
+		const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
+		const { value: rawValue } = usePropKeyContext();
+		const content = value ?? extractInlineHtmlContent( rawValue );
 		const generateButtonRef = useRef< HTMLButtonElement >( null );
-
-		const debouncedParse = useMemo(
-			() =>
-				debounce( ( html: string ) => {
-					const parsed = parseHtmlChildren( html );
-
-					setValue( {
-						content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
-						children: parsed.children,
-					} );
-				}, CHILDREN_PARSE_DEBOUNCE_MS ),
-			[ setValue ]
-		);
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
 				const html = ( newValue ?? '' ) as string;
 
-				setValue( {
-					content: html ? stringPropTypeUtil.create( html ) : null,
-					children: value?.children ?? [],
-				} );
-
-				debouncedParse( html );
+				setValue( html );
 			},
-			[ setValue, value?.children, debouncedParse ]
+			[ setValue ]
 		);
 
 		const handleGenerateClick = useCallback( () => {
@@ -121,8 +103,6 @@ export const InlineEditingControl = createControl(
 			} ).catch( () => {} );
 		}, [ content, elementId ] );
 
-		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );
-
 		return (
 			<ControlActions>
 				<Stack gap={ 0.8 }>
@@ -155,24 +135,6 @@ export const InlineEditingControl = createControl(
 							'& .ProseMirror:focus': {
 								outline: 'none',
 							},
-							'& .ProseMirror': {
-								minHeight: '70px',
-								fontSize: '12px',
-								'& a': {
-									color: 'inherit',
-								},
-								'& .elementor-inline-editor-reset': {
-									margin: 0,
-									padding: 0,
-								},
-								'&.is-empty::before': {
-									content: 'attr(data-placeholder)',
-									color: 'text.tertiary',
-									pointerEvents: 'none',
-									position: 'absolute',
-									opacity: 0.6,
-								},
-							},
 							'.strip-styles *': {
 								all: 'unset',
 							},
@@ -181,11 +143,7 @@ export const InlineEditingControl = createControl(
 						{ ...attributes }
 						{ ...props }
 					>
-						<InlineEditor
-							value={ content }
-							setValue={ handleChange }
-							placeholder={ placeholder?.content?.value ?? null }
-						/>
+						<InlineEditor value={ content } setValue={ handleChange } placeholder={ placeholder ?? null } />
 					</Box>
 				</Stack>
 			</ControlActions>
