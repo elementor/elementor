@@ -18,6 +18,16 @@ abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
 	use Has_Meta;
 
+	/**
+	 * Maps atomic element type → the minor version when the "New" badge expires.
+	 * Format: 'element-type' => 'major.minor'  (patch is ignored during comparison).
+	 *
+	 * @var array<string, string>
+	 */
+	private const NEW_ATOMIC_ELEMENTS = [
+		'e-background-video' => '4.3',
+	];
+
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $interactions = [];
@@ -97,9 +107,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['children_dependencies'] = $this->get_children_dependencies_config();
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
-		$config['default_html_tag'] = $this->define_default_html_tag();
+		$config['default_html_tag'] = static::get_computed_html_tag( [] );
+		$config['html_tag_follows_link'] = static::html_tag_follows_link();
 		$config['meta'] = $this->get_meta();
 		$config['allowed_child_types'] = $this->define_allowed_child_types();
+		$config['new_until_version'] = self::NEW_ATOMIC_ELEMENTS[ $this->get_name() ] ?? '';
 
 		return $config;
 	}
@@ -147,10 +159,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return $config;
 	}
 
-	protected function define_default_html_tag() {
-		return 'div';
-	}
-
 	protected function define_initial_attributes() {
 		return [];
 	}
@@ -194,14 +202,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * @return string
 	 */
 	protected function get_html_tag(): string {
-		$settings = $this->get_atomic_settings();
-		$default_html_tag = $this->define_default_html_tag();
-
-		if ( ! empty( $settings['link']['tag'] ) ) {
-			return $settings['link']['tag'];
-		}
-
-		return $settings['tag'] ?? $default_html_tag;
+		return static::get_computed_html_tag( $this->get_atomic_settings() );
 	}
 
 	/**

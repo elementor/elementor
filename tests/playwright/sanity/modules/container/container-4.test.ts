@@ -4,10 +4,15 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import _path from 'path';
+import { wpCli } from '../../../assets/wp-cli';
 
 const templateFilePath = _path.resolve( __dirname, `../../templates/container-dimensions-ltr-rtl.json` );
 
 test.describe( 'Container tests #4 @container', () => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
+	} );
+
 	test( 'Container no horizontal scroll', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

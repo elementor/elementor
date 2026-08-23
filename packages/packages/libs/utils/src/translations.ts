@@ -10,7 +10,11 @@ export function createTranslate( { configKey, defaultStrings = {} }: CreateTrans
 		const appConfig = window.elementorAppConfig as
 			| Record< string, { translations?: Record< string, string > } >
 			| undefined;
-		const remoteStrings = appConfig?.[ configKey ]?.translations;
+		const remoteStrings = Object.fromEntries(
+			Object.entries( appConfig?.[ configKey ]?.translations ?? {} ).filter(
+				( [ , value ] ) => 'string' === typeof value && '' !== value.trim()
+			)
+		);
 		const strings: Record< string, string > = {
 			...defaultStrings,
 			...remoteStrings,
