@@ -46,8 +46,17 @@ class Test_Default_Styles_Repository extends Elementor_Test_Base {
 		$this->assertCount( 1, $item['variants'] );
 	}
 
-	public function test_is_allowed_tag_rejects_invalid_tag() {
+	public function test_is_allowed_tag_accepts_v4_wrapper_tags() {
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'h1' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'img' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'details' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'input' ) );
+	}
+
+	public function test_is_allowed_tag_rejects_unsupported_tags() {
+		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'main' ) );
+		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'nav' ) );
+		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'b' ) );
 		$this->assertFalse( Default_Styles_Repository::is_allowed_tag( 'script' ) );
 	}
 }
