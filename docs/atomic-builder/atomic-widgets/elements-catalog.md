@@ -60,6 +60,12 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-divider` | widget | no | — | |
 | `e-youtube` | widget | no | — | |
 | `e-self-hosted-video` | widget | no | — | |
+| `e-accordion` | element | yes | `e-accordion-item` | Default: 2 items, first open |
+| `e-accordion-item` | element | yes | `e-accordion-item-head`, `e-accordion-item-content` | `<details>`; permanently locked |
+| `e-accordion-item-head` | element | yes | `e-accordion-item-title`, `e-accordion-item-icon` | `<summary>`; permanently locked |
+| `e-accordion-item-title` | element | yes | any | Tag from root's `title_tag` setting |
+| `e-accordion-item-icon` | element | yes | any | Decorative (`aria-hidden`); shown/hidden via root's `show_icon` |
+| `e-accordion-item-content` | element | yes | any | Collapsible body |
 | `e-tabs` | element | yes | any | Default: menu + content area |
 | `e-tabs-menu` | element | yes | `e-tab`, `container` | Tab triggers |
 | `e-tab` | element | no | — | Single tab trigger |
@@ -94,6 +100,11 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 
 | Child | Parents |
 |-------|---------|
+| `e-accordion-item` | `e-accordion` |
+| `e-accordion-item-head` | `e-accordion-item` |
+| `e-accordion-item-content` | `e-accordion-item` |
+| `e-accordion-item-title` | `e-accordion-item-head` |
+| `e-accordion-item-icon` | `e-accordion-item-head` |
 | `e-tab` | `e-tabs-menu` |
 | `e-tab-content` | `e-tabs-content-area` |
 | `e-paragraph` | `e-form-success-message`, `e-form-error-message` |

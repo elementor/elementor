@@ -300,6 +300,7 @@ function useOptions() {
 
 	return useProviders()
 		.filter( isProviderEditable )
+		.filter( ( provider ) => provider.getKey() !== 'default-styles' )
 		.flatMap< StyleDefOption >( ( provider ) => {
 			const isElements = isElementsStylesProvider( provider.getKey() );
 			const styleDefs = provider.actions.all( { elementId: element.id } );
