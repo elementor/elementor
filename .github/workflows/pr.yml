@@ -2,14 +2,10 @@ name: PR
 
 on:
   pull_request:
-    types: [labeled, opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
-
-concurrency:
-  group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -22,7 +18,9 @@ permissions:
 jobs:
   set-pending-playwright-on-draft:
     name: Set Pending Playwright Status on Draft
-    if: github.event.pull_request.draft == true
+    if: |
+      github.event.pull_request.draft == true &&
+      github.event.action != 'ready_for_review'
     runs-on: ubuntu-22.04
     permissions:
       statuses: write
@@ -111,23 +109,12 @@ jobs:
           php-version: '7.4'
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
-      - name: Restore dependency cache
-        uses: actions/cache@v5
-        id: deps-cache
-        with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
       - name: Install dependencies
-        if: steps.deps-cache.outputs.cache-hit != 'true'
-        run: |
-          npm run install:ci
-          npm run composer:no-dev
+        uses: ./.github/workflows/install-dependencies
 
   build:
     name: Build plugin
+    needs: [install]
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -139,7 +126,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: 'npm'
+          package-manager-cache: false
       - name: Set ENV variables
         id: set_env
         run: |
@@ -154,8 +141,10 @@ jobs:
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
           echo "PLUGIN_ZIP_FILENAME=$PLUGIN_ZIP_FILENAME" >> $GITHUB_ENV
-      - name: Install dependencies
-        uses: ./.github/workflows/install-dependencies
+      - name: Restore dependency cache
+        uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -177,7 +166,10 @@ jobs:
           compression-level: 9
           retention-days: 3
       - name: Find existing comment on PR (Elementor repo)
-        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: |
+          startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') &&
+          github.event.action != 'ready_for_review' &&
+          github.event.action != 'labeled'
         uses: peter-evans/find-comment@v4
         id: find
         with:
@@ -185,7 +177,10 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: 'Elementor Build'
       - name: Comment build info on PR (Elementor repo)
-        if: startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        if: |
+          startsWith(github.event.pull_request.head.repo.full_name, 'elementor/') &&
+          github.event.action != 'ready_for_review' &&
+          github.event.action != 'labeled'
         uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -218,7 +213,9 @@ jobs:
     if: |
       always() &&
       needs.build.result == 'success' &&
-      startsWith(github.repository, 'elementor/')
+      startsWith(github.repository, 'elementor/') &&
+      github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled'
     permissions:
       contents: read
       actions: read
@@ -233,7 +230,9 @@ jobs:
     name: Lint JS
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.js == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -243,14 +242,9 @@ jobs:
           node-version: 24.15.0
           package-manager-cache: false
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          install-on-miss: 'true'
       - name: Build tools
         run: npm run build:tools
       - name: Run Lint
@@ -260,7 +254,9 @@ jobs:
     name: Lint PHP
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.php == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.php == 'true'
     steps:
       - name: Mask GitHub token
         run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
@@ -273,14 +269,9 @@ jobs:
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          install-on-miss: 'true'
       - name: Install PHP lint dependencies
         run: |
           composer install
@@ -329,7 +320,9 @@ jobs:
     name: Jest
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.js == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -339,14 +332,9 @@ jobs:
           node-version: 24.15.0
           package-manager-cache: false
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          install-on-miss: 'true'
       - name: Run Jest
         run: npm run test
 
@@ -354,7 +342,9 @@ jobs:
     name: QUnit
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.js == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -364,14 +354,9 @@ jobs:
           node-version: 24.15.0
           package-manager-cache: false
       - name: Restore dependency cache
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/restore-dependencies-cache
         with:
-          path: |
-            node_modules
-            packages/node_modules
-            vendor
-          key: deps-v2-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/composer.lock') }}
-          fail-on-cache-miss: true
+          install-on-miss: 'true'
       - name: Build tools
         run: npm run build:tools
       - name: Run QUnit
@@ -380,7 +365,9 @@ jobs:
   phpunit:
     name: PHPUnit
     needs: [install, detect-changes]
-    if: needs.detect-changes.outputs.php == 'true'
+    if: |
+      github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.php == 'true'
     uses: ./.github/workflows/phpunit-runner.yml
     with:
       job_name: PHPUnit (PR)
@@ -513,7 +500,7 @@ jobs:
       - js-qunit
       - phpunit
       - playwright
-    if: always()
+    if: always() && !cancelled()
     steps:
       - name: Validate required checks
         env:
@@ -525,6 +512,9 @@ jobs:
           QUNIT_RESULT: ${{ needs.js-qunit.result }}
           PHPUNIT_RESULT: ${{ needs.phpunit.result }}
           PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+          JS_CHANGED: ${{ needs.detect-changes.outputs.js == 'true' }}
+          PHP_CHANGED: ${{ needs.detect-changes.outputs.php == 'true' }}
+          PLAYWRIGHT_ONLY_EVENT: ${{ github.event.action == 'ready_for_review' }}
           PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
         run: |
           is_ok() {
@@ -535,20 +525,32 @@ jobs:
           }
 
           FAILED=0
-          for RESULT in \
-            "$INSTALL_RESULT" \
-            "$BUILD_RESULT" \
-            "$LINT_JS_RESULT" \
-            "$LINT_PHP_RESULT" \
-            "$JEST_RESULT" \
-            "$QUNIT_RESULT" \
-            "$PHPUNIT_RESULT"
-          do
+          for RESULT in "$INSTALL_RESULT" "$BUILD_RESULT"; do
             if ! is_ok "$RESULT"; then
               echo "Check failed with result: $RESULT"
               FAILED=1
             fi
           done
+
+          if [ "$PLAYWRIGHT_ONLY_EVENT" != "true" ]; then
+            if [ "$JS_CHANGED" = "true" ]; then
+              for RESULT in "$LINT_JS_RESULT" "$JEST_RESULT" "$QUNIT_RESULT"; do
+                if ! is_ok "$RESULT"; then
+                  echo "Check failed with result: $RESULT"
+                  FAILED=1
+                fi
+              done
+            fi
+
+            if [ "$PHP_CHANGED" = "true" ]; then
+              for RESULT in "$LINT_PHP_RESULT" "$PHPUNIT_RESULT"; do
+                if ! is_ok "$RESULT"; then
+                  echo "Check failed with result: $RESULT"
+                  FAILED=1
+                fi
+              done
+            fi
+          fi
 
           if [ "$PLAYWRIGHT_REQUIRED" = "true" ]; then
             if [ "$PLAYWRIGHT_RESULT" != "success" ]; then
