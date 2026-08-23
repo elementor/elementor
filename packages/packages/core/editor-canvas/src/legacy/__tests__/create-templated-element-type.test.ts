@@ -5,6 +5,7 @@ import {
 	createTemplatedElementType,
 	createTemplatedElementView,
 } from '../create-templated-element-type';
+import { type ElementView } from '../types';
 
 const MOCK_ELEMENT_TYPE = 'test-element';
 const MOCK_HTML = '<div>Element</div>';
@@ -19,6 +20,8 @@ const createMockElementConfig = () => ( {
 	twig_main_template: 'main',
 	atomic_props_schema: {},
 	base_styles_dictionary: {},
+	default_html_tag: 'div',
+	html_tag_follows_link: true,
 } );
 
 describe( 'createTemplatedElementType', () => {
@@ -114,6 +117,53 @@ describe( 'createTemplatedElementView', () => {
 			expect( utils.register ).toHaveBeenCalledTimes( 2 );
 			expect( utils.register ).toHaveBeenCalledWith( 'template1', '<div>Template 1</div>' );
 			expect( utils.register ).toHaveBeenCalledWith( 'template2', '<div>Template 2</div>' );
+		} );
+	} );
+
+	describe( 'render context', () => {
+		it( 'should inject computed tag into the twig render context', async () => {
+			// Arrange
+			const utils = createMockRenderer();
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: utils,
+				element: {
+					...createMockElementConfig(),
+					twig_templates: {
+						main: '<{{ tag | e("html_tag") }}></{{ tag | e("html_tag") }}>',
+					},
+				},
+			} );
+
+			const view = new ViewClass() as unknown as ElementView & {
+				_abortController: AbortController;
+			};
+			view.model = {
+				get: ( key: string ) => {
+					if ( key === 'id' ) {
+						return 'test-id';
+					}
+
+					if ( key === 'settings' ) {
+						return { toJSON: () => ( {} ) };
+					}
+
+					return undefined;
+				},
+			} as unknown as ElementView[ 'model' ];
+			view.isRendered = false;
+			view._abortController = new AbortController();
+			view.triggerMethod = jest.fn();
+			view.bindUIElements = jest.fn();
+			view.$el = { html: jest.fn() } as unknown as ElementView[ '$el' ];
+			view._ensureViewIsIntact = jest.fn();
+			view.resetChildViewContainer = jest.fn();
+
+			// Act
+			await view._renderTemplate();
+
+			// Assert
+			expect( utils.render ).toHaveBeenCalledWith( 'main', expect.objectContaining( { tag: 'div' } ) );
 		} );
 	} );
 } );
