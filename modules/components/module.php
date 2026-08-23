@@ -29,6 +29,12 @@ class Module extends BaseModule {
 	const EXPERIMENT_VARIANTS_NAME = 'e_component_variants';
 	const PACKAGES        = [ 'editor-components' ];
 
+	/**
+	 * Variants meta must be persisted before `Global_Classes_Relations::on_document_save()`
+	 * (default priority 10) reads it via the `extract_class_ids_from_post` filter.
+	 */
+	const SAVE_VARIANTS_PRIORITY = 9;
+
 	public function get_name() {
 		return 'components';
 	}
@@ -51,7 +57,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
 
 		if ( self::is_variants_experiment_active() ) {
-			add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_variants( $document, $data ), 9, 2 );
+			add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_variants( $document, $data ), self::SAVE_VARIANTS_PRIORITY, 2 );
 			add_filter(
 				'elementor/global_classes/extract_class_ids_from_post',
 				fn( array $ids, $post_id ) => $this->add_variant_class_ids( $ids, $post_id ),

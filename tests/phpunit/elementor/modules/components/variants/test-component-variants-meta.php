@@ -6,6 +6,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -187,38 +188,49 @@ class Test_Component_Variants_Meta extends Elementor_Test_Base {
 		$this->assertEquals( 'v_g8k3nq00', $variants->variants[0]->id );
 	}
 
-	public function test_extract_class_ids_filter__contributes_variant_class_ids_for_component_post() {
-		// Arrange.
+	public function test_collect_class_ids_from_post__includes_variant_class_ids_for_component_with_empty_elements() {
+		// Regression guard for the extract-filter running before the empty-elements
+		// early return. `create_component()` produces a component with no element tree,
+		// so this test also verifies variants land in the collection even without elements.
 		$this->act_as_admin();
 		$document = $this->create_component();
 		$document->update_variants( $this->build_valid_variants() );
 
 		// Act.
-		$ids = apply_filters(
-			'elementor/global_classes/extract_class_ids_from_post',
-			[ 'g-existing' ],
-			$document->get_main_id()
-		);
+		$ids = ( new Global_Classes_Relations() )->collect_class_ids_from_post( $document->get_main_id() );
 
 		// Assert.
-		$this->assertContains( 'g-existing', $ids );
 		$this->assertContains( 'g_abc123', $ids );
 	}
 
-	public function test_extract_class_ids_filter__leaves_non_component_posts_untouched() {
+	public function test_collect_class_ids_from_post__leaves_non_component_posts_untouched() {
 		// Arrange.
 		$this->act_as_admin();
 		$page_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
 
 		// Act.
-		$ids = apply_filters(
-			'elementor/global_classes/extract_class_ids_from_post',
-			[ 'g-existing' ],
-			$page_id
-		);
+		$ids = ( new Global_Classes_Relations() )->collect_class_ids_from_post( $page_id );
 
 		// Assert.
-		$this->assertSame( [ 'g-existing' ], $ids );
+		$this->assertSame( [], $ids );
+	}
+
+	public function test_save_hook__variant_class_ids_are_indexed_on_used_global_class_meta() {
+		// End-to-end guard for the priority-9 ordering: after `save()`, variant class ids
+		// must land in `_elementor_used_global_class` via the after_save chain.
+		$this->act_as_admin();
+		$document = $this->create_component();
+
+		// Act - save with variants; hooks fire in priority order (variants @9 → relations @10).
+		$document->save( [
+			'settings' => [
+				'variants' => $this->build_valid_variants(),
+			],
+		] );
+
+		// Assert.
+		$stored_ids = get_post_meta( $document->get_main_id(), Global_Classes_Relations::META_KEY_FRONTEND, false );
+		$this->assertContains( 'g_abc123', $stored_ids );
 	}
 
 	public function test_publish_promotion__includes_variants_in_custom_meta_keys() {

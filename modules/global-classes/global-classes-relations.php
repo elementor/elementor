@@ -278,16 +278,14 @@ class Global_Classes_Relations {
 
 		$elements_data = $document->get_elements_data();
 
-		if ( empty( $elements_data ) ) {
-			return [];
+		if ( ! empty( $elements_data ) ) {
+			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
+				$used_class_ids = array_merge(
+					$used_class_ids,
+					Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
+				);
+			} );
 		}
-
-		Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
-			$used_class_ids = array_merge(
-				$used_class_ids,
-				Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
-			);
-		} );
 
 		$used_class_ids = apply_filters(
 			'elementor/global_classes/extract_class_ids_from_post',
