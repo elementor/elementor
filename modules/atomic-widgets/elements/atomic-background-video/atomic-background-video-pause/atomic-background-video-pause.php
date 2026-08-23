@@ -50,7 +50,8 @@ class Atomic_Background_Video_Pause extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-pause';
+		// No Structure/Navigator icon: this locked control is identified by its title alone.
+		return '';
 	}
 
 	public function should_show_in_panel() {
