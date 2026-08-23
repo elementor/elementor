@@ -15,9 +15,9 @@ class Html_Tag_Resolver_Button_Fixture {
 	}
 }
 
-class Html_Tag_Resolver_Img_Fixture {
+class Html_Tag_Resolver_Main_Fixture {
 	public static function get_computed_html_tag( array $settings ): string {
-		return 'img';
+		return 'main';
 	}
 }
 
@@ -30,7 +30,7 @@ class Test_Element_Tag_Resolver extends TestCase {
 	}
 
 	public function test_filters_disallowed_tag_from_element_class() {
-		$result = Element_Tag_Resolver::resolve_for_class( [], Html_Tag_Resolver_Img_Fixture::class );
+		$result = Element_Tag_Resolver::resolve_for_class( [], Html_Tag_Resolver_Main_Fixture::class );
 
 		$this->assertNull( $result );
 	}
