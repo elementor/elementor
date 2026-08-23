@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
@@ -24,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
+	const EXPERIMENT_VARIANTS_NAME = 'e_component_variants';
 	const PACKAGES        = [ 'editor-components' ];
 
 	public function get_name() {
@@ -37,6 +39,8 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_variants_experiment();
+
 		$this->register_component_post_type();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
@@ -44,6 +48,10 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
+
+		if ( self::is_variants_experiment_active() ) {
+			add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_variants( $document, $data ), 10, 2 );
+		}
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 		add_filter( 'elementor/utils/find_element_recursive/inner_elements', fn( array $inner_elements, array $element_data ) => $this->get_inner_elements_for_search( $inner_elements, $element_data ), 10, 2 );
 
@@ -62,6 +70,26 @@ class Module extends BaseModule {
 
 	public static function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	public static function is_variants_experiment_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VARIANTS_NAME );
+	}
+
+	/**
+	 * Dev-only gate that keeps per-instance Component Variants off trunk while the feature ships
+	 * across several tickets. Hidden experiments cannot declare dependencies on other experiments,
+	 * so activation is checked manually in the constructor after the parent atomic-elements gate.
+	 */
+	private function register_variants_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_VARIANTS_NAME,
+			'title' => esc_html__( 'Component Variants', 'elementor' ),
+			'description' => esc_html__( 'Enable per-instance class variants on components.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	public function get_widgets() {
@@ -132,6 +160,28 @@ class Module extends BaseModule {
 
 		if ( ! $result->is_valid() ) {
 			throw new \Exception( esc_html( 'Settings validation failed for component overridable props: ' . $result->errors()->to_string() ) );
+		}
+	}
+
+	private function set_component_variants( Document $document, array $data ) {
+		if ( ! isset( $data['settings'] ) ) {
+			return;
+		}
+		if ( ( ! $document instanceof Component_Document ) ||
+			( ! isset( $data['settings']['variants'] ) )
+		) {
+			return;
+		}
+
+		if ( ! Components_Access_Controller::can_edit() ) {
+			throw new \Exception( esc_html__( 'You do not have permission to edit component source.', 'elementor' ) );
+		}
+
+		/* @var Component_Document $document */
+		$result = $document->update_variants( $data['settings']['variants'] );
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed for component variants: ' . $result->errors()->to_string() ) );
 		}
 	}
 

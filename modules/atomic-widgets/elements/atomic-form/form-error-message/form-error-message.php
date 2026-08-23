@@ -2,12 +2,17 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Message\Form_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Form_Error_Message extends Form_Message {
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div' );
+	}
 
 	public static $widget_description = 'Shown when the form submission fails. Hidden by default, displayed automatically when the form submission result is an error.';
 

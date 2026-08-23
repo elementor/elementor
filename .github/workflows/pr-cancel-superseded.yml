@@ -21,37 +21,26 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const branch = context.payload.pull_request.head.ref;
-            const activeRuns = [];
+            const currentSha = context.payload.pull_request.head.sha;
+            const supersededRuns = new Map();
 
-            for (const status of ['in_progress', 'queued', 'pending']) {
-              let page = 1;
+            for (const status of ['in_progress', 'queued', 'pending', 'requested', 'waiting']) {
+              const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+                owner,
+                repo,
+                workflow_id: 'pr.yml',
+                branch,
+                status,
+                per_page: 100,
+              });
 
-              while (true) {
-                const { data } = await github.rest.actions.listWorkflowRunsForRepo({
-                  owner,
-                  repo,
-                  workflow_id: 'pr.yml',
-                  branch,
-                  status,
-                  per_page: 100,
-                  page,
-                });
-
-                activeRuns.push(...data.workflow_runs);
-
-                if (data.workflow_runs.length < 100) {
-                  break;
-                }
-
-                page += 1;
+              for (const run of runs.filter((candidate) => candidate.head_sha !== currentSha)) {
+                supersededRuns.set(run.id, run);
               }
             }
 
-            const uniqueRuns = [...new Map(activeRuns.map((run) => [run.id, run])).values()]
-              .sort((left, right) => right.id - left.id);
-
-            for (const run of uniqueRuns.slice(1)) {
-              core.info(`Cancelling superseded PR workflow run ${run.id} (${run.status})`);
+            for (const run of supersededRuns.values()) {
+              core.info(`Cancelling superseded PR workflow run ${run.id} (${run.status}, sha ${run.head_sha})`);
 
               try {
                 await github.rest.actions.cancelWorkflowRun({
