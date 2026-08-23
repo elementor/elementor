@@ -1,5 +1,10 @@
-{%- macro render_base_classes(id, base_styles, settings, extra_classes) -%}
-{{- ['elementor-element', 'elementor-element-' ~ id, 'e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | merge(extra_classes | default([])) | join(' ') -}}
+{%- macro default_tag_class(tag) -%}
+{%- if tag %}e-default-{{ tag | e('html_attr') }}{% endif -%}
+{%- endmacro -%}
+
+{%- macro render_base_classes(id, base_styles, settings, extra_classes, tag) -%}
+{%- import _self as self -%}
+{{- ['elementor-element', 'elementor-element-' ~ id, 'e-con', 'e-atomic-element', base_styles.base, self.default_tag_class(tag)] | merge(settings.classes | default([])) | merge(extra_classes | default([])) | join(' ') -}}
 {%- endmacro -%}
 
 {%- macro render_data_attributes(id, type, interaction_id) -%}

@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
-import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
+import { type ComponentProps, useCallback } from 'react';
+import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
 
-import { useBoundProp } from '../bound-prop-context';
+import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-
-const CHILDREN_PARSE_DEBOUNCE_MS = 300;
+import { extractInlineHtmlContent } from '../utils/inline-editing';
 
 export const InlineEditingControl = createControl(
 	( {
@@ -21,37 +19,18 @@ export const InlineEditingControl = createControl(
 		attributes?: Record< string, string >;
 		props?: ComponentProps< 'div' >;
 	} ) => {
-		const { value, setValue, placeholder } = useBoundProp( htmlV3PropTypeUtil );
-		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
-
-		const debouncedParse = useMemo(
-			() =>
-				debounce( ( html: string ) => {
-					const parsed = parseHtmlChildren( html );
-
-					setValue( {
-						content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
-						children: parsed.children,
-					} );
-				}, CHILDREN_PARSE_DEBOUNCE_MS ),
-			[ setValue ]
-		);
+		const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
+		const { value: rawValue } = usePropKeyContext();
+		const content = value ?? extractInlineHtmlContent( rawValue );
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
 				const html = ( newValue ?? '' ) as string;
 
-				setValue( {
-					content: html ? stringPropTypeUtil.create( html ) : null,
-					children: value?.children ?? [],
-				} );
-
-				debouncedParse( html );
+				setValue( html );
 			},
-			[ setValue, value?.children, debouncedParse ]
+			[ setValue ]
 		);
-
-		useEffect( () => () => debouncedParse.cancel(), [ debouncedParse ] );
 
 		return (
 			<ControlActions>
@@ -98,11 +77,7 @@ export const InlineEditingControl = createControl(
 					{ ...attributes }
 					{ ...props }
 				>
-					<InlineEditor
-						value={ content }
-						setValue={ handleChange }
-						placeholder={ placeholder?.content?.value ?? null }
-					/>
+					<InlineEditor value={ content } setValue={ handleChange } placeholder={ placeholder ?? null } />
 				</Box>
 			</ControlActions>
 		);

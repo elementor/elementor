@@ -34,6 +34,11 @@ class Plain_Llm_Schema_Converter {
 
 		if ( isset( $schema['anyOf'] ) && is_array( $schema['anyOf'] ) ) {
 			$schema['anyOf'] = $this->walk_any_of( $schema['anyOf'] );
+			if ( count( $schema['anyOf'] ) === 1 ) {
+				$shape = $schema['anyOf'][0];
+				unset( $schema['anyOf'] );
+				$schema = array_merge( $shape, $schema );
+			}
 		}
 
 		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
