@@ -1,53 +1,48 @@
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
-import type {
-  DynamicTag,
-  DynamicTags,
-  DynamicTagsManager,
-  InteractionsConfig,
-} from '@elementor/editor-editing-panel';
+import type { DynamicTag, DynamicTags, DynamicTagsManager, InteractionsConfig } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema, PropValue } from '@elementor/editor-props';
 import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 
 interface OnboardingConfig {
-  version: string;
-  restUrl: string;
-  nonce: string;
-  progress: {
-    current_step_id?: string;
-    current_step_index?: number;
-    completed_steps?: string[];
-    exit_type?: 'user_exit' | 'unexpected' | null;
-    last_active_timestamp?: number | null;
-    started_at?: number | null;
-  };
-  choices: {
-    building_for?: string | null;
-    site_about?: string[];
-    experience_level?: string | null;
-    theme_selection?: string | null;
-    site_features?: string[];
-  };
-  hadUnexpectedExit: boolean;
-  isConnected: boolean;
-  shouldShowProInstallScreen?: boolean;
-  userName?: string;
-  uiTheme?: 'auto' | 'dark' | 'light';
-  translations?: Record< string, string >;
-  steps: Array< {
-    id: string;
-    label: string;
-    type: 'single' | 'multiple';
-  } >;
-  urls: {
-    dashboard: string;
-    editor: string;
-    connect: string;
-    signUp: string;
-    comparePlans?: string;
-    createNewPage?: string;
-    upgradeUrl: string;
-  };
+	version: string;
+	restUrl: string;
+	nonce: string;
+	progress: {
+		current_step_id?: string;
+		current_step_index?: number;
+		completed_steps?: string[];
+		exit_type?: 'user_exit' | 'unexpected' | null;
+		last_active_timestamp?: number | null;
+		started_at?: number | null;
+	};
+	choices: {
+		building_for?: string | null;
+		site_about?: string[];
+		experience_level?: string | null;
+		theme_selection?: string | null;
+		site_features?: string[];
+	};
+	hadUnexpectedExit: boolean;
+	isConnected: boolean;
+	shouldShowProInstallScreen?: boolean;
+	userName?: string;
+	uiTheme?: 'auto' | 'dark' | 'light';
+	translations?: Record< string, string >;
+	steps: Array< {
+		id: string;
+		label: string;
+		type: 'single' | 'multiple';
+	} >;
+	urls: {
+		dashboard: string;
+		editor: string;
+		connect: string;
+		signUp: string;
+		comparePlans?: string;
+		createNewPage?: string;
+		upgradeUrl: string;
+	};
 }
 
 declare global {
