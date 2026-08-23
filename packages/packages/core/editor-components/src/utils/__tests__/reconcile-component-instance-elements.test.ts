@@ -129,7 +129,7 @@ describe( 'reconcileComponentInstanceElements', () => {
 		expect( result[ 0 ].elements ).toEqual( [] );
 	} );
 
-	it( 'unwraps overridable settings so the rendered element sees plain values', () => {
+	it( 'preserves overridable wrappers while evaluating dependencies with overrides', () => {
 		// Arrange.
 		const elements = [
 			createParent( {
@@ -144,10 +144,19 @@ describe( 'reconcileComponentInstanceElements', () => {
 		];
 
 		// Act.
-		const result = reconcileComponentInstanceElements( elements );
+		const result = reconcileComponentInstanceElements( elements, {
+			show_child_override: { $$type: 'boolean', value: false },
+		} );
 
 		// Assert.
-		expect( result[ 0 ].settings?.show_child ).toEqual( { $$type: 'boolean', value: true } );
+		expect( result[ 0 ].settings?.show_child ).toEqual( {
+			$$type: 'overridable',
+			value: {
+				override_key: 'show_child_override',
+				origin_value: { $$type: 'boolean', value: true },
+			},
+		} );
+		expect( result[ 0 ].elements ).toEqual( [] );
 	} );
 
 	it( 'derives ids for the whole inserted subtree instead of random ones', () => {

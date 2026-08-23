@@ -64,7 +64,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			fn() => current_user_can( 'edit_posts' ),
@@ -199,7 +199,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'edit_url' => [
 					'type' => 'string',
 					'format' => 'uri',
-					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
+					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor).',
 				],
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [

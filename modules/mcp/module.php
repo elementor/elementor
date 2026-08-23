@@ -3,11 +3,17 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
+use Elementor\Plugin;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	const CONNECTOR_EXPERIMENT_NAME = 'mcp_connector';
 
 	private Ability_Registry $registry;
 
@@ -24,26 +32,29 @@ class Module extends BaseModule {
 
 	public static function is_active() {
 		return class_exists( McpAdapter::class ) &&
-			function_exists( 'wp_register_ability' );
+			function_exists( 'wp_register_ability' ) &&
+			class_exists( Shared_Registry::class );
 	}
 
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_connector_experiment();
+
 		$this->registry = self::build_core_registry();
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
+		( new Editor_Sync_State() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
 		}
 
-		McpAdapter::instance();
-
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
-		add_action( 'mcp_adapter_init', [ $this, 'register_server' ] );
+		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
 	}
 
 	public function registry(): Ability_Registry {
@@ -74,31 +85,34 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function register_server( $adapter ) {
-		if ( ! $adapter instanceof McpAdapter ) {
+	public function register_shared_registry_slugs(): void {
+		$shared = Shared_Registry::instance();
+
+		$shared->register_tools( $this->collect_server_ids( $this->registry->tools() ) );
+		$shared->register_resources( $this->collect_server_ids( $this->registry->resources() ) );
+	}
+
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		if ( ! self::is_connector_page_active() ) {
 			return;
 		}
 
-		$result = $adapter->create_server(
-			'elementor-mcp-server',
-			'elementor',
-			'mcp',
-			'Elementor MCP',
-			'Read and modify Elementor Editor abilities.',
-			'v1.0.0',
-			[ \WP\MCP\Transport\HttpTransport::class ],
-			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
-			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
-			$this->get_server_tools(),
-			$this->get_server_resources(),
-			[]
-		);
+		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
+	}
 
-		if ( is_wp_error( $result ) ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
-			return;
-		}
+	public static function is_connector_page_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::CONNECTOR_EXPERIMENT_NAME );
+	}
+
+	private function register_connector_experiment(): void {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::CONNECTOR_EXPERIMENT_NAME,
+			'title' => esc_html__( 'MCP Connector', 'elementor' ),
+			'description' => esc_html__( 'Enable the MCP connector admin page.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		] );
 	}
 
 	public static function build_core_registry(): Ability_Registry {
@@ -123,6 +137,8 @@ class Module extends BaseModule {
 			new Abilities\Wordpress_Best_Practices_Ability(),
 			new Abilities\Manage_Variable_Ability(),
 			new Abilities\Manage_Classes_Ability(),
+			new Abilities\Manage_Default_Styles_Ability(),
+			new Abilities\Get_Default_Styles_Ability(),
 			new Abilities\Reorder_Classes_Ability(),
 			new Abilities\Manage_Variable_Guide_Ability(),
 			new Abilities\Get_Widget_Schema_Ability(),
@@ -149,44 +165,6 @@ class Module extends BaseModule {
 		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 
-	private function get_server_tools(): array {
-		$tools = $this->collect_server_ids( $this->registry->tools() );
-
-		/**
-		 * Filters additional MCP tool ability slugs to expose on the Elementor MCP server.
-		 *
-		 * Preferred integration path: add abilities directly to the Ability_Registry via
-		 * `Plugin::$instance->modules_manager->get_modules( 'mcp' )->registry()->add( ... )`.
-		 * This filter is retained for backward compatibility with third-party extensions.
-		 *
-		 * @since 4.3.0
-		 *
-		 * @param string[] $additional_tools List of tool ability slugs contributed by other modules.
-		 */
-		$additional_tools = apply_filters( 'elementor/mcp/server/tools', [] );
-
-		return $this->normalize_slugs( $tools, $additional_tools );
-	}
-
-	private function get_server_resources(): array {
-		$resources = $this->collect_server_ids( $this->registry->resources() );
-
-		/**
-		 * Filters additional MCP resource ability slugs to expose on the Elementor MCP server.
-		 *
-		 * Preferred integration path: add abilities directly to the Ability_Registry via
-		 * `Plugin::$instance->modules_manager->get_modules( 'mcp' )->registry()->add( ... )`.
-		 * This filter is retained for backward compatibility with third-party extensions.
-		 *
-		 * @since 4.3.0
-		 *
-		 * @param string[] $additional_resources List of resource ability slugs contributed by other modules.
-		 */
-		$additional_resources = apply_filters( 'elementor/mcp/server/resources', [] );
-
-		return $this->normalize_slugs( $resources, $additional_resources );
-	}
-
 	/**
 	 * @param Abstract_Ability[] $abilities
 	 * @return string[]
@@ -201,11 +179,5 @@ class Module extends BaseModule {
 		}
 
 		return $ids;
-	}
-
-	private function normalize_slugs( array $defaults, $additional ): array {
-		$additional = is_array( $additional ) ? array_filter( $additional, 'is_string' ) : [];
-
-		return array_values( array_unique( array_merge( $defaults, $additional ) ) );
 	}
 }
