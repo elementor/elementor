@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
@@ -68,7 +69,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_items( [
 					Svg_Control::bind_to( 'svg' )
 						->set_label( __( 'SVG', 'elementor' ) )
-						->set_show_icon_library( true ),
+						->set_show_icon_library( Atomic_Widgets_Module::is_svg_library_active() ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
