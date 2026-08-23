@@ -1194,6 +1194,12 @@ BaseElementView = BaseContainer.extend( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
+				if ( jQuery( e.originalEvent.target ).closest( '.elementor-element-overlay' ).length ) {
+					e.originalEvent.preventDefault();
+
+					return;
+				}
+
 				if ( this.getContainer().isLocked() ) {
 					e.originalEvent.preventDefault();
 

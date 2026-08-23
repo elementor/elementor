@@ -5,6 +5,9 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import { wpCli } from '../../../assets/wp-cli';
 
+const DRAG_STEPS = 20;
+const TARGET_BOTTOM_OFFSET = 5;
+
 test.describe( 'Container tests #1 @container', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate container' );
@@ -238,6 +241,45 @@ test.describe( 'Container tests #1 @container', () => {
 		await expect.soft( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
 		await expect.soft( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
+	} );
+
+	test( 'Reorder top-level containers via canvas edit handle', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+
+		const firstContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const secondContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const frame = editor.getPreviewFrame();
+		const source = frame.locator( `.elementor-element-${ firstContainer }` );
+		const target = frame.locator( `.elementor-element-${ secondContainer }` );
+		const handle = source.locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
+		const rootContainers = frame.locator( '.elementor-section-wrap > .e-con' );
+		const getRootOrder = () => rootContainers.evaluateAll( ( elements ) =>
+			elements.map( ( element ) => element.getAttribute( 'data-id' ) ) );
+
+		expect( await getRootOrder() ).toEqual( [ firstContainer, secondContainer ] );
+
+		await editor.selectElement( firstContainer );
+		await expect( handle ).toBeVisible();
+
+		const handleBox = await handle.boundingBox();
+		const targetBox = await target.boundingBox();
+
+		expect( handleBox ).not.toBeNull();
+		expect( targetBox ).not.toBeNull();
+
+		await page.mouse.move( handleBox!.x + ( handleBox!.width / 2 ), handleBox!.y + ( handleBox!.height / 2 ) );
+		await page.mouse.down();
+		await page.mouse.move(
+			targetBox!.x + ( targetBox!.width / 2 ),
+			targetBox!.y + targetBox!.height - TARGET_BOTTOM_OFFSET,
+			{ steps: DRAG_STEPS },
+		);
+		await page.mouse.up();
+
+		await expect.poll( getRootOrder ).toEqual( [ secondContainer, firstContainer ] );
 	} );
 
 	test( 'Container nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {
