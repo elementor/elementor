@@ -2,8 +2,13 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Container Grid tests @container', () => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
+	} );
+
 	test( 'Test grid container', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
