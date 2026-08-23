@@ -14,6 +14,7 @@ class Post_Query extends Base {
 	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
 	const SEARCH_IN_CONTENT_KEY = 'search_in_content';
+	const NON_PUBLIC_STATUSES_FOR_UNPRIVILEGED = [ 'draft', 'pending' ];
 	const ALLOWED_KEYS_CONVERSION_MAP = [
 		'ID' => 'id',
 		'post_title' => 'label',
@@ -68,14 +69,19 @@ class Post_Query extends Base {
 		$post_types = $this->get_post_types_from_params( $request );
 
 		$query_args = [
-			'post_type'                    => array_keys( $post_types ),
-			'numberposts'                  => $post_count,
-			'suppress_filters'             => false,
-			'custom_search'                => true,
-			'post_status'                  => $is_public_only ? 'publish' : 'any',
-			'orderby'                      => 'modified',
-			'order'                        => 'DESC',
+			'post_type'       => array_keys( $post_types ),
+			'numberposts'     => $post_count,
+			'suppress_filters' => false,
+			'custom_search'   => true,
+			'post_status'     => $this->resolve_post_status( $is_public_only ),
+			'orderby'         => 'modified',
+			'order'           => 'DESC',
 		];
+
+		// for non-admins (contributors), filter by author for private posts
+		if ( ! $is_public_only && ! current_user_can( 'read_private_posts' ) ) {
+			$query_args['author'] = get_current_user_id();
+		}
 
 		if ( ! empty( $term ) ) {
 			$query_args['search_term'] = $term;
@@ -241,6 +247,14 @@ class Post_Query extends Base {
 			self::META_QUERY_KEY,
 			self::TAX_QUERY_KEY,
 		];
+	}
+
+	private function resolve_post_status( bool $is_public_only ) {
+		if ( current_user_can( 'read_private_posts' ) ) {
+			return $is_public_only ? 'publish' : 'any';
+		}
+
+		return $is_public_only ? 'publish' : self::NON_PUBLIC_STATUSES_FOR_UNPRIVILEGED;
 	}
 
 	private function get_post_types_from_params( \WP_REST_Request $request ) {
