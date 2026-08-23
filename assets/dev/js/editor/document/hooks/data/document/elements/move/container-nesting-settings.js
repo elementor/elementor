@@ -32,9 +32,9 @@ export class ContainerNestingSettings extends After {
 
 			const isTopLevel = 'document' === container.parent.model.get( 'elType' );
 
-			if ( isTopLevel ) {
-				container.model.set( 'isInner', false );
+			container.model.set( 'isInner', ! isTopLevel );
 
+			if ( isTopLevel ) {
 				return;
 			}
 

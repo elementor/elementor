@@ -50,7 +50,7 @@ describe( 'ContainerNestingSettings--document/elements/move', () => {
 		expect( shouldRun ).toBe( true );
 	} );
 
-	it( 'Should set content_width to full when moved into a nested container', () => {
+	it( 'Should set isInner to true and content_width to full when moved into a nested container', () => {
 		// Arrange.
 		const parent = createContainer( { type: 'container', id: 'parent' } );
 		const movedContainer = createContainer( {
@@ -66,6 +66,7 @@ describe( 'ContainerNestingSettings--document/elements/move', () => {
 		hook.apply( {}, movedContainer );
 
 		// Assert.
+		expect( movedContainer.model.get( 'isInner' ) ).toBe( true );
 		expect( runSpy ).toHaveBeenCalledWith( 'document/elements/settings', {
 			container: movedContainer,
 			settings: {
