@@ -24,7 +24,7 @@ New types are added via `elementor/variables/register` — built-in color/font/s
 | `elementor/variables/register` | Fired on `init`; receives registry |
 | `Style_Schema` / `Size_Style_Schema` | Add variable unions to atomic style keys |
 | `Global_Variable_Transformer` | PHP: color/font id → `var(--label)` |
-| `variableTransformer` (JS) | Editor: all types including size |
+| `variableTransformer` (JS) | Editor default styleTransformer when a type omits its own. Built-in size overrides it with `EmptyTransformer` |
 
 Registry lifecycle: `Module::init_variable_types_registry()` on `init` → `do_action( 'elementor/variables/register', $registry )` → built-ins from `Hooks::register_variable_types()`.
 
@@ -76,7 +76,31 @@ registerVariableType( {
 } );
 ```
 
-Call from `registerVariableTypes()` in `register-variable-types.tsx`.
+Core built-ins are registered in `registerVariableTypes()` (`register-variable-types.tsx`). **Extensions must call `registerVariableType` from their own editor v2 package `init()`** — do not edit the core file. A PHP-only type (no `registerVariableType`) still works via REST / MCP / CSS but will **not appear in the "Add Variable" dropdown**.
+
+### registerVariableType field contract
+
+Full option set (`editor-variables/src/variables-registry/create-variable-type-registry.ts`). Only `icon`, `propTypeUtil`, `fallbackPropTypeUtil`, and `variableType` are structurally required; `key` defaults to `propTypeUtil.key` and `isActive` defaults to `true`.
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `key` | `string` | Registry key / `$$type` (defaults to `propTypeUtil.key`) |
+| `icon` | icon component | Type icon in the picker |
+| `startIcon` | `({ value }) => JSX` | Optional leading indicator (e.g. color swatch) |
+| `valueField` | `(props: ValueFieldProps) => JSX` | The value editor component |
+| `variableType` | `string` | Logical category (`color`, `font`, `size`, …) |
+| `defaultValue` | `string` | Initial value for a new variable |
+| `propTypeUtil` | `PropTypeUtil` | Bind/parse the stored PropValue |
+| `fallbackPropTypeUtil` | `PropTypeUtil` | Used when the variable is unresolved |
+| `styleTransformer` | transformer | Style render transform (defaults to `variableTransformer`) |
+| `valueTransformer` | `(value, type?) => PropValue` | Normalize raw input into a PropValue |
+| `selectionFilter` | `(variables, propType?) => variables` | Restrict which variables are offered |
+| `isCompatible` | `(propType, variable) => boolean` | Gate a variable against a prop (default: union membership) |
+| `emptyState` | `JSX` | Rendered when no variables exist (used for Pro upsell CTA) |
+| `isActive` | `boolean` | `false` hides it from the active list / `hasVariableType` |
+| `menuActionsFactory` | `(context) => actions[]` | Row actions in the variables manager |
+
+`ValueFieldProps` (what `valueField` receives): `value`, `onChange`, `onValidationChange?`, `onPropTypeKeyChange?`, `propTypeKey?`, `propType?`, `error?`, `onKeyDown?`.
 
 ### Built-in types
 
@@ -86,6 +110,8 @@ Call from `registerVariableTypes()` in `register-variable-types.tsx`.
 | `global-font-variable` | `Font_Variable_Prop_Type` | Font family name |
 | `global-size-variable` | `Size_Variable_Prop_Type` | `16px`, `1.5rem`, etc. (Pro) |
 | `global-custom-size-variable` | `Size_Variable_Prop_Type` (alias) | `auto`, `clamp(...)`, `calc(...)` (Pro) |
+
+**What "(Pro)" means for size:** it is not only a PHP gate. The free Core JS bundle *does* register both size keys, but with `isActive: false`, `styleTransformer: EmptyTransformer`, `selectionFilter: () => []`, and an `emptyState` CTA (`go.elementor.com/go-pro-panel-size-variable/`) — so the picker shows an upsell instead of an editable field. Pro's editor variables package re-registers the same keys as active for them to actually work in the UI. `clamp(...)` / `calc(...)` values live under `global-custom-size-variable`.
 
 ## Internals
 
