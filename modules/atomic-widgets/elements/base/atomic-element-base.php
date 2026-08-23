@@ -18,6 +18,16 @@ abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
 	use Has_Meta;
 
+	/**
+	 * Maps atomic element type → the minor version when the "New" badge expires.
+	 * Format: 'element-type' => 'major.minor'  (patch is ignored during comparison).
+	 *
+	 * @var array<string, string>
+	 */
+	private const NEW_ATOMIC_ELEMENTS = [
+		'e-background-video' => '4.3',
+	];
+
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $interactions = [];
@@ -101,6 +111,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['html_tag_follows_link'] = static::html_tag_follows_link();
 		$config['meta'] = $this->get_meta();
 		$config['allowed_child_types'] = $this->define_allowed_child_types();
+		$config['new_until_version'] = self::NEW_ATOMIC_ELEMENTS[ $this->get_name() ] ?? '';
 
 		return $config;
 	}
