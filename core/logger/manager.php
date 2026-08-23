@@ -4,9 +4,10 @@ namespace Elementor\Core\Logger;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Editor\Editor;
-use Elementor\Core\Logger\Loggers\Logger_Interface;
-use Elementor\Core\Logger\Items\PHP;
 use Elementor\Core\Logger\Items\JS;
+use Elementor\Core\Logger\Items\PHP;
+use Elementor\Core\Logger\Loggers\Logger_Interface;
+use Elementor\Core\Logger\Sentry\Reporter as Sentry_Reporter;
 use Elementor\Plugin;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Utils;
@@ -41,6 +42,8 @@ class Manager extends BaseModule {
 		if ( ! Utils::is_elementor_path( $last_error['file'] ) ) {
 			return;
 		}
+
+		( new Sentry_Reporter() )->report( $last_error );
 
 		$last_error['type'] = $this->get_log_type_from_php_error( $last_error['type'] );
 		$last_error['trace'] = true;
