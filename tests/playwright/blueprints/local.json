@@ -9,6 +9,11 @@
 	"steps": [
 		{ "step": "login", "username": "admin", "password": "password" },
 		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/elementor-pro-mock.php",
+			"data": "<?php\nnamespace ElementorPro\\License;\n\nif ( ! class_exists( __NAMESPACE__ . '\\\\API' ) ) {\n    class API {\n        public static function is_license_active(): bool {\n            return true;\n        }\n    }\n}"
+		},
+		{
             "step": "defineWpConfigConsts",
             "consts": {
                 "WP_DISABLE_FATAL_ERROR_HANDLER": true,
