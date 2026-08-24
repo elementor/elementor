@@ -2,16 +2,11 @@ import { expect, type Frame } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
-import { wpCli } from '../../../assets/wp-cli';
 
 const INNER_CONTAINER_HANDLE_BACKGROUND = 'rgb(157, 165, 174)';
 const PARENT_CONTAINER_HANDLE_BACKGROUND = 'rgb(243, 186, 253)';
 
 test.describe( 'Container handles @container', () => {
-	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate container' );
-	} );
-
 	test( 'Inner handle styles stay scoped to nested containers [ED-25335]', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
