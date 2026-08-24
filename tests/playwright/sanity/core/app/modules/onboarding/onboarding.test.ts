@@ -18,6 +18,9 @@ test.describe( 'Onboarding @onboarding', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		originalActiveTheme = await wpAdmin.getActiveTheme();
 		await wpAdmin.activateTheme( 'twentytwentyfive' );
+		// This suite exercises the new onboarding flow (`e_onboarding`), which is
+		// no longer the default. Force it active so these specs keep testing it.
+		await wpAdmin.setExperiments( { e_onboarding: true } );
 		await page.close();
 		await context.close();
 	} );
@@ -27,6 +30,7 @@ test.describe( 'Onboarding @onboarding', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.activateTheme( originalActiveTheme );
+		await wpAdmin.resetExperiments();
 		await page.close();
 		await context.close();
 	} );

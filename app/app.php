@@ -23,6 +23,7 @@ use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
 use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
+use Elementor\App\Modules\OnboardingNew\Module as OnboardingNewModule;
 use Elementor\App\Modules\SiteBuilder\Module as SiteBuilderModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -300,6 +301,20 @@ class App extends BaseApp {
 		] );
 	}
 
+	private function register_e_onboarding_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_onboarding',
+			'title' => esc_html__( 'New Onboarding', 'elementor' ),
+			'hidden' => true,
+			'default' => ExperimentsManager::STATE_INACTIVE,
+			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function is_e_onboarding_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'e_onboarding' );
+	}
+
 	public function __construct() {
 		$this->register_import_export_customization_experiment();
 
@@ -317,7 +332,13 @@ class App extends BaseApp {
 			$this->add_component( 'kit-library', new KitLibraryModule() );
 		}
 
-		$this->add_component( 'onboarding', new OnboardingModule() );
+		$this->register_e_onboarding_experiment();
+
+		if ( $this->is_e_onboarding_active() ) {
+			$this->add_component( 'onboarding', new OnboardingNewModule() );
+		} else {
+			$this->add_component( 'onboarding', new OnboardingModule() );
+		}
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
