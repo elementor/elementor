@@ -70,6 +70,36 @@ export const Move = () => {
 				} );
 			} );
 
+			QUnit.test( 'Top-level container edit handle starts native container dragging', ( assert ) => {
+				const container = ElementsHelper.createContainer(),
+					done = assert.async();
+
+				setTimeout( () => {
+					const currentContainer = container.lookup(),
+						handle = currentContainer.view.el.querySelector(
+							':scope > .elementor-element-overlay .elementor-editor-element-edit',
+						),
+						dragStart = new DragEvent( 'dragstart', {
+							bubbles: true,
+							cancelable: true,
+							dataTransfer: new DataTransfer(),
+						} );
+
+					assert.true( handle.dispatchEvent( dragStart ),
+						'The handle drag is not prevented by another drag owner.' );
+					assert.strictEqual(
+						elementor.channels.editor.request( 'element:dragged' ),
+						currentContainer.view,
+						'The native drag path owns the top-level container handle.',
+					);
+
+					handle.dispatchEvent( new DragEvent( 'dragend', { bubbles: true } ) );
+					elementor.channels.editor.reply( 'element:dragged', null );
+
+					done();
+				} );
+			} );
+
 			QUnit.test( 'Document drop zone accepts an existing container', ( assert ) => {
 				const container = ElementsHelper.createContainer(),
 					addSectionView = new AddSectionView();
@@ -425,10 +455,26 @@ export const Move = () => {
 				} );
 			} );
 
+			QUnit.test( 'Nested V3 container becomes full width even when its new parent is full width', ( assert ) => {
+				const parentContainer = ElementsHelper.createContainer(),
+					childContainer = ElementsHelper.createContainer();
+
+				parentContainer.settings.set( 'content_width', 'full' );
+				childContainer.settings.set( 'content_width', 'boxed' );
+
+				ElementsHelper.move( childContainer, parentContainer );
+
+				assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'full',
+					'Cross-level move normalizes the nested container width.' );
+			} );
+
 			QUnit.module( 'History', () => {
 				QUnit.test( 'Container between nesting levels', ( assert ) => {
 					const parentContainer = ElementsHelper.createContainer(),
 						childContainer = ElementsHelper.createContainer();
+
+					parentContainer.settings.set( 'content_width', 'full' );
+					childContainer.settings.set( 'content_width', 'boxed' );
 
 					ElementsHelper.move( childContainer, parentContainer );
 
@@ -437,6 +483,8 @@ export const Move = () => {
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Container' );
 					assert.true( childContainer.lookup().model.get( 'isInner' ),
 						'The moved container is nested.' );
+					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'full',
+						'The nested container is normalized to full width in the move history item.' );
 
 					HistoryHelper.undoValidate( assert, historyItem );
 
@@ -444,6 +492,8 @@ export const Move = () => {
 						'Undo restores the container to the document root.' );
 					assert.false( childContainer.lookup().model.get( 'isInner' ),
 						'Undo restores the top-level nesting state.' );
+					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'boxed',
+						'Undo restores the original top-level content width.' );
 
 					HistoryHelper.redoValidate( assert, historyItem );
 
@@ -451,6 +501,8 @@ export const Move = () => {
 						'Redo restores the container to its nested parent.' );
 					assert.true( childContainer.lookup().model.get( 'isInner' ),
 						'Redo restores the nested state.' );
+					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'full',
+						'Redo restores the normalized nested content width.' );
 				} );
 
 				QUnit.test( 'Section', ( assert ) => {

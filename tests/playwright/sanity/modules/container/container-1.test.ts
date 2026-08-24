@@ -5,7 +5,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import { wpCli } from '../../../assets/wp-cli';
 
-const DRAG_STEPS = 20;
 const TARGET_BOTTOM_OFFSET = 5;
 
 test.describe( 'Container tests #1 @container', () => {
@@ -243,7 +242,7 @@ test.describe( 'Container tests #1 @container', () => {
 		await expect.soft( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
 	} );
 
-	test( 'Reorder top-level containers via canvas edit handle', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Reorder top-level containers via canvas DnD', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -251,35 +250,89 @@ test.describe( 'Container tests #1 @container', () => {
 
 		const firstContainer = await editor.addElement( { elType: 'container' }, 'document' );
 		const secondContainer = await editor.addElement( { elType: 'container' }, 'document' );
-		const frame = editor.getPreviewFrame();
-		const source = frame.locator( `.elementor-element-${ firstContainer }` );
-		const target = frame.locator( `.elementor-element-${ secondContainer }` );
-		const handle = source.locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
-		const rootContainers = frame.locator( '.elementor-section-wrap > .e-con' );
-		const getRootOrder = () => rootContainers.evaluateAll( ( elements ) =>
+		const getFrame = () => editor.getPreviewFrame();
+		const source = () => getFrame().locator( `.elementor-element-${ firstContainer }` );
+		const target = () => getFrame().locator( `.elementor-element-${ secondContainer }` );
+		const handle = () => source().locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
+		const getRootOrder = () => getFrame().locator( '.elementor-section-wrap > .e-con' ).evaluateAll( ( elements ) =>
 			elements.map( ( element ) => element.getAttribute( 'data-id' ) ) );
 
 		expect( await getRootOrder() ).toEqual( [ firstContainer, secondContainer ] );
 
 		await editor.selectElement( firstContainer );
-		await expect( handle ).toBeVisible();
+		await expect( handle() ).toBeVisible();
 
-		const handleBox = await handle.boundingBox();
-		const targetBox = await target.boundingBox();
+		const targetBox = await target().boundingBox();
 
-		expect( handleBox ).not.toBeNull();
 		expect( targetBox ).not.toBeNull();
 
-		await page.mouse.move( handleBox!.x + ( handleBox!.width / 2 ), handleBox!.y + ( handleBox!.height / 2 ) );
-		await page.mouse.down();
-		await page.mouse.move(
-			targetBox!.x + ( targetBox!.width / 2 ),
-			targetBox!.y + targetBox!.height - TARGET_BOTTOM_OFFSET,
-			{ steps: DRAG_STEPS },
+		await getFrame().dragAndDrop(
+			getElementSelector( firstContainer ),
+			getElementSelector( secondContainer ),
+			{ targetPosition: {
+				x: targetBox!.width / 2,
+				y: targetBox!.height - TARGET_BOTTOM_OFFSET,
+			},
+			},
 		);
-		await page.mouse.up();
 
 		await expect.poll( getRootOrder ).toEqual( [ secondContainer, firstContainer ] );
+	} );
+
+	test( 'Nest a top-level container inside a sibling via canvas DnD', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+
+		const firstContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const secondContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const getFrame = () => editor.getPreviewFrame();
+		const source = () => getFrame().locator( `.elementor-element-${ firstContainer }` );
+		const target = () => getFrame().locator( `.elementor-element-${ secondContainer }` );
+		const handle = () => source().locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
+		const getRootOrder = () => getFrame().locator( '.elementor-section-wrap > .e-con' ).evaluateAll( ( elements ) =>
+			elements.map( ( element ) => element.getAttribute( 'data-id' ) ) );
+		const getParentContainerId = async ( elementId: string ) => getFrame().locator( `.elementor-element-${ elementId }` ).evaluate( ( node ) => {
+			const parentElement = node.parentElement?.closest( '.elementor-element.e-con' );
+
+			return parentElement?.getAttribute( 'data-id' ) ?? null;
+		} );
+
+		expect( await getRootOrder() ).toEqual( [ firstContainer, secondContainer ] );
+		expect( await getParentContainerId( firstContainer ) ).toBeNull();
+
+		await editor.selectElement( firstContainer );
+		await expect( handle() ).toBeVisible();
+
+		const targetBox = await target().boundingBox();
+
+		expect( targetBox ).not.toBeNull();
+
+		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+		await getFrame().dragAndDrop(
+			getElementSelector( firstContainer ),
+			getElementSelector( secondContainer ),
+			{ targetPosition: {
+				x: targetBox!.width / 2,
+				y: targetBox!.height / 2,
+			},
+			},
+		);
+		await getFrame().dragAndDrop(
+			getElementSelector( firstContainer ),
+			getElementSelector( secondContainer ),
+			{ targetPosition: {
+				x: targetBox!.width / 2,
+				y: targetBox!.height / 2,
+			},
+			},
+		);
+
+		expect( await getParentContainerId( firstContainer ) ).toBe( secondContainer );
+		await expect( source() ).toHaveClass( /e-child/ );
+		await expect( source() ).toHaveClass( /e-con-full/ );
+		await expect.poll( getRootOrder ).toEqual( [ secondContainer ] );
 	} );
 
 	test( 'Un-nest a container to the top level via canvas edit handle', async ( { page, apiRequests }, testInfo ) => {
@@ -290,37 +343,44 @@ test.describe( 'Container tests #1 @container', () => {
 
 		const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 		const childContainer = await editor.addElement( { elType: 'container' }, parentContainer );
-		const frame = editor.getPreviewFrame();
-		const child = frame.locator( `.elementor-element-${ childContainer }` );
-		const handle = child.locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
-		const addSectionArea = frame.locator( '.elementor-add-section.elementor-visible-desktop' );
-		const rootContainers = frame.locator( '.elementor-section-wrap > .e-con' );
-		const getRootOrder = () => rootContainers.evaluateAll( ( elements ) =>
+		const getFrame = () => editor.getPreviewFrame();
+		const child = () => getFrame().locator( `.elementor-element-${ childContainer }` );
+		const handle = () => child().locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
+		const addSectionArea = () => getFrame().locator( '.elementor-add-section.elementor-visible-desktop' );
+		const getRootOrder = () => getFrame().locator( '.elementor-section-wrap > .e-con' ).evaluateAll( ( elements ) =>
 			elements.map( ( element ) => element.getAttribute( 'data-id' ) ) );
 
 		expect( await getRootOrder() ).toEqual( [ parentContainer ] );
 
 		await editor.selectElement( childContainer );
-		await expect( handle ).toBeVisible();
+		await expect( handle() ).toBeVisible();
 
-		const handleBox = await handle.boundingBox();
-		const dropBox = await addSectionArea.boundingBox();
+		const handleBox = await handle().boundingBox();
+		const childBox = await child().boundingBox();
+		const dropBox = await addSectionArea().boundingBox();
 
 		expect( handleBox ).not.toBeNull();
+		expect( childBox ).not.toBeNull();
 		expect( dropBox ).not.toBeNull();
 
-		await page.mouse.move( handleBox!.x + ( handleBox!.width / 2 ), handleBox!.y + ( handleBox!.height / 2 ) );
-		await page.mouse.down();
-		await page.mouse.move(
-			dropBox!.x + ( dropBox!.width / 2 ),
-			dropBox!.y + ( dropBox!.height / 2 ),
-			{ steps: DRAG_STEPS },
+		await getFrame().dragAndDrop(
+			getElementSelector( childContainer ),
+			'.elementor-add-section.elementor-visible-desktop',
+			{
+				sourcePosition: {
+					x: handleBox!.x - childBox!.x + ( handleBox!.width / 2 ),
+					y: handleBox!.y - childBox!.y + ( handleBox!.height / 2 ),
+				},
+				targetPosition: {
+					x: dropBox!.width / 2,
+					y: dropBox!.height / 2,
+				},
+			},
 		);
-		await page.mouse.up();
 
 		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
-		await expect( child ).toHaveClass( /e-parent/ );
-		await expect( child ).toHaveClass( /e-con-full/ );
+		await expect( child() ).toHaveClass( /e-parent/ );
+		await expect( child() ).toHaveClass( /e-con-full/ );
 
 		const runHistoryCommand = ( command: 'undo' | 'redo' ) => page.evaluate( ( historyCommand ) => {
 			( window as unknown as { $e: { run: ( commandName: string ) => void } } )
@@ -329,17 +389,17 @@ test.describe( 'Container tests #1 @container', () => {
 
 		await runHistoryCommand( 'undo' );
 		await expect.poll( getRootOrder ).toEqual( [ parentContainer ] );
-		await expect( child ).toHaveClass( /e-child/ );
+		await expect( child() ).toHaveClass( /e-child/ );
 
 		await runHistoryCommand( 'redo' );
 		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
-		await expect( child ).toHaveClass( /e-parent/ );
+		await expect( child() ).toHaveClass( /e-parent/ );
 
 		await editor.saveAndReloadPage();
 		await editor.waitForPanelToLoad();
 		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
-		await expect( child ).toHaveClass( /e-parent/ );
-		await expect( child ).toHaveClass( /e-con-full/ );
+		await expect( child() ).toHaveClass( /e-parent/ );
+		await expect( child() ).toHaveClass( /e-con-full/ );
 	} );
 
 	test( 'Container nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {
@@ -348,36 +408,36 @@ test.describe( 'Container tests #1 @container', () => {
 		const editor = await wpAdmin.openNewPage();
 		const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 		const childContainer = await editor.addElement( { elType: 'container' }, 'document' );
-		const childLocator = editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` );
+		const childLocator = () => editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` );
 
 		// Act - Nest the child container inside the parent container.
 		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childContainer ),
 			getElementSelector( parentContainer ),
 		);
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childContainer ),
 			getElementSelector( parentContainer ),
 		);
 
 		// Assert.
-		await expect.soft( childLocator ).toHaveClass( /e-con-full/ );
-		await expect.soft( childLocator ).toHaveClass( /e-child/ );
+		await expect.soft( childLocator() ).toHaveClass( /e-con-full/ );
+		await expect.soft( childLocator() ).toHaveClass( /e-child/ );
 
 		// Act - Un-nest the child container to the document root.
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childContainer ),
 			'.elementor-add-section.elementor-visible-desktop',
 		);
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childContainer ),
 			'.elementor-add-section.elementor-visible-desktop',
 		);
 
 		// Assert — un-nesting keeps content_width `full` (`e-con-full`); the pre-nest value is not stored.
-		await expect.soft( childLocator ).toHaveClass( /e-parent/ );
-		await expect.soft( childLocator ).not.toHaveClass( /e-child/ );
-		await expect.soft( childLocator ).toHaveClass( /e-con-full/ );
+		await expect.soft( childLocator() ).toHaveClass( /e-parent/ );
+		await expect.soft( childLocator() ).not.toHaveClass( /e-child/ );
+		await expect.soft( childLocator() ).toHaveClass( /e-con-full/ );
 	} );
 } );

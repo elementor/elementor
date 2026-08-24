@@ -26,7 +26,7 @@ test.describe( 'Div Block tests @div-block', () => {
 			button = await editor.addWidget( { widgetType: widgets.button, container: divBlock } ),
 			image = await editor.addWidget( { widgetType: widgets.image, container: divBlock } );
 
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),
 		);
@@ -46,7 +46,6 @@ test.describe( 'Div Block tests @div-block', () => {
 		const editor = await wpAdmin.openNewPage();
 		const parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 		const childDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
-		const childLocator = editor.getPreviewFrame().locator( `.elementor-element-${ childDivBlock }` );
 
 		const getParentDivBlockId = async ( elementId: string ) => {
 			const elementHandle = await editor.getElementHandle( elementId );
@@ -57,41 +56,45 @@ test.describe( 'Div Block tests @div-block', () => {
 				return parentElement?.getAttribute( 'data-id' ) ?? null;
 			} );
 		};
+		const getIsInner = ( elementId: string ) => page.evaluate(
+			( id ) => elementor.getContainer( id ).model.get( 'isInner' ),
+			elementId,
+		);
 
 		// Act - Nest the child div block inside the parent div block.
 		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childDivBlock ),
 			getElementSelector( parentDivBlock ),
 		);
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childDivBlock ),
 			getElementSelector( parentDivBlock ),
 		);
 
 		// Assert.
 		expect( await getParentDivBlockId( childDivBlock ) ).toBe( parentDivBlock );
-		await expect( childLocator ).toHaveClass( /e-child/ );
+		expect( await getIsInner( childDivBlock ) ).toBe( true );
 
 		// Act - Un-nest the child div block to the document root.
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childDivBlock ),
 			'.elementor-add-section.elementor-visible-desktop',
 		);
-		await editor.previewFrame.dragAndDrop(
+		await editor.getPreviewFrame().dragAndDrop(
 			getElementSelector( childDivBlock ),
 			'.elementor-add-section.elementor-visible-desktop',
 		);
 
 		// Assert.
 		expect( await getParentDivBlockId( childDivBlock ) ).toBeNull();
-		await expect( childLocator ).toHaveClass( /e-parent/ );
+		expect( await getIsInner( childDivBlock ) ).toBe( false );
 
 		await editor.saveAndReloadPage();
 		await editor.waitForPanelToLoad();
 
 		expect( await getParentDivBlockId( childDivBlock ) ).toBeNull();
-		await expect( childLocator ).toHaveClass( /e-parent/ );
+		expect( await getIsInner( childDivBlock ) ).toBe( false );
 	} );
 
 	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {
