@@ -166,11 +166,11 @@ async function expectContainerHandlesInside( frame: Frame, containerId: string )
 	await expect( container ).toHaveClass( /e-handles-inside/ );
 	await expect( settings ).toBeVisible();
 
-	const verticalTranslation = await settings.evaluate( ( element ) => {
-		return new DOMMatrixReadOnly( getComputedStyle( element ).transform ).m42;
-	} );
-
-	expect( verticalTranslation ).toBe( 0 );
+	await expect.poll( async () => {
+		return settings.evaluate( ( element ) => {
+			return new DOMMatrixReadOnly( getComputedStyle( element ).transform ).m42;
+		} );
+	} ).toBe( 0 );
 }
 
 async function wrapContainerInPostContentDocument( editor: EditorPage, containerId: string ) {
