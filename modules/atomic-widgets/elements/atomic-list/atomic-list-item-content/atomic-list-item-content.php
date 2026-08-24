@@ -9,8 +9,8 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -103,9 +103,8 @@ class Atomic_List_Item_Content extends Atomic_Element_Base {
 		return [
 			Widget_Builder::make( Atomic_Paragraph::get_element_type() )
 				->settings( [
-					'paragraph' => Html_V3_Prop_Type::generate( [
-						'content' => String_Prop_Type::generate( __( 'List item', 'elementor' ) ),
-						'children' => [],
+					'paragraph' => Escaped_Html_Prop_Type::generate( [
+						'value' => String_Prop_Type::generate( __( 'List item', 'elementor' ) ),
 					] ),
 				] )
 				->build(),
