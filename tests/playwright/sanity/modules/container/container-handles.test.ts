@@ -164,15 +164,13 @@ async function expectContainerHandlesInside( frame: Frame, containerId: string )
 	const settings = container.locator( '> .elementor-element-overlay > .elementor-editor-element-settings' );
 
 	await expect( container ).toHaveClass( /e-handles-inside/ );
+	await expect( settings ).toBeVisible();
 
-	const containerBox = await container.boundingBox();
-	const settingsBox = await settings.boundingBox();
+	const verticalTranslation = await settings.evaluate( ( element ) => {
+		return new DOMMatrixReadOnly( getComputedStyle( element ).transform ).m42;
+	} );
 
-	if ( ! containerBox || ! settingsBox ) {
-		throw new Error( 'Container or handle bounds were not available.' );
-	}
-
-	expect( settingsBox.y ).toBeGreaterThanOrEqual( containerBox.y );
+	expect( verticalTranslation ).toBe( 0 );
 }
 
 async function wrapContainerInPostContentDocument( editor: EditorPage, containerId: string ) {
