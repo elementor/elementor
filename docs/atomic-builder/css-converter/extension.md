@@ -1,6 +1,6 @@
 # CSS Converter Extension
 
-> Audience: external
+> Audience: internal
 > Module: `modules/atomic-widgets/css-converter/`
 > Related: [pipeline.md](./pipeline.md), [../fundamentals/style-schema.md](../fundamentals/style-schema.md), [../atomic-widgets/hooks.md](../atomic-widgets/hooks.md)
 
