@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -35,6 +36,10 @@ class Atomic_List extends Atomic_Element_Base {
 		return 'eicon-bullet-list';
 	}
 
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'ul' );
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()
@@ -49,10 +54,6 @@ class Atomic_List extends Atomic_Element_Base {
 
 	protected function define_allowed_child_types() {
 		return [ 'e-list-item' ];
-	}
-
-	protected function define_default_html_tag() {
-		return 'ul';
 	}
 
 	protected function get_templates(): array {

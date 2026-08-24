@@ -28,6 +28,7 @@ class Default_Styles_Allowed_Tags {
 		'main',
 		'nav',
 		'form',
+		'ul',
 		'img',
 		'video',
 		'hr',
