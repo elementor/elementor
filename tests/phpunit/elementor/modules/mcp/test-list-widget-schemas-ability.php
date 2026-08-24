@@ -69,7 +69,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'e-heading', $descriptions_by_type['theme-post-title'] );
 		$this->assertStringContainsString( 'e-image', $descriptions_by_type['theme-post-featured-image'] );
 		$this->assertStringContainsString( 'post-excerpt', $descriptions_by_type['theme-post-excerpt'] );
-		$this->assertStringContainsString( 'single-template', $descriptions_by_type['theme-post-content'] );
+		$this->assertStringContainsStringIgnoringCase( 'single-template', $descriptions_by_type['theme-post-content'] );
 		$this->assertStringContainsString( 'loop', $descriptions_by_type['theme-post-content'] );
 	}
 

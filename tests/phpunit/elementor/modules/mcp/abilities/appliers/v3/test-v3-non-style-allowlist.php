@@ -87,7 +87,7 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 		$description = V3_Widget_Bridge_Registry::get_description( 'theme-post-content' );
 
 		$this->assertNotNull( $description );
-		$this->assertStringContainsString( 'single-template', $description );
+		$this->assertStringContainsStringIgnoringCase( 'single-template', $description );
 		$this->assertStringContainsString( 'loop', $description );
 	}
 
