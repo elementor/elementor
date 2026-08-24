@@ -339,10 +339,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="heading"></e-heading></e-flexbox>',
 			'element_config' => [
 				'heading' => [
-					'title' => [
-						'content' => 'Raw heading',
-						'children' => [],
-					],
+					'title' => 'Raw heading',
 				],
 			],
 		] );

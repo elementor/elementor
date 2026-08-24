@@ -124,7 +124,7 @@ class Test_Element_Config_Applier extends TestCase {
 
 		// Assert
 		$this->assertNotNull( $result['error'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['error']->get_error_code() );
+		$this->assertSame( 'elementor_invalid_component_instance', $result['error']->get_error_code() );
 		$this->assertStringContainsString( 'my-hero', $result['error']->get_error_message() );
 		$this->assertStringContainsString( 'document context', $result['error']->get_error_message() );
 		$this->assertSame( [], $e_component_node['settings'] );

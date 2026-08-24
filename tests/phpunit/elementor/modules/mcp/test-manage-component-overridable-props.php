@@ -398,14 +398,6 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 
 		$inner_component_id = $this->given_card_component( $ability );
 		$wrapper_component_id = $this->given_empty_wrapper( $ability, 'Grid With Preset Caption' );
-		$preset_caption = [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => [ '$$type' => 'string', 'value' => 'Preset Caption' ],
-				'children' => [],
-			],
-		];
-
 		// Act
 		$result = $ability->execute( [
 			'action' => 'update',
@@ -414,7 +406,7 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 			'element_config' => [
 				'card-1' => [
 					'component_id' => $inner_component_id,
-					'overrides' => [ 'caption' => $preset_caption ],
+					'overrides' => [ 'caption' => 'Preset Caption' ],
 				],
 			],
 			'overridable_props' => [
