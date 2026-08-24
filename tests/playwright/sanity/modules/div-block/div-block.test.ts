@@ -47,15 +47,11 @@ test.describe( 'Div Block tests @div-block', () => {
 		const parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 		const childDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
-		const getParentDivBlockId = async ( elementId: string ) => {
-			const elementHandle = await editor.getElementHandle( elementId );
+		const getParentDivBlockId = async ( elementId: string ) => page.evaluate( ( id ) => {
+			const parent = elementor.getContainer( id )?.parent;
 
-			return elementHandle.evaluate( ( node ) => {
-				const parentElement = node.closest( '.elementor-element' )?.parentElement?.closest( '.elementor-element' );
-
-				return parentElement?.getAttribute( 'data-id' ) ?? null;
-			} );
-		};
+			return parent && 'document' !== parent.type ? parent.id : null;
+		}, elementId );
 		const getIsInner = ( elementId: string ) => page.evaluate(
 			( id ) => elementor.getContainer( id ).model.get( 'isInner' ),
 			elementId,
@@ -93,8 +89,10 @@ test.describe( 'Div Block tests @div-block', () => {
 		await editor.saveAndReloadPage();
 		await editor.waitForPanelToLoad();
 
-		expect( await getParentDivBlockId( childDivBlock ) ).toBeNull();
-		expect( await getIsInner( childDivBlock ) ).toBe( false );
+		await expect( editor.getPreviewFrame().locator( getElementSelector( childDivBlock ) ) ).toBeVisible();
+		await expect( editor.getPreviewFrame().locator( getElementSelector( parentDivBlock ) ) ).toBeVisible();
+		await expect.poll( () => getParentDivBlockId( childDivBlock ) ).toBeNull();
+		await expect.poll( () => getIsInner( childDivBlock ) ).toBe( false );
 	} );
 
 	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {

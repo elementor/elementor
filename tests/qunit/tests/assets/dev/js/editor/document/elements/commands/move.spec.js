@@ -455,7 +455,7 @@ export const Move = () => {
 				} );
 			} );
 
-			QUnit.test( 'Nested V3 container becomes full width even when its new parent is full width', ( assert ) => {
+			QUnit.test( 'Nested V3 container keeps its content width when moved into a full-width parent', ( assert ) => {
 				const parentContainer = ElementsHelper.createContainer(),
 					childContainer = ElementsHelper.createContainer();
 
@@ -464,8 +464,8 @@ export const Move = () => {
 
 				ElementsHelper.move( childContainer, parentContainer );
 
-				assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'full',
-					'Cross-level move normalizes the nested container width.' );
+				assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'boxed',
+					'Cross-level move preserves the nested container width contract.' );
 			} );
 
 			QUnit.module( 'History', () => {
@@ -483,8 +483,8 @@ export const Move = () => {
 					HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Container' );
 					assert.true( childContainer.lookup().model.get( 'isInner' ),
 						'The moved container is nested.' );
-					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'full',
-						'The nested container is normalized to full width in the move history item.' );
+					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'boxed',
+						'The nested container keeps its original content width in the move history item.' );
 
 					HistoryHelper.undoValidate( assert, historyItem );
 
@@ -501,8 +501,8 @@ export const Move = () => {
 						'Redo restores the container to its nested parent.' );
 					assert.true( childContainer.lookup().model.get( 'isInner' ),
 						'Redo restores the nested state.' );
-					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'full',
-						'Redo restores the normalized nested content width.' );
+					assert.equal( childContainer.lookup().settings.get( 'content_width' ), 'boxed',
+						'Redo restores the nested content width.' );
 				} );
 
 				QUnit.test( 'Section', ( assert ) => {
