@@ -2,7 +2,6 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
@@ -41,16 +40,6 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	 * `test_render_two_instances_have_distinct_names()` depends on that being true here too.
 	 */
 	private int $render_seq = 0;
-
-	public function setUp(): void {
-		parent::setUp();
-
-		// Process-local only, mirroring VERIFY.md's live-bootstrap scripts — writes nothing to
-		// the database. The accordion element types are only registered while this is active
-		// (`modules/atomic-widgets/module.php::register_elements()`).
-		Plugin::$instance->experiments->set_feature_default_state( 'e_accordion', Experiments_Manager::STATE_ACTIVE );
-		do_action( 'elementor/elements/elements_registered', Plugin::$instance->elements_manager );
-	}
 
 	// ---------------------------------------------------------------------
 	// Helpers
