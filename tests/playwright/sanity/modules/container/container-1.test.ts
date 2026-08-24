@@ -320,6 +320,7 @@ test.describe( 'Container tests #1 @container', () => {
 
 		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
 		await expect( child ).toHaveClass( /e-parent/ );
+		await expect( child ).toHaveClass( /e-con-full/ );
 	} );
 
 	test( 'Container nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {
@@ -355,8 +356,9 @@ test.describe( 'Container tests #1 @container', () => {
 			'.elementor-add-section.elementor-visible-desktop',
 		);
 
-		// Assert.
+		// Assert — un-nesting keeps content_width `full` (`e-con-full`); the pre-nest value is not stored.
 		await expect.soft( childLocator ).toHaveClass( /e-parent/ );
 		await expect.soft( childLocator ).not.toHaveClass( /e-child/ );
+		await expect.soft( childLocator ).toHaveClass( /e-con-full/ );
 	} );
 } );

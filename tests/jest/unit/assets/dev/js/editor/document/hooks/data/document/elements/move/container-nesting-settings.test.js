@@ -77,7 +77,7 @@ describe( 'ContainerNestingSettings--document/elements/move', () => {
 		runSpy.mockRestore();
 	} );
 
-	it( 'Should set isInner to false when moved to the document root', () => {
+	it( 'Should set isInner to false without changing content_width when moved to the document root', () => {
 		// Arrange.
 		const documentContainer = createContainer( { type: 'document', id: 'document' } );
 		const movedContainer = createContainer( {

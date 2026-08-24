@@ -34,6 +34,8 @@ export class ContainerNestingSettings extends After {
 
 			container.model.set( 'isInner', ! isTopLevel );
 
+			// Nested containers must be full-width. Un-nesting does not restore a previous
+			// content_width: that value is not stored, so inventing `boxed` would mutate saved data.
 			if ( isTopLevel ) {
 				return;
 			}
