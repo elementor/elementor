@@ -1,1 +1,1 @@
-Lists images and SVG assets already uploaded to the WordPress Media Library, so you can reference them by attachment `id` when composing pages.
+Lists images and SVG assets already uploaded to the WordPress Media Library, so you can reference them by attachment `id` when composing pages. Use `type: "video"` to discover uploaded videos referenced by `e-self-hosted-video` / `e-background-video`.

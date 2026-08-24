@@ -16,6 +16,7 @@ class List_Assets_Ability extends Abstract_Ability {
 	const TYPE_ALL = 'all';
 	const TYPE_IMAGE = 'image';
 	const TYPE_SVG = 'svg';
+	const TYPE_VIDEO = 'video';
 
 	const IMAGE_MIME_TYPES = [
 		'image/jpeg',
@@ -27,6 +28,13 @@ class List_Assets_Ability extends Abstract_Ability {
 	];
 
 	const SVG_MIME_TYPE = 'image/svg+xml';
+
+	const VIDEO_MIME_TYPES = [
+		'video/mp4',
+		'video/webm',
+		'video/ogg',
+		'video/quicktime',
+	];
 
 	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Ask the user to upload the images or SVG icons they want to use (WP Admin → Media → Add New), then call this tool again. Do not fabricate attachment ids.';
 
@@ -80,9 +88,9 @@ class List_Assets_Ability extends Abstract_Ability {
 					],
 					'type' => [
 						'type' => 'string',
-						'enum' => [ self::TYPE_ALL, self::TYPE_IMAGE, self::TYPE_SVG ],
+						'enum' => [ self::TYPE_ALL, self::TYPE_IMAGE, self::TYPE_SVG, self::TYPE_VIDEO ],
 						'default' => self::TYPE_ALL,
-						'description' => 'Filter by asset kind. "svg" returns only SVG assets, which are required to reference from an e-svg widget.',
+						'description' => 'Filter by asset kind. "svg" returns only SVG assets, which are required to reference from an e-svg widget. "video" returns only uploaded videos for e-self-hosted-video and e-background-video.',
 					],
 					'page' => [
 						'type' => 'integer',
@@ -161,6 +169,10 @@ class List_Assets_Ability extends Abstract_Ability {
 
 		if ( self::TYPE_SVG === $type ) {
 			return [ self::SVG_MIME_TYPE ];
+		}
+
+		if ( self::TYPE_VIDEO === $type ) {
+			return self::VIDEO_MIME_TYPES;
 		}
 
 		return self::IMAGE_MIME_TYPES;

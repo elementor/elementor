@@ -76,6 +76,37 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_execute__type_video_returns_only_video() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_attachment( 'image/png', 'raster.png' );
+		$this->create_attachment( 'video/mp4', 'clip.mp4' );
+
+		// Act
+		$result = $this->ability->execute( [ 'type' => 'video' ] );
+
+		// Assert
+		$this->assertNotEmpty( $result['assets'] );
+		foreach ( $result['assets'] as $asset ) {
+			$this->assertSame( 'video/mp4', $asset['mime_type'] );
+		}
+	}
+
+	public function test_execute__type_all_excludes_video() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_attachment( 'image/png', 'raster.png' );
+		$this->create_attachment( 'video/mp4', 'clip.mp4' );
+
+		// Act
+		$result = $this->ability->execute( [ 'type' => 'all' ] );
+
+		// Assert
+		$mime_types = array_column( $result['assets'], 'mime_type' );
+		$this->assertContains( 'image/png', $mime_types );
+		$this->assertNotContains( 'video/mp4', $mime_types );
+	}
+
 	public function test_execute__per_page_is_clamped_to_maximum() {
 		// Arrange
 		$this->act_as_admin();
