@@ -203,7 +203,6 @@ class AddSectionBase extends Marionette.ItemView {
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure ),
 			isAddedAboveAnotherContainer = !! this.options.at || 0 === this.options.at;
 
 		EditorOneEventManager.sendCanvasEmptyBoxAction( {
@@ -215,33 +214,10 @@ class AddSectionBase extends Marionette.ItemView {
 			containerCreated: true,
 		} );
 
-		const newContainer = ContainerHelper.createContainer(
-			{
-				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
-				grid_columns_grid: {
-					unit: 'fr',
-					size: parsedStructure.columns,
-				},
-				grid_rows_grid: {
-					unit: 'fr',
-					size: parsedStructure.rows,
-				},
-				grid_rows_grid_mobile: {
-					unit: 'fr',
-					size: parsedStructure.rows,
-				},
-			},
+		const newContainer = ContainerHelper.createContainerFromGridPreset(
+			selectedStructure,
 			elementor.getPreviewContainer(),
 			this.options,
-			{
-				title: __( 'Grid', 'elementor' ),
-				custom: {
-					isPreset: true,
-					preset_settings: {
-						presetIcon: 'eicon-container-grid',
-					},
-				},
-			},
 		);
 
 		if ( isAddedAboveAnotherContainer ) {

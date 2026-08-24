@@ -348,7 +348,10 @@ export default class EditorPage extends BasePage {
 		const frame = this.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
 		await frame.locator( `.${ element }-preset-button` ).click();
-		await frame.locator( `[data-preset=${ preset }]` ).click();
+		const presetSelector = 'grid' === element
+			? `[data-structure="${ preset }"]`
+			: `[data-preset="${ preset }"]`;
+		await frame.locator( presetSelector ).click();
 	}
 
 	/**
