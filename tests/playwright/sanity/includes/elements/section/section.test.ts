@@ -16,6 +16,7 @@ test.describe( 'Section tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await page.close();
+		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
 	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page, apiRequests }, testInfo ) => {

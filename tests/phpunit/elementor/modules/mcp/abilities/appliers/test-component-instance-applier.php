@@ -205,7 +205,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'hero' => [
 				'component_id' => $component_id,
 				'overrides' => [
-					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'New Title' ], 'children' => [] ] ],
+					'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'New Title' ],
 				],
 			],
 		];
@@ -264,7 +264,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 				'hero-instance' => [
 					'component_id' => $component_id,
 					'overrides'    => [
-						'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Override Title' ], 'children' => [] ] ],
+						'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'Override Title' ],
 					],
 				],
 			],
@@ -418,7 +418,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'hero' => [
 				'component_id' => $component_id,
 				'overrides' => [
-					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Original' ], 'children' => [] ] ],
+					'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'Original' ],
 					'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h2' ],
 				],
 			],
@@ -430,7 +430,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'hero' => [
 				'component_id' => $component_id,
 				'overrides' => [
-					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Updated' ], 'children' => [] ] ],
+					'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'Updated' ],
 				],
 			],
 		];
@@ -445,7 +445,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$by_key = $this->overrides_by_key( $overrides );
 		$this->assertArrayHasKey( 'prop-uuid-1', $by_key );
 		$this->assertArrayHasKey( 'prop-uuid-2', $by_key );
-		$this->assertSame( 'Updated', $by_key['prop-uuid-1']['value']['override_value']['value']['content']['value'] );
+		$this->assertSame( 'Updated', $by_key['prop-uuid-1']['value']['override_value']['value'] );
 		$this->assertSame( 'h2', $by_key['prop-uuid-2']['value']['override_value']['value'] );
 	}
 
@@ -461,7 +461,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'hero' => [
 				'component_id' => $component_id,
 				'overrides' => [
-					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Kept' ], 'children' => [] ] ],
+					'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'Kept' ],
 					'prop-uuid-2' => [ '$$type' => 'string', 'value' => 'h4' ],
 				],
 			],
@@ -494,7 +494,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'hero' => [
 				'component_id' => $component_id,
 				'overrides' => [
-					'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'Kept' ], 'children' => [] ] ],
+					'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'Kept' ],
 				],
 			],
 		];
@@ -568,7 +568,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$applier = $this->make_applier();
 
 		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
-		$initial = [ 'hero' => [ 'component_id' => $component_id, 'overrides' => [ 'prop-uuid-1' => [ '$$type' => 'html-v3', 'value' => [ 'content' => [ '$$type' => 'string', 'value' => 'A' ], 'children' => [] ] ] ] ] ];
+		$initial = [ 'hero' => [ 'component_id' => $component_id, 'overrides' => [ 'prop-uuid-1' => [ '$$type' => 'escaped-html', 'value' => 'A' ] ] ] ];
 		$this->assertNull( $applier->apply( $index, $initial, $document ) );
 
 		// Act

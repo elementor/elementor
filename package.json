@@ -56,8 +56,7 @@
     "packages:release": "turbo build && npm run release -w elementor-packages",
     "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
     "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
-    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\"",
-    "prepare": "husky"
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\""
   },
   "engines": {
     "node": ">=24.15.0",
@@ -131,7 +130,6 @@
     "eslint-plugin-unicorn": "^72.0.0",
     "glob": "^11.0.3",
     "globals": "^16.0.0",
-    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "karma": "^6.4.4",
@@ -145,7 +143,6 @@
     "karma-remap-coverage": "0.1.5",
     "knip": "^5.54.1",
     "lighthouse": "^12.3.0",
-    "lint-staged": "^16.2.7",
     "msw": "^2.6.8",
     "path": "^0.12.7",
     "pixelmatch": "^7.2.0",
@@ -163,7 +160,7 @@
     "ts-node": "^10.9.2",
     "tsup": "^8.3.5",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.65.0",
     "vite-plus": "^0.2.6",
     "webpack": "^5.97.1"
@@ -222,16 +219,5 @@
     "eslint-import-resolver-typescript": { "eslint": "$eslint" },
     "@tanstack/eslint-plugin-query": { "eslint": "$eslint" },
     "eslint-plugin-react-compiler": { "eslint": "$eslint" }
-  },
-  "lint-staged": {
-    "packages/**/*.{js,jsx,ts,tsx}": [
-      "node scripts/lint-packages-staged.js"
-    ],
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
-    ],
-    "*.{php,twig}": [
-      "bash bin/check-twig-safety.sh"
-    ]
   }
 }

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,6 +52,7 @@ class Widget_Type_Resolver {
 
 		$errors = [];
 		$this->collect_child_type_errors( $root, $widget_configs, $errors );
+		$this->collect_required_child_errors( $root, $widget_configs, $errors );
 
 		if ( empty( $errors ) ) {
 			return null;
@@ -76,18 +79,25 @@ class Widget_Type_Resolver {
 	}
 
 	/**
-	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class']
+	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class', 'controls']
 	 */
 	public function resolve_type_config( string $type ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			$config = $widget->get_config();
-			return [
+			$resolved = [
 				'elType' => 'widget',
 				'widgetType' => $type,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
+				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $widget ),
 			];
+
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+				$resolved['controls'] = (array) $widget->get_controls();
+			}
+
+			return $resolved;
 		}
 
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
@@ -97,6 +107,7 @@ class Widget_Type_Resolver {
 				'elType' => $type,
 				'widgetType' => null,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
+				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $element ),
 			];
 		}
@@ -136,6 +147,35 @@ class Widget_Type_Resolver {
 			}
 
 			$this->collect_child_type_errors( $child, $widget_configs, $errors );
+		}
+	}
+
+	private function collect_required_child_errors( \DOMElement $node, array $widget_configs, array &$errors ): void {
+		$parent_tag = $this->xml_parser->get_tag_name( $node );
+		$parent_config = $widget_configs[ $parent_tag ] ?? null;
+		$default_children = is_array( $parent_config ) ? ( $parent_config['default_children'] ?? [] ) : [];
+		$required_types = Default_Children_Utils::get_required_child_types( $default_children );
+
+		if ( ! empty( $required_types ) ) {
+			$actual_child_types = array_map(
+				fn( \DOMElement $child ) => $this->xml_parser->get_tag_name( $child ),
+				$this->xml_parser->get_child_elements( $node )
+			);
+
+			foreach ( $required_types as $required_type ) {
+				if ( ! in_array( $required_type, $actual_child_types, true ) ) {
+					$errors[] = sprintf(
+						/* translators: 1: parent tag 2: required child tag */
+						__( '"%1$s" requires a direct child "%2$s".', 'elementor' ),
+						$parent_tag,
+						$required_type
+					);
+				}
+			}
+		}
+
+		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
+			$this->collect_required_child_errors( $child, $widget_configs, $errors );
 		}
 	}
 }

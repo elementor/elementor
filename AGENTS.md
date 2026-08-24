@@ -6,6 +6,12 @@ Works for **laptop local development** and **Cursor Cloud / non-interactive agen
 
 Longer human onboarding: [CONTRIBUTING.md](.github/CONTRIBUTING.md), Playwright Docker: [tests/test-environment-setup.md](tests/test-environment-setup.md).
 
+## Atomic builder extension skills
+
+`.cursor/skills/` holds Cursor skills for Elementor v4 / atomic-builder extension work (widgets, prop types, dynamic tags, editor packages, variables, CSS converter, interactions). Source of truth remains [docs/atomic-builder/](docs/atomic-builder/README.md) — skills are checklists that link there.
+
+For v4 or atomic extension tasks: load [atomic-builder-extend](.cursor/skills/atomic-builder-extend/SKILL.md) first, then the matching domain skill it routes to.
+
 ## Layout (Core + Pro)
 
 Clone as siblings so Pro can see Core at `../elementor`:
@@ -187,7 +193,6 @@ Allowed types: `Feature`, `CI`, `New`, `Tweak`, `Fix`, `Experiment`, `Deprecate`
 - For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npm run build`. Restore dev dependencies afterward with `composer install`.
 - The build runs on Vite/Rolldown (see [scripts/vite/README.md](scripts/vite/README.md)). Grunt and Webpack are gone, but Babel is still in the pipeline for ES5 downleveling, and `webpack` remains a devDependency because the published plugins under `packages/packages/tools/` declare it as a peer.
 - [package.json](package.json) `engines` and `.nvmrc` define the Node version; keep them aligned.
-- Husky pre-commit runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192` (see [.husky/pre-commit](.husky/pre-commit)).
 
 ## Cursor Cloud specific instructions
 

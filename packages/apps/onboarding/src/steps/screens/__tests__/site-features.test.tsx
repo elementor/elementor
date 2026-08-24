@@ -3,11 +3,11 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { DEFAULT_TEST_URLS, mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
 import { t } from '../../../utils/translations';
-import { COOKIE_CONSENT_FEATURE_ID, FEATURE_OPTIONS, HELLO_THEME_FEATURE_ID } from '../site-features';
+import { COOKIE_CONSENT_FEATURE_ID, FEATURE_OPTIONS } from '../../components/site-features';
 
 const SITE_FEATURES_PROGRESS = {
 	current_step_id: 'site_features',
-	current_step_index: 3,
+	current_step_index: 0,
 };
 
 const STEP_TITLE = 'What do you want to include in your site?';
@@ -73,13 +73,24 @@ describe( 'SiteFeatures', () => {
 			} );
 		} );
 
-		it( 'does not render Interactions or WooCommerce', () => {
+		it( 'renders Interactions as a core feature', () => {
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
 			} );
 
-			expect( screen.queryByText( 'Interactions' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Interactions' ) ).toBeInTheDocument();
+			const card = screen.getByTestId( 'feature-card-interactions' );
+			expect( within( card ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not render Hello theme or WooCommerce', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			expect( screen.queryByText( 'Hello theme' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'WooCommerce' ) ).not.toBeInTheDocument();
 		} );
 
@@ -92,43 +103,9 @@ describe( 'SiteFeatures', () => {
 			const ids = FEATURE_OPTIONS.map( ( option ) => option.id );
 			expect( ids.indexOf( COOKIE_CONSENT_FEATURE_ID ) ).toBeGreaterThan( ids.indexOf( 'email_deliverability' ) );
 		} );
-
-		it( 'renders Recommended chip on Hello theme card', () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			const card = screen.getByTestId( `feature-card-${ HELLO_THEME_FEATURE_ID }` );
-			expect( within( card ).getByText( 'Recommended' ) ).toBeInTheDocument();
-		} );
-
-		it( 'hides Hello theme card when isHelloThemeActive is true', () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-				isHelloThemeActive: true,
-			} );
-
-			expect( screen.queryByText( 'Hello theme' ) ).not.toBeInTheDocument();
-		} );
 	} );
 
 	describe( 'Default selection state', () => {
-		it( 'selects Hello theme by default', async () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByRole( 'button', { name: 'Hello theme' } ) ).toHaveAttribute(
-					'aria-pressed',
-					'true'
-				);
-			} );
-		} );
-
 		it( 'does not select Cookie Consent by default', () => {
 			renderApp( {
 				isConnected: true,
@@ -195,62 +172,6 @@ describe( 'SiteFeatures', () => {
 				);
 			} );
 		} );
-
-		it( 'allows toggling Hello theme off', async () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			const helloButton = await screen.findByRole( 'button', { name: 'Hello theme' } );
-			fireEvent.click( helloButton );
-
-			expect( helloButton ).toHaveAttribute( 'aria-pressed', 'false' );
-		} );
-	} );
-
-	describe( 'Install orchestration on Continue', () => {
-		it( 'installs Hello theme when selected and Continue is clicked', async () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			await screen.findByRole( 'button', { name: 'Hello theme' } );
-			fireEvent.click( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) );
-
-			await waitFor( () => {
-				expect(
-					mockFetch.mock.calls.some(
-						( [ url, options ] ) =>
-							typeof url === 'string' &&
-							url.includes( 'install-theme' ) &&
-							typeof options?.body === 'string' &&
-							options.body.includes( 'hello-elementor' )
-					)
-				).toBe( true );
-			} );
-		} );
-
-		it( 'does not call install-theme when Hello is unselected', async () => {
-			renderApp( {
-				isConnected: true,
-				progress: SITE_FEATURES_PROGRESS,
-			} );
-
-			const helloButton = await screen.findByRole( 'button', { name: 'Hello theme' } );
-			fireEvent.click( helloButton );
-			fireEvent.click( screen.getByRole( 'button', { name: FINISH_BUTTON_LABEL } ) );
-
-			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalled();
-			} );
-
-			expect( mockFetch ).not.toHaveBeenCalledWith(
-				expect.stringContaining( 'install-theme' ),
-				expect.anything()
-			);
-		} );
 	} );
 
 	describe( 'External links', () => {
@@ -292,7 +213,9 @@ describe( 'SiteFeatures', () => {
 				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 			} );
-			const unselectedButton = screen.getByRole( 'button', { name: t( unselectedOption.labelKey ) } );
+			const unselectedButton = screen.getByRole( 'button', {
+				name: t( unselectedOption.labelKey ),
+			} );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );
@@ -302,7 +225,6 @@ describe( 'SiteFeatures', () => {
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
-				choices: { site_features: [ HELLO_THEME_FEATURE_ID ] },
 			} );
 
 			expect( screen.queryByText( PRO_PLAN_NOTICE_PATTERN ) ).not.toBeInTheDocument();

@@ -2,11 +2,12 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
-use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -213,6 +214,18 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertEquals( $custom_url, $data['items'][0]['url'] );
 	}
 
+	public function test_get_third_level_data__excludes_submissions_only_from_flyout_menu() {
+		$this->set_admin_user();
+		$item = $this->create_test_item( 'e-form-submissions', Menu_Config::EDITOR_GROUP_ID, true );
+		$this->provider->register_level3_item( $item );
+
+		$editor_one_menu = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT );
+		$flyout_menu = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_FLYOUT_MENU );
+
+		$this->assertContains( 'e-form-submissions', array_column( $editor_one_menu['items'], 'slug' ) );
+		$this->assertNotContains( 'e-form-submissions', array_column( $flyout_menu['items'], 'slug' ) );
+	}
+
 	public function test_get_third_level_data__expands_third_party_children() {
 		$this->set_admin_user();
 		$parent = $this->createMock( Menu_Item_Third_Level_Interface::class );
@@ -333,6 +346,67 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertEquals( $child_custom_url, $parent_item['url'], 'Parent should use first child custom URL' );
 	}
 
+	public function test_derive_event_id_from_slug__maps_known_slugs() {
+		$this->assertSame(
+			'saved_templates',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'edit.php?post_type=elementor_library' ] )
+		);
+		$this->assertSame(
+			'theme_builder',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'elementor-app' ] )
+		);
+	}
+
+	public function test_derive_event_id_from_slug__normalizes_elementor_prefixed_slugs() {
+		$this->assertSame(
+			'templates',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'elementor-templates' ] )
+		);
+		$this->assertSame(
+			'custom_elements',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'elementor-custom-elements' ] )
+		);
+		$this->assertSame(
+			'system_info',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'elementor-system-info' ] )
+		);
+	}
+
+	public function test_derive_event_id_from_slug__strips_query_and_hash_suffixes() {
+		$this->assertSame(
+			'settings',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'elementor-settings?tab=general' ] )
+		);
+		$this->assertSame(
+			'system',
+			$this->invoke_private_method( $this->provider, 'derive_event_id_from_slug', [ 'elementor-system#details' ] )
+		);
+	}
+
+	public function test_resolve_event_id__prefers_interface_value() {
+		$item = new Test_Event_Id_Menu_Item( 'explicit_event_id' );
+
+		$event_id = $this->invoke_private_method(
+			$this->provider,
+			'resolve_event_id',
+			[ $item, 'elementor-settings' ]
+		);
+
+		$this->assertSame( 'explicit_event_id', $event_id );
+	}
+
+	public function test_resolve_event_id__falls_back_to_slug_derivation() {
+		$item = $this->createMock( Menu_Item_Interface::class );
+
+		$event_id = $this->invoke_private_method(
+			$this->provider,
+			'resolve_event_id',
+			[ $item, 'elementor-system-info' ]
+		);
+
+		$this->assertSame( 'system_info', $event_id );
+	}
+
 	private function create_test_item( string $slug, string $group_id, bool $is_level3 ) {
 		if ( $is_level3 ) {
 			$item = $this->createMock( Menu_Item_Third_Level_Interface::class );
@@ -429,6 +503,46 @@ class Test_Custom_Url_Menu_Item implements Menu_Item_Third_Level_Interface, Menu
 
 	public function get_menu_url(): string {
 		return $this->url;
+	}
+}
+
+class Test_Event_Id_Menu_Item implements Menu_Item_Interface, Menu_Item_With_Event_Id_Interface {
+	private string $event_id;
+
+	public function __construct( string $event_id ) {
+		$this->event_id = $event_id;
+	}
+
+	public function get_capability(): string {
+		return 'manage_options';
+	}
+
+	public function get_label(): string {
+		return 'Event Id Item';
+	}
+
+	public function get_parent_slug(): string {
+		return '';
+	}
+
+	public function is_visible(): bool {
+		return true;
+	}
+
+	public function get_position(): int {
+		return 100;
+	}
+
+	public function get_slug(): string {
+		return 'event-id-item';
+	}
+
+	public function get_group_id(): string {
+		return 'test-group';
+	}
+
+	public function get_event_id(): string {
+		return $this->event_id;
 	}
 }
 

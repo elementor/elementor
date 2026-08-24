@@ -7,9 +7,10 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -46,22 +47,30 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return 'eicon-paragraph';
 	}
 
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'p', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => Html_V3_Prop_Type::make()
-				->default( [
-					'content'  => String_Prop_Type::generate( __( 'Type your paragraph here', 'elementor' ) ),
-					'children' => [],
-				] )
+			'paragraph' => Escaped_Html_Prop_Type::make()
+				->default( __( 'Type your paragraph here', 'elementor' ) )
 				->description( 'The text content of the paragraph.' )
 				->alias( 'text', 'content' ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'p', 'span' ] )
-				->default( 'p' ),
+				->default( 'p' )
+				->description( 'The HTML tag for the paragraph element. One of: p or span. Do not use heading or div tags.' ),
 
 			'link' => Link_Prop_Type::make(),
 

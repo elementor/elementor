@@ -10,10 +10,21 @@ const getComponentDocumentParams = ( id: number ) => ( {
 	data: { id },
 } );
 
-export const getComponentDocumentData = async ( id: number ) => {
-	try {
-		return await ajax.load< { id: number }, Document >( getComponentDocumentParams( id ) );
-	} catch {
-		return null;
+const pendingRequests = new Map< number, Promise< Document | null > >();
+
+export const getComponentDocumentData = ( id: number ): Promise< Document | null > => {
+	const pendingRequest = pendingRequests.get( id );
+
+	if ( pendingRequest ) {
+		return pendingRequest;
 	}
+
+	const request = ajax
+		.load< { id: number }, Document >( getComponentDocumentParams( id ) )
+		.catch( () => null )
+		.finally( () => pendingRequests.delete( id ) );
+
+	pendingRequests.set( id, request );
+
+	return request;
 };

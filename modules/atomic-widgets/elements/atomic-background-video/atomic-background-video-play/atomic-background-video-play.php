@@ -6,11 +6,12 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -26,7 +27,7 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'Play button for the Background Video element. Drop any element inside to replace the default label.';
+	public static $widget_description = 'Play button for the Background Video element. REQUIRED child: e-paragraph with the button label text (e.g. "Play"). Drop any element inside to replace the default label.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -50,11 +51,16 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-play';
+		// No Structure/Navigator icon: this locked control is identified by its title alone.
+		return '';
 	}
 
 	public function should_show_in_panel() {
 		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'button' );
 	}
 
 	protected static function define_props_schema(): array {
@@ -64,6 +70,15 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 		];
 	}
 
+	public static function get_props_schema(): array {
+		$schema = parent::get_props_schema();
+
+		// Locked sub-element: Display Conditions belong on the Background Video root only.
+		unset( $schema['display-conditions'] );
+
+		return $schema;
+	}
+
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
@@ -71,10 +86,6 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 				->set_id( 'settings' )
 				->set_items( [] ),
 		];
-	}
-
-	protected function define_default_html_tag() {
-		return 'button';
 	}
 
 	protected function define_initial_attributes() {
@@ -107,17 +118,33 @@ class Atomic_Background_Video_Play extends Atomic_Element_Base {
 		];
 	}
 
+	public static function build_default_element( bool $mark_required = false ): array {
+		$builder = static::generate()
+			->children( [ static::build_label_paragraph() ] )
+			->editor_settings( [
+				'title' => esc_html__( 'Play Button', 'elementor' ),
+			] );
+
+		if ( $mark_required ) {
+			$builder->meta( [ 'required' => true ] );
+		}
+
+		return $builder->build();
+	}
+
+	private static function build_label_paragraph(): array {
+		return Atomic_Paragraph::generate()
+			->meta( [ 'required' => true ] )
+			->settings( [
+				'paragraph' => Escaped_Html_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
+				'tag' => String_Prop_Type::generate( 'span' ),
+			] )
+			->build();
+	}
+
 	protected function define_default_children() {
 		return [
-			Atomic_Paragraph::generate()
-				->settings( [
-					'paragraph' => Html_V3_Prop_Type::generate( [
-						'content'  => String_Prop_Type::generate( esc_html__( 'Play', 'elementor' ) ),
-						'children' => [],
-					] ),
-					'tag' => String_Prop_Type::generate( 'span' ),
-				] )
-				->build(),
+			static::build_label_paragraph(),
 		];
 	}
 

@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -51,6 +52,10 @@ class Div_Block extends Atomic_Element_Base {
 		return 'eicon-div-block';
 	}
 
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div' );
+	}
+
 	protected static function define_props_schema(): array {
 		$tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 			->where( [
@@ -77,6 +82,7 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
+				->description( 'The HTML tag for the div block container. One of: div, header, section, article, aside, footer, a (link), or button. Do not use heading or paragraph tags.' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),

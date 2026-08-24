@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Grid;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
@@ -57,6 +58,10 @@ class Grid extends Atomic_Element_Base {
 		return 'eicon-library-grid';
 	}
 
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div' );
+	}
+
 	protected static function define_props_schema(): array {
 		$tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 			->where( [
@@ -83,7 +88,7 @@ class Grid extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
-				->description( 'The HTML tag for the grid container. Could be div, header, section, article, aside, footer, or a (link).' )
+				->description( 'The HTML tag for the grid container. One of: div, header, section, article, aside, footer, a (link), or button.' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),

@@ -21,6 +21,7 @@ describe( 'getComponentDocumentData', () => {
 		// Arrange
 		const componentId = 123;
 		const mockDocument = createMockDocument( { id: componentId } );
+
 		mockLoad.mockResolvedValueOnce( mockDocument );
 
 		// Act
@@ -44,5 +45,38 @@ describe( 'getComponentDocumentData', () => {
 
 		// Assert
 		expect( result ).toBeNull();
+	} );
+
+	it( 'should dedupe concurrent requests for the same component', async () => {
+		// Arrange
+		const componentId = 789;
+		const mockDocument = createMockDocument( { id: componentId } );
+
+		mockLoad.mockResolvedValue( mockDocument );
+
+		// Act
+		const results = await Promise.all( [
+			getComponentDocumentData( componentId ),
+			getComponentDocumentData( componentId ),
+		] );
+
+		// Assert
+		expect( mockLoad ).toHaveBeenCalledTimes( 1 );
+		expect( results ).toEqual( [ mockDocument, mockDocument ] );
+	} );
+
+	it( 'should request again after the previous request settled', async () => {
+		// Arrange
+		const componentId = 789;
+		const mockDocument = createMockDocument( { id: componentId } );
+
+		mockLoad.mockResolvedValue( mockDocument );
+
+		// Act
+		await getComponentDocumentData( componentId );
+		await getComponentDocumentData( componentId );
+
+		// Assert
+		expect( mockLoad ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

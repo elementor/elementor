@@ -12,10 +12,6 @@ on:
         required: false
         default: ''
 
-concurrency:
-  group: ${{ inputs.pull_request_number != '' && format('pr-{0}-playwright', inputs.pull_request_number) || format('playwright-suite-{0}', github.ref) }}
-  cancel-in-progress: ${{ inputs.pull_request_number != '' }}
-
 permissions:
   contents: read
 
@@ -50,6 +46,7 @@ jobs:
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
+    timeout-minutes: 20
     needs: [build-plugin, prepare-caller-build, get-php-version]
     permissions:
       contents: read
@@ -85,10 +82,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24.15.0
-          cache: 'npm'
-      - name: Install dependencies
-        run: |
-          npm run install:ci
+          package-manager-cache: false
+      - name: Restore dependency cache
+        uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
       - name: Download build artifact
         uses: actions/download-artifact@v8
         with:
@@ -397,7 +395,7 @@ jobs:
         with:
           github_user: ${{ github.actor }}
         env:
-          GH_TOKEN: ${{ secrets.PUBLIC_CLOUD_DEVOPS_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}

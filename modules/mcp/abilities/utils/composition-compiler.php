@@ -116,8 +116,8 @@ final class Composition_Compiler {
 			return $class_error;
 		}
 
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ) );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), $this->element_types_from_index( $index ) );
+		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
+		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs );
 		if ( $style_result['error'] ) {
 			return $style_result['error'];
 		}
@@ -210,18 +210,8 @@ final class Composition_Compiler {
 		return is_array( $value ) ? $value : [];
 	}
 
-	private function element_types_from_index( array $index ): array {
-		$element_types = [];
-
-		foreach ( $index as $config_id => $node ) {
-			$element_type = $node['widgetType'] ?? $node['elType'] ?? null;
-
-			if ( is_string( $element_type ) && '' !== $element_type ) {
-				$element_types[ $config_id ] = $element_type;
-			}
-		}
-
-		return $element_types;
+	private function get_active_breakpoints(): array {
+		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 	}
 
 	private function create_css_converter( ?Variables_Service $variables_service ): Css_Converter {

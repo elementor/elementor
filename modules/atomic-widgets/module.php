@@ -28,6 +28,12 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -46,6 +52,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Svg_Src_Transform
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Escaped_Html_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V2_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V3_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
@@ -93,6 +100,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Time_Range_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
@@ -176,6 +184,7 @@ class Module extends BaseModule {
 		'editor-interactions',
 		'editor-templates',
 		'editor-design-system',
+		'editor-site-settings',
 	];
 
 	public function get_name() {
@@ -287,6 +296,28 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+
+		add_filter( 'elementor/allowed_html_wrapper_tags', [ $this, 'add_inline_html_tags' ] );
+	}
+
+	public function add_inline_html_tags( array $tags ): array {
+		return array_merge( $tags, [
+			'b',
+			'i',
+			'em',
+			'u',
+			'ul',
+			'ol',
+			'li',
+			'blockquote',
+			'del',
+			'br',
+			'span',
+			'strong',
+			'sup',
+			'sub',
+			's',
+		] );
 	}
 
 	private function add_packages( $packages ) {
@@ -359,6 +390,15 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ACCORDION ) ) {
+			$elements_manager->register_element_type( new Atomic_Accordion() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+			$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
+		}
+
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
@@ -393,6 +433,7 @@ class Module extends BaseModule {
 		$transformers->register( Time_Range_Prop_Type::get_key(), new Time_Range_Transformer() );
 		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
 		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
+		$transformers->register( Escaped_Html_Prop_Type::get_key(), new Escaped_Html_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -514,6 +555,7 @@ class Module extends BaseModule {
 
 		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
 		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
+		$registry->register( Escaped_Html_Prop_Type::get_key(), new String_Plain_Resolver() );
 
 		return $resolver;
 	}
@@ -572,7 +614,12 @@ class Module extends BaseModule {
 			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
 			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
-			'.e-background-video__content { position: relative; z-index: 1; flex: 1; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; }',
+			// Editor empty state: content is a nested flex child inside padded root (overflow:hidden).
+			// Let content shrink to the inner flex area, then grow the empty-view to fill it.
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view.elementor-empty-view { position: relative; flex: 1 1 auto; min-height: 120px; height: auto; width: 100%; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view > .elementor-first-add { position: absolute; inset: 0; width: 100%; height: 100%; }',
 			'.e-background-video__controls { z-index: 2; }',
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
@@ -582,6 +629,38 @@ class Module extends BaseModule {
 			// sets one of the state classes from real playback, so exactly one button shows there.
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
+			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's
+			// base style in Chrome/Firefox, but Safari renders `::-webkit-details-marker` regardless of
+			// `display`, so a stray triangle would sit next to our chevron unless the pseudo-element is
+			// killed explicitly. `list-style: none` is kept for completeness (browsers that box the
+			// marker as a list-item marker box), the `::-webkit-details-marker` rule is what actually
+			// fixes Safari.
+			'.e-accordion-item-header-base { list-style: none; }',
+			'.e-accordion-item-header-base::-webkit-details-marker { display: none; }',
+			// Animated expand/collapse via `::details-content` (block-size 0 -> auto) needs
+			// `interpolate-size: allow-keywords` on the <details> element to let `block-size: auto`
+			// participate in the transition. Graceful degradation is deliberate here, but the two failure
+			// modes are different: `interpolate-size` is a real CSS property with a valid selector
+			// (`.e-accordion-item-base`), so that rule always PARSES everywhere — an unsupporting browser
+			// just drops the one unknown *declaration* inside it (inert on its own; harmless). The two
+			// `::details-content` rules are different: `::details-content` is an unrecognised
+			// pseudo-element there, which invalidates the *whole selector*, so the *entire rule* is
+			// dropped, not just a declaration. That whole-rule drop is what structurally guarantees
+			// "collapse to 0" and "expand on [open]" can never apply one without the other — both live
+			// behind the identical `::details-content` requirement, so an unsupporting browser parses
+			// neither and simply keeps the browser's native <details> toggle (content already shown/hidden
+			// correctly without any CSS from us): an instant toggle, never a silently blanked panel.
+			'.e-accordion-item-base { interpolate-size: allow-keywords; }',
+			'.e-accordion-item-base::details-content {',
+			'block-size: 0; overflow: hidden;',
+			'transition: block-size .3s ease, content-visibility .3s ease allow-discrete;',
+			'}',
+			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
+			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
+			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

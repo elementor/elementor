@@ -7,14 +7,15 @@
     "require": {
         "php": ">=7.4",
         "automattic/jetpack-autoloader": "^5",
-        "elementor/wp-one-package": "1.0.68",
-        "wordpress/mcp-adapter": "^0.5.0"
+        "elementor/elementor-mcp-composer": "^1.0.6",
+        "elementor/wp-one-package": "1.0.68"
     },
     "repositories": [
         {
             "type": "composer",
             "url": "https://composer.elementor.com",
             "only": [
+                "elementor/elementor-mcp-composer",
                 "elementor/wp-one-package"
             ]
         }

@@ -182,7 +182,7 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 		} );
 
 		describe( 'Dynamic is a whole-value replacement (outermost only)', () => {
-			const titlePropType = STUBS.htmlV3Title;
+			const titlePropType = STUBS.escapedHtmlTitle;
 
 			const findVariant = ( variants: ReturnType< typeof propTypeToJsonSchema >[ 'anyOf' ], constKey: string ) =>
 				( variants ?? [] ).find( ( variant ) => variant.properties?.$$type?.const === constKey );
@@ -198,12 +198,10 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 			it( 'does not duplicate dynamic on a nested field once the root offers it', () => {
 				// Arrange & Act
 				const jsonSchema = propTypeToJsonSchema( titlePropType );
-				const htmlVariant = findVariant( jsonSchema.anyOf, 'html-v3' );
-				const contentVariants = htmlVariant?.properties?.value?.properties?.content?.anyOf;
+				const escapedHtmlVariant = findVariant( jsonSchema.anyOf, 'escaped-html' );
 
 				// Assert
-				expect( findVariant( contentVariants, 'string' ) ).toBeDefined();
-				expect( findVariant( contentVariants, 'dynamic' ) ).toBeUndefined();
+				expect( escapedHtmlVariant?.properties?.value?.type ).toBe( 'string' );
 			} );
 
 			it( 'still accepts a whole-property dynamic value', () => {
