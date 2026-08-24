@@ -50,6 +50,41 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'fake-v3', $result );
 	}
 
+	public function test_execute__summary_falls_back_to_registry_description_for_v3_post_widgets() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_v3_widgets_no_description( [
+			'theme-post-title' => [ 'title' => [ 'type' => 'text' ] ],
+			'theme-post-featured-image' => [ 'image' => [ 'type' => 'media' ] ],
+			'theme-post-excerpt' => [ 'excerpt' => [ 'type' => 'text' ] ],
+			'theme-post-content' => [ 'align' => [ 'type' => 'select' ] ],
+		] );
+
+		$result = $this->ability->execute( [ 'summary' => true ] );
+
+		$descriptions_by_type = [];
+		foreach ( $result['widgets'] as $summary ) {
+			$descriptions_by_type[ $summary['type'] ] = $summary['description'] ?? null;
+		}
+
+		$this->assertStringContainsString( 'e-heading', $descriptions_by_type['theme-post-title'] );
+		$this->assertStringContainsString( 'e-image', $descriptions_by_type['theme-post-featured-image'] );
+		$this->assertStringContainsString( 'post-excerpt', $descriptions_by_type['theme-post-excerpt'] );
+		$this->assertStringContainsString( 'single-template', $descriptions_by_type['theme-post-content'] );
+		$this->assertStringContainsString( 'loop', $descriptions_by_type['theme-post-content'] );
+	}
+
+	public function test_execute__schema_falls_back_to_registry_description_for_v3_post_widgets() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_v3_widgets_no_description( [
+			'theme-post-title' => [ 'title' => [ 'type' => 'text' ] ],
+		] );
+
+		$result = $this->ability->execute( [] );
+
+		$this->assertArrayHasKey( 'theme-post-title', $result );
+		$this->assertStringContainsString( 'e-heading', $result['theme-post-title']['description'] );
+	}
+
 	public function test_execute__summary_includes_allowlisted_v3_type() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets( [
@@ -70,23 +105,34 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 	/**
 	 * @param array<string, array> $widgets_by_type widget_type => controls
 	 */
-	private function given_widget_manager_with_v3_widgets( array $widgets_by_type ): void {
+	private function given_widget_manager_with_v3_widgets_no_description( array $widgets_by_type ): void {
+		$this->given_widget_manager_with_v3_widgets( $widgets_by_type, null );
+	}
+
+	/**
+	 * @param array<string, array> $widgets_by_type widget_type => controls
+	 */
+	private function given_widget_manager_with_v3_widgets( array $widgets_by_type, ?string $description = 'Fake V3 widget' ): void {
 		$instances = [];
 
 		foreach ( $widgets_by_type as $type => $controls ) {
-			$instances[ $type ] = new class( $controls ) {
+			$instances[ $type ] = new class( $controls, $description ) {
 				private array $controls;
+				private ?string $description;
 
-				public function __construct( array $controls ) {
+				public function __construct( array $controls, ?string $description ) {
 					$this->controls = $controls;
+					$this->description = $description;
 				}
 
 				public function get_config(): array {
+					$meta = null === $this->description ? [] : [ 'description' => $this->description ];
+
 					return [
 						'controls' => $this->controls,
 						'atomic_props_schema' => null,
 						'title' => 'Fake V3',
-						'meta' => [ 'description' => 'Fake V3 widget' ],
+						'meta' => $meta,
 					];
 				}
 			};
