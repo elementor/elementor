@@ -51,10 +51,13 @@ class Atomic_List extends Atomic_Element_Base {
 		return 'eicon-bullet-list';
 	}
 
+	public static function get_computed_html_tag( array $settings ): string {
+		return 'ul';
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'tag' => String_Prop_Type::make()->default( 'ul' )->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
@@ -122,10 +125,6 @@ class Atomic_List extends Atomic_Element_Base {
 				] )
 				->build(),
 		];
-	}
-
-	protected function define_default_html_tag() {
-		return 'ul';
 	}
 
 	protected function define_allowed_child_types() {
