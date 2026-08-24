@@ -7,6 +7,9 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+// Set on the preview body for as long as an element is being dragged.
+const DRAGGING_CLASS = 'elementor-element-dragging';
+
 /**
  * @typedef {{}} DataBinding
  * @property {DOMStringMap} dataset The dataset of the element.
@@ -1173,14 +1176,8 @@ BaseElementView = BaseContainer.extend( {
 		return this.$el;
 	},
 
-	// Top-level elements are reordered by the document jQuery UI sortable, which owns their edit handle
-	// (`base-sections-container.js`). Nested elements have no sortable and rely on native dragging.
-	isTopLevelSortableHandle( eventTarget ) {
-		if ( this.$el.parents( '.e-con' ).length ) {
-			return false;
-		}
-
-		return !! jQuery( eventTarget ).closest( '.elementor-element-overlay' ).length;
+	toggleDraggingClass( isDragging ) {
+		this.$el.closest( 'body' ).toggleClass( DRAGGING_CLASS, isDragging );
 	},
 
 	/**
@@ -1203,12 +1200,6 @@ BaseElementView = BaseContainer.extend( {
 		this.getDomElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
-
-				if ( this.isTopLevelSortableHandle( e.originalEvent.target ) ) {
-					e.originalEvent.preventDefault();
-
-					return;
-				}
 
 				if ( this.getContainer().isLocked() ) {
 					e.originalEvent.preventDefault();
@@ -1234,12 +1225,16 @@ BaseElementView = BaseContainer.extend( {
 					helper.remove();
 				} );
 
+				this.toggleDraggingClass( true );
+
 				this.onDragStart( e );
 
 				elementor.channels.editor.reply( 'element:dragged', this );
 			},
 			onDragEnd: ( e ) => {
 				e.stopPropagation();
+
+				this.toggleDraggingClass( false );
 
 				this.onDragEnd( e );
 			},

@@ -21,6 +21,21 @@ export const Paste = () => {
 				assert.equal( elementor.saver.isEditorChanged(), true,
 					'Command applied the saver editor is changed.' );
 			} );
+
+			QUnit.test( 'Containers are the same element across nesting levels', ( assert ) => {
+				const topContainer = ElementsHelper.createContainer(),
+					innerContainer = ElementsHelper.createContainer();
+
+				innerContainer.model.set( 'isInner', true );
+
+				const isSameElement = $e.components
+					.get( 'document/elements' )
+					.utils
+					.isSameElement( innerContainer.model, topContainer );
+
+				assert.true( isSameElement,
+					'Container identity does not depend on its current nesting level.' );
+			} );
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {

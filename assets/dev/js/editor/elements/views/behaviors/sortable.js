@@ -234,9 +234,16 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		var model = elementor.channels.data.request( 'dragging:model' ),
+			targetModel = this.view.getContainer().model,
 			draggedElType = model.get( 'elType' ),
 			draggedIsInnerSection = 'section' === draggedElType && model.get( 'isInner' ),
-			targetIsInnerColumn = 'column' === this.view.getElementType() && this.view.isInner();
+			targetIsInnerColumn = 'column' === this.view.getElementType?.() && this.view.isInner();
+
+		if ( ! targetModel.isValidChild( model ) ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+
+			return;
+		}
 
 		if ( draggedIsInnerSection && targetIsInnerColumn ) {
 			jQuery( ui.sender ).sortable( 'cancel' );

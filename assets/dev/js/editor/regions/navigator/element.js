@@ -63,7 +63,9 @@ export default class extends Marionette.CompositeView {
 		let classes = 'elementor-navigator__element';
 		const elType = this.model.get( 'elType' );
 
-		if ( ! this.isNavigatorContainer() ) {
+		if ( this.isNavigatorContainer() ) {
+			classes += ' ' + NEW_NESTABLE_CLASS;
+		} else {
 			classes += ' elementor-navigator__element-' + elType;
 			if ( ! this.isExcludedNestableElement() ) {
 				classes += ' ' + NEW_NESTABLE_CLASS;

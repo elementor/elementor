@@ -188,35 +188,9 @@ class AddSectionBase extends Marionette.ItemView {
 	getDroppableOptions() {
 		return {
 			isDroppingAllowed: () => {
-				const draggedView = elementor.channels.editor.request( 'element:dragged' );
-
-				if ( draggedView?.el?.dataset?.id ) {
-					return elementor.getPreviewContainer().model.isValidChild( draggedView.model );
-				}
-
-				return true;
+				return ! elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
 			},
 			onDropping: ( side, event ) => {
-				const draggedView = elementor.channels.editor.request( 'element:dragged' );
-
-				if ( draggedView?.el?.dataset?.id ) {
-					event.stopPropagation();
-
-					elementor.getPreviewView().onPanelElementDragEnd();
-
-					elementor.channels.editor.reply( 'element:dragged', null );
-
-					$e.run( 'document/elements/move', {
-						container: draggedView.getContainer(),
-						target: elementor.getPreviewContainer(),
-						options: {
-							at: this.getOption( 'at' ),
-						},
-					} );
-
-					return;
-				}
-
 				elementor.getPreviewView().onDrop(
 					event,
 					{ side, at: this.getOption( 'at' ) },

@@ -16,6 +16,39 @@
 		}
 	};
 
+	// A droppable can place its placeholder outside itself (see `getPlaceholderOverride`),
+	// where the per-droppable cleanup can't reach it. Only one such placeholder should ever
+	// be visible, so it's tracked across droppables and cleared by whoever draws next.
+	var overridePlaceholder = null;
+
+	var clearOverridePlaceholder = function() {
+		if ( ! overridePlaceholder ) {
+			return;
+		}
+
+		overridePlaceholder.$placeholder.removeClass( overridePlaceholder.className ).remove();
+
+		overridePlaceholder = null;
+	};
+
+	// `dragleave` on the droppable being left can fire after `dragenter` on the one being
+	// entered, so a droppable may only clean up a placeholder it owns.
+	var clearOwnOverridePlaceholder = function( $placeholder ) {
+		if ( overridePlaceholder?.$placeholder.is( $placeholder ) ) {
+			clearOverridePlaceholder();
+		}
+	};
+
+	var setOverridePlaceholder = function( $placeholder, override ) {
+		const insertMethod = 'bottom' === override.side ? 'after' : 'before';
+
+		$placeholder.addClass( override.className );
+
+		$( override.element )[ insertMethod ]( $placeholder );
+
+		overridePlaceholder = { $placeholder, className: override.className };
+	};
+
 	var Draggable = function( userSettings ) {
 		var self = this,
 			settings = {},
@@ -91,6 +124,7 @@
 			elementsCache = {},
 			currentElement,
 			currentSide,
+			currentPlaceholderOverride = null,
 			isDroppingAllowedState = false,
 			originalCurrentElementOpacity = null,
 			placeholderContext = {},
@@ -106,6 +140,8 @@
 				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
 				isDroppingAllowed: null,
+				getPlaceholderOverride: null,
+				getFallbackItem: null,
 				onDragEnter: null,
 				onDragging: null,
 				onDropping: null,
@@ -211,12 +247,36 @@
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
-		var insertPlaceholder = function() {
+		// Lets a droppable place the placeholder outside its own subtree, so a drop that
+		// targets a different level than the hovered element can still be previewed.
+		var getPlaceholderOverride = function( event ) {
+			if ( 'function' !== typeof settings.getPlaceholderOverride ) {
+				return null;
+			}
+
+			return settings.getPlaceholderOverride.call( currentElement, currentSide, event, self );
+		};
+
+		var isSamePlaceholderOverride = function( override ) {
+			return override?.element === currentPlaceholderOverride?.element &&
+				override?.side === currentPlaceholderOverride?.side;
+		};
+
+		var insertPlaceholder = function( override = null ) {
 			if ( ! settings.placeholder ) {
 				return;
 			}
 
 			clearPreviousPlaceholder();
+			clearOverridePlaceholder();
+
+			currentPlaceholderOverride = override;
+
+			if ( override ) {
+				setOverridePlaceholder( elementsCache.$placeholder, override );
+
+				return;
+			}
 
 			const insertMode = getInsertMode();
 
@@ -567,7 +627,7 @@
 					$( document ).on( 'dragend', onDocumentDragEnd );
 				}
 
-				insertPlaceholder();
+				insertPlaceholder( getPlaceholderOverride( event ) );
 
 				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
 
@@ -596,8 +656,10 @@
 
 			event.preventDefault();
 
-			if ( oldSide !== currentSide ) {
-				insertPlaceholder();
+			const placeholderOverride = getPlaceholderOverride( event );
+
+			if ( oldSide !== currentSide || ! isSamePlaceholderOverride( placeholderOverride ) ) {
+				insertPlaceholder( placeholderOverride );
 			}
 
 			if ( 'function' === typeof settings.onDragging ) {
@@ -639,11 +701,23 @@
 		var onDrop = function( event ) {
 			event.preventDefault();
 
+			// Matches `onDragEnter`/`onDragOver`, and keeps the fallback handler on the Droppable
+			// itself from running a second time for a drop an item has already taken.
+			event.stopPropagation();
+
+			if ( ! currentElement ) {
+				return;
+			}
+
 			setSide( event );
 
 			if ( ! isDroppingAllowedState ) {
 				return;
 			}
+
+			// The fallback handlers run on the Droppable itself rather than on a matched item,
+			// so point `currentTarget` at the item the drop actually resolved to.
+			event.currentTarget = currentElement;
 
 			// Trigger a Droppable-specific `onDropping` callback.
 			if ( settings.onDropping ) {
@@ -651,12 +725,64 @@
 			}
 		};
 
+		// Runs only when no item matched, because a delegated handler stops propagation before
+		// the event reaches the Droppable itself. Lets a drop that lands inside the Droppable
+		// but outside any of its items still resolve to one.
+		var withFallbackItem = function( handler ) {
+			return function( event ) {
+				var item = settings.getFallbackItem( event );
+
+				if ( ! item ) {
+					return;
+				}
+
+				return handler.call( item, event );
+			};
+		};
+
+		// Moving from an item out into the Droppable itself fires `dragenter` on the Droppable
+		// before the item's `dragleave`, so the item is still current and the enter is ignored.
+		// Only a change of item releases it: a fallback item is the one nearest the pointer
+		// rather than the one under it, so releasing on every event would leave the Droppable
+		// entering and leaving itself for the whole drag.
+		var withFallbackItemChange = function( handler ) {
+			var withItem = withFallbackItem( handler );
+
+			return function( event ) {
+				var item = settings.getFallbackItem( event );
+
+				if ( currentElement && item && currentElement !== item ) {
+					self.doDragLeave();
+				}
+
+				return withItem.call( this, event );
+			};
+		};
+
+		var fallbackHandlers = {};
+
 		var attachEvents = function() {
 			elementsCache.$element
 				.on( 'dragenter', settings.items, onDragEnter )
 				.on( 'dragover', settings.items, onDragOver )
 				.on( 'drop', settings.items, onDrop )
 				.on( 'dragleave drop', settings.items, onDragLeave );
+
+			if ( 'function' !== typeof settings.getFallbackItem ) {
+				return;
+			}
+
+			fallbackHandlers = {
+				dragenter: withFallbackItemChange( onDragEnter ),
+				dragover: withFallbackItemChange( onDragOver ),
+				drop: withFallbackItem( onDrop ),
+			};
+
+			elementsCache.$element
+				.on( 'dragenter', fallbackHandlers.dragenter )
+				.on( 'dragover', fallbackHandlers.dragover )
+				.on( 'drop', fallbackHandlers.drop )
+				.on( 'dragleave drop', onDragLeave );
 		};
 
 		var init = function() {
@@ -668,6 +794,8 @@
 		};
 
 		this.doDragLeave = function() {
+			clearOwnOverridePlaceholder( elementsCache.$placeholder );
+
 			if ( settings.placeholder ) {
 				elementsCache.$placeholder.remove();
 			}
@@ -682,6 +810,7 @@
 			}
 
 			currentElement = currentSide = null;
+			currentPlaceholderOverride = null;
 		};
 
 		this.destroy = function() {
@@ -690,6 +819,16 @@
 				.off( 'dragover', settings.items, onDragOver )
 				.off( 'drop', settings.items, onDrop )
 				.off( 'dragleave drop', settings.items, onDragLeave );
+
+			if ( ! fallbackHandlers.dragenter ) {
+				return;
+			}
+
+			elementsCache.$element
+				.off( 'dragenter', fallbackHandlers.dragenter )
+				.off( 'dragover', fallbackHandlers.dragover )
+				.off( 'drop', fallbackHandlers.drop )
+				.off( 'dragleave drop', onDragLeave );
 		};
 
 		init();

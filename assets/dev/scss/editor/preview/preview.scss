@@ -336,6 +336,13 @@ html.elementor-html {
 	z-index: $first-layer;
 	pointer-events: all;
 	transition: var(--e-a-transition-hover);
+
+	// A native drag freezes `:hover`, so the dragged element keeps its handles. They are drawn
+	// outside the element they belong to, where they cover the neighbour above it and swallow
+	// its drops.
+	.elementor-element-dragging & {
+		pointer-events: none;
+	}
 }
 
 .elementor-editor-element-edit {
@@ -433,6 +440,22 @@ html.elementor-html {
 		margin-inline-start: var(--e-placeholder-margin-inline-start);
 		width: var(--e-placeholder-width);
 		min-width: 200px;
+	}
+
+	// Shown between top-level Containers while a nested Container is dragged out to the
+	// document level. The negative block margins cancel its own height, so showing it
+	// doesn't push the Containers around and make the drop target move under the cursor.
+	&.e-document-level {
+		margin-block: calc(-0.5 * #{$widget-placeholder-size});
+		// It is drawn outside the Container that owns the drag, right under the cursor, so
+		// taking the drop would hand it to an element with no Droppable and lose it.
+		pointer-events: none;
+
+		// As the last child its bottom margin collapses out of the wrapper instead of
+		// shrinking it, so the whole height has to be taken off the top.
+		&:last-child {
+			margin-block: calc(-1 * #{$widget-placeholder-size}) 0;
+		}
 	}
 }
 

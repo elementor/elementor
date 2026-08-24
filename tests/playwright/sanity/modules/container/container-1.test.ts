@@ -321,6 +321,25 @@ test.describe( 'Container tests #1 @container', () => {
 		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
 		await expect( child ).toHaveClass( /e-parent/ );
 		await expect( child ).toHaveClass( /e-con-full/ );
+
+		const runHistoryCommand = ( command: 'undo' | 'redo' ) => page.evaluate( ( historyCommand ) => {
+			( window as unknown as { $e: { run: ( commandName: string ) => void } } )
+				.$e.run( `document/history/${ historyCommand }` );
+		}, command );
+
+		await runHistoryCommand( 'undo' );
+		await expect.poll( getRootOrder ).toEqual( [ parentContainer ] );
+		await expect( child ).toHaveClass( /e-child/ );
+
+		await runHistoryCommand( 'redo' );
+		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
+		await expect( child ).toHaveClass( /e-parent/ );
+
+		await editor.saveAndReloadPage();
+		await editor.waitForPanelToLoad();
+		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
+		await expect( child ).toHaveClass( /e-parent/ );
+		await expect( child ).toHaveClass( /e-con-full/ );
 	} );
 
 	test( 'Container nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {

@@ -27,9 +27,12 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	getSortableOptions() {
+		// Containers are deliberately absent from `items`: they are moved by the HTML5 drag &
+		// drop system, which can both reorder and nest them. Letting jQuery UI claim the handle
+		// would capture the drag and limit it to reordering at the document level.
 		return {
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
-			items: '> .elementor-section, > .e-con',
+			items: '> .elementor-section',
 		};
 	},
 

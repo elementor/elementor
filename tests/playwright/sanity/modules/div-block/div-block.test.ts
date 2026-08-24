@@ -46,6 +46,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const editor = await wpAdmin.openNewPage();
 		const parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 		const childDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+		const childLocator = editor.getPreviewFrame().locator( `.elementor-element-${ childDivBlock }` );
 
 		const getParentDivBlockId = async ( elementId: string ) => {
 			const elementHandle = await editor.getElementHandle( elementId );
@@ -70,6 +71,7 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		// Assert.
 		expect( await getParentDivBlockId( childDivBlock ) ).toBe( parentDivBlock );
+		await expect( childLocator ).toHaveClass( /e-child/ );
 
 		// Act - Un-nest the child div block to the document root.
 		await editor.previewFrame.dragAndDrop(
@@ -83,6 +85,13 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		// Assert.
 		expect( await getParentDivBlockId( childDivBlock ) ).toBeNull();
+		await expect( childLocator ).toHaveClass( /e-parent/ );
+
+		await editor.saveAndReloadPage();
+		await editor.waitForPanelToLoad();
+
+		expect( await getParentDivBlockId( childDivBlock ) ).toBeNull();
+		await expect( childLocator ).toHaveClass( /e-parent/ );
 	} );
 
 	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {
