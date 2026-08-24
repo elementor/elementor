@@ -223,7 +223,7 @@
 	// TODO: Find a better solution.
 	& > &,
 	&-inner > &,
-	.elementor-widget & {
+	&.e-child {
 
 		> .elementor-element-overlay {
 
