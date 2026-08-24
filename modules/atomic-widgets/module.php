@@ -383,6 +383,19 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 	}
 
+	private function register_list_element( Elements_Manager $elements_manager ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
+			return $this;
+		}
+
+		$elements_manager->register_element_type( new Atomic_List() );
+		$elements_manager->register_element_type( new Atomic_List_Item() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Marker() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Content() );
+
+		return $this;
+	}
+
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
@@ -394,12 +407,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
-			$elements_manager->register_element_type( new Atomic_List() );
-			$elements_manager->register_element_type( new Atomic_List_Item() );
-			$elements_manager->register_element_type( new Atomic_List_Item_Marker() );
-			$elements_manager->register_element_type( new Atomic_List_Item_Content() );
-		}
+		$this->register_list_element( $elements_manager );
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ACCORDION ) ) {
 			$elements_manager->register_element_type( new Atomic_Accordion() );
