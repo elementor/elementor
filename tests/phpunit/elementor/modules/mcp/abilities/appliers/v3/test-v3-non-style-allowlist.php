@@ -72,4 +72,31 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 			$this->assertIsArray( V3_Widget_Bridge_Registry::get_style_overrides( $type ) );
 		}
 	}
+
+	public function test_get_description__returns_v4_preference_hint_for_post_widgets() {
+		$this->assertStringContainsString( 'e-heading', V3_Widget_Bridge_Registry::get_description( 'theme-post-title' ) );
+		$this->assertStringContainsString( 'post-title', V3_Widget_Bridge_Registry::get_description( 'theme-post-title' ) );
+
+		$this->assertStringContainsString( 'e-image', V3_Widget_Bridge_Registry::get_description( 'theme-post-featured-image' ) );
+		$this->assertStringContainsString( 'featured-image', V3_Widget_Bridge_Registry::get_description( 'theme-post-featured-image' ) );
+
+		$this->assertStringContainsString( 'post-excerpt', V3_Widget_Bridge_Registry::get_description( 'theme-post-excerpt' ) );
+	}
+
+	public function test_get_description__theme_post_content_forbids_loop_placement() {
+		$description = V3_Widget_Bridge_Registry::get_description( 'theme-post-content' );
+
+		$this->assertNotNull( $description );
+		$this->assertStringContainsStringIgnoringCase( 'single-template', $description );
+		$this->assertStringContainsString( 'loop', $description );
+	}
+
+	public function test_get_description__nav_menu_and_archive_title_have_no_v4_hint() {
+		$this->assertNull( V3_Widget_Bridge_Registry::get_description( 'nav-menu' ) );
+		$this->assertNull( V3_Widget_Bridge_Registry::get_description( 'theme-archive-title' ) );
+	}
+
+	public function test_get_description__unknown_widget_returns_null() {
+		$this->assertNull( V3_Widget_Bridge_Registry::get_description( 'unknown-widget' ) );
+	}
 }

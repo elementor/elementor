@@ -8,7 +8,7 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
 - `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
-- `elementor/list-components` - User-defined reusable widget compositions; only call when the user explicitly asks to use a component (see COMPONENTS below)
+- `elementor/list-components` - Discover reusable widget compositions and the component capabilities available for the current license tier (see COMPONENTS)
 
 # TOOL SUPPORT
 Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
@@ -16,8 +16,9 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 # WORKFLOW
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
-3. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
-4. Use returned element IDs for subsequent configuration changes
+3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
+4. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+5. Use returned element IDs for subsequent configuration changes
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
@@ -27,37 +28,14 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 - Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
 
 # COMPONENTS (only when explicitly requested)
+Elementor components are reusable widget compositions; global classes are reusable styles. Do not substitute one for the other.
 
-**Do NOT call `elementor/list-components` by default.** Compose from raw widgets unless the user explicitly asks to use a component (e.g. "use my Hero component", "insert the Product Card component", "reuse the CTA component I made").
+Call `elementor/list-components` before building a repeated, named, or otherwise reusable structure. Use its `capabilities` response to decide the flow:
+- When `can_add_to_page` is true, reuse a matching component whose `overridable_props` cover the required customization.
+- When no suitable component exists and `can_create` is true, create one through `elementor/manage-component`, then place it.
+- When the required capability is false, build with raw widgets. Do not claim that a component was created or placed.
 
-## When the user explicitly asks for a component
-
-1. Call `elementor/list-components` with no arguments and find components whose names match what the user asked for (fuzzy match is fine: "Hero" → "Hero Section", etc.). If more than one component name is a plausible match, do NOT guess — ask the user which one before fetching the schema.
-2. If found, call `elementor/list-components` again with `component_ids` set to the id(s) you plan to use (batch multiple in one call) and verify each `overridable_props` covers the customizations the user needs.
-3. If a component is missing, archived (`is_archived: true`), or its overridable props do not cover the required customizations, fall back to raw widgets and tell the user why.
-
-## Placement
-- Use `<e-component configuration-id="my-hero">` in `xml_structure`. **Leaf tag — no child tags inside it.**
-- Configure it under `element_config` like any other widget. The value has the flat shape `{ component_id, overrides? }` (the widget has no other settings). Each override value uses the plain-value shape from `origin_prop_schema` — no `$$type` envelopes, same convention as regular widget settings:
-
-```json
-{
-  "element_config": {
-    "my-hero": {
-      "component_id": 42,
-      "overrides": {
-        "title": "Welcome",
-        "cta_url": "https://example.com"
-      }
-    }
-  }
-}
-```
-
-- `component_id` is required. `overrides` is optional — omit it entirely if you have no overrides to apply.
-- Only `override_key`s listed in `overridable_props` are valid. Unknown keys are rejected.
-- Do NOT place archived components (`is_archived: true`).
-- Components can be mixed with raw widgets in the same composition.
+Place a component as the self-closing leaf tag `<e-component configuration-id="my-hero"/>`. Configure it through `element_config` with `{ component_id, overrides? }`. Override values use the plain-value shape from `origin_prop_schema`; only listed override keys are valid. Components can be mixed with raw widgets.
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
@@ -237,3 +215,5 @@ Note: No height/width specified on any element - flexbox handles layout automati
 
 # FURTHER INSTRUCTIONS
 Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.
+
+If components were requested or used, verify that each was created or placed successfully before reporting completion.

@@ -14,6 +14,8 @@ class Document_Mutator {
 
 	const DOCUMENT_ROOT = 'document';
 
+	const WIDGET_EL_TYPE = 'widget';
+
 	/** @var \Elementor\Elements_Manager */
 	private $element_manager;
 
@@ -91,7 +93,13 @@ class Document_Mutator {
 			$element['id'] = $this->generate_id();
 		}
 
-		if ( 'document' === $parent_id ) {
+		if ( self::DOCUMENT_ROOT === $parent_id ) {
+			$root_child_error = $this->check_document_root_child_allowed( $element );
+
+			if ( is_wp_error( $root_child_error ) ) {
+				return $root_child_error;
+			}
+
 			return $this->splice_into( $tree, $index, $element );
 		}
 
@@ -283,7 +291,7 @@ class Document_Mutator {
 	private function insert_into_tree( array $tree, string $parent_id, ?int $index, array $element ) {
 		foreach ( $tree as $i => $node ) {
 			if ( isset( $node['id'] ) && $node['id'] === $parent_id ) {
-				if ( isset( $node['elType'] ) && 'widget' === $node['elType'] ) {
+				if ( isset( $node['elType'] ) && self::WIDGET_EL_TYPE === $node['elType'] ) {
 					return new \WP_Error(
 						'elementor_invalid_parent',
 						__( 'Cannot insert into a widget element.', 'elementor' ),
@@ -339,6 +347,28 @@ class Document_Mutator {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Mirrors the editor's `Document.isValidChild`: only element types may sit at the document
+	 * root, so widgets inserted here would produce a tree the editor itself refuses to create.
+	 *
+	 * @return null|\WP_Error
+	 */
+	private function check_document_root_child_allowed( array $element ): ?\WP_Error {
+		if ( self::WIDGET_EL_TYPE !== ( $element['elType'] ?? '' ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_invalid_parent',
+			sprintf(
+				/* translators: %s: widget type */
+				__( '"%s" is a widget and cannot be a direct child of the document. Wrap it in a container element such as e-flexbox or e-div-block.', 'elementor' ),
+				$element['widgetType'] ?? self::WIDGET_EL_TYPE
+			),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 
 	/**
