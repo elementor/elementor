@@ -73,24 +73,9 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
 			}
 
-			let modelToCreate = model;
-
-			if ( isContainerElement( model ) ) {
-				const isInner = isInnerContainer( container.model );
-
-				modelToCreate = {
-					...model,
-					isInner,
-					...( isInner && 'container' === model.elType
-						? {
-							settings: {
-								...( model.settings || {} ),
-								content_width: 'full',
-							},
-						}
-						: {} ),
-				};
-			}
+			const modelToCreate = isContainerElement( model )
+				? { ...model, isInner: isInnerContainer( container.model ) }
+				: model;
 
 			if ( ! container?.view || container.view.isDestroyed ) {
 				$e.components.get( 'document' ).utils.addModelToParent( container.id, modelToCreate, options );
