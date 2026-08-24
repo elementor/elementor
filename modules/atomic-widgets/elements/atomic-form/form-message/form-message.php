@@ -10,7 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -64,10 +64,7 @@ abstract class Form_Message extends Atomic_Element_Base {
 		return [
 			Atomic_Paragraph::generate()
 				->settings( [
-					'paragraph' => Html_V3_Prop_Type::generate( [
-						'content' => String_Prop_Type::generate( static::get_default_status_paragraph_text() ),
-						'children' => [],
-					] ),
+					'paragraph' => Escaped_Html_Prop_Type::generate( static::get_default_status_paragraph_text() ),
 				] )
 				->build(),
 		];

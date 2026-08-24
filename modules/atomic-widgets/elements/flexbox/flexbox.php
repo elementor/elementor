@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Flexbox;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -35,6 +36,8 @@ class Flexbox extends Atomic_Element_Base {
 		return 'e-flexbox';
 	}
 
+	public static $widget_description = 'A container (div) with flex display and flex-direction row by default.';
+
 	public static function get_element_type(): string {
 		return 'e-flexbox';
 	}
@@ -49,6 +52,10 @@ class Flexbox extends Atomic_Element_Base {
 
 	public function get_icon() {
 		return 'eicon-flexbox';
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div' );
 	}
 
 	protected static function define_props_schema(): array {

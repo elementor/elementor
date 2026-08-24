@@ -55,6 +55,7 @@ abstract class Abstract_Ability {
 		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
 		$mcp['public'] = true;
 		$meta['mcp'] = $mcp;
+		$meta['show_in_rest'] = true;
 		$definition['meta'] = $meta;
 		wp_register_ability( $this->get_id(), $definition );
 	}

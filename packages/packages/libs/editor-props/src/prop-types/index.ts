@@ -45,6 +45,7 @@ export * from './query-filter';
 export * from './html';
 export * from './html-v2';
 export * from './html-v3';
+export * from './escaped-html';
 export * from './filter-prop-types/filter';
 export * from './transform-prop-types/transform';
 export * from './transform-prop-types/transform-functions';
