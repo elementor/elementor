@@ -78,6 +78,15 @@ Some elements have internal tree structures (nesting). When using these elements
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
 - style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media (--breakpoint)` blocks (e.g. `@media (--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css`, which is stripped by Pro 3.35+.
+- **V3 `inner_elements`:** Allowlisted V3 widgets that declare `inner_elements` in `elementor/get-widget-schema` (e.g. `nav-menu`) require scoped alias blocks in `style` — one block per sub-part. Bare wrapper declarations (e.g. `margin-top`) may appear before alias blocks and map to widget wrapper/advanced controls; unscoped look-and-feel props belong inside `main-menu` / `dropdown` / `toggle` blocks. Other unscoped declarations map to the default inner element (`main-menu` for nav-menu). Use `alias:state` for hover/focus/active (e.g. `main-menu:hover { color: #aaa; }`). Only properties listed under `inner_elements.<alias>.accepted_css_properties` are converted; prefer longhand. `classes` still target the widget wrapper only.
+
+```css
+main-menu { color: #111111; font-size: 1rem; }
+main-menu:hover { color: #aaaaaa; }
+dropdown { color: #222222; }
+toggle { color: #333333; }
+@media (--mobile) { main-menu { font-size: 0.875rem; } }
+```
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
 - **box-shadow**: literal values only — `var(...)` wrappers are not supported.
@@ -208,7 +217,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
 - **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT). For `<e-component>` config-ids the value is `{ component_id, overrides? }` (see COMPONENTS section).
-- **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). Variables by **label** via `var(--label)`
+- **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). V3 widgets with `inner_elements` use alias blocks instead of flat rules (see CONFIGURATION). Variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
 - **parent_id**: ID of the parent container (omit to insert at document root)

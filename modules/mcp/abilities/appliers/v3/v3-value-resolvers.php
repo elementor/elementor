@@ -91,6 +91,26 @@ class V3_Value_Resolvers {
 		];
 	}
 
+	/**
+	 * @return array{top: string, right: string, bottom: string, left: string, unit: string, isLinked: bool}|null
+	 */
+	public static function resolve_single_dimension_side( string $css_value, string $side ): ?array {
+		$parsed = self::parse_length( trim( $css_value ) );
+
+		if ( null === $parsed || ! in_array( $side, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
+			return null;
+		}
+
+		return [
+			'top' => 'top' === $side ? (string) $parsed['size'] : '',
+			'right' => 'right' === $side ? (string) $parsed['size'] : '',
+			'bottom' => 'bottom' === $side ? (string) $parsed['size'] : '',
+			'left' => 'left' === $side ? (string) $parsed['size'] : '',
+			'unit' => $parsed['unit'],
+			'isLinked' => false,
+		];
+	}
+
 	public static function resolve_color( string $css_value ): string {
 		return trim( $css_value );
 	}
@@ -283,6 +303,8 @@ class V3_Value_Resolvers {
 				return self::resolve_dimension( $css_value );
 			case 'sides':
 				return self::resolve_sides_shorthand( $css_value );
+			case 'dimension_side':
+				return self::resolve_single_dimension_side( $css_value, (string) ( $args['side'] ?? '' ) );
 			case 'box_shadow':
 				return self::resolve_box_shadow( $css_value );
 			case 'border':
