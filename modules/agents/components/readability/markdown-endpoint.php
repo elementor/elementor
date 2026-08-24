@@ -228,9 +228,10 @@ class Markdown_Endpoint extends Feature_Component {
 			return;
 		}
 
-		$extractor_id = Content_Extractor::get_extractor_id( $post );
-		$body         = Content_Extractor::extract( $post );
-		$frontmatter  = Frontmatter_Builder::build( $post, $extractor_id );
+		$extractor    = new Content_Extractor();
+		$extractor_id = $extractor->get_extractor_id( $post );
+		$body         = $extractor->extract( $post );
+		$frontmatter  = ( new Frontmatter_Builder() )->build( $post, $extractor_id );
 
 		$output = $frontmatter . "\n\n" . $body;
 

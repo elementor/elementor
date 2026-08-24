@@ -9,6 +9,14 @@ use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Request_Path;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -45,6 +53,7 @@ class Module extends BaseModule {
 	private Llms_Cache $cache;
 	private Content_Generator $generator;
 	private Robots_Txt_Handler $robots_handler;
+	private Well_Known_Router $well_known_router;
 
 	public function get_name() {
 		return 'agents';
@@ -94,6 +103,22 @@ class Module extends BaseModule {
 
 		// Initialise the feature registry.
 		$this->feature_registry = new Feature_Registry();
+
+		// Initialise the well-known router (must come before endpoint registration).
+		$this->well_known_router = new Well_Known_Router();
+		$this->add_component( 'well_known_router', $this->well_known_router );
+		$this->well_known_router->init();
+
+		// Register /.well-known/ endpoints.
+		// Order: Phase 1.1 stubs first (is_applicable=false), ARD manifest last
+		// so it can introspect active peers via get_active_endpoints().
+		$this->register_well_known_endpoint( new Oauth_Authorization_Server() );
+		$this->register_well_known_endpoint( new Webmcp_Manifest() );
+		$this->register_well_known_endpoint( new Oauth_Protected_Resource() );
+		$this->register_well_known_endpoint( new Auth_Md() );
+		$this->register_well_known_endpoint( new Api_Catalog() );
+		$this->register_well_known_endpoint( new Agent_Skills() );
+		$this->register_well_known_endpoint( new Ard_Manifest() );
 
 		// Register readability components.
 		$this->register_component( new Markdown_Endpoint() );
@@ -615,5 +640,21 @@ class Module extends BaseModule {
 		if ( $component->is_enabled() ) {
 			$component->register();
 		}
+	}
+
+	/**
+	 * Register a well-known endpoint component.
+	 *
+	 * Adds it to the feature registry, the module's component store, and the
+	 * well-known router. The router handles dispatch — the component's own
+	 * register() is a no-op. Disabled/inapplicable endpoints are still
+	 * registered so the router and registry are always complete.
+	 *
+	 * @param \Elementor\Modules\Agents\Components\Discovery\Well_Known\Abstract_Well_Known_Endpoint $endpoint
+	 */
+	private function register_well_known_endpoint( $endpoint ): void {
+		$this->feature_registry->register( $endpoint );
+		$this->add_component( $endpoint->get_id(), $endpoint );
+		$this->well_known_router->register_endpoint( $endpoint );
 	}
 }
