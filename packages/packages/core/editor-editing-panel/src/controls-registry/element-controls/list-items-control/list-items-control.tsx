@@ -1,18 +1,7 @@
 import * as React from 'react';
 import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
-import {
-	getContainer,
-	updateElementEditorSettings,
-	useElementEditorSettings,
-	type V1Element,
-} from '@elementor/editor-elements';
+import { updateElementEditorSettings, useElementChildren, useElementEditorSettings } from '@elementor/editor-elements';
 import { type CreateOptions } from '@elementor/editor-props';
-import {
-	__privateUseListenTo as useListenTo,
-	commandEndEvent,
-	v1ReadyEvent,
-	windowEvent,
-} from '@elementor/editor-v1-adapters';
 import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -20,33 +9,14 @@ import { useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
 import { addItem, duplicateItem, LIST_ITEM_ELEMENT_TYPE, type ListItem, moveItem, removeItem } from './list-actions';
 
+const LIST_ELEMENT_TYPE = 'e-list';
+
 const getEffectiveListItemLabel = ( label: string | undefined, fallbackLabel: string ) => {
 	return label?.trim() ? label : fallbackLabel;
 };
 
-const useListItems = ( elementId: string ) => {
-	return useListenTo(
-		[
-			v1ReadyEvent(),
-			windowEvent( 'elementor/element/update_editor_settings' ),
-			commandEndEvent( 'document/elements/create' ),
-			commandEndEvent( 'document/elements/delete' ),
-			commandEndEvent( 'document/elements/update' ),
-			commandEndEvent( 'document/elements/set-settings' ),
-		],
-		() => {
-			const container = getContainer( elementId );
-			const children = container?.children ?? [];
-
-			return children
-				.filter( ( child ) => child.model.get( 'elType' ) === LIST_ITEM_ELEMENT_TYPE )
-				.map( ( child: V1Element ) => ( {
-					id: child.id,
-					editorSettings: child.model.get( 'editor_settings' ) ?? {},
-				} ) );
-		},
-		[ elementId ]
-	) as Array< { id: string; editorSettings: Record< string, string > } >;
+const getDefaultListItemLabel = ( index: number ) => {
+	return `Item ${ index + 1 }`;
 };
 
 export const ListItemsControl = ( { label }: { label: string } ) => {
@@ -59,11 +29,15 @@ export const ListItemsControl = ( { label }: { label: string } ) => {
 
 const ListItemsControlContent = ( { label }: { label: string } ) => {
 	const { element } = useElement();
-	const listItems = useListItems( element.id );
+	const { [ LIST_ITEM_ELEMENT_TYPE ]: listItems } = useElementChildren(
+		element.id,
+		{ [ LIST_ELEMENT_TYPE ]: LIST_ITEM_ELEMENT_TYPE },
+		{ includeSelfAsParent: true }
+	);
 
 	const repeaterValues: RepeaterItem< ListItem >[] = listItems.map( ( item, index ) => ( {
 		id: item.id,
-		title: getEffectiveListItemLabel( item.editorSettings?.title, `Item ${ index + 1 }` ),
+		title: getDefaultListItemLabel( index ),
 		index,
 	} ) );
 
@@ -113,10 +87,16 @@ const ListItemsControlContent = ( { label }: { label: string } ) => {
 	);
 };
 
-const ItemLabel = ( { value }: { value: ListItem } ) => {
+const ItemLabel = ( { value, index }: { value: ListItem; index: number } ) => {
+	const fallbackLabel = value.title ?? getDefaultListItemLabel( index );
+
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
-			<span>{ value.title }</span>
+			{ value.id ? (
+				<ListItemRepeaterLabel elementId={ value.id } fallbackLabel={ fallbackLabel } />
+			) : (
+				<span>{ fallbackLabel }</span>
+			) }
 		</Stack>
 	);
 };
@@ -131,6 +111,13 @@ const ItemContent = ( { value }: { value: ListItem } ) => {
 			<ListItemLabelControl elementId={ value.id } fallbackLabel={ value.title ?? '' } />
 		</Stack>
 	);
+};
+
+const ListItemRepeaterLabel = ( { elementId, fallbackLabel }: { elementId: string; fallbackLabel: string } ) => {
+	const editorSettings = useElementEditorSettings( elementId );
+	const label = getEffectiveListItemLabel( editorSettings?.title, fallbackLabel );
+
+	return <span>{ label }</span>;
 };
 
 const ListItemLabelControl = ( { elementId, fallbackLabel }: { elementId: string; fallbackLabel: string } ) => {

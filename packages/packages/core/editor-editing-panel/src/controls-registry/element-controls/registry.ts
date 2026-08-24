@@ -1,8 +1,8 @@
 import { type ControlComponent } from '@elementor/editor-controls';
 
 import { type ControlRegistry, controlsRegistry } from '../controls-registry';
-import { ListItemsControl } from './list-items-control/list-items-control';
 import { AccordionItemsControl } from './accordion-items-control/accordion-items-control';
+import { ListItemsControl } from './list-items-control/list-items-control';
 import { TabsControl } from './tabs-control/tabs-control';
 
 const controlTypes = {
