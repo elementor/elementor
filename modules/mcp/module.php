@@ -6,7 +6,6 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Plugin;
-use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -152,18 +151,11 @@ class Module extends BaseModule {
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
 			new Abilities\Read_Resource_Ability( $registry ),
+			new Abilities\List_Components_Ability(),
+			new Abilities\Manage_Component_Ability(),
 		];
 
-		if ( self::is_components_active() ) {
-			$abilities[] = new Abilities\List_Components_Ability();
-			$abilities[] = new Abilities\Manage_Component_Ability();
-		}
-
 		return $abilities;
-	}
-
-	private static function is_components_active(): bool {
-		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 
 	/**
