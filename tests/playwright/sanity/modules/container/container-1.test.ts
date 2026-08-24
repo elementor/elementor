@@ -282,6 +282,46 @@ test.describe( 'Container tests #1 @container', () => {
 		await expect.poll( getRootOrder ).toEqual( [ secondContainer, firstContainer ] );
 	} );
 
+	test( 'Un-nest a container to the top level via canvas edit handle', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+
+		const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const childContainer = await editor.addElement( { elType: 'container' }, parentContainer );
+		const frame = editor.getPreviewFrame();
+		const child = frame.locator( `.elementor-element-${ childContainer }` );
+		const handle = child.locator( '> .elementor-element-overlay .elementor-editor-element-edit' );
+		const addSectionArea = frame.locator( '.elementor-add-section.elementor-visible-desktop' );
+		const rootContainers = frame.locator( '.elementor-section-wrap > .e-con' );
+		const getRootOrder = () => rootContainers.evaluateAll( ( elements ) =>
+			elements.map( ( element ) => element.getAttribute( 'data-id' ) ) );
+
+		expect( await getRootOrder() ).toEqual( [ parentContainer ] );
+
+		await editor.selectElement( childContainer );
+		await expect( handle ).toBeVisible();
+
+		const handleBox = await handle.boundingBox();
+		const dropBox = await addSectionArea.boundingBox();
+
+		expect( handleBox ).not.toBeNull();
+		expect( dropBox ).not.toBeNull();
+
+		await page.mouse.move( handleBox!.x + ( handleBox!.width / 2 ), handleBox!.y + ( handleBox!.height / 2 ) );
+		await page.mouse.down();
+		await page.mouse.move(
+			dropBox!.x + ( dropBox!.width / 2 ),
+			dropBox!.y + ( dropBox!.height / 2 ),
+			{ steps: DRAG_STEPS },
+		);
+		await page.mouse.up();
+
+		await expect.poll( getRootOrder ).toEqual( [ parentContainer, childContainer ] );
+		await expect( child ).toHaveClass( /e-parent/ );
+	} );
+
 	test( 'Container nesting and un-nesting via DnD', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

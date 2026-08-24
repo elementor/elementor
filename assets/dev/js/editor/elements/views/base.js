@@ -1173,6 +1173,16 @@ BaseElementView = BaseContainer.extend( {
 		return this.$el;
 	},
 
+	// Top-level elements are reordered by the document jQuery UI sortable, which owns their edit handle
+	// (`base-sections-container.js`). Nested elements have no sortable and rely on native dragging.
+	isTopLevelSortableHandle( eventTarget ) {
+		if ( this.$el.parents( '.e-con' ).length ) {
+			return false;
+		}
+
+		return !! jQuery( eventTarget ).closest( '.elementor-element-overlay' ).length;
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1194,7 +1204,7 @@ BaseElementView = BaseContainer.extend( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
-				if ( jQuery( e.originalEvent.target ).closest( '.elementor-element-overlay' ).length ) {
+				if ( this.isTopLevelSortableHandle( e.originalEvent.target ) ) {
 					e.originalEvent.preventDefault();
 
 					return;
