@@ -72,7 +72,7 @@ describe( 'VideoMediaControl', () => {
 		// Act.
 		renderControl( <VideoMediaControl />, props );
 
-		const control = document.querySelector( 'video' );
+		const control = screen.getByLabelText( 'Video preview' );
 
 		// Assert.
 		expect( control ).toHaveAttribute( 'src', 'https://localhost/library-video.mp4' );
@@ -99,7 +99,7 @@ describe( 'VideoMediaControl', () => {
 		// Act.
 		renderControl( <VideoMediaControl />, props );
 
-		const control = document.querySelector( 'video' );
+		const control = screen.getByLabelText( 'Video preview' );
 
 		// Assert.
 		expect( control ).toHaveAttribute( 'src', 'https://localhost/video.mp4' );

@@ -104,6 +104,7 @@ const VideoPreview = ( { isFetching = false, videoUrl }: { isFetching?: boolean;
 	if ( videoUrl ) {
 		return (
 			<video
+				aria-label={ __( 'Video preview', 'elementor' ) }
 				src={ videoUrl }
 				muted
 				preload="metadata"
