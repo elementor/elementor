@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { videoSrcPropTypeUtil } from '@elementor/editor-props';
+import { urlPropTypeUtil, videoSrcPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
 import { useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -13,16 +13,20 @@ import { TILES_GRADIENT_FORMULA } from './svg-media-control';
 const PLACEHOLDER_IMAGE = window.elementorCommon?.config?.urls?.assets + '/shapes/play-triangle.svg';
 
 export const VideoMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( videoSrcPropTypeUtil );
+	const { value, setValue, propType } = useBoundProp( videoSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
 	const videoUrl = attachment?.url ?? url?.value ?? null;
 
+	const defaultUrl = videoSrcPropTypeUtil.extract( propType.default ?? null )?.url?.value;
+	const currentUrlForModal = url?.value && url.value !== defaultUrl ? url.value : undefined;
+
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'video' ],
 		multiple: false,
 		selected: id?.value || null,
+		allowUrlImport: true,
 		onSelect: ( selectedAttachment ) => {
 			setValue( {
 				id: {
@@ -30,6 +34,12 @@ export const VideoMediaControl = createControl( () => {
 					value: selectedAttachment.id,
 				},
 				url: null,
+			} );
+		},
+		onSelectUrl: ( selectedUrl ) => {
+			setValue( {
+				id: null,
+				url: urlPropTypeUtil.create( selectedUrl ),
 			} );
 		},
 	} );
@@ -70,6 +80,14 @@ export const VideoMediaControl = createControl( () => {
 							onClick={ () => open( { mode: 'upload' } ) }
 						>
 							{ __( 'Upload', 'elementor' ) }
+						</Button>
+						<Button
+							size="tiny"
+							variant="text"
+							color="inherit"
+							onClick={ () => open( { mode: 'url', currentUrl: currentUrlForModal } ) }
+						>
+							{ __( 'Insert from URL', 'elementor' ) }
 						</Button>
 					</Stack>
 				</CardOverlay>
