@@ -39,7 +39,12 @@ type ToolbarButtonKeys = keyof typeof toolbarButtons;
 
 type FormatAction = Omit< ToolbarButtonKeys, 'clear' >;
 
-export const InlineEditorToolbar = ( { editor, elementId, sx = {}, inControlPanel = false }: InlineEditorToolbarProps ) => {
+export const InlineEditorToolbar = ( {
+	editor,
+	elementId,
+	sx = {},
+	inControlPanel = false
+}: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
@@ -122,7 +127,7 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {}, inControlPane
 				...( inControlPanel && {
 					width: 'stretch',
 					justifyContent: 'center',
-				    flexDirection: 'row',
+					flexDirection: 'row',
 					backgroundColor: 'transparent',
 					boxShadow: 'none',
 					borderWidth: '0',
@@ -163,7 +168,8 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {}, inControlPane
 						'& svg': {
 							width: '0.7rem',
 							height: '0.7rem',
-						}
+							fill: 'black',
+						},
 					} ),
 				} }
 			>

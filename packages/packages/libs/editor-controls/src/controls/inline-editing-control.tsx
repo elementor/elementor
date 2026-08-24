@@ -39,14 +39,16 @@ export const InlineEditingControl = createControl(
 
 		return (
 			<ControlActions>
-				<Box sx={ { position: 'relative' } }>					
+				<Box sx={ { position: 'relative' } }>			
 					{ editor && editor.isEditable && (
-						<InlineEditorToolbar 
-							editor={ editor } 
+						<InlineEditorToolbar
+							editor={ editor }
 							elementId={ context?.elementId }
-							sx={ { 
+							sx={ {
 								boxShadow: 'none',
-								border: '1px solid', borderColor: 'grey.200', mb: 0.5 
+								border: '1px solid',
+								borderColor: 'grey.200',
+								mb: 0.5,
 							} }
 							inControlPanel={ true }
 						/>
@@ -94,14 +96,14 @@ export const InlineEditingControl = createControl(
 						{ ...attributes }
 						{ ...props }
 					>
-						<InlineEditor 
+						<InlineEditor
 							value={ content }
 							setValue={ handleChange }
 							placeholder={ placeholder ?? null }
 							onEditorCreate={ setEditor }
-							sx = {{ 
+							sx = { {
 								paddingBlockStart: 5,
-							}}
+							} }
 						/>
 					</Box>
 				</Box>
