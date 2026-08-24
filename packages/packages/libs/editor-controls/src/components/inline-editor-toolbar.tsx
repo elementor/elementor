@@ -32,13 +32,14 @@ export type InlineEditorToolbarProps = {
 	editor: Editor;
 	elementId?: ElementID;
 	sx?: SxProps< Theme >;
+	inControlPanel?: boolean;
 };
 
 type ToolbarButtonKeys = keyof typeof toolbarButtons;
 
 type FormatAction = Omit< ToolbarButtonKeys, 'clear' >;
 
-export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEditorToolbarProps ) => {
+export const InlineEditorToolbar = ( { editor, elementId, sx = {}, inControlPanel = false }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
@@ -118,6 +119,18 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 				visibility: linkPopupState.isOpen ? 'hidden' : 'visible',
 				pointerEvents: linkPopupState.isOpen ? 'none' : 'all',
 				...sx,
+				...( inControlPanel && {
+					width: 'stretch',
+					justifyContent: 'center',
+				    flexDirection: 'row',
+					backgroundColor: 'transparent',
+					boxShadow: 'none',
+					borderWidth: '0',
+					borderBottom: '1px solid',
+					borderBottomColor: 'grey.200',
+					borderRadius: '0',
+					position: 'absolute',
+				} ),
 			} }
 		>
 			<Tooltip title={ clearButton.label } placement="top" sx={ { borderRadius: '8px' } }>
@@ -144,6 +157,14 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 								marginLeft: 0,
 							},
 						},
+					...( inControlPanel && {
+						justifyContent: 'space-between',
+						width: 'stretch',
+						'& svg': {
+							width: '0.7rem',
+							height: '0.7rem',
+						}
+					} ),
 				} }
 			>
 				{ formatButtonsList.map( ( button ) => (
