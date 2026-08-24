@@ -209,6 +209,7 @@ describe( 'InlineEditorToolbar', () => {
 			// Act.
 			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const boldIcon = screen.getByLabelText( 'Bold' ).querySelector( 'svg' );
 
 			// Assert.
@@ -222,6 +223,7 @@ describe( 'InlineEditorToolbar', () => {
 			// Act.
 			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } inControlPanel /> );
 
+			// eslint-disable-next-line testing-library/no-node-access
 			const boldIcon = screen.getByLabelText( 'Bold' ).querySelector( 'svg' );
 
 			// Assert.

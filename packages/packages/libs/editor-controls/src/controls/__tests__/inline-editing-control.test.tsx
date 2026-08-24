@@ -12,12 +12,12 @@ jest.mock( '../../components/inline-editor', () => ( {
 } ) );
 
 jest.mock( '../../components/inline-editor-toolbar', () => ( {
-	InlineEditorToolbar: jest.fn( () => <div data-testid="toolbar" /> ),
+	InlineEditorToolbar: jest.fn( () => <div role="toolbar" aria-label="Formatting toolbar" /> ),
 } ) );
 
 const propType = createMockPropType( { kind: 'plain' } );
 
-const createMockEditor = ( isEditable = true ): Editor => ( { isEditable } as unknown as Editor );
+const createMockEditor = ( isEditable = true ): Editor => ( { isEditable } ) as unknown as Editor;
 
 type InlineEditorMockProps = {
 	value: string | null;
@@ -33,7 +33,12 @@ describe( '<InlineEditingControl />', () => {
 			placeholder,
 			onEditorCreate,
 		}: InlineEditorMockProps ) => (
-			<div data-testid="inline-editor" data-value={ value ?? '' } data-placeholder={ placeholder ?? '' }>
+			<div
+				role="textbox"
+				aria-label="Inline editor"
+				data-value={ value ?? '' }
+				data-placeholder={ placeholder ?? '' }
+			>
 				<button onClick={ () => onEditorCreate?.( createMockEditor( true ) ) }>create-editable-editor</button>
 				<button onClick={ () => onEditorCreate?.( createMockEditor( false ) ) }>
 					create-non-editable-editor
@@ -58,7 +63,10 @@ describe( '<InlineEditingControl />', () => {
 		renderControl( <InlineEditingControl context={ { elementId: '1' } } />, baseProps );
 
 		// Assert.
-		expect( screen.getByTestId( 'inline-editor' ) ).toHaveAttribute( 'data-value', '<p>Hello</p>' );
+		expect( screen.getByRole( 'textbox', { name: 'Inline editor' } ) ).toHaveAttribute(
+			'data-value',
+			'<p>Hello</p>'
+		);
 	} );
 
 	it( 'should pass the placeholder down to the inline editor', () => {
@@ -70,7 +78,10 @@ describe( '<InlineEditingControl />', () => {
 		} );
 
 		// Assert.
-		expect( screen.getByTestId( 'inline-editor' ) ).toHaveAttribute( 'data-placeholder', 'Type your title here' );
+		expect( screen.getByRole( 'textbox', { name: 'Inline editor' } ) ).toHaveAttribute(
+			'data-placeholder',
+			'Type your title here'
+		);
 	} );
 
 	it( 'should call setValue with the updated html when the editor content changes', () => {
@@ -96,7 +107,7 @@ describe( '<InlineEditingControl />', () => {
 		renderControl( <InlineEditingControl context={ { elementId: '1' } } />, baseProps );
 
 		// Assert.
-		expect( screen.queryByTestId( 'toolbar' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'toolbar' ) ).not.toBeInTheDocument();
 		expect( InlineEditorToolbar ).not.toHaveBeenCalled();
 	} );
 
@@ -108,7 +119,7 @@ describe( '<InlineEditingControl />', () => {
 		fireEvent.click( screen.getByText( 'create-editable-editor' ) );
 
 		// Assert.
-		expect( screen.getByTestId( 'toolbar' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'toolbar' ) ).toBeInTheDocument();
 		expect( InlineEditorToolbar ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				elementId: '1',
@@ -126,7 +137,7 @@ describe( '<InlineEditingControl />', () => {
 		fireEvent.click( screen.getByText( 'create-non-editable-editor' ) );
 
 		// Assert.
-		expect( screen.queryByTestId( 'toolbar' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'toolbar' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should pass the current elementId from context down to the toolbar', () => {

@@ -43,7 +43,7 @@ export const InlineEditorToolbar = ( {
 	editor,
 	elementId,
 	sx = {},
-	inControlPanel = false
+	inControlPanel = false,
 }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );

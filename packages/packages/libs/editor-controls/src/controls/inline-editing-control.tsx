@@ -39,7 +39,7 @@ export const InlineEditingControl = createControl(
 
 		return (
 			<ControlActions>
-				<Box sx={ { position: 'relative' } }>			
+				<Box sx={ { position: 'relative' } }>
 					{ editor && editor.isEditable && (
 						<InlineEditorToolbar
 							editor={ editor }
@@ -101,7 +101,7 @@ export const InlineEditingControl = createControl(
 							setValue={ handleChange }
 							placeholder={ placeholder ?? null }
 							onEditorCreate={ setEditor }
-							sx = { {
+							sx={ {
 								paddingBlockStart: 5,
 							} }
 						/>
