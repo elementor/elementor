@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "ca9c50e9b8bbb42851c91855da171fd2",
-=======
-    "content-hash": "bc102c01e65d6c29d6436e01f58b20c9",
->>>>>>> 43d8bc247a (Internal: Update wp-coding-standards/wpcs to 3.4.1 for CVE-2026-45293 [ED-25116] (#36701))
+    "content-hash": "b53f6ddfa6c675356dc80f87c57cba8d",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -4627,13 +4623,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "7.4"
     },
