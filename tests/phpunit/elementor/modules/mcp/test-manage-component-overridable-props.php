@@ -429,10 +429,10 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 
 		$inner_override = $overrides[0]['value']['origin_value'];
 		$this->assertSame( 'caption', $inner_override['value']['override_key'] );
-		$this->assertSame( 'Preset Caption', $inner_override['value']['override_value']['value']['content']['value'] );
+		$this->assertSame( 'Preset Caption', $inner_override['value']['override_value']['value'] );
 
 		$prop = $outer->get_overridable_props()->props['card_1_caption'];
-		$this->assertSame( 'Preset Caption', $prop->origin_value['value']['content']['value'], 'The absorbed value becomes the exposed prop\'s inherited default.' );
+		$this->assertSame( 'Preset Caption', $prop->origin_value['value'], 'The absorbed value becomes the exposed prop\'s inherited default.' );
 	}
 
 	public function test_update__expose_further_threads_origin_prop_fields_through_multi_hop() {
