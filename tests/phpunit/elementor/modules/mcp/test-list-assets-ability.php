@@ -88,8 +88,21 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertNotEmpty( $result['assets'] );
 		foreach ( $result['assets'] as $asset ) {
-			$this->assertSame( 'video/mp4', $asset['mime_type'] );
+			$this->assertContains( $asset['mime_type'], List_Assets_Ability::VIDEO_MIME_TYPES );
 		}
+	}
+
+	public function test_execute__type_video_includes_editor_picker_mime_types() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_attachment( 'video/x-m4v', 'clip.m4v' );
+
+		// Act
+		$result = $this->ability->execute( [ 'type' => 'video' ] );
+
+		// Assert
+		$mime_types = array_column( $result['assets'], 'mime_type' );
+		$this->assertContains( 'video/x-m4v', $mime_types );
 	}
 
 	public function test_execute__type_all_excludes_video() {

@@ -34,6 +34,12 @@ class List_Assets_Ability extends Abstract_Ability {
 		'video/webm',
 		'video/ogg',
 		'video/quicktime',
+		'video/x-m4v',
+		'video/avi',
+		'video/x-ms-wmv',
+		'video/mpeg',
+		'video/3gpp',
+		'video/3gpp2',
 	];
 
 	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Ask the user to upload the images or SVG icons they want to use (WP Admin → Media → Add New), then call this tool again. Do not fabricate attachment ids.';
