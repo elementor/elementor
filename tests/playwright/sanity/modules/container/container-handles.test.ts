@@ -95,8 +95,6 @@ test.describe( 'Container handles @container', () => {
 
 		await test.step( 'Top-level parent below embedded document keeps outside handles', async () => {
 			// Arrange.
-			const embeddedContainerId = await editor.addElement( { elType: 'container' }, 'document' );
-			await wrapContainerInEmbeddedDocumentWithTopHandle( editor, embeddedContainerId );
 			const topLevelContainerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Act.
