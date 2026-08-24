@@ -125,7 +125,7 @@ export const InlineEditorToolbar = ( {
 				pointerEvents: linkPopupState.isOpen ? 'none' : 'all',
 				...sx,
 				...( inControlPanel && {
-					width: 'stretch',
+					width: '100%',
 					justifyContent: 'center',
 					flexDirection: 'row',
 					backgroundColor: 'transparent',
@@ -136,6 +136,7 @@ export const InlineEditorToolbar = ( {
 					borderRadius: '0',
 					position: 'absolute',
 					top: '0',
+					left: '0',
 				} ),
 			} }
 		>
@@ -165,7 +166,7 @@ export const InlineEditorToolbar = ( {
 						},
 					...( inControlPanel && {
 						justifyContent: 'space-between',
-						width: 'stretch',
+						width: '100%',
 						'& svg': {
 							width: '0.7rem',
 							height: '0.7rem',
