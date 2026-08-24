@@ -201,6 +201,47 @@ describe( 'InlineEditorToolbar', () => {
 		} );
 	} );
 
+	describe( 'inControlPanel styling', () => {
+		it( 'should not apply the smaller icon size by default', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			const boldIcon = screen.getByLabelText( 'Bold' ).querySelector( 'svg' );
+
+			// Assert.
+			expect( boldIcon ).not.toHaveStyle( { width: '0.7rem', height: '0.7rem' } );
+		} );
+
+		it( 'should apply the smaller icon size when rendered inside the control panel', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } inControlPanel /> );
+
+			const boldIcon = screen.getByLabelText( 'Bold' ).querySelector( 'svg' );
+
+			// Assert.
+			expect( boldIcon ).toHaveStyle( { width: '0.7rem', height: '0.7rem' } );
+		} );
+
+		it( 'should still render all toolbar buttons when inControlPanel is enabled', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } inControlPanel /> );
+
+			// Assert.
+			expect( screen.getByLabelText( 'Clear' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'Bold' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'Link button visibility based on LinkControl', () => {
 		const ELEMENT_ID = 'test-element-123';
 

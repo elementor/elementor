@@ -135,6 +135,7 @@ export const InlineEditorToolbar = ( {
 					borderBottomColor: 'grey.200',
 					borderRadius: '0',
 					position: 'absolute',
+					top: '0',
 				} ),
 			} }
 		>
