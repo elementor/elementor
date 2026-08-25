@@ -1,8 +1,10 @@
 import { BrowserContext, expect } from '@playwright/test';
 import { resolve } from 'path';
+import { timeouts } from '../../../config/timeouts';
 import EditorPage from '../../../pages/editor-page';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
@@ -45,13 +47,13 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			editor.selectElement( widgetId );
 			const videoWidget = await editor.selectElement( widgetId );
 			await expect( videoWidget ).toBeVisible();
-			await editor.page.getByRole( 'button', { name: 'Select video' } ).click();
+			await editor.page.getByRole( 'button', { name: 'Upload' } ).click();
 			await editor.page.setInputFiles(
-				'input[type="file"]',
+				EditorSelectors.media.imageInp,
 				resolve( __dirname, '../../../resources/video.webm' ),
 			);
-
-			await editor.page.getByRole( 'button', { name: 'Select', exact: true } ).click();
+			await editor.page.locator( '.attachments .attachment' ).first().waitFor( { timeout: timeouts.longAction } );
+			await editor.page.locator( EditorSelectors.media.selectBtn ).click();
 			await expect( videoElement ).toBeVisible();
 		} );
 
