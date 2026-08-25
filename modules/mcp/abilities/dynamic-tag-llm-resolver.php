@@ -19,6 +19,14 @@ class Dynamic_Tag_Llm_Resolver {
 		return [ self::class, 'resolve' ];
 	}
 
+	public static function try_serialize( $value ): ?array {
+		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $value ) ) {
+			return null;
+		}
+
+		return self::serialize( $value );
+	}
+
 	public static function serialize( $stored_value ): array {
 		$input = self::normalize_input( $stored_value );
 		$name = $input['name'] ?? '';
@@ -26,9 +34,16 @@ class Dynamic_Tag_Llm_Resolver {
 		$props_schema = is_array( $tag['props_schema'] ?? null ) ? $tag['props_schema'] : [];
 		$stored_settings = is_array( $input['settings'] ?? null ) ? $input['settings'] : [];
 
+		$schema = array_diff_key(
+			array_intersect_key( $props_schema, $stored_settings ),
+			array_flip( self::OMITTED_SETTING_KEYS )
+		);
+
+		$resolved = Render_Props_Resolver::for_plain()->resolve( $schema, $stored_settings );
+
 		return [
 			'name' => $name,
-			'settings' => self::serialize_tag_settings( $props_schema, $stored_settings ),
+			'settings' => array_filter( $resolved, fn( $value ) => null !== $value ),
 		];
 	}
 
@@ -60,33 +75,6 @@ class Dynamic_Tag_Llm_Resolver {
 				),
 			],
 		];
-	}
-
-	private static function serialize_tag_settings( array $props_schema, array $stored_settings ): array {
-		$plain_settings = [];
-		$resolver = Render_Props_Resolver::for_plain();
-
-		foreach ( $props_schema as $key => $prop_type ) {
-			if ( in_array( $key, self::OMITTED_SETTING_KEYS, true ) ) {
-				continue;
-			}
-
-			if ( ! $prop_type instanceof Prop_Type ) {
-				continue;
-			}
-
-			if ( ! array_key_exists( $key, $stored_settings ) ) {
-				continue;
-			}
-
-			$plain = $resolver->resolve_value( $stored_settings[ $key ], $prop_type );
-
-			if ( null !== $plain ) {
-				$plain_settings[ $key ] = $plain;
-			}
-		}
-
-		return $plain_settings;
 	}
 
 	private static function normalize_input( $value ): array {

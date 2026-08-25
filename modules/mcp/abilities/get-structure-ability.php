@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
@@ -185,31 +183,26 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return (object) [];
 		}
 
-		$resolved = [];
+		$schema = array_intersect_key( $props_schema, $raw_settings );
+		$serialized = [];
+		$static_schema = [];
 
-		foreach ( array_intersect_key( $props_schema, $raw_settings ) as $key => $prop_type ) {
-			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+		foreach ( $schema as $key => $prop_type ) {
+			$dynamic = Dynamic_Tag_Llm_Resolver::try_serialize( $raw_settings[ $key ] );
+
+			if ( null !== $dynamic ) {
+				$serialized[ $key ] = $dynamic;
 				continue;
 			}
 
-			$prop_value = $raw_settings[ $key ];
-
-			if ( Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) ) {
-				$resolved[ $key ] = Dynamic_Tag_Llm_Resolver::serialize( $prop_value );
-				continue;
-			}
-
-			$single = Render_Props_Resolver::for_settings()->resolve(
-				[ $key => $prop_type ],
-				[ $key => $prop_value ]
-			);
-
-			if ( array_key_exists( $key, $single ) ) {
-				$resolved[ $key ] = $single[ $key ];
-			}
+			$static_schema[ $key ] = $prop_type;
 		}
 
-		return ! empty( $resolved ) ? $resolved : (object) [];
+		if ( ! empty( $static_schema ) ) {
+			$serialized += Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
+		}
+
+		return ! empty( $serialized ) ? $serialized : (object) [];
 	}
 
 	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings ): void {
