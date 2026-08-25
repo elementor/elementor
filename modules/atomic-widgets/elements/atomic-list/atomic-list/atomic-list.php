@@ -116,7 +116,7 @@ class Atomic_List extends Atomic_Element_Base {
 		return [
 			Atomic_List_Item::generate()
 				->settings( [
-					'show_markers' => true,
+					'show_markers' => Boolean_Prop_Type::generate( true ),
 				] )
 				->hydrate_default_children( true )
 				->editor_settings( [

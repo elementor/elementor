@@ -39,7 +39,7 @@ describe( 'list-items-control actions', () => {
 						model: expect.objectContaining( {
 							elType: 'e-list-item',
 							settings: {
-								show_markers: true,
+								show_markers: { $$type: 'boolean', value: true },
 							},
 							hydrateDefaultChildren: true,
 							editor_settings: expect.objectContaining( {
@@ -106,7 +106,7 @@ describe( 'list-items-control actions', () => {
 					expect.objectContaining( {
 						model: expect.objectContaining( {
 							settings: {
-								show_markers: false,
+								show_markers: { $$type: 'boolean', value: false },
 							},
 						} ),
 					} ),

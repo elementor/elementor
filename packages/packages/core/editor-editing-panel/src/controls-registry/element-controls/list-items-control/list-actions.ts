@@ -6,6 +6,7 @@ import {
 	moveElements,
 	removeElements,
 } from '@elementor/editor-elements';
+import { booleanPropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 export type ListItem = {
@@ -110,7 +111,7 @@ export const addItem = ( {
 					model: {
 						elType: LIST_ITEM_ELEMENT_TYPE,
 						settings: {
-							show_markers: showMarkers,
+							show_markers: booleanPropTypeUtil.create( showMarkers ),
 						},
 						hydrateDefaultChildren: true,
 						editor_settings: {
