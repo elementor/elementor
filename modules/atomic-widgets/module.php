@@ -410,14 +410,12 @@ class Module extends BaseModule {
 			$elements_manager->register_element_type( new Atomic_List() );
 		}
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ACCORDION ) ) {
-			$elements_manager->register_element_type( new Atomic_Accordion() );
-			$elements_manager->register_element_type( new Atomic_Accordion_Item() );
-			$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
-			$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
-			$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
-			$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
-		}
+		$elements_manager->register_element_type( new Atomic_Accordion() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
 
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
 		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
