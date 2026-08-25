@@ -85,6 +85,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 **In `style` (raw CSS):** reference by label only:
 - `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
+- Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
 - Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
 
