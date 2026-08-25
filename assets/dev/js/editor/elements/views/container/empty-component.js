@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import PropTypes from 'prop-types';
 import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 export default function EmptyComponent( { container } = {} ) {
@@ -21,3 +22,7 @@ export default function EmptyComponent( { container } = {} ) {
 		</div>
 	);
 }
+
+EmptyComponent.propTypes = {
+	container: PropTypes.object,
+};
