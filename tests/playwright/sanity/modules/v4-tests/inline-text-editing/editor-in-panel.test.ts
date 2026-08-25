@@ -52,7 +52,7 @@ test.describe( 'Inline Editing Control in Editor Panel @v4-tests', () => {
 		await expect( panelInlineEditor ).toHaveText( TEST_WORD );
 	} );
 
-	test.only( 'Panel inline editor toolbar applies formatting to text and canvas', async () => {
+	test( 'Panel inline editor toolbar applies formatting to text and canvas', async () => {
 		const FORMATTED_WORD = INLINE_EDITING_SELECTORS.attributes.bold;
 		const PLAIN_PREFIX = 'plain ';
 		const PLAIN_SUFFIX = ' plain';
