@@ -13,6 +13,20 @@ const GRID_PRESETS = [
 	{ structure: '2-3', rows: 2, columns: 3 },
 ];
 
+function countGridTracks( templateValue: string ) {
+	if ( ! templateValue || 'none' === templateValue ) {
+		return 0;
+	}
+
+	const repeatMatch = templateValue.match( /repeat\(\s*(\d+)/ );
+
+	if ( repeatMatch ) {
+		return Number( repeatMatch[ 1 ] );
+	}
+
+	return templateValue.split( /\s+/ ).filter( ( track ) => track && 'none' !== track ).length;
+}
+
 function hasWhiteSpace( value: string ) {
 	return /\s/g.test( value );
 }
@@ -40,21 +54,30 @@ test.describe( 'V4 grid layout wizard presets @css-grid', () => {
 				await expect( gridElement ).toBeVisible();
 				await expect( gridElement ).toHaveCSS( 'display', 'grid' );
 
-				const [ initialRows, initialColumns ] = await gridElement.evaluate( ( el ) => {
+				const [ rowCount, columnCount ] = await gridElement.evaluate( ( el ) => {
+					const countTracks = ( templateValue: string ) => {
+						if ( ! templateValue || 'none' === templateValue ) {
+							return 0;
+						}
+
+						const repeatMatch = templateValue.match( /repeat\(\s*(\d+)/ );
+
+						if ( repeatMatch ) {
+							return Number( repeatMatch[ 1 ] );
+						}
+
+						return templateValue.split( /\s+/ ).filter( ( track ) => track && 'none' !== track ).length;
+					};
 					const computedStyle = window.getComputedStyle( el );
+
 					return [
-						computedStyle.getPropertyValue( 'grid-template-rows' ),
-						computedStyle.getPropertyValue( 'grid-template-columns' ),
+						countTracks( computedStyle.getPropertyValue( 'grid-template-rows' ) ),
+						countTracks( computedStyle.getPropertyValue( 'grid-template-columns' ) ),
 					];
 				} );
 
-				await gridElement.evaluate( ( el, { rowsCount, colsCount } ) => {
-					el.style.setProperty( 'grid-template-rows', `repeat(${ rowsCount }, 1fr)` );
-					el.style.setProperty( 'grid-template-columns', `repeat(${ colsCount }, 1fr)` );
-				}, { rowsCount: rows, colsCount: columns } );
-
-				await expect( gridElement ).toHaveCSS( 'grid-template-rows', initialRows );
-				await expect( gridElement ).toHaveCSS( 'grid-template-columns', initialColumns );
+				expect( rowCount ).toBe( rows );
+				expect( columnCount ).toBe( columns );
 
 				await editor.cleanContent();
 			} );
@@ -77,10 +100,11 @@ test.describe( 'V4 grid layout wizard presets @css-grid', () => {
 
 		await editor.changeResponsiveView( 'mobile' );
 
-		const gridTemplateColumnsCssValue = await gridElement.evaluate( ( element ) => {
-			return window.getComputedStyle( element ).getPropertyValue( 'grid-template-columns' );
+		const gridTemplateColumnsCssValue = await gridElement.evaluate( ( el ) => {
+			return window.getComputedStyle( el ).getPropertyValue( 'grid-template-columns' );
 		} );
 
+		expect( countGridTracks( gridTemplateColumnsCssValue ) ).toBe( 1 );
 		expect( hasWhiteSpace( gridTemplateColumnsCssValue ) ).toBeFalsy();
 	} );
 } );

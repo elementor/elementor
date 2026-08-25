@@ -1,3 +1,5 @@
+const ELEMENT_STYLE_CHANGE_EVENT = 'elementor/editor-v2/editor-elements/style';
+
 export function buildModel( elType, cssProps, mobileProps ) {
 	const model = {
 		id: elementorCommon.helpers.getUniqueId(),
@@ -45,6 +47,48 @@ export function buildModel( elType, cssProps, mobileProps ) {
 	return model;
 }
 
+function stripPendingStylesFromModel( model ) {
+	const pendingStyles = model.styles;
+	const pendingClasses = model.settings?.classes;
+
+	if ( ! pendingStyles || ! Object.keys( pendingStyles ).length ) {
+		return { createModel: model, pendingStyles: null, pendingClasses: null };
+	}
+
+	const createModel = { ...model };
+
+	delete createModel.styles;
+
+	if ( pendingClasses ) {
+		const settings = { ...( createModel.settings || {} ) };
+
+		delete settings.classes;
+
+		if ( Object.keys( settings ).length ) {
+			createModel.settings = settings;
+		} else {
+			delete createModel.settings;
+		}
+	}
+
+	return { createModel, pendingStyles, pendingClasses };
+}
+
+export function applyLocalElementStyles( container, styles, classesSetting ) {
+	container.model.set( 'styles', styles );
+
+	if ( classesSetting ) {
+		$e.internal( 'document/elements/set-settings', {
+			container,
+			settings: {
+				classes: classesSetting,
+			},
+		} );
+	}
+
+	window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
+}
+
 export function createV4Element( target, model, options ) {
 	const containerClass = elementorModules?.editor?.Container;
 	const getDocumentUtils = () => $e?.components?.get?.( 'document' )?.utils;
@@ -79,37 +123,49 @@ export function createV4Element( target, model, options ) {
 		return null;
 	};
 
+	const { createModel, pendingStyles, pendingClasses } = stripPendingStylesFromModel( model );
 	const resolvedTarget = resolveContainer( target );
 
-	if ( ! resolvedTarget && containerClass && target?.id ) {
-		getDocumentUtils()?.addModelToParent?.( target.id, model, options );
+	const applyPendingStyles = ( container ) => {
+		const resolvedContainer = resolveContainer( container );
 
-		const inserted = getContainerById( model.id );
+		if ( pendingStyles && resolvedContainer ) {
+			applyLocalElementStyles( resolvedContainer, pendingStyles, pendingClasses );
+		}
+
+		return resolvedContainer ?? container;
+	};
+
+	if ( ! resolvedTarget && containerClass && target?.id ) {
+		getDocumentUtils()?.addModelToParent?.( target.id, createModel, options );
+
+		const inserted = getContainerById( createModel.id );
+
 		if ( inserted ) {
-			return inserted;
+			return applyPendingStyles( inserted );
 		}
 
 		return {
-			id: model.id,
-			lookup: () => getContainerById( model.id ),
+			id: createModel.id,
+			lookup: () => applyPendingStyles( getContainerById( createModel.id ) ),
 		};
 	}
 
 	const created = $e.run( 'document/elements/create', {
 		container: resolvedTarget ?? target,
-		model,
+		model: createModel,
 		options,
 	} );
 
 	const resolvedCreated = resolveContainer( created );
 
 	if ( resolvedCreated || ! containerClass ) {
-		return resolvedCreated ?? created;
+		return applyPendingStyles( resolvedCreated ?? created );
 	}
 
 	return {
-		id: model.id,
-		lookup: () => getContainerById( model.id ),
+		id: createModel.id,
+		lookup: () => applyPendingStyles( getContainerById( createModel.id ) ),
 	};
 }
 
