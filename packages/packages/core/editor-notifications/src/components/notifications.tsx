@@ -7,8 +7,8 @@ import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elem
 
 import { useEnqueueNotification } from '../hooks/use-enqueue-notifications';
 import { clearAction, notifyAction } from '../slice';
-import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
 import { getAppBarHeight } from '../sync/get-app-bar-height';
+import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
 import { type NotificationData, type Notifications } from '../types';
 
 // 8 seconds
