@@ -15,6 +15,29 @@ export type ListItem = {
 
 export const LIST_ITEM_ELEMENT_TYPE = 'e-list-item';
 
+const TRAILING_NUMBER = /(\d+)\s*$/;
+
+const getItemTitle = ( position: number ) => `Item ${ position }`;
+
+const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
+	const taken = new Set( existingTitles.filter( ( title ): title is string => Boolean( title ) ) );
+
+	const highest = existingTitles.reduce( ( max: number, title ) => {
+		const [ , trailingNumber ] = title?.match( TRAILING_NUMBER ) ?? [];
+		const parsed = trailingNumber ? Number( trailingNumber ) : 0;
+
+		return Number.isFinite( parsed ) && parsed > max ? parsed : max;
+	}, 0 );
+
+	let next = highest + 1;
+
+	while ( taken.has( getItemTitle( next ) ) ) {
+		next += 1;
+	}
+
+	return next;
+};
+
 export const duplicateItem = ( { items }: { items: ItemsActionPayload< ListItem > } ) => {
 	duplicateElements( {
 		elementIds: items.map( ( { item } ) => item.id ),
@@ -58,11 +81,15 @@ export const removeItem = ( { items }: { items: ItemsActionPayload< ListItem > }
 };
 
 export const addItem = ( {
+	existingTitles,
 	listContainerId,
 	items,
+	showMarkers,
 }: {
+	existingTitles: ( string | undefined )[];
 	listContainerId: string;
 	items: ItemsActionPayload< ListItem >;
+	showMarkers: boolean;
 } ) => {
 	const listContainer = getContainer( listContainerId );
 
@@ -70,8 +97,10 @@ export const addItem = ( {
 		throw new Error( 'List container not found' );
 	}
 
+	const titles = [ ...existingTitles ];
+
 	items.forEach( ( { index } ) => {
-		const position = index + 1;
+		const position = getNextItemNumber( titles );
 
 		createElements( {
 			title: __( 'List Items', 'elementor' ),
@@ -81,11 +110,11 @@ export const addItem = ( {
 					model: {
 						elType: LIST_ITEM_ELEMENT_TYPE,
 						settings: {
-							show_markers: true,
+							show_markers: showMarkers,
 						},
 						hydrateDefaultChildren: true,
 						editor_settings: {
-							title: `Item ${ position }`,
+							title: getItemTitle( position ),
 							initial_position: position,
 						},
 					},
@@ -93,5 +122,7 @@ export const addItem = ( {
 				},
 			],
 		} );
+
+		titles.push( getItemTitle( position ) );
 	} );
 };

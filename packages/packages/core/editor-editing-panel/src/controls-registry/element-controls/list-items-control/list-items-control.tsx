@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import { updateElementEditorSettings, useElementChildren, useElementEditorSettings } from '@elementor/editor-elements';
-import { type CreateOptions } from '@elementor/editor-props';
+import { booleanPropTypeUtil, type CreateOptions } from '@elementor/editor-props';
 import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -28,16 +28,17 @@ export const ListItemsControl = ( { label }: { label: string } ) => {
 };
 
 const ListItemsControlContent = ( { label }: { label: string } ) => {
-	const { element } = useElement();
+	const { element, settings } = useElement();
 	const { [ LIST_ITEM_ELEMENT_TYPE ]: listItems } = useElementChildren(
 		element.id,
 		{ [ LIST_ELEMENT_TYPE ]: LIST_ITEM_ELEMENT_TYPE },
 		{ includeSelfAsParent: true }
 	);
+	const showMarkers = booleanPropTypeUtil.extract( settings.show_markers ) ?? true;
 
 	const repeaterValues: RepeaterItem< ListItem >[] = listItems.map( ( item, index ) => ( {
 		id: item.id,
-		title: getDefaultListItemLabel( index ),
+		title: item.editorSettings?.title ?? getDefaultListItemLabel( index ),
 		index,
 	} ) );
 
@@ -47,7 +48,12 @@ const ListItemsControlContent = ( { label }: { label: string } ) => {
 		meta?: SetRepeaterValuesMeta< RepeaterItem< ListItem > >
 	) => {
 		if ( meta?.action?.type === 'add' ) {
-			return addItem( { listContainerId: element.id, items: meta.action.payload } );
+			return addItem( {
+				existingTitles: repeaterValues.map( ( { title } ) => title ),
+				listContainerId: element.id,
+				items: meta.action.payload,
+				showMarkers,
+			} );
 		}
 
 		if ( meta?.action?.type === 'remove' ) {

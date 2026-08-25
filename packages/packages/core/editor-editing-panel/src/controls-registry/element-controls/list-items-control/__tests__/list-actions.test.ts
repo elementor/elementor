@@ -4,8 +4,8 @@ import {
 	getContainer,
 	moveElements,
 	removeElements,
-	type V1Element,
 } from '@elementor/editor-elements';
+import type { V1Element } from '@elementor/editor-elements';
 
 import { addItem, duplicateItem, moveItem, removeItem } from '../list-actions';
 
@@ -24,8 +24,10 @@ describe( 'list-items-control actions', () => {
 
 		// Act.
 		addItem( {
+			existingTitles: [ 'Item 1', 'Item 2' ],
 			listContainerId: 'list-123',
 			items: [ { item: { id: 'new-item' }, index: 2 } ],
+			showMarkers: true,
 		} );
 
 		// Assert.
@@ -46,6 +48,67 @@ describe( 'list-items-control actions', () => {
 							} ),
 						} ),
 						options: { at: 2 },
+					} ),
+				],
+			} )
+		);
+	} );
+
+	it( 'uses the next untaken item number after a delete', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( {
+			id: 'list-123',
+		} as unknown as V1Element );
+
+		// Act.
+		addItem( {
+			existingTitles: [ 'Item 2' ],
+			listContainerId: 'list-123',
+			items: [ { item: { id: 'new-item' }, index: 1 } ],
+			showMarkers: true,
+		} );
+
+		// Assert.
+		expect( createElements ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				elements: [
+					expect.objectContaining( {
+						model: expect.objectContaining( {
+							editor_settings: expect.objectContaining( {
+								title: 'Item 3',
+								initial_position: 3,
+							} ),
+						} ),
+					} ),
+				],
+			} )
+		);
+	} );
+
+	it( 'seeds a new list item from the root show_markers value, not the schema default', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( {
+			id: 'list-123',
+		} as unknown as V1Element );
+
+		// Act.
+		addItem( {
+			existingTitles: [],
+			listContainerId: 'list-123',
+			items: [ { item: { id: 'new-item' }, index: 0 } ],
+			showMarkers: false,
+		} );
+
+		// Assert.
+		expect( createElements ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				elements: [
+					expect.objectContaining( {
+						model: expect.objectContaining( {
+							settings: {
+								show_markers: false,
+							},
+						} ),
 					} ),
 				],
 			} )
