@@ -4,6 +4,7 @@ import {
 } from '../create-nested-templated-element-type';
 import { elementsLegacyTypes } from '../init-legacy-views';
 import { initListType } from '../list-type';
+import type { ElementType, NestedTemplatedElementViewClass } from '../types';
 
 jest.mock( '../create-nested-templated-element-type', () => ( {
 	createNestedTemplatedElementType: jest.fn(),
@@ -12,6 +13,27 @@ jest.mock( '../create-nested-templated-element-type', () => ( {
 
 const LIST_TYPE = 'e-list';
 const resetListType = () => Reflect.deleteProperty( elementsLegacyTypes, LIST_TYPE );
+
+const createMockBaseType = (): typeof ElementType => {
+	const MockBaseType = function MockBaseType() {};
+
+	MockBaseType.prototype.getType = () => LIST_TYPE;
+	MockBaseType.prototype.getView = () => function MockBaseView() {};
+
+	return MockBaseType as unknown as typeof ElementType;
+};
+
+const createMockBaseView = ( generatedViewIdRef: { current: number } ): NestedTemplatedElementViewClass => {
+	const MockBaseView = Object.assign( function BaseViewMock() {}, {
+		extend() {
+			return Object.assign( function ExtendedViewMock() {}, {
+				viewId: ++generatedViewIdRef.current,
+			} );
+		},
+	} );
+
+	return MockBaseView as unknown as NestedTemplatedElementViewClass;
+};
 
 const createMockOptions = () => ( {
 	type: LIST_TYPE,
@@ -32,31 +54,16 @@ const createMockOptions = () => ( {
 
 describe( 'initListType', () => {
 	beforeEach( () => {
-		let generatedViewId = 0;
+		const generatedViewIdRef = { current: 0 };
 
 		jest.clearAllMocks();
 		resetListType();
 
-		jest.mocked( createNestedTemplatedElementType ).mockImplementation( () => {
-			const MockBaseType = function MockBaseType() {};
+		jest.mocked( createNestedTemplatedElementType ).mockImplementation( () => createMockBaseType() );
 
-			MockBaseType.prototype.getType = () => LIST_TYPE;
-			MockBaseType.prototype.getView = () => function MockBaseView() {};
-
-			return MockBaseType as never;
-		} );
-
-		jest.mocked( createNestedTemplatedElementView ).mockImplementation( () => {
-			const MockBaseView = Object.assign( function BaseViewMock() {}, {
-				extend() {
-					return Object.assign( function ExtendedViewMock() {}, {
-						viewId: ++generatedViewId,
-					} );
-				},
-			} );
-
-			return MockBaseView as never;
-		} );
+		jest.mocked( createNestedTemplatedElementView ).mockImplementation( () =>
+			createMockBaseView( generatedViewIdRef )
+		);
 	} );
 
 	afterEach( () => {
