@@ -11,6 +11,7 @@ jest.mock( '../create-nested-templated-element-type', () => ( {
 } ) );
 
 const LIST_TYPE = 'e-list';
+const resetListType = () => Reflect.deleteProperty( elementsLegacyTypes, LIST_TYPE );
 
 const createMockOptions = () => ( {
 	type: LIST_TYPE,
@@ -34,27 +35,32 @@ describe( 'initListType', () => {
 		let generatedViewId = 0;
 
 		jest.clearAllMocks();
-		delete elementsLegacyTypes[ LIST_TYPE ];
+		resetListType();
 
-		jest.mocked( createNestedTemplatedElementType ).mockImplementation(
-			() => class MockBaseType {}
-		);
+		jest.mocked( createNestedTemplatedElementType ).mockImplementation( () => {
+			const MockBaseType = function MockBaseType() {};
+
+			MockBaseType.prototype.getType = () => LIST_TYPE;
+			MockBaseType.prototype.getView = () => function MockBaseView() {};
+
+			return MockBaseType as never;
+		} );
 
 		jest.mocked( createNestedTemplatedElementView ).mockImplementation( () => {
-			class MockBaseView {
-				static extend() {
-					return class MockExtendedView {
-						static viewId = ++generatedViewId;
-					};
-				}
-			}
+			const MockBaseView = Object.assign( function BaseViewMock() {}, {
+				extend() {
+					return Object.assign( function ExtendedViewMock() {}, {
+						viewId: ++generatedViewId,
+					} );
+				},
+			} );
 
 			return MockBaseView as never;
 		} );
 	} );
 
 	afterEach( () => {
-		delete elementsLegacyTypes[ LIST_TYPE ];
+		resetListType();
 	} );
 
 	it( 'should reuse the same view class for multiple list type instances', () => {

@@ -4,8 +4,8 @@ import {
 	getContainer,
 	moveElements,
 	removeElements,
+	type V1Element,
 } from '@elementor/editor-elements';
-import type { V1Element } from '@elementor/editor-elements';
 
 import { addItem, duplicateItem, moveItem, removeItem } from '../list-actions';
 
