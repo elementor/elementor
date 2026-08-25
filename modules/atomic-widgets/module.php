@@ -142,7 +142,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -367,6 +370,19 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 	}
 
+	private function register_list_element( Elements_Manager $elements_manager ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
+			return $this;
+		}
+
+		$elements_manager->register_element_type( new Atomic_List() );
+		$elements_manager->register_element_type( new Atomic_List_Item() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Marker() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Content() );
+
+		return $this;
+	}
+
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
@@ -378,9 +394,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
-			$elements_manager->register_element_type( new Atomic_List() );
-		}
+		$this->register_list_element( $elements_manager );
 
 		$elements_manager->register_element_type( new Atomic_Accordion() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
