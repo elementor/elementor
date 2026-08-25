@@ -26,6 +26,8 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	private const NEW_ATOMIC_ELEMENTS = [
 		'e-background-video' => '4.3',
+		'e-accordion' => '4.3',
+		'e-list' => '4.3',
 	];
 
 	protected $version = '0.0';
