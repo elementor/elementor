@@ -1406,4 +1406,46 @@ export default class EditorPage extends BasePage {
 
 		await button.click();
 	}
+
+	getPanelContentSection(): Locator {
+		return this.page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
+	}
+
+	getPanelInlineEditor(): Locator {
+		return this.getPanelContentSection().locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+	}
+
+	async togglePanelInlineEditingAttribute( attribute: string ): Promise<void> {
+		const label = INLINE_EDITING_SELECTORS.formatButtonLabels[ attribute as keyof typeof INLINE_EDITING_SELECTORS.formatButtonLabels ];
+
+		if ( ! label ) {
+			return;
+		}
+
+		await this.getPanelContentSection().getByRole( 'button', { name: label } ).click();
+	}
+
+	async selectPanelInlineEditedText( substring: string ): Promise<void> {
+		const panelInlineEditor = this.getPanelInlineEditor();
+
+		await panelInlineEditor.click();
+
+		const entireText = await panelInlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		await this.page.keyboard.press( 'Home' );
+
+		const startIndex = entireText.indexOf( substring );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
+		}
+	}
 }
