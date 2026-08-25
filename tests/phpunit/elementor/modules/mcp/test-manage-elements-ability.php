@@ -12,7 +12,6 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
-use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -1007,16 +1006,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertIsArray( $interactions );
 		$this->assertCount( 2, $interactions['items'] );
-
-		$structure = ( new Get_Structure_Ability() )->execute( [
-			'post_id' => $post_id,
-			'element_id' => $heading_id,
-			'include_content' => true,
-		] );
-
-		$this->assertCount( 2, $structure['elements'][0]['interactions'] );
-		$this->assertSame( 'scrollIn', $structure['elements'][0]['interactions'][0]['trigger'] );
-		$this->assertSame( 'hover', $structure['elements'][0]['interactions'][1]['trigger'] );
+		$this->assertSame( 'scrollIn', $interactions['items'][0]['value']['trigger']['value'] );
+		$this->assertSame( 'hover', $interactions['items'][1]['value']['trigger']['value'] );
 	}
 
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
