@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,6 +51,14 @@ class String_Property_Converter extends Property_Converter_Base {
 
 		if ( '' === $value ) {
 			return false;
+		}
+
+		if ( Font_Family_Prop_Type::get_key() === $this->property || Font_Family_Prop_Type::get_key() === $this->type_key ) {
+			$value = Font_Family_Prop_Type::normalize_family_name( $value );
+
+			if ( '' === $value ) {
+				return false;
+			}
 		}
 
 		if ( null !== $this->allowed_values && ! in_array( $value, $this->allowed_values, true ) ) {

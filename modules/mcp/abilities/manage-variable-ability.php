@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -181,6 +182,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
 				}
 
+				if ( self::TYPE_FONT === $type ) {
+					$value = Font_Family_Prop_Type::normalize_family_name( $value );
+				}
+
 				return [
 					'type' => 'create',
 					'variable' => [
@@ -197,6 +202,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 				if ( '' === $id || '' === $label || '' === $value ) {
 					return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
+				}
+
+				if ( self::TYPE_FONT === $this->get_existing_variable_type( $id ) ) {
+					$value = Font_Family_Prop_Type::normalize_family_name( $value );
 				}
 
 				return [
@@ -227,6 +236,16 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					$action
 				) );
 		}
+	}
+
+	private function get_existing_variable_type( string $id ): string {
+		$variables = $this->get_service()->get_variables_list();
+
+		if ( ! is_array( $variables ) || empty( $variables[ $id ]['type'] ) ) {
+			return '';
+		}
+
+		return (string) $variables[ $id ]['type'];
 	}
 
 	private function merge_batch_results( array $batch_results, array $index_map, Bulk_Operations_Result $results ): void {

@@ -251,4 +251,195 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$this->assertWPError( $result );
 		$this->assertSame( 'unexpected_server_error', $result->get_error_code() );
 	}
+
+	public function test_create_font_variable_with_fallback_stack_stores_first_family_only() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'create',
+						'variable' => [
+							'type' => 'global-font-variable',
+							'label' => 'font-heading',
+							'value' => 'Inter',
+						],
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'font-1',
+						'label' => 'font-heading',
+					],
+				],
+				'watermark' => 1,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-font-variable',
+				'label' => 'font-heading',
+				'value' => 'Inter, "Helvetica Neue", Arial, sans-serif',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	public function test_create_font_variable_with_quoted_first_family_strips_quotes() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'create',
+						'variable' => [
+							'type' => 'global-font-variable',
+							'label' => 'font-heading',
+							'value' => 'Playfair Display',
+						],
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'font-1',
+						'label' => 'font-heading',
+					],
+				],
+				'watermark' => 1,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-font-variable',
+				'label' => 'font-heading',
+				'value' => '"Playfair Display", serif',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	public function test_update_font_variable_normalizes_value() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'get_variables_list' )->willReturn( [
+			'font-1' => [
+				'type' => 'global-font-variable',
+				'label' => 'font-heading',
+				'value' => 'Roboto',
+			],
+		] );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'update',
+						'id' => 'font-1',
+						'variable' => [
+							'label' => 'font-heading',
+							'value' => 'Inter',
+						],
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'update',
+						'id' => 'font-1',
+						'label' => 'font-heading',
+					],
+				],
+				'watermark' => 2,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'font-1',
+				'label' => 'font-heading',
+				'value' => 'Inter, sans-serif',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	public function test_create_color_variable_with_commas_is_not_normalized() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'create',
+						'variable' => [
+							'type' => 'global-color-variable',
+							'label' => 'brand',
+							'value' => 'rgba(0,0,0,0.5)',
+						],
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'color-1',
+						'label' => 'brand',
+					],
+				],
+				'watermark' => 1,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-color-variable',
+				'label' => 'brand',
+				'value' => 'rgba(0,0,0,0.5)',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
 }

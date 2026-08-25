@@ -14,22 +14,53 @@ class Font_Family_Prop_Type extends String_Prop_Type implements Font_Enqueueable
 		return 'font-family';
 	}
 
+	public static function normalize_family_name( string $value ): string {
+		$trimmed = trim( $value );
+		$comma_pos = strpos( $trimmed, ',' );
+
+		if ( false === $comma_pos ) {
+			return self::unquote_family_name( $trimmed );
+		}
+
+		$before_comma = substr( $trimmed, 0, $comma_pos );
+
+		if ( str_contains( $before_comma, '(' ) ) {
+			return $trimmed;
+		}
+
+		return self::unquote_family_name( trim( $before_comma ) );
+	}
+
+	private static function unquote_family_name( string $value ): string {
+		if (
+			( str_starts_with( $value, '"' ) && str_ends_with( $value, '"' ) )
+			|| ( str_starts_with( $value, "'" ) && str_ends_with( $value, "'" ) )
+		) {
+			return trim( substr( $value, 1, -1 ) );
+		}
+
+		return $value;
+	}
+
 	public function get_enqueue_font_family( $stored_value ): ?string {
 		if ( ! is_string( $stored_value ) ) {
 			return null;
 		}
 
-		$trimmed = trim( $stored_value );
+		$normalized = self::normalize_family_name( $stored_value );
 
-		$is_quoted = (
-			( str_starts_with( $trimmed, '"' ) && str_ends_with( $trimmed, '"' ) ) ||
-			( str_starts_with( $trimmed, "'" ) && str_ends_with( $trimmed, "'" ) )
-		);
-
-		if ( $is_quoted ) {
-			return trim( substr( $trimmed, 1, -1 ) );
+		if ( '' === $normalized || str_contains( $normalized, '(' ) ) {
+			return null;
 		}
 
-		return $trimmed;
+		return $normalized;
+	}
+
+	protected function sanitize_value( $value ) {
+		if ( is_string( $value ) ) {
+			$value = self::normalize_family_name( $value );
+		}
+
+		return parent::sanitize_value( $value );
 	}
 }

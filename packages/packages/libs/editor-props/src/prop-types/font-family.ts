@@ -7,15 +7,24 @@ const baseUtil = createPropUtils( 'font-family', z.string().nullable() );
 export const fontFamilyPropTypeUtil = Object.assign( baseUtil, {
 	getEnqueueFontFamily: ( value: string ) => {
 		const trimmed = value.trim();
+		const commaIndex = trimmed.indexOf( ',' );
+		const family =
+			-1 === commaIndex || trimmed.slice( 0, commaIndex ).includes( '(' )
+				? trimmed
+				: trimmed.slice( 0, commaIndex ).trim();
 
-		if (
-			( trimmed.startsWith( '"' ) && trimmed.endsWith( '"' ) ) ||
-			( trimmed.startsWith( "'" ) && trimmed.endsWith( "'" ) )
-		) {
-			return trimmed.slice( 1, -1 ).trim();
+		if ( family.includes( '(' ) ) {
+			return '';
 		}
 
-		return trimmed;
+		if (
+			( family.startsWith( '"' ) && family.endsWith( '"' ) ) ||
+			( family.startsWith( "'" ) && family.endsWith( "'" ) )
+		) {
+			return family.slice( 1, -1 ).trim();
+		}
+
+		return family;
 	},
 } );
 
