@@ -299,8 +299,7 @@ class Validation {
 			return false;
 		}
 
-		// Validate direction (can be empty string)
-		if ( ! $this->is_valid_string_prop( $animation_value, 'direction', self::VALID_DIRECTIONS ) ) {
+		if ( array_key_exists( 'direction', $animation_value ) && ! $this->is_valid_string_prop( $animation_value, 'direction', self::VALID_DIRECTIONS ) ) {
 			return false;
 		}
 
