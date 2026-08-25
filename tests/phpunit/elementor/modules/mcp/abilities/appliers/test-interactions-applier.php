@@ -147,6 +147,38 @@ class Test_Interactions_Applier extends TestCase {
 		$this->assertSame( 'ms', $duration['unit'] );
 	}
 
+	public function test_apply__multiple_items_on_same_element_are_all_saved() {
+		$applier = $this->make_applier();
+		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
+		$scroll = $this->valid_interaction();
+		$scroll['trigger'] = 'scrollIn';
+		$scroll['animation']['effect'] = 'slide';
+		$scroll['animation']['direction'] = 'bottom';
+		$hover = [
+			'trigger' => 'hover',
+			'animation' => [
+				'effect' => 'scale',
+				'type' => 'in',
+				'timing_config' => [
+					'duration' => [ 'size' => 250, 'unit' => 'ms' ],
+					'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+				],
+				'config' => [
+					'easing' => 'easeOut',
+				],
+			],
+		];
+
+		$result = $applier->apply( $index, [
+			'hero' => [ $scroll, $hover ],
+		] );
+
+		$this->assertNull( $result['error'] );
+		$this->assertCount( 2, $index['hero']['interactions']['items'] );
+		$this->assertSame( 'scrollIn', $index['hero']['interactions']['items'][0]['value']['trigger']['value'] );
+		$this->assertSame( 'hover', $index['hero']['interactions']['items'][1]['value']['trigger']['value'] );
+	}
+
 	public function test_apply__resolves_minimal_required_fields_only() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
