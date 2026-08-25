@@ -190,15 +190,6 @@ declare global {
 		};
 		elementorAppConfig?: {
 			onboarding?: OnboardingConfig;
-			'site-builder'?: {
-				iframeUrl?: string;
-				isAdmin?: boolean;
-				exitTo?: string;
-				elementorAiCurrentContext?: {
-					siteTitle: string;
-					siteAbout: unknown;
-				};
-			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;
