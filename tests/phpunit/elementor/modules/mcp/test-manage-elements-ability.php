@@ -12,6 +12,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -950,6 +951,72 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertOkOperation( $result, 0 );
 		$this->assertNull( $this->find_element_in_document( $post_id, $v3_id ) );
+	}
+
+	public function test_execute__update_persists_multiple_interactions_on_same_element() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'interactions' => [
+						[
+							'interaction_id' => 'card-scroll',
+							'trigger' => 'scrollIn',
+							'animation' => [
+								'effect' => 'slide',
+								'type' => 'in',
+								'direction' => 'bottom',
+								'timing_config' => [
+									'duration' => [ 'size' => 650, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+						[
+							'interaction_id' => 'card-hover',
+							'trigger' => 'hover',
+							'animation' => [
+								'effect' => 'scale',
+								'type' => 'in',
+								'timing_config' => [
+									'duration' => [ 'size' => 250, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+
+		$this->assertIsArray( $interactions );
+		$this->assertCount( 2, $interactions['items'] );
+
+		$structure = ( new Get_Structure_Ability() )->execute( [
+			'post_id' => $post_id,
+			'element_id' => $heading_id,
+			'include_content' => true,
+		] );
+
+		$this->assertCount( 2, $structure['elements'][0]['interactions'] );
+		$this->assertSame( 'scrollIn', $structure['elements'][0]['interactions'][0]['trigger'] );
+		$this->assertSame( 'hover', $structure['elements'][0]['interactions'][1]['trigger'] );
 	}
 
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
