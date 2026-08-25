@@ -36,6 +36,9 @@ describe( 'list-items-control actions', () => {
 						container: expect.anything(),
 						model: expect.objectContaining( {
 							elType: 'e-list-item',
+							settings: {
+								show_markers: true,
+							},
 							hydrateDefaultChildren: true,
 							editor_settings: expect.objectContaining( {
 								title: 'Item 3',
