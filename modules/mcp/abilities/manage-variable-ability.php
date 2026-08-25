@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -23,8 +22,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Variables_Service $service;
-
-	private ?array $existing_types_cache = null;
 
 	public function __construct( ?Variables_Service $service = null ) {
 		$this->service = $service;
@@ -120,7 +117,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
-		$this->existing_types_cache = null;
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) ) {
@@ -185,14 +181,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
 				}
 
-				if ( self::TYPE_FONT === $type ) {
-					$value = Font_Family_Prop_Type::normalize_family_name( $value );
-
-					if ( '' === $value ) {
-						return $this->bad_request( __( 'Font value must be a non-empty family name.', 'elementor' ) );
-					}
-				}
-
 				return [
 					'type' => 'create',
 					'variable' => [
@@ -209,14 +197,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 				if ( '' === $id || '' === $label || '' === $value ) {
 					return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
-				}
-
-				if ( self::TYPE_FONT === $this->get_existing_variable_type( $id ) ) {
-					$value = Font_Family_Prop_Type::normalize_family_name( $value );
-
-					if ( '' === $value ) {
-						return $this->bad_request( __( 'Font value must be a non-empty family name.', 'elementor' ) );
-					}
 				}
 
 				return [
@@ -247,15 +227,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					$action
 				) );
 		}
-	}
-
-	private function get_existing_variable_type( string $id ): string {
-		if ( null === $this->existing_types_cache ) {
-			$variables = $this->get_service()->get_variables_list();
-			$this->existing_types_cache = is_array( $variables ) ? $variables : [];
-		}
-
-		return (string) ( $this->existing_types_cache[ $id ]['type'] ?? '' );
 	}
 
 	private function merge_batch_results( array $batch_results, array $index_map, Bulk_Operations_Result $results ): void {

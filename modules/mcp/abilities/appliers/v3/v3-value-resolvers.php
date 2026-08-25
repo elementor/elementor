@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -330,7 +328,16 @@ class V3_Value_Resolvers {
 	 * V3 typography controls accept a single named font; CSS stacks are reduced to the first family.
 	 */
 	private static function normalize_font_family( string $value ): string {
-		return Font_Family_Prop_Type::normalize_family_name( $value );
+		$first = trim( explode( ',', $value, 2 )[0] );
+
+		if (
+			( str_starts_with( $first, '"' ) && str_ends_with( $first, '"' ) )
+			|| ( str_starts_with( $first, "'" ) && str_ends_with( $first, "'" ) )
+		) {
+			$first = substr( $first, 1, -1 );
+		}
+
+		return trim( $first );
 	}
 
 	/**

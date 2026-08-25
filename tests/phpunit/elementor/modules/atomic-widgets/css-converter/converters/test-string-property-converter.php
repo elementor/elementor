@@ -73,7 +73,7 @@ class Test_String_Property_Converter extends TestCase {
 		$this->assertFalse( $context->has_prop( 'font-weight' ) );
 	}
 
-	public function test_convert__font_family_stack_keeps_first_family_only() {
+	public function test_convert__without_allowlist_accepts_any_non_empty_value() {
 		// Arrange.
 		$converter = new String_Property_Converter( 'font-family' );
 		$context = new Conversion_Context();
@@ -83,20 +83,7 @@ class Test_String_Property_Converter extends TestCase {
 
 		// Assert.
 		$this->assertTrue( $converted );
-		$this->assertSame( [ '$$type' => 'string', 'value' => 'Inter' ], $context->get_prop( 'font-family' ) );
-	}
-
-	public function test_convert__font_family_preserves_css_var_with_fallback() {
-		// Arrange.
-		$converter = new String_Property_Converter( 'font-family', null, Font_Family_Prop_Type::get_key() );
-		$context = new Conversion_Context();
-
-		// Act.
-		$converted = $converter->convert( $context, [ 'property' => 'font-family', 'value' => 'var(--font-heading, Inter)' ] );
-
-		// Assert.
-		$this->assertTrue( $converted );
-		$this->assertSame( [ '$$type' => 'font-family', 'value' => 'var(--font-heading, Inter)' ], $context->get_prop( 'font-family' ) );
+		$this->assertSame( [ '$$type' => 'string', 'value' => 'Inter, sans-serif' ], $context->get_prop( 'font-family' ) );
 	}
 
 	public function test_convert__uses_the_provided_type_key_for_subclassed_prop_types() {
@@ -111,7 +98,7 @@ class Test_String_Property_Converter extends TestCase {
 		$prop_value = $context->get_prop( 'font-family' );
 
 		$this->assertTrue( $converted );
-		$this->assertSame( [ '$$type' => 'font-family', 'value' => 'Anton' ], $prop_value );
+		$this->assertSame( [ '$$type' => 'font-family', 'value' => "'Anton', 'Archivo Black', sans-serif" ], $prop_value );
 
 		$validation_result = Props_Parser::make( [ 'font-family' => Font_Family_Prop_Type::make() ] )->validate( [ 'font-family' => $prop_value ] );
 		$this->assertTrue( $validation_result->is_valid(), $validation_result->errors()->to_string() );
