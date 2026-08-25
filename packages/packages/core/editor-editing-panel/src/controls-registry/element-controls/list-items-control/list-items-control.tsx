@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { addItem, duplicateItem, LIST_ITEM_ELEMENT_TYPE, type ListItem, moveItem, removeItem } from './list-actions';
+import { useShowMarkersWriteThrough } from './use-show-markers-write-through';
 
 const LIST_ELEMENT_TYPE = 'e-list';
 
@@ -29,7 +30,11 @@ const ListItemsControlContent = ( { label }: { label: string } ) => {
 		{ [ LIST_ELEMENT_TYPE ]: LIST_ITEM_ELEMENT_TYPE },
 		{ includeSelfAsParent: true }
 	);
+	// The root owns `show_markers`, but each child item needs a mirrored copy for its own
+	// `Child_Dependency`, so the repeater hosts the write-through that keeps those values undoable.
 	const showMarkers = booleanPropTypeUtil.extract( settings.show_markers ) ?? true;
+
+	useShowMarkersWriteThrough( element.id, showMarkers );
 
 	const repeaterValues: RepeaterItem< ListItem >[] = listItems.map( ( item, index ) => ( {
 		id: item.id,
