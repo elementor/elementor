@@ -171,14 +171,38 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$resolved_settings = is_array( $raw_settings )
-			? Render_Props_Resolver::for_settings()->resolve( array_intersect_key( $props_schema, $raw_settings ), $raw_settings )
-			: $raw_settings;
-
-		$skeleton['settings'] = $resolved_settings ? $resolved_settings : (object) [];
+		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
 		$skeleton['styles'] = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 
-		$this->populate_default_styles( $skeleton, $node, $config, is_array( $resolved_settings ) ? $resolved_settings : [] );
+		$resolved_settings = is_array( $skeleton['settings'] ) ? $skeleton['settings'] : [];
+		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings );
+	}
+
+	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {
+		if ( ! is_array( $raw_settings ) ) {
+			return (object) [];
+		}
+
+		$schema = array_intersect_key( $props_schema, $raw_settings );
+		$serialized = [];
+		$static_schema = [];
+
+		foreach ( $schema as $key => $prop_type ) {
+			$dynamic = Dynamic_Tag_Llm_Resolver::try_serialize( $raw_settings[ $key ] );
+
+			if ( null !== $dynamic ) {
+				$serialized[ $key ] = $dynamic;
+				continue;
+			}
+
+			$static_schema[ $key ] = $prop_type;
+		}
+
+		if ( ! empty( $static_schema ) ) {
+			$serialized += Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
+		}
+
+		return ! empty( $serialized ) ? $serialized : (object) [];
 	}
 
 	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings ): void {
