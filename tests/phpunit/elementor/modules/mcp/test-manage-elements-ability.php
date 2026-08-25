@@ -952,6 +952,64 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNull( $this->find_element_in_document( $post_id, $v3_id ) );
 	}
 
+	public function test_execute__update_persists_multiple_interactions_on_same_element() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'interactions' => [
+						[
+							'interaction_id' => 'card-scroll',
+							'trigger' => 'scrollIn',
+							'animation' => [
+								'effect' => 'slide',
+								'type' => 'in',
+								'direction' => 'bottom',
+								'timing_config' => [
+									'duration' => [ 'size' => 650, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+						[
+							'interaction_id' => 'card-hover',
+							'trigger' => 'hover',
+							'animation' => [
+								'effect' => 'scale',
+								'type' => 'in',
+								'timing_config' => [
+									'duration' => [ 'size' => 250, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+
+		$this->assertIsArray( $interactions );
+		$this->assertCount( 2, $interactions['items'] );
+		$this->assertSame( 'scrollIn', $interactions['items'][0]['value']['trigger']['value'] );
+		$this->assertSame( 'hover', $interactions['items'][1]['value']['trigger']['value'] );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
