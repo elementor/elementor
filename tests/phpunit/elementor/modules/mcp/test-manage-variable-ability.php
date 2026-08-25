@@ -442,4 +442,78 @@ class Test_Manage_Variable_Ability extends TestCase {
 		// Assert
 		$this->assertSame( 'ok', $result['status'] );
 	}
+
+	public function test_create_font_variable_rejects_empty_value_after_normalization() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'process_batch' );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-font-variable',
+				'label' => 'font-heading',
+				'value' => ', sans-serif',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_update_font_variable_rejects_empty_value_after_normalization() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'get_variables_list' )->willReturn( [
+			'font-1' => [ 'type' => 'global-font-variable', 'label' => 'h', 'value' => 'Roboto' ],
+		] );
+		$service->expects( $this->never() )->method( 'process_batch' );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'font-1',
+				'label' => 'h',
+				'value' => ', sans-serif',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_update_font_variables_in_batch_reads_variables_list_once() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'get_variables_list' )
+			->willReturn( [
+				'font-1' => [ 'type' => 'global-font-variable', 'label' => 'a', 'value' => 'Roboto' ],
+				'font-2' => [ 'type' => 'global-font-variable', 'label' => 'b', 'value' => 'Arial' ],
+				'font-3' => [ 'type' => 'global-font-variable', 'label' => 'c', 'value' => 'Inter' ],
+			] );
+		$service->method( 'process_batch' )->willReturn( [
+			'success' => true,
+			'results' => [
+				[ 'index' => 0, 'status' => 'ok', 'action' => 'update', 'id' => 'font-1', 'label' => 'a' ],
+				[ 'index' => 1, 'status' => 'ok', 'action' => 'update', 'id' => 'font-2', 'label' => 'b' ],
+				[ 'index' => 2, 'status' => 'ok', 'action' => 'update', 'id' => 'font-3', 'label' => 'c' ],
+			],
+			'watermark' => 3,
+		] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[ 'action' => 'update', 'id' => 'font-1', 'label' => 'a', 'value' => 'Inter, sans-serif' ],
+			[ 'action' => 'update', 'id' => 'font-2', 'label' => 'b', 'value' => 'Roboto, sans-serif' ],
+			[ 'action' => 'update', 'id' => 'font-3', 'label' => 'c', 'value' => 'Lato, sans-serif' ],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
 }

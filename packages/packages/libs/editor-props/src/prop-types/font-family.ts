@@ -4,27 +4,27 @@ import { createPropUtils } from '../utils/create-prop-utils';
 
 const baseUtil = createPropUtils( 'font-family', z.string().nullable() );
 
+const unquote = ( value: string ): string => {
+	const isQuoted =
+		( value.startsWith( '"' ) && value.endsWith( '"' ) ) ||
+		( value.startsWith( "'" ) && value.endsWith( "'" ) );
+
+	return isQuoted ? value.slice( 1, -1 ).trim() : value;
+};
+
+const takeFirstFamily = ( value: string ): string => {
+	const commaIndex = value.indexOf( ',' );
+	const openParenIndex = value.indexOf( '(' );
+	const commaSeparatesStack = -1 !== commaIndex && ( -1 === openParenIndex || commaIndex < openParenIndex );
+
+	return commaSeparatesStack ? value.slice( 0, commaIndex ).trim() : value;
+};
+
 export const fontFamilyPropTypeUtil = Object.assign( baseUtil, {
 	getEnqueueFontFamily: ( value: string ) => {
-		const trimmed = value.trim();
-		const commaIndex = trimmed.indexOf( ',' );
-		const family =
-			-1 === commaIndex || trimmed.slice( 0, commaIndex ).includes( '(' )
-				? trimmed
-				: trimmed.slice( 0, commaIndex ).trim();
+		const family = takeFirstFamily( value.trim() );
 
-		if ( family.includes( '(' ) ) {
-			return '';
-		}
-
-		if (
-			( family.startsWith( '"' ) && family.endsWith( '"' ) ) ||
-			( family.startsWith( "'" ) && family.endsWith( "'" ) )
-		) {
-			return family.slice( 1, -1 ).trim();
-		}
-
-		return family;
+		return family.includes( '(' ) ? '' : unquote( family );
 	},
 } );
 
