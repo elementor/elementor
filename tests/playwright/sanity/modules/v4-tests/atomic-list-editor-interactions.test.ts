@@ -11,6 +11,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 	const listType = 'e-list';
 	const listItemsLabel = 'List Items';
+	const showMarkersLabel = 'Show Markers';
 
 	const getListRoot = ( listId: string ): Locator => {
 		return editor.getPreviewFrame().locator( editor.getWidgetSelector( listId ) );
@@ -45,6 +46,17 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		await expect( listItemsField ).toBeVisible();
 
 		return listItemsField;
+	};
+
+	const openShowMarkersControl = async () => {
+		await editor.v4Panel.openTab( 'general' );
+
+		const showMarkersField = editor.page.locator( 'span' )
+			.filter( { hasText: showMarkersLabel } );
+
+		await expect( showMarkersField ).toBeVisible();
+
+		return showMarkersField;
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
@@ -148,5 +160,145 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 		// Assert.
 		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( [ initialIds[ 1 ], initialIds[ 0 ] ] );
+	} );
+
+	test( 'Undo and redo adding a list item restores the original subtree', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const listRoot = getListRoot( listId );
+		await editor.selectElement( listId );
+		await editor.waitForPanelToLoad();
+
+		const listItemsField = await openListItemsControl();
+		const initialIds = await getListItemIds( listRoot );
+
+		// Act - add one item.
+		await listItemsField.getByRole( 'button', { name: 'Add item' } ).click();
+		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( initialIds.length + 1 );
+		await expect( getListMarkers( listRoot ) ).toHaveCount( initialIds.length + 1 );
+		await expect( getListParagraphs( listRoot ) ).toHaveCount( initialIds.length + 1 );
+
+		// Act - undo the add.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
+
+		// Assert - back to initial structure.
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( initialIds );
+		await expect( getListMarkers( listRoot ) ).toHaveCount( initialIds.length );
+		await expect( getListParagraphs( listRoot ) ).toHaveCount( initialIds.length );
+
+		// Act - redo the add.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/redo' ) );
+
+		// Assert - the extra subtree returns.
+		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( initialIds.length + 1 );
+		await expect( getListMarkers( listRoot ) ).toHaveCount( initialIds.length + 1 );
+		await expect( getListParagraphs( listRoot ) ).toHaveCount( initialIds.length + 1 );
+	} );
+
+	test( 'Undo and redo removing a list item restores the original ids', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const listRoot = getListRoot( listId );
+		await editor.selectElement( listId );
+		await editor.waitForPanelToLoad();
+
+		const listItemsField = await openListItemsControl();
+		await listItemsField.getByRole( 'button', { name: 'Add item' } ).click();
+		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( 2 );
+
+		const initialIds = await getListItemIds( listRoot );
+		const listRows = listItemsField.locator( 'ul.MuiList-root > li' );
+
+		// Act - remove the second item.
+		await listRows.nth( 1 ).hover();
+		const removeButton = listRows.nth( 1 ).getByRole( 'button', { name: 'Remove' } );
+		await expect( removeButton ).toBeVisible();
+		await removeButton.click();
+
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( [ initialIds[ 0 ] ] );
+
+		// Act - undo the removal.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
+
+		// Assert - back to both original ids.
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( initialIds );
+
+		// Act - redo the removal.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/redo' ) );
+
+		// Assert - reduced structure returns.
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( [ initialIds[ 0 ] ] );
+	} );
+
+	test( 'Undo and redo reorder restores list item order', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const listRoot = getListRoot( listId );
+		await editor.selectElement( listId );
+		await editor.waitForPanelToLoad();
+
+		const listItemsField = await openListItemsControl();
+		await listItemsField.getByRole( 'button', { name: 'Add item' } ).click();
+		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( 2 );
+
+		const initialIds = await getListItemIds( listRoot );
+		const listRows = listItemsField.locator( 'ul.MuiList-root > li' );
+		const firstItem = listRows.first();
+		const lastItem = listRows.last();
+		const firstDragHandle = firstItem.locator( '.class-item-sortable-trigger' );
+
+		// Act - reorder first to last.
+		await firstItem.hover();
+		await firstDragHandle.dragTo( lastItem );
+
+		const reorderedIds = [ initialIds[ 1 ], initialIds[ 0 ] ];
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( reorderedIds );
+
+		// Act - undo the reorder.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
+
+		// Assert - original order restored.
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( initialIds );
+
+		// Act - redo the reorder.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/redo' ) );
+
+		// Assert - reordered state returns.
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( reorderedIds );
+	} );
+
+	test( 'Undo and redo show markers uses a single intuitive history step', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const listRoot = getListRoot( listId );
+		await editor.selectElement( listId );
+		await editor.waitForPanelToLoad();
+
+		const showMarkersField = await openShowMarkersControl();
+		await expect( getListMarkers( listRoot ) ).toHaveCount( 1 );
+
+		// Act - hide markers.
+		await showMarkersField.getByRole( 'checkbox' ).click();
+		await expect( getListMarkers( listRoot ) ).toHaveCount( 0 );
+
+		// Act - undo once.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
+
+		// Assert - one undo restores both the switch effect and visible markers.
+		await expect( getListMarkers( listRoot ) ).toHaveCount( 1 );
+
+		// Act - redo once.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/redo' ) );
+
+		// Assert - markers hide again.
+		await expect( getListMarkers( listRoot ) ).toHaveCount( 0 );
 	} );
 } );
