@@ -136,6 +136,11 @@ class Editor {
 		add_action( 'wp_head', [ $this, 'editor_head_trigger' ], 30 );
 
 		// Handle `wp_footer`
+		// Re-attach core media templates after wiping `wp_footer`. `wp_enqueue_media()`
+		// hooks `wp_print_media_templates` there; if it already ran this request
+		// (or the editor loader pulls in `wp-media` without calling it), the
+		// templates never print and media-editor.js throws before bootstrap.
+		add_action( 'wp_footer', 'wp_print_media_templates', 10 );
 		add_action( 'wp_footer', 'wp_print_footer_scripts', 20 );
 		add_action( 'wp_footer', 'wp_auth_check_html', 30 );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
