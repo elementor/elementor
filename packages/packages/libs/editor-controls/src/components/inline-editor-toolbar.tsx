@@ -107,8 +107,10 @@ export const InlineEditorToolbar = ( {
 	};
 
 	useEffect( () => {
-		editor?.commands?.focus();
-	}, [ editor ] );
+		if ( ! inControlPanel ) {
+			editor?.commands?.focus();
+		}
+	}, [ editor, inControlPanel ] );
 
 	return (
 		<Box
