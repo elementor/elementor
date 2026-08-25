@@ -28,9 +28,6 @@ export function init() {
 
 	initViewReplacements();
 
-	initTabsModelExtensions();
-	initListType();
-
 	initLegacyViews();
 
 	initSettingsTransformers();
@@ -65,4 +62,7 @@ export function init() {
 			docs: mcpDescription,
 		} )
 	);
+
+	initTabsModelExtensions();
+	initListType();
 }
