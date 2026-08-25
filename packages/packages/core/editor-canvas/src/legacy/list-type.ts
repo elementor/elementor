@@ -8,16 +8,6 @@ import type { ElementType, RenderContext } from './types';
 
 const LIST_TYPE = 'e-list';
 
-function getMemoizedView< T >( viewCreator: () => T ) {
-	let cachedView: T | null = null;
-
-	if ( ! cachedView ) {
-		cachedView = viewCreator();
-	}
-
-	return cachedView;
-}
-
 /**
  * Initialize the e-list element type with custom view logic.
  *
@@ -32,10 +22,15 @@ export function initListType() {
 
 function createListType( options: CreateNestedTemplatedElementTypeOptions ): typeof ElementType {
 	const BaseType = createNestedTemplatedElementType( options );
+	let ListView: ReturnType< typeof createListView > | null = null;
 
 	return class extends BaseType {
 		getView() {
-			return getMemoizedView( () => createListView( options ) );
+			if ( ! ListView ) {
+				ListView = createListView( options );
+			}
+
+			return ListView;
 		}
 	};
 }

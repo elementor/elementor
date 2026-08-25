@@ -6,7 +6,6 @@ import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
-import { SettingsField } from '../../settings-field';
 import { addItem, duplicateItem, LIST_ITEM_ELEMENT_TYPE, type ListItem, moveItem, removeItem } from './list-actions';
 
 const LIST_ELEMENT_TYPE = 'e-list';
@@ -20,11 +19,7 @@ const getDefaultListItemLabel = ( index: number ) => {
 };
 
 export const ListItemsControl = ( { label }: { label: string } ) => {
-	return (
-		<SettingsField bind="tag" propDisplayName={ __( 'List', 'elementor' ) }>
-			<ListItemsControlContent label={ label } />
-		</SettingsField>
-	);
+	return <ListItemsControlContent label={ label } />;
 };
 
 const ListItemsControlContent = ( { label }: { label: string } ) => {
@@ -82,6 +77,10 @@ const ListItemsControlContent = ( { label }: { label: string } ) => {
 			setValues={ setValue }
 			showRemove={ repeaterValues.length > 1 }
 			label={ label }
+			// List items are child elements, not a prop on the root, so there is nothing meaningful
+			// to expose or bind here. Using an unrelated prop key just to satisfy adornment context
+			// makes the panel act as if that real prop belongs to this repeater.
+			adornment={ () => null }
 			itemSettings={ {
 				getId: ( { item } ) => item.id,
 				initialValues: { id: '', title: 'Item' },
