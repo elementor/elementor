@@ -152,6 +152,7 @@ class Module extends BaseModule {
 			new Abilities\List_Resources_Ability( $registry ),
 			new Abilities\Read_Resource_Ability( $registry ),
 			new Abilities\List_Components_Ability(),
+			new Abilities\Manage_Component_Ability(),
 		];
 
 		return $abilities;

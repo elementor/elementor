@@ -16,6 +16,7 @@ use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
+use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
 
@@ -27,6 +28,12 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const EXPERIMENT_VARIANTS_NAME = 'e_component_variants';
 	const PACKAGES        = [ 'editor-components' ];
+
+	/**
+	 * Variants meta must be persisted before `Global_Classes_Relations::on_document_save()`
+	 * (default priority 10) reads it via the `extract_class_ids_from_post` filter.
+	 */
+	const SAVE_VARIANTS_PRIORITY = 9;
 
 	public function get_name() {
 		return 'components';
@@ -50,7 +57,13 @@ class Module extends BaseModule {
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
 
 		if ( self::is_variants_experiment_active() ) {
-			add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_variants( $document, $data ), 10, 2 );
+			add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_variants( $document, $data ), self::SAVE_VARIANTS_PRIORITY, 2 );
+			add_filter(
+				'elementor/global_classes/extract_class_ids_from_post',
+				fn( array $ids, $post_id ) => $this->add_variant_class_ids( $ids, $post_id ),
+				10,
+				2
+			);
 		}
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 		add_filter( 'elementor/utils/find_element_recursive/inner_elements', fn( array $inner_elements, array $element_data ) => $this->get_inner_elements_for_search( $inner_elements, $element_data ), 10, 2 );
@@ -183,6 +196,16 @@ class Module extends BaseModule {
 		if ( ! $result->is_valid() ) {
 			throw new \Exception( esc_html( 'Settings validation failed for component variants: ' . $result->errors()->to_string() ) );
 		}
+	}
+
+	private function add_variant_class_ids( array $ids, $post_id ): array {
+		$document = Plugin::$instance->documents->get( (int) $post_id );
+
+		if ( ! $document instanceof Component_Document ) {
+			return $ids;
+		}
+
+		return array_merge( $ids, Component_Variant_Class_Collector::collect( $document->get_variants() ) );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
