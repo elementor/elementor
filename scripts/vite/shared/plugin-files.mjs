@@ -30,6 +30,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'!cypress.json',
 	'!docker-compose.yml',
 	'!docs/**',
+	'!examples/**',
 	'!local-site/**',
 	'!modules/**/assets/**',
 	'!nightwatch.conf.js',

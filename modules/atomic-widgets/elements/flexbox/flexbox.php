@@ -36,6 +36,8 @@ class Flexbox extends Atomic_Element_Base {
 		return 'e-flexbox';
 	}
 
+	public static $widget_description = 'A container (div) with flex display and flex-direction row by default.';
+
 	public static function get_element_type(): string {
 		return 'e-flexbox';
 	}

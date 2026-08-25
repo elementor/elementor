@@ -7,7 +7,6 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\DefaultStyles\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -100,7 +99,7 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['default_styles'] = [
-			'allowed_tags' => Utils::ALLOWED_HTML_WRAPPER_TAGS,
+			'allowed_tags' => Default_Styles_Allowed_Tags::TAGS,
 		];
 
 		return $settings;

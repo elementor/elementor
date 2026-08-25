@@ -83,6 +83,7 @@ const useAppliedStyles = () => {
 	const currentClassesProp = useClassesProp();
 	const baseStyles = useBaseStyles();
 	const defaultTagStyleId = useDefaultTagStyleId();
+	const { id: activeStyleId } = useStyle();
 
 	useStylesRerender();
 
@@ -90,7 +91,12 @@ const useAppliedStyles = () => {
 
 	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
 
-	const applicableIds = [ ...baseStyles, ...appliedStyles, ...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ) ];
+	const applicableIds = [
+		...baseStyles,
+		...appliedStyles,
+		...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ),
+		...( activeStyleId ? [ activeStyleId ] : [] ),
+	];
 
 	return stylesRepository.all().filter( ( style ) => applicableIds.includes( style.id ) );
 };

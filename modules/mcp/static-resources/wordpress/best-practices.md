@@ -2,6 +2,9 @@
 
 Opinionated guidance for building WordPress sites with Elementor via MCP. Load before making structural decisions about pages, posts, and theme templates.
 
+## Widget selection: V4 + dynamic tag over V3 post-* widgets
+Title, featured image, excerpt, price, meta, CTA link → V4 widget (`e-heading`, `e-image`, `e-paragraph`, `e-button`) + a dynamic tag from [elementor://dynamic-tags]. Do NOT use the V3 `theme-post-title` / `theme-post-featured-image` / `theme-post-excerpt` widgets when a V4 + dynamic tag combination works — reserve them for cases where the V4 equivalent is not viable. This applies everywhere: singles, archives, loop items, and standalone pages.
+
 ## Repeating layouts / detail pages
 When the user describes a design that repeats across posts or pages ("each project", "the product detail page", "make every blog post look like this", "each item links to a page like this"), that is ONE `single` / `single-<cpt>` template driven by dynamic data — NOT N duplicated pages. Never loop `elementor/manage-site-parts` `action: create` to make one page per item.
 
@@ -27,6 +30,7 @@ Every single template has one optional editorial slot: a `theme-post-content` wi
 
 - Wrap with `e-div-block`, NOT `e-flexbox` — a row-direction default would squeeze the article body. Style the wrapper's `max-width` / `padding`.
 - Exactly one `theme-post-content` per single template.
+- `theme-post-content` is for the single-template body slot ONLY — never place it inside a loop item, archive, header, footer, or reusable component; the surrounding loop already repeats the article body.
 
 ### Dynamic tags for the rest
 Title, featured image, excerpt, meta, price, CTA link all use dynamic tags on regular widgets (`e-heading` title, `e-image` src, `e-button` link). Read [elementor://dynamic-tags] for allowed tag names. Do NOT hard-code per-post values — the same template renders every post.

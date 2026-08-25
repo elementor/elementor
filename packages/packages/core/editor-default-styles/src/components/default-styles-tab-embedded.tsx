@@ -14,6 +14,7 @@ import {
 	StyleInheritanceProvider,
 	StyleProvider,
 	StyleSections,
+	StyleTabSlot,
 } from '@elementor/editor-editing-panel';
 import { type Element, type ElementType } from '@elementor/editor-elements';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
@@ -211,6 +212,7 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 												<StyleInheritanceProvider>
 													<SectionsList>
 														<StyleSections />
+														<StyleTabSlot />
 													</SectionsList>
 													<Box
 														sx={ {
