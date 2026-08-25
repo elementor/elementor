@@ -24,6 +24,7 @@ type InlineEditorMockProps = {
 	setValue: ( value: string | null ) => void;
 	placeholder?: string | null;
 	onEditorCreate?: ( editor: Editor | null ) => void;
+	onEditorDestroy?: () => void;
 };
 
 describe( '<InlineEditingControl />', () => {
@@ -32,6 +33,7 @@ describe( '<InlineEditingControl />', () => {
 			value,
 			placeholder,
 			onEditorCreate,
+			onEditorDestroy,
 		}: InlineEditorMockProps ) => (
 			<div
 				role="textbox"
@@ -43,6 +45,7 @@ describe( '<InlineEditingControl />', () => {
 				<button onClick={ () => onEditorCreate?.( createMockEditor( false ) ) }>
 					create-non-editable-editor
 				</button>
+				<button onClick={ () => onEditorDestroy?.() }>destroy-editor</button>
 			</div>
 		) ) as unknown as typeof InlineEditor );
 	} );
@@ -154,14 +157,27 @@ describe( '<InlineEditingControl />', () => {
 		);
 	} );
 
-	it( 'should render without crashing when context is not provided', () => {
-		// Act.
-		renderControl( <InlineEditingControl />, baseProps );
+	it( 'should hide the toolbar when the editor instance is destroyed', () => {
+		// Arrange.
+		renderControl( <InlineEditingControl context={ { elementId: '1' } } />, baseProps );
 		fireEvent.click( screen.getByText( 'create-editable-editor' ) );
 
+		expect( screen.getByRole( 'toolbar' ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.click( screen.getByText( 'destroy-editor' ) );
+
 		// Assert.
-		expect( InlineEditorToolbar ).toHaveBeenCalledWith(
-			expect.objectContaining( { elementId: undefined } ),
+		expect( screen.queryByRole( 'toolbar' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should pass onEditorDestroy to the inline editor', () => {
+		// Act.
+		renderControl( <InlineEditingControl context={ { elementId: '1' } } />, baseProps );
+
+		// Assert.
+		expect( InlineEditor ).toHaveBeenCalledWith(
+			expect.objectContaining( { onEditorDestroy: expect.any( Function ) } ),
 			expect.anything()
 		);
 	} );

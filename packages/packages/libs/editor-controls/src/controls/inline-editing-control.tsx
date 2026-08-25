@@ -10,104 +10,100 @@ import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { extractInlineHtmlContent } from '../utils/inline-editing';
+import { type ControlProps } from '../utils/types';
 
-export const InlineEditingControl = createControl(
-	( {
-		sx,
-		attributes,
-		props,
-		context,
-	}: {
-		sx?: SxProps< Theme >;
-		attributes?: Record< string, string >;
-		props?: ComponentProps< 'div' >;
-		context?: { elementId: string };
-	} ) => {
-		const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
-		const { value: rawValue } = usePropKeyContext();
-		const content = value ?? extractInlineHtmlContent( rawValue );
-		const [ editor, setEditor ] = useState< Editor | null >( null );
+type Props = ControlProps< {
+	sx?: SxProps< Theme >;
+	attributes?: Record< string, string >;
+	props?: ComponentProps< 'div' >;
+} >;
 
-		const handleChange = useCallback(
-			( newValue: unknown ) => {
-				const html = ( newValue ?? '' ) as string;
+export const InlineEditingControl = createControl( ( { sx, attributes, props, context: { elementId } }: Props ) => {
+	const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
+	const { value: rawValue } = usePropKeyContext();
+	const content = value ?? extractInlineHtmlContent( rawValue );
+	const [ editor, setEditor ] = useState< Editor | null >( null );
 
-				setValue( html );
-			},
-			[ setValue ]
-		);
+	const handleChange = useCallback(
+		( newValue: unknown ) => {
+			const html = ( newValue ?? '' ) as string;
 
-		return (
-			<ControlActions>
-				<Box sx={ { position: 'relative' } }>
-					{ editor && editor.isEditable && (
-						<InlineEditorToolbar
-							editor={ editor }
-							elementId={ context?.elementId }
-							sx={ {
-								boxShadow: 'none',
-								border: '1px solid',
-								borderColor: 'grey.200',
-								mb: 0.5,
-							} }
-							inControlPanel={ true }
-						/>
-					) }
-					<Box
+			setValue( html );
+		},
+		[ setValue ]
+	);
+
+	return (
+		<ControlActions>
+			<Box sx={ { position: 'relative' } }>
+				{ editor && editor.isEditable && (
+					<InlineEditorToolbar
+						editor={ editor }
+						elementId={ elementId }
 						sx={ {
-							p: 0.8,
+							boxShadow: 'none',
 							border: '1px solid',
 							borderColor: 'grey.200',
-							borderRadius: '8px',
-							transition: 'border-color .2s ease, box-shadow .2s ease',
-							'&:hover': {
-								borderColor: 'black',
-							},
-							'&:focus-within': {
-								borderColor: 'black',
-								boxShadow: '0 0 0 1px black',
-							},
-							'& .ProseMirror:focus': {
-								outline: 'none',
-							},
-							'& .ProseMirror': {
-								minHeight: '100px',
-								fontSize: '12px',
-								'& a': {
-									color: 'inherit',
-								},
-								'& .elementor-inline-editor-reset': {
-									margin: 0,
-									padding: 0,
-								},
-								'&.is-empty::before': {
-									content: 'attr(data-placeholder)',
-									color: 'text.tertiary',
-									pointerEvents: 'none',
-									position: 'absolute',
-									opacity: 0.6,
-								},
-							},
-							'.strip-styles *': {
-								all: 'unset',
-							},
-							...sx,
+							mb: 0.5,
 						} }
-						{ ...attributes }
-						{ ...props }
-					>
-						<InlineEditor
-							value={ content }
-							setValue={ handleChange }
-							placeholder={ placeholder ?? null }
-							onEditorCreate={ setEditor }
-							sx={ {
-								paddingBlockStart: 5,
-							} }
-						/>
-					</Box>
+						inControlPanel={ true }
+					/>
+				) }
+				<Box
+					sx={ {
+						p: 0.8,
+						border: '1px solid',
+						borderColor: 'grey.200',
+						borderRadius: '8px',
+						transition: 'border-color .2s ease, box-shadow .2s ease',
+						'&:hover': {
+							borderColor: 'black',
+						},
+						'&:focus-within': {
+							borderColor: 'black',
+							boxShadow: '0 0 0 1px black',
+						},
+						'& .ProseMirror:focus': {
+							outline: 'none',
+						},
+						'& .ProseMirror': {
+							minHeight: '100px',
+							fontSize: '12px',
+							'& a': {
+								color: 'inherit',
+							},
+							'& .elementor-inline-editor-reset': {
+								margin: 0,
+								padding: 0,
+							},
+							'&.is-empty::before': {
+								content: 'attr(data-placeholder)',
+								color: 'text.tertiary',
+								pointerEvents: 'none',
+								position: 'absolute',
+								opacity: 0.6,
+							},
+						},
+						'.strip-styles *': {
+							all: 'unset',
+						},
+						...sx,
+					} }
+					{ ...attributes }
+					{ ...props }
+				>
+					<InlineEditor
+						value={ content }
+						setValue={ handleChange }
+						placeholder={ placeholder ?? null }
+						onEditorCreate={ setEditor }
+						onEditorDestroy={ () => setEditor( null ) }
+						sx={ {
+							paddingBlockStart: 5,
+						} }
+					/>
 				</Box>
-			</ControlActions>
-		);
-	}
-);
+			</Box>
+		</ControlActions>
+	);
+} );
