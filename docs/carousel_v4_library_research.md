@@ -8,8 +8,14 @@ Date of data collection: **14 Aug 2026**. Every version number, bundle size and 
 below was measured locally (npm registry, esbuild, Playwright against Chromium) rather than quoted
 from the docs.
 
+**Re-checked on 25 Aug 2026 against spec version 21.** The spec changed materially: Carousel became
+an **Elementor Pro** feature, the autoplay pause/play button became a persisted eighth element, and
+three props were added or reshaped. §9 covers what moved and where the code has to live; §10 covers
+the shared-code question. Everything measured on 14 Aug still holds — the changes are about
+packaging and ownership, not about the engine.
+
 Two pieces of code back this document. The `e-carousel` element itself is in this repository, under
-`modules/atomic-widgets/elements/atomic-carousel/`, behind the hidden `e_carousel` experiment (§10).
+`modules/atomic-widgets/elements/atomic-carousel/`, behind the hidden `e_carousel` experiment (§12).
 The standalone measurement harness is deliberately *outside* the repository, in `carousel-poc/` at
 the WordPress root, because it installs two conflicting Embla versions side by side to compare them —
 see [Running the POC](#running-the-poc).
@@ -24,14 +30,16 @@ see [Running the POC](#running-the-poc).
 | Which version? | **v8.6.0, pinned.** Not the v9 RC — see §4. |
 | Alternative if Embla is rejected? | keen-slider (smaller, but no fade and no autoplay, both would be ours to write and maintain). |
 | Can we skip the library entirely? | **Not yet.** `::scroll-button()` / `::scroll-marker` are still Chromium-only (~70% of pageviews) and give no loop and no fade. |
-| Blocking issues found? | **No blockers.** Three real defects in the spec (§3.1, §3.2, §3.7) and one product decision that must be made before the first PR (§5, R1). |
+| Blocking issues found? | **No blockers.** Two factual defects still in the spec (§3.1, §3.2), one it has since fixed (§3.7), plus the decisions listed in §8. |
+| Where does it live? | **Elementor Pro**, per spec v21 — a Pro module plus a promotion stub in core. See §9. |
+| Does it need new shared code in `packages`? | **One item only** — a responsive settings prop that can drive a CSS custom property (§5, R9). Everything else reuses what exists. See §10. |
 
 The standalone POC scores **58 / 60** behavioural checks on v8 and **57 / 60** on the v9 RC. The
 failures are genuine findings, not harness noise, and are described in §3.
 
 Beyond the harness, the branch contains a working `e-carousel` element in the plugin behind a hidden
 experiment — seven element types, Twig templates, conditional children and the frontend handler —
-verified end to end at 30 PHP-side and 22 browser-side checks. See §10.
+verified end to end at 30 PHP-side and 22 browser-side checks. See §12.
 
 ---
 
@@ -215,20 +223,20 @@ transform or transition to the container or slides").
 (`e-carousel-container`, `e-carousel-slide`) rather than relying on documentation, or introduce an
 inner wrapper inside each slide that carries user transforms.
 
-### 3.7 Defect — "one dot per slide" is the wrong model
+### 3.7 One dot per snap position, not per slide — fixed in spec v21
 
-The spec describes pagination as one dot per slide. Embla's dot count comes from
+The spec used to describe pagination as one dot per slide. Embla's dot count comes from
 `scrollSnapList()`, which is the list of *reachable* positions, and with `containScroll: 'trimSnaps'`
 the trailing positions that would scroll past the last slide are dropped. Six slides at three per
 view with a 16 px gap produce **five** dots, not six, because the slides do not tile the viewport
-exactly.
+exactly. A sixth dot would be a dot that cannot be selected.
 
-This is the correct behaviour — a sixth dot would be a dot that cannot be selected — but the spec's
-wording will produce the wrong implementation and the wrong QA expectation. Measured in the
-integration harness (`node verify-integration.mjs`): 6 slides → 5 dots, 7 slides → 6 dots, 2
-slides → 1 dot, at which point the arrows and the dot strip hide themselves.
+Measured in the integration harness (`node verify-integration.mjs`): 6 slides → 5 dots, 7 slides →
+6 dots, 2 slides → 1 dot, at which point the arrows and the dot strip hide themselves.
 
-*Spec fix: "one dot per scroll position".*
+Spec v21 now reads "one dot per scroll snap point (depends on slide count and `slides_to_scroll`)",
+so this is resolved. Recording it here because the numbers are the ones QA should expect, and a
+reviewer counting dots against slides will otherwise file a bug.
 
 ### 3.8 Everything else in the spec verified as achievable
 
@@ -315,7 +323,7 @@ migration needed". That is true and also not the interesting part. The real risk
 
 | # | Risk | Severity | Notes |
 |---|---|---|---|
-| **R1** | **The saved child tree is canonical.** `define_default_children()` only runs when the element is created (`atomic-element-base-model.js`); the full tree is written into `_elementor_data` on save (`Document::save_elements`). Adding an 8th sub-element later does **not** backfill existing documents, and there is **no child-tree migration infrastructure** — `Migrations_Orchestrator` walks `settings` props, not `elements[]`. | **High** | Directly affects the spec's open decision on `show_autoplay_button` ("8th element vs JS-generated button is a dev decision"). **Decide before the first PR.** |
+| **R1** | **Structural changes after release cannot be migrated.** `define_default_children()` only runs when the element is created (`atomic-element-base-model.js`), and the full tree is written into `_elementor_data` on save (`Document::save_elements`). `children_dependencies` *do* backfill missing children when a model initialises in the editor (`reconcileInitialChildren`) and at render time for component instances (`Reconcile_Component_Instance_Elements::apply`) — so a conditional child added later does reach documents that are reopened. What has no path is a published page that is never reopened, and `Migrations_Orchestrator` cannot help: it walks `settings` props, not `elements[]`. | Medium | Not a v1 problem for a brand-new element, and spec v21 resolves the specific case by making `e-carousel-autoplay-button` a persisted conditional child. It stays on the list because it constrains every post-release structural change. |
 | **R2** | **`children_dependencies` stash is sessionStorage-only.** Toggling `show_arrows` off detaches the arrow elements and stashes them in session storage (`stash.ts`); saving writes a document without them. After the session ends the stash is gone, so re-enabling arrows restores the **factory default**, not the user's customised arrow content. | **High** | The spec explicitly asks for `Child_Dependency` here. Same pattern already shipped in `e-background-video`, so this may be an accepted product behaviour — but it must be a conscious decision, not a surprise. |
 | **R3** | **Embla's inline styles beat the Style tab** on `e-carousel-container` and `e-carousel-slide`. | **High** | See §3.6. Restrict the style schema on those node types. |
 | **R4** | **`transition_speed` persists an Embla physics constant** into `_elementor_data`. | Medium | See §3.3. Store ms and map, or the engine becomes part of our data contract. |
@@ -323,13 +331,20 @@ migration needed". That is true and also not the interesting part. The real risk
 | **R6** | **Swiper 8.4.5 and Embla both load** on a page containing a V3 `image-carousel` and a V4 `e-carousel`. No dedup mechanism exists. | Medium | ~20 KB + ~9 KB gzipped. Probably acceptable during the V3/V4 overlap period, but worth stating explicitly rather than discovering in a performance review. |
 | **R7** | **`eicon-nested-carousel` is already used by Elementor Pro's `nested-carousel` widget**, which is also labelled "Carousel" in the panel. | Low | The spec says "exists in the eicons set, no design task needed" without noting the collision. Users with Pro will see two identically-iconed, identically-named widgets. |
 | **R9** | **Per-breakpoint `slides_per_view` cannot come from a settings prop.** Only *style* props are breakpoint-aware in V4; settings props hold one value. The element writes `--e-carousel-slides-per-view` as an inline attribute, so it is one value for all breakpoints. | Medium | Making it responsive means either sourcing the variable from a style prop or emitting per-breakpoint CSS for the element's own class. Discovered while implementing, not while reading the spec. |
-| **R8** | **Component instances**: dependency-inserted children get deterministic derived IDs (`reconcile-component-instance-elements.ts`), and detached conditional children fall back to `default_model` with no stash server-side. | Medium | The spec requires all 12 props to be exposable as component properties, including `show_arrows` / `show_pagination`, which are precisely the ones that detach children. Needs explicit QA. |
+| **R8** | **Component instances**: dependency-inserted children get deterministic derived IDs (`reconcile-component-instance-elements.ts`), and detached conditional children fall back to `default_model` with no stash server-side. | Medium | Spec v21 requires all 14 props to be exposable as component properties, including `show_arrows`, `pagination_type` and `show_autoplay_button` — precisely the three that detach children. Needs explicit QA. |
+| **R10** | **`--e-carousel-gap` has no source.** Spec v21's `flex-basis` formula reads `var(--e-carousel-gap, 0px)`, but the gap is set by the user through the Style tab as plain CSS `gap` on the container. Nothing writes the variable, and CSS cannot read a computed `gap`. | Medium | Either own a Gap control on the root that emits both `gap` and the variable, or drop the variable and accept that with a gap the Nth slide is partially clipped. Embla itself needs no help — see §3.5. |
 
-**R1 is the one that cannot be deferred.** Everything else can be fixed later at moderate cost;
-adding a persisted sub-element after release requires writing migration infrastructure that does not
-exist yet. My recommendation is to make the autoplay pause/play button **JS-generated, not a
-persisted child** — the POC does it this way and it works, it keeps the tree at 7 nodes, and it
-sidesteps R1 entirely for the one element the spec left undecided.
+**R3, R2 and R9 are the ones worth deciding early.** R3 is a silent-failure class of bug that
+generates support tickets rather than test failures. R2 changes what users lose and needs a product
+call, not a technical one. R9 is the only item on the list that needs infrastructure which does not
+exist yet, and whichever way it is solved becomes precedent for every future element with a
+responsive behavioural prop.
+
+The earlier draft of this report treated R1 as undeferrable and recommended generating the autoplay
+button in JavaScript to avoid it. That was too absolute: `children_dependencies` backfill missing
+children in the editor and for component instances, so a persisted conditional child is viable, and
+spec v21 has since chosen exactly that. The POC still generates the button in JS and should be
+brought in line.
 
 ---
 
@@ -406,9 +421,10 @@ to that — the whole engine is 18 KB of dependency-free MIT TypeScript.
 3. **`transition_speed` range** (§3.3) — the 1–100 slider produces a 9-second transition at the top,
    a dead zone across its bottom fifth, and a 1.7-second default. Proposal: store milliseconds and
    map internally. **Needs product decision.**
-4. **`show_autoplay_button` implementation** (§5 R1) — the spec defers this to dev, but it is the one
-   decision with a lasting data cost. Proposal: **JS-generated, not a persisted sub-element.**
-   Recommend recording it in the spec rather than leaving it open.
+4. **`show_autoplay_button` contradicts itself in spec v21** — the props table keeps it (Boolean,
+   default true, exposable as a component property) while panel item 13 says to remove the control
+   entirely and always show the button when autoplay is ON. **Needs product decision.** Either
+   reading is implementable; the persisted-child mechanism works for both (§5 R1).
 5. **`show_arrows` OFF loses customised arrow content across sessions** (§5 R2) — is that acceptable?
    It is the existing `e-background-video` behaviour, so there may be precedent, but the carousel
    spec makes arrows a headline customisation feature, which raises the stakes.
@@ -417,41 +433,156 @@ to that — the whole engine is 18 KB of dependency-free MIT TypeScript.
 7. **`eicon-nested-carousel` + "Carousel" label collide with Elementor Pro's nested carousel** (§5 R7).
 8. **Loop fallback UX** (§3.4) — did not reproduce on the default tree, but if a user reaches a
    configuration where Embla disables loop, should the editor warn?
-9. **"One dot per slide"** (§3.7) — should read "one dot per scroll position". *Spec fix, no product
-   decision needed, but the QA checklist depends on it.*
-10. **Is `slides_per_view` meant to be per breakpoint?** (§5 R9) — the spec implies responsive, but
-    V4 settings props hold a single value. If responsive is required it needs a design decision
-    about where the value lives; if not, the spec should say so.
+9. ~~**"One dot per slide"**~~ (§3.7) — **resolved in spec v21**, which now says one dot per scroll
+   snap point. QA should expect 5 dots from 6 slides at 3 per view, not 6.
+10. **Is `slides_per_view` meant to be per breakpoint?** (§5 R9) — spec v21 marks both
+    `slides_per_view` and `slides_to_scroll` as responsive, but V4 settings props hold a single
+    value. **Needs a product and core decision**, and it is the one item that needs new
+    infrastructure. `slides_to_scroll` is the harder half, because the handler reads it at runtime
+    rather than through CSS, so a per-breakpoint CSS variable alone does not solve it.
+11. **Who sets `--e-carousel-gap`?** (§5 R10) — the spec's own formula depends on a variable nothing
+    writes.
+12. **Experiment name and ownership** — the spec says `e_carousel`, but Pro modules register their
+    own flags and the two existing V4 Pro elements use `e_pro_atomic_form` / `e_pro_collection_loop`
+    (§9). Proposal: `e_pro_atomic_carousel`, registered from the Pro module, with core's
+    `e_atomic_elements` as a prerequisite.
+13. **`eicon-nested-carousel` + "Carousel" collide with Pro's `nested-carousel` widget** (§5 R7).
+    Now that both live in Pro, the collision is inside a single plugin rather than across two.
+14. **Go links** for the Carousel upgrade and renewal flows — spec v21 has `[Add link]` placeholders
+    in both places, and both need to exist before the promotion work can be finished.
 
 ---
 
-## 9. Proposed implementation tasks under ED-25236
+## 9. What spec v21 changed, and where the code lives now
 
-Sequenced so that each one is independently reviewable. Sizes are rough. Tasks 1–3 and 5 exist on
-this branch as the POC described in §10; they are listed as tasks because the POC is a sketch, not a
-reviewable PR — it has no tests of its own and skips the panel control.
+Re-read on 25 Aug against version 21 (24 Aug). What moved:
 
-| # | Task | Size | Depends on |
-|---|---|---|---|
-| 1 | Register the `e_carousel` hidden dev experiment and bundle Embla: add `embla-carousel` + `autoplay` + `fade` to `package.json` (pinned), add the `carousel-handler` entry to `scripts/vite/shared/entries.mjs`, register the script in `Frontend_Assets_Loader` | S | — |
-| 2 | PHP element classes for the 7 types under `modules/atomic-widgets/elements/atomic-carousel/`, with `define_props_schema`, `define_atomic_controls`, `define_base_styles` (**logical properties for arrows**), `define_default_children`, `define_allowed_child_types`, and Twig templates | L | 1 |
-| 3 | Frontend handler on `@elementor/frontend-handlers`, with the v8/v9 API adapter kept at the boundary | M | 1, 2 |
-| 4 | Slides repeater panel control, modelled on the existing `tabs-control` (`packages/.../element-controls/tabs-control/`) | M | 2 |
-| 5 | `children_dependencies` for `show_arrows` / `show_pagination`, following `e-background-video` | S | 2 |
-| 6 | Editor preview handler: loop/autoplay/drag disabled, navigate-to-slide on canvas and Structure selection | M | 3 |
-| 7 | Accessibility pass: ARIA per the spec, the `aria-disabled` decision from §3.2, keyboard, reduced motion | M | 3 |
-| 8 | Restrict the style schema on `e-carousel-container` / `e-carousel-slide` (§3.6) | S | 2 |
-| 9 | Tests: PHPUnit render snapshots, Jest for the repeater actions, Playwright covering the spec's 20-row QA checklist plus RTL and keyboard | L | 2–7 |
-| 10 | Components compatibility: expose all 12 props as overridable, QA the `show_arrows` / `show_pagination` instance behaviour (§5 R8) | M | 2, 5 |
-| 11 | Agent Ready: `$widget_description` on all 7 types, `render_markdown()` on the root, `->description()` on every prop | S | 2 |
-| 12 | Docs: add the carousel to `docs/atomic-builder/atomic-widgets/elements-catalog.md` | S | 2 |
+| Change | Effect on this report |
+|---|---|
+| **Version is now Pro**, with a Pro requirements section: license-tier registration, Free→Pro promotion tile, locked-but-intact state without Pro, expired-license behaviour, Go links | The POC has to be ported into an `elementor-pro` module with a promotion stub in core. Discussed below |
+| **Eight element types.** `e-carousel-autoplay-button` is now an explicit locked child, added when autoplay is ON | Resolves the open decision in §5 R1, in the opposite direction to the earlier recommendation. The mechanism does work — see the R1 note |
+| **`carousel_name`** (String, default `Carousel`) drives the root `aria-label` | New prop, new QA row, new component property |
+| **`equal_height`** (Boolean, default true) | New prop. Explicitly *not* viewport auto-height, which stays out of scope |
+| **`show_pagination` → `pagination_type`** (`none` \| `dots`), with fraction and progress deferred to V2 | Prop rename; the POC still uses the boolean |
+| **`slides_per_view` and `slides_to_scroll` are marked responsive** | Turns §5 R9 from a nice-to-have into a scoping decision. See §10 |
+| **`transition_speed` confirmed as a 1–100 slider, default 25, higher = slower** | The measurements in §3.3 still stand and still argue against it; the default moved into a saner part of the curve but the dead zone and the nine-second top end did not |
+| **Pagination reworded to "one dot per scroll snap point"** | §3.7 is resolved |
+| **`aria-live` is now dynamic** — `off` while autoplay runs, `polite` when off or paused | New handler requirement |
+| **Gap formula now references `var(--e-carousel-gap, 0px)`** | Nothing writes that variable. New risk, §5 R10 |
+| **QA checklist grew from 20 to 23 rows**; Components Compatibility from 12 to 14 props | Test scope |
+| **Open Questions section emptied** ("all resolved") | Two of the three defects in §3 are still present in the spec, and §8 lists what is genuinely still open |
 
-Task 1 should also carry the decision record from §4 (v8, pinned, adapter at the boundary) so the
-rationale is not lost.
+The spec also repeats that the structure is "suggested, not rigid" — the public API (props,
+accessibility, behaviour) is the contract, and internal implementation details are ours.
+
+### Where the code lives
+
+The POC in this repository was built as a core element, so it has to move. Two precedents exist for a Pro-gated V4 atomic element — `Atomic_Form` / `Atomic_Form_Promotion` and
+`Collection_Loop_Promotion` — and between them they cover everything the spec asks for.
+
+| Concern | Where it goes | Precedent |
+|---|---|---|
+| Element classes, Twig, base styles, handler | **elementor-pro**, as a module | `elementor-pro/modules/collection-loop/` |
+| Registration switch | **core** — `if ( Utils::has_pro() && experiment ) { real } elseif ( ! has_pro() ) { promotion }` | `modules/atomic-widgets/module.php:399-409` |
+| Promotion stub | **core** — same `elType`, `meta( 'is_pro_promotion', true )`, `should_show_in_panel() => false`, `Preserves_Children_Subtree`, Twig upgrade placeholder | `atomic-form-promotion.php`, `collection-loop-promotion.php` |
+| Panel tile + upgrade popover | **core** `Promotions_Module` → `atomicWidgetPromotions` | `atomic-form-widget-promotion.php` |
+| Experiment flag | **elementor-pro**, via the module's `get_experimental_data()` | `e_pro_atomic_form`, `e_pro_collection_loop` |
+| Handler build | **elementor-pro** Vite frontend entry, `@elementor/frontend-handlers` externalised to `elementorV2.frontendHandlers`, script registered with a dependency on core's `elementor-v2-frontend-handlers` | `collection-loop-pagination-handler` |
+| Slides repeater control | **elementor-pro** editor package; `controlsRegistry` is a public export of `@elementor/editor-editing-panel` and Pro already registers into it | `editor-collection-loop`, `editor-editing-panel-extended` |
+
+Two things worth knowing before this work is scoped:
+
+**The "already on the canvas without Pro" requirement needs no new code.**
+`Pro_Promotion_Data_Preservation` discovers promotion types by the `is_pro_promotion` meta and
+restores settings and children on document save, and `Preserved_Element` keeps unknown child types
+verbatim, so a carousel's whole subtree survives an editor save with Pro inactive. The requirement is
+satisfied by the stub following the meta convention.
+
+**There is a hole in the existing pattern.** When Pro *is* installed but the experiment or the
+license blocks registration, neither the real element nor the promotion stub registers — core only
+registers a stub in the `! has_pro()` branch. That state renders nothing. The same hole exists for
+Form and Loop today, so it is a core question rather than a carousel one, but the carousel needs an
+answer either way.
+
+Also: Embla must be bundled in exactly one place. If the handler moves to Pro, the packages come out
+of core's `package.json` with it.
 
 ---
 
-## 10. The element itself, built on this branch
+## 10. Shared code and `packages` — what, if anything, belongs there
+
+The short answer: **one genuine piece of new infrastructure, two cheap utilities, one generalisation
+to defer, and no new package for the element or its handler.**
+
+### Reuse as-is
+
+- **`@elementor/frontend-handlers`** gives the handler registration by `data-e-type`, settings from
+  `data-e-settings`, an `AbortSignal` that cleans up listeners, teardown on re-render, and
+  `listenToChildren( types ).render()` for editor child churn. The carousel needs all of it and adds
+  nothing to it — Pro consumes the package as a global, it cannot extend it.
+- **`Repeater` from `@elementor/editor-controls`**, plus `useElementChildren`, `createElements`,
+  `removeElements`, `moveElements` and `updateElementEditorSettings` from `@elementor/editor-elements`
+  — all public exports, all usable from a Pro package. That is the whole Slides repeater.
+- **`Style_Variant::set_breakpoint()`** for static per-breakpoint base CSS, and `Size_Prop_Type` with
+  a custom unit for the slide `flex-basis: calc(...)`.
+- **Per-entry Vite bundling for npm dependencies.** There is already a Pro precedent for a handler
+  with an npm dep (`dompurify` in the collection-loop pagination handler).
+
+### Genuine new infrastructure — one item
+
+**A responsive settings prop that can drive a CSS custom property** (§5 R9). Only *style* props are
+breakpoint-aware in V4; settings props hold one value. The three routes are: source the variable from
+a style prop with per-breakpoint variants; add a responsive settings prop type with a resolver and
+panel control; or hard-code breakpoint overrides in base styles and give up user control. The
+carousel is the first element to need this, and whichever route is chosen becomes precedent.
+
+### Cheap shared utilities, worth doing if the core team agrees
+
+`prefersReducedMotion()` and `isEditorPreview()` in `@elementor/frontend-handlers`. There are
+currently **four** different editor-detection idioms across shipped handlers — a `data-*` attribute
+on the carousel, `isEditorPreview()` in background video, `isEditorContext()` in forms and links, and
+an inline check in collection loop — and reduced motion is implemented locally in two places. The
+carousel needs both helpers, so this is the moment to stop the drift, if we want to.
+
+### Defer
+
+- **A generic nested-children repeater.** Tabs ships `tabs-control` plus its own `use-actions`;
+  Accordion is planned the same way; the carousel would be the third roughly 80%-identical copy.
+  Extract a shared hook when the third one lands, not before — and the carousel *is* the third, so
+  this is worth a look during that story rather than a blind copy.
+- **A shared `@elementor/embla` package, or externalising Embla to a global.** No second consumer, no
+  precedent. Per-entry bundling is correct until there is one.
+
+---
+
+## 11. Proposed implementation stories under ED-25236
+
+Each story carries something a user or the business can see, and each is independently reviewable.
+Unit and Playwright tests are part of every story's definition of done rather than a story of their
+own — a carousel whose behaviour is not tested is not done. Stories 1, 2, 3 and part of 5 exist on
+this branch as the POC described in §12, but the POC is a sketch, not a reviewable PR: it has no
+tests, skips the panel control, and lives in core rather than Pro.
+
+| Story | What it delivers | Notes |
+|---|---|---|
+| [ED-25375](https://elementor.atlassian.net/browse/ED-25375) | Pro gating, feature flag and the Embla asset pipeline | Nothing user-visible. Unblocks everything else and lets the work merge dark. §4, §9 |
+| [ED-25376](https://elementor.atlassian.net/browse/ED-25376) | Element structure, panel controls and rendering | Drop a carousel, fill four slides, style every part. Carries the RTL fix (§3.1) and the style-schema restriction (§3.6) |
+| [ED-25377](https://elementor.atlassian.net/browse/ED-25377) | Navigation and motion on the frontend | Arrows, dots, slide/fade, loop. Carries the one-dot-per-snap model (§3.7) and the `transition_speed` decision (§3.3) |
+| [ED-25378](https://elementor.atlassian.net/browse/ED-25378) | Autoplay with an accessible pause/play control | WCAG 2.2.2. Carries the persisted eighth element (§5 R1) and the runtime `aria-live` switch |
+| [ED-25379](https://elementor.atlassian.net/browse/ED-25379) | Authoring experience in the editor | Slides repeater, navigate-on-selection, editor-safe engine. Third children-repeater in the codebase — see §10 |
+| [ED-25380](https://elementor.atlassian.net/browse/ED-25380) | Keyboard and screen-reader accessibility | Carries the `aria-disabled` decision (§3.2) |
+| [ED-25381](https://elementor.atlassian.net/browse/ED-25381) | Per-breakpoint Slides Per View / Slides To Scroll | The only story that needs new core infrastructure (§5 R9, §10). May be descoped |
+| [ED-25382](https://elementor.atlassian.net/browse/ED-25382) | Free → Pro promotion and license states | The revenue path, plus content preservation when Pro is absent (§9) |
+| [ED-25383](https://elementor.atlassian.net/browse/ED-25383) | Works as a Component | All 14 props exposable; the three children-detaching props need explicit QA (§5 R8) |
+| [ED-25384](https://elementor.atlassian.net/browse/ED-25384) | Agent Ready | Descriptions, `render_markdown()`, prop self-documentation |
+| [ED-25385](https://elementor.atlassian.net/browse/ED-25385) | GA — remove the experiment and document the element | Also lands the spec and evaluation-page corrections from §2 and §8 |
+
+ED-25375 should carry the decision record from §4 (v8.6.0 pinned, adapter at the boundary) so the
+rationale is not lost in a commit message.
+
+---
+
+## 12. The element itself, built on this branch
 
 The standalone harness proves Embla can satisfy the spec. To prove the *architecture* works, the
 branch also contains a working `e-carousel` in the plugin, wired the way a real PR would be:
@@ -489,13 +620,20 @@ measurement above:
 | Spec says | Implementation does | Why |
 |---|---|---|
 | `transition_speed` is a 1–100 slider stored as Embla's `duration` | stores milliseconds, maps to Embla's 12–60 band in the handler | §3.3 — the raw constant is a physics value, and persisting it makes the engine part of our data contract |
-| `show_autoplay_button` is "a dev decision" | the button is created by the handler, not persisted | §5 R1 — a persisted 8th child could never be backfilled into existing documents |
+| `show_autoplay_button` was "a dev decision" at the time | the button is created by the handler, not persisted | §5 R1 as it was first understood. **Spec v21 has since made the button a persisted conditional child, and the mechanism does work — the POC is now the odd one out and should follow the spec.** |
 | Arrows sit at `left` / `right`, "RTL swaps automatically" | `inset-inline-start` / `inset-inline-end` | §3.1 — physical properties do not follow `direction` |
 
-Three things a real PR still needs that this POC does not have: the Slides repeater panel control
-(slides are managed from the Structure panel here), an editor preview handler, and the v8/v9 API
-adapter — the ported handler imports v8 directly, since that is what `package.json` pins. None of
-them changes the architecture.
+What a real PR still needs that this POC does not have: the Slides repeater panel control (slides are
+managed from the Structure panel here), an editor preview handler, the v8/v9 API adapter (the ported
+handler imports v8 directly, since that is what `package.json` pins), the three props spec v21 added
+or reshaped (`carousel_name`, `equal_height`, and `pagination_type` in place of the boolean
+`show_pagination`), the runtime `aria-live` switch, and the persisted autoplay button. None of those
+change the architecture.
+
+**The bigger gap is packaging, not behaviour.** This POC lives in core behind `e_carousel`, while
+spec v21 makes Carousel a Pro feature. The element, its templates, its handler and its Embla
+dependencies all belong in an `elementor-pro` module, with a promotion stub left behind in core (§9).
+Treat the code on this branch as a reference implementation to port, not as the first commit.
 
 A note for whoever picks this up: Playwright refuses to click a button with
 `aria-disabled="true"`, treating it as not actionable. The behaviour is correct in a browser — the
@@ -517,7 +655,7 @@ node rtl-fix.mjs     # RTL arrow positioning, before and after the logical-prope
 node speed-curve.mjs # real transition time across the 1-100 transition_speed range
 ```
 
-The element built into the plugin (§10) is verified separately, because it needs the local
+The element built into the plugin (§12) is verified separately, because it needs the local
 WordPress install and the built bundle:
 
 ```bash
