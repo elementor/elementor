@@ -27,7 +27,8 @@ see [Running the POC](#running-the-poc).
 | Question | Answer |
 |---|---|
 | Is Embla the right engine? | **Yes.** It is the only candidate that is genuinely headless *and* loops without cloning or reordering slide nodes. |
-| Which version? | **v8.6.0, pinned.** Not the v9 RC — see §4. |
+| Which version? | **v8.6.0, pinned.** Not the v9 RC, which reached rc03 on 21 Aug 2026 but still has no stable release — see §4. |
+| Can we upgrade to v9 later without breaking what users built? | **Yes, provided nothing engine-specific is ever persisted.** One prop in the spec currently breaks that rule (`transition_speed`). Fix it and a version bump is a one-file change with no data migration — see §4, "The migration contract". |
 | Alternative if Embla is rejected? | keen-slider (smaller, but no fade and no autoplay, both would be ours to write and maintain). |
 | Can we skip the library entirely? | **Not yet.** `::scroll-button()` / `::scroll-marker` are still Chromium-only (~70% of pageviews) and give no loop and no fade. |
 | Blocking issues found? | **No blockers.** Two factual defects still in the spec (§3.1, §3.2), one it has since fixed (§3.7), plus the decisions listed in §8. |
@@ -52,7 +53,7 @@ conclusion, but the page should be updated before it is used to justify the deci
 |---|---|
 | Core is "~3–5 KB gzipped" | **7.45 KB gzipped** (17.89 KB minified). The main spec's "~7 KB" figure is the correct one. |
 | "~8.7M downloads/week (core)" | **~37.1M/week**, but this is mostly `embla-carousel-react` traffic. `embla-carousel-autoplay` at ~2.7M/week is the better proxy for direct vanilla-JS use. |
-| "v9.0.0-rc02 (release candidate, April 2026)" | Correct date (10 Apr 2026), but the page does not say that **v9 is still RC 4 months later, with no stable release and no published timeline**, and that the last *stable* release of anything was **8.6.0 on 4 Apr 2025 — 16 months ago**. |
+| "v9.0.0-rc02 (release candidate, April 2026)" | Superseded: **9.0.0-rc03 shipped on 21 Aug 2026**. The cadence is one RC per four months (rc01 20 Jan, rc02 10 Apr, rc03 21 Aug 2026), and npm's `latest` tag is **still `8.6.0`** — the last stable release of anything, on 4 Apr 2025. |
 | `@bluecadet/embla-carousel-a11y` / `embla-carousel-accessibility` listed as a v8 option to "evaluate" | `embla-carousel-accessibility` **has never been published for v8**. Its `latest` tag is `9.0.0-rc01` and it peer-depends on the v9 core. Using it means shipping the RC. |
 | "Zero dependencies" | True for core and all first-party plugins. **Not** true for `embla-carousel-wheel-gestures`, which is third-party (maintainer `xiel`) and depends on `wheel-gestures`. Not in our V1 scope, but the blanket claim should be qualified. |
 
@@ -67,7 +68,10 @@ frontend build emits.
 | \+ `autoplay` + `fade` — **our V1 set** | 22.88 KB | **9.17 KB** | 8.30 KB |
 | \+ `class-names` | 24.43 KB | 9.68 KB | 8.76 KB |
 | `embla-carousel` (v9.0.0-rc02) | 19.15 KB | 7.99 KB | 7.24 KB |
-| v9 + `autoplay` + `fade` + `accessibility` | 27.93 KB | 10.87 KB | 9.89 KB |
+| v9 rc02 + `autoplay` + `fade` + `accessibility` | 27.93 KB | 10.87 KB | 9.89 KB |
+| `embla-carousel` (v9.0.0-rc03) | 19.18 KB | 8.01 KB | 7.26 KB |
+| v9 rc03 + `autoplay` + `fade` — the v1 set | 25.19 KB | **10.16 KB** | 9.19 KB |
+| v9 rc03 + `autoplay` + `fade` + `accessibility` | 30.23 KB | 11.80 KB | 10.69 KB |
 | Whole POC bundle (engine + plugins + our handler + test harness) | 30.29 KB | 11.71 KB | — |
 
 For comparison, V3 ships Swiper 8.4.5 (~20 KB gzipped for a *minimal* v14 build; the vendored v8
@@ -267,51 +271,101 @@ hardest requirement for free.
 ## 4. Version decision: v8.6.0, not v9 RC
 
 The evaluation page leaves this open ("if stable enough for our timeline, start on v9 to avoid
-migration later"). Based on the POC, **v9 is the wrong choice today**, and the reason is not
-stability in the abstract — it is that v9's two headline benefits do not survive contact with our
-spec.
+migration later").
 
-**The accessibility plugin conflicts with our ARIA contract.** This is the main reason to want v9.
-Dumping the attributes it writes (`node a11y-diff.mjs`) shows it targets the Embla root node, which
-in our structure is `e-carousel-viewport`:
+**Re-checked on 26 Aug 2026 against `9.0.0-rc03`, which shipped on 21 Aug** — after the original
+evaluation, and five days before this re-check. The packages were installed and their type
+definitions read directly (`carousel-poc/v9rc3/`) rather than taken from a changelog. One of the two
+original objections is fixed by rc03; the other is not.
 
-```
-Attributes the v9 accessibility plugin adds:
-  viewport.role                 = "region"
-  viewport.aria-label           = "Carousel"
-  viewport.aria-roledescription = "carousel"
-```
+**Fixed in rc03 — the accessibility plugin is now configurable.** On rc02 it wrote `role="region"`,
+`aria-roledescription="carousel"` and `aria-label` onto the Embla root, which in our structure is
+`e-carousel-viewport`, producing a second carousel region nested inside the one the spec puts on
+`e-carousel`. rc03 adds a `rootNode` callback plus `carouselRole`, `carouselAriaRoleDescription`,
+`slideRole`, `slideAriaRoleDescription`, `slideAriaLabel`, `dotButtonAriaLabel`, `liveRegionContent`
+and `announceChanges` options, and explicit `setupPrevAndNextButtons` / `setupDotButtons` /
+`setupLiveRegion` methods. Pointing `rootNode` at our `e-carousel` would put the attributes exactly
+where the spec wants them. The spec has since chosen manual ARIA anyway, so the plugin is no longer
+an argument either way — but this objection is gone.
 
-Our spec puts exactly those three attributes on `e-carousel`, the viewport's parent. Taking the
-plugin gives us **two nested carousel regions**, which screen readers announce twice. We would have
-to strip its output — at which point we are writing the ARIA ourselves anyway, which is what the
-spec already decided ("We define ARIA ourselves (manual)... No 3rd-party plugin"). The plugin adds
-~1.6 KB gzipped and nothing we can use.
+**Not fixed in rc03 — autoplay still has no pause-on-hover option.** The complete option set is
+`delay`, `instant`, `defaultInteraction`, `stopOnLastSnap`, `rootNode`. `stopOnMouseEnter`,
+`stopOnInteraction`, `stopOnFocusIn` and `playOnInit` are still gone, so `pause_on_hover` and
+`pause_on_interaction` are ours to implement on v9 — the identical POC handler passes `pause_on_hover`
+on v8 and fails it on v9 for exactly this reason. The cost is smaller than it first appears, though:
+rc03 exposes `play` / `stop` / `pause` / `reset` / `isPlaying` / `timeUntilNext` and an
+`autoplay:interaction` event carrying `interaction: 'mouseenter' | 'mouseleave' | 'pointerdown' |
+'pointerup' | 'slidefocus' | 'slidefocusout'` plus `isMouseOver` and `isPointerDown`. So it is
+`defaultInteraction: false` and one event subscription — roughly twenty lines, and finer-grained
+control than v8's booleans.
 
-**v9 removes the exact autoplay options our panel maps onto.** `stopOnMouseEnter`,
-`stopOnInteraction`, `stopOnFocusIn` and `playOnInit` are all gone, replaced by a
-`defaultInteraction` flag and an `autoplay:interaction` event. The POC demonstrates the cost
-empirically: the identical handler passes `pause_on_hover` on v8 and **fails it on v9**, because
-there is no longer an option for it. Our `pause_on_hover` and `pause_on_interaction` props would
-become hand-rolled event plumbing.
+**Still no stable release.** npm's `latest` tag is `8.6.0`. The RC cadence is one every four months
+(rc01 20 Jan, rc02 10 Apr, rc03 21 Aug 2026) with no announced date, and the surface does still move
+between RCs — `scrolloptimize` was added in rc01 and removed in rc02 after it broke stacking
+contexts.
 
-**The v9 surface is still moving between RCs.** The `scrolloptimize` event was introduced in rc01 and
-removed in rc02 after it broke stacking contexts. rc02 is 4 months old with no rc03 and no announced
-date.
-
-**The counter-argument is real but cheap to manage.** v8 is a dead branch for fixes — genuine
-autoplay bugs (#1300, #1139) were fixed only in rc02 and never backported. And the v8→v9 migration
-is broad: every navigation method is renamed (`scrollNext` → `goToNext`, `scrollSnapList` →
-`snapList`, …), all events lowercase, `watchDrag` → `draggable`.
-
-The POC already solves this. Both versions run through **one ~20-line adapter** in
-`src/e-carousel.js`; the same handler file drives v8 and v9 with an `apiVersion` flag. If we keep
-that boundary, the eventual v9 migration is a one-file change, and the "start on v9 to avoid
-migration later" argument loses most of its force.
+**The rename is broad, and confirmed against rc03.** `scrollNext` / `scrollPrev` / `scrollTo` →
+`goToNext` / `goToPrev` / `goTo`; `scrollSnapList` → `snapList`; `selectedScrollSnap` →
+`selectedSnap`; `canScrollNext` / `canScrollPrev` → `canGoToNext` / `canGoToPrev`; `watchDrag` →
+`draggable`; `watchSlides` → `slideChanges`; `watchResize` → `resize`; `startIndex` → `startSnap`;
+all events lowercase. Against that, v8 is a dead branch for fixes — genuine autoplay bugs (#1300,
+#1139) were fixed only in the v9 line and never backported.
 
 **Recommendation:** pin `embla-carousel@8.6.0` exactly (plugin peer deps pin the core version to the
-patch, so all four packages must move together), keep the adapter, and re-evaluate when v9 goes
-stable.
+patch, so all packages must move together), keep the seam described below, and re-evaluate when v9
+goes stable. The deciding factor is no longer the API — it is that shipping a release candidate
+inside a paid Pro feature is a risk architecture cannot absorb, whereas the risk of a later library
+upgrade *can* be absorbed. The next section is how.
+
+### The migration contract — what makes any engine change safe
+
+The question worth answering is not "which version" but "what happens to the carousels users already
+built when we upgrade the library". Two different things get called an adapter here, and only one of
+them is a real risk.
+
+**What users persist is our schema, not Embla's.** Users write no code. What lands in
+`_elementor_data` is our props — `loop: true`, `slides_per_view: 3`, `transition_type: 'slide'`. If no
+persisted byte is a value that belongs to the engine, a library upgrade cannot invalidate an existing
+element and no data migration is ever needed. Four rules keep it that way:
+
+1. **Never persist an engine constant.** Prop values are in units a human chose, not units a library
+   invented.
+2. **Prop names describe user intent**, not library options — `pause_on_hover`, never
+   `stopOnMouseEnter`.
+3. **Enum values are ours** — `slide` / `fade`, not plugin names.
+4. **Never persist a derived value** such as a snap index or a dot index. Both are recomputed from
+   the DOM on every init.
+
+**The current spec breaks rule 1 in exactly one place:** `transition_speed` as a raw 1–100 slider
+passed straight through as Embla's `duration`. That is the engine's internal spring constant stored
+in our database. If we change engines — or if Embla merely retunes its physics between versions,
+which is not a breaking change by semver — then `25` silently means a different speed on pages that
+are already published, and *that* is the kind of data migration this section exists to avoid. Storing
+milliseconds and mapping inside the handler removes the only such leak in the element. That is why
+§3.3 is more than a UX nitpick.
+
+**The DOM and the ARIA are ours too.** Embla is headless: no markup, no classes, no ARIA, no CSS. V4
+style props attach to our element types, so an engine change cannot move a user's styling. The one
+exception is the inline `transform` on the container and the inline `transform` / `opacity` on slides
+(§3.6) — a second reason to restrict the style schema on those two types. It protects users from
+silently-ignored styles today and from a change in how the engine animates tomorrow.
+
+**One seam, one file.** Every Embla import lives in a single engine module exposing an interface we
+define — `next()`, `prev()`, `goTo(i)`, `snapCount()`, `selectedSnap()`, `canPrev()`, `canNext()`,
+`on()`, `play()`, `pause()`, `isPlaying()`, `reinit()`, `destroy()`. The handler never imports
+`embla-carousel` and never calls an `emblaApi.*` method directly. Worth enforcing with an ESLint
+`no-restricted-imports` rule rather than a convention, so nobody punches through the seam six months
+from now.
+
+**Contract tests written against the seam, not against Embla.** This is what turns "we can upgrade
+safely" from a promise into a checkable fact: the behavioural suite targets our interface, so the same
+suite runs against both engine versions and a green run *is* the parity proof. The POC already
+demonstrates it — one handler, a ~20-line adapter, 60 checks on v8 and 57 on the v9 RC, the three
+differences being real findings rather than harness breakage. The seam has survived a real
+major-version swap once already.
+
+Net effect: a future v9 move is one rewritten file plus one test run. Nothing reads or rewrites
+anything a user saved.
 
 ---
 
