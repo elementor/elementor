@@ -48,6 +48,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transfo
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Svg_Src_Import_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Icon_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Svg_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
@@ -109,6 +110,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
@@ -142,7 +144,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -172,6 +177,8 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_LIST = 'e_list';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
+	const EXPERIMENT_ACCORDION = 'e_accordion';
+	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -200,6 +207,8 @@ class Module extends BaseModule {
 
 		$this->register_list_experiment();
 		$this->register_icon_button_experiment();
+		$this->register_accordion_experiment();
+		$this->register_icon_library_experiment();
 
 		$this->register_hooks();
 
@@ -267,6 +276,28 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ICON_BUTTON,
 			'title' => esc_html__( 'Icon Button', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Icon Button element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_accordion_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ACCORDION,
+			'title' => esc_html__( 'Accordion', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_icon_library_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ICON_LIBRARY,
+			'title' => esc_html__( 'SVG Library', 'elementor' ),
+			'description' => esc_html__( 'Enable SVG library support in the SVG element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -367,6 +398,19 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 	}
 
+	private function register_list_element( Elements_Manager $elements_manager ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
+			return $this;
+		}
+
+		$elements_manager->register_element_type( new Atomic_List() );
+		$elements_manager->register_element_type( new Atomic_List_Item() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Marker() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Content() );
+
+		return $this;
+	}
+
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
@@ -378,9 +422,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
-			$elements_manager->register_element_type( new Atomic_List() );
-		}
+		$this->register_list_element( $elements_manager );
 
 		$elements_manager->register_element_type( new Atomic_Accordion() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
@@ -414,6 +456,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Transformer() );
+		$transformers->register( Icon_Prop_Type::get_key(), new Icon_Transformer() );
 		$transformers->register( Video_Src_Prop_Type::get_key(), new Video_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
@@ -554,6 +597,10 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
+	public static function is_svg_library_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ICON_LIBRARY );
+	}
+
 	private function get_element_usage_name( $title, $type ) {
 		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
@@ -584,8 +631,8 @@ class Module extends BaseModule {
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-		<span class="elementor-panel-heading-category-chip">
-				<?php echo esc_html__( 'New', 'elementor' ); ?><i class="eicon-info"></i>
+		<span class="elementor-panel-heading-category-chip" aria-label="<?php echo esc_attr__( 'New', 'elementor' ); ?>">
+				<i class="eicon-info" aria-hidden="true"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php
