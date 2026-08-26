@@ -1,7 +1,6 @@
 import { createMockStyleDefinitionWithVariants } from 'test-utils';
 import {
 	__createStore as createStore,
-	__dispatch as dispatch,
 	__getState as getState,
 	__registerSlice as registerSlice,
 } from '@elementor/store';

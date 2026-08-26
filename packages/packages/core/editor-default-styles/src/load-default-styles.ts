@@ -14,7 +14,5 @@ export async function loadDefaultStyles() {
 				data: items,
 			} )
 		);
-	} catch {
-		return;
-	}
+	} catch {}
 }
