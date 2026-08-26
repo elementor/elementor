@@ -12,8 +12,10 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Field_Contract;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Plugin;
 
@@ -507,16 +509,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function document_links( Component_Document $component ): array {
-		$editor_url = $component->get_edit_url();
-
-		return [
-			'editor_url' => $editor_url,
-			'llm_instructions' => sprintf(
-				/* translators: %s: Component editor URL. */
-				__( 'You MUST show the user this link to review the component: %s', 'elementor' ),
-				$editor_url
-			),
-		];
+		return Document_Mutation_Links::for_component(
+			$component,
+			__( 'Component saved.', 'elementor' )
+		);
 	}
 
 	private function resolve_status( array $input ): string {
@@ -583,14 +579,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'integer' ],
 					'description' => 'archive only.',
 				],
-				'editor_url' => [
-					'type' => 'string',
+				'edit_url' => Document_Mutation_Links::edit_url_schema_property() + [
 					'description' => 'Component documents have no public permalink; this is the editor URL to review the change.',
 				],
-				'llm_instructions' => [
-					'type' => 'string',
-					'description' => 'Mandatory next step: include this text (with the editor link) in your reply to the user.',
-				],
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -640,7 +632,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 				'style' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Same shape as elementor/build-composition style. Only used with xml_structure.',
+					'description' => Style_Field_Contract::description( 'Same shape as elementor/build-composition style: configuration-id → plain CSS string. Only used with xml_structure.' ),
 				],
 				'interactions' => [
 					'type' => 'object',

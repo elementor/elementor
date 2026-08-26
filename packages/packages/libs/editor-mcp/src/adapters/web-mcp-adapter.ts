@@ -45,7 +45,7 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 					uri: {
 						type: 'string',
 						description:
-							'A full resource URI (e.g. elementor://style/best-practices) or a partial string to search across available resource patterns.',
+							'A full resource URI (e.g. elementor://global-classes) or a partial string to search across available resource patterns.',
 					},
 				},
 				required: [ 'uri' ],

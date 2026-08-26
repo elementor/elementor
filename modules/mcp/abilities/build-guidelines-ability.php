@@ -6,18 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Wordpress_Best_Practices_Ability extends Abstract_Ability {
-	const URI = 'elementor://wordpress/best-practices';
-	const FILE_PATH = __DIR__ . '/../static-resources/wordpress/best-practices.md';
+class Build_Guidelines_Ability extends Abstract_Ability {
+	const URI = 'elementor://build-guidelines';
+	const FILE_PATH = __DIR__ . '/../static-resources/build-guidelines.md';
 
 	protected function get_ability_id(): string {
-		return 'elementor/wordpress-best-practices';
+		return 'elementor/build-guidelines';
 	}
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'WordPress Best Practices', 'elementor' ),
-			__( 'Opinionated WordPress patterns for Elementor builds: repeating layouts (single template vs N pages), include-all + exclude-exceptions condition scoping, Post Content placement, dynamic tags.', 'elementor' ),
+			__( 'Build Guidelines', 'elementor' ),
+			__( 'Authoritative engine + WordPress rules for MCP builds: styling contract (breakpoint spelling, value-shape traps, variables and classes), sizing/layout defaults, and repeating-layout / single-template patterns.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -26,7 +26,7 @@ class Wordpress_Best_Practices_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'text/markdown',
-					'description' => __( 'Opinionated WordPress patterns for Elementor builds: repeating layouts (single template vs N pages), include-all + exclude-exceptions condition scoping, Post Content placement, dynamic tags.', 'elementor' ),
+					'description' => __( 'Authoritative engine + WordPress rules for MCP builds: styling contract (breakpoint spelling, value-shape traps, variables and classes), sizing/layout defaults, and repeating-layout / single-template patterns.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

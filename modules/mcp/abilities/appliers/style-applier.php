@@ -98,7 +98,11 @@ class Style_Applier {
 				continue;
 			}
 
-			$new_variants           = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->css_converter );
+			$build_result           = Style_Variants_Merger::build_variants_with_warnings( $parsed['breakpoint_blocks'], $this->css_converter );
+			$new_variants           = $build_result['variants'];
+			foreach ( $build_result['warnings'] as $warning ) {
+				$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
+			}
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
 			$removal_bps            = $parsed['removal_breakpoints'];
 			$existing_style_id      = $this->find_existing_local_style_id( $node );

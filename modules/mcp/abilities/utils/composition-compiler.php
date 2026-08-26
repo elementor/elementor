@@ -65,14 +65,12 @@ final class Composition_Compiler {
 			return $dom;
 		}
 
-		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
-			$dom,
-			$document_tree,
-			$parent_id
-		);
+		$form_validator = new Form_Structure_Validator( $xml_parser );
+		$form_structure_error = $form_validator->validate( $dom, $document_tree, $parent_id );
 		if ( $form_structure_error ) {
 			return $form_structure_error;
 		}
+		$form_message_warnings = $form_validator->collect_warnings( $dom );
 
 		$widget_configs = $type_resolver->collect_used( $dom );
 		if ( is_wp_error( $widget_configs ) ) {
@@ -129,7 +127,7 @@ final class Composition_Compiler {
 
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warnings' => array_merge( $form_message_warnings, $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];

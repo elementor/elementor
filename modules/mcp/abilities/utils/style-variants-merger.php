@@ -75,7 +75,20 @@ class Style_Variants_Merger {
 	}
 
 	public static function build_variants( array $breakpoint_blocks, Css_Converter $converter ): array {
+		return self::build_variants_with_warnings( $breakpoint_blocks, $converter )['variants'];
+	}
+
+	/**
+	 * V4 converter feedback surface: returns the variants plus per-variant warnings for CSS the
+	 * converter rejected outright (e.g. `animation`) or routed to `custom_css` (unsupported
+	 * shorthands, pixel queries, `var()` inside `box-shadow`, unknown properties). Callers that
+	 * only need variants use the thin `build_variants` wrapper.
+	 *
+	 * @return array{variants: array, warnings: string[]}
+	 */
+	public static function build_variants_with_warnings( array $breakpoint_blocks, Css_Converter $converter ): array {
 		$variants = [];
+		$warnings = [];
 
 		foreach ( $breakpoint_blocks as $entry ) {
 			$bp                    = $entry['breakpoint'];
@@ -99,19 +112,28 @@ class Style_Variants_Merger {
 					continue;
 				}
 
-				$variant = self::make_variant( $bp, $state, $css, $converter );
+				[ $variant, $diagnostics ] = self::make_variant_with_diagnostics( $bp, $state, $css, $converter );
 				if ( null !== $variant ) {
 					$variants[] = $variant;
 				}
+				foreach ( self::format_diagnostics( $bp, $state, $diagnostics ) as $warning ) {
+					$warnings[] = $warning;
+				}
 			}
 
-			$base_variant = self::make_variant( $bp, null, $base_block_css, $converter, $base_custom_css_parts );
+			[ $base_variant, $base_diagnostics ] = self::make_variant_with_diagnostics( $bp, null, $base_block_css, $converter, $base_custom_css_parts );
 			if ( null !== $base_variant ) {
 				$variants[] = $base_variant;
 			}
+			foreach ( self::format_diagnostics( $bp, null, $base_diagnostics ) as $warning ) {
+				$warnings[] = $warning;
+			}
 		}
 
-		return $variants;
+		return [
+			'variants' => $variants,
+			'warnings' => $warnings,
+		];
 	}
 
 	public static function apply_mode( array $existing, array $new_variants, string $mode, array $affected_breakpoints ): array {
@@ -201,11 +223,22 @@ class Style_Variants_Merger {
 	}
 
 	private static function make_variant( string $breakpoint, ?string $state, string $css, Css_Converter $converter, array $extra_custom_css_parts = [] ): ?array {
+		return self::make_variant_with_diagnostics( $breakpoint, $state, $css, $converter, $extra_custom_css_parts )[0];
+	}
+
+	/**
+	 * @return array{0: ?array, 1: array{rejected: string[], fallback_css: string}}
+	 */
+	private static function make_variant_with_diagnostics( string $breakpoint, ?string $state, string $css, Css_Converter $converter, array $extra_custom_css_parts = [] ): array {
 		$null_props   = self::extract_null_props( $css );
 		$stripped_css = self::strip_null_declarations( $css );
 		$result       = $converter->convert( $stripped_css );
 		$props        = $result['props'] ?? [];
 		$custom_str   = $result['customCss'] ?? '';
+		$diagnostics  = [
+			'rejected'     => $result['rejected'] ?? [],
+			'fallback_css' => $custom_str,
+		];
 
 		if ( ! empty( $extra_custom_css_parts ) ) {
 			$extra      = implode( ' ', $extra_custom_css_parts );
@@ -213,20 +246,63 @@ class Style_Variants_Merger {
 		}
 
 		if ( empty( $props ) && '' === $custom_str && empty( $null_props ) ) {
-			return null;
+			return [ null, $diagnostics ];
 		}
 
 		return [
-			'meta'       => [
-				'breakpoint' => $breakpoint,
-				'state'      => $state,
+			[
+				'meta'       => [
+					'breakpoint' => $breakpoint,
+					'state'      => $state,
+				],
+				'props'      => $props,
+				'custom_css' => '' !== $custom_str
+					? [ 'raw' => base64_encode( $custom_str ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
+					: null,
+				'null_props' => $null_props,
 			],
-			'props'      => $props,
-			'custom_css' => '' !== $custom_str
-				? [ 'raw' => base64_encode( $custom_str ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
-				: null,
-			'null_props' => $null_props,
+			$diagnostics,
 		];
+	}
+
+	/**
+	 * @param string                                          $breakpoint
+	 * @param string|null                                     $state
+	 * @param array{rejected: string[], fallback_css: string} $diagnostics
+	 * @return string[]
+	 */
+	private static function format_diagnostics( string $breakpoint, ?string $state, array $diagnostics ): array {
+		$warnings = [];
+		$scope    = null !== $state ? sprintf( '%s:%s', $breakpoint, $state ) : $breakpoint;
+
+		foreach ( $diagnostics['rejected'] as $declaration ) {
+			$warnings[] = sprintf(
+				/* translators: 1: scope (breakpoint or breakpoint:state), 2: rejected CSS declaration */
+				__( '[%1$s] CSS is not supported by the atomic style engine and was dropped: %2$s', 'elementor' ),
+				$scope,
+				self::truncate_snippet( $declaration )
+			);
+		}
+
+		if ( '' !== $diagnostics['fallback_css'] ) {
+			$warnings[] = sprintf(
+				/* translators: 1: scope (breakpoint or breakpoint:state), 2: CSS snippet that fell back */
+				__( '[%1$s] CSS fell back to custom_css and may not render reliably: %2$s', 'elementor' ),
+				$scope,
+				self::truncate_snippet( $diagnostics['fallback_css'] )
+			);
+		}
+
+		return $warnings;
+	}
+
+	private static function truncate_snippet( string $css, int $max_length = 160 ): string {
+		$css = trim( preg_replace( '/\s+/', ' ', $css ) ?? $css );
+		if ( strlen( $css ) <= $max_length ) {
+			return $css;
+		}
+
+		return substr( $css, 0, $max_length - 3 ) . '...';
 	}
 
 	private static function extract_null_props( string $css ): array {

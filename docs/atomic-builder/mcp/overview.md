@@ -60,7 +60,7 @@ Do not conflate the two — external `elementor/build-composition` does not use 
 | Kind | Callable? | Examples |
 |------|-----------|----------|
 | Ability (tool) | Yes | `elementor/build-composition`, `elementor/manage-classes` |
-| Resource | No — read by URI | `elementor://global-classes`, `elementor://style/best-practices` |
+| Resource | No — read by URI | `elementor://global-classes`, `elementor://build-guidelines` |
 
 Read resources via `elementor/read-resource` or host-native fetch. See [resources.md](resources.md).
 

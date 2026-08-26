@@ -329,6 +329,47 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertSame( [], $errors );
 	}
 
+	public function test_collect_warnings__flags_form_missing_success_message() {
+		// Arrange
+		$dom = $this->parse_xml(
+			'<e-form><e-form-input /><e-form-submit-button /><e-form-error-message><e-paragraph /></e-form-error-message></e-form>'
+		);
+
+		// Act
+		$warnings = $this->validator->collect_warnings( $dom );
+
+		// Assert
+		$this->assertCount( 1, $warnings );
+		$this->assertStringContainsString( 'e-form-success-message', $warnings[0] );
+	}
+
+	public function test_collect_warnings__flags_form_missing_error_message() {
+		// Arrange
+		$dom = $this->parse_xml(
+			'<e-form><e-form-input /><e-form-submit-button /><e-form-success-message><e-paragraph /></e-form-success-message></e-form>'
+		);
+
+		// Act
+		$warnings = $this->validator->collect_warnings( $dom );
+
+		// Assert
+		$this->assertCount( 1, $warnings );
+		$this->assertStringContainsString( 'e-form-error-message', $warnings[0] );
+	}
+
+	public function test_collect_warnings__silent_when_both_message_widgets_present() {
+		// Arrange
+		$dom = $this->parse_xml(
+			'<e-form><e-form-submit-button /><e-form-success-message><e-paragraph /></e-form-success-message><e-form-error-message><e-paragraph /></e-form-error-message></e-form>'
+		);
+
+		// Act
+		$warnings = $this->validator->collect_warnings( $dom );
+
+		// Assert
+		$this->assertSame( [], $warnings );
+	}
+
 	private function parse_xml( string $xml_structure ): \DOMDocument {
 		$result = $this->xml_parser->parse( $xml_structure );
 

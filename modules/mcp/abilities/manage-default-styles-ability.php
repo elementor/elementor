@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Field_Contract;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -80,7 +81,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 								],
 								'css' => [
 									'type' => 'string',
-									'description' => 'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.',
+									'description' => Style_Field_Contract::description( 'Plain CSS string. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.' ),
 								],
 								'mode' => [
 									'type' => 'string',
