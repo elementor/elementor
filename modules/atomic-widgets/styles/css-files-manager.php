@@ -2,10 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Files\Base as Base_File;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 
 class CSS_Files_Manager {
-	const DEFAULT_CSS_DIR = 'elementor/css/';
+	const DEFAULT_CSS_DIR = 'css/';
 	const FILE_EXTENSION = '.css';
 	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
@@ -127,6 +128,10 @@ class CSS_Files_Manager {
 	private function write_atomically( string $filesystem_path, string $css ): bool {
 		$filesystem = $this->get_filesystem();
 
+		if ( ! $this->ensure_directory_exists( dirname( $filesystem_path ) ) ) {
+			return false;
+		}
+
 		$tmp_path = $filesystem_path . '.tmp-' . wp_generate_password( 8, false, false );
 
 		$is_written = $filesystem->put_contents( $tmp_path, $css, self::PERMISSIONS );
@@ -148,6 +153,16 @@ class CSS_Files_Manager {
 		return true;
 	}
 
+	private function ensure_directory_exists( string $directory ): bool {
+		$filesystem = $this->get_filesystem();
+
+		if ( $filesystem->is_dir( $directory ) ) {
+			return true;
+		}
+
+		return wp_mkdir_p( $directory );
+	}
+
 	private function get_filesystem(): \WP_Filesystem_Base {
 		global $wp_filesystem;
 
@@ -166,19 +181,17 @@ class CSS_Files_Manager {
 	}
 
 	private function get_url( string $handle ): string {
-		$upload_dir = wp_upload_dir();
 		$sanitized_handle = $this->sanitize_handle( $handle );
 		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return trailingslashit( $upload_dir['baseurl'] ) . self::DEFAULT_CSS_DIR . $handle;
+		return Base_File::get_base_uploads_url() . self::DEFAULT_CSS_DIR . $handle;
 	}
 
 	private function get_path( string $handle ): string {
-		$upload_dir = wp_upload_dir();
 		$sanitized_handle = $this->sanitize_handle( $handle );
 		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $handle;
+		return Base_File::get_base_uploads_dir() . self::DEFAULT_CSS_DIR . $handle;
 	}
 
 	private function sanitize_handle( string $handle ): string {
