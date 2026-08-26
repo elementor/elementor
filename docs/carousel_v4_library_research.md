@@ -613,26 +613,34 @@ carousel needs both helpers, so this is the moment to stop the drift, if we want
 
 Each story carries something a user or the business can see, and each is independently reviewable.
 Unit and Playwright tests are part of every story's definition of done rather than a story of their
-own — a carousel whose behaviour is not tested is not done. Stories 1, 2, 3 and part of 5 exist on
+own — a carousel whose behaviour is not tested is not done. ED-25375 and most of ED-25377 exist on
 this branch as the POC described in §12, but the POC is a sketch, not a reviewable PR: it has no
 tests, skips the panel control, and lives in core rather than Pro.
 
+The original breakdown had eleven stories. Two groups were merged on 26 Aug 2026 because they could
+not be reviewed or merged independently — the first pair writes to the same PHP classes and the same
+registration path, the second trio writes to the same frontend handler and the same Playwright
+suite. Splitting those produces merge conflicts, not parallel work. ED-25376, ED-25378 and ED-25379
+are closed as duplicates and their scope now lives in the surviving keys.
+
 | Story | What it delivers | Notes |
 |---|---|---|
-| [ED-25375](https://elementor.atlassian.net/browse/ED-25375) | Pro gating, feature flag and the Embla asset pipeline | Nothing user-visible. Unblocks everything else and lets the work merge dark. §4, §9 |
-| [ED-25376](https://elementor.atlassian.net/browse/ED-25376) | Element structure, panel controls and rendering | Drop a carousel, fill four slides, style every part. Carries the RTL fix (§3.1) and the style-schema restriction (§3.6) |
-| [ED-25377](https://elementor.atlassian.net/browse/ED-25377) | Navigation and motion on the frontend | Arrows, dots, slide/fade, loop. Carries the one-dot-per-snap model (§3.7) and the `transition_speed` decision (§3.3) |
-| [ED-25378](https://elementor.atlassian.net/browse/ED-25378) | Autoplay with an accessible pause/play control | WCAG 2.2.2. Carries the persisted eighth element (§5 R1) and the runtime `aria-live` switch |
-| [ED-25379](https://elementor.atlassian.net/browse/ED-25379) | Authoring experience in the editor | Slides repeater, navigate-on-selection, editor-safe engine. Third children-repeater in the codebase — see §10 |
-| [ED-25380](https://elementor.atlassian.net/browse/ED-25380) | Keyboard and screen-reader accessibility | Carries the `aria-disabled` decision (§3.2) |
-| [ED-25381](https://elementor.atlassian.net/browse/ED-25381) | Per-breakpoint Slides Per View / Slides To Scroll | The only story that needs new core infrastructure (§5 R9, §10). May be descoped |
+| [ED-25375](https://elementor.atlassian.net/browse/ED-25375) | **Foundation** — Pro gating, feature flag, Embla pipeline, element structure, props and styles | Merged with the former ED-25376. Behind the flag a Pro user can drop a carousel, fill four slides and style every part; no motion yet. Carries the RTL fix (§3.1), the style-schema restriction (§3.6), and the engine seam plus the no-engine-values-in-data rule (§4) |
+| [ED-25377](https://elementor.atlassian.net/browse/ED-25377) | **The working carousel** — motion, autoplay and editor authoring | Merged with the former ED-25378 and ED-25379. Arrows, dots, slide/fade, loop, autoplay with an accessible pause control, slides repeater, editor-safe engine. Carries the one-dot-per-snap model (§3.7), the `transition_speed` mapping (§3.3), and the both-versions contract-test run (§4) |
+| [ED-25380](https://elementor.atlassian.net/browse/ED-25380) | Keyboard and screen-reader accessibility | Carries the `aria-disabled` decision (§3.2). Same handler as ED-25377, so it follows rather than parallels it |
+| [ED-25381](https://elementor.atlassian.net/browse/ED-25381) | Per-breakpoint Slides Per View / Slides To Scroll | The only story that needs new core infrastructure (§5 R9, §10). Runs in parallel in the core repo; may be descoped |
 | [ED-25382](https://elementor.atlassian.net/browse/ED-25382) | Free → Pro promotion and license states | The revenue path, plus content preservation when Pro is absent (§9) |
 | [ED-25383](https://elementor.atlassian.net/browse/ED-25383) | Works as a Component | All 14 props exposable; the three children-detaching props need explicit QA (§5 R8) |
-| [ED-25384](https://elementor.atlassian.net/browse/ED-25384) | Agent Ready | Descriptions, `render_markdown()`, prop self-documentation |
+| [ED-25384](https://elementor.atlassian.net/browse/ED-25384) | Agent Ready | Descriptions, `render_markdown()`, prop self-documentation. Needs the prop schema frozen |
 | [ED-25385](https://elementor.atlassian.net/browse/ED-25385) | GA — remove the experiment and document the element | Also lands the spec and evaluation-page corrections from §2 and §8 |
 
-ED-25375 should carry the decision record from §4 (v8.6.0 pinned, adapter at the boundary) so the
-rationale is not lost in a commit message.
+Dependencies recorded as Jira links: ED-25375 blocks ED-25377 and ED-25382; ED-25377 blocks
+ED-25380, ED-25383 and ED-25384; ED-25380, ED-25382, ED-25383 and ED-25384 all block ED-25385;
+ED-25381 relates to ED-25377 rather than blocking it, because the widget ships with a single
+Slides Per View value until the core infrastructure lands.
+
+ED-25375 carries the decision record from §4 — v8.6.0 pinned, the engine seam, and the rule that no
+persisted prop holds an engine value — so the rationale is not lost in a commit message.
 
 ---
 
