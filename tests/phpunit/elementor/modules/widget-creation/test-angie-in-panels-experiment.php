@@ -19,20 +19,16 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		parent::set_up();
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::ANGIE_IN_PANELS_EXPERIMENT )['default'];
-
-		Plugin::$instance->experiments->remove_feature( Module::ANGIE_IN_PANELS_EXPERIMENT );
-		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT );
-		Plugin::$instance->experiments->add_feature( Module::get_experimental_data() );
+			->get_features( Module::EXPERIMENT_NAME )['default'];
 	}
 
 	public function tear_down() {
 		Plugin::$instance->experiments->set_feature_default_state(
-			Module::ANGIE_IN_PANELS_EXPERIMENT,
+			Module::EXPERIMENT_NAME,
 			$this->original_experiment_default_state
 		);
 
-		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT );
+		delete_option( Experiments_Manager::OPTION_PREFIX . Module::EXPERIMENT_NAME );
 
 		parent::tear_down();
 	}
@@ -42,7 +38,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$data = Module::get_experimental_data();
 
 		// Act & Assert
-		$this->assertSame( Module::ANGIE_IN_PANELS_EXPERIMENT, $data['name'] );
+		$this->assertSame( Module::EXPERIMENT_NAME, $data['name'] );
 		$this->assertTrue( $data['hidden'] );
 		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
@@ -51,12 +47,12 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 	public function test_experiment_can_be_activated() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
-			Module::ANGIE_IN_PANELS_EXPERIMENT,
+			Module::EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
 		);
 
 		// Act
-		$is_active = Plugin::$instance->experiments->is_feature_active( Module::ANGIE_IN_PANELS_EXPERIMENT );
+		$is_active = Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_NAME );
 
 		// Assert
 		$this->assertTrue( $is_active );

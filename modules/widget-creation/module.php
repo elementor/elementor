@@ -6,7 +6,6 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Elements_Manager;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,8 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
-	const ANGIE_IN_PANELS_EXPERIMENT = 'e_angie_in_panels';
+	const EXPERIMENT_NAME = 'e_angie_in_panels';
 	const MODULE_NAME = 'widget-creation';
 
 	const PACKAGES = [
@@ -30,7 +28,7 @@ class Module extends BaseModule {
 
 	public static function get_experimental_data() {
 		return [
-			'name' => self::ANGIE_IN_PANELS_EXPERIMENT,
+			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
 			'description' => esc_html__( 'Load Angie inside the native Elementor editor panel instead of the legacy push sidebar.', 'elementor' ),
 			'hidden' => true,
