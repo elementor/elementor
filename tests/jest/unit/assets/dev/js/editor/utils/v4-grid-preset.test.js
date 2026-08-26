@@ -6,31 +6,19 @@ const gridTrackSizeProp = ( size ) => ( {
 } );
 
 function makeFakeContainer( id = `c-${ Math.random().toString( 36 ).slice( 2 ) }` ) {
-	return {
-		id,
-		model: {
-			styles: {},
-			set: jest.fn( function( key, value ) {
-				this[ key ] = value;
-			} ),
-		},
-	};
+	return { id };
 }
 
 describe( 'createV4GridFromPreset', () => {
 	let createCalls;
-	let setSettingsCalls;
 	let historyEvents;
-	let dispatchEventSpy;
 	let uniqueCounter;
 	let originalEnv;
 
 	beforeEach( () => {
 		createCalls = [];
-		setSettingsCalls = [];
 		historyEvents = [];
 		uniqueCounter = 0;
-		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' ).mockImplementation( () => true );
 
 		originalEnv = {
 			elementor: global.elementor,
@@ -78,45 +66,33 @@ describe( 'createV4GridFromPreset', () => {
 				if ( 'document/history/delete-log' === command ) {
 					historyEvents.push( { type: 'delete', id: args.id } );
 				}
-				if ( 'document/elements/set-settings' === command ) {
-					setSettingsCalls.push( args );
-				}
 				return undefined;
 			} ),
 		};
 	} );
 
 	afterEach( () => {
-		dispatchEventSpy.mockRestore();
 		global.elementor = originalEnv.elementor;
 		global.elementorCommon = originalEnv.elementorCommon;
 		global.$e = originalEnv.$e;
 	} );
 
-	function getCreateModel( index = 0 ) {
+	function getModel( index = 0 ) {
 		return createCalls[ index ].model;
 	}
 
-	function getAppliedStyles() {
-		const createdContainer = global.$e.run.mock.results.find(
-			( result ) => result.value?.model?.styles && Object.keys( result.value.model.styles ).length,
-		)?.value;
-
-		return createdContainer?.model?.styles;
-	}
-
-	function getVariants( styles ) {
-		const styleIds = Object.keys( styles ?? {} );
+	function getVariants( model ) {
+		const styleIds = Object.keys( model.styles ?? {} );
 		const lastId = styleIds[ styleIds.length - 1 ];
-		return styles?.[ lastId ]?.variants;
+		return model.styles?.[ lastId ]?.variants;
 	}
 
-	function getDesktopProps( styles ) {
-		return getVariants( styles )?.[ 0 ]?.props;
+	function getDesktopProps( model ) {
+		return getVariants( model )?.[ 0 ]?.props;
 	}
 
-	function getMobileProps( styles ) {
-		return getVariants( styles )?.[ 1 ]?.props;
+	function getMobileProps( model ) {
+		return getVariants( model )?.[ 1 ]?.props;
 	}
 
 	const GRID_PRESETS = [
@@ -133,20 +109,17 @@ describe( 'createV4GridFromPreset', () => {
 
 		expect( createCalls ).toHaveLength( 1 );
 
-		const createModel = getCreateModel( 0 );
-		expect( createModel.elType ).toBe( 'e-grid' );
-		expect( createModel.elements ).toEqual( [] );
-		expect( createModel.styles ).toBeUndefined();
-		expect( createModel.settings ).toBeUndefined();
+		const model = getModel( 0 );
+		expect( model.elType ).toBe( 'e-grid' );
+		expect( model.elements ).toEqual( [] );
 
-		const appliedStyles = getAppliedStyles();
-		const desktopProps = getDesktopProps( appliedStyles );
+		const desktopProps = getDesktopProps( model );
 		expect( desktopProps[ 'grid-template-columns' ] ).toEqual( gridTrackSizeProp( columns ) );
 		expect( desktopProps[ 'grid-template-rows' ] ).toEqual( gridTrackSizeProp( rows ) );
 		expect( typeof desktopProps[ 'grid-template-columns' ].value.size ).toBe( 'number' );
 		expect( typeof desktopProps[ 'grid-template-rows' ].value.size ).toBe( 'number' );
 
-		const mobileProps = getMobileProps( appliedStyles );
+		const mobileProps = getMobileProps( model );
 		expect( mobileProps[ 'grid-template-columns' ] ).toEqual( gridTrackSizeProp( 1 ) );
 		expect( mobileProps[ 'grid-template-rows' ] ).toEqual( gridTrackSizeProp( rows ) );
 	} );
@@ -154,31 +127,18 @@ describe( 'createV4GridFromPreset', () => {
 	test( 'settings.classes references the generated style id', () => {
 		createV4GridFromPreset( '1-2', makeFakeContainer( 'target' ), {} );
 
-		const appliedStyles = getAppliedStyles();
-		const styleId = Object.keys( appliedStyles )[ 0 ];
-
-		expect( setSettingsCalls ).toHaveLength( 1 );
-		expect( setSettingsCalls[ 0 ].settings.classes ).toEqual( {
-			$$type: 'classes',
-			value: [ styleId ],
-		} );
+		const model = getModel( 0 );
+		const styleId = Object.keys( model.styles )[ 0 ];
+		expect( model.settings.classes ).toEqual( { $$type: 'classes', value: [ styleId ] } );
 	} );
 
 	test( 'variants include desktop and mobile breakpoints', () => {
 		createV4GridFromPreset( '2-2', makeFakeContainer( 'target' ), {} );
 
-		const variants = getVariants( getAppliedStyles() );
+		const variants = getVariants( getModel( 0 ) );
 		expect( variants ).toHaveLength( 2 );
 		expect( variants[ 0 ].meta ).toEqual( { breakpoint: 'desktop', state: null } );
 		expect( variants[ 1 ].meta ).toEqual( { breakpoint: 'mobile', state: null } );
-	} );
-
-	test( 'dispatches style change event after applying local styles', () => {
-		createV4GridFromPreset( '1-2', makeFakeContainer( 'target' ), {} );
-
-		expect( dispatchEventSpy ).toHaveBeenCalledWith(
-			expect.objectContaining( { type: 'elementor/editor-v2/editor-elements/style' } ),
-		);
 	} );
 
 	// Regression test for ED-24385.
