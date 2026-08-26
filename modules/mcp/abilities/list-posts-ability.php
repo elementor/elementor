@@ -13,10 +13,6 @@ class List_Posts_Ability extends Abstract_Ability {
 	const MAX_PER_PAGE = 25;
 	const DEFAULT_PER_PAGE = 10;
 
-	const POST_TYPE_PAGE = 'page';
-	const POST_TYPE_POST = 'post';
-	const POST_TYPE_ALL = 'all';
-
 	const EMPTY_RESULT_HINT = 'No matching posts found. The site may have no published content yet, or you need to adjust your search terms.';
 
 	protected function get_ability_id(): string {
@@ -39,7 +35,6 @@ class List_Posts_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'integer' ],
 								'title' => [ 'type' => 'string' ],
 								'post_type' => [ 'type' => 'string' ],
-								'status' => [ 'type' => 'string' ],
 								'date' => [ 'type' => 'string' ],
 								'modified' => [ 'type' => 'string' ],
 								'url' => [ 'type' => 'string' ],
@@ -74,18 +69,6 @@ class List_Posts_Ability extends Abstract_Ability {
 						'type' => 'string',
 						'description' => 'Optional keyword matched against post title and content.',
 					],
-					'post_type' => [
-						'type' => 'string',
-						'enum' => [ self::POST_TYPE_ALL, self::POST_TYPE_PAGE, self::POST_TYPE_POST ],
-						'default' => self::POST_TYPE_ALL,
-						'description' => 'Filter by post type. "all" returns both pages and posts.',
-					],
-					'status' => [
-						'type' => 'string',
-						'enum' => [ 'any', 'publish', 'draft', 'pending', 'private' ],
-						'default' => 'any',
-						'description' => 'Filter by post status. "any" returns all accessible statuses.',
-					],
 					'page' => [
 						'type' => 'integer',
 						'minimum' => 1,
@@ -115,13 +98,11 @@ class List_Posts_Ability extends Abstract_Ability {
 
 		$page = $this->resolve_page( $input );
 		$per_page = $this->resolve_per_page( $input );
-		$post_types = $this->resolve_post_types( $input );
-		$status = $this->resolve_status( $input );
 		$search = isset( $input['search'] ) && is_string( $input['search'] ) ? trim( $input['search'] ) : '';
 
 		$query_args = [
-			'post_type' => $post_types,
-			'post_status' => $status,
+			'post_type' => [ 'post', 'page' ],
+			'post_status' => 'publish',
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'paged' => $page,
@@ -163,27 +144,6 @@ class List_Posts_Ability extends Abstract_Ability {
 		return max( 1, min( self::MAX_PER_PAGE, $per_page ) );
 	}
 
-	private function resolve_post_types( array $input ): array {
-		$type = isset( $input['post_type'] ) && is_string( $input['post_type'] ) ? $input['post_type'] : self::POST_TYPE_ALL;
-
-		if ( self::POST_TYPE_PAGE === $type ) {
-			return [ 'page' ];
-		}
-
-		if ( self::POST_TYPE_POST === $type ) {
-			return [ 'post' ];
-		}
-
-		return [ 'post', 'page' ];
-	}
-
-	private function resolve_status( array $input ): string {
-		$status = isset( $input['status'] ) && is_string( $input['status'] ) ? $input['status'] : 'any';
-		$allowed = [ 'any', 'publish', 'draft', 'pending', 'private' ];
-
-		return in_array( $status, $allowed, true ) ? $status : 'any';
-	}
-
 	private function format_post( \WP_Post $post ): array {
 		$author = get_user_by( 'id', $post->post_author );
 
@@ -191,7 +151,6 @@ class List_Posts_Ability extends Abstract_Ability {
 			'id' => (int) $post->ID,
 			'title' => (string) $post->post_title,
 			'post_type' => (string) $post->post_type,
-			'status' => (string) $post->post_status,
 			'date' => (string) $post->post_date_gmt,
 			'modified' => (string) $post->post_modified_gmt,
 			'url' => (string) get_permalink( $post->ID ),

@@ -60,44 +60,14 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'per_page', $result );
 	}
 
-	public function test_execute__filters_by_post_type_post() {
+	public function test_execute__returns_both_posts_and_pages() {
 		// Arrange
 		$this->act_as_admin();
 		$this->create_post( 'A Post', 'post', 'publish' );
 		$this->create_post( 'A Page', 'page', 'publish' );
 
 		// Act
-		$result = $this->ability->execute( [ 'post_type' => 'post' ] );
-
-		// Assert
-		$post_types = array_column( $result['posts'], 'post_type' );
-		$this->assertContains( 'post', $post_types );
-		$this->assertNotContains( 'page', $post_types );
-	}
-
-	public function test_execute__filters_by_post_type_page() {
-		// Arrange
-		$this->act_as_admin();
-		$this->create_post( 'A Post', 'post', 'publish' );
-		$this->create_post( 'A Page', 'page', 'publish' );
-
-		// Act
-		$result = $this->ability->execute( [ 'post_type' => 'page' ] );
-
-		// Assert
-		$post_types = array_column( $result['posts'], 'post_type' );
-		$this->assertContains( 'page', $post_types );
-		$this->assertNotContains( 'post', $post_types );
-	}
-
-	public function test_execute__filters_by_post_type_all() {
-		// Arrange
-		$this->act_as_admin();
-		$this->create_post( 'A Post', 'post', 'publish' );
-		$this->create_post( 'A Page', 'page', 'publish' );
-
-		// Act
-		$result = $this->ability->execute( [ 'post_type' => 'all' ] );
+		$result = $this->ability->execute( [] );
 
 		// Assert
 		$post_types = array_column( $result['posts'], 'post_type' );
@@ -105,19 +75,19 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		$this->assertContains( 'page', $post_types );
 	}
 
-	public function test_execute__filters_by_status() {
+	public function test_execute__returns_only_published_posts() {
 		// Arrange
 		$this->act_as_admin();
-		$this->create_post( 'Published Post', 'post', 'publish' );
+		$published_id = $this->create_post( 'Published Post', 'post', 'publish' );
 		$this->create_post( 'Draft Post', 'post', 'draft' );
 
 		// Act
-		$result = $this->ability->execute( [ 'status' => 'publish' ] );
+		$result = $this->ability->execute( [] );
 
 		// Assert
-		$statuses = array_column( $result['posts'], 'status' );
-		$this->assertContains( 'publish', $statuses );
-		$this->assertNotContains( 'draft', $statuses );
+		$ids = array_column( $result['posts'], 'id' );
+		$this->assertContains( $published_id, $ids );
+		$this->assertCount( 1, array_filter( $ids, fn( $id ) => in_array( $id, $this->created_post_ids, true ) ) );
 	}
 
 	public function test_execute__per_page_is_clamped_to_maximum() {
