@@ -201,23 +201,60 @@ class Test_Base_Path_Filters extends Elementor_Test_Base {
 		$this->assertSame( $this->get_default_base_dir(), Base::get_base_uploads_dir() );
 	}
 
-	public function test_get_base_uploads_dir__only_dir_filter_set__falls_back_to_default() {
+	public function test_url_only_override__applies_url_and_dir_stays_default() {
 		$this->activate_experiment();
-		$this->expect_doing_it_wrong( 'Elementor\Core\Files\Base::is_base_paths_filter_pair_valid' );
+
+		$cdn_url = 'https://cdn.example.com/wp-content/uploads/elementor/';
+
+		add_filter( 'elementor/files/base_url', function () use ( $cdn_url ) {
+			return $cdn_url;
+		} );
+
+		$this->assertSame( $this->get_default_base_dir(), Base::get_base_uploads_dir(), 'base_dir must fall through to the WP uploads default when only base_url is filtered' );
+		$this->assertSame( trailingslashit( $cdn_url ), Base::get_base_uploads_url() );
+	}
+
+	public function test_dir_only_override__applies_dir_and_url_stays_default() {
+		$this->activate_experiment();
 
 		add_filter( 'elementor/files/base_dir', function () {
 			return $this->custom_base_dir;
 		} );
 
-		$this->assertSame( $this->get_default_base_dir(), Base::get_base_uploads_dir() );
+		$this->assertSame( trailingslashit( wp_normalize_path( $this->custom_base_dir ) ), Base::get_base_uploads_dir() );
+		$this->assertSame( $this->get_default_base_url(), Base::get_base_uploads_url(), 'base_url must fall through to the WP uploads default when only base_dir is filtered' );
 	}
 
-	public function test_get_base_uploads_url__only_url_filter_set__falls_back_to_default() {
+	public function test_get_base_uploads_url__experiment_active__accepts_cross_domain_cdn_url() {
 		$this->activate_experiment();
-		$this->expect_doing_it_wrong( 'Elementor\Core\Files\Base::is_base_paths_filter_pair_valid' );
+
+		$cdn_url = 'https://cdn.example.com/elementor/';
+
+		add_filter( 'elementor/files/base_url', function () use ( $cdn_url ) {
+			return $cdn_url;
+		} );
+
+		$this->assertSame( trailingslashit( $cdn_url ), Base::get_base_uploads_url() );
+	}
+
+	public function test_get_base_uploads_url__experiment_active__accepts_protocol_relative_url() {
+		$this->activate_experiment();
+
+		$cdn_url = '//cdn.example.com/elementor/';
+
+		add_filter( 'elementor/files/base_url', function () use ( $cdn_url ) {
+			return $cdn_url;
+		} );
+
+		$this->assertSame( trailingslashit( $cdn_url ), Base::get_base_uploads_url() );
+	}
+
+	public function test_get_base_uploads_url__experiment_active__rejects_javascript_scheme() {
+		$this->activate_experiment();
+		$this->expect_doing_it_wrong( 'Elementor\Core\Files\Base::validate_base_url' );
 
 		add_filter( 'elementor/files/base_url', function () {
-			return $this->custom_base_url;
+			return 'javascript:alert(1)/';
 		} );
 
 		$this->assertSame( $this->get_default_base_url(), Base::get_base_uploads_url() );
