@@ -1,4 +1,4 @@
-import { buildModel, createV4Element, runWithHistory } from './v4-preset-utils';
+import { buildModel, insertElementFromModel, runWithHistory } from './v4-preset-utils';
 
 const V4_ELEMENT_TYPE = 'e-grid';
 
@@ -27,6 +27,6 @@ export function createV4GridFromPreset( structure, target = elementor.getPreview
 		const { desktop, mobile } = getGridPresetProps( structure );
 		const model = buildModel( V4_ELEMENT_TYPE, desktop, mobile );
 
-		return createV4Element( target, model, options );
+		return insertElementFromModel( target, model, options );
 	} );
 }

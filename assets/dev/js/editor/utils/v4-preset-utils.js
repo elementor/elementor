@@ -1,3 +1,35 @@
+/**
+ * @typedef {import('../container/container')} Container
+ */
+
+/**
+ * @typedef {Object} AtomicProp
+ * @property {string} $$type - Atomic prop type identifier.
+ * @property {*}      value   - Prop value payload.
+ */
+
+/**
+ * @typedef {Object.<string, AtomicProp>} AtomicPropsMap
+ */
+
+/**
+ * @typedef {Object} ElementModel
+ * @property {string}                    id       - Element id.
+ * @property {string}                    elType   - Element type (e.g. `e-grid`).
+ * @property {Array}                     elements - Child element models.
+ * @property {Object.<string, Object>}   [styles] - Local style classes keyed by style id.
+ * @property {{ classes: AtomicProp }}   [settings] - Element settings.
+ */
+
+/**
+ * Build a V4 element model with optional desktop and mobile style variants.
+ *
+ * @param {string}         elType      - V4 element type.
+ * @param {AtomicPropsMap} cssProps    - Desktop breakpoint style props.
+ * @param {AtomicPropsMap} mobileProps - Mobile breakpoint style props.
+ *
+ * @return {ElementModel} Element model ready for document insertion.
+ */
 export function buildModel( elType, cssProps, mobileProps ) {
 	const model = {
 		id: elementorCommon.helpers.getUniqueId(),
@@ -45,7 +77,18 @@ export function buildModel( elType, cssProps, mobileProps ) {
 	return model;
 }
 
-export function createV4Element( target, model, options ) {
+/**
+ * Insert an element model into the document under the given target container.
+ *
+ * Expects to run inside a `runWithHistory()` transaction when the operation should be undoable.
+ *
+ * @param {Container|Object} target  - Parent container (or stub with `id` / `lookup`).
+ * @param {ElementModel}     model   - Element model to insert.
+ * @param {Object}           options - `document/elements/create` command options.
+ *
+ * @return {Container|Object} Created container, or a lookup stub when Container is unavailable.
+ */
+export function insertElementFromModel( target, model, options ) {
 	const containerClass = elementorModules?.editor?.Container;
 	const getDocumentUtils = () => $e?.components?.get?.( 'document' )?.utils;
 	const getContainerById = ( id ) => getDocumentUtils()?.findContainerById?.( id ) ?? null;
@@ -113,6 +156,14 @@ export function createV4Element( target, model, options ) {
 	};
 }
 
+/**
+ * Run a callback inside a single document history transaction.
+ *
+ * @param {string}   title    - History log title shown in the undo stack.
+ * @param {Function} callback - Operation to run while history is open.
+ *
+ * @return {*} Callback return value.
+ */
 export function runWithHistory( title, callback ) {
 	const historyId = $e.internal( 'document/history/start-log', {
 		type: 'add',

@@ -1,4 +1,4 @@
-import { buildModel, createV4Element, runWithHistory } from './v4-preset-utils';
+import { buildModel, insertElementFromModel, runWithHistory } from './v4-preset-utils';
 
 const V4_ELEMENT_TYPE = 'e-flexbox';
 const DIRECTION_ROW = 'row';
@@ -83,13 +83,13 @@ function buildNode( definition, target, options, isRoot ) {
 	const reuseTarget = isRoot && false === options.createWrapper;
 	const node = reuseTarget
 		? ( target?.lookup?.() ?? target )
-		: createV4Element( target, buildModel( V4_ELEMENT_TYPE, parentProps, parentMobile ), isRoot ? options : { edit: false } );
+		: insertElementFromModel( target, buildModel( V4_ELEMENT_TYPE, parentProps, parentMobile ), isRoot ? options : { edit: false } );
 
 	children.forEach( ( childDef ) => {
 		const hasNestedChildren = !! childDef.children?.length;
 
 		if ( hasNestedChildren ) {
-			createV4Element( node, buildTreeModel( childDef ), { edit: false } );
+			insertElementFromModel( node, buildTreeModel( childDef ), { edit: false } );
 			return;
 		}
 
