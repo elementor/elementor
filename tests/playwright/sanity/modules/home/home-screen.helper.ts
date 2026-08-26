@@ -124,13 +124,33 @@ const replaceImageUrl = (
 	return mockData;
 };
 
+const SCREENSHOT_SIZE_SNAP_PX = 2;
+
+const snapScreenshotSize = ( size: number ): number => {
+	return Math.floor( size / SCREENSHOT_SIZE_SNAP_PX ) * SCREENSHOT_SIZE_SNAP_PX;
+};
+
 export const navigateToHomeScreen = async ( page: Page ) => {
 	await page.goto( 'wp-admin/admin.php?page=elementor' );
 	return page.locator( '#e-home-screen' );
 };
 
 export const expectScreenshot = async ( locator: Locator, baseName: string ): Promise<void> => {
-	await expect( locator ).toHaveScreenshot( baseName );
+	await locator.waitFor( { state: 'visible' } );
+	const box = await locator.boundingBox();
+
+	if ( ! box ) {
+		throw new Error( `Cannot screenshot "${ baseName }": locator has no bounding box.` );
+	}
+
+	await expect( locator ).toHaveScreenshot( baseName, {
+		clip: {
+			x: 0,
+			y: 0,
+			width: snapScreenshotSize( box.width ),
+			height: snapScreenshotSize( box.height ),
+		},
+	} );
 };
 
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
