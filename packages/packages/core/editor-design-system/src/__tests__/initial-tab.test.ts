@@ -2,10 +2,6 @@ import type * as InitialTabModule from '../initial-tab';
 
 type InitialTab = typeof InitialTabModule;
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	isExperimentActive: jest.fn( () => true ),
-} ) );
-
 const STORAGE_KEY = 'elementor_editor_design_system_active_tab';
 
 function loadModule(): InitialTab {

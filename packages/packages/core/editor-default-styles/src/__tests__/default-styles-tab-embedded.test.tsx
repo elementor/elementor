@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithStore } from 'test-utils';
+import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { setSessionStorageItem } from '@elementor/session';
 import { __createStore as createStore, __registerSlice as registerSlice, type Store } from '@elementor/store';
@@ -7,6 +8,18 @@ import { act, screen } from '@testing-library/react';
 
 import { DefaultStylesTabEmbedded } from '../components/default-styles-tab-embedded';
 import { slice } from '../store';
+
+jest.mock( '@elementor/editor-styles-repository', () => ( {
+	...jest.requireActual( '@elementor/editor-styles-repository' ),
+	useUserStylesCapability: jest.fn( () => ( {
+		userCan: () => ( {
+			create: true,
+			delete: true,
+			update: true,
+			updateProps: true,
+		} ),
+	} ) ),
+} ) );
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	ControlActionsProvider: ( { children }: React.PropsWithChildren ) => children,
@@ -61,6 +74,15 @@ describe( 'DefaultStylesTabEmbedded', () => {
 	} );
 
 	beforeEach( () => {
+		jest.mocked( useUserStylesCapability ).mockReturnValue( {
+			userCan: () => ( {
+				create: true,
+				delete: true,
+				update: true,
+				updateProps: true,
+			} ),
+		} );
+
 		(
 			window as unknown as {
 				elementor: {
@@ -184,5 +206,25 @@ describe( 'DefaultStylesTabEmbedded', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeDisabled();
+	} );
+
+	it( 'should hide the save changes button when the user cannot edit default styles', () => {
+		jest.mocked( useUserStylesCapability ).mockReturnValue( {
+			userCan: () => ( {
+				create: false,
+				delete: false,
+				update: false,
+				updateProps: false,
+			} ),
+		} );
+
+		renderWithStore(
+			<QueryClientProvider client={ queryClient }>
+				<DefaultStylesTabEmbedded onRequestClose={ jest.fn() } />
+			</QueryClientProvider>,
+			store
+		);
+
+		expect( screen.queryByRole( 'button', { name: 'Save changes' } ) ).not.toBeInTheDocument();
 	} );
 } );
