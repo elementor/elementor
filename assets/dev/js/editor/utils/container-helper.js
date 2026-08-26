@@ -1,6 +1,5 @@
 import { createV4FlexboxFromPreset } from './v4-flexbox-preset';
 import { createV4GridFromPreset } from './v4-grid-preset';
-import { isExperimentActive } from './experiment-helper';
 
 /**
  * @typedef {import('../container/container')} Container
@@ -20,7 +19,7 @@ export class ContainerHelper {
 	static V4_DEFAULT_CONTAINER_TYPE = 'e-flexbox';
 
 	static isV4OptIn() {
-		return isExperimentActive( 'e_opt_in_v4' );
+		return !! elementorCommon?.config?.experimentalFeatures?.e_opt_in_v4;
 	}
 
 	/**
@@ -159,7 +158,7 @@ export class ContainerHelper {
 	 * @return {Container} - Container created on.
 	 */
 	static createContainerFromGridPreset( structure, target = elementor.getPreviewContainer(), options = {}, modelAttributes = {} ) {
-		if ( isExperimentActive( 'e_opt_in_v4' ) ) {
+		if ( ContainerHelper.isV4OptIn() ) {
 			return createV4GridFromPreset( structure, target, options );
 		}
 
@@ -207,7 +206,7 @@ export class ContainerHelper {
 	 * @return {Container} - Container created on.
 	 */
 	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
-		if ( isExperimentActive( 'e_opt_in_v4' ) ) {
+		if ( ContainerHelper.isV4OptIn() ) {
 			return createV4FlexboxFromPreset( preset, target, options );
 		}
 
