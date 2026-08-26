@@ -159,6 +159,7 @@ declare global {
 			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
 				enqueueFont?: EnqueueFont;
+				enqueueIconFonts?: ( iconType: string ) => void;
 				hasPro?: () => boolean;
 			};
 			hooks?: {
@@ -189,15 +190,6 @@ declare global {
 		};
 		elementorAppConfig?: {
 			onboarding?: OnboardingConfig;
-			'site-builder'?: {
-				iframeUrl?: string;
-				isAdmin?: boolean;
-				exitTo?: string;
-				elementorAiCurrentContext?: {
-					siteTitle: string;
-					siteAbout: unknown;
-				};
-			};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;

@@ -114,7 +114,7 @@ class Widget_Context_Helper {
 		return self::filter_nulls( [
 			'type' => $widget_type,
 			'version' => self::get_widget_version( $config ),
-			'description' => self::get_description( $config ),
+			'description' => self::get_description( $config, $widget_type ),
 		] );
 	}
 
@@ -155,15 +155,16 @@ class Widget_Context_Helper {
 			$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
 			$built = V3_Json_Schema_Builder::build( $config['controls'], $allowed_keys );
 
-			return [
+			return self::filter_nulls( [
 				'type' => 'object',
 				'widget_version' => self::VERSION_V3,
+				'description' => self::get_description( $config, $widget_type ),
 				'message' => self::V3_FALLBACK_MESSAGE,
 				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
 				'properties' => $built['properties'],
 				'required' => $built['required'],
 				'additionalProperties' => false,
-			];
+			] );
 		}
 
 		$properties = self::build_configurable_properties_schema( $props_schema );
@@ -171,7 +172,7 @@ class Widget_Context_Helper {
 		return self::filter_nulls( [
 			'type' => 'object',
 			'properties' => $properties,
-			'description' => self::get_description( $config ),
+			'description' => self::get_description( $config, $widget_type ),
 			'llm_guidance' => Llm_Guidance_Builder::build( $config, $widget_type, $parents_index ),
 		] );
 	}
@@ -302,10 +303,18 @@ class Widget_Context_Helper {
 		return (bool) $prop_type->get_meta_item( 'llm_configurable', false );
 	}
 
-	private static function get_description( array $config ): ?string {
+	private static function get_description( array $config, ?string $widget_type = null ): ?string {
 		$description = $config['meta']['description'] ?? null;
 
-		return is_string( $description ) ? $description : null;
+		if ( is_string( $description ) && '' !== $description ) {
+			return $description;
+		}
+
+		if ( null !== $widget_type && self::is_v3_allowlisted( $widget_type ) ) {
+			return V3_Widget_Bridge_Registry::get_description( $widget_type );
+		}
+
+		return null;
 	}
 
 	private static function filter_nulls( array $data ): array {
