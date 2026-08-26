@@ -5,7 +5,7 @@
 /**
  * @typedef {Object} AtomicProp
  * @property {string} $$type - Atomic prop type identifier.
- * @property {*}      value   - Prop value payload.
+ * @property {*}      value  - Prop value payload.
  */
 
 /**
@@ -14,11 +14,11 @@
 
 /**
  * @typedef {Object} ElementModel
- * @property {string}                    id       - Element id.
- * @property {string}                    elType   - Element type (e.g. `e-grid`).
- * @property {Array}                     elements - Child element models.
- * @property {Object.<string, Object>}   [styles] - Local style classes keyed by style id.
- * @property {{ classes: AtomicProp }}   [settings] - Element settings.
+ * @property {string}                  id         - Element id.
+ * @property {string}                  elType     - Element type (e.g. `e-grid`).
+ * @property {Array}                   elements   - Child element models.
+ * @property {Object.<string, Object>} [styles]   - Local style classes keyed by style id.
+ * @property {{ classes: AtomicProp }} [settings] - Element settings.
  */
 
 /**
