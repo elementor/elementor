@@ -24,6 +24,38 @@ module.exports = Marionette.CompositeView.extend( {
 		return this.collection.add( model, options, true );
 	},
 
+	/**
+	 * Find a descendant view that accepts `elType` as a direct child.
+	 * Prefers a direct child that accepts the type over a deeper match inside
+	 * an earlier sibling (e.g. accordion item content over header → title).
+	 *
+	 * @param {string} elType
+	 * @return {Marionette.View|null}
+	 */
+	findFirstViewAccepting( elType ) {
+		let directAccepting = null;
+		let recursiveAccepting = null;
+
+		this.children.each( ( child ) => {
+			if ( ! child?.getChildType ) {
+				return;
+			}
+
+			if ( -1 !== child.getChildType().indexOf( elType ) ) {
+				if ( ! directAccepting ) {
+					directAccepting = child;
+				}
+				return;
+			}
+
+			if ( ! recursiveAccepting && child.findFirstViewAccepting ) {
+				recursiveAccepting = child.findFirstViewAccepting( elType );
+			}
+		} );
+
+		return directAccepting || recursiveAccepting;
+	},
+
 	addElement( data, options ) {
 		if ( this.isCollectionFilled() ) {
 			return;
@@ -60,7 +92,10 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			return this.children.last().addElement( newItem, options );
+			const acceptingChild = this.findFirstViewAccepting( elType );
+			const fallbackChild = acceptingChild || this.children.last();
+
+			return fallbackChild.addElement( newItem, options );
 		}
 
 		if ( options.clone ) {
