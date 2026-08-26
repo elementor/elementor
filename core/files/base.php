@@ -56,13 +56,23 @@ abstract class Base {
 			return $dir;
 		}
 
+		if ( ! self::is_base_paths_filter_pair_valid() ) {
+			return $dir;
+		}
+
 		/**
 		 * Elementor files base directory.
 		 *
 		 * Filters the absolute filesystem path of the Elementor files base directory.
+		 * Applies to all `Elementor\Core\Files\Base` consumers (Post CSS, Global CSS,
+		 * Frontend CSS, Google Fonts, atomic CSS, etc.) — not only atomic CSS.
+		 *
+		 * Must be set together with `elementor/files/base_url`. Setting only one of the
+		 * two is rejected and both fall back to their defaults.
+		 *
 		 * Only available when the `e_optimized_css_files` experiment is active.
 		 *
-		 * @since 3.33.0
+		 * @since 4.4.0
 		 *
 		 * @param string $dir Absolute filesystem path to the Elementor files base directory.
 		 */
@@ -86,13 +96,23 @@ abstract class Base {
 			return $url;
 		}
 
+		if ( ! self::is_base_paths_filter_pair_valid() ) {
+			return $url;
+		}
+
 		/**
 		 * Elementor files base URL.
 		 *
 		 * Filters the public URL of the Elementor files base directory.
+		 * Applies to all `Elementor\Core\Files\Base` consumers (Post CSS, Global CSS,
+		 * Frontend CSS, Google Fonts, atomic CSS, etc.) — not only atomic CSS.
+		 *
+		 * Must be set together with `elementor/files/base_dir`. Setting only one of the
+		 * two is rejected and both fall back to their defaults.
+		 *
 		 * Only available when the `e_optimized_css_files` experiment is active.
 		 *
-		 * @since 3.33.0
+		 * @since 4.4.0
 		 *
 		 * @param string $url Public URL for the Elementor files base directory.
 		 */
@@ -343,7 +363,7 @@ abstract class Base {
 	/**
 	 * Whether the "Optimized CSS Files" experiment is active.
 	 *
-	 * @since 3.33.0
+	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
@@ -354,9 +374,37 @@ abstract class Base {
 	}
 
 	/**
+	 * Ensure `elementor/files/base_dir` and `elementor/files/base_url` are either both
+	 * filtered or both unfiltered. Setting only one produces a mismatched write vs.
+	 * enqueue location and yields 404s for every generated asset.
+	 *
+	 * @since 4.4.0
+	 * @access private
+	 * @static
+	 *
+	 * @return bool True when the pair is safe to apply (both set or both unset).
+	 */
+	private static function is_base_paths_filter_pair_valid() {
+		$has_dir_filter = (bool) has_filter( 'elementor/files/base_dir' );
+		$has_url_filter = (bool) has_filter( 'elementor/files/base_url' );
+
+		if ( $has_dir_filter === $has_url_filter ) {
+			return true;
+		}
+
+		_doing_it_wrong(
+			__METHOD__,
+			'The `elementor/files/base_dir` and `elementor/files/base_url` filters must be set together. Falling back to defaults.',
+			'4.4.0'
+		);
+
+		return false;
+	}
+
+	/**
 	 * Validate a filtered base directory path.
 	 *
-	 * @since 3.33.0
+	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
@@ -369,7 +417,7 @@ abstract class Base {
 			_doing_it_wrong(
 				__METHOD__,
 				'The `elementor/files/base_dir` filter must return a non-empty string.',
-				'3.33.0'
+				'4.4.0'
 			);
 
 			return null;
@@ -381,7 +429,7 @@ abstract class Base {
 			_doing_it_wrong(
 				__METHOD__,
 				'The `elementor/files/base_dir` filter must return an absolute filesystem path.',
-				'3.33.0'
+				'4.4.0'
 			);
 
 			return null;
@@ -391,7 +439,7 @@ abstract class Base {
 			_doing_it_wrong(
 				__METHOD__,
 				'The `elementor/files/base_dir` filter must not contain path traversal segments.',
-				'3.33.0'
+				'4.4.0'
 			);
 
 			return null;
@@ -401,7 +449,7 @@ abstract class Base {
 			_doing_it_wrong(
 				__METHOD__,
 				'The `elementor/files/base_dir` filter must resolve inside `WP_CONTENT_DIR` or the uploads basedir.',
-				'3.33.0'
+				'4.4.0'
 			);
 
 			return null;
@@ -413,7 +461,7 @@ abstract class Base {
 	/**
 	 * Validate a filtered base URL.
 	 *
-	 * @since 3.33.0
+	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
@@ -426,7 +474,7 @@ abstract class Base {
 			_doing_it_wrong(
 				__METHOD__,
 				'The `elementor/files/base_url` filter must return a non-empty string.',
-				'3.33.0'
+				'4.4.0'
 			);
 
 			return null;
@@ -438,7 +486,7 @@ abstract class Base {
 			_doing_it_wrong(
 				__METHOD__,
 				'The `elementor/files/base_url` filter must return a valid URL.',
-				'3.33.0'
+				'4.4.0'
 			);
 
 			return null;
@@ -448,7 +496,7 @@ abstract class Base {
 	}
 
 	/**
-	 * @since 3.33.0
+	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
@@ -467,7 +515,7 @@ abstract class Base {
 	}
 
 	/**
-	 * @since 3.33.0
+	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
@@ -482,7 +530,7 @@ abstract class Base {
 	}
 
 	/**
-	 * @since 3.33.0
+	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
@@ -495,19 +543,63 @@ abstract class Base {
 			return true;
 		}
 
-		$path = untrailingslashit( wp_normalize_path( $path ) );
-		$allowed_roots = [
-			untrailingslashit( wp_normalize_path( WP_CONTENT_DIR ) ),
-			untrailingslashit( wp_normalize_path( self::get_wp_uploads_dir()['basedir'] ) ),
-		];
+		$resolved_path = self::resolve_deepest_existing( $path );
+
+		if ( false === $resolved_path ) {
+			return false;
+		}
+
+		$uploads_basedir = self::get_wp_uploads_dir()['basedir'];
+		$allowed_roots = array_filter( [
+			self::resolve_deepest_existing( WP_CONTENT_DIR ),
+			self::resolve_deepest_existing( $uploads_basedir ),
+		] );
 
 		foreach ( $allowed_roots as $root ) {
-			if ( $path === $root || 0 === strpos( $path, $root . '/' ) ) {
+			if ( $resolved_path === $root || 0 === strpos( $resolved_path, $root . '/' ) ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Resolve the realpath of the deepest existing ancestor of `$path`.
+	 *
+	 * Non-existent targets are common when a host sets the filter to a directory
+	 * that Elementor will create on first write. Walking up to the deepest existing
+	 * ancestor lets us still resolve symlinks and reject paths whose real location
+	 * escapes the allowed roots.
+	 *
+	 * @since 4.4.0
+	 * @access private
+	 * @static
+	 *
+	 * @param string $path Filesystem path.
+	 *
+	 * @return string|false Normalized realpath, or false if none could be resolved.
+	 */
+	private static function resolve_deepest_existing( $path ) {
+		$current = wp_normalize_path( untrailingslashit( (string) $path ) );
+
+		while ( '' !== $current && ! file_exists( $current ) ) {
+			$parent = wp_normalize_path( dirname( $current ) );
+
+			if ( $parent === $current ) {
+				return false;
+			}
+
+			$current = $parent;
+		}
+
+		if ( '' === $current ) {
+			return false;
+		}
+
+		$real = realpath( $current );
+
+		return $real ? untrailingslashit( wp_normalize_path( $real ) ) : false;
 	}
 
 	/**

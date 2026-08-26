@@ -19,9 +19,10 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 
 		$this->filesystemMock = $this->getMockBuilder( WP_Filesystem_Base::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'exists', 'delete', 'put_contents', 'get_contents', 'abspath', 'size', 'move' ] )
+			->onlyMethods( [ 'exists', 'delete', 'put_contents', 'get_contents', 'abspath', 'size', 'move', 'is_dir' ] )
 			->getMock();
 		$this->filesystemMock->method( 'abspath' )->willReturn( ABSPATH );
+		$this->filesystemMock->method( 'is_dir' )->willReturn( true );
 
 		global $wp_filesystem;
 		$wp_filesystem = $this->filesystemMock;

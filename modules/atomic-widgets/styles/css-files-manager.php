@@ -128,6 +128,10 @@ class CSS_Files_Manager {
 	private function write_atomically( string $filesystem_path, string $css ): bool {
 		$filesystem = $this->get_filesystem();
 
+		if ( ! $this->ensure_directory_exists( dirname( $filesystem_path ) ) ) {
+			return false;
+		}
+
 		$tmp_path = $filesystem_path . '.tmp-' . wp_generate_password( 8, false, false );
 
 		$is_written = $filesystem->put_contents( $tmp_path, $css, self::PERMISSIONS );
@@ -147,6 +151,16 @@ class CSS_Files_Manager {
 		}
 
 		return true;
+	}
+
+	private function ensure_directory_exists( string $directory ): bool {
+		$filesystem = $this->get_filesystem();
+
+		if ( $filesystem->is_dir( $directory ) ) {
+			return true;
+		}
+
+		return wp_mkdir_p( $directory );
 	}
 
 	private function get_filesystem(): \WP_Filesystem_Base {
