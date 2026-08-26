@@ -2,6 +2,7 @@
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -54,5 +55,27 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		$this->assertSame( 'e-paragraph', $children[0]['widgetType'] );
 		$this->assertSame( 'escaped-html', $children[0]['settings']['paragraph']['$$type'] );
 		$this->assertSame( 'List item', $children[0]['settings']['paragraph']['value'] );
+	}
+
+	public function test_marker_slot_uses_single_line_height(): void {
+		$props = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['base_styles']['e-list-item-marker-base']['variants'][0]['props'];
+
+		$this->assertSame(
+			[
+				'$$type' => 'size',
+				'value' => [
+					'size' => '1lh',
+					'unit' => 'custom',
+				],
+			],
+			$props['height']
+		);
+		$this->assertSame(
+			[
+				'$$type' => 'string',
+				'value' => 'flex-start',
+			],
+			$props['align-self']
+		);
 	}
 }

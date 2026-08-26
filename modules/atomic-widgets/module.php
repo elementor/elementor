@@ -698,6 +698,11 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+			// List markers
+			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
+			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base svg { width: auto !important; }',
+			'.e-default-ul > .elementor-element-overlay > .elementor-editor-element-settings, .e-default-li > .elementor-element-overlay > .elementor-editor-element-settings { list-style: none; margin: 0; padding: 0; }',
+			'.e-default-ul > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-setting, .e-default-li > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-setting { list-style: none; margin: 0; padding: 0; }',
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
