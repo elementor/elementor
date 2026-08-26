@@ -21,7 +21,9 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Module::ANGIE_IN_PANELS_EXPERIMENT )['default'];
 
+		Plugin::$instance->experiments->remove_feature( Module::ANGIE_IN_PANELS_EXPERIMENT );
 		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT );
+		Plugin::$instance->experiments->add_feature( Module::get_experimental_data() );
 	}
 
 	public function tear_down() {
