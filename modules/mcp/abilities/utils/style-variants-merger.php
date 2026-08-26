@@ -75,18 +75,6 @@ class Style_Variants_Merger {
 	}
 
 	public static function build_variants( array $breakpoint_blocks, Css_Converter $converter ): array {
-		return self::build_variants_with_warnings( $breakpoint_blocks, $converter )['variants'];
-	}
-
-	/**
-	 * V4 converter feedback surface: returns the variants plus per-variant warnings for CSS the
-	 * converter rejected outright (e.g. `animation`) or routed to `custom_css` (unsupported
-	 * shorthands, pixel queries, `var()` inside `box-shadow`, unknown properties). Callers that
-	 * only need variants use the thin `build_variants` wrapper.
-	 *
-	 * @return array{variants: array, warnings: string[]}
-	 */
-	public static function build_variants_with_warnings( array $breakpoint_blocks, Css_Converter $converter ): array {
 		$variants = [];
 		$warnings = [];
 

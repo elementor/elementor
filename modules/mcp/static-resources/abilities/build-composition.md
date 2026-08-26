@@ -1,3 +1,6 @@
+# SITE PARTS (Pro)
+If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. Read [elementor://build-guidelines] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
+
 # RESOURCES (Read before use)
 - [elementor://build-guidelines] - Authoritative engine + WordPress rules: styling contract (breakpoint spelling, value-shape traps, variables and classes), sizing/layout defaults, repeating-layout / single-template patterns
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
