@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class List_Posts_Ability extends Abstract_Ability {
 
-	const MAX_PER_PAGE = 100;
-	const DEFAULT_PER_PAGE = 50;
+	const MAX_PER_PAGE = 25;
+	const DEFAULT_PER_PAGE = 10;
 
 	const POST_TYPE_PAGE = 'page';
 	const POST_TYPE_POST = 'post';

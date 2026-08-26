@@ -131,7 +131,7 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		$this->assertSame( List_Posts_Ability::MAX_PER_PAGE, $result['per_page'] );
 	}
 
-	public function test_execute__default_per_page_is_50() {
+	public function test_execute__default_per_page_is_10() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -139,7 +139,7 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		$result = $this->ability->execute( [] );
 
 		// Assert
-		$this->assertSame( List_Posts_Ability::DEFAULT_PER_PAGE, $result['per_page'] );
+		$this->assertSame( 10, $result['per_page'] );
 	}
 
 	public function test_execute__paginates_and_reports_total() {
