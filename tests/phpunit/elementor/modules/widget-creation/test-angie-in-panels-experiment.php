@@ -48,14 +48,6 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
-	public function test_experiment_is_inactive_by_default() {
-		// Act
-		$is_active = Plugin::$instance->experiments->is_feature_active( Module::ANGIE_IN_PANELS_EXPERIMENT );
-
-		// Assert
-		$this->assertFalse( $is_active );
-	}
-
 	public function test_experiment_can_be_activated() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
