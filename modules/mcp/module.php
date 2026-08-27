@@ -3,10 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
-use Elementor\Plugin;
-use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -22,8 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const CONNECTOR_EXPERIMENT_NAME = 'mcp_connector';
-
 	private Ability_Registry $registry;
 
 	public function get_name() {
@@ -38,8 +33,6 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-
-		$this->register_connector_experiment();
 
 		$this->registry = self::build_core_registry();
 
@@ -93,26 +86,7 @@ class Module extends BaseModule {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		if ( ! self::is_connector_page_active() ) {
-			return;
-		}
-
 		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
-	}
-
-	public static function is_connector_page_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::CONNECTOR_EXPERIMENT_NAME );
-	}
-
-	private function register_connector_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::CONNECTOR_EXPERIMENT_NAME,
-			'title' => esc_html__( 'MCP Connector', 'elementor' ),
-			'description' => esc_html__( 'Enable the MCP connector admin page.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		] );
 	}
 
 	public static function build_core_registry(): Ability_Registry {
@@ -152,17 +126,11 @@ class Module extends BaseModule {
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
 			new Abilities\Read_Resource_Ability( $registry ),
+			new Abilities\List_Components_Ability(),
+			new Abilities\Manage_Component_Ability(),
 		];
 
-		if ( self::is_components_active() ) {
-			$abilities[] = new Abilities\List_Components_Ability();
-		}
-
 		return $abilities;
-	}
-
-	private static function is_components_active(): bool {
-		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 
 	/**

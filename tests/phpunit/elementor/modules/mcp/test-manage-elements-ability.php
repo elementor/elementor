@@ -210,6 +210,30 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	public function test_move__reparents_element_to_document_root_at_index() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $inner_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( $inner_id, $elements[0]['id'] );
+		$this->assertEmpty( $elements[1]['elements'] ?? [] );
+	}
+
+	public function test_move__rejects_reparenting_widget_to_document_root() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
 		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -224,11 +248,12 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertOkOperation( $result, 0 );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_parent', $result['results'][0]['code'] );
 
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( $heading_id, $elements[0]['id'] );
-		$this->assertEmpty( $elements[1]['elements'] ?? [] );
+		$container = $this->find_element_in_document( $post_id, $container_id );
+		$this->assertSame( $heading_id, $container['elements'][0]['id'] ?? null );
 	}
 
 	public function test_move__missing_new_parent_id_returns_per_op_error() {
@@ -620,13 +645,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$build_result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'parent_id' => 'document',
 			'style' => [ 'h1' => 'color: #ff0000;' ],
 		] );
 		$this->assertIsArray( $build_result, 'build-composition failed: ' . ( is_wp_error( $build_result ) ? $build_result->get_error_message() : 'unknown' ) );
 		$this->assertTrue( $build_result['success'] ?? false );
-		$heading_id = $build_result['root_element_ids'][0];
+		$section_id = $build_result['root_element_ids'][0];
+		$heading_id = $this->find_element_in_document( $post_id, $section_id )['elements'][0]['id'] ?? null;
+		$this->assertNotNull( $heading_id );
 
 		$update_result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -673,9 +700,9 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				],
 				[
 					'action' => 'move',
-					'element_id' => $heading_id,
+					'element_id' => $container_id,
 					'new_parent_id' => 'document',
-					'index' => 0,
+					'index' => 1,
 				],
 			],
 		] );
@@ -689,8 +716,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['version'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( $heading_id, $elements[0]['id'] );
-		$this->assertCount( 3, $elements );
+		$this->assertCount( 2, $elements );
+		$this->assertSame( $container_id, $elements[1]['id'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertSame( 'Bulk Title', $node['settings']['title']['value'] );
@@ -925,6 +952,64 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNull( $this->find_element_in_document( $post_id, $v3_id ) );
 	}
 
+	public function test_execute__update_persists_multiple_interactions_on_same_element() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'interactions' => [
+						[
+							'interaction_id' => 'card-scroll',
+							'trigger' => 'scrollIn',
+							'animation' => [
+								'effect' => 'slide',
+								'type' => 'in',
+								'direction' => 'bottom',
+								'timing_config' => [
+									'duration' => [ 'size' => 650, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+						[
+							'interaction_id' => 'card-hover',
+							'trigger' => 'hover',
+							'animation' => [
+								'effect' => 'scale',
+								'type' => 'in',
+								'timing_config' => [
+									'duration' => [ 'size' => 250, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+
+		$this->assertIsArray( $interactions );
+		$this->assertCount( 2, $interactions['items'] );
+		$this->assertSame( 'scrollIn', $interactions['items'][0]['value']['trigger']['value'] );
+		$this->assertSame( 'hover', $interactions['items'][1]['value']['trigger']['value'] );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1062,11 +1147,17 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	private function given_heading_on_document( int $post_id ): string {
+		[ , $heading_id ] = $this->given_container_with_heading( $post_id );
+
+		return $heading_id;
+	}
+
+	private function given_nested_containers( int $post_id ): array {
 		$this->act_as_admin();
 
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="outer"><e-flexbox configuration-id="inner"/></e-flexbox>',
 			'parent_id' => 'document',
 		] );
 
@@ -1074,7 +1165,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			$this->fail( 'Fixture setup failed: ' . $result->get_error_message() );
 		}
 
-		return $result['root_element_ids'][0];
+		$outer_id = $result['root_element_ids'][0];
+		$inner_id = $this->find_element_in_document( $post_id, $outer_id )['elements'][0]['id'] ?? null;
+		$this->assertNotNull( $inner_id );
+
+		return [ $outer_id, $inner_id ];
 	}
 
 	private function given_container_with_heading( int $post_id ): array {
