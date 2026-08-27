@@ -32,7 +32,7 @@ class Overridable_Transformer extends Transformer_Base {
 		return $result;
 	}
 
-	private function is_origin_value_override( array $origin_value ): bool {
+	private function is_origin_value_override( ?array $origin_value ): bool {
 		return isset( $origin_value['$$type'] ) && Override_Prop_Type::get_key() === $origin_value['$$type'];
 	}
 

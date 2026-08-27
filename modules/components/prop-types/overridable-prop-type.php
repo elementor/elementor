@@ -43,7 +43,16 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
-		return $origin_prop_type->validate( $value['origin_value'] );
+		return $origin_prop_type->validate( self::normalize_origin_value( $value['origin_value'] ) );
+	}
+
+	/**
+	 * Exposing a prop that has no value must persist `origin_value: null`. Editor versions that
+	 * wrote an empty object instead left components permanently unsavable, so treat any empty
+	 * `origin_value` as "no value" and let `sanitize_value()` normalize it away on the next save.
+	 */
+	private static function normalize_origin_value( $origin_value ) {
+		return ( is_array( $origin_value ) && empty( $origin_value ) ) ? null : $origin_value;
 	}
 
 	protected function sanitize_value( $value ): ?array {
@@ -54,6 +63,8 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 		if ( ! $origin_prop_type ) {
 			return null;
 		}
+
+		$origin_value = self::normalize_origin_value( $origin_value );
 
 		$sanitized_override_key = sanitize_key( $override_key );
 		$sanitized_origin_value = is_null( $origin_value ) ? null : $origin_prop_type->sanitize( $origin_value );
