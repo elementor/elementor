@@ -10,10 +10,8 @@ export const componentOverridableTransformer = createTransformer(
 		const overrideValue = overrides?.[ value.override_key as keyof typeof overrides ];
 
 		if ( overrideValue ) {
-			const isOverride = isOriginValueOverride( value.origin_value );
-
-			if ( isOverride ) {
-				return transformOverride( value, options, overrideValue );
+			if ( isOriginValueOverride( value.origin_value ) ) {
+				return transformOverride( value.origin_value, options, overrideValue );
 			}
 
 			return overrideValue;
@@ -24,7 +22,7 @@ export const componentOverridableTransformer = createTransformer(
 );
 
 function transformOverride(
-	value: ComponentOverridable,
+	originValue: TransformablePropValue< string >,
 	options: {
 		key: string;
 	},
@@ -36,7 +34,7 @@ function transformOverride(
 		return null;
 	}
 
-	const transformedValue = transformer( value.origin_value.value, options );
+	const transformedValue = transformer( originValue.value, options );
 
 	if ( ! transformedValue ) {
 		return null;
@@ -49,6 +47,8 @@ function transformOverride(
 	};
 }
 
-function isOriginValueOverride( originValue: TransformablePropValue< string > ): boolean {
-	return originValue.$$type === 'override';
+function isOriginValueOverride(
+	originValue: TransformablePropValue< string > | null
+): originValue is TransformablePropValue< string > {
+	return originValue?.$$type === 'override';
 }
