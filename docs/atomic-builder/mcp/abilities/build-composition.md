@@ -77,7 +77,7 @@ Example:
 }
 ```
 
-CSS `style` strings are converted to native atomic styles when possible; some shapes fall back to `custom_css` and `animation` is dropped. Prefer `@media(--breakpoint)` over pixel queries, single-value `gap`, literal `box-shadow`, and `padding` / `margin` shorthands.
+CSS is converted to native atomic styles; unsupported shapes fall back to `custom_css` and `animation` is dropped. See the live tool prompt for the full conversion guide.
 
 ### element_config format
 
