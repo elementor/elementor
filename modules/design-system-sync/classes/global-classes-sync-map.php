@@ -3,7 +3,7 @@
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -17,7 +17,7 @@ class Wordpress_Best_Practices_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'WordPress Best Practices', 'elementor' ),
-			__( 'Opinionated WordPress patterns for Elementor builds: repeating layouts, condition scoping, Post Content placement, dynamic tags.', 'elementor' ),
+			__( 'Opinionated WordPress patterns for Elementor builds: repeating layouts (single template vs N pages), include-all + exclude-exceptions condition scoping, Post Content placement, dynamic tags.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -26,7 +26,7 @@ class Wordpress_Best_Practices_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'text/markdown',
-					'description' => __( 'WordPress Best Practices', 'elementor' ),
+					'description' => __( 'Opinionated WordPress patterns for Elementor builds: repeating layouts (single template vs N pages), include-all + exclude-exceptions condition scoping, Post Content placement, dynamic tags.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

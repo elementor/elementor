@@ -34,7 +34,7 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'application/json',
-					'description' => __( 'Global class IDs and labels from the active kit, ordered from highest to lowest CSS priority.', 'elementor' ),
+					'description' => __( 'Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority. Check first before adding inline styles.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

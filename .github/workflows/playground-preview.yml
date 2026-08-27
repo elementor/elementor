@@ -1,71 +1,40 @@
-name: Playground PR Preview Deployments
+name: Playground PR Preview
+
 on:
-  workflow_run:
-    workflows: ["PR"]
-    types: [completed]
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: Core build artifact name from the PR build job
+        required: true
+        type: string
+      pr_number:
+        description: Pull request number
+        required: true
+        type: string
+      head_sha:
+        description: PR head commit SHA
+        required: true
+        type: string
+
 permissions:
   contents: read
-  pull-requests: write
   actions: read
   deployments: write
 
 jobs:
   preview:
     runs-on: ubuntu-latest
-    if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v6
 
-      - name: Resolve PR context and Build run
-        id: runctx
-        uses: actions/github-script@v9
-        with:
-          script: |
-            console.log('context:${JSON.stringify(context)}');
-            const run = context.payload.workflow_run;
-            const prs = run.pull_requests || [];
-            if (!prs.length) {
-              core.setFailed('No pull request found for this workflow run');
-              return;
-            }
-
-            const prNumber = prs[0].number;
-            const headSha = run.head_sha;
-            const buildRunId = run.id;
-
-            core.setOutput('pr-number', String(prNumber));
-            core.setOutput('head-sha', headSha);
-            core.setOutput('build-run-id', String(buildRunId));
-
       - name: Download plugin artifact
-        id: artifact
-        uses: actions/github-script@v9
+        uses: actions/download-artifact@v8
         with:
-          script: |
-            const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: Number('${{ steps.runctx.outputs.build-run-id }}'),
-            });
-            const hit = artifacts.find(a => a.name.startsWith('elementor-'));
-            if (!hit) {
-              core.setFailed('No elementor artifact found in resolved PR workflow run');
-              return;
-            }
-            const dl = await github.rest.actions.downloadArtifact({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              artifact_id: hit.id,
-              archive_format: 'zip',
-            });
-            require('fs').writeFileSync('build-artifact.zip', Buffer.from(dl.data));
-            core.setOutput('artifact-name', hit.name);
+          name: ${{ inputs.artifact_name }}
+          path: build-artifact
 
       - name: Repack build artifact for Playground
         run: |
-          unzip -oq build-artifact.zip -d build-artifact
           if [ ! -f build-artifact/elementor.php ]; then
             echo "Downloaded artifact does not look like Elementor plugin root (missing elementor.php)"
             exit 1
@@ -79,7 +48,7 @@ jobs:
         id: playground-artifact
         uses: actions/upload-artifact@v7
         with:
-          name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
+          name: playground-plugin-pr${{ inputs.pr_number }}-${{ inputs.head_sha }}
           path: plugin-root
           if-no-files-found: error
           retention-days: 3
@@ -87,7 +56,7 @@ jobs:
       - name: Prepare blueprint JSON
         id: blueprint
         env:
-          ARTIFACT_NAME: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
+          ARTIFACT_NAME: playground-plugin-pr${{ inputs.pr_number }}-${{ inputs.head_sha }}
         run: |
           node <<'NODE'
           const fs = require('fs');
@@ -107,8 +76,8 @@ jobs:
       - name: Create PR deployment
         uses: actions/github-script@v9
         env:
-          HEAD_SHA: ${{ steps.runctx.outputs.head-sha }}
-          PR_NUMBER: ${{ steps.runctx.outputs.pr-number }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+          PR_NUMBER: ${{ inputs.pr_number }}
           PREVIEW_URL: ${{ steps.blueprint.outputs.playground-url }}
         with:
           script: |

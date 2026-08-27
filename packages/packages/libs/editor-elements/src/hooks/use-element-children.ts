@@ -19,9 +19,21 @@ function toElementModel( { model }: ModelResult ): ElementModel {
 	};
 }
 
+export type UseElementChildrenOptions = {
+	/**
+	 * Let the element itself match a requested parent type. Off by default, because
+	 * `findChildRecursive` only inspects descendants and existing callers rely on that: an element
+	 * whose repeater items are its own direct children (e.g. `e-accordion` -> `e-accordion-item`)
+	 * has no intermediate wrapper to look for, while one that keeps them in a sub-container
+	 * (e.g. `e-tabs` -> `e-tabs-menu` -> `e-tab`) must not match itself.
+	 */
+	includeSelfAsParent?: boolean;
+};
+
 export function useElementChildren< T extends ElementChildren >(
 	elementId: ElementID,
-	childrenTypes: Record< string, string >
+	childrenTypes: Record< string, string >,
+	{ includeSelfAsParent = false }: UseElementChildrenOptions = {}
 ): T {
 	return useListenTo(
 		[
@@ -40,7 +52,10 @@ export function useElementChildren< T extends ElementChildren >(
 			}
 
 			const elementChildren = Object.entries( childrenTypes ).reduce( ( acc, [ parentType, childType ] ) => {
-				const parent = findChildRecursive( model, ( m ) => m.get( 'elType' ) === parentType );
+				const parent =
+					includeSelfAsParent && model.get( 'elType' ) === parentType
+						? { model }
+						: findChildRecursive( model, ( m ) => m.get( 'elType' ) === parentType );
 
 				if ( ! parent ) {
 					acc[ childType ] = [];

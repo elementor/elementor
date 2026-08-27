@@ -110,6 +110,7 @@ export const slice = createSlice( {
 		},
 
 		update( state, { payload }: PayloadAction< { style: UpdateActionPayload } > ) {
+			const oldLabel = state.classLabels[ payload.style.id ];
 			localHistory.next( state.data );
 			const style = state.data.items[ payload.style.id ];
 
@@ -117,6 +118,10 @@ export const slice = createSlice( {
 				...style,
 				...payload.style,
 			};
+
+			if ( oldLabel && payload.style.label && payload.style.label !== oldLabel ) {
+				state.classLabels[ payload.style.id ] = payload.style.label;
+			}
 
 			state.data.items[ payload.style.id ] = mergedData;
 
@@ -260,10 +265,16 @@ export const slice = createSlice( {
 			} >
 		) {
 			// Update initial data
-			state.initialData.frontend.items = { ...state.initialData.frontend.items, ...payload.addedItems };
+			state.initialData.frontend.items = {
+				...state.initialData.frontend.items,
+				...payload.addedItems,
+			};
 			state.initialData.frontend.order = [ ...state.initialData.frontend.order, ...payload.addedIdsOrder ];
 
-			state.initialData.preview.items = { ...state.initialData.preview.items, ...payload.addedItems };
+			state.initialData.preview.items = {
+				...state.initialData.preview.items,
+				...payload.addedItems,
+			};
 			state.initialData.preview.order = [ ...state.initialData.preview.order, ...payload.addedIdsOrder ];
 
 			// Update current data

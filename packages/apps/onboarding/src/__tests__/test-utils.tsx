@@ -56,19 +56,9 @@ interface OnboardingConfig {
 	};
 }
 
-const DEFAULT_STEPS = [
-	{ id: 'building_for', label: 'Who are you building for?', type: 'single' as const },
-	{ id: 'site_about', label: 'What is your site about?', type: 'multiple' as const },
-	{ id: 'experience_level', label: 'Experience level', type: 'single' as const },
-	{ id: 'site_features', label: 'Site features', type: 'multiple' as const },
-];
+const DEFAULT_STEPS = [ { id: 'site_features', label: 'Site features', type: 'multiple' as const } ];
 
-export const PRO_ONBOARDING_STEPS = [
-	{ id: 'building_for', label: 'Who are you building for?', type: 'single' as const },
-	{ id: 'site_about', label: 'What is your site about?', type: 'multiple' as const },
-	{ id: 'experience_level', label: 'Experience level', type: 'single' as const },
-	{ id: 'theme_selection', label: 'Theme selection', type: 'single' as const },
-];
+export const PRO_ONBOARDING_STEPS = [ { id: 'theme_selection', label: 'Theme selection', type: 'single' as const } ];
 
 export const DEFAULT_TEST_URLS = {
 	comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
@@ -83,7 +73,7 @@ const defaultConfig: OnboardingConfig = {
 	steps: DEFAULT_STEPS,
 	translations: DEFAULT_STRINGS,
 	progress: {
-		current_step_id: 'building_for',
+		current_step_id: 'site_features',
 		current_step_index: 0,
 		completed_steps: [],
 	},

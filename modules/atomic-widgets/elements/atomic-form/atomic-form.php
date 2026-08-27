@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -22,7 +23,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -81,6 +82,10 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	public function get_icon() {
 		return 'eicon-atomic-form';
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'form' );
 	}
 
 	public static function get_base_props_schema(): array {
@@ -284,10 +289,6 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [ 'atomic-form' ];
 	}
 
-	protected function define_default_html_tag() {
-		return 'form';
-	}
-
 	protected function define_default_children() {
 
 		$prefix = 'e-form-';
@@ -310,10 +311,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$children[] = Widget_Builder::make( 'e-form-submit-button' )
 			->settings( [
-				'text' => Html_V3_Prop_Type::generate( [
-					'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
-					'children' => [],
-				] ),
+				'text' => Escaped_Html_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
 			] )
 			->build();
 		$children[] = $this->build_status_message(
@@ -350,10 +348,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	private function build_label( string $text, string $input_id ): array {
 		return Widget_Builder::make( 'e-form-label' )
 			->settings( [
-				'text' => Html_V3_Prop_Type::generate( [
-					'content'  => String_Prop_Type::generate( $text ),
-					'children' => [],
-				] ),
+				'text' => Escaped_Html_Prop_Type::generate( $text ),
 				'input-id' => String_Prop_Type::generate( $input_id ),
 			] )
 			->build();
@@ -380,10 +375,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function build_status_message( string $message, string $state, string $title ): array {
-		$paragraph_value = Html_V3_Prop_Type::generate( [
-			'content'  => String_Prop_Type::generate( $message ),
-			'children' => [],
-		] );
+		$paragraph_value = Escaped_Html_Prop_Type::generate( $message );
 
 		$element_type = 'success' === $state
 			? Form_Success_Message::get_element_type()

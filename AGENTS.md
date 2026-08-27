@@ -193,7 +193,6 @@ Allowed types: `Feature`, `CI`, `New`, `Tweak`, `Fix`, `Experiment`, `Deprecate`
 - For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npm run build`. Restore dev dependencies afterward with `composer install`.
 - The build runs on Vite/Rolldown (see [scripts/vite/README.md](scripts/vite/README.md)). Grunt and Webpack are gone, but Babel is still in the pipeline for ES5 downleveling, and `webpack` remains a devDependency because the published plugins under `packages/packages/tools/` declare it as a peer.
 - [package.json](package.json) `engines` and `.nvmrc` define the Node version; keep them aligned.
-- Husky pre-commit runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192` (see [.husky/pre-commit](.husky/pre-commit)).
 
 ## Cursor Cloud specific instructions
 

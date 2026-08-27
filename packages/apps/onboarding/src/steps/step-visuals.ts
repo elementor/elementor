@@ -31,18 +31,6 @@ export const LOGIN_CONFIG: StepVisualConfig = {
 };
 
 const stepVisuals: Record< StepIdType, StepVisualConfig > = {
-	[ StepId.BUILDING_FOR ]: {
-		background: buildBackground( 'step-1.webp' ),
-	},
-	[ StepId.SITE_ABOUT ]: {
-		background: buildBackground( 'step-1.webp' ),
-		// background: '',
-		video: getOnboardingVideoUrl( 'step-2.webm' ),
-	},
-	[ StepId.EXPERIENCE_LEVEL ]: {
-		background: '',
-		video: getOnboardingVideoUrl( 'step-3.webm' ),
-	},
 	[ StepId.THEME_SELECTION ]: {
 		background: '',
 		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),

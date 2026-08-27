@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +18,7 @@ class Test_V3_Style_Mapper extends TestCase {
 	private function make_mapper(): V3_Style_Mapper {
 		$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
 
-		return new V3_Style_Mapper( $converter, [ 'desktop', 'tablet', 'mobile' ] );
+		return V3_Style_Mapper_Factory::create( $converter, [ 'desktop', 'tablet', 'mobile' ] );
 	}
 
 	private function heading_config(): array {

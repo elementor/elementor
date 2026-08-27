@@ -14,13 +14,6 @@ function createThemeSelectionStep(): Step {
 
 function getDefaultSteps(): Step[] {
 	return [
-		{ id: StepId.BUILDING_FOR, label: t( 'steps.building_for.title' ), type: 'single' },
-		{ id: StepId.SITE_ABOUT, label: t( 'steps.site_about.title' ), type: 'multiple' },
-		{
-			id: StepId.EXPERIENCE_LEVEL,
-			label: t( 'steps.experience_level.title' ),
-			type: 'single',
-		},
 		{
 			id: StepId.SITE_FEATURES,
 			label: t( 'steps.site_features.title' ),
@@ -36,18 +29,7 @@ function applyProInstalledSteps( steps: Step[] ): Step[] {
 		return withoutSiteFeatures;
 	}
 
-	const experienceLevelIndex = withoutSiteFeatures.findIndex( ( step ) => step.id === StepId.EXPERIENCE_LEVEL );
-	const themeSelectionStep = createThemeSelectionStep();
-
-	if ( experienceLevelIndex === -1 ) {
-		return [ ...withoutSiteFeatures, themeSelectionStep ];
-	}
-
-	return [
-		...withoutSiteFeatures.slice( 0, experienceLevelIndex + 1 ),
-		themeSelectionStep,
-		...withoutSiteFeatures.slice( experienceLevelIndex + 1 ),
-	];
+	return [ ...withoutSiteFeatures, createThemeSelectionStep() ];
 }
 
 function parseStepsFromConfig( configSteps?: Array< { id: string; label: string; type?: string } > ): Step[] {
@@ -84,7 +66,7 @@ function getEmptyState(): OnboardingState {
 
 	return {
 		steps,
-		currentStepId: steps[ 0 ]?.id ?? StepId.BUILDING_FOR,
+		currentStepId: steps[ 0 ]?.id ?? StepId.SITE_FEATURES,
 		currentStepIndex: 0,
 		completedSteps: [],
 		exitType: null,
@@ -112,11 +94,14 @@ function buildStateFromConfig(
 	}
 
 	const steps = parseStepsFromConfig( config.steps );
-	const firstStepId = steps[ 0 ]?.id ?? StepId.BUILDING_FOR;
+	const firstStepId = steps[ 0 ]?.id ?? StepId.SITE_FEATURES;
 	const progress = config.progress ?? {};
 	let currentStepIndex = progress.current_step_index ?? 0;
+	const progressStepId = progress.current_step_id as StepIdType | undefined;
+	const isInvalidStepIndex = currentStepIndex < 0 || currentStepIndex >= steps.length;
+	const isInvalidStepId = Boolean( progressStepId ) && ! steps.some( ( step ) => step.id === progressStepId );
 
-	if ( currentStepIndex < 0 || currentStepIndex >= steps.length ) {
+	if ( isInvalidStepIndex || isInvalidStepId ) {
 		currentStepIndex = 0;
 	}
 
@@ -268,6 +253,8 @@ export const slice = __createSlice( {
 		markProInstalled: ( state ) => {
 			state.hasProInstallScreenDismissed = true;
 			state.steps = applyProInstalledSteps( state.steps );
+			state.currentStepIndex = 0;
+			state.currentStepId = state.steps[ 0 ]?.id ?? StepId.THEME_SELECTION;
 		},
 	},
 } );

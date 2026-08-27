@@ -10,7 +10,7 @@ describe( 'ThemeSelection', () => {
 		renderApp( {
 			steps: PRO_ONBOARDING_STEPS,
 			isConnected: true,
-			progress: { current_step_id: 'theme_selection', current_step_index: 3 },
+			progress: { current_step_id: 'theme_selection', current_step_index: 0 },
 		} );
 	};
 
@@ -57,25 +57,8 @@ describe( 'ThemeSelection', () => {
 	} );
 
 	describe( 'Greeting text', () => {
-		it( 'shows beginner greeting when experience_level is beginner', () => {
-			renderApp( {
-				steps: PRO_ONBOARDING_STEPS,
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { experience_level: 'beginner' },
-			} );
-
-			// Assert
-			expect( screen.getByText( "Glad you're here!" ) ).toBeInTheDocument();
-		} );
-
-		it( 'shows default greeting when experience_level is not beginner', () => {
-			renderApp( {
-				steps: PRO_ONBOARDING_STEPS,
-				isConnected: true,
-				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
-				choices: { experience_level: 'intermediate' },
-			} );
+		it( 'shows default greeting', () => {
+			navigateToThemeSelection();
 
 			// Assert
 			expect( screen.getByText( "Great. Let's take it to the next step" ) ).toBeInTheDocument();
@@ -129,8 +112,8 @@ describe( 'ThemeSelection', () => {
 				isConnected: true,
 				progress: {
 					current_step_id: 'theme_selection',
-					current_step_index: 3,
-					completed_steps: [ 'building_for', 'site_about', 'experience_level', 'theme_selection' ],
+					current_step_index: 0,
+					completed_steps: [ 'theme_selection' ],
 				},
 				choices: { theme_selection: 'hello-elementor' },
 			} );

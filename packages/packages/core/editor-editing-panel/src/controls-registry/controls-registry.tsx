@@ -33,7 +33,7 @@ import {
 	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailsPropTypeUtil,
-	htmlV3PropTypeUtil,
+	escapedHtmlPropTypeUtil,
 	imagePropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
@@ -84,7 +84,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: escapedHtmlPropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
 	'date-range': {
 		component: DateRangeControl,

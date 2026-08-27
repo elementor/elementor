@@ -4,6 +4,7 @@ export const tests = () => {
 
 	// Editor.
 	require( './assets/dev/js/editor/utils/helpers.spec' );
+	require( './assets/dev/js/editor/utils/heartbeat.spec' );
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// WEB CLI editor

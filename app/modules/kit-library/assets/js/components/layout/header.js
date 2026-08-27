@@ -8,6 +8,10 @@ export default function Header( props ) {
 	const returnTo = useReturnTo();
 
 	const onClose = useCallback( () => {
+		if ( window.top !== window ) {
+			window.top.$e.run( 'app/close' );
+			return;
+		}
 		if ( returnTo && safeRedirect( returnTo ) ) {
 			return;
 		}

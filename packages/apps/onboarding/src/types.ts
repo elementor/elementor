@@ -8,9 +8,6 @@ export type ExtendedWindow = Window & {
 };
 
 export const StepId = {
-	BUILDING_FOR: 'building_for',
-	SITE_ABOUT: 'site_about',
-	EXPERIENCE_LEVEL: 'experience_level',
 	THEME_SELECTION: 'theme_selection',
 	SITE_FEATURES: 'site_features',
 } as const;

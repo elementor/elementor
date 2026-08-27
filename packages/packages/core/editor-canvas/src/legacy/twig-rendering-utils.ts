@@ -7,7 +7,8 @@ import { type ElementView, type RenderContext } from './types';
 
 export type TwigElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
->;
+> &
+	Pick< V1ElementConfig, 'default_html_tag' | 'html_tag_follows_link' >;
 
 export type SetupTwigRendererOptions = {
 	type: string;
@@ -19,6 +20,8 @@ export type SetupTwigRendererResult = {
 	templateKey: string;
 	baseStylesDictionary: Record< string, unknown >;
 	resolveProps: PropsResolver;
+	defaultHtmlTag: string;
+	htmlTagFollowsLink: boolean;
 };
 
 export function setupTwigRenderer( { renderer, element }: SetupTwigRendererOptions ): SetupTwigRendererResult {
@@ -34,7 +37,13 @@ export function setupTwigRenderer( { renderer, element }: SetupTwigRendererOptio
 		schema: element.atomic_props_schema,
 	} );
 
-	return { templateKey, baseStylesDictionary, resolveProps };
+	return {
+		templateKey,
+		baseStylesDictionary,
+		resolveProps,
+		defaultHtmlTag: element.default_html_tag ?? 'div',
+		htmlTagFollowsLink: element.html_tag_follows_link ?? true,
+	};
 }
 
 export interface TwigViewInterface extends Omit< ElementView, 'getResolverRenderContext' > {

@@ -214,6 +214,18 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertEquals( $custom_url, $data['items'][0]['url'] );
 	}
 
+	public function test_get_third_level_data__excludes_submissions_only_from_flyout_menu() {
+		$this->set_admin_user();
+		$item = $this->create_test_item( 'e-form-submissions', Menu_Config::EDITOR_GROUP_ID, true );
+		$this->provider->register_level3_item( $item );
+
+		$editor_one_menu = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT );
+		$flyout_menu = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_FLYOUT_MENU );
+
+		$this->assertContains( 'e-form-submissions', array_column( $editor_one_menu['items'], 'slug' ) );
+		$this->assertNotContains( 'e-form-submissions', array_column( $flyout_menu['items'], 'slug' ) );
+	}
+
 	public function test_get_third_level_data__expands_third_party_children() {
 		$this->set_admin_user();
 		$parent = $this->createMock( Menu_Item_Third_Level_Interface::class );

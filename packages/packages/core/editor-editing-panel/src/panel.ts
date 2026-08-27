@@ -1,4 +1,4 @@
-import { __createPanel as createPanel } from '@elementor/editor-panels';
+import { createPanel } from '@elementor/editor-panels';
 
 import { EditingPanel } from './components/editing-panel';
 
