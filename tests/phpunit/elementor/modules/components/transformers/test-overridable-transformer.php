@@ -134,6 +134,58 @@ class Test_Overridable_Transformer extends Elementor_Test_Base {
         $this->assertEquals( $origin_value, $result );
     }
 
+    public function test_overridable_transformer_returns_override_value_when_origin_value_is_null() {
+        // Arrange.
+        $transformer = new Overridable_Transformer();
+
+        $value = [
+            'override_key' => 'my-override-key',
+            'origin_value' => null,
+        ];
+
+        $override_value = [
+            '$$type' => 'video-src',
+            'value' => [
+                'id' => [ '$$type' => 'video-attachment-id', 'value' => 12 ],
+                'url' => null,
+            ],
+        ];
+
+        $context = [ 'overrides' => [ 'my-override-key' => $override_value ] ];
+
+        // Act.
+        Render_Context::push( Overridable_Transformer::class, $context );
+        $result = $transformer->transform( $value, Props_Resolver_Context::make() );
+        Render_Context::pop( Overridable_Transformer::class );
+
+        // Assert.
+        $this->assertEquals( $override_value, $result );
+    }
+
+    public function test_overridable_transformer_returns_null_when_origin_value_is_null_and_no_matching_override() {
+        // Arrange.
+        $transformer = new Overridable_Transformer();
+
+        $value = [
+            'override_key' => 'my-override-key',
+            'origin_value' => null,
+        ];
+
+        $context = [
+            'overrides' => [
+                'other-override-key' => [ '$$type' => 'string', 'value' => 'Other Override Text' ],
+            ],
+        ];
+
+        // Act.
+        Render_Context::push( Overridable_Transformer::class, $context );
+        $result = $transformer->transform( $value, Props_Resolver_Context::make() );
+        Render_Context::pop( Overridable_Transformer::class );
+
+        // Assert.
+        $this->assertNull( $result );
+    }
+
     public function test_overridable_transformer_handles_override_original_value_when_matching_override_is_found() {
         // Arrange.
         $transformer = new Overridable_Transformer();
