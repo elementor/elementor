@@ -4,7 +4,7 @@ import { isAngieAvailable } from './is-angie-available';
 
 export const HELP_CENTER_ANGIE_SOURCE = 'help-center';
 
-export const openAngieInAskMode = (): void => {
+export const openAngieInAskMode = ( prompt?: string ): void => {
 	if ( ! isAngieAvailable() ) {
 		return;
 	}
@@ -14,4 +14,8 @@ export const openAngieInAskMode = (): void => {
 		isStudioOpen: false,
 		source: HELP_CENTER_ANGIE_SOURCE,
 	} );
+
+	if ( prompt ) {
+		window.location.hash = `angie-prompt=${ encodeURIComponent( prompt ) }`;
+	}
 };

@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { type ExtendedWindow } from '../../../types';
 
 const HELP_CENTER_URL = 'https://go.elementor.com/editor-top-bar-learn/';
+const HELP_CENTER_ANGIE_PROMPT = __( 'Help me with ', 'elementor' );
 
 const dispatchHelpClickEvent = () => {
 	const extendedWindow = window as unknown as ExtendedWindow;
@@ -30,7 +31,7 @@ export default function useActionProps() {
 			onClick: ( event: React.MouseEvent ) => {
 				event.preventDefault();
 				dispatchHelpClickEvent();
-				openAngieInAskMode();
+				openAngieInAskMode( HELP_CENTER_ANGIE_PROMPT );
 			},
 		};
 	}

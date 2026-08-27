@@ -7,7 +7,7 @@ const mockOpenAngieInAskMode = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => ( {
 	isAngieAvailable: () => mockIsAngieAvailable(),
-	openAngieInAskMode: () => mockOpenAngieInAskMode(),
+	openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
 } ) );
 
 describe( 'useHelpCenterActionProps', () => {
@@ -58,7 +58,7 @@ describe( 'useHelpCenterActionProps', () => {
 		result.current.onClick?.( { preventDefault } as unknown as React.MouseEvent );
 
 		expect( preventDefault ).toHaveBeenCalled();
-		expect( mockOpenAngieInAskMode ).toHaveBeenCalled();
+		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
 		expect( result.current.href ).toBeUndefined();
 		expect( result.current.target ).toBeUndefined();
 	} );

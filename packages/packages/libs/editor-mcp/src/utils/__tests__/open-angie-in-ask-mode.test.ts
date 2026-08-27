@@ -15,6 +15,7 @@ describe( 'openAngieInAskMode', () => {
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
 		mockNavigateAngieIframe.mockReset();
+		window.location.hash = '';
 	} );
 
 	it( 'does nothing when Angie is not available', () => {
@@ -35,5 +36,13 @@ describe( 'openAngieInAskMode', () => {
 			isStudioOpen: false,
 			source: 'help-center',
 		} );
+	} );
+
+	it( 'prefills the Angie prompt when a prompt is provided', () => {
+		mockIsAngieAvailable.mockReturnValue( true );
+
+		openAngieInAskMode( 'Help me with ' );
+
+		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
 	} );
 } );
