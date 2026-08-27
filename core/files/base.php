@@ -56,10 +56,6 @@ abstract class Base {
 			return $dir;
 		}
 
-		if ( ! self::is_base_paths_filter_pair_valid() ) {
-			return $dir;
-		}
-
 		/**
 		 * Elementor files base directory.
 		 *
@@ -67,8 +63,10 @@ abstract class Base {
 		 * Applies to all `Elementor\Core\Files\Base` consumers (Post CSS, Global CSS,
 		 * Frontend CSS, Google Fonts, atomic CSS, etc.) — not only atomic CSS.
 		 *
-		 * Must be set together with `elementor/files/base_url`. Setting only one of the
-		 * two is rejected and both fall back to their defaults.
+		 * Can be filtered independently of `elementor/files/base_url`:
+		 *  - Filter both to relocate Elementor files (e.g. WP VIP where `uploads/` is read-only).
+		 *  - Filter only `elementor/files/base_url` (leaving this untouched) to serve files
+		 *    from a CDN or an alternate URL (e.g. WPML sub-folder) while keeping local writes.
 		 *
 		 * Only available when the `e_optimized_css_files` experiment is active.
 		 *
@@ -96,10 +94,6 @@ abstract class Base {
 			return $url;
 		}
 
-		if ( ! self::is_base_paths_filter_pair_valid() ) {
-			return $url;
-		}
-
 		/**
 		 * Elementor files base URL.
 		 *
@@ -107,8 +101,11 @@ abstract class Base {
 		 * Applies to all `Elementor\Core\Files\Base` consumers (Post CSS, Global CSS,
 		 * Frontend CSS, Google Fonts, atomic CSS, etc.) — not only atomic CSS.
 		 *
-		 * Must be set together with `elementor/files/base_dir`. Setting only one of the
-		 * two is rejected and both fall back to their defaults.
+		 * Accepts absolute (`https://cdn.example.com/…`) and protocol-relative
+		 * (`//cdn.example.com/…`) URLs. Can be filtered independently of
+		 * `elementor/files/base_dir` — filter only this hook to serve files from a
+		 * CDN or an alternate URL (e.g. WPML sub-folder) while keeping local writes
+		 * at the default location.
 		 *
 		 * Only available when the `e_optimized_css_files` experiment is active.
 		 *
@@ -374,34 +371,6 @@ abstract class Base {
 	}
 
 	/**
-	 * Ensure `elementor/files/base_dir` and `elementor/files/base_url` are either both
-	 * filtered or both unfiltered. Setting only one produces a mismatched write vs.
-	 * enqueue location and yields 404s for every generated asset.
-	 *
-	 * @since 4.4.0
-	 * @access private
-	 * @static
-	 *
-	 * @return bool True when the pair is safe to apply (both set or both unset).
-	 */
-	private static function is_base_paths_filter_pair_valid() {
-		$has_dir_filter = (bool) has_filter( 'elementor/files/base_dir' );
-		$has_url_filter = (bool) has_filter( 'elementor/files/base_url' );
-
-		if ( $has_dir_filter === $has_url_filter ) {
-			return true;
-		}
-
-		_doing_it_wrong(
-			__METHOD__,
-			'The `elementor/files/base_dir` and `elementor/files/base_url` filters must be set together. Falling back to defaults.',
-			'4.4.0'
-		);
-
-		return false;
-	}
-
-	/**
 	 * Validate a filtered base directory path.
 	 *
 	 * @since 4.4.0
@@ -482,10 +451,10 @@ abstract class Base {
 
 		$url = trailingslashit( $url );
 
-		if ( ! wp_http_validate_url( $url ) ) {
+		if ( ! self::is_valid_base_url( $url ) ) {
 			_doing_it_wrong(
 				__METHOD__,
-				'The `elementor/files/base_url` filter must return a valid URL.',
+				'The `elementor/files/base_url` filter must return an absolute or protocol-relative http(s) URL.',
 				'4.4.0'
 			);
 
@@ -493,6 +462,44 @@ abstract class Base {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Lightweight structural check for the base URL filter.
+	 *
+	 * Intentionally avoids `wp_http_validate_url()` which performs DNS lookups and
+	 * rejects protocol-relative and RFC1918 URLs — none of which we want when the
+	 * URL is only being prepended to CSS asset paths (CDN endpoints, WPML sub-folder
+	 * rewrites, etc.). We only enforce that the value looks like an absolute or
+	 * protocol-relative http/https URL with a host.
+	 *
+	 * @since 4.4.0
+	 * @access private
+	 * @static
+	 *
+	 * @param string $url Candidate URL (already normalized to a trailing slash).
+	 *
+	 * @return bool
+	 */
+	private static function is_valid_base_url( $url ) {
+		$is_protocol_relative = 0 === strpos( $url, '//' );
+		$parsable = $is_protocol_relative ? 'https:' . $url : $url;
+
+		$parts = wp_parse_url( $parsable );
+
+		if ( ! is_array( $parts ) || empty( $parts['host'] ) ) {
+			return false;
+		}
+
+		if ( ! $is_protocol_relative ) {
+			$scheme = isset( $parts['scheme'] ) ? strtolower( $parts['scheme'] ) : '';
+
+			if ( ! in_array( $scheme, [ 'http', 'https' ], true ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
