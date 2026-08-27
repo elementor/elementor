@@ -14,6 +14,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -31,7 +33,16 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 
 	const ICON_HEIGHT = 20;
 
-	public static $widget_description = 'The open/closed indicator slot of an accordion item header. Decorative (aria-hidden), and rotated by CSS when the item is open. Holds an e-svg (defaulting to Atomic_Svg\'s own default SVG) by default; the SVG can be replaced.';
+	/**
+	 * The chevron the slot seeds its `e-svg` child with, shipped alongside `Atomic_Svg`'s own
+	 * `images/default-svg.svg` and declared the same way. It is the same glyph the editor's
+	 * `@elementor/icons` `ChevronDownIcon` draws, so the canvas indicator matches the panel.
+	 */
+	const DEFAULT_ICON = 'images/chevron-down.svg';
+	const DEFAULT_ICON_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_ICON;
+	const DEFAULT_ICON_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_ICON;
+
+	public static $widget_description = 'The open/closed indicator slot of an accordion item header. Decorative (aria-hidden), and rotated by CSS when the item is open. Holds an e-svg (defaulting to a chevron) by default; the SVG can be replaced.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -144,9 +155,29 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 		];
 	}
 
+	/**
+	 * Seeds the `e-svg` child with the chevron rather than letting it fall back to `Atomic_Svg`'s
+	 * own `svg` schema default (the generic `default-svg.svg` placeholder): the default indicator
+	 * has to be a chevron, but `e-svg` is a general-purpose element whose own default must stay
+	 * neutral for every other place it is dropped.
+	 *
+	 * This is the single seeding point for all three ways an icon slot comes into existence — the
+	 * two default items in `Atomic_Accordion::build_default_item()`, an item added from the panel
+	 * repeater (`accordion-items-control/use-actions.ts`), and the slot re-attached when
+	 * `show_icon` goes OFF -> ON without a stash (`Atomic_Accordion_Item_Header::define_children_dependencies()`).
+	 * All three carry `hydrateDefaultChildren`, so they resolve these children from this element's
+	 * config client-side (`atomic-element-base-model.js::getDefaultChildren()`) instead of
+	 * spelling the SVG out themselves.
+	 */
 	protected function define_default_children() {
 		return [
 			Atomic_Svg::generate()
+				->settings( [
+					'svg' => Svg_Src_Prop_Type::generate( [
+						'id' => null,
+						'url' => Url_Prop_Type::generate( self::DEFAULT_ICON_URL ),
+					] ),
+				] )
 				->build(),
 		];
 	}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { InlineEditor } from '../inline-editor';
 
@@ -126,5 +126,25 @@ describe( 'InlineEditor', () => {
 		// Assert.
 		const editor = screen.getByRole( 'textbox' );
 		expect( editor ).not.toHaveAttribute( 'data-placeholder' );
+	} );
+
+	it( 'should call onEditorDestroy when the editor is destroyed', async () => {
+		// Arrange.
+		const onEditorDestroy = jest.fn();
+		const { unmount } = setup( { onEditorDestroy } );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'textbox' ) ).toBeInTheDocument();
+		} );
+
+		// Act.
+		await act( async () => {
+			unmount();
+		} );
+
+		// Assert.
+		await waitFor( () => {
+			expect( onEditorDestroy ).toHaveBeenCalled();
+		} );
 	} );
 } );

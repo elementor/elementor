@@ -24,7 +24,7 @@ export default class AtomicElementEmptyView extends Marionette.ItemView {
 	onRender() {
 		this.$el.addClass( this.className );
 
-		this.renderReactDefaultElement();
+		this.renderReactDefaultElement( this._parent?.getContainer?.() );
 	}
 
 	onDestroy() {
