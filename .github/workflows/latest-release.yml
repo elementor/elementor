@@ -9,6 +9,8 @@ on:
     types: [closed]
     branches:
       - main
+      - release/beta
+      - release/stable
       - '[0-9].[0-9][0-9]'
       - '[0-9][0-9].[0-9][0-9]'
 
