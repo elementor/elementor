@@ -112,7 +112,7 @@ Omit keys listed in `llm_guidance.default_settings` unless the user requests a c
 | `version` | Post modified timestamp |
 | `resolved_xml` | XML with Elementor element IDs embedded |
 | `llm_instructions` | Next-step hint for the agent |
-| `warnings` | Non-fatal skips (e.g. unknown props) |
+| `warnings` | Non-fatal skips (unknown props, CSS fallbacks) |
 | `removed_element_ids` | Present when `mode: replace_children` |
 
 ## Extension
