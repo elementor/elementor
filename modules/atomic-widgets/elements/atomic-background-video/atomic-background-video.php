@@ -113,6 +113,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 			'show_controls' => Boolean_Prop_Type::make()->default( true ),
 			'state' => String_Prop_Type::make()
 				->enum( [ 'playing', 'paused' ] )
+				->default( 'playing' )
 				->set_dependencies( $state_dependencies )
 				->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
