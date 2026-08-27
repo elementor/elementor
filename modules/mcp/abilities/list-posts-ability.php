@@ -13,6 +13,13 @@ class List_Posts_Ability extends Abstract_Ability {
 	const MAX_PER_PAGE = 25;
 	const DEFAULT_PER_PAGE = 10;
 
+	const POST_TYPE_ALL = 'all';
+	const POST_TYPE_POST = 'post';
+	const POST_TYPE_PAGE = 'page';
+	const POST_TYPE_PRODUCT = 'product';
+
+	const SUPPORTED_POST_TYPES = [ self::POST_TYPE_POST, self::POST_TYPE_PAGE, self::POST_TYPE_PRODUCT ];
+
 	const EMPTY_RESULT_HINT = 'No matching posts found. The site may have no published content yet, or you need to adjust your search terms.';
 
 	protected function get_ability_id(): string {
@@ -69,6 +76,12 @@ class List_Posts_Ability extends Abstract_Ability {
 						'type' => 'string',
 						'description' => 'Optional keyword matched against post title and content.',
 					],
+					'post_type' => [
+						'type' => 'string',
+						'enum' => array_merge( [ self::POST_TYPE_ALL ], self::SUPPORTED_POST_TYPES ),
+						'default' => self::POST_TYPE_ALL,
+						'description' => 'Filter by post type. "all" returns posts, pages and products (when available).',
+					],
 					'page' => [
 						'type' => 'integer',
 						'minimum' => 1,
@@ -98,10 +111,14 @@ class List_Posts_Ability extends Abstract_Ability {
 
 		$page = $this->resolve_page( $input );
 		$per_page = $this->resolve_per_page( $input );
+		$post_types = $this->resolve_post_types( $input );
+		if ( is_wp_error( $post_types ) ) {
+			return $post_types;
+		}
 		$search = isset( $input['search'] ) && is_string( $input['search'] ) ? trim( $input['search'] ) : '';
 
 		$query_args = [
-			'post_type' => [ 'post', 'page' ],
+			'post_type' => $post_types,
 			'post_status' => 'publish',
 			'orderby' => 'date',
 			'order' => 'DESC',
@@ -142,6 +159,26 @@ class List_Posts_Ability extends Abstract_Ability {
 		$per_page = isset( $input['per_page'] ) ? (int) $input['per_page'] : self::DEFAULT_PER_PAGE;
 
 		return max( 1, min( self::MAX_PER_PAGE, $per_page ) );
+	}
+
+	private function resolve_post_types( array $input ) {
+		$type = isset( $input['post_type'] ) && is_string( $input['post_type'] )
+			? sanitize_key( $input['post_type'] )
+			: self::POST_TYPE_ALL;
+
+		if ( self::POST_TYPE_ALL === $type ) {
+			return array_values( array_filter( self::SUPPORTED_POST_TYPES, 'post_type_exists' ) );
+		}
+
+		if ( ! in_array( $type, self::SUPPORTED_POST_TYPES, true ) || ! post_type_exists( $type ) ) {
+			return new \WP_Error(
+				'invalid_post_type',
+				__( 'Unsupported post type. Allowed values: all, post, page, product.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return [ $type ];
 	}
 
 	private function format_post( \WP_Post $post ): array {

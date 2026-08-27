@@ -75,6 +75,122 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		$this->assertContains( 'page', $post_types );
 	}
 
+	public function test_execute__filters_by_post_type_post() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_post( 'A Post', 'post', 'publish' );
+		$this->create_post( 'A Page', 'page', 'publish' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'post' ] );
+
+		// Assert
+		$post_types = array_column( $result['posts'], 'post_type' );
+		$this->assertContains( 'post', $post_types );
+		$this->assertNotContains( 'page', $post_types );
+	}
+
+	public function test_execute__filters_by_post_type_page() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_post( 'A Post', 'post', 'publish' );
+		$this->create_post( 'A Page', 'page', 'publish' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'page' ] );
+
+		// Assert
+		$post_types = array_column( $result['posts'], 'post_type' );
+		$this->assertContains( 'page', $post_types );
+		$this->assertNotContains( 'post', $post_types );
+	}
+
+	public function test_execute__filters_by_post_type_all() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_post( 'A Post', 'post', 'publish' );
+		$this->create_post( 'A Page', 'page', 'publish' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'all' ] );
+
+		// Assert
+		$post_types = array_column( $result['posts'], 'post_type' );
+		$this->assertContains( 'post', $post_types );
+		$this->assertContains( 'page', $post_types );
+	}
+
+	public function test_execute__filters_by_post_type_product() {
+		// Arrange
+		$this->act_as_admin();
+		register_post_type( 'product', [
+			'public' => true,
+			'label' => 'Product',
+		] );
+		$this->create_post( 'A Product', 'product', 'publish' );
+		$this->create_post( 'A Post', 'post', 'publish' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'product' ] );
+
+		// Cleanup
+		unregister_post_type( 'product' );
+
+		// Assert
+		$post_types = array_column( $result['posts'], 'post_type' );
+		$this->assertContains( 'product', $post_types );
+		$this->assertNotContains( 'post', $post_types );
+	}
+
+	public function test_execute__all_includes_product_when_registered() {
+		// Arrange
+		$this->act_as_admin();
+		register_post_type( 'product', [
+			'public' => true,
+			'label' => 'Product',
+		] );
+		$this->create_post( 'A Product', 'product', 'publish' );
+		$this->create_post( 'A Post', 'post', 'publish' );
+		$this->create_post( 'A Page', 'page', 'publish' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'all' ] );
+
+		// Cleanup
+		unregister_post_type( 'product' );
+
+		// Assert
+		$post_types = array_column( $result['posts'], 'post_type' );
+		$this->assertContains( 'post', $post_types );
+		$this->assertContains( 'page', $post_types );
+		$this->assertContains( 'product', $post_types );
+	}
+
+	public function test_execute__returns_400_for_unsupported_post_type() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'attachment' ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_post_type', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function test_execute__returns_400_when_product_not_registered() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'product' ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_post_type', $result->get_error_code() );
+	}
+
 	public function test_execute__returns_only_published_posts() {
 		// Arrange
 		$this->act_as_admin();
