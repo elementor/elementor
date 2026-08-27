@@ -75,6 +75,9 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 		$this->assertStringContainsString( 'featured-image', V3_Widget_Map_Loader::get_description( 'theme-post-featured-image' ) );
 
 		$this->assertStringContainsString( 'post-excerpt', V3_Widget_Map_Loader::get_description( 'theme-post-excerpt' ) );
+
+		$this->assertStringContainsString( 'e-heading', V3_Widget_Map_Loader::get_description( 'theme-archive-title' ) );
+		$this->assertStringContainsString( 'archive-title', V3_Widget_Map_Loader::get_description( 'theme-archive-title' ) );
 	}
 
 	public function test_get_description__theme_post_content_forbids_loop_placement() {
@@ -87,7 +90,6 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 
 	public function test_get_description__widgets_without_a_v4_equivalent_have_no_hint() {
 		$this->assertNull( V3_Widget_Map_Loader::get_description( 'nav-menu' ) );
-		$this->assertNull( V3_Widget_Map_Loader::get_description( 'theme-archive-title' ) );
 	}
 
 	public function test_get_description__unknown_widget_returns_null() {

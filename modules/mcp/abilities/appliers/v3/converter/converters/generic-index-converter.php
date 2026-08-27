@@ -6,6 +6,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Value_Compatibility;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Resolvers;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,6 +48,11 @@ class Generic_Index_Converter implements V3_Property_Converter {
 		);
 
 		if ( null === $setting ) {
+			return false;
+		}
+
+		$control = $meta->controls()[ $setting ] ?? null;
+		if ( is_array( $control ) && ! V3_Control_Value_Compatibility::accepts( $control, (string) $generic_rule['resolver'], $resolved ) ) {
 			return false;
 		}
 

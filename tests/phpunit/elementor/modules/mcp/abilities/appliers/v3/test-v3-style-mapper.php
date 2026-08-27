@@ -193,4 +193,28 @@ class Test_V3_Style_Mapper extends TestCase {
 		$this->assertSame( [], $result['settings_patch'] );
 		$this->assertSame( '', $result['unmapped_css'] );
 	}
+
+	public function test_apply__maps_numeric_width_to_element_custom_width_pair() {
+		// Arrange.
+		$mapper = $this->make_mapper();
+		$controls = json_decode(
+			file_get_contents( __DIR__ . '/fixtures/controls/advanced-shared.json' ),
+			true
+		)['controls'];
+		$controls['title_color'] = [
+			'type' => 'color',
+			'selectors' => [ '{{WRAPPER}}' => 'color: {{VALUE}};' ],
+		];
+
+		// Act.
+		$result = $mapper->apply( 'max-width: 40rem;', 'theme-post-excerpt', [ 'controls' => $controls ] );
+
+		// Assert.
+		$this->assertSame( 'initial', $result['settings_patch']['_element_width'] );
+		$this->assertSame(
+			[ 'unit' => 'rem', 'size' => 40.0 ],
+			$result['settings_patch']['_element_custom_width']
+		);
+		$this->assertIsString( $result['settings_patch']['_element_width'] );
+	}
 }

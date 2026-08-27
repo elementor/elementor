@@ -13,6 +13,13 @@ class V3_Value_Resolvers {
 
 	const DEFAULT_UNIT = 'px';
 
+	const ELEMENT_WIDTH_MODE_INITIAL = 'initial';
+	const ELEMENT_WIDTH_MODE_INHERIT = 'inherit';
+	const ELEMENT_WIDTH_MODE_AUTO = 'auto';
+
+	const ELEMENT_WIDTH_SETTING = '_element_width';
+	const ELEMENT_CUSTOM_WIDTH_SETTING = '_element_custom_width';
+
 	/**
 	 * @return array{unit: string, size: float}|null
 	 */
@@ -174,6 +181,37 @@ class V3_Value_Resolvers {
 
 	public static function resolve_color( string $css_value ): string {
 		return trim( $css_value );
+	}
+
+	/**
+	 * Maps width / max-width CSS to Elementor's paired Advanced-tab controls.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public static function resolve_element_width( string $css_value ): ?array {
+		$normalized = strtolower( trim( $css_value ) );
+
+		if ( '100%' === $normalized ) {
+			return [
+				self::ELEMENT_WIDTH_SETTING => self::ELEMENT_WIDTH_MODE_INHERIT,
+			];
+		}
+
+		if ( self::ELEMENT_WIDTH_MODE_AUTO === $normalized ) {
+			return [
+				self::ELEMENT_WIDTH_SETTING => self::ELEMENT_WIDTH_MODE_AUTO,
+			];
+		}
+
+		$dimension = self::resolve_dimension( $css_value );
+		if ( null === $dimension ) {
+			return null;
+		}
+
+		return [
+			self::ELEMENT_WIDTH_SETTING => self::ELEMENT_WIDTH_MODE_INITIAL,
+			self::ELEMENT_CUSTOM_WIDTH_SETTING => $dimension,
+		];
 	}
 
 	/**
@@ -383,6 +421,8 @@ class V3_Value_Resolvers {
 				return null === $dimension ? null : $dimension;
 			case 'text':
 				return trim( $css_value );
+			case 'element_width':
+				return self::resolve_element_width( $css_value );
 			default:
 				return null;
 		}

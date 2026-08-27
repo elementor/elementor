@@ -36,6 +36,7 @@
             "padding-right",
             "padding-bottom",
             "padding-left",
+            "width",
             "max-width",
             "height",
             "object-fit",
@@ -56,7 +57,6 @@
             "background",
             "border-radius",
             "text-align",
-            "width",
             "background-color",
             "grid-column",
             "grid-row",
@@ -116,7 +116,7 @@
             "margin-left": "_margin",
             "margin-right": "_margin",
             "margin-top": "_margin",
-            "max-width": "space",
+            "max-width": "element_width",
             "object-fit": "object-fit",
             "object-position": "object-position",
             "opacity": "opacity",
@@ -134,7 +134,7 @@
             "top": "_offset_y",
             "transition": "_background_hover_transition",
             "transition-duration": "background_hover_transition",
-            "width": "width",
+            "width": "element_width",
             "word-spacing": "caption_typography",
             "z-index": "_z_index"
         }

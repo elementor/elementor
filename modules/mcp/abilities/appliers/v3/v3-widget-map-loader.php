@@ -101,6 +101,76 @@ class V3_Widget_Map_Loader {
 	}
 
 	/**
+	 * Maps padding / margin shorthand and longhands to a dimensions control that writes CSS variables on {{WRAPPER}}.
+	 *
+	 * @return array<string, array>
+	 */
+	public static function spacing_overrides_for( string $setting, bool $responsive = true ): array {
+		$overrides = [
+			'padding' => [
+				'setting' => $setting,
+				'resolver' => 'sides',
+				'responsive' => $responsive,
+			],
+		];
+
+		foreach ( self::SIDES as $side ) {
+			$overrides[ 'padding-' . $side ] = [
+				'setting' => $setting,
+				'resolver' => 'dimension_side',
+				'side' => $side,
+				'responsive' => $responsive,
+			];
+		}
+
+		return $overrides;
+	}
+
+	/**
+	 * @return array<string, array>
+	 */
+	public static function border_radius_overrides_for( string $setting, bool $responsive = true ): array {
+		return [
+			'border-radius' => [
+				'setting' => $setting,
+				'resolver' => 'sides',
+				'responsive' => $responsive,
+			],
+		];
+	}
+
+	/**
+	 * @return array<string, array>
+	 */
+	public static function color_overrides_for( array $state_settings, bool $responsive = false ): array {
+		$overrides = [];
+
+		foreach ( $state_settings as $state => $setting ) {
+			$key = '' === $state ? 'color' : 'color@' . $state;
+			$overrides[ $key ] = [
+				'setting' => $setting,
+				'resolver' => 'color',
+				'responsive' => $responsive,
+			];
+		}
+
+		return $overrides;
+	}
+
+	/**
+	 * @return array<string, array>
+	 */
+	public static function dimension_override( string $property, string $setting, bool $responsive = true ): array {
+		return [
+			$property => [
+				'setting' => $setting,
+				'resolver' => 'dimension',
+				'responsive' => $responsive,
+			],
+		];
+	}
+
+	/**
 	 * @return array<string, mixed>|null
 	 */
 	private static function read_map_file( string $widget_type ): ?array {
@@ -141,6 +211,7 @@ class V3_Widget_Map_Loader {
 					: $derived['wrapper']['setting_keys'],
 				'style_overrides' => array_merge(
 					self::spacing_overrides(),
+					self::element_width_overrides(),
 					self::array_map_value( $wrapper['style_overrides'] ?? null )
 				),
 				'excluded_advanced_keys' => $derived['excluded_advanced_keys'],
@@ -150,9 +221,6 @@ class V3_Widget_Map_Loader {
 		];
 	}
 
-	/**
-	 * @return array<string, array>
-	 */
 	private static function spacing_overrides(): array {
 		$overrides = [];
 
@@ -174,6 +242,22 @@ class V3_Widget_Map_Loader {
 		}
 
 		return $overrides;
+	}
+
+	/**
+	 * @return array<string, array>
+	 */
+	private static function element_width_overrides(): array {
+		return [
+			'width' => [
+				'resolver' => 'element_width',
+				'responsive' => true,
+			],
+			'max-width' => [
+				'resolver' => 'element_width',
+				'responsive' => true,
+			],
+		];
 	}
 
 	/**

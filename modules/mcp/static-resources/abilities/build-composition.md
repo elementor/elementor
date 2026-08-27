@@ -83,6 +83,7 @@ results { background-color: #f5f7fa; }
 nothing-found-message { color: #666666; }
 ```
 Read `inner_elements.elements.<alias>.accepted_css_properties` and `supported_states` before styling each alias.
+- **V4 `style`** is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them

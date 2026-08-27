@@ -160,6 +160,7 @@ class Test_V3_Mapping_Parity extends TestCase {
 				?? $rule['typography_prefix']
 				?? $rule['border_prefix']
 				?? $rule['box_shadow_prefix']
+				?? $rule['resolver']
 				?? '?';
 		}
 

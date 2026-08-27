@@ -110,7 +110,25 @@ class Test_V3_Scoped_Style_Write extends TestCase {
 		// Assert.
 		$this->assertSame( '2', $patch['search_field_border_radius']['top'] );
 		$this->assertSame( '#ffffff', $patch['search_field_background_normal_color'] );
+		$this->assertSame( 'classic', $patch['search_field_background_normal_background'] );
 		$this->assertSame( '#1a3d2b', $patch['submit_background_normal_color'] );
+		$this->assertSame( 'classic', $patch['submit_background_normal_background'] );
+	}
+
+	public function test_search__writes_padding_and_text_color_via_map_overrides() {
+		// Arrange.
+		$css = 'search-field { padding-top: 0.75rem; color: #1a3d2b; } submit { padding: 0.875rem 1.5rem; border-radius: 0.5rem; color: #ffffff; }';
+
+		// Act.
+		$patch = $this->apply_scoped_css( 'search', $css )['settings_patch'];
+
+		// Assert.
+		$this->assertSame( '0.75', $patch['search_field_padding']['top'] );
+		$this->assertSame( '#1a3d2b', $patch['search_field_input_text_color_normal'] );
+		$this->assertSame( '0.875', $patch['submit_padding']['top'] );
+		$this->assertSame( '1.5', $patch['submit_padding']['right'] );
+		$this->assertSame( '0.5', $patch['submit_border_radius']['top'] );
+		$this->assertSame( '#ffffff', $patch['submit_text_color_normal'] );
 	}
 
 	public function test_unsupported_property__is_reported_as_unmapped_instead_of_written() {

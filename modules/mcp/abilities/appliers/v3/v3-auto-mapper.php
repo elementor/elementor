@@ -296,7 +296,7 @@ class V3_Auto_Mapper {
 
 					$generic_index[ $match_key ] = [
 						'setting' => $setting_key,
-						'resolver' => self::infer_resolver( $control, $property ),
+						'resolver' => V3_Control_Value_Compatibility::infer_resolver( $control, $property ),
 						'responsive' => self::is_responsive_control( $setting_key, $controls ),
 					];
 				}
@@ -383,36 +383,4 @@ class V3_Auto_Mapper {
 		return V3_Control_Introspector::is_responsive_setting( $setting_key, $controls );
 	}
 
-	/**
-	 * @param array<string, mixed> $control
-	 */
-	private static function infer_resolver( array $control, string $property ): string {
-		$type = $control['type'] ?? null;
-
-		if ( 'color' === $type || str_ends_with( $property, 'color' ) || 'fill' === $property ) {
-			return 'color';
-		}
-
-		if ( in_array( $property, [ 'padding', 'margin', 'border-radius' ], true ) ) {
-			return 'sides';
-		}
-
-		if ( in_array( $type, [ 'slider', 'dimensions' ], true ) ) {
-			return 'dimensions' === $type ? 'sides' : 'dimension';
-		}
-
-		if ( in_array( $property, [ 'width', 'height', 'max-width', 'min-height', 'font-size', 'line-height', 'letter-spacing', 'word-spacing', 'opacity', 'top', 'right', 'bottom', 'left' ], true ) ) {
-			return 'dimension';
-		}
-
-		if ( 'box-shadow' === $property ) {
-			return 'box_shadow';
-		}
-
-		if ( 'border' === $property ) {
-			return 'border';
-		}
-
-		return 'text';
-	}
 }
