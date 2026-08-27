@@ -8,7 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -32,12 +32,16 @@ class Widget_Context_Helper {
 
 	const V3_ALLOWLIST = [
 		'nav-menu',
+		'search',
+		'table-of-contents',
 		'theme-post-content',
 		'theme-post-title',
 		'theme-post-featured-image',
 		'theme-post-excerpt',
 		'theme-archive-title',
 	];
+
+	const INNER_ELEMENTS_NOT_SUPPORTED_NOTE = 'Only the properties listed under each alias `accepted_css_properties` are converted. Anything else inside an alias block is rejected and reported in `warnings` — it is not written to `custom_css`. Declarations outside an alias block target the widget wrapper.';
 
 	const V3_FALLBACK_MESSAGE = '`properties` lists the only keys accepted in `element_config` / `manage-elements.settings` for this widget. Put visual styling in the `style` (CSS) input; when `inner_elements` is present, scope rules per alias (e.g. `main-menu { color: red; }`) — see `inner_elements` descriptions.';
 
@@ -153,7 +157,7 @@ class Widget_Context_Helper {
 				return null;
 			}
 
-			$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
+			$allowed_keys = V3_Widget_Map_Loader::get_non_style_keys( $widget_type, $config['controls'] );
 			$built = V3_Json_Schema_Builder::build( $config['controls'], $allowed_keys );
 			$inner_elements = self::build_inner_elements_schema( $widget_type, $config );
 
@@ -314,7 +318,7 @@ class Widget_Context_Helper {
 		}
 
 		if ( null !== $widget_type && self::is_v3_allowlisted( $widget_type ) ) {
-			return V3_Widget_Bridge_Registry::get_description( $widget_type );
+			return V3_Widget_Map_Loader::get_description( $widget_type );
 		}
 
 		return null;
@@ -325,17 +329,19 @@ class Widget_Context_Helper {
 	}
 
 	/**
+	 * @param string               $widget_type
 	 * @param array<string, mixed> $config
 	 * @return array<string, array<string, mixed>>|null
 	 */
 	private static function build_inner_elements_schema( string $widget_type, array $config ): ?array {
-		$inner_elements = V3_Widget_Bridge_Registry::get_inner_elements( $widget_type );
+		$controls = is_array( $config['controls'] ?? null ) ? $config['controls'] : [];
+		$inner_elements = V3_Widget_Map_Loader::get_inner_elements( $widget_type, $controls );
 
 		if ( empty( $inner_elements ) ) {
 			return null;
 		}
 
-		$schema = [];
+		$elements = [];
 
 		foreach ( $inner_elements as $alias => $inner_element ) {
 			if ( ! is_string( $alias ) || ! is_array( $inner_element ) ) {
@@ -351,7 +357,7 @@ class Widget_Context_Helper {
 					implode( ', :', $states )
 				);
 
-			$schema[ $alias ] = [
+			$elements[ $alias ] = [
 				'label' => is_string( $label ) ? $label : $alias,
 				'description' => sprintf(
 					'Style with `%s { ... }` inside the widget `style` string.%s Supports @media breakpoints.',
@@ -363,6 +369,14 @@ class Widget_Context_Helper {
 			];
 		}
 
-		return empty( $schema ) ? null : $schema;
+		if ( empty( $elements ) ) {
+			return null;
+		}
+
+		return [
+			'default' => V3_Widget_Map_Loader::get_default_inner_element( $widget_type, $controls ),
+			'not_supported_note' => self::INNER_ELEMENTS_NOT_SUPPORTED_NOTE,
+			'elements' => $elements,
+		];
 	}
 }

@@ -66,13 +66,22 @@ class Test_V3_Auto_Mapper extends TestCase {
 
 	public function test_for_scope__maps_color_control_from_selectors() {
 		// Arrange.
-		$inner_element = [
+		$scope = [
 			'label' => 'Main menu items',
-			'control_pattern' => '/(menu_item|menu_typography|pointer|animation_)/',
+			'setting_keys' => [
+				'color_menu_item',
+				'color_menu_item_hover',
+				'color_menu_item_active',
+				'padding_horizontal_menu_item',
+				'padding_horizontal_menu_item_tablet',
+				'padding_horizontal_menu_item_mobile',
+				'menu_typography_typography',
+				'menu_typography_font_size',
+			],
 		];
 
 		// Act.
-		$mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $inner_element );
+		$mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $scope );
 
 		// Assert.
 		$this->assertSame( 'color_menu_item', $mapping['generic_index']['color']['setting'] );
@@ -80,33 +89,42 @@ class Test_V3_Auto_Mapper extends TestCase {
 
 	public function test_for_scope__detects_hover_and_active_from_control_names() {
 		// Arrange.
-		$inner_element = [
+		$scope = [
 			'label' => 'Main menu items',
-			'control_pattern' => '/(menu_item|menu_typography|pointer|animation_)/',
+			'setting_keys' => [
+				'color_menu_item',
+				'color_menu_item_hover',
+				'color_menu_item_active',
+				'padding_horizontal_menu_item',
+				'padding_horizontal_menu_item_tablet',
+				'padding_horizontal_menu_item_mobile',
+				'menu_typography_typography',
+				'menu_typography_font_size',
+			],
 		];
 
 		// Act.
-		$mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $inner_element );
+		$mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $scope );
 
 		// Assert.
 		$this->assertSame( 'color_menu_item_hover', $mapping['generic_index']['color@hover']['setting'] );
 		$this->assertSame( 'color_menu_item_active', $mapping['generic_index']['color@active']['setting'] );
 	}
 
-	public function test_for_scope__isolates_inner_elements_by_regex() {
+	public function test_for_scope__isolates_inner_elements_by_setting_keys() {
 		// Arrange.
-		$dropdown = [
+		$dropdown_scope = [
 			'label' => 'Dropdown',
-			'control_pattern' => '/dropdown/',
+			'setting_keys' => [ 'color_dropdown_item', 'color_dropdown_item_active' ],
 		];
-		$toggle = [
+		$toggle_scope = [
 			'label' => 'Toggle',
-			'control_pattern' => '/^toggle_/',
+			'setting_keys' => [ 'toggle_color' ],
 		];
 
 		// Act.
-		$dropdown_mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $dropdown );
-		$toggle_mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $toggle );
+		$dropdown_mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $dropdown_scope );
+		$toggle_mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $toggle_scope );
 
 		// Assert.
 		$this->assertSame( 'color_dropdown_item', $dropdown_mapping['generic_index']['color']['setting'] );
@@ -115,9 +133,18 @@ class Test_V3_Auto_Mapper extends TestCase {
 
 	public function test_for_scope__escape_hatch_overrides_derived_map() {
 		// Arrange.
-		$inner_element = [
+		$scope = [
 			'label' => 'Main menu items',
-			'control_pattern' => '/(menu_item|menu_typography|pointer|animation_)/',
+			'setting_keys' => [
+				'color_menu_item',
+				'color_menu_item_hover',
+				'color_menu_item_active',
+				'padding_horizontal_menu_item',
+				'padding_horizontal_menu_item_tablet',
+				'padding_horizontal_menu_item_mobile',
+				'menu_typography_typography',
+				'menu_typography_font_size',
+			],
 			'style_overrides' => [
 				'color' => [
 					'setting' => 'custom_color_override',
@@ -127,7 +154,7 @@ class Test_V3_Auto_Mapper extends TestCase {
 		];
 
 		// Act.
-		$mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $inner_element );
+		$mapping = V3_Auto_Mapper::for_scope( $this->nav_menu_config(), $scope );
 
 		// Assert.
 		$this->assertSame( 'custom_color_override', $mapping['overrides']['color']['setting'] );
@@ -135,13 +162,22 @@ class Test_V3_Auto_Mapper extends TestCase {
 
 	public function test_accepted_css_properties__strips_state_suffixes() {
 		// Arrange.
-		$inner_element = [
+		$scope = [
 			'label' => 'Main menu items',
-			'control_pattern' => '/(menu_item|menu_typography|pointer|animation_)/',
+			'setting_keys' => [
+				'color_menu_item',
+				'color_menu_item_hover',
+				'color_menu_item_active',
+				'padding_horizontal_menu_item',
+				'padding_horizontal_menu_item_tablet',
+				'padding_horizontal_menu_item_mobile',
+				'menu_typography_typography',
+				'menu_typography_font_size',
+			],
 		];
 
 		// Act.
-		$properties = V3_Auto_Mapper::accepted_css_properties( $this->nav_menu_config(), $inner_element );
+		$properties = V3_Auto_Mapper::accepted_css_properties( $this->nav_menu_config(), $scope );
 
 		// Assert.
 		$this->assertContains( 'color', $properties );

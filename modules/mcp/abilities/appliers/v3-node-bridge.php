@@ -4,7 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Settings_Index;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Utils;
 
@@ -157,54 +157,36 @@ class V3_Node_Bridge {
 	private static function collect_style_setting_keys( string $widget_type, array $widget_config ): array {
 		$keys = [];
 		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
-		$inner_elements = V3_Widget_Bridge_Registry::get_inner_elements( $widget_type );
+		$map = V3_Widget_Map_Loader::get( $widget_type, $controls );
+		$inner_elements = $map['inner_elements'];
 
 		if ( ! empty( $inner_elements ) ) {
 			foreach ( $inner_elements as $inner_element ) {
-				$pattern = $inner_element['control_pattern'] ?? '';
-				$keys = array_merge(
-					$keys,
-					V3_Auto_Mapper::collect_setting_keys_for_pattern( $controls, (string) $pattern )
-				);
+				$keys = array_merge( $keys, $inner_element['setting_keys'] ?? [] );
 
 				$mapping = V3_Auto_Mapper::for_scope( $widget_config, $inner_element );
 				$keys = array_merge( $keys, self::keys_from_mapping( $mapping, $controls ) );
 			}
 
-			$wrapper_overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-			foreach ( $wrapper_overrides as $override ) {
+			foreach ( $map['wrapper']['style_overrides'] as $override ) {
 				$keys = array_merge( $keys, self::expand_override_keys( $override ) );
 			}
 
 			return array_values( array_unique( $keys ) );
 		}
 
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$keys = array_merge( $keys, $map['wrapper']['setting_keys'] ?? [] );
+		$keys = array_merge(
+			$keys,
+			self::keys_from_mapping( V3_Auto_Mapper::for_scope( $widget_config, $map['wrapper'] ), $controls )
+		);
 
-		foreach ( $overrides as $override ) {
-			$keys = array_merge( $keys, self::expand_override_keys( $override ) );
-		}
-
-		$generic = V3_Style_Settings_Index::build( $controls, $overrides );
-		foreach ( $generic as $rule ) {
-			$setting = (string) ( $rule['setting'] ?? '' );
-			if ( '' === $setting ) {
-				continue;
-			}
-			$keys[] = $setting;
-			if ( ! empty( $rule['responsive'] ) ) {
-				foreach ( self::RESPONSIVE_SUFFIXES as $suffix ) {
-					$keys[] = $setting . $suffix;
-				}
-			}
-		}
-
-		return $keys;
+		return array_values( array_unique( $keys ) );
 	}
 
 	/**
 	 * @param array{overrides: array<string, array>, generic_index: array<string, array>} $mapping
-	 * @param array<string, mixed>                                                       $controls
+	 * @param array<string, mixed>                                                        $controls
 	 * @return string[]
 	 */
 	private static function keys_from_mapping( array $mapping, array $controls ): array {

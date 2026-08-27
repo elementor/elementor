@@ -7,7 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Derives CSS-property → V3-setting maps from widget controls filtered by inner-element regex.
+ * Derives CSS-property → V3-setting maps for one scope (widget wrapper or inner element).
+ *
+ * Scope membership is an explicit list of setting keys, resolved by V3_Widget_Map_Loader
+ * from a checked-in map file or from V3_Control_Introspector.
  */
 class V3_Auto_Mapper {
 
@@ -27,6 +30,24 @@ class V3_Auto_Mapper {
 		'word-spacing',
 	];
 
+	const BORDER_LONGHANDS = [
+		'border-style' => [
+			'setting' => 'border',
+			'resolver' => 'text',
+			'responsive' => false,
+		],
+		'border-width' => [
+			'setting' => 'width',
+			'resolver' => 'sides',
+			'responsive' => true,
+		],
+		'border-color' => [
+			'setting' => 'color',
+			'resolver' => 'color',
+			'responsive' => false,
+		],
+	];
+
 	const TYPOGRAPHY_RESPONSIVE_PROPERTIES = [
 		'font-size',
 		'line-height',
@@ -40,21 +61,41 @@ class V3_Auto_Mapper {
 	private static array $cache = [];
 
 	/**
+	 * Mapping over every control of the widget, for callers that address the widget as a whole
+	 * (serializing settings back to CSS, collecting owned setting keys) rather than per scope.
+	 *
 	 * @param array<string, mixed> $widget_config
-	 * @param array<string, mixed> $inner_element
 	 * @return array{overrides: array<string, array>, generic_index: array<string, array>}
 	 */
-	public static function for_scope( array $widget_config, array $inner_element ): array {
-		$pattern = $inner_element['control_pattern'] ?? '';
-		$cache_key = md5( serialize( [ $widget_config['controls'] ?? [], $pattern, $inner_element['style_overrides'] ?? [] ] ) );
+	public static function for_widget( array $widget_config, string $widget_type ): array {
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+
+		return self::for_scope(
+			$widget_config,
+			[
+				'setting_keys' => array_keys( $controls ),
+				'style_overrides' => V3_Widget_Map_Loader::get_wrapper_style_overrides( $widget_type, $controls ),
+			]
+		);
+	}
+
+	/**
+	 * @param array<string, mixed> $widget_config
+	 * @param array<string, mixed> $scope Scope descriptor: setting_keys + optional style_overrides.
+	 * @return array{overrides: array<string, array>, generic_index: array<string, array>}
+	 */
+	public static function for_scope( array $widget_config, array $scope ): array {
+		$setting_keys = is_array( $scope['setting_keys'] ?? null ) ? $scope['setting_keys'] : [];
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- Cache key only, never output.
+		$cache_key = md5( (string) json_encode( [ $widget_config['controls'] ?? [], $setting_keys, $scope['style_overrides'] ?? [] ] ) );
 
 		if ( isset( self::$cache[ $cache_key ] ) ) {
 			return self::$cache[ $cache_key ];
 		}
 
 		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
-		$filtered = self::filter_controls_by_pattern( $controls, (string) $pattern );
-		$escape_hatch = is_array( $inner_element['style_overrides'] ?? null ) ? $inner_element['style_overrides'] : [];
+		$filtered = self::filter_controls_by_keys( $controls, $setting_keys );
+		$escape_hatch = is_array( $scope['style_overrides'] ?? null ) ? $scope['style_overrides'] : [];
 		$overrides = array_merge( self::build_group_overrides( $filtered ), $escape_hatch );
 		$generic_index = V3_Style_Settings_Index::build( $filtered, $overrides );
 		$generic_index = self::merge_name_state_index( $filtered, $generic_index, $overrides );
@@ -71,43 +112,23 @@ class V3_Auto_Mapper {
 
 	/**
 	 * @param array<string, mixed> $controls
+	 * @param string[]             $setting_keys
 	 * @return array<string, mixed>
 	 */
-	public static function filter_controls_by_pattern( array $controls, string $pattern ): array {
-		if ( '' === $pattern ) {
-			return [];
-		}
-
-		$filtered = [];
-
-		foreach ( $controls as $key => $control ) {
-			if ( ! is_string( $key ) || ! is_array( $control ) ) {
-				continue;
-			}
-
-			if ( 1 === preg_match( $pattern, $key ) ) {
-				$filtered[ $key ] = $control;
-			}
-		}
-
-		return $filtered;
-	}
-
-	/**
-	 * @param array<string, mixed> $controls
-	 * @return string[]
-	 */
-	public static function collect_setting_keys_for_pattern( array $controls, string $pattern ): array {
-		return array_keys( self::filter_controls_by_pattern( $controls, $pattern ) );
+	public static function filter_controls_by_keys( array $controls, array $setting_keys ): array {
+		return array_filter(
+			array_intersect_key( $controls, array_fill_keys( $setting_keys, true ) ),
+			'is_array'
+		);
 	}
 
 	/**
 	 * @param array<string, mixed> $widget_config
-	 * @param array<string, mixed> $inner_element
+	 * @param array<string, mixed> $scope
 	 * @return string[]
 	 */
-	public static function accepted_css_properties( array $widget_config, array $inner_element ): array {
-		$mapping = self::for_scope( $widget_config, $inner_element );
+	public static function accepted_css_properties( array $widget_config, array $scope ): array {
+		$mapping = self::for_scope( $widget_config, $scope );
 		$keys = array_merge(
 			array_keys( $mapping['overrides'] ),
 			array_keys( $mapping['generic_index'] )
@@ -125,11 +146,11 @@ class V3_Auto_Mapper {
 
 	/**
 	 * @param array<string, mixed> $widget_config
-	 * @param array<string, mixed> $inner_element
+	 * @param array<string, mixed> $scope
 	 * @return string[]
 	 */
-	public static function supported_states( array $widget_config, array $inner_element ): array {
-		$mapping = self::for_scope( $widget_config, $inner_element );
+	public static function supported_states( array $widget_config, array $scope ): array {
+		$mapping = self::for_scope( $widget_config, $scope );
 		$keys = array_merge(
 			array_keys( $mapping['overrides'] ),
 			array_keys( $mapping['generic_index'] )
@@ -156,67 +177,66 @@ class V3_Auto_Mapper {
 	private static function build_group_overrides( array $controls ): array {
 		$overrides = [];
 
-		foreach ( self::detect_typography_prefixes( $controls ) as $prefix ) {
+		foreach ( V3_Group_Control_Detector::typography_prefixes( $controls ) as $prefix ) {
 			$overrides = array_merge( $overrides, self::typography_overrides_for_prefix( $prefix ) );
 		}
 
-		foreach ( self::detect_border_prefixes( $controls ) as $prefix ) {
-			$overrides['border'] = [ 'border_prefix' => $prefix ];
+		foreach ( self::sort_widget_own_prefixes_last( V3_Group_Control_Detector::border_prefixes( $controls ) ) as $prefix ) {
+			$overrides[ self::match_key( 'border', $prefix ) ] = [ 'border_prefix' => $prefix ];
+			$overrides = array_merge( $overrides, self::border_longhand_overrides( $prefix ) );
 		}
 
-		foreach ( self::detect_box_shadow_prefixes( $controls ) as $prefix ) {
-			$overrides['box-shadow'] = [ 'box_shadow_prefix' => $prefix ];
+		foreach ( self::sort_widget_own_prefixes_last( V3_Group_Control_Detector::box_shadow_prefixes( $controls ) ) as $prefix ) {
+			$overrides[ self::match_key( 'box-shadow', $prefix ) ] = [ 'box_shadow_prefix' => $prefix ];
 		}
 
 		return $overrides;
 	}
 
 	/**
-	 * @param array<string, mixed> $controls
+	 * Advanced-tab group controls are prefixed with an underscore and exist on every widget, so
+	 * when both they and a widget-own group produce the same property, the widget-own one wins.
+	 *
+	 * @param string[] $prefixes
 	 * @return string[]
 	 */
-	private static function detect_typography_prefixes( array $controls ): array {
-		$prefixes = [];
+	private static function sort_widget_own_prefixes_last( array $prefixes ): array {
+		usort(
+			$prefixes,
+			static fn( $first, $second ) => (int) str_starts_with( $second, '_' ) <=> (int) str_starts_with( $first, '_' )
+		);
 
-		foreach ( array_keys( $controls ) as $key ) {
-			if ( preg_match( '/^(.+)_typography_(?:typography|font_|line_|letter_|word_|text_)/', $key, $matches ) ) {
-				$prefixes[ $matches[1] . '_typography' ] = true;
-			}
-		}
-
-		return array_keys( $prefixes );
+		return $prefixes;
 	}
 
 	/**
-	 * @param array<string, mixed> $controls
-	 * @return string[]
+	 * A border group writes style, width and color into separate settings, so the longhands are
+	 * routed explicitly instead of competing with unrelated bordered sub-parts in the index.
+	 *
+	 * @return array<string, array>
 	 */
-	private static function detect_border_prefixes( array $controls ): array {
-		$prefixes = [];
+	private static function border_longhand_overrides( string $prefix ): array {
+		$overrides = [];
 
-		foreach ( array_keys( $controls ) as $key ) {
-			if ( preg_match( '/^(.+)_border_(?:border|width|color)$/', $key, $matches ) ) {
-				$prefixes[ $matches[1] . '_border' ] = true;
-			}
+		foreach ( self::BORDER_LONGHANDS as $property => $suffix ) {
+			$overrides[ self::match_key( $property, $prefix ) ] = [
+				'setting' => $prefix . '_' . $suffix['setting'],
+				'resolver' => $suffix['resolver'],
+				'responsive' => $suffix['responsive'],
+			];
 		}
 
-		return array_keys( $prefixes );
+		return $overrides;
 	}
 
 	/**
-	 * @param array<string, mixed> $controls
-	 * @return string[]
+	 * A widget declares one group control per state (`_box_shadow` and `_box_shadow_hover`), so
+	 * the state is read back from the prefix to keep both reachable.
 	 */
-	private static function detect_box_shadow_prefixes( array $controls ): array {
-		$prefixes = [];
+	private static function match_key( string $property, string $setting_prefix ): string {
+		$state = self::state_from_setting_key( $setting_prefix );
 
-		foreach ( array_keys( $controls ) as $key ) {
-			if ( preg_match( '/^(.+)_box_shadow(?:_type)?$/', $key, $matches ) ) {
-				$prefixes[ $matches[1] . '_box_shadow' ] = true;
-			}
-		}
-
-		return array_keys( $prefixes );
+		return null === $state ? $property : $property . '@' . $state;
 	}
 
 	/**
@@ -226,7 +246,7 @@ class V3_Auto_Mapper {
 		$overrides = [];
 
 		foreach ( self::TYPOGRAPHY_PROPERTIES as $property ) {
-			$overrides[ $property ] = [
+			$overrides[ self::match_key( $property, $prefix ) ] = [
 				'typography_prefix' => $prefix,
 				'responsive' => in_array( $property, self::TYPOGRAPHY_RESPONSIVE_PROPERTIES, true ),
 			];
@@ -236,13 +256,13 @@ class V3_Auto_Mapper {
 	}
 
 	/**
-	 * @param array<string, mixed>        $controls
-	 * @param array<string, array>        $generic_index
-	 * @param array<string, array>        $overrides
+	 * @param array<string, mixed> $controls
+	 * @param array<string, array> $generic_index
+	 * @param array<string, array> $overrides
 	 * @return array<string, array>
 	 */
 	private static function merge_name_state_index( array $controls, array $generic_index, array $overrides ): array {
-		foreach ( $controls as $setting_key => $control ) {
+		foreach ( self::widget_own_controls_first( $controls ) as $setting_key => $control ) {
 			if ( ! is_string( $setting_key ) || ! is_array( $control ) ) {
 				continue;
 			}
@@ -264,6 +284,10 @@ class V3_Auto_Mapper {
 				}
 
 				foreach ( self::extract_css_properties( $css_template ) as $property ) {
+					if ( V3_Style_Settings_Index::is_internal_property( $property ) ) {
+						continue;
+					}
+
 					$match_key = null === $state ? $property : $property . '@' . $state;
 
 					if ( isset( $overrides[ $match_key ] ) || isset( $generic_index[ $match_key ] ) ) {
@@ -280,6 +304,26 @@ class V3_Auto_Mapper {
 		}
 
 		return $generic_index;
+	}
+
+	/**
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	private static function widget_own_controls_first( array $controls ): array {
+		$own = [];
+		$advanced = [];
+
+		foreach ( $controls as $setting_key => $control ) {
+			if ( is_string( $setting_key ) && str_starts_with( $setting_key, '_' ) ) {
+				$advanced[ $setting_key ] = $control;
+				continue;
+			}
+
+			$own[ $setting_key ] = $control;
+		}
+
+		return $own + $advanced;
 	}
 
 	private static function state_from_setting_key( string $setting_key ): ?string {
@@ -321,7 +365,8 @@ class V3_Auto_Mapper {
 				continue;
 			}
 
-			$property = strtolower( trim( strstr( $declaration, ':', true ) ?: '' ) );
+			$prefix = strstr( $declaration, ':', true );
+			$property = strtolower( trim( false === $prefix ? '' : $prefix ) );
 			if ( '' !== $property ) {
 				$properties[ $property ] = true;
 			}
@@ -331,10 +376,11 @@ class V3_Auto_Mapper {
 	}
 
 	/**
+	 * @param string               $setting_key
 	 * @param array<string, mixed> $controls
 	 */
 	private static function is_responsive_control( string $setting_key, array $controls ): bool {
-		return isset( $controls[ $setting_key . '_tablet' ] ) || isset( $controls[ $setting_key . '_mobile' ] );
+		return V3_Control_Introspector::is_responsive_setting( $setting_key, $controls );
 	}
 
 	/**

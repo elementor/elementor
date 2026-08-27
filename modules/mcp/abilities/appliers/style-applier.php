@@ -6,7 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Scoped_Css_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -160,7 +160,8 @@ class Style_Applier {
 			return $warnings;
 		}
 
-		$inner_elements = V3_Widget_Bridge_Registry::get_inner_elements( (string) $widget_type );
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+		$inner_elements = V3_Widget_Map_Loader::get_inner_elements( (string) $widget_type, $controls );
 		if ( ! empty( $inner_elements ) ) {
 			return $this->apply_v3_inner_element_styles(
 				$node,
@@ -208,9 +209,12 @@ class Style_Applier {
 	}
 
 	/**
-	 * @param array<string, mixed>              $node
-	 * @param array<string, array<string,mixed>> $inner_elements
-	 * @param string[]                          $warnings
+	 * @param array<string, mixed>                $node
+	 * @param string                              $css_string
+	 * @param string                              $widget_type
+	 * @param array<string, mixed>                $widget_config
+	 * @param array<string, array<string, mixed>> $inner_elements
+	 * @param string[]                            $warnings
 	 * @return string[]
 	 */
 	private function apply_v3_inner_element_styles(
@@ -222,7 +226,10 @@ class Style_Applier {
 		array $warnings
 	): array {
 		$split = V3_Scoped_Css_Splitter::split( $css_string, array_keys( $inner_elements ) );
-		$default_inner_element = V3_Widget_Bridge_Registry::get_default_inner_element( $widget_type );
+		$default_inner_element = V3_Widget_Map_Loader::get_default_inner_element(
+			$widget_type,
+			is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : []
+		);
 
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
 		$settings_patch = [];
@@ -255,7 +262,12 @@ class Style_Applier {
 			$scope_alias = explode( ':', $scope_key, 2 )[0];
 			$inner_element = $inner_elements[ $scope_alias ] ?? null;
 			if ( null === $inner_element ) {
-				$unmapped_parts[] = $scope_key . ' { ' . $scope_css . ' }';
+				$warnings[] = sprintf(
+					/* translators: 1: Inner-element alias the LLM used, 2: V3 widget type name. */
+					__( 'Unknown inner element "%1$s" for widget `%2$s`; its rules were dropped. Use the aliases listed under `inner_elements` in the widget schema.', 'elementor' ),
+					$scope_alias,
+					$widget_type
+				);
 				continue;
 			}
 
@@ -266,9 +278,10 @@ class Style_Applier {
 			$settings_patch = array_merge( $settings_patch, $result['settings_patch'] );
 			$warnings = array_merge( $warnings, $result['warnings'] );
 
-			if ( '' !== trim( $result['unmapped_css'] ?? '' ) ) {
-				$unmapped_parts[] = self::format_scope_unmapped_css( $scope_key, $result['unmapped_css'] );
-			}
+			$warnings = array_merge(
+				$warnings,
+				self::unsupported_scope_property_warnings( $scope_alias, $result['unmapped_css'] ?? '' )
+			);
 		}
 
 		if ( ! empty( $settings_patch ) ) {
@@ -299,18 +312,38 @@ class Style_Applier {
 		return $warnings;
 	}
 
-	private static function format_scope_unmapped_css( string $scope_key, string $unmapped_css ): string {
-		$unmapped_css = trim( $unmapped_css );
+	/**
+	 * Inner-element rules cannot survive in `custom_css`: the wrapper-scoped selector Pro
+	 * wraps it with cannot express a sub-element, and Pro 3.35+ strips `custom_css` anyway.
+	 * Unmapped properties are therefore dropped and reported, so the LLM can retry against
+	 * the alias `accepted_css_properties` instead of believing the style was applied.
+	 *
+	 * @return string[]
+	 */
+	private static function unsupported_scope_property_warnings( string $scope_alias, string $unmapped_css ): array {
+		$warnings = [];
 
-		if ( '' === $unmapped_css ) {
-			return '';
+		foreach ( self::css_property_names( $unmapped_css ) as $property ) {
+			$warnings[] = sprintf(
+				/* translators: 1: CSS property name, 2: Inner-element alias. */
+				__( 'Property "%1$s" is not supported on "%2$s" and was dropped. See `accepted_css_properties` for that inner element.', 'elementor' ),
+				$property,
+				$scope_alias
+			);
 		}
 
-		if ( preg_match( '/&:(?:hover|active|focus)\s*\{/', $unmapped_css ) ) {
-			return $unmapped_css;
+		return $warnings;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function css_property_names( string $css ): array {
+		if ( ! preg_match_all( '/([a-zA-Z-]+)\s*:/', $css, $matches ) ) {
+			return [];
 		}
 
-		return $scope_key . ' { ' . $unmapped_css . ' }';
+		return array_values( array_unique( array_map( 'strtolower', $matches[1] ) ) );
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {

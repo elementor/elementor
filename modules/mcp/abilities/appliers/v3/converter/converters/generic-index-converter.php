@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Fallback converter: uses V3_Style_Settings_Index auto-discovered mappings when no
  * registry override matches. Registered last.
- *
- * Note the responsive rule differs from `Simple_Setting_Converter`: the generic index
- * does not carry an explicit `responsive` flag, so any non-desktop breakpoint requires
- * the suffixed control to exist — otherwise the write is dropped.
  */
 class Generic_Index_Converter implements V3_Property_Converter {
 
-	const BASE_BREAKPOINT = Responsive_Key_Resolver::BASE_BREAKPOINT;
+	private Responsive_Key_Resolver $responsive_resolver;
+
+	public function __construct( Responsive_Key_Resolver $responsive_resolver ) {
+		$this->responsive_resolver = $responsive_resolver;
+	}
 
 	public function is_supported( array $rule, V3_Context_Meta $meta ): bool {
 		return null !== $meta->get_generic_rule( $rule['property'], $rule['state'] );
@@ -39,15 +39,15 @@ class Generic_Index_Converter implements V3_Property_Converter {
 			return false;
 		}
 
-		$setting = (string) $generic_rule['setting'];
-		$breakpoint = (string) $rule['breakpoint'];
+		$setting = $this->responsive_resolver->resolve(
+			(string) $generic_rule['setting'],
+			(string) $rule['breakpoint'],
+			! empty( $generic_rule['responsive'] ),
+			$meta
+		);
 
-		if ( self::BASE_BREAKPOINT !== $breakpoint ) {
-			$suffixed = $setting . '_' . $breakpoint;
-			if ( ! $meta->has_control( $suffixed ) ) {
-				return false;
-			}
-			$setting = $suffixed;
+		if ( null === $setting ) {
+			return false;
 		}
 
 		$ctx->merge_patch( [ $setting => $resolved ] );

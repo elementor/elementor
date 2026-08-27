@@ -11,7 +11,6 @@ use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -37,14 +36,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles (as { __style_id, css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode), interactions, its rendered HTML tag when known, and default_styles (a raw CSS string of the widget base layer followed by the kit\'s site-wide default layer for that tag, in browser cascade order — includes selectors, @media(--breakpoint) blocks, and pseudo-states as the frontend renders them). V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). V4 nodes can be modified via elementor/manage-elements or elementor/build-composition. Allowlisted V3 nodes (see elementor/list-widget-schemas) return settings (content/behavior only) and a round-trippable style CSS string when include_content=true; scoped V3 widgets use alias blocks in style (e.g. main-menu { color: #111; } main-menu:hover { color: #aaa; }). Non-allowlisted V3 nodes are returned for context only. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles: V4 as { __style_id, css }, V3 as a plain style string. V4 nodes also include interactions, rendered HTML tag when known, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). V3 nodes always have empty settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true: V4 nodes include settings, styles (as { __style_id, css }), interactions, tag, and default_styles. Allowlisted V3 nodes include settings (non-style keys) and style (plain CSS string; scoped widgets use alias blocks). Other V3 nodes have empty settings and style.',
 					],
 				],
 			],
@@ -73,7 +72,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each V4 node\'s settings, styles (as { __style_id, css } — raw CSS string), interactions, rendered tag, and default_styles (raw CSS string: base layer + kit default for that tag). The styles.css value is round-trippable to build-composition.style / manage-elements.update.style in replace mode. Requires element_id.',
+						'description' => 'If true, includes settings and styles for the subtree. V4: settings, styles as { __style_id, css }, interactions, tag, default_styles. Allowlisted V3: settings (content only) + style (CSS string, alias blocks when inner_elements). Requires element_id.',
 					],
 				],
 			]
@@ -253,19 +252,19 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$widget_type = (string) ( $node['widgetType'] ?? '' );
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
-		$allowed = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
-
-		if ( empty( $allowed ) && empty( V3_Widget_Bridge_Registry::get_style_overrides( $widget_type ) ) ) {
+		if ( ! Widget_Context_Helper::is_v3_allowlisted( $widget_type ) ) {
 			$skeleton['settings'] = (object) [];
 			$skeleton['style'] = '';
 			return;
 		}
 
-		$filter = V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings );
+		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type ) ?? [];
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+
+		$filter = V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings, $controls );
 		$allowed_settings = $filter['allowed'];
 
-		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
-		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
+		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['style'] = $style;

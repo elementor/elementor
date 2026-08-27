@@ -48,6 +48,41 @@ class Test_V3_Scoped_Css_Splitter extends TestCase {
 		$this->assertStringContainsString( 'padding-left: 5px;', $result['scopes']['main-menu'] );
 	}
 
+	public function test_split__routes_alias_blocks_nested_in_a_media_query_to_their_scope() {
+		// Arrange.
+		$css = 'main-menu { color: red; } @media(--mobile) { main-menu { font-size: 1rem; } margin-top: 0; }';
+
+		// Act.
+		$result = V3_Scoped_Css_Splitter::split( $css, [ 'main-menu' ] );
+
+		// Assert.
+		$this->assertSame( 'color: red; @media(--mobile) { font-size: 1rem; }', $result['scopes']['main-menu'] );
+		$this->assertSame( '@media(--mobile) { margin-top: 0; }', $result['wrapper'] );
+	}
+
+	public function test_split__keeps_media_query_without_alias_blocks_on_the_wrapper() {
+		// Arrange.
+		$css = '@media(--mobile) { margin-top: 0; }';
+
+		// Act.
+		$result = V3_Scoped_Css_Splitter::split( $css, [ 'main-menu' ] );
+
+		// Assert.
+		$this->assertSame( $css, $result['wrapper'] );
+		$this->assertSame( [], $result['scopes'] );
+	}
+
+	public function test_scope_to_mapper_css__nests_the_state_inside_the_media_query() {
+		// Act.
+		$mapper_css = V3_Scoped_Css_Splitter::scope_to_mapper_css(
+			'main-menu:hover',
+			'color: green; @media(--mobile) { color: navy; }'
+		);
+
+		// Assert.
+		$this->assertSame( '&:hover { color: green; } @media(--mobile) { &:hover { color: navy; } }', $mapper_css );
+	}
+
 	public function test_split__keeps_unknown_selectors_in_wrapper() {
 		// Arrange.
 		$css = 'main-menu { color: red; } .unknown { margin: 1px; }';

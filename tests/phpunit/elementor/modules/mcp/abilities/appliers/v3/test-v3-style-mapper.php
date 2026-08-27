@@ -97,10 +97,22 @@ class Test_V3_Style_Mapper extends TestCase {
 		$mapper = $this->make_mapper();
 		$config = [
 			'controls' => [
-				'image_border_radius' => [ 'type' => 'dimensions' ],
-				'image_border_border' => [ 'type' => 'select' ],
-				'image_border_width' => [ 'type' => 'dimensions' ],
-				'image_border_color' => [ 'type' => 'color' ],
+				'image_border_radius' => [
+					'type' => 'dimensions',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+				],
+				'image_border_border' => [
+					'type' => 'select',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-style: {{VALUE}};' ],
+				],
+				'image_border_width' => [
+					'type' => 'dimensions',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+				],
+				'image_border_color' => [
+					'type' => 'color',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-color: {{VALUE}};' ],
+				],
 			],
 		];
 

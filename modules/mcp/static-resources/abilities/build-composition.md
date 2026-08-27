@@ -25,7 +25,9 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 
 **Rules:**
 - Only use element IDs from the `resolved_xml` in **this tool's response** for any follow-up `manage-elements` calls — never IDs from an earlier read.
-- Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
+- Prefer adding pseudo-states and breakpoints **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
+  - **V4 / flat V3:** use `&:hover` / `&:focus` / `&:active` and `@media(--mobile) { ... }` inside the element's `style` string.
+  - **Scoped V3** (widgets with `inner_elements`): use separate `alias:state { ... }` blocks (e.g. `main-menu:hover { color: #aaa; }`) and `@media(--mobile) { alias { ... } }` — not `&:hover` inside an alias block.
 
 # COMPONENTS (only when explicitly requested)
 Elementor components are reusable widget compositions; global classes are reusable styles. Do not substitute one for the other.
@@ -55,16 +57,32 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
-- **V3 `inner_elements`:** Allowlisted V3 widgets that declare `inner_elements` in `elementor/get-widget-schema` (e.g. `nav-menu`) require scoped alias blocks in `style` — one block per sub-part. Bare wrapper declarations (e.g. `margin-top`) may appear before alias blocks and map to widget wrapper/advanced controls; unscoped look-and-feel props belong inside the alias blocks. Other unscoped declarations map to the default inner element (`main-menu` for nav-menu). Use `alias:state` for hover/focus/active (e.g. `main-menu:hover { color: #aaa; }`). Only properties listed under `inner_elements.<alias>.accepted_css_properties` are converted; prefer longhand. `classes` still target the widget wrapper only.
+- **V3 widgets** use the widget type as the XML tag (e.g. `<nav-menu configuration-id="Main Nav"/>`, `<search configuration-id="Site Search"/>`, `<theme-post-title configuration-id="Title"/>`) — not an `e-` prefix.
+- **V3 `element_config` is content/behavior only.** Keys under `properties` in the schema (menu source, layout, placeholder text, etc.). Never send style control keys (`color_menu_item`, `typography_font_size`, …) in `element_config` — put them in `style`.
+- **V3 `style` — two shapes:**
+  - **Flat** (no `inner_elements` in schema, e.g. `theme-post-title`): one CSS string per configuration-id, same as V4 — `color: red; &:hover { color: blue; } @media(--mobile) { font-size: 1rem; }`.
+  - **Scoped** (`inner_elements` present, e.g. `nav-menu`, `search`, `table-of-contents`): alias blocks per sub-part. Wrapper/advanced rules (margin, padding on the widget shell) may appear unscoped before alias blocks; other look-and-feel rules belong inside the correct alias. Unscoped look-and-feel declarations fold into `inner_elements.default`.
+- **`accepted_css_properties` is authoritative per alias.** Only listed properties are converted to native panel controls. Anything else (and any unknown alias) is **dropped with a `warnings` entry** — not written to `custom_css`, because `custom_css` cannot target a sub-part selector.
+- **Round-trip:** `elementor/get-page-structure` with `include_content=true` returns allowlisted V3 nodes as `{ settings, style }` where `style` uses the same alias-block format. Re-send that `style` string via `build-composition` or `manage-elements` to preserve styling.
+- **V3 containers (`section` / `column` / `container`) are not exposed.** Use V4 `e-div-block` / `e-flexbox` for layout; V3 widgets are placed inside those.
 
+### Scoped V3 style (nav-menu)
 ```css
-main-menu { color: #111111; font-size: 1rem; }
+main-menu { color: #111111; font-size: 1rem; padding-left: 1rem; }
 main-menu:hover { color: #aaaaaa; }
-dropdown { color: #222222; }
-toggle { color: #333333; }
+dropdown { background-color: #f5f7fa; border-radius: 0.5rem; }
+toggle { font-size: 1.5rem; }
 @media(--mobile) { main-menu { font-size: 0.875rem; } }
 ```
+
+### Scoped V3 style (search)
+```css
+search-field { border-radius: 2rem; background-color: #ffffff; }
+submit { background-color: #1a3d2b; color: #ffffff; }
+results { background-color: #f5f7fa; }
+nothing-found-message { color: #666666; }
+```
+Read `inner_elements.elements.<alias>.accepted_css_properties` and `supported_states` before styling each alias.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them

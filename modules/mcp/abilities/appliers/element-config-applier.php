@@ -63,14 +63,14 @@ class Element_Config_Applier {
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
 				$widget_type = (string) $tag;
-				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
+				$widget_config = is_array( $widget_configs[ $widget_type ] ?? null ) ? $widget_configs[ $widget_type ] : [];
+				$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+
+				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings, $controls );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
 					continue;
 				}
-
-				$widget_config = is_array( $widget_configs[ $widget_type ] ?? null ) ? $widget_configs[ $widget_type ] : [];
-				$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
 
 				$hoist_outcome = $this->get_v3_dynamic_hoister()->hoist( $widget_type, $filter['allowed'], $controls );
 

@@ -54,7 +54,7 @@ class V3_Scoped_Css_Splitter {
 					break;
 				}
 
-				$wrapper_parts[] = $block['raw'];
+				self::split_at_rule( $block, $inner_element_aliases, $wrapper_parts, $scopes );
 				$offset = $block['end'];
 				continue;
 			}
@@ -101,6 +101,37 @@ class V3_Scoped_Css_Splitter {
 	}
 
 	/**
+	 * An at-rule may wrap alias blocks (`@media(--mobile) { main-menu { ... } }`), so its body is
+	 * split as well and each part is re-wrapped in the same prelude. That keeps the breakpoint
+	 * with the scope it belongs to, since a scope is mapped independently of the wrapper.
+	 *
+	 * @param array{prelude: string, body: string, raw: string} $block
+	 * @param string[]                                          $inner_element_aliases
+	 * @param string[]                                          $wrapper_parts
+	 * @param array<string, string>                             $scopes
+	 */
+	private static function split_at_rule( array $block, array $inner_element_aliases, array &$wrapper_parts, array &$scopes ): void {
+		$inner = self::split( $block['body'], $inner_element_aliases );
+
+		if ( empty( $inner['scopes'] ) ) {
+			$wrapper_parts[] = $block['raw'];
+			return;
+		}
+
+		if ( '' !== $inner['wrapper'] ) {
+			$wrapper_parts[] = $block['prelude'] . ' { ' . $inner['wrapper'] . ' }';
+		}
+
+		foreach ( $inner['scopes'] as $scope_key => $scope_css ) {
+			$existing = $scopes[ $scope_key ] ?? '';
+			$wrapped = $block['prelude'] . ' { ' . $scope_css . ' }';
+
+			$scopes[ $scope_key ] = '' === $existing ? $wrapped : $existing . ' ' . $wrapped;
+		}
+	}
+
+	/**
+	 * @param string              $selector
 	 * @param array<string, true> $alias_lookup
 	 */
 	public static function resolve_scope_key( string $selector, array $alias_lookup ): ?string {
@@ -129,7 +160,8 @@ class V3_Scoped_Css_Splitter {
 	}
 
 	/**
-	 * @param array<string, string> $scopes
+	 * @param string $scope_key
+	 * @param string $css_body
 	 */
 	public static function scope_to_mapper_css( string $scope_key, string $css_body ): string {
 		$css_body = trim( $css_body );
@@ -142,18 +174,65 @@ class V3_Scoped_Css_Splitter {
 			return $css_body;
 		}
 
-		[ $alias, $state ] = explode( ':', $scope_key, 2 );
+		[ , $state ] = explode( ':', $scope_key, 2 );
 
 		if ( ! in_array( $state, self::SUPPORTED_STATES, true ) ) {
 			return $css_body;
 		}
 
-		unset( $alias );
-
-		return '&:' . $state . ' { ' . $css_body . ' }';
+		return self::wrap_in_state( $css_body, $state );
 	}
 
 	/**
+	 * The mapper splits breakpoints before pseudo-states, so a state block always has to sit
+	 * inside its at-rule — never the other way around.
+	 */
+	private static function wrap_in_state( string $css_body, string $state ): string {
+		$parts = [];
+		$offset = 0;
+		$length = strlen( $css_body );
+
+		while ( $offset < $length ) {
+			self::skip_whitespace( $css_body, $offset, $length );
+
+			if ( $offset >= $length ) {
+				break;
+			}
+
+			if ( '@' !== $css_body[ $offset ] ) {
+				$at_rule_start = strpos( $css_body, '@', $offset );
+				$declarations = trim( substr( $css_body, $offset, ( false === $at_rule_start ? $length : $at_rule_start ) - $offset ) );
+
+				if ( '' !== $declarations ) {
+					$parts[] = '&:' . $state . ' { ' . $declarations . ' }';
+				}
+
+				if ( false === $at_rule_start ) {
+					break;
+				}
+
+				$offset = $at_rule_start;
+				continue;
+			}
+
+			$block = self::read_at_rule_block( $css_body, $offset, $length );
+
+			if ( null === $block ) {
+				$parts[] = '&:' . $state . ' { ' . trim( substr( $css_body, $offset ) ) . ' }';
+				break;
+			}
+
+			$parts[] = $block['prelude'] . ' { ' . self::wrap_in_state( $block['body'], $state ) . ' }';
+			$offset = $block['end'];
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	/**
+	 * @param string              $css
+	 * @param int                 $offset
+	 * @param int                 $length
 	 * @param array<string, true> $alias_lookup
 	 * @return array{start: int, brace_pos: int, selector: string}|null
 	 */
@@ -174,6 +253,9 @@ class V3_Scoped_Css_Splitter {
 	}
 
 	/**
+	 * @param string   $css
+	 * @param int      $offset
+	 * @param int      $length
 	 * @param string[] $aliases
 	 * @return array{start: int, brace_pos: int, selector: string}|null
 	 */
@@ -276,7 +358,7 @@ class V3_Scoped_Css_Splitter {
 	}
 
 	/**
-	 * @return array{raw: string, end: int}|null
+	 * @return array{raw: string, prelude: string, body: string, end: int}|null
 	 */
 	private static function read_at_rule_block( string $css, int $offset, int $length ): ?array {
 		$open_brace = strpos( $css, '{', $offset );
@@ -291,6 +373,8 @@ class V3_Scoped_Css_Splitter {
 
 		return [
 			'raw' => trim( substr( $css, $offset, $block['end'] - $offset ) ),
+			'prelude' => trim( substr( $css, $offset, $open_brace - $offset ) ),
+			'body' => $block['body'],
 			'end' => $block['end'],
 		];
 	}

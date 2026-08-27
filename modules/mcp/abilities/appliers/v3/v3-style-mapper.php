@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * `<setting>_<breakpoint>` on the widget config; if the responsive variant does not exist
  * and the base setting does, the rule is dropped (to avoid overwriting desktop with mobile).
  *
- * Overrides (per-widget CSS -> V3 setting map, see {@see V3_Widget_Bridge_Registry}):
+ * Overrides (per-widget CSS -> V3 setting map, see {@see V3_Widget_Map_Loader}):
  * Four mutually-exclusive shapes are dispatched by the {@see V3_Converter_Registry},
  * one converter class per shape. A fallback `Generic_Index_Converter` uses
  * {@see V3_Style_Settings_Index} for auto-discovered mappings.
@@ -55,9 +55,9 @@ class V3_Style_Mapper {
 	}
 
 	/**
-	 * @param string $css_string
-	 * @param string $widget_type
-	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
+	 * @param string                                                                             $css_string
+	 * @param string                                                                             $widget_type
+	 * @param array                                                                              $widget_config From Widget_Context_Helper::get_widget_config().
 	 * @param array{overrides?: array<string, array>, generic_index?: array<string, array>}|null $mapping Optional pre-resolved mapping.
 	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[]}
 	 */
@@ -159,11 +159,9 @@ class V3_Style_Mapper {
 			return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
 		}
 
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-		$controls = $widget_config['controls'] ?? [];
-		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+		$derived = V3_Auto_Mapper::for_widget( $widget_config, $widget_type );
 
-		return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
+		return new V3_Context_Meta( $widget_type, $widget_config, $derived['overrides'], $derived['generic_index'] );
 	}
 
 	private function finalize( V3_Conversion_Context $ctx, V3_Context_Meta $meta ): array {
@@ -176,7 +174,18 @@ class V3_Style_Mapper {
 			);
 
 			if ( ! empty( $bucket['responsive'] ) && Responsive_Key_Resolver::BASE_BREAKPOINT !== $bucket['breakpoint'] ) {
-				$group_patch = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );
+				$suffixed = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );
+				$group_patch = $suffixed['patch'];
+
+				foreach ( $suffixed['dropped'] as $dropped_setting ) {
+					$ctx->warn(
+						sprintf(
+							'"%1$s" cannot vary per breakpoint, so its %2$s value was dropped.',
+							$dropped_setting,
+							$bucket['breakpoint']
+						)
+					);
+				}
 			}
 
 			$settings_patch = array_merge( $settings_patch, $group_patch );

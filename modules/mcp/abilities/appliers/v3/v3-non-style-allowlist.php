@@ -14,10 +14,11 @@ class V3_Non_Style_Allowlist {
 	/**
 	 * @param string               $widget_type
 	 * @param array<string, mixed> $settings
+	 * @param array<string, mixed> $controls Widget controls, the allowlist is derived from them.
 	 * @return array{allowed: array<string, mixed>, rejected: string[], error: \WP_Error|null}
 	 */
-	public static function filter( string $widget_type, array $settings ): array {
-		$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
+	public static function filter( string $widget_type, array $settings, array $controls = [] ): array {
+		$allowed_keys = V3_Widget_Map_Loader::get_non_style_keys( $widget_type, $controls );
 		$allowed_lookup = array_fill_keys( $allowed_keys, true );
 
 		$allowed = [];
