@@ -275,7 +275,7 @@ class Style_Variants_Merger {
 		if ( '' !== $diagnostics['fallback_css'] ) {
 			$warnings[] = sprintf(
 				/* translators: 1: scope (breakpoint or breakpoint:state), 2: CSS snippet that fell back */
-				__( '[%1$s] CSS fell back to custom_css and may not render reliably: %2$s', 'elementor' ),
+				__( '[%1$s] CSS fell back to custom_css: %2$s', 'elementor' ),
 				$scope,
 				self::truncate_snippet( $diagnostics['fallback_css'] )
 			);

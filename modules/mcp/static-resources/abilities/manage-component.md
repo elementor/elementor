@@ -94,7 +94,7 @@ Example — a `Cards Grid` wrapper that re-exposes `caption`/`image` from each n
   "title": "Hero Section",
   "xml_structure": "<e-flexbox configuration-id=\"hero\"><e-heading configuration-id=\"hero-title\"></e-heading></e-flexbox>",
   "element_config": {
-    "hero-title": { "title": { "content": "Welcome", "children": [] } }
+    "hero-title": { "title": "Welcome" }
   },
   "overridable_props": {
     "heading-text": {

@@ -77,7 +77,7 @@ Example:
 }
 ```
 
-CSS declarations that fall back to `custom_css` may not render reliably (e.g. pixel queries, two-value `gap`, `animation`). `padding` / `margin` shorthands are supported.
+CSS declarations that fall back to `custom_css` (e.g. pixel queries, two-value `gap`, `animation`) are reported in `warnings`. `padding` / `margin` shorthands are supported.
 
 ### element_config format
 

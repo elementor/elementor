@@ -140,7 +140,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices per operation (each prefixed with its config_id). Reports: props skipped because the target widget does not support them; CSS declarations the atomic converter rejected outright (e.g. `animation`); CSS that fell back to `custom_css` (pixel queries, unsupported shorthands, `var()` inside `box-shadow`, unknown variable references) and may not render reliably. The composition was still built — treat warnings as guidance for the next call.',
+					'description' => 'Non-fatal notices per operation (each prefixed with its config_id). Reports: props skipped because the target widget does not support them; CSS declarations the atomic converter rejected outright (e.g. `animation`); CSS that fell back to `custom_css` (pixel queries, unsupported shorthands, `var()` inside `box-shadow`, unknown variable references). The composition was still built — treat warnings as guidance for the next call.',
 				],
 				'removed_element_ids' => [
 					'type' => 'array',
