@@ -3,6 +3,7 @@
 namespace Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
@@ -14,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
+	const ANGIE_IN_PANELS_EXPERIMENT_NAME = 'e_angie_in_panels';
 	const MODULE_NAME = 'widget-creation';
 
 	const PACKAGES = [
@@ -26,13 +28,29 @@ class Module extends BaseModule {
 		return self::MODULE_NAME;
 	}
 
+	public static function get_angie_in_panels_experimental_data(): array {
+		return [
+			'name' => self::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
+			'description' => esc_html__( 'Load Angie inside the native Elementor editor panel instead of the legacy push sidebar.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
 	public function __construct() {
 		parent::__construct();
+		$this->register_angie_in_panels_experiment();
 		AngiePromotion::init();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'elementor/elements/categories_registered', [ $this, 'maybe_register_custom_widgets_category_fallback' ], 100 );
 		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
+	}
+
+	private function register_angie_in_panels_experiment(): void {
+		Plugin::$instance->experiments->add_feature( self::get_angie_in_panels_experimental_data() );
 	}
 
 	private function register_consent_route(): void {
