@@ -191,6 +191,11 @@ class V3_Style_Mapper {
 			$settings_patch = array_merge( $settings_patch, $group_patch );
 		}
 
+		$settings_patch = V3_Value_Resolvers::supplement_background_group_toggles(
+			$settings_patch,
+			$meta->controls()
+		);
+
 		return [
 			'settings_patch' => $settings_patch,
 			'unmapped_css' => $this->unmapped_serializer->join( $ctx->unmapped_parts() ),

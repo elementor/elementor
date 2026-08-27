@@ -83,6 +83,49 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( 'Georgia', $patch['typography_font_family'] );
 	}
 
+	public function test_resolve_line_height__keeps_unitless_values() {
+		// Arrange / Act / Assert.
+		$this->assertSame( [ 'unit' => '', 'size' => 1.5 ], V3_Value_Resolvers::resolve_line_height( '1.5' ) );
+		$this->assertSame( [ 'unit' => 'px', 'size' => 24.0 ], V3_Value_Resolvers::resolve_line_height( '24px' ) );
+	}
+
+	public function test_resolve_typography_group__uses_unitless_line_height() {
+		// Arrange / Act.
+		$patch = V3_Value_Resolvers::resolve_typography_group(
+			[
+				'line-height' => '1.5',
+			],
+			'search_field_typography'
+		);
+
+		// Assert.
+		$this->assertSame( [ 'unit' => '', 'size' => 1.5 ], $patch['search_field_typography_line_height'] );
+	}
+
+	public function test_supplement_background_group_toggles__sets_classic_type_for_color_keys() {
+		// Arrange.
+		$controls = [
+			'search_field_background_normal_background' => [ 'type' => 'choose' ],
+			'search_field_background_normal_color' => [ 'type' => 'color' ],
+			'results_background_background' => [ 'type' => 'choose' ],
+			'results_background_color' => [ 'type' => 'color' ],
+			'title_color' => [ 'type' => 'color' ],
+		];
+		$patch = [
+			'search_field_background_normal_color' => '#ffffff',
+			'results_background_color' => '#f5f5f5',
+			'title_color' => '#111111',
+		];
+
+		// Act.
+		$result = V3_Value_Resolvers::supplement_background_group_toggles( $patch, $controls );
+
+		// Assert.
+		$this->assertSame( 'classic', $result['search_field_background_normal_background'] );
+		$this->assertSame( 'classic', $result['results_background_background'] );
+		$this->assertArrayNotHasKey( 'title_background', $result );
+	}
+
 	public function test_resolve_typography_group__skips_toggle_when_nothing_resolves() {
 		// Arrange / Act.
 		$patch = V3_Value_Resolvers::resolve_typography_group(

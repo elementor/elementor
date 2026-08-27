@@ -30,6 +30,67 @@ class V3_Value_Resolvers {
 	}
 
 	/**
+	 * Line-height may be unitless (e.g. 1.5); Elementor expects an empty unit in that case.
+	 *
+	 * @return array{unit: string, size: float}|null
+	 */
+	public static function resolve_line_height( string $css_value ): ?array {
+		$value = trim( $css_value );
+
+		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%)?$/i', $value, $matches ) ) {
+			$unit = strtolower( $matches[2] ?? '' );
+
+			return [
+				'unit' => $unit,
+				'size' => (float) $matches[1],
+			];
+		}
+
+		return self::resolve_dimension( $value );
+	}
+
+	/**
+	 * When a background color is written, Elementor also needs the background type choose set to `classic`.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	public static function supplement_background_group_toggles( array $patch, array $controls ): array {
+		foreach ( $patch as $setting => $value ) {
+			if ( ! is_string( $setting ) || ! str_ends_with( $setting, '_color' ) ) {
+				continue;
+			}
+
+			if ( ! self::is_background_color_setting( $setting ) ) {
+				continue;
+			}
+
+			$type_key = preg_replace( '/_color$/', '_background', $setting );
+
+			if ( ! is_string( $type_key ) || ! isset( $controls[ $type_key ] ) ) {
+				continue;
+			}
+
+			if ( 'choose' !== ( $controls[ $type_key ]['type'] ?? '' ) ) {
+				continue;
+			}
+
+			$patch[ $type_key ] = 'classic';
+		}
+
+		return $patch;
+	}
+
+	private static function is_background_color_setting( string $setting ): bool {
+		if ( str_contains( $setting, '_background_' ) ) {
+			return true;
+		}
+
+		return (bool) preg_match( '/_background_color$/', $setting );
+	}
+
+	/**
 	 * Parses padding/margin/border-radius shorthand into Elementor dimensions shape.
 	 *
 	 * @return array{top: string, right: string, bottom: string, left: string, unit: string, isLinked: bool}|null
@@ -207,7 +268,15 @@ class V3_Value_Resolvers {
 				continue;
 			}
 
-			if ( in_array( $property, [ 'font-size', 'line-height', 'letter-spacing', 'word-spacing' ], true ) ) {
+			if ( 'line-height' === $property ) {
+				$dimension = self::resolve_line_height( $value );
+				if ( null !== $dimension ) {
+					$patch[ $key ] = $dimension;
+				}
+				continue;
+			}
+
+			if ( in_array( $property, [ 'font-size', 'letter-spacing', 'word-spacing' ], true ) ) {
 				$dimension = self::resolve_dimension( $value );
 				if ( null !== $dimension ) {
 					$patch[ $key ] = $dimension;
