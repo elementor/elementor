@@ -510,7 +510,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 		$editor_url = $component->get_edit_url();
 
 		return [
-			'editor_url' => $editor_url,
+			'edit_url' => $editor_url,
 			'llm_instructions' => sprintf(
 				/* translators: %s: Component editor URL. */
 				__( 'You MUST show the user this link to review the component: %s', 'elementor' ),
@@ -583,7 +583,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'integer' ],
 					'description' => 'archive only.',
 				],
-				'editor_url' => [
+				'edit_url' => [
 					'type' => 'string',
 					'description' => 'Component documents have no public permalink; this is the editor URL to review the change.',
 				],
