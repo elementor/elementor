@@ -352,6 +352,85 @@ namespace {
 			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 		}
 
+		public function test_apply__v4_rejected_property_produces_warning() {
+			// Arrange.
+			$css       = 'animation: fade 1s;';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [], 'customCss' => '', 'rejected' => [ 'animation: fade 1s;' ] ] ] ]
+			);
+			$applier = $this->make_applier( $converter );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertNotEmpty( $result['warnings'], 'Rejected V4 property must produce a warning.' );
+			$this->assertTrue(
+				(bool) array_filter(
+					$result['warnings'],
+					static fn( $warning ) => false !== strpos( (string) $warning, 'animation: fade 1s' )
+				),
+				'Warning must name the rejected declaration.'
+			);
+		}
+
+		public function test_apply__v4_custom_css_fallback_produces_warning() {
+			// Arrange.
+			$css       = 'gap: 10px 20px;';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [], 'customCss' => 'gap: 10px 20px;', 'rejected' => [] ] ] ]
+			);
+			$applier = $this->make_applier( $converter );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertNotEmpty( $result['warnings'], 'V4 CSS routed to custom_css must produce a warning.' );
+			$this->assertTrue(
+				(bool) array_filter(
+					$result['warnings'],
+					static fn( $warning ) => false !== strpos( (string) $warning, 'custom_css' )
+				),
+				'Warning must reference custom_css so the LLM recognizes the fallback signal.'
+			);
+			$this->assertTrue(
+				(bool) array_filter(
+					$result['warnings'],
+					static fn( $warning ) => false !== strpos( (string) $warning, 'gap' )
+				),
+				'Warning must include the offending declaration snippet.'
+			);
+		}
+
+		public function test_apply__v4_prefixes_warnings_with_config_id() {
+			// Arrange.
+			$css       = 'animation: pulse 2s;';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [], 'customCss' => '', 'rejected' => [ 'animation: pulse 2s;' ] ] ] ]
+			);
+			$applier = $this->make_applier( $converter );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$this->assertNull( $result['error'] );
+			$this->assertNotEmpty( $result['warnings'] );
+			$this->assertStringStartsWith( '[hero-title]', $result['warnings'][0] );
+		}
+
 		public function test_apply__v3_replace_empty_css_wipes_styles() {
 			// Arrange.
 			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );

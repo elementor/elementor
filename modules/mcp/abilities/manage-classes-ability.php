@@ -379,7 +379,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		$touched_items = [];
 
 		foreach ( $intents['creates'] as $index => $intent ) {
-			$variants                      = Style_Variants_Merger::build_variants( $intent['breakpoint_blocks'], $this->get_css_converter() );
+			$variants                      = Style_Variants_Merger::build_variants( $intent['breakpoint_blocks'], $this->get_css_converter() )['variants'];
 			$touched_items[ $intent['id'] ] = [
 				'id'       => $intent['id'],
 				'label'    => $intent['label'],
@@ -390,7 +390,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 		foreach ( $intents['updates'] as $index => $intent ) {
 			if ( isset( $intent['breakpoint_blocks'] ) ) {
-				$new_variants           = Style_Variants_Merger::build_variants( $intent['breakpoint_blocks'], $this->get_css_converter() );
+				$new_variants           = Style_Variants_Merger::build_variants( $intent['breakpoint_blocks'], $this->get_css_converter() )['variants'];
 				$removal_breakpoints    = $intent['removal_breakpoints'];
 				$existing_after_removal = array_values(
 					array_filter(

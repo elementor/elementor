@@ -55,12 +55,11 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media (--breakpoint)` blocks (e.g. `@media (--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css`, which is stripped by Pro 3.35+.
+- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css` and may not render reliably.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
-- **box-shadow**: literal values only — `var(...)` wrappers are not supported.
+- **CSS value traps** (fall back to `custom_css` and may not render reliably; reported in `warnings` when detected): two-value `gap` / `row-gap`; per-side `border-color` / `border-style`; elliptical `border-radius` (slash form); `transform` matrix / skew / perspective / rotate3d; `transition` (easing and delay dropped); `box-shadow` with `var(...)` inside; `font-family` fallback stacks; unknown `var()` references; `animation` and `animation-*` (rejected). **`padding` / `margin` shorthands are supported** — do not prefer longhand over them.
+- **box-shadow**: `var(...)` inside `box-shadow` is not supported and falls back to `custom_css`. `box-shadow` itself is fully supported with literal values.
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
-- Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
 ## element_config FORMAT
@@ -68,7 +67,7 @@ Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
 - **boolean**: plain boolean (`true`)
-- **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
+- **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). Do NOT wrap in `{ content, children }`.
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`.
@@ -87,7 +86,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
 - Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
-- Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
+- Unrecognized variable references fall back to `custom_css` and may not render reliably
 
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
@@ -207,7 +206,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   "element_config": {
     "Section Title": {
       "tag": "h2",
-      "title": { "content": "Welcome", "children": [] }
+      "title": "Welcome"
     }
   },
   "style": {
