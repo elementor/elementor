@@ -74,6 +74,42 @@ describe( 'componentOverridableTransformer', () => {
 		expect( result ).toEqual( TEST_OVERRIDE_VALUE );
 	} );
 
+	it( 'should return the override value when origin value is null', () => {
+		// Arrange
+		const value: ComponentOverridable = {
+			override_key: TEST_OVERRIDE_KEY,
+			origin_value: null,
+		};
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: { overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE } },
+		};
+
+		// Act
+		const result = componentOverridableTransformer( value, options );
+
+		// Assert
+		expect( result ).toEqual( TEST_OVERRIDE_VALUE );
+	} );
+
+	it( 'should return null when origin value is null and no override matches', () => {
+		// Arrange
+		const value: ComponentOverridable = {
+			override_key: TEST_OVERRIDE_KEY,
+			origin_value: null,
+		};
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: { overrides: { 'different-key': TEST_OVERRIDE_VALUE } },
+		};
+
+		// Act
+		const result = componentOverridableTransformer( value, options );
+
+		// Assert
+		expect( result ).toBeNull();
+	} );
+
 	it( 'should transform override when origin value is an override type', () => {
 		// Arrange
 		const TRANSFORMED_KEY = 'transformed-key';
