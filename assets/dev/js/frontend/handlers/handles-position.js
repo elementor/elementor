@@ -14,6 +14,16 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		return 'hidden' === this.$element.css( 'overflow' );
 	}
 
+	isEmbeddedEditArea() {
+		const editAreaElement = this.getEditAreaElement();
+
+		if ( ! editAreaElement ) {
+			return false;
+		}
+
+		return null !== editAreaElement.closest( '.elementor-embedded-editor' );
+	}
+
 	getEditAreaElement() {
 		const $closestEditArea = this.$element.closest( '.elementor-edit-area-active' );
 
@@ -55,7 +65,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 
 		const viewportTop = this.$element[ 0 ].getBoundingClientRect().top;
 
-		if ( viewportTop < handlesHeight || this.getEditAreaOffset() < handlesHeight || this.isOverflowHidden() ) {
+		if ( viewportTop < handlesHeight || this.isOverflowHidden() || ( this.isEmbeddedEditArea() && this.getEditAreaOffset() < handlesHeight ) ) {
 			this.$element.addClass( handlesInsideClass );
 		} else {
 			this.$element.removeClass( handlesInsideClass );

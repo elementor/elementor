@@ -6,6 +6,7 @@ import EditorPage from '../../../pages/editor-page';
 const INNER_CONTAINER_HANDLE_BACKGROUND = 'rgb(157, 165, 174)';
 const PARENT_CONTAINER_HANDLE_BACKGROUND = 'rgb(243, 186, 253)';
 const PARENT_CONTAINER_OUTLINE_COLOR = PARENT_CONTAINER_HANDLE_BACKGROUND;
+const HANDLES_INSIDE_VIEWPORT_THRESHOLD_PX = 100;
 
 test.describe( 'Container handles @container', () => {
 	test( 'Inner handle styles stay scoped to nested containers [ED-25335]', async ( { page, apiRequests }, testInfo ) => {
@@ -85,6 +86,10 @@ test.describe( 'Container handles @container', () => {
 			// Arrange.
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await wrapContainerInEmbeddedDocumentWithTopHandle( editor, containerId );
+			await expectContainerHandleMetrics( editor.getPreviewFrame(), containerId, {
+				minViewportTop: HANDLES_INSIDE_VIEWPORT_THRESHOLD_PX,
+				maxEditAreaOffset: HANDLES_INSIDE_VIEWPORT_THRESHOLD_PX,
+			} );
 
 			// Act.
 			await hoverContainer( editor, containerId );
@@ -93,18 +98,31 @@ test.describe( 'Container handles @container', () => {
 			await expectContainerHandlesInside( editor.getPreviewFrame(), containerId );
 		} );
 
-		await test.step( 'Top-level parent below embedded document keeps outside handles', async () => {
-			// Arrange.
-			const topLevelContainerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.setPageTemplate( 'default' );
+	} );
 
-			// Act.
-			await hoverContainer( editor, topLevelContainerId );
+	test( 'Normal document edit-area offset does not flip handles inside [ED-25335]', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-			// Assert.
-			await expect( editor.getPreviewFrame().locator( getContainerSelector( topLevelContainerId ) ) ).not.toHaveClass( /e-handles-inside/ );
+		await editor.getPreviewFrame().locator( '.elementor-edit-area-active' ).evaluate(
+			( editArea, offset ) => {
+				editArea.style.transform = `translateY(${ offset }px)`;
+			},
+			HANDLES_INSIDE_VIEWPORT_THRESHOLD_PX * 2,
+		);
+		await expectContainerHandleMetrics( editor.getPreviewFrame(), containerId, {
+			minViewportTop: HANDLES_INSIDE_VIEWPORT_THRESHOLD_PX,
+			maxEditAreaOffset: HANDLES_INSIDE_VIEWPORT_THRESHOLD_PX,
 		} );
 
-		await editor.setPageTemplate( 'default' );
+		// Act.
+		await hoverContainer( editor, containerId );
+
+		// Assert.
+		await expect( editor.getPreviewFrame().locator( getContainerSelector( containerId ) ) ).not.toHaveClass( /e-handles-inside/ );
 	} );
 } );
 
@@ -155,6 +173,29 @@ async function expectParentContainerOutline( frame: Frame, containerId: string )
 		color: PARENT_CONTAINER_OUTLINE_COLOR,
 		style: 'solid',
 	} );
+}
+
+async function expectContainerHandleMetrics(
+	frame: Frame,
+	containerId: string,
+	{ minViewportTop, maxEditAreaOffset }: { minViewportTop: number; maxEditAreaOffset: number },
+) {
+	const metrics = await frame.evaluate( ( id ) => {
+		const container = document.querySelector( `.elementor-element-${ id }` );
+		const editArea = container?.closest( '.elementor-edit-area-active' );
+
+		if ( ! container || ! editArea ) {
+			throw new Error( 'Container or active edit area was not found for handle metrics.' );
+		}
+
+		return {
+			editAreaOffset: container.getBoundingClientRect().top - editArea.getBoundingClientRect().top,
+			viewportTop: container.getBoundingClientRect().top,
+		};
+	}, containerId );
+
+	expect( metrics.viewportTop ).toBeGreaterThanOrEqual( minViewportTop );
+	expect( metrics.editAreaOffset ).toBeLessThan( maxEditAreaOffset );
 }
 
 async function expectContainerHandlesInside( frame: Frame, containerId: string ) {
