@@ -44,4 +44,8 @@ class Mock_Upgrades_Manager extends DB_Upgrades_Manager {
 	public function mock_continue_run() {
 		$this->get_task_runner()->continue_run();
 	}
+
+	public function mock_clear_cache() {
+		$this->clear_cache();
+	}
 }

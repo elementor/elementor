@@ -5,7 +5,10 @@ use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Experiments\Non_Existing_Dependency;
 use Elementor\Core\Experiments\Wrap_Core_Dependency;
+use Elementor\Core\Files\Base as Files_Base;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Upgrade\Manager;
+use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -814,6 +817,132 @@ class Test_Manager extends Elementor_Test_Base {
 			Experiments_Manager::STATE_INACTIVE
 		);
 
+	}
+
+	/**
+	 * Toggling `e_optimized_css_files` ON purges only meta, so it never triggers the
+	 * exact bug it fixes (turning the experiment on wiping the site's CSS files).
+	 *
+	 * Uses the real `Plugin::$instance->experiments` singleton, since that's the
+	 * instance `Core\Experiments\Manager::on_feature_state_change()` reads
+	 * `is_feature_active()` from when deciding whether to invalidate or clear.
+	 */
+	public function test_on_feature_state_change__turning_optimized_css_files_on_does_not_delete_files() {
+		// Arrange.
+		$experiments = Plugin::$instance->experiments;
+		$feature_name = 'e_optimized_css_files';
+		$original_default_state = $experiments->get_features( $feature_name )['default'];
+
+		$experiments->set_feature_default_state( $feature_name, Experiments_Manager::STATE_INACTIVE );
+
+		$post_id = $this->factory()->post->create();
+		$dir = Files_Base::get_base_uploads_dir() . Files_Base::DEFAULT_FILES_DIR;
+		wp_mkdir_p( $dir );
+		$path = $dir . 'post-' . $post_id . '.css';
+		file_put_contents( $path, '.test{color:red}' );
+		add_post_meta( $post_id, Post_CSS::META_KEY, [ 'status' => 'file' ] );
+
+		// Act: turn the experiment ON.
+		update_option(
+			$experiments->get_feature_option_key( $feature_name ),
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		// Assert: the file survives the toggle, only the meta was invalidated.
+		$this->assertFileExists( $path );
+		$this->assertEmpty( get_post_meta( $post_id, Post_CSS::META_KEY ) );
+
+		// Cleanup.
+		unlink( $path );
+		$experiments->set_feature_default_state( $feature_name, $original_default_state );
+		delete_option( $experiments->get_feature_option_key( $feature_name ) );
+	}
+
+	/**
+	 * Toggling `e_optimized_css_files` OFF should keep hard-deleting, same as any
+	 * other experiment toggle today.
+	 */
+	public function test_on_feature_state_change__turning_optimized_css_files_off_still_deletes_files() {
+		// Arrange.
+		$experiments = Plugin::$instance->experiments;
+		$feature_name = 'e_optimized_css_files';
+		$original_default_state = $experiments->get_features( $feature_name )['default'];
+
+		$experiments->set_feature_default_state( $feature_name, Experiments_Manager::STATE_ACTIVE );
+		update_option(
+			$experiments->get_feature_option_key( $feature_name ),
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$post_id = $this->factory()->post->create();
+		$dir = Files_Base::get_base_uploads_dir() . Files_Base::DEFAULT_FILES_DIR;
+		wp_mkdir_p( $dir );
+		$path = $dir . 'post-' . $post_id . '.css';
+		file_put_contents( $path, '.test{color:red}' );
+		add_post_meta( $post_id, Post_CSS::META_KEY, [ 'status' => 'file' ] );
+
+		// Act: turn the experiment OFF.
+		update_option(
+			$experiments->get_feature_option_key( $feature_name ),
+			Experiments_Manager::STATE_INACTIVE
+		);
+
+		// Assert.
+		$this->assertFileDoesNotExist( $path );
+		$this->assertEmpty( get_post_meta( $post_id, Post_CSS::META_KEY ) );
+
+		// Cleanup.
+		$experiments->set_feature_default_state( $feature_name, $original_default_state );
+		delete_option( $experiments->get_feature_option_key( $feature_name ) );
+	}
+
+	/**
+	 * The gate must key off whether `e_optimized_css_files` is *currently* active, not
+	 * off which feature was just toggled. Otherwise, once a user has opted in, flipping
+	 * any *other* experiment on the same request would still hard-delete their CSS
+	 * files - the exact day-2 regression the experiment is meant to prevent.
+	 */
+	public function test_on_feature_state_change__toggling_an_unrelated_feature_while_optimized_css_files_is_active_does_not_delete_files() {
+		// Arrange.
+		$experiments = Plugin::$instance->experiments;
+		$feature_name = 'e_optimized_css_files';
+		$original_default_state = $experiments->get_features( $feature_name )['default'];
+
+		$experiments->set_feature_default_state( $feature_name, Experiments_Manager::STATE_ACTIVE );
+
+		$other_feature_name = 'container';
+		$original_other_default_state = $experiments->get_features( $other_feature_name )['default'];
+		$original_other_state = get_option(
+			$experiments->get_feature_option_key( $other_feature_name ),
+			$original_other_default_state
+		);
+		$toggled_other_state = Experiments_Manager::STATE_ACTIVE === $original_other_state
+			? Experiments_Manager::STATE_INACTIVE
+			: Experiments_Manager::STATE_ACTIVE;
+
+		$post_id = $this->factory()->post->create();
+		$dir = Files_Base::get_base_uploads_dir() . Files_Base::DEFAULT_FILES_DIR;
+		wp_mkdir_p( $dir );
+		$path = $dir . 'post-' . $post_id . '.css';
+		file_put_contents( $path, '.test{color:red}' );
+		add_post_meta( $post_id, Post_CSS::META_KEY, [ 'status' => 'file' ] );
+
+		// Act: toggle a *different* experiment, not `e_optimized_css_files`.
+		update_option(
+			$experiments->get_feature_option_key( $other_feature_name ),
+			$toggled_other_state
+		);
+
+		// Assert: the file survives, only the meta was invalidated - same as toggling
+		// `e_optimized_css_files` itself would do.
+		$this->assertFileExists( $path );
+		$this->assertEmpty( get_post_meta( $post_id, Post_CSS::META_KEY ) );
+
+		// Cleanup.
+		unlink( $path );
+		update_option( $experiments->get_feature_option_key( $other_feature_name ), $original_other_state );
+		$experiments->set_feature_default_state( $feature_name, $original_default_state );
+		delete_option( $experiments->get_feature_option_key( $feature_name ) );
 	}
 
 	/**
