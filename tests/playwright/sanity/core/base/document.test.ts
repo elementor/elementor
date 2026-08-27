@@ -10,6 +10,7 @@ test.describe( 'Document tests', async () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await page.close();
+		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
 	test( 'Converting Gutenberg page to sections columns',

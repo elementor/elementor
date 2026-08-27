@@ -18,6 +18,12 @@ test.describe( 'Editor tests', () => {
 		await editor.openUserPreferencesPanel();
 		await editor.isUiStable( appBar, 5 );
 
+		await appBar.locator( '.MuiBadge-badge' ).evaluateAll( ( badges ) => {
+			badges.forEach( ( badge ) => {
+				( badge as HTMLElement ).style.visibility = 'hidden';
+			} );
+		} );
+
 		// Assert
 		expect.soft( await appBar.screenshot( {
 			type: 'jpeg',
