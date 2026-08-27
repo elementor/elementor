@@ -30,13 +30,16 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__returns_only_public_content_for_subscriber() {
+	public function test_execute__subscriber_cannot_see_other_users_drafts_or_private_posts() {
 		// Arrange
-		$user_id = $this->factory()->user->create( [ 'role' => 'subscriber' ] );
-		wp_set_current_user( $user_id );
+		$author_id = $this->factory()->user->create( [ 'role' => 'author' ] );
+		wp_set_current_user( $author_id );
 		$public_id = $this->create_post( 'Public Post', 'post', 'publish' );
-		$this->create_post( 'Draft Post', 'post', 'draft' );
-		$this->create_post( 'Private Post', 'post', 'private' );
+		$draft_id = $this->create_post( 'Draft Post', 'post', 'draft' );
+		$private_id = $this->create_post( 'Private Post', 'post', 'private' );
+
+		$subscriber_id = $this->factory()->user->create( [ 'role' => 'subscriber' ] );
+		wp_set_current_user( $subscriber_id );
 
 		// Act
 		$result = $this->ability->execute( [] );
@@ -44,15 +47,16 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		// Assert
 		$ids = array_column( $result['posts'], 'id' );
 		$this->assertContains( $public_id, $ids );
-		$mine = array_filter( $ids, fn( $id ) => in_array( $id, $this->created_post_ids, true ) );
-		$this->assertCount( 1, $mine );
+		$this->assertNotContains( $draft_id, $ids );
+		$this->assertNotContains( $private_id, $ids );
 	}
 
-	public function test_execute__editor_sees_drafts_and_private_posts() {
+	public function test_execute__author_can_see_their_own_drafts_and_private_posts() {
 		// Arrange
-		$this->act_as_editor();
-		$draft_id = $this->create_post( 'Draft Post', 'post', 'draft' );
-		$private_id = $this->create_post( 'Private Post', 'post', 'private' );
+		$author_id = $this->factory()->user->create( [ 'role' => 'author' ] );
+		wp_set_current_user( $author_id );
+		$draft_id = $this->create_post( 'My Draft', 'post', 'draft' );
+		$private_id = $this->create_post( 'My Private', 'post', 'private' );
 
 		// Act
 		$result = $this->ability->execute( [] );
