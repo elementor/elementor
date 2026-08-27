@@ -1,0 +1,203 @@
+{
+    "controls": {
+        "section_content": {
+            "type": "section",
+            "tab": "content",
+            "label": "Content"
+        },
+        "excerpt": {
+            "type": "text",
+            "tab": "content",
+            "section": "section_content"
+        },
+        "section_style": {
+            "type": "section",
+            "tab": "style",
+            "label": "Style"
+        },
+        "align": {
+            "type": "choose",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Alignment",
+            "selectors": {
+                "{{WRAPPER}}": "text-align: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "typography_typography": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Typography"
+        },
+        "typography_font_family": {
+            "type": "font",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Family",
+            "selectors": {
+                "{{WRAPPER}}": "font-family: \"{{VALUE}}\", Sans-serif;"
+            }
+        },
+        "typography_font_size": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Size",
+            "selectors": {
+                "{{WRAPPER}}": "font-size: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "typography_font_weight": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Weight",
+            "selectors": {
+                "{{WRAPPER}}": "font-weight: {{VALUE}};"
+            }
+        },
+        "typography_text_transform": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Transform",
+            "selectors": {
+                "{{WRAPPER}}": "text-transform: {{VALUE}};"
+            }
+        },
+        "typography_font_style": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Style",
+            "selectors": {
+                "{{WRAPPER}}": "font-style: {{VALUE}};"
+            }
+        },
+        "typography_text_decoration": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Decoration",
+            "selectors": {
+                "{{WRAPPER}}": "text-decoration: {{VALUE}};"
+            }
+        },
+        "typography_line_height": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Line Height",
+            "selectors": {
+                "{{WRAPPER}}": "line-height: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "typography_letter_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Letter Spacing",
+            "selectors": {
+                "{{WRAPPER}}": "letter-spacing: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "typography_word_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Word Spacing",
+            "selectors": {
+                "{{WRAPPER}}": "word-spacing: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "text_shadow_text_shadow_type": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Text Shadow"
+        },
+        "text_shadow_text_shadow": {
+            "type": "text_shadow",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Text Shadow",
+            "selectors": {
+                "{{WRAPPER}}": "text-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};"
+            }
+        },
+        "paragraph_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Paragraph Spacing",
+            "selectors": {
+                "{{WRAPPER}}": "margin-bottom: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "separator": {
+            "type": "divider",
+            "tab": "style",
+            "section": "section_style"
+        },
+        "link_colors": {
+            "type": "tabs",
+            "tab": "style",
+            "section": "section_style"
+        },
+        "colors_normal": {
+            "type": "tab",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Normal"
+        },
+        "title_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Text Color",
+            "selectors": {
+                "{{WRAPPER}}": "color: {{VALUE}};"
+            }
+        },
+        "link_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Link Color",
+            "selectors": {
+                "{{WRAPPER}} a": "color: {{VALUE}};"
+            }
+        },
+        "colors_hover": {
+            "type": "tab",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Hover"
+        },
+        "link_hover_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Link Color",
+            "selectors": {
+                "{{WRAPPER}} a:hover, {{WRAPPER}} a:focus": "color: {{VALUE}};"
+            }
+        },
+        "link_hover_color_transition_duration": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Transition Duration",
+            "selectors": {
+                "{{WRAPPER}} a": "transition-duration: {{SIZE}}{{UNIT}};"
+            }
+        }
+    }
+}

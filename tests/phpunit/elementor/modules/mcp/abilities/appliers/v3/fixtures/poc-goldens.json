@@ -1,0 +1,1954 @@
+{
+    "nav-menu": {
+        "non_style_keys": [
+            "menu_name",
+            "menu",
+            "layout",
+            "align_items",
+            "pointer",
+            "animation_line",
+            "animation_framed",
+            "animation_background",
+            "animation_text",
+            "submenu_icon",
+            "dropdown",
+            "full_width",
+            "text_align",
+            "toggle",
+            "toggle_icon_normal",
+            "toggle_icon_hover_animation",
+            "toggle_icon_active",
+            "toggle_align"
+        ],
+        "default_inner_element": "main-menu",
+        "wrapper_style_overrides": {
+            "margin": {
+                "setting": "_margin",
+                "resolver": "sides",
+                "responsive": true
+            },
+            "margin-top": {
+                "setting": "_margin",
+                "resolver": "dimension_side",
+                "side": "top",
+                "responsive": true
+            },
+            "margin-right": {
+                "setting": "_margin",
+                "resolver": "dimension_side",
+                "side": "right",
+                "responsive": true
+            },
+            "margin-bottom": {
+                "setting": "_margin",
+                "resolver": "dimension_side",
+                "side": "bottom",
+                "responsive": true
+            },
+            "margin-left": {
+                "setting": "_margin",
+                "resolver": "dimension_side",
+                "side": "left",
+                "responsive": true
+            }
+        },
+        "wrapper_generic_index": {
+            "--e-nav-menu-divider-content": {
+                "setting": "nav_menu_divider",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-nav-menu-divider-style": {
+                "setting": "nav_menu_divider_style",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-nav-menu-divider-width": {
+                "setting": "nav_menu_divider_weight",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--e-nav-menu-divider-height": {
+                "setting": "nav_menu_divider_height",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--e-nav-menu-divider-color": {
+                "setting": "nav_menu_divider_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "height": {
+                "setting": "pointer_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--e-nav-menu-horizontal-menu-item-margin": {
+                "setting": "menu_space_between",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "fill": {
+                "setting": "toggle_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "fill@hover": {
+                "setting": "toggle_color_hover",
+                "resolver": "color",
+                "responsive": false
+            },
+            "--nav-menu-icon-size": {
+                "setting": "toggle_size",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "padding": {
+                "setting": "_padding",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "--container-widget-width": {
+                "setting": "_element_custom_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--align-self": {
+                "setting": "_flex_align_self",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-grow": {
+                "setting": "_flex_grow",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-shrink": {
+                "setting": "_flex_shrink",
+                "resolver": "text",
+                "responsive": false
+            },
+            "align-self": {
+                "setting": "_element_vertical_align",
+                "resolver": "text",
+                "responsive": false
+            },
+            "top": {
+                "setting": "_offset_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "bottom": {
+                "setting": "_offset_y_end",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "z-index": {
+                "setting": "_z_index",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx": {
+                "setting": "_transform_flipX_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy": {
+                "setting": "_transform_flipY_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx@hover": {
+                "setting": "_transform_flipX_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy@hover": {
+                "setting": "_transform_flipY_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-transition-duration": {
+                "setting": "_transform_transition_hover",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "background-image": {
+                "setting": "_background_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment": {
+                "setting": "_background_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat": {
+                "setting": "_background_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background": {
+                "setting": "_background_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-image@hover": {
+                "setting": "_background_hover_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment@hover": {
+                "setting": "_background_hover_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat@hover": {
+                "setting": "_background_hover_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background@hover": {
+                "setting": "_background_hover_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-style": {
+                "setting": "_border_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "box-shadow": {
+                "setting": "_box_shadow_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "border-style@hover": {
+                "setting": "_border_hover_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width@hover": {
+                "setting": "_border_hover_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color@hover": {
+                "setting": "_border_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius@hover": {
+                "setting": "_border_radius_hover",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow@hover": {
+                "setting": "_box_shadow_hover_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "-webkit-mask-position": {
+                "setting": "_mask_position",
+                "resolver": "text",
+                "responsive": false
+            },
+            "-webkit-mask-position-x": {
+                "setting": "_mask_position_x",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-position-y": {
+                "setting": "_mask_position_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-repeat": {
+                "setting": "_mask_repeat",
+                "resolver": "text",
+                "responsive": false
+            }
+        },
+        "inner_elements": {
+            "main-menu": {
+                "label": "Main menu items",
+                "accepted_css_properties": [
+                    "font-family",
+                    "font-weight",
+                    "font-style",
+                    "text-transform",
+                    "text-decoration",
+                    "font-size",
+                    "line-height",
+                    "letter-spacing",
+                    "word-spacing",
+                    "color",
+                    "background-color",
+                    "padding-left",
+                    "padding-right",
+                    "padding-top",
+                    "padding-bottom",
+                    "height",
+                    "fill",
+                    "border-color",
+                    "border-width",
+                    "border-radius"
+                ],
+                "supported_states": [
+                    "hover",
+                    "active"
+                ],
+                "overrides": {
+                    "font-family": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": false
+                    },
+                    "font-weight": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": false
+                    },
+                    "font-style": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": false
+                    },
+                    "text-transform": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": false
+                    },
+                    "text-decoration": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": false
+                    },
+                    "font-size": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": true
+                    },
+                    "line-height": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": true
+                    },
+                    "letter-spacing": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": true
+                    },
+                    "word-spacing": {
+                        "typography_prefix": "menu_typography",
+                        "responsive": true
+                    },
+                    "color": {
+                        "setting": "color_menu_item",
+                        "resolver": "color"
+                    },
+                    "color@hover": {
+                        "setting": "color_menu_item_hover",
+                        "resolver": "color"
+                    },
+                    "color@active": {
+                        "setting": "color_menu_item_active",
+                        "resolver": "color"
+                    },
+                    "background-color@hover": {
+                        "setting": "pointer_color_menu_item_hover",
+                        "resolver": "color"
+                    },
+                    "background-color@active": {
+                        "setting": "pointer_color_menu_item_active",
+                        "resolver": "color"
+                    },
+                    "padding-left": {
+                        "setting": "padding_horizontal_menu_item",
+                        "resolver": "dimension",
+                        "responsive": true
+                    },
+                    "padding-right": {
+                        "setting": "padding_horizontal_menu_item",
+                        "resolver": "dimension",
+                        "responsive": true
+                    },
+                    "padding-top": {
+                        "setting": "padding_vertical_menu_item",
+                        "resolver": "dimension",
+                        "responsive": true
+                    },
+                    "padding-bottom": {
+                        "setting": "padding_vertical_menu_item",
+                        "resolver": "dimension",
+                        "responsive": true
+                    }
+                },
+                "generic_index": {
+                    "height": {
+                        "setting": "pointer_width",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "fill": {
+                        "setting": "color_menu_item",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "fill@hover": {
+                        "setting": "color_menu_item_hover",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "border-color@hover": {
+                        "setting": "pointer_color_menu_item_hover",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "border-color@active": {
+                        "setting": "pointer_color_menu_item_active",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "border-width": {
+                        "setting": "pointer_width",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "border-radius": {
+                        "setting": "border_radius_menu_item",
+                        "resolver": "sides",
+                        "responsive": false
+                    }
+                }
+            },
+            "dropdown": {
+                "label": "Dropdown / sub-menu",
+                "accepted_css_properties": [
+                    "font-family",
+                    "font-weight",
+                    "font-style",
+                    "text-transform",
+                    "text-decoration",
+                    "font-size",
+                    "line-height",
+                    "letter-spacing",
+                    "word-spacing",
+                    "border",
+                    "box-shadow",
+                    "color",
+                    "background-color",
+                    "border-radius",
+                    "padding-left",
+                    "padding-top",
+                    "margin-top",
+                    "fill",
+                    "border-style",
+                    "border-width",
+                    "border-color",
+                    "border-top-left-radius",
+                    "border-top-right-radius",
+                    "border-bottom-right-radius",
+                    "border-bottom-left-radius",
+                    "padding-right",
+                    "padding-bottom",
+                    "border-bottom-width"
+                ],
+                "supported_states": [
+                    "hover",
+                    "active"
+                ],
+                "overrides": {
+                    "font-family": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": false
+                    },
+                    "font-weight": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": false
+                    },
+                    "font-style": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": false
+                    },
+                    "text-transform": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": false
+                    },
+                    "text-decoration": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": false
+                    },
+                    "font-size": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": true
+                    },
+                    "line-height": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": true
+                    },
+                    "letter-spacing": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": true
+                    },
+                    "word-spacing": {
+                        "typography_prefix": "dropdown_typography",
+                        "responsive": true
+                    },
+                    "border": {
+                        "border_prefix": "dropdown_border"
+                    },
+                    "box-shadow": {
+                        "box_shadow_prefix": "dropdown_box_shadow"
+                    },
+                    "color": {
+                        "setting": "color_dropdown_item",
+                        "resolver": "color"
+                    },
+                    "color@hover": {
+                        "setting": "color_dropdown_item_hover",
+                        "resolver": "color"
+                    },
+                    "color@active": {
+                        "setting": "color_dropdown_item_active",
+                        "resolver": "color"
+                    },
+                    "background-color": {
+                        "setting": "background_color_dropdown_item",
+                        "resolver": "color"
+                    },
+                    "background-color@hover": {
+                        "setting": "background_color_dropdown_item_hover",
+                        "resolver": "color"
+                    },
+                    "background-color@active": {
+                        "setting": "background_color_dropdown_item_active",
+                        "resolver": "color"
+                    },
+                    "border-radius": {
+                        "setting": "dropdown_border_radius",
+                        "resolver": "sides",
+                        "responsive": true
+                    }
+                },
+                "generic_index": {
+                    "padding-left": {
+                        "setting": "padding_horizontal_dropdown_item",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "padding-top": {
+                        "setting": "padding_vertical_dropdown_item",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "margin-top": {
+                        "setting": "dropdown_top_distance",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "fill": {
+                        "setting": "color_dropdown_item",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "border-style": {
+                        "setting": "dropdown_border_border",
+                        "resolver": "text",
+                        "responsive": false
+                    },
+                    "border-width": {
+                        "setting": "dropdown_border_width",
+                        "resolver": "sides",
+                        "responsive": false
+                    },
+                    "border-color": {
+                        "setting": "dropdown_border_color",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "border-top-left-radius": {
+                        "setting": "dropdown_border_radius",
+                        "resolver": "sides",
+                        "responsive": false
+                    },
+                    "border-top-right-radius": {
+                        "setting": "dropdown_border_radius",
+                        "resolver": "sides",
+                        "responsive": false
+                    },
+                    "border-bottom-right-radius": {
+                        "setting": "dropdown_border_radius",
+                        "resolver": "sides",
+                        "responsive": false
+                    },
+                    "border-bottom-left-radius": {
+                        "setting": "dropdown_border_radius",
+                        "resolver": "sides",
+                        "responsive": false
+                    },
+                    "padding-right": {
+                        "setting": "padding_horizontal_dropdown_item",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "padding-bottom": {
+                        "setting": "padding_vertical_dropdown_item",
+                        "resolver": "dimension",
+                        "responsive": false
+                    },
+                    "border-bottom-width": {
+                        "setting": "dropdown_divider_width",
+                        "resolver": "dimension",
+                        "responsive": false
+                    }
+                }
+            },
+            "toggle": {
+                "label": "Mobile toggle button",
+                "accepted_css_properties": [
+                    "border",
+                    "color",
+                    "background-color",
+                    "border-width",
+                    "border-radius",
+                    "fill",
+                    "--nav-menu-icon-size"
+                ],
+                "supported_states": [
+                    "hover"
+                ],
+                "overrides": {
+                    "border": {
+                        "border_prefix": "toggle_border"
+                    },
+                    "color": {
+                        "setting": "toggle_color",
+                        "resolver": "color"
+                    },
+                    "color@hover": {
+                        "setting": "toggle_color_hover",
+                        "resolver": "color"
+                    },
+                    "background-color": {
+                        "setting": "toggle_background_color",
+                        "resolver": "color"
+                    },
+                    "background-color@hover": {
+                        "setting": "toggle_background_color_hover",
+                        "resolver": "color"
+                    },
+                    "border-width": {
+                        "setting": "toggle_border_width",
+                        "resolver": "dimension",
+                        "responsive": true
+                    },
+                    "border-radius": {
+                        "setting": "toggle_border_radius",
+                        "resolver": "dimension",
+                        "responsive": true
+                    }
+                },
+                "generic_index": {
+                    "fill": {
+                        "setting": "toggle_color",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "fill@hover": {
+                        "setting": "toggle_color_hover",
+                        "resolver": "color",
+                        "responsive": false
+                    },
+                    "--nav-menu-icon-size": {
+                        "setting": "toggle_size",
+                        "resolver": "dimension",
+                        "responsive": false
+                    }
+                }
+            }
+        }
+    },
+    "theme-post-content": {
+        "non_style_keys": [],
+        "default_inner_element": null,
+        "wrapper_style_overrides": {
+            "font-family": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-weight": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-style": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-transform": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-decoration": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-size": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "line-height": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "letter-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "word-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "color": {
+                "setting": "text_color",
+                "resolver": "color"
+            },
+            "text-align": {
+                "setting": "align",
+                "resolver": "text"
+            }
+        },
+        "wrapper_generic_index": {
+            "margin": {
+                "setting": "_margin",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "padding": {
+                "setting": "_padding",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "--container-widget-width": {
+                "setting": "_element_custom_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--align-self": {
+                "setting": "_flex_align_self",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-grow": {
+                "setting": "_flex_grow",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-shrink": {
+                "setting": "_flex_shrink",
+                "resolver": "text",
+                "responsive": false
+            },
+            "align-self": {
+                "setting": "_element_vertical_align",
+                "resolver": "text",
+                "responsive": false
+            },
+            "top": {
+                "setting": "_offset_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "bottom": {
+                "setting": "_offset_y_end",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "z-index": {
+                "setting": "_z_index",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx": {
+                "setting": "_transform_flipX_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy": {
+                "setting": "_transform_flipY_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx@hover": {
+                "setting": "_transform_flipX_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy@hover": {
+                "setting": "_transform_flipY_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-transition-duration": {
+                "setting": "_transform_transition_hover",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "background-image": {
+                "setting": "_background_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment": {
+                "setting": "_background_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat": {
+                "setting": "_background_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background": {
+                "setting": "_background_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-image@hover": {
+                "setting": "_background_hover_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment@hover": {
+                "setting": "_background_hover_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat@hover": {
+                "setting": "_background_hover_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background@hover": {
+                "setting": "_background_hover_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-style": {
+                "setting": "_border_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width": {
+                "setting": "_border_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color": {
+                "setting": "_border_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius": {
+                "setting": "_border_radius",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow": {
+                "setting": "_box_shadow_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "border-style@hover": {
+                "setting": "_border_hover_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width@hover": {
+                "setting": "_border_hover_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color@hover": {
+                "setting": "_border_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius@hover": {
+                "setting": "_border_radius_hover",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow@hover": {
+                "setting": "_box_shadow_hover_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "-webkit-mask-position": {
+                "setting": "_mask_position",
+                "resolver": "text",
+                "responsive": false
+            },
+            "-webkit-mask-position-x": {
+                "setting": "_mask_position_x",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-position-y": {
+                "setting": "_mask_position_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-repeat": {
+                "setting": "_mask_repeat",
+                "resolver": "text",
+                "responsive": false
+            }
+        },
+        "inner_elements": []
+    },
+    "theme-post-title": {
+        "non_style_keys": [
+            "title",
+            "link",
+            "size",
+            "header_size"
+        ],
+        "default_inner_element": null,
+        "wrapper_style_overrides": {
+            "font-family": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-weight": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-style": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-transform": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-decoration": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-size": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "line-height": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "letter-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "word-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "color": {
+                "setting": "title_color",
+                "resolver": "color"
+            },
+            "color@hover": {
+                "setting": "title_hover_color",
+                "resolver": "color"
+            },
+            "text-align": {
+                "setting": "align",
+                "resolver": "text"
+            },
+            "mix-blend-mode": {
+                "setting": "blend_mode",
+                "resolver": "text"
+            }
+        },
+        "wrapper_generic_index": {
+            "transition-duration": {
+                "setting": "title_hover_color_transition_duration",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "margin": {
+                "setting": "_margin",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "padding": {
+                "setting": "_padding",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "--container-widget-width": {
+                "setting": "_element_custom_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--align-self": {
+                "setting": "_flex_align_self",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-grow": {
+                "setting": "_flex_grow",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-shrink": {
+                "setting": "_flex_shrink",
+                "resolver": "text",
+                "responsive": false
+            },
+            "align-self": {
+                "setting": "_element_vertical_align",
+                "resolver": "text",
+                "responsive": false
+            },
+            "top": {
+                "setting": "_offset_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "bottom": {
+                "setting": "_offset_y_end",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "z-index": {
+                "setting": "_z_index",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx": {
+                "setting": "_transform_flipX_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy": {
+                "setting": "_transform_flipY_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx@hover": {
+                "setting": "_transform_flipX_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy@hover": {
+                "setting": "_transform_flipY_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-transition-duration": {
+                "setting": "_transform_transition_hover",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "background-image": {
+                "setting": "_background_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment": {
+                "setting": "_background_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat": {
+                "setting": "_background_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background": {
+                "setting": "_background_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-image@hover": {
+                "setting": "_background_hover_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment@hover": {
+                "setting": "_background_hover_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat@hover": {
+                "setting": "_background_hover_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background@hover": {
+                "setting": "_background_hover_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-style": {
+                "setting": "_border_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width": {
+                "setting": "_border_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color": {
+                "setting": "_border_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius": {
+                "setting": "_border_radius",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow": {
+                "setting": "_box_shadow_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "border-style@hover": {
+                "setting": "_border_hover_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width@hover": {
+                "setting": "_border_hover_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color@hover": {
+                "setting": "_border_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius@hover": {
+                "setting": "_border_radius_hover",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow@hover": {
+                "setting": "_box_shadow_hover_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "-webkit-mask-position": {
+                "setting": "_mask_position",
+                "resolver": "text",
+                "responsive": false
+            },
+            "-webkit-mask-position-x": {
+                "setting": "_mask_position_x",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-position-y": {
+                "setting": "_mask_position_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-repeat": {
+                "setting": "_mask_repeat",
+                "resolver": "text",
+                "responsive": false
+            }
+        },
+        "inner_elements": []
+    },
+    "theme-post-featured-image": {
+        "non_style_keys": [
+            "image",
+            "image_size",
+            "image_custom_dimension",
+            "caption_source",
+            "caption",
+            "link_to",
+            "link",
+            "open_lightbox"
+        ],
+        "default_inner_element": null,
+        "wrapper_style_overrides": {
+            "font-family": {
+                "typography_prefix": "caption_typography",
+                "responsive": false
+            },
+            "font-weight": {
+                "typography_prefix": "caption_typography",
+                "responsive": false
+            },
+            "font-style": {
+                "typography_prefix": "caption_typography",
+                "responsive": false
+            },
+            "text-transform": {
+                "typography_prefix": "caption_typography",
+                "responsive": false
+            },
+            "text-decoration": {
+                "typography_prefix": "caption_typography",
+                "responsive": false
+            },
+            "font-size": {
+                "typography_prefix": "caption_typography",
+                "responsive": true
+            },
+            "line-height": {
+                "typography_prefix": "caption_typography",
+                "responsive": true
+            },
+            "letter-spacing": {
+                "typography_prefix": "caption_typography",
+                "responsive": true
+            },
+            "word-spacing": {
+                "typography_prefix": "caption_typography",
+                "responsive": true
+            },
+            "text-align": {
+                "setting": "align",
+                "resolver": "text"
+            },
+            "width": {
+                "setting": "width",
+                "resolver": "dimension",
+                "responsive": true
+            },
+            "max-width": {
+                "setting": "space",
+                "resolver": "dimension",
+                "responsive": true
+            },
+            "height": {
+                "setting": "height",
+                "resolver": "dimension",
+                "responsive": true
+            },
+            "object-fit": {
+                "setting": "object_fit",
+                "resolver": "text"
+            },
+            "object-position": {
+                "setting": "object_position",
+                "resolver": "text"
+            },
+            "opacity": {
+                "setting": "opacity",
+                "resolver": "text"
+            },
+            "opacity@hover": {
+                "setting": "opacity_hover",
+                "resolver": "text"
+            },
+            "border-radius": {
+                "setting": "image_border_radius",
+                "resolver": "sides",
+                "responsive": true
+            },
+            "border": {
+                "border_prefix": "image_border"
+            },
+            "box-shadow": {
+                "box_shadow_prefix": "image_box_shadow"
+            }
+        },
+        "wrapper_generic_index": {
+            "color": {
+                "setting": "text_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "margin-block-start": {
+                "setting": "caption_space",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "margin": {
+                "setting": "_margin",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "padding": {
+                "setting": "_padding",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "--container-widget-width": {
+                "setting": "_element_custom_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--align-self": {
+                "setting": "_flex_align_self",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-grow": {
+                "setting": "_flex_grow",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-shrink": {
+                "setting": "_flex_shrink",
+                "resolver": "text",
+                "responsive": false
+            },
+            "align-self": {
+                "setting": "_element_vertical_align",
+                "resolver": "text",
+                "responsive": false
+            },
+            "top": {
+                "setting": "_offset_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "bottom": {
+                "setting": "_offset_y_end",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "z-index": {
+                "setting": "_z_index",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx": {
+                "setting": "_transform_flipX_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy": {
+                "setting": "_transform_flipY_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx@hover": {
+                "setting": "_transform_flipX_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy@hover": {
+                "setting": "_transform_flipY_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-transition-duration": {
+                "setting": "_transform_transition_hover",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "background-image": {
+                "setting": "_background_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment": {
+                "setting": "_background_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat": {
+                "setting": "_background_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background": {
+                "setting": "_background_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-image@hover": {
+                "setting": "_background_hover_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment@hover": {
+                "setting": "_background_hover_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat@hover": {
+                "setting": "_background_hover_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background@hover": {
+                "setting": "_background_hover_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-style": {
+                "setting": "_border_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width": {
+                "setting": "_border_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color": {
+                "setting": "_border_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-style@hover": {
+                "setting": "_border_hover_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width@hover": {
+                "setting": "_border_hover_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color@hover": {
+                "setting": "_border_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius@hover": {
+                "setting": "_border_radius_hover",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow@hover": {
+                "setting": "_box_shadow_hover_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "-webkit-mask-position": {
+                "setting": "_mask_position",
+                "resolver": "text",
+                "responsive": false
+            },
+            "-webkit-mask-position-x": {
+                "setting": "_mask_position_x",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-position-y": {
+                "setting": "_mask_position_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-repeat": {
+                "setting": "_mask_repeat",
+                "resolver": "text",
+                "responsive": false
+            }
+        },
+        "inner_elements": []
+    },
+    "theme-post-excerpt": {
+        "non_style_keys": [
+            "excerpt"
+        ],
+        "default_inner_element": null,
+        "wrapper_style_overrides": {
+            "font-family": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-weight": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-style": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-transform": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-decoration": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-size": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "line-height": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "letter-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "word-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "color": {
+                "setting": "title_color",
+                "resolver": "color"
+            },
+            "text-align": {
+                "setting": "align",
+                "resolver": "text"
+            },
+            "margin-bottom": {
+                "setting": "paragraph_spacing",
+                "resolver": "dimension",
+                "responsive": true
+            }
+        },
+        "wrapper_generic_index": {
+            "color@hover": {
+                "setting": "link_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "transition-duration": {
+                "setting": "link_hover_color_transition_duration",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "margin": {
+                "setting": "_margin",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "padding": {
+                "setting": "_padding",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "--container-widget-width": {
+                "setting": "_element_custom_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--align-self": {
+                "setting": "_flex_align_self",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-grow": {
+                "setting": "_flex_grow",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-shrink": {
+                "setting": "_flex_shrink",
+                "resolver": "text",
+                "responsive": false
+            },
+            "align-self": {
+                "setting": "_element_vertical_align",
+                "resolver": "text",
+                "responsive": false
+            },
+            "top": {
+                "setting": "_offset_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "bottom": {
+                "setting": "_offset_y_end",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "z-index": {
+                "setting": "_z_index",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx": {
+                "setting": "_transform_flipX_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy": {
+                "setting": "_transform_flipY_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx@hover": {
+                "setting": "_transform_flipX_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy@hover": {
+                "setting": "_transform_flipY_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-transition-duration": {
+                "setting": "_transform_transition_hover",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "background-image": {
+                "setting": "_background_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment": {
+                "setting": "_background_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat": {
+                "setting": "_background_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background": {
+                "setting": "_background_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-image@hover": {
+                "setting": "_background_hover_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment@hover": {
+                "setting": "_background_hover_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat@hover": {
+                "setting": "_background_hover_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background@hover": {
+                "setting": "_background_hover_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-style": {
+                "setting": "_border_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width": {
+                "setting": "_border_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color": {
+                "setting": "_border_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius": {
+                "setting": "_border_radius",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow": {
+                "setting": "_box_shadow_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "border-style@hover": {
+                "setting": "_border_hover_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width@hover": {
+                "setting": "_border_hover_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color@hover": {
+                "setting": "_border_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius@hover": {
+                "setting": "_border_radius_hover",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow@hover": {
+                "setting": "_box_shadow_hover_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "-webkit-mask-position": {
+                "setting": "_mask_position",
+                "resolver": "text",
+                "responsive": false
+            },
+            "-webkit-mask-position-x": {
+                "setting": "_mask_position_x",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-position-y": {
+                "setting": "_mask_position_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-repeat": {
+                "setting": "_mask_repeat",
+                "resolver": "text",
+                "responsive": false
+            }
+        },
+        "inner_elements": []
+    },
+    "theme-archive-title": {
+        "non_style_keys": [
+            "title",
+            "link",
+            "size",
+            "header_size"
+        ],
+        "default_inner_element": null,
+        "wrapper_style_overrides": {
+            "font-family": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-weight": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-style": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-transform": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "text-decoration": {
+                "typography_prefix": "typography",
+                "responsive": false
+            },
+            "font-size": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "line-height": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "letter-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "word-spacing": {
+                "typography_prefix": "typography",
+                "responsive": true
+            },
+            "color": {
+                "setting": "title_color",
+                "resolver": "color"
+            },
+            "color@hover": {
+                "setting": "title_hover_color",
+                "resolver": "color"
+            },
+            "text-align": {
+                "setting": "align",
+                "resolver": "text"
+            },
+            "mix-blend-mode": {
+                "setting": "blend_mode",
+                "resolver": "text"
+            }
+        },
+        "wrapper_generic_index": {
+            "transition-duration": {
+                "setting": "title_hover_color_transition_duration",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "margin": {
+                "setting": "_margin",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "padding": {
+                "setting": "_padding",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "--container-widget-width": {
+                "setting": "_element_custom_width",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "--align-self": {
+                "setting": "_flex_align_self",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-grow": {
+                "setting": "_flex_grow",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--flex-shrink": {
+                "setting": "_flex_shrink",
+                "resolver": "text",
+                "responsive": false
+            },
+            "align-self": {
+                "setting": "_element_vertical_align",
+                "resolver": "text",
+                "responsive": false
+            },
+            "top": {
+                "setting": "_offset_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "bottom": {
+                "setting": "_offset_y_end",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "z-index": {
+                "setting": "_z_index",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx": {
+                "setting": "_transform_flipX_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy": {
+                "setting": "_transform_flipY_effect",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipx@hover": {
+                "setting": "_transform_flipX_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-flipy@hover": {
+                "setting": "_transform_flipY_effect_hover",
+                "resolver": "text",
+                "responsive": false
+            },
+            "--e-transform-transition-duration": {
+                "setting": "_transform_transition_hover",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "background-image": {
+                "setting": "_background_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment": {
+                "setting": "_background_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat": {
+                "setting": "_background_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background": {
+                "setting": "_background_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-image@hover": {
+                "setting": "_background_hover_image",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-attachment@hover": {
+                "setting": "_background_hover_attachment",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background-repeat@hover": {
+                "setting": "_background_hover_repeat",
+                "resolver": "text",
+                "responsive": false
+            },
+            "background@hover": {
+                "setting": "_background_hover_video_fallback",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-style": {
+                "setting": "_border_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width": {
+                "setting": "_border_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color": {
+                "setting": "_border_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius": {
+                "setting": "_border_radius",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow": {
+                "setting": "_box_shadow_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "border-style@hover": {
+                "setting": "_border_hover_border",
+                "resolver": "text",
+                "responsive": false
+            },
+            "border-width@hover": {
+                "setting": "_border_hover_width",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "border-color@hover": {
+                "setting": "_border_hover_color",
+                "resolver": "color",
+                "responsive": false
+            },
+            "border-radius@hover": {
+                "setting": "_border_radius_hover",
+                "resolver": "sides",
+                "responsive": false
+            },
+            "box-shadow@hover": {
+                "setting": "_box_shadow_hover_box_shadow",
+                "resolver": "box_shadow",
+                "responsive": false
+            },
+            "-webkit-mask-position": {
+                "setting": "_mask_position",
+                "resolver": "text",
+                "responsive": false
+            },
+            "-webkit-mask-position-x": {
+                "setting": "_mask_position_x",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-position-y": {
+                "setting": "_mask_position_y",
+                "resolver": "dimension",
+                "responsive": false
+            },
+            "-webkit-mask-repeat": {
+                "setting": "_mask_repeat",
+                "resolver": "text",
+                "responsive": false
+            }
+        },
+        "inner_elements": []
+    }
+}
