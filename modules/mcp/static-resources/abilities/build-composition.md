@@ -61,12 +61,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
 ### Style conversion
-`warnings` in the response are **guidance, not failure** — the composition still builds.
-
-**Three outcomes:**
-1. **Native (preferred):** declaration becomes atomic style props (breakpoint variants, pseudo-states).
-2. **`custom_css` fallback:** stored as raw CSS when the converter cannot map the value — often still works; reported in `warnings`.
-3. **Rejected:** declaration is dropped — does not apply (`animation`, `animation-*`).
+The server converts most CSS into **native atomic styles** (breakpoint variants, pseudo-states). Some value shapes fall back to `custom_css`; `animation` and `animation-*` are dropped.
 
 **When easy, prefer native-friendly shapes** (fallbacks are fine when the design needs them):
 - Breakpoints: `@media(--mobile)` — not `@media (max-width: 768px)`

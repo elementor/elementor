@@ -204,7 +204,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$new_variants = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->get_css_converter() )['variants'];
+		$new_variants = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->get_css_converter() );
 
 		$existing = $this->get_repository()->get( $tag );
 		$existing_variants = is_array( $existing['variants'] ?? null ) ? $existing['variants'] : [];

@@ -77,7 +77,7 @@ Example:
 }
 ```
 
-CSS `style` strings are converted to native atomic styles when possible. `warnings` report `custom_css` fallbacks (build still succeeds) or rejected declarations (`animation` is dropped). Prefer `@media(--breakpoint)` over pixel queries, single-value `gap`, literal `box-shadow`, and `padding` / `margin` shorthands. See the live tool prompt for the full conversion guide.
+CSS `style` strings are converted to native atomic styles when possible; some shapes fall back to `custom_css` and `animation` is dropped. Prefer `@media(--breakpoint)` over pixel queries, single-value `gap`, literal `box-shadow`, and `padding` / `margin` shorthands. See the live tool prompt for the full conversion guide.
 
 ### element_config format
 
@@ -112,7 +112,7 @@ Omit keys listed in `llm_guidance.default_settings` unless the user requests a c
 | `version` | Post modified timestamp |
 | `resolved_xml` | XML with Elementor element IDs embedded |
 | `llm_instructions` | Next-step hint for the agent |
-| `warnings` | Non-fatal skips (unknown props, CSS fallbacks) |
+| `warnings` | Non-fatal skips (e.g. unknown props) |
 | `removed_element_ids` | Present when `mode: replace_children` |
 
 ## Extension
