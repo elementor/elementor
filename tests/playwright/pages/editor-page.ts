@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
 import { comparePngBuffers } from '../assets/image-comparator';
-import { expect, type Page, type Frame, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
+import { expect, type Page, type Frame, type Request, type Response, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
@@ -17,6 +17,83 @@ let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
+
+const ADMIN_AJAX_PATH = 'admin-ajax.php';
+const SAVE_BUILDER_ACTION = 'save_builder';
+const PUBLISH_STATUS = 'publish';
+
+type AjaxBatchAction = {
+	action?: string;
+	data?: {
+		status?: string;
+	};
+};
+
+type AjaxBatchResponse = {
+	success?: boolean;
+	data?: unknown;
+};
+
+function parseAjaxBatchActions( request: Request ): Record<string, AjaxBatchAction> | null {
+	try {
+		const postData = request.postDataJSON() as { actions?: string | Record<string, AjaxBatchAction> } | null;
+		if ( ! postData?.actions ) {
+			return null;
+		}
+
+		if ( 'string' === typeof postData.actions ) {
+			return JSON.parse( postData.actions ) as Record<string, AjaxBatchAction>;
+		}
+
+		return postData.actions;
+	} catch {
+		return null;
+	}
+}
+
+function isPublishSaveBuilderAction( action: AjaxBatchAction ): boolean {
+	return SAVE_BUILDER_ACTION === action.action && PUBLISH_STATUS === action.data?.status;
+}
+
+function isPublishSaveBuilderResponse( response: Response ): boolean {
+	if ( ! response.url().includes( ADMIN_AJAX_PATH ) || 'POST' !== response.request().method() ) {
+		return false;
+	}
+
+	const actions = parseAjaxBatchActions( response.request() );
+	if ( ! actions ) {
+		return false;
+	}
+
+	return Object.values( actions ).some( isPublishSaveBuilderAction );
+}
+
+async function assertPublishSaveBuilderSucceeded( saveResponse: Response ): Promise<void> {
+	let body: { data?: { responses?: Record<string, AjaxBatchResponse> } };
+
+	try {
+		body = await saveResponse.json();
+	} catch {
+		throw new Error( `Publish save_builder failed: HTTP ${ saveResponse.status() } (non-JSON body)` );
+	}
+
+	const actions = parseAjaxBatchActions( saveResponse.request() ) ?? {};
+	const responses = body?.data?.responses ?? {};
+	const publishSaveIds = Object.entries( actions )
+		.filter( ( [ , action ] ) => isPublishSaveBuilderAction( action ) )
+		.map( ( [ id ] ) => id );
+	const failedSave = publishSaveIds.find( ( id ) => ! responses[ id ]?.success );
+
+	if ( saveResponse.ok() && ! failedSave && publishSaveIds.length > 0 ) {
+		return;
+	}
+
+	const failedPayload = failedSave ? responses[ failedSave ]?.data : responses[ SAVE_BUILDER_ACTION ]?.data;
+
+	throw new Error(
+		`Publish save_builder failed: HTTP ${ saveResponse.status() } ${ JSON.stringify( failedPayload ) }`,
+	);
+}
 
 /**
  * Helper design contract:
@@ -348,7 +425,10 @@ export default class EditorPage extends BasePage {
 		const frame = this.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
 		await frame.locator( `.${ element }-preset-button` ).click();
-		await frame.locator( `[data-preset=${ preset }]` ).click();
+		const presetSelector = 'grid' === element
+			? `[data-structure="${ preset }"]`
+			: `[data-preset="${ preset }"]`;
+		await frame.locator( presetSelector ).click();
 	}
 
 	/**
@@ -957,9 +1037,16 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage(): Promise<void> {
+		const saveResponsePromise = this.page.waitForResponse(
+			isPublishSaveBuilderResponse,
+			{ timeout: timeouts.heavyAction },
+		);
+
 		await this.clickTopBarItem( TopBarSelectors.publish );
-		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.heavyAction } );
+
+		const saveResponse = await saveResponsePromise;
+
+		await assertPublishSaveBuilderSucceeded( saveResponse );
 	}
 
 	/**
@@ -1405,5 +1492,47 @@ export default class EditorPage extends BasePage {
 		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
 
 		await button.click();
+	}
+
+	getPanelContentSection(): Locator {
+		return this.page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
+	}
+
+	getPanelInlineEditor(): Locator {
+		return this.getPanelContentSection().locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+	}
+
+	async togglePanelInlineEditingAttribute( attribute: string ): Promise<void> {
+		const label = INLINE_EDITING_SELECTORS.formatButtonLabels[ attribute as keyof typeof INLINE_EDITING_SELECTORS.formatButtonLabels ];
+
+		if ( ! label ) {
+			return;
+		}
+
+		await this.getPanelContentSection().getByRole( 'button', { name: label } ).click();
+	}
+
+	async selectPanelInlineEditedText( substring: string ): Promise<void> {
+		const panelInlineEditor = this.getPanelInlineEditor();
+
+		await panelInlineEditor.click();
+
+		const entireText = await panelInlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		await this.page.keyboard.press( 'Home' );
+
+		const startIndex = entireText.indexOf( substring );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
+		}
 	}
 }

@@ -1,39 +1,54 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback } from 'react';
+import { type ComponentProps, useCallback, useState } from 'react';
 import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
+import { type Editor } from '@tiptap/react';
 
 import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
+import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { extractInlineHtmlContent } from '../utils/inline-editing';
+import { type ControlProps } from '../utils/types';
 
-export const InlineEditingControl = createControl(
-	( {
-		sx,
-		attributes,
-		props,
-	}: {
-		sx?: SxProps< Theme >;
-		attributes?: Record< string, string >;
-		props?: ComponentProps< 'div' >;
-	} ) => {
-		const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
-		const { value: rawValue } = usePropKeyContext();
-		const content = value ?? extractInlineHtmlContent( rawValue );
+type Props = ControlProps< {
+	sx?: SxProps< Theme >;
+	attributes?: Record< string, string >;
+	props?: ComponentProps< 'div' >;
+} >;
 
-		const handleChange = useCallback(
-			( newValue: unknown ) => {
-				const html = ( newValue ?? '' ) as string;
+export const InlineEditingControl = createControl( ( { sx, attributes, props, context: { elementId } }: Props ) => {
+	const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
+	const { value: rawValue } = usePropKeyContext();
+	const content = value ?? extractInlineHtmlContent( rawValue );
+	const [ editor, setEditor ] = useState< Editor | null >( null );
 
-				setValue( html );
-			},
-			[ setValue ]
-		);
+	const handleChange = useCallback(
+		( newValue: unknown ) => {
+			const html = ( newValue ?? '' ) as string;
 
-		return (
-			<ControlActions>
+			setValue( html );
+		},
+		[ setValue ]
+	);
+
+	return (
+		<ControlActions>
+			<Box sx={ { position: 'relative' } }>
+				{ editor && editor.isEditable && (
+					<InlineEditorToolbar
+						editor={ editor }
+						elementId={ elementId }
+						sx={ {
+							boxShadow: 'none',
+							border: '1px solid',
+							borderColor: 'grey.200',
+							mb: 0.5,
+						} }
+						inControlPanel={ true }
+					/>
+				) }
 				<Box
 					sx={ {
 						p: 0.8,
@@ -52,7 +67,7 @@ export const InlineEditingControl = createControl(
 							outline: 'none',
 						},
 						'& .ProseMirror': {
-							minHeight: '70px',
+							minHeight: '100px',
 							fontSize: '12px',
 							'& a': {
 								color: 'inherit',
@@ -77,9 +92,18 @@ export const InlineEditingControl = createControl(
 					{ ...attributes }
 					{ ...props }
 				>
-					<InlineEditor value={ content } setValue={ handleChange } placeholder={ placeholder ?? null } />
+					<InlineEditor
+						value={ content }
+						setValue={ handleChange }
+						placeholder={ placeholder ?? null }
+						onEditorCreate={ setEditor }
+						onEditorDestroy={ () => setEditor( null ) }
+						sx={ {
+							paddingBlockStart: 5,
+						} }
+					/>
 				</Box>
-			</ControlActions>
-		);
-	}
-);
+			</Box>
+		</ControlActions>
+	);
+} );

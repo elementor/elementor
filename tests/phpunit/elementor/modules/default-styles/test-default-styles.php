@@ -53,6 +53,8 @@ class Test_Default_Styles_Repository extends Elementor_Test_Base {
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'input' ) );
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'main' ) );
 		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'nav' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'ul' ) );
+		$this->assertTrue( Default_Styles_Repository::is_allowed_tag( 'li' ) );
 	}
 
 	public function test_is_allowed_tag_rejects_unsupported_tags() {

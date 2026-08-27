@@ -52,7 +52,7 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: TOOL_NAME,
 		description:
-			'Manage V4 global variables (color, font, size, custom-size). Read the guide resource before use. font = font-famliy, size = measured unit, custom-size = calculated values',
+			'Manage V4 global variables (color, font, size, custom-size). Read the guide resource before use. font = single Google Font family name, no fallback stacks, size = measured unit, custom-size = calculated values',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ),
 			id: z
@@ -65,7 +65,7 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 				.string()
 				.optional()
 				.describe(
-					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only. Size: value with unit e.g. "16px", or "auto" (Pro). Do NOT pass JSON.'
+					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: single Google Font family name only — no fallback stacks, no generic families. Size: value with unit e.g. "16px", or "auto" (Pro). Do NOT pass JSON.'
 				),
 		},
 		outputSchema: {
