@@ -20,7 +20,9 @@ class List_Posts_Ability extends Abstract_Ability {
 
 	const SUPPORTED_POST_TYPES = [ self::POST_TYPE_POST, self::POST_TYPE_PAGE, self::POST_TYPE_PRODUCT ];
 
-	const EMPTY_RESULT_HINT = 'No matching posts found. The site may have no published content yet, or you need to adjust your search terms.';
+	const READABLE_STATUSES = [ 'publish', 'private', 'draft', 'pending', 'future' ];
+
+	const EMPTY_RESULT_HINT = 'No matching posts found. The site may have no readable content yet, or you need to adjust your search terms.';
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-posts';
@@ -42,6 +44,7 @@ class List_Posts_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'integer' ],
 								'title' => [ 'type' => 'string' ],
 								'post_type' => [ 'type' => 'string' ],
+								'status' => [ 'type' => 'string' ],
 								'date' => [ 'type' => 'string' ],
 								'modified' => [ 'type' => 'string' ],
 								'url' => [ 'type' => 'string' ],
@@ -68,7 +71,7 @@ class List_Posts_Ability extends Abstract_Ability {
 					'destructive' => false,
 				],
 			],
-			fn() => current_user_can( 'edit_posts' ),
+			fn() => is_user_logged_in(),
 			[
 				'type' => 'object',
 				'properties' => [
@@ -99,14 +102,6 @@ class List_Posts_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to list posts.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
 		$input = is_array( $input ) ? $input : [];
 
 		$page = $this->resolve_page( $input );
@@ -119,7 +114,8 @@ class List_Posts_Ability extends Abstract_Ability {
 
 		$query_args = [
 			'post_type' => $post_types,
-			'post_status' => 'publish',
+			'post_status' => self::READABLE_STATUSES,
+			'perm' => 'readable',
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'paged' => $page,
@@ -133,16 +129,19 @@ class List_Posts_Ability extends Abstract_Ability {
 
 		$query = new \WP_Query( $query_args );
 
-		$posts = array_map( [ $this, 'format_post' ], $query->posts );
+		$readable_posts = array_values( array_filter(
+			$query->posts,
+			fn( \WP_Post $post ) => current_user_can( 'read_post', $post->ID )
+		) );
 
 		$response = [
-			'posts' => $posts,
+			'posts' => array_map( [ $this, 'format_post' ], $readable_posts ),
 			'total' => (int) $query->found_posts,
 			'page' => $page,
 			'per_page' => $per_page,
 		];
 
-		if ( 0 === $response['total'] ) {
+		if ( empty( $response['posts'] ) ) {
 			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
 		}
 
@@ -188,6 +187,7 @@ class List_Posts_Ability extends Abstract_Ability {
 			'id' => (int) $post->ID,
 			'title' => (string) $post->post_title,
 			'post_type' => (string) $post->post_type,
+			'status' => (string) $post->post_status,
 			'date' => (string) $post->post_date_gmt,
 			'modified' => (string) $post->post_modified_gmt,
 			'url' => (string) get_permalink( $post->ID ),

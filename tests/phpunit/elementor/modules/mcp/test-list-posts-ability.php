@@ -30,18 +30,37 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__returns_403_for_subscriber() {
+	public function test_execute__returns_only_public_content_for_subscriber() {
 		// Arrange
 		$user_id = $this->factory()->user->create( [ 'role' => 'subscriber' ] );
 		wp_set_current_user( $user_id );
+		$public_id = $this->create_post( 'Public Post', 'post', 'publish' );
+		$this->create_post( 'Draft Post', 'post', 'draft' );
+		$this->create_post( 'Private Post', 'post', 'private' );
 
 		// Act
 		$result = $this->ability->execute( [] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
-		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+		$ids = array_column( $result['posts'], 'id' );
+		$this->assertContains( $public_id, $ids );
+		$mine = array_filter( $ids, fn( $id ) => in_array( $id, $this->created_post_ids, true ) );
+		$this->assertCount( 1, $mine );
+	}
+
+	public function test_execute__editor_sees_drafts_and_private_posts() {
+		// Arrange
+		$this->act_as_editor();
+		$draft_id = $this->create_post( 'Draft Post', 'post', 'draft' );
+		$private_id = $this->create_post( 'Private Post', 'post', 'private' );
+
+		// Act
+		$result = $this->ability->execute( [] );
+
+		// Assert
+		$ids = array_column( $result['posts'], 'id' );
+		$this->assertContains( $draft_id, $ids );
+		$this->assertContains( $private_id, $ids );
 	}
 
 	public function test_execute__returns_posts_for_editor() {
@@ -191,19 +210,17 @@ class Test_List_Posts_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_post_type', $result->get_error_code() );
 	}
 
-	public function test_execute__returns_only_published_posts() {
+	public function test_execute__post_includes_status_field() {
 		// Arrange
 		$this->act_as_admin();
-		$published_id = $this->create_post( 'Published Post', 'post', 'publish' );
 		$this->create_post( 'Draft Post', 'post', 'draft' );
 
 		// Act
 		$result = $this->ability->execute( [] );
 
 		// Assert
-		$ids = array_column( $result['posts'], 'id' );
-		$this->assertContains( $published_id, $ids );
-		$this->assertCount( 1, array_filter( $ids, fn( $id ) => in_array( $id, $this->created_post_ids, true ) ) );
+		$this->assertNotEmpty( $result['posts'] );
+		$this->assertArrayHasKey( 'status', $result['posts'][0] );
 	}
 
 	public function test_execute__per_page_is_clamped_to_maximum() {
