@@ -579,34 +579,48 @@ abstract class Base {
 	 * ancestor lets us still resolve symlinks and reject paths whose real location
 	 * escapes the allowed roots.
 	 *
+	 * WPVIP compatibility: on object-store-backed filesystems (VIP File System),
+	 * `realpath()` is documented as unreliable and may return false even on valid
+	 * paths. When that happens we fall back to the normalized input, preserving
+	 * the original string-prefix semantics rather than silently rejecting the
+	 * path. Symlink protection is sacrificed only on filesystems that don't
+	 * expose real paths in the first place.
+	 *
 	 * @since 4.4.0
 	 * @access private
 	 * @static
 	 *
 	 * @param string $path Filesystem path.
 	 *
-	 * @return string|false Normalized realpath, or false if none could be resolved.
+	 * @return string|false Normalized path (from realpath when available, otherwise
+	 *                      the normalized input), or false when the input is empty.
 	 */
 	private static function resolve_deepest_existing( $path ) {
-		$current = wp_normalize_path( untrailingslashit( (string) $path ) );
+		$normalized = wp_normalize_path( untrailingslashit( (string) $path ) );
+
+		if ( '' === $normalized ) {
+			return false;
+		}
+
+		$current = $normalized;
 
 		while ( '' !== $current && ! file_exists( $current ) ) {
 			$parent = wp_normalize_path( dirname( $current ) );
 
 			if ( $parent === $current ) {
-				return false;
+				return $normalized;
 			}
 
 			$current = $parent;
 		}
 
-		if ( '' === $current ) {
-			return false;
-		}
-
 		$real = realpath( $current );
 
-		return $real ? untrailingslashit( wp_normalize_path( $real ) ) : false;
+		if ( $real ) {
+			return untrailingslashit( wp_normalize_path( $real ) );
+		}
+
+		return $normalized;
 	}
 
 	/**
