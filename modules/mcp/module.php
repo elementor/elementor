@@ -128,6 +128,7 @@ class Module extends BaseModule {
 			new Abilities\Read_Resource_Ability( $registry ),
 			new Abilities\List_Components_Ability(),
 			new Abilities\Manage_Component_Ability(),
+			new Abilities\List_Posts_Ability(),
 		];
 
 		return $abilities;
