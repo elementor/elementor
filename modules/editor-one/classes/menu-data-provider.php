@@ -570,11 +570,34 @@ class Menu_Data_Provider {
 	}
 
 	private function title_case( string $text ): string {
-		if ( function_exists( 'mb_convert_case' ) ) {
-			return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
+		$tokens = preg_split( '/(\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+
+		if ( false === $tokens ) {
+			return $text;
 		}
 
-		return ucwords( strtolower( $text ) );
+		$result = '';
+
+		foreach ( $tokens as $token ) {
+			if ( '' === $token || preg_match( '/^\s+$/', $token ) ) {
+				$result .= $token;
+				continue;
+			}
+
+			if ( preg_match( '/^[A-Z]{2,}$/', $token ) ) {
+				$result .= $token;
+				continue;
+			}
+
+			if ( function_exists( 'mb_convert_case' ) ) {
+				$result .= mb_convert_case( $token, MB_CASE_TITLE, 'UTF-8' );
+				continue;
+			}
+
+			$result .= ucwords( strtolower( $token ) );
+		}
+
+		return $result;
 	}
 
 	private function invalidate_cache(): void {
