@@ -1,0 +1,29 @@
+{
+  "name": "@elementor/generate-font-awesome-7",
+  "version": "4.4.0",
+  "private": true,
+  "author": "Elementor Team",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "build": "node ./src/generate.mjs",
+    "dev": "node ./src/generate.mjs"
+  },
+  "turbo": {
+    "tasks": {
+      "build": {
+        "cache": false,
+        "outputs": []
+      },
+      "dev": {
+        "cache": false,
+        "persistent": false
+      }
+    }
+  },
+  "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^7",
+    "@fortawesome/free-regular-svg-icons": "^7",
+    "@fortawesome/free-solid-svg-icons": "^7"
+  }
+}

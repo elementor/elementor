@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Icon_Transformer extends Elementor_Test_Base {
 	private const FA7_STAR_PATH_FRAGMENT = 'M309.5-18.9';
 
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->ensure_font_awesome_7_json_available();
+	}
+
 	public function test_transform__returns_inline_svg_for_font_awesome_7_icon() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
@@ -140,5 +146,28 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		// Assert.
 		$this->assertStringContainsString( '<svg', $result['html'] );
 		$this->assertStringContainsString( '<path', $result['html'] );
+	}
+
+	private function ensure_font_awesome_7_json_available(): void {
+		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
+		$json_file = $json_dir . '/solid.json';
+
+		if ( is_readable( $json_file ) ) {
+			return;
+		}
+
+		if ( ! is_dir( $json_dir ) && ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
+			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
+		}
+
+		file_put_contents(
+			$json_file,
+			wp_json_encode( [
+				'icons' => [
+					'star' => [ 576, 512, [], 'f005', self::FA7_STAR_PATH_FRAGMENT ],
+					'headphones' => [ 448, 512, [ 'headphones-simple' ], 'f025', 'M64 224' ],
+				],
+			] )
+		);
 	}
 }

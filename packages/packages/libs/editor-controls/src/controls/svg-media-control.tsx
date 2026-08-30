@@ -101,6 +101,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 			open( MODE_UPLOAD );
 		}
 	};
+	console.log( 'iconValue', iconValue );
 
 	const handleClick = ( openOptions?: OpenOptions ) => {
 		if ( ! allowSvgUpload && openOptions === MODE_UPLOAD ) {
