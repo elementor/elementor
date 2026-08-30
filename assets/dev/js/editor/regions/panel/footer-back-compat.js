@@ -28,12 +28,28 @@ module.exports = Marionette.ItemView.extend( {
 		'aria-hidden': 'true',
 	},
 
+	ui: {},
+
+	initialize() {
+		// Pro 4.2.x assigns `footerView.ui.menuConditions` before Marionette binds ui hashes.
+		this.ui = this.ui || {};
+	},
+
 	behaviors() {
 		return {
 			saver: {
 				behaviorClass: StubFooterSaverBehavior,
 			},
 		};
+	},
+
+	onRender() {
+		const saverIndex = Object.keys( this.behaviors() ).indexOf( 'saver' );
+		const behavior = this._behaviors?.[ saverIndex ];
+
+		if ( behavior?.ui?.buttonPreview?.length && ! behavior.ui.buttonPreview.tipsy ) {
+			behavior.ui.buttonPreview.tipsy = () => behavior.ui.buttonPreview;
+		}
 	},
 
 	addSubMenuItem( subMenuName, itemData ) {
