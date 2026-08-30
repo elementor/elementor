@@ -98,14 +98,14 @@ class Icon_Transformer extends Transformer_Base {
 		$paths_markup = '';
 
 		foreach ( $paths as $path ) {
-			if ( ! is_string( $path ) || $path === '' ) {
+			if ( ! is_string( $path ) || '' === $path ) {
 				continue;
 			}
 
 			$paths_markup .= '<path d="' . esc_attr( $path ) . '"></path>';
 		}
 
-		if ( $paths_markup === '' ) {
+		if ( '' === $paths_markup ) {
 			return '';
 		}
 

@@ -7,17 +7,18 @@ type IconValue = {
 	library?: unknown;
 };
 
-type FontAwesomeIconJson = [ number, number, unknown, unknown, string | string[] ];
+type FontAwesomeIconJson = [ number, number, unknown[], unknown, string | string[] ];
 
 const FONT_AWESOME_JSON = {
 	width: 0,
 	height: 1,
 	aliases: 2,
+	unicode: 3,
 	path: 4,
 } as const;
 
+const FONT_AWESOME_7_JSON_FILES = [ 'solid', 'regular', 'brands' ] as const;
 const FONT_AWESOME_7_JSON_BASE_PATH = 'lib/font-awesome-7/json/';
-const ICON_SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: visible;';
 
 const fontAwesomeJsonCache = new Map< string, Record< string, FontAwesomeIconJson > >();
 
@@ -37,13 +38,18 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 	}
 
 	const icons = await fetchFontAwesomeIcons( jsonFileName, signal );
-	const iconData = findFontAwesomeIconData( icons, iconName );
+	const iconData = icons?.[ iconName ];
 
 	if ( ! iconData ) {
 		return { html: null, url: null };
 	}
 
 	const svgText = buildFontAwesomeSvg( iconData );
+
+	if ( ! svgText ) {
+		return { html: null, url: null };
+	}
+
 	const html = processIconSvgContent( svgText );
 
 	return { html, url: null };
@@ -56,11 +62,9 @@ function getFontAwesomeIconName( iconValue: string ): string | null {
 }
 
 function getFontAwesomeJsonFileName( library: string ): string | null {
-	if ( ! library.startsWith( 'fa-' ) ) {
-		return null;
-	}
+	const match = library.match( /^fa-(solid|regular|brands)$/ );
 
-	return library.replace( /^fa-/, '' );
+	return match?.[ 1 ] ?? null;
 }
 
 function getAssetsBaseUrl(): string | null {
@@ -92,6 +96,10 @@ async function loadFontAwesomeIcons(
 	jsonFileName: string,
 	signal?: AbortSignal
 ): Promise< Record< string, FontAwesomeIconJson > | null > {
+	if ( ! FONT_AWESOME_7_JSON_FILES.includes( jsonFileName as ( typeof FONT_AWESOME_7_JSON_FILES )[ number ] ) ) {
+		return null;
+	}
+
 	const assetsUrl = getAssetsBaseUrl();
 
 	if ( ! assetsUrl ) {
@@ -99,56 +107,67 @@ async function loadFontAwesomeIcons(
 	}
 
 	try {
-		const response = await fetch( `${ assetsUrl }${ FONT_AWESOME_7_JSON_BASE_PATH }${ jsonFileName }.json`, { signal } );
+		const response = await fetch( `${ assetsUrl }${ FONT_AWESOME_7_JSON_BASE_PATH }${ jsonFileName }.json`, {
+			signal,
+		} );
 
 		if ( ! response.ok ) {
 			return null;
 		}
 
 		const data = ( await response.json() ) as { icons?: Record< string, FontAwesomeIconJson > };
+		const icons = data.icons;
 
-		return data.icons ?? null;
+		if ( ! icons || typeof icons !== 'object' ) {
+			return null;
+		}
+
+		return indexFontAwesomeIcons( icons );
 	} catch {
 		return null;
 	}
 }
 
-function findFontAwesomeIconData(
-	icons: Record< string, FontAwesomeIconJson > | null,
-	iconName: string
-): FontAwesomeIconJson | null {
-	if ( ! icons ) {
-		return null;
-	}
+function indexFontAwesomeIcons( icons: Record< string, FontAwesomeIconJson > ): Record< string, FontAwesomeIconJson > {
+	const index: Record< string, FontAwesomeIconJson > = {};
 
-	if ( icons[ iconName ] ) {
-		return icons[ iconName ];
-	}
-
-	for ( const iconData of Object.values( icons ) ) {
-		const aliases = iconData[ FONT_AWESOME_JSON.aliases ];
-
-		if ( ! Array.isArray( aliases ) ) {
+	for ( const [ name, iconData ] of Object.entries( icons ) ) {
+		if ( ! isValidIconTuple( iconData ) ) {
 			continue;
 		}
 
-		for ( const alias of aliases ) {
-			if ( typeof alias === 'string' && alias === iconName ) {
-				return iconData;
+		index[ name ] = iconData;
+
+		for ( const alias of iconData[ FONT_AWESOME_JSON.aliases ] ) {
+			if ( typeof alias === 'string' && alias !== '' && ! index[ alias ] ) {
+				index[ alias ] = iconData;
 			}
 		}
 	}
 
-	return null;
+	return index;
 }
 
-function buildFontAwesomeSvg( iconData: FontAwesomeIconJson ): string {
+function isValidIconTuple( iconData: unknown ): iconData is FontAwesomeIconJson {
+	return (
+		Array.isArray( iconData ) &&
+		iconData.length >= 5 &&
+		typeof iconData[ FONT_AWESOME_JSON.width ] === 'number' &&
+		typeof iconData[ FONT_AWESOME_JSON.height ] === 'number' &&
+		Array.isArray( iconData[ FONT_AWESOME_JSON.aliases ] )
+	);
+}
+
+function buildFontAwesomeSvg( iconData: FontAwesomeIconJson ): string | null {
 	const width = iconData[ FONT_AWESOME_JSON.width ];
 	const height = iconData[ FONT_AWESOME_JSON.height ];
 	const paths = normalizePaths( iconData[ FONT_AWESOME_JSON.path ] );
-	const pathMarkup = paths
-		.map( ( path ) => `<path d="${ escapeSvgPath( path ) }"></path>` )
-		.join( '' );
+
+	if ( paths.length === 0 ) {
+		return null;
+	}
+
+	const pathMarkup = paths.map( ( path ) => `<path d="${ escapeSvgPath( path ) }"></path>` ).join( '' );
 
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ width } ${ height }" aria-hidden="true">${ pathMarkup }</svg>`;
 }
@@ -166,7 +185,7 @@ function normalizePaths( pathData: string | string[] ): string[] {
 }
 
 function escapeSvgPath( path: string ): string {
-	return path.replace( /"/g, '&quot;' );
+	return path.replace( /&/g, '&amp;' ).replace( /"/g, '&quot;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
 }
 
 function processIconSvgContent( svgText: string ): string | null {
@@ -185,14 +204,9 @@ function processIconSvgContent( svgText: string ): string | null {
 	}
 
 	svgElement.setAttribute( 'aria-hidden', 'true' );
-
-	const existingStyle = svgElement.getAttribute( 'style' ) ?? '';
-	const trimmed = existingStyle.trim();
-	const merged = trimmed
-		? `${ trimmed.replace( /;$/, '' ) }; ${ ICON_SVG_INLINE_STYLES }`
-		: ICON_SVG_INLINE_STYLES;
-
-	svgElement.setAttribute( 'style', merged.replace( /overflow:\s*unset/g, 'overflow: visible' ) );
+	svgElement.style.setProperty( 'width', '100%' );
+	svgElement.style.setProperty( 'height', '100%' );
+	svgElement.style.setProperty( 'overflow', 'visible' );
 
 	return svgElement.outerHTML;
 }

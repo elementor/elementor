@@ -36,6 +36,25 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'M259.3 17.8', $result['html'] );
 	}
 
+	public function test_build_fa7_svg__renders_multiple_paths() {
+		// Arrange.
+		$transformer = new Icon_Transformer();
+		$method = new \ReflectionMethod( Icon_Transformer::class, 'build_fa7_svg' );
+		$method->setAccessible( true );
+
+		// Act.
+		$html = $method->invoke( $transformer, [
+			'width' => 640,
+			'height' => 640,
+			'paths' => [ 'M0 0', 'M10 10' ],
+		] );
+
+		// Assert.
+		$this->assertSame( 2, substr_count( $html, '<path' ) );
+		$this->assertStringContainsString( 'd="M0 0"', $html );
+		$this->assertStringContainsString( 'd="M10 10"', $html );
+	}
+
 	public function test_transform__resolves_font_awesome_7_icon_by_alias() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
@@ -59,6 +78,24 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$value = [
 			'value' => 'fas fa-not-a-real-icon-name',
 			'library' => 'fa-solid',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertSame( [
+			'html' => '',
+			'url' => null,
+		], $result );
+	}
+
+	public function test_transform__returns_empty_html_for_path_traversal_library() {
+		// Arrange.
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'fas fa-star',
+			'library' => 'fa-../../wp-config',
 		];
 
 		// Act.
