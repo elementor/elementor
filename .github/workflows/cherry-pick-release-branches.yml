@@ -1,0 +1,55 @@
+name: Cherry Pick Release Branches
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  cherry-pick:
+    if: >-
+      ${{
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        (github.event.pull_request.base.ref == 'release/stable' || github.event.pull_request.base.ref == 'release/beta') &&
+        !contains(github.event.pull_request.title, 'Cherry-pick PR')
+      }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Log trigger and PR information
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          echo "PR #${PR_NUMBER} merged to ${BASE_REF}"
+          echo "Head repository: ${HEAD_REPO}"
+          echo "Merge commit: ${MERGE_SHA}"
+        shell: bash
+
+      - name: Cherry-pick to downstream branches
+        uses: elementor/elementor-editor-github-actions/actions/cherry-pick-release-branches@main
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          using-pat: ${{ secrets.GH_PAT != '' }}
+          base-ref: ${{ github.event.pull_request.base.ref }}
+          pr-number: ${{ github.event.pull_request.number }}
+          merge-sha: ${{ github.event.pull_request.merge_commit_sha }}
+          pr-title: ${{ github.event.pull_request.title }}
+          pr-user-login: ${{ github.event.pull_request.user.login }}
+          pr-url: ${{ github.event.pull_request.html_url }}
+          source-repo: ${{ github.event.pull_request.head.repo.full_name }}
