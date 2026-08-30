@@ -244,7 +244,7 @@ describe( 'InlineEditorToolbar', () => {
 			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should use light icon color in dark mode when rendered inside the control panel', () => {
+		it( 'should use white icon color in dark mode when rendered inside the control panel', () => {
 			// Arrange.
 			const mockEditor = createMockEditor();
 

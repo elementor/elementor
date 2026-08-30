@@ -40,7 +40,7 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 					<InlineEditorToolbar
 						editor={ editor }
 						elementId={ elementId }
-						sx={ ( theme ) => ( {
+						sx={ ( theme: Theme ) => ( {
 							boxShadow: 'none',
 							border: '1px solid',
 							borderColor:
@@ -51,7 +51,7 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 					/>
 				) }
 				<Box
-					sx={ ( theme ) => ( {
+					sx={ ( theme: Theme ) => ( {
 						p: 0.8,
 						border: '1px solid',
 						borderColor:

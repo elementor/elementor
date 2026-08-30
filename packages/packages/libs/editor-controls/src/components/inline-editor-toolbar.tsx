@@ -134,14 +134,14 @@ export const InlineEditorToolbar = ( {
 					boxShadow: 'none',
 					borderWidth: '0',
 					borderBottom: '1px solid',
-					borderBottomColor: ( theme ) =>
+					borderBottomColor: ( theme: Theme ) =>
 						theme.palette.mode === 'dark' ? theme.palette.grey[ 700 ] : theme.palette.grey[ 200 ],
 					borderRadius: '0',
 					position: 'absolute',
 					top: '0',
 					left: '0',
 					'&, & .MuiIconButton-root, & .MuiToggleButton-root': {
-						color: ( theme ) =>
+						color: ( theme: Theme ) =>
 							theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
 					},
 				} ),
