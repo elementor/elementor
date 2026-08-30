@@ -134,11 +134,16 @@ export const InlineEditorToolbar = ( {
 					boxShadow: 'none',
 					borderWidth: '0',
 					borderBottom: '1px solid',
-					borderBottomColor: 'grey.200',
+					borderBottomColor: ( theme ) =>
+						theme.palette.mode === 'dark' ? theme.palette.grey[ 700 ] : theme.palette.grey[ 200 ],
 					borderRadius: '0',
 					position: 'absolute',
 					top: '0',
 					left: '0',
+					'&, & .MuiIconButton-root, & .MuiToggleButton-root': {
+						color: ( theme ) =>
+							theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
+					},
 				} ),
 			} }
 		>
@@ -172,7 +177,6 @@ export const InlineEditorToolbar = ( {
 						'& svg': {
 							width: '0.7rem',
 							height: '0.7rem',
-							fill: 'black',
 						},
 					} ),
 				} }

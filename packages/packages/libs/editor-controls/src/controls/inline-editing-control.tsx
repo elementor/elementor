@@ -40,28 +40,32 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 					<InlineEditorToolbar
 						editor={ editor }
 						elementId={ elementId }
-						sx={ {
+						sx={ ( theme ) => ( {
 							boxShadow: 'none',
 							border: '1px solid',
-							borderColor: 'grey.200',
+							borderColor:
+								theme.palette.mode === 'dark' ? theme.palette.grey[ 700 ] : theme.palette.grey[ 200 ],
 							mb: 0.5,
-						} }
+						} ) }
 						inControlPanel={ true }
 					/>
 				) }
 				<Box
-					sx={ {
+					sx={ ( theme ) => ( {
 						p: 0.8,
 						border: '1px solid',
-						borderColor: 'grey.200',
+						borderColor:
+							theme.palette.mode === 'dark' ? theme.palette.grey[ 700 ] : theme.palette.grey[ 200 ],
 						borderRadius: '8px',
 						transition: 'border-color .2s ease, box-shadow .2s ease',
 						'&:hover': {
-							borderColor: 'black',
+							borderColor:
+								theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
 						},
 						'&:focus-within': {
-							borderColor: 'black',
-							boxShadow: '0 0 0 1px black',
+							borderColor:
+								theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
+							boxShadow: theme.palette.mode === 'dark' ? '0 0 0 1px white' : '0 0 0 1px black',
 						},
 						'& .ProseMirror:focus': {
 							outline: 'none',
@@ -88,7 +92,7 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 							all: 'unset',
 						},
 						...sx,
-					} }
+					} ) }
 					{ ...attributes }
 					{ ...props }
 				>
