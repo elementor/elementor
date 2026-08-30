@@ -37,6 +37,15 @@ describe( 'defaultStylesStylesProvider', () => {
 		expect( provider?.priority ).toBe( 15 );
 	} );
 
+	it( 'requires manage_options for write actions', () => {
+		expect( defaultStylesStylesProvider.capabilities ).toEqual( {
+			update: 'manage_options',
+			create: 'manage_options',
+			delete: 'manage_options',
+			updateProps: 'manage_options',
+		} );
+	} );
+
 	it( 'returns class style definitions with prefixed cssName from all()', () => {
 		const all = defaultStylesStylesProvider.actions.all();
 
