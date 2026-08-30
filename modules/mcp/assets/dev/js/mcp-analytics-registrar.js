@@ -2,8 +2,7 @@
 	const MCP_INTERACTION_EVENT = 'elementor/mcp/interaction';
 
 	const FIXED_PROPS = {
-		app_type: 'infra',
-		appType: 'infra',
+		app_type: 'wpadmin',
 		window_name: 'elementor_mcp',
 		target_location: 'main_content',
 	};
