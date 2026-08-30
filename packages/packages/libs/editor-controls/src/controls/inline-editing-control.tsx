@@ -61,7 +61,7 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 						},
 						'&:focus-within': {
 							borderColor: theme.palette.text.primary,
-							boxShadow: theme.palette.mode === 'dark' ? '0 0 0 1px white' : '0 0 0 1px black',
+							boxShadow: '0 0 0 1px ${theme.palette.text.primary}',
 						},
 						'& .ProseMirror:focus': {
 							outline: 'none',
