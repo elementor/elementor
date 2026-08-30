@@ -4,6 +4,9 @@ on:
   pull_request:
     types:
       - closed
+    branches:
+      - release/stable
+      - release/beta
 
 permissions:
   contents: write
