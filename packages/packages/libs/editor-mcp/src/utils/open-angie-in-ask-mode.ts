@@ -1,4 +1,9 @@
-import { setAngieInteractionMode } from '@elementor-external/angie-sdk';
+import {
+	AngieInteractionMode,
+	getAngieIframe,
+	setAngieInteractionMode,
+	toggleAngieSidebar,
+} from '@elementor-external/angie-sdk';
 
 import { isAngieAvailable } from './is-angie-available';
 
@@ -9,8 +14,14 @@ export const openAngieInAskMode = ( prompt?: string ): void => {
 		return;
 	}
 
-	setAngieInteractionMode( 'ask', {
-		isOpen: true,
+	const angieSidebar = getAngieIframe();
+
+	if ( ! angieSidebar ) {
+		return;
+	}
+
+	toggleAngieSidebar( angieSidebar, true );
+	setAngieInteractionMode( AngieInteractionMode.ASK, {
 		source: HELP_CENTER_ANGIE_SOURCE,
 		prompt,
 	} );

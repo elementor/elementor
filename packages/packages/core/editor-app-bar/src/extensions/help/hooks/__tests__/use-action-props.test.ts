@@ -58,6 +58,7 @@ describe( 'useHelpCenterActionProps', () => {
 		result.current.onClick?.( { preventDefault } as unknown as React.MouseEvent );
 
 		expect( preventDefault ).toHaveBeenCalled();
+		expect( window.elementorCommon.eventsManager.dispatchEvent ).toHaveBeenCalled();
 		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
 		expect( result.current.href ).toBeUndefined();
 		expect( result.current.target ).toBeUndefined();

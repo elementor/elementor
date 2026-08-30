@@ -1,10 +1,18 @@
 import { openAngieInAskMode } from '../open-angie-in-ask-mode';
 
 const mockIsAngieAvailable = jest.fn();
+const mockGetAngieIframe = jest.fn();
+const mockToggleAngieSidebar = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
+const mockAngieIframe = document.createElement( 'iframe' );
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
+	AngieInteractionMode: {
+		ASK: 'ask',
+	},
+	getAngieIframe: () => mockGetAngieIframe(),
 	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
+	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
 } ) );
 
 jest.mock( '../is-angie-available', () => ( {
@@ -14,7 +22,10 @@ jest.mock( '../is-angie-available', () => ( {
 describe( 'openAngieInAskMode', () => {
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
+		mockGetAngieIframe.mockReset();
+		mockToggleAngieSidebar.mockReset();
 		mockSetAngieInteractionMode.mockReset();
+		mockGetAngieIframe.mockReturnValue( mockAngieIframe );
 	} );
 
 	it( 'does nothing when Angie is not available', () => {
@@ -22,6 +33,18 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode();
 
+		expect( mockGetAngieIframe ).not.toHaveBeenCalled();
+		expect( mockToggleAngieSidebar ).not.toHaveBeenCalled();
+		expect( mockSetAngieInteractionMode ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does nothing when Angie iframe is not found', () => {
+		mockIsAngieAvailable.mockReturnValue( true );
+		mockGetAngieIframe.mockReturnValue( null );
+
+		openAngieInAskMode();
+
+		expect( mockToggleAngieSidebar ).not.toHaveBeenCalled();
 		expect( mockSetAngieInteractionMode ).not.toHaveBeenCalled();
 	} );
 
@@ -30,8 +53,8 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode();
 
+		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( mockAngieIframe, true );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask', {
-			isOpen: true,
 			source: 'help-center',
 			prompt: undefined,
 		} );
@@ -43,7 +66,6 @@ describe( 'openAngieInAskMode', () => {
 		openAngieInAskMode( 'Help me with ' );
 
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask', {
-			isOpen: true,
 			source: 'help-center',
 			prompt: 'Help me with ',
 		} );
