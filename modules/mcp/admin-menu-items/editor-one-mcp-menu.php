@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
-use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Preserved_Label_Interface;
 use Elementor\MCP\Composer\Admin\Page;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
@@ -12,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Menu_Item_With_Preserved_Label_Interface, Admin_Menu_Item_With_Page {
+class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu_Item_With_Page {
 
 	const REGISTER_PRIORITY_AFTER_SUBMISSIONS = 11;
 
@@ -40,10 +39,6 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Menu_Item_
 
 	public function get_label(): string {
 		return $this->page->get_label();
-	}
-
-	public function should_preserve_label_casing(): bool {
-		return true;
 	}
 
 	public function get_position(): int {
