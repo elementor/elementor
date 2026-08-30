@@ -6,7 +6,6 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
-use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Preserved_Label_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -409,9 +408,21 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 	}
 
 	public function test_format_flyout_label__preserves_label_when_flag_is_set() {
-		$item = new Test_Preserved_Label_Menu_Item( 'Elementor MCP' );
+		$item = new Test_Custom_Url_Menu_Item(
+			'elementor-mcp',
+			Menu_Config::EDITOR_GROUP_ID,
+			admin_url( 'admin.php?page=elementor-mcp' ),
+			false,
+			'Elementor MCP'
+		);
 
-		$label = $this->invoke_private_method( $this->provider, 'format_flyout_label', [ $item ] );
+		$this->provider->register_menu( $item, [ 'preserve_label_casing' => true ] );
+
+		$label = $this->invoke_private_method(
+			$this->provider,
+			'format_flyout_label',
+			[ $item, 'elementor-mcp' ]
+		);
 
 		$this->assertSame( 'Elementor MCP', $label );
 	}
@@ -420,21 +431,26 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$item = $this->createMock( Menu_Item_Interface::class );
 		$item->method( 'get_label' )->willReturn( 'custom settings' );
 
-		$label = $this->invoke_private_method( $this->provider, 'format_flyout_label', [ $item ] );
+		$label = $this->invoke_private_method(
+			$this->provider,
+			'format_flyout_label',
+			[ $item, 'custom-settings' ]
+		);
 
 		$this->assertSame( 'Custom Settings', $label );
 	}
 
 	public function test_get_third_level_data__preserves_mcp_label_in_flyout() {
 		$this->set_admin_user();
-		$item = new Test_Preserved_Label_Menu_Item(
-			'Elementor MCP',
+		$item = new Test_Custom_Url_Menu_Item(
 			'elementor-mcp',
 			Menu_Config::EDITOR_GROUP_ID,
-			admin_url( 'admin.php?page=elementor-mcp' )
+			admin_url( 'admin.php?page=elementor-mcp' ),
+			false,
+			'Elementor MCP'
 		);
 
-		$this->provider->register_level3_item( $item );
+		$this->provider->register_menu( $item, [ 'preserve_label_casing' => true ] );
 
 		$data = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT );
 
@@ -577,65 +593,6 @@ class Test_Event_Id_Menu_Item implements Menu_Item_Interface, Menu_Item_With_Eve
 
 	public function get_event_id(): string {
 		return $this->event_id;
-	}
-}
-
-class Test_Preserved_Label_Menu_Item implements Menu_Item_Third_Level_Interface, Menu_Item_With_Preserved_Label_Interface {
-	private string $label;
-	private string $slug;
-	private string $group_id;
-	private string $url;
-
-	public function __construct(
-		string $label,
-		string $slug = 'preserved-label-item',
-		string $group_id = 'test-group',
-		string $url = 'https://example.com/preserved-label'
-	) {
-		$this->label = $label;
-		$this->slug = $slug;
-		$this->group_id = $group_id;
-		$this->url = $url;
-	}
-
-	public function get_capability(): string {
-		return 'manage_options';
-	}
-
-	public function get_label(): string {
-		return $this->label;
-	}
-
-	public function should_preserve_label_casing(): bool {
-		return true;
-	}
-
-	public function get_parent_slug(): string {
-		return '';
-	}
-
-	public function is_visible(): bool {
-		return true;
-	}
-
-	public function get_position(): int {
-		return 100;
-	}
-
-	public function get_slug(): string {
-		return $this->slug;
-	}
-
-	public function get_group_id(): string {
-		return $this->group_id;
-	}
-
-	public function get_icon(): string {
-		return 'extension';
-	}
-
-	public function has_children(): bool {
-		return false;
 	}
 }
 
