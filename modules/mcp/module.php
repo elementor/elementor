@@ -19,10 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const ANALYTICS_LISTENER_HANDLE = 'elementor-mcp-analytics-listener';
+
 	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
+	}
+
+	public function enqueue_analytics_listener(): void {
+		wp_enqueue_script(
+			self::ANALYTICS_LISTENER_HANDLE,
+			$this->get_js_assets_url( 'mcp-analytics-listener' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public static function is_active() {
