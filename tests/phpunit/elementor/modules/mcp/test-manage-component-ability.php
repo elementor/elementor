@@ -198,7 +198,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 		$this->assertArrayHasKey( 'component_id', $result );
 		$this->assertArrayHasKey( 'uid', $result );
-		$this->assertArrayHasKey( 'editor_url', $result );
+		$this->assertArrayHasKey( 'edit_url', $result );
 
 		$component = ( new Components_Repository() )->get( $result['component_id'], false );
 		$this->assertSame( [], $component->get_elements_data() );
