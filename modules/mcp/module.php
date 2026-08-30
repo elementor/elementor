@@ -19,10 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
+
 	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
+	}
+
+	public function enqueue_analytics_registrar(): void {
+		wp_enqueue_script(
+			self::ANALYTICS_REGISTRAR_HANDLE,
+			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
+			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public static function is_active() {
