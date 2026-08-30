@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import {
-	ControlActionsProvider,
-	PropKeyProvider,
-	PropProvider,
-} from '@elementor/editor-controls';
+import { ControlActionsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -224,6 +220,7 @@ describe( '<InlineEditingControl />', () => {
 		};
 
 		const getEditorContainerBorderColor = ( root: HTMLElement ) => {
+			// eslint-disable-next-line testing-library/no-node-access -- border color is on a structural wrapper without an accessible role.
 			const borderedContainer = Array.from( root.querySelectorAll( 'div' ) ).find(
 				( element ) => getComputedStyle( element ).borderRadius === '8px'
 			);

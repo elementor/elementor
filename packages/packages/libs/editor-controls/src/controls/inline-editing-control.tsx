@@ -57,7 +57,7 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 						borderRadius: '8px',
 						transition: 'border-color .2s ease, box-shadow .2s ease',
 						'&:hover': {
-							borderColor: theme.palette.text.primary
+							borderColor: theme.palette.text.primary,
 						},
 						'&:focus-within': {
 							borderColor: theme.palette.text.primary,
