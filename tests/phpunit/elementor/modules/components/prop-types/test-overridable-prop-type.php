@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -121,6 +121,48 @@ class Test_Overridable_Prop_Type extends Elementor_Test_Base {
 			'$$type' => 'overridable',
 			'value' => [
 				'override_key' => 'my-override-key',
+				'origin_value' => null,
+			],
+		], $result );
+	}
+
+	public function test_validate__passes_with_empty_origin_value_for_video_src() {
+		// Arrange — simulates legacy Pro writing `{}` when exposing an empty video source.
+		$prop_type = Overridable_Prop_Type::make()
+			->set_origin_prop_type( Video_Src_Prop_Type::make() );
+
+		// Act
+		$result = $prop_type->validate( [
+			'$$type' => 'overridable',
+			'value' => [
+				'override_key' => 'source',
+				'origin_value' => [],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_sanitize__normalizes_empty_origin_value_to_null_for_video_src() {
+		// Arrange — Core-only fix must accept legacy `{}` and persist canonical `null`.
+		$prop_type = Overridable_Prop_Type::make()
+			->set_origin_prop_type( Video_Src_Prop_Type::make() );
+
+		// Act
+		$result = $prop_type->sanitize( [
+			'$$type' => 'overridable',
+			'value' => [
+				'override_key' => 'source',
+				'origin_value' => [],
+			],
+		] );
+
+		// Assert
+		$this->assertEquals( [
+			'$$type' => 'overridable',
+			'value' => [
+				'override_key' => 'source',
 				'origin_value' => null,
 			],
 		], $result );
