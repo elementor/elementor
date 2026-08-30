@@ -1,10 +1,10 @@
 import { openAngieInAskMode } from '../open-angie-in-ask-mode';
 
 const mockIsAngieAvailable = jest.fn();
-const mockNavigateAngieIframe = jest.fn();
+const mockSdkOpenAngieInAskMode = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
-	navigateAngieIframe: ( ...args: unknown[] ) => mockNavigateAngieIframe( ...args ),
+	openAngieInAskMode: ( ...args: unknown[] ) => mockSdkOpenAngieInAskMode( ...args ),
 } ) );
 
 jest.mock( '../is-angie-available', () => ( {
@@ -14,8 +14,7 @@ jest.mock( '../is-angie-available', () => ( {
 describe( 'openAngieInAskMode', () => {
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
-		mockNavigateAngieIframe.mockReset();
-		window.location.hash = '';
+		mockSdkOpenAngieInAskMode.mockReset();
 	} );
 
 	it( 'does nothing when Angie is not available', () => {
@@ -23,7 +22,7 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode();
 
-		expect( mockNavigateAngieIframe ).not.toHaveBeenCalled();
+		expect( mockSdkOpenAngieInAskMode ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens Angie in ask mode when Angie is available', () => {
@@ -31,18 +30,20 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode();
 
-		expect( mockNavigateAngieIframe ).toHaveBeenCalledWith( 'ask', {
-			isOpen: true,
-			isStudioOpen: false,
+		expect( mockSdkOpenAngieInAskMode ).toHaveBeenCalledWith( {
 			source: 'help-center',
+			prompt: undefined,
 		} );
 	} );
 
-	it( 'prefills the Angie prompt when a prompt is provided', () => {
+	it( 'passes prompt to the SDK when provided', () => {
 		mockIsAngieAvailable.mockReturnValue( true );
 
 		openAngieInAskMode( 'Help me with ' );
 
-		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
+		expect( mockSdkOpenAngieInAskMode ).toHaveBeenCalledWith( {
+			source: 'help-center',
+			prompt: 'Help me with ',
+		} );
 	} );
 } );

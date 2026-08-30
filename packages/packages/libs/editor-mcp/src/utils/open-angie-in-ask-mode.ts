@@ -1,4 +1,4 @@
-import { navigateAngieIframe } from '@elementor-external/angie-sdk';
+import { openAngieInAskMode as sdkOpenAngieInAskMode } from '@elementor-external/angie-sdk';
 
 import { isAngieAvailable } from './is-angie-available';
 
@@ -9,13 +9,8 @@ export const openAngieInAskMode = ( prompt?: string ): void => {
 		return;
 	}
 
-	navigateAngieIframe( 'ask', {
-		isOpen: true,
-		isStudioOpen: false,
+	sdkOpenAngieInAskMode( {
 		source: HELP_CENTER_ANGIE_SOURCE,
+		prompt,
 	} );
-
-	if ( prompt ) {
-		window.location.hash = `angie-prompt=${ encodeURIComponent( prompt ) }`;
-	}
 };
