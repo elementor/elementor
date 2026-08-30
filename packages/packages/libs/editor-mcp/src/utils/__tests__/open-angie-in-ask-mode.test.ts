@@ -26,6 +26,7 @@ describe( 'openAngieInAskMode', () => {
 		mockToggleAngieSidebar.mockReset();
 		mockSetAngieInteractionMode.mockReset();
 		mockGetAngieIframe.mockReturnValue( mockAngieIframe );
+		window.location.hash = '';
 	} );
 
 	it( 'does nothing when Angie is not available', () => {
@@ -54,20 +55,16 @@ describe( 'openAngieInAskMode', () => {
 		openAngieInAskMode();
 
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( mockAngieIframe, true );
-		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask', {
-			source: 'help-center',
-			prompt: undefined,
-		} );
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
+		expect( window.location.hash ).toBe( '' );
 	} );
 
-	it( 'passes prompt to the SDK when provided', () => {
+	it( 'sets angie-prompt hash when prompt is provided', () => {
 		mockIsAngieAvailable.mockReturnValue( true );
 
 		openAngieInAskMode( 'Help me with ' );
 
-		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask', {
-			source: 'help-center',
-			prompt: 'Help me with ',
-		} );
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
+		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
 	} );
 } );
