@@ -6,6 +6,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Preserved_Label_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -366,7 +367,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $this->title_case( $item->get_label() ),
+			'label' => $this->format_flyout_label( $item ),
 			'url' => $url,
 			'group_id' => '',
 			'priority' => $this->get_item_priority( $item ),
@@ -402,7 +403,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $this->title_case( $item->get_label() ),
+			'label' => $this->format_flyout_label( $item ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
@@ -481,7 +482,7 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => $this->title_case( $item->get_label() ),
+					'label' => $this->format_flyout_label( $item ),
 					'url' => $url,
 					'priority' => $this->get_item_priority( $item ),
 					'event_id' => $this->resolve_event_id( $item, $item_slug ),
@@ -569,35 +570,22 @@ class Menu_Data_Provider {
 		return strtolower( $event_id );
 	}
 
+	private function format_flyout_label( Menu_Item_Interface $item ): string {
+		$label = $item->get_label();
+
+		if ( $item instanceof Menu_Item_With_Preserved_Label_Interface && $item->should_preserve_label_casing() ) {
+			return $label;
+		}
+
+		return $this->title_case( $label );
+	}
+
 	private function title_case( string $text ): string {
-		$tokens = preg_split( '/(\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE );
-
-		if ( false === $tokens ) {
-			return $text;
+		if ( function_exists( 'mb_convert_case' ) ) {
+			return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
 		}
 
-		$result = '';
-
-		foreach ( $tokens as $token ) {
-			if ( '' === $token || preg_match( '/^\s+$/', $token ) ) {
-				$result .= $token;
-				continue;
-			}
-
-			if ( preg_match( '/^[A-Z]{2,}$/', $token ) ) {
-				$result .= $token;
-				continue;
-			}
-
-			if ( function_exists( 'mb_convert_case' ) ) {
-				$result .= mb_convert_case( $token, MB_CASE_TITLE, 'UTF-8' );
-				continue;
-			}
-
-			$result .= ucwords( strtolower( $token ) );
-		}
-
-		return $result;
+		return ucwords( strtolower( $text ) );
 	}
 
 	private function invalidate_cache(): void {
