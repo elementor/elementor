@@ -1,10 +1,10 @@
 import { openAngieInAskMode } from '../open-angie-in-ask-mode';
 
 const mockIsAngieAvailable = jest.fn();
-const mockSdkOpenAngieInAskMode = jest.fn();
+const mockSetAngieInteractionMode = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
-	openAngieInAskMode: ( ...args: unknown[] ) => mockSdkOpenAngieInAskMode( ...args ),
+	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
 } ) );
 
 jest.mock( '../is-angie-available', () => ( {
@@ -14,7 +14,7 @@ jest.mock( '../is-angie-available', () => ( {
 describe( 'openAngieInAskMode', () => {
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
-		mockSdkOpenAngieInAskMode.mockReset();
+		mockSetAngieInteractionMode.mockReset();
 	} );
 
 	it( 'does nothing when Angie is not available', () => {
@@ -22,7 +22,7 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode();
 
-		expect( mockSdkOpenAngieInAskMode ).not.toHaveBeenCalled();
+		expect( mockSetAngieInteractionMode ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens Angie in ask mode when Angie is available', () => {
@@ -30,7 +30,8 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode();
 
-		expect( mockSdkOpenAngieInAskMode ).toHaveBeenCalledWith( {
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask', {
+			isOpen: true,
 			source: 'help-center',
 			prompt: undefined,
 		} );
@@ -41,7 +42,8 @@ describe( 'openAngieInAskMode', () => {
 
 		openAngieInAskMode( 'Help me with ' );
 
-		expect( mockSdkOpenAngieInAskMode ).toHaveBeenCalledWith( {
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask', {
+			isOpen: true,
 			source: 'help-center',
 			prompt: 'Help me with ',
 		} );

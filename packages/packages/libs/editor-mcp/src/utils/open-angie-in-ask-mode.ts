@@ -1,4 +1,4 @@
-import { openAngieInAskMode as sdkOpenAngieInAskMode } from '@elementor-external/angie-sdk';
+import { setAngieInteractionMode } from '@elementor-external/angie-sdk';
 
 import { isAngieAvailable } from './is-angie-available';
 
@@ -9,7 +9,8 @@ export const openAngieInAskMode = ( prompt?: string ): void => {
 		return;
 	}
 
-	sdkOpenAngieInAskMode( {
+	setAngieInteractionMode( 'ask', {
+		isOpen: true,
 		source: HELP_CENTER_ANGIE_SOURCE,
 		prompt,
 	} );
