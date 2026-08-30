@@ -169,7 +169,7 @@ function buildFontAwesomeSvg( iconData: FontAwesomeIconJson ): string | null {
 
 	const pathMarkup = paths.map( ( path ) => `<path d="${ escapeSvgPath( path ) }"></path>` ).join( '' );
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ width } ${ height }" aria-hidden="true">${ pathMarkup }</svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ width } ${ height }">${ pathMarkup }</svg>`;
 }
 
 function normalizePaths( pathData: string | string[] ): string[] {

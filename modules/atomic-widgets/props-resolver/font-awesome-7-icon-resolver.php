@@ -25,6 +25,10 @@ class Font_Awesome_7_Icon_Resolver {
 
 	private static $icons_by_file = [];
 
+	public static function reset(): void {
+		self::$icons_by_file = [];
+	}
+
 	public static function is_supported_library( string $library ): bool {
 		return str_starts_with( $library, 'fa-' );
 	}
@@ -70,6 +74,20 @@ class Font_Awesome_7_Icon_Resolver {
 		return $matches[1];
 	}
 
+	private static function get_json_base_path( string $file_name ): string {
+		$base_path = apply_filters(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			self::JSON_BASE_PATH,
+			$file_name
+		);
+
+		if ( ! is_string( $base_path ) || '' === $base_path ) {
+			return self::JSON_BASE_PATH;
+		}
+
+		return trailingslashit( $base_path );
+	}
+
 	private static function get_json_file_name( string $library ): ?string {
 		if ( ! preg_match( '/^fa-(solid|regular|brands)$/', $library, $matches ) ) {
 			return null;
@@ -79,15 +97,15 @@ class Font_Awesome_7_Icon_Resolver {
 	}
 
 	private static function load_icons( string $file_name ): ?array {
-		if ( isset( self::$icons_by_file[ $file_name ] ) ) {
-			return self::$icons_by_file[ $file_name ];
-		}
-
 		if ( ! in_array( $file_name, self::ALLOWED_JSON_FILES, true ) ) {
 			return null;
 		}
 
-		$file_path = self::JSON_BASE_PATH . $file_name . '.json';
+		$file_path = self::get_json_base_path( $file_name ) . $file_name . '.json';
+
+		if ( isset( self::$icons_by_file[ $file_path ] ) ) {
+			return self::$icons_by_file[ $file_path ];
+		}
 
 		if ( ! is_readable( $file_path ) ) {
 			return null;
@@ -105,9 +123,9 @@ class Font_Awesome_7_Icon_Resolver {
 			return null;
 		}
 
-		self::$icons_by_file[ $file_name ] = self::index_icons( $file_data['icons'] );
+		self::$icons_by_file[ $file_path ] = self::index_icons( $file_data['icons'] );
 
-		return self::$icons_by_file[ $file_name ];
+		return self::$icons_by_file[ $file_path ];
 	}
 
 	private static function index_icons( array $icons ): array {

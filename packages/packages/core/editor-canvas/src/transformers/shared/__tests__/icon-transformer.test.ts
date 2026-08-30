@@ -1,7 +1,12 @@
-import { iconTransformer, resetFontAwesomeIconsCache } from '../icon-transformer';
+import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
-const FA7_STAR_PATH =
-	'M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z';
+import { iconPropType } from '../../../__tests__/prop-types';
+import { initSettingsTransformers } from '../../../init-settings-transformers';
+import { createPropsResolver } from '../../../renderers/create-props-resolver';
+import { settingsTransformersRegistry } from '../../../settings-transformers-registry';
+import { resetFontAwesomeIconsCache } from '../icon-transformer';
+
+const STAR_PATH = 'M0 0h100v100H0z';
 const STAR_WIDTH = 576;
 const STAR_HEIGHT = 512;
 
@@ -12,12 +17,35 @@ const mockFetch = ( body: unknown, ok = true ) => {
 	} );
 };
 
+function createSavedIcon( iconClass: string, library: string ) {
+	return iconPropTypeUtil.create( {
+		value: stringPropTypeUtil.create( iconClass ),
+		library: stringPropTypeUtil.create( library ),
+	} );
+}
+
+async function resolveSavedIcon( iconClass: string, library: string ) {
+	const resolve = createPropsResolver( {
+		transformers: settingsTransformersRegistry,
+		schema: { svg: iconPropType() },
+	} );
+
+	const result = await resolve( {
+		props: {
+			svg: createSavedIcon( iconClass, library ),
+		},
+	} );
+
+	return result.svg;
+}
+
 describe( 'iconTransformer', () => {
 	const originalElementorCommon = window.elementorCommon;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		resetFontAwesomeIconsCache();
+		initSettingsTransformers();
 		window.elementorCommon = {
 			config: {
 				urls: {
@@ -36,23 +64,23 @@ describe( 'iconTransformer', () => {
 		// Arrange.
 		mockFetch( {
 			icons: {
-				star: [ STAR_WIDTH, STAR_HEIGHT, [], 'f005', FA7_STAR_PATH ],
+				star: [ STAR_WIDTH, STAR_HEIGHT, [], 'f005', STAR_PATH ],
 			},
 		} );
 
 		// Act.
-		const result = await iconTransformer( { value: 'fas fa-star', library: 'fa-solid' }, { key: 'svg' } );
+		const result = await resolveSavedIcon( 'fas fa-star', 'fa-solid' );
 
 		// Assert.
 		expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/assets/lib/font-awesome-7/json/solid.json', {
 			signal: undefined,
 		} );
 		expect( result ).toEqual( {
-			html: expect.stringContaining( FA7_STAR_PATH ),
+			html: expect.stringContaining( STAR_PATH ),
 			url: null,
 		} );
 		expect( ( result as { html: string } ).html ).toContain( 'fill="currentColor"' );
-		expect( ( result as { html: string } ).html ).toContain( 'viewBox="0 0 576 512"' );
+		expect( ( result as { html: string } ).html ).toContain( `viewBox="0 0 ${ STAR_WIDTH } ${ STAR_HEIGHT }"` );
 		expect( ( result as { html: string } ).html ).toContain( 'aria-hidden="true"' );
 		expect( ( result as { html: string } ).html ).toContain( 'overflow: visible' );
 	} );
@@ -66,10 +94,7 @@ describe( 'iconTransformer', () => {
 		} );
 
 		// Act.
-		const result = await iconTransformer(
-			{ value: 'fas fa-headphones-simple', library: 'fa-solid' },
-			{ key: 'svg' }
-		);
+		const result = await resolveSavedIcon( 'fas fa-headphones-simple', 'fa-solid' );
 
 		// Assert.
 		expect( result ).toEqual( {
@@ -87,7 +112,7 @@ describe( 'iconTransformer', () => {
 		} );
 
 		// Act.
-		const result = await iconTransformer( { value: 'fas fa-slash', library: 'fa-solid' }, { key: 'svg' } );
+		const result = await resolveSavedIcon( 'fas fa-slash', 'fa-solid' );
 
 		// Assert.
 		const html = ( result as { html: string } ).html;
@@ -101,7 +126,7 @@ describe( 'iconTransformer', () => {
 		mockFetch( { icons: {} } );
 
 		// Act.
-		const result = await iconTransformer( { value: 'fas fa-missing', library: 'fa-solid' }, { key: 'svg' } );
+		const result = await resolveSavedIcon( 'fas fa-missing', 'fa-solid' );
 
 		// Assert.
 		expect( result ).toEqual( { html: null, url: null } );
@@ -112,7 +137,7 @@ describe( 'iconTransformer', () => {
 		mockFetch( { icons: {} } );
 
 		// Act.
-		const result = await iconTransformer( { value: 'fas fa-star', library: 'fa-../../wp-config' }, { key: 'svg' } );
+		const result = await resolveSavedIcon( 'fas fa-star', 'fa-../../wp-config' );
 
 		// Assert.
 		expect( global.fetch ).not.toHaveBeenCalled();
@@ -121,9 +146,20 @@ describe( 'iconTransformer', () => {
 
 	it( 'returns null html when value or library is missing', async () => {
 		// Act.
-		const result = await iconTransformer( { value: 'fas fa-star' }, { key: 'svg' } );
+		const resolve = createPropsResolver( {
+			transformers: settingsTransformersRegistry,
+			schema: { svg: iconPropType() },
+		} );
+		const result = await resolve( {
+			props: {
+				svg: iconPropTypeUtil.create( {
+					value: stringPropTypeUtil.create( 'fas fa-star' ),
+					library: stringPropTypeUtil.create( '' ),
+				} ),
+			},
+		} );
 
 		// Assert.
-		expect( result ).toEqual( { html: null, url: null } );
+		expect( result.svg ).toEqual( { html: null, url: null } );
 	} );
 } );

@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver\Transformers;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Icon_Transformer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -13,10 +14,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Icon_Transformer extends Elementor_Test_Base {
 	private const FA7_STAR_PATH_FRAGMENT = 'M309.5-18.9';
 
+	private const FILTERED_ICON_NAME = 'filter-probe';
+
+	private const FILTERED_ICON_PATH = 'M1 1';
+
+	private const FILTERED_ICON_SIZE = 10;
+
+	private const JSON_BASE_PATH_FILTER = 'elementor/atomic-widgets/font-awesome-7/json-base-path';
+
+	private $filtered_json_dir = null;
+
 	public function setUp(): void {
 		parent::setUp();
 
+		Font_Awesome_7_Icon_Resolver::reset();
 		$this->ensure_font_awesome_7_json_available();
+	}
+
+	public function tearDown(): void {
+		remove_all_filters( self::JSON_BASE_PATH_FILTER );
+		Font_Awesome_7_Icon_Resolver::reset();
+		$this->remove_filtered_json_dir();
+
+		parent::tearDown();
 	}
 
 	public function test_transform__returns_inline_svg_for_font_awesome_7_icon() {
@@ -132,6 +152,35 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		], $result );
 	}
 
+	public function test_transform__reads_icons_from_filtered_json_base_path() {
+		// Arrange.
+		$this->filtered_json_dir = $this->create_filtered_json_dir();
+
+		add_filter(
+			self::JSON_BASE_PATH_FILTER,
+			function () {
+				return $this->filtered_json_dir;
+			}
+		);
+
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'fas fa-' . self::FILTERED_ICON_NAME,
+			'library' => 'fa-solid',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertStringContainsString( self::FILTERED_ICON_PATH, $result['html'] );
+		$this->assertStringContainsString(
+			'viewBox="0 0 ' . self::FILTERED_ICON_SIZE . ' ' . self::FILTERED_ICON_SIZE . '"',
+			$result['html']
+		);
+		$this->assertStringNotContainsString( self::FA7_STAR_PATH_FRAGMENT, $result['html'] );
+	}
+
 	public function test_transform__returns_inline_svg_for_eicons_library() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
@@ -146,6 +195,46 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		// Assert.
 		$this->assertStringContainsString( '<svg', $result['html'] );
 		$this->assertStringContainsString( '<path', $result['html'] );
+	}
+
+	private function create_filtered_json_dir(): string {
+		$json_dir = sys_get_temp_dir() . '/elementor-fa7-json-' . uniqid( '', true );
+
+		if ( ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
+			$this->fail( 'Could not create filtered Font Awesome 7 JSON directory.' );
+		}
+
+		file_put_contents(
+			$json_dir . '/solid.json',
+			wp_json_encode( [
+				'icons' => [
+					self::FILTERED_ICON_NAME => [
+						self::FILTERED_ICON_SIZE,
+						self::FILTERED_ICON_SIZE,
+						[],
+						'f000',
+						self::FILTERED_ICON_PATH,
+					],
+				],
+			] )
+		);
+
+		return $json_dir;
+	}
+
+	private function remove_filtered_json_dir(): void {
+		if ( ! is_string( $this->filtered_json_dir ) || ! is_dir( $this->filtered_json_dir ) ) {
+			return;
+		}
+
+		$json_file = $this->filtered_json_dir . '/solid.json';
+
+		if ( is_file( $json_file ) ) {
+			unlink( $json_file );
+		}
+
+		rmdir( $this->filtered_json_dir );
+		$this->filtered_json_dir = null;
 	}
 
 	private function ensure_font_awesome_7_json_available(): void {
