@@ -34,7 +34,7 @@ describe( 'mcp-analytics-registrar', () => {
 						client: 'cursor',
 						mode: 'auto',
 					},
-				} )
+				} ),
 			);
 		} );
 
@@ -45,7 +45,7 @@ describe( 'mcp-analytics-registrar', () => {
 				interaction_result: 'page_loaded',
 				client: 'cursor',
 				mode: 'auto',
-			} )
+			} ),
 		);
 	} );
 
@@ -64,7 +64,7 @@ describe( 'mcp-analytics-registrar', () => {
 			window.dispatchEvent(
 				new CustomEvent( MCP_INTERACTION_EVENT, {
 					detail: {},
-				} )
+				} ),
 			);
 		} );
 
