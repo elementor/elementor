@@ -15,21 +15,6 @@ module.exports = {
 				},
 			},
 		],
-		'^.+\\.mjs$': [
-			'@swc/jest',
-			{
-				jsc: {
-					transform: {
-						react: {
-							runtime: 'automatic',
-						},
-					},
-				},
-				module: {
-					type: 'commonjs',
-				},
-			},
-		],
 	},
 	moduleNameMapper: {
 		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [

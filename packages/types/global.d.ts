@@ -77,6 +77,12 @@ declare global {
 			config?: {
 				allowedHTMLWrapperTags?: string[];
 				experimentalFeatures?: Record< string, boolean >;
+				atomic?: {
+					fontAwesome7?: {
+						jsonFiles?: string[];
+						jsonBaseUrl?: string;
+					};
+				};
 				urls?: {
 					assets?: string;
 				};

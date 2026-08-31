@@ -9,6 +9,11 @@ type IconValue = {
 
 type FontAwesomeIconJson = [ number, number, unknown[], unknown, string | string[] ];
 
+type FontAwesome7EditorConfig = {
+	jsonFiles: string[];
+	jsonBaseUrl: string;
+};
+
 const FONT_AWESOME_JSON = {
 	width: 0,
 	height: 1,
@@ -17,8 +22,7 @@ const FONT_AWESOME_JSON = {
 	path: 4,
 } as const;
 
-const FONT_AWESOME_7_JSON_FILES = [ 'solid', 'regular', 'brands' ] as const;
-const FONT_AWESOME_7_JSON_BASE_PATH = 'lib/font-awesome-7/json/';
+const FONT_AWESOME_LIBRARY_PREFIX = 'fa-';
 
 const fontAwesomeJsonCache = new Map< string, Record< string, FontAwesomeIconJson > >();
 
@@ -62,15 +66,31 @@ function getFontAwesomeIconName( iconValue: string ): string | null {
 }
 
 function getFontAwesomeJsonFileName( library: string ): string | null {
-	const match = library.match( /^fa-(solid|regular|brands)$/ );
+	if ( ! library.startsWith( FONT_AWESOME_LIBRARY_PREFIX ) ) {
+		return null;
+	}
 
-	return match?.[ 1 ] ?? null;
+	const fileName = library.slice( FONT_AWESOME_LIBRARY_PREFIX.length );
+	const config = getFontAwesome7EditorConfig();
+
+	if ( ! config?.jsonFiles.includes( fileName ) ) {
+		return null;
+	}
+
+	return fileName;
 }
 
-function getAssetsBaseUrl(): string | null {
-	const assetsUrl = window.elementorCommon?.config?.urls?.assets;
+function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
+	const config = window.elementorCommon?.config?.atomic?.fontAwesome7;
 
-	return typeof assetsUrl === 'string' && assetsUrl !== '' ? assetsUrl : null;
+	if ( ! config || ! Array.isArray( config.jsonFiles ) || typeof config.jsonBaseUrl !== 'string' || config.jsonBaseUrl === '' ) {
+		return null;
+	}
+
+	return {
+		jsonFiles: config.jsonFiles,
+		jsonBaseUrl: config.jsonBaseUrl,
+	};
 }
 
 async function fetchFontAwesomeIcons(
@@ -96,18 +116,14 @@ async function loadFontAwesomeIcons(
 	jsonFileName: string,
 	signal?: AbortSignal
 ): Promise< Record< string, FontAwesomeIconJson > | null > {
-	if ( ! FONT_AWESOME_7_JSON_FILES.includes( jsonFileName as ( typeof FONT_AWESOME_7_JSON_FILES )[ number ] ) ) {
-		return null;
-	}
+	const config = getFontAwesome7EditorConfig();
 
-	const assetsUrl = getAssetsBaseUrl();
-
-	if ( ! assetsUrl ) {
+	if ( ! config?.jsonFiles.includes( jsonFileName ) ) {
 		return null;
 	}
 
 	try {
-		const response = await fetch( `${ assetsUrl }${ FONT_AWESOME_7_JSON_BASE_PATH }${ jsonFileName }.json`, {
+		const response = await fetch( `${ config.jsonBaseUrl }${ jsonFileName }.json`, {
 			signal,
 		} );
 

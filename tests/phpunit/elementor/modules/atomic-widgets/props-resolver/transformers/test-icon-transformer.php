@@ -152,6 +152,15 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		], $result );
 	}
 
+	public function test_get_editor_config__exposes_allowed_files_and_json_url() {
+		// Act.
+		$config = Font_Awesome_7_Icon_Resolver::get_editor_config();
+
+		// Assert.
+		$this->assertSame( Font_Awesome_7_Icon_Resolver::ALLOWED_JSON_FILES, $config['jsonFiles'] );
+		$this->assertStringContainsString( Font_Awesome_7_Icon_Resolver::JSON_RELATIVE_PATH, $config['jsonBaseUrl'] );
+	}
+
 	public function test_transform__reads_icons_from_filtered_json_base_path() {
 		// Arrange.
 		$this->filtered_json_dir = $this->create_filtered_json_dir();

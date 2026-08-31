@@ -51,6 +51,12 @@ describe( 'iconTransformer', () => {
 				urls: {
 					assets: 'https://example.com/assets/',
 				},
+				atomic: {
+					fontAwesome7: {
+						jsonFiles: [ 'solid', 'regular', 'brands' ],
+						jsonBaseUrl: 'https://example.com/assets/lib/font-awesome-7/json/',
+					},
+				},
 			},
 		};
 	} );
@@ -130,6 +136,34 @@ describe( 'iconTransformer', () => {
 
 		// Assert.
 		expect( result ).toEqual( { html: null, url: null } );
+	} );
+
+	it( 'fetches json from the localized font awesome 7 base url', async () => {
+		// Arrange.
+		const jsonBaseUrl = 'https://cdn.example.com/fa7/json/';
+		window.elementorCommon = {
+			config: {
+				atomic: {
+					fontAwesome7: {
+						jsonFiles: [ 'solid', 'regular', 'brands' ],
+						jsonBaseUrl,
+					},
+				},
+			},
+		};
+		mockFetch( {
+			icons: {
+				star: [ STAR_WIDTH, STAR_HEIGHT, [], 'f005', STAR_PATH ],
+			},
+		} );
+
+		// Act.
+		await resolveSavedIcon( 'fas fa-star', 'fa-solid' );
+
+		// Assert.
+		expect( global.fetch ).toHaveBeenCalledWith( `${ jsonBaseUrl }solid.json`, {
+			signal: undefined,
+		} );
 	} );
 
 	it( 'does not fetch json when library is not an allowed fa7 file', async () => {

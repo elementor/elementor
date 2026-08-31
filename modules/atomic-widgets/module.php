@@ -41,6 +41,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Are
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Pro_Promotion_Data_Preservation;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Svg_Src_Export_Transformer;
@@ -214,6 +215,8 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
+		add_filter( 'elementor/common/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
@@ -349,6 +352,16 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
+
+		return $settings;
+	}
+
+	private function add_font_awesome_7_config( $settings ) {
+		if ( ! isset( $settings['atomic'] ) || ! is_array( $settings['atomic'] ) ) {
+			$settings['atomic'] = [];
+		}
+
+		$settings['atomic']['fontAwesome7'] = Font_Awesome_7_Icon_Resolver::get_editor_config();
 
 		return $settings;
 	}

@@ -6,8 +6,8 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "build": "node ./src/generate.mjs",
-    "dev": "node ./src/generate.mjs"
+    "build": "node --experimental-strip-types ./src/generate.ts",
+    "dev": "node --experimental-strip-types ./src/generate.ts"
   },
   "turbo": {
     "tasks": {

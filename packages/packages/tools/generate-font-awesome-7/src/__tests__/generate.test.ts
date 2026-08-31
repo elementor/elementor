@@ -6,7 +6,7 @@ import {
 	buildIconsJsonFromPack,
 	generateFontAwesome7,
 	serializeIconsJson,
-} from '../generate.mjs';
+} from '../generate';
 
 describe( 'generateFontAwesome7', () => {
 	it( 'throws when an installed package is not major 7', () => {

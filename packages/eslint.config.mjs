@@ -31,7 +31,7 @@ function getImportSortGroups() {
 
 export default [
 	{
-		ignores: [ 'node_modules/', '**/dist/', 'docs/**', '!.github/', 'scripts/**', 'tests/**', 'eslint.config.mjs', 'packages/tools/generate-font-awesome-7/**' ],
+		ignores: [ 'node_modules/', '**/dist/', 'docs/**', '!.github/', 'scripts/**', 'tests/**', 'eslint.config.mjs' ],
 	},
 	...wordpress.configs.recommended,
 	...tseslint.configs.strict,
