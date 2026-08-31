@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { getContainer, getElementSetting } from '@elementor/editor-elements';
-import { fireEvent, screen } from '@testing-library/react';
+import { ThemeProvider } from '@elementor/ui';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
@@ -198,6 +199,64 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Assert.
 			expect( newTabButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		} );
+	} );
+
+	describe( 'inControlPanel styling', () => {
+		it( 'should not apply the smaller icon size by default', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			// eslint-disable-next-line testing-library/no-node-access
+			const boldIcon = screen.getByLabelText( 'Bold' ).querySelector( 'svg' );
+
+			// Assert.
+			expect( boldIcon ).not.toHaveStyle( { width: '0.7rem', height: '0.7rem' } );
+		} );
+
+		it( 'should apply the smaller icon size when rendered inside the control panel', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } inControlPanel /> );
+
+			// eslint-disable-next-line testing-library/no-node-access
+			const boldIcon = screen.getByLabelText( 'Bold' ).querySelector( 'svg' );
+
+			// Assert.
+			expect( boldIcon ).toHaveStyle( { width: '0.7rem', height: '0.7rem' } );
+		} );
+
+		it( 'should still render all toolbar buttons when inControlPanel is enabled', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } inControlPanel /> );
+
+			// Assert.
+			expect( screen.getByLabelText( 'Clear' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'Bold' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should use white icon color in dark mode when rendered inside the control panel', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			render(
+				<ThemeProvider colorScheme="dark">
+					<InlineEditorToolbar editor={ mockEditor } inControlPanel />
+				</ThemeProvider>
+			);
+
+			// Assert.
+			expect( screen.getByLabelText( 'Bold' ) ).toHaveStyle( { color: 'rgb(255, 255, 255)' } );
 		} );
 	} );
 

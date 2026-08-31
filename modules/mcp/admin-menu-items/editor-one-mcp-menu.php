@@ -31,7 +31,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function is_visible(): bool {
-		return Module::is_connector_page_active();
+		return true;
 	}
 
 	public function get_group_id(): string {
@@ -63,6 +63,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function render() {
+		Module::instance()->enqueue_analytics_registrar();
 		$this->page->render();
 	}
 }

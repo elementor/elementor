@@ -7,7 +7,7 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
-- `elementor/list-assets` - Images and SVG icons already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`) and always before an `e-svg` (which needs an uploaded asset to render)
+- `elementor/list-assets` - Images, SVG icons, and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), always before an `e-svg` (which needs an uploaded asset to render), and before `e-self-hosted-video` / `e-background-video` when using a library video
 - `elementor/list-components` - Discover reusable widget compositions and the component capabilities available for the current license tier (see COMPONENTS)
 
 # TOOL SUPPORT
@@ -55,25 +55,41 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media (--breakpoint)` blocks (e.g. `@media (--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css`, which is stripped by Pro 3.35+.
+- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- **CSS shorthand properties may fall back to custom_css which is stripped by Pro 3.35+; prefer longhand properties (e.g., `padding-top`, `padding-right` instead of `padding`)**
-- **box-shadow**: literal values only — `var(...)` wrappers are not supported.
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
-- Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
+
+### Style conversion
+The server converts most CSS into **native atomic styles** (breakpoint variants, pseudo-states). Some value shapes fall back to `custom_css`; `animation` and `animation-*` are dropped.
+
+**When easy, prefer native-friendly shapes** (fallbacks are fine when the design needs them):
+- Breakpoints: `@media(--mobile)` — not `@media (max-width: 768px)`
+- Gap: single value `gap: 1rem` — not two-value `gap: 1rem 2rem` / `row-gap`
+- Borders: shorthand `border` / `border-width` — per-side `border-color` / `border-style` may fall back
+- Border-radius: simple values — not elliptical slash form (`10px / 20px`)
+- Transform: `rotate()` / `scale()` / `translate()` — not `matrix()`, `skew()`, `perspective`, `rotate3d`
+- Transition: property list — easing and delay may be dropped
+- Box-shadow: literal values (fully supported) — not `var(...)` inside the shadow
+- Font family & `var()`: one Google Font or one kit variable label — see GLOBAL VARIABLES
+
+**`padding` / `margin` shorthands are supported** — use them; do not split into longhand unnecessarily.
 
 ## element_config FORMAT
 Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
 - **boolean**: plain boolean (`true`)
-- **html-v3** (title, paragraph, etc.): `{ "content": "Hello", "children": [] }` — `children` is a plain array of child node objects
+- **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). Do NOT wrap in `{ content, children }`.
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`.
   - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
 - **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
+- **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
+  - Library asset (from `elementor/list-assets` with `type: "video"`): `{ "id": 123 }`
+  - External URL: `{ "url": "https://example.com/clip.mp4" }`
+  - NEVER put a raw video URL on a text, link, or `href` prop — a video always goes into `source` on a video widget.
 
 ## GLOBAL VARIABLES
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
@@ -81,8 +97,9 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 **In `style` (raw CSS):** reference by label only:
 - `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
+- Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
-- Unrecognized variable references fall back to `custom_css`, which may not render on Pro 3.35+
+- Unrecognized variable references fall back to `custom_css`
 
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
@@ -202,7 +219,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   "element_config": {
     "Section Title": {
       "tag": "h2",
-      "title": { "content": "Welcome", "children": [] }
+      "title": "Welcome"
     }
   },
   "style": {

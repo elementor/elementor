@@ -2,7 +2,7 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 3.34.2
 Beta tag: 3.34.0-beta3
@@ -359,6 +359,11 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 4.2.4 - 2026-08-31 =
+
+* Tweak: Updated WordPress compatibility to version 7.1
+* Fix: Improved code security enforcement in query handling
 
 = 4.2.3 - 2026-08-19 =
 
