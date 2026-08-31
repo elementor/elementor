@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { isAngieAvailable } from '@elementor/editor-mcp';
 import { trackEvent } from '@elementor/events';
 import { AngieIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
+import { useIsAngieAvailable } from '../../../hooks/use-is-angie-available';
 import { AI_WIDGET_CTA_VIEWED_EVENT, ANGIE_GUIDE_TOGGLE_EVENT } from '../angie-consts';
 
 export function useActionProps() {
-	const hasAngieInstalled = isAngieAvailable();
+	const hasAngieInstalled = useIsAngieAvailable();
 	const visible = ! hasAngieInstalled;
 
 	useEffect( () => {
