@@ -4,6 +4,9 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Group_Control_Detector;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Patch_Bisector;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Render_Probe;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Scoped_Css_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
@@ -181,7 +184,15 @@ class Style_Applier {
 		}
 
 		if ( ! empty( $result['settings_patch'] ) ) {
-			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+			$base_settings = $node['settings'] ?? [];
+			$safe_patch = self::guard_v3_render(
+				(string) $widget_type,
+				$base_settings,
+				$result['settings_patch'],
+				$controls,
+				$warnings
+			);
+			$node['settings'] = array_merge( $base_settings, $safe_patch );
 		}
 
 		$unmapped = $result['unmapped_css'] ?? '';
@@ -206,6 +217,116 @@ class Style_Applier {
 		}
 
 		return $warnings;
+	}
+
+	/**
+	 * @param array<string, mixed> $base
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @param string[]             $warnings
+	 * @return array<string, mixed> Patch with offending keys removed.
+	 */
+	private static function guard_v3_render(
+		string $widget_type,
+		array $base,
+		array $patch,
+		array $controls,
+		array &$warnings
+	): array {
+		if ( ! apply_filters( 'elementor/mcp/v3_render_probe', true ) ) {
+			return $patch;
+		}
+
+		$merged = array_merge( $base, $patch );
+		$initial = V3_Render_Probe::probe( $widget_type, $merged );
+
+		if ( $initial['ok'] || $initial['timed_out'] ) {
+			return $patch;
+		}
+
+		$probe = static function ( array $settings ) use ( $widget_type ): bool {
+			$result = V3_Render_Probe::probe( $widget_type, $settings );
+			return $result['ok'] || $result['timed_out'];
+		};
+
+		$offending = V3_Patch_Bisector::find_offending(
+			$base,
+			$patch,
+			$probe,
+			self::render_probe_groups( $controls )
+		);
+
+		if ( empty( $offending ) ) {
+			return $patch;
+		}
+
+		$safe = $patch;
+		foreach ( $offending as $key ) {
+			unset( $safe[ $key ] );
+		}
+
+		$warnings[] = sprintf(
+			/* translators: 1: widget type, 2: comma-separated setting keys, 3: PHP error message. */
+			__( 'V3 render fatal on %1$s for keys [%2$s]: %3$s. Props dropped.', 'elementor' ),
+			$widget_type,
+			implode( ',', $offending ),
+			(string) $initial['error']
+		);
+
+		return $safe;
+	}
+
+	/**
+	 * @param array<string, mixed> $controls
+	 * @return array<string, string[]>
+	 */
+	private static function render_probe_groups( array $controls ): array {
+		$groups = [];
+
+		foreach ( V3_Group_Control_Detector::typography_prefixes( $controls ) as $prefix ) {
+			$members = [];
+			foreach ( V3_Group_Control_Detector::TYPOGRAPHY_SUFFIXES as $suffix ) {
+				foreach ( V3_Group_Control_Detector::RESPONSIVE_SUFFIXES as $responsive ) {
+					$key = $prefix . '_' . $suffix . $responsive;
+					if ( isset( $controls[ $key ] ) ) {
+						$members[] = $key;
+					}
+				}
+			}
+			if ( ! empty( $members ) ) {
+				$groups[ $prefix ] = $members;
+			}
+		}
+
+		foreach ( V3_Group_Control_Detector::border_prefixes( $controls ) as $prefix ) {
+			$members = [];
+			foreach ( V3_Group_Control_Detector::BORDER_SUFFIXES as $suffix ) {
+				foreach ( V3_Group_Control_Detector::RESPONSIVE_SUFFIXES as $responsive ) {
+					$key = $prefix . '_' . $suffix . $responsive;
+					if ( isset( $controls[ $key ] ) ) {
+						$members[] = $key;
+					}
+				}
+			}
+			if ( ! empty( $members ) ) {
+				$groups[ $prefix ] = $members;
+			}
+		}
+
+		foreach ( V3_Group_Control_Detector::box_shadow_prefixes( $controls ) as $prefix ) {
+			$members = [];
+			foreach ( V3_Group_Control_Detector::BOX_SHADOW_SUFFIXES as $suffix ) {
+				$key = $prefix . '_' . $suffix;
+				if ( isset( $controls[ $key ] ) ) {
+					$members[] = $key;
+				}
+			}
+			if ( ! empty( $members ) ) {
+				$groups[ $prefix . '_box_shadow' ] = $members;
+			}
+		}
+
+		return $groups;
 	}
 
 	/**
