@@ -2,6 +2,11 @@
 // Compatibility
 //
 
+// Hidden stub for Elementor Pro < 4.3 panel footer API (ED-25418).
+#elementor-panel-footer.elementor-panel-footer-back-compat-wrapper {
+	display: none !important;
+}
+
 // WP Media Modal Compatibility
 .media-modal.wp-core-ui {
 	color-scheme: light; //light mode only
