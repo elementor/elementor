@@ -51,7 +51,6 @@ export default [
 			'eslint-local-rules.js',
 			'.eslintrc.js',
 			'scripts/create-version-change.js',
-			'scripts/lint-packages-staged.js',
 			'coverage-report/',
 			'node_modules/',
 			'.sass-cache/',

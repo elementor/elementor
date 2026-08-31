@@ -6,7 +6,6 @@ use Elementor\App\Modules\ImportExportCustomization\Runners\Export\Export_Runner
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\DefaultStyles\ImportExportCustomization\Import_Export_Customization;
-use Elementor\Modules\DefaultStyles\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,8 +26,7 @@ class Export extends Export_Runner_Base {
 	}
 
 	private function is_feature_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
 
 	public function export( array $data ): array {

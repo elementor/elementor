@@ -277,21 +277,19 @@ class Module extends BaseModule {
 	}
 
 	private function get_steps_config(): array {
-		if ( self::is_elementor_pro_installed() ) {
-			$steps = [
-				[
-					'id' => 'theme_selection',
-					'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
-					'type' => 'single',
-				],
-			];
-		} else {
-			$steps = [
-				[
-					'id' => 'site_features',
-					'label' => __( 'What do you want to include in your site?', 'elementor' ),
-					'type' => 'multiple',
-				],
+		$steps = [
+			[
+				'id' => 'theme_selection',
+				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
+				'type' => 'single',
+			],
+		];
+
+		if ( ! self::is_elementor_pro_installed() ) {
+			$steps[] = [
+				'id' => 'site_features',
+				'label' => __( 'What do you want to include in your site?', 'elementor' ),
+				'type' => 'multiple',
 			];
 		}
 

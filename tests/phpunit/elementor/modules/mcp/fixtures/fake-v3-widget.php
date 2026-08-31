@@ -30,6 +30,32 @@ abstract class Fake_V3_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Override to return controls directly, bypassing Controls_Manager stack init which
+	 * is order-sensitive in tests (widget instances get cloned during element resolution,
+	 * losing their registered stack). The MCP V3 schema builder only needs the {name => spec}
+	 * map — no section wrappers required.
+	 */
+	public function get_controls( $control_id = null ) {
+		$controls = $this->get_test_controls();
+
+		if ( null !== $control_id ) {
+			return $controls[ $control_id ] ?? null;
+		}
+
+		return $controls;
+	}
+
+	/**
+	 * @return array<string, array>
+	 */
+	protected function get_test_controls(): array {
+		return [
+			'menu' => [ 'name' => 'menu', 'label' => 'Menu', 'type' => Controls_Manager::TEXT ],
+			'layout' => [ 'name' => 'layout', 'label' => 'Layout', 'type' => Controls_Manager::TEXT ],
+		];
+	}
+
 	protected function render() {
 	}
 }

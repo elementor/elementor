@@ -47,6 +47,10 @@ class Editor_Sync_State {
 			return null;
 		}
 
+		if ( ! function_exists( 'wp_check_post_lock' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/post.php';
+		}
+
 		$has_lock    = (bool) wp_check_post_lock( $post_id );
 		$has_unsaved = self::has_editor_unsaved( $post_id );
 

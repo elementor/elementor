@@ -25,7 +25,7 @@ class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 	}
 
 	public function get_parent_slug(): string {
-		return Menu_Config::ELEMENTOR_MENU_SLUG;
+		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 	}
 
 	public function is_visible(): bool {

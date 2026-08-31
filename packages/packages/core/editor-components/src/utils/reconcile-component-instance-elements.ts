@@ -93,7 +93,6 @@ function reconcileElementTree( element: V1ElementData, overridesMapping: Overrid
 
 	return {
 		...element,
-		settings: effectiveSettings,
 		elements: reconciledChildren,
 	};
 }

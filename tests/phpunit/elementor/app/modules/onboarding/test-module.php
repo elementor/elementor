@@ -38,6 +38,7 @@ class Test_Module extends Test_Base {
 		$this->assertArrayHasKey( 'steps', $settings );
 
 		$step_ids = array_column( $settings['steps'], 'id' );
+		$this->assertContains( 'theme_selection', $step_ids );
 		$this->assertContains( 'site_features', $step_ids );
 	}
 
@@ -81,7 +82,7 @@ class Test_Module extends Test_Base {
 		}
 	}
 
-	public function test_steps_exclude_theme_selection_when_pro_not_installed() {
+	public function test_steps_include_theme_selection_and_site_features_when_pro_not_installed() {
 		add_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
 		try {
 			$_GET['page'] = 'elementor-app';
@@ -92,8 +93,12 @@ class Test_Module extends Test_Base {
 			$this->assertArrayHasKey( 'steps', $settings );
 
 			$step_ids = array_column( $settings['steps'], 'id' );
-			$this->assertNotContains( 'theme_selection', $step_ids );
+			$this->assertContains( 'theme_selection', $step_ids );
 			$this->assertContains( 'site_features', $step_ids );
+
+			$theme_index = array_search( 'theme_selection', $step_ids );
+			$features_index = array_search( 'site_features', $step_ids );
+			$this->assertLessThan( $features_index, $theme_index, 'theme_selection should come before site_features' );
 		} finally {
 			remove_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
 		}

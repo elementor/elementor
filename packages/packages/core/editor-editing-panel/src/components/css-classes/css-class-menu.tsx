@@ -16,36 +16,11 @@ import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/ty
 import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
+import { usePseudoStates } from '../style-states/use-pseudo-states';
 import { useCssClass } from './css-class-context';
 import { DuplicateClassMenuItem } from './duplicate-class-menu-item';
 import { LocalClassSubMenu } from './local-class-sub-menu';
 import { useUndoableUnapplyClass } from './use-apply-and-unapply-class';
-
-type State = {
-	key: StyleDefinitionStateWithNormal;
-	value: StyleDefinitionState | null;
-	label: string;
-};
-
-const DEFAULT_PSEUDO_STATES: State[] = [
-	{ key: 'normal', value: null, label: __( 'normal', 'elementor' ) },
-	{ key: 'hover', value: 'hover', label: __( 'hover', 'elementor' ) },
-	{ key: 'focus', value: 'focus', label: __( 'focus', 'elementor' ) },
-	{ key: 'active', value: 'active', label: __( 'active', 'elementor' ) },
-];
-
-function usePseudoStates(): State[] {
-	const { elementType } = useElement();
-	const { pseudoStates = [] } = elementType;
-
-	const additionalStates: State[] = pseudoStates.map( ( { name, value } ) => ( {
-		key: value as StyleDefinitionStateWithNormal,
-		value: value as StyleDefinitionState,
-		label: name,
-	} ) );
-
-	return [ ...DEFAULT_PSEUDO_STATES, ...additionalStates ];
-}
 
 type CssClassMenuProps = {
 	popupState: PopupState;
@@ -81,8 +56,19 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 		>
 			{ isLocalStyle && <LocalClassSubMenu popupState={ popupState } /> }
 			{ /* It has to be an array since MUI menu doesn't accept a Fragment as a child, and wrapping the items with an HTML element disrupts keyboard navigation */ }
-			{ getMenuItemsByProvider( { provider, closeMenu: popupState.close, fixed } ) }
-			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
+			{ getMenuItemsByProvider( {
+				provider,
+				closeMenu: popupState.close,
+				fixed,
+			} ) }
+			<MenuSubheader
+				sx={ {
+					typography: 'caption',
+					color: 'text.secondary',
+					pb: 0.5,
+					pt: 1,
+				} }
+			>
 				{ __( 'States', 'elementor' ) }
 			</MenuSubheader>
 			{ pseudoStates.map( ( state ) => {
@@ -113,7 +99,14 @@ function ClassStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
 	return (
 		<>
 			<Divider />
-			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
+			<MenuSubheader
+				sx={ {
+					typography: 'caption',
+					color: 'text.secondary',
+					pb: 0.5,
+					pt: 1,
+				} }
+			>
 				{ customTitle }
 			</MenuSubheader>
 			{ elementStates.map( ( state ) => {
@@ -201,7 +194,13 @@ function getMenuItemsByProvider( {
 		actions.unshift(
 			<MenuSubheader
 				key="provider-label"
-				sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1, textTransform: 'capitalize' } }
+				sx={ {
+					typography: 'caption',
+					color: 'text.secondary',
+					pb: 0.5,
+					pt: 1,
+					textTransform: 'capitalize',
+				} }
 			>
 				{ providerInstance?.labels?.singular }
 			</MenuSubheader>

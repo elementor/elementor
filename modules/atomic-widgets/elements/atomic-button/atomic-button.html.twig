@@ -1,15 +1,9 @@
 {% import 'elementor/macros' as m %}
 {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' -%}
-{%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
-{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
-	<{{ settings.link.tag | default('a') | e('html_tag') }}
-		{{- m.render_link_attributes(settings.link) }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) }}>
-		{{ settings.text | striptags(allowed_tags) | raw }}
-	</{{ settings.link.tag | default('a') | e('html_tag') }}>
-{%- else -%}
-	<button class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) }}>
-		{{ settings.text | striptags(allowed_tags) | raw }}
-	</button>
-{%- endif %}
+{%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+{%- set classes = settings.classes | merge( [ base_styles.base, m.default_tag_class(tag) ] ) | join(' ') -%}
+<{{ tag | e('html_tag') }}
+	{%- if has_link %}{{ m.render_link_attributes(settings.link) }}{% endif %} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+	{{- m.render_custom_attributes(settings) }}>
+	{{ settings.text | striptags(allowed_tags) | raw }}
+</{{ tag | e('html_tag') }}>

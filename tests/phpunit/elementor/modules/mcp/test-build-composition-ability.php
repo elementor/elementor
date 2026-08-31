@@ -106,10 +106,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'xml_structure' => $xml_structure,
 			'element_config' => [
 				'newspaper-title' => [
-					'title' => [
-						'content' => 'Daily Herald',
-						'children' => [],
-					],
+					'title' => 'Daily Herald',
 				],
 				'post-title-heading' => [
 					'title' => [
@@ -118,10 +115,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 					],
 				],
 			'masthead-eyebrow' => [
-				'paragraph' => [
-					'content' => 'Breaking News',
-					'children' => [],
-				],
+				'paragraph' => 'Breaking News',
 			],
 			'post-image' => [
 				'image' => [
@@ -340,10 +334,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			],
 			'unresolvable title type' => [
 				[
-					'title' => [
-						'content' => [ 'not', 'a', 'string' ],
-						'children' => [],
-					],
+					'title' => [ 'foo' => 'bar' ],
 				],
 				[ 'title', 'could not be resolved' ],
 			],
@@ -360,7 +351,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-divider configuration-id="d1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-divider configuration-id="d1"/></e-flexbox>',
 			'element_config' => [
 				'd1' => [
 					'link' => [
@@ -447,7 +438,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'element_config' => [
 				'h1' => [
 					'title' => [
@@ -491,7 +482,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'style' => [
 				'h1' => 'color: #ff0000;',
 			],
@@ -502,7 +493,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$style    = reset( $elements[0]['styles'] );
+		$style    = $this->get_first_local_style( $elements );
 
 		$this->assertSame( 'local', $style['label'] );
 		$this->assertCount( 1, $style['variants'] );
@@ -532,7 +523,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$style    = reset( $elements[0]['styles'] );
+		$style    = $this->get_first_local_style( $elements );
 
 		$by_state = array_column( $style['variants'], null, null );
 		$states   = array_map( fn( $v ) => $v['meta']['state'], $style['variants'] );
@@ -560,7 +551,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 
 		$elements    = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$style       = reset( $elements[0]['styles'] );
+		$style       = $this->get_first_local_style( $elements );
 		$breakpoints = array_map( fn( $v ) => $v['meta']['breakpoint'], $style['variants'] );
 
 		$this->assertContains( 'desktop', $breakpoints, 'Expected a desktop variant.' );
@@ -588,7 +579,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$styles   = $elements[0]['styles'] ?? [];
+		$styles   = $this->find_element_with_styles( $elements )['styles'] ?? [];
 
 		$this->assertNotEmpty( $styles, 'Expected a local style entry on the element.' );
 
@@ -612,7 +603,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'classes' => [
 				'h1' => [ 'hero-heading' ],
 			],
@@ -627,7 +618,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
-		$heading = $elements[0] ?? null;
+		$heading = $elements[0]['elements'][0] ?? null;
 		$this->assertNotNull( $heading );
 
 		$class_values = $heading['settings']['classes']['value'] ?? [];
@@ -671,7 +662,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'style' => [
 				'h1' => 'color: var(--wc26-gold);',
 			],
@@ -683,7 +674,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
-		$heading = $elements[0] ?? null;
+		$heading = $elements[0]['elements'][0] ?? null;
 		$this->assertNotNull( $heading );
 
 		$style = reset( $heading['styles'] );
@@ -751,6 +742,33 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
+	public function test_execute__wraps_direct_document_children_in_single_div_block() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/><e-button configuration-id="cta"/>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['warnings'] );
+		$this->assertStringContainsString( 'e-div-block', $result['warnings'][0] );
+		$this->assertStringContainsString( '<e-div-block', $result['resolved_xml'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'e-div-block', $elements[0]['elType'] );
+		$this->assertCount( 2, $elements[0]['elements'] );
+		$this->assertSame( 'e-heading', $elements[0]['elements'][0]['widgetType'] );
+		$this->assertSame( 'e-button', $elements[0]['elements'][1]['widgetType'] );
+	}
+
 	public function test_execute__mode_omitted_behaves_as_append() {
 		// Arrange
 		$this->act_as_admin();
@@ -764,7 +782,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"/>',
 		] );
 
 		// Assert
@@ -791,7 +809,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"/>',
 			'mode' => 'append',
 		] );
 
@@ -899,7 +917,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="new-heading"/>',
+			'xml_structure' => '<e-flexbox configuration-id="new-section"><e-heading configuration-id="new-heading"/></e-flexbox>',
 			'parent_id' => 'document',
 			'mode' => 'replace_children',
 		] );
@@ -913,8 +931,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
 		$this->assertCount( 1, $elements );
-		$this->assertSame( 'widget', $elements[0]['elType'] );
-		$this->assertSame( 'e-heading', $elements[0]['widgetType'] );
+		$this->assertSame( 'e-flexbox', $elements[0]['elType'] );
+		$this->assertSame( 'e-heading', $elements[0]['elements'][0]['widgetType'] );
 	}
 
 	public function test_execute__mode_replace_children_with_nonexistent_parent_returns_error() {
@@ -991,11 +1009,12 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$document = Plugin::$instance->documents->get( $post_id );
 		$elements = $document->get_elements_data();
-		$this->assertCount( 1, $elements );
-		$this->assertSame( 'widget', $elements[0]['elType'] );
-		$this->assertSame( 'nav-menu', $elements[0]['widgetType'] );
-		$this->assertSame( '3', $elements[0]['settings']['menu'] );
-		$this->assertSame( 'horizontal', $elements[0]['settings']['layout'] );
+		$nav = $this->find_element_by_widget_type( $elements, 'nav-menu' );
+		$this->assertNotNull( $nav );
+		$this->assertSame( 'widget', $nav['elType'] );
+		$this->assertSame( 'nav-menu', $nav['widgetType'] );
+		$this->assertSame( '3', $nav['settings']['menu'] );
+		$this->assertSame( 'horizontal', $nav['settings']['layout'] );
 	}
 
 	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
@@ -1015,8 +1034,10 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( 'hero-menu', $elements[0]['settings']['_css_classes'] ?? null );
-		$this->assertArrayNotHasKey( 'classes', $elements[0]['settings'] );
+		$nav = $this->find_element_by_widget_type( $elements, 'nav-menu' );
+		$this->assertNotNull( $nav );
+		$this->assertSame( 'hero-menu', $nav['settings']['_css_classes'] ?? null );
+		$this->assertArrayNotHasKey( 'classes', $nav['settings'] );
 	}
 
 	public function test_execute__allowlisted_v3_widget_style_wraps_in_selector_when_pro_active() {
@@ -1039,7 +1060,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( 'selector { filter: blur(2px); }', $elements[0]['settings']['custom_css'] ?? null );
+		$nav = $this->find_element_by_widget_type( $elements, 'nav-menu' );
+		$this->assertNotNull( $nav );
+		$this->assertSame( 'selector { filter: blur(2px); }', $nav['settings']['custom_css'] ?? null );
 	}
 
 	public function test_execute__allowlisted_v3_widget_style_warns_when_pro_missing() {
@@ -1069,7 +1092,55 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		);
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertArrayNotHasKey( 'custom_css', $elements[0]['settings'] );
+		$nav = $this->find_element_by_widget_type( $elements, 'nav-menu' );
+		$this->assertNotNull( $nav );
+		$this->assertArrayNotHasKey( 'custom_css', $nav['settings'] );
+	}
+
+	private function get_first_local_style( array $elements ): array {
+		$element = $this->find_element_with_styles( $elements );
+		$this->assertNotEmpty( $element['styles'] ?? [], 'Expected a local style entry on the element.' );
+
+		return reset( $element['styles'] );
+	}
+
+	private function find_element_with_styles( array $elements ): array {
+		$found = $this->find_element_by_callback(
+			$elements,
+			static fn( array $element ) => ! empty( $element['styles'] )
+		);
+		$this->assertNotNull( $found, 'Expected an element with local styles.' );
+
+		return $found;
+	}
+
+	private function find_element_by_widget_type( array $elements, string $widget_type ): ?array {
+		return $this->find_element_by_callback(
+			$elements,
+			static fn( array $element ) => ( $element['widgetType'] ?? null ) === $widget_type
+		);
+	}
+
+	private function find_element_by_callback( array $elements, callable $matcher ): ?array {
+		foreach ( $elements as $element ) {
+			if ( ! is_array( $element ) ) {
+				continue;
+			}
+
+			if ( $matcher( $element ) ) {
+				return $element;
+			}
+
+			$children = $element['elements'] ?? [];
+			if ( is_array( $children ) && ! empty( $children ) ) {
+				$found = $this->find_element_by_callback( $children, $matcher );
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private function given_fake_v3_widget_registered( string $type ): void {

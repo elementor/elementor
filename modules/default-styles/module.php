@@ -3,7 +3,6 @@
 namespace Elementor\Modules\DefaultStyles;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\DefaultStyles\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
@@ -13,36 +12,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_default_styles';
+	const PACKAGES = [
+		'editor-default-styles',
+	];
 
 	public function get_name() {
 		return 'default-styles';
 	}
 
-	public static function get_experimental_data() {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'HTML Tag Default Styles', 'elementor' ),
-			'description' => esc_html__( 'Enable site-wide default styles for HTML tags.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		];
-	}
-
 	public function __construct() {
 		parent::__construct();
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return;
-		}
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
 			return;
 		}
 
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+
 		( new Default_Style_Post_Type() )->register();
 		( new Default_Styles_Tag_Post_IDs() )->register_hooks();
+
+		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_editor_localize_settings( $settings ) );
 
 		( new Default_Styles_REST_API() )->register_hooks();
 		( new Atomic_Default_Styles() )->register_hooks();
@@ -77,5 +67,21 @@ class Module extends BaseModule {
 		foreach ( array_keys( $tags ) as $tag ) {
 			Default_Style_Post::clone_to_other_kit( $tag, $previous_kit, $new_kit );
 		}
+	}
+
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
+	}
+
+	private function add_editor_localize_settings( array $settings ): array {
+		if ( ! isset( $settings['atomic'] ) ) {
+			$settings['atomic'] = [];
+		}
+
+		$settings['atomic']['default_styles'] = [
+			'allowed_tags' => Default_Styles_Allowed_Tags::TAGS,
+		];
+
+		return $settings;
 	}
 }

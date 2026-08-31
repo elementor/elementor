@@ -1,5 +1,6 @@
 import { ELEMENT_STYLE_CHANGE_EVENT, type V1ElementModelProps } from '@elementor/editor-elements';
 
+import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createPendingElement } from './create-pending-element';
@@ -93,7 +94,7 @@ export function createNestedTemplatedElementView( {
 }: CreateNestedTemplatedElementViewOptions ): NestedTemplatedElementViewClass {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+	const { templateKey, baseStylesDictionary, resolveProps, defaultHtmlTag, htmlTagFollowsLink } = setupTwigRenderer( {
 		type,
 		renderer,
 		element,
@@ -198,6 +199,7 @@ export function createNestedTemplatedElementView( {
 						interaction_id: this.getInteractionId(),
 						type,
 						settings: resolvedSettings,
+						tag: computeHtmlTag( resolvedSettings, defaultHtmlTag, { followLink: htmlTagFollowsLink } ),
 						base_styles: baseStylesDictionary,
 						editor_attributes: buildEditorAttributes( model ),
 						editor_classes: buildEditorClasses( model ),
