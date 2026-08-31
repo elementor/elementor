@@ -697,6 +697,69 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_register_styles__does_not_rewrite_global_related_option_on_identical_re_render() {
+		// Arrange.
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
+		$global_classes->register_hooks();
+
+		$parent_id = $this->factory()->post->create();
+		$child_id  = $this->factory()->post->create();
+
+		$relations->set_styles_for_post( $parent_id, [ 'g-4-124' ] );
+		$relations->set_styles_for_post( $child_id, [ 'g-4-123' ] );
+
+		Global_Classes_Repository::make()->put(
+			$this->mock_global_classes['items'],
+			$this->mock_global_classes['order']
+		);
+
+		add_filter( 'elementor/document/related_posts', function( $related, $post_id ) use ( $parent_id, $child_id ) {
+			if ( (int) $post_id === $parent_id ) {
+				$related[] = $child_id;
+			}
+			return $related;
+		}, 10, 2 );
+
+		$this->mock_atomic_styles_manager->method( 'register' );
+
+		$related_option = 'elementor_atomic_cache_validity__' . Atomic_Global_Styles::STYLES_KEY . '_' . Atomic_Global_Styles::RELATED_KEY;
+		$reverse_option = 'elementor_atomic_cache_validity__' . Atomic_Global_Styles::STYLES_KEY . '_' . Atomic_Global_Styles::RELATED_REVERSE_KEY;
+
+		$related_writes = 0;
+		$reverse_writes = 0;
+
+		$count_related = function ( $value ) use ( &$related_writes ) {
+			$related_writes++;
+			return $value;
+		};
+		$count_reverse = function ( $value ) use ( &$reverse_writes ) {
+			$reverse_writes++;
+			return $value;
+		};
+
+		add_filter( "pre_update_option_{$related_option}", $count_related );
+		add_filter( "pre_update_option_{$reverse_option}", $count_reverse );
+
+		// Act: first render seeds the relation maps.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $parent_id, $child_id ] );
+
+		$related_writes_after_first_render = $related_writes;
+		$reverse_writes_after_first_render = $reverse_writes;
+
+		// Act: identical re-render must not touch the cache-validity options at all.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $parent_id, $child_id ] );
+
+		remove_filter( "pre_update_option_{$related_option}", $count_related );
+		remove_filter( "pre_update_option_{$reverse_option}", $count_reverse );
+
+		// Assert: first render performs the initial writes; second render does not call update_option at all.
+		$this->assertGreaterThan( 0, $related_writes_after_first_render, 'First render should seed the forward relation option.' );
+		$this->assertGreaterThan( 0, $reverse_writes_after_first_render, 'First render should seed the reverse relation option.' );
+		$this->assertSame( $related_writes_after_first_render, $related_writes, 'Identical re-render must not call update_option on the forward relation option.' );
+		$this->assertSame( $reverse_writes_after_first_render, $reverse_writes, 'Identical re-render must not call update_option on the reverse relation option.' );
+	}
+
 	private function create_atomic_global_styles(): Atomic_Global_Styles {
 		$relations = new Global_Classes_Relations();
 
