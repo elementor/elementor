@@ -83,7 +83,12 @@ function getFontAwesomeJsonFileName( library: string ): string | null {
 function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
 	const config = window.elementorCommon?.config?.atomic?.fontAwesome7;
 
-	if ( ! config || ! Array.isArray( config.jsonFiles ) || typeof config.jsonBaseUrl !== 'string' || config.jsonBaseUrl === '' ) {
+	if (
+		! config ||
+		! Array.isArray( config.jsonFiles ) ||
+		typeof config.jsonBaseUrl !== 'string' ||
+		config.jsonBaseUrl === ''
+	) {
 		return null;
 	}
 
