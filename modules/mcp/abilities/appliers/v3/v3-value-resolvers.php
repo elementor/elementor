@@ -21,9 +21,14 @@ class V3_Value_Resolvers {
 	const ELEMENT_CUSTOM_WIDTH_SETTING = '_element_custom_width';
 
 	/**
-	 * @return array{unit: string, size: float}|null
+	 * @return array{unit: string, size: float}|array{rejected: true, reason: string, value: string, property: string}|null
 	 */
-	public static function resolve_dimension( string $css_value ): ?array {
+	public static function resolve_dimension( string $css_value, string $property = '' ) {
+		$rejection = self::maybe_reject_variable( $css_value, $property );
+		if ( null !== $rejection ) {
+			return $rejection;
+		}
+
 		$parsed = self::parse_length( trim( $css_value ) );
 
 		if ( null === $parsed ) {
@@ -39,9 +44,14 @@ class V3_Value_Resolvers {
 	/**
 	 * Line-height may be unitless (e.g. 1.5); Elementor expects an empty unit in that case.
 	 *
-	 * @return array{unit: string, size: float}|null
+	 * @return array{unit: string, size: float}|array{rejected: true, reason: string, value: string, property: string}|null
 	 */
-	public static function resolve_line_height( string $css_value ): ?array {
+	public static function resolve_line_height( string $css_value, string $property = 'line-height' ) {
+		$rejection = self::maybe_reject_variable( $css_value, $property );
+		if ( null !== $rejection ) {
+			return $rejection;
+		}
+
 		$value = trim( $css_value );
 
 		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%)?$/i', $value, $matches ) ) {
@@ -53,7 +63,7 @@ class V3_Value_Resolvers {
 			];
 		}
 
-		return self::resolve_dimension( $value );
+		return self::resolve_dimension( $value, $property );
 	}
 
 	/**
@@ -100,9 +110,14 @@ class V3_Value_Resolvers {
 	/**
 	 * Parses padding/margin/border-radius shorthand into Elementor dimensions shape.
 	 *
-	 * @return array{top: string, right: string, bottom: string, left: string, unit: string, isLinked: bool}|null
+	 * @return array{top: string, right: string, bottom: string, left: string, unit: string, isLinked: bool}|array{rejected: true, reason: string, value: string, property: string}|null
 	 */
-	public static function resolve_sides_shorthand( string $css_value ): ?array {
+	public static function resolve_sides_shorthand( string $css_value, string $property = '' ) {
+		$rejection = self::maybe_reject_variable( $css_value, $property );
+		if ( null !== $rejection ) {
+			return $rejection;
+		}
+
 		$tokens = self::tokenize_css_values( trim( $css_value ) );
 
 		if ( empty( $tokens ) || count( $tokens ) > 4 ) {
@@ -160,9 +175,14 @@ class V3_Value_Resolvers {
 	}
 
 	/**
-	 * @return array{top: string, right: string, bottom: string, left: string, unit: string, isLinked: bool}|null
+	 * @return array{top: string, right: string, bottom: string, left: string, unit: string, isLinked: bool}|array{rejected: true, reason: string, value: string, property: string}|null
 	 */
-	public static function resolve_single_dimension_side( string $css_value, string $side ): ?array {
+	public static function resolve_single_dimension_side( string $css_value, string $side, string $property = '' ) {
+		$rejection = self::maybe_reject_variable( $css_value, $property );
+		if ( null !== $rejection ) {
+			return $rejection;
+		}
+
 		$parsed = self::parse_length( trim( $css_value ) );
 
 		if ( null === $parsed || ! in_array( $side, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
@@ -186,9 +206,14 @@ class V3_Value_Resolvers {
 	/**
 	 * Maps width / max-width CSS to Elementor's paired Advanced-tab controls.
 	 *
-	 * @return array<string, mixed>|null
+	 * @return array<string, mixed>|array{rejected: true, reason: string, value: string, property: string}|null
 	 */
-	public static function resolve_element_width( string $css_value ): ?array {
+	public static function resolve_element_width( string $css_value, string $property = 'width' ) {
+		$rejection = self::maybe_reject_variable( $css_value, $property );
+		if ( null !== $rejection ) {
+			return $rejection;
+		}
+
 		$normalized = strtolower( trim( $css_value ) );
 
 		if ( '100%' === $normalized ) {
@@ -286,7 +311,22 @@ class V3_Value_Resolvers {
 	 * @return array<string, mixed>
 	 */
 	public static function resolve_typography_group( array $declarations, string $prefix = 'typography' ): array {
+		$result = self::resolve_typography_group_with_rejections( $declarations, $prefix );
+
+		return $result['patch'];
+	}
+
+	/**
+	 * Same as {@see resolve_typography_group()} but also surfaces the per-property
+	 * rejections triggered by unsupported `var()` inputs. The style mapper uses this
+	 * variant so it can warn the caller when a variable was silently dropped.
+	 *
+	 * @param array<string, string> $declarations property => css value
+	 * @return array{patch: array<string, mixed>, rejections: array<int, array{property: string, value: string, reason: string}>}
+	 */
+	public static function resolve_typography_group_with_rejections( array $declarations, string $prefix = 'typography' ): array {
 		$patch = [];
+		$rejections = [];
 
 		$map = [
 			'font-family' => $prefix . '_font_family',
@@ -307,7 +347,11 @@ class V3_Value_Resolvers {
 			}
 
 			if ( 'line-height' === $property ) {
-				$dimension = self::resolve_line_height( $value );
+				$dimension = self::resolve_line_height( $value, $property );
+				if ( self::is_rejected( $dimension ) ) {
+					$rejections[] = self::rejection_summary( $dimension );
+					continue;
+				}
 				if ( null !== $dimension ) {
 					$patch[ $key ] = $dimension;
 				}
@@ -315,10 +359,24 @@ class V3_Value_Resolvers {
 			}
 
 			if ( in_array( $property, [ 'font-size', 'letter-spacing', 'word-spacing' ], true ) ) {
-				$dimension = self::resolve_dimension( $value );
+				$dimension = self::resolve_dimension( $value, $property );
+				if ( self::is_rejected( $dimension ) ) {
+					$rejections[] = self::rejection_summary( $dimension );
+					continue;
+				}
 				if ( null !== $dimension ) {
 					$patch[ $key ] = $dimension;
 				}
+				continue;
+			}
+
+			if ( V3_Variable_Compatibility::is_var_reference( (string) $value )
+				&& ! V3_Variable_Compatibility::supports( $property ) ) {
+				$rejections[] = [
+					'property' => $property,
+					'value' => (string) $value,
+					'reason' => V3_Variable_Compatibility::reject_reason( $property ),
+				];
 				continue;
 			}
 
@@ -333,12 +391,12 @@ class V3_Value_Resolvers {
 		}
 
 		if ( empty( $patch ) ) {
-			return [];
+			return [ 'patch' => [], 'rejections' => $rejections ];
 		}
 
 		$patch[ $prefix . '_typography' ] = 'custom';
 
-		return $patch;
+		return [ 'patch' => $patch, 'rejections' => $rejections ];
 	}
 
 	/**
@@ -403,29 +461,69 @@ class V3_Value_Resolvers {
 	 * @return mixed|null
 	 */
 	public static function resolve( string $resolver_name, string $css_value, array $args = [] ) {
+		$property = (string) ( $args['property'] ?? '' );
+
 		switch ( $resolver_name ) {
 			case 'color':
 				return self::resolve_color( $css_value );
 			case 'dimension':
-				return self::resolve_dimension( $css_value );
+				return self::resolve_dimension( $css_value, $property );
 			case 'sides':
-				return self::resolve_sides_shorthand( $css_value );
+				return self::resolve_sides_shorthand( $css_value, $property );
 			case 'dimension_side':
-				return self::resolve_single_dimension_side( $css_value, (string) ( $args['side'] ?? '' ) );
+				return self::resolve_single_dimension_side( $css_value, (string) ( $args['side'] ?? '' ), $property );
 			case 'box_shadow':
 				return self::resolve_box_shadow( $css_value );
 			case 'border':
 				return self::resolve_border_shorthand( $css_value, $args['prefix'] ?? 'border' );
 			case 'slider':
-				$dimension = self::resolve_dimension( $css_value );
-				return null === $dimension ? null : $dimension;
+				return self::resolve_dimension( $css_value, $property );
 			case 'text':
 				return trim( $css_value );
 			case 'element_width':
-				return self::resolve_element_width( $css_value );
+				return self::resolve_element_width( $css_value, $property );
 			default:
 				return null;
 		}
+	}
+
+	/**
+	 * @param mixed $resolved
+	 */
+	public static function is_rejected( $resolved ): bool {
+		return is_array( $resolved ) && ! empty( $resolved['rejected'] );
+	}
+
+	/**
+	 * @param array{rejected: true, reason: string, value: string, property: string} $rejection
+	 * @return array{property: string, value: string, reason: string}
+	 */
+	public static function rejection_summary( array $rejection ): array {
+		return [
+			'property' => (string) ( $rejection['property'] ?? '' ),
+			'value' => (string) ( $rejection['value'] ?? '' ),
+			'reason' => (string) ( $rejection['reason'] ?? '' ),
+		];
+	}
+
+	/**
+	 * @return array{rejected: true, reason: string, value: string, property: string}|null
+	 */
+	private static function maybe_reject_variable( string $css_value, string $property ): ?array {
+		if ( ! V3_Variable_Compatibility::is_var_reference( $css_value ) ) {
+			return null;
+		}
+
+		if ( V3_Variable_Compatibility::supports( $property ) ) {
+			return null;
+		}
+
+		return [
+			'rejected' => true,
+			'property' => $property,
+			'value' => trim( $css_value ),
+			'reason' => V3_Variable_Compatibility::reject_reason( $property ),
+		];
 	}
 
 	/**

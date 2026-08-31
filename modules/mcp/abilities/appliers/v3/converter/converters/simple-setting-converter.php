@@ -61,9 +61,16 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 			return false;
 		}
 
-		$resolved = V3_Value_Resolvers::resolve( (string) $resolver, (string) $rule['value'], $override );
+		$resolver_args = array_merge( $override, [ 'property' => (string) $rule['property'] ] );
+		$resolved = V3_Value_Resolvers::resolve( (string) $resolver, (string) $rule['value'], $resolver_args );
 		if ( null === $resolved ) {
 			return false;
+		}
+
+		if ( V3_Value_Resolvers::is_rejected( $resolved ) ) {
+			$ctx->warn( self::format_reject_warning( (string) $rule['property'], (string) $rule['value'], $setting, (string) $resolved['reason'] ) );
+
+			return true;
 		}
 
 		if ( 'box_shadow' === $resolver && is_array( $resolved ) ) {
@@ -100,9 +107,15 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 	 * @param array<string, mixed> $override
 	 */
 	private function convert_element_width( V3_Conversion_Context $ctx, array $rule, V3_Context_Meta $meta, array $override ): bool {
-		$patch = V3_Value_Resolvers::resolve_element_width( (string) $rule['value'] );
+		$patch = V3_Value_Resolvers::resolve_element_width( (string) $rule['value'], (string) $rule['property'] );
 		if ( null === $patch ) {
 			return false;
+		}
+
+		if ( V3_Value_Resolvers::is_rejected( $patch ) ) {
+			$ctx->warn( self::format_reject_warning( (string) $rule['property'], (string) $rule['value'], V3_Value_Resolvers::ELEMENT_WIDTH_SETTING, (string) $patch['reason'] ) );
+
+			return true;
 		}
 
 		$responsive = ! empty( $override['responsive'] );
@@ -135,5 +148,9 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 		$ctx->merge_patch( $merged );
 
 		return true;
+	}
+
+	public static function format_reject_warning( string $property, string $value, string $setting, string $reason ): string {
+		return sprintf( 'Property `%s` value `%s` rejected on `%s`: %s', $property, trim( $value ), $setting, $reason );
 	}
 }

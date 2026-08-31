@@ -35,9 +35,24 @@ class Generic_Index_Converter implements V3_Property_Converter {
 			return false;
 		}
 
-		$resolved = V3_Value_Resolvers::resolve( (string) $generic_rule['resolver'], (string) $rule['value'] );
+		$resolved = V3_Value_Resolvers::resolve(
+			(string) $generic_rule['resolver'],
+			(string) $rule['value'],
+			[ 'property' => (string) $rule['property'] ]
+		);
 		if ( null === $resolved ) {
 			return false;
+		}
+
+		if ( V3_Value_Resolvers::is_rejected( $resolved ) ) {
+			$ctx->warn( Simple_Setting_Converter::format_reject_warning(
+				(string) $rule['property'],
+				(string) $rule['value'],
+				(string) $generic_rule['setting'],
+				(string) $resolved['reason']
+			) );
+
+			return true;
 		}
 
 		$setting = $this->responsive_resolver->resolve(
