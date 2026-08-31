@@ -100,6 +100,10 @@ abstract class Abstract_Ability {
 		return true;
 	}
 
+	public function is_available_for_current_mode(): bool {
+		return true;
+	}
+
 	private function is_resource(): bool {
 		return self::KIND_RESOURCE === ( $this->mcp_meta()['type'] ?? null );
 	}
