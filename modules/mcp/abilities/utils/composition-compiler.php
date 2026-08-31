@@ -111,9 +111,9 @@ final class Composition_Compiler {
 		}
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-		$class_error = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
-		if ( $class_error ) {
-			return $class_error;
+		$class_result = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
+		if ( $class_result['error'] ) {
+			return $class_result['error'];
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
@@ -129,7 +129,7 @@ final class Composition_Compiler {
 
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $class_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];

@@ -112,9 +112,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'description' => 'patch (default): merge incoming style variants with existing. replace: discard existing variants for the affected breakpoints before writing new ones. Pass an empty string with replace to wipe all local style variants.',
 								],
 								'classes' => [
-									'type' => 'array',
-									'items' => [ 'type' => 'string' ],
-									'description' => 'update only: global class labels to attach (prepended to existing). Pass an empty array [] to remove all global classes from the element (local styles are preserved).',
+									'type' => [ 'array', 'object' ],
+									'description' => 'update only: global class labels to attach. Two shapes: (1) array of labels applies to the element wrapper (prepended to existing); (2) object keyed by target (wrapper or an inner-element alias declared in the V3 widget map) with an array of labels per target. Pass an empty array [] to remove all global classes from the element wrapper (local styles are preserved).',
 								],
 								'interactions' => [
 									'type' => 'array',
@@ -424,13 +423,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
-				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
+				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels or an object keyed by target alias.', 'elementor' ) );
 			}
 			$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-			$class_error = $class_applier->apply( $index, [ $element_id => $classes ] );
-			if ( $class_error ) {
-				return $class_error;
+			$class_result = $class_applier->apply( $index, [ $element_id => $classes ] );
+			if ( $class_result['error'] ) {
+				return $class_result['error'];
 			}
+			$warnings = array_merge( $warnings, $class_result['warnings'] );
 		}
 
 		if ( $has_style ) {

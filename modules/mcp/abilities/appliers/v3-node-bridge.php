@@ -90,12 +90,56 @@ class V3_Node_Bridge {
 	/**
 	 * Writes labels directly to V3's `_css_classes` (space-separated, deduped).
 	 * V4 global class labels are the CSS class names themselves.
+	 *
+	 * @deprecated Use apply_classes_to_target() with V3_Widget_Map_Loader::WRAPPER_TARGET.
 	 */
 	public static function apply_classes( array &$node, array $labels ): void {
-		$existing = self::split_css_classes( $node['settings'][ self::V3_CSS_CLASSES_SETTING ] ?? '' );
+		self::apply_classes_to_target( $node, V3_Widget_Map_Loader::WRAPPER_TARGET, $labels );
+	}
+
+	/**
+	 * Writes labels to the setting bound to `$target` for the node's widget type.
+	 * For `wrapper` the setting is V3's built-in `_css_classes`. For inner-element aliases,
+	 * the setting is the `class_setting` declared on the alias in its map file.
+	 *
+	 * Returns a warning message when the target is unknown or does not accept classes on
+	 * this widget; the caller decides how to surface it.
+	 *
+	 * @param array<string, mixed> $node          Subtree node (by reference).
+	 * @param string               $target        `wrapper` or an inner-element alias.
+	 * @param string[]             $labels        Global-class labels (CSS names).
+	 * @param array<string, mixed> $widget_config Widget config from Widget_Context_Helper::get_widget_config().
+	 */
+	public static function apply_classes_to_target( array &$node, string $target, array $labels, array $widget_config = [] ): ?string {
+		$widget_type = is_string( $node['widgetType'] ?? null ) ? $node['widgetType'] : '';
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+
+		$setting = V3_Widget_Map_Loader::resolve_class_setting( $widget_type, $target, $controls );
+
+		if ( null === $setting ) {
+			return sprintf(
+				/* translators: 1: alias name, 2: V3 widget type. */
+				__( "Global class target '%1\$s' is not defined for %2\$s", 'elementor' ),
+				$target,
+				'' === $widget_type ? esc_html__( 'this V3 widget', 'elementor' ) : $widget_type
+			);
+		}
+
+		if ( false === $setting ) {
+			return sprintf(
+				/* translators: 1: V3 widget type, 2: alias name. */
+				__( 'Widget %1$s does not accept classes on inner element %2$s', 'elementor' ),
+				'' === $widget_type ? esc_html__( 'this V3 widget', 'elementor' ) : $widget_type,
+				$target
+			);
+		}
+
+		$existing = self::split_css_classes( $node['settings'][ $setting ] ?? '' );
 		$merged = array_values( array_unique( array_merge( $labels, $existing ) ) );
 
-		$node['settings'][ self::V3_CSS_CLASSES_SETTING ] = implode( ' ', $merged );
+		$node['settings'][ $setting ] = implode( ' ', $merged );
+
+		return null;
 	}
 
 	public static function clear_classes( array &$node ): void {

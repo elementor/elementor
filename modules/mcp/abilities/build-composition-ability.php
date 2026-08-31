@@ -178,10 +178,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'classes' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → list of existing global class labels to attach to that element. Create classes first via elementor/manage-classes.',
+					'description' => 'Record mapping configuration-id → global class labels. Value is either an array of labels (attached to the element wrapper) or an object keyed by target (wrapper or an inner-element alias declared in the V3 widget map) with an array of labels per target. Create classes first via elementor/manage-classes.',
 					'additionalProperties' => [
-						'type' => 'array',
-						'items' => [ 'type' => 'string' ],
+						'type' => [ 'array', 'object' ],
 					],
 				],
 				'interactions' => [
