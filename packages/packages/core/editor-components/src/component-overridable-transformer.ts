@@ -7,19 +7,31 @@ export const componentOverridableTransformer = createTransformer(
 	( value: ComponentOverridable, options: TransformerOptions ) => {
 		const { overrides } = options.renderContext ?? {};
 
+		const originValue = normalizeOriginValue( value.origin_value );
 		const overrideValue = overrides?.[ value.override_key as keyof typeof overrides ];
 
 		if ( overrideValue ) {
-			if ( isOriginValueOverride( value.origin_value ) ) {
-				return transformOverride( value.origin_value, options, overrideValue );
+			if ( isOriginValueOverride( originValue ) ) {
+				return transformOverride( originValue, options, overrideValue );
 			}
 
 			return overrideValue;
 		}
 
-		return value.origin_value;
+		return originValue;
 	}
 );
+
+/**
+ * Mirrors `Overridable_Prop_Type::normalize_origin_value()` on the PHP side. Rendering resolves
+ * props without validating them, so an empty origin value written by an older editor reaches this
+ * transformer untouched until the document is next saved.
+ */
+function normalizeOriginValue( originValue: ComponentOverridable[ 'origin_value' ] ) {
+	const isEmpty = !! originValue && Object.keys( originValue ).length === 0;
+
+	return isEmpty ? null : originValue;
+}
 
 function transformOverride(
 	originValue: TransformablePropValue< string >,

@@ -49,9 +49,13 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 	/**
 	 * Exposing a prop that has no value must persist `origin_value: null`. Editor versions that
 	 * wrote an empty object instead left components permanently unsavable, so treat any empty
-	 * `origin_value` as "no value" and let `sanitize_value()` normalize it away on the next save.
+	 * `origin_value` as "no value".
+	 *
+	 * Rendering resolves props without validating them, so stored empty values reach
+	 * `Overridable_Transformer` untouched until the document is next saved. Both paths share this
+	 * helper so that "empty means no value" does not depend on whether a re-save has happened yet.
 	 */
-	private static function normalize_origin_value( $origin_value ) {
+	public static function normalize_origin_value( $origin_value ) {
 		return ( is_array( $origin_value ) && empty( $origin_value ) ) ? null : $origin_value;
 	}
 
