@@ -8,20 +8,19 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 
 import { useIsAngieAvailable } from '../use-is-angie-available';
 
-type MutationCallback = MutationCallback;
+type ObserverCallback = MutationCallback;
 
 class MockMutationObserver {
 	static instances: MockMutationObserver[] = [];
-	callback: MutationCallback;
+	callback: ObserverCallback;
+	disconnect = jest.fn();
 
-	constructor( callback: MutationCallback ) {
+	constructor( callback: ObserverCallback ) {
 		this.callback = callback;
 		MockMutationObserver.instances.push( this );
 	}
 
 	observe() {}
-
-	disconnect() {}
 
 	trigger() {
 		this.callback( [], this as unknown as MutationObserver );
@@ -80,5 +79,6 @@ describe( 'useIsAngieAvailable', () => {
 
 		// Assert.
 		expect( result.current ).toBe( true );
+		expect( MockMutationObserver.instances[ 0 ]?.disconnect ).toHaveBeenCalled();
 	} );
 } );

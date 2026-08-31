@@ -16,6 +16,7 @@ export function useIsAngieAvailable(): boolean {
 
 		const observer = new MutationObserver( () => {
 			if ( isAngieAvailable() ) {
+				observer.disconnect();
 				setAvailable( true );
 			}
 		} );
