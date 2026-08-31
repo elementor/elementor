@@ -73,7 +73,7 @@ class Post_Query extends Base {
 			'numberposts'     => $post_count,
 			'suppress_filters' => false,
 			'custom_search'   => true,
-			'post_status'     => $this->resolve_post_status( $is_public_only ),
+			'post_status'     => $is_public_only ? 'publish' : 'any',
 			'orderby'         => 'modified',
 			'order'           => 'DESC',
 		];
@@ -247,14 +247,6 @@ class Post_Query extends Base {
 			self::META_QUERY_KEY,
 			self::TAX_QUERY_KEY,
 		];
-	}
-
-	private function resolve_post_status( bool $is_public_only ) {
-		if ( current_user_can( 'read_private_posts' ) ) {
-			return $is_public_only ? 'publish' : 'any';
-		}
-
-		return $is_public_only ? 'publish' : self::NON_PUBLIC_STATUSES_FOR_UNPRIVILEGED;
 	}
 
 	private function get_post_types_from_params( \WP_REST_Request $request ) {
