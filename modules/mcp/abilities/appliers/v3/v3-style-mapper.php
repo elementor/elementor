@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters\Simple_Setting_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
@@ -168,10 +169,20 @@ class V3_Style_Mapper {
 		$settings_patch = $ctx->settings_patch();
 
 		foreach ( $ctx->typography_buckets() as $bucket ) {
-			$group_patch = V3_Value_Resolvers::resolve_typography_group(
+			$resolved = V3_Value_Resolvers::resolve_typography_group_with_rejections(
 				$bucket['declarations'],
 				$bucket['prefix']
 			);
+			$group_patch = $resolved['patch'];
+
+			foreach ( $resolved['rejections'] as $rejection ) {
+				$ctx->warn( Simple_Setting_Converter::format_reject_warning(
+					$rejection['property'],
+					$rejection['value'],
+					$bucket['prefix'] . '_typography',
+					$rejection['reason']
+				) );
+			}
 
 			if ( ! empty( $bucket['responsive'] ) && Responsive_Key_Resolver::BASE_BREAKPOINT !== $bucket['breakpoint'] ) {
 				$suffixed = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );

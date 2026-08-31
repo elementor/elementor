@@ -116,6 +116,19 @@ class Test_V3_Style_Serializer extends TestCase {
 		$this->assertStringContainsString( 'text-align: center;', $css );
 	}
 
+	public function test_round_trip__preserves_color_var_reference() {
+		$css = 'color: var(--wc26-gold);';
+
+		$mapped = $this->make_mapper()->apply( $css, 'theme-post-title', $this->heading_config() );
+		$this->assertSame( 'var(--wc26-gold)', $mapped['settings_patch']['title_color'] );
+
+		$serialized = ( new V3_Style_Serializer() )->serialize( $mapped['settings_patch'], 'theme-post-title', $this->heading_config() );
+		$this->assertStringContainsString( 'color: var(--wc26-gold);', $serialized );
+
+		$remapped = $this->make_mapper()->apply( $serialized, 'theme-post-title', $this->heading_config() );
+		$this->assertSame( 'var(--wc26-gold)', $remapped['settings_patch']['title_color'] );
+	}
+
 	public function test_round_trip__mapper_serializer_mapper_is_idempotent() {
 		$css = 'color: #ff3355; font-size: 42px; text-transform: uppercase; letter-spacing: 2px; &:hover { color: #c00; } @media(--tablet) { font-size: 32px; }';
 

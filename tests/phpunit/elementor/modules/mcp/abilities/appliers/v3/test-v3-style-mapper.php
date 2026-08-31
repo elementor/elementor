@@ -194,6 +194,28 @@ class Test_V3_Style_Mapper extends TestCase {
 		$this->assertSame( '', $result['unmapped_css'] );
 	}
 
+	public function test_apply__accepts_var_on_color_and_rejects_var_on_font_size() {
+		// Arrange.
+		$mapper = $this->make_mapper();
+
+		// Act.
+		$result = $mapper->apply(
+			'color: var(--a); font-size: var(--b);',
+			'theme-post-title',
+			$this->heading_config()
+		);
+
+		// Assert.
+		$this->assertSame( 'var(--a)', $result['settings_patch']['title_color'] );
+		$this->assertArrayNotHasKey( 'typography_font_size', $result['settings_patch'] );
+		$this->assertArrayNotHasKey( 'typography_typography', $result['settings_patch'] );
+		$this->assertSame( '', $result['unmapped_css'] );
+
+		$joined_warnings = implode( "\n", $result['warnings'] );
+		$this->assertStringContainsString( 'Property `font-size` value `var(--b)` rejected', $joined_warnings );
+		$this->assertStringContainsString( 'literal value', $joined_warnings );
+	}
+
 	public function test_apply__maps_numeric_width_to_element_custom_width_pair() {
 		// Arrange.
 		$mapper = $this->make_mapper();

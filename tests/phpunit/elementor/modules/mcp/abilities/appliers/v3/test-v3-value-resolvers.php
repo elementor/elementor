@@ -170,4 +170,63 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( [ 'unit' => 'px', 'size' => 10.0 ], V3_Value_Resolvers::resolve( 'dimension', '10px' ) );
 		$this->assertNull( V3_Value_Resolvers::resolve( 'unknown', 'x' ) );
 	}
+
+	public function test_resolve_dimension__rejects_var_reference_on_unsupported_property() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_dimension( 'var(--gap)', 'font-size' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'font-size', $result['property'] );
+		$this->assertSame( 'var(--gap)', $result['value'] );
+		$this->assertStringContainsString( 'literal value', $result['reason'] );
+	}
+
+	public function test_resolve_sides_shorthand__rejects_var_reference() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_sides_shorthand( 'var(--pad)', 'padding' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'padding', $result['property'] );
+	}
+
+	public function test_resolve_line_height__rejects_var_reference() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_line_height( 'var(--lh)', 'line-height' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+	}
+
+	public function test_resolve_color__passes_through_var_reference() {
+		$this->assertSame( 'var(--wc26-gold)', V3_Value_Resolvers::resolve_color( '  var(--wc26-gold)  ' ) );
+	}
+
+	public function test_resolve__threads_property_for_dimension_reject() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve( 'dimension', 'var(--x)', [ 'property' => 'width' ] );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'width', $result['property'] );
+	}
+
+	public function test_resolve_typography_group_with_rejections__collects_font_size_var() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_typography_group_with_rejections(
+			[
+				'font-size' => 'var(--fs)',
+				'font-weight' => '700',
+			],
+			'typography'
+		);
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'typography_font_size', $result['patch'] );
+		$this->assertSame( '700', $result['patch']['typography_font_weight'] );
+		$this->assertCount( 1, $result['rejections'] );
+		$this->assertSame( 'font-size', $result['rejections'][0]['property'] );
+		$this->assertSame( 'var(--fs)', $result['rejections'][0]['value'] );
+	}
 }
