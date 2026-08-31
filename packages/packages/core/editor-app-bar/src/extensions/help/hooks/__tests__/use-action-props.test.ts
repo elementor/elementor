@@ -11,12 +11,15 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 describe( 'useHelpCenterActionProps', () => {
+	let mockDispatchEvent: jest.Mock;
+
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
 		mockOpenAngieInAskMode.mockReset();
+		mockDispatchEvent = jest.fn();
 		window.elementorCommon = {
 			eventsManager: {
-				dispatchEvent: jest.fn(),
+				dispatchEvent: mockDispatchEvent,
 				config: {
 					names: {
 						topBar: {
@@ -58,7 +61,7 @@ describe( 'useHelpCenterActionProps', () => {
 		result.current.onClick?.( { preventDefault } as unknown as React.MouseEvent );
 
 		expect( preventDefault ).toHaveBeenCalled();
-		expect( window.elementorCommon.eventsManager.dispatchEvent ).toHaveBeenCalled();
+		expect( mockDispatchEvent ).toHaveBeenCalled();
 		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
 		expect( result.current.href ).toBeUndefined();
 		expect( result.current.target ).toBeUndefined();
