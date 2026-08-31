@@ -13,7 +13,6 @@ type AjaxErrorLike = {
 };
 
 type SessionWindow = Window & {
-	jQuery?: ( target: Document ) => { trigger: ( event: string, data?: unknown[] ) => void };
 	elementorCommon?: { ajax?: { config?: { url?: string } } };
 };
 
@@ -61,10 +60,4 @@ async function requestFreshNonce(): Promise< string > {
 	window.elementorAudits = { ...getWindowConfig(), nonce };
 
 	return nonce;
-}
-
-export function showSessionExpiredModal(): void {
-	( window as SessionWindow )
-		.jQuery?.( document )
-		.trigger( 'heartbeat-tick.wp-auth-check', [ { 'wp-auth-check': false } ] );
 }

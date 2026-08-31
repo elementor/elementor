@@ -20,7 +20,6 @@ describe( 'fetchPageContext', () => {
 			restNamespace: 'elementor/v1',
 			nonce: 'fake-nonce',
 		};
-		delete ( window as unknown as { jQuery?: unknown } ).jQuery;
 	} );
 
 	afterEach( () => {
@@ -106,7 +105,7 @@ describe( 'fetchPageContext', () => {
 		expect( fetchMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'propagates a non-session nonce-refresh failure without showing the login modal or retrying again', async () => {
+	it( 'propagates a non-session nonce-refresh failure without retrying again', async () => {
 		// Arrange.
 		const get = jest.fn().mockRejectedValue( NONCE_INVALID_ERROR );
 		jest.mocked( httpService ).mockReturnValue( { get } as unknown as ReturnType< typeof httpService > );
@@ -115,12 +114,9 @@ describe( 'fetchPageContext', () => {
 			status: 500,
 			text: () => Promise.resolve( '' ),
 		} ) as unknown as typeof fetch;
-		const trigger = jest.fn();
-		( window as unknown as { jQuery?: unknown } ).jQuery = jest.fn().mockReturnValue( { trigger } );
 
 		// Act & Assert.
 		await expect( fetchPageContext( 1, [] ) ).rejects.not.toBeInstanceOf( SessionExpiredError );
 		expect( get ).toHaveBeenCalledTimes( 1 );
-		expect( trigger ).not.toHaveBeenCalled();
 	} );
 } );

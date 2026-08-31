@@ -1,9 +1,4 @@
-import {
-	isNonceInvalidError,
-	refreshAuditsNonce,
-	SessionExpiredError,
-	showSessionExpiredModal,
-} from '../session-expiration';
+import { isNonceInvalidError, refreshAuditsNonce, SessionExpiredError } from '../session-expiration';
 
 describe( 'isNonceInvalidError', () => {
 	it( 'returns true for a 403 rest_cookie_invalid_nonce error', () => {
@@ -135,31 +130,5 @@ describe( 'refreshAuditsNonce', () => {
 
 		// Assert.
 		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
-	} );
-} );
-
-describe( 'showSessionExpiredModal', () => {
-	it( 'triggers the WP core interim-login heartbeat event via jQuery', () => {
-		// Arrange.
-		const trigger = jest.fn();
-		const jQueryMock = jest.fn().mockReturnValue( { trigger } );
-		( window as unknown as { jQuery?: unknown } ).jQuery = jQueryMock;
-
-		// Act.
-		showSessionExpiredModal();
-
-		// Assert.
-		expect( jQueryMock ).toHaveBeenCalledWith( document );
-		expect( trigger ).toHaveBeenCalledWith( 'heartbeat-tick.wp-auth-check', [ { 'wp-auth-check': false } ] );
-
-		delete ( window as unknown as { jQuery?: unknown } ).jQuery;
-	} );
-
-	it( 'does not throw when jQuery is not available', () => {
-		// Arrange.
-		delete ( window as unknown as { jQuery?: unknown } ).jQuery;
-
-		// Act & Assert.
-		expect( () => showSessionExpiredModal() ).not.toThrow();
 	} );
 } );

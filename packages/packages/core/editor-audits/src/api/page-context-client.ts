@@ -1,12 +1,7 @@
 import { httpService } from '@elementor/http-client';
 
 import { type PageContextResponse } from '../types';
-import {
-	isNonceInvalidError,
-	refreshAuditsNonce,
-	SessionExpiredError,
-	showSessionExpiredModal,
-} from '../utils/session-expiration';
+import { isNonceInvalidError, refreshAuditsNonce } from '../utils/session-expiration';
 import { getWindowConfig } from '../utils/window-config';
 
 export async function fetchPageContext( documentId: number, attachmentIds: number[] ): Promise< PageContextResponse > {
@@ -36,14 +31,7 @@ async function requestPageContext(
 			throw error;
 		}
 
-		try {
-			await refreshAuditsNonce();
-		} catch ( refreshError ) {
-			if ( refreshError instanceof SessionExpiredError ) {
-				showSessionExpiredModal();
-			}
-			throw refreshError;
-		}
+		await refreshAuditsNonce();
 
 		return requestPageContext( documentId, attachmentIds, false );
 	}
