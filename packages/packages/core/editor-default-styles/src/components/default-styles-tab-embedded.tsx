@@ -14,10 +14,12 @@ import {
 	StyleInheritanceProvider,
 	StyleProvider,
 	StyleSections,
+	StyleTabSlot,
 } from '@elementor/editor-editing-panel';
 import { type Element, type ElementType } from '@elementor/editor-elements';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
+import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { controlActionsMenu } from '@elementor/menus';
 import { useMutation } from '@elementor/query';
@@ -40,6 +42,7 @@ import {
 	getDefaultActiveTag,
 	isAllowedDefaultStyleTag,
 } from '../allowed-tags';
+import { DEFAULT_STYLES_PROVIDER_KEY } from '../default-styles-provider';
 import { saveDefaultStyles } from '../save-default-styles';
 import { selectIsDirty, slice } from '../store';
 import { TagChip } from './tag-chip';
@@ -98,6 +101,8 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 	const isDirty = useSelector( selectIsDirty );
 	const { mutateAsync: save, isPending: isSaving } = useSave();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+	const { userCan } = useUserStylesCapability();
+	const canEdit = userCan( DEFAULT_STYLES_PROVIDER_KEY ).updateProps;
 
 	const setSelectedTag = ( tag: AllowedHtmlTag ) => {
 		setSelectedTagState( tag );
@@ -105,13 +110,13 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 	};
 
 	const handleClosePanel = useCallback( () => {
-		if ( isDirty ) {
+		if ( canEdit && isDirty ) {
 			openSaveChangesDialog();
 			return;
 		}
 
 		void onRequestClose();
-	}, [ isDirty, onRequestClose, openSaveChangesDialog ] );
+	}, [ canEdit, isDirty, onRequestClose, openSaveChangesDialog ] );
 
 	useEffect( () => {
 		if ( ! onExposeCloseAttempt ) {
@@ -123,7 +128,7 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 		return () => onExposeCloseAttempt( null );
 	}, [ onExposeCloseAttempt, handleClosePanel ] );
 
-	usePreventUnload( isDirty );
+	usePreventUnload( canEdit && isDirty );
 
 	const handleTagSelect = ( _selected: Option[], reason: AutocompleteChangeReason, option: Option ) => {
 		if ( reason !== 'selectOption' || ! option.value ) {
@@ -211,6 +216,7 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 												<StyleInheritanceProvider>
 													<SectionsList>
 														<StyleSections />
+														<StyleTabSlot />
 													</SectionsList>
 													<Box
 														sx={ {
@@ -223,24 +229,26 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 									</ClassesPropProvider>
 								</ElementProvider>
 							</Box>
-							<Box sx={ { flexShrink: 0, px: 2, py: 1.5 } }>
-								<Button
-									fullWidth
-									size="small"
-									color="global"
-									variant="contained"
-									onClick={ () => void save() }
-									disabled={ ! isDirty }
-									loading={ isSaving }
-								>
-									{ __( 'Save changes', 'elementor' ) }
-								</Button>
-							</Box>
+							{ canEdit ? (
+								<Box sx={ { flexShrink: 0, px: 2, py: 1.5 } }>
+									<Button
+										fullWidth
+										size="small"
+										color="global"
+										variant="contained"
+										onClick={ () => void save() }
+										disabled={ ! isDirty }
+										loading={ isSaving }
+									>
+										{ __( 'Save changes', 'elementor' ) }
+									</Button>
+								</Box>
+							) : null }
 						</Stack>
 					</ControlReplacementsProvider>
 				</ControlActionsProvider>
 
-				{ isSaveChangesDialogOpen && (
+				{ canEdit && isSaveChangesDialogOpen && (
 					<SaveChangesDialog>
 						<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
 							{ __( 'You have unsaved changes', 'elementor' ) }

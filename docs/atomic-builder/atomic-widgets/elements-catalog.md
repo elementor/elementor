@@ -64,7 +64,7 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-accordion-item` | element | yes | `e-accordion-item-head`, `e-accordion-item-content` | `<details>`; permanently locked |
 | `e-accordion-item-head` | element | yes | `e-accordion-item-title`, `e-accordion-item-icon` | `<summary>`; permanently locked |
 | `e-accordion-item-title` | element | yes | any | Tag from root's `title_tag` setting |
-| `e-accordion-item-icon` | element | yes | any | Decorative (`aria-hidden`); shown/hidden via root's `show_icon` |
+| `e-accordion-item-icon` | element | yes | any | Decorative (`aria-hidden`); shown/hidden via root's `show_icon`; seeds an `e-svg` child with `assets/images/chevron-down.svg` |
 | `e-accordion-item-content` | element | yes | any | Collapsible body |
 | `e-tabs` | element | yes | any | Default: menu + content area |
 | `e-tabs-menu` | element | yes | `e-tab`, `container` | Tab triggers |

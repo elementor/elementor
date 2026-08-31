@@ -3,19 +3,15 @@
 namespace Elementor\Modules\DefaultStyles;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\DefaultStyles\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_default_styles';
-
 	const PACKAGES = [
 		'editor-default-styles',
 	];
@@ -27,17 +23,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_default_styles_experiment();
-
 		if ( ! Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
 			return;
 		}
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			return;
-		}
 
 		( new Default_Style_Post_Type() )->register();
 		( new Default_Styles_Tag_Post_IDs() )->register_hooks();
@@ -79,17 +69,6 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_default_styles_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'HTML Tag Default Styles', 'elementor' ),
-			'description' => esc_html__( 'Enable site-wide default styles for HTML tags.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-	}
-
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
@@ -100,7 +79,7 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['default_styles'] = [
-			'allowed_tags' => Utils::ALLOWED_HTML_WRAPPER_TAGS,
+			'allowed_tags' => Default_Styles_Allowed_Tags::TAGS,
 		];
 
 		return $settings;

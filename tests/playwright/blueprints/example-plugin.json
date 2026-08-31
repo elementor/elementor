@@ -1,0 +1,10 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"steps": [
+		{ "step": "login", "username": "admin", "password": "password" },
+		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor" },
+		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor-example-plugin" },
+		{ "step": "wp-cli", "command": "wp elementor experiments activate e_atomic_elements e_opt_in_v4 e_variables e_variables_manager" },
+		{ "step": "wp-cli", "command": "wp plugin list --status=active --fields=name,status --format=csv" }
+	]
+}

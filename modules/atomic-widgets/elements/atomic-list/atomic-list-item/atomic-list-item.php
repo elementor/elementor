@@ -1,0 +1,185 @@
+<?php
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item;
+
+use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Atomic_List_Item extends Atomic_Element_Base {
+	use Has_Element_Template;
+
+	const BASE_STYLE_KEY = 'base';
+
+	public static $widget_description = 'A locked list item wrapper that contains marker and content slots.';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'permanently_locked', true );
+	}
+
+	public static function get_type() {
+		return 'e-list-item';
+	}
+
+	public static function get_element_type(): string {
+		return self::get_type();
+	}
+
+	public function get_title() {
+		return esc_html__( 'List item', 'elementor' );
+	}
+
+	public function get_icon() {
+		return 'eicon-bullet-list';
+	}
+
+	public function should_show_in_panel() {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'li' );
+	}
+
+	/**
+	 * Define props schema for list items.
+	 *
+	 * The show_markers is a hidden prop (not shown in panel) that's automatically
+	 * synced from the parent list's show_markers setting. It's used by
+	 * children_dependencies to conditionally show/hide markers.
+	 */
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] )
+				->description( 'CSS classes applied to the list item container.' ),
+			'show_markers' => Boolean_Prop_Type::make()
+				->default( true )
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Hidden prop automatically synced from the parent list. Controls whether markers are shown via children dependencies. Do not set manually.' ),
+			'attributes' => Attributes_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->description( 'Custom HTML attributes applied to the list item element.' ),
+		];
+	}
+
+	protected function define_atomic_controls(): array {
+		return [
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( [] ),
+		];
+	}
+
+	protected function define_base_styles(): array {
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'display' => String_Prop_Type::generate( 'flex' ),
+							'flex-direction' => String_Prop_Type::generate( 'row' ),
+							'gap' => Size_Prop_Type::generate( [
+								'size' => 8,
+								'unit' => 'px',
+							] ),
+						] )
+				),
+		];
+	}
+
+	/**
+	 * Define default children for list items.
+	 *
+	 * Markers are now managed via children_dependencies (see below) and are
+	 * conditionally added/removed based on the show_markers setting.
+	 * Only the content slot is included as a default child.
+	 */
+	protected function define_default_children() {
+		return [
+			Atomic_List_Item_Content::generate()
+				->hydrate_default_children( true )
+				->build(),
+		];
+	}
+
+	/**
+	 * Define children dependencies for conditional marker rendering.
+	 *
+	 * Markers are added when show_markers === true and removed when false.
+	 * Stashing preserves all marker customizations when toggled off, allowing
+	 * restoration when toggled back on.
+	 */
+	protected function define_children_dependencies(): array {
+		return [
+			Child_Dependency::for( Atomic_List_Item_Marker::get_element_type() )
+				->when(
+					Dependency_Manager::make()->where( [
+						'operator' => 'eq',
+						'path' => [ 'show_markers' ],
+						'value' => true,
+					] )
+				)
+				->position( Element_Position::first() )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_List_Item_Marker::get_element_type() )
+						->hydrate_default_children( true )
+						->build()
+				),
+		];
+	}
+
+	/**
+	 * Sync show_markers setting from parent list via render context.
+	 *
+	 * This propagates the list-level setting to each item, where children
+	 * dependencies use it to determine marker visibility.
+	 */
+	protected function define_render_context(): array {
+		$list_context = Render_Context::get( Atomic_List::class );
+
+		return [
+			[
+				'context' => [
+					'show_markers' => $list_context['show_markers'] ?? true,
+				],
+			],
+		];
+	}
+
+	protected function define_allowed_child_types() {
+		return [
+			Atomic_List_Item_Marker::get_element_type(),
+			Atomic_List_Item_Content::get_element_type(),
+		];
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-list-item' => __DIR__ . '/atomic-list-item.html.twig',
+		];
+	}
+}
