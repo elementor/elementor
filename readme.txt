@@ -360,6 +360,11 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.2.4 - 2026-08-31 =
+
+* Tweak: Updated WordPress compatibility to version 7.1
+* Fix: Improved code security enforcement in query handling
+
 = 4.2.3 - 2026-08-19 =
 
 * Fix: Improved code security enforcement in template handling
