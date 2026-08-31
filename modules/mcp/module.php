@@ -19,10 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
+
 	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
+	}
+
+	public function enqueue_analytics_registrar(): void {
+		wp_enqueue_script(
+			self::ANALYTICS_REGISTRAR_HANDLE,
+			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
+			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public static function is_active() {
@@ -86,7 +98,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
+		$menu_data_provider->register_menu(
+			new Editor_One_Mcp_Menu(),
+			[ 'preserve_label_casing' => true ]
+		);
 	}
 
 	public static function build_core_registry(): Ability_Registry {
