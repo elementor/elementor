@@ -14,7 +14,6 @@ class Post_Query extends Base {
 	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
 	const SEARCH_IN_CONTENT_KEY = 'search_in_content';
-	const NON_PUBLIC_STATUSES_FOR_UNPRIVILEGED = [ 'draft', 'pending' ];
 	const ALLOWED_KEYS_CONVERSION_MAP = [
 		'ID' => 'id',
 		'post_title' => 'label',
