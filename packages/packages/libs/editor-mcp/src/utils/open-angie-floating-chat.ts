@@ -1,13 +1,11 @@
 import {
-	DEFAULT_CONTAINER_ID,
-	getAngieIframe,
 	LAYOUT_FLOATING_CHAT,
 	toggleAngieSidebar,
 	type WidgetConfig,
 } from '@elementor-external/angie-sdk';
 
 import { registerAngieMcpServers } from '../mcp-registry';
-import { getSDK } from './get-sdk';
+import { ANGIE_FLOATING_CHAT_INSTANCE, getSDK } from './get-sdk';
 
 export type OpenAngieFloatingChatArgs = {
 	appId: string;
@@ -19,6 +17,8 @@ export type OpenAngieFloatingChatArgs = {
 	widgetConfig?: WidgetConfig;
 };
 
+export const FLOATING_CHAT_CONTAINER_ID = 'angie-floating-chat-container';
+
 const NO_CHAT_TOGGLE_BUTTON = { enabled: false, selector: '' };
 
 const CHAT_WIDTH = 360;
@@ -29,8 +29,13 @@ let bootPromise: Promise< void > | null = null;
 
 const clamp = ( value: number, min: number, max: number ) => Math.max( min, Math.min( value, Math.max( min, max ) ) );
 
+const getFloatingChatIframe = (): HTMLIFrameElement | null => {
+	const container = document.getElementById( FLOATING_CHAT_CONTAINER_ID );
+	return container?.querySelector( 'iframe' ) ?? null;
+};
+
 const anchorChatTo = ( anchorElement: HTMLElement ) => {
-	const container = document.getElementById( DEFAULT_CONTAINER_ID );
+	const container = document.getElementById( FLOATING_CHAT_CONTAINER_ID );
 
 	if ( ! container ) {
 		return;
@@ -64,11 +69,14 @@ export const openAngieFloatingChat = async ( {
 	aiContext,
 	widgetConfig,
 }: OpenAngieFloatingChatArgs ): Promise< void > => {
+	const floatingChatSdk = getSDK( ANGIE_FLOATING_CHAT_INSTANCE );
+
 	if ( ! bootPromise ) {
-		bootPromise = getSDK()
+		bootPromise = floatingChatSdk
 			.loadSidebarV2( {
-				host: { appId, aiContext },
+				host: { appId, instanceId: ANGIE_FLOATING_CHAT_INSTANCE, aiContext },
 				container: {
+					id: FLOATING_CHAT_CONTAINER_ID,
 					layout: LAYOUT_FLOATING_CHAT,
 					chatToggleButton: NO_CHAT_TOGGLE_BUTTON,
 				},
@@ -86,14 +94,14 @@ export const openAngieFloatingChat = async ( {
 		anchorChatTo( anchorElement );
 	}
 
-	const iframe = getAngieIframe();
+	const iframe = getFloatingChatIframe();
 	if ( iframe ) {
-		toggleAngieSidebar( iframe, true );
+		toggleAngieSidebar( iframe, true, FLOATING_CHAT_CONTAINER_ID );
 	}
 
-	await registerAngieMcpServers( mcpServers );
+	await registerAngieMcpServers( mcpServers, floatingChatSdk );
 
-	await getSDK().triggerAngie( {
+	await floatingChatSdk.triggerAngie( {
 		prompt,
 		context: { source },
 		options: { newChat: true },

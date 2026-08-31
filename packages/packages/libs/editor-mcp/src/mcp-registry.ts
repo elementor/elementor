@@ -1,4 +1,5 @@
 import { z, type z3 } from '@elementor/schema';
+import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
@@ -32,7 +33,7 @@ const bufferedTools: Parameters< IMcpRegistrationAdapter[ 'onToolRegistered' ] >
 const bufferedResources: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] >[] = [];
 const adapterActivationPromises = new Map< IMcpRegistrationAdapter, Promise< void > >();
 
-const scopedAngieRegistrations = new Map< string, Promise< void > >();
+const scopedAngieRegistrations = new WeakMap< AngieMcpSdk, Map< string, Promise< void > > >();
 
 let angieMcpAdapter: AngieMcpAdapter | null = null;
 let ensureAngieMcpAdapterPromise: Promise< void > | null = null;
@@ -92,17 +93,27 @@ export const ensureAngieMcpAdapter = (): Promise< void > => {
 	return ensureAngieMcpAdapterPromise;
 };
 
-export const registerAngieMcpServers = ( namespaces: string[] ): Promise< void > => {
+export const registerAngieMcpServers = (
+	namespaces: string[],
+	sdk: AngieMcpSdk = getSDK()
+): Promise< void > => {
 	const scope = [ ...namespaces ].sort().join( ',' );
-	let registration = scopedAngieRegistrations.get( scope );
+	let perSdkRegistrations = scopedAngieRegistrations.get( sdk );
+
+	if ( ! perSdkRegistrations ) {
+		perSdkRegistrations = new Map();
+		scopedAngieRegistrations.set( sdk, perSdkRegistrations );
+	}
+
+	let registration = perSdkRegistrations.get( scope );
 
 	if ( ! registration ) {
-		const adapter = new AngieMcpAdapter( getSDK(), () =>
+		const adapter = new AngieMcpAdapter( sdk, () =>
 			getRegisteredMcpServers().filter( ( [ namespace ] ) => namespaces.includes( namespace ) )
 		);
 
 		registration = adapter.activate();
-		scopedAngieRegistrations.set( scope, registration );
+		perSdkRegistrations.set( scope, registration );
 	}
 
 	return registration;
