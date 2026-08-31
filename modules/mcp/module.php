@@ -86,7 +86,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
+		$menu_data_provider->register_menu(
+			new Editor_One_Mcp_Menu(),
+			[ 'preserve_label_casing' => true ]
+		);
 	}
 
 	public static function build_core_registry(): Ability_Registry {
