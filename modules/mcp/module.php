@@ -93,6 +93,10 @@ class Module extends BaseModule {
 		$registry = new Ability_Registry();
 
 		foreach ( self::get_core_abilities( $registry ) as $ability ) {
+			if ( ! $ability->is_available_for_current_mode() ) {
+				continue;
+			}
+
 			$registry->add( $ability );
 		}
 

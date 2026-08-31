@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -14,6 +15,10 @@ class Interactions_Schema_Resource_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/interactions-schema-resource';
+	}
+
+	public function is_available_for_current_mode(): bool {
+		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {

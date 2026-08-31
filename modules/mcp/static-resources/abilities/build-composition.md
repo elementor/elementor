@@ -13,6 +13,8 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 # TOOL SUPPORT
 Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true` — the catalog varies with the V4 (atomic) elements experiment, so never assume a fixed list. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
 
+Note: some MCP tools (components, classes, default styles, global variables, interactions schema) are only registered when the V4 atomic-elements experiment is active.
+
 # WORKFLOW
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +14,10 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/manage-global-variable-guide';
+	}
+
+	public function is_available_for_current_mode(): bool {
+		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {
