@@ -43,6 +43,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		return 'elementor/manage-classes';
 	}
 
+	public function is_available_for_current_mode(): bool {
+		return AtomicWidgetsModule::is_active();
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Classes', 'elementor' ),
