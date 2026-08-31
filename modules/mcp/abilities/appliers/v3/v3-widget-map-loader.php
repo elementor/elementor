@@ -96,6 +96,34 @@ class V3_Widget_Map_Loader {
 		return self::get( $widget_type, $controls )['wrapper']['style_overrides'];
 	}
 
+	const WRAPPER_TARGET = 'wrapper';
+
+	/**
+	 * Resolves the V3 setting key that stores CSS classes for a given target on a widget.
+	 * Returns null when the target is not defined at all, and the sentinel `false` when the
+	 * target exists but does not expose a class-accepting setting.
+	 *
+	 * @param string               $widget_type
+	 * @param string               $target      `wrapper` or an inner-element alias.
+	 * @param array<string, mixed> $controls
+	 * @return string|false|null
+	 */
+	public static function resolve_class_setting( string $widget_type, string $target, array $controls = [] ) {
+		if ( self::WRAPPER_TARGET === $target ) {
+			return '_css_classes';
+		}
+
+		$inner_elements = self::get_inner_elements( $widget_type, $controls );
+
+		if ( ! isset( $inner_elements[ $target ] ) ) {
+			return null;
+		}
+
+		$class_setting = $inner_elements[ $target ]['class_setting'] ?? null;
+
+		return is_string( $class_setting ) && '' !== $class_setting ? $class_setting : false;
+	}
+
 	public static function has_map_file( string $widget_type ): bool {
 		return null !== self::read_map_file( $widget_type );
 	}
@@ -279,9 +307,16 @@ class V3_Widget_Map_Loader {
 
 			$section_id = self::non_empty_string( $inner_element['section_id'] ?? null );
 
-			$inner_elements[ $alias ] = null === $section_id
+			$resolved = null === $section_id
 				? $inner_element
 				: array_merge( V3_Control_Introspector::scope_for_section( $controls, $section_id ), $inner_element );
+
+			$class_setting = self::non_empty_string( $inner_element['class_setting'] ?? null );
+			if ( null !== $class_setting ) {
+				$resolved['class_setting'] = $class_setting;
+			}
+
+			$inner_elements[ $alias ] = $resolved;
 		}
 
 		return $inner_elements;

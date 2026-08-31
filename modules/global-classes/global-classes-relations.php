@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\GlobalClasses\Utils\V3_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -269,6 +270,7 @@ class Global_Classes_Relations {
 
 	private function extract_class_ids_from_post( int $post_id ): array {
 		$used_class_ids = [];
+		$v3_labels = [];
 
 		$document = $this->get_document_for_post( $post_id );
 
@@ -279,13 +281,22 @@ class Global_Classes_Relations {
 		$elements_data = $document->get_elements_data();
 
 		if ( ! empty( $elements_data ) ) {
-			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
+			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids, &$v3_labels ) {
 				$used_class_ids = array_merge(
 					$used_class_ids,
 					Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
 				);
+				$v3_labels = array_merge(
+					$v3_labels,
+					V3_Elements_Utils::collect_class_labels_from_v3_element( $element_data )
+				);
 			} );
 		}
+
+		$used_class_ids = array_merge(
+			$used_class_ids,
+			$this->resolve_labels_to_ids( array_unique( $v3_labels ) )
+		);
 
 		$used_class_ids = apply_filters(
 			'elementor/global_classes/extract_class_ids_from_post',
@@ -294,6 +305,40 @@ class Global_Classes_Relations {
 		);
 
 		return array_values( array_unique( $used_class_ids ) );
+	}
+
+	/**
+	 * @param string[] $labels
+	 * @return string[]
+	 */
+	private function resolve_labels_to_ids( array $labels ): array {
+		if ( empty( $labels ) ) {
+			return [];
+		}
+
+		$label_by_id = Global_Classes_Repository::make()
+			->set_preview( $this->is_preview() )
+			->all_labels();
+
+		if ( empty( $label_by_id ) ) {
+			return [];
+		}
+
+		$id_by_label = [];
+		foreach ( $label_by_id as $id => $label ) {
+			if ( is_string( $label ) && '' !== $label ) {
+				$id_by_label[ $label ] = $id;
+			}
+		}
+
+		$ids = [];
+		foreach ( $labels as $label ) {
+			if ( isset( $id_by_label[ $label ] ) ) {
+				$ids[] = $id_by_label[ $label ];
+			}
+		}
+
+		return $ids;
 	}
 
 	private function get_stored_style_ids( int $post_id ): array {
