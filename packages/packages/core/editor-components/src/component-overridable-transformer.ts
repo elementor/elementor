@@ -26,6 +26,8 @@ export const componentOverridableTransformer = createTransformer(
  * Mirrors `Overridable_Prop_Type::normalize_origin_value()` on the PHP side. Rendering resolves
  * props without validating them, so an empty origin value written by an older editor reaches this
  * transformer untouched until the document is next saved.
+ *
+ * @param originValue The origin_value nested on a component-overridable prop.
  */
 function normalizeOriginValue( originValue: ComponentOverridable[ 'origin_value' ] ) {
 	const isEmpty = !! originValue && Object.keys( originValue ).length === 0;
