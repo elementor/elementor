@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -30,6 +31,41 @@ class Widget_Context_Helper {
 
 	const VERSION_V4 = 'v4';
 
+	/**
+	 * V3 widgets that fill gaps missing from V4 atomic widgets (nav menus, search, etc.). Always
+	 * exposed to MCP regardless of the V4 experiment.
+	 */
+	const V3_ALLOWLIST_GAP = [
+		'nav-menu',
+		'search',
+		'table-of-contents',
+	];
+
+	/**
+	 * V3 theme-builder widgets used inside theme documents. Always exposed to MCP regardless of
+	 * the V4 experiment because atomic equivalents rely on dynamic tags, which need a legacy
+	 * fallback for existing theme templates.
+	 */
+	const V3_ALLOWLIST_THEME = [
+		'theme-post-content',
+		'theme-post-title',
+		'theme-post-featured-image',
+		'theme-post-excerpt',
+		'theme-archive-title',
+	];
+
+	/**
+	 * V3 basic widgets that duplicate V4 atomic widgets. Only exposed to MCP when the V4
+	 * atomic-elements experiment is inactive, so the LLM never gets both a V3 heading and a
+	 * V4 e-heading in the same catalog. Empty for now; populated when we ship the fixtures /
+	 * map files needed to keep them safe under render probing.
+	 */
+	const V3_ALLOWLIST_BASIC = [];
+
+	/**
+	 * @deprecated 3.36.0 Use {@see get_allowlisted_v3_types()}. Retained so external code that
+	 * inlined the constant keeps compiling; the returned list matches the V4-on catalog.
+	 */
 	const V3_ALLOWLIST = [
 		'nav-menu',
 		'search',
@@ -112,7 +148,25 @@ class Widget_Context_Helper {
 	}
 
 	public static function is_v3_allowlisted( string $widget_type ): bool {
-		return in_array( $widget_type, self::V3_ALLOWLIST, true );
+		return in_array( $widget_type, self::get_allowlisted_v3_types(), true );
+	}
+
+	/**
+	 * Full list of V3 widget types the LLM catalog exposes for the current V4 experiment state.
+	 *
+	 * V4 atomic experiment on  → gap + theme (v3 basics live as V4 atomic widgets already).
+	 * V4 atomic experiment off → basic + gap + theme.
+	 *
+	 * @return string[]
+	 */
+	public static function get_allowlisted_v3_types(): array {
+		$types = array_merge( self::V3_ALLOWLIST_GAP, self::V3_ALLOWLIST_THEME );
+
+		if ( ! AtomicWidgetsModule::is_active() ) {
+			$types = array_merge( self::V3_ALLOWLIST_BASIC, $types );
+		}
+
+		return $types;
 	}
 
 	public static function build_widget_summary( string $widget_type, array $config ): array {
