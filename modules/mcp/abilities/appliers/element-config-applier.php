@@ -9,6 +9,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Patch_Bisector;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Render_Probe;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
@@ -81,7 +83,15 @@ class Element_Config_Applier {
 				$shape = V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
 
 				if ( ! empty( $shape['valid'] ) ) {
-					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
+					$base_settings = $node['settings'] ?? [];
+					$safe_valid = self::guard_v3_render(
+						$widget_type,
+						$base_settings,
+						$shape['valid'],
+						$config_id,
+						$warnings
+					);
+					$node['settings'] = $this->merge_with_clears( $base_settings, $safe_valid );
 				}
 
 				if ( $shape['error'] ) {
@@ -214,6 +224,64 @@ class Element_Config_Applier {
 			'resolved' => $resolved,
 			'cleared' => $cleared,
 		];
+	}
+
+	/**
+	 * @param array<string, mixed> $base
+	 * @param array<string, mixed> $incoming Validated settings the applier wants to merge on top.
+	 * @param string[]             $warnings
+	 * @return array<string, mixed> Incoming with offending keys removed.
+	 */
+	private static function guard_v3_render(
+		string $widget_type,
+		array $base,
+		array $incoming,
+		string $config_id,
+		array &$warnings
+	): array {
+		if ( ! apply_filters( 'elementor/mcp/v3_render_probe', true ) ) {
+			return $incoming;
+		}
+
+		$merged_preview = array_merge( $base, $incoming );
+		foreach ( $incoming as $key => $value ) {
+			if ( null === $value ) {
+				unset( $merged_preview[ $key ] );
+			}
+		}
+
+		$initial = V3_Render_Probe::probe( $widget_type, $merged_preview );
+
+		if ( $initial['ok'] || $initial['timed_out'] ) {
+			return $incoming;
+		}
+
+		$probe = static function ( array $settings ) use ( $widget_type ): bool {
+			$result = V3_Render_Probe::probe( $widget_type, $settings );
+			return $result['ok'] || $result['timed_out'];
+		};
+
+		$offending = V3_Patch_Bisector::find_offending( $base, $incoming, $probe );
+
+		if ( empty( $offending ) ) {
+			return $incoming;
+		}
+
+		$safe = $incoming;
+		foreach ( $offending as $key ) {
+			unset( $safe[ $key ] );
+		}
+
+		$warnings[] = sprintf(
+			/* translators: 1: config id, 2: widget type, 3: comma-separated setting keys, 4: PHP error message. */
+			__( '[%1$s] V3 render fatal on %2$s for keys [%3$s]: %4$s. Props dropped.', 'elementor' ),
+			$config_id,
+			$widget_type,
+			implode( ',', $offending ),
+			(string) $initial['error']
+		);
+
+		return $safe;
 	}
 
 	private function merge_with_clears( array $existing, array $incoming ): array {
