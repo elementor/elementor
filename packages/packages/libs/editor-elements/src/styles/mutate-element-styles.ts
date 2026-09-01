@@ -67,8 +67,6 @@ function isStyleEmpty( style: StyleDefinition ) {
 function clearRemovedClasses( container: V1Element, { oldIds, newIds }: { oldIds: string[]; newIds: string[] } ) {
 	const removedIds = oldIds.filter( ( id ) => ! newIds.includes( id ) );
 
-	// Writing settings forces a re-render of the element and its entire subtree,
-	// so it must be skipped when the classes prop would not actually change.
 	if ( ! removedIds.length ) {
 		return;
 	}

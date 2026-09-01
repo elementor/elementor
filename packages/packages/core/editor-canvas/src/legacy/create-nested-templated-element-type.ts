@@ -12,13 +12,7 @@ import {
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
-import {
-	type ElementModel,
-	type ElementType,
-	type ElementView,
-	type LegacyWindow,
-	type NestedTemplatedElementViewClass,
-} from './types';
+import { type ElementType, type ElementView, type LegacyWindow, type NestedTemplatedElementViewClass } from './types';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -114,7 +108,6 @@ export function createNestedTemplatedElementView( {
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
 		_lastResolvedSettingsHash: null as string | null,
-		_lastRenderedStyles: undefined as ElementModel[ 'styles' ],
 		_domUpdateWasSkipped: false,
 
 		template: false,
@@ -171,20 +164,6 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			this.model.trigger( 'render:complete' );
-			this._notifyStylesChanged();
-		},
-
-		// Rendering a parent re-renders its whole subtree, so notifying unconditionally would
-		// emit one style event per descendant for a change that touched a single element.
-		_notifyStylesChanged() {
-			const styles = this.model.get( 'styles' );
-
-			if ( styles === this._lastRenderedStyles ) {
-				return;
-			}
-
-			this._lastRenderedStyles = styles;
-
 			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 		},
 

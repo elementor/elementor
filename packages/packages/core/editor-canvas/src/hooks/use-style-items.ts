@@ -37,10 +37,6 @@ export function useStyleItems() {
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
 
 	const providerAndSubscribers = useMemo( () => {
-		// Cached items hold CSS produced by the previous renderer, so a new renderer
-		// (e.g. after a breakpoints change) must not reuse them.
-		styleItemsCacheRef.current.clear();
-
 		const createEmptyCache = () => {
 			return { orderedIds: [], itemsById: new Map() };
 		};
@@ -190,8 +186,6 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 	) {
 		const changedIds = getChangedStyleIds( previous, current );
 
-		evictRemovedStyleItems( cache, previous, current );
-
 		cache.orderedIds = provider.actions
 			.all()
 			.map( ( style ) => style.id )
@@ -276,14 +270,6 @@ function getChangedStyleIds( previous: StylesCollection, current: StylesCollecti
 	}
 
 	return changedIds;
-}
-
-function evictRemovedStyleItems( cache: StyleItemsCache, previous: StylesCollection, current: StylesCollection ): void {
-	for ( const id of Object.keys( previous ) ) {
-		if ( ! ( id in current ) ) {
-			cache.itemsById.delete( id );
-		}
-	}
 }
 
 function getOrderedItems( cache: StyleItemsCache ): StyleItem[] {
