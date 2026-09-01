@@ -25,7 +25,7 @@ const SVG_WIDGET_TYPE = 'e-svg';
 
 const TRAILING_NUMBER = /(\d+)\s*$/;
 
-const getItemTitle = ( position: number ) => `Item ${ position }`;
+const getItemTitle = ( position: number ) => `List item ${ position }`;
 
 const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 	const taken = new Set( existingTitles.filter( ( title ): title is string => Boolean( title ) ) );
@@ -47,6 +47,8 @@ const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 };
 
 const buildItemModel = ( position: number, showMarkers: boolean ): V1ElementData => {
+	const itemTitle = getItemTitle( position );
+
 	return {
 		elType: LIST_ITEM_ELEMENT_TYPE,
 		id: generateElementId(),
@@ -54,7 +56,7 @@ const buildItemModel = ( position: number, showMarkers: boolean ): V1ElementData
 			show_markers: booleanPropTypeUtil.create( showMarkers ),
 		},
 		editor_settings: {
-			title: getItemTitle( position ),
+			title: itemTitle,
 			initial_position: position,
 		},
 		elements: [
@@ -86,7 +88,7 @@ const buildItemModel = ( position: number, showMarkers: boolean ): V1ElementData
 						id: generateElementId(),
 						elements: [],
 						settings: {
-							paragraph: escapedHtmlPropTypeUtil.create( __( 'List item', 'elementor' ) ),
+							paragraph: escapedHtmlPropTypeUtil.create( itemTitle ),
 						},
 					},
 				],
@@ -164,7 +166,7 @@ export const addItem = ( {
 			elements: [
 				{
 					container: listContainer,
-					model: buildItemModel( position, showMarkers ) as CreateElementParams['model'],
+					model: buildItemModel( position, showMarkers ) as CreateElementParams[ 'model' ],
 					options: { at: index },
 				},
 			],

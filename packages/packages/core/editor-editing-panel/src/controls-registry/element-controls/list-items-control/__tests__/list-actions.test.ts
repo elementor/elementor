@@ -33,7 +33,7 @@ describe( 'list-items-control actions', () => {
 
 		// Act.
 		addItem( {
-			existingTitles: [ 'Item 1', 'Item 2' ],
+			existingTitles: [ 'List item 1', 'List item 2' ],
 			listContainerId: 'list-123',
 			items: [ { item: { id: 'new-item' }, index: 2 } ],
 			showMarkers: true,
@@ -58,7 +58,7 @@ describe( 'list-items-control actions', () => {
 					show_markers: { $$type: 'boolean', value: true },
 				},
 				editor_settings: {
-					title: 'Item 3',
+					title: 'List item 3',
 					initial_position: 3,
 				},
 			} )
@@ -73,7 +73,7 @@ describe( 'list-items-control actions', () => {
 
 		// Act.
 		addItem( {
-			existingTitles: [ 'Item 2' ],
+			existingTitles: [ 'List item 2' ],
 			listContainerId: 'list-123',
 			items: [ { item: { id: 'new-item' }, index: 1 } ],
 			showMarkers: true,
@@ -86,7 +86,7 @@ describe( 'list-items-control actions', () => {
 					expect.objectContaining( {
 						model: expect.objectContaining( {
 							editor_settings: expect.objectContaining( {
-								title: 'Item 3',
+								title: 'List item 3',
 								initial_position: 3,
 							} ),
 						} ),
@@ -173,7 +173,7 @@ describe( 'list-items-control actions', () => {
 				settings: {
 					paragraph: {
 						$$type: 'escaped-html',
-						value: 'List item',
+						value: 'List item 1',
 					},
 				},
 			} )

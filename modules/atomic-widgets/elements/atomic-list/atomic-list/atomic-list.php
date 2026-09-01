@@ -34,7 +34,6 @@ class Atomic_List extends Atomic_Element_Base {
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		$this->meta( 'is_container', true );
 	}
 
 	public static function get_type() {
@@ -154,7 +153,7 @@ class Atomic_List extends Atomic_Element_Base {
 				'show_markers' => Boolean_Prop_Type::generate( true ),
 			] )
 			->editor_settings( [
-				'title' => esc_html__( 'Item ' . $index, 'elementor' ),
+				'title' => $numbered_content,
 				'initial_position' => $index,
 			] )
 			->children( [ $marker, $content ] )

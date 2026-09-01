@@ -15,7 +15,7 @@ class Test_Atomic_List extends Elementor_Test_Base {
 
 		foreach ( $children as $index => $item ) {
 			$this->assertSame( 'e-list-item', $item['elType'] );
-			$this->assertSame( 'Item ' . ( $index + 1 ), $item['editor_settings']['title'] );
+			$this->assertSame( 'List item ' . ( $index + 1 ), $item['editor_settings']['title'] );
 			$this->assertSame( $index + 1, $item['editor_settings']['initial_position'] );
 			$this->assertTrue( $item['settings']['show_markers']['value'] );
 
