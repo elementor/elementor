@@ -64,12 +64,21 @@ final class Composition_Compiler {
 			return $dom;
 		}
 
-		$pre_apply_error = $this->collect_pre_apply_errors( $dom, $xml_parser, $type_resolver, $document_tree, $parent_id );
-		if ( is_wp_error( $pre_apply_error ) ) {
-			return $pre_apply_error;
-		}
+		[
+			'configs' => $widget_configs,
+			'unknown_tag_errors' => $unknown_widget_tag_errors,
+		] = $type_resolver->collect_referenced_widget_configs( $dom );
 
-		$widget_configs = $pre_apply_error['widget_configs'];
+		$validation_error = $this->validate_xml_before_apply(
+			$dom,
+			$xml_parser,
+			$document_tree,
+			$parent_id,
+			$unknown_widget_tag_errors
+		);
+		if ( $validation_error ) {
+			return $validation_error;
+		}
 
 		$wrapping_result = $this->wrap_document_root_content( $dom, $widget_configs, $parent_id, $type_resolver, $xml_parser );
 		if ( is_wp_error( $wrapping_result ) ) {
@@ -132,30 +141,29 @@ final class Composition_Compiler {
 	}
 
 	/**
-	 * Runs every validator that can safely execute before appliers touch the tree, then
-	 * returns a single WP_Error carrying all messages, or the resolved widget configs.
+	 * @param \DOMDocument $dom
+	 * @param Xml_Parser   $xml_parser
+	 * @param array        $document_tree
+	 * @param string       $parent_id
+	 * @param string[]     $unknown_widget_tag_errors
 	 *
-	 * @return array{widget_configs: array<string, array>}|\WP_Error
+	 * @return \WP_Error|null
 	 */
-	private function collect_pre_apply_errors(
+	private function validate_xml_before_apply(
 		\DOMDocument $dom,
 		Xml_Parser $xml_parser,
-		Widget_Type_Resolver $type_resolver,
 		array $document_tree,
-		string $parent_id
+		string $parent_id,
+		array $unknown_widget_tag_errors
 	) {
-		$type_resolution = $type_resolver->collect_used_with_errors( $dom );
-
 		$errors = array_merge(
 			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
 			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
-			$this->tag_errors( 'elementor_unknown_type', $type_resolution['errors'] ?? [] ),
+			$this->tag_errors( 'elementor_unknown_type', $unknown_widget_tag_errors ),
 		);
 
 		if ( empty( $errors ) ) {
-			return [
-				'widget_configs' => $type_resolution['configs'],
-			];
+			return null;
 		}
 
 		$status = [ 'status' => \WP_Http::BAD_REQUEST ];

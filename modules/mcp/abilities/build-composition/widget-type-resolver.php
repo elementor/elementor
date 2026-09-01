@@ -42,11 +42,11 @@ class Widget_Type_Resolver {
 	}
 
 	/**
-	 * @return array{configs: array<string, array>, errors: string[]}
+	 * @return array{configs: array<string, array>, unknown_tag_errors: string[]}
 	 */
-	public function collect_used_with_errors( \DOMDocument $dom ): array {
+	public function collect_referenced_widget_configs( \DOMDocument $dom ): array {
 		$configs = [];
-		$errors = [];
+		$unknown_tag_errors = [];
 		$seen_unknown = [];
 
 		foreach ( $this->xml_parser->iterate_all_descendants( $dom ) as $node ) {
@@ -59,7 +59,7 @@ class Widget_Type_Resolver {
 			$config = $this->resolve_type_config( $tag );
 			if ( is_wp_error( $config ) ) {
 				$seen_unknown[ $tag ] = true;
-				$errors[] = $config->get_error_message();
+				$unknown_tag_errors[] = $config->get_error_message();
 				continue;
 			}
 			$configs[ $tag ] = $config;
@@ -67,7 +67,7 @@ class Widget_Type_Resolver {
 
 		return [
 			'configs' => $configs,
-			'errors' => $errors,
+			'unknown_tag_errors' => $unknown_tag_errors,
 		];
 	}
 
