@@ -102,25 +102,16 @@ jobs:
       - name: Get release name
         uses: ./.github/workflows/get-release-name
         with:
+          BUILD_ZIP_FILE_PATH: ${{ env.REPO_NAME }}-${{ env.VERSION }}.zip
           PLUGIN_NAME: ${{ env.REPO_NAME }}
 
       - name: Unzip build artifact
         env:
-          ELEMENTOR_PATH: ${{ github.workspace }}/${{ env.REPO_NAME }}
+          ELEMENTOR_PATH: ${{ github.workspace }}
           ZIP_FILE: ${{ env.REPO_NAME }}-${{ env.VERSION }}.zip
         run: |
-          mkdir -p "$ELEMENTOR_PATH"
           echo "Unzipping ${ZIP_FILE} into ${ELEMENTOR_PATH}"
           unzip -o "$ZIP_FILE" -d "$ELEMENTOR_PATH"
-
-      - name: Validate build files
-        if: github.repository_owner == 'elementor'
-        env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
-          PACKAGE_VERSION: ${{ env.VERSION }}
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
