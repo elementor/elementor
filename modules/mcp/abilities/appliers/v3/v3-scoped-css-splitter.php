@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Splits a CSS string into wrapper declarations and inner-element scoped blocks.
+ *
+ * Non-alias nested blocks (e.g. `footer-link { ... }`) never reach the wrapper output —
+ * they are collected in `dropped_blocks` so the caller can warn without poisoning the
+ * downstream V3 mapper (whose `parse_nested` errors on any un-prefixed `{`).
  */
 class V3_Scoped_Css_Splitter {
 
@@ -22,7 +26,7 @@ class V3_Scoped_Css_Splitter {
 	/**
 	 * @param string   $css_string
 	 * @param string[] $inner_element_aliases
-	 * @return array{wrapper: string, scopes: array<string, string>}
+	 * @return array{wrapper: string, scopes: array<string, string>, dropped_blocks: array<int, array{selector: string, body: string}>}
 	 */
 	public static function split( string $css_string, array $inner_element_aliases ): array {
 		$css_string = trim( $css_string );
@@ -31,12 +35,14 @@ class V3_Scoped_Css_Splitter {
 			return [
 				'wrapper' => $css_string,
 				'scopes' => [],
+				'dropped_blocks' => [],
 			];
 		}
 
 		$alias_lookup = array_fill_keys( $inner_element_aliases, true );
 		$wrapper_parts = [];
 		$scopes = [];
+		$dropped_blocks = [];
 		$offset = 0;
 		$length = strlen( $css_string );
 
@@ -50,11 +56,11 @@ class V3_Scoped_Css_Splitter {
 			if ( '@' === $css_string[ $offset ] ) {
 				$block = self::read_at_rule_block( $css_string, $offset, $length );
 				if ( null === $block ) {
-					$wrapper_parts[] = substr( $css_string, $offset );
+					self::collect_wrapper_declarations( substr( $css_string, $offset ), $wrapper_parts, $dropped_blocks );
 					break;
 				}
 
-				self::split_at_rule( $block, $inner_element_aliases, $wrapper_parts, $scopes );
+				self::split_at_rule( $block, $inner_element_aliases, $wrapper_parts, $scopes, $dropped_blocks );
 				$offset = $block['end'];
 				continue;
 			}
@@ -62,29 +68,27 @@ class V3_Scoped_Css_Splitter {
 			$next_alias = self::find_next_alias_block( $css_string, $offset, $length, $alias_lookup );
 
 			if ( null === $next_alias ) {
-				$remainder = trim( substr( $css_string, $offset ) );
-				if ( '' !== $remainder ) {
-					$wrapper_parts[] = $remainder;
-				}
+				self::collect_wrapper_declarations( substr( $css_string, $offset ), $wrapper_parts, $dropped_blocks );
 				break;
 			}
 
 			if ( $next_alias['start'] > $offset ) {
-				$declarations = trim( substr( $css_string, $offset, $next_alias['start'] - $offset ) );
-				if ( '' !== $declarations ) {
-					$wrapper_parts[] = $declarations;
-				}
+				$declarations = substr( $css_string, $offset, $next_alias['start'] - $offset );
+				self::collect_wrapper_declarations( $declarations, $wrapper_parts, $dropped_blocks );
 			}
 
 			$block = self::read_braced_block( $css_string, $next_alias['brace_pos'], $length );
 			if ( null === $block ) {
-				$wrapper_parts[] = trim( substr( $css_string, $next_alias['start'] ) );
+				self::collect_wrapper_declarations( substr( $css_string, $next_alias['start'] ), $wrapper_parts, $dropped_blocks );
 				break;
 			}
 
 			$scope_key = self::resolve_scope_key( $next_alias['selector'], $alias_lookup );
 			if ( null === $scope_key ) {
-				$wrapper_parts[] = trim( $next_alias['selector'] . ' { ' . $block['body'] . ' }' );
+				$dropped_blocks[] = [
+					'selector' => trim( $next_alias['selector'] ),
+					'body' => trim( $block['body'] ),
+				];
 			} else {
 				$scopes[ $scope_key ] = trim(
 					( $scopes[ $scope_key ] ?? '' ) . ( '' === ( $scopes[ $scope_key ] ?? '' ) ? '' : ' ' ) . $block['body']
@@ -97,7 +101,109 @@ class V3_Scoped_Css_Splitter {
 		return [
 			'wrapper' => trim( implode( ' ', array_filter( $wrapper_parts, static fn( $part ) => '' !== trim( $part ) ) ) ),
 			'scopes' => $scopes,
+			'dropped_blocks' => $dropped_blocks,
 		];
+	}
+
+	/**
+	 * Extracts declarations (property: value pairs) from a chunk of wrapper CSS while
+	 * routing any embedded `selector { ... }` blocks (which would break parse_nested) into
+	 * `dropped_blocks`. Braces inside strings are preserved for the declaration path.
+	 *
+	 * @param string                                                       $chunk
+	 * @param string[]                                                     $wrapper_parts
+	 * @param array<int, array{selector: string, body: string}>            $dropped_blocks
+	 */
+	private static function collect_wrapper_declarations( string $chunk, array &$wrapper_parts, array &$dropped_blocks ): void {
+		$chunk = trim( $chunk );
+
+		if ( '' === $chunk ) {
+			return;
+		}
+
+		$offset = 0;
+		$length = strlen( $chunk );
+		$declarations_parts = [];
+
+		while ( $offset < $length ) {
+			$brace_pos = self::next_unquoted_brace( $chunk, $offset, $length );
+
+			if ( null === $brace_pos ) {
+				$declarations_parts[] = substr( $chunk, $offset );
+				break;
+			}
+
+			$selector_start = self::scan_selector_start( $chunk, $offset, $brace_pos );
+			if ( $selector_start > $offset ) {
+				$declarations_parts[] = substr( $chunk, $offset, $selector_start - $offset );
+			}
+
+			$block = self::read_braced_block( $chunk, $brace_pos, $length );
+			if ( null === $block ) {
+				$declarations_parts[] = substr( $chunk, $selector_start );
+				break;
+			}
+
+			$dropped_blocks[] = [
+				'selector' => trim( substr( $chunk, $selector_start, $brace_pos - $selector_start ) ),
+				'body' => trim( $block['body'] ),
+			];
+
+			$offset = $block['end'];
+		}
+
+		foreach ( $declarations_parts as $part ) {
+			$part = trim( $part );
+			if ( '' !== $part ) {
+				$wrapper_parts[] = $part;
+			}
+		}
+	}
+
+	/**
+	 * Returns the offset of the next `{` outside of any quoted string, or null.
+	 */
+	private static function next_unquoted_brace( string $chunk, int $offset, int $length ): ?int {
+		$in_string = false;
+		$string_char = '';
+
+		for ( $i = $offset; $i < $length; $i++ ) {
+			$char = $chunk[ $i ];
+
+			if ( $in_string ) {
+				if ( $string_char === $char && ( $i === 0 || '\\' !== $chunk[ $i - 1 ] ) ) {
+					$in_string = false;
+				}
+				continue;
+			}
+
+			if ( '"' === $char || "'" === $char ) {
+				$in_string = true;
+				$string_char = $char;
+				continue;
+			}
+
+			if ( '{' === $char ) {
+				return $i;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Finds where a selector starts, given the position of its `{`. Walks back over the
+	 * selector characters until it hits a `;` or `}` (declaration/block boundary).
+	 */
+	private static function scan_selector_start( string $chunk, int $offset, int $brace_pos ): int {
+		for ( $i = $brace_pos - 1; $i >= $offset; $i-- ) {
+			$char = $chunk[ $i ];
+			if ( ';' === $char || '}' === $char ) {
+				return $i + 1;
+			}
+		}
+
+		return $offset;
 	}
 
 	/**
@@ -105,16 +211,26 @@ class V3_Scoped_Css_Splitter {
 	 * split as well and each part is re-wrapped in the same prelude. That keeps the breakpoint
 	 * with the scope it belongs to, since a scope is mapped independently of the wrapper.
 	 *
-	 * @param array{prelude: string, body: string, raw: string} $block
-	 * @param string[]                                          $inner_element_aliases
-	 * @param string[]                                          $wrapper_parts
-	 * @param array<string, string>                             $scopes
+	 * @param array{prelude: string, body: string, raw: string}     $block
+	 * @param string[]                                               $inner_element_aliases
+	 * @param string[]                                               $wrapper_parts
+	 * @param array<string, string>                                  $scopes
+	 * @param array<int, array{selector: string, body: string}>      $dropped_blocks
 	 */
-	private static function split_at_rule( array $block, array $inner_element_aliases, array &$wrapper_parts, array &$scopes ): void {
+	private static function split_at_rule( array $block, array $inner_element_aliases, array &$wrapper_parts, array &$scopes, array &$dropped_blocks ): void {
 		$inner = self::split( $block['body'], $inner_element_aliases );
 
+		foreach ( $inner['dropped_blocks'] as $dropped ) {
+			$dropped_blocks[] = [
+				'selector' => $block['prelude'] . ' ' . $dropped['selector'],
+				'body' => $dropped['body'],
+			];
+		}
+
 		if ( empty( $inner['scopes'] ) ) {
-			$wrapper_parts[] = $block['raw'];
+			if ( '' !== trim( $inner['wrapper'] ) ) {
+				$wrapper_parts[] = $block['prelude'] . ' { ' . $inner['wrapper'] . ' }';
+			}
 			return;
 		}
 

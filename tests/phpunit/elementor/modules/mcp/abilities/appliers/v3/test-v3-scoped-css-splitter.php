@@ -83,7 +83,7 @@ class Test_V3_Scoped_Css_Splitter extends TestCase {
 		$this->assertSame( '&:hover { color: green; } @media(--mobile) { &:hover { color: navy; } }', $mapper_css );
 	}
 
-	public function test_split__keeps_unknown_selectors_in_wrapper() {
+	public function test_split__reports_unknown_selectors_as_dropped_blocks() {
 		// Arrange.
 		$css = 'main-menu { color: red; } .unknown { margin: 1px; }';
 
@@ -92,7 +92,40 @@ class Test_V3_Scoped_Css_Splitter extends TestCase {
 
 		// Assert.
 		$this->assertSame( 'color: red;', $result['scopes']['main-menu'] );
-		$this->assertStringContainsString( '.unknown { margin: 1px; }', $result['wrapper'] );
+		$this->assertSame( '', $result['wrapper'] );
+		$this->assertCount( 1, $result['dropped_blocks'] );
+		$this->assertSame( '.unknown', $result['dropped_blocks'][0]['selector'] );
+		$this->assertSame( 'margin: 1px;', $result['dropped_blocks'][0]['body'] );
+	}
+
+	public function test_split__isolates_unknown_alias_from_sibling_declarations() {
+		// Arrange: the exact poison-path input from the bug report.
+		$css = 'background-color: #111; footer-link { color: red; } main-menu { color: #111; }';
+
+		// Act.
+		$result = V3_Scoped_Css_Splitter::split( $css, [ 'main-menu', 'dropdown', 'toggle' ] );
+
+		// Assert.
+		$this->assertSame( 'background-color: #111;', $result['wrapper'] );
+		$this->assertSame( 'color: #111;', $result['scopes']['main-menu'] );
+		$this->assertCount( 1, $result['dropped_blocks'] );
+		$this->assertSame( 'footer-link', $result['dropped_blocks'][0]['selector'] );
+		$this->assertSame( 'color: red;', $result['dropped_blocks'][0]['body'] );
+	}
+
+	public function test_split__drops_unknown_selector_inside_media_query() {
+		// Arrange.
+		$css = '@media(--tablet) { footer-link { color: red; } margin-top: 1rem; }';
+
+		// Act.
+		$result = V3_Scoped_Css_Splitter::split( $css, [ 'main-menu' ] );
+
+		// Assert.
+		$this->assertStringContainsString( '@media(--tablet)', $result['wrapper'] );
+		$this->assertStringContainsString( 'margin-top: 1rem;', $result['wrapper'] );
+		$this->assertStringNotContainsString( 'footer-link', $result['wrapper'] );
+		$this->assertCount( 1, $result['dropped_blocks'] );
+		$this->assertStringContainsString( 'footer-link', $result['dropped_blocks'][0]['selector'] );
 	}
 
 	public function test_scope_to_mapper_css__wraps_state_scopes() {

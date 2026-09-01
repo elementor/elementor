@@ -352,6 +352,15 @@ class Style_Applier {
 			is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : []
 		);
 
+		foreach ( $split['dropped_blocks'] as $dropped ) {
+			$warnings[] = sprintf(
+				/* translators: 1: Unknown selector the LLM used, 2: V3 widget type name. */
+				__( 'Unknown selector "%1$s" for widget `%2$s`; its rules were dropped. Use the aliases listed under `inner_elements` in the widget schema.', 'elementor' ),
+				$dropped['selector'],
+				$widget_type
+			);
+		}
+
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
 		$settings_patch = [];
 		$unmapped_parts = [];
