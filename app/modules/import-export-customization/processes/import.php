@@ -784,6 +784,7 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
+				$data['elements'] = $this->remap_component_instances( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
 
@@ -799,6 +800,45 @@ class Import {
 
 			$document->save( $data );
 		}
+	}
+
+	/**
+	 * Rewrite `component_id` inside every `e-component` widget so it points at the
+	 * component post that was recreated on the destination site instead of the
+	 * source-site post id that was serialized in the exported template.
+	 *
+	 * @param array $elements Elements tree from the exported document.
+	 * @param array $post_ids_map Source→destination post id map produced by the runner.
+	 *
+	 * @return array
+	 */
+	private function remap_component_instances( array $elements, array $post_ids_map ): array {
+		if ( empty( $post_ids_map ) ) {
+			return $elements;
+		}
+
+		foreach ( $elements as &$element ) {
+			if ( ! is_array( $element ) ) {
+				continue;
+			}
+
+			$is_component_widget = 'widget' === ( $element['elType'] ?? null )
+				&& 'e-component' === ( $element['widgetType'] ?? null );
+
+			if ( $is_component_widget ) {
+				$source_id = $element['settings']['component_instance']['value']['component_id']['value'] ?? null;
+
+				if ( is_numeric( $source_id ) && isset( $post_ids_map[ (int) $source_id ] ) ) {
+					$element['settings']['component_instance']['value']['component_id']['value'] = (int) $post_ids_map[ (int) $source_id ];
+				}
+			}
+
+			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = $this->remap_component_instances( $element['elements'], $post_ids_map );
+			}
+		}
+
+		return $elements;
 	}
 
 	private function update_instance_data_in_import_session_option() {
