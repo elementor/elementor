@@ -13,7 +13,7 @@ const getAllElementTypes = () => {
  *
  * @type {string[]}
  */
-const COMPOUND_ATOMIC_TYPES = [ 'e-tabs', 'e-accordion', 'e-collection-loop' ];
+const COMPOUND_ATOMIC_TYPES = [ 'e-tabs', 'e-accordion', 'e-collection-loop', 'e-list' ];
 
 module.exports = {
 	getAllElementTypes,

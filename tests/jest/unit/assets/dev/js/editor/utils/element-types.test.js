@@ -5,6 +5,7 @@ describe( 'COMPOUND_ATOMIC_TYPES', () => {
 		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-tabs' );
 		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-accordion' );
 		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-collection-loop' );
+		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-list' );
 	} );
 
 	test( 'does not include generic container types', () => {
