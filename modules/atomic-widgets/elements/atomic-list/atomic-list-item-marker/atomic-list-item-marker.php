@@ -78,23 +78,23 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	protected function define_base_styles(): array {
 		return [
-			static::BASE_STYLE_KEY => Style_Definition::make()
-				->add_variant(
-					Style_Variant::make()
-						->add_props( [
-							'display' => String_Prop_Type::generate( 'inline-flex' ),
-							'align-items' => String_Prop_Type::generate( 'center' ),
-							'align-self' => String_Prop_Type::generate( 'flex-start' ),
-							'width' => Size_Prop_Type::generate( [
-								'size' => '',
-								'unit' => 'auto',
-							] ),
-							'height' => Size_Prop_Type::generate( [
-								'size' => '1lh',
-								'unit' => 'custom',
-							] ),
-						] )
-				),
+			// static::BASE_STYLE_KEY => Style_Definition::make()
+			// 	->add_variant(
+			// 		Style_Variant::make()
+			// 			->add_props( [
+			// 				'display' => String_Prop_Type::generate( 'inline-flex' ),
+			// 				'align-items' => String_Prop_Type::generate( 'center' ),
+			// 				'align-self' => String_Prop_Type::generate( 'flex-start' ),
+			// 				'width' => Size_Prop_Type::generate( [
+			// 					'size' => '',
+			// 					'unit' => 'auto',
+			// 				] ),
+			// 				'height' => Size_Prop_Type::generate( [
+			// 					'size' => '1lh',
+			// 					'unit' => 'custom',
+			// 				] ),
+			// 			] )
+			// 	),
 		];
 	}
 
