@@ -53,7 +53,7 @@ class Test_Atomic_List extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'e-default-ul', $rendered_output );
 	}
 
-	public function test_list_editor_handles_are_reset_inside_default_style_roots(): void {
+	public function test_list_default_style_roots_do_not_add_editor_handle_reset_rule(): void {
 		wp_register_style( 'elementor-frontend', 'https://example.com/frontend.css' );
 		wp_register_style( 'elementor-editor', 'https://example.com/editor.css' );
 
@@ -65,12 +65,12 @@ class Test_Atomic_List extends Elementor_Test_Base {
 
 		$frontend_inline_styles = wp_styles()->get_data( 'elementor-frontend', 'after' );
 		$editor_inline_styles = wp_styles()->get_data( 'elementor-editor', 'after' );
-		$expected_rule = '.e-default-ul > .elementor-element-overlay > .elementor-editor-element-settings, .e-default-li > .elementor-element-overlay > .elementor-editor-element-settings { list-style: none; margin: 0; padding: 0; }';
+		$removed_rule = '.e-default-ul > .elementor-element-overlay > .elementor-editor-element-settings, .e-default-li > .elementor-element-overlay > .elementor-editor-element-settings { list-style: none; margin: 0; padding: 0; }';
 
 		$this->assertIsArray( $frontend_inline_styles );
 		$this->assertIsArray( $editor_inline_styles );
-		$this->assertContains( $expected_rule, $frontend_inline_styles );
-		$this->assertContains( $expected_rule, $editor_inline_styles );
+		$this->assertNotContains( $removed_rule, $frontend_inline_styles );
+		$this->assertNotContains( $removed_rule, $editor_inline_styles );
 
 		wp_deregister_style( 'elementor-frontend' );
 		wp_deregister_style( 'elementor-editor' );
