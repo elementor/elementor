@@ -17,6 +17,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -109,6 +110,14 @@ class Atomic_List extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
+							// Neutralises the 10px inline padding that `.e-con` (added to every atomic
+							// element by `render_base_classes`) resolves from the container defaults.
+							// The item's own 10px lives on the header and the content slot, so any
+							// padding here or on the item would just inset the whole accordion.
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
 							'display' => String_Prop_Type::generate( 'flex' ),
 							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'list-style-type' => String_Prop_Type::generate( 'none' ),
