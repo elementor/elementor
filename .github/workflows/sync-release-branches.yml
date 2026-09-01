@@ -20,7 +20,8 @@ jobs:
         github.event.pull_request.merged == true &&
         github.event.pull_request.head.repo.full_name == github.repository &&
         (github.event.pull_request.base.ref == 'release/stable' || github.event.pull_request.base.ref == 'release/beta') &&
-        !startsWith(github.event.pull_request.head.ref, 'sync-pr')
+        !startsWith(github.event.pull_request.head.ref, 'sync-pr') &&
+        !startsWith(github.event.pull_request.head.ref, 'cherry-pick-pr')
       }}
     runs-on: ubuntu-latest
 
