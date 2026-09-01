@@ -1,4 +1,5 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { COMPOUND_ATOMIC_TYPES } from 'elementor-editor/utils/element-types';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -194,8 +195,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getWrappingContainer( container, model, settings ) {
-		const compoundAtomicTypes = [ 'e-tabs', 'e-accordion', 'e-collection-loop' ];
-		const isAtomic = elementor.helpers.isAtomicWidget( model ) || compoundAtomicTypes.includes( model.elType );
+		const isAtomic = elementor.helpers.isAtomicWidget( model ) || COMPOUND_ATOMIC_TYPES.includes( model.elType );
 		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
 
 		if ( isAtomic ) {
