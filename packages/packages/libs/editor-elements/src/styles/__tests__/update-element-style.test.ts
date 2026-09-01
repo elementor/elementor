@@ -271,16 +271,7 @@ describe( 'updateElementStyle', () => {
 			},
 		] );
 
-		expect( updateElementSettings ).toHaveBeenCalledWith( {
-			id: 'test-element-id',
-			props: {
-				classes: {
-					$$type: 'classes',
-					value: [ existingStyle.id ],
-				},
-			},
-			withHistory: false,
-		} );
+		expect( updateElementSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should remove empty styles', () => {

@@ -1,4 +1,3 @@
-import { type StyleDefinition } from '@elementor/editor-styles';
 import {
 	getCurrentDocumentId,
 	getElements,
@@ -9,7 +8,6 @@ import {
 import { __privateListenTo as listenTo } from '@elementor/editor-v1-adapters';
 
 import { ActiveDocumentMustExistError, InvalidElementsStyleProviderMetaError } from '../errors';
-import { type StylesCollection } from '../types';
 import { createStylesProvider } from '../utils/create-styles-provider';
 
 export const ELEMENTS_STYLES_PROVIDER_KEY_PREFIX = 'document-elements-';
@@ -33,7 +31,6 @@ export const documentElementsStylesProvider = createStylesProvider( {
 	priority: 50,
 	isPregeneratedLink: ( { id } ) => PREGENERATED_LINK_PATTERN.test( id ),
 	subscribe: ( cb ) => {
-		let previousStyles = collectAllElementStyles();
 		let scheduledFrame: number | null = null;
 
 		const unsubscribe = listenTo( styleRerenderEvents, () => {
@@ -43,10 +40,7 @@ export const documentElementsStylesProvider = createStylesProvider( {
 
 			scheduledFrame = requestAnimationFrame( () => {
 				scheduledFrame = null;
-				const currentStyles = collectAllElementStyles();
-				const snapshot = previousStyles;
-				previousStyles = currentStyles;
-				cb( snapshot, currentStyles );
+				cb();
 			} );
 		} );
 
@@ -111,18 +105,4 @@ export const documentElementsStylesProvider = createStylesProvider( {
 
 function isValidElementsMeta( meta: Record< string, unknown > ): meta is ElementsMeta {
 	return 'elementId' in meta && typeof meta.elementId === 'string' && !! meta.elementId;
-}
-
-function collectAllElementStyles(): StylesCollection {
-	const collection: StylesCollection = {};
-
-	for ( const element of getElements() ) {
-		const styles = element.model.get( 'styles' ) ?? {};
-
-		for ( const style of Object.values( styles ) as StyleDefinition[] ) {
-			collection[ style.id ] = style;
-		}
-	}
-
-	return collection;
 }

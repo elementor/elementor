@@ -28,8 +28,6 @@ type ProviderAndSubscriber = {
 
 type ProviderAndStyleItemsMap = Record< string, ProviderAndStyleItems >;
 
-const UNCHANGED_STYLE_ITEMS = Symbol( 'unchanged-style-items' );
-
 export function useStyleItems() {
 	const resolve = useStylePropResolver();
 	const renderStyles = useStyleRenderer( resolve );
@@ -39,7 +37,11 @@ export function useStyleItems() {
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
 
 	const providerAndSubscribers = useMemo( () => {
-		const createEmptyCache = (): StyleItemsCache => {
+		// Cached items hold CSS produced by the previous renderer, so a new renderer
+		// (e.g. after a breakpoints change) must not reuse them.
+		styleItemsCacheRef.current.clear();
+
+		const createEmptyCache = () => {
 			return { orderedIds: [], itemsById: new Map() };
 		};
 
@@ -157,7 +159,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 		signalizedProcess( abortController.signal )
 			.then( ( _, signal ) => {
 				const cache = getCache();
-				const hasDiffInfo = previous !== undefined && current !== undefined;
+				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
 				if ( hasCache && provider.isPregeneratedLink ) {
@@ -165,14 +167,13 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
 				}
 
-				return hasDiffInfo && hasCache
-					? updateItems( cache, previous, current, signal )
-					: createItems( cache, signal );
+				if ( hasDiffInfo && hasCache ) {
+					return updateItems( cache, previous, current, signal );
+				}
+
+				return createItems( cache, signal );
 			} )
 			.then( ( items ) => {
-				if ( items === UNCHANGED_STYLE_ITEMS ) {
-					return;
-				}
 				setStyleItems( ( prev ) => ( {
 					...prev,
 					[ provider.getKey() ]: { provider, items },
@@ -189,30 +190,32 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 	) {
 		const changedIds = getChangedStyleIds( previous, current );
 
-		if ( changedIds.length === 0 ) {
-			return UNCHANGED_STYLE_ITEMS;
-		}
+		evictRemovedStyleItems( cache, previous, current );
 
 		cache.orderedIds = provider.actions
 			.all()
 			.map( ( style ) => style.id )
 			.reverse();
 
-		const changedStyles = changedIds
-			.map( ( id ) => current[ id ] )
-			.filter( ( style ): style is StyleDefinition => !! style )
-			.map( ( style ) => ( {
-				...style,
-				cssName: provider.actions.resolveCssName( style.id ),
-			} ) );
+		if ( changedIds.length > 0 ) {
+			const changedStyles = changedIds
+				.map( ( id ) => provider.actions.get( id ) )
+				.filter( ( style ): style is StyleDefinition => !! style )
+				.map( ( style ) => ( {
+					...style,
+					cssName: provider.actions.resolveCssName( style.id ),
+				} ) );
 
-		const breakpointSplit = breakToBreakpoints( changedStyles );
+			const breakpointSplit = breakToBreakpoints( changedStyles );
 
-		return renderStyles( { styles: breakpointSplit, signal } ).then( ( rendered ) => {
-			updateCacheItems( cache, changedIds, rendered );
+			return renderStyles( { styles: breakpointSplit, signal } ).then( ( rendered ) => {
+				updateCacheItems( cache, changedIds, rendered );
 
-			return getOrderedItems( cache );
-		} );
+				return getOrderedItems( cache );
+			} );
+		}
+
+		return getOrderedItems( cache );
 	}
 
 	async function createItems( cache: StyleItemsCache, signal: AbortSignal ) {
@@ -264,18 +267,23 @@ function getChangedStyleIds( previous: StylesCollection, current: StylesCollecti
 	const changedIds: string[] = [];
 
 	for ( const id of Object.keys( current ) ) {
-		if ( current[ id ] !== previous[ id ] ) {
-			changedIds.push( id );
-		}
-	}
+		const currentStyle = current[ id ];
+		const previousStyle = previous[ id ];
 
-	for ( const id of Object.keys( previous ) ) {
-		if ( ! ( id in current ) ) {
+		if ( ! previousStyle || currentStyle !== previousStyle ) {
 			changedIds.push( id );
 		}
 	}
 
 	return changedIds;
+}
+
+function evictRemovedStyleItems( cache: StyleItemsCache, previous: StylesCollection, current: StylesCollection ): void {
+	for ( const id of Object.keys( previous ) ) {
+		if ( ! ( id in current ) ) {
+			cache.itemsById.delete( id );
+		}
+	}
 }
 
 function getOrderedItems( cache: StyleItemsCache ): StyleItem[] {
