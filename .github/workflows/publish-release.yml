@@ -53,6 +53,8 @@ on:
         required: false
       MAINTAIN_TOKEN:
         required: false
+      ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY:
+        required: false
     outputs:
       CLEAN_PACKAGE_VERSION:
         description: 'Base semver version with no channel suffix, e.g. 4.2.0'
@@ -131,6 +133,14 @@ jobs:
           PACKAGE_VERSION: ${{ env.VERSION }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+
+      - name: Invalidate changelog cache
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: ${{ inputs.channel == 'beta' && 'beta' || 'release' }}
 
       - name: Get Jira release URL
         id: get_jira_release_url
