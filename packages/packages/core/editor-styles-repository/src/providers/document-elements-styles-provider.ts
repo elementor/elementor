@@ -30,7 +30,29 @@ export const documentElementsStylesProvider = createStylesProvider( {
 	},
 	priority: 50,
 	isPregeneratedLink: ( { id } ) => PREGENERATED_LINK_PATTERN.test( id ),
-	subscribe: ( cb ) => listenTo( styleRerenderEvents, () => cb() ),
+	subscribe: ( cb ) => {
+		let scheduledFrame: number | null = null;
+
+		const unsubscribe = listenTo( styleRerenderEvents, () => {
+			if ( scheduledFrame !== null ) {
+				return;
+			}
+
+			scheduledFrame = requestAnimationFrame( () => {
+				scheduledFrame = null;
+				cb();
+			} );
+		} );
+
+		return () => {
+			if ( scheduledFrame !== null ) {
+				cancelAnimationFrame( scheduledFrame );
+				scheduledFrame = null;
+			}
+
+			unsubscribe();
+		};
+	},
 	actions: {
 		all: ( meta = {} ) => {
 			let elements = getElements();
