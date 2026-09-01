@@ -1,0 +1,42 @@
+name: Post-Release Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      core_version:
+        description: 'Core version (e.g. 4.2.3)'
+        required: true
+        type: string
+      pro_version:
+        description: 'Pro version. Leave empty for Core-only.'
+        required: false
+        type: string
+        default: ''
+      skip_wordpress_org:
+        description: 'Skip wordpress.org SVN/download (use when the tag is not on .org yet)'
+        required: false
+        type: boolean
+        default: false
+      skip_smoke:
+        description: 'Run API/zip checks only'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  post-release-check:
+    name: Post-release check
+    if: github.repository_owner == 'elementor'
+    uses: elementor/elementor-editor-github-actions/.github/workflows/post-release-check.yml@feat/post-release-check
+    with:
+      core_version: ${{ inputs.core_version }}
+      pro_version: ${{ inputs.pro_version }}
+      skip_wordpress_org: ${{ inputs.skip_wordpress_org }}
+      skip_smoke: ${{ inputs.skip_smoke }}
+      actions_ref: feat/post-release-check
+    secrets:
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
