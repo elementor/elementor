@@ -156,6 +156,8 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 		$this->assertSame( 'overridable', $heading['settings']['tag']['$$type'] );
 		$this->assertArrayHasKey( 'heading_tag', $component->get_overridable_props()->props );
 		$this->assertNotSame( 'source-heading-id', $heading['id'] );
+		$this->assertNotSame( 'source-heading-id', $heading['editor_settings']['title'] ?? null, 'Source id must not leak into editor_settings.title.' );
+		$this->assertNotSame( 'source-wrap-id', $component->get_elements_data()[0]['editor_settings']['title'] ?? null, 'Source id must not leak into editor_settings.title.' );
 	}
 
 	public function test_create__copy_from_source_does_not_clobber_existing_editor_settings_title() {

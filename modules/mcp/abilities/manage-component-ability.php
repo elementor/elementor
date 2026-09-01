@@ -92,9 +92,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $source_result;
 		}
 		[ 'elements' => $elements, 'warnings' => $warnings ] = $source_result;
+		$source_id_map = $source_result['source_id_map'] ?? [];
 
 		$settings = [];
-		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings );
+		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings, $source_id_map );
 		if ( is_wp_error( $overridable_error ) ) {
 			return $overridable_error;
 		}
@@ -363,7 +364,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: string[], source_id_map?: array<string,string>}|\WP_Error
 	 */
 	private function resolve_create_elements( array $input ) {
 		$has_xml = ! empty( $input['xml_structure'] ) && is_string( $input['xml_structure'] );
@@ -429,7 +430,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: string[], source_id_map: array<string,string>}|\WP_Error
 	 */
 	private function copy_elements_from_source( array $input ) {
 		$source_post_id = (int) $input['source_post_id'];
@@ -455,9 +456,13 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $this->not_found( __( 'element_id was not found on source_post_id.', 'elementor' ) );
 		}
 
+		$source_id_map = [];
+		$elements = $this->assign_element_ids_recording_source_ids( [ $found ], $source_id_map );
+
 		return [
-			'elements' => $this->assign_element_ids( $this->preserve_source_ids_as_titles( [ $found ] ) ),
+			'elements' => $elements,
 			'warnings' => [],
+			'source_id_map' => $source_id_map,
 		];
 	}
 
@@ -467,14 +472,21 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * payload itself is left to the component document's save hook, which already
 	 * parses and persists it for every component save.
 	 *
+	 * @param array<string,string> $source_id_map old-source-id => new-machine-id, when the tree
+	 *                                            came from `copy_elements_from_source`. Used to
+	 *                                            let callers address targets by the ids they
+	 *                                            saw on the source document, before id regeneration.
+	 *
 	 * @return \WP_Error|null
 	 */
-	private function apply_overridable_props( array &$elements, array $input, array &$settings ) {
+	private function apply_overridable_props( array &$elements, array $input, array &$settings, array $source_id_map = [] ) {
 		if ( ! is_array( $input['overridable_props'] ?? null ) || empty( $input['overridable_props'] ) ) {
 			return null;
 		}
 
-		$builder_result = Overridable_Props_Builder::make( $this->get_repository() )->build( $elements, $input['overridable_props'] );
+		$definitions = $this->remap_overridable_targets( $input['overridable_props'], $source_id_map );
+
+		$builder_result = Overridable_Props_Builder::make( $this->get_repository() )->build( $elements, $definitions );
 		if ( is_wp_error( $builder_result ) ) {
 			return $builder_result;
 		}
@@ -485,26 +497,30 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * Compiled subtrees have no ids yet (`Subtree_Builder` never sets one), and copied
-	 * subtrees carry ids from another document that would collide here. Both paths need
-	 * fresh, slug-safe machine ids; the caller's configuration-id stays on
-	 * `editor_settings.title` so `overridable_props.target` and other tools can still
-	 * address elements by the identifier the caller used in `xml_structure` — see
-	 * `Overridable_Props_Builder::find_element_ref`.
+	 * Rewrites `overridable_props[*].target` from source-document ids to the freshly assigned
+	 * ids, so callers can keep referencing the elements by the ids they observed on the source.
+	 * Unknown targets pass through untouched so the xml_structure `configuration-id` path (which
+	 * resolves via `editor_settings.title` in `Overridable_Props_Builder::find_element_ref`) and
+	 * regular id targets still work.
+	 *
+	 * @param array<string,string> $source_id_map
 	 */
-	private function preserve_source_ids_as_titles( array $elements ): array {
-		return array_map( function ( array $element ) {
-			$title = $element['editor_settings']['title'] ?? '';
-			if ( '' === $title && ! empty( $element['id'] ) ) {
-				$element['editor_settings']['title'] = (string) $element['id'];
-			}
+	private function remap_overridable_targets( array $definitions, array $source_id_map ): array {
+		if ( empty( $source_id_map ) ) {
+			return $definitions;
+		}
 
-			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = $this->preserve_source_ids_as_titles( $element['elements'] );
+		foreach ( $definitions as $override_key => &$definition ) {
+			if ( ! is_array( $definition ) ) {
+				continue;
 			}
+			$target = $definition['target'] ?? null;
+			if ( is_string( $target ) && isset( $source_id_map[ $target ] ) ) {
+				$definition['target'] = $source_id_map[ $target ];
+			}
+		}
 
-			return $element;
-		}, $elements );
+		return $definitions;
 	}
 
 	private function assign_element_ids( array $elements ): array {
@@ -516,6 +532,38 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
 			$element['elements'] = array_map( fn( array $child ) => $this->assign_element_id( $child ), $element['elements'] );
+		}
+
+		return $element;
+	}
+
+	/**
+	 * Regenerates ids like `assign_element_ids`, but records the mapping from each element's
+	 * old id to its new id so callers can keep addressing the tree by pre-regeneration ids.
+	 *
+	 * @param array<string,string> $source_id_map Populated by reference.
+	 */
+	private function assign_element_ids_recording_source_ids( array $elements, array &$source_id_map ): array {
+		return array_map(
+			fn( array $element ) => $this->assign_element_id_recording_source_id( $element, $source_id_map ),
+			$elements
+		);
+	}
+
+	private function assign_element_id_recording_source_id( array $element, array &$source_id_map ): array {
+		$old_id = isset( $element['id'] ) ? (string) $element['id'] : '';
+
+		$element['id'] = Document_Mutator::instance()->generate_id();
+
+		if ( '' !== $old_id ) {
+			$source_id_map[ $old_id ] = $element['id'];
+		}
+
+		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+			$element['elements'] = array_map(
+				fn( array $child ) => $this->assign_element_id_recording_source_id( $child, $source_id_map ),
+				$element['elements']
+			);
 		}
 
 		return $element;
