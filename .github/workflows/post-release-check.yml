@@ -31,12 +31,12 @@ jobs:
   post-release-check:
     name: Post-release check
     if: github.repository_owner == 'elementor'
-    uses: elementor/elementor-editor-github-actions/.github/workflows/post-release-check.yml@feat/post-release-check
+    uses: elementor/elementor-editor-github-actions/.github/workflows/post-release-check.yml@main
     with:
       core_version: ${{ inputs.core_version }}
       pro_version: ${{ inputs.pro_version }}
       skip_wordpress_org: ${{ inputs.skip_wordpress_org }}
       skip_smoke: ${{ inputs.skip_smoke }}
-      actions_ref: feat/post-release-check
+      actions_ref: main
     secrets:
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
