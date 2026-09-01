@@ -82,9 +82,6 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'inline-flex' ),
-							'align-items' => String_Prop_Type::generate( 'center' ),
-							'align-self' => String_Prop_Type::generate( 'flex-start' ),
 							'width' => Size_Prop_Type::generate( [
 								'size' => '',
 								'unit' => 'auto',
