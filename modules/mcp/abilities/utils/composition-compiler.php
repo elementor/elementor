@@ -144,61 +144,45 @@ final class Composition_Compiler {
 		array $document_tree,
 		string $parent_id
 	) {
-		$errors_by_code = [];
-
-		$duplicate_id_errors = $xml_parser->collect_duplicate_configuration_id_errors( $dom );
-		if ( ! empty( $duplicate_id_errors ) ) {
-			$errors_by_code['elementor_duplicate_configuration_id'] = $duplicate_id_errors;
-		}
-
-		$form_structure_errors = ( new Form_Structure_Validator( $xml_parser ) )
-			->collect_errors( $dom, $document_tree, $parent_id );
-		if ( ! empty( $form_structure_errors ) ) {
-			$errors_by_code['elementor_invalid_form_structure'] = $form_structure_errors;
-		}
-
 		$type_resolution = $type_resolver->collect_used_with_errors( $dom );
-		if ( ! empty( $type_resolution['errors'] ) ) {
-			$errors_by_code['elementor_unknown_type'] = $type_resolution['errors'];
-		}
 
-		if ( ! empty( $errors_by_code ) ) {
-			return $this->build_aggregated_error( $errors_by_code );
-		}
-
-		return [
-			'widget_configs' => $type_resolution['configs'],
-		];
-	}
-
-	/**
-	 * @param array<string, string[]> $errors_by_code
-	 */
-	private function build_aggregated_error( array $errors_by_code ): \WP_Error {
-		$primary_code = array_key_first( $errors_by_code );
-		$all_messages = [];
-		foreach ( $errors_by_code as $messages ) {
-			foreach ( $messages as $message ) {
-				$all_messages[] = $message;
-			}
-		}
-
-		$aggregated = new \WP_Error(
-			$primary_code,
-			implode( ' ', $all_messages ),
-			[ 'status' => \WP_Http::BAD_REQUEST ]
+		$errors = array_merge(
+			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
+			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
+			$this->tag_errors( 'elementor_unknown_type', $type_resolution['errors'] ?? [] ),
 		);
 
-		foreach ( $errors_by_code as $code => $messages ) {
-			foreach ( $messages as $index => $message ) {
-				if ( $code === $primary_code && 0 === $index ) {
-					continue;
-				}
-				$aggregated->add( $code, $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
-			}
+		if ( empty( $errors ) ) {
+			return [
+				'widget_configs' => $type_resolution['configs'],
+			];
+		}
+
+		$status = [ 'status' => \WP_Http::BAD_REQUEST ];
+		$joined = implode( ' ', array_column( $errors, 'message' ) );
+
+		$aggregated = new \WP_Error( $errors[0]['code'], $joined, $status );
+		foreach ( array_slice( $errors, 1 ) as $error ) {
+			$aggregated->add( $error['code'], $error['message'], $status );
 		}
 
 		return $aggregated;
+	}
+
+	/**
+	 * @param string   $code     Error code to tag each message with.
+	 * @param string[] $messages List of error messages.
+	 *
+	 * @return array<int, array{code: string, message: string}>
+	 */
+	private function tag_errors( string $code, array $messages ): array {
+		return array_map(
+			fn ( $message ) => [
+				'code' => $code,
+				'message' => $message,
+			],
+			$messages
+		);
 	}
 
 	private function wrap_document_root_content(
