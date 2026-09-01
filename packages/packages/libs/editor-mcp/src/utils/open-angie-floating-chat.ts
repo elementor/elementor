@@ -60,6 +60,23 @@ const anchorChatTo = ( anchorElement: HTMLElement ) => {
 	} );
 };
 
+const EMBEDDED_ANGIE_READY_MAX_ATTEMPTS = 40;
+const EMBEDDED_ANGIE_READY_POLL_MS = 250;
+
+const waitForEmbeddedAngieReady = async ( sdk: ReturnType< typeof getSDK > ): Promise< void > => {
+	for ( let attempt = 0; attempt < EMBEDDED_ANGIE_READY_MAX_ATTEMPTS; attempt++ ) {
+		if ( sdk.isAngieReady() ) {
+			return;
+		}
+
+		await new Promise( ( resolve ) => {
+			setTimeout( resolve, EMBEDDED_ANGIE_READY_POLL_MS );
+		} );
+	}
+
+	throw new Error( 'Angie is not ready' );
+};
+
 export const openAngieFloatingChat = async ( {
 	appId,
 	prompt,
@@ -75,6 +92,7 @@ export const openAngieFloatingChat = async ( {
 		bootPromise = floatingChatSdk
 			.loadSidebarV2( {
 				host: { appId, instanceId: ANGIE_FLOATING_CHAT_INSTANCE, aiContext },
+				sdkInstanceId: ANGIE_FLOATING_CHAT_INSTANCE,
 				container: {
 					id: FLOATING_CHAT_CONTAINER_ID,
 					layout: LAYOUT_FLOATING_CHAT,
@@ -100,6 +118,7 @@ export const openAngieFloatingChat = async ( {
 	}
 
 	await registerAngieMcpServers( mcpServers, floatingChatSdk );
+	await waitForEmbeddedAngieReady( floatingChatSdk );
 
 	await floatingChatSdk.triggerAngie( {
 		prompt,

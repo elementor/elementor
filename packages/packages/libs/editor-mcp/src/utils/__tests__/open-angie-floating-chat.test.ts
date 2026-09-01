@@ -3,13 +3,16 @@ const mockToggleAngieSidebar = jest.fn();
 const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockRegisterAngieMcpServers = jest.fn();
+const mockIsAngieReady = jest.fn();
 const mockFloatingChatSdk = {
 	loadSidebarV2: mockLoadSidebarV2,
 	triggerAngie: mockTriggerAngie,
+	isAngieReady: () => mockIsAngieReady(),
 };
 const mockDefaultSdk = {
 	loadSidebarV2: jest.fn(),
 	triggerAngie: jest.fn(),
+	isAngieReady: jest.fn(),
 };
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
@@ -50,9 +53,11 @@ describe( 'openAngieFloatingChat', () => {
 		mockLoadSidebarV2.mockReset();
 		mockTriggerAngie.mockReset();
 		mockRegisterAngieMcpServers.mockReset();
+		mockIsAngieReady.mockReset();
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( undefined );
 		mockRegisterAngieMcpServers.mockResolvedValue( undefined );
+		mockIsAngieReady.mockReturnValue( true );
 	} );
 
 	it( 'boots Angie on a dedicated instance, registers scoped MCP servers, opens the chat, and triggers a new chat', async () => {
@@ -72,6 +77,7 @@ describe( 'openAngieFloatingChat', () => {
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledTimes( 1 );
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledWith( {
 			host: { appId: APP_ID, instanceId: FLOATING_CHAT_INSTANCE_ID, aiContext: undefined },
+			sdkInstanceId: FLOATING_CHAT_INSTANCE_ID,
 			container: {
 				id: FLOATING_CHAT_CONTAINER_ID,
 				layout: LAYOUT_FLOATING_CHAT,

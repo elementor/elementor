@@ -32,13 +32,19 @@ export type InlineEditorToolbarProps = {
 	editor: Editor;
 	elementId?: ElementID;
 	sx?: SxProps< Theme >;
+	inControlPanel?: boolean;
 };
 
 type ToolbarButtonKeys = keyof typeof toolbarButtons;
 
 type FormatAction = Omit< ToolbarButtonKeys, 'clear' >;
 
-export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEditorToolbarProps ) => {
+export const InlineEditorToolbar = ( {
+	editor,
+	elementId,
+	sx = {},
+	inControlPanel = false,
+}: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
@@ -101,8 +107,10 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 	};
 
 	useEffect( () => {
-		editor?.commands?.focus();
-	}, [ editor ] );
+		if ( ! inControlPanel ) {
+			editor?.commands?.focus();
+		}
+	}, [ editor, inControlPanel ] );
 
 	return (
 		<Box
@@ -118,6 +126,23 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 				visibility: linkPopupState.isOpen ? 'hidden' : 'visible',
 				pointerEvents: linkPopupState.isOpen ? 'none' : 'all',
 				...sx,
+				...( inControlPanel && {
+					width: '100%',
+					justifyContent: 'center',
+					flexDirection: 'row',
+					backgroundColor: 'transparent',
+					boxShadow: 'none',
+					borderWidth: '0',
+					borderBottom: '1px solid',
+					borderBottomColor: ( theme: Theme ) => theme.palette.text.secondary,
+					borderRadius: '0',
+					position: 'absolute',
+					top: '0',
+					left: '0',
+					'&, & .MuiIconButton-root, & .MuiToggleButton-root': {
+						color: ( theme: Theme ) => theme.palette.text.primary,
+					},
+				} ),
 			} }
 		>
 			<Tooltip title={ clearButton.label } placement="top" sx={ { borderRadius: '8px' } }>
@@ -144,6 +169,14 @@ export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEdito
 								marginLeft: 0,
 							},
 						},
+					...( inControlPanel && {
+						justifyContent: 'space-between',
+						width: '100%',
+						'& svg': {
+							width: '0.7rem',
+							height: '0.7rem',
+						},
+					} ),
 				} }
 			>
 				{ formatButtonsList.map( ( button ) => (

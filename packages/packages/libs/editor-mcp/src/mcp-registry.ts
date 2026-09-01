@@ -93,6 +93,42 @@ export const ensureAngieMcpAdapter = (): Promise< void > => {
 	return ensureAngieMcpAdapterPromise;
 };
 
+const MAX_LOCAL_SERVER_REGISTER_RETRIES = 3;
+const LOCAL_SERVER_REGISTER_RETRY_DELAY_MS = 250;
+
+const registerLocalServersOnSdk = async (
+	sdk: AngieMcpSdk,
+	namespaces: string[]
+): Promise< void > => {
+	const entries = getRegisteredMcpServers().filter( ( [ namespace ] ) => namespaces.includes( namespace ) );
+
+	for ( let retry = MAX_LOCAL_SERVER_REGISTER_RETRIES; retry > 0; retry-- ) {
+		const failed: typeof entries = [];
+
+		for ( const [ key, mcpServer, description ] of entries ) {
+			try {
+				await sdk.registerLocalServer( {
+					title: toMCPTitle( key ),
+					name: `editor-${ key }`,
+					server: mcpServer,
+					version: '1.0.0',
+					description,
+				} );
+			} catch {
+				failed.push( [ key, mcpServer, description ] );
+			}
+		}
+
+		if ( failed.length === 0 ) {
+			return;
+		}
+
+		await new Promise( ( resolve ) => {
+			setTimeout( resolve, LOCAL_SERVER_REGISTER_RETRY_DELAY_MS );
+		} );
+	}
+};
+
 export const registerAngieMcpServers = (
 	namespaces: string[],
 	sdk: AngieMcpSdk = getSDK()
@@ -108,11 +144,7 @@ export const registerAngieMcpServers = (
 	let registration = perSdkRegistrations.get( scope );
 
 	if ( ! registration ) {
-		const adapter = new AngieMcpAdapter( sdk, () =>
-			getRegisteredMcpServers().filter( ( [ namespace ] ) => namespaces.includes( namespace ) )
-		);
-
-		registration = adapter.activate();
+		registration = registerLocalServersOnSdk( sdk, namespaces );
 		perSdkRegistrations.set( scope, registration );
 	}
 

@@ -33,7 +33,7 @@ class Test_Shared_Registry_Bridge extends TestCase {
 				continue;
 			}
 
-			$this->assertGreaterThanOrEqual( '1.0.4', $package['version'] );
+			$this->assertTrue( version_compare( $package['version'], '1.0.4', '>=' ), "Expected version >= 1.0.4, got {$package['version']}" );
 			return;
 		}
 
@@ -59,21 +59,22 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		$this->assertStringContainsString( 'return 25;', $source );
 	}
 
-	public function test_connector_page_is_gated_by_hidden_inactive_experiment(): void {
+	public function test_connector_page_is_always_registered_when_mcp_is_active(): void {
 		$module_source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
 		);
 
-		$this->assertStringContainsString( "const CONNECTOR_EXPERIMENT_NAME = 'mcp_connector';", $module_source );
-		$this->assertStringContainsString( "'hidden' => true,", $module_source );
-		$this->assertStringContainsString( 'Experiments_Manager::STATE_INACTIVE', $module_source );
-		$this->assertStringContainsString( 'if ( ! self::is_connector_page_active() ) {', $module_source );
+		$this->assertStringNotContainsString( 'mcp_connector', $module_source );
+		$this->assertStringNotContainsString( 'is_connector_page_active', $module_source );
+		$this->assertStringContainsString( '$menu_data_provider->register_menu(', $module_source );
+		$this->assertStringContainsString( 'new Editor_One_Mcp_Menu()', $module_source );
 
 		$menu_source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/admin-menu-items/editor-one-mcp-menu.php'
 		);
 
-		$this->assertStringContainsString( 'Module::is_connector_page_active()', $menu_source );
+		$this->assertStringContainsString( 'return true;', $menu_source );
+		$this->assertStringNotContainsString( 'is_connector_page_active', $menu_source );
 	}
 
 	public function test_editor_one_mcp_menu_registers_after_submissions(): void {

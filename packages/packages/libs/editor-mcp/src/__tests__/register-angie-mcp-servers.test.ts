@@ -1,14 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 const mockRegisterLocalServer = jest.fn();
-const mockWaitForReady = jest.fn();
-
 const mockDefaultSdk = {
-	waitForReady: () => mockWaitForReady(),
+	waitForReady: jest.fn().mockResolvedValue( undefined ),
 	registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 };
 const mockScopedSdk = {
-	waitForReady: () => mockWaitForReady(),
 	registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 };
 
@@ -28,9 +25,8 @@ describe( 'registerAngieMcpServers', () => {
 	beforeEach( () => {
 		jest.resetModules();
 		mockRegisterLocalServer.mockReset();
-		mockWaitForReady.mockReset();
 		mockRegisterLocalServer.mockResolvedValue( undefined );
-		mockWaitForReady.mockResolvedValue( undefined );
+		mockDefaultSdk.waitForReady.mockClear();
 	} );
 
 	it( 'registers only the requested namespaces with Angie', async () => {
@@ -44,6 +40,7 @@ describe( 'registerAngieMcpServers', () => {
 
 		// Assert
 		expect( getRegisteredServerNames() ).toEqual( [ `editor-${ TITLE_GENERATION_NAMESPACE }` ] );
+		expect( mockDefaultSdk.waitForReady ).not.toHaveBeenCalled();
 	} );
 
 	it( 'uses separate registration scopes per SDK instance', async () => {
@@ -76,6 +73,7 @@ describe( 'registerAngieMcpServers', () => {
 		expect( getRegisteredServerNames() ).toEqual(
 			expect.arrayContaining( [ `editor-${ TITLE_GENERATION_NAMESPACE }`, `editor-${ CANVAS_NAMESPACE }` ] )
 		);
+		expect( mockDefaultSdk.waitForReady ).toHaveBeenCalled();
 	} );
 
 	it( 'does not register the same scope twice', async () => {

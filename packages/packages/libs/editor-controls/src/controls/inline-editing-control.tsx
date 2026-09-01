@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { type ComponentProps, useCallback, useRef } from 'react';
+import { type ComponentProps, useCallback, useRef, useState } from 'react';
 import { openAngieFloatingChat } from '@elementor/editor-mcp';
 import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 import { Box, Button, Stack, type SxProps, type Theme } from '@elementor/ui';
+import { type Editor } from '@tiptap/react';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
+import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { extractInlineHtmlContent } from '../utils/inline-editing';
@@ -41,6 +43,7 @@ export const InlineEditingControl = createControl(
 		const { value: rawValue } = usePropKeyContext();
 		const content = value ?? extractInlineHtmlContent( rawValue );
 		const generateButtonRef = useRef< HTMLButtonElement >( null );
+		const [ editor, setEditor ] = useState< Editor | null >( null );
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
@@ -96,9 +99,10 @@ export const InlineEditingControl = createControl(
 					feedback: { enabled: false },
 					commands: { enabled: false },
 					testMode: { enabled: false },
-					betaBanner: { enabled: false },
+					statusBanner: { enabled: false },
+					quotaBanner: { enabled: false },
 					modeSwitcher: { enabled: false, default: 'agent' },
-					aiContextGuidance: { enabled: true },
+					topBar: { enabled: false },
 				},
 			} ).catch( () => {} );
 		}, [ content, elementId ] );
@@ -118,32 +122,74 @@ export const InlineEditingControl = createControl(
 							</Button>
 						</Box>
 					) : null }
-					<Box
-						sx={ {
-							p: 0.8,
-							border: '1px solid',
-							borderColor: 'grey.200',
-							borderRadius: '8px',
-							transition: 'border-color .2s ease, box-shadow .2s ease',
-							'&:hover': {
-								borderColor: 'black',
-							},
-							'&:focus-within': {
-								borderColor: 'black',
-								boxShadow: '0 0 0 1px black',
-							},
-							'& .ProseMirror:focus': {
-								outline: 'none',
-							},
-							'.strip-styles *': {
-								all: 'unset',
-							},
-							...sx,
-						} }
-						{ ...attributes }
-						{ ...props }
-					>
-						<InlineEditor value={ content } setValue={ handleChange } placeholder={ placeholder ?? null } />
+					<Box sx={ { position: 'relative' } }>
+						{ editor && editor.isEditable && (
+							<InlineEditorToolbar
+								editor={ editor }
+								elementId={ elementId }
+								sx={ ( theme: Theme ) => ( {
+									boxShadow: 'none',
+									border: '1px solid',
+									borderColor: theme.palette.text.secondary,
+									mb: 0.5,
+								} ) }
+								inControlPanel={ true }
+							/>
+						) }
+						<Box
+							sx={ ( theme: Theme ) => ( {
+								p: 0.8,
+								border: '1px solid',
+								borderColor: theme.palette.text.secondary,
+								borderRadius: '8px',
+								transition: 'border-color .2s ease, box-shadow .2s ease',
+								'&:hover': {
+									borderColor: theme.palette.text.primary,
+								},
+								'&:focus-within': {
+									borderColor: theme.palette.text.primary,
+									boxShadow: `0 0 0 1px ${ theme.palette.text.primary }`,
+								},
+								'& .ProseMirror:focus': {
+									outline: 'none',
+								},
+								'& .ProseMirror': {
+									minHeight: '100px',
+									fontSize: '12px',
+									'& a': {
+										color: 'inherit',
+									},
+									'& .elementor-inline-editor-reset': {
+										margin: 0,
+										padding: 0,
+									},
+									'&.is-empty::before': {
+										content: 'attr(data-placeholder)',
+										color: 'text.tertiary',
+										pointerEvents: 'none',
+										position: 'absolute',
+										opacity: 0.6,
+									},
+								},
+								'.strip-styles *': {
+									all: 'unset',
+								},
+								...sx,
+							} ) }
+							{ ...attributes }
+							{ ...props }
+						>
+							<InlineEditor
+								value={ content }
+								setValue={ handleChange }
+								placeholder={ placeholder ?? null }
+								onEditorCreate={ setEditor }
+								onEditorDestroy={ () => setEditor( null ) }
+								sx={ {
+									paddingBlockStart: 5,
+								} }
+							/>
+						</Box>
 					</Box>
 				</Stack>
 			</ControlActions>
