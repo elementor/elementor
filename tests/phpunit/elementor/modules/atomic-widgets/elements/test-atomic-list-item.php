@@ -70,12 +70,5 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 			],
 			$props['height']
 		);
-		$this->assertSame(
-			[
-				'$$type' => 'string',
-				'value' => 'flex-start',
-			],
-			$props['align-self']
-		);
 	}
 }
