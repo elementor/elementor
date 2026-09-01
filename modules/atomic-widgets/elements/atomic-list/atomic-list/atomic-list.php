@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
@@ -110,6 +111,7 @@ class Atomic_List extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
+							'flex-direction' => String_Prop_Type::generate( 'column' ),
 							'list-style-type' => String_Prop_Type::generate( 'none' ),
 						] )
 				),
@@ -126,6 +128,13 @@ class Atomic_List extends Atomic_Element_Base {
 	private function build_default_item( int $index ): array {
 		/* translators: %d: List item position. */
 		$numbered_content = sprintf( esc_html__( 'List item %d', 'elementor' ), $index );
+
+		$marker = Element_Builder::make( Atomic_List_Item_Marker::get_element_type() )
+			->editor_settings( [
+				'title' => esc_html__( 'Marker', 'elementor' ),
+			] )
+			->hydrate_default_children( true )
+			->build();
 
 		$content = Element_Builder::make( Atomic_List_Item_Content::get_element_type() )
 			->editor_settings( [
@@ -148,7 +157,7 @@ class Atomic_List extends Atomic_Element_Base {
 				'title' => esc_html__( 'Item ' . $index, 'elementor' ),
 				'initial_position' => $index,
 			] )
-			->children( [ $content ] )
+			->children( [ $marker, $content ] )
 			->build();
 	}
 
@@ -176,7 +185,7 @@ class Atomic_List extends Atomic_Element_Base {
 		$lines = [];
 
 		foreach ( $children as $child ) {
-			if ( $child::get_element_type() !== Atomic_List_Item::get_element_type() ) {
+			if ( $child->get_type() !== Atomic_List_Item::get_element_type() ) {
 				continue;
 			}
 
@@ -184,7 +193,7 @@ class Atomic_List extends Atomic_Element_Base {
 			$content_text = '';
 
 			foreach ( $item_children as $item_child ) {
-				if ( $item_child::get_element_type() === Atomic_List_Item_Content::get_element_type() ) {
+				if ( $item_child->get_type() === Atomic_List_Item_Content::get_element_type() ) {
 					$content_children = $item_child->get_children();
 					$content_parts = [];
 					foreach ( $content_children as $content_child ) {

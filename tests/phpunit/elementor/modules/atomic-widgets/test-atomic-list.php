@@ -1,6 +1,8 @@
 <?php
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List;
+namespace Elementor\Testing\Modules\AtomicWidgets;
+
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
 use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -17,7 +19,12 @@ class Test_Atomic_List extends Elementor_Test_Base {
 			$this->assertSame( $index + 1, $item['editor_settings']['initial_position'] );
 			$this->assertTrue( $item['settings']['show_markers']['value'] );
 
-			$content = $item['elements'][0];
+			$marker = $item['elements'][0];
+			$this->assertSame( 'e-list-item-marker', $marker['elType'] );
+			$this->assertSame( 'Marker', $marker['editor_settings']['title'] );
+			$this->assertTrue( $marker['hydrateDefaultChildren'] );
+
+			$content = $item['elements'][1];
 			$this->assertSame( 'e-list-item-content', $content['elType'] );
 
 			$paragraph = $content['elements'][0];
@@ -50,8 +57,8 @@ class Test_Atomic_List extends Elementor_Test_Base {
 		wp_register_style( 'elementor-frontend', 'https://example.com/frontend.css' );
 		wp_register_style( 'elementor-editor', 'https://example.com/editor.css' );
 
-		$module = ( new ReflectionClass( Module::class ) )->newInstanceWithoutConstructor();
-		$method = new ReflectionMethod( Module::class, 'add_inline_styles' );
+		$module = ( new \ReflectionClass( Module::class ) )->newInstanceWithoutConstructor();
+		$method = new \ReflectionMethod( Module::class, 'add_inline_styles' );
 		$method->setAccessible( true );
 
 		$method->invoke( $module );

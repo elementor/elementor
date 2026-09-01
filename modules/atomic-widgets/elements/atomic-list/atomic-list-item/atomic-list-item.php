@@ -95,18 +95,18 @@ class Atomic_List_Item extends Atomic_Element_Base {
 
 	protected function define_base_styles(): array {
 		return [
-			// static::BASE_STYLE_KEY => Style_Definition::make()
-			// 	->add_variant(
-			// 		Style_Variant::make()
-			// 			->add_props( [
-			// 				'display' => String_Prop_Type::generate( 'flex' ),
-			// 				'flex-direction' => String_Prop_Type::generate( 'row' ),
-			// 				'gap' => Size_Prop_Type::generate( [
-			// 					'size' => 8,
-			// 					'unit' => 'px',
-			// 				] ),
-			// 			] )
-			// 	),
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'display' => String_Prop_Type::generate( 'flex' ),
+							'flex-direction' => String_Prop_Type::generate( 'row' ),
+							'gap' => Size_Prop_Type::generate( [
+								'size' => 8,
+								'unit' => 'px',
+							] ),
+						] )
+				),
 		];
 	}
 
