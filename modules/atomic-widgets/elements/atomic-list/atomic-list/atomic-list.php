@@ -37,7 +37,7 @@ class Atomic_List extends Atomic_Element_Base {
 	}
 
 	public static function get_type() {
-		return 'e-atomic-list';
+		return 'e-list';
 	}
 
 	public static function get_element_type(): string {
@@ -109,6 +109,7 @@ class Atomic_List extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
+							'display' => String_Prop_Type::generate( 'flex' ),
 							'list-style-type' => String_Prop_Type::generate( 'none' ),
 						] )
 				),
