@@ -93,4 +93,31 @@ class Xml_Parser {
 		}
 		return $descendants;
 	}
+
+	public function validate_unique_configuration_ids( \DOMDocument $dom ): ?\WP_Error {
+		$seen = [];
+
+		foreach ( $this->iterate_all_descendants( $dom ) as $node ) {
+			$configuration_id = $this->get_configuration_id( $node );
+			if ( null === $configuration_id || '' === $configuration_id ) {
+				continue;
+			}
+
+			if ( isset( $seen[ $configuration_id ] ) ) {
+				return new \WP_Error(
+					'elementor_duplicate_configuration_id',
+					sprintf(
+						/* translators: %s: duplicate configuration-id value */
+						__( 'Duplicate configuration-id "%s". Each element must have a unique configuration-id.', 'elementor' ),
+						$configuration_id
+					),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
+			}
+
+			$seen[ $configuration_id ] = true;
+		}
+
+		return null;
+	}
 }

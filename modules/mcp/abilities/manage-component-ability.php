@@ -456,7 +456,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		return [
-			'elements' => $this->assign_element_ids( [ $found ] ),
+			'elements' => $this->assign_element_ids( $this->preserve_source_ids_as_titles( [ $found ] ) ),
 			'warnings' => [],
 		];
 	}
@@ -492,6 +492,21 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * address elements by the identifier the caller used in `xml_structure` — see
 	 * `Overridable_Props_Builder::find_element_ref`.
 	 */
+	private function preserve_source_ids_as_titles( array $elements ): array {
+		return array_map( function ( array $element ) {
+			$title = $element['editor_settings']['title'] ?? '';
+			if ( '' === $title && ! empty( $element['id'] ) ) {
+				$element['editor_settings']['title'] = (string) $element['id'];
+			}
+
+			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = $this->preserve_source_ids_as_titles( $element['elements'] );
+			}
+
+			return $element;
+		}, $elements );
+	}
+
 	private function assign_element_ids( array $elements ): array {
 		return array_map( fn( array $element ) => $this->assign_element_id( $element ), $elements );
 	}

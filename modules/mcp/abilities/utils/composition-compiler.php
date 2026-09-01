@@ -34,7 +34,6 @@ final class Composition_Compiler {
 
 	private const DEFAULT_PARENT_ID = 'document';
 	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
-	private const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
 
 	public const COMPONENT_PARENT_ID = 'component';
 
@@ -63,6 +62,11 @@ final class Composition_Compiler {
 		$dom = $xml_parser->parse( (string) ( $input['xml_structure'] ?? '' ) );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
+		}
+
+		$duplicate_id_error = $xml_parser->validate_unique_configuration_ids( $dom );
+		if ( $duplicate_id_error ) {
+			return $duplicate_id_error;
 		}
 
 		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
@@ -164,10 +168,6 @@ final class Composition_Compiler {
 			$config = $widget_configs[ $tag ] ?? [];
 
 			if ( 'widget' !== ( $config['elType'] ?? null ) ) {
-				continue;
-			}
-
-			if ( self::COMPONENT_INSTANCE_WIDGET_TYPE === ( $config['widgetType'] ?? null ) ) {
 				continue;
 			}
 

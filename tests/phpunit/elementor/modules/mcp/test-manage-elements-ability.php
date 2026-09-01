@@ -1010,6 +1010,42 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'hover', $interactions['items'][1]['value']['trigger']['value'] );
 	}
 
+	public function test_execute__update_rejects_short_interaction_payload() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'interactions' => [
+						[
+							'trigger' => 'scrollIn',
+							'action' => [
+								'type' => 'play',
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['results'][0]['status'] ?? null );
+		$this->assertSame( 'elementor_invalid_interactions', $result['results'][0]['code'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+		$items = is_array( $interactions ) ? ( $interactions['items'] ?? $interactions ) : $interactions;
+		$this->assertTrue( empty( $items ) );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();

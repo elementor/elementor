@@ -207,7 +207,27 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'empty error message' => [ '<e-form><e-form-submit-button/><e-form-error-message/></e-form>', 'elementor_invalid_form_structure' ],
 			'multiple submit buttons' => [ '<e-form><e-form-submit-button/><e-form-submit-button/></e-form>', 'elementor_invalid_form_structure' ],
 			'nested form' => [ '<e-form><e-form-submit-button/><e-form><e-form-submit-button/></e-form></e-form>', 'elementor_invalid_form_structure' ],
+			'duplicate configuration-id' => [ '<e-heading configuration-id="dup"/><e-heading configuration-id="dup"/>', 'elementor_duplicate_configuration_id' ],
 		];
+	}
+
+	public function test_execute__duplicate_configuration_id_is_rejected_on_dry_run() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-heading configuration-id="dup"/><e-heading configuration-id="dup"/>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_duplicate_configuration_id', $result->get_error_code() );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
 	}
 
 	public function test_execute__valid_form_structure_passes_form_validation() {

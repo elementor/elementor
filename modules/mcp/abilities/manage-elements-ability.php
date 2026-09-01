@@ -447,7 +447,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
 			}
 			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
-				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
+				return new \WP_Error(
+					'elementor_invalid_interactions',
+					__( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
 			} else {
 				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
