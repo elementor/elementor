@@ -102,6 +102,7 @@ jobs:
       - name: Get release name
         uses: ./.github/workflows/get-release-name
         with:
+          BUILD_ZIP_FILE_PATH: ${{ env.REPO_NAME }}-${{ env.VERSION }}.zip
           PLUGIN_NAME: ${{ env.REPO_NAME }}
 
       - name: Unzip build artifact
