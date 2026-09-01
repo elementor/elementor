@@ -21,7 +21,6 @@ echo "Publish version: ${PLUGIN_VERSION}"
 ELEMENTOR_PATH="$GITHUB_WORKSPACE/elementor"
 SVN_PATH="$GITHUB_WORKSPACE/svn"
 
-cd $ELEMENTOR_PATH
 mkdir -p $SVN_PATH
 cd $SVN_PATH
 
