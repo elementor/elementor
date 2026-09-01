@@ -151,12 +151,35 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         run: |
-          svn cp \
-            https://plugins.svn.wordpress.org/elementor/trunk \
-            "https://plugins.svn.wordpress.org/elementor/tags/${PLUGIN_VERSION}" \
-            --message "Tagged ${PLUGIN_VERSION}" \
-            --no-auth-cache --non-interactive \
-            --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/copy-svn-trunk-to-tag.sh"
+      - name: Invalidate changelog cache (release stream)
+        if: github.event.inputs.dry_run == 'false'
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: ${{ env.CHANNEL == 'ga' && 'release' || 'beta' }}
+      - name: Release Dev From Beta
+        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
+        uses: ./.github/workflows/release-dev-from-beta
+        with:
+          BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+
+      - name: Invalidate changelog cache (dev stream)
+        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: dev
 
       - name: Get Jira release URL
         if: github.event.inputs.dry_run == 'false'

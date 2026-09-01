@@ -53,6 +53,8 @@ on:
         required: false
       MAINTAIN_TOKEN:
         required: false
+      ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY:
+        required: false
     outputs:
       CLEAN_PACKAGE_VERSION:
         description: 'Base semver version with no channel suffix, e.g. 4.2.0'
@@ -138,12 +140,15 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         run: |
-          svn cp \
-            https://plugins.svn.wordpress.org/elementor/trunk \
-            "https://plugins.svn.wordpress.org/elementor/tags/${PLUGIN_VERSION}" \
-            --message "Tagged ${PLUGIN_VERSION}" \
-            --no-auth-cache --non-interactive \
-            --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/copy-svn-trunk-to-tag.sh"
+
+      - name: Invalidate changelog cache
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: ${{ inputs.channel == 'beta' && 'beta' || 'release' }}
 
       - name: Get Jira release URL
         id: get_jira_release_url
