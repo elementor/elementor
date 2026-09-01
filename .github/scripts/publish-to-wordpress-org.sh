@@ -21,6 +21,16 @@ echo "Publish version: ${PLUGIN_VERSION}"
 ELEMENTOR_PATH="$GITHUB_WORKSPACE/elementor"
 SVN_PATH="$GITHUB_WORKSPACE/svn"
 
+if [[ ! -d "$ELEMENTOR_PATH" ]]; then
+	ZIP_FILE="$GITHUB_WORKSPACE/elementor-${PLUGIN_VERSION}.zip"
+	if [[ ! -f "$ZIP_FILE" ]]; then
+		echo "Built plugin folder not found at ${ELEMENTOR_PATH} and ${ZIP_FILE} does not exist"
+		exit 1
+	fi
+	echo "Unzipping ${ZIP_FILE} into ${GITHUB_WORKSPACE}"
+	unzip -o "$ZIP_FILE" -d "$GITHUB_WORKSPACE"
+fi
+
 cd $ELEMENTOR_PATH
 mkdir -p $SVN_PATH
 cd $SVN_PATH
