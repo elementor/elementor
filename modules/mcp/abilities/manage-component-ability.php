@@ -544,10 +544,11 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * @param array<string,string> $source_id_map Populated by reference.
 	 */
 	private function assign_element_ids_recording_source_ids( array $elements, array &$source_id_map ): array {
-		return array_map(
-			fn( array $element ) => $this->assign_element_id_recording_source_id( $element, $source_id_map ),
-			$elements
-		);
+		$result = [];
+		foreach ( $elements as $element ) {
+			$result[] = $this->assign_element_id_recording_source_id( $element, $source_id_map );
+		}
+		return $result;
 	}
 
 	private function assign_element_id_recording_source_id( array $element, array &$source_id_map ): array {
@@ -560,10 +561,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-			$element['elements'] = array_map(
-				fn( array $child ) => $this->assign_element_id_recording_source_id( $child, $source_id_map ),
-				$element['elements']
-			);
+			$element['elements'] = $this->assign_element_ids_recording_source_ids( $element['elements'], $source_id_map );
 		}
 
 		return $element;
