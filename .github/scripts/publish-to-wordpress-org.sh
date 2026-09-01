@@ -48,3 +48,9 @@ svn status
 echo "Commit files to trunk"
 svn ci -m "Upload v${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 svn update
+
+echo "Remove the SVN folder from the workspace (for multiple releases in the same Action)"
+rm -rf $SVN_PATH
+
+echo "Back to the workspace root"
+cd $GITHUB_WORKSPACE
