@@ -472,6 +472,9 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * payload itself is left to the component document's save hook, which already
 	 * parses and persists it for every component save.
 	 *
+	 * @param array[]              $elements
+	 * @param array                $input
+	 * @param array                $settings
 	 * @param array<string,string> $source_id_map old-source-id => new-machine-id, when the tree
 	 *                                            came from `copy_elements_from_source`. Used to
 	 *                                            let callers address targets by the ids they
@@ -503,6 +506,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * resolves via `editor_settings.title` in `Overridable_Props_Builder::find_element_ref`) and
 	 * regular id targets still work.
 	 *
+	 * @param array                $definitions
 	 * @param array<string,string> $source_id_map
 	 */
 	private function remap_overridable_targets( array $definitions, array $source_id_map ): array {
@@ -541,6 +545,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * Regenerates ids like `assign_element_ids`, but records the mapping from each element's
 	 * old id to its new id so callers can keep addressing the tree by pre-regeneration ids.
 	 *
+	 * @param array[]              $elements
 	 * @param array<string,string> $source_id_map Populated by reference.
 	 */
 	private function assign_element_ids_recording_source_ids( array $elements, array &$source_id_map ): array {

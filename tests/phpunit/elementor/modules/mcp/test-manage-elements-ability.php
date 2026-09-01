@@ -11,6 +11,8 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
@@ -1015,23 +1017,25 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
 
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'interactions' => [
-						[
-							'trigger' => 'scrollIn',
-							'action' => [
-								'type' => 'play',
+		$result = $this->with_interactions_inactive( function () use ( $post_id, $heading_id ) {
+			return ( new Manage_Elements_Ability() )->execute( [
+				'post_id' => $post_id,
+				'operations' => [
+					[
+						'action' => 'update',
+						'element_id' => $heading_id,
+						'interactions' => [
+							[
+								'trigger' => 'scrollIn',
+								'action' => [
+									'type' => 'play',
+								],
 							],
 						],
 					],
 				],
-			],
-		] );
+			] );
+		} );
 
 		$this->assertIsArray( $result );
 		$this->assertSame( 'error', $result['results'][0]['status'] ?? null );
@@ -1360,5 +1364,18 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		Global_Classes_Labels::make( $kit )->set_labels( [ $class_id => $label ] );
 
 		return $class_id;
+	}
+
+	private function with_interactions_inactive( callable $callback ) {
+		$experiments = Plugin::$instance->experiments;
+		$original_state = $experiments->get_features( Interactions_Module::EXPERIMENT_NAME )['state'];
+		$feature_option_key = $experiments->get_feature_option_key( Interactions_Module::EXPERIMENT_NAME );
+		update_option( $feature_option_key, Experiments_Manager::STATE_INACTIVE );
+
+		try {
+			return $callback();
+		} finally {
+			update_option( $feature_option_key, $original_state );
+		}
 	}
 }
