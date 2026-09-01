@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta cascade, or npm packages publish)'
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, or npm packages publish)'
       channel:
         required: false
         type: choice
@@ -19,7 +19,7 @@ on:
           - stable
           - beta
         default: 'stable'
-        description: 'Release channel. Controls the beta cascade and the npm dist-tag.'
+        description: 'Release channel. Controls the npm dist-tag.'
 
   workflow_call:
     inputs:
@@ -122,7 +122,7 @@ jobs:
           prerelease: ${{ inputs.prerelease }}
           draft: false
 
-      - name: Publish to WordPress.org SVN
+      - name: Publish trunk to WordPress.org SVN
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -131,6 +131,19 @@ jobs:
           PACKAGE_VERSION: ${{ env.VERSION }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+
+      - name: Copy SVN trunk to tag
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          svn cp \
+            https://plugins.svn.wordpress.org/elementor/trunk \
+            "https://plugins.svn.wordpress.org/elementor/tags/${PLUGIN_VERSION}" \
+            --message "Tagged ${PLUGIN_VERSION}" \
+            --no-auth-cache --non-interactive \
+            --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 
       - name: Get Jira release URL
         id: get_jira_release_url
