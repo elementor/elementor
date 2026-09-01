@@ -77,6 +77,26 @@ class Test_Ability_Availability extends Elementor_Test_Base {
 		} );
 	}
 
+	public function test_module_registry_matches_fresh_build_after_bootstrap() {
+		// Arrange.
+		$this->with_atomic_experiment( Experiments_Manager::STATE_ACTIVE, function () {
+			$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
+			$this->reset_module_registry( $module );
+
+			$module_ids = array_map(
+				static fn ( $ability ) => $ability->get_id(),
+				$module->registry()->all()
+			);
+			$fresh_ids = array_map(
+				static fn ( $ability ) => $ability->get_id(),
+				Mcp_Module::build_core_registry()->all()
+			);
+
+			// Assert.
+			$this->assertSame( $fresh_ids, $module_ids, 'Module registry should reflect experiment state when built after bootstrap.' );
+		} );
+	}
+
 	public function test_shared_registry_slug_list_reflects_gating() {
 		// Arrange.
 		$this->with_atomic_experiment( Experiments_Manager::STATE_INACTIVE, function () {
@@ -99,6 +119,12 @@ class Test_Ability_Availability extends Elementor_Test_Base {
 				$this->assertNotContains( $ability_id, $all_exposed, sprintf( 'V4-only ability %s should not appear in tool/resource lists when atomic experiment is off.', $ability_id ) );
 			}
 		} );
+	}
+
+	private function reset_module_registry( Mcp_Module $module ): void {
+		$property = new \ReflectionProperty( $module, 'registry' );
+		$property->setAccessible( true );
+		$property->setValue( $module, null );
 	}
 
 	private function with_atomic_experiment( string $state, callable $callback ): void {
