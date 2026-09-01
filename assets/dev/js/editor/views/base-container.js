@@ -194,7 +194,8 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getWrappingContainer( container, model, settings ) {
-		const isAtomic = elementor.helpers.isAtomicWidget( model );
+		const compoundAtomicTypes = [ 'e-tabs', 'e-accordion', 'e-collection-loop' ];
+		const isAtomic = elementor.helpers.isAtomicWidget( model ) || compoundAtomicTypes.includes( model.elType );
 		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
 
 		if ( isAtomic ) {

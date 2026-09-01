@@ -80,11 +80,12 @@ const Preview = BaseSectionsContainerView.extend( {
 
 	createElementFromModel( model, options = {} ) {
 		const wrappedElementTypes = [ 'widget', 'section', 'column' ];
+		const compoundAtomicTypes = [ 'e-tabs', 'e-accordion', 'e-collection-loop' ];
 
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) && ! model.widgetType?.startsWith( 'e-form-' ) },
+			{ ...options, shouldWrap: ( wrappedElementTypes.includes( model.elType ) || compoundAtomicTypes.includes( model.elType ) ) && ! model.widgetType?.startsWith( 'e-form-' ) },
 		);
 	},
 
