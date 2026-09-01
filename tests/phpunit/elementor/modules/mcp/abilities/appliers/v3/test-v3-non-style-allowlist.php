@@ -54,6 +54,20 @@ class Test_V3_Non_Style_Allowlist extends TestCase {
 		$this->assertContains( 'typography_font_size', $result['rejected'] );
 	}
 
+	public function test_filter__css_classes_is_not_a_write_allowlisted_key() {
+		// Locks in that _css_classes has a dedicated write path (Class_Applier); the
+		// element_config allowlist must not accept it, and Get_Structure_Ability is
+		// responsible for echoing it back on read via its own read-only key list.
+		$result = V3_Non_Style_Allowlist::filter(
+			'nav-menu',
+			[ '_css_classes' => [ 'value' => [ 'menu-container' ], '$$type' => 'classes' ] ],
+			$this->controls( 'nav-menu' )
+		);
+
+		$this->assertContains( '_css_classes', $result['rejected'] );
+		$this->assertArrayNotHasKey( '_css_classes', $result['allowed'] );
+	}
+
 	public function test_filter__theme_post_content_has_no_non_style_keys() {
 		// Arrange.
 		$controls = $this->controls( 'theme-post-content' );

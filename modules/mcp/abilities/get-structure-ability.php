@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Get_Structure_Ability extends Abstract_Ability {
 
+	private const V3_READ_ONLY_ECHO_KEYS = [ '_css_classes' ];
+
 	private ?Default_Styles_Repository $default_styles_repository;
 
 	public function __construct( ?Default_Styles_Repository $default_styles_repository = null ) {
@@ -264,10 +266,31 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$filter = V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings, $controls );
 		$allowed_settings = $filter['allowed'];
 
+		$allowed_settings = $this->include_v3_read_only_keys( $allowed_settings, $raw_settings );
+
 		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['style'] = $style;
+	}
+
+	/**
+	 * Certain V3 keys are not in `element_config`'s write allowlist (they have dedicated
+	 * write paths — e.g. classes go through Class_Applier) but must still round-trip on
+	 * read so `get-page-structure include_content=true` reflects what actually persisted.
+	 *
+	 * @param array<string, mixed> $allowed
+	 * @param array<string, mixed> $raw
+	 * @return array<string, mixed>
+	 */
+	private function include_v3_read_only_keys( array $allowed, array $raw ): array {
+		foreach ( self::V3_READ_ONLY_ECHO_KEYS as $key ) {
+			if ( array_key_exists( $key, $raw ) ) {
+				$allowed[ $key ] = $raw[ $key ];
+			}
+		}
+
+		return $allowed;
 	}
 
 	private function normalize_interactions( $interactions ): array {
