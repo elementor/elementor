@@ -207,7 +207,15 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'empty error message' => [ '<e-form><e-form-submit-button/><e-form-error-message/></e-form>', 'elementor_invalid_form_structure' ],
 			'multiple submit buttons' => [ '<e-form><e-form-submit-button/><e-form-submit-button/></e-form>', 'elementor_invalid_form_structure' ],
 			'nested form' => [ '<e-form><e-form-submit-button/><e-form><e-form-submit-button/></e-form></e-form>', 'elementor_invalid_form_structure' ],
-			'duplicate configuration-id' => [ '<e-heading configuration-id="dup"/><e-heading configuration-id="dup"/>', 'elementor_duplicate_configuration_id' ],
+			'multiple duplicate configuration-ids' => [
+				'<e-heading configuration-id="dup-a"/><e-heading configuration-id="dup-a"/><e-heading configuration-id="dup-b"/><e-heading configuration-id="dup-b"/>',
+				'elementor_duplicate_configuration_id',
+			],
+			'duplicate configuration-id and invalid child type' => [
+				'<e-heading configuration-id="dup"/><e-heading configuration-id="dup"/><e-heading configuration-id="h1"><e-paragraph configuration-id="p1"/></e-heading>',
+				'elementor_duplicate_configuration_id',
+			],
+			'multiple unknown types' => [ '<nonexistent-widget/><another-nonexistent-widget/>', 'elementor_unknown_type' ],
 		];
 	}
 

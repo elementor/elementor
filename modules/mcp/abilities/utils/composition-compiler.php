@@ -64,24 +64,12 @@ final class Composition_Compiler {
 			return $dom;
 		}
 
-		$duplicate_id_error = $xml_parser->validate_unique_configuration_ids( $dom );
-		if ( $duplicate_id_error ) {
-			return $duplicate_id_error;
+		$pre_apply_error = $this->collect_pre_apply_errors( $dom, $xml_parser, $type_resolver, $document_tree, $parent_id );
+		if ( is_wp_error( $pre_apply_error ) ) {
+			return $pre_apply_error;
 		}
 
-		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
-			$dom,
-			$document_tree,
-			$parent_id
-		);
-		if ( $form_structure_error ) {
-			return $form_structure_error;
-		}
-
-		$widget_configs = $type_resolver->collect_used( $dom );
-		if ( is_wp_error( $widget_configs ) ) {
-			return $widget_configs;
-		}
+		$widget_configs = $pre_apply_error['widget_configs'];
 
 		$wrapping_result = $this->wrap_document_root_content( $dom, $widget_configs, $parent_id, $type_resolver, $xml_parser );
 		if ( is_wp_error( $wrapping_result ) ) {
@@ -90,9 +78,13 @@ final class Composition_Compiler {
 
 		$widget_configs = $wrapping_result['widget_configs'];
 
-		$child_type_error = $type_resolver->validate_child_types( $dom, $widget_configs );
-		if ( $child_type_error ) {
-			return $child_type_error;
+		$child_type_errors = $type_resolver->collect_child_type_and_required_child_errors( $dom, $widget_configs );
+		if ( ! empty( $child_type_errors ) ) {
+			return new \WP_Error(
+				'elementor_invalid_child_type',
+				implode( ' ', $child_type_errors ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
@@ -137,6 +129,76 @@ final class Composition_Compiler {
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];
+	}
+
+	/**
+	 * Runs every validator that can safely execute before appliers touch the tree, then
+	 * returns a single WP_Error carrying all messages, or the resolved widget configs.
+	 *
+	 * @return array{widget_configs: array<string, array>}|\WP_Error
+	 */
+	private function collect_pre_apply_errors(
+		\DOMDocument $dom,
+		Xml_Parser $xml_parser,
+		Widget_Type_Resolver $type_resolver,
+		array $document_tree,
+		string $parent_id
+	) {
+		$errors_by_code = [];
+
+		$duplicate_id_errors = $xml_parser->collect_duplicate_configuration_id_errors( $dom );
+		if ( ! empty( $duplicate_id_errors ) ) {
+			$errors_by_code['elementor_duplicate_configuration_id'] = $duplicate_id_errors;
+		}
+
+		$form_structure_errors = ( new Form_Structure_Validator( $xml_parser ) )
+			->collect_errors( $dom, $document_tree, $parent_id );
+		if ( ! empty( $form_structure_errors ) ) {
+			$errors_by_code['elementor_invalid_form_structure'] = $form_structure_errors;
+		}
+
+		$type_resolution = $type_resolver->collect_used_with_errors( $dom );
+		if ( ! empty( $type_resolution['errors'] ) ) {
+			$errors_by_code['elementor_unknown_type'] = $type_resolution['errors'];
+		}
+
+		if ( ! empty( $errors_by_code ) ) {
+			return $this->build_aggregated_error( $errors_by_code );
+		}
+
+		return [
+			'widget_configs' => $type_resolution['configs'],
+		];
+	}
+
+	/**
+	 * @param array<string, string[]> $errors_by_code
+	 */
+	private function build_aggregated_error( array $errors_by_code ): \WP_Error {
+		$primary_code = array_key_first( $errors_by_code );
+		$all_messages = [];
+		foreach ( $errors_by_code as $messages ) {
+			foreach ( $messages as $message ) {
+				$all_messages[] = $message;
+			}
+		}
+
+		$aggregated = new \WP_Error(
+			$primary_code,
+			implode( ' ', $all_messages ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
+
+		foreach ( $errors_by_code as $code => $messages ) {
+			foreach ( $messages as $index => $message ) {
+				if ( $code === $primary_code && 0 === $index ) {
+					continue;
+				}
+				$aggregated->add( $code, $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
+			}
+		}
+
+		return $aggregated;
 	}
 
 	private function wrap_document_root_content(

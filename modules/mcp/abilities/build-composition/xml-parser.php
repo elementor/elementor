@@ -94,8 +94,8 @@ class Xml_Parser {
 		return $descendants;
 	}
 
-	public function validate_unique_configuration_ids( \DOMDocument $dom ): ?\WP_Error {
-		$seen = [];
+	public function collect_duplicate_configuration_id_errors( \DOMDocument $dom ): array {
+		$counts = [];
 
 		foreach ( $this->iterate_all_descendants( $dom ) as $node ) {
 			$configuration_id = $this->get_configuration_id( $node );
@@ -103,21 +103,40 @@ class Xml_Parser {
 				continue;
 			}
 
-			if ( isset( $seen[ $configuration_id ] ) ) {
-				return new \WP_Error(
-					'elementor_duplicate_configuration_id',
-					sprintf(
-						/* translators: %s: duplicate configuration-id value */
-						__( 'Duplicate configuration-id "%s". Each element must have a unique configuration-id.', 'elementor' ),
-						$configuration_id
-					),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
+			if ( ! isset( $counts[ $configuration_id ] ) ) {
+				$counts[ $configuration_id ] = 0;
 			}
 
-			$seen[ $configuration_id ] = true;
+			$counts[ $configuration_id ]++;
 		}
 
-		return null;
+		$errors = [];
+		foreach ( $counts as $configuration_id => $count ) {
+			if ( $count <= 1 ) {
+				continue;
+			}
+
+			$errors[] = sprintf(
+				/* translators: %s: duplicate configuration-id value */
+				__( 'Duplicate configuration-id "%s". Each element must have a unique configuration-id.', 'elementor' ),
+				$configuration_id
+			);
+		}
+
+		return $errors;
+	}
+
+	public function validate_unique_configuration_ids( \DOMDocument $dom ): ?\WP_Error {
+		$errors = $this->collect_duplicate_configuration_id_errors( $dom );
+
+		if ( empty( $errors ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_duplicate_configuration_id',
+			implode( ' ', $errors ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 }
