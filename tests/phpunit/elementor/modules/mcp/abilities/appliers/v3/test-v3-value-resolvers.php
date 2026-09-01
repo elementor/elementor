@@ -45,6 +45,34 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( 'rgba(0,0,0,0.5)', V3_Value_Resolvers::resolve_color( 'rgba(0,0,0,0.5)' ) );
 	}
 
+	public function test_resolve_color__accepts_all_hex_lengths() {
+		$this->assertSame( '#abc', V3_Value_Resolvers::resolve_color( '#abc' ) );
+		$this->assertSame( '#abcd', V3_Value_Resolvers::resolve_color( '#abcd' ) );
+		$this->assertSame( '#aabbcc', V3_Value_Resolvers::resolve_color( '#aabbcc' ) );
+		$this->assertSame( '#aabbccdd', V3_Value_Resolvers::resolve_color( '#aabbccdd' ) );
+	}
+
+	public function test_resolve_color__rejects_invalid_hex() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_color( '#gggggg', 'color' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'color', $result['property'] );
+		$this->assertSame( '#gggggg', $result['value'] );
+	}
+
+	public function test_resolve_color__rejects_wrong_length_hex() {
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( V3_Value_Resolvers::resolve_color( '#12345', 'color' ) ) );
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( V3_Value_Resolvers::resolve_color( '#1234567', 'color' ) ) );
+	}
+
+	public function test_resolve_color__passes_through_named_and_functional_colors() {
+		$this->assertSame( 'transparent', V3_Value_Resolvers::resolve_color( 'transparent' ) );
+		$this->assertSame( 'red', V3_Value_Resolvers::resolve_color( 'red' ) );
+		$this->assertSame( 'hsl(0, 100%, 50%)', V3_Value_Resolvers::resolve_color( 'hsl(0, 100%, 50%)' ) );
+	}
+
 	public function test_resolve_box_shadow__parses_lengths_and_color() {
 		// Arrange / Act.
 		$result = V3_Value_Resolvers::resolve_box_shadow( '0 20px 60px rgba(0,0,0,0.15)' );

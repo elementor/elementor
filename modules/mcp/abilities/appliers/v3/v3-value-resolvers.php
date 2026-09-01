@@ -199,8 +199,39 @@ class V3_Value_Resolvers {
 		];
 	}
 
-	public static function resolve_color( string $css_value ): string {
-		return trim( $css_value );
+	/**
+	 * Native V3 color/fill controls store the raw string. Passing a malformed hex
+	 * (`#gggggg`, `#12`) into a native control corrupts the panel picker for that
+	 * setting — the frontend still renders as HTTP 200, but the control shows garbage.
+	 *
+	 * Non-hex forms (`rgb()`, `rgba()`, `hsl()`, `var(--x)`, named colors, `transparent`)
+	 * are passed through unchanged; only `#...` values are shape-checked.
+	 *
+	 * @param string $css_value
+	 * @param string $property
+	 * @return string|array{rejected: true, reason: string, value: string, property: string}
+	 */
+	public static function resolve_color( string $css_value, string $property = 'color' ) {
+		$value = trim( $css_value );
+
+		if ( '' === $value ) {
+			return $value;
+		}
+
+		if ( '#' === $value[0] && ! self::is_valid_hex( $value ) ) {
+			return [
+				'rejected' => true,
+				'property' => $property,
+				'value' => $value,
+				'reason' => __( 'Invalid hex color; expected #rgb, #rgba, #rrggbb, or #rrggbbaa.', 'elementor' ),
+			];
+		}
+
+		return $value;
+	}
+
+	private static function is_valid_hex( string $value ): bool {
+		return (bool) preg_match( '/^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $value );
 	}
 
 	/**
@@ -465,7 +496,7 @@ class V3_Value_Resolvers {
 
 		switch ( $resolver_name ) {
 			case 'color':
-				return self::resolve_color( $css_value );
+				return self::resolve_color( $css_value, $property );
 			case 'dimension':
 				return self::resolve_dimension( $css_value, $property );
 			case 'sides':
