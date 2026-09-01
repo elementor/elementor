@@ -112,8 +112,6 @@ class Atomic_List extends Atomic_Element_Base {
 						->add_props( [
 							// Neutralises the 10px inline padding that `.e-con` (added to every atomic
 							// element by `render_base_classes`) resolves from the container defaults.
-							// The item's own 10px lives on the header and the content slot, so any
-							// padding here or on the item would just inset the whole accordion.
 							'padding' => Size_Prop_Type::generate( [
 								'size' => 0,
 								'unit' => 'px',
