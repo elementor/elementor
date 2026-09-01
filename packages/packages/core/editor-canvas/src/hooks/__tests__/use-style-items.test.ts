@@ -1,6 +1,6 @@
 import { createMockStyleDefinition, createMockStyleDefinitionWithVariants, createMockStylesProvider } from 'test-utils';
 import { type StyleDefinition } from '@elementor/editor-styles';
-import { stylesRepository } from '@elementor/editor-styles-repository';
+import { createStylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { act, renderHook } from '@testing-library/react';
 
@@ -272,6 +272,7 @@ describe( 'useStyleItems', () => {
 		// Assert.
 		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
 		expect( result.current ).toHaveLength( 2 );
+		const itemsAfterFirst = result.current;
 
 		// Act - trigger update with same props (updateProps mutates in place, same reference).
 		renderStylesMock.mockClear();
@@ -287,6 +288,7 @@ describe( 'useStyleItems', () => {
 		// Assert - renderStyles should not be called when no changes detected.
 		expect( renderStylesMock ).not.toHaveBeenCalled();
 		expect( result.current ).toHaveLength( 2 );
+		expect( result.current ).toBe( itemsAfterFirst );
 	} );
 
 	it( 'should maintain breakpoint order after style update', async () => {
@@ -512,5 +514,84 @@ describe( 'useStyleItems', () => {
 		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 1 );
 		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles[ 0 ].id ).toBe( 'style2' );
 		expect( result.current ).toHaveLength( 3 );
+	} );
+
+	it( 'should incrementally update when a provider notifies without previous/current collections', async () => {
+		// Arrange
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const styles = [
+			createMockStyleDefinition( { id: 'style1' } ),
+			createMockStyleDefinition( { id: 'style2' } ),
+			createMockStyleDefinition( { id: 'style3' } ),
+		];
+
+		let notify: () => void = () => {};
+
+		const documentLikeProvider = createStylesProvider( {
+			key: 'document-elements-like',
+			subscribe: ( cb ) => {
+				notify = () => cb();
+				return () => {};
+			},
+			actions: {
+				all: () => styles,
+				get: ( id, meta = {} ) => {
+					if ( ! ( 'elementId' in meta ) ) {
+						throw new Error( 'document-elements get requires elementId' );
+					}
+
+					return styles.find( ( style ) => style.id === id ) ?? null;
+				},
+			},
+		} );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ documentLikeProvider ] );
+
+		renderHook( () => useStyleItems() );
+
+		// Act - first notify has no cache, so all styles are rendered.
+		await act( async () => {
+			notify();
+		} );
+
+		// Assert
+		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 3 );
+
+		// Act - replace one style object, matching document-elements mutation.
+		renderStylesMock.mockClear();
+		styles[ 1 ] = { ...styles[ 1 ] };
+
+		await act( async () => {
+			notify();
+		} );
+
+		// Assert - only the changed style is converted to CSS.
+		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles[ 0 ].id ).toBe( 'style2' );
+
+		// Act - a newly added style must be rendered even though get() cannot resolve it.
+		renderStylesMock.mockClear();
+		styles.push( createMockStyleDefinition( { id: 'style4' } ) );
+
+		await act( async () => {
+			notify();
+		} );
+
+		// Assert
+		expect( renderStylesMock ).toHaveBeenCalledTimes( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 1 );
+		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles[ 0 ].id ).toBe( 'style4' );
 	} );
 } );

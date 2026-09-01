@@ -17,6 +17,7 @@ type StylesCollection = Record< string, StyleDefinition >;
 type StyleItemsCache = {
 	orderedIds: string[];
 	itemsById: Map< string, StyleItem[] >;
+	lastStyles?: StylesCollection;
 };
 
 type ProviderAndStyleItems = { provider: StylesProvider; items: StyleItem[] };
@@ -28,6 +29,8 @@ type ProviderAndSubscriber = {
 
 type ProviderAndStyleItemsMap = Record< string, ProviderAndStyleItems >;
 
+const UNCHANGED_STYLE_ITEMS = Symbol( 'unchanged-style-items' );
+
 export function useStyleItems() {
 	const resolve = useStylePropResolver();
 	const renderStyles = useStyleRenderer( resolve );
@@ -37,7 +40,7 @@ export function useStyleItems() {
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
 
 	const providerAndSubscribers = useMemo( () => {
-		const createEmptyCache = () => {
+		const createEmptyCache = (): StyleItemsCache => {
 			return { orderedIds: [], itemsById: new Map() };
 		};
 
@@ -135,6 +138,10 @@ function createBreakpointSorter( breakpointsOrder: BreakpointId[] ) {
 		breakpointsOrder.indexOf( breakpointB as BreakpointId );
 }
 
+function stylesToCollection( styles: StyleDefinition[] ): StylesCollection {
+	return Object.fromEntries( styles.map( ( style ) => [ style.id, style ] ) );
+}
+
 function safeGetKey( provider: StylesProvider ): string | null {
 	try {
 		return provider.getKey();
@@ -155,7 +162,16 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 		signalizedProcess( abortController.signal )
 			.then( ( _, signal ) => {
 				const cache = getCache();
-				const hasDiffInfo = current !== undefined && previous !== undefined;
+				const providerPassedDiff = current !== undefined && previous !== undefined;
+				let resolvedPrevious = previous;
+				let resolvedCurrent = current;
+
+				if ( ! providerPassedDiff ) {
+					resolvedCurrent = stylesToCollection( provider.actions.all() );
+					resolvedPrevious = cache.lastStyles;
+				}
+
+				const hasDiffInfo = resolvedPrevious !== undefined && resolvedCurrent !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
 				if ( hasCache && provider.isPregeneratedLink ) {
@@ -163,13 +179,27 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
 				}
 
-				if ( hasDiffInfo && hasCache ) {
-					return updateItems( cache, previous, current, signal );
-				}
+				const run =
+					hasDiffInfo && hasCache
+						? updateItems( cache, resolvedPrevious as StylesCollection, resolvedCurrent as StylesCollection, signal )
+						: createItems( cache, signal );
 
-				return createItems( cache, signal );
+				return Promise.resolve( run ).then( ( items ) => {
+					if ( items === UNCHANGED_STYLE_ITEMS ) {
+						return items;
+					}
+
+					if ( resolvedCurrent ) {
+						cache.lastStyles = resolvedCurrent;
+					}
+
+					return items;
+				} );
 			} )
 			.then( ( items ) => {
+				if ( items === UNCHANGED_STYLE_ITEMS ) {
+					return;
+				}
 				setStyleItems( ( prev ) => ( {
 					...prev,
 					[ provider.getKey() ]: { provider, items },
@@ -186,30 +216,30 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 	) {
 		const changedIds = getChangedStyleIds( previous, current );
 
+		if ( changedIds.length === 0 ) {
+			return UNCHANGED_STYLE_ITEMS;
+		}
+
 		cache.orderedIds = provider.actions
 			.all()
 			.map( ( style ) => style.id )
 			.reverse();
 
-		if ( changedIds.length > 0 ) {
-			const changedStyles = changedIds
-				.map( ( id ) => provider.actions.get( id ) )
-				.filter( ( style ): style is StyleDefinition => !! style )
-				.map( ( style ) => ( {
-					...style,
-					cssName: provider.actions.resolveCssName( style.id ),
-				} ) );
+		const changedStyles = changedIds
+			.map( ( id ) => current[ id ] )
+			.filter( ( style ): style is StyleDefinition => !! style )
+			.map( ( style ) => ( {
+				...style,
+				cssName: provider.actions.resolveCssName( style.id ),
+			} ) );
 
-			const breakpointSplit = breakToBreakpoints( changedStyles );
+		const breakpointSplit = breakToBreakpoints( changedStyles );
 
-			return renderStyles( { styles: breakpointSplit, signal } ).then( ( rendered ) => {
-				updateCacheItems( cache, changedIds, rendered );
+		return renderStyles( { styles: breakpointSplit, signal } ).then( ( rendered ) => {
+			updateCacheItems( cache, changedIds, rendered );
 
-				return getOrderedItems( cache );
-			} );
-		}
-
-		return getOrderedItems( cache );
+			return getOrderedItems( cache );
+		} );
 	}
 
 	async function createItems( cache: StyleItemsCache, signal: AbortSignal ) {
