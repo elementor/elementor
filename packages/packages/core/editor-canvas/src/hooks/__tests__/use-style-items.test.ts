@@ -516,7 +516,7 @@ describe( 'useStyleItems', () => {
 		expect( result.current ).toHaveLength( 3 );
 	} );
 
-	it( 'should incrementally update when a provider notifies without previous/current collections', async () => {
+	it( 'should incrementally update when a provider notifies with previous/current collections', async () => {
 		// Arrange
 		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
 			Promise.resolve(
@@ -535,12 +535,21 @@ describe( 'useStyleItems', () => {
 			createMockStyleDefinition( { id: 'style3' } ),
 		];
 
+		const toCollection = ( items: StyleDefinition[] ) =>
+			Object.fromEntries( items.map( ( style ) => [ style.id, style ] ) );
+
+		let previous = toCollection( styles );
 		let notify: () => void = () => {};
 
 		const documentLikeProvider = createStylesProvider( {
 			key: 'document-elements-like',
 			subscribe: ( cb ) => {
-				notify = () => cb();
+				notify = () => {
+					const current = toCollection( styles );
+					const snapshot = previous;
+					previous = current;
+					cb( snapshot, current );
+				};
 				return () => {};
 			},
 			actions: {

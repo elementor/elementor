@@ -17,7 +17,6 @@ type StylesCollection = Record< string, StyleDefinition >;
 type StyleItemsCache = {
 	orderedIds: string[];
 	itemsById: Map< string, StyleItem[] >;
-	lastStyles?: StylesCollection;
 };
 
 type ProviderAndStyleItems = { provider: StylesProvider; items: StyleItem[] };
@@ -138,10 +137,6 @@ function createBreakpointSorter( breakpointsOrder: BreakpointId[] ) {
 		breakpointsOrder.indexOf( breakpointB as BreakpointId );
 }
 
-function stylesToCollection( styles: StyleDefinition[] ): StylesCollection {
-	return Object.fromEntries( styles.map( ( style ) => [ style.id, style ] ) );
-}
-
 function safeGetKey( provider: StylesProvider ): string | null {
 	try {
 		return provider.getKey();
@@ -162,16 +157,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 		signalizedProcess( abortController.signal )
 			.then( ( _, signal ) => {
 				const cache = getCache();
-				const providerPassedDiff = current !== undefined && previous !== undefined;
-				let resolvedPrevious = previous;
-				let resolvedCurrent = current;
-
-				if ( ! providerPassedDiff ) {
-					resolvedCurrent = stylesToCollection( provider.actions.all() );
-					resolvedPrevious = cache.lastStyles;
-				}
-
-				const hasDiffInfo = resolvedPrevious !== undefined && resolvedCurrent !== undefined;
+				const hasDiffInfo = previous !== undefined && current !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
 				if ( hasCache && provider.isPregeneratedLink ) {
@@ -179,22 +165,9 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
 				}
 
-				const run =
-					hasDiffInfo && hasCache
-						? updateItems( cache, resolvedPrevious as StylesCollection, resolvedCurrent as StylesCollection, signal )
-						: createItems( cache, signal );
-
-				return Promise.resolve( run ).then( ( items ) => {
-					if ( items === UNCHANGED_STYLE_ITEMS ) {
-						return items;
-					}
-
-					if ( resolvedCurrent ) {
-						cache.lastStyles = resolvedCurrent;
-					}
-
-					return items;
-				} );
+				return hasDiffInfo && hasCache
+					? updateItems( cache, previous, current, signal )
+					: createItems( cache, signal );
 			} )
 			.then( ( items ) => {
 				if ( items === UNCHANGED_STYLE_ITEMS ) {
@@ -291,10 +264,13 @@ function getChangedStyleIds( previous: StylesCollection, current: StylesCollecti
 	const changedIds: string[] = [];
 
 	for ( const id of Object.keys( current ) ) {
-		const currentStyle = current[ id ];
-		const previousStyle = previous[ id ];
+		if ( current[ id ] !== previous[ id ] ) {
+			changedIds.push( id );
+		}
+	}
 
-		if ( ! previousStyle || currentStyle !== previousStyle ) {
+	for ( const id of Object.keys( previous ) ) {
+		if ( ! ( id in current ) ) {
 			changedIds.push( id );
 		}
 	}
