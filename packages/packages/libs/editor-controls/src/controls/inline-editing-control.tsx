@@ -96,9 +96,7 @@ export const InlineEditingControl = createControl(
 					feedback: { enabled: false },
 					commands: { enabled: false },
 					testMode: { enabled: false },
-					betaBanner: { enabled: false },
 					modeSwitcher: { enabled: false, default: 'agent' },
-					aiContextGuidance: { enabled: true },
 				},
 			} ).catch( () => {} );
 		}, [ content, elementId ] );
