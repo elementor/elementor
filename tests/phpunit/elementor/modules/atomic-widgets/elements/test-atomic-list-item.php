@@ -3,6 +3,7 @@
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -76,12 +77,36 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		$children = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['default_children'];
 
 		$this->assertCount( 1, $children );
-		$this->assertSame( 'widget', $children[0]['elType'] );
-		$this->assertSame( 'e-svg', $children[0]['widgetType'] );
-		$this->assertSame( 'svg-src', $children[0]['settings']['svg']['$$type'] );
+		$svg = $children[0];
+
+		$this->assertSame( 'widget', $svg['elType'] );
+		$this->assertSame( 'e-svg', $svg['widgetType'] );
 		$this->assertSame(
-			ELEMENTOR_ASSETS_URL . 'images/chevron-check.svg',
-			$children[0]['settings']['svg']['value']['url']['value']
+			[
+				'$$type' => 'svg-src',
+				'value' => [
+					'id' => null,
+					'url' => [
+						'$$type' => 'url',
+						'value' => Atomic_List_Item_Marker::DEFAULT_ICON_URL,
+					],
+				],
+			],
+			$svg['settings']['svg']
+		);
+
+		$this->assertNotSame(
+			Atomic_Svg::DEFAULT_SVG_URL,
+			$svg['settings']['svg']['value']['url']['value'],
+			'The list marker must not fall back to the generic e-svg placeholder.'
+		);
+	}
+
+	public function test_default_marker_asset_ships_with_the_plugin(): void {
+		$this->assertFileExists( Atomic_List_Item_Marker::DEFAULT_ICON_PATH );
+		$this->assertStringContainsString(
+			'<svg',
+			(string) file_get_contents( Atomic_List_Item_Marker::DEFAULT_ICON_PATH )
 		);
 	}
 }
