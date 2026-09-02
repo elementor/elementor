@@ -14,32 +14,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class V3_Style_Settings_Index {
 
-	const GROUP_CONTROL_PREFIXES = [
-		'typography_',
-		'text_stroke_',
-		'text_shadow_',
-		'box_shadow_',
-		'border_',
-		'background_',
-		'css_filters_',
-		'image_border_',
-		'image_box_shadow_',
-		'caption_typography_',
-		'caption_text_shadow_',
-		'menu_typography_',
-		'dropdown_typography_',
-		'dropdown_border_',
-		'dropdown_box_shadow_',
-		'dropdown_divider_',
-	];
+	/**
+	 * Elementor's own custom properties (`--e-transform-*`, `--nav-menu-icon-size`, ...) are an
+	 * implementation detail of how a widget renders. An LLM writes real CSS properties, so
+	 * exposing them would only invite unusable declarations.
+	 */
+	const INTERNAL_PROPERTY_PREFIX = '--';
 
 	/**
 	 * @param array                $controls Widget controls from get_config()['controls'].
 	 * @param array<string, array> $style_overrides Registry overrides (excluded from generic index).
+	 * @param string[]|null        $group_setting_keys Group-control sibling keys to skip; detected
+	 *                                                 from the controls themselves when omitted.
 	 * @return array<string, array{setting: string, resolver: string, responsive: bool}>
 	 *         Keyed by "property" or "property@state". Only unique matches are kept.
 	 */
-	public static function build( array $controls, array $style_overrides = [] ): array {
+	public static function build( array $controls, array $style_overrides = [], ?array $group_setting_keys = null ): array {
+		$group_setting_keys = array_flip( $group_setting_keys ?? V3_Group_Control_Detector::setting_keys( $controls ) );
 		$candidates = [];
 
 		foreach ( $controls as $setting_key => $control ) {
@@ -47,7 +38,7 @@ class V3_Style_Settings_Index {
 				continue;
 			}
 
-			if ( self::is_group_control_key( $setting_key ) ) {
+			if ( isset( $group_setting_keys[ $setting_key ] ) ) {
 				continue;
 			}
 
@@ -62,7 +53,7 @@ class V3_Style_Settings_Index {
 				}
 
 				$property = self::extract_css_property( $css_template );
-				if ( null === $property ) {
+				if ( null === $property || self::is_internal_property( $property ) ) {
 					continue;
 				}
 
@@ -75,8 +66,8 @@ class V3_Style_Settings_Index {
 
 				$candidates[ $match_key ][] = [
 					'setting' => $setting_key,
-					'resolver' => self::infer_resolver( $control, $property ),
-					'responsive' => isset( $controls[ $setting_key . '_tablet' ] ) || isset( $controls[ $setting_key . '_mobile' ] ),
+					'resolver' => V3_Control_Value_Compatibility::infer_resolver( $control, $property ),
+					'responsive' => V3_Control_Introspector::is_responsive_setting( $setting_key, $controls ),
 				];
 			}
 		}
@@ -92,14 +83,8 @@ class V3_Style_Settings_Index {
 		return $index;
 	}
 
-	private static function is_group_control_key( string $setting_key ): bool {
-		foreach ( self::GROUP_CONTROL_PREFIXES as $prefix ) {
-			if ( str_starts_with( $setting_key, $prefix ) ) {
-				return true;
-			}
-		}
-
-		return false;
+	public static function is_internal_property( string $property ): bool {
+		return str_starts_with( $property, self::INTERNAL_PROPERTY_PREFIX );
 	}
 
 	private static function extract_css_property( string $css_template ): ?string {
@@ -118,33 +103,4 @@ class V3_Style_Settings_Index {
 		return null;
 	}
 
-	private static function infer_resolver( array $control, string $property ): string {
-		$type = $control['type'] ?? null;
-
-		if ( 'color' === $type || str_ends_with( $property, 'color' ) || 'fill' === $property ) {
-			return 'color';
-		}
-
-		if ( in_array( $property, [ 'padding', 'margin', 'border-radius' ], true ) ) {
-			return 'sides';
-		}
-
-		if ( in_array( $type, [ 'slider', 'dimensions' ], true ) ) {
-			return 'dimensions' === $type ? 'sides' : 'dimension';
-		}
-
-		if ( in_array( $property, [ 'width', 'height', 'max-width', 'min-height', 'font-size', 'line-height', 'letter-spacing', 'word-spacing', 'opacity', 'top', 'right', 'bottom', 'left' ], true ) ) {
-			return 'dimension';
-		}
-
-		if ( 'box-shadow' === $property ) {
-			return 'box_shadow';
-		}
-
-		if ( 'border' === $property ) {
-			return 'border';
-		}
-
-		return 'text';
-	}
 }

@@ -29,6 +29,6 @@ class V3_Converter_Registry_Factory {
 			->register( new Border_Shorthand_Converter() )
 			->register( new Box_Shadow_Prefix_Converter() )
 			->register( new Simple_Setting_Converter( $responsive_resolver ) )
-			->register( new Generic_Index_Converter() );
+			->register( new Generic_Index_Converter( $responsive_resolver ) );
 	}
 }

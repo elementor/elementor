@@ -1,12 +1,10 @@
 import {
 	createElements,
 	duplicateElements,
-	generateElementId,
 	getContainer,
 	moveElements,
 	removeElements,
 	type V1Element,
-	type V1ElementData,
 } from '@elementor/editor-elements';
 
 import { addItem, duplicateItem, moveItem, removeItem } from '../list-actions';
@@ -16,16 +14,9 @@ jest.mock( '@elementor/editor-elements' );
 describe( 'list-items-control actions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-
-		let idCounter = 0;
-		jest.mocked( generateElementId ).mockImplementation( () => `generated-${ ++idCounter }` );
 	} );
 
-	const getCreatedItemModel = () => {
-		return jest.mocked( createElements ).mock.calls[ 0 ][ 0 ].elements[ 0 ].model as unknown as V1ElementData;
-	};
-
-	it( 'creates a self-contained list item at the requested position', () => {
+	it( 'creates a hydrated list item at the requested position', () => {
 		// Arrange.
 		jest.mocked( getContainer ).mockReturnValue( {
 			id: 'list-123',
@@ -33,7 +24,7 @@ describe( 'list-items-control actions', () => {
 
 		// Act.
 		addItem( {
-			existingTitles: [ 'List item 1', 'List item 2' ],
+			existingTitles: [ 'Item 1', 'Item 2' ],
 			listContainerId: 'list-123',
 			items: [ { item: { id: 'new-item' }, index: 2 } ],
 			showMarkers: true,
@@ -45,22 +36,20 @@ describe( 'list-items-control actions', () => {
 				elements: [
 					expect.objectContaining( {
 						container: expect.anything(),
+						model: expect.objectContaining( {
+							elType: 'e-list-item',
+							settings: {
+								show_markers: { $$type: 'boolean', value: true },
+							},
+							hydrateDefaultChildren: true,
+							editor_settings: expect.objectContaining( {
+								title: 'Item 3',
+								initial_position: 3,
+							} ),
+						} ),
 						options: { at: 2 },
 					} ),
 				],
-			} )
-		);
-
-		expect( getCreatedItemModel() ).toEqual(
-			expect.objectContaining( {
-				elType: 'e-list-item',
-				settings: {
-					show_markers: { $$type: 'boolean', value: true },
-				},
-				editor_settings: {
-					title: 'List item 3',
-					initial_position: 3,
-				},
 			} )
 		);
 	} );
@@ -73,7 +62,7 @@ describe( 'list-items-control actions', () => {
 
 		// Act.
 		addItem( {
-			existingTitles: [ 'List item 2' ],
+			existingTitles: [ 'Item 2' ],
 			listContainerId: 'list-123',
 			items: [ { item: { id: 'new-item' }, index: 1 } ],
 			showMarkers: true,
@@ -86,7 +75,7 @@ describe( 'list-items-control actions', () => {
 					expect.objectContaining( {
 						model: expect.objectContaining( {
 							editor_settings: expect.objectContaining( {
-								title: 'List item 3',
+								title: 'Item 3',
 								initial_position: 3,
 							} ),
 						} ),
@@ -124,87 +113,6 @@ describe( 'list-items-control actions', () => {
 				],
 			} )
 		);
-	} );
-
-	it( 'builds the marker and content subtree for a created list item', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( {
-			id: 'list-123',
-		} as unknown as V1Element );
-
-		// Act.
-		addItem( {
-			existingTitles: [],
-			listContainerId: 'list-123',
-			items: [ { item: { id: 'new-item' }, index: 0 } ],
-			showMarkers: true,
-		} );
-
-		// Assert.
-		const model = getCreatedItemModel();
-		const [ marker, content ] = model.elements ?? [];
-		const markerChild = marker?.elements?.[ 0 ];
-		const paragraph = content?.elements?.[ 0 ];
-
-		expect( marker ).toEqual(
-			expect.objectContaining( {
-				elType: 'e-list-item-marker',
-				editor_settings: { title: 'Marker' },
-			} )
-		);
-		expect( markerChild ).toEqual(
-			expect.objectContaining( {
-				elType: 'widget',
-				widgetType: 'e-svg',
-				elements: [],
-			} )
-		);
-		expect( content ).toEqual(
-			expect.objectContaining( {
-				elType: 'e-list-item-content',
-				editor_settings: { title: 'Content' },
-			} )
-		);
-		expect( paragraph ).toEqual(
-			expect.objectContaining( {
-				elType: 'widget',
-				widgetType: 'e-paragraph',
-				elements: [],
-				settings: {
-					paragraph: {
-						$$type: 'escaped-html',
-						value: 'List item 1',
-					},
-				},
-			} )
-		);
-	} );
-
-	it( 'generates a unique id for every created node in the subtree', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( {
-			id: 'list-123',
-		} as unknown as V1Element );
-
-		// Act.
-		addItem( {
-			existingTitles: [],
-			listContainerId: 'list-123',
-			items: [ { item: { id: 'new-item' }, index: 0 } ],
-			showMarkers: true,
-		} );
-
-		// Assert.
-		const ids: string[] = [];
-		const collectIds = ( node: V1ElementData ) => {
-			ids.push( node.id );
-			( node.elements ?? [] ).forEach( collectIds );
-		};
-
-		collectIds( getCreatedItemModel() );
-
-		expect( ids ).toHaveLength( 5 );
-		expect( new Set( ids ).size ).toBe( 5 );
 	} );
 
 	it( 'duplicates the selected list item subtree', () => {

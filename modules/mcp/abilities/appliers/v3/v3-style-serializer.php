@@ -18,6 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The output is grouped by breakpoint / pseudo-state to match what the write path
  * expects: base declarations, then `&:hover|focus|active { ... }`, then
  * `@media(--breakpoint) { ... }` blocks with the same nesting inside.
+ *
+ * Widgets with inner elements are serialized scope by scope — wrapper declarations first,
+ * then one `alias { ... }` block per inner element — so the result can be fed straight back
+ * into the write path. Flattening every scope into one block would be lossy: two scopes can
+ * map the same property (`color` on both the menu item and the dropdown) to different
+ * settings, and the reader could not tell which one a declaration came from.
  */
 class V3_Style_Serializer {
 
@@ -30,23 +36,35 @@ class V3_Style_Serializer {
 	}
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-		$controls = $widget_config['controls'] ?? [];
-		$generic = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+		$map = V3_Widget_Map_Loader::get( $widget_type, $controls );
+		$parts = [];
 
-		$blocks = new V3_Block_Accumulator();
+		if ( empty( $map['inner_elements'] ) ) {
+			$wrapper_css = $this->serialize_scope(
+				$settings,
+				$widget_config,
+				[
+					'setting_keys' => array_keys( $controls ),
+					'style_overrides' => $map['wrapper']['style_overrides'],
+				]
+			);
+		} else {
+			$wrapper_css = $this->serialize_scope( $settings, $widget_config, $map['wrapper'] );
 
-		foreach ( $overrides as $match_key => $entry ) {
-			[ $property, $state ] = $this->split_match_key( (string) $match_key );
-			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
+			foreach ( $map['inner_elements'] as $alias => $scope ) {
+				$scope_css = $this->serialize_scope( $settings, $widget_config, $scope, (string) $alias );
+				if ( '' !== $scope_css ) {
+					$parts[] = $scope_css;
+				}
+			}
 		}
 
-		foreach ( $generic as $match_key => $entry ) {
-			[ $property, $state ] = $this->split_match_key( (string) $match_key );
-			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
+		if ( '' !== $wrapper_css ) {
+			array_unshift( $parts, $wrapper_css );
 		}
 
-		$mapped_css = $this->renderer->render( $blocks );
+		$mapped_css = implode( ' ', $parts );
 		$custom_css = $this->unwrap_custom_css( $settings['custom_css'] ?? null );
 
 		if ( '' === $mapped_css ) {
@@ -58,6 +76,27 @@ class V3_Style_Serializer {
 		}
 
 		return $mapped_css . ' ' . $custom_css;
+	}
+
+	private function serialize_scope( array $settings, array $widget_config, array $scope, ?string $alias = null ): string {
+		$mapping = V3_Auto_Mapper::for_scope( $widget_config, $scope );
+		$blocks = new V3_Block_Accumulator();
+
+		foreach ( $mapping['overrides'] as $match_key => $entry ) {
+			[ $property, $state ] = $this->split_match_key( (string) $match_key );
+			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
+		}
+
+		foreach ( $mapping['generic_index'] as $match_key => $entry ) {
+			[ $property, $state ] = $this->split_match_key( (string) $match_key );
+			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
+		}
+
+		if ( null !== $alias ) {
+			return $this->renderer->render_scoped( $alias, $blocks );
+		}
+
+		return $this->renderer->render( $blocks );
 	}
 
 	/**

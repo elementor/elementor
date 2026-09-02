@@ -186,10 +186,14 @@ class Document_Mutator {
 	 * Save an elements tree to a document, downgrading `publish` to `draft`
 	 * first so no live changes leak out.
 	 *
+	 * Pass `$preserve_status = true` to keep the current status (used by callers that treat the
+	 * save as an in-place edit of a live document rather than a fresh unpublished write — MCP
+	 * `manage-elements` on a published page, for example).
+	 *
 	 * @return true|int|\WP_Error
 	 */
-	public function save_as_draft( Document $document, array $elements ) {
-		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
+	public function save_as_draft( Document $document, array $elements, bool $preserve_status = false ) {
+		if ( ! $preserve_status && 'publish' === get_post_status( $document->get_main_id() ) ) {
 			wp_update_post( [
 				'ID' => $document->get_main_id(),
 				'post_status' => 'draft',

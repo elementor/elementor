@@ -14,7 +14,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	regions: {
 		content: '#elementor-panel-content-wrapper',
 		header: '#elementor-panel-header-wrapper',
-		footer: '#elementor-panel-footer',
 		modeSwitcher: '#elementor-mode-switcher',
 	},
 
@@ -152,17 +151,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	onBeforeShow() {
-		var PanelHeaderItemView = require( 'elementor-regions/panel/header' ),
-			PanelFooterBackCompatView = require( 'elementor-regions/panel/footer-back-compat' );
+		var PanelHeaderItemView = require( 'elementor-regions/panel/header' );
 
 		// Edit Mode
 		this.showChildView( 'modeSwitcher', new EditModeItemView() );
 
 		// Header
 		this.showChildView( 'header', new PanelHeaderItemView() );
-
-		// Back-compat for Elementor Pro < 4.3 (ED-25418).
-		this.showChildView( 'footer', new PanelFooterBackCompatView() );
 
 		// Added Editor events
 		this.updateScrollbar = _.throttle( this.updateScrollbar, 100 );

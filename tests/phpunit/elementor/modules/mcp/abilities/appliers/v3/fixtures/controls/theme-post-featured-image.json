@@ -1,0 +1,457 @@
+{
+    "controls": {
+        "section_image": {
+            "type": "section",
+            "tab": "content",
+            "label": "Image"
+        },
+        "image": {
+            "type": "media",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Choose Image"
+        },
+        "image_size": {
+            "type": "select",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Image Resolution"
+        },
+        "image_custom_dimension": {
+            "type": "image_dimensions",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Image Dimension"
+        },
+        "caption_source": {
+            "type": "select",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Caption"
+        },
+        "caption": {
+            "type": "text",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Custom Caption"
+        },
+        "link_to": {
+            "type": "select",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Link"
+        },
+        "link": {
+            "type": "url",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Link"
+        },
+        "open_lightbox": {
+            "type": "select",
+            "tab": "content",
+            "section": "section_image",
+            "label": "Lightbox"
+        },
+        "section_style_image": {
+            "type": "section",
+            "tab": "style",
+            "label": "Image"
+        },
+        "align": {
+            "type": "choose",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Alignment",
+            "selectors": {
+                "{{WRAPPER}}": "text-align: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "width": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Width",
+            "selectors": {
+                "{{WRAPPER}} img": "width: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "space": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Max Width",
+            "selectors": {
+                "{{WRAPPER}} img": "max-width: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "height": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Height",
+            "selectors": {
+                "{{WRAPPER}} img": "height: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "object-fit": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Object Fit",
+            "selectors": {
+                "{{WRAPPER}} img": "object-fit: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "object-position": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Object Position",
+            "selectors": {
+                "{{WRAPPER}} img": "object-position: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "separator_panel_style": {
+            "type": "divider",
+            "tab": "style",
+            "section": "section_style_image"
+        },
+        "image_effects": {
+            "type": "tabs",
+            "tab": "style",
+            "section": "section_style_image"
+        },
+        "normal": {
+            "type": "tab",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Normal"
+        },
+        "opacity": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Opacity",
+            "selectors": {
+                "{{WRAPPER}} img": "opacity: {{SIZE}};"
+            }
+        },
+        "css_filters_css_filter": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "CSS Filters"
+        },
+        "css_filters_blur": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Blur",
+            "selectors": {
+                "{{WRAPPER}} img": "filter: brightness( {{css_filters_brightness.SIZE}}% ) contrast( {{css_filters_contrast.SIZE}}% ) saturate( {{css_filters_saturate.SIZE}}% ) blur( {{css_filters_blur.SIZE}}px ) hue-rotate( {{css_filters_hue.SIZE}}deg )"
+            }
+        },
+        "css_filters_brightness": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Brightness"
+        },
+        "css_filters_contrast": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Contrast"
+        },
+        "css_filters_saturate": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Saturation"
+        },
+        "css_filters_hue": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Hue"
+        },
+        "hover": {
+            "type": "tab",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Hover"
+        },
+        "opacity_hover": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Opacity",
+            "selectors": {
+                "{{WRAPPER}}:hover img": "opacity: {{SIZE}};"
+            }
+        },
+        "css_filters_hover_css_filter": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "CSS Filters"
+        },
+        "css_filters_hover_blur": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Blur",
+            "selectors": {
+                "{{WRAPPER}}:hover img": "filter: brightness( {{css_filters_hover_brightness.SIZE}}% ) contrast( {{css_filters_hover_contrast.SIZE}}% ) saturate( {{css_filters_hover_saturate.SIZE}}% ) blur( {{css_filters_hover_blur.SIZE}}px ) hue-rotate( {{css_filters_hover_hue.SIZE}}deg )"
+            }
+        },
+        "css_filters_hover_brightness": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Brightness"
+        },
+        "css_filters_hover_contrast": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Contrast"
+        },
+        "css_filters_hover_saturate": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Saturation"
+        },
+        "css_filters_hover_hue": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Hue"
+        },
+        "background_hover_transition": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Transition Duration (s)",
+            "selectors": {
+                "{{WRAPPER}} img": "transition-duration: {{SIZE}}s"
+            }
+        },
+        "hover_animation": {
+            "type": "hover_animation",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Hover Animation"
+        },
+        "image_border_border": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Border Type",
+            "selectors": {
+                "{{WRAPPER}} img": "border-style: {{VALUE}};"
+            }
+        },
+        "image_border_width": {
+            "type": "dimensions",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Border Width",
+            "selectors": {
+                "{{WRAPPER}} img": "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "image_border_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Border Color",
+            "selectors": {
+                "{{WRAPPER}} img": "border-color: {{VALUE}};"
+            }
+        },
+        "image_border_radius": {
+            "type": "dimensions",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Border Radius",
+            "selectors": {
+                "{{WRAPPER}} img": "border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "image_box_shadow_box_shadow_type": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Box Shadow"
+        },
+        "image_box_shadow_box_shadow": {
+            "type": "box_shadow",
+            "tab": "style",
+            "section": "section_style_image",
+            "label": "Box Shadow",
+            "selectors": {
+                "{{WRAPPER}} img": "box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{image_box_shadow_box_shadow_position.VALUE}};"
+            }
+        },
+        "section_style_caption": {
+            "type": "section",
+            "tab": "style",
+            "label": "Caption"
+        },
+        "caption_align": {
+            "type": "choose",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Alignment",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "text-align: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "text_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Text Color",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "color: {{VALUE}};"
+            }
+        },
+        "caption_background_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Background Color",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "background-color: {{VALUE}};"
+            }
+        },
+        "caption_typography_typography": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Typography"
+        },
+        "caption_typography_font_family": {
+            "type": "font",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Family",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "font-family: \"{{VALUE}}\", Sans-serif;"
+            }
+        },
+        "caption_typography_font_size": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Size",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "font-size: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "caption_typography_font_weight": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Weight",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "font-weight: {{VALUE}};"
+            }
+        },
+        "caption_typography_text_transform": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Transform",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "text-transform: {{VALUE}};"
+            }
+        },
+        "caption_typography_font_style": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Style",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "font-style: {{VALUE}};"
+            }
+        },
+        "caption_typography_text_decoration": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Decoration",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "text-decoration: {{VALUE}};"
+            }
+        },
+        "caption_typography_line_height": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Line Height",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "line-height: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "caption_typography_letter_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Letter Spacing",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "letter-spacing: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "caption_typography_word_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Word Spacing",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "word-spacing: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "caption_text_shadow_text_shadow_type": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Text Shadow"
+        },
+        "caption_text_shadow_text_shadow": {
+            "type": "text_shadow",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Text Shadow",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "text-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};"
+            }
+        },
+        "caption_space": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style_caption",
+            "label": "Spacing",
+            "selectors": {
+                "{{WRAPPER}} .widget-image-caption": "margin-block-start: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        }
+    }
+}

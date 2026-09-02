@@ -9,7 +9,6 @@ use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\Components\Utils\Remap_Component_Instance_Ids;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Elementor_Content;
@@ -785,7 +784,6 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
-				$data['elements'] = Remap_Component_Instance_Ids::apply( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
 

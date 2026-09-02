@@ -42,7 +42,7 @@
 
 	.e-con-inner {
 
-		.e-con.e-child {
+		.e-con {
 
 			> .elementor-element-overlay {
 
@@ -223,7 +223,7 @@
 	// TODO: Find a better solution.
 	& > &,
 	&-inner > &,
-	&.e-child {
+	.elementor-widget & {
 
 		> .elementor-element-overlay {
 

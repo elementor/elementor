@@ -54,7 +54,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			sprintf(
 				/* translators: %s: comma-separated list of V3-allowlisted widget types. */
 				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
-				implode( ', ', Widget_Context_Helper::V3_ALLOWLIST )
+				implode( ', ', Widget_Context_Helper::get_allowlisted_v3_types() )
 			),
 			'elementor',
 			[
@@ -112,9 +112,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'description' => 'patch (default): merge incoming style variants with existing. replace: discard existing variants for the affected breakpoints before writing new ones. Pass an empty string with replace to wipe all local style variants.',
 								],
 								'classes' => [
-									'type' => 'array',
-									'items' => [ 'type' => 'string' ],
-									'description' => 'update only: global class labels to attach (prepended to existing). Pass an empty array [] to remove all global classes from the element (local styles are preserved).',
+									'type' => [ 'array', 'object' ],
+									'description' => 'update only: global class labels to attach. Two shapes: (1) array of labels applies to the element wrapper (prepended to existing); (2) object keyed by target (wrapper or an inner-element alias declared in the V3 widget map) with an array of labels per target. Pass an empty array [] to remove all global classes from the element wrapper (local styles are preserved).',
 								],
 								'interactions' => [
 									'type' => 'array',
@@ -231,7 +230,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->with_edit_url( $response, $document );
 		}
 
-		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
+		// `manage-elements` edits an existing document in place; if it is already published, keep
+		// it published. Downgrading to draft here would silently unpublish a live page mid-session.
+		$save_result = $this->get_mutator()->save_as_draft( $document, $tree, true );
 		if ( is_wp_error( $save_result ) || ! $save_result ) {
 			$response['status'] = 'error';
 			$response['save_error'] = is_wp_error( $save_result )
@@ -400,25 +401,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$variables_service = $this->create_variables_service();
 		$warnings = [];
 
-		if ( null !== $interactions ) {
-			if ( ! is_array( $interactions ) ) {
-				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
-			}
-			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
-				return new \WP_Error(
-					'elementor_invalid_interactions',
-					__( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-			$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
-			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
-			if ( $interactions_result['error'] ) {
-				return $interactions_result['error'];
-			}
-			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
-		}
-
 		if ( ! empty( $settings ) ) {
 			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
 				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
@@ -443,13 +425,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
-				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels.', 'elementor' ) );
+				return new \WP_Error( 'invalid_input', __( 'classes must be an array of global class labels or an object keyed by target alias.', 'elementor' ) );
 			}
 			$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-			$class_error = $class_applier->apply( $index, [ $element_id => $classes ] );
-			if ( $class_error ) {
-				return $class_error;
+			$class_result = $class_applier->apply( $index, [ $element_id => $classes ] );
+			if ( $class_result['error'] ) {
+				return $class_result['error'];
 			}
+			$warnings = array_merge( $warnings, $class_result['warnings'] );
 		}
 
 		if ( $has_style ) {
@@ -459,6 +442,22 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
+		}
+
+		if ( null !== $interactions ) {
+			if ( ! is_array( $interactions ) ) {
+				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
+			}
+			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
+			} else {
+				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+				if ( $interactions_result['error'] ) {
+					return $interactions_result['error'];
+				}
+				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+			}
 		}
 
 		return [

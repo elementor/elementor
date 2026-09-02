@@ -33,7 +33,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Composition_Compiler {
 
 	private const DEFAULT_PARENT_ID = 'document';
-	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
+	private const DOCUMENT_ROOT_WRAPPER_V4 = 'e-div-block';
+	private const DOCUMENT_ROOT_WRAPPER_V3 = 'container';
+	private const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
+
+	private static function document_root_wrapper(): string {
+		return AtomicWidgetsModule::is_active()
+			? self::DOCUMENT_ROOT_WRAPPER_V4
+			: self::DOCUMENT_ROOT_WRAPPER_V3;
+	}
 
 	public const COMPONENT_PARENT_ID = 'component';
 
@@ -64,20 +72,18 @@ final class Composition_Compiler {
 			return $dom;
 		}
 
-		[
-			'configs' => $widget_configs,
-			'unknown_tag_errors' => $unknown_widget_tag_errors,
-		] = $type_resolver->collect_referenced_widget_configs( $dom );
-
-		$validation_error = $this->validate_xml_before_apply(
+		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
 			$dom,
-			$xml_parser,
 			$document_tree,
-			$parent_id,
-			$unknown_widget_tag_errors
+			$parent_id
 		);
-		if ( $validation_error ) {
-			return $validation_error;
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
+		$widget_configs = $type_resolver->collect_used( $dom );
+		if ( is_wp_error( $widget_configs ) ) {
+			return $widget_configs;
 		}
 
 		$wrapping_result = $this->wrap_document_root_content( $dom, $widget_configs, $parent_id, $type_resolver, $xml_parser );
@@ -87,20 +93,21 @@ final class Composition_Compiler {
 
 		$widget_configs = $wrapping_result['widget_configs'];
 
-		$child_type_errors = $type_resolver->collect_child_type_and_required_child_errors( $dom, $widget_configs );
-		if ( ! empty( $child_type_errors ) ) {
-			return new \WP_Error(
-				'elementor_invalid_child_type',
-				implode( ' ', $child_type_errors ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+		$child_type_error = $type_resolver->validate_child_types( $dom, $widget_configs );
+		if ( $child_type_error ) {
+			return $child_type_error;
 		}
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
 		if ( empty( $subtrees ) ) {
+			$example_tag = AtomicWidgetsModule::is_active() ? 'e-flexbox' : 'container';
 			return new \WP_Error(
 				'empty_composition',
-				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-flexbox configuration-id="..."></e-flexbox>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+				sprintf(
+					/* translators: %s: example XML tag name appropriate for the current V4 experiment state */
+					__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <%1$s configuration-id="..."></%1$s>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+					$example_tag
+				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
@@ -116,9 +123,9 @@ final class Composition_Compiler {
 		}
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-		$class_error = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
-		if ( $class_error ) {
-			return $class_error;
+		$class_result = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
+		if ( $class_result['error'] ) {
+			return $class_result['error'];
 		}
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
@@ -134,63 +141,10 @@ final class Composition_Compiler {
 
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $class_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];
-	}
-
-	/**
-	 * @param \DOMDocument $dom
-	 * @param Xml_Parser   $xml_parser
-	 * @param array        $document_tree
-	 * @param string       $parent_id
-	 * @param string[]     $unknown_widget_tag_errors
-	 *
-	 * @return \WP_Error|null
-	 */
-	private function validate_xml_before_apply(
-		\DOMDocument $dom,
-		Xml_Parser $xml_parser,
-		array $document_tree,
-		string $parent_id,
-		array $unknown_widget_tag_errors
-	) {
-		$errors = array_merge(
-			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
-			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
-			$this->tag_errors( 'elementor_unknown_type', $unknown_widget_tag_errors ),
-		);
-
-		if ( empty( $errors ) ) {
-			return null;
-		}
-
-		$status = [ 'status' => \WP_Http::BAD_REQUEST ];
-		$joined = implode( ' ', array_column( $errors, 'message' ) );
-
-		$aggregated = new \WP_Error( $errors[0]['code'], $joined, $status );
-		foreach ( array_slice( $errors, 1 ) as $error ) {
-			$aggregated->add( $error['code'], $error['message'], $status );
-		}
-
-		return $aggregated;
-	}
-
-	/**
-	 * @param string   $code     Error code to tag each message with.
-	 * @param string[] $messages List of error messages.
-	 *
-	 * @return array<int, array{code: string, message: string}>
-	 */
-	private function tag_errors( string $code, array $messages ): array {
-		return array_map(
-			fn ( $message ) => [
-				'code' => $code,
-				'message' => $message,
-			],
-			$messages
-		);
 	}
 
 	private function wrap_document_root_content(
@@ -216,43 +170,71 @@ final class Composition_Compiler {
 		}
 
 		$root_children = $xml_parser->get_child_elements( $root );
-		$has_widget = false;
-		foreach ( $root_children as $child ) {
+
+		$needs_wrap = static function ( \DOMElement $child ) use ( $widget_configs, $xml_parser ): bool {
 			$tag = $xml_parser->get_tag_name( $child );
 			$config = $widget_configs[ $tag ] ?? [];
 
 			if ( 'widget' !== ( $config['elType'] ?? null ) ) {
-				continue;
+				return false;
 			}
 
-			$has_widget = true;
-			break;
+			if ( self::COMPONENT_INSTANCE_WIDGET_TYPE === ( $config['widgetType'] ?? null ) ) {
+				return false;
+			}
+
+			return true;
+		};
+
+		$has_any_widget = false;
+		foreach ( $root_children as $child ) {
+			if ( $needs_wrap( $child ) ) {
+				$has_any_widget = true;
+				break;
+			}
 		}
 
-		if ( ! $has_widget ) {
+		if ( ! $has_any_widget ) {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
 			];
 		}
 
-		$wrapper_config = $type_resolver->resolve_type_config( self::DOCUMENT_ROOT_WRAPPER );
+		$wrapper_type = self::document_root_wrapper();
+		$wrapper_config = $type_resolver->resolve_type_config( $wrapper_type );
 		if ( is_wp_error( $wrapper_config ) ) {
 			return $wrapper_config;
 		}
 
-		$widget_configs[ self::DOCUMENT_ROOT_WRAPPER ] = $wrapper_config;
+		$widget_configs[ $wrapper_type ] = $wrapper_config;
 
-		$wrapper = $dom->createElement( self::DOCUMENT_ROOT_WRAPPER );
-		$root->appendChild( $wrapper );
-
+		// Wrap each contiguous run of illegal-at-root widget siblings in its own wrapper; leave
+		// legal-at-root children (containers, section/column, existing div-blocks) in place.
+		// Otherwise a mixed root like `<html/><container/><container/>` ends up with the two
+		// containers nested inside the auto-wrapper that only the <html/> needed.
+		$current_wrapper = null;
 		foreach ( $root_children as $child ) {
-			$wrapper->appendChild( $child );
+			if ( $needs_wrap( $child ) ) {
+				if ( null === $current_wrapper ) {
+					$current_wrapper = $dom->createElement( $wrapper_type );
+					$root->insertBefore( $current_wrapper, $child );
+				}
+				$current_wrapper->appendChild( $child );
+				continue;
+			}
+			$current_wrapper = null;
 		}
 
 		return [
 			'widget_configs' => $widget_configs,
-			'warnings' => [ __( 'Direct document-root content was wrapped in an e-div-block element.', 'elementor' ) ],
+			'warnings' => [
+				sprintf(
+					/* translators: %s: element type used to wrap the direct document-root widgets */
+					__( 'Direct document-root widgets were wrapped in %s elements. Containers and other layout boxes at the root were left in place.', 'elementor' ),
+					$wrapper_type
+				),
+			],
 		];
 	}
 

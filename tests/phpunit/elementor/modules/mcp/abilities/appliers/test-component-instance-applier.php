@@ -352,10 +352,9 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertSame( 'e-heading', $elements[0]['elements'][0]['widgetType'] );
 	}
 
-	public function test_build_composition__wraps_component_instance_as_direct_document_child() {
+	public function test_build_composition__rejects_component_instance_as_direct_document_child() {
 		// Arrange
 		$this->act_as_admin();
-		Mock_Pro_License_API::set_license_state( true );
 		$component_id = $this->create_component( 'Hero Component' );
 		$post_id = $this->create_real_document();
 		$ability = new Build_Composition_Ability( Document_Mutator::instance() );
@@ -372,14 +371,10 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$this->assertTrue( $result['success'] );
-		$this->assertStringContainsString( 'e-div-block', $result['warnings'][0] ?? '' );
-		$this->assertStringContainsString( '<e-div-block', $result['resolved_xml'] );
-
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( 'e-div-block', $elements[0]['elType'] );
-		$this->assertSame( 'e-component', $elements[0]['elements'][0]['widgetType'] );
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_parent', $result->get_error_code() );
+		$this->assertStringContainsString( 'e-component', $result->get_error_message() );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
 	}
 
 	public function test_apply__allows_expired_tier_to_edit_a_component_document() {

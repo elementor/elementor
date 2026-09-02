@@ -134,58 +134,6 @@ class Test_Overridable_Transformer extends Elementor_Test_Base {
         $this->assertEquals( $origin_value, $result );
     }
 
-    public function test_overridable_transformer_returns_override_value_when_origin_value_is_null() {
-        // Arrange.
-        $transformer = new Overridable_Transformer();
-
-        $value = [
-            'override_key' => 'my-override-key',
-            'origin_value' => null,
-        ];
-
-        $override_value = [
-            '$$type' => 'video-src',
-            'value' => [
-                'id' => [ '$$type' => 'video-attachment-id', 'value' => 12 ],
-                'url' => null,
-            ],
-        ];
-
-        $context = [ 'overrides' => [ 'my-override-key' => $override_value ] ];
-
-        // Act.
-        Render_Context::push( Overridable_Transformer::class, $context );
-        $result = $transformer->transform( $value, Props_Resolver_Context::make() );
-        Render_Context::pop( Overridable_Transformer::class );
-
-        // Assert.
-        $this->assertEquals( $override_value, $result );
-    }
-
-    public function test_overridable_transformer_returns_null_when_origin_value_is_null_and_no_matching_override() {
-        // Arrange.
-        $transformer = new Overridable_Transformer();
-
-        $value = [
-            'override_key' => 'my-override-key',
-            'origin_value' => null,
-        ];
-
-        $context = [
-            'overrides' => [
-                'other-override-key' => [ '$$type' => 'string', 'value' => 'Other Override Text' ],
-            ],
-        ];
-
-        // Act.
-        Render_Context::push( Overridable_Transformer::class, $context );
-        $result = $transformer->transform( $value, Props_Resolver_Context::make() );
-        Render_Context::pop( Overridable_Transformer::class );
-
-        // Assert.
-        $this->assertNull( $result );
-    }
-
     public function test_overridable_transformer_handles_override_original_value_when_matching_override_is_found() {
         // Arrange.
         $transformer = new Overridable_Transformer();
@@ -301,55 +249,4 @@ class Test_Overridable_Transformer extends Elementor_Test_Base {
         // Assert.
         $this->assertEquals( $original_value, $result );
     }
-
-	/**
-	 * Rendering does not validate props, so an empty origin value stored by an older editor
-	 * reaches the transformer as-is until the document is next saved. It must resolve to `null`,
-	 * exactly like an already-normalized value.
-	 */
-	public function test_overridable_transformer_normalizes_empty_origin_value_when_no_matching_override() {
-		// Arrange.
-		$transformer = new Overridable_Transformer();
-
-		$value = [
-			'override_key' => 'source',
-			'origin_value' => [],
-		];
-
-		$context = [
-			'overrides' => [
-				'other-override-key' => [ '$$type' => 'string', 'value' => 'Other Override Text' ],
-			],
-		];
-
-		// Act.
-		Render_Context::push( Overridable_Transformer::class, $context );
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-		Render_Context::pop( Overridable_Transformer::class );
-
-		// Assert.
-		$this->assertNull( $result );
-	}
-
-	public function test_overridable_transformer_returns_override_value_for_empty_origin_value() {
-		// Arrange.
-		$transformer = new Overridable_Transformer();
-
-		$override_value = [ '$$type' => 'string', 'value' => 'Override Text' ];
-
-		$value = [
-			'override_key' => 'source',
-			'origin_value' => [],
-		];
-
-		$context = [ 'overrides' => [ 'source' => $override_value ] ];
-
-		// Act.
-		Render_Context::push( Overridable_Transformer::class, $context );
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-		Render_Context::pop( Overridable_Transformer::class );
-
-		// Assert.
-		$this->assertEquals( $override_value, $result );
-	}
 }

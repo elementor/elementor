@@ -1,15 +1,12 @@
 import { type ItemsActionPayload } from '@elementor/editor-controls';
 import {
-	type CreateElementParams,
 	createElements,
 	duplicateElements,
-	generateElementId,
 	getContainer,
 	moveElements,
 	removeElements,
-	type V1ElementData,
 } from '@elementor/editor-elements';
-import { booleanPropTypeUtil, escapedHtmlPropTypeUtil } from '@elementor/editor-props';
+import { booleanPropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 export type ListItem = {
@@ -18,14 +15,10 @@ export type ListItem = {
 };
 
 export const LIST_ITEM_ELEMENT_TYPE = 'e-list-item';
-const LIST_ITEM_MARKER_ELEMENT_TYPE = 'e-list-item-marker';
-const LIST_ITEM_CONTENT_ELEMENT_TYPE = 'e-list-item-content';
-const PARAGRAPH_WIDGET_TYPE = 'e-paragraph';
-const SVG_WIDGET_TYPE = 'e-svg';
 
 const TRAILING_NUMBER = /(\d+)\s*$/;
 
-const getItemTitle = ( position: number ) => `List item ${ position }`;
+const getItemTitle = ( position: number ) => `Item ${ position }`;
 
 const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 	const taken = new Set( existingTitles.filter( ( title ): title is string => Boolean( title ) ) );
@@ -44,57 +37,6 @@ const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 	}
 
 	return next;
-};
-
-const buildItemModel = ( position: number, showMarkers: boolean ): V1ElementData => {
-	const itemTitle = getItemTitle( position );
-
-	return {
-		elType: LIST_ITEM_ELEMENT_TYPE,
-		id: generateElementId(),
-		settings: {
-			show_markers: booleanPropTypeUtil.create( showMarkers ),
-		},
-		editor_settings: {
-			title: itemTitle,
-			initial_position: position,
-		},
-		elements: [
-			{
-				elType: LIST_ITEM_MARKER_ELEMENT_TYPE,
-				id: generateElementId(),
-				editor_settings: {
-					title: __( 'Marker', 'elementor' ),
-				},
-				elements: [
-					{
-						elType: 'widget',
-						widgetType: SVG_WIDGET_TYPE,
-						id: generateElementId(),
-						elements: [],
-					},
-				],
-			},
-			{
-				elType: LIST_ITEM_CONTENT_ELEMENT_TYPE,
-				id: generateElementId(),
-				editor_settings: {
-					title: __( 'Content', 'elementor' ),
-				},
-				elements: [
-					{
-						elType: 'widget',
-						widgetType: PARAGRAPH_WIDGET_TYPE,
-						id: generateElementId(),
-						elements: [],
-						settings: {
-							paragraph: escapedHtmlPropTypeUtil.create( itemTitle ),
-						},
-					},
-				],
-			},
-		],
-	};
 };
 
 export const duplicateItem = ( { items }: { items: ItemsActionPayload< ListItem > } ) => {
@@ -166,7 +108,17 @@ export const addItem = ( {
 			elements: [
 				{
 					container: listContainer,
-					model: buildItemModel( position, showMarkers ) as CreateElementParams[ 'model' ],
+					model: {
+						elType: LIST_ITEM_ELEMENT_TYPE,
+						settings: {
+							show_markers: booleanPropTypeUtil.create( showMarkers ),
+						},
+						hydrateDefaultChildren: true,
+						editor_settings: {
+							title: getItemTitle( position ),
+							initial_position: position,
+						},
+					},
 					options: { at: index },
 				},
 			],

@@ -24,7 +24,6 @@ docs/superpowers/
 build/
 assets/css/
 assets/js/
-assets/lib/font-awesome-7/
 assets/lib/swiper/css/swiper*.css
 *.log
 *.map

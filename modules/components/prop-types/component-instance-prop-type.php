@@ -30,12 +30,6 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		return $settings['component_instance']['value']['component_id']['value'];
 	}
 
-	public static function set_component_id( array $settings, int $component_id ): array {
-		$settings['component_instance']['value']['component_id']['value'] = $component_id;
-
-		return $settings;
-	}
-
 	public function validate_value( $value ): bool {
 		if ( ! parent::validate_value( $value ) ) {
 			return false;

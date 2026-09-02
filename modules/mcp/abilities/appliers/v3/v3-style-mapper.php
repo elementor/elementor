@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters\Simple_Setting_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
@@ -24,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * `<setting>_<breakpoint>` on the widget config; if the responsive variant does not exist
  * and the base setting does, the rule is dropped (to avoid overwriting desktop with mobile).
  *
- * Overrides (per-widget CSS -> V3 setting map, see {@see V3_Widget_Bridge_Registry}):
+ * Overrides (per-widget CSS -> V3 setting map, see {@see V3_Widget_Map_Loader}):
  * Four mutually-exclusive shapes are dispatched by the {@see V3_Converter_Registry},
  * one converter class per shape. A fallback `Generic_Index_Converter` uses
  * {@see V3_Style_Settings_Index} for auto-discovered mappings.
@@ -55,19 +56,20 @@ class V3_Style_Mapper {
 	}
 
 	/**
-	 * @param string $css_string
-	 * @param string $widget_type
-	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
+	 * @param string                                                                             $css_string
+	 * @param string                                                                             $widget_type
+	 * @param array                                                                              $widget_config From Widget_Context_Helper::get_widget_config().
+	 * @param array{overrides?: array<string, array>, generic_index?: array<string, array>}|null $mapping Optional pre-resolved mapping.
 	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[]}
 	 */
-	public function apply( string $css_string, string $widget_type, array $widget_config ): array {
+	public function apply( string $css_string, string $widget_type, array $widget_config, ?array $mapping = null ): array {
 		$css_string = trim( $css_string );
 
 		if ( '' === $css_string ) {
 			return $this->empty_result();
 		}
 
-		$meta = $this->build_meta( $widget_type, $widget_config );
+		$meta = $this->build_meta( $widget_type, $widget_config, $mapping );
 		$ctx = new V3_Conversion_Context();
 
 		$split = ( new Css_Media_Splitter( $this->get_active_breakpoints() ) )->split( $css_string );
@@ -150,29 +152,72 @@ class V3_Style_Mapper {
 		return false;
 	}
 
-	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-		$controls = $widget_config['controls'] ?? [];
-		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+	private function build_meta( string $widget_type, array $widget_config, ?array $mapping = null ): V3_Context_Meta {
+		if ( null !== $mapping ) {
+			$overrides = is_array( $mapping['overrides'] ?? null ) ? $mapping['overrides'] : [];
+			$generic_index = is_array( $mapping['generic_index'] ?? null ) ? $mapping['generic_index'] : [];
 
-		return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
+			return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
+		}
+
+		$derived = V3_Auto_Mapper::for_widget( $widget_config, $widget_type );
+
+		return new V3_Context_Meta( $widget_type, $widget_config, $derived['overrides'], $derived['generic_index'] );
 	}
 
 	private function finalize( V3_Conversion_Context $ctx, V3_Context_Meta $meta ): array {
 		$settings_patch = $ctx->settings_patch();
 
 		foreach ( $ctx->typography_buckets() as $bucket ) {
-			$group_patch = V3_Value_Resolvers::resolve_typography_group(
+			$resolved = V3_Value_Resolvers::resolve_typography_group_with_rejections(
 				$bucket['declarations'],
 				$bucket['prefix']
 			);
+			$group_patch = $resolved['patch'];
+
+			foreach ( $resolved['rejections'] as $rejection ) {
+				$ctx->warn( Simple_Setting_Converter::format_reject_warning(
+					$rejection['property'],
+					$rejection['value'],
+					$bucket['prefix'] . '_typography',
+					$rejection['reason']
+				) );
+			}
 
 			if ( ! empty( $bucket['responsive'] ) && Responsive_Key_Resolver::BASE_BREAKPOINT !== $bucket['breakpoint'] ) {
-				$group_patch = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );
+				$suffixed = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );
+				$group_patch = $suffixed['patch'];
+
+				foreach ( $suffixed['dropped'] as $dropped_setting ) {
+					$ctx->warn(
+						sprintf(
+							'"%1$s" cannot vary per breakpoint, so its %2$s value was dropped.',
+							$dropped_setting,
+							$bucket['breakpoint']
+						)
+					);
+				}
 			}
 
 			$settings_patch = array_merge( $settings_patch, $group_patch );
 		}
+
+		$settings_patch = V3_Value_Resolvers::supplement_container_type_toggle(
+			$settings_patch,
+			$meta->controls()
+		);
+		$settings_patch = V3_Value_Resolvers::supplement_flex_grid_twin_alignments(
+			$settings_patch,
+			$meta->controls()
+		);
+		$settings_patch = V3_Value_Resolvers::supplement_content_width_toggle(
+			$settings_patch,
+			$meta->controls()
+		);
+		$settings_patch = V3_Value_Resolvers::supplement_background_group_toggles(
+			$settings_patch,
+			$meta->controls()
+		);
 
 		return [
 			'settings_patch' => $settings_patch,

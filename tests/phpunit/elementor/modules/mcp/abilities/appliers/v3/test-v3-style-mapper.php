@@ -97,10 +97,22 @@ class Test_V3_Style_Mapper extends TestCase {
 		$mapper = $this->make_mapper();
 		$config = [
 			'controls' => [
-				'image_border_radius' => [ 'type' => 'dimensions' ],
-				'image_border_border' => [ 'type' => 'select' ],
-				'image_border_width' => [ 'type' => 'dimensions' ],
-				'image_border_color' => [ 'type' => 'color' ],
+				'image_border_radius' => [
+					'type' => 'dimensions',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+				],
+				'image_border_border' => [
+					'type' => 'select',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-style: {{VALUE}};' ],
+				],
+				'image_border_width' => [
+					'type' => 'dimensions',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+				],
+				'image_border_color' => [
+					'type' => 'color',
+					'selectors' => [ '{{WRAPPER}} img' => 'border-color: {{VALUE}};' ],
+				],
 			],
 		];
 
@@ -180,5 +192,51 @@ class Test_V3_Style_Mapper extends TestCase {
 
 		$this->assertSame( [], $result['settings_patch'] );
 		$this->assertSame( '', $result['unmapped_css'] );
+	}
+
+	public function test_apply__accepts_var_on_color_and_rejects_var_on_font_size() {
+		// Arrange.
+		$mapper = $this->make_mapper();
+
+		// Act.
+		$result = $mapper->apply(
+			'color: var(--a); font-size: var(--b);',
+			'theme-post-title',
+			$this->heading_config()
+		);
+
+		// Assert.
+		$this->assertSame( 'var(--a)', $result['settings_patch']['title_color'] );
+		$this->assertArrayNotHasKey( 'typography_font_size', $result['settings_patch'] );
+		$this->assertArrayNotHasKey( 'typography_typography', $result['settings_patch'] );
+		$this->assertSame( '', $result['unmapped_css'] );
+
+		$joined_warnings = implode( "\n", $result['warnings'] );
+		$this->assertStringContainsString( 'Property `font-size` value `var(--b)` rejected', $joined_warnings );
+		$this->assertStringContainsString( 'literal value', $joined_warnings );
+	}
+
+	public function test_apply__maps_numeric_width_to_element_custom_width_pair() {
+		// Arrange.
+		$mapper = $this->make_mapper();
+		$controls = json_decode(
+			file_get_contents( __DIR__ . '/fixtures/controls/advanced-shared.json' ),
+			true
+		)['controls'];
+		$controls['title_color'] = [
+			'type' => 'color',
+			'selectors' => [ '{{WRAPPER}}' => 'color: {{VALUE}};' ],
+		];
+
+		// Act.
+		$result = $mapper->apply( 'max-width: 40rem;', 'theme-post-excerpt', [ 'controls' => $controls ] );
+
+		// Assert.
+		$this->assertSame( 'initial', $result['settings_patch']['_element_width'] );
+		$this->assertSame(
+			[ 'unit' => 'rem', 'size' => 40.0 ],
+			$result['settings_patch']['_element_custom_width']
+		);
+		$this->assertIsString( $result['settings_patch']['_element_width'] );
 	}
 }
