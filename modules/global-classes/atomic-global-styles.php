@@ -407,7 +407,7 @@ class Atomic_Global_Styles {
 		return Plugin::$instance->preview->is_editor_or_preview();
 	}
 
-	private function get_cache_root_key( string $key = null ): string {
+	private function get_cache_root_key( ?string $key = null ): string {
 		return $key ? self::STYLES_KEY . '_' . $key : self::STYLES_KEY;
 	}
 }
