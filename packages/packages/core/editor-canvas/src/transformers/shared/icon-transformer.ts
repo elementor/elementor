@@ -22,8 +22,6 @@ const FONT_AWESOME_JSON = {
 	path: 4,
 } as const;
 
-const FONT_AWESOME_LIBRARY_PREFIX = 'fa-';
-
 const fontAwesomeJsonCache = new Map< string, Record< string, FontAwesomeIconJson > >();
 
 export const iconTransformer = createTransformer( async ( value: IconValue, { signal }: TransformerOptions ) => {
@@ -66,11 +64,7 @@ function getFontAwesomeIconName( iconValue: string ): string | null {
 }
 
 function getFontAwesomeJsonFileName( library: string ): string | null {
-	if ( ! library.startsWith( FONT_AWESOME_LIBRARY_PREFIX ) ) {
-		return null;
-	}
-
-	const fileName = library.slice( FONT_AWESOME_LIBRARY_PREFIX.length );
+	const fileName = library.replace( /^fa-/, '' );
 	const config = getFontAwesome7EditorConfig();
 
 	if ( ! config?.jsonFiles.includes( fileName ) ) {
