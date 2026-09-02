@@ -86,6 +86,10 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 								'size' => '',
 								'unit' => 'auto',
 							] ),
+							'height' => Size_Prop_Type::generate( [
+								'size' => '1lh',
+								'unit' => 'custom',
+							] ),
 						] )
 				),
 		];
