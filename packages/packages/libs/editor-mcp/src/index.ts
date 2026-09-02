@@ -1,5 +1,8 @@
 import { getSDK } from './utils/get-sdk';
+export type { AngieMcpSdk, LoadSidebarV2Options, WidgetConfig } from '@elementor-external/angie-sdk';
+export { LAYOUT_FLOATING_CHAT } from '@elementor-external/angie-sdk';
 export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
+export { createAngieMcpSdkInstance } from './utils/create-angie-mcp-sdk-instance';
 
 export {
 	McpServer,
