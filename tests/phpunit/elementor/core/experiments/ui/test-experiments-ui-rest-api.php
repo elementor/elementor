@@ -2,8 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments\Ui;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Experiments\Ui\Experiments_Ui;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
@@ -34,11 +32,10 @@ class Test_Experiments_Ui_Rest_Api extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			self::TEST_FEATURE_NAME,
+		update_option(
+			Plugin::$instance->experiments->get_feature_option_key( self::TEST_FEATURE_NAME ),
 			$this->original_test_feature_state
 		);
-
 		Plugin::$instance->experiments->sync_feature_state_from_saved_option( self::TEST_FEATURE_NAME );
 
 		global $wp_rest_server;
@@ -63,15 +60,21 @@ class Test_Experiments_Ui_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$experiments = Plugin::$instance->experiments;
-		$feature = $experiments->get_features( self::TEST_FEATURE_NAME );
-		$feature['mutable'] = false;
-		$experiments->add_feature( $feature );
+		$reflection = new \ReflectionClass( $experiments );
+		$features_property = $reflection->getProperty( 'features' );
+		$features_property->setAccessible( true );
+		$features = $features_property->getValue( $experiments );
+		$features[ self::TEST_FEATURE_NAME ]['mutable'] = false;
+		$features_property->setValue( $experiments, $features );
 
 		$request = new WP_REST_Request( 'POST', self::TOGGLE_ROUTE );
 		$request->set_param( 'name', self::TEST_FEATURE_NAME );
 		$request->set_param( 'state', 'active' );
 
 		$response = rest_get_server()->dispatch( $request );
+
+		$features[ self::TEST_FEATURE_NAME ]['mutable'] = true;
+		$features_property->setValue( $experiments, $features );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'experiment_not_allowed', $response->get_data()['code'] );
