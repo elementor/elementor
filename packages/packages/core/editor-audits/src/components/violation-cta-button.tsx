@@ -11,7 +11,7 @@ export default function ViolationCtaButton( { ctaLabel, externalUrl }: Props ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		window.open( externalUrl, '_blank' );
+		window.open( externalUrl, '_blank', 'noopener' );
 	};
 
 	return (
