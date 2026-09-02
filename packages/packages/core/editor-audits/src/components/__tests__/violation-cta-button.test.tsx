@@ -29,7 +29,7 @@ describe( 'ViolationCtaButton', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: CTA_LABEL } ) );
 
-		expect( window.open ).toHaveBeenCalledWith( EXTERNAL_URL, '_blank' );
+		expect( window.open ).toHaveBeenCalledWith( EXTERNAL_URL, '_blank', 'noopener' );
 	} );
 
 	it( 'stops event propagation on click', () => {
