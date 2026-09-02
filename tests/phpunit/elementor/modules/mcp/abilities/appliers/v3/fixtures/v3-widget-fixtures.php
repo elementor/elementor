@@ -58,13 +58,6 @@ class V3_Widget_Fixtures {
 	/**
 	 * @return array<string, array<string, mixed>>
 	 */
-	public static function poc_goldens(): array {
-		return self::read_json( __DIR__ . '/poc-goldens.json' );
-	}
-
-	/**
-	 * @return array<string, array<string, mixed>>
-	 */
 	private static function read_controls( string $file_name ): array {
 		return self::read_json( __DIR__ . '/controls/' . $file_name )['controls'] ?? [];
 	}

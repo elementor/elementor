@@ -145,33 +145,7 @@ class Test_V3_Control_Introspector extends TestCase {
 		$this->assertSame( 'search-field', V3_Control_Introspector::alias_from_section_id( 'section_search_field_style' ) );
 	}
 
-	/**
-	 * The hand-written `non_style_keys` lists in the registry are the reference for what an
-	 * LLM may set through `element_config`; derivation must reproduce them exactly.
-	 *
-	 * @dataProvider widget_types_with_golden_non_style_keys
-	 */
-	public function test_non_style_keys__matches_hand_written_registry_lists( string $widget_type ) {
-		// Arrange.
-		$config = V3_Widget_Fixtures::widget_config( $widget_type );
-		$expected = V3_Widget_Fixtures::poc_goldens()[ $widget_type ]['non_style_keys'];
-
-		// Act.
-		$derived = V3_Control_Introspector::non_style_keys( $config['controls'] );
-
-		// Assert.
-		sort( $expected );
-		sort( $derived );
-		$this->assertSame( $expected, $derived );
-	}
-
-	public function widget_types_with_golden_non_style_keys(): array {
-		$cases = [];
-
-		foreach ( array_keys( V3_Widget_Fixtures::poc_goldens() ) as $widget_type ) {
-			$cases[ $widget_type ] = [ $widget_type ];
-		}
-
-		return $cases;
-	}
+	// Per-widget `non_style_keys` correctness is now guarded by `Test_V3_Widget_Parity`,
+	// which iterates the parity fixtures. This unit-level test class keeps only tests that
+	// exercise the introspector's *behavior*, not its per-widget outputs.
 }
