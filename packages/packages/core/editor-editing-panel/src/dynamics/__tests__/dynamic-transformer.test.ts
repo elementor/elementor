@@ -128,6 +128,63 @@ describe( 'dynamicTransformer', () => {
 		expect( value ).toBe( 'default-value' );
 	} );
 
+	it( 'should wrap an image tag value as an svg-src value when bound to an svg prop', async () => {
+		// Arrange.
+		window.elementor = {
+			...ELEMENTOR_MOCK,
+			dynamicTags: mockDynamicTagsManager( { id: 5, url: 'https://example.com/icon.svg' } ),
+		};
+
+		const propType = {
+			kind: 'union',
+			prop_types: {
+				'svg-src': { kind: 'object', key: 'svg-src' },
+				dynamic: { kind: 'plain', key: 'dynamic' },
+			},
+		} as unknown as PropType;
+
+		const expected = {
+			$$type: 'svg-src',
+			value: {
+				id: { $$type: 'image-attachment-id', value: 5 },
+				url: { $$type: 'url', value: 'https://example.com/icon.svg' },
+			},
+		};
+
+		// Act & Assert - resolved from the server.
+		await expect(
+			dynamicTransformer( { name: 'test-tag', settings: {} }, { key: 'test', propType } )
+		).resolves.toEqual( expected );
+
+		// Act & Assert - resolved from the cache.
+		expect( dynamicTransformer( { name: 'test-tag', settings: {} }, { key: 'test', propType } ) ).toEqual(
+			expected
+		);
+	} );
+
+	it( 'should not wrap an image tag value when the prop is not an svg prop', async () => {
+		// Arrange.
+		const tagValue = { id: 5, url: 'https://example.com/icon.svg' };
+
+		window.elementor = {
+			...ELEMENTOR_MOCK,
+			dynamicTags: mockDynamicTagsManager( tagValue ),
+		};
+
+		const propType = {
+			kind: 'union',
+			prop_types: {
+				'image-src': { kind: 'object', key: 'image-src' },
+				dynamic: { kind: 'plain', key: 'dynamic' },
+			},
+		} as unknown as PropType;
+
+		// Act & Assert.
+		await expect(
+			dynamicTransformer( { name: 'test-tag', settings: {} }, { key: 'test', propType } )
+		).resolves.toEqual( tagValue );
+	} );
+
 	it( 'should return default value for null dynamic values', async () => {
 		// Arrange & Act.
 		const value = dynamicTransformer( null as never, {
@@ -140,7 +197,7 @@ describe( 'dynamicTransformer', () => {
 	} );
 } );
 
-function mockDynamicTagsManager(): DynamicTagsManager {
+function mockDynamicTagsManager( tagValue?: unknown ): DynamicTagsManager {
 	const tags: Record< string, TagInstance > = {};
 	const cache: Record< string, unknown > = {};
 
@@ -170,7 +227,7 @@ function mockDynamicTagsManager(): DynamicTagsManager {
 			}
 
 			// Populate for next "fetch".
-			cache[ cacheKey ] = cacheKey;
+			cache[ cacheKey ] = tagValue ?? cacheKey;
 
 			return null;
 		},
