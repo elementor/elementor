@@ -140,6 +140,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 			. "- **Do NOT write `margin: 0 auto` / `margin-left: auto; margin-right: auto`.** A V3 `container` centers its own content automatically when `max-width` is set — write `max-width: X` alone (routes to `boxed_width` + `content_width: boxed`). Writing `auto` on a numeric margin control falls to `custom_css`.\n"
 			. "- **`min-width` is not a native V3 container control.** Use `flex-basis` or a min-width child pattern; a bare `min-width: X` falls to `custom_css`.\n"
 			. "- **Hover transforms (`&:hover { transform: … }`) are custom_css.** V3 has no native micro-motion; expect a warning per widget.\n\n"
+			. "## V3 container grid layouts\n\n"
+			. "- To use grid, write **`grid-template-columns` (and/or `grid-template-rows`)** on the container — the mapper flips `container_type` to `grid` automatically. Writing bare `display: grid` also works but is not required if a grid-template is present. Values are passed through verbatim: `repeat(3, 1fr)`, `1fr 2fr 1fr`, `minmax(200px, 1fr)`, etc.\n"
+			. "- `gap`, `align-items`, `justify-content`, `align-content` are written to BOTH the flex and grid twin settings, so the same CSS works whether the container is flex or grid.\n"
+			. "- `grid-auto-flow` (`row`, `column`) and `justify-items` also route to native controls.\n\n"
+			. "## custom_css visibility & Pro requirement\n\n"
+			. "- Whatever the mapper cannot route falls to the widget's V3 `custom_css` setting **only when Elementor Pro is active** — `custom_css` is a Pro control. Without Pro, the write is skipped and a warning is emitted; do NOT retry the same `style` field, either fall back to `element_config`-only edits or ask the user to install Pro.\n"
+			. "- When Pro is active, the custom_css lives under **Advanced → Custom CSS** on the widget's panel; its scope is the widget's own wrapper (V3 uses `selector` as the placeholder, which the mapper injects automatically).\n\n"
 			. "---\n\n";
 	}
 

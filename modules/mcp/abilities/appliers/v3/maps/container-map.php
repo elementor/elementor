@@ -49,6 +49,34 @@ return [
 				'resolver' => 'gaps',
 				'responsive' => true,
 			],
+
+			// Grid — Group_Control_Grid_Container fields, prefixed `grid`. `columns_grid` /
+			// `rows_grid` are SLIDERs whose `custom` unit path writes `--e-con-grid-template-*`
+			// verbatim, so a `raw_slider` resolver forwards any CSS grid-template expression
+			// (`repeat(3, 1fr)`, `1fr 2fr 1fr`, `minmax(200px, 1fr) auto`, …) unchanged. Any
+			// grid_* setting written flips `container_type` to grid via
+			// V3_Value_Resolvers::supplement_container_type_toggle — otherwise the container
+			// stays in its default flex mode and the grid CSS is inert.
+			'grid-template-columns' => [
+				'setting' => 'grid_columns_grid',
+				'resolver' => 'raw_slider',
+				'responsive' => true,
+			],
+			'grid-template-rows' => [
+				'setting' => 'grid_rows_grid',
+				'resolver' => 'raw_slider',
+				'responsive' => true,
+			],
+			'grid-auto-flow' => [
+				'setting' => 'grid_auto_flow',
+				'resolver' => 'text',
+				'responsive' => true,
+			],
+			'justify-items' => [
+				'setting' => 'grid_justify_items',
+				'resolver' => 'text',
+				'responsive' => true,
+			],
 			// `display: flex` on a container is redundant — the container is already flex/grid by
 			// its own `container_type` setting. Route it there so the write is a no-op instead of
 			// a `custom_css` dump; if the LLM writes `display: grid` it flips the mode instead.

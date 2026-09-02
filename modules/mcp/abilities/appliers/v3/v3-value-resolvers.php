@@ -100,6 +100,105 @@ class V3_Value_Resolvers {
 	}
 
 	/**
+	 * Container carries separate `flex_*` and `grid_*` alignment/gap settings that are only
+	 * consumed under the matching `container_type`. An LLM writes standard CSS names like
+	 * `align-items: center` once — the mapper routes it to the flex setting by default, then
+	 * this helper mirrors the value onto the grid twin so the write survives a later
+	 * container_type flip. Unused settings are harmless noise.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	public static function supplement_flex_grid_twin_alignments( array $patch, array $controls ): array {
+		$twins = [
+			'flex_align_items' => 'grid_align_items',
+			'flex_justify_content' => 'grid_justify_content',
+			'flex_align_content' => 'grid_align_content',
+			'flex_gap' => 'grid_gaps',
+		];
+
+		foreach ( $twins as $source => $target ) {
+			foreach ( self::responsive_variants( $source, $patch ) as $suffix ) {
+				if ( isset( $controls[ $target . $suffix ] ) && ! isset( $patch[ $target . $suffix ] ) ) {
+					$patch[ $target . $suffix ] = $patch[ $source . $suffix ];
+				}
+			}
+		}
+
+		return $patch;
+	}
+
+	/**
+	 * @param array<string, mixed> $patch
+	 * @return string[] Breakpoint suffixes ('', '_mobile', '_tablet', ...) that the patch
+	 *                  contains for the given base setting.
+	 */
+	private static function responsive_variants( string $setting, array $patch ): array {
+		$suffixes = [];
+
+		foreach ( array_keys( $patch ) as $key ) {
+			if ( ! is_string( $key ) ) {
+				continue;
+			}
+
+			if ( $key === $setting ) {
+				$suffixes[] = '';
+				continue;
+			}
+
+			if ( 0 === strpos( $key, $setting . '_' ) ) {
+				$suffixes[] = substr( $key, strlen( $setting ) );
+			}
+		}
+
+		return $suffixes;
+	}
+
+	/**
+	 * Container's grid group controls are conditional on `container_type = grid`. When any of
+	 * them lands in the patch (`grid_columns_grid`, `grid_rows_grid`, `grid_gaps`,
+	 * `grid_auto_flow`, `grid_justify_items`, `grid_align_items`, `grid_justify_content`,
+	 * `grid_align_content`) the container has to be flipped from its default `flex` to `grid`
+	 * or the setting stays inert. Mirrors the background-color / content-width toggle pattern.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	public static function supplement_container_type_toggle( array $patch, array $controls ): array {
+		if ( ! isset( $controls['container_type'] ) ) {
+			return $patch;
+		}
+
+		// Only "grid-exclusive" signals flip the mode. Settings like `grid_align_items` /
+		// `grid_gaps` also come from `supplement_flex_grid_twin_alignments` (mirrored from the
+		// flex twin), so relying on them would flip a legitimately-flex container to grid.
+		$grid_exclusive_prefixes = [
+			'grid_columns_grid',
+			'grid_rows_grid',
+			'grid_auto_flow',
+			'grid_justify_items',
+		];
+
+		foreach ( array_keys( $patch ) as $setting ) {
+			if ( ! is_string( $setting ) ) {
+				continue;
+			}
+
+			foreach ( $grid_exclusive_prefixes as $prefix ) {
+				if ( $setting === $prefix || 0 === strpos( $setting, $prefix . '_' ) ) {
+					$patch['container_type'] = 'grid';
+
+					return $patch;
+				}
+			}
+		}
+
+		return $patch;
+	}
+
+	/**
 	 * `boxed_width` (V3 container's max-width setting) is a conditional control that only takes
 	 * effect when `content_width` is `boxed`. When the LLM writes `max-width: X` on a container,
 	 * the resolver routes to `boxed_width`; this pairs `content_width=boxed` so the width is
@@ -584,6 +683,8 @@ class V3_Value_Resolvers {
 				return self::resolve_element_width( $css_value, $property );
 			case 'gaps':
 				return self::resolve_gaps( $css_value, $property );
+			case 'raw_slider':
+				return self::resolve_raw_slider( $css_value );
 			case 'border_side':
 				return self::resolve_border_side_shorthand(
 					$css_value,
@@ -593,6 +694,21 @@ class V3_Value_Resolvers {
 			default:
 				return null;
 		}
+	}
+
+	/**
+	 * Stores an arbitrary CSS expression in a V3 SLIDER control that supports the `custom` unit
+	 * (e.g. `grid-template-columns: repeat(3, 1fr)` -> `{size: 'repeat(3, 1fr)', unit: 'custom'}`).
+	 * The control's selector template writes `{{SIZE}}` verbatim when unit is `custom`, so
+	 * anything CSS accepts here — `repeat()`, `minmax()`, per-column tracks like `1fr 2fr 1fr`.
+	 *
+	 * @return array{unit: string, size: string}
+	 */
+	public static function resolve_raw_slider( string $css_value ): array {
+		return [
+			'unit' => 'custom',
+			'size' => trim( $css_value ),
+		];
 	}
 
 	/**
