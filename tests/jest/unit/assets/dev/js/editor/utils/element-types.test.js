@@ -1,23 +1,46 @@
-import { COMPOUND_ATOMIC_TYPES } from 'elementor-editor/utils/element-types';
+import { isCompoundAtomicType } from 'elementor-editor/utils/element-types';
 
-describe( 'COMPOUND_ATOMIC_TYPES', () => {
-	test( 'includes all expected compound atomic element types', () => {
-		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-tabs' );
-		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-accordion' );
-		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-collection-loop' );
-		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-list' );
-		expect( COMPOUND_ATOMIC_TYPES ).toContain( 'e-form' );
+const makeConfig = ( types ) => {
+	global.elementor = {
+		getConfig: () => ( {
+			elements: Object.fromEntries(
+				types.map( ( [ type, isCompound ] ) => [ type, isCompound ? { is_compound: true } : {} ] )
+			),
+		} ),
+	};
+};
+
+describe( 'isCompoundAtomicType', () => {
+	beforeEach( () => {
+		makeConfig( [
+			[ 'e-tabs', true ],
+			[ 'e-accordion', true ],
+			[ 'e-collection-loop', true ],
+			[ 'e-list', true ],
+			[ 'e-form', true ],
+			[ 'e-flexbox', false ],
+			[ 'e-grid', false ],
+			[ 'e-div-block', false ],
+		] );
 	} );
 
-	test( 'does not include generic container types', () => {
-		expect( COMPOUND_ATOMIC_TYPES ).not.toContain( 'e-flexbox' );
-		expect( COMPOUND_ATOMIC_TYPES ).not.toContain( 'e-grid' );
-		expect( COMPOUND_ATOMIC_TYPES ).not.toContain( 'e-div-block' );
+	test( 'returns true for compound atomic types', () => {
+		expect( isCompoundAtomicType( 'e-tabs' ) ).toBe( true );
+		expect( isCompoundAtomicType( 'e-accordion' ) ).toBe( true );
+		expect( isCompoundAtomicType( 'e-collection-loop' ) ).toBe( true );
+		expect( isCompoundAtomicType( 'e-list' ) ).toBe( true );
+		expect( isCompoundAtomicType( 'e-form' ) ).toBe( true );
 	} );
 
-	test( 'does not include legacy widget/section types', () => {
-		expect( COMPOUND_ATOMIC_TYPES ).not.toContain( 'widget' );
-		expect( COMPOUND_ATOMIC_TYPES ).not.toContain( 'section' );
-		expect( COMPOUND_ATOMIC_TYPES ).not.toContain( 'column' );
+	test( 'returns false for generic container types', () => {
+		expect( isCompoundAtomicType( 'e-flexbox' ) ).toBe( false );
+		expect( isCompoundAtomicType( 'e-grid' ) ).toBe( false );
+		expect( isCompoundAtomicType( 'e-div-block' ) ).toBe( false );
+	} );
+
+	test( 'returns false for legacy widget/section types', () => {
+		expect( isCompoundAtomicType( 'widget' ) ).toBe( false );
+		expect( isCompoundAtomicType( 'section' ) ).toBe( false );
+		expect( isCompoundAtomicType( 'column' ) ).toBe( false );
 	} );
 } );

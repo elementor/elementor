@@ -8,14 +8,20 @@ const getAllElementTypes = () => {
 };
 
 /**
- * Compound atomic element types that should be auto-wrapped in a flexbox container
- * when dropped onto the canvas, consistent with atom elements (Heading, Image, etc.).
+ * Returns whether an element type is a compound atomic element —
+ * one that should be auto-wrapped in a flexbox container when dropped on the canvas,
+ * consistent with atom elements (Heading, Image, etc.).
  *
- * @type {string[]}
+ * Compound atomic elements declare `is_compound: true` in their PHP element meta.
+ *
+ * @param {string} elType - The element type string (e.g. 'e-tabs').
+ * @return {boolean}
  */
-const COMPOUND_ATOMIC_TYPES = [ 'e-tabs', 'e-accordion', 'e-collection-loop', 'e-list', 'e-form' ];
+const isCompoundAtomicType = ( elType ) => {
+	return !! elementor.getConfig().elements[ elType ]?.is_compound;
+};
 
 module.exports = {
 	getAllElementTypes,
-	COMPOUND_ATOMIC_TYPES,
+	isCompoundAtomicType,
 };

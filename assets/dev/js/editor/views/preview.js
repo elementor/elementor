@@ -1,7 +1,7 @@
 import AddSectionView from './add-section/independent';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
-const { COMPOUND_ATOMIC_TYPES } = require( 'elementor-editor/utils/element-types' );
+const { isCompoundAtomicType } = require( 'elementor-editor/utils/element-types' );
 
 const Preview = BaseSectionsContainerView.extend( {
 	initialize() {
@@ -85,7 +85,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: ( wrappedElementTypes.includes( model.elType ) || COMPOUND_ATOMIC_TYPES.includes( model.elType ) ) && ! model.widgetType?.startsWith( 'e-form-' ) },
+			{ ...options, shouldWrap: ( wrappedElementTypes.includes( model.elType ) || isCompoundAtomicType( model.elType ) ) && ! model.widgetType?.startsWith( 'e-form-' ) },
 		);
 	},
 
