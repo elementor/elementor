@@ -22,16 +22,29 @@ class V3_Widget_Map_Loader {
 	const MAPS_DIR = __DIR__ . '/maps';
 
 	/**
-	 * Every V3 widget carries the same Advanced-tab spacing controls, and both are `dimensions`
-	 * controls: the generic index can only reach them through the shorthand, so the per-side
-	 * properties an LLM naturally writes (`margin-top`) are wired up here for all widgets.
+	 * Every V3 widget/element carries the same Advanced-tab spacing controls. Widgets (which
+	 * extend common-base) call them `_margin` / `_padding`; elements (`container`, `section`,
+	 * `column`) call them `margin` / `padding` — no underscore prefix. Historically the loader
+	 * assumed the widget shape, so LLM writes like `padding: 2rem` on a container silently went
+	 * to a nonexistent `_padding` setting and the page rendered with no spacing at all.
+	 *
+	 * Left as a per-property list of candidate setting names in preference order — the resolver
+	 * picks the first one that exists on the current widget's controls.
 	 */
-	const SPACING_SETTINGS = [
-		'margin' => '_margin',
-		'padding' => '_padding',
+	const SPACING_SETTING_CANDIDATES = [
+		'margin' => [ '_margin', 'margin' ],
+		'padding' => [ '_padding', 'padding' ],
 	];
 
 	const SIDES = [ 'top', 'right', 'bottom', 'left' ];
+
+	/**
+	 * Advanced-tab settings that every V3 element carries and every LLM needs to reach
+	 * (CSS ID for in-page anchors, CSS classes handled separately). The introspector's
+	 * `non_style_keys` derivation only picks up Content-tab controls, so these are
+	 * injected here so a page can be assembled with working `#id` links.
+	 */
+	const SHARED_NON_STYLE_ADVANCED_KEYS = [ '_element_id' ];
 
 	/**
 	 * @var array<string, array<string, mixed>|null>
@@ -238,21 +251,46 @@ class V3_Widget_Map_Loader {
 					? V3_Control_Introspector::styleable_setting_keys( $controls )
 					: $derived['wrapper']['setting_keys'],
 				'style_overrides' => array_merge(
-					self::spacing_overrides(),
+					self::spacing_overrides( $controls ),
 					self::element_width_overrides(),
 					self::array_map_value( $wrapper['style_overrides'] ?? null )
 				),
 				'excluded_advanced_keys' => $derived['excluded_advanced_keys'],
 			],
 			'inner_elements' => $inner_elements,
-			'non_style_keys' => $derived['non_style_keys'],
+			'non_style_keys' => self::merge_shared_non_style_keys( $derived['non_style_keys'], $controls ),
 		];
 	}
 
-	private static function spacing_overrides(): array {
+	/**
+	 * @param string[]             $derived_keys
+	 * @param array<string, mixed> $controls
+	 * @return string[]
+	 */
+	private static function merge_shared_non_style_keys( array $derived_keys, array $controls ): array {
+		foreach ( self::SHARED_NON_STYLE_ADVANCED_KEYS as $key ) {
+			if ( isset( $controls[ $key ] ) && ! in_array( $key, $derived_keys, true ) ) {
+				$derived_keys[] = $key;
+			}
+		}
+
+		return $derived_keys;
+	}
+
+	/**
+	 * @param array<string, mixed> $controls Widget's own controls, used to pick between the
+	 *                                       widget-shape (`_padding`) and element-shape
+	 *                                       (`padding`) setting name.
+	 */
+	private static function spacing_overrides( array $controls = [] ): array {
 		$overrides = [];
 
-		foreach ( self::SPACING_SETTINGS as $property => $setting ) {
+		foreach ( self::SPACING_SETTING_CANDIDATES as $property => $candidates ) {
+			$setting = self::pick_existing_setting( $candidates, $controls );
+			if ( null === $setting ) {
+				continue;
+			}
+
 			$overrides[ $property ] = [
 				'setting' => $setting,
 				'resolver' => 'sides',
@@ -270,6 +308,24 @@ class V3_Widget_Map_Loader {
 		}
 
 		return $overrides;
+	}
+
+	/**
+	 * Picks the first candidate setting that actually exists on the widget's controls. Falls
+	 * back to the first candidate (widget shape) when the controls list is empty — this keeps
+	 * the behavior stable for schema / cache paths that resolve the map without a full config.
+	 *
+	 * @param string[]             $candidates
+	 * @param array<string, mixed> $controls
+	 */
+	private static function pick_existing_setting( array $candidates, array $controls ): ?string {
+		foreach ( $candidates as $candidate ) {
+			if ( isset( $controls[ $candidate ] ) ) {
+				return $candidate;
+			}
+		}
+
+		return empty( $controls ) ? ( $candidates[0] ?? null ) : null;
 	}
 
 	/**
