@@ -99,6 +99,32 @@ class V3_Value_Resolvers {
 		return $patch;
 	}
 
+	/**
+	 * `boxed_width` (V3 container's max-width setting) is a conditional control that only takes
+	 * effect when `content_width` is `boxed`. When the LLM writes `max-width: X` on a container,
+	 * the resolver routes to `boxed_width`; this pairs `content_width=boxed` so the width is
+	 * actually applied. Mirrors the background-color toggle pattern.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	public static function supplement_content_width_toggle( array $patch, array $controls ): array {
+		if ( ! isset( $controls['boxed_width'], $controls['content_width'] ) ) {
+			return $patch;
+		}
+
+		foreach ( array_keys( $patch ) as $setting ) {
+			if ( is_string( $setting ) && ( 'boxed_width' === $setting || 0 === strpos( $setting, 'boxed_width_' ) ) ) {
+				$patch['content_width'] = 'boxed';
+
+				return $patch;
+			}
+		}
+
+		return $patch;
+	}
+
 	private static function is_background_color_setting( string $setting ): bool {
 		if ( str_contains( $setting, '_background_' ) ) {
 			return true;
@@ -484,9 +510,52 @@ class V3_Value_Resolvers {
 	}
 
 	/**
+	 * Parses a CSS `gap` value (`gap: 1rem` or `gap: 1rem 2rem` — first is row-gap, second is
+	 * column-gap) into the shape Controls_Manager::GAPS stores: `{column, row, unit, isLinked}`.
+	 * Two-value form uses different row/column values and marks isLinked=false; single-value
+	 * mirrors row=column and marks isLinked=true.
+	 *
+	 * @return array{column: string, row: string, unit: string, isLinked: bool}|array{rejected: true, reason: string, value: string, property: string}|null
+	 */
+	public static function resolve_gaps( string $css_value, string $property = 'gap' ) {
+		$rejection = self::maybe_reject_variable( $css_value, $property );
+		if ( null !== $rejection ) {
+			return $rejection;
+		}
+
+		$tokens = self::tokenize_css_values( trim( $css_value ) );
+		if ( empty( $tokens ) || count( $tokens ) > 2 ) {
+			return null;
+		}
+
+		$parsed = [];
+		foreach ( $tokens as $token ) {
+			$length = self::parse_length( $token );
+			if ( null === $length ) {
+				return null;
+			}
+			$parsed[] = $length;
+		}
+
+		if ( count( $parsed ) === 2 && $parsed[0]['unit'] !== $parsed[1]['unit'] ) {
+			return null;
+		}
+
+		$row = (string) $parsed[0]['size'];
+		$column = count( $parsed ) === 2 ? (string) $parsed[1]['size'] : $row;
+
+		return [
+			'column' => $column,
+			'row' => $row,
+			'unit' => $parsed[0]['unit'],
+			'isLinked' => $row === $column,
+		];
+	}
+
+	/**
 	 * Dispatches a named resolver against a CSS value.
 	 *
-	 * @param string               $resolver_name One of: color, dimension, sides, box_shadow, border, text, slider.
+	 * @param string               $resolver_name One of: color, dimension, sides, box_shadow, border, text, slider, gaps, element_width.
 	 * @param string               $css_value
 	 * @param array<string, mixed> $args          Extra args (prefix for border/typography).
 	 * @return mixed|null
@@ -513,9 +582,49 @@ class V3_Value_Resolvers {
 				return trim( $css_value );
 			case 'element_width':
 				return self::resolve_element_width( $css_value, $property );
+			case 'gaps':
+				return self::resolve_gaps( $css_value, $property );
+			case 'border_side':
+				return self::resolve_border_side_shorthand(
+					$css_value,
+					(string) ( $args['side'] ?? '' ),
+					(string) ( $args['prefix'] ?? 'border' )
+				);
 			default:
 				return null;
 		}
+	}
+
+	/**
+	 * Parses `border-top: 1px solid #ccc` (and its 3 siblings) into the V3 border-group patch,
+	 * setting only the requested side's width. The other three sides fall back to zero so a
+	 * standalone per-side write does not leak into unrelated sides — full linked writes should
+	 * use `border` (the shorthand of all four).
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public static function resolve_border_side_shorthand( string $css_value, string $side, string $prefix = 'border' ): ?array {
+		if ( ! in_array( $side, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
+			return null;
+		}
+
+		$patch = self::resolve_border_shorthand( $css_value, $prefix );
+		if ( null === $patch ) {
+			return null;
+		}
+
+		$width = $patch[ $prefix . '_width' ] ?? null;
+		if ( is_array( $width ) ) {
+			$sides = [ 'top', 'right', 'bottom', 'left' ];
+			$only_side_value = $width[ $side ];
+			foreach ( $sides as $s ) {
+				$width[ $s ] = $s === $side ? (string) $only_side_value : '0';
+			}
+			$width['isLinked'] = false;
+			$patch[ $prefix . '_width' ] = $width;
+		}
+
+		return $patch;
 	}
 
 	/**
@@ -574,7 +683,7 @@ class V3_Value_Resolvers {
 			];
 		}
 
-		if ( ! preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|vmin|vmax)?$/i', $token, $matches ) ) {
+		if ( ! preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|vmin|vmax|ch|ex|svh|svw|dvh|dvw|lvh|lvw)?$/i', $token, $matches ) ) {
 			return null;
 		}
 

@@ -42,6 +42,7 @@ class V3_Control_Value_Compatibility {
 		'dimension_side',
 		'box_shadow',
 		'border',
+		'gaps',
 	];
 
 	public static function infer_resolver( array $control, string $property ): string {
@@ -88,6 +89,10 @@ class V3_Control_Value_Compatibility {
 		if ( in_array( $resolver, self::STRUCTURED_RESOLVERS, true ) ) {
 			if ( 'box_shadow' === $resolver ) {
 				return 'box_shadow' === $type;
+			}
+
+			if ( 'gaps' === $resolver ) {
+				return 'gaps' === $type;
 			}
 
 			if ( in_array( $type, [ 'slider', 'dimensions' ], true ) ) {
