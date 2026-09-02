@@ -260,6 +260,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const elementClasses = contentElement.classList.toString();
 		const propValue = this.getExtractedContentValue();
 		const expectedTag = this.getExpectedTag();
+		const bind = this.getInlineEditablePropertyName();
 
 		contentElement.innerHTML = '';
 		this.editing = true;
@@ -272,6 +273,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 				rootElement={ this.element }
 				contentElement={ contentElement }
 				id={ this.id }
+				bind={ bind }
 				setValue={ this.setContentValue.bind( this ) }
 				requestDestroy={ this.unmountInlineEditor.bind( this ) }
 			/>

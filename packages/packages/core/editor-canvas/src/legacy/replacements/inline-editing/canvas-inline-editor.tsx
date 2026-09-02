@@ -4,6 +4,7 @@ import { InlineEditor, InlineEditorToolbar } from '@elementor/editor-controls';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { autoUpdate, flip, FloatingPortal, useFloating } from '@floating-ui/react';
 
+import { isInlineTextGeneratorInteraction } from '../../../inline-text-generator/is-inline-text-generator-interaction';
 import { CANVAS_WRAPPER_ID, OutlineOverlay } from '../../../components/outline-overlay';
 import {
 	type Editor,
@@ -20,6 +21,7 @@ export const CanvasInlineEditor = ( {
 	rootElement,
 	contentElement,
 	id,
+	bind,
 	setValue,
 	requestDestroy,
 }: {
@@ -29,6 +31,7 @@ export const CanvasInlineEditor = ( {
 	rootElement: HTMLElement;
 	contentElement: HTMLElement;
 	id: string;
+	bind: string;
 	setValue: ( value: string | null ) => void;
 	requestDestroy: () => void;
 } ) => {
@@ -55,6 +58,10 @@ export const CanvasInlineEditor = ( {
 
 		const handleClickAway = ( event: MouseEvent ) => {
 			if ( contentElement.contains( event.target as Node ) ) {
+				return;
+			}
+
+			if ( isInlineTextGeneratorInteraction( event.target ) ) {
 				return;
 			}
 
@@ -88,7 +95,9 @@ export const CanvasInlineEditor = ( {
 				autofocus
 				onSelectionEnd={ onSelectionEnd }
 			/>
-			{ toolbarAnchor && editor && <InlineEditingToolbar anchor={ toolbarAnchor } editor={ editor } id={ id } /> }
+			{ toolbarAnchor && editor && (
+				<InlineEditingToolbar anchor={ toolbarAnchor } editor={ editor } id={ id } bind={ bind } />
+			) }
 		</ThemeProvider>
 	);
 };
@@ -112,7 +121,17 @@ const InlineEditingOverlay = ( {
 	return overlayRefElement ? <OutlineOverlay element={ overlayRefElement } id={ id } isSelected /> : null;
 };
 
-const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; editor: Editor; id: string } ) => {
+const InlineEditingToolbar = ( {
+	anchor,
+	editor,
+	id,
+	bind,
+}: {
+	anchor: HTMLElement;
+	editor: Editor;
+	id: string;
+	bind: string;
+} ) => {
 	const { refs, floatingStyles } = useFloating( {
 		placement: 'top',
 		strategy: 'fixed',
@@ -137,7 +156,7 @@ const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; ed
 					pointerEvents: 'none',
 				} }
 			>
-				<InlineEditorToolbar editor={ editor } elementId={ id } />
+				<InlineEditorToolbar editor={ editor } elementId={ id } bind={ bind } source="canvas" />
 			</Box>
 		</FloatingPortal>
 	);

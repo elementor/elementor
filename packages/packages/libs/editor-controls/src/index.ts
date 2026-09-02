@@ -66,6 +66,10 @@ export {
 export { PopoverGridContainer } from './components/popover-grid-container';
 export { InlineEditor } from './components/inline-editor';
 export { InlineEditorToolbar } from './components/inline-editor-toolbar';
+export {
+	injectIntoInlineEditorToolbarActions,
+	InlineEditorToolbarActionsSlot,
+} from './components/inline-editor-toolbar-actions';
 export { UnstableSizeField } from './components/size/unstable-size-field';
 export { NumberInput } from './components/number-input';
 export { SizeComponent } from './controls/size-control/size-component';
@@ -89,6 +93,10 @@ export {
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
 export type { InlineEditorToolbarProps } from './components/inline-editor-toolbar';
+export type {
+	InlineEditorToolbarActionContext,
+	InlineEditorToolbarSource,
+} from './components/inline-editor-toolbar-actions';
 export type { V4PromotionData, V4PromotionKey } from './components/promotions/types';
 export type { PromotionTriggerRef } from './components/promotions/promotion-trigger';
 export { trackViewPromotion, trackUpgradePromotionClick } from './utils/tracking';
