@@ -111,6 +111,89 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'heading_tag', $component->get_overridable_props()->props );
 	}
 
+	public function test_create__copy_from_source_applies_overridable_props_using_live_source_ids() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[
+				'id' => 'source-wrap-id',
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'source-heading-id',
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'create',
+			'title' => 'Copied Overridable Hero',
+			'source_post_id' => $post_id,
+			'element_id' => 'source-wrap-id',
+			'overridable_props' => [
+				'heading_tag' => [
+					'target' => 'source-heading-id',
+					'prop_key' => 'tag',
+					'label' => 'Heading Tag',
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
+		$component = ( new Components_Repository() )->get( $result['component_id'], false );
+		$heading = $component->get_elements_data()[0]['elements'][0];
+		$this->assertSame( 'overridable', $heading['settings']['tag']['$$type'] );
+		$this->assertArrayHasKey( 'heading_tag', $component->get_overridable_props()->props );
+		$this->assertNotSame( 'source-heading-id', $heading['id'] );
+		$this->assertNotSame( 'source-heading-id', $heading['editor_settings']['title'] ?? null, 'Source id must not leak into editor_settings.title.' );
+		$this->assertNotSame( 'source-wrap-id', $component->get_elements_data()[0]['editor_settings']['title'] ?? null, 'Source id must not leak into editor_settings.title.' );
+	}
+
+	public function test_create__copy_from_source_does_not_clobber_existing_editor_settings_title() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, [
+			[
+				'id' => 'source-heading-id',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'elements' => [],
+				'editor_settings' => [
+					'title' => 'Keep Me',
+				],
+			],
+		] );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'action' => 'create',
+			'title' => 'Copied Labeled Heading',
+			'source_post_id' => $post_id,
+			'element_id' => 'source-heading-id',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
+		$copied = ( new Components_Repository() )->get( $result['component_id'], false )->get_elements_data()[0];
+		$this->assertSame( 'Keep Me', $copied['editor_settings']['title'] );
+		$this->assertNotSame( 'source-heading-id', $copied['id'] );
+	}
+
 	public function test_create__persists_widgets_cache_key_as_widget_type_for_atomic_elements() {
 		// Arrange
 		$this->act_as_admin();
