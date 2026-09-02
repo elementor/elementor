@@ -90,7 +90,7 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( $experimental_data['mutable'] && is_admin() ) {
+		if ( $experimental_data['mutable'] && ( is_admin() || wp_is_json_request() ) ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
@@ -386,6 +386,14 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 			'generator_tag' => true,
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_experiments_ui',
+			'title' => esc_html__( 'New Experiments Page UI', 'elementor' ),
+			'description' => esc_html__( 'Redesigned experiments page with card layout, search, filtering, auto-save on toggle, dependency grouping, and bulk actions.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 
@@ -940,6 +948,11 @@ class Manager extends Base_Object {
 		// Register CLI commands.
 		if ( Utils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor experiments', WP_CLI::class );
+		}
+
+		if ( file_exists( __DIR__ . '/ui/experiments-ui.php' ) ) {
+			require_once __DIR__ . '/ui/experiments-ui.php';
+			( new \Elementor\Core\Experiments\Ui\Experiments_Ui() )->register();
 		}
 	}
 
