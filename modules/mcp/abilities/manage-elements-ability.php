@@ -230,7 +230,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->with_edit_url( $response, $document );
 		}
 
-		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
+		// `manage-elements` edits an existing document in place; if it is already published, keep
+		// it published. Downgrading to draft here would silently unpublish a live page mid-session.
+		$save_result = $this->get_mutator()->save_as_draft( $document, $tree, true );
 		if ( is_wp_error( $save_result ) || ! $save_result ) {
 			$response['status'] = 'error';
 			$response['save_error'] = is_wp_error( $save_result )
