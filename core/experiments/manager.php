@@ -855,9 +855,28 @@ class Manager extends Base_Object {
 		return ! $this->has_non_existing_dependency( $feature );
 	}
 
+	public function sync_feature_state_from_saved_option( $feature_name ) {
+		$feature = $this->get_features( $feature_name );
+
+		if ( ! $feature ) {
+			return;
+		}
+
+		$this->features[ $feature_name ]['state'] = get_option(
+			$this->get_feature_option_key( $feature_name ),
+			$feature['default']
+		);
+	}
+
 	private function is_experiments_ui_rest_request() {
 		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
 			return false;
+		}
+
+		$rest_route = $GLOBALS['wp']->query_vars['rest_route'] ?? '';
+
+		if ( is_string( $rest_route ) && '' !== $rest_route ) {
+			return 0 === strpos( $rest_route, '/elementor/v1/experiments-ui' );
 		}
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';

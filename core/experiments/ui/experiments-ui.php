@@ -303,6 +303,8 @@ class Experiments_Ui {
 		remove_filter( 'wp_die_ajax_handler', $die_handler_factory );
 		remove_filter( 'wp_die_json_handler', $die_handler_factory );
 
+		$experiments->sync_feature_state_from_saved_option( $name );
+
 		return [
 			'name' => $name,
 			'state' => get_option( $option_key, $feature['default'] ),

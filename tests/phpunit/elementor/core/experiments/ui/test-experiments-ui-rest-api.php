@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments\Ui;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Ui\Experiments_Ui;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
@@ -17,19 +18,12 @@ class Test_Experiments_Ui_Rest_Api extends Elementor_Test_Base {
 
 	private const BULK_ROUTE = '/elementor/v1/experiments-ui/bulk';
 
-	private const TEST_FEATURE_NAME = 'test_experiments_ui_feature';
+	private const TEST_FEATURE_NAME = 'e_experiments_ui';
 
 	private string $original_test_feature_state;
 
 	public function setUp(): void {
 		parent::setUp();
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::TEST_FEATURE_NAME,
-			'title' => 'Test Feature',
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'mutable' => true,
-		] );
 
 		$this->original_test_feature_state = Plugin::$instance->experiments
 			->get_features( self::TEST_FEATURE_NAME )['state'];
@@ -44,6 +38,8 @@ class Test_Experiments_Ui_Rest_Api extends Elementor_Test_Base {
 			self::TEST_FEATURE_NAME,
 			$this->original_test_feature_state
 		);
+
+		Plugin::$instance->experiments->sync_feature_state_from_saved_option( self::TEST_FEATURE_NAME );
 
 		global $wp_rest_server;
 		$wp_rest_server = null;
@@ -66,16 +62,14 @@ class Test_Experiments_Ui_Rest_Api extends Elementor_Test_Base {
 	public function test_toggle__rejects_immutable_feature() {
 		$this->act_as_admin();
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'immutable_experiments_ui_feature',
-			'title' => 'Immutable Feature',
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'mutable' => false,
-		] );
+		$experiments = Plugin::$instance->experiments;
+		$feature = $experiments->get_features( self::TEST_FEATURE_NAME );
+		$feature['mutable'] = false;
+		$experiments->add_feature( $feature );
 
 		$request = new WP_REST_Request( 'POST', self::TOGGLE_ROUTE );
-		$request->set_param( 'name', 'immutable_experiments_ui_feature' );
-		$request->set_param( 'state', 'inactive' );
+		$request->set_param( 'name', self::TEST_FEATURE_NAME );
+		$request->set_param( 'state', 'active' );
 
 		$response = rest_get_server()->dispatch( $request );
 
