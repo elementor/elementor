@@ -357,11 +357,11 @@ class Module extends BaseModule {
 	}
 
 	private function add_font_awesome_7_config( $settings ) {
-		if ( ! isset( $settings['font-awesome'] ) || ! is_array( $settings['font-awesome'] ) ) {
-			$settings['font-awesome'] = [];
+		if ( ! isset( $settings['fontAwesome'] ) || ! is_array( $settings['fontAwesome'] ) ) {
+			$settings['fontAwesome'] = [];
 		}
 
-		$settings['font-awesome']['v7'] = Font_Awesome_7_Icon_Resolver::get_editor_config();
+		$settings['fontAwesome']['v7'] = Font_Awesome_7_Icon_Resolver::get_editor_config();
 
 		return $settings;
 	}

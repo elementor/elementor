@@ -77,7 +77,7 @@ declare global {
 			config?: {
 				allowedHTMLWrapperTags?: string[];
 				experimentalFeatures?: Record< string, boolean >;
-				'font-awesome'?: {
+				fontAwesome?: {
 					v7?: {
 						jsonFiles?: string[];
 						jsonBaseUrl?: string;
