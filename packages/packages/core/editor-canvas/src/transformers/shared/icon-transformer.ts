@@ -75,7 +75,7 @@ function getFontAwesomeJsonFileName( library: string ): string | null {
 }
 
 function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
-	const config = window.elementorCommon?.config?.atomic?.fontAwesome7;
+	const config = window.elementorCommon?.config?.[ 'font-awesome' ]?.v7;
 
 	if (
 		! config ||

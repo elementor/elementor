@@ -51,8 +51,8 @@ describe( 'iconTransformer', () => {
 				urls: {
 					assets: 'https://example.com/assets/',
 				},
-				atomic: {
-					fontAwesome7: {
+				'font-awesome': {
+					v7: {
 						jsonFiles: [ 'solid', 'regular', 'brands' ],
 						jsonBaseUrl: 'https://example.com/assets/lib/font-awesome-7/json/',
 					},
@@ -143,8 +143,8 @@ describe( 'iconTransformer', () => {
 		const jsonBaseUrl = 'https://cdn.example.com/fa7/json/';
 		window.elementorCommon = {
 			config: {
-				atomic: {
-					fontAwesome7: {
+				'font-awesome': {
+					v7: {
 						jsonFiles: [ 'solid', 'regular', 'brands' ],
 						jsonBaseUrl,
 					},

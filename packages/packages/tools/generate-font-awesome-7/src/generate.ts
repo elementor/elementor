@@ -3,9 +3,9 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import * as freeBrandsSvgIcons from '@fortawesome/free-brands-svg-icons';
-import * as freeRegularSvgIcons from '@fortawesome/free-regular-svg-icons';
-import * as freeSolidSvgIcons from '@fortawesome/free-solid-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 const FONT_AWESOME_MAJOR_VERSION = 7;
 
@@ -35,9 +35,9 @@ const FONT_AWESOME_7_PACKS: Array< {
 	fileName: string;
 	packageName: FontAwesome7PackageName;
 } > = [
-	{ module: freeSolidSvgIcons, fileName: 'solid', packageName: '@fortawesome/free-solid-svg-icons' },
-	{ module: freeRegularSvgIcons, fileName: 'regular', packageName: '@fortawesome/free-regular-svg-icons' },
-	{ module: freeBrandsSvgIcons, fileName: 'brands', packageName: '@fortawesome/free-brands-svg-icons' },
+	{ module: fas as Record< string, unknown >, fileName: 'solid', packageName: '@fortawesome/free-solid-svg-icons' },
+	{ module: far as Record< string, unknown >, fileName: 'regular', packageName: '@fortawesome/free-regular-svg-icons' },
+	{ module: fab as Record< string, unknown >, fileName: 'brands', packageName: '@fortawesome/free-brands-svg-icons' },
 ];
 
 const require = createRequire( import.meta.url );
