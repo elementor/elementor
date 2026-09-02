@@ -35,9 +35,21 @@ const FONT_AWESOME_7_PACKS: Array< {
 	fileName: string;
 	packageName: FontAwesome7PackageName;
 } > = [
-	{ module: fas as Record< string, unknown >, fileName: 'solid', packageName: '@fortawesome/free-solid-svg-icons' },
-	{ module: far as Record< string, unknown >, fileName: 'regular', packageName: '@fortawesome/free-regular-svg-icons' },
-	{ module: fab as Record< string, unknown >, fileName: 'brands', packageName: '@fortawesome/free-brands-svg-icons' },
+	{
+		module: fas as Record< string, unknown >,
+		fileName: 'solid',
+		packageName: '@fortawesome/free-solid-svg-icons',
+	},
+	{
+		module: far as Record< string, unknown >,
+		fileName: 'regular',
+		packageName: '@fortawesome/free-regular-svg-icons',
+	},
+	{
+		module: fab as Record< string, unknown >,
+		fileName: 'brands',
+		packageName: '@fortawesome/free-brands-svg-icons',
+	},
 ];
 
 const require = createRequire( import.meta.url );
