@@ -103,19 +103,29 @@ class Widget_Type_Resolver {
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
 		if ( $element ) {
 			$config = $element->get_config();
-			return [
+			$resolved = [
 				'elType' => $type,
 				'widgetType' => null,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
 				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $element ),
 			];
+
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) && method_exists( $element, 'get_controls' ) ) {
+				$resolved['controls'] = (array) $element->get_controls();
+			}
+
+			return $resolved;
 		}
+
+		$hint = Widget_Context_Helper::v4_off_type_hint( $type );
 
 		return new \WP_Error(
 			'elementor_unknown_type',
-			/* translators: %s: element type */
-			sprintf( __( 'Unknown element type: %s.', 'elementor' ), $type ),
+			null === $hint
+				/* translators: %s: element type */
+				? sprintf( __( 'Unknown element type: %s.', 'elementor' ), $type )
+				: $hint,
 			[ 'status' => \WP_Http::BAD_REQUEST ]
 		);
 	}

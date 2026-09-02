@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Plugin;
@@ -112,7 +113,34 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	private function get_ability_description(): string {
-		return Prompt_Loader::load( 'build-composition' );
+		return $this->runtime_flags_notice() . Prompt_Loader::load( 'build-composition' );
+	}
+
+	/**
+	 * When the V4 atomic experiment is off, the global-variables / global-classes / interactions
+	 * tools and resources are not registered on this site — but the static doc still references
+	 * them. Prepend a runtime notice so the LLM knows not to call them.
+	 */
+	private function runtime_flags_notice(): string {
+		if ( AtomicWidgetsModule::is_active() ) {
+			return '';
+		}
+
+		return "# THIS SITE IS V3-ONLY (V4 atomic experiment: OFF)\n\n"
+			. "**This notice OVERRIDES anything below that references V4 widgets, global classes, global variables, interactions, or components. Wherever the sections below tell you to read `elementor://global-classes` / `elementor://global-variables` / `elementor://interactions/schema`, or to call `elementor/manage-classes` / `elementor/manage-global-variable` / `elementor/manage-default-styles` / `elementor/manage-component` / `elementor/reorder-classes`, ignore those instructions — those tools/resources are not registered on this site.**\n\n"
+			. "## What IS available\n\n"
+			. "- Widgets: whatever `elementor/list-widget-schemas` returns. Layout box is the V3 `container` element (use it wherever the sections below say `e-div-block` or `e-flexbox`).\n"
+			. "- Abilities: `elementor/list-widget-schemas`, `elementor/get-widget-schema`, `elementor/get-page-structure`, `elementor/build-composition`, `elementor/manage-elements`, `elementor/create-page`, `elementor/update-page-settings`, `elementor/publish-document`, `elementor/create-preview-link`, `elementor/list-posts`, `elementor/list-assets`, `elementor/list-site-parts`, `elementor/manage-site-parts`.\n"
+			. "- Resources: `elementor://style/best-practices`, `elementor://wordpress/best-practices`, `elementor://dynamic-tags`.\n\n"
+			. "## Type mapping (V4 name → V3 name)\n\n"
+			. "`e-heading` → `heading` · `e-paragraph` → `text-editor` · `e-image` → `image` · `e-button` → `button` · `e-svg` / `e-icon` → `icon` · `e-divider` → `divider` · `e-div-block` / `e-flexbox` → `container` (the V3 container is flex by default; set `container_type: grid` in style CSS via `display: grid` if you need grid).\n\n"
+			. "## V3 style contract in one line\n\n"
+			. "`element_config` = content/behavior only (see `properties` in the widget schema). `style` = CSS on the wrapper by default; when the widget schema exposes `inner_elements`, use `alias { … }` blocks per sub-part (identical to how `nav-menu` / `search` / `accordion` are documented). Wrappers accept regular CSS; the mapper routes what it can to native V3 controls and dumps the rest to `custom_css` (a Pro feature — expect a warning if Pro is not active). Common properties that map natively on the V3 `container`: `background-color`, `padding`, `margin`, `flex-direction`, `flex-wrap`, `justify-content`, `align-items`, `align-content`, `gap`, `min-height`, `max-width` (routes to boxed content), `border`, `border-{top,right,bottom,left}`, `border-radius`, `overflow`, `position`, `z-index`, `flex-grow`, `flex-shrink`, `align-self`, `order`. Motion and transforms fall to `custom_css`; animation properties are dropped.\n\n"
+			. "## V3 container centering & sizing pitfalls\n\n"
+			. "- **Do NOT write `margin: 0 auto` / `margin-left: auto; margin-right: auto`.** A V3 `container` centers its own content automatically when `max-width` is set — write `max-width: X` alone (routes to `boxed_width` + `content_width: boxed`). Writing `auto` on a numeric margin control falls to `custom_css`.\n"
+			. "- **`min-width` is not a native V3 container control.** Use `flex-basis` or a min-width child pattern; a bare `min-width: X` falls to `custom_css`.\n"
+			. "- **Hover transforms (`&:hover { transform: … }`) are custom_css.** V3 has no native micro-motion; expect a warning per widget.\n\n"
+			. "---\n\n";
 	}
 
 	private function get_output_schema(): array {

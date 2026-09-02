@@ -30,13 +30,19 @@ class Test_Widget_Context_Helper_V3_Allowlist extends Elementor_Test_Base {
 			foreach ( Widget_Context_Helper::V3_ALLOWLIST_BASIC as $type ) {
 				$this->assertNotContains( $type, $types );
 			}
+			foreach ( Widget_Context_Helper::V3_ALLOWLIST_CONTAINERS as $type ) {
+				$this->assertNotContains( $type, $types );
+			}
 		} );
 	}
 
-	public function test_get_allowlisted_v3_types__with_v4_inactive__adds_basic_widgets() {
+	public function test_get_allowlisted_v3_types__with_v4_inactive__adds_basic_widgets_and_containers() {
 		$this->with_atomic_experiment( Experiments_Manager::STATE_INACTIVE, function () {
 			$types = Widget_Context_Helper::get_allowlisted_v3_types();
 
+			foreach ( Widget_Context_Helper::V3_ALLOWLIST_CONTAINERS as $type ) {
+				$this->assertContains( $type, $types );
+			}
 			foreach ( Widget_Context_Helper::V3_ALLOWLIST_BASIC as $type ) {
 				$this->assertContains( $type, $types );
 			}

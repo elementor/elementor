@@ -143,7 +143,8 @@ class Style_Applier {
 	 */
 	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
-		$widget_type = $node['widgetType'] ?? '';
+		// V3 widgets carry their type on `widgetType`; V3 container/section/column elements carry it on `elType`.
+		$widget_type = $node['widgetType'] ?? ( 'widget' === ( $node['elType'] ?? null ) ? '' : (string) ( $node['elType'] ?? '' ) );
 		$widget_config = [];
 
 		if ( is_string( $widget_type ) && '' !== $widget_type ) {

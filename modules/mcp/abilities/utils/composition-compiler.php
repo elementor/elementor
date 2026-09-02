@@ -33,8 +33,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Composition_Compiler {
 
 	private const DEFAULT_PARENT_ID = 'document';
-	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
+	private const DOCUMENT_ROOT_WRAPPER_V4 = 'e-div-block';
+	private const DOCUMENT_ROOT_WRAPPER_V3 = 'container';
 	private const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
+
+	private static function document_root_wrapper(): string {
+		return AtomicWidgetsModule::is_active()
+			? self::DOCUMENT_ROOT_WRAPPER_V4
+			: self::DOCUMENT_ROOT_WRAPPER_V3;
+	}
 
 	public const COMPONENT_PARENT_ID = 'component';
 
@@ -93,9 +100,14 @@ final class Composition_Compiler {
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
 		if ( empty( $subtrees ) ) {
+			$example_tag = AtomicWidgetsModule::is_active() ? 'e-flexbox' : 'container';
 			return new \WP_Error(
 				'empty_composition',
-				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-flexbox configuration-id="..."></e-flexbox>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+				sprintf(
+					/* translators: %s: example XML tag name appropriate for the current V4 experiment state */
+					__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <%1$s configuration-id="..."></%1$s>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+					$example_tag
+				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
@@ -158,47 +170,71 @@ final class Composition_Compiler {
 		}
 
 		$root_children = $xml_parser->get_child_elements( $root );
-		$has_widget = false;
-		foreach ( $root_children as $child ) {
+
+		$needs_wrap = static function ( \DOMElement $child ) use ( $widget_configs, $xml_parser ): bool {
 			$tag = $xml_parser->get_tag_name( $child );
 			$config = $widget_configs[ $tag ] ?? [];
 
 			if ( 'widget' !== ( $config['elType'] ?? null ) ) {
-				continue;
+				return false;
 			}
 
 			if ( self::COMPONENT_INSTANCE_WIDGET_TYPE === ( $config['widgetType'] ?? null ) ) {
-				continue;
+				return false;
 			}
 
-			$has_widget = true;
-			break;
+			return true;
+		};
+
+		$has_any_widget = false;
+		foreach ( $root_children as $child ) {
+			if ( $needs_wrap( $child ) ) {
+				$has_any_widget = true;
+				break;
+			}
 		}
 
-		if ( ! $has_widget ) {
+		if ( ! $has_any_widget ) {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
 			];
 		}
 
-		$wrapper_config = $type_resolver->resolve_type_config( self::DOCUMENT_ROOT_WRAPPER );
+		$wrapper_type = self::document_root_wrapper();
+		$wrapper_config = $type_resolver->resolve_type_config( $wrapper_type );
 		if ( is_wp_error( $wrapper_config ) ) {
 			return $wrapper_config;
 		}
 
-		$widget_configs[ self::DOCUMENT_ROOT_WRAPPER ] = $wrapper_config;
+		$widget_configs[ $wrapper_type ] = $wrapper_config;
 
-		$wrapper = $dom->createElement( self::DOCUMENT_ROOT_WRAPPER );
-		$root->appendChild( $wrapper );
-
+		// Wrap each contiguous run of illegal-at-root widget siblings in its own wrapper; leave
+		// legal-at-root children (containers, section/column, existing div-blocks) in place.
+		// Otherwise a mixed root like `<html/><container/><container/>` ends up with the two
+		// containers nested inside the auto-wrapper that only the <html/> needed.
+		$current_wrapper = null;
 		foreach ( $root_children as $child ) {
-			$wrapper->appendChild( $child );
+			if ( $needs_wrap( $child ) ) {
+				if ( null === $current_wrapper ) {
+					$current_wrapper = $dom->createElement( $wrapper_type );
+					$root->insertBefore( $current_wrapper, $child );
+				}
+				$current_wrapper->appendChild( $child );
+				continue;
+			}
+			$current_wrapper = null;
 		}
 
 		return [
 			'widget_configs' => $widget_configs,
-			'warnings' => [ __( 'Direct document-root content was wrapped in an e-div-block element.', 'elementor' ) ],
+			'warnings' => [
+				sprintf(
+					/* translators: %s: element type used to wrap the direct document-root widgets */
+					__( 'Direct document-root widgets were wrapped in %s elements. Containers and other layout boxes at the root were left in place.', 'elementor' ),
+					$wrapper_type
+				),
+			],
 		];
 	}
 

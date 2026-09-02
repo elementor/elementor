@@ -55,12 +55,39 @@ class Widget_Context_Helper {
 	];
 
 	/**
+	 * V3 container elements that lay out other elements. Only exposed to MCP when the V4
+	 * atomic-elements experiment is inactive, because when V4 is on the LLM uses
+	 * `e-div-block` / `e-flexbox` instead. Without this, a V4-off catalog contains widgets
+	 * with no branches to attach them to and the LLM cannot assemble a page.
+	 */
+	const V3_ALLOWLIST_CONTAINERS = [
+		'container',
+	];
+
+	/**
 	 * V3 basic widgets that duplicate V4 atomic widgets. Only exposed to MCP when the V4
 	 * atomic-elements experiment is inactive, so the LLM never gets both a V3 heading and a
-	 * V4 e-heading in the same catalog. Empty for now; populated when we ship the fixtures /
-	 * map files needed to keep them safe under render probing.
+	 * V4 e-heading in the same catalog.
 	 */
-	const V3_ALLOWLIST_BASIC = [];
+	const V3_ALLOWLIST_BASIC = [
+		'heading',
+		'text-editor',
+		'image',
+		'video',
+		'button',
+		'icon',
+		'spacer',
+		'divider',
+		'html',
+		'image-box',
+		'icon-box',
+		'accordion',
+		'tabs',
+		'toggle',
+		'counter',
+		'icon-list',
+		'testimonial',
+	];
 
 	/**
 	 * @deprecated 3.36.0 Use {@see get_allowlisted_v3_types()}. Retained so external code that
@@ -152,10 +179,58 @@ class Widget_Context_Helper {
 	}
 
 	/**
+	 * When the LLM asks for a V4 atomic type on a site where the V4 experiment is off, tell it
+	 * so — and, when we can guess the intended V3 equivalent, name it. Returns null when there
+	 * is nothing to add (V4 is on, or the type is not an `e-*` we recognize).
+	 *
+	 * @param string $widget_type The type the LLM asked for.
+	 */
+	public static function v4_off_type_hint( string $widget_type ): ?string {
+		if ( AtomicWidgetsModule::is_active() ) {
+			return null;
+		}
+
+		if ( 0 !== strpos( $widget_type, 'e-' ) ) {
+			return null;
+		}
+
+		$v3_equivalent = self::V4_TO_V3_TYPE_HINTS[ $widget_type ] ?? null;
+
+		if ( null === $v3_equivalent ) {
+			return sprintf(
+				/* translators: %s: widget type */
+				__( '`%s` is a V4 atomic widget, but the V4 atomic experiment is off on this site — V4 widgets are not registered. Call `elementor/list-widget-schemas` to see the available V3 catalog.', 'elementor' ),
+				$widget_type
+			);
+		}
+
+		return sprintf(
+			/* translators: 1: v4 widget type, 2: v3 equivalent */
+			__( '`%1$s` is a V4 atomic widget, but the V4 atomic experiment is off on this site — use `%2$s` instead. Call `elementor/list-widget-schemas` to see the available V3 catalog.', 'elementor' ),
+			$widget_type,
+			$v3_equivalent
+		);
+	}
+
+	private const V4_TO_V3_TYPE_HINTS = [
+		'e-heading' => 'heading',
+		'e-paragraph' => 'text-editor',
+		'e-image' => 'image',
+		'e-button' => 'button',
+		'e-svg' => 'icon',
+		'e-icon' => 'icon',
+		'e-divider' => 'divider',
+		'e-div-block' => 'container',
+		'e-flexbox' => 'container',
+	];
+
+	/**
 	 * Full list of V3 widget types the LLM catalog exposes for the current V4 experiment state.
 	 *
 	 * V4 atomic experiment on  → gap + theme (v3 basics live as V4 atomic widgets already).
-	 * V4 atomic experiment off → basic + gap + theme.
+	 * V4 atomic experiment off → containers + basic + gap + theme. Containers are needed so
+	 * the LLM has a layout box to place the basics into; without them the catalog is leaves
+	 * with no branches.
 	 *
 	 * @return string[]
 	 */
@@ -163,7 +238,7 @@ class Widget_Context_Helper {
 		$types = array_merge( self::V3_ALLOWLIST_GAP, self::V3_ALLOWLIST_THEME );
 
 		if ( ! AtomicWidgetsModule::is_active() ) {
-			$types = array_merge( self::V3_ALLOWLIST_BASIC, $types );
+			$types = array_merge( self::V3_ALLOWLIST_CONTAINERS, self::V3_ALLOWLIST_BASIC, $types );
 		}
 
 		return $types;

@@ -66,7 +66,9 @@ Some elements have internal tree structures (nesting). When using these elements
   - **Scoped** (`inner_elements` present, e.g. `nav-menu`, `search`, `table-of-contents`): alias blocks per sub-part. Wrapper/advanced rules (margin, padding on the widget shell) may appear unscoped before alias blocks; other look-and-feel rules belong inside the correct alias. Unscoped look-and-feel declarations fold into `inner_elements.default`.
 - **`accepted_css_properties` is authoritative per alias.** Only listed properties are converted to native panel controls. Anything else (and any unknown alias) is **dropped with a `warnings` entry** — not written to `custom_css`, because `custom_css` cannot target a sub-part selector.
 - **Round-trip:** `elementor/get-page-structure` with `include_content=true` returns allowlisted V3 nodes as `{ settings, style }` where `style` uses the same alias-block format. Re-send that `style` string via `build-composition` or `manage-elements` to preserve styling.
-- **V3 containers (`section` / `column` / `container`) are not exposed.** Use V4 `e-div-block` / `e-flexbox` for layout; V3 widgets are placed inside those.
+- **Layout box choice depends on the V4 atomic experiment:**
+  - **V4 on:** use `e-div-block` / `e-flexbox` for layout; V3 widgets are placed inside those. V3 `section` / `column` / `container` are not exposed.
+  - **V4 off:** use the V3 `container` element for layout — `<container configuration-id="Hero">…</container>`. `e-div-block` / `e-flexbox` are not registered. V3 basics (`heading`, `text-editor`, `image`, `button`, …) are placed inside `container`.
 
 ### Scoped V3 style (nav-menu)
 ```css
