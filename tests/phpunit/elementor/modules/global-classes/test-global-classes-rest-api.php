@@ -236,6 +236,42 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		], $classes );
 	}
 
+	public function test_put__accepts_null_breakpoint_and_normalizes_it_to_desktop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$class = $this->create_global_class( 'g-1' );
+		$class['sync_to_v3'] = true;
+		$class['variants'][0]['meta']['breakpoint'] = null;
+
+		$this->seed_global_classes_posts( [
+			'items' => [ 'g-1' => $this->create_global_class( 'g-1' ) ],
+			'order' => [ 'g-1' ],
+		] );
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+
+		$request->set_body_params( [
+			'items' => [ 'g-1' => $class ],
+			'order' => [ 'g-1' ],
+			'changes' => [
+				'added' => [],
+				'deleted' => [],
+				'modified' => [ 'g-1' ],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertSame( 'desktop', $classes['items']['g-1']['variants'][0]['meta']['breakpoint'] );
+		$this->assertTrue( $classes['items']['g-1']['sync_to_v3'] );
+	}
+
 	public function test_put__updates_based_on_changes() {
 		// Arrange.
 		$this->act_as_admin();

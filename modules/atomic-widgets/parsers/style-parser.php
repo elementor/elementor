@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -169,8 +170,9 @@ class Style_Parser {
 			return $result;
 		}
 
+		// A `null` breakpoint is the base (desktop) variant - it is normalized on sanitization.
 		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
-		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
+		if ( ! array_key_exists( 'breakpoint', $meta ) || ( null !== $meta['breakpoint'] && ! is_string( $meta['breakpoint'] ) ) ) {
 			$result->errors()->add( 'breakpoint', 'missing_or_invalid_value' );
 
 			return $result;
@@ -198,8 +200,10 @@ class Style_Parser {
 			return [];
 		}
 
-		if ( isset( $meta['breakpoint'] ) ) {
-			$meta['breakpoint'] = sanitize_key( $meta['breakpoint'] );
+		if ( array_key_exists( 'breakpoint', $meta ) ) {
+			$meta['breakpoint'] = null === $meta['breakpoint']
+				? Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP
+				: sanitize_key( $meta['breakpoint'] );
 		}
 
 		return $meta;
