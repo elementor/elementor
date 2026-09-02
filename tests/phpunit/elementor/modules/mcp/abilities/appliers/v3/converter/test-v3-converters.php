@@ -50,7 +50,12 @@ class Test_V3_Converters extends TestCase {
 		$this->assertArrayHasKey( 'title_size_tablet', $ctx->settings_patch() );
 	}
 
-	public function test_simple_setting_converter__responsive_drops_when_variant_missing_but_base_exists() {
+	/**
+	 * When `additional_custom_breakpoints` does not duplicate controls per device, the widget
+	 * registers one control and the editor creates `<key>_<breakpoint>` settings itself, so a
+	 * missing suffixed control does not mean the breakpoint value is unwritable.
+	 */
+	public function test_simple_setting_converter__responsive_writes_suffixed_key_without_a_duplicated_control() {
 		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
 		$meta = $this->meta(
 			[ 'font-size' => [ 'setting' => 'title_size', 'resolver' => 'dimension', 'responsive' => true ] ],
@@ -61,8 +66,37 @@ class Test_V3_Converters extends TestCase {
 
 		$result = $converter->convert( $ctx, $this->rule( 'font-size', '20px', null, 'tablet' ), $meta );
 
+		$this->assertTrue( $result );
+		$this->assertArrayHasKey( 'title_size_tablet', $ctx->settings_patch() );
+	}
+
+	public function test_simple_setting_converter__drops_non_desktop_value_for_a_non_responsive_setting() {
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$meta = $this->meta(
+			[ 'font-size' => [ 'setting' => 'title_size', 'resolver' => 'dimension', 'responsive' => false ] ],
+			[],
+			[ 'title_size' => [] ]
+		);
+		$ctx = new V3_Conversion_Context();
+
+		$result = $converter->convert( $ctx, $this->rule( 'font-size', '20px', null, 'tablet' ), $meta );
+
 		$this->assertFalse( $result );
 		$this->assertSame( [], $ctx->settings_patch() );
+	}
+
+	public function test_simple_setting_converter__writes_suffixed_key_when_only_the_control_marker_says_responsive() {
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$meta = $this->meta(
+			[ 'font-size' => [ 'setting' => 'title_size', 'resolver' => 'dimension' ] ],
+			[],
+			[ 'title_size' => [ 'responsive' => [] ] ]
+		);
+		$ctx = new V3_Conversion_Context();
+
+		$converter->convert( $ctx, $this->rule( 'font-size', '20px', null, 'tablet' ), $meta );
+
+		$this->assertArrayHasKey( 'title_size_tablet', $ctx->settings_patch() );
 	}
 
 	public function test_typography_group_converter__pushes_declaration_into_bucket() {
@@ -106,7 +140,7 @@ class Test_V3_Converters extends TestCase {
 	}
 
 	public function test_generic_index_converter__falls_back_on_index_entry() {
-		$converter = new Generic_Index_Converter();
+		$converter = new Generic_Index_Converter( new Responsive_Key_Resolver() );
 		$meta = $this->meta(
 			[],
 			[ 'gap' => [ 'setting' => 'extra_gap', 'resolver' => 'dimension', 'responsive' => false ] ]
@@ -119,7 +153,7 @@ class Test_V3_Converters extends TestCase {
 	}
 
 	public function test_generic_index_converter__drops_when_non_desktop_variant_missing() {
-		$converter = new Generic_Index_Converter();
+		$converter = new Generic_Index_Converter( new Responsive_Key_Resolver() );
 		$meta = $this->meta(
 			[],
 			[ 'gap' => [ 'setting' => 'extra_gap', 'resolver' => 'dimension', 'responsive' => false ] ]

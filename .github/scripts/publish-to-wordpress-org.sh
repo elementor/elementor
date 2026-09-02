@@ -21,6 +21,7 @@ echo "Publish version: ${PLUGIN_VERSION}"
 ELEMENTOR_PATH="$GITHUB_WORKSPACE/elementor"
 SVN_PATH="$GITHUB_WORKSPACE/svn"
 
+cd $ELEMENTOR_PATH
 mkdir -p $SVN_PATH
 cd $SVN_PATH
 
@@ -47,6 +48,13 @@ svn status
 
 echo "Commit files to trunk"
 svn ci -m "Upload v${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
+svn update
+
+# Why? - We need to wait a bit to make sure the files are committed to the trunk.
+sleep 10
+
+echo "Copy files from trunk to tag ${PLUGIN_VERSION}"
+svn cp https://plugins.svn.wordpress.org/elementor/trunk https://plugins.svn.wordpress.org/elementor/tags/${PLUGIN_VERSION} --message "Tagged ${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 svn update
 
 echo "Remove the SVN folder from the workspace (for multiple releases in the same Action)"

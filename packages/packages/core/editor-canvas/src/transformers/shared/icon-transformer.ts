@@ -7,18 +7,11 @@ type IconValue = {
 	library?: unknown;
 };
 
-type FontAwesomeIconJson = [ number, number, unknown[], unknown, string | string[] ];
-
-type FontAwesome7EditorConfig = {
-	jsonFiles: string[];
-	jsonBaseUrl: string;
-};
+type FontAwesomeIconJson = [ number, number, unknown, unknown, string ];
 
 const FONT_AWESOME_JSON = {
 	width: 0,
 	height: 1,
-	aliases: 2,
-	unicode: 3,
 	path: 4,
 } as const;
 
@@ -47,12 +40,7 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 	}
 
 	const svgText = buildFontAwesomeSvg( iconData );
-
-	if ( ! svgText ) {
-		return { html: null, url: null };
-	}
-
-	const html = processIconSvgContent( svgText );
+	const html = processSvgContent( svgText );
 
 	return { html, url: null };
 } );
@@ -64,32 +52,17 @@ function getFontAwesomeIconName( iconValue: string ): string | null {
 }
 
 function getFontAwesomeJsonFileName( library: string ): string | null {
-	const fileName = library.replace( /^fa-/, '' );
-	const config = getFontAwesome7EditorConfig();
-
-	if ( ! config?.jsonFiles.includes( fileName ) ) {
+	if ( ! library.startsWith( 'fa-' ) ) {
 		return null;
 	}
 
-	return fileName;
+	return library.replace( /^fa-/, '' );
 }
 
-function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
-	const config = window.elementorCommon?.config?.fontAwesome?.v7;
+function getAssetsBaseUrl(): string | null {
+	const assetsUrl = window.elementorCommon?.config?.urls?.assets;
 
-	if (
-		! config ||
-		! Array.isArray( config.jsonFiles ) ||
-		typeof config.jsonBaseUrl !== 'string' ||
-		config.jsonBaseUrl === ''
-	) {
-		return null;
-	}
-
-	return {
-		jsonFiles: config.jsonFiles,
-		jsonBaseUrl: config.jsonBaseUrl,
-	};
+	return typeof assetsUrl === 'string' && assetsUrl !== '' ? assetsUrl : null;
 }
 
 async function fetchFontAwesomeIcons(
@@ -115,115 +88,33 @@ async function loadFontAwesomeIcons(
 	jsonFileName: string,
 	signal?: AbortSignal
 ): Promise< Record< string, FontAwesomeIconJson > | null > {
-	const config = getFontAwesome7EditorConfig();
+	const assetsUrl = getAssetsBaseUrl();
 
-	if ( ! config?.jsonFiles.includes( jsonFileName ) ) {
+	if ( ! assetsUrl ) {
 		return null;
 	}
 
 	try {
-		const response = await fetch( `${ config.jsonBaseUrl }${ jsonFileName }.json`, {
-			signal,
-		} );
+		const response = await fetch( `${ assetsUrl }lib/font-awesome/json/${ jsonFileName }.json`, { signal } );
 
 		if ( ! response.ok ) {
 			return null;
 		}
 
 		const data = ( await response.json() ) as { icons?: Record< string, FontAwesomeIconJson > };
-		const icons = data.icons;
 
-		if ( ! icons || typeof icons !== 'object' ) {
-			return null;
-		}
-
-		return indexFontAwesomeIcons( icons );
+		return data.icons ?? null;
 	} catch {
 		return null;
 	}
 }
 
-function indexFontAwesomeIcons( icons: Record< string, FontAwesomeIconJson > ): Record< string, FontAwesomeIconJson > {
-	const index: Record< string, FontAwesomeIconJson > = {};
-
-	for ( const [ name, iconData ] of Object.entries( icons ) ) {
-		if ( ! isValidIconTuple( iconData ) ) {
-			continue;
-		}
-
-		index[ name ] = iconData;
-
-		for ( const alias of iconData[ FONT_AWESOME_JSON.aliases ] ) {
-			if ( typeof alias === 'string' && alias !== '' && ! index[ alias ] ) {
-				index[ alias ] = iconData;
-			}
-		}
-	}
-
-	return index;
-}
-
-function isValidIconTuple( iconData: unknown ): iconData is FontAwesomeIconJson {
-	return (
-		Array.isArray( iconData ) &&
-		iconData.length >= 5 &&
-		typeof iconData[ FONT_AWESOME_JSON.width ] === 'number' &&
-		typeof iconData[ FONT_AWESOME_JSON.height ] === 'number' &&
-		Array.isArray( iconData[ FONT_AWESOME_JSON.aliases ] )
-	);
-}
-
-function buildFontAwesomeSvg( iconData: FontAwesomeIconJson ): string | null {
+function buildFontAwesomeSvg( iconData: FontAwesomeIconJson ): string {
 	const width = iconData[ FONT_AWESOME_JSON.width ];
 	const height = iconData[ FONT_AWESOME_JSON.height ];
-	const paths = normalizePaths( iconData[ FONT_AWESOME_JSON.path ] );
+	const path = iconData[ FONT_AWESOME_JSON.path ];
 
-	if ( paths.length === 0 ) {
-		return null;
-	}
-
-	const pathMarkup = paths.map( ( path ) => `<path d="${ escapeSvgPath( path ) }"></path>` ).join( '' );
-
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ width } ${ height }">${ pathMarkup }</svg>`;
-}
-
-function normalizePaths( pathData: string | string[] ): string[] {
-	if ( typeof pathData === 'string' && pathData !== '' ) {
-		return [ pathData ];
-	}
-
-	if ( ! Array.isArray( pathData ) ) {
-		return [];
-	}
-
-	return pathData.filter( ( path ): path is string => typeof path === 'string' && path !== '' );
-}
-
-function escapeSvgPath( path: string ): string {
-	return path.replace( /&/g, '&amp;' ).replace( /"/g, '&quot;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
-}
-
-function processIconSvgContent( svgText: string ): string | null {
-	const html = processSvgContent( svgText );
-
-	if ( ! html ) {
-		return null;
-	}
-
-	const parser = new DOMParser();
-	const doc = parser.parseFromString( html, 'image/svg+xml' );
-	const svgElement = doc.querySelector( 'svg' );
-
-	if ( ! svgElement ) {
-		return null;
-	}
-
-	svgElement.setAttribute( 'aria-hidden', 'true' );
-	svgElement.style.setProperty( 'width', '100%' );
-	svgElement.style.setProperty( 'height', '100%' );
-	svgElement.style.setProperty( 'overflow', 'visible' );
-
-	return svgElement.outerHTML;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ width } ${ height }"><path d="${ path }"></path></svg>`;
 }
 
 export function resetFontAwesomeIconsCache() {

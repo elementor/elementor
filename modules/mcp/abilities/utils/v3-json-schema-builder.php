@@ -359,14 +359,59 @@ class V3_Json_Schema_Builder {
 				];
 
 			case 'repeater':
-				return [
-					'type' => 'array',
-					'items' => [ 'type' => 'object' ],
-				];
+				return self::repeater_entry( $control );
 
 			default:
 				return [ 'type' => 'string' ];
 		}
+	}
+
+	/**
+	 * Introspects a repeater's `fields` list to expose the item shape. Without this the schema
+	 * degrades to `array<object>` and the LLM has to guess sub-field names (e.g. `tab_title`).
+	 *
+	 * @param array<string, mixed> $control
+	 * @return array{type: string, items: array<string, mixed>}
+	 */
+	private static function repeater_entry( array $control ): array {
+		$fields = $control['fields'] ?? null;
+
+		if ( ! is_array( $fields ) || empty( $fields ) ) {
+			return [
+				'type' => 'array',
+				'items' => [ 'type' => 'object' ],
+			];
+		}
+
+		$properties = [];
+
+		foreach ( $fields as $field ) {
+			if ( ! is_array( $field ) ) {
+				continue;
+			}
+
+			$field_name = $field['name'] ?? null;
+			if ( ! is_string( $field_name ) || '' === $field_name ) {
+				continue;
+			}
+
+			$field_type = $field['type'] ?? null;
+			$entry = self::build_entry( $field, is_string( $field_type ) ? $field_type : null );
+			if ( null === $entry ) {
+				continue;
+			}
+
+			$properties[ $field_name ] = $entry;
+		}
+
+		return [
+			'type' => 'array',
+			'items' => [
+				'type' => 'object',
+				'properties' => $properties,
+				'additionalProperties' => false,
+			],
+		];
 	}
 
 	private static function enum_entry( array $control ): array {

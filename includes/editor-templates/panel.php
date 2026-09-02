@@ -16,12 +16,7 @@ $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtere
 	</div>
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
-	<footer id="elementor-panel-footer" class="elementor-panel-footer-back-compat-wrapper" hidden></footer>
 	<div id="elementor-mode-switcher"></div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-panel-footer-back-compat">
-	<button type="button" class="elementor-panel-footer-back-compat-preview" tabindex="-1" hidden></button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-menu">

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Introspector;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -48,6 +50,10 @@ class V3_Context_Meta {
 
 	public function has_control( string $key ): bool {
 		return array_key_exists( $key, $this->controls() );
+	}
+
+	public function supports_breakpoint_variant( string $setting ): bool {
+		return V3_Control_Introspector::is_responsive_setting( $setting, $this->controls() );
 	}
 
 	public function match_key( string $property, ?string $state ): string {

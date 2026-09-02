@@ -7,36 +7,24 @@ export const componentOverridableTransformer = createTransformer(
 	( value: ComponentOverridable, options: TransformerOptions ) => {
 		const { overrides } = options.renderContext ?? {};
 
-		const originValue = normalizeOriginValue( value.origin_value );
 		const overrideValue = overrides?.[ value.override_key as keyof typeof overrides ];
 
 		if ( overrideValue ) {
-			if ( isOriginValueOverride( originValue ) ) {
-				return transformOverride( originValue, options, overrideValue );
+			const isOverride = isOriginValueOverride( value.origin_value );
+
+			if ( isOverride ) {
+				return transformOverride( value, options, overrideValue );
 			}
 
 			return overrideValue;
 		}
 
-		return originValue;
+		return value.origin_value;
 	}
 );
 
-/**
- * Mirrors `Overridable_Prop_Type::normalize_origin_value()` on the PHP side. Rendering resolves
- * props without validating them, so an empty origin value written by an older editor reaches this
- * transformer untouched until the document is next saved.
- *
- * @param originValue The origin_value nested on a component-overridable prop.
- */
-function normalizeOriginValue( originValue: ComponentOverridable[ 'origin_value' ] ) {
-	const isEmpty = !! originValue && Object.keys( originValue ).length === 0;
-
-	return isEmpty ? null : originValue;
-}
-
 function transformOverride(
-	originValue: TransformablePropValue< string >,
+	value: ComponentOverridable,
 	options: {
 		key: string;
 	},
@@ -48,7 +36,7 @@ function transformOverride(
 		return null;
 	}
 
-	const transformedValue = transformer( originValue.value, options );
+	const transformedValue = transformer( value.origin_value.value, options );
 
 	if ( ! transformedValue ) {
 		return null;
@@ -61,8 +49,6 @@ function transformOverride(
 	};
 }
 
-function isOriginValueOverride(
-	originValue: TransformablePropValue< string > | null
-): originValue is TransformablePropValue< string > {
-	return originValue?.$$type === 'override';
+function isOriginValueOverride( originValue: TransformablePropValue< string > ): boolean {
+	return originValue.$$type === 'override';
 }

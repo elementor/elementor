@@ -19,22 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
-
-	private Ability_Registry $registry;
+	private ?Ability_Registry $registry = null;
 
 	public function get_name() {
 		return 'mcp';
-	}
-
-	public function enqueue_analytics_registrar(): void {
-		wp_enqueue_script(
-			self::ANALYTICS_REGISTRAR_HANDLE,
-			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
-			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 
 	public static function is_active() {
@@ -46,9 +34,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->registry = self::build_core_registry();
-
-		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
+		( new Mcp_Proxy_REST_API() )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
 
@@ -63,6 +49,10 @@ class Module extends BaseModule {
 	}
 
 	public function registry(): Ability_Registry {
+		if ( null === $this->registry ) {
+			$this->registry = self::build_core_registry();
+		}
+
 		return $this->registry;
 	}
 
@@ -85,29 +75,31 @@ class Module extends BaseModule {
 			return;
 		}
 
-		foreach ( $this->registry->all() as $ability ) {
+		foreach ( $this->registry()->all() as $ability ) {
 			$ability->register();
 		}
 	}
 
 	public function register_shared_registry_slugs(): void {
 		$shared = Shared_Registry::instance();
+		$registry = $this->registry();
 
-		$shared->register_tools( $this->collect_server_ids( $this->registry->tools() ) );
-		$shared->register_resources( $this->collect_server_ids( $this->registry->resources() ) );
+		$shared->register_tools( $this->collect_server_ids( $registry->tools() ) );
+		$shared->register_resources( $this->collect_server_ids( $registry->resources() ) );
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		$menu_data_provider->register_menu(
-			new Editor_One_Mcp_Menu(),
-			[ 'preserve_label_casing' => true ]
-		);
+		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
 	}
 
 	public static function build_core_registry(): Ability_Registry {
 		$registry = new Ability_Registry();
 
 		foreach ( self::get_core_abilities( $registry ) as $ability ) {
+			if ( ! $ability->is_available_for_current_mode() ) {
+				continue;
+			}
+
 			$registry->add( $ability );
 		}
 

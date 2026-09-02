@@ -54,6 +54,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'!commitlint.config.js',
 	'!scripts/**',
 	'!eslint-local-rules.js',
+	'!run-on-linux.js',
 	'!test*/**',
 	'!8888/**',
 	'!8889/**',

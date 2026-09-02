@@ -3,7 +3,13 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Group_Control_Detector;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Patch_Bisector;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Render_Probe;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Scoped_Css_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -137,7 +143,8 @@ class Style_Applier {
 	 */
 	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
-		$widget_type = $node['widgetType'] ?? '';
+		// V3 widgets carry their type on `widgetType`; V3 container/section/column elements carry it on `elType`.
+		$widget_type = $node['widgetType'] ?? ( 'widget' === ( $node['elType'] ?? null ) ? '' : (string) ( $node['elType'] ?? '' ) );
 		$widget_config = [];
 
 		if ( is_string( $widget_type ) && '' !== $widget_type ) {
@@ -157,6 +164,19 @@ class Style_Applier {
 			return $warnings;
 		}
 
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+		$inner_elements = V3_Widget_Map_Loader::get_inner_elements( (string) $widget_type, $controls );
+		if ( ! empty( $inner_elements ) ) {
+			return $this->apply_v3_inner_element_styles(
+				$node,
+				$css_string,
+				(string) $widget_type,
+				$widget_config,
+				$inner_elements,
+				$warnings
+			);
+		}
+
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
 		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
 
@@ -165,7 +185,15 @@ class Style_Applier {
 		}
 
 		if ( ! empty( $result['settings_patch'] ) ) {
-			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+			$base_settings = $node['settings'] ?? [];
+			$safe_patch = self::guard_v3_render(
+				(string) $widget_type,
+				$base_settings,
+				$result['settings_patch'],
+				$controls,
+				$warnings
+			);
+			$node['settings'] = array_merge( $base_settings, $safe_patch );
 		}
 
 		$unmapped = $result['unmapped_css'] ?? '';
@@ -190,6 +218,263 @@ class Style_Applier {
 		}
 
 		return $warnings;
+	}
+
+	/**
+	 * @param array<string, mixed> $base
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @param string[]             $warnings
+	 * @return array<string, mixed> Patch with offending keys removed.
+	 */
+	private static function guard_v3_render(
+		string $widget_type,
+		array $base,
+		array $patch,
+		array $controls,
+		array &$warnings
+	): array {
+		if ( ! apply_filters( 'elementor/mcp/v3_render_probe', true ) ) {
+			return $patch;
+		}
+
+		$merged = array_merge( $base, $patch );
+		$initial = V3_Render_Probe::probe( $widget_type, $merged );
+
+		if ( $initial['ok'] || $initial['timed_out'] ) {
+			return $patch;
+		}
+
+		$probe = static function ( array $settings ) use ( $widget_type ): bool {
+			$result = V3_Render_Probe::probe( $widget_type, $settings );
+			return $result['ok'] || $result['timed_out'];
+		};
+
+		$offending = V3_Patch_Bisector::find_offending(
+			$base,
+			$patch,
+			$probe,
+			self::render_probe_groups( $controls )
+		);
+
+		if ( empty( $offending ) ) {
+			return $patch;
+		}
+
+		$safe = $patch;
+		foreach ( $offending as $key ) {
+			unset( $safe[ $key ] );
+		}
+
+		$warnings[] = sprintf(
+			/* translators: 1: widget type, 2: comma-separated setting keys, 3: PHP error message. */
+			__( 'V3 render fatal on %1$s for keys [%2$s]: %3$s. Props dropped.', 'elementor' ),
+			$widget_type,
+			implode( ',', $offending ),
+			(string) $initial['error']
+		);
+
+		return $safe;
+	}
+
+	/**
+	 * @param array<string, mixed> $controls
+	 * @return array<string, string[]>
+	 */
+	private static function render_probe_groups( array $controls ): array {
+		$groups = [];
+
+		foreach ( V3_Group_Control_Detector::typography_prefixes( $controls ) as $prefix ) {
+			$members = [];
+			foreach ( V3_Group_Control_Detector::TYPOGRAPHY_SUFFIXES as $suffix ) {
+				foreach ( V3_Group_Control_Detector::RESPONSIVE_SUFFIXES as $responsive ) {
+					$key = $prefix . '_' . $suffix . $responsive;
+					if ( isset( $controls[ $key ] ) ) {
+						$members[] = $key;
+					}
+				}
+			}
+			if ( ! empty( $members ) ) {
+				$groups[ $prefix ] = $members;
+			}
+		}
+
+		foreach ( V3_Group_Control_Detector::border_prefixes( $controls ) as $prefix ) {
+			$members = [];
+			foreach ( V3_Group_Control_Detector::BORDER_SUFFIXES as $suffix ) {
+				foreach ( V3_Group_Control_Detector::RESPONSIVE_SUFFIXES as $responsive ) {
+					$key = $prefix . '_' . $suffix . $responsive;
+					if ( isset( $controls[ $key ] ) ) {
+						$members[] = $key;
+					}
+				}
+			}
+			if ( ! empty( $members ) ) {
+				$groups[ $prefix ] = $members;
+			}
+		}
+
+		foreach ( V3_Group_Control_Detector::box_shadow_prefixes( $controls ) as $prefix ) {
+			$members = [];
+			foreach ( V3_Group_Control_Detector::BOX_SHADOW_SUFFIXES as $suffix ) {
+				$key = $prefix . '_' . $suffix;
+				if ( isset( $controls[ $key ] ) ) {
+					$members[] = $key;
+				}
+			}
+			if ( ! empty( $members ) ) {
+				$groups[ $prefix . '_box_shadow' ] = $members;
+			}
+		}
+
+		return $groups;
+	}
+
+	/**
+	 * @param array<string, mixed>                $node
+	 * @param string                              $css_string
+	 * @param string                              $widget_type
+	 * @param array<string, mixed>                $widget_config
+	 * @param array<string, array<string, mixed>> $inner_elements
+	 * @param string[]                            $warnings
+	 * @return string[]
+	 */
+	private function apply_v3_inner_element_styles(
+		array &$node,
+		string $css_string,
+		string $widget_type,
+		array $widget_config,
+		array $inner_elements,
+		array $warnings
+	): array {
+		$split = V3_Scoped_Css_Splitter::split( $css_string, array_keys( $inner_elements ) );
+		$default_inner_element = V3_Widget_Map_Loader::get_default_inner_element(
+			$widget_type,
+			is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : []
+		);
+
+		foreach ( $split['dropped_blocks'] as $dropped ) {
+			$warnings[] = sprintf(
+				/* translators: 1: Unknown selector the LLM used, 2: V3 widget type name. */
+				__( 'Unknown selector "%1$s" for widget `%2$s`; its rules were dropped. Use the aliases listed under `inner_elements` in the widget schema.', 'elementor' ),
+				$dropped['selector'],
+				$widget_type
+			);
+		}
+
+		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
+		$settings_patch = [];
+		$unmapped_parts = [];
+		$wrapper_unmapped = '';
+
+		if ( '' !== trim( $split['wrapper'] ) ) {
+			$result = $mapper->apply( $split['wrapper'], $widget_type, $widget_config );
+			$settings_patch = array_merge( $settings_patch, $result['settings_patch'] );
+			$warnings = array_merge( $warnings, $result['warnings'] );
+			$wrapper_unmapped = trim( $result['unmapped_css'] ?? '' );
+		}
+
+		if ( null !== $default_inner_element && '' !== $wrapper_unmapped ) {
+			$split['scopes'][ $default_inner_element ] = trim(
+				( $split['scopes'][ $default_inner_element ] ?? '' ) . ' ' . $wrapper_unmapped
+			);
+			$wrapper_unmapped = '';
+		}
+
+		if ( '' !== $wrapper_unmapped ) {
+			$unmapped_parts[] = $wrapper_unmapped;
+		}
+
+		foreach ( $split['scopes'] as $scope_key => $scope_css ) {
+			if ( '' === trim( $scope_css ) ) {
+				continue;
+			}
+
+			$scope_alias = explode( ':', $scope_key, 2 )[0];
+			$inner_element = $inner_elements[ $scope_alias ] ?? null;
+			if ( null === $inner_element ) {
+				$warnings[] = sprintf(
+					/* translators: 1: Inner-element alias the LLM used, 2: V3 widget type name. */
+					__( 'Unknown inner element "%1$s" for widget `%2$s`; its rules were dropped. Use the aliases listed under `inner_elements` in the widget schema.', 'elementor' ),
+					$scope_alias,
+					$widget_type
+				);
+				continue;
+			}
+
+			$mapping = V3_Auto_Mapper::for_scope( $widget_config, $inner_element );
+			$mapper_css = V3_Scoped_Css_Splitter::scope_to_mapper_css( $scope_key, $scope_css );
+			$result = $mapper->apply( $mapper_css, $widget_type, $widget_config, $mapping );
+
+			$settings_patch = array_merge( $settings_patch, $result['settings_patch'] );
+			$warnings = array_merge( $warnings, $result['warnings'] );
+
+			$warnings = array_merge(
+				$warnings,
+				self::unsupported_scope_property_warnings( $scope_alias, $result['unmapped_css'] ?? '' )
+			);
+		}
+
+		if ( ! empty( $settings_patch ) ) {
+			$node['settings'] = array_merge( $node['settings'] ?? [], $settings_patch );
+		}
+
+		$unmapped = trim( implode( ' ', array_filter( $unmapped_parts, static fn( $part ) => '' !== trim( $part ) ) ) );
+		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, $widget_type );
+		if ( null !== $pro_warning ) {
+			$warnings[] = $pro_warning;
+		}
+
+		if ( '' !== $unmapped ) {
+			$snippet = self::truncate_css_snippet( $unmapped );
+			$warnings[] = null !== $pro_warning
+				? sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
+					$snippet
+				)
+				: sprintf(
+					/* translators: %s: CSS snippet that could not be mapped */
+					__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
+					$snippet
+				);
+		}
+
+		return $warnings;
+	}
+
+	/**
+	 * Inner-element rules cannot survive in `custom_css`: the wrapper-scoped selector Pro
+	 * wraps it with cannot express a sub-element, and Pro 3.35+ strips `custom_css` anyway.
+	 * Unmapped properties are therefore dropped and reported, so the LLM can retry against
+	 * the alias `accepted_css_properties` instead of believing the style was applied.
+	 *
+	 * @return string[]
+	 */
+	private static function unsupported_scope_property_warnings( string $scope_alias, string $unmapped_css ): array {
+		$warnings = [];
+
+		foreach ( self::css_property_names( $unmapped_css ) as $property ) {
+			$warnings[] = sprintf(
+				/* translators: 1: CSS property name, 2: Inner-element alias. */
+				__( 'Property "%1$s" is not supported on "%2$s" and was dropped. See `accepted_css_properties` for that inner element.', 'elementor' ),
+				$property,
+				$scope_alias
+			);
+		}
+
+		return $warnings;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function css_property_names( string $css ): array {
+		if ( ! preg_match_all( '/([a-zA-Z-]+)\s*:/', $css, $matches ) ) {
+			return [];
+		}
+
+		return array_values( array_unique( array_map( 'strtolower', $matches[1] ) ) );
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {

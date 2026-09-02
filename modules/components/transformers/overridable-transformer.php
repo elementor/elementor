@@ -5,7 +5,6 @@ namespace Elementor\Modules\Components\Transformers;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
-use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Overridable_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		[ 'override_key' => $override_key, 'origin_value' => $origin_value ] = $value;
-
-		$origin_value = Overridable_Prop_Type::normalize_origin_value( $origin_value );
 
 		$result = $origin_value;
 
@@ -35,7 +32,7 @@ class Overridable_Transformer extends Transformer_Base {
 		return $result;
 	}
 
-	private function is_origin_value_override( ?array $origin_value ): bool {
+	private function is_origin_value_override( array $origin_value ): bool {
 		return isset( $origin_value['$$type'] ) && Override_Prop_Type::get_key() === $origin_value['$$type'];
 	}
 
