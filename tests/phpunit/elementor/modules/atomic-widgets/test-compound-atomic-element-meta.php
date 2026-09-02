@@ -3,7 +3,6 @@
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -14,6 +13,8 @@ use ElementorEditorTesting\Elementor_Test_Base;
  * The JS function `isCompoundAtomicType()` in the editor reads `elements[type].meta.is_compound`
  * to decide whether a dropped element should be auto-wrapped in a flexbox container.
  * If any element removes `$this->meta('is_compound', true)` from its constructor, this test fails.
+ *
+ * Note: e-form is excluded — it is a Pro feature and not registered in the test environment.
  */
 class Test_Compound_Atomic_Element_Meta extends Elementor_Test_Base {
 
@@ -32,12 +33,8 @@ class Test_Compound_Atomic_Element_Meta extends Elementor_Test_Base {
 		// Act.
 		$instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
 
-		// Skip if the element isn't registered or only has a Pro promotion placeholder in this environment.
-		if ( null === $instance || ( $instance->get_meta()['is_pro_promotion'] ?? false ) ) {
-			$this->markTestSkipped( "Element type '{$element_type}' requires Pro and is not available in this environment." );
-		}
-
 		// Assert.
+		$this->assertNotNull( $instance, "Element type '{$element_type}' is not registered." );
 		$this->assertTrue(
 			$instance->get_meta()['is_compound'] ?? false,
 			"Element '{$element_type}' must call \$this->meta('is_compound', true) in its constructor."
@@ -49,7 +46,6 @@ class Test_Compound_Atomic_Element_Meta extends Elementor_Test_Base {
 			'Tabs'            => [ Atomic_Tabs::get_element_type() ],
 			'Accordion'       => [ Atomic_Accordion::get_element_type() ],
 			'List'            => [ Atomic_List::get_element_type() ],
-			'Form'            => [ Atomic_Form::get_element_type() ],
 			'Collection Loop' => [ Collection_Loop_Promotion::get_element_type() ],
 		];
 	}
