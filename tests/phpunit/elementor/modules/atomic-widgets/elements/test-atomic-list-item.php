@@ -71,4 +71,17 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 			$props['height']
 		);
 	}
+
+	public function test_marker_slot_default_children_seed_list_marker_svg(): void {
+		$children = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['default_children'];
+
+		$this->assertCount( 1, $children );
+		$this->assertSame( 'widget', $children[0]['elType'] );
+		$this->assertSame( 'e-svg', $children[0]['widgetType'] );
+		$this->assertSame( 'svg-src', $children[0]['settings']['svg']['$$type'] );
+		$this->assertSame(
+			ELEMENTOR_ASSETS_URL . 'images/chevron-check.svg',
+			$children[0]['settings']['svg']['value']['url']['value']
+		);
+	}
 }
