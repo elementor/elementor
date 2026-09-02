@@ -38,6 +38,7 @@ export type AuditViolation = {
 	label: string;
 	detail?: string;
 	angieFix?: boolean;
+	ctaLabel?: string;
 };
 
 export type PageContextResponse = {
