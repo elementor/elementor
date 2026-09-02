@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: true
-        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, or npm packages publish)'
 
 permissions:
   contents: write
@@ -218,3 +218,4 @@ jobs:
       JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}

@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta cascade, or npm packages publish)'
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, or npm packages publish)'
       channel:
         required: false
         type: choice
@@ -19,7 +19,7 @@ on:
           - stable
           - beta
         default: 'stable'
-        description: 'Release channel. Controls the beta cascade and the npm dist-tag.'
+        description: 'Release channel. Controls the npm dist-tag.'
 
   workflow_call:
     inputs:
@@ -52,6 +52,8 @@ on:
       NPMJS_CLOUD_DEVOPS_TOKEN:
         required: false
       MAINTAIN_TOKEN:
+        required: false
+      ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY:
         required: false
     outputs:
       CLEAN_PACKAGE_VERSION:
@@ -107,21 +109,11 @@ jobs:
 
       - name: Unzip build artifact
         env:
-          ELEMENTOR_PATH: ${{ github.workspace }}/${{ env.REPO_NAME }}
+          ELEMENTOR_PATH: ${{ github.workspace }}
           ZIP_FILE: ${{ env.REPO_NAME }}-${{ env.VERSION }}.zip
         run: |
-          mkdir -p "$ELEMENTOR_PATH"
           echo "Unzipping ${ZIP_FILE} into ${ELEMENTOR_PATH}"
           unzip -o "$ZIP_FILE" -d "$ELEMENTOR_PATH"
-
-      - name: Validate build files
-        if: github.repository_owner == 'elementor'
-        env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          CHANNEL: ${{ inputs.channel == 'beta' && 'beta' || 'ga' }}
-          PACKAGE_VERSION: ${{ env.VERSION }}
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
@@ -132,7 +124,7 @@ jobs:
           prerelease: ${{ inputs.prerelease }}
           draft: false
 
-      - name: Publish to WordPress.org SVN
+      - name: Publish trunk to WordPress.org SVN
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -141,6 +133,22 @@ jobs:
           PACKAGE_VERSION: ${{ env.VERSION }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+
+      - name: Copy SVN trunk to tag
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/copy-svn-trunk-to-tag.sh"
+
+      - name: Invalidate changelog cache
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: ${{ inputs.channel == 'beta' && 'beta' || 'release' }}
 
       - name: Get Jira release URL
         id: get_jira_release_url
