@@ -18,7 +18,7 @@ const getAllElementTypes = () => {
  * @return {boolean}
  */
 const isCompoundAtomicType = ( elType ) => {
-	return !! elementor.getConfig().elements[ elType ]?.is_compound;
+	return !! elementor.getConfig().elements[ elType ]?.meta?.is_compound;
 };
 
 module.exports = {

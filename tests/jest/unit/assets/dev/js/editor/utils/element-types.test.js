@@ -4,7 +4,7 @@ const makeConfig = ( types ) => {
 	global.elementor = {
 		getConfig: () => ( {
 			elements: Object.fromEntries(
-				types.map( ( [ type, isCompound ] ) => [ type, isCompound ? { is_compound: true } : {} ] ),
+				types.map( ( [ type, isCompound ] ) => [ type, isCompound ? { meta: { is_compound: true } } : {} ] ),
 			),
 		} ),
 	};
