@@ -68,6 +68,13 @@ class V3_Group_Control_Detector {
 	}
 
 	/**
+	 * A Group_Control_Border named `X` writes three sibling settings: `<X>_border` (style),
+	 * `<X>_width`, `<X>_color`. Both nested-group naming (`image_border_border` for a group
+	 * called `image_border`) and direct naming (`border_border` for a group called `border`
+	 * — the V3 `container`, `section`, `column` case) end with `_border` / `_width` / `_color`.
+	 * Detect by matching that suffix and confirming all three sibling settings exist, so
+	 * unrelated `_color` / `_width` settings don't falsely nominate a border group.
+	 *
 	 * @param array<string, mixed> $controls
 	 * @return string[]
 	 */
@@ -75,8 +82,17 @@ class V3_Group_Control_Detector {
 		$prefixes = [];
 
 		foreach ( array_keys( $controls ) as $key ) {
-			if ( preg_match( '/^(.+)_border_(?:border|width|color)$/', $key, $matches ) ) {
-				$prefixes[ $matches[1] . '_border' ] = true;
+			if ( ! preg_match( '/^(.+)_(?:border|width|color)$/', $key, $matches ) ) {
+				continue;
+			}
+
+			$prefix = $matches[1];
+			if ( isset( $prefixes[ $prefix ] ) ) {
+				continue;
+			}
+
+			if ( isset( $controls[ $prefix . '_border' ], $controls[ $prefix . '_width' ], $controls[ $prefix . '_color' ] ) ) {
+				$prefixes[ $prefix ] = true;
 			}
 		}
 
