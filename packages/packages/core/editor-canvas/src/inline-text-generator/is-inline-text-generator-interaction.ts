@@ -1,7 +1,4 @@
-import {
-	ANGIE_WIDGET_TOGGLE_CLASS,
-	INLINE_TEXT_GENERATOR_CONTAINER_ID,
-} from './constants';
+import { ANGIE_WIDGET_TOGGLE_CLASS, INLINE_TEXT_GENERATOR_CONTAINER_ID } from './constants';
 
 export const isInlineTextGeneratorInteraction = ( target: EventTarget | null ): boolean => {
 	if ( ! target || ! ( target instanceof Node ) ) {

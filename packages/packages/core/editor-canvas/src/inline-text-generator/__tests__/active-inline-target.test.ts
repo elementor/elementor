@@ -1,13 +1,11 @@
-import {
-	getActiveInlineTarget,
-	setActiveInlineTarget,
-	snapshotActiveInlineTarget,
-} from '../active-inline-target';
+import { type Editor } from '@tiptap/react';
 
-const createMockEditor = () =>
+import { getActiveInlineTarget, setActiveInlineTarget, snapshotActiveInlineTarget } from '../active-inline-target';
+
+const createMockEditor = (): Editor =>
 	( {
 		getHTML: jest.fn().mockReturnValue( '<p>Updated</p>' ),
-	} ) as unknown as import('@tiptap/react').Editor;
+	} ) as unknown as Editor;
 
 describe( 'activeInlineTarget', () => {
 	it( 'should store and return the active inline target', () => {

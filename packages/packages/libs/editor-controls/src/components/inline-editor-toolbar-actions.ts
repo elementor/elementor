@@ -12,7 +12,5 @@ export type InlineEditorToolbarActionContext = {
 	source: InlineEditorToolbarSource;
 };
 
-export const {
-	Slot: InlineEditorToolbarActionsSlot,
-	inject: injectIntoInlineEditorToolbarActions,
-} = createLocation< InlineEditorToolbarActionContext >();
+export const { Slot: InlineEditorToolbarActionsSlot, inject: injectIntoInlineEditorToolbarActions } =
+	createLocation< InlineEditorToolbarActionContext >();

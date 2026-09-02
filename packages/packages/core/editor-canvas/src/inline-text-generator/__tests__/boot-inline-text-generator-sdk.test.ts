@@ -74,7 +74,7 @@ describe( 'bootInlineTextGeneratorSdk', () => {
 		await openInlineTextGeneratorWithPrompt();
 
 		// Assert.
-		expect( container.classList.contains( 'angie-widget-hidden' ) ).toBe( false );
+		expect( container ).not.toHaveClass( 'angie-widget-hidden' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				context: {

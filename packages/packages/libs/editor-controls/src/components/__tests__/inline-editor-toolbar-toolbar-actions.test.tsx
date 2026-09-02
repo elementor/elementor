@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { getContainer, getElementSetting } from '@elementor/editor-elements';
 import { injectIntoInlineEditorToolbarActions } from '@elementor/editor-controls';
+import { getContainer, getElementSetting } from '@elementor/editor-elements';
 import { screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
@@ -44,14 +44,7 @@ describe( 'InlineEditorToolbar toolbar actions', () => {
 		const editor = createMockEditor();
 
 		// Act.
-		renderWithTheme(
-			<InlineEditorToolbar
-				editor={ editor }
-				elementId="element-1"
-				bind="title"
-				source="canvas"
-			/>
-		);
+		renderWithTheme( <InlineEditorToolbar editor={ editor } elementId="element-1" bind="title" source="canvas" /> );
 
 		// Assert.
 		expect( screen.getByRole( 'button', { name: 'Generate action' } ) ).toBeInTheDocument();

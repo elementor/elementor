@@ -4,8 +4,8 @@ import { InlineEditor, InlineEditorToolbar } from '@elementor/editor-controls';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { autoUpdate, flip, FloatingPortal, useFloating } from '@floating-ui/react';
 
-import { isInlineTextGeneratorInteraction } from '../../../inline-text-generator/is-inline-text-generator-interaction';
 import { CANVAS_WRAPPER_ID, OutlineOverlay } from '../../../components/outline-overlay';
+import { isInlineTextGeneratorInteraction } from '../../../inline-text-generator/is-inline-text-generator-interaction';
 import {
 	type Editor,
 	getInlineEditorElement,

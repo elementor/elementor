@@ -1,7 +1,7 @@
 import {
+	type AngieMcpSdk,
 	createAngieMcpSdkInstance,
 	LAYOUT_FLOATING_CHAT,
-	type AngieMcpSdk,
 	type LoadSidebarV2Options,
 } from '@elementor/editor-mcp';
 import { __ } from '@wordpress/i18n';

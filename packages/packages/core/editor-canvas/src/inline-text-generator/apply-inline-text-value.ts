@@ -26,11 +26,7 @@ const htmlToPlainText = ( html: string ): string => {
 	return doc.body.textContent ?? '';
 };
 
-const TEXT_PROP_TYPE_KEYS = [
-	escapedHtmlPropTypeUtil.key,
-	htmlV3PropTypeUtil.key,
-	stringPropTypeUtil.key,
-] as const;
+const TEXT_PROP_TYPE_KEYS = [ escapedHtmlPropTypeUtil.key, htmlV3PropTypeUtil.key, stringPropTypeUtil.key ] as const;
 
 const getElementWidgetType = ( elementId: string ): string | null => {
 	const container = getContainer( elementId );
@@ -146,7 +142,7 @@ export const applyInlineTextValue = ( elementId: string, bind: string, html: str
 		},
 		{
 			title: getElementLabel( elementId ),
-			subtitle: __( '%s edited', 'elementor' ).replace( '%s', bind ),
+			subtitle: __( 'Inline text edited', 'elementor' ),
 			debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 		}
 	)();

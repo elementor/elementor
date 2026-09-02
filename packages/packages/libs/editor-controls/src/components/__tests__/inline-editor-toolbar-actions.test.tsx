@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { type Editor } from '@tiptap/react';
 import { screen } from '@testing-library/react';
+import { type Editor } from '@tiptap/react';
 
 import {
 	injectIntoInlineEditorToolbarActions,
-	InlineEditorToolbarActionsSlot,
 	type InlineEditorToolbarActionContext,
+	InlineEditorToolbarActionsSlot,
 } from '../inline-editor-toolbar-actions';
 
 const TestAction = ( { bind, source }: InlineEditorToolbarActionContext ) => (

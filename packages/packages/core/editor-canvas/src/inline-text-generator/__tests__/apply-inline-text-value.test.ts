@@ -1,9 +1,5 @@
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
-import {
-	escapedHtmlPropTypeUtil,
-	htmlV3PropTypeUtil,
-	stringPropTypeUtil,
-} from '@elementor/editor-props';
+import { escapedHtmlPropTypeUtil, htmlV3PropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, undoable } from '@elementor/editor-v1-adapters';
 
 import { applyInlineTextValue } from '../apply-inline-text-value';
@@ -114,10 +110,14 @@ describe( 'applyInlineTextValue', () => {
 		const bind = 'paragraph';
 		const generatedHtml = '<p>Rich <strong>text</strong></p>';
 		jest.mocked( getContainer ).mockReturnValue(
-			createContainerMock( 'e-paragraph', bind, htmlV3PropTypeUtil.create( {
-				content: stringPropTypeUtil.create( '<p>Old</p>' ),
-				children: [],
-			} ) )
+			createContainerMock(
+				'e-paragraph',
+				bind,
+				htmlV3PropTypeUtil.create( {
+					content: stringPropTypeUtil.create( '<p>Old</p>' ),
+					children: [],
+				} )
+			)
 		);
 		jest.mocked( getElementType ).mockReturnValue( {
 			propsSchema: {
@@ -148,10 +148,14 @@ describe( 'applyInlineTextValue', () => {
 		const bind = 'paragraph';
 		const unsafeHtml = '<p>Safe</p><script>alert(1)</script>';
 		jest.mocked( getContainer ).mockReturnValue(
-			createContainerMock( 'e-paragraph', bind, htmlV3PropTypeUtil.create( {
-				content: stringPropTypeUtil.create( '<p>Old</p>' ),
-				children: [],
-			} ) )
+			createContainerMock(
+				'e-paragraph',
+				bind,
+				htmlV3PropTypeUtil.create( {
+					content: stringPropTypeUtil.create( '<p>Old</p>' ),
+					children: [],
+				} )
+			)
 		);
 		jest.mocked( getElementType ).mockReturnValue( {
 			propsSchema: {

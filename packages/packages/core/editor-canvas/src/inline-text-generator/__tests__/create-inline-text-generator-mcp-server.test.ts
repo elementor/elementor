@@ -10,8 +10,8 @@ jest.mock( '../apply-inline-text-value', () => ( {
 	applyInlineTextValue: jest.fn(),
 } ) );
 
-import { applyInlineTextValue } from '../apply-inline-text-value';
 import { setActiveInlineTarget } from '../active-inline-target';
+import { applyInlineTextValue } from '../apply-inline-text-value';
 import { createInlineTextGeneratorMcpServer } from '../create-inline-text-generator-mcp-server';
 
 const getToolHandler = ( toolName: string ) =>
