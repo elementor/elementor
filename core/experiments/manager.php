@@ -90,7 +90,7 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( $experimental_data['mutable'] && ( is_admin() || wp_is_json_request() ) ) {
+		if ( $experimental_data['mutable'] && ( is_admin() || $this->is_experiments_ui_rest_request() ) ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
@@ -837,6 +837,32 @@ class Manager extends Base_Object {
 
 	private function should_show_hidden() {
 		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
+	}
+
+	public function is_feature_manageable( $feature_name ) {
+		$feature = $this->get_features( $feature_name );
+
+		if ( ! $feature || ! $feature['mutable'] ) {
+			return false;
+		}
+
+		$is_hidden = $feature[ static::TYPE_HIDDEN ];
+
+		if ( $is_hidden && ! $this->should_show_hidden() ) {
+			return false;
+		}
+
+		return ! $this->has_non_existing_dependency( $feature );
+	}
+
+	private function is_experiments_ui_rest_request() {
+		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
+			return false;
+		}
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+		return false !== strpos( $request_uri, '/' . rest_get_url_prefix() . '/elementor/v1/experiments-ui' );
 	}
 
 	private function create_dependency_class( $dependency_name, $dependency_args ) {

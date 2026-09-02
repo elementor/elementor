@@ -69,6 +69,11 @@ class Experiments_Ui {
 				'saving' => esc_html__( 'Saving…', 'elementor' ),
 				'saveFailed' => esc_html__( 'Save failed', 'elementor' ),
 				'undo' => esc_html__( 'Undo', 'elementor' ),
+				'pageTitle' => esc_html__( 'Experiments', 'elementor' ),
+				'pageSubtitle' => esc_html__( 'Toggles save automatically. Some experiments require a page reload to fully apply.', 'elementor' ),
+				'enabled' => esc_html__( 'enabled', 'elementor' ),
+				'disabled' => esc_html__( 'disabled', 'elementor' ),
+				'hiddenBadge' => esc_html__( 'Hidden', 'elementor' ),
 				'searchPlaceholder' => esc_html__( 'Search experiments…', 'elementor' ),
 				'filterAll' => esc_html__( 'All', 'elementor' ),
 				'filterActive' => esc_html__( 'Active', 'elementor' ),
@@ -100,17 +105,12 @@ class Experiments_Ui {
 
 		$payload = [];
 
-		$show_hidden = defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
-
 		foreach ( $features_raw as $name => $feature ) {
-			if ( ! $feature['mutable'] ) {
+			if ( ! $experiments->is_feature_manageable( $name ) ) {
 				continue;
 			}
 
 			$is_hidden = ! empty( $feature[ Experiments_Manager::TYPE_HIDDEN ] );
-			if ( $is_hidden && ! $show_hidden ) {
-				continue;
-			}
 
 			$dependencies = [];
 			if ( ! empty( $feature['dependencies'] ) ) {
@@ -265,13 +265,17 @@ class Experiments_Ui {
 			return new WP_Error( 'experiment_not_found', 'Experiment not found: ' . $name, [ 'status' => 404 ] );
 		}
 
+		if ( ! $experiments->is_feature_manageable( $name ) ) {
+			return new WP_Error( 'experiment_not_allowed', 'Experiment cannot be changed: ' . $name, [ 'status' => 403 ] );
+		}
+
 		$option_key = $experiments->get_feature_option_key( $name );
 
 		$die_message = null;
 		$die_handler_factory = function () use ( &$die_message ) {
 			return function ( $msg ) use ( &$die_message ) {
 				$die_message = wp_strip_all_tags( (string) $msg );
-				throw new \RuntimeException( $die_message );
+				throw new \RuntimeException( $die_message ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			};
 		};
 
@@ -286,9 +290,11 @@ class Experiments_Ui {
 			remove_filter( 'wp_die_ajax_handler', $die_handler_factory );
 			remove_filter( 'wp_die_json_handler', $die_handler_factory );
 
+			$error_message = $die_message ? $die_message : $e->getMessage();
+
 			return new WP_Error(
 				'experiment_dependency_conflict',
-				$die_message ?: $e->getMessage(),
+				$error_message,
 				[ 'status' => 409 ]
 			);
 		}

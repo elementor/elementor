@@ -1,8 +1,10 @@
-( function () {
+(function() {
 	'use strict';
 
 	const cfg = window.ElementorExperimentsUi;
-	if ( ! cfg || ! Array.isArray( cfg.features ) ) return;
+	if ( ! cfg || ! Array.isArray( cfg.features ) ) {
+		return;
+	}
 
 	const i18n = cfg.i18n;
 
@@ -36,8 +38,8 @@
 		return `
 			<header class="e-exp-ui-header">
 				<div>
-					<h1>Experiments</h1>
-					<p>Toggles save automatically. Some experiments require a page reload to fully apply.</p>
+					<h1>${ escapeHtml( i18n.pageTitle ) }</h1>
+					<p>${ escapeHtml( i18n.pageSubtitle ) }</p>
 				</div>
 				<div class="e-exp-ui-indicator" data-indicator>
 					<span class="dot"></span><span class="text">${ escapeHtml( i18n.saved ) }</span>
@@ -68,12 +70,12 @@
 		const groupsEl = root.querySelector( '[data-groups]' );
 		const groups = { ongoing: [], stable: [] };
 		for ( const f of state.values() ) {
-			( f.releaseStatus === 'stable' ? groups.stable : groups.ongoing ).push( f );
+			( 'stable' === f.releaseStatus ? groups.stable : groups.ongoing ).push( f );
 		}
 
 		const order = [
 			{ key: 'ongoing', label: i18n.ongoing, items: groups.ongoing },
-			{ key: 'stable',  label: i18n.stable,  items: groups.stable },
+			{ key: 'stable', label: i18n.stable, items: groups.stable },
 		];
 
 		groupsEl.innerHTML = order
@@ -98,14 +100,14 @@
 	}
 
 	function renderCard( f ) {
-		const isActive = f.actualState === 'active';
+		const isActive = 'active' === f.actualState;
 		return `
 			<article class="e-exp-ui-card" data-card data-name="${ escapeHtml( f.name ) }" data-state="${ isActive ? 'active' : 'inactive' }">
 				<div class="e-exp-ui-card-main">
 					<div class="e-exp-ui-card-title-row">
 						<h3 class="e-exp-ui-card-title">${ escapeHtml( f.title ) }</h3>
 						<span class="e-exp-ui-badge ${ escapeHtml( f.releaseStatus ) }">${ escapeHtml( f.releaseStatus ) }</span>
-						${ f.isHidden ? `<span class="e-exp-ui-badge hidden">Hidden</span>` : '' }
+						${ f.isHidden ? `<span class="e-exp-ui-badge hidden">${ escapeHtml( i18n.hiddenBadge ) }</span>` : '' }
 						${ ( f.tags || [] ).map( ( t ) => `<span class="e-exp-ui-badge tag">${ escapeHtml( t.label ) }</span>` ).join( '' ) }
 					</div>
 					<p class="e-exp-ui-card-desc">${ f.description || '' }</p>
@@ -154,7 +156,8 @@
 			setTimeout( () => card.classList.remove( 'just-saved' ), 1200 );
 
 			const feature = state.get( name );
-			toast( `${ feature.title } ${ res.actualState === 'active' ? 'enabled' : 'disabled' }`, {
+			const statusLabel = 'active' === res.actualState ? i18n.enabled : i18n.disabled;
+			toast( `${ feature.title } ${ statusLabel }`, {
 				undo: () => {
 					input.checked = prevChecked;
 					input.dispatchEvent( new Event( 'change' ) );
@@ -179,7 +182,9 @@
 	async function onReset( card, opts = {} ) {
 		const name = card.dataset.name;
 		const feature = state.get( name );
-		if ( ! feature ) return;
+		if ( ! feature ) {
+			return;
+		}
 		const prevState = feature.state;
 		const prevActual = feature.actualState;
 
@@ -215,24 +220,33 @@
 			inactive: i18n.deactivateAllConfirm,
 			default: i18n.resetAllConfirm,
 		};
-		if ( ! window.confirm( confirmMap[ targetState ] ) ) return;
+		// eslint-disable-next-line no-alert
+		if ( ! window.confirm( confirmMap[ targetState ] ) ) {
+			return;
+		}
 
 		const targetCards = [];
 		const targetNames = [];
 		root.querySelectorAll( '[data-card]' ).forEach( ( card ) => {
 			const feature = state.get( card.dataset.name );
-			if ( ! feature ) return;
+			if ( ! feature ) {
+				return;
+			}
 
-			const alreadyAtTarget = targetState === 'default'
+			const alreadyAtTarget = 'default' === targetState
 				? isAtDefault( feature )
 				: feature.actualState === targetState && ! isAtDefault( feature );
 
-			if ( alreadyAtTarget ) return;
+			if ( alreadyAtTarget ) {
+				return;
+			}
 			targetCards.push( card );
 			targetNames.push( feature.name );
 		} );
 
-		if ( ! targetNames.length ) return;
+		if ( ! targetNames.length ) {
+			return;
+		}
 
 		targetCards.forEach( ( card ) => card.classList.add( 'saving' ) );
 		setIndicator( 'saving', i18n.saving );
@@ -298,7 +312,7 @@
 		} );
 	}
 
-	async function onManualSet( card, targetState, targetActual ) {
+	async function onManualSet( card, targetState ) {
 		const name = card.dataset.name;
 		try {
 			const res = await apiFetch( { name, state: targetState } );
@@ -325,13 +339,15 @@
 		}
 	}
 
-	function updateCard( name, actualState, rawState ) {
+	function updateCard( name, actualState ) {
 		const card = root.querySelector( `[data-card][data-name="${ CSS.escape( name ) }"]` );
-		if ( ! card ) return;
+		if ( ! card ) {
+			return;
+		}
 		const input = card.querySelector( 'input[type="checkbox"]' );
 		const label = card.querySelector( '[data-state-label]' );
 		const resetBtn = card.querySelector( '[data-reset]' );
-		const isActive = actualState === 'active';
+		const isActive = 'active' === actualState;
 		input.checked = isActive;
 		card.dataset.state = isActive ? 'active' : 'inactive';
 		label.textContent = isActive ? i18n.filterActive : i18n.filterInactive;
@@ -344,7 +360,9 @@
 	}
 
 	function isAtDefault( f ) {
-		if ( f.state === 'default' ) return true;
+		if ( 'default' === f.state ) {
+			return true;
+		}
 		return f.state === f.default;
 	}
 
@@ -362,7 +380,7 @@
 				btn.classList.add( 'active' );
 				currentFilter = btn.dataset.filter;
 				applyFilter();
-			} )
+			} ),
 		);
 		search.addEventListener( 'input', applyFilter );
 
@@ -373,14 +391,17 @@
 				let groupVisible = 0;
 				group.querySelectorAll( '[data-card]' ).forEach( ( card ) => {
 					const matchesQuery = ! q || card.textContent.toLowerCase().includes( q );
-					const matchesFilter = currentFilter === 'all' || card.dataset.state === currentFilter;
+					const matchesFilter = 'all' === currentFilter || card.dataset.state === currentFilter;
 					const show = matchesQuery && matchesFilter;
 					card.style.display = show ? '' : 'none';
-					if ( show ) { visible++; groupVisible++; }
+					if ( show ) {
+						visible++;
+						groupVisible++;
+					}
 				} );
 				group.style.display = groupVisible ? '' : 'none';
 			} );
-			root.querySelector( '[data-empty]' ).classList.toggle( 'show', visible === 0 );
+			root.querySelector( '[data-empty]' ).classList.toggle( 'show', 0 === visible );
 		}
 	}
 
@@ -388,7 +409,11 @@
 		const cards = root.querySelectorAll( '[data-card]' );
 		const total = cards.length;
 		let active = 0;
-		cards.forEach( ( c ) => { if ( c.dataset.state === 'active' ) active++; } );
+		cards.forEach( ( c ) => {
+			if ( 'active' === c.dataset.state ) {
+				active++;
+			}
+		} );
 		root.querySelector( '[data-filter="all"] .count' ).textContent = total;
 		root.querySelector( '[data-filter="active"] .count' ).textContent = active;
 		root.querySelector( '[data-filter="inactive"] .count' ).textContent = total - active;
@@ -396,7 +421,9 @@
 
 	function setIndicator( mode, text ) {
 		indicator.classList.remove( 'saving', 'error' );
-		if ( mode !== 'saved' ) indicator.classList.add( mode );
+		if ( 'saved' !== mode ) {
+			indicator.classList.add( mode );
+		}
 		indicatorText.textContent = text;
 	}
 
@@ -406,8 +433,16 @@
 		el.innerHTML = `<span>${ escapeHtml( msg ) }</span>` + ( opts.undo ? ` <button class="undo">${ escapeHtml( i18n.undo ) }</button>` : '' );
 		toasts.appendChild( el );
 		requestAnimationFrame( () => el.classList.add( 'show' ) );
-		const dismiss = () => { el.classList.remove( 'show' ); setTimeout( () => el.remove(), 200 ); };
-		if ( opts.undo ) el.querySelector( '.undo' ).addEventListener( 'click', () => { opts.undo(); dismiss(); } );
+		const dismiss = () => {
+			el.classList.remove( 'show' );
+			setTimeout( () => el.remove(), 200 );
+		};
+		if ( opts.undo ) {
+			el.querySelector( '.undo' ).addEventListener( 'click', () => {
+				opts.undo();
+				dismiss();
+			} );
+		}
 		setTimeout( dismiss, opts.duration || 3500 );
 	}
 
@@ -431,6 +466,12 @@
 	}
 
 	function escapeHtml( s ) {
-		return String( s ?? '' ).replace( /[&<>"']/g, ( c ) => ( { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ c ] ) );
+		return String( s ?? '' ).replace( /[&<>"']/g, ( c ) => ( {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#39;',
+		}[ c ] ) );
 	}
-} )();
+}());
