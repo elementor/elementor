@@ -1,6 +1,7 @@
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
+import { timeouts } from '../../../config/timeouts';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Scrolling tests in editor @scroll-to-element', () => {
 	test( 'Scroll to element from button widget', async ( { page, apiRequests }, testInfo ) => {
@@ -31,7 +32,7 @@ test.describe( 'Scrolling tests in editor @scroll-to-element', () => {
 		const scrollToElem = editor.getPreviewFrame().locator( `[data-id="${ elemWithID }"]` );
 
 		// Assert.
-		await expect( scrollToElem ).toBeInViewport( { timeout: 500 } );
+		await expect( scrollToElem ).toBeInViewport( { timeout: timeouts.action } );
 	} );
 
 	test( 'Scroll to element from heading with anchor tag container with link ', async ( { page, apiRequests }, testInfo ) => {
@@ -66,6 +67,6 @@ test.describe( 'Scrolling tests in editor @scroll-to-element', () => {
 		const scrollToElem = editor.getPreviewFrame().locator( `[data-id="${ elemWithID }"]` );
 
 		// Assert.
-		await expect( scrollToElem ).toBeInViewport( { timeout: 500 } );
+		await expect( scrollToElem ).toBeInViewport( { timeout: timeouts.action } );
 	} );
 } );

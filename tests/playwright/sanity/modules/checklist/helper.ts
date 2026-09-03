@@ -1,9 +1,11 @@
 import EditorPage from '../../../pages/editor-page';
 import { type APIRequestContext, Page, type TestInfo } from '@playwright/test';
+import ApiRequests from '../../../assets/api-requests';
+import { wpCli } from '../../../assets/wp-cli';
+import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import { proStepIds, Step, StepId } from '../../../types/checklist';
-import ApiRequests from '../../../assets/api-requests';
 
 export class ChecklistHelper {
 	readonly page: Page;
@@ -93,7 +95,7 @@ export class ChecklistHelper {
 		await this.toggleChecklistItem( itemId, context, true );
 
 		const markAsButton = this.page.locator( this.getStepContentSelector( itemId, selectors.markAsButton ) ),
-			buttonText = await markAsButton.textContent();
+			buttonText = await markAsButton.innerText();
 
 		await this.page.locator( this.getStepContentSelector( itemId, selectors.markAsButton ) ).click();
 		await this.page
@@ -113,7 +115,7 @@ export class ChecklistHelper {
 			await this.toggleChecklist( context, true );
 		}
 
-		const progress = await this.page.locator( selectors.progressBarPercentage ).textContent();
+		const progress = await this.page.locator( selectors.progressBarPercentage ).innerText();
 
 		return +progress.replace( '%', '' );
 	}
@@ -128,6 +130,31 @@ export class ChecklistHelper {
 
 	async getSteps( request: APIRequestContext ): Promise< Step[] > {
 		return ( await this.apiRequests.customGet( request, 'wp-json/elementor/v1/checklist/steps' ) ).data;
+	}
+
+	async resetEditorVisitCounter( request: APIRequestContext, count: number = 0 ) {
+		await this.apiRequests.customPut( request, 'wp-json/elementor/v1/checklist/user-progress', {
+			e_editor_counter: count,
+			last_opened_timestamp: false,
+		} );
+	}
+
+	async enableChecklistVisibilityPreference() {
+		await wpCli(
+			'wp eval update_user_meta(1,"elementor_preferences",array_merge((array)get_user_meta(1,"elementor_preferences",true),array("show_launchpad_checklist"=>"yes")));',
+		);
+	}
+
+	waitForUserProgressResponse( page: Page, shouldOpenInEditor: boolean ) {
+		return page.waitForResponse( async ( response ) => {
+			if ( ! response.url().includes( 'wp-json/elementor/v1/checklist/user-progress' ) || ! response.ok() ) {
+				return false;
+			}
+
+			const { data } = await response.json();
+
+			return shouldOpenInEditor === data?.should_open_in_editor;
+		}, { timeout: timeouts.heavyAction } );
 	}
 
 	async resetStepsInDb( request: APIRequestContext, alternativeValues = {} ) {
@@ -159,7 +186,7 @@ export class ChecklistHelper {
 		return proStepIds.includes( stepId );
 	}
 
-	returnDataMockAllDoneMessage( isCompleted ) {
+	returnDataMockAllDoneMessage( isCompleted: boolean ) {
 		return {
 			data: [
 				{
