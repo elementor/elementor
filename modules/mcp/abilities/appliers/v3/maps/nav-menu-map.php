@@ -13,6 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * widget's own controls by V3_Control_Introspector.
  *
  * Intended migration target: a `get_mcp_map()` method on the widget class itself.
+ *
+ * `class_setting` per inner alias is intentionally deferred: the V3 nav-menu widget does
+ * not expose per-alias CSS-classes settings today, so declaring `class_setting` here
+ * would point at nothing. Wire it up in a follow-up if/when the widget grows a
+ * `<alias>_css_classes` control (or an equivalent path) that the frontend honours.
  */
 
 return [

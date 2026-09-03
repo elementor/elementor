@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * but their styles are plain settings, so they are safe to expose as aliases.
  *
  * See nav-menu-map.php for the shape and what is derived rather than declared.
+ *
+ * `class_setting` per inner alias is deferred — same reason as nav-menu-map: the V3 search
+ * widget has no per-alias CSS-classes control today.
  */
 
 return [
