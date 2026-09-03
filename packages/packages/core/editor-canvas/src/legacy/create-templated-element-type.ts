@@ -7,7 +7,6 @@ import { createElementViewClassDeclaration } from './create-element-type';
 import {
 	createAfterRender,
 	createBeforeRender,
-	rerenderExistingChildren,
 	setupTwigRenderer,
 	type TwigViewInterface,
 	waitForChildrenToComplete,
@@ -122,17 +121,11 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			if ( this._shouldReuseChildren() ) {
-				rerenderExistingChildren( this );
-			} else {
+			if ( ! this._domUpdateWasSkipped ) {
 				super._renderChildren();
 			}
 
 			await waitForChildrenToComplete( this );
-		}
-
-		_shouldReuseChildren() {
-			return this._domUpdateWasSkipped && this.children?.length > 0;
 		}
 
 		async _renderTemplate() {
