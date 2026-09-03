@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
@@ -11,6 +12,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
@@ -1011,6 +1013,84 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'hover', $interactions['items'][1]['value']['trigger']['value'] );
 	}
 
+	public function test_execute__update_rejects_interactions_when_experiment_inactive() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = $this->with_interactions_inactive( function () use ( $post_id, $heading_id ) {
+			return ( new Manage_Elements_Ability() )->execute( [
+				'post_id' => $post_id,
+				'operations' => [
+					[
+						'action' => 'update',
+						'element_id' => $heading_id,
+						'interactions' => [
+							[
+								'trigger' => 'scrollIn',
+								'action' => [
+									'type' => 'play',
+								],
+							],
+						],
+					],
+				],
+			] );
+		} );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['results'][0]['status'] ?? null );
+		$this->assertSame( 'elementor_invalid_interactions', $result['results'][0]['code'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+		$items = is_array( $interactions ) ? ( $interactions['items'] ?? $interactions ) : $interactions;
+		$this->assertTrue( empty( $items ) );
+	}
+
+	public function test_bulk__failed_interactions_update_does_not_persist_settings() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => 'Saved',
+					],
+				],
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => 'Leaked',
+					],
+					'interactions' => [
+						[
+							'unknown_field' => 'nope',
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'error', $result['results'][1]['status'] );
+		$this->assertSame( 'elementor_invalid_interactions', $result['results'][1]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Saved', $node['settings']['title']['value'] );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1325,5 +1405,23 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		Global_Classes_Labels::make( $kit )->set_labels( [ $class_id => $label ] );
 
 		return $class_id;
+	}
+
+	private function with_interactions_inactive( callable $callback ) {
+		$experiments = Plugin::$instance->experiments;
+		$name = Interactions_Module::EXPERIMENT_NAME;
+		$original_default = $experiments->get_features( $name )['default'];
+		$feature_option_key = $experiments->get_feature_option_key( $name );
+		$original_option = get_option( $feature_option_key );
+
+		$experiments->set_feature_default_state( $name, Experiments_Manager::STATE_INACTIVE );
+		update_option( $feature_option_key, Experiments_Manager::STATE_INACTIVE );
+
+		try {
+			return $callback();
+		} finally {
+			$experiments->set_feature_default_state( $name, $original_default );
+			update_option( $feature_option_key, $original_option );
+		}
 	}
 }

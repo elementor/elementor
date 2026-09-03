@@ -58,12 +58,25 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
 - **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
-- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`); the server converts it to native styles. **Use Elementor breakpoint names only** (`--mobile`, `--tablet`, `--laptop`, etc.) — raw pixel queries like `@media (max-width: 768px)` are NOT converted to variants and fall back to `custom_css` and may not render reliably.
+- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- **box-shadow**: `var(...)` inside `box-shadow` is not supported and falls back to `custom_css`. `box-shadow` itself is fully supported with literal values.
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
-- Retry on errors up to 10x
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
+
+### Style conversion
+The server converts most CSS into **native atomic styles** (breakpoint variants, pseudo-states). Some value shapes fall back to `custom_css`; `animation` and `animation-*` are dropped.
+
+**When easy, prefer native-friendly shapes** (fallbacks are fine when the design needs them):
+- Breakpoints: `@media(--mobile)` — not `@media (max-width: 768px)`
+- Gap: single value `gap: 1rem` — not two-value `gap: 1rem 2rem` / `row-gap`
+- Borders: shorthand `border` / `border-width` — per-side `border-color` / `border-style` may fall back
+- Border-radius: simple values — not elliptical slash form (`10px / 20px`)
+- Transform: `rotate()` / `scale()` / `translate()` — not `matrix()`, `skew()`, `perspective`, `rotate3d`
+- Transition: property list — easing and delay may be dropped
+- Box-shadow: literal values (fully supported) — not `var(...)` inside the shadow
+- Font family & `var()`: one Google Font or one kit variable label — see GLOBAL VARIABLES
+
+**`padding` / `margin` shorthands are supported** — use them; do not split into longhand unnecessarily.
 
 ## element_config FORMAT
 Match the widget schema shape:

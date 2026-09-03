@@ -398,6 +398,25 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$variables_service = $this->create_variables_service();
 		$warnings = [];
 
+		if ( null !== $interactions ) {
+			if ( ! is_array( $interactions ) ) {
+				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
+			}
+			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+				return new \WP_Error(
+					'elementor_invalid_interactions',
+					__( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
+			}
+			$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+			if ( $interactions_result['error'] ) {
+				return $interactions_result['error'];
+			}
+			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+		}
+
 		if ( ! empty( $settings ) ) {
 			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
 				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
@@ -438,22 +457,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
-		}
-
-		if ( null !== $interactions ) {
-			if ( ! is_array( $interactions ) ) {
-				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
-			}
-			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
-				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
-			} else {
-				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
-				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
-				if ( $interactions_result['error'] ) {
-					return $interactions_result['error'];
-				}
-				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
-			}
 		}
 
 		return [
