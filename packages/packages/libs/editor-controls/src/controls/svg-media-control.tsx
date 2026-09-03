@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { iconPropTypeUtil, svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { Box, Card, CardOverlay, Popover, Stack, styled, usePopupState } from '@elementor/ui';
@@ -126,6 +126,29 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 		setIconLibraryAnchor( anchor );
 		iconLibraryPopoverState.open( event );
 	};
+
+	useEffect( () => {
+		if ( ! iconLibraryPopoverState.isOpen ) {
+			return;
+		}
+
+		const updateAnchor = () => {
+			const nextAnchor = getIconLibraryAnchor(
+				controlContainerRef.current?.getBoundingClientRect(),
+				buttonGroupRef.current?.getBoundingClientRect()
+			);
+
+			if ( nextAnchor ) {
+				setIconLibraryAnchor( nextAnchor );
+			}
+		};
+
+		window.addEventListener( 'resize', updateAnchor );
+
+		return () => {
+			window.removeEventListener( 'resize', updateAnchor );
+		};
+	}, [ iconLibraryPopoverState.isOpen ] );
 
 	const iconLibraryWidth = iconLibraryAnchor?.width ?? ICON_LIBRARY_POPOVER_WIDTH;
 

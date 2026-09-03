@@ -376,6 +376,35 @@ describe( 'SvgMediaControl', () => {
 		expect( preview ).toContainHTML( `d="${ starPath }"` );
 	} );
 
+	it( 'should keep an icon preview placeholder when the catalog does not contain the icon', () => {
+		// Arrange
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+		} as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'fas fa-star' },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl showIconLibrary />, props );
+
+		// Assert
+		expect( screen.getByLabelText( 'Preview icon' ) ).toBeInTheDocument();
+		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should show infotip on hover for user without admin permissions', async () => {
 		// Arrange
 		const open = jest.fn();
@@ -401,7 +430,7 @@ describe( 'SvgMediaControl', () => {
 } );
 
 function mockSvgControlLayout() {
-	jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation( function () {
+	jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation( function ( this: HTMLElement ) {
 		const testId = this.getAttribute( 'data-testid' );
 
 		if ( testId === SVG_MEDIA_CONTROL_CONTAINER_TEST_ID ) {

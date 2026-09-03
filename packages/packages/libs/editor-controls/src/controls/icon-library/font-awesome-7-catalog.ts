@@ -34,18 +34,19 @@ type FontAwesome7EditorConfig = {
 export function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
 	const config = window.elementorCommon?.config?.fontAwesome?.v7;
 
-	if (
-		! config ||
-		! Array.isArray( config.jsonFiles ) ||
-		typeof config.jsonBaseUrl !== 'string' ||
-		config.jsonBaseUrl === ''
-	) {
+	if ( ! config || ! Array.isArray( config.jsonFiles ) ) {
+		return null;
+	}
+
+	const jsonBaseUrl = getAllowedJsonBaseUrl( config.jsonBaseUrl );
+
+	if ( ! jsonBaseUrl ) {
 		return null;
 	}
 
 	return {
 		jsonFiles: config.jsonFiles,
-		jsonBaseUrl: config.jsonBaseUrl,
+		jsonBaseUrl,
 	};
 }
 
@@ -104,11 +105,60 @@ export function findFontAwesome7Icon(
 ): FontAwesome7Icon | undefined {
 	const selectedId = getSelectedIconId( iconClass, library );
 
-	if ( ! selectedId ) {
+	if ( ! selectedId || ! library ) {
 		return undefined;
 	}
 
-	return icons.find( ( icon ) => icon.id === selectedId );
+	const selectedName = selectedId.slice( `${ library }:`.length );
+
+	return icons.find( ( icon ) => {
+		if ( icon.library !== library ) {
+			return false;
+		}
+
+		return icon.id === selectedId || icon.name === selectedName || icon.aliases.includes( selectedName );
+	} );
+}
+
+function getAllowedJsonBaseUrl( jsonBaseUrl: unknown ): string | null {
+	if ( typeof jsonBaseUrl !== 'string' || jsonBaseUrl === '' ) {
+		return null;
+	}
+
+	try {
+		const url = new URL( jsonBaseUrl );
+
+		if ( url.protocol !== 'http:' && url.protocol !== 'https:' ) {
+			return null;
+		}
+
+		return url.href;
+	} catch {
+		return null;
+	}
+}
+
+function getCatalogFileUrl( jsonBaseUrl: string, file: string ): string | null {
+	try {
+		const baseUrl = new URL( jsonBaseUrl );
+		const fileUrl = new URL( `${ file }.json`, jsonBaseUrl );
+
+		if ( fileUrl.origin !== baseUrl.origin || ! fileUrl.pathname.startsWith( baseUrl.pathname ) ) {
+			return null;
+		}
+
+		if ( fileUrl.protocol !== 'http:' && fileUrl.protocol !== 'https:' ) {
+			return null;
+		}
+
+		return fileUrl.href;
+	} catch {
+		return null;
+	}
+}
+
+function isSafeSvgPath( path: string ): boolean {
+	return path !== '' && ! /[<>"'`]/.test( path );
 }
 
 function loadLibraryIcons(
@@ -120,7 +170,13 @@ function loadLibraryIcons(
 		return Promise.resolve( [] );
 	}
 
-	return fetch( `${ config.jsonBaseUrl }${ file }.json`, { signal } )
+	const catalogUrl = getCatalogFileUrl( config.jsonBaseUrl, file );
+
+	if ( ! catalogUrl ) {
+		return Promise.resolve( [] );
+	}
+
+	return fetch( catalogUrl, { signal } )
 		.then( ( response ) => ( response.ok ? response.json() : null ) )
 		.then( ( data: { icons?: Record< string, FontAwesomeIconJson > } | null ) => {
 			if ( ! data?.icons || typeof data.icons !== 'object' ) {
@@ -175,7 +231,7 @@ function isValidIconTuple( iconData: unknown ): iconData is FontAwesomeIconJson 
 }
 
 function normalizePaths( pathData: string | string[] ): string[] {
-	if ( typeof pathData === 'string' && pathData !== '' ) {
+	if ( typeof pathData === 'string' && isSafeSvgPath( pathData ) ) {
 		return [ pathData ];
 	}
 
@@ -183,7 +239,7 @@ function normalizePaths( pathData: string | string[] ): string[] {
 		return [];
 	}
 
-	return pathData.filter( ( path ): path is string => typeof path === 'string' && path !== '' );
+	return pathData.filter( ( path ): path is string => typeof path === 'string' && isSafeSvgPath( path ) );
 }
 
 function formatIconLabel( name: string ): string {

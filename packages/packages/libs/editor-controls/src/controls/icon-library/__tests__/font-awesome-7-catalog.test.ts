@@ -3,6 +3,7 @@ import {
 	filterFontAwesome7Icons,
 	findFontAwesome7Icon,
 	type FontAwesome7Icon,
+	getFontAwesome7EditorConfig,
 	getSelectedIconId,
 	loadFontAwesome7Catalog,
 } from '../font-awesome-7-catalog';
@@ -103,5 +104,55 @@ describe( 'font-awesome-7-catalog', () => {
 		expect( getSelectedIconId( 'fas fa-star', 'fa-solid' ) ).toBe( 'fa-solid:star' );
 		expect( getSelectedIconId( 'fa-solid fa-star', 'fa-solid' ) ).toBe( 'fa-solid:star' );
 		expect( findFontAwesome7Icon( [ createIcon() ], 'fas fa-star', 'fa-solid' )?.id ).toBe( 'fa-solid:star' );
+		expect( findFontAwesome7Icon( [ createIcon() ], 'fa-solid fa-favorite', 'fa-solid' )?.id ).toBe(
+			'fa-solid:star'
+		);
+	} );
+
+	it( 'rejects non-http catalog URLs and unsafe SVG paths', async () => {
+		// Arrange.
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						jsonFiles: [ 'solid' ],
+						jsonBaseUrl: 'javascript:alert(1)',
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+		global.fetch = jest.fn();
+
+		// Act.
+		const blockedConfig = getFontAwesome7EditorConfig();
+		const blockedCatalog = await loadFontAwesome7Catalog();
+
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						jsonFiles: [ 'solid' ],
+						jsonBaseUrl: 'https://example.com/assets/lib/font-awesome-7/json/',
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () =>
+				Promise.resolve( {
+					icons: {
+						xss: [ 10, 10, [], 'f000', 'M0 0"><script>alert(1)</script><path d="M1 1' ],
+					},
+				} ),
+		} );
+
+		const sanitizedCatalog = await loadFontAwesome7Catalog();
+
+		// Assert.
+		expect( blockedConfig ).toBeNull();
+		expect( blockedCatalog ).toEqual( [] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+		expect( sanitizedCatalog ).toEqual( [] );
 	} );
 } );

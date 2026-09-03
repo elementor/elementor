@@ -38,6 +38,19 @@ export function SvgMediaPreview( { isFetching, src, iconClassName, iconLibrary }
 		);
 	}
 
+	if ( shouldLoadIconCatalog ) {
+		return (
+			<Box
+				aria-label={ __( 'Preview icon', 'elementor' ) }
+				sx={ {
+					width: ICON_PREVIEW_SIZE,
+					height: ICON_PREVIEW_SIZE,
+					color: ICON_PREVIEW_COLOR,
+				} }
+			/>
+		);
+	}
+
 	return (
 		<CardMedia
 			component="img"

@@ -78,9 +78,9 @@ export function SvgMediaOverlay( {
 					description={ infotipDescription }
 					isEnabled={ ! isAdmin }
 				>
-					<Box component="span" sx={ { display: 'inline-flex' } } onClick={ () => isAdmin && onUpload() }>
+					<Box component="span" sx={ { display: 'inline-flex' } }>
 						{ isAdmin ? (
-							<UploadButton sx={ svgButtonSx } />
+							<UploadButton sx={ svgButtonSx } onClick={ onUpload } />
 						) : (
 							<ThemeProvider colorScheme="dark">
 								<UploadButton disabled sx={ svgButtonSx } />
@@ -110,7 +110,7 @@ export function SvgMediaOverlay( {
 	);
 }
 
-function UploadButton( { disabled = false, sx }: { disabled?: boolean; sx?: SxProps } ) {
+function UploadButton( { disabled = false, sx, onClick }: { disabled?: boolean; sx?: SxProps; onClick?: () => void } ) {
 	return (
 		<Button
 			sx={ sx }
@@ -118,6 +118,7 @@ function UploadButton( { disabled = false, sx }: { disabled?: boolean; sx?: SxPr
 			color="inherit"
 			variant="text"
 			disabled={ disabled }
+			onClick={ onClick }
 			aria-label={ __( 'Upload', 'elementor' ) }
 		>
 			<UploadIcon />
