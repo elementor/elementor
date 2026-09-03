@@ -38,14 +38,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). V4 nodes can be modified via elementor/manage-elements or elementor/build-composition. Allowlisted V3 nodes (see elementor/list-widget-schemas) return settings (content/behavior only) and a round-trippable style CSS string when include_content=true; scoped V3 widgets use alias blocks in style (e.g. main-menu { color: #111; } main-menu:hover { color: #aaa; }). Non-allowlisted V3 nodes are returned for context only. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles: V4 as { __style_id, css }, V3 as a plain style string. V4 nodes also include interactions, rendered HTML tag when known, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). V4 nodes can be modified via elementor/manage-elements or elementor/build-composition. Allowlisted V3 nodes (see elementor/list-widget-schemas) return non-style settings (including `_css_classes`) and a plain style CSS string when include_content=true. Non-allowlisted V3 nodes are returned for context only. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles: V4 as { __style_id, css }, V3 as a plain style string. V4 nodes also include interactions, rendered HTML tag when known, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true: V4 nodes include settings, styles (as { __style_id, css }), interactions, tag, and default_styles. Allowlisted V3 nodes include settings (non-style keys) and style (plain CSS string; scoped widgets use alias blocks). Other V3 nodes have empty settings and style.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true: V4 nodes include settings, styles (as { __style_id, css }), interactions, tag, and default_styles. Allowlisted V3 nodes include settings (non-style keys, incl. `_css_classes`) and style (plain CSS string). Other V3 nodes have empty settings and style.',
 					],
 				],
 			],
@@ -74,7 +74,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes settings and styles for the subtree. V4: settings, styles as { __style_id, css }, interactions, tag, default_styles. Allowlisted V3: settings (content only) + style (CSS string, alias blocks when inner_elements). Requires element_id.',
+						'description' => 'If true, includes settings and styles for the subtree. V4: settings, styles as { __style_id, css }, interactions, tag, default_styles. Allowlisted V3: settings (non-style keys, incl. `_css_classes`) + style (plain CSS string). Requires element_id.',
 					],
 				],
 			]
