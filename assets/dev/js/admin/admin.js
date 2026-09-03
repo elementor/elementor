@@ -61,7 +61,7 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 
 				if ( self.isElementorMode() ) {
 					elementorCommon.dialogsManager.createWidget( 'confirm', {
-						message: __( 'This page was built with Elementor. You\'re about to switch to editing with the WordPress editor. Your current layout, design and content may break and need to be rebuilt. Are you sure you want to continue?', 'elementor' ),
+						message: __( 'You are about to switch this page from the Elementor editor to the WordPress editor. Your current layout, design, and content may break and need to be rebuilt. Are you sure you want to continue?', 'elementor' ),
 						headerMessage: __( 'Edit with WordPress?', 'elementor' ),
 						strings: {
 							confirm: __( 'Continue', 'elementor' ),
