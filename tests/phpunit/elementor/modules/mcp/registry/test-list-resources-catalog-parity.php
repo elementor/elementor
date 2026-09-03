@@ -7,9 +7,8 @@ use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Interactions_Schema_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
+use Elementor\Modules\Mcp\Abilities\Build_Guidelines_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
-use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
-use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use PHPUnit\Framework\TestCase;
 
@@ -46,8 +45,7 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 
 	private function core_resource_abilities(): array {
 		return [
-			new Style_Best_Practices_Ability(),
-			new Wordpress_Best_Practices_Ability(),
+			new Build_Guidelines_Ability(),
 			new Manage_Variable_Guide_Ability(),
 			new Global_Classes_Resource_Ability(),
 			new Global_Variables_Resource_Ability(),
@@ -59,15 +57,9 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 	private function expected_catalog_entries(): array {
 		return [
 			[
-				'uri' => Style_Best_Practices_Ability::URI,
-				'name' => 'Style Best Practices',
-				'description' => 'Design quality guidelines for creating distinctive, intentional aesthetics. Covers typography, color strategy, spacing, motion, and visual hierarchy.',
-				'mimeType' => 'text/markdown',
-			],
-			[
-				'uri' => Wordpress_Best_Practices_Ability::URI,
-				'name' => 'WordPress Best Practices',
-				'description' => 'Opinionated WordPress patterns for Elementor builds: repeating layouts (single template vs N pages), include-all + exclude-exceptions condition scoping, Post Content placement, dynamic tags.',
+				'uri' => Build_Guidelines_Ability::URI,
+				'name' => 'Build Guidelines',
+				'description' => 'Authoritative engine + WordPress rules for MCP builds: styling contract (breakpoint spelling, value-shape traps, variables and classes), sizing/layout defaults, and repeating-layout / single-template patterns.',
 				'mimeType' => 'text/markdown',
 			],
 			[

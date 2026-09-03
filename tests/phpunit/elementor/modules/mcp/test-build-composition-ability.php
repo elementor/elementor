@@ -140,8 +140,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertCount( 1, $result['root_element_ids'] );
 		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertNotEmpty( $result['edit_url'] );
-		$this->assertArrayNotHasKey( 'preview_url', $result );
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['edit_url'], $result['llm_instructions'] );
 
 		$rendered = $this->render_root_elements( $post_id );
 		$this->assertMatchesSnapshot( $this->normalize_snapshot( $rendered ) );

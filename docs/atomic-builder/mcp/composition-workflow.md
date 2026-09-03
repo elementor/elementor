@@ -32,7 +32,7 @@ Full layouts from scratch or container redesigns. For single-element edits, use 
 ### Call order
 
 ```
-1. Read elementor://global-variables, elementor://global-classes, elementor://style/best-practices
+1. Read elementor://global-variables, elementor://global-classes
 2. elementor/manage-global-variable  (create missing tokens)
 3. elementor/manage-classes          (create missing classes)
 4. elementor/list-widget-schemas?summary=true
@@ -86,5 +86,4 @@ Subfolder: `modules/mcp/abilities/build-composition/`.
 ## See also
 
 - [abilities/build-composition.md](abilities/build-composition.md)
-- [design-guidance.md](design-guidance.md)
 - [../css-converter/overview.md](../css-converter/overview.md)

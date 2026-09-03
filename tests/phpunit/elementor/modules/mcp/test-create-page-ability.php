@@ -100,7 +100,7 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'draft', $result['status'] );
 		$this->assertArrayHasKey( 'preview_url', $result );
 		$this->assertArrayHasKey( 'llm_instructions', $result );
-		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringContainsString( $result['edit_url'], $result['llm_instructions'] );
 		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
 		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 	}

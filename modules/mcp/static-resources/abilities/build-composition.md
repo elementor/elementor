@@ -1,8 +1,8 @@
 # SITE PARTS (Pro)
-If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
+If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. Read [elementor://build-guidelines] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
 
 # RESOURCES (Read before use)
-- [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
+- [elementor://build-guidelines] - Authoritative engine + WordPress rules: styling contract (breakpoint spelling, value-shape traps, variables and classes), sizing/layout defaults, repeating-layout / single-template patterns
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
@@ -25,7 +25,7 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 
 **Rules:**
 - Only use element IDs from the `resolved_xml` in **this tool's response** for any follow-up `manage-elements` calls — never IDs from an earlier read.
-- Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
+- Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media(--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
 
 # COMPONENTS (only when explicitly requested)
 Elementor components are reusable widget compositions; global classes are reusable styles. Do not substitute one for the other.
@@ -43,6 +43,9 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
+
+## PARTIAL TEXT STYLING
+Text widgets (`e-heading`, `e-paragraph`, `e-button` text) take a plain string — no inline children, no styled substrings. To style a subset of a headline (e.g. one bold word, a gradient run), split the text across sibling text widgets inside a flex container and style each sibling separately. Read `elementor://build-guidelines` for the pattern.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
@@ -99,7 +102,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
 - Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
-- Unrecognized variable references fall back to `custom_css`
+- Unrecognized variable references fall back to `custom_css` and may not render reliably
 
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
@@ -119,11 +122,7 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
-# DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
-
-**Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
-
-## SIZING: DEFAULT IS NO SIZE (CRITICAL)
+# SIZING (engine behavior — omit sizes unless required)
 
 **DO NOT specify height or width unless you have a specific visual reason.**
 
@@ -148,41 +147,9 @@ vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
 GOOD: `<e-flexbox>content naturally sizes</e-flexbox>`
 BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-flexbox>`
 
-## Layout Variety (Break the Template)
-- AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
-- VARY heights: Use auto-height sections with generous padding (6rem+). Let content breathe
-- VARY widths: Not everything spans full width. Use contained sections (max-width: 960px) mixed with edge-to-edge
-- ASYMMETRIC grids: 2:1, 1:3, offset layouts. Avoid equal column widths
-- Negative space as design element: Large margins create focus and sophistication
-- Break alignment intentionally: Offset headings, overlapping elements, broken grids
+# LAYOUT (engine defaults)
 
-## Visual Depth & Effects
-- Layer elements: Overlapping cards, text over images, floating elements
-- Subtle shadows with color tint (not pure black): `box-shadow: 0 20px 60px rgba(<brand-color-here>, 0.15)`
-- Gradient overlays on images for text readability
-- Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
-- Backdrop blur for glassmorphism where appropriate
-- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
-
-## Typography with Character
-- Display fonts for headlines (from user's brand or contextually appropriate)
-- Size contrast: 4rem+ headlines vs 1rem body. Make hierarchy unmistakable
-- Letter-spacing: Tight for large headlines (-0.02em), loose for small caps (0.1em)
-- Line-height: Tight for headlines (1.1), generous for body (1.6-1.8)
-- Text decoration: Underlines, highlights, gradient text for emphasis
-
-## Color with Purpose
-- Extract palette from user context (brand colors, industry norms, mood)
-- 60-30-10 rule: dominant, secondary, accent
-- Tinted neutrals over pure grays: warm (#faf8f5, #2d2a26) or cool (#f5f7fa, #1e2430)
-- Color blocking: Large colored sections create visual rhythm
-- Gradient directions: Diagonal (135deg, 225deg) feel more dynamic than vertical
-
-## Spacing Strategy
-- Section padding: 6rem-10rem vertical, creating breathing room
-- Rhythm variation: Tight groups (2rem) with generous gaps between (6rem)
-- Use rem/em exclusively for responsive scaling
-- Generous padding on CTAs: min 1rem 2.5rem
+- `e-flexbox` defaults to `flex-direction: row`. Stacked content (heading + paragraph, footer columns) needs `display: flex; flex-direction: column` set explicitly, or children render side-by-side.
 
 # INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.

@@ -28,7 +28,7 @@ class Create_Page_Ability extends Abstract_Ability {
 				'type' => 'object',
 				'properties' => [
 					'id' => [ 'type' => 'integer' ],
-					'edit_url' => [ 'type' => 'string' ],
+					'edit_url' => Document_Mutation_Links::edit_url_schema_property(),
 					'status' => [ 'type' => 'string' ],
 					'type' => [ 'type' => 'string' ],
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
@@ -136,7 +136,6 @@ class Create_Page_Ability extends Abstract_Ability {
 
 		return [
 			'id' => (int) $post_id,
-			'edit_url' => $document->get_edit_url(),
 			'status' => get_post_status( $post_id ),
 			'type' => $post_type,
 		] + Document_Mutation_Links::for_document(

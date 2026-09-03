@@ -29,6 +29,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 				'properties' => [
 					'success' => [ 'type' => 'boolean' ],
 					'post_id' => [ 'type' => 'integer' ],
+					'edit_url' => Document_Mutation_Links::edit_url_schema_property(),
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
