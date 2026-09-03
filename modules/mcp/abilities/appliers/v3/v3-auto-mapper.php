@@ -382,5 +382,4 @@ class V3_Auto_Mapper {
 	private static function is_responsive_control( string $setting_key, array $controls ): bool {
 		return V3_Control_Introspector::is_responsive_setting( $setting_key, $controls );
 	}
-
 }

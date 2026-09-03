@@ -248,6 +248,7 @@ class V3_Control_Introspector {
 	}
 
 	/**
+	 * @param string               $setting_key
 	 * @param array<string, mixed> $controls
 	 */
 	public static function is_responsive_setting( string $setting_key, array $controls ): bool {

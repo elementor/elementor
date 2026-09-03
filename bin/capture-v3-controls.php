@@ -82,7 +82,7 @@ foreach ( $widget_types as $widget_type ) {
 
 	$filtered = array_diff_key( $controls, array_flip( $shared_advanced ) );
 
-	$path = $fixtures_dir . '/' . $widget_type . '.json';
+	$fixture_path = $fixtures_dir . '/' . $widget_type . '.json';
 	$json = json_encode(
 		[ 'controls' => $filtered ],
 		JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
@@ -93,9 +93,9 @@ foreach ( $widget_types as $widget_type ) {
 		continue;
 	}
 
-	file_put_contents( $path, $json . "\n" );
+	file_put_contents( $fixture_path, $json . "\n" );
 
-	fwrite( STDOUT, sprintf( "Captured `%s` (%d controls) → %s\n", $widget_type, count( $filtered ), $path ) );
+	fwrite( STDOUT, sprintf( "Captured `%s` (%d controls) → %s\n", $widget_type, count( $filtered ), $fixture_path ) );
 }
 
 /**

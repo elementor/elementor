@@ -102,5 +102,4 @@ class V3_Style_Settings_Index {
 
 		return null;
 	}
-
 }

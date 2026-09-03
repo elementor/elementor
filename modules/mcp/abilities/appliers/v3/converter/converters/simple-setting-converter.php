@@ -104,7 +104,10 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 	}
 
 	/**
-	 * @param array<string, mixed> $override
+	 * @param V3_Conversion_Context $ctx
+	 * @param array<string, mixed>  $rule
+	 * @param V3_Context_Meta       $meta
+	 * @param array<string, mixed>  $override
 	 */
 	private function convert_element_width( V3_Conversion_Context $ctx, array $rule, V3_Context_Meta $meta, array $override ): bool {
 		$patch = V3_Value_Resolvers::resolve_element_width( (string) $rule['value'], (string) $rule['property'] );

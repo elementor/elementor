@@ -227,8 +227,10 @@ class Element_Config_Applier {
 	}
 
 	/**
+	 * @param string               $widget_type
 	 * @param array<string, mixed> $base
-	 * @param array<string, mixed> $incoming Validated settings the applier wants to merge on top.
+	 * @param array<string, mixed> $incoming  Validated settings the applier wants to merge on top.
+	 * @param string               $config_id
 	 * @param string[]             $warnings
 	 * @return array<string, mixed> Incoming with offending keys removed.
 	 */

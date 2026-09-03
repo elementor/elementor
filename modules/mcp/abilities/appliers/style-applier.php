@@ -221,6 +221,7 @@ class Style_Applier {
 	}
 
 	/**
+	 * @param string               $widget_type
 	 * @param array<string, mixed> $base
 	 * @param array<string, mixed> $patch
 	 * @param array<string, mixed> $controls

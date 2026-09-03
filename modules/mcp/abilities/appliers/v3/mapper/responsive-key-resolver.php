@@ -25,8 +25,11 @@ class Responsive_Key_Resolver {
 	 * A setting that cannot vary per breakpoint has to be dropped rather than written to its
 	 * bare key, which would silently replace the desktop value with the narrower one.
 	 *
-	 * @param bool $is_responsive Mapping-level claim; the widget's own control marker is
-	 *                            authoritative when the mapping makes no claim.
+	 * @param string          $setting
+	 * @param string          $breakpoint
+	 * @param bool            $is_responsive Mapping-level claim; the widget's own control marker
+	 *                                       is authoritative when the mapping makes no claim.
+	 * @param V3_Context_Meta $meta
 	 * @return string|null Suffixed key, base key, or null when the write should be dropped.
 	 */
 	public function resolve( string $setting, string $breakpoint, bool $is_responsive, V3_Context_Meta $meta ): ?string {

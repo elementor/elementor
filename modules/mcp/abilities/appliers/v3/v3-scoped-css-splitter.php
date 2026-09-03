@@ -110,9 +110,9 @@ class V3_Scoped_Css_Splitter {
 	 * routing any embedded `selector { ... }` blocks (which would break parse_nested) into
 	 * `dropped_blocks`. Braces inside strings are preserved for the declaration path.
 	 *
-	 * @param string                                                       $chunk
-	 * @param string[]                                                     $wrapper_parts
-	 * @param array<int, array{selector: string, body: string}>            $dropped_blocks
+	 * @param string                                            $chunk
+	 * @param string[]                                          $wrapper_parts
+	 * @param array<int, array{selector: string, body: string}> $dropped_blocks
 	 */
 	private static function collect_wrapper_declarations( string $chunk, array &$wrapper_parts, array &$dropped_blocks ): void {
 		$chunk = trim( $chunk );
@@ -171,7 +171,7 @@ class V3_Scoped_Css_Splitter {
 			$char = $chunk[ $i ];
 
 			if ( $in_string ) {
-				if ( $string_char === $char && ( $i === 0 || '\\' !== $chunk[ $i - 1 ] ) ) {
+				if ( $string_char === $char && ( 0 === $i || '\\' !== $chunk[ $i - 1 ] ) ) {
 					$in_string = false;
 				}
 				continue;
@@ -211,11 +211,11 @@ class V3_Scoped_Css_Splitter {
 	 * split as well and each part is re-wrapped in the same prelude. That keeps the breakpoint
 	 * with the scope it belongs to, since a scope is mapped independently of the wrapper.
 	 *
-	 * @param array{prelude: string, body: string, raw: string}     $block
-	 * @param string[]                                               $inner_element_aliases
-	 * @param string[]                                               $wrapper_parts
-	 * @param array<string, string>                                  $scopes
-	 * @param array<int, array{selector: string, body: string}>      $dropped_blocks
+	 * @param array{prelude: string, body: string, raw: string}  $block
+	 * @param string[]                                           $inner_element_aliases
+	 * @param string[]                                           $wrapper_parts
+	 * @param array<string, string>                              $scopes
+	 * @param array<int, array{selector: string, body: string}>  $dropped_blocks
 	 */
 	private static function split_at_rule( array $block, array $inner_element_aliases, array &$wrapper_parts, array &$scopes, array &$dropped_blocks ): void {
 		$inner = self::split( $block['body'], $inner_element_aliases );
