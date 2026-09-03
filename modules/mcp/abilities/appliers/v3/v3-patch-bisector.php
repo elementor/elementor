@@ -12,14 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Split logic is group-aware: sibling keys of a V3 group control (e.g. `typography_typography`
  * and its `typography_font_size` companion) must move together, otherwise probing "half" of a
  * group produces a shape that fatals for a reason unrelated to what the LLM actually caused.
+ *
+ * Consumed by [6/6]'s `Build_Composition_Applier`/`Update_Style_Applier`: on a failed
+ * `V3_Render_Probe`, the applier calls `find_offending()` with a `probe` callable that wraps
+ * `V3_Render_Probe::probe()`; the returned keys are surfaced back as actionable warnings.
  */
 class V3_Patch_Bisector {
 
 	/**
-	 * @param array<string, mixed>            $base
-	 * @param array<string, mixed>            $patch
-	 * @param callable                        $probe  fn(array $settings): bool -- true when render is OK.
-	 * @param array<string, string[]>         $groups Optional. Group name => member setting keys.
+	 * @param array<string, mixed>    $base
+	 * @param array<string, mixed>    $patch
+	 * @param callable                $probe  fn(array $settings): bool -- true when render is OK.
+	 * @param array<string, string[]> $groups Optional. Group name => member setting keys.
 	 * @return string[]
 	 */
 	public static function find_offending( array $base, array $patch, callable $probe, array $groups = [] ): array {

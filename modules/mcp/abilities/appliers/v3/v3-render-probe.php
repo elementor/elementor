@@ -12,9 +12,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Instantiates a widget with a candidate settings array and probe-renders it to detect
  * fatal shapes (e.g. slider control receiving a plain string) before the write is committed.
  *
- * The probe is fail-open: any unexpected condition (missing widget class, V4 atomic widget,
- * probe exceeding the time budget) returns `ok=true` so a legitimate write is never blocked
- * by the safety net itself.
+ * Consumed by [6/6]'s style-write pipeline (`Update_Style_Applier` / `Build_Composition_Applier`);
+ * lives here so [6/6] can depend on a stable API rather than importing the probe out of a WIP file.
+ *
+ * Design notes:
+ *  - Uses `clone $prototype` + reflection injection instead of `new $class( $data, $args )` on
+ *    purpose. The stock `Widget_Base` constructor runs skin registration, control stack init,
+ *    and other setup that itself can fatal on malformed settings — which is exactly the shape
+ *    we want to catch at render time, not at construction time. Cloning the type-instance
+ *    prototype (already fully initialised by the widgets manager) and swapping only its `data`
+ *    payload isolates the probe to a single `render_content()` invocation.
+ *  - Fail-open by contract: any unexpected condition (missing widget class, V4 atomic widget,
+ *    probe exceeding the time budget, reflection failure) returns `ok=true` so a legitimate
+ *    write is never blocked by the safety net itself.
+ *  - `\Throwable` catches PHP 7-style `\Error` (including `TypeError`, `ParseError`) so an
+ *    uncaught fatal inside `render_content()` becomes `ok=false` + populated `error_class`
+ *    instead of tearing down the request.
  */
 class V3_Render_Probe {
 
@@ -58,6 +71,7 @@ class V3_Render_Probe {
 	}
 
 	/**
+	 * @param object               $widget
 	 * @param array<string, mixed> $settings
 	 */
 	private static function inject_settings( object $widget, array $settings ): bool {
@@ -88,7 +102,8 @@ class V3_Render_Probe {
 			if ( $class->hasProperty( 'data' ) ) {
 				return $class->getProperty( 'data' );
 			}
-			$class = $class->getParentClass() ?: null;
+			$parent = $class->getParentClass();
+			$class = false === $parent ? null : $parent;
 		}
 
 		return null;
@@ -103,6 +118,7 @@ class V3_Render_Probe {
 		$error_class = null;
 
 		set_error_handler( static function ( $severity, $message, $file, $line ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Message is thrown, not emitted.
 			throw new \ErrorException( $message, 0, $severity, $file, $line );
 		}, E_ERROR | E_RECOVERABLE_ERROR | E_USER_ERROR );
 

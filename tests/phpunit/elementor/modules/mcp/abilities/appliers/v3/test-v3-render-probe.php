@@ -136,6 +136,21 @@ namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3 {
 			$this->assertTrue( $result['timed_out'] );
 		}
 
+		public function test_probe__catches_error_subclass_from_render() {
+			// A PHP TypeError is a `\Error` (7+), not an `\Exception`. Verify the outer
+			// `catch ( \Throwable )` catches it and surfaces the class name.
+			$widget = $this->make_probe_widget( static function () {
+				throw new \TypeError( 'shape mismatch' );
+			} );
+			$this->install_widgets_manager( [ 'type-error-widget' => $widget ] );
+
+			$result = V3_Render_Probe::probe( 'type-error-widget', [] );
+
+			$this->assertFalse( $result['ok'] );
+			$this->assertSame( \TypeError::class, $result['error_class'] );
+			$this->assertStringContainsString( 'shape mismatch', (string) $result['error'] );
+		}
+
 		public function test_probe__injects_settings_via_data_property() {
 			// Arrange.
 			$captured = null;
