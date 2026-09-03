@@ -130,6 +130,7 @@ class V3_Value_Resolvers {
 	}
 
 	/**
+	 * @param string               $setting
 	 * @param array<string, mixed> $patch
 	 * @return string[] Breakpoint suffixes ('', '_mobile', '_tablet', ...) that the patch
 	 *                  contains for the given base setting.
@@ -547,12 +548,18 @@ class V3_Value_Resolvers {
 		}
 
 		if ( empty( $patch ) ) {
-			return [ 'patch' => [], 'rejections' => $rejections ];
+			return [
+				'patch' => [],
+				'rejections' => $rejections,
+			];
 		}
 
 		$patch[ $prefix . '_typography' ] = 'custom';
 
-		return [ 'patch' => $patch, 'rejections' => $rejections ];
+		return [
+			'patch' => $patch,
+			'rejections' => $rejections,
+		];
 	}
 
 	/**
@@ -652,48 +659,75 @@ class V3_Value_Resolvers {
 	}
 
 	/**
-	 * Dispatches a named resolver against a CSS value.
+	 * Dispatches a named resolver against a CSS value via {@see V3_Resolver_Registry}.
 	 *
-	 * @param string               $resolver_name One of: color, dimension, sides, box_shadow, border, text, slider, gaps, element_width.
+	 * Registered names (default set): color, dimension, sides, dimension_side, box_shadow,
+	 * border, border_side, text, slider, raw_slider, gaps, element_width. Callers can add
+	 * or override entries at boot with {@see V3_Resolver_Registry::register()}.
+	 *
+	 * @param string               $resolver_name
 	 * @param string               $css_value
-	 * @param array<string, mixed> $args          Extra args (prefix for border/typography).
+	 * @param array<string, mixed> $args          `property` (always), plus resolver-specific
+	 *                                            keys (`side` for `dimension_side`/`border_side`,
+	 *                                            `prefix` for `border`/`border_side`).
 	 * @return mixed|null
 	 */
 	public static function resolve( string $resolver_name, string $css_value, array $args = [] ) {
-		$property = (string) ( $args['property'] ?? '' );
+		return V3_Resolver_Registry::resolve( $resolver_name, $css_value, $args );
+	}
 
-		switch ( $resolver_name ) {
-			case 'color':
-				return self::resolve_color( $css_value, $property );
-			case 'dimension':
-				return self::resolve_dimension( $css_value, $property );
-			case 'sides':
-				return self::resolve_sides_shorthand( $css_value, $property );
-			case 'dimension_side':
-				return self::resolve_single_dimension_side( $css_value, (string) ( $args['side'] ?? '' ), $property );
-			case 'box_shadow':
-				return self::resolve_box_shadow( $css_value );
-			case 'border':
-				return self::resolve_border_shorthand( $css_value, $args['prefix'] ?? 'border' );
-			case 'slider':
-				return self::resolve_dimension( $css_value, $property );
-			case 'text':
-				return trim( $css_value );
-			case 'element_width':
-				return self::resolve_element_width( $css_value, $property );
-			case 'gaps':
-				return self::resolve_gaps( $css_value, $property );
-			case 'raw_slider':
-				return self::resolve_raw_slider( $css_value );
-			case 'border_side':
+	/**
+	 * The default resolver set. `V3_Resolver_Registry` reads this on first access.
+	 *
+	 * @return array<string, callable>
+	 */
+	public static function default_resolvers(): array {
+		return [
+			'color' => static function ( string $value, array $args ) {
+				return self::resolve_color( $value, (string) ( $args['property'] ?? '' ) );
+			},
+			'dimension' => static function ( string $value, array $args ) {
+				return self::resolve_dimension( $value, (string) ( $args['property'] ?? '' ) );
+			},
+			'sides' => static function ( string $value, array $args ) {
+				return self::resolve_sides_shorthand( $value, (string) ( $args['property'] ?? '' ) );
+			},
+			'dimension_side' => static function ( string $value, array $args ) {
+				return self::resolve_single_dimension_side(
+					$value,
+					(string) ( $args['side'] ?? '' ),
+					(string) ( $args['property'] ?? '' )
+				);
+			},
+			'box_shadow' => static function ( string $value ) {
+				return self::resolve_box_shadow( $value );
+			},
+			'border' => static function ( string $value, array $args ) {
+				return self::resolve_border_shorthand( $value, (string) ( $args['prefix'] ?? 'border' ) );
+			},
+			'border_side' => static function ( string $value, array $args ) {
 				return self::resolve_border_side_shorthand(
-					$css_value,
+					$value,
 					(string) ( $args['side'] ?? '' ),
 					(string) ( $args['prefix'] ?? 'border' )
 				);
-			default:
-				return null;
-		}
+			},
+			'slider' => static function ( string $value, array $args ) {
+				return self::resolve_dimension( $value, (string) ( $args['property'] ?? '' ) );
+			},
+			'text' => static function ( string $value ) {
+				return trim( $value );
+			},
+			'element_width' => static function ( string $value, array $args ) {
+				return self::resolve_element_width( $value, (string) ( $args['property'] ?? '' ) );
+			},
+			'gaps' => static function ( string $value, array $args ) {
+				return self::resolve_gaps( $value, (string) ( $args['property'] ?? '' ) );
+			},
+			'raw_slider' => static function ( string $value ) {
+				return self::resolve_raw_slider( $value );
+			},
+		];
 	}
 
 	/**

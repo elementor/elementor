@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Resolver_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Resolvers;
 use PHPUnit\Framework\TestCase;
 
@@ -256,5 +257,161 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertCount( 1, $result['rejections'] );
 		$this->assertSame( 'font-size', $result['rejections'][0]['property'] );
 		$this->assertSame( 'var(--fs)', $result['rejections'][0]['value'] );
+	}
+
+	/**
+	 * @dataProvider malformed_hex_provider
+	 */
+	public function test_resolve_color__rejects_malformed_hex( string $input ) {
+		$result = V3_Value_Resolvers::resolve_color( $input, 'color' );
+
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'color', $result['property'] );
+	}
+
+	public function malformed_hex_provider(): array {
+		return [
+			'bare hash' => [ '#' ],
+			'double hash' => [ '##' ],
+			'five chars' => [ '#12345' ],
+			'seven chars' => [ '#1234567' ],
+			'non-hex chars' => [ '#zzz' ],
+			'mixed non-hex' => [ '#12g45f' ],
+		];
+	}
+
+	public function test_resolve_element_width__100_percent_yields_inherit_mode() {
+		$patch = V3_Value_Resolvers::resolve_element_width( '100%' );
+
+		$this->assertSame(
+			[ V3_Value_Resolvers::ELEMENT_WIDTH_SETTING => V3_Value_Resolvers::ELEMENT_WIDTH_MODE_INHERIT ],
+			$patch
+		);
+	}
+
+	public function test_resolve_element_width__auto_yields_auto_mode_without_custom() {
+		$patch = V3_Value_Resolvers::resolve_element_width( 'auto' );
+
+		$this->assertSame(
+			[ V3_Value_Resolvers::ELEMENT_WIDTH_SETTING => V3_Value_Resolvers::ELEMENT_WIDTH_MODE_AUTO ],
+			$patch
+		);
+	}
+
+	public function test_resolve_element_width__numeric_yields_initial_plus_custom_width() {
+		$patch = V3_Value_Resolvers::resolve_element_width( '480px' );
+
+		$this->assertSame( V3_Value_Resolvers::ELEMENT_WIDTH_MODE_INITIAL, $patch[ V3_Value_Resolvers::ELEMENT_WIDTH_SETTING ] );
+		$this->assertSame( [ 'unit' => 'px', 'size' => 480.0 ], $patch[ V3_Value_Resolvers::ELEMENT_CUSTOM_WIDTH_SETTING ] );
+	}
+
+	public function test_resolve_element_width__rejects_var_reference() {
+		$result = V3_Value_Resolvers::resolve_element_width( 'var(--w)', 'width' );
+
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'width', $result['property'] );
+	}
+
+	public function test_resolve_color__rejects_var_reference_on_unsupported_property() {
+		$result = V3_Value_Resolvers::resolve_color( 'var(--brand)', 'background-image' );
+
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+	}
+
+	public function test_resolve_gaps__parses_one_value() {
+		$this->assertSame(
+			[ 'column' => '16', 'row' => '16', 'unit' => 'px', 'isLinked' => true ],
+			V3_Value_Resolvers::resolve_gaps( '16px' )
+		);
+	}
+
+	public function test_resolve_gaps__parses_two_values_row_then_column() {
+		$this->assertSame(
+			[ 'column' => '24', 'row' => '8', 'unit' => 'px', 'isLinked' => false ],
+			V3_Value_Resolvers::resolve_gaps( '8px 24px' )
+		);
+	}
+
+	public function test_resolve_gaps__rejects_mixed_units() {
+		$this->assertNull( V3_Value_Resolvers::resolve_gaps( '8px 1rem' ) );
+	}
+
+	public function test_supplement_flex_grid_twin_alignments__mirrors_flex_to_grid() {
+		$patch = V3_Value_Resolvers::supplement_flex_grid_twin_alignments(
+			[ 'flex_align_items' => 'center' ],
+			[ 'grid_align_items' => [] ]
+		);
+
+		$this->assertSame( 'center', $patch['grid_align_items'] );
+	}
+
+	public function test_supplement_container_type_toggle__flips_to_grid_on_grid_columns() {
+		$patch = V3_Value_Resolvers::supplement_container_type_toggle(
+			[ 'grid_columns_grid' => [ 'unit' => 'custom', 'size' => 'repeat(3, 1fr)' ] ],
+			[ 'container_type' => [] ]
+		);
+
+		$this->assertSame( 'grid', $patch['container_type'] );
+	}
+
+	public function test_supplement_container_type_toggle__leaves_flex_default_when_only_twinned_grid_keys() {
+		$patch = V3_Value_Resolvers::supplement_container_type_toggle(
+			[ 'grid_align_items' => 'center' ],
+			[ 'container_type' => [] ]
+		);
+
+		$this->assertArrayNotHasKey( 'container_type', $patch );
+	}
+
+	public function test_supplement_content_width_toggle__flips_to_boxed_when_boxed_width_present() {
+		$patch = V3_Value_Resolvers::supplement_content_width_toggle(
+			[ 'boxed_width' => [ 'unit' => 'px', 'size' => 1200 ] ],
+			[ 'boxed_width' => [], 'content_width' => [] ]
+		);
+
+		$this->assertSame( 'boxed', $patch['content_width'] );
+	}
+
+	public function test_resolve_border_side_shorthand__zeroes_other_sides() {
+		$patch = V3_Value_Resolvers::resolve_border_side_shorthand( '3px solid #000', 'top', 'border' );
+
+		$width = $patch['border_width'];
+		$this->assertSame( '3', $width['top'] );
+		$this->assertSame( '0', $width['right'] );
+		$this->assertSame( '0', $width['bottom'] );
+		$this->assertSame( '0', $width['left'] );
+		$this->assertFalse( $width['isLinked'] );
+	}
+
+	public function test_resolve_border_side_shorthand__rejects_unknown_side() {
+		$this->assertNull( V3_Value_Resolvers::resolve_border_side_shorthand( '1px solid red', 'diagonal' ) );
+	}
+
+	public function test_resolve_box_shadow__none_returns_zeroed_shape_with_empty_type() {
+		$patch = V3_Value_Resolvers::resolve_box_shadow( 'none' );
+
+		$this->assertSame( '', $patch['box_shadow_type'] );
+		$this->assertSame( 0, $patch['box_shadow']['horizontal'] );
+	}
+
+	public function test_resolve_registry__resolves_via_default_set() {
+		V3_Resolver_Registry::reset();
+
+		$this->assertSame(
+			[ 'unit' => 'px', 'size' => 24.0 ],
+			V3_Resolver_Registry::resolve( 'dimension', '24px', [ 'property' => 'width' ] )
+		);
+		$this->assertNull( V3_Resolver_Registry::resolve( 'not_registered', 'x' ) );
+	}
+
+	public function test_resolve_registry__allows_overriding_a_resolver() {
+		V3_Resolver_Registry::reset();
+		V3_Resolver_Registry::register( 'text', static function () {
+			return 'overridden';
+		} );
+
+		$this->assertSame( 'overridden', V3_Value_Resolvers::resolve( 'text', 'hello' ) );
+
+		V3_Resolver_Registry::reset();
 	}
 }
