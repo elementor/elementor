@@ -9,11 +9,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * V3-element counterpart of Atomic_Elements_Utils. V3 widgets do not carry an atomic
- * classes prop; instead, they store a space-separated list of CSS class names in the
- * `_css_classes` setting. Those names ARE the labels of V4 global classes when the MCP
- * class applier writes to a V3 wrapper — so a document scan must read them and resolve
- * them back to global-class ids so the corresponding rule files ship with the page.
+ * V3-element counterpart of `Atomic_Elements_Utils`.
+ *
+ * What it solves — reviewer question:
+ *   V3 widgets have no atomic `classes` prop. The wrapper stores a raw
+ *   space-separated string in the `_css_classes` setting. That's the only shape
+ *   the V3 data model exposes for global-class assignment on the wrapper.
+ *   Without this scan, `Global_Classes_Relations` only sees V4 elements and
+ *   `Atomic_Global_Styles` therefore never enqueues the class stylesheet for
+ *   a page whose only reference to a global class is on a V3 wrapper. Result:
+ *   the DOM shows the class name but no CSS ships → the class silently no-ops.
+ *
+ * How it bridges the gap:
+ *   - Wrapper-level (this utility): the class-applier writes global class LABELS
+ *     to `_css_classes`; we read those labels back on document scan and resolve
+ *     them to global-class ids, so the enqueue path picks them up.
+ *   - Inner-element level (NOT here): V3 inner elements have no `_css_classes`
+ *     analogue on their sub-settings. That's why `V3_Node_Bridge::apply_classes_to_target()`
+ *     consults per-widget maps under `modules/mcp/abilities/appliers/v3/maps/`:
+ *     each alias may declare `class_setting` pointing at the concrete V3 setting
+ *     that receives the class labels (e.g. `search_field_css_classes`). This
+ *     utility is intentionally wrapper-scoped and does not attempt to walk into
+ *     inner elements — the bridge on write side already resolves inner-element
+ *     class settings, and those live in dedicated V3 settings that the same
+ *     `_css_classes`-style read will not find.
  */
 class V3_Elements_Utils {
 
