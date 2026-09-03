@@ -17,6 +17,7 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
+use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -119,6 +120,9 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Api_Catalog() );
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest() );
+
+		// Register discovery components.
+		$this->register_component( new Link_Headers() );
 
 		// Register readability components.
 		$this->register_component( new Markdown_Endpoint() );
