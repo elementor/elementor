@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -30,10 +29,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/manage-global-variable';
-	}
-
-	public function is_available_for_current_mode(): bool {
-		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {

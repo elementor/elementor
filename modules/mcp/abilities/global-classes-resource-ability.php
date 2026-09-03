@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
@@ -21,10 +20,6 @@ class Global_Classes_Resource_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/global-classes-resource';
-	}
-
-	public function is_available_for_current_mode(): bool {
-		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {

@@ -5,7 +5,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Components\Components_Access_Controller;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
-use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -18,10 +17,6 @@ class List_Components_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-components';
-	}
-
-	public function is_available_for_current_mode(): bool {
-		return Components_Module::is_experiment_active();
 	}
 
 	public function is_exposed_via_proxy(): bool {

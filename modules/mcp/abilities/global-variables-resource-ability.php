@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -17,10 +16,6 @@ class Global_Variables_Resource_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/global-variables-resource';
-	}
-
-	public function is_available_for_current_mode(): bool {
-		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {
