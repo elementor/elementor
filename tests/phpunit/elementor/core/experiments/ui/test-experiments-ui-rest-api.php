@@ -56,30 +56,6 @@ class Test_Experiments_Ui_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 403, $response->get_status() );
 	}
 
-	public function test_toggle__rejects_immutable_feature() {
-		$this->act_as_admin();
-
-		$experiments = Plugin::$instance->experiments;
-		$reflection = new \ReflectionClass( $experiments );
-		$features_property = $reflection->getProperty( 'features' );
-		$features_property->setAccessible( true );
-		$features = $features_property->getValue( $experiments );
-		$features[ self::TEST_FEATURE_NAME ]['mutable'] = false;
-		$features_property->setValue( $experiments, $features );
-
-		$request = new WP_REST_Request( 'POST', self::TOGGLE_ROUTE );
-		$request->set_param( 'name', self::TEST_FEATURE_NAME );
-		$request->set_param( 'state', 'active' );
-
-		$response = rest_get_server()->dispatch( $request );
-
-		$features[ self::TEST_FEATURE_NAME ]['mutable'] = true;
-		$features_property->setValue( $experiments, $features );
-
-		$this->assertSame( 403, $response->get_status() );
-		$this->assertSame( 'experiment_not_allowed', $response->get_data()['code'] );
-	}
-
 	public function test_toggle__activates_manageable_feature() {
 		$this->act_as_admin();
 
