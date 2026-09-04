@@ -104,7 +104,7 @@ class Role_Manager extends Settings_Page {
 
 			<div>
 				<div id="elementor-role-manager">
-					<h3><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h3>
+					<h2><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h2>
 					<form id="elementor-settings-form" method="post" action="options.php">
 						<?php
 						settings_fields( static::PAGE_ID );
