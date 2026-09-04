@@ -1,11 +1,20 @@
 import * as React from 'react';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { openDialog } from '@elementor/editor-ui';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { hash } from '@elementor/utils';
 
-import { API_ERROR_CODES, apiClient, type ApiContext } from './api';
+import { API_ERROR_CODES, apiClient, isConflictError, type ApiContext } from './api';
 import { DuplicateLabelDialog } from './components/class-manager/duplicate-label-dialog';
-import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
+import {
+	type GlobalClasses,
+	selectData,
+	selectFrontendInitialData,
+	selectPreviewInitialData,
+	selectVersion,
+	slice,
+} from './store';
+import { styleDefinitionsMapWithoutNull } from './load-document-classes';
 import { trackGlobalClasses } from './utils/tracking';
 
 type Options = {
@@ -13,10 +22,55 @@ type Options = {
 	onApprove?: () => void;
 };
 
+const INDEX_ORDER_CONFLICT_EVENT = 'classes:conflict';
+
 export async function saveGlobalClasses( { context, onApprove }: Options ) {
-	const state = selectData( getState() );
+	let lastResponse;
+
+	try {
+		lastResponse = await persistGlobalClasses( { context, onApprove } );
+	} catch ( error ) {
+		// The save was based on a stale snapshot: another save already changed the
+		// kit's classes since this client's last index read. Re-fetch, rebase, re-diff
+		// and retry once against the fresh baseline. A class whose loss had already
+		// committed on the server is re-added by the re-diff (self-heal).
+		if ( ! isConflictError( error ) ) {
+			throw error;
+		}
+
+		window.dispatchEvent( new CustomEvent( INDEX_ORDER_CONFLICT_EVENT ) );
+
+		await rebaseToServer( context );
+
+		lastResponse = await persistGlobalClasses( { context, onApprove } );
+	}
+
+	if (
+		lastResponse?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL
+	) {
+		dispatch( slice.actions.updateMultiple( lastResponse.data.data.modifiedLabels ) );
+
+		trackGlobalClasses( {
+			event: 'classPublishConflict',
+			numOfConflicts: Object.keys( lastResponse.data.data.modifiedLabels ).length,
+		} );
+
+		openDialog( {
+			component: (
+				<DuplicateLabelDialog
+					modifiedLabels={ lastResponse.data.data.modifiedLabels || [] }
+					onApprove={ onApprove }
+				/>
+			),
+		} );
+	}
+}
+
+async function persistGlobalClasses( { context, onApprove }: Options ) {
 	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
 	const currentContext = context === 'preview' ? selectPreviewInitialData : selectFrontendInitialData;
+
+	const state = selectData( getState() );
 	const changes = calculateChanges( state, currentContext( getState() ) );
 
 	const touchedIds = [ ...changes.added, ...changes.modified ];
@@ -28,29 +82,45 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 		items: touchedItems,
 		order: state.order,
 		changes,
+		version: selectVersion( getState(), context ),
 	} );
 
-	dispatch( slice.actions.reset( { context } ) );
+	// A successful save establishes the new baseline, unless a duplicate-label
+	// response carried server-side label modifications that must be folded in first.
+	if ( response?.data?.data?.code !== API_ERROR_CODES.DUPLICATED_LABEL ) {
+		dispatch( slice.actions.reset( { context } ) );
+	}
 
 	window.dispatchEvent( new CustomEvent( 'classes:updated', { detail: { context } } ) );
 
-	if ( response?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL ) {
-		dispatch( slice.actions.updateMultiple( response.data.data.modifiedLabels ) );
+	return response;
+}
 
-		trackGlobalClasses( {
-			event: 'classPublishConflict',
-			numOfConflicts: Object.keys( response.data.data.modifiedLabels ).length,
-		} );
+async function rebaseToServer( context: ApiContext ) {
+	const [ serverIndexRes, serverPostRes ] = await Promise.all( [
+		apiClient.all( context ),
+		getCurrentDocument()?.id
+			? apiClient.getStylesForPost( getCurrentDocument().id, context )
+			: Promise.resolve( null ),
+	] );
 
-		openDialog( {
-			component: (
-				<DuplicateLabelDialog
-					modifiedLabels={ response.data.data.modifiedLabels || [] }
-					onApprove={ onApprove }
-				/>
-			),
-		} );
+	if ( ! serverPostRes ) {
+		return;
 	}
+
+	const serverItems = styleDefinitionsMapWithoutNull( serverPostRes.data.data );
+	const server: GlobalClasses = {
+		items: serverItems,
+		order: serverIndexRes.data.data.map( ( entry ) => entry.id ),
+	};
+
+	dispatch(
+		slice.actions.rebaseToServer( {
+			context,
+			server,
+			version: serverIndexRes.data.meta.version ?? 0,
+		} )
+	);
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {

@@ -20,6 +20,16 @@ class Global_Classes_REST_API {
 	const API_BASE_POST = self::API_BASE . '/post';
 	const API_BASE_STYLES = self::API_BASE . '/styles';
 	const MAX_ITEMS = 1000;
+
+	/**
+	 * Per-kit mutex that serializes the read-modify-write of a global-classes
+	 * save. Mirrors the spinlock pattern used by the component lock managers,
+	 * but keys on the kit so two overlapping saves cannot overwrite each other.
+	 */
+	const LOCK_GROUP = 'elementor_global_classes_lock';
+	const LOCK_ACQUIRE_ATTEMPTS = 20;
+	const LOCK_ACQUIRE_DELAY_US = 100000;
+
 	private ?Global_Classes_Repository $repository = null;
 	private ?Global_Classes_Relations $relations = null;
 	private ?Kit $kit = null;
@@ -56,6 +66,39 @@ class Global_Classes_REST_API {
 		}
 
 		return $this->relations;
+	}
+
+	private function lock_key( int $kit_id ): string {
+		return 'elementor_global_classes_' . $kit_id;
+	}
+
+	/**
+	 * Acquire the per-kit global-classes write lock.
+	 *
+	 * Returns the lock token on success or null if it could not be acquired
+	 * within the give-up budget. The token must be passed to release_lock().
+	 */
+	private function acquire_lock( int $kit_id ): ?string {
+		$key = $this->lock_key( $kit_id );
+		$token = wp_generate_uuid4();
+
+		for ( $attempt = 0; $attempt < self::LOCK_ACQUIRE_ATTEMPTS; $attempt++ ) {
+			if ( wp_cache_add( $key, $token, self::LOCK_GROUP ) ) {
+				return $token;
+			}
+
+			usleep( self::LOCK_ACQUIRE_DELAY_US );
+		}
+
+		return null;
+	}
+
+	private function release_lock( int $kit_id, string $token ): void {
+		$key = $this->lock_key( $kit_id );
+
+		if ( wp_cache_get( $key, self::LOCK_GROUP ) === $token ) {
+			wp_cache_delete( $key, self::LOCK_GROUP );
+		}
 	}
 
 	private function register_routes() {
@@ -221,6 +264,11 @@ class Global_Classes_REST_API {
 							'type' => 'string',
 						],
 					],
+					'version' => [
+						'type' => 'integer',
+						'required' => false,
+						'description' => 'Optimistic-concurrency token from the last index read. When present and stale, the save is rejected with a conflict instead of overwriting the kit index.',
+					],
 				],
 			],
 		] );
@@ -239,7 +287,9 @@ class Global_Classes_REST_API {
 			];
 		}
 
-		return Response_Builder::make( $list )->build();
+		return Response_Builder::make( $list )
+			->set_meta( [ 'version' => $this->get_repository()->get_version() ] )
+			->build();
 	}
 
 	private function styles_for_post( \WP_REST_Request $request ) {
@@ -310,9 +360,46 @@ class Global_Classes_REST_API {
 		$added_ids = $changes['added'] ?? [];
 		$deleted_ids = $changes['deleted'] ?? [];
 		$order = $request->get_param( 'order' ) ?? [];
+		$requested_version = $request->get_param( 'version' );
 
 		$repository = $this->get_repository()->set_preview( $is_preview );
+		$kit = $this->get_kit();
+		$kit_id = $kit ? (int) $kit->get_main_id() : null;
+
+		$lock_token = $kit_id ? $this->acquire_lock( $kit_id ) : null;
+
+		if ( null === $lock_token ) {
+			return Error_Builder::make( 'global_classes_conflict' )
+				->set_status( 409 )
+				->set_message( __( 'Global classes are currently being updated by another request. Please try again.', 'elementor' ) )
+				->build();
+		}
+
+		try {
+			return $this->put_serialized( $request, $repository, $changes, $added_ids, $deleted_ids, $order, $requested_version );
+		} finally {
+			if ( $kit_id ) {
+				$this->release_lock( $kit_id, $lock_token );
+			}
+		}
+	}
+
+	private function put_serialized( \WP_REST_Request $request, Global_Classes_Repository $repository, array $changes, array $added_ids, array $deleted_ids, array $order, $requested_version ) {
+		// Read the authoritative list inside the lock so a concurrent save cannot
+		// interleave between this read and the index rewrite below.
 		$all_label_by_id = $repository->all_labels();
+
+		// Optimistic-concurrency guard: a client that sends an outdated version is
+		// editing against a stale baseline. Reject before any mutation instead of
+		// letting this request silently overwrite classes another save already wrote.
+		if ( null !== $requested_version && (int) $requested_version !== $repository->get_version() ) {
+			return Error_Builder::make( 'global_classes_conflict' )
+				->set_status( 409 )
+				->set_meta( [ 'version' => $repository->get_version() ] )
+				->set_message( __( 'Global classes changed since this page was loaded. Refresh to reload the latest classes.', 'elementor' ) )
+				->build();
+		}
+
 		$existing_label_list = $this->global_classes_existing_label_list( $all_label_by_id, $deleted_ids );
 		$total_count = count( $all_label_by_id ) - count( $deleted_ids ) + count( $added_ids );
 
@@ -385,6 +472,9 @@ class Global_Classes_REST_API {
 			'modified' => $changes['modified'] ?? [],
 			'order' => isset( $changes['order'] ) && $changes['order'], // boolean indicating if the order has changed
 		], $order_result->unwrap() );
+
+		// Advance the concurrency token only after a successful, conflict-free commit.
+		$repository->bump_version();
 
 		if ( $duplicate_validation_result ) {
 			return Response_Builder::make( [
