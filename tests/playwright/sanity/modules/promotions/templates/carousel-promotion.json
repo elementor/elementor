@@ -1,0 +1,31 @@
+{
+	"content": [
+		{
+			"id": "car001",
+			"elType": "e-carousel",
+			"settings": [],
+			"elements": [
+				{
+					"id": "viewport01",
+					"elType": "e-carousel-viewport",
+					"settings": [],
+					"elements": [
+						{
+							"id": "container01",
+							"elType": "e-carousel-container",
+							"settings": [],
+							"elements": [
+								{ "id": "slide01", "elType": "e-carousel-slide", "settings": [], "elements": [] },
+								{ "id": "slide02", "elType": "e-carousel-slide", "settings": [], "elements": [] }
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"page_settings": [],
+	"version": "0.4",
+	"title": "carousel-promotion",
+	"type": "page"
+}
