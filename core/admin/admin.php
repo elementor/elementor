@@ -243,8 +243,8 @@ class Admin extends App {
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
 			<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
 				<span class="elementor-switch-mode-on">
-					<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Back to WordPress Editor', 'elementor' ); ?>
+					<i class="eicon-wordpress" aria-hidden="true"></i>
+					<?php echo esc_html__( 'Edit with WordPress', 'elementor' ); ?>
 				</span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
