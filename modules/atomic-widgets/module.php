@@ -140,6 +140,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Back
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
@@ -180,6 +181,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
 	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
+	const EXPERIMENT_CAROUSEL_PROMOTION = 'e_carousel_promotion';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -210,6 +212,7 @@ class Module extends BaseModule {
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
 		$this->register_icon_library_experiment();
+		$this->register_carousel_promotion_experiment();
 
 		$this->register_hooks();
 
@@ -301,6 +304,21 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ICON_LIBRARY,
 			'title' => esc_html__( 'SVG Library', 'elementor' ),
 			'description' => esc_html__( 'Enable SVG library support in the SVG element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	/**
+	 * Dev-only gate that keeps the Carousel panel promotion tile off trunk until GA.
+	 * Remove it once the element ships (ED-25385).
+	 */
+	private function register_carousel_promotion_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_CAROUSEL_PROMOTION,
+			'title' => esc_html__( 'Carousel promotion', 'elementor' ),
+			'description' => esc_html__( 'Show the Carousel widget promotion tile in the panel.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -460,6 +478,7 @@ class Module extends BaseModule {
 
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
+			$elements_manager->register_element_type( new Carousel_Promotion() );
 		}
 	}
 
