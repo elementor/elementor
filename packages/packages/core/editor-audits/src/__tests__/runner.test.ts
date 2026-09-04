@@ -29,6 +29,9 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	ally_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
+	cookiez_plugin_installed: false,
+	cookiez_plugin_action_url: 'https://example.com/wp-admin/plugin-install.php',
+	cookiez_scan_url: 'https://example.com/wp-admin/admin.php?page=cookiez-settings#cookie-management',
 	image_optimization_plugin_active: false,
 	image_optimization_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
 	site_identity: {

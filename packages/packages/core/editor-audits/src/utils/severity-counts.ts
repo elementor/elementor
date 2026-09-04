@@ -1,6 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 
 import { type AuditCategory, type AuditSeverity, type PageAuditReport } from '../types';
+import { isScoredAudit } from './is-scored-audit';
 
 export type SeverityCounts = Record< AuditSeverity, number >;
 
@@ -15,6 +16,10 @@ export function countSeverities( report: PageAuditReport, category?: AuditCatego
 		}
 
 		if ( category && ! audit.categories.includes( category ) ) {
+			continue;
+		}
+
+		if ( ! isScoredAudit( audit ) ) {
 			continue;
 		}
 

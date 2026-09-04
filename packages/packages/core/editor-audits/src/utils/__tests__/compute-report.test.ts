@@ -83,4 +83,20 @@ describe( 'computeReport', () => {
 
 		expect( computeReport( 1, results ).categories.seo.score ).toBe( 90 );
 	} );
+
+	it( 'a failing zero-weight audit does not lower the score of otherwise passing audits in its category', () => {
+		// Arrange.
+		const results: AuditRun[] = [
+			auditRun( auditMeta( 'a', [ 'compliance' ], 1 ), { status: 'pass' } ),
+			auditRun( auditMeta( 'b', [ 'compliance' ], 1 ), { status: 'pass' } ),
+			auditRun( auditMeta( 'c', [ 'compliance' ], 0 ), { status: 'fail', violations: [] } ),
+		];
+
+		// Act.
+		const report = computeReport( 1, results );
+
+		// Assert.
+		expect( report.categories.compliance.score ).toBe( 100 );
+		expect( report.categories.compliance.total ).toBe( 3 );
+	} );
 } );
