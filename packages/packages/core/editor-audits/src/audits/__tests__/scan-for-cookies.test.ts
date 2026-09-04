@@ -16,30 +16,42 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails and links to the plugin install page when cookiez is not installed', async () => {
+	it( 'fails and links to the plugin action url when cookiez is not installed', async () => {
 		const result = await audit.evaluate(
-			makeContext( { pageContext: { cookiez_plugin_installed: false, cookiez_plugin_active: false } } )
+			makeContext( {
+				pageContext: {
+					cookiez_plugin_installed: false,
+					cookiez_plugin_active: false,
+					cookiez_plugin_action_url: 'https://example.com/wp-admin/update.php?action=install-plugin',
+				},
+			} )
 		);
 
 		expect( result.status ).toBe( 'fail' );
 
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].externalUrl ).toBe(
-				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez'
+				'https://example.com/wp-admin/update.php?action=install-plugin'
 			);
 		}
 	} );
 
-	it( 'fails and links to the plugin install page when cookiez is installed but not active', async () => {
+	it( 'fails and links to the plugin action url (activate) when cookiez is installed but not active', async () => {
 		const result = await audit.evaluate(
-			makeContext( { pageContext: { cookiez_plugin_installed: true, cookiez_plugin_active: false } } )
+			makeContext( {
+				pageContext: {
+					cookiez_plugin_installed: true,
+					cookiez_plugin_active: false,
+					cookiez_plugin_action_url: 'https://example.com/wp-admin/plugins.php?action=activate',
+				},
+			} )
 		);
 
 		expect( result.status ).toBe( 'fail' );
 
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].externalUrl ).toBe(
-				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez'
+				'https://example.com/wp-admin/plugins.php?action=activate'
 			);
 		}
 	} );

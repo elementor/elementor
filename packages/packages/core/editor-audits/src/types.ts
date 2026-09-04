@@ -66,6 +66,7 @@ export type PageContextResponse = {
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
 	cookiez_plugin_installed: boolean;
+	cookiez_plugin_action_url: string;
 	cookiez_scan_url: string;
 	image_optimization_plugin_active: boolean;
 	image_optimization_plugin_url: string;
