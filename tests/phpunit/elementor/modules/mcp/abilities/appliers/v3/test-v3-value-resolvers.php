@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Resolver_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Resolvers;
 use PHPUnit\Framework\TestCase;
 
@@ -45,6 +46,34 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( 'rgba(0,0,0,0.5)', V3_Value_Resolvers::resolve_color( 'rgba(0,0,0,0.5)' ) );
 	}
 
+	public function test_resolve_color__accepts_all_hex_lengths() {
+		$this->assertSame( '#abc', V3_Value_Resolvers::resolve_color( '#abc' ) );
+		$this->assertSame( '#abcd', V3_Value_Resolvers::resolve_color( '#abcd' ) );
+		$this->assertSame( '#aabbcc', V3_Value_Resolvers::resolve_color( '#aabbcc' ) );
+		$this->assertSame( '#aabbccdd', V3_Value_Resolvers::resolve_color( '#aabbccdd' ) );
+	}
+
+	public function test_resolve_color__rejects_invalid_hex() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_color( '#gggggg', 'color' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'color', $result['property'] );
+		$this->assertSame( '#gggggg', $result['value'] );
+	}
+
+	public function test_resolve_color__rejects_wrong_length_hex() {
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( V3_Value_Resolvers::resolve_color( '#12345', 'color' ) ) );
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( V3_Value_Resolvers::resolve_color( '#1234567', 'color' ) ) );
+	}
+
+	public function test_resolve_color__passes_through_named_and_functional_colors() {
+		$this->assertSame( 'transparent', V3_Value_Resolvers::resolve_color( 'transparent' ) );
+		$this->assertSame( 'red', V3_Value_Resolvers::resolve_color( 'red' ) );
+		$this->assertSame( 'hsl(0, 100%, 50%)', V3_Value_Resolvers::resolve_color( 'hsl(0, 100%, 50%)' ) );
+	}
+
 	public function test_resolve_box_shadow__parses_lengths_and_color() {
 		// Arrange / Act.
 		$result = V3_Value_Resolvers::resolve_box_shadow( '0 20px 60px rgba(0,0,0,0.15)' );
@@ -81,6 +110,49 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( [ 'unit' => 'rem', 'size' => 2.0 ], $patch['typography_font_size'] );
 		$this->assertSame( '700', $patch['typography_font_weight'] );
 		$this->assertSame( 'Georgia', $patch['typography_font_family'] );
+	}
+
+	public function test_resolve_line_height__keeps_unitless_values() {
+		// Arrange / Act / Assert.
+		$this->assertSame( [ 'unit' => '', 'size' => 1.5 ], V3_Value_Resolvers::resolve_line_height( '1.5' ) );
+		$this->assertSame( [ 'unit' => 'px', 'size' => 24.0 ], V3_Value_Resolvers::resolve_line_height( '24px' ) );
+	}
+
+	public function test_resolve_typography_group__uses_unitless_line_height() {
+		// Arrange / Act.
+		$patch = V3_Value_Resolvers::resolve_typography_group(
+			[
+				'line-height' => '1.5',
+			],
+			'search_field_typography'
+		);
+
+		// Assert.
+		$this->assertSame( [ 'unit' => '', 'size' => 1.5 ], $patch['search_field_typography_line_height'] );
+	}
+
+	public function test_supplement_background_group_toggles__sets_classic_type_for_color_keys() {
+		// Arrange.
+		$controls = [
+			'search_field_background_normal_background' => [ 'type' => 'choose' ],
+			'search_field_background_normal_color' => [ 'type' => 'color' ],
+			'results_background_background' => [ 'type' => 'choose' ],
+			'results_background_color' => [ 'type' => 'color' ],
+			'title_color' => [ 'type' => 'color' ],
+		];
+		$patch = [
+			'search_field_background_normal_color' => '#ffffff',
+			'results_background_color' => '#f5f5f5',
+			'title_color' => '#111111',
+		];
+
+		// Act.
+		$result = V3_Value_Resolvers::supplement_background_group_toggles( $patch, $controls );
+
+		// Assert.
+		$this->assertSame( 'classic', $result['search_field_background_normal_background'] );
+		$this->assertSame( 'classic', $result['results_background_background'] );
+		$this->assertArrayNotHasKey( 'title_background', $result );
 	}
 
 	public function test_resolve_typography_group__skips_toggle_when_nothing_resolves() {
@@ -126,5 +198,220 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( 'red', V3_Value_Resolvers::resolve( 'color', 'red' ) );
 		$this->assertSame( [ 'unit' => 'px', 'size' => 10.0 ], V3_Value_Resolvers::resolve( 'dimension', '10px' ) );
 		$this->assertNull( V3_Value_Resolvers::resolve( 'unknown', 'x' ) );
+	}
+
+	public function test_resolve_dimension__rejects_var_reference_on_unsupported_property() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_dimension( 'var(--gap)', 'font-size' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'font-size', $result['property'] );
+		$this->assertSame( 'var(--gap)', $result['value'] );
+		$this->assertStringContainsString( 'literal value', $result['reason'] );
+	}
+
+	public function test_resolve_sides_shorthand__rejects_var_reference() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_sides_shorthand( 'var(--pad)', 'padding' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'padding', $result['property'] );
+	}
+
+	public function test_resolve_line_height__rejects_var_reference() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_line_height( 'var(--lh)', 'line-height' );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+	}
+
+	public function test_resolve_color__passes_through_var_reference() {
+		$this->assertSame( 'var(--wc26-gold)', V3_Value_Resolvers::resolve_color( '  var(--wc26-gold)  ' ) );
+	}
+
+	public function test_resolve__threads_property_for_dimension_reject() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve( 'dimension', 'var(--x)', [ 'property' => 'width' ] );
+
+		// Assert.
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'width', $result['property'] );
+	}
+
+	public function test_resolve_typography_group_with_rejections__collects_font_size_var() {
+		// Arrange / Act.
+		$result = V3_Value_Resolvers::resolve_typography_group_with_rejections(
+			[
+				'font-size' => 'var(--fs)',
+				'font-weight' => '700',
+			],
+			'typography'
+		);
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'typography_font_size', $result['patch'] );
+		$this->assertSame( '700', $result['patch']['typography_font_weight'] );
+		$this->assertCount( 1, $result['rejections'] );
+		$this->assertSame( 'font-size', $result['rejections'][0]['property'] );
+		$this->assertSame( 'var(--fs)', $result['rejections'][0]['value'] );
+	}
+
+	/**
+	 * @dataProvider malformed_hex_provider
+	 */
+	public function test_resolve_color__rejects_malformed_hex( string $input ) {
+		$result = V3_Value_Resolvers::resolve_color( $input, 'color' );
+
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'color', $result['property'] );
+	}
+
+	public function malformed_hex_provider(): array {
+		return [
+			'bare hash' => [ '#' ],
+			'double hash' => [ '##' ],
+			'five chars' => [ '#12345' ],
+			'seven chars' => [ '#1234567' ],
+			'non-hex chars' => [ '#zzz' ],
+			'mixed non-hex' => [ '#12g45f' ],
+		];
+	}
+
+	public function test_resolve_element_width__100_percent_yields_inherit_mode() {
+		$patch = V3_Value_Resolvers::resolve_element_width( '100%' );
+
+		$this->assertSame(
+			[ V3_Value_Resolvers::ELEMENT_WIDTH_SETTING => V3_Value_Resolvers::ELEMENT_WIDTH_MODE_INHERIT ],
+			$patch
+		);
+	}
+
+	public function test_resolve_element_width__auto_yields_auto_mode_without_custom() {
+		$patch = V3_Value_Resolvers::resolve_element_width( 'auto' );
+
+		$this->assertSame(
+			[ V3_Value_Resolvers::ELEMENT_WIDTH_SETTING => V3_Value_Resolvers::ELEMENT_WIDTH_MODE_AUTO ],
+			$patch
+		);
+	}
+
+	public function test_resolve_element_width__numeric_yields_initial_plus_custom_width() {
+		$patch = V3_Value_Resolvers::resolve_element_width( '480px' );
+
+		$this->assertSame( V3_Value_Resolvers::ELEMENT_WIDTH_MODE_INITIAL, $patch[ V3_Value_Resolvers::ELEMENT_WIDTH_SETTING ] );
+		$this->assertSame( [ 'unit' => 'px', 'size' => 480.0 ], $patch[ V3_Value_Resolvers::ELEMENT_CUSTOM_WIDTH_SETTING ] );
+	}
+
+	public function test_resolve_element_width__rejects_var_reference() {
+		$result = V3_Value_Resolvers::resolve_element_width( 'var(--w)', 'width' );
+
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+		$this->assertSame( 'width', $result['property'] );
+	}
+
+	public function test_resolve_color__rejects_var_reference_on_unsupported_property() {
+		$result = V3_Value_Resolvers::resolve_color( 'var(--brand)', 'background-image' );
+
+		$this->assertTrue( V3_Value_Resolvers::is_rejected( $result ) );
+	}
+
+	public function test_resolve_gaps__parses_one_value() {
+		$this->assertSame(
+			[ 'column' => '16', 'row' => '16', 'unit' => 'px', 'isLinked' => true ],
+			V3_Value_Resolvers::resolve_gaps( '16px' )
+		);
+	}
+
+	public function test_resolve_gaps__parses_two_values_row_then_column() {
+		$this->assertSame(
+			[ 'column' => '24', 'row' => '8', 'unit' => 'px', 'isLinked' => false ],
+			V3_Value_Resolvers::resolve_gaps( '8px 24px' )
+		);
+	}
+
+	public function test_resolve_gaps__rejects_mixed_units() {
+		$this->assertNull( V3_Value_Resolvers::resolve_gaps( '8px 1rem' ) );
+	}
+
+	public function test_supplement_flex_grid_twin_alignments__mirrors_flex_to_grid() {
+		$patch = V3_Value_Resolvers::supplement_flex_grid_twin_alignments(
+			[ 'flex_align_items' => 'center' ],
+			[ 'grid_align_items' => [] ]
+		);
+
+		$this->assertSame( 'center', $patch['grid_align_items'] );
+	}
+
+	public function test_supplement_container_type_toggle__flips_to_grid_on_grid_columns() {
+		$patch = V3_Value_Resolvers::supplement_container_type_toggle(
+			[ 'grid_columns_grid' => [ 'unit' => 'custom', 'size' => 'repeat(3, 1fr)' ] ],
+			[ 'container_type' => [] ]
+		);
+
+		$this->assertSame( 'grid', $patch['container_type'] );
+	}
+
+	public function test_supplement_container_type_toggle__leaves_flex_default_when_only_twinned_grid_keys() {
+		$patch = V3_Value_Resolvers::supplement_container_type_toggle(
+			[ 'grid_align_items' => 'center' ],
+			[ 'container_type' => [] ]
+		);
+
+		$this->assertArrayNotHasKey( 'container_type', $patch );
+	}
+
+	public function test_supplement_content_width_toggle__flips_to_boxed_when_boxed_width_present() {
+		$patch = V3_Value_Resolvers::supplement_content_width_toggle(
+			[ 'boxed_width' => [ 'unit' => 'px', 'size' => 1200 ] ],
+			[ 'boxed_width' => [], 'content_width' => [] ]
+		);
+
+		$this->assertSame( 'boxed', $patch['content_width'] );
+	}
+
+	public function test_resolve_border_side_shorthand__zeroes_other_sides() {
+		$patch = V3_Value_Resolvers::resolve_border_side_shorthand( '3px solid #000', 'top', 'border' );
+
+		$width = $patch['border_width'];
+		$this->assertSame( '3', $width['top'] );
+		$this->assertSame( '0', $width['right'] );
+		$this->assertSame( '0', $width['bottom'] );
+		$this->assertSame( '0', $width['left'] );
+		$this->assertFalse( $width['isLinked'] );
+	}
+
+	public function test_resolve_border_side_shorthand__rejects_unknown_side() {
+		$this->assertNull( V3_Value_Resolvers::resolve_border_side_shorthand( '1px solid red', 'diagonal' ) );
+	}
+
+	public function test_resolve_box_shadow__none_returns_zeroed_shape_with_empty_type() {
+		$patch = V3_Value_Resolvers::resolve_box_shadow( 'none' );
+
+		$this->assertSame( '', $patch['box_shadow_type'] );
+		$this->assertSame( 0, $patch['box_shadow']['horizontal'] );
+	}
+
+	public function test_resolve_registry__resolves_via_default_set() {
+		V3_Resolver_Registry::reset();
+
+		$this->assertSame(
+			[ 'unit' => 'px', 'size' => 24.0 ],
+			V3_Resolver_Registry::resolve( 'dimension', '24px', [ 'property' => 'width' ] )
+		);
+		$this->assertNull( V3_Resolver_Registry::resolve( 'not_registered', 'x' ) );
+	}
+
+	public function test_resolve_registry__allows_overriding_a_resolver() {
+		V3_Resolver_Registry::reset();
+		V3_Resolver_Registry::register( 'text', static function () {
+			return 'overridden';
+		} );
+
+		$this->assertSame( 'overridden', V3_Value_Resolvers::resolve( 'text', 'hello' ) );
+
+		V3_Resolver_Registry::reset();
 	}
 }
