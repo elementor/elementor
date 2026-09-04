@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CloseButton, Stack, Typography } from '@elementor/ui';
+import { CloseButton, Stack, type StackProps, Typography } from '@elementor/ui';
 
 const SIZE = 'tiny';
 
@@ -8,18 +8,23 @@ type PopoverHeaderProps = {
 	onClose: () => void;
 	icon?: React.ReactNode;
 	actions?: React.ReactNode[];
+	sx?: StackProps[ 'sx' ];
 };
 
-export const PopoverHeader = ( { title, onClose, icon, actions }: PopoverHeaderProps ) => {
-	const paddingAndSizing = {
-		pl: 2,
-		pr: 1,
-		py: 1.5,
-		maxHeight: 36,
-	};
-
+export const PopoverHeader = ( { title, onClose, icon, actions, sx }: PopoverHeaderProps ) => {
 	return (
-		<Stack direction="row" alignItems="center" { ...paddingAndSizing } sx={ { columnGap: 0.5 } }>
+		<Stack
+			direction="row"
+			alignItems="center"
+			sx={ {
+				pl: 2,
+				pr: 1,
+				py: 1.5,
+				maxHeight: 36,
+				columnGap: 0.5,
+				...sx,
+			} }
+		>
 			{ icon }
 			<Typography variant="subtitle2" sx={ { fontSize: '12px', mt: 0.25 } }>
 				{ title }
