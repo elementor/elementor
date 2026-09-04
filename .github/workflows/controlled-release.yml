@@ -94,7 +94,10 @@ jobs:
             echo ""
             echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
             echo ""
-            echo "> Before approving: I executed custom core with the build that was created by this action."
+            echo "Run [Playwright - Custom Core](https://github.com/elementor/elementor-pro/actions/workflows/playwright-custom-core.yml) in **elementor-pro**."
+            echo "Set **core_release_tag** to \`${{ inputs.version }}\` so tests use this draft zip, not the Core branch (which can keep moving)."
+            echo ""
+            echo "> Before approving: I executed Custom Core against this draft GitHub release."
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ── Job 5 ────────────────────────────────────────────────────────────────
