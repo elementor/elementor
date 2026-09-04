@@ -4,6 +4,8 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -124,27 +126,37 @@ class Module extends BaseModule {
 			new Abilities\Publish_Document_Ability(),
 			new Abilities\Style_Best_Practices_Ability(),
 			new Abilities\Wordpress_Best_Practices_Ability(),
-			new Abilities\Manage_Variable_Ability(),
-			new Abilities\Manage_Classes_Ability(),
-			new Abilities\Manage_Default_Styles_Ability(),
-			new Abilities\Get_Default_Styles_Ability(),
-			new Abilities\Reorder_Classes_Ability(),
-			new Abilities\Manage_Variable_Guide_Ability(),
 			new Abilities\Get_Widget_Schema_Ability(),
 			new Abilities\List_Widget_Schemas_Ability(),
 			new Abilities\List_Dynamic_Tags_Ability(),
 			new Abilities\Build_Composition_Ability(),
 			new Abilities\Manage_Elements_Ability(),
-			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
-			new Abilities\Global_Variables_Resource_Ability(),
-			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
 			new Abilities\Read_Resource_Ability( $registry ),
-			new Abilities\List_Components_Ability(),
-			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
 		];
+
+		if ( AtomicWidgetsModule::is_active() ) {
+			$abilities = array_merge( $abilities, [
+				new Abilities\Manage_Variable_Ability(),
+				new Abilities\Manage_Classes_Ability(),
+				new Abilities\Manage_Default_Styles_Ability(),
+				new Abilities\Get_Default_Styles_Ability(),
+				new Abilities\Reorder_Classes_Ability(),
+				new Abilities\Manage_Variable_Guide_Ability(),
+				new Abilities\Global_Classes_Resource_Ability(),
+				new Abilities\Global_Variables_Resource_Ability(),
+				new Abilities\Interactions_Schema_Resource_Ability(),
+			] );
+		}
+
+		if ( Components_Module::is_experiment_active() ) {
+			$abilities = array_merge( $abilities, [
+				new Abilities\List_Components_Ability(),
+				new Abilities\Manage_Component_Ability(),
+			] );
+		}
 
 		return $abilities;
 	}
