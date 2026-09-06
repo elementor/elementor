@@ -1,4 +1,4 @@
-import { getCurrentDocument } from '@elementor/editor-documents';
+import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __dispatch as dispatch } from '@elementor/store';
 
@@ -43,7 +43,7 @@ export async function loadCurrentDocumentClasses() {
 	// without it we won't be able to properly resolve the styles' class names
 	resetGlobalClassesState( previewOrder, classLabels );
 
-	const postId = getCurrentDocument()?.id;
+	const postId = getV1CurrentDocument()?.id;
 	if ( ! postId ) {
 		return;
 	}
