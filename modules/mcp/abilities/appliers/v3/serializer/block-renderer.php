@@ -40,6 +40,29 @@ class Block_Renderer {
 		return implode( ' ', $parts );
 	}
 
+	public function render_scoped( string $alias, V3_Block_Accumulator $blocks ): string {
+		$grouped = $blocks->all();
+		$parts = [];
+
+		$default = $grouped[ Responsive_Key_Resolver::BASE_BREAKPOINT ] ?? [];
+		unset( $grouped[ Responsive_Key_Resolver::BASE_BREAKPOINT ] );
+
+		$rendered_default = $this->render_scoped_state_group( $alias, $default );
+		if ( '' !== $rendered_default ) {
+			$parts[] = $rendered_default;
+		}
+
+		foreach ( $grouped as $breakpoint => $state_group ) {
+			$rendered = $this->render_scoped_state_group( $alias, $state_group );
+			if ( '' === $rendered ) {
+				continue;
+			}
+			$parts[] = sprintf( '@media(--%s) { %s }', $breakpoint, $rendered );
+		}
+
+		return implode( ' ', $parts );
+	}
+
 	/**
 	 * @param array<string, array<string, string>> $state_group
 	 */
@@ -60,6 +83,31 @@ class Block_Renderer {
 		}
 
 		return implode( ' ', $parts );
+	}
+
+	private function render_scoped_state_group( string $alias, array $state_group ): string {
+		$parts = [];
+
+		$base = $state_group[''] ?? [];
+		unset( $state_group[''] );
+		if ( ! empty( $base ) ) {
+			$parts[] = $this->render_scoped_block( $alias, null, $base );
+		}
+
+		foreach ( $state_group as $state => $declarations ) {
+			if ( empty( $declarations ) ) {
+				continue;
+			}
+			$parts[] = $this->render_scoped_block( $alias, $state, $declarations );
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	private function render_scoped_block( string $alias, ?string $state, array $declarations ): string {
+		$selector = $alias . ( null === $state || '' === $state ? '' : ':' . $state );
+
+		return sprintf( '%s { %s }', $selector, $this->render_declarations( $declarations ) );
 	}
 
 	/**

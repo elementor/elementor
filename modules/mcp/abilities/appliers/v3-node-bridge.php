@@ -2,8 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Auto_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Settings_Index;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Utils;
 
@@ -76,25 +77,70 @@ class V3_Node_Bridge {
 	}
 
 	public static function is_v3_node( array $node ): bool {
-		// V3 non-widget elements (containers/sections) are intentionally not supported at this layer for now.
-		if ( 'widget' !== ( $node['elType'] ?? null ) ) {
-			return false;
+		$el_type = $node['elType'] ?? null;
+
+		if ( 'widget' === $el_type ) {
+			$type = $node['widgetType'] ?? null;
+			return is_string( $type ) && Widget_Context_Helper::is_v3_allowlisted( $type );
 		}
 
-		$type = $node['widgetType'] ?? null;
-
-		return is_string( $type ) && Widget_Context_Helper::is_v3_allowlisted( $type );
+		// V3 container/section/column elements — the type key is on `elType` itself, not `widgetType`.
+		return is_string( $el_type ) && Widget_Context_Helper::is_v3_allowlisted( $el_type );
 	}
 
 	/**
 	 * Writes labels directly to V3's `_css_classes` (space-separated, deduped).
 	 * V4 global class labels are the CSS class names themselves.
+	 *
+	 * @deprecated Use apply_classes_to_target() with V3_Widget_Map_Loader::WRAPPER_TARGET.
 	 */
 	public static function apply_classes( array &$node, array $labels ): void {
-		$existing = self::split_css_classes( $node['settings'][ self::V3_CSS_CLASSES_SETTING ] ?? '' );
+		self::apply_classes_to_target( $node, V3_Widget_Map_Loader::WRAPPER_TARGET, $labels );
+	}
+
+	/**
+	 * Writes labels to the setting bound to `$target` for the node's widget type.
+	 * For `wrapper` the setting is V3's built-in `_css_classes`. For inner-element aliases,
+	 * the setting is the `class_setting` declared on the alias in its map file.
+	 *
+	 * Returns a warning message when the target is unknown or does not accept classes on
+	 * this widget; the caller decides how to surface it.
+	 *
+	 * @param array<string, mixed> $node          Subtree node (by reference).
+	 * @param string               $target        `wrapper` or an inner-element alias.
+	 * @param string[]             $labels        Global-class labels (CSS names).
+	 * @param array<string, mixed> $widget_config Widget config from Widget_Context_Helper::get_widget_config().
+	 */
+	public static function apply_classes_to_target( array &$node, string $target, array $labels, array $widget_config = [] ): ?string {
+		$widget_type = is_string( $node['widgetType'] ?? null ) ? $node['widgetType'] : '';
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+
+		$setting = V3_Widget_Map_Loader::resolve_class_setting( $widget_type, $target, $controls );
+
+		if ( null === $setting ) {
+			return sprintf(
+				/* translators: 1: alias name, 2: V3 widget type. */
+				__( "Global class target '%1\$s' is not defined for %2\$s", 'elementor' ),
+				$target,
+				'' === $widget_type ? esc_html__( 'this V3 widget', 'elementor' ) : $widget_type
+			);
+		}
+
+		if ( false === $setting ) {
+			return sprintf(
+				/* translators: 1: V3 widget type, 2: alias name. */
+				__( 'Widget %1$s does not accept classes on inner element %2$s', 'elementor' ),
+				'' === $widget_type ? esc_html__( 'this V3 widget', 'elementor' ) : $widget_type,
+				$target
+			);
+		}
+
+		$existing = self::split_css_classes( $node['settings'][ $setting ] ?? '' );
 		$merged = array_values( array_unique( array_merge( $labels, $existing ) ) );
 
-		$node['settings'][ self::V3_CSS_CLASSES_SETTING ] = implode( ' ', $merged );
+		$node['settings'][ $setting ] = implode( ' ', $merged );
+
+		return null;
 	}
 
 	public static function clear_classes( array &$node ): void {
@@ -155,22 +201,59 @@ class V3_Node_Bridge {
 	 */
 	private static function collect_style_setting_keys( string $widget_type, array $widget_config ): array {
 		$keys = [];
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+		$map = V3_Widget_Map_Loader::get( $widget_type, $controls );
+		$inner_elements = $map['inner_elements'];
 
-		foreach ( $overrides as $override ) {
+		if ( ! empty( $inner_elements ) ) {
+			foreach ( $inner_elements as $inner_element ) {
+				$keys = array_merge( $keys, $inner_element['setting_keys'] ?? [] );
+
+				$mapping = V3_Auto_Mapper::for_scope( $widget_config, $inner_element );
+				$keys = array_merge( $keys, self::keys_from_mapping( $mapping, $controls ) );
+			}
+
+			foreach ( $map['wrapper']['style_overrides'] as $override ) {
+				$keys = array_merge( $keys, self::expand_override_keys( $override ) );
+			}
+
+			return array_values( array_unique( $keys ) );
+		}
+
+		$keys = array_merge( $keys, $map['wrapper']['setting_keys'] ?? [] );
+		$keys = array_merge(
+			$keys,
+			self::keys_from_mapping( V3_Auto_Mapper::for_scope( $widget_config, $map['wrapper'] ), $controls )
+		);
+
+		return array_values( array_unique( $keys ) );
+	}
+
+	/**
+	 * @param array{overrides: array<string, array>, generic_index: array<string, array>} $mapping
+	 * @param array<string, mixed>                                                        $controls
+	 * @return string[]
+	 */
+	private static function keys_from_mapping( array $mapping, array $controls ): array {
+		$keys = [];
+
+		foreach ( $mapping['overrides'] ?? [] as $override ) {
 			$keys = array_merge( $keys, self::expand_override_keys( $override ) );
 		}
 
-		$generic = V3_Style_Settings_Index::build( $widget_config['controls'] ?? [], $overrides );
-		foreach ( $generic as $rule ) {
+		foreach ( $mapping['generic_index'] ?? [] as $rule ) {
 			$setting = (string) ( $rule['setting'] ?? '' );
 			if ( '' === $setting ) {
 				continue;
 			}
+
 			$keys[] = $setting;
+
 			if ( ! empty( $rule['responsive'] ) ) {
 				foreach ( self::RESPONSIVE_SUFFIXES as $suffix ) {
-					$keys[] = $setting . $suffix;
+					if ( isset( $controls[ $setting . $suffix ] ) ) {
+						$keys[] = $setting . $suffix;
+					}
 				}
 			}
 		}

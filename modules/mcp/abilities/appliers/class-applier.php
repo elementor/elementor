@@ -3,6 +3,8 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Map_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,74 +19,188 @@ class Class_Applier {
 	}
 
 	/**
+	 * Accepts two shapes per config id (backward compatible):
+	 *   - `["label-1", "label-2"]`                 → wrapper-only (legacy).
+	 *   - `{ "wrapper": [...], "menu-item": [...] }` → targeted; keys are wrapper or inner-element aliases.
+	 *
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, mixed>  $classes_input   Per-config-id global class labels.
+	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
-	public function apply( array $config_id_index, array $classes_input ): ?\WP_Error {
+	public function apply( array $config_id_index, array $classes_input ): array {
 		if ( empty( $classes_input ) ) {
-			return null;
+			return [ 'error' => null, 'warnings' => [] ];
 		}
 
 		$id_by_label = $this->build_label_to_id_map( $this->repository->all_labels() );
 		$errors = [];
+		$warnings = [];
 
-		foreach ( $classes_input as $config_id => $labels ) {
+		foreach ( $classes_input as $config_id => $raw ) {
 			if ( ! isset( $config_id_index[ $config_id ] ) ) {
+				continue;
+			}
+
+			$targets = $this->normalize_targets( $raw, $config_id, $errors );
+
+			if ( null === $targets ) {
+				continue;
+			}
+
+			$node = &$config_id_index[ $config_id ];
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				$this->apply_v3( $node, $targets, $id_by_label, $config_id, $errors, $warnings );
+				unset( $node );
+				continue;
+			}
+
+			if ( ! isset( $targets[ V3_Widget_Map_Loader::WRAPPER_TARGET ] ) ) {
+				foreach ( array_keys( $targets ) as $target ) {
+					$warnings[] = sprintf(
+						'[%s] Global class target \'%s\' is only supported on V3 widgets.',
+						$config_id,
+						$target
+					);
+				}
+				unset( $node );
+				continue;
+			}
+
+			$this->apply_v4_wrapper( $node, $targets[ V3_Widget_Map_Loader::WRAPPER_TARGET ], $id_by_label, $config_id, $errors );
+
+			foreach ( $targets as $target => $_labels ) {
+				if ( V3_Widget_Map_Loader::WRAPPER_TARGET === $target ) {
+					continue;
+				}
+				$warnings[] = sprintf(
+					'[%s] Global class target \'%s\' is only supported on V3 widgets.',
+					$config_id,
+					$target
+				);
+			}
+
+			unset( $node );
+		}
+
+		$error = empty( $errors ) ? null : new \WP_Error(
+			'elementor_unknown_global_class',
+			implode( ' ', $errors ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
+
+		return [
+			'error' => $error,
+			'warnings' => $warnings,
+		];
+	}
+
+	/**
+	 * @return array<string, string[]>|null Per-target label lists, or null if the input for this
+	 *                                       config id was rejected (an error was recorded).
+	 */
+	private function normalize_targets( $raw, string $config_id, array &$errors ): ?array {
+		if ( is_array( $raw ) && $this->is_list( $raw ) ) {
+			return [ V3_Widget_Map_Loader::WRAPPER_TARGET => $raw ];
+		}
+
+		if ( ! is_array( $raw ) ) {
+			$errors[] = sprintf(
+				'[%s] classes must be an array of global class labels or a target-keyed map, got %s.',
+				$config_id,
+				gettype( $raw )
+			);
+			return null;
+		}
+
+		$targets = [];
+
+		foreach ( $raw as $target => $labels ) {
+			if ( ! is_string( $target ) || '' === $target ) {
+				$errors[] = sprintf( '[%s] Class target keys must be non-empty strings.', $config_id );
 				continue;
 			}
 
 			if ( ! is_array( $labels ) ) {
 				$errors[] = sprintf(
-					'[%s] classes must be an array of global class labels, got %s.',
+					'[%s] Labels for target \'%s\' must be an array, got %s.',
 					$config_id,
+					$target,
 					gettype( $labels )
 				);
 				continue;
 			}
 
-			$node = &$config_id_index[ $config_id ];
+			$targets[ $target ] = $labels;
+		}
+
+		return $targets;
+	}
+
+	private function is_list( array $arr ): bool {
+		if ( empty( $arr ) ) {
+			return true;
+		}
+		return array_keys( $arr ) === range( 0, count( $arr ) - 1 );
+	}
+
+	private function apply_v3(
+		array &$node,
+		array $targets,
+		array $id_by_label,
+		string $config_id,
+		array &$errors,
+		array &$warnings
+	): void {
+		$widget_type = is_string( $node['widgetType'] ?? null ) ? $node['widgetType'] : '';
+		$widget_config = '' !== $widget_type
+			? ( Widget_Context_Helper::get_widget_config( $widget_type ) ?? [] )
+			: [];
+
+		foreach ( $targets as $target => $labels ) {
 			$resolved_labels = $this->resolve_labels( $labels, $id_by_label, $config_id, $errors );
 
-			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				if ( empty( $labels ) ) {
-					V3_Node_Bridge::clear_classes( $node );
-				} elseif ( ! empty( $resolved_labels ) ) {
-					V3_Node_Bridge::apply_classes( $node, $resolved_labels );
-				}
-
-				unset( $node );
-				continue;
-			}
-
-			if ( empty( $labels ) ) {
-				$node['settings'] = $this->clear_global_classes( $node['settings'] ?? [] );
-				unset( $node );
+			if ( empty( $labels ) && V3_Widget_Map_Loader::WRAPPER_TARGET === $target ) {
+				V3_Node_Bridge::clear_classes( $node );
 				continue;
 			}
 
 			if ( empty( $resolved_labels ) ) {
-				unset( $node );
 				continue;
 			}
 
-			$resolved_ids = array_map(
-				static fn( string $label ) => $id_by_label[ $label ],
-				$resolved_labels
-			);
+			$warning = V3_Node_Bridge::apply_classes_to_target( $node, $target, $resolved_labels, $widget_config );
 
-			$node['settings'] = $this->prepend_global_classes( $node['settings'] ?? [], $resolved_ids );
-			unset( $node );
+			if ( null !== $warning ) {
+				$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
+			}
+		}
+	}
+
+	private function apply_v4_wrapper(
+		array &$node,
+		array $labels,
+		array $id_by_label,
+		string $config_id,
+		array &$errors
+	): void {
+		if ( empty( $labels ) ) {
+			$node['settings'] = $this->clear_global_classes( $node['settings'] ?? [] );
+			return;
 		}
 
-		if ( empty( $errors ) ) {
-			return null;
+		$resolved_labels = $this->resolve_labels( $labels, $id_by_label, $config_id, $errors );
+
+		if ( empty( $resolved_labels ) ) {
+			return;
 		}
 
-		return new \WP_Error(
-			'elementor_unknown_global_class',
-			implode( ' ', $errors ),
-			[ 'status' => \WP_Http::BAD_REQUEST ]
+		$resolved_ids = array_map(
+			static fn( string $label ) => $id_by_label[ $label ],
+			$resolved_labels
 		);
+
+		$node['settings'] = $this->prepend_global_classes( $node['settings'] ?? [], $resolved_ids );
 	}
 
 	/**

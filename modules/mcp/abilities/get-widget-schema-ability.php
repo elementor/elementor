@@ -59,10 +59,13 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 		$config = Widget_Context_Helper::get_widget_config( $widget_type );
 
 		if ( ! $config || ! Widget_Context_Helper::is_widget_eligible_for_llm( $config ) ) {
+			$hint = Widget_Context_Helper::v4_off_type_hint( $widget_type );
 			return new \WP_Error(
 				'elementor_not_found',
-				/* translators: %s: widget type */
-				sprintf( __( 'Unknown widget type: %s.', 'elementor' ), $widget_type ),
+				null === $hint
+					/* translators: %s: widget type */
+					? sprintf( __( 'Unknown widget type: %s.', 'elementor' ), $widget_type )
+					: $hint,
 				[ 'status' => \WP_Http::NOT_FOUND ]
 			);
 		}

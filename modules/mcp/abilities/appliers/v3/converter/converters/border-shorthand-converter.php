@@ -14,22 +14,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles `border_prefix` overrides: explodes `border: <width> <style> <color>` into
  * three prefixed V3 settings via V3_Value_Resolvers::resolve_border_shorthand.
+ *
+ * Also handles the per-side variant `border_side_prefix` (with `side` set to
+ * top/right/bottom/left): `border-<side>: <width> <style> <color>` writes width to only
+ * that side, other sides pinned to 0.
  */
 class Border_Shorthand_Converter implements V3_Property_Converter {
 
 	public function is_supported( array $rule, V3_Context_Meta $meta ): bool {
 		$override = $meta->get_override( $rule['property'], $rule['state'] );
 
-		return null !== $override && isset( $override['border_prefix'] );
+		return null !== $override && ( isset( $override['border_prefix'] ) || isset( $override['border_side_prefix'] ) );
 	}
 
 	public function convert( V3_Conversion_Context $ctx, array $rule, V3_Context_Meta $meta ): bool {
 		$override = $meta->get_override( $rule['property'], $rule['state'] );
-		if ( null === $override || ! isset( $override['border_prefix'] ) ) {
+		if ( null === $override ) {
 			return false;
 		}
 
-		$patch = V3_Value_Resolvers::resolve_border_shorthand( (string) $rule['value'], (string) $override['border_prefix'] );
+		if ( isset( $override['border_side_prefix'] ) ) {
+			$patch = V3_Value_Resolvers::resolve_border_side_shorthand(
+				(string) $rule['value'],
+				(string) ( $override['side'] ?? '' ),
+				(string) $override['border_side_prefix']
+			);
+		} elseif ( isset( $override['border_prefix'] ) ) {
+			$patch = V3_Value_Resolvers::resolve_border_shorthand( (string) $rule['value'], (string) $override['border_prefix'] );
+		} else {
+			return false;
+		}
+
 		if ( null === $patch ) {
 			return false;
 		}

@@ -1,0 +1,2495 @@
+{
+    "controls": {
+        "_section_style": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Layout"
+        },
+        "_title": {
+            "type": "hidden",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Title"
+        },
+        "_margin": {
+            "type": "dimensions",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Margin",
+            "selectors": {
+                "{{WRAPPER}}": "margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} calc(var(--kit-widget-spacing, 0px) + {{BOTTOM}}{{UNIT}}) {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_padding": {
+            "type": "dimensions",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Padding",
+            "selectors": {
+                "{{WRAPPER}}": "padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_element_width": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Width",
+            "selectors": {
+                "{{WRAPPER}}": "width: {{VALUE}}; max-width: {{VALUE}}"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_element_width_tablet": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Width",
+            "selectors": {
+                "{{WRAPPER}}": "width: {{VALUE}}; max-width: {{VALUE}}"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_element_width_mobile": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Width",
+            "selectors": {
+                "{{WRAPPER}}": "width: {{VALUE}}; max-width: {{VALUE}}"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_element_custom_width": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Custom Width",
+            "selectors": {
+                "{{WRAPPER}}": "--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_heading_grid_item": {
+            "type": "heading",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Grid Item"
+        },
+        "_grid_column": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Column Span",
+            "selectors": {
+                "{{WRAPPER}}": "grid-column: span {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_grid_column_custom": {
+            "type": "text",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Custom",
+            "selectors": {
+                "{{WRAPPER}}": "grid-column: {{VALUE}}"
+            },
+            "responsive": []
+        },
+        "_grid_row": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Row Span",
+            "selectors": {
+                "{{WRAPPER}}": "grid-row: span {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_grid_row_custom": {
+            "type": "text",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Custom",
+            "selectors": {
+                "{{WRAPPER}}": "grid-row: {{VALUE}}"
+            },
+            "responsive": []
+        },
+        "_flex_align_self": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Align Self",
+            "selectors": {
+                "{{WRAPPER}}.elementor-element": "--align-self: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_flex_order": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Order",
+            "selectors": {
+                "{{WRAPPER}}.elementor-element": "--order: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_flex_order_custom": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Custom Order",
+            "selectors": {
+                "{{WRAPPER}}.elementor-element": "--order: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_flex_size": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Size",
+            "selectors": {
+                "{{WRAPPER}}.elementor-element": "{{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_flex_grow": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Flex Grow",
+            "selectors": {
+                "{{WRAPPER}}.elementor-element": "--flex-grow: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_flex_shrink": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Flex Shrink",
+            "selectors": {
+                "{{WRAPPER}}.elementor-element": "--flex-shrink: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_element_vertical_align": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Vertical Align",
+            "selectors": {
+                "{{WRAPPER}}": "align-self: {{VALUE}}"
+            },
+            "responsive": []
+        },
+        "_position_description": {
+            "type": "alert",
+            "tab": "advanced",
+            "section": "_section_style"
+        },
+        "_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Position"
+        },
+        "_offset_orientation_h": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Horizontal Orientation"
+        },
+        "_offset_x": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Offset",
+            "selectors": {
+                "body:not(.rtl) {{WRAPPER}}": "left: {{SIZE}}{{UNIT}}",
+                "body.rtl {{WRAPPER}}": "right: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_offset_x_end": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Offset",
+            "selectors": {
+                "body:not(.rtl) {{WRAPPER}}": "right: {{SIZE}}{{UNIT}}",
+                "body.rtl {{WRAPPER}}": "left: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_offset_orientation_v": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Vertical Orientation"
+        },
+        "_offset_y": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Offset",
+            "selectors": {
+                "{{WRAPPER}}": "top: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_offset_y_end": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Offset",
+            "selectors": {
+                "{{WRAPPER}}": "bottom: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_z_index": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Z-Index",
+            "selectors": {
+                "{{WRAPPER}}": "z-index: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_element_id": {
+            "type": "text",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "CSS ID"
+        },
+        "_css_classes": {
+            "type": "text",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "CSS Classes"
+        },
+        "e_display_conditions_trigger": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "_section_style"
+        },
+        "e_display_conditions": {
+            "type": "hidden",
+            "tab": "advanced",
+            "section": "_section_style"
+        },
+        "_element_cache": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_style",
+            "label": "Cache Settings"
+        },
+        "section_effects": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Motion Effects"
+        },
+        "ai_animation": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Animate With AI"
+        },
+        "motion_fx_motion_fx_scrolling": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Scrolling Effects"
+        },
+        "motion_fx_translateY_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Vertical Scroll"
+        },
+        "motion_fx_translateY_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_translateY_speed": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Speed"
+        },
+        "motion_fx_translateY_affectedRange": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Viewport"
+        },
+        "motion_fx_translateX_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Horizontal Scroll"
+        },
+        "motion_fx_translateX_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_translateX_speed": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Speed"
+        },
+        "motion_fx_translateX_affectedRange": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Viewport"
+        },
+        "motion_fx_opacity_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Transparency"
+        },
+        "motion_fx_opacity_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_opacity_level": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Level"
+        },
+        "motion_fx_opacity_range": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Viewport"
+        },
+        "motion_fx_blur_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Blur"
+        },
+        "motion_fx_blur_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_blur_level": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Level"
+        },
+        "motion_fx_blur_range": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Viewport"
+        },
+        "motion_fx_rotateZ_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Rotate"
+        },
+        "motion_fx_rotateZ_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_rotateZ_speed": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Speed"
+        },
+        "motion_fx_rotateZ_affectedRange": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Viewport"
+        },
+        "motion_fx_scale_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Scale"
+        },
+        "motion_fx_scale_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_scale_speed": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Speed"
+        },
+        "motion_fx_scale_range": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Viewport"
+        },
+        "motion_fx_transform_origin_x": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "X Anchor Point",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-origin-x: {{VALUE}}"
+            }
+        },
+        "motion_fx_transform_origin_y": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Y Anchor Point",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-origin-y: {{VALUE}}"
+            }
+        },
+        "motion_fx_devices": {
+            "type": "select2",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Apply Effects On"
+        },
+        "motion_fx_range": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Effects Relative To"
+        },
+        "motion_fx_motion_fx_mouse": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Mouse Effects"
+        },
+        "motion_fx_mouseTrack_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Mouse Track"
+        },
+        "motion_fx_mouseTrack_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_mouseTrack_speed": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Speed"
+        },
+        "motion_fx_tilt_effect": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "3D Tilt"
+        },
+        "motion_fx_tilt_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Direction"
+        },
+        "motion_fx_tilt_speed": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Speed"
+        },
+        "handle_motion_fx_asset_loading": {
+            "type": "hidden",
+            "tab": "advanced",
+            "section": "section_effects"
+        },
+        "sticky": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Sticky"
+        },
+        "sticky_on": {
+            "type": "select2",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Sticky On"
+        },
+        "sticky_offset": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Sticky Offset",
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "sticky_offset_tablet": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Sticky Offset",
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "sticky_offset_mobile": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Sticky Offset",
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "sticky_effects_offset": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Effects Offset",
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "sticky_effects_offset_tablet": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Effects Offset",
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "sticky_effects_offset_mobile": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Effects Offset",
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "sticky_anchor_link_offset": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Anchor Offset",
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "sticky_anchor_link_offset_tablet": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Anchor Offset",
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "sticky_anchor_link_offset_mobile": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Anchor Offset",
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "anchor_offset_description": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "section_effects"
+        },
+        "sticky_parent": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Stay In Column"
+        },
+        "sticky_divider": {
+            "type": "divider",
+            "tab": "advanced",
+            "section": "section_effects"
+        },
+        "_animation": {
+            "type": "animation",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Entrance Animation",
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_animation_tablet": {
+            "type": "animation",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Entrance Animation",
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_animation_mobile": {
+            "type": "animation",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Entrance Animation",
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "animation_duration": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Animation Duration"
+        },
+        "_animation_delay": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "section_effects",
+            "label": "Animation Delay (ms)"
+        },
+        "_section_transform": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Transform"
+        },
+        "_tabs_positioning": {
+            "type": "tabs",
+            "tab": "advanced",
+            "section": "_section_transform"
+        },
+        "_tab_positioning": {
+            "type": "tab",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Normal"
+        },
+        "_transform_rotate_popover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate"
+        },
+        "_transform_rotateZ_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateZ: {{SIZE}}deg"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_rotateZ_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateZ: {{SIZE}}deg"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_rotateZ_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateZ: {{SIZE}}deg"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_rotate_3d": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "3D Rotate",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateX: 1{{UNIT}};  --e-transform-perspective: 20px;"
+            }
+        },
+        "_transform_rotateX_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate X (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_rotateX_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate X (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_rotateX_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate X (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_rotateY_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_rotateY_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_rotateY_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-rotateY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_perspective_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Perspective (px)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-perspective: {{SIZE}}px"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_perspective_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Perspective (px)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-perspective: {{SIZE}}px"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_perspective_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Perspective (px)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-perspective: {{SIZE}}px"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_translate_popover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset"
+        },
+        "_transform_translateX_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset X",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-translateX: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_translateX_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset X",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-translateX: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_translateX_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset X",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-translateX: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_translateY_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset Y",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-translateY: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_translateY_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset Y",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-translateY: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_translateY_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset Y",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-translateY: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_scale_popover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale"
+        },
+        "_transform_keep_proportions": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Keep Proportions"
+        },
+        "_transform_scale_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scale: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_scale_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scale: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_scale_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scale: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_scaleX_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale X",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scaleX: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_scaleX_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale X",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scaleX: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_scaleX_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale X",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scaleX: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_scaleY_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale Y",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scaleY: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_scaleY_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale Y",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scaleY: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_scaleY_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale Y",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-scaleY: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_skew_popover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew"
+        },
+        "_transform_skewX_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew X (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-skewX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_skewX_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew X (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-skewX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_skewX_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew X (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-skewX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_skewY_effect": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-skewY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_skewY_effect_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-skewY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_skewY_effect_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-skewY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_flipX_effect": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Flip Horizontal",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-flipX: -1"
+            }
+        },
+        "_transform_flipY_effect": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Flip Vertical",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-flipY: -1"
+            }
+        },
+        "_tab_positioning_hover": {
+            "type": "tab",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Hover"
+        },
+        "ai_hover_animation": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Animate With AI"
+        },
+        "_transform_rotate_popover_hover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate"
+        },
+        "_transform_rotateZ_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateZ: {{SIZE}}deg"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_rotateZ_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateZ: {{SIZE}}deg"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_rotateZ_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateZ: {{SIZE}}deg"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_rotate_3d_hover": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "3D Rotate",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateX: 1{{UNIT}};  --e-transform-perspective: 20px;"
+            }
+        },
+        "_transform_rotateX_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate X (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_rotateX_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate X (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_rotateX_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate X (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_rotateY_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_rotateY_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_rotateY_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Rotate Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-rotateY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_perspective_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Perspective (px)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-perspective: {{SIZE}}px"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_perspective_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Perspective (px)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-perspective: {{SIZE}}px"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_perspective_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Perspective (px)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-perspective: {{SIZE}}px"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_translate_popover_hover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset"
+        },
+        "_transform_translateX_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset X",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-translateX: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_translateX_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset X",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-translateX: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_translateX_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset X",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-translateX: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_translateY_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset Y",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-translateY: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_translateY_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset Y",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-translateY: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_translateY_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Offset Y",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-translateY: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_scale_popover_hover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale"
+        },
+        "_transform_keep_proportions_hover": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Keep Proportions"
+        },
+        "_transform_scale_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scale: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_scale_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scale: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_scale_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scale: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_scaleX_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale X",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scaleX: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_scaleX_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale X",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scaleX: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_scaleX_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale X",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scaleX: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_scaleY_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale Y",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scaleY: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_scaleY_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale Y",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scaleY: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_scaleY_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Scale Y",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-scaleY: {{SIZE}};"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_skew_popover_hover": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew"
+        },
+        "_transform_skewX_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew X (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-skewX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_skewX_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew X (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-skewX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_skewX_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew X (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-skewX: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_skewY_effect_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-skewY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "desktop"
+            }
+        },
+        "_transform_skewY_effect_hover_tablet": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-skewY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "tablet"
+            }
+        },
+        "_transform_skewY_effect_hover_mobile": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Skew Y (deg)",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-skewY: {{SIZE}}deg;"
+            },
+            "responsive": {
+                "max": "mobile"
+            }
+        },
+        "_transform_flipX_effect_hover": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Flip Horizontal",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-flipX: -1"
+            }
+        },
+        "_transform_flipY_effect_hover": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Flip Vertical",
+            "selectors": {
+                "{{WRAPPER}}:hover": "--e-transform-flipY: -1"
+            }
+        },
+        "_transform_transition_hover": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Transition Duration (ms)",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-transition-duration: {{SIZE}}ms"
+            }
+        },
+        "motion_fx_transform_x_anchor_point": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "X Anchor Point",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-origin-x: {{VALUE}}"
+            },
+            "responsive": []
+        },
+        "motion_fx_transform_y_anchor_point": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_transform",
+            "label": "Y Anchor Point",
+            "selectors": {
+                "{{WRAPPER}}": "--e-transform-origin-y: {{VALUE}}"
+            },
+            "responsive": []
+        },
+        "_section_background": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Background"
+        },
+        "_tabs_background": {
+            "type": "tabs",
+            "tab": "advanced",
+            "section": "_section_background"
+        },
+        "_tab_background_normal": {
+            "type": "tab",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Normal"
+        },
+        "_background_background": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Type"
+        },
+        "_background_gradient_notice": {
+            "type": "alert",
+            "tab": "advanced",
+            "section": "_section_background"
+        },
+        "_background_color": {
+            "type": "color",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Color",
+            "selectors": {
+                "{{WRAPPER}}": "background-color: {{VALUE}};"
+            }
+        },
+        "_background_color_stop": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Location",
+            "responsive": []
+        },
+        "_background_color_b": {
+            "type": "color",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Second Color"
+        },
+        "_background_color_b_stop": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Location",
+            "responsive": []
+        },
+        "_background_gradient_type": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Type"
+        },
+        "_background_gradient_angle": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Angle",
+            "selectors": {
+                "{{WRAPPER}}": "background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{_background_color.VALUE}} {{_background_color_stop.SIZE}}{{_background_color_stop.UNIT}}, {{_background_color_b.VALUE}} {{_background_color_b_stop.SIZE}}{{_background_color_b_stop.UNIT}})"
+            },
+            "responsive": []
+        },
+        "_background_gradient_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Position",
+            "selectors": {
+                "{{WRAPPER}}": "background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{_background_color.VALUE}} {{_background_color_stop.SIZE}}{{_background_color_stop.UNIT}}, {{_background_color_b.VALUE}} {{_background_color_b_stop.SIZE}}{{_background_color_b_stop.UNIT}})"
+            },
+            "responsive": []
+        },
+        "_background_image": {
+            "type": "media",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Image",
+            "selectors": {
+                "{{WRAPPER}}": "background-image: url(\"{{URL}}\");"
+            },
+            "responsive": []
+        },
+        "_background_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Position",
+            "selectors": {
+                "{{WRAPPER}}": "background-position: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_xpos": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "X Position",
+            "selectors": {
+                "{{WRAPPER}}": "background-position: {{SIZE}}{{UNIT}} {{_background_ypos.SIZE}}{{_background_ypos.UNIT}}"
+            },
+            "responsive": []
+        },
+        "_background_ypos": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Y Position",
+            "selectors": {
+                "{{WRAPPER}}": "background-position: {{_background_xpos.SIZE}}{{_background_xpos.UNIT}} {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_background_attachment": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Attachment",
+            "selectors": {
+                "(desktop+){{WRAPPER}}": "background-attachment: {{VALUE}};"
+            }
+        },
+        "_background_attachment_alert": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "_section_background"
+        },
+        "_background_repeat": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Repeat",
+            "selectors": {
+                "{{WRAPPER}}": "background-repeat: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_size": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Display Size",
+            "selectors": {
+                "{{WRAPPER}}": "background-size: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_bg_width": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Width",
+            "selectors": {
+                "{{WRAPPER}}": "background-size: {{SIZE}}{{UNIT}} auto"
+            },
+            "responsive": []
+        },
+        "_background_video_link": {
+            "type": "text",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Video Link"
+        },
+        "_background_video_start": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Start Time"
+        },
+        "_background_video_end": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "End Time"
+        },
+        "_background_play_once": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Play Once"
+        },
+        "_background_play_on_mobile": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Play On Mobile"
+        },
+        "_background_privacy_mode": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Privacy Mode"
+        },
+        "_background_video_fallback": {
+            "type": "media",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Fallback",
+            "selectors": {
+                "{{WRAPPER}}": "background: url(\"{{URL}}\") 50% 50%; background-size: cover;"
+            }
+        },
+        "_background_slideshow_gallery": {
+            "type": "gallery",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Images"
+        },
+        "_background_slideshow_loop": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Infinite Loop"
+        },
+        "_background_slideshow_slide_duration": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Duration (ms)"
+        },
+        "_background_slideshow_slide_transition": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Transition"
+        },
+        "_background_slideshow_transition_duration": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Transition Duration (ms)"
+        },
+        "_background_slideshow_background_size": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Size",
+            "selectors": {
+                "{{WRAPPER}} .elementor-background-slideshow__slide__image": "background-size: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_slideshow_background_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Position",
+            "selectors": {
+                "{{WRAPPER}} .elementor-background-slideshow__slide__image": "background-position: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_slideshow_lazyload": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Lazyload"
+        },
+        "_background_slideshow_ken_burns": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Ken Burns Effect"
+        },
+        "_background_slideshow_ken_burns_zoom_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Direction"
+        },
+        "_tab_background_hover": {
+            "type": "tab",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Hover"
+        },
+        "_background_hover_background": {
+            "type": "choose",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Type"
+        },
+        "_background_hover_gradient_notice": {
+            "type": "alert",
+            "tab": "advanced",
+            "section": "_section_background"
+        },
+        "_background_hover_color": {
+            "type": "color",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Color",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-color: {{VALUE}};"
+            }
+        },
+        "_background_hover_color_stop": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Location",
+            "responsive": []
+        },
+        "_background_hover_color_b": {
+            "type": "color",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Second Color"
+        },
+        "_background_hover_color_b_stop": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Location",
+            "responsive": []
+        },
+        "_background_hover_gradient_type": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Type"
+        },
+        "_background_hover_gradient_angle": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Angle",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{_background_hover_color.VALUE}} {{_background_hover_color_stop.SIZE}}{{_background_hover_color_stop.UNIT}}, {{_background_hover_color_b.VALUE}} {{_background_hover_color_b_stop.SIZE}}{{_background_hover_color_b_stop.UNIT}})"
+            },
+            "responsive": []
+        },
+        "_background_hover_gradient_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Position",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{_background_hover_color.VALUE}} {{_background_hover_color_stop.SIZE}}{{_background_hover_color_stop.UNIT}}, {{_background_hover_color_b.VALUE}} {{_background_hover_color_b_stop.SIZE}}{{_background_hover_color_b_stop.UNIT}})"
+            },
+            "responsive": []
+        },
+        "_background_hover_image": {
+            "type": "media",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Image",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-image: url(\"{{URL}}\");"
+            },
+            "responsive": []
+        },
+        "_background_hover_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Position",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-position: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_hover_xpos": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "X Position",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-position: {{SIZE}}{{UNIT}} {{_background_hover_ypos.SIZE}}{{_background_hover_ypos.UNIT}}"
+            },
+            "responsive": []
+        },
+        "_background_hover_ypos": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Y Position",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-position: {{_background_hover_xpos.SIZE}}{{_background_hover_xpos.UNIT}} {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "_background_hover_attachment": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Attachment",
+            "selectors": {
+                "(desktop+){{WRAPPER}}:hover": "background-attachment: {{VALUE}};"
+            }
+        },
+        "_background_hover_attachment_alert": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "_section_background"
+        },
+        "_background_hover_repeat": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Repeat",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-repeat: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_hover_size": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Display Size",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-size: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_hover_bg_width": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Width",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background-size: {{SIZE}}{{UNIT}} auto"
+            },
+            "responsive": []
+        },
+        "_background_hover_video_link": {
+            "type": "text",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Video Link"
+        },
+        "_background_hover_video_start": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Start Time"
+        },
+        "_background_hover_video_end": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "End Time"
+        },
+        "_background_hover_play_once": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Play Once"
+        },
+        "_background_hover_play_on_mobile": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Play On Mobile"
+        },
+        "_background_hover_privacy_mode": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Privacy Mode"
+        },
+        "_background_hover_video_fallback": {
+            "type": "media",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Fallback",
+            "selectors": {
+                "{{WRAPPER}}:hover": "background: url(\"{{URL}}\") 50% 50%; background-size: cover;"
+            }
+        },
+        "_background_hover_slideshow_gallery": {
+            "type": "gallery",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Images"
+        },
+        "_background_hover_slideshow_loop": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Infinite Loop"
+        },
+        "_background_hover_slideshow_slide_duration": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Duration (ms)"
+        },
+        "_background_hover_slideshow_slide_transition": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Transition"
+        },
+        "_background_hover_slideshow_transition_duration": {
+            "type": "number",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Transition Duration (ms)"
+        },
+        "_background_hover_slideshow_background_size": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Size",
+            "selectors": {
+                "{{WRAPPER}} .elementor-background-slideshow__slide__image": "background-size: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_hover_slideshow_background_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Background Position",
+            "selectors": {
+                "{{WRAPPER}} .elementor-background-slideshow__slide__image": "background-position: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_background_hover_slideshow_lazyload": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Lazyload"
+        },
+        "_background_hover_slideshow_ken_burns": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Ken Burns Effect"
+        },
+        "_background_hover_slideshow_ken_burns_zoom_direction": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Direction"
+        },
+        "_background_hover_transition": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_background",
+            "label": "Transition Duration (s)",
+            "selectors": {
+                "{{WRAPPER}}": "transition: background {{SIZE}}s"
+            }
+        },
+        "_section_border": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Border"
+        },
+        "_tabs_border": {
+            "type": "tabs",
+            "tab": "advanced",
+            "section": "_section_border"
+        },
+        "_tab_border_normal": {
+            "type": "tab",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Normal"
+        },
+        "_border_border": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Type",
+            "selectors": {
+                "{{WRAPPER}}": "border-style: {{VALUE}};"
+            }
+        },
+        "_border_width": {
+            "type": "dimensions",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Width",
+            "selectors": {
+                "{{WRAPPER}}": "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_border_color": {
+            "type": "color",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Color",
+            "selectors": {
+                "{{WRAPPER}}": "border-color: {{VALUE}};"
+            }
+        },
+        "_border_radius": {
+            "type": "dimensions",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Radius",
+            "selectors": {
+                "{{WRAPPER}}": "border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_box_shadow_box_shadow_type": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Box Shadow"
+        },
+        "_box_shadow_box_shadow": {
+            "type": "box_shadow",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Box Shadow",
+            "selectors": {
+                "{{WRAPPER}}": "box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{_box_shadow_box_shadow_position.VALUE}};"
+            }
+        },
+        "_box_shadow_box_shadow_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Position"
+        },
+        "_tab_border_hover": {
+            "type": "tab",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Hover"
+        },
+        "_border_hover_border": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Type",
+            "selectors": {
+                "{{WRAPPER}}:hover": "border-style: {{VALUE}};"
+            }
+        },
+        "_border_hover_width": {
+            "type": "dimensions",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Width",
+            "selectors": {
+                "{{WRAPPER}}:hover": "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_border_hover_color": {
+            "type": "color",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Color",
+            "selectors": {
+                "{{WRAPPER}}:hover": "border-color: {{VALUE}};"
+            }
+        },
+        "_border_radius_hover": {
+            "type": "dimensions",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Border Radius",
+            "selectors": {
+                "{{WRAPPER}}:hover": "border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_box_shadow_hover_box_shadow_type": {
+            "type": "popover_toggle",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Box Shadow"
+        },
+        "_box_shadow_hover_box_shadow": {
+            "type": "box_shadow",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Box Shadow",
+            "selectors": {
+                "{{WRAPPER}}:hover": "box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{_box_shadow_hover_box_shadow_position.VALUE}};"
+            }
+        },
+        "_box_shadow_hover_box_shadow_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Position"
+        },
+        "_border_hover_transition": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_border",
+            "label": "Transition Duration (s)",
+            "selectors": {
+                "{{WRAPPER}}": "transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s"
+            }
+        },
+        "_section_masking": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Mask"
+        },
+        "_mask_switch": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Mask"
+        },
+        "_mask_shape": {
+            "type": "visual_choice",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Shape",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-image: url( http://test.local/wp-content/plugins/elementor/assets/mask-shapes/{{VALUE}}.svg );"
+            }
+        },
+        "_mask_image": {
+            "type": "media",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Image",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-image: url( {{URL}} );"
+            },
+            "responsive": []
+        },
+        "_mask_size": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Size",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-size: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_mask_size_scale": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Scale",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-size: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_mask_position": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Position",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-position: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_mask_position_x": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "X Position",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-position-x: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_mask_position_y": {
+            "type": "slider",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Y Position",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-position-y: {{SIZE}}{{UNIT}};"
+            },
+            "responsive": []
+        },
+        "_mask_repeat": {
+            "type": "select",
+            "tab": "advanced",
+            "section": "_section_masking",
+            "label": "Repeat",
+            "selectors": {
+                "{{WRAPPER}}:not( .elementor-widget-image ), {{WRAPPER}}.elementor-widget-image img": "-webkit-mask-repeat: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "_section_responsive": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Responsive"
+        },
+        "responsive_description": {
+            "type": "raw_html",
+            "tab": "advanced",
+            "section": "_section_responsive"
+        },
+        "hide_desktop": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_responsive",
+            "label": "Hide On Desktop"
+        },
+        "hide_tablet": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_responsive",
+            "label": "Hide On Tablet Portrait"
+        },
+        "hide_mobile": {
+            "type": "switcher",
+            "tab": "advanced",
+            "section": "_section_responsive",
+            "label": "Hide On Mobile Portrait"
+        },
+        "_section_attributes": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Attributes"
+        },
+        "_attributes": {
+            "type": "textarea",
+            "tab": "advanced",
+            "section": "_section_attributes",
+            "label": "Custom Attributes"
+        },
+        "section_custom_css": {
+            "type": "section",
+            "tab": "advanced",
+            "label": "Custom CSS"
+        },
+        "custom_css": {
+            "type": "code",
+            "tab": "advanced",
+            "section": "section_custom_css",
+            "label": "Add your own custom CSS"
+        }
+    }
+}
