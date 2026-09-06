@@ -34,6 +34,15 @@ export const INLINE_EDITING_SELECTORS = {
 		inlineEditor: '.tiptap',
 		contentSectionLabel: 'Content',
 	},
+	formatButtonLabels: {
+		bold: 'Bold',
+		italic: 'Italic',
+		underline: 'Underline',
+		strike: 'Strikethrough',
+		superscript: 'Superscript',
+		subscript: 'Subscript',
+		link: 'Link',
+	},
 	canvas: {
 		inlineEditor: '.ProseMirror[contenteditable="true"]',
 	},

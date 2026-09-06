@@ -5,6 +5,7 @@ import { usePanelActions, usePanelStatus } from '../../design-system-panel';
 import { getActiveDesignSystemTab, setPendingDesignSystemTab } from '../../initial-tab';
 import { DesignSystemEntrypoints } from '../design-system-entrypoints';
 
+const EVENT_OPEN_DEFAULTS = 'elementor/open-default-styles';
 const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
 const EVENT_TOGGLE = 'elementor/toggle-design-system';
@@ -33,9 +34,9 @@ jest.mock( '../../design-system-panel', () => ( {
 } ) );
 
 jest.mock( '../../initial-tab', () => ( {
-	getActiveDesignSystemTab: jest.fn( () => 'variables' ),
+	getActiveDesignSystemTab: jest.fn( () => 'defaults' ),
 	setPendingDesignSystemTab: jest.fn(),
-	getInitialDesignSystemTab: jest.fn( () => 'variables' ),
+	getInitialDesignSystemTab: jest.fn( () => 'defaults' ),
 	persistDesignSystemTab: jest.fn(),
 	notifyDesignSystemTabChange: jest.fn(),
 } ) );
@@ -86,7 +87,7 @@ describe( 'DesignSystemEntrypoints', () => {
 		} );
 
 		jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false, isBlocked: false } );
-		jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
+		jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'defaults' );
 		mockUseActiveDocument.mockReturnValue( null );
 
 		jest.mocked( useDialog ).mockReturnValue( {
@@ -99,6 +100,20 @@ describe( 'DesignSystemEntrypoints', () => {
 	} );
 
 	describe( 'toggle event — panel is closed', () => {
+		it( 'should dispatch open-defaults event when toggled with defaults tab', () => {
+			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'defaults' } );
+			} );
+
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
+			expect( dispatched ).toContain( EVENT_OPEN_DEFAULTS );
+
+			dispatchSpy.mockRestore();
+		} );
+
 		it( 'should dispatch open-variables event when toggled with variables tab', () => {
 			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
 			render( <DesignSystemEntrypoints /> );
@@ -137,7 +152,9 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			const relevant = dispatchSpy.mock.calls
 				.map( ( [ e ]: [ Event ] ) => ( e as Event ).type )
-				.filter( ( t: string ) => [ EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES, EVENT_SET_TAB ].includes( t ) );
+				.filter( ( t: string ) =>
+					[ EVENT_OPEN_DEFAULTS, EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES, EVENT_SET_TAB ].includes( t )
+				);
 			expect( relevant ).toHaveLength( 0 );
 
 			dispatchSpy.mockRestore();
@@ -150,6 +167,18 @@ describe( 'DesignSystemEntrypoints', () => {
 		} );
 
 		it( 'should close the panel when toggled with the same tab that is already active', () => {
+			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'defaults' );
+
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'defaults' } );
+			} );
+
+			expect( mockClose ).toHaveBeenCalled();
+		} );
+
+		it( 'should close variables panel when toggled with variables while variables is active', () => {
 			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
 
 			render( <DesignSystemEntrypoints /> );
@@ -174,7 +203,17 @@ describe( 'DesignSystemEntrypoints', () => {
 		} );
 	} );
 
-	describe( 'open from variables/classes events (via route handoff)', () => {
+	describe( 'open from defaults/variables/classes events (via route handoff)', () => {
+		it( 'should call openRoute when open-defaults event fires', () => {
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_OPEN_DEFAULTS );
+			} );
+
+			expect( jest.mocked( openRoute ) ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
+		} );
+
 		it( 'should call openRoute when open-variables event fires', () => {
 			render( <DesignSystemEntrypoints /> );
 
@@ -193,6 +232,19 @@ describe( 'DesignSystemEntrypoints', () => {
 			} );
 
 			expect( jest.mocked( openRoute ) ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
+		} );
+
+		it( 'should call setPendingDesignSystemTab("defaults") and open() after route resolves for defaults', async () => {
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_OPEN_DEFAULTS );
+			} );
+
+			await fireRoutePanelOpen();
+
+			expect( jest.mocked( setPendingDesignSystemTab ) ).toHaveBeenCalledWith( 'defaults' );
+			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
 		it( 'should call setPendingDesignSystemTab("variables") and open() after route resolves for variables', async () => {
@@ -233,7 +285,7 @@ describe( 'DesignSystemEntrypoints', () => {
 	describe( 'tab persistence across close and reopen', () => {
 		it( 'should reopen with the classes tab after user switched to classes then closed', async () => {
 			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
+			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'defaults' );
 
 			const { unmount } = render( <DesignSystemEntrypoints /> );
 
@@ -311,13 +363,23 @@ describe( 'DesignSystemEntrypoints', () => {
 			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
-		it( 'should default to variables when active-panel=design-system has no tab param', async () => {
+		it( 'should default to defaults when active-panel=design-system has no tab param', async () => {
 			window.history.pushState( {}, '', '/?active-panel=design-system' );
 
 			render( <DesignSystemEntrypoints /> );
 			await fireRoutePanelOpenWithTimers();
 
-			expect( jest.mocked( setPendingDesignSystemTab ) ).toHaveBeenCalledWith( 'variables' );
+			expect( jest.mocked( setPendingDesignSystemTab ) ).toHaveBeenCalledWith( 'defaults' );
+			expect( mockOpen ).toHaveBeenCalled();
+		} );
+
+		it( 'should open with defaults tab from legacy active-panel=default-styles', async () => {
+			window.history.pushState( {}, '', '/?active-panel=default-styles' );
+
+			render( <DesignSystemEntrypoints /> );
+			await fireRoutePanelOpenWithTimers();
+
+			expect( jest.mocked( setPendingDesignSystemTab ) ).toHaveBeenCalledWith( 'defaults' );
 			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
@@ -394,6 +456,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
 			expect( dispatched ).not.toContain( EVENT_OPEN_CLASSES );
 			expect( dispatched ).not.toContain( EVENT_OPEN_VARIABLES );
+			expect( dispatched ).not.toContain( EVENT_OPEN_DEFAULTS );
 
 			dispatchSpy.mockRestore();
 		} );

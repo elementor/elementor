@@ -55,10 +55,11 @@
 		background-color: transparent;
 		color: var(--e-a-color-txt);
 		margin-block: 10px 0;
-		margin-inline: 30px 0;	
+		margin-inline: 30px 0;
 		padding: 5px;
 		box-shadow: none;
 		width: 92%;
+		flex-basis: 100%;
 	}
 
 	.dialog-buttons-wrapper {
@@ -133,4 +134,5 @@
 	align-items: center;
 	line-height: 2;
 	overflow: hidden;
+	flex-wrap: wrap;
 }

@@ -8,11 +8,11 @@ export const videoSrcPropTypeUtil = createPropUtils(
 	z
 		.strictObject( {
 			id: unknownChildrenSchema,
-			url: z.null(),
+			url: z.literal( null ).optional(),
 		} )
 		.or(
 			z.strictObject( {
-				id: z.null(),
+				id: z.literal( null ).optional(),
 				url: unknownChildrenSchema,
 			} )
 		)

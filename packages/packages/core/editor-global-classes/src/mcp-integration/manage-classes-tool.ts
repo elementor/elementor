@@ -38,7 +38,7 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 				.string()
 				.optional()
 				.describe(
-					'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.'
+					'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. font-family must be a single Google Font name (no fallback stacks). In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.'
 				),
 			mode: z
 				.enum( [ 'patch', 'replace' ] )

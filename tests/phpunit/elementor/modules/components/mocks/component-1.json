@@ -22,14 +22,8 @@
             ]
           },
           "text": {
-            "$$type": "html-v3",
-            "value": {
-              "content": {
-                "$$type": "string",
-                "value": "Component 2 Button"
-              },
-              "children": []
-            }
+            "$$type": "escaped-html",
+            "value": "Component 2 Button"
           },
           "link": {
             "$$type": "link",

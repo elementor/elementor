@@ -1,0 +1,7 @@
+{% import 'elementor/macros' as m %}
+<details class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
+    {{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }}
+    {{- m.render_custom_attributes(settings, editor_attributes) }}
+    {{- ' ' }}{% if is_open %}open{% endif %}{% if group_name %} name="{{ group_name }}"{% endif %}>
+    <!-- elementor-children-placeholder -->
+</details>

@@ -3,8 +3,13 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import ContextMenu from '../../../pages/widgets/context-menu';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Container tests #3 @container', () => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
+	} );
+
 	// TODO: to be fixed in ED-23584
 	test.skip( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.

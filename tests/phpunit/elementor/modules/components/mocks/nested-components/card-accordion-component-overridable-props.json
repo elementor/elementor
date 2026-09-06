@@ -8,14 +8,8 @@
       "elType": "widget",
       "widgetType": "e-heading",
       "originValue": {
-        "$$type": "html-v3",
-        "value": {
-          "content": {
-            "$$type": "string",
-            "value": "This is a title"
-          },
-          "children": []
-        }
+        "$$type": "escaped-html",
+        "value": "This is a title"
       },
       "groupId": "group-1"
     },
@@ -27,14 +21,8 @@
       "elType": "widget",
       "widgetType": "e-heading",
       "originValue": {
-        "$$type": "html-v3",
-        "value": {
-          "content": {
-            "$$type": "string",
-            "value": "This is a subtitle"
-          },
-          "children": []
-        }
+        "$$type": "escaped-html",
+        "value": "This is a subtitle"
       },
       "groupId": "group-1"
     },

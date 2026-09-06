@@ -1,6 +1,6 @@
 {% import 'elementor/macros' as m %}
-{%- set classes = settings.classes | merge( [ base_styles.base, m.default_tag_class(settings.tag) ] ) | join(' ') -%}
-<{{ settings.tag | e('html_tag') }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+{%- set classes = settings.classes | merge( [ base_styles.base, m.default_tag_class(tag) ] ) | join(' ') -%}
+<{{ tag | e('html_tag') }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
 	{{- m.render_custom_attributes(settings) }}>
 {%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
 	<{{ settings.link.tag | default('a') | e('html_tag') }}
@@ -10,4 +10,4 @@
 {%- else -%}
 	{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
 {%- endif %}
-</{{ settings.tag | e('html_tag') }}>
+</{{ tag | e('html_tag') }}>

@@ -30,6 +30,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'!cypress.json',
 	'!docker-compose.yml',
 	'!docs/**',
+	'!examples/**',
 	'!local-site/**',
 	'!modules/**/assets/**',
 	'!nightwatch.conf.js',
@@ -53,7 +54,6 @@ export const PLUGIN_FILE_PATTERNS = [
 	'!commitlint.config.js',
 	'!scripts/**',
 	'!eslint-local-rules.js',
-	'!run-on-linux.js',
 	'!test*/**',
 	'!8888/**',
 	'!8889/**',
@@ -70,6 +70,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'vendor/composer/**',
 	'vendor/elementor/wp-one-package/**',
 	'vendor/elementor/wp-notifications-package/**',
+	'vendor/elementor/elementor-mcp-composer/**',
 	'vendor/jetpack-autoloader/**',
 	'vendor/wordpress/**',
 ];

@@ -1,25 +1,29 @@
-export type DesignSystemTab = 'variables' | 'classes';
+export type DesignSystemTab = 'defaults' | 'variables' | 'classes';
 
 const STORAGE_KEY = 'elementor_editor_design_system_active_tab';
 
 function readStoredTab(): DesignSystemTab {
 	if ( typeof window === 'undefined' ) {
-		return 'variables';
+		return 'defaults';
 	}
 	try {
 		const raw = window.localStorage.getItem( STORAGE_KEY );
-		if ( raw === 'classes' || raw === 'variables' ) {
+		if ( raw === 'defaults' || raw === 'classes' || raw === 'variables' ) {
 			return raw;
 		}
 	} catch {
 		// Storage may be unavailable (private mode, quota, etc.).
 	}
-	return 'variables';
+	return 'defaults';
 }
 
 let pendingTabForOpen: DesignSystemTab | null = null;
 
 let activeTabInMemory: DesignSystemTab = readStoredTab();
+
+export function normalizeDesignSystemTab( tab: DesignSystemTab ): DesignSystemTab {
+	return tab;
+}
 
 export function setPendingDesignSystemTab( tab: DesignSystemTab ): void {
 	pendingTabForOpen = tab;

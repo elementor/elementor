@@ -12,6 +12,21 @@ import Notifications from 'elementor-utils/notifications';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
+		Marionette.TemplateCache.prototype.loadTemplate = ( templateId ) => {
+			const $template = '#' === templateId.charAt( 0 )
+				? Backbone.$( 'script' + templateId )
+				: Backbone.$( templateId );
+
+			if ( ! $template.length ) {
+				throw new Marionette.Error( {
+					name: 'NoTemplateError',
+					message: 'Could not find template: "' + templateId + '"',
+				} );
+			}
+
+			return $template.html();
+		};
+
 		Marionette.TemplateCache.prototype.compileTemplate = ( rawTemplate, options ) => {
 			options = {
 				evaluate: /<#([\s\S]+?)#>/g,

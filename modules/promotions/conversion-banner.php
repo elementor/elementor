@@ -249,6 +249,7 @@ class Conversion_Banner {
 
 	private function get_allowed_admin_pages(): array {
 		$default = [ 'selector' => self::DEFAULT_SELECTOR ];
+		$plugin_pages = [ 'selector' => '.wrap hr.wp-header-end' ];
 
 		return [
 			'dashboard' => [ 'selector' => '#wpbody #wpbody-content .wrap h1' ],
@@ -279,9 +280,9 @@ class Conversion_Banner {
 			'themes' => $default,
 			'nav-menus' => $default,
 			'theme-editor' => $default,
-			'plugins' => $default,
-			'plugin-install' => $default,
-			'plugin-editor' => $default,
+			'plugins' => $plugin_pages,
+			'plugin-install' => $plugin_pages,
+			'plugin-editor' => $plugin_pages,
 		];
 	}
 }

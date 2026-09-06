@@ -37,10 +37,6 @@ const mockStyle3 = createMockStyleDefinition( {
 } );
 
 describe( 'useStylesInheritanceSnapshot', () => {
-	beforeAll( () => {
-		initStyleInheritanceMocks( 'style-id-1' );
-	} );
-
 	beforeEach( () => {
 		jest.mocked( stylesRepository.all ).mockReturnValue( [ mockStyle1, mockStyle2 ] );
 	} );
@@ -49,6 +45,7 @@ describe( 'useStylesInheritanceSnapshot', () => {
 		{
 			should: 'provide a snapshot of all applied styles',
 			styles: [ mockStyle1, mockStyle2 ],
+			activeStyleId: 'style-id-1',
 			snapshot: {
 				prop1: [
 					createMockSnapshotField( mockStyle1, { breakpoint: null, state: null }, [ 'prop1' ], null ),
@@ -60,10 +57,20 @@ describe( 'useStylesInheritanceSnapshot', () => {
 		{
 			should: 'ignore non-existing style ids',
 			styles: [ mockStyle3 ],
+			activeStyleId: 'style-id-3',
 			snapshot: {},
 		},
-	] )( 'should $should', ( { styles, snapshot } ) => {
+		{
+			should: 'include active style id when not in applied classes',
+			styles: [],
+			activeStyleId: 'style-id-1',
+			snapshot: {
+				prop1: [ createMockSnapshotField( mockStyle1, { breakpoint: null, state: null }, [ 'prop1' ], null ) ],
+			},
+		},
+	] )( 'should $should', ( { styles, activeStyleId, snapshot } ) => {
 		// Arrange.
+		initStyleInheritanceMocks( activeStyleId );
 		const element = mockElement();
 		const elementType = createMockElementType();
 

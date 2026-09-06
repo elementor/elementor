@@ -1,4 +1,4 @@
-import { htmlV3PropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { escapedHtmlPropTypeUtil } from '@elementor/editor-props';
 
 import { type ModelExtensions } from './create-nested-templated-element-type';
 import { registerModelExtensions } from './init-legacy-views';
@@ -23,10 +23,7 @@ const tabModelExtensions: ModelExtensions = {
 			...paragraphElement,
 			settings: {
 				...paragraphElement.settings,
-				paragraph: htmlV3PropTypeUtil.create( {
-					content: stringPropTypeUtil.create( `Tab ${ position }` ),
-					children: [],
-				} ),
+				paragraph: escapedHtmlPropTypeUtil.create( `Tab ${ position }` ),
 			},
 		};
 

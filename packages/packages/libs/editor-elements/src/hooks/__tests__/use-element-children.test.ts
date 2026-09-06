@@ -312,6 +312,41 @@ describe( 'useElementChildren', () => {
 		expect( result.current.accordion.map( ( e ) => e.id ) ).toEqual( [ 'nested-accordion' ] );
 	} );
 
+	describe( 'includeSelfAsParent', () => {
+		const setupSelfParentContainer = () => {
+			const items = [
+				createMockChild( { id: 'item-1', elType: 'accordion-item' } ),
+				createMockChild( { id: 'item-2', elType: 'accordion-item' } ),
+			];
+
+			mockGetContainer.mockReturnValue( createMockContainer( 'element-1', items, 'accordion' ) );
+		};
+
+		it( 'should treat the element itself as the parent when enabled', () => {
+			// Arrange.
+			setupSelfParentContainer();
+
+			// Act.
+			const { result } = renderHook( () =>
+				useElementChildren( 'element-1', { accordion: 'accordion-item' }, { includeSelfAsParent: true } )
+			);
+
+			// Assert.
+			expect( result.current[ 'accordion-item' ].map( ( e ) => e.id ) ).toEqual( [ 'item-1', 'item-2' ] );
+		} );
+
+		it( 'should not treat the element itself as the parent by default', () => {
+			// Arrange.
+			setupSelfParentContainer();
+
+			// Act.
+			const { result } = renderHook( () => useElementChildren( 'element-1', { accordion: 'accordion-item' } ) );
+
+			// Assert.
+			expect( result.current[ 'accordion-item' ] ).toEqual( [] );
+		} );
+	} );
+
 	it( 'should only return direct children from the first level where parent is found, not nested descendants', () => {
 		// Arrange.
 		const deeplyNestedTab = createMockChild( { id: 'deeply-nested-tab', elType: 'tab' } );

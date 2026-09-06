@@ -1,11 +1,6 @@
 {% import 'elementor/macros' as m %}
 {%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
-{%- set effective_tag = has_link ? (settings.link.tag | default('a')) : 'div' -%}
-{%- set classes = settings.classes | merge([base_styles.base, m.default_tag_class(effective_tag)]) | join(' ') -%}
-{%- if has_link -%}
-	<{{ effective_tag | e('html_tag') }}{{ m.render_link_attributes(settings.link) }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</{{ effective_tag | e('html_tag') }}>
-{%- else -%}
-	<div class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</div>
-{%- endif -%}
+{%- set classes = settings.classes | merge([base_styles.base, m.default_tag_class(tag)]) | join(' ') -%}
+<{{ tag | e('html_tag') }}
+	{%- if has_link %}{{ m.render_link_attributes(settings.link) }}{% endif %} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+	{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</{{ tag | e('html_tag') }}>

@@ -1,3 +1,5 @@
+import { isWidgetNew as checkIsWidgetNew } from './utils/is-widget-new';
+
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
@@ -160,6 +162,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.elementsCollection = elementsCollection;
 	},
 
+	isWidgetNew( item ) {
+		return checkIsWidgetNew( item, elementor.config.version );
+	},
+
 	getCollectionItem( item ) {
 		return {
 			title: item.title,
@@ -171,6 +177,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			custom: item.custom,
 			editable: item.editable,
 			hideOnSearch: item.hide_on_search,
+			isNew: this.isWidgetNew( item ),
 		};
 	},
 

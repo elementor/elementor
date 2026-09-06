@@ -19,7 +19,7 @@ export function useOpenDesignSystemToolbar(): ToggleActionProps {
 				trackDesignSystem( { event: 'opened' } );
 			}
 
-			const tab = getActiveDesignSystemTab() ?? 'variables';
+			const tab = getActiveDesignSystemTab();
 
 			window.dispatchEvent(
 				new CustomEvent( EVENT_TOGGLE, {

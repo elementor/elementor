@@ -19,11 +19,8 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
 					'originValue' => [
-						'$$type' => 'html-v3',
-						'value' => [
-							'content' => [ '$$type' => 'string', 'value' => 'Original Title' ],
-							'children' => [],
-						],
+						'$$type' => 'escaped-html',
+						'value' => 'Original Title',
 					],
 					'groupId' => 'group-1',
 				],
@@ -95,11 +92,8 @@ class Component_Overrides_Mocks {
 					'widgetType' => 'e-component',
 					'propKey' => 'override',
 				'originValue' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => ['$$type' => 'string', 'value' => 'Click here'],
-						'children' => [],
-					],
+					'$$type' => 'escaped-html',
+					'value' => 'Click here',
 				],
 					'originPropFields' => [
 						'elType' => 'widget',
@@ -134,11 +128,8 @@ class Component_Overrides_Mocks {
 			'value' => [
 			'override_key' => 'prop-uuid-1',
 			'override_value' => [
-				'$$type' => 'html-v3',
-				'value' => [
-					'content' => ['$$type' => 'string', 'value' => 'New Title'],
-					'children' => [],
-				],
+				'$$type' => 'escaped-html',
+				'value' => 'New Title',
 			],
 			'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 		],
@@ -215,11 +206,8 @@ class Component_Overrides_Mocks {
 			'widgetType' => 'e-heading',
 			'propKey' => 'title',
 			'originValue' => [
-				'$$type' => 'html-v3',
-				'value' => [
-					'content' => ['$$type' => 'string', 'value' => 'Autosave Title'],
-					'children' => [],
-				],
+				'$$type' => 'escaped-html',
+				'value' => 'Autosave Title',
 			],
 			'groupId' => 'group-1',
 		];

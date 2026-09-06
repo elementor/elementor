@@ -12,7 +12,12 @@ export {
 } from './children-dependencies';
 
 // hooks
-export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
+export {
+	useElementChildren,
+	type ElementChildren,
+	type ElementModel,
+	type UseElementChildrenOptions,
+} from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';

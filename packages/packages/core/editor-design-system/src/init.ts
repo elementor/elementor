@@ -16,7 +16,7 @@ export function init() {
 
 	toolsMenu.registerToggleAction( {
 		id: 'open-design-system-toolbar',
-		priority: 21,
+		priority: 4,
 		useProps: useOpenDesignSystemToolbar,
 	} );
 }

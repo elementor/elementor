@@ -33,6 +33,7 @@ type InlineEditorProps = {
 	autofocus?: boolean;
 	expectedTag?: string | null;
 	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
+	onEditorDestroy?: () => void;
 	wrapperClassName?: string;
 	onSelectionEnd?: ( view: EditorView ) => void;
 	mountElement?: HTMLElement | null;
@@ -50,6 +51,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		onBlur = undefined,
 		expectedTag = null,
 		onEditorCreate,
+		onEditorDestroy,
 		wrapperClassName,
 		onSelectionEnd,
 		mountElement = null,
@@ -146,6 +148,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			},
 		},
 		onCreate: onEditorCreate ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor ) : undefined,
+		onDestroy: onEditorDestroy ? () => onEditorDestroy() : undefined,
 		onBlur: mountElement ? undefined : () => onBlurRef.current?.(),
 		onSelectionUpdate: onSelectionEnd
 			? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
