@@ -82,7 +82,6 @@ Match the widget schema shape:
 - **boolean**: plain boolean (`true`)
 - **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). Do NOT wrap in `{ content, children }`. May contain a small allowlist of inline HTML tags for text styling — same shape, just HTML inside the string. Anything outside the allowlist is stripped server-side.
   - Available on all three: `<strong>`, `<em>`, `<s>` (strikethrough), `<u>`, `<sub>`, `<sup>`, `<br>`, `<b>`, `<del>`, `<span>`.
-  - Available on `e-heading` and `e-paragraph` only: `<a href="..." target="_blank">` (use `_blank` only when opening in a new tab is intended).
   - Available on `e-paragraph` only: `<ul>`, `<ol>`, `<li>`, `<blockquote>`.
   - Example: `"paragraph": "<strong>Contact support</strong> for a <s>free</s> discounted quote — <em>limited time</em> only."`
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
