@@ -8,18 +8,17 @@
 
 	const i18n = cfg.i18n;
 
+	const experimentsTab = document.getElementById( 'tab-experiments' );
+	if ( ! experimentsTab ) {
+		return;
+	}
+
 	document.body.classList.add( 'e-exp-ui-active' );
 
 	const root = document.createElement( 'div' );
 	root.className = 'e-exp-ui';
 	root.innerHTML = renderShell();
-	const wrap = document.querySelector( '#wpbody-content .wrap' ) || document.querySelector( '#wpbody-content' );
-	const anchor = wrap.querySelector( '.nav-tab-wrapper' ) || wrap.querySelector( 'h1' );
-	if ( anchor && anchor.parentNode === wrap ) {
-		anchor.insertAdjacentElement( 'afterend', root );
-	} else {
-		wrap.prepend( root );
-	}
+	experimentsTab.prepend( root );
 
 	const indicator = root.querySelector( '[data-indicator]' );
 	const indicatorText = indicator.querySelector( '.text' );
@@ -30,6 +29,9 @@
 
 	const state = new Map( cfg.features.map( ( f ) => [ f.name, f ] ) );
 	const favorites = new Set( Array.isArray( cfg.favorites ) ? cfg.favorites : [] );
+
+	let currentFilter = 'all';
+	let searchInput;
 
 	renderCards();
 	wireToolbar();
@@ -52,15 +54,15 @@
 					<input type="search" data-search placeholder="${ escapeHtml( i18n.searchPlaceholder ) }" />
 				</label>
 				<div class="e-exp-ui-filters" role="tablist">
-					<button class="e-exp-ui-filter active" data-filter="all">${ escapeHtml( i18n.filterAll ) } <span class="count">0</span></button>
-					<button class="e-exp-ui-filter" data-filter="active">${ escapeHtml( i18n.filterActive ) } <span class="count">0</span></button>
-					<button class="e-exp-ui-filter" data-filter="inactive">${ escapeHtml( i18n.filterInactive ) } <span class="count">0</span></button>
-					<button class="e-exp-ui-filter" data-filter="favorites">${ escapeHtml( i18n.filterFavorites ) } <span class="count">0</span></button>
+					<button type="button" class="e-exp-ui-filter active" data-filter="all">${ escapeHtml( i18n.filterAll ) } <span class="count">0</span></button>
+					<button type="button" class="e-exp-ui-filter" data-filter="active">${ escapeHtml( i18n.filterActive ) } <span class="count">0</span></button>
+					<button type="button" class="e-exp-ui-filter" data-filter="inactive">${ escapeHtml( i18n.filterInactive ) } <span class="count">0</span></button>
+					<button type="button" class="e-exp-ui-filter" data-filter="favorites">${ escapeHtml( i18n.filterFavorites ) } <span class="count">0</span></button>
 				</div>
 				<div class="e-exp-ui-bulk">
-					<button class="e-exp-ui-bulk-btn" data-bulk="active">${ escapeHtml( i18n.activateAll ) }</button>
-					<button class="e-exp-ui-bulk-btn" data-bulk="inactive">${ escapeHtml( i18n.deactivateAll ) }</button>
-					<button class="e-exp-ui-bulk-btn" data-bulk="default">${ escapeHtml( i18n.resetAll ) }</button>
+					<button type="button" class="e-exp-ui-bulk-btn" data-bulk="active">${ escapeHtml( i18n.activateAll ) }</button>
+					<button type="button" class="e-exp-ui-bulk-btn" data-bulk="inactive">${ escapeHtml( i18n.deactivateAll ) }</button>
+					<button type="button" class="e-exp-ui-bulk-btn" data-bulk="default">${ escapeHtml( i18n.resetAll ) }</button>
 				</div>
 			</div>
 			<div data-groups></div>
@@ -432,9 +434,6 @@
 		}
 		return f.state === f.default;
 	}
-
-	let currentFilter = 'all';
-	let searchInput;
 
 	function wireToolbar() {
 		searchInput = root.querySelector( '[data-search]' );

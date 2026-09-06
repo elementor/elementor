@@ -1,6 +1,10 @@
 /* Elementor Experiments POC — layered on top of the existing settings page */
 
-body.e-exp-ui-active #wpcontent .wrap > form {
+body.e-exp-ui-active #tab-experiments > *:not(.e-exp-ui) {
+	display: none !important;
+}
+
+body.e-exp-ui-active form:has(#tab-experiments.elementor-active) > p.submit {
 	display: none !important;
 }
 
