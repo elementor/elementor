@@ -130,7 +130,7 @@ class Experiments_Ui {
 
 			$payload[] = [
 				'name' => $name,
-				'title' => wp_strip_all_tags( $feature['title'] ),
+				'title' => html_entity_decode( wp_strip_all_tags( $feature['title'] ), ENT_QUOTES, 'UTF-8' ),
 				'description' => $feature['description'],
 				'releaseStatus' => $feature['release_status'],
 				'state' => $feature['state'],
@@ -161,7 +161,7 @@ class Experiments_Ui {
 				}
 				$index[ $dep_name ][] = [
 					'name' => $name,
-					'title' => wp_strip_all_tags( $feature['title'] ),
+					'title' => html_entity_decode( wp_strip_all_tags( $feature['title'] ), ENT_QUOTES, 'UTF-8' ),
 				];
 			}
 		}
@@ -380,7 +380,7 @@ class Experiments_Ui {
 				$feat = $experiments->get_features( $feat_name );
 				$cascaded[] = [
 					'name' => $feat_name,
-					'title' => wp_strip_all_tags( $feat['title'] ),
+					'title' => html_entity_decode( wp_strip_all_tags( $feat['title'] ), ENT_QUOTES, 'UTF-8' ),
 					'state' => $after_state,
 					'actualState' => $experiments->is_feature_active( $feat_name ) ? 'active' : 'inactive',
 				];
