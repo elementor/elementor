@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box, CardMedia, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { findFontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
+import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
@@ -16,7 +16,7 @@ type SvgMediaPreviewProps = {
 	iconLibrary: string | null;
 };
 
-export function SvgMediaPreview( { isFetching, src, iconClassName, iconLibrary }: SvgMediaPreviewProps ) {
+export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }: SvgMediaPreviewProps ) => {
 	const shouldLoadIconCatalog = Boolean( iconClassName && iconLibrary );
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( shouldLoadIconCatalog );
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
@@ -26,37 +26,43 @@ export function SvgMediaPreview( { isFetching, src, iconClassName, iconLibrary }
 	}
 
 	if ( selectedIcon ) {
-		return (
-			<Box sx={ { color: ICON_PREVIEW_COLOR } }>
-				<FontAwesomeGlyph
-					icon={ selectedIcon }
-					size={ ICON_PREVIEW_SIZE }
-					color={ ICON_PREVIEW_COLOR }
-					label={ __( 'Preview icon', 'elementor' ) }
-				/>
-			</Box>
-		);
+		return <IconPreview icon={ selectedIcon } />;
 	}
 
 	if ( shouldLoadIconCatalog ) {
-		return (
-			<Box
-				aria-label={ __( 'Preview icon', 'elementor' ) }
-				sx={ {
-					width: ICON_PREVIEW_SIZE,
-					height: ICON_PREVIEW_SIZE,
-					color: ICON_PREVIEW_COLOR,
-				} }
-			/>
-		);
+		return <IconPreviewPlaceholder />;
 	}
 
-	return (
-		<CardMedia
-			component="img"
-			image={ src }
-			alt={ __( 'Preview SVG', 'elementor' ) }
-			sx={ { maxHeight: '140px', width: `${ ICON_PREVIEW_SIZE }px`, color: ICON_PREVIEW_COLOR } }
+	return <SvgPreview src={ src } />;
+};
+
+const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
+	<Box sx={ { color: ICON_PREVIEW_COLOR } }>
+		<FontAwesomeGlyph
+			icon={ icon }
+			size={ ICON_PREVIEW_SIZE }
+			color={ ICON_PREVIEW_COLOR }
+			label={ __( 'Preview icon', 'elementor' ) }
 		/>
-	);
-}
+	</Box>
+);
+
+const IconPreviewPlaceholder = () => (
+	<Box
+		aria-label={ __( 'Preview icon', 'elementor' ) }
+		sx={ {
+			width: ICON_PREVIEW_SIZE,
+			height: ICON_PREVIEW_SIZE,
+			color: ICON_PREVIEW_COLOR,
+		} }
+	/>
+);
+
+const SvgPreview = ( { src }: { src: string | null } ) => (
+	<CardMedia
+		component="img"
+		image={ src }
+		alt={ __( 'Preview SVG', 'elementor' ) }
+		sx={ { maxHeight: '140px', width: `${ ICON_PREVIEW_SIZE }px`, color: ICON_PREVIEW_COLOR } }
+	/>
+);

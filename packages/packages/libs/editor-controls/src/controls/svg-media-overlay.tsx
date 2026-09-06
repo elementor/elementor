@@ -42,7 +42,7 @@ type SvgMediaOverlayProps = {
 	infotipDescription: React.ReactNode;
 };
 
-export function SvgMediaOverlay( {
+export const SvgMediaOverlay = ( {
 	isAdmin,
 	showIconLibrary,
 	buttonGroupRef,
@@ -51,77 +51,87 @@ export function SvgMediaOverlay( {
 	onOpenIconLibrary,
 	infotipTitle,
 	infotipDescription,
-}: SvgMediaOverlayProps ) {
-	return (
-		<Stack alignItems="center" gap={ 1 }>
-			<MediaActionGroup ref={ buttonGroupRef } direction="row" data-testid={ SVG_MEDIA_ACTION_GROUP_TEST_ID }>
-				<Button
-					size="tiny"
-					color="inherit"
-					variant="text"
-					onClick={ onSelectSvg }
-					aria-label={ __( 'Select', 'elementor' ) }
-					sx={ svgButtonSx }
-				>
-					{ __( 'Select', 'elementor' ) }
-				</Button>
-				<Box
-					sx={ {
-						width: '1px',
-						alignSelf: 'stretch',
-						bgcolor: 'currentColor',
-						flexShrink: 0,
-					} }
-				/>
-				<ConditionalControlInfotip
-					title={ infotipTitle }
-					description={ infotipDescription }
-					isEnabled={ ! isAdmin }
-				>
-					<Box component="span" sx={ { display: 'inline-flex' } }>
-						{ isAdmin ? (
-							<UploadButton sx={ svgButtonSx } onClick={ onUpload } />
-						) : (
-							<ThemeProvider colorScheme="dark">
-								<UploadButton disabled sx={ svgButtonSx } />
-							</ThemeProvider>
-						) }
-					</Box>
-				</ConditionalControlInfotip>
-			</MediaActionGroup>
-			{ showIconLibrary ? (
-				<Button
-					size="tiny"
-					color="inherit"
-					variant="text"
-					startIcon={ <LibraryIcon sx={ { height: '18px', width: '16px' } } /> }
-					aria-label={ __( 'Icon library', 'elementor' ) }
-					onClick={ onOpenIconLibrary }
-					sx={ {
-						height: '28px',
-						p: ICON_LIBRARY_PADDING,
-						'.MuiButton-icon': { ml: 0 },
-					} }
-				>
-					<Typography>{ __( 'Icon library', 'elementor' ) }</Typography>
-				</Button>
-			) : null }
-		</Stack>
-	);
-}
+}: SvgMediaOverlayProps ) => (
+	<Stack alignItems="center" gap={ 1 }>
+		<MediaActionGroup ref={ buttonGroupRef } direction="row" data-testid={ SVG_MEDIA_ACTION_GROUP_TEST_ID }>
+			<Button
+				size="tiny"
+				color="inherit"
+				variant="text"
+				onClick={ onSelectSvg }
+				aria-label={ __( 'Select', 'elementor' ) }
+				sx={ svgButtonSx }
+			>
+				{ __( 'Select', 'elementor' ) }
+			</Button>
+			<Box
+				sx={ {
+					width: '1px',
+					alignSelf: 'stretch',
+					bgcolor: 'currentColor',
+					flexShrink: 0,
+				} }
+			/>
+			<ConditionalControlInfotip
+				title={ infotipTitle }
+				description={ infotipDescription }
+				isEnabled={ ! isAdmin }
+			>
+				<Box component="span" sx={ { display: 'inline-flex' } }>
+					<UploadControl isAdmin={ isAdmin } onUpload={ onUpload } />
+				</Box>
+			</ConditionalControlInfotip>
+		</MediaActionGroup>
+		{ showIconLibrary ? (
+			<Button
+				size="tiny"
+				color="inherit"
+				variant="text"
+				startIcon={ <LibraryIcon sx={ { height: '18px', width: '16px' } } /> }
+				aria-label={ __( 'Icon library', 'elementor' ) }
+				onClick={ onOpenIconLibrary }
+				sx={ {
+					height: '28px',
+					p: ICON_LIBRARY_PADDING,
+					'.MuiButton-icon': { ml: 0 },
+				} }
+			>
+				<Typography>{ __( 'Icon library', 'elementor' ) }</Typography>
+			</Button>
+		) : null }
+	</Stack>
+);
 
-function UploadButton( { disabled = false, sx, onClick }: { disabled?: boolean; sx?: SxProps; onClick?: () => void } ) {
+const UploadControl = ( { isAdmin, onUpload }: { isAdmin: boolean; onUpload: () => void } ) => {
+	if ( isAdmin ) {
+		return <UploadButton sx={ svgButtonSx } onClick={ onUpload } />;
+	}
+
 	return (
-		<Button
-			sx={ sx }
-			size="tiny"
-			color="inherit"
-			variant="text"
-			disabled={ disabled }
-			onClick={ onClick }
-			aria-label={ __( 'Upload', 'elementor' ) }
-		>
-			<UploadIcon />
-		</Button>
+		<ThemeProvider colorScheme="dark">
+			<UploadButton disabled sx={ svgButtonSx } />
+		</ThemeProvider>
 	);
-}
+};
+
+const UploadButton = ( {
+	disabled = false,
+	sx,
+	onClick,
+}: {
+	disabled?: boolean;
+	sx?: SxProps;
+	onClick?: () => void;
+} ) => (
+	<Button
+		sx={ sx }
+		size="tiny"
+		color="inherit"
+		variant="text"
+		disabled={ disabled }
+		onClick={ onClick }
+		aria-label={ __( 'Upload', 'elementor' ) }
+	>
+		<UploadIcon />
+	</Button>
+);

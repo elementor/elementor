@@ -11,7 +11,7 @@ import { EnableUnfilteredModal } from '../components/enable-unfiltered-modal';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
-import { getIconLibraryAnchor } from './icon-library/get-icon-library-anchor';
+import { type IconLibraryAnchor, measureIconLibraryAnchor } from './icon-library/get-icon-library-anchor';
 import { ICON_LIBRARY_POPOVER_WIDTH, IconLibraryPopover } from './icon-library/icon-library-popover';
 import { createIconPropValue } from './open-icon-library';
 import { SVG_MEDIA_CONTROL_CONTAINER_TEST_ID, SvgMediaOverlay } from './svg-media-overlay';
@@ -65,7 +65,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 	const iconLibraryPopoverState = usePopupState( { variant: 'popover' } );
 	const controlContainerRef = useRef< HTMLDivElement >( null );
 	const buttonGroupRef = useRef< HTMLDivElement >( null );
-	const [ iconLibraryAnchor, setIconLibraryAnchor ] = useState< ReturnType< typeof getIconLibraryAnchor > >( null );
+	const [ iconLibraryAnchor, setIconLibraryAnchor ] = useState< IconLibraryAnchor | null >( null );
 	const { isAdmin } = useCurrentUserCapabilities();
 	const selectedIconClass =
 		showIconLibrary && typeof iconValue?.value?.value === 'string' ? iconValue.value.value : null;
@@ -87,7 +87,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 		},
 	} );
 
-	const onCloseUnfilteredModal = ( enabled: boolean ) => {
+	const handleCloseUnfilteredModal = ( enabled: boolean ) => {
 		setUnfilteredModalOpenState( false );
 
 		if ( enabled ) {
@@ -103,21 +103,26 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 		}
 	};
 
-	const closeIconLibrary = () => {
+	const handleSelectSvg = () => {
+		handleClick( MODE_BROWSE );
+	};
+
+	const handleUpload = () => {
+		handleClick( MODE_UPLOAD );
+	};
+
+	const handleCloseIconLibrary = () => {
 		iconLibraryPopoverState.close();
 		setIconLibraryAnchor( null );
 	};
 
 	const handleIconLibrarySelect = ( icon: { value: string; library: string } ) => {
 		setIconValue( createIconPropValue( icon.value, icon.library ) );
-		closeIconLibrary();
+		handleCloseIconLibrary();
 	};
 
-	const openIconLibraryPopover = ( event: React.MouseEvent< HTMLElement > ) => {
-		const anchor = getIconLibraryAnchor(
-			controlContainerRef.current?.getBoundingClientRect(),
-			buttonGroupRef.current?.getBoundingClientRect()
-		);
+	const handleOpenIconLibrary = ( event: React.MouseEvent< HTMLElement > ) => {
+		const anchor = measureIconLibraryAnchor( controlContainerRef.current, buttonGroupRef.current );
 
 		if ( ! anchor ) {
 			return;
@@ -132,21 +137,18 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 			return;
 		}
 
-		const updateAnchor = () => {
-			const nextAnchor = getIconLibraryAnchor(
-				controlContainerRef.current?.getBoundingClientRect(),
-				buttonGroupRef.current?.getBoundingClientRect()
-			);
+		const handleResize = () => {
+			const nextAnchor = measureIconLibraryAnchor( controlContainerRef.current, buttonGroupRef.current );
 
 			if ( nextAnchor ) {
 				setIconLibraryAnchor( nextAnchor );
 			}
 		};
 
-		window.addEventListener( 'resize', updateAnchor );
+		window.addEventListener( 'resize', handleResize );
 
 		return () => {
-			window.removeEventListener( 'resize', updateAnchor );
+			window.removeEventListener( 'resize', handleResize );
 		};
 	}, [ iconLibraryPopoverState.isOpen ] );
 
@@ -154,12 +156,12 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 
 	return (
 		<Stack gap={ 1 } aria-label="SVG Control">
-			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
+			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ handleCloseUnfilteredModal } />
 			{ showIconLibrary && iconLibraryAnchor ? (
 				<Popover
 					disableScrollLock
 					open={ iconLibraryPopoverState.isOpen }
-					onClose={ closeIconLibrary }
+					onClose={ handleCloseIconLibrary }
 					anchorReference="anchorPosition"
 					anchorPosition={ { top: iconLibraryAnchor.top, left: iconLibraryAnchor.left } }
 					anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
@@ -179,7 +181,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 						selectedIconClass={ selectedIconClass }
 						selectedIconLibrary={ selectedIconLibrary }
 						onSelect={ handleIconLibrarySelect }
-						onClose={ closeIconLibrary }
+						onClose={ handleCloseIconLibrary }
 						width={ iconLibraryWidth }
 					/>
 				</Popover>
@@ -210,20 +212,11 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 								isAdmin={ isAdmin }
 								showIconLibrary={ showIconLibrary }
 								buttonGroupRef={ buttonGroupRef }
-								onSelectSvg={ () => handleClick( MODE_BROWSE ) }
-								onUpload={ () => handleClick( MODE_UPLOAD ) }
-								onOpenIconLibrary={ openIconLibraryPopover }
+								onSelectSvg={ handleSelectSvg }
+								onUpload={ handleUpload }
+								onOpenIconLibrary={ handleOpenIconLibrary }
 								infotipTitle={ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
-								infotipDescription={
-									<>
-										{ __(
-											'To upload them anyway, ask the site administrator to enable unfiltered',
-											'elementor'
-										) }
-										<br />
-										{ __( 'file uploads.', 'elementor' ) }
-									</>
-								}
+								infotipDescription={ <UnfilteredUploadInfotipDescription /> }
 							/>
 						</CardOverlay>
 					</StyledCard>
@@ -232,3 +225,11 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 		</Stack>
 	);
 } );
+
+const UnfilteredUploadInfotipDescription = () => (
+	<>
+		{ __( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' ) }
+		<br />
+		{ __( 'file uploads.', 'elementor' ) }
+	</>
+);

@@ -33,7 +33,7 @@ const CompactIconLibraryMenuList = styled( StyledMenuList )( ( { theme } ) => ( 
 	},
 } ) );
 
-type IconLibraryItem = VirtualizedItem< 'item', string > & FontAwesome7Icon;
+type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' >;
 
 type IconLibraryPopoverProps = {
 	open: boolean;
@@ -44,35 +44,43 @@ type IconLibraryPopoverProps = {
 	width?: number;
 };
 
-export function IconLibraryPopover( {
+export const IconLibraryPopover = ( {
 	open,
 	selectedIconClass,
 	selectedIconLibrary,
 	onSelect,
 	onClose,
 	width = ICON_LIBRARY_POPOVER_WIDTH,
-}: IconLibraryPopoverProps ) {
+}: IconLibraryPopoverProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
 
-	const items = useMemo< IconLibraryItem[] >(
-		() =>
-			filterFontAwesome7Icons( icons, searchValue ).map( ( icon ) => ( {
-				...icon,
-				type: 'item',
-				value: icon.id,
-			} ) ),
-		[ icons, searchValue ]
-	);
-
+	const items = useMemo( () => createIconLibraryItems( icons, searchValue ), [ icons, searchValue ] );
 	const selectedValue = useMemo(
-		() => items.find( ( item ) => item.id === getSelectedIconId( selectedIconClass, selectedIconLibrary ) )?.value,
+		() => getSelectedListValue( items, selectedIconClass, selectedIconLibrary ),
 		[ items, selectedIconClass, selectedIconLibrary ]
 	);
 
 	const handleClose = () => {
 		setSearchValue( '' );
 		onClose();
+	};
+
+	const handleSelect = ( id: string ) => {
+		const icon = items.find( ( item ) => item.id === id );
+
+		if ( ! icon ) {
+			return;
+		}
+
+		onSelect( {
+			value: createIconSelectionValue( icon.library, icon.name ),
+			library: icon.library,
+		} );
+	};
+
+	const handleClearSearch = () => {
+		setSearchValue( '' );
 	};
 
 	return (
@@ -92,46 +100,74 @@ export function IconLibraryPopover( {
 			/>
 			<Divider />
 			<Box sx={ { flex: 1, overflow: 'auto', minHeight: 0 } }>
-				{ isLoading ? (
-					<Stack alignItems="center" justifyContent="center" height="100%">
-						<CircularProgress role="progressbar" size={ 24 } />
-					</Stack>
-				) : (
-					<PopoverMenuList
-						items={ items }
-						selectedValue={ selectedValue }
-						menuListTemplate={ CompactIconLibraryMenuList }
-						onSelect={ ( id ) => {
-							const icon = items.find( ( item ) => item.id === id );
-
-							if ( icon ) {
-								onSelect( {
-									value: createIconSelectionValue( icon.library, icon.name ),
-									library: icon.library,
-								} );
-							}
-						} }
-						onClose={ handleClose }
-						itemHeight={ ICON_LIBRARY_ROW_HEIGHT }
-						menuItemContentTemplate={ renderIconRow }
-						noResultsComponent={
-							searchValue.trim() === '' ? (
-								<CatalogUnavailable />
-							) : (
-								<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
-							)
-						}
-						data-testid="icon-library-list"
-					/>
-				) }
+				<IconLibraryContent
+					isLoading={ isLoading }
+					items={ items }
+					selectedValue={ selectedValue }
+					searchValue={ searchValue }
+					onSelect={ handleSelect }
+					onClose={ handleClose }
+					onClearSearch={ handleClearSearch }
+				/>
 			</Box>
 		</PopoverBody>
 	);
-}
+};
 
-function renderIconRow( item: VirtualizedItem< string, string > ) {
+type IconLibraryContentProps = {
+	isLoading: boolean;
+	items: IconLibraryItem[];
+	selectedValue: string | undefined;
+	searchValue: string;
+	onSelect: ( id: string ) => void;
+	onClose: () => void;
+	onClearSearch: () => void;
+};
+
+const IconLibraryContent = ( {
+	isLoading,
+	items,
+	selectedValue,
+	searchValue,
+	onSelect,
+	onClose,
+	onClearSearch,
+}: IconLibraryContentProps ) => {
+	if ( isLoading ) {
+		return <IconLibraryLoadingState />;
+	}
+
+	return (
+		<PopoverMenuList
+			items={ items }
+			selectedValue={ selectedValue }
+			menuListTemplate={ CompactIconLibraryMenuList }
+			onSelect={ onSelect }
+			onClose={ onClose }
+			itemHeight={ ICON_LIBRARY_ROW_HEIGHT }
+			menuItemContentTemplate={ IconLibraryRow }
+			noResultsComponent={ <IconLibraryEmptyState searchValue={ searchValue } onClear={ onClearSearch } /> }
+			data-testid="icon-library-list"
+		/>
+	);
+};
+
+const IconLibraryLoadingState = () => (
+	<Stack alignItems="center" justifyContent="center" height="100%">
+		<CircularProgress role="progressbar" size={ 24 } />
+	</Stack>
+);
+
+const IconLibraryEmptyState = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => {
+	if ( searchValue.trim() === '' ) {
+		return <CatalogUnavailable />;
+	}
+
+	return <NoResults searchValue={ searchValue } onClear={ onClear } />;
+};
+
+const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 	const icon = item as IconLibraryItem;
-	const paths = icon.paths ?? [];
 
 	return (
 		<Stack direction="row" alignItems="center" gap={ 1 } sx={ { width: '100%' } }>
@@ -149,7 +185,7 @@ function renderIconRow( item: VirtualizedItem< string, string > ) {
 					flexShrink: 0,
 				} }
 			>
-				{ paths.length > 0 ? (
+				{ icon.paths.length > 0 ? (
 					<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
 				) : null }
 			</Box>
@@ -158,32 +194,41 @@ function renderIconRow( item: VirtualizedItem< string, string > ) {
 			</Typography>
 		</Stack>
 	);
-}
+};
 
-function CatalogUnavailable() {
-	return (
-		<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
-			<ComponentsIcon fontSize="large" />
-			<Typography align="center" variant="subtitle2" color="text.secondary">
-				{ __( "Icons couldn't be loaded.", 'elementor' ) }
-			</Typography>
-		</Stack>
-	);
-}
+const CatalogUnavailable = () => (
+	<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
+		<ComponentsIcon fontSize="large" />
+		<Typography align="center" variant="subtitle2" color="text.secondary">
+			{ __( "Icons couldn't be loaded.", 'elementor' ) }
+		</Typography>
+	</Stack>
+);
 
-function NoResults( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) {
-	return (
-		<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
-			<ComponentsIcon fontSize="large" />
-			<Typography align="center" variant="subtitle2" color="text.secondary">
-				{ __( 'Sorry, nothing matched', 'elementor' ) }
-			</Typography>
-			<Typography align="center" variant="subtitle2" color="text.secondary" noWrap sx={ { maxWidth: '80%' } }>
-				&ldquo;{ searchValue }&rdquo;.
-			</Typography>
-			<Link color="secondary" variant="caption" component="button" onClick={ onClear }>
-				{ __( 'Clear & try again', 'elementor' ) }
-			</Link>
-		</Stack>
-	);
-}
+const NoResults = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
+	<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
+		<ComponentsIcon fontSize="large" />
+		<Typography align="center" variant="subtitle2" color="text.secondary">
+			{ __( 'Sorry, nothing matched', 'elementor' ) }
+		</Typography>
+		<Typography align="center" variant="subtitle2" color="text.secondary" noWrap sx={ { maxWidth: '80%' } }>
+			&ldquo;{ searchValue }&rdquo;.
+		</Typography>
+		<Link color="secondary" variant="caption" component="button" onClick={ onClear }>
+			{ __( 'Clear & try again', 'elementor' ) }
+		</Link>
+	</Stack>
+);
+
+const createIconLibraryItems = ( icons: FontAwesome7Icon[], searchValue: string ): IconLibraryItem[] =>
+	filterFontAwesome7Icons( icons, searchValue ).map( ( icon ) => ( {
+		...icon,
+		type: 'item',
+		value: icon.id,
+	} ) );
+
+const getSelectedListValue = (
+	items: IconLibraryItem[],
+	selectedIconClass: string | null,
+	selectedIconLibrary: string | null
+) => items.find( ( item ) => item.id === getSelectedIconId( selectedIconClass, selectedIconLibrary ) )?.value;

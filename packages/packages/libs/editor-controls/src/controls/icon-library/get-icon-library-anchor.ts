@@ -20,3 +20,10 @@ export function getIconLibraryAnchor(
 		width: containerRect.width,
 	};
 }
+
+export function measureIconLibraryAnchor(
+	container: HTMLElement | null,
+	buttonGroup: HTMLElement | null
+): IconLibraryAnchor | null {
+	return getIconLibraryAnchor( container?.getBoundingClientRect(), buttonGroup?.getBoundingClientRect() );
+}

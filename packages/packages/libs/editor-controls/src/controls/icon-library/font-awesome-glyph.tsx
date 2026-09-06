@@ -9,7 +9,7 @@ type FontAwesomeGlyphProps = {
 	label?: string;
 };
 
-export function FontAwesomeGlyph( { icon, size, color, label }: FontAwesomeGlyphProps ) {
+export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -27,4 +27,4 @@ export function FontAwesomeGlyph( { icon, size, color, label }: FontAwesomeGlyph
 			) ) }
 		</svg>
 	);
-}
+};
