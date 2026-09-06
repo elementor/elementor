@@ -1,24 +1,25 @@
-import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
-
 import { createNestedTemplatedElementView } from '../create-nested-templated-element-type';
-import { type ElementModel, type LegacyWindow } from '../types';
+import { type LegacyWindow } from '../types';
 
-type ViewPrototype = {
-	_lastRenderedStyles: ElementModel[ 'styles' ];
-	_notifyStylesChanged: () => void;
-	model: { get: ( key: 'styles' ) => ElementModel[ 'styles' ] };
+type CapturedPrototype = {
+	_renderChildren: () => Promise< void >;
+	_removeChildrenPlaceholder: () => void;
+	_domUpdateWasSkipped: boolean;
+	children?: { each: ( cb: ( child: unknown ) => void ) => void };
+	$el: { get: ( idx: number ) => Element | null };
 };
 
-const createViewPrototype = (): ViewPrototype => {
-	let capturedPrototype: ViewPrototype | null = null;
+const setupNestedView = () => {
+	const parentRenderChildren = jest.fn();
+	let capturedPrototype: CapturedPrototype | null = null;
 
 	const AtomicElementBaseView = {
 		prototype: {
-			_renderChildren: jest.fn(),
+			_renderChildren: parentRenderChildren,
 			_openEditingPanel: jest.fn(),
 			addElement: jest.fn(),
 		},
-		extend: ( prototype: ViewPrototype ) => {
+		extend: ( prototype: CapturedPrototype ) => {
 			capturedPrototype = prototype;
 
 			return prototype;
@@ -47,66 +48,38 @@ const createViewPrototype = (): ViewPrototype => {
 		},
 	} );
 
-	return capturedPrototype as unknown as ViewPrototype;
+	return {
+		prototype: capturedPrototype as unknown as CapturedPrototype,
+		parentRenderChildren,
+	};
 };
 
-describe( 'nested templated element view style notifications', () => {
-	it( 'should notify when the element styles changed since the last render', () => {
+describe( 'nested templated element view _renderChildren', () => {
+	it( 'should call the parent _renderChildren when the DOM update was not skipped', async () => {
 		// Arrange.
-		const styles = { 'style-1': { id: 'style-1', label: 'local', type: 'class', variants: [] } };
-		const view = createViewPrototype();
-		const listener = jest.fn();
+		const { prototype, parentRenderChildren } = setupNestedView();
 
-		view._lastRenderedStyles = undefined;
-		view.model = { get: () => styles as ElementModel[ 'styles' ] };
-
-		window.addEventListener( ELEMENT_STYLE_CHANGE_EVENT, listener );
+		prototype._domUpdateWasSkipped = false;
+		prototype.$el = { get: () => null };
 
 		// Act.
-		view._notifyStylesChanged();
+		await prototype._renderChildren.call( prototype );
 
 		// Assert.
-		expect( listener ).toHaveBeenCalledTimes( 1 );
+		expect( parentRenderChildren ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should not notify when the element styles are unchanged', () => {
+	it( 'should skip the parent _renderChildren when the DOM update was skipped', async () => {
 		// Arrange.
-		const styles = { 'style-1': { id: 'style-1', label: 'local', type: 'class', variants: [] } };
-		const view = createViewPrototype();
-		const listener = jest.fn();
+		const { prototype, parentRenderChildren } = setupNestedView();
 
-		view._lastRenderedStyles = undefined;
-		view.model = { get: () => styles as ElementModel[ 'styles' ] };
-
-		window.addEventListener( ELEMENT_STYLE_CHANGE_EVENT, listener );
+		prototype._domUpdateWasSkipped = true;
+		prototype.$el = { get: () => null };
 
 		// Act.
-		view._notifyStylesChanged();
-		view._notifyStylesChanged();
-		view._notifyStylesChanged();
+		await prototype._renderChildren.call( prototype );
 
 		// Assert.
-		expect( listener ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'should dispatch one style event when many renders leave styles unchanged', () => {
-		// Arrange.
-		const styles = { 'style-1': { id: 'style-1', label: 'local', type: 'class', variants: [] } };
-		const view = createViewPrototype();
-		const listener = jest.fn();
-		const subtreeSize = 100;
-
-		view._lastRenderedStyles = undefined;
-		view.model = { get: () => styles as ElementModel[ 'styles' ] };
-
-		window.addEventListener( ELEMENT_STYLE_CHANGE_EVENT, listener );
-
-		// Act - simulates a parent re-render cascading through a large subtree.
-		for ( let index = 0; index < subtreeSize; index++ ) {
-			view._notifyStylesChanged();
-		}
-
-		// Assert.
-		expect( listener ).toHaveBeenCalledTimes( 1 );
+		expect( parentRenderChildren ).not.toHaveBeenCalled();
 	} );
 } );
