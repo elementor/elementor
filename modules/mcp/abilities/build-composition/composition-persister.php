@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,17 +55,9 @@ class Composition_Persister {
 			$root_ids[] = $this->find_last_root_id( $tree, $parent_id );
 		}
 
-		$save_result = $this->mutator->save_as_draft( $document, $tree );
+		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->mutator, $document, $tree );
 		if ( is_wp_error( $save_result ) ) {
 			return $save_result;
-		}
-
-		if ( ! $save_result ) {
-			return new \WP_Error(
-				'save_failed',
-				__( 'Could not save document.', 'elementor' ),
-				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
-			);
 		}
 
 		return [

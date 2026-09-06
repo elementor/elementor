@@ -602,7 +602,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 	}
 
 	private function create_real_document(): int {
-		return $this->factory()->create_and_get_default_post()->ID;
+		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
 	}
 
 	private function create_component( string $title ): int {
