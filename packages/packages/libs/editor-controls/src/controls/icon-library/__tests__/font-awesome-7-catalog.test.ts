@@ -7,6 +7,7 @@ import {
 	getSelectedIconId,
 	loadFontAwesome7Catalog,
 } from '../font-awesome-7-catalog';
+import { resetFontAwesome7IconsCache } from '../font-awesome-7-data';
 
 const STAR_PATH = 'M0 0h100v100H0z';
 
@@ -43,6 +44,7 @@ describe( 'font-awesome-7-catalog', () => {
 
 	afterEach( () => {
 		window.elementorCommon = originalElementorCommon;
+		resetFontAwesome7IconsCache();
 		jest.restoreAllMocks();
 	} );
 
