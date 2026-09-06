@@ -87,6 +87,26 @@ class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
 		$this->assertEquals( self::ORIGINAL_ELEMENTS, $document->get_elements_data() );
 	}
 
+	public function test_save_as_draft__preserve_flag_on__passed_autosave_doc__reuses_same_autosave() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$main_document = Plugin::$instance->documents->get( $post->ID );
+		$existing_autosave = $main_document->get_autosave( 0, true );
+
+		// Act.
+		$result = Document_Mutator::instance()->save_as_draft( $existing_autosave, self::NEW_ELEMENTS, true );
+
+		// Assert.
+		$this->assertInstanceOf( Document::class, $result );
+		$this->assertEquals(
+			$existing_autosave->get_post()->ID,
+			$result->get_post()->ID,
+			'save_as_draft should reuse the existing autosave when passed one, not nest a new autosave under it.'
+		);
+		$this->assertEquals( $post->ID, wp_get_post_parent_id( $result->get_post()->ID ) );
+	}
+
 	public function test_save_as_draft__preserve_flag_on__draft_post__writes_to_main_document() {
 		// Arrange.
 		$this->act_as_admin();

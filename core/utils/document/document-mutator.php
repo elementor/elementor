@@ -242,13 +242,23 @@ class Document_Mutator {
 	 * @return Document|\WP_Error
 	 */
 	private function resolve_autosave_target( Document $document ) {
-		$main_status = get_post_status( $document->get_main_id() );
+		$main_document = Plugin::$instance->documents->get( $document->get_main_id() );
 
-		if ( ! in_array( $main_status, [ 'publish', 'private' ], true ) ) {
-			return $document;
+		if ( ! $main_document instanceof Document ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Post not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
 		}
 
-		$autosave = $document->get_autosave( 0, true );
+		$main_status = get_post_status( $main_document->get_main_id() );
+
+		if ( ! in_array( $main_status, [ 'publish', 'private' ], true ) ) {
+			return $main_document;
+		}
+
+		$autosave = $main_document->get_autosave( 0, true );
 
 		if ( ! $autosave instanceof Document ) {
 			return new \WP_Error(
