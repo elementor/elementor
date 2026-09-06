@@ -29,6 +29,7 @@
 	document.body.appendChild( toasts );
 
 	const state = new Map( cfg.features.map( ( f ) => [ f.name, f ] ) );
+	const favorites = new Set( Array.isArray( cfg.favorites ) ? cfg.favorites : [] );
 
 	renderCards();
 	wireToolbar();
@@ -54,6 +55,7 @@
 					<button class="e-exp-ui-filter active" data-filter="all">${ escapeHtml( i18n.filterAll ) } <span class="count">0</span></button>
 					<button class="e-exp-ui-filter" data-filter="active">${ escapeHtml( i18n.filterActive ) } <span class="count">0</span></button>
 					<button class="e-exp-ui-filter" data-filter="inactive">${ escapeHtml( i18n.filterInactive ) } <span class="count">0</span></button>
+					<button class="e-exp-ui-filter" data-filter="favorites">${ escapeHtml( i18n.filterFavorites ) } <span class="count">0</span></button>
 				</div>
 				<div class="e-exp-ui-bulk">
 					<button class="e-exp-ui-bulk-btn" data-bulk="active">${ escapeHtml( i18n.activateAll ) }</button>
@@ -96,13 +98,78 @@
 			if ( resetBtn ) {
 				resetBtn.addEventListener( 'click', () => onReset( card ) );
 			}
+
+			const favBtn = card.querySelector( '[data-fav]' );
+			if ( favBtn ) {
+				favBtn.addEventListener( 'click', () => onToggleFavorite( card ) );
+			}
+		} );
+	}
+
+	async function onToggleFavorite( card ) {
+		const name = card.dataset.name;
+		const wasFav = favorites.has( name );
+		const nextFav = ! wasFav;
+
+		setFavoriteLocal( name, nextFav );
+
+		try {
+			await favApiFetch( { name, favorite: nextFav } );
+			refreshCounts();
+			applyFilter();
+		} catch ( err ) {
+			setFavoriteLocal( name, wasFav );
+			toast( i18n.saveFailed + ( err && err.message ? ': ' + err.message : '' ), { error: true } );
+		}
+	}
+
+	function setFavoriteLocal( name, isFav ) {
+		if ( isFav ) {
+			favorites.add( name );
+		} else {
+			favorites.delete( name );
+		}
+		const card = root.querySelector( `[data-card][data-name="${ CSS.escape( name ) }"]` );
+		if ( ! card ) {
+			return;
+		}
+		card.dataset.favorite = isFav ? 'true' : 'false';
+		const btn = card.querySelector( '[data-fav]' );
+		if ( btn ) {
+			btn.setAttribute( 'aria-pressed', isFav ? 'true' : 'false' );
+			const label = isFav ? i18n.removeFavorite : i18n.addFavorite;
+			btn.setAttribute( 'aria-label', label );
+			btn.setAttribute( 'title', label );
+		}
+	}
+
+	function favApiFetch( body ) {
+		return fetch( cfg.restUrl + '/favorites', {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': cfg.nonce,
+			},
+			body: JSON.stringify( body ),
+		} ).then( async ( res ) => {
+			const data = await res.json().catch( () => ( {} ) );
+			if ( ! res.ok ) {
+				throw new Error( data && data.message ? data.message : `HTTP ${ res.status }` );
+			}
+			return data;
 		} );
 	}
 
 	function renderCard( f ) {
 		const isActive = 'active' === f.actualState;
+		const isFav = favorites.has( f.name );
+		const favLabel = isFav ? i18n.removeFavorite : i18n.addFavorite;
 		return `
-			<article class="e-exp-ui-card" data-card data-name="${ escapeHtml( f.name ) }" data-state="${ isActive ? 'active' : 'inactive' }">
+			<article class="e-exp-ui-card" data-card data-name="${ escapeHtml( f.name ) }" data-state="${ isActive ? 'active' : 'inactive' }" data-favorite="${ isFav ? 'true' : 'false' }">
+				<button class="e-exp-ui-fav" data-fav type="button" aria-pressed="${ isFav ? 'true' : 'false' }" aria-label="${ escapeHtml( favLabel ) }" title="${ escapeHtml( favLabel ) }">
+					<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 17.3 6.2 20.6l1.1-6.5L2.6 9.5l6.5-1L12 2.6l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5z"/></svg>
+				</button>
 				<div class="e-exp-ui-card-main">
 					<div class="e-exp-ui-card-title-row">
 						<h3 class="e-exp-ui-card-title">${ escapeHtml( f.title ) }</h3>
@@ -366,11 +433,13 @@
 		return f.state === f.default;
 	}
 
+	let currentFilter = 'all';
+	let searchInput;
+
 	function wireToolbar() {
-		const search = root.querySelector( '[data-search]' );
+		searchInput = root.querySelector( '[data-search]' );
 		const filters = root.querySelectorAll( '[data-filter]' );
 		const bulkBtns = root.querySelectorAll( '[data-bulk]' );
-		let currentFilter = 'all';
 
 		bulkBtns.forEach( ( btn ) => btn.addEventListener( 'click', () => bulkSet( btn.dataset.bulk ) ) );
 
@@ -382,41 +451,63 @@
 				applyFilter();
 			} ),
 		);
-		search.addEventListener( 'input', applyFilter );
+		searchInput.addEventListener( 'input', applyFilter );
+	}
 
-		function applyFilter() {
-			const q = search.value.trim().toLowerCase();
-			let visible = 0;
-			root.querySelectorAll( '.e-exp-ui-group' ).forEach( ( group ) => {
-				let groupVisible = 0;
-				group.querySelectorAll( '[data-card]' ).forEach( ( card ) => {
-					const matchesQuery = ! q || card.textContent.toLowerCase().includes( q );
-					const matchesFilter = 'all' === currentFilter || card.dataset.state === currentFilter;
-					const show = matchesQuery && matchesFilter;
-					card.style.display = show ? '' : 'none';
-					if ( show ) {
-						visible++;
-						groupVisible++;
-					}
-				} );
-				group.style.display = groupVisible ? '' : 'none';
-			} );
-			root.querySelector( '[data-empty]' ).classList.toggle( 'show', 0 === visible );
+	function applyFilter() {
+		if ( ! searchInput ) {
+			return;
 		}
+		const q = searchInput.value.trim().toLowerCase();
+		let visible = 0;
+		root.querySelectorAll( '.e-exp-ui-group' ).forEach( ( group ) => {
+			let groupVisible = 0;
+			group.querySelectorAll( '[data-card]' ).forEach( ( card ) => {
+				const matchesQuery = ! q || card.textContent.toLowerCase().includes( q );
+				const matchesFilter = matchesCurrentFilter( card );
+				const show = matchesQuery && matchesFilter;
+				card.style.display = show ? '' : 'none';
+				if ( show ) {
+					visible++;
+					groupVisible++;
+				}
+			} );
+			group.style.display = groupVisible ? '' : 'none';
+		} );
+		const emptyEl = root.querySelector( '[data-empty]' );
+		emptyEl.textContent = 'favorites' === currentFilter && 0 === favorites.size
+			? i18n.noFavorites
+			: i18n.noResults;
+		emptyEl.classList.toggle( 'show', 0 === visible );
+	}
+
+	function matchesCurrentFilter( card ) {
+		if ( 'all' === currentFilter ) {
+			return true;
+		}
+		if ( 'favorites' === currentFilter ) {
+			return 'true' === card.dataset.favorite;
+		}
+		return card.dataset.state === currentFilter;
 	}
 
 	function refreshCounts() {
 		const cards = root.querySelectorAll( '[data-card]' );
 		const total = cards.length;
 		let active = 0;
+		let favCount = 0;
 		cards.forEach( ( c ) => {
 			if ( 'active' === c.dataset.state ) {
 				active++;
+			}
+			if ( 'true' === c.dataset.favorite ) {
+				favCount++;
 			}
 		} );
 		root.querySelector( '[data-filter="all"] .count' ).textContent = total;
 		root.querySelector( '[data-filter="active"] .count' ).textContent = active;
 		root.querySelector( '[data-filter="inactive"] .count' ).textContent = total - active;
+		root.querySelector( '[data-filter="favorites"] .count' ).textContent = favCount;
 	}
 
 	function setIndicator( mode, text ) {

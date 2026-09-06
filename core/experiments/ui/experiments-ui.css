@@ -66,7 +66,13 @@ body.e-exp-ui-active #wpcontent .wrap > form {
 .e-exp-ui-group-header .line { flex:1; height:1px; background: var(--border); }
 
 .e-exp-ui-cards { display:grid; grid-template-columns:1fr; gap:10px; }
-.e-exp-ui-card { background: var(--surface); border:1px solid var(--border); border-radius: var(--radius); padding:18px 20px; display:grid; grid-template-columns:1fr auto; gap:16px 20px; align-items:center; box-shadow: var(--shadow-sm); transition: box-shadow .15s ease, border-color .15s ease; }
+.e-exp-ui-card { background: var(--surface); border:1px solid var(--border); border-radius: var(--radius); padding:18px 20px; display:grid; grid-template-columns:auto 1fr auto; gap:16px 20px; align-items:center; box-shadow: var(--shadow-sm); transition: box-shadow .15s ease, border-color .15s ease; }
+.e-exp-ui-fav { border:0; background:transparent; padding:4px; margin:0; cursor:pointer; color: var(--text-subtle); border-radius:6px; display:inline-flex; align-items:center; justify-content:center; transition: color .15s ease, background .15s ease, transform .1s ease; }
+.e-exp-ui-fav:hover { color: var(--brand-600); background: color-mix(in srgb, var(--brand-600) 8%, transparent); }
+.e-exp-ui-fav:active { transform: scale(.92); }
+.e-exp-ui-fav svg { fill: none; stroke: currentColor; stroke-width:1.6; stroke-linejoin:round; }
+.e-exp-ui-card[data-favorite="true"] .e-exp-ui-fav { color: #f5b301; }
+.e-exp-ui-card[data-favorite="true"] .e-exp-ui-fav svg { fill: #f5b301; stroke: #f5b301; }
 .e-exp-ui-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); }
 .e-exp-ui-card.saving { border-color:#fbbf24; }
 .e-exp-ui-card.just-saved { border-color: var(--success); }

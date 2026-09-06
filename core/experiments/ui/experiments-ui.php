@@ -24,6 +24,7 @@ class Experiments_Ui {
 	const EXPERIMENT_NAME = 'e_experiments_ui';
 	const REST_NAMESPACE = 'elementor/v1';
 	const REST_ROUTE = '/experiments-ui';
+	const FAVORITES_USER_META_KEY = 'elementor_experiments_ui_favorites';
 
 	public function register() {
 		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
@@ -64,6 +65,7 @@ class Experiments_Ui {
 			'restUrl' => esc_url_raw( rest_url( self::REST_NAMESPACE . self::REST_ROUTE ) ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 			'features' => $this->collect_features_payload(),
+			'favorites' => $this->get_favorites(),
 			'i18n' => [
 				'saved' => esc_html__( 'All changes saved', 'elementor' ),
 				'saving' => esc_html__( 'Saving…', 'elementor' ),
@@ -93,6 +95,10 @@ class Experiments_Ui {
 				'deactivateAll' => esc_html__( 'Deactivate all', 'elementor' ),
 				'activateAllConfirm' => esc_html__( 'Activate all experiments? This may affect site behavior.', 'elementor' ),
 				'deactivateAllConfirm' => esc_html__( 'Deactivate all experiments?', 'elementor' ),
+				'filterFavorites' => esc_html__( 'Favorites', 'elementor' ),
+				'addFavorite' => esc_html__( 'Add to favorites', 'elementor' ),
+				'removeFavorite' => esc_html__( 'Remove from favorites', 'elementor' ),
+				'noFavorites' => esc_html__( 'No favorite experiments yet. Click the star on any card to add one.', 'elementor' ),
 			],
 		] );
 	}
@@ -203,6 +209,56 @@ class Experiments_Ui {
 				],
 			],
 		] );
+
+		register_rest_route( self::REST_NAMESPACE, self::REST_ROUTE . '/favorites', [
+			'methods' => WP_REST_Server::EDITABLE,
+			'callback' => [ $this, 'rest_set_favorite' ],
+			'permission_callback' => $permission,
+			'args' => [
+				'name' => [
+					'type' => 'string',
+					'required' => true,
+					'sanitize_callback' => 'sanitize_key',
+				],
+				'favorite' => [
+					'type' => 'boolean',
+					'required' => true,
+				],
+			],
+		] );
+	}
+
+	public function rest_set_favorite( WP_REST_Request $request ) {
+		$name = $request->get_param( 'name' );
+		$favorite = (bool) $request->get_param( 'favorite' );
+
+		$experiments = Plugin::$instance->experiments;
+		if ( ! $experiments->is_feature_manageable( $name ) ) {
+			return new WP_Error( 'experiment_not_found', 'Experiment not found: ' . $name, [ 'status' => 404 ] );
+		}
+
+		$favorites = $this->get_favorites();
+		$favorites = array_values( array_diff( $favorites, [ $name ] ) );
+
+		if ( $favorite ) {
+			$favorites[] = $name;
+		}
+
+		update_user_meta( get_current_user_id(), self::FAVORITES_USER_META_KEY, $favorites );
+
+		return new WP_REST_Response( [
+			'name' => $name,
+			'favorite' => $favorite,
+			'favorites' => $favorites,
+		] );
+	}
+
+	private function get_favorites() {
+		$favorites = get_user_meta( get_current_user_id(), self::FAVORITES_USER_META_KEY, true );
+		if ( ! is_array( $favorites ) ) {
+			return [];
+		}
+		return array_values( array_filter( array_map( 'sanitize_key', $favorites ) ) );
 	}
 
 	public function rest_toggle( WP_REST_Request $request ) {
