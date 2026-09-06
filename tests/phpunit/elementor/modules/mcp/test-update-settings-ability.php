@@ -138,9 +138,10 @@ class Test_Update_Settings_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertTrue( $result['success'] );
 		$this->assertSame( $post_id, $result['post_id'] );
+		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertArrayHasKey( 'preview_url', $result );
 		$this->assertArrayHasKey( 'llm_instructions', $result );
-		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringContainsString( $result['edit_url'], $result['llm_instructions'] );
 		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
 		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 	}

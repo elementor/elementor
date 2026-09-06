@@ -91,8 +91,10 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'publish', $result['status'] );
 		$this->assertSame( 'draft', $result['previous_status'] );
 		$this->assertSame( 'publish', get_post_status( $post_id ) );
+		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertArrayHasKey( 'preview_url', $result );
 		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['edit_url'], $result['llm_instructions'] );
 	}
 
 	public function test_execute__is_idempotent_when_already_published() {

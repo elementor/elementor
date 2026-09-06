@@ -6,9 +6,8 @@ use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Interactions_Schema_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
+use Elementor\Modules\Mcp\Abilities\Build_Guidelines_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
-use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
-use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,14 +44,9 @@ class Test_Core_Resources_Metadata extends TestCase {
 
 	public function core_resource_abilities(): array {
 		return [
-			'style-best-practices' => [
-				Style_Best_Practices_Ability::class,
-				Style_Best_Practices_Ability::URI,
-				'text/markdown',
-			],
-			'wordpress-best-practices' => [
-				Wordpress_Best_Practices_Ability::class,
-				Wordpress_Best_Practices_Ability::URI,
+			'build-guidelines' => [
+				Build_Guidelines_Ability::class,
+				Build_Guidelines_Ability::URI,
 				'text/markdown',
 			],
 			'manage-global-variable-guide' => [

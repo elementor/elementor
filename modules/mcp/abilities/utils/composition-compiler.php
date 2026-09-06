@@ -69,6 +69,8 @@ final class Composition_Compiler {
 			'unknown_tag_errors' => $unknown_widget_tag_errors,
 		] = $type_resolver->collect_referenced_widget_configs( $dom );
 
+		$form_message_warnings = ( new Form_Structure_Validator( $xml_parser ) )->collect_warnings( $dom );
+
 		$validation_error = $this->validate_xml_before_apply(
 			$dom,
 			$xml_parser,
@@ -134,7 +136,7 @@ final class Composition_Compiler {
 
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warnings' => array_merge( $form_message_warnings, $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];

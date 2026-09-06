@@ -33,7 +33,7 @@ Verified: `abstract-ability.php`.
 
 See [../composition-workflow.md](../composition-workflow.md):
 
-1. Read resources (`global-variables`, `global-classes`, `style/best-practices`)
+1. Read resources (`global-variables`, `global-classes`)
 2. `manage-global-variable` → `manage-classes`
 3. `list-widget-schemas` (`summary: true`) → `list-components` (if using `<e-component>`)
 4. `get-widget-schema` per type → read `interactions/schema` if needed

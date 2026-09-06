@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Field_Contract;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -127,11 +128,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'IDs of the created root-level elements.',
 				],
-				'edit_url' => [
-					'type' => 'string',
-					'format' => 'uri',
-					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor).',
-				],
+				'edit_url' => Document_Mutation_Links::edit_url_schema_property(),
+				'preview_url' => Document_Mutation_Links::preview_schema_property(),
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
 					'type' => 'string',
@@ -140,7 +139,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices, e.g. props skipped because the target widget does not support them, or CSS that fell back to custom_css. The composition was still built.',
+					'description' => 'Non-fatal notices per operation (each prefixed with its config_id). Reports: props skipped because the target widget does not support them; CSS declarations the atomic converter rejected outright (e.g. `animation`); CSS that fell back to `custom_css` (pixel queries, unsupported shorthands, `var()` inside `box-shadow`, unknown variable references) and may not render reliably. The composition was still built — treat warnings as guidance for the next call.',
 				],
 				'removed_element_ids' => [
 					'type' => 'array',
@@ -172,7 +171,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'style' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => Style_Field_Contract::description( 'Record mapping configuration-id → plain CSS string. Keys MUST match configuration-id attributes in xml_structure.' ),
 					'additionalProperties' => [ 'type' => 'string' ],
 				],
 				'classes' => [
@@ -279,10 +278,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'success' => true,
 			'post_id' => $post_id,
 			'root_element_ids' => $root_ids,
-			'edit_url' => $document->get_edit_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
-		];
+		] + Document_Mutation_Links::for_document( $document, __( 'Composition built.', 'elementor' ) );
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;

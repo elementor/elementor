@@ -23,6 +23,8 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Field_Contract;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -53,7 +55,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			__( 'Manage Elements', 'elementor' ),
 			sprintf(
 				/* translators: %s: comma-separated list of V3-allowlisted widget types. */
-				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
+				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media(--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
 				implode( ', ', Widget_Context_Helper::V3_ALLOWLIST )
 			),
 			'elementor',
@@ -64,11 +66,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'status' => [ 'type' => 'string' ],
 					'results' => [ 'type' => 'array' ],
 					'post_id' => [ 'type' => 'integer' ],
-					'edit_url' => [
-						'type' => 'string',
-						'format' => 'uri',
-						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
-					],
+					'edit_url' => Document_Mutation_Links::edit_url_schema_property(),
+					'preview_url' => Document_Mutation_Links::preview_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 					'version' => [ 'type' => 'string' ],
 				],
 			],
@@ -103,7 +103,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								],
 								'style' => [
 									'type' => 'string',
-									'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour.',
+									'description' => Style_Field_Contract::description( 'update only: plain CSS string. Merged with existing local style variants. Use style_apply_mode to control merge behaviour.' ),
 								],
 								'style_apply_mode' => [
 									'type' => 'string',
@@ -250,9 +250,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function with_edit_url( array $response, Document $document ): array {
-		$response['edit_url'] = $document->get_edit_url();
-
-		return $response;
+		return $response + Document_Mutation_Links::for_document( $document, __( 'Elements updated.', 'elementor' ) );
 	}
 
 	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {

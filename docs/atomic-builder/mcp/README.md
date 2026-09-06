@@ -20,6 +20,5 @@ Separate stacks — PHP runs on WordPress server; JS runs in the browser editor.
 | [overview.md](overview.md) | Scope, Public API, ability IDs |
 | [resources.md](resources.md) | Resource URI catalog |
 | [composition-workflow.md](composition-workflow.md) | Agent workflow sequence |
-| [design-guidance.md](design-guidance.md) | Design principles summary |
 | [registering-editor-tools.md](registering-editor-tools.md) | JS `getMCPByDomain` API |
 | [abilities/](abilities/README.md) | v4 PHP ability reference |

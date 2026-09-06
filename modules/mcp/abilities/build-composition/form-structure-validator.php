@@ -10,6 +10,11 @@ class Form_Structure_Validator {
 
 	const FORM_ELEMENT_TYPE = 'e-form';
 
+	const FORM_MESSAGE_TAGS = [
+		'e-form-success-message',
+		'e-form-error-message',
+	];
+
 	const FORM_FIELD_ELEMENT_TYPES = [
 		'e-form-input',
 		'e-form-textarea',
@@ -160,6 +165,36 @@ class Form_Structure_Validator {
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * Soft advisory: forms without success/error message widgets still submit, but the user sees
+	 * no confirmation or failure feedback. Surfaced via the `warnings` channel so agents can add
+	 * the missing widgets on the next call without failing the build.
+	 *
+	 * @return string[]
+	 */
+	public function collect_warnings( \DOMDocument $dom ): array {
+		$warnings = [];
+		$xpath = new \DOMXPath( $dom );
+
+		foreach ( $xpath->query( '//' . self::FORM_ELEMENT_TYPE ) as $form ) {
+			if ( ! $form instanceof \DOMElement ) {
+				continue;
+			}
+
+			foreach ( self::FORM_MESSAGE_TAGS as $message_tag ) {
+				$matches = $xpath->query( './/' . $message_tag, $form );
+				if ( ! $matches || 0 === $matches->length ) {
+					$warnings[] = sprintf(
+						'<e-form> is missing <%s>. Users will see no feedback for this state after submitting.',
+						$message_tag
+					);
+				}
+			}
+		}
+
+		return $warnings;
 	}
 
 	private function form_field_must_be_in_form_error( string $tag, ?string $configuration_id ): string {
