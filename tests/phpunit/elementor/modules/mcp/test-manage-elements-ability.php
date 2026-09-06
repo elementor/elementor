@@ -1223,7 +1223,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	private function create_real_document(): int {
-		return $this->factory()->create_and_get_default_post()->ID;
+		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
 	}
 
 	private function given_heading_on_document( int $post_id ): string {
