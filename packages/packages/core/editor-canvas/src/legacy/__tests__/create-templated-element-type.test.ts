@@ -124,9 +124,11 @@ describe( 'createTemplatedElementView', () => {
 		const setupView = () => {
 			const parentRenderChildren = jest.fn();
 			const legacyWindow = window as unknown as LegacyWindow;
-			( legacyWindow.elementor.modules.elements.views.Widget.prototype as unknown as {
-				_renderChildren: () => void;
-			} )._renderChildren = parentRenderChildren;
+			(
+				legacyWindow.elementor.modules.elements.views.Widget.prototype as unknown as {
+					_renderChildren: () => void;
+				}
+			)._renderChildren = parentRenderChildren;
 
 			const ViewClass = createTemplatedElementView( {
 				type: MOCK_ELEMENT_TYPE,
