@@ -1653,9 +1653,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array The data to export
 	 */
 	public function get_export_data() {
-		$elements = apply_filters( 'elementor/document/export/elements', $this->get_elements_data(), $this );
-
-		$content = Plugin::$instance->db->iterate_data( $elements, function( $element_data ) {
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
 			$element_data['id'] = Utils::generate_random_string();
 
 			$element_data = apply_filters( 'elementor/document/element/replace_id', $element_data );

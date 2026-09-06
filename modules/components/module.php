@@ -16,7 +16,6 @@ use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
-use Elementor\Modules\Components\Utils\Detach_Component_Instances;
 use Elementor\Modules\Components\Utils\Remap_Component_Instance_Ids;
 use Elementor\Modules\Components\Utils\Strip_Component_Instances;
 use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
@@ -33,9 +32,9 @@ class Module extends BaseModule {
 	const PACKAGES        = [ 'editor-components' ];
 
 	/**
-	 * Local kill switch for components import/export. Off by default: on export the module
-	 * detaches every `e-component` instance into plain elements, on import it strips any
-	 * `e-component` widgets that survived from a foreign zip. Flip to `true` in the source
+	 * Local kill switch for components import/export. Off by default: on export the
+	 * `elementor_component` post type is excluded, on import any `e-component` widgets
+	 * that survived from a foreign zip are stripped. Flip to `true` in the source
 	 * to unblock the flag-on branch when working on the real feature (`Remap_Component_Instance_Ids`
 	 * and its test cover that path today).
 	 *
@@ -83,9 +82,6 @@ class Module extends BaseModule {
 				10,
 				2
 			);
-		}
-		if ( ! self::is_import_export_supported() ) {
-			add_filter( 'elementor/document/export/elements', fn( array $elements ) => Detach_Component_Instances::apply( $elements ) );
 		}
 
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );

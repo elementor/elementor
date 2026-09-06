@@ -37,12 +37,6 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		return $settings['component_instance']['value']['component_id']['value'];
 	}
 
-	public static function extract_overrides( array $settings ): array {
-		$overrides = $settings['component_instance']['value']['overrides']['value'] ?? [];
-
-		return is_array( $overrides ) ? $overrides : [];
-	}
-
 	public static function set_component_id( array $settings, int $component_id ): array {
 		$settings['component_instance']['value']['component_id']['value'] = $component_id;
 
