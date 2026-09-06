@@ -49,7 +49,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - Check `llm_guidance.nesting` in widget schemas for structure requirements
 - `llm_guidance.required_direct_children` lists element types that must appear as direct child tags in XML (from widget defaults)
 - `allowed_child_types` lists which element types can be nested inside
-- `allowed_parents` lists which element types this element can be placed inside
+- `allowed_parents` lists which element types this structural sub-element can be placed inside (panel-hidden children only). General panel-visible widgets omit this key; absence means they can live in any layout container, not that they have no valid parent
 
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
