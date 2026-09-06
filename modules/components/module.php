@@ -17,6 +17,8 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
 use Elementor\Modules\Components\Utils\Detach_Component_Instances;
+use Elementor\Modules\Components\Utils\Remap_Component_Instance_Ids;
+use Elementor\Modules\Components\Utils\Strip_Component_Instances;
 use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
@@ -112,6 +114,30 @@ class Module extends BaseModule {
 
 	public static function is_import_export_supported(): bool {
 		return self::IS_IMPORT_EXPORT_SUPPORTED;
+	}
+
+	/**
+	 * Single entry point for import runners to normalize the elements tree of an imported
+	 * document with respect to component instances. When components round-trip is enabled
+	 * (flag on) it rewrites source-site component ids to their destination-site equivalents;
+	 * when disabled (flag off) it strips any `e-component` widget that survived from a
+	 * legacy zip so the destination editor never opens a document with dangling instances.
+	 *
+	 * Kept as a static helper on the module so both `import-export-customization` and legacy
+	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
+	 */
+	public static function prepare_imported_elements( array $elements, array $post_ids_map ): array {
+		return self::is_import_export_supported()
+			? Remap_Component_Instance_Ids::apply( $elements, $post_ids_map )
+			: Strip_Component_Instances::apply( $elements );
+	}
+
+	/**
+	 * Post types that must be excluded from the import/export runners when components
+	 * round-trip is disabled. Same gating as `prepare_imported_elements()`.
+	 */
+	public static function excluded_import_export_post_types(): array {
+		return self::is_import_export_supported() ? [] : [ Component_Document::TYPE ];
 	}
 
 	/**

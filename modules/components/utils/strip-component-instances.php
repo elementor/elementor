@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Components\Utils;
 
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -15,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * either render empty or throw in the editor panel.
  */
 class Strip_Component_Instances {
-	const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
-
 	public static function apply( array $elements ): array {
 		$result = [];
 
@@ -26,7 +26,7 @@ class Strip_Component_Instances {
 				continue;
 			}
 
-			if ( self::is_component_instance( $element ) ) {
+			if ( Component_Instance_Prop_Type::is_instance_element( $element ) ) {
 				continue;
 			}
 
@@ -38,10 +38,5 @@ class Strip_Component_Instances {
 		}
 
 		return $result;
-	}
-
-	private static function is_component_instance( array $element ): bool {
-		return 'widget' === ( $element['elType'] ?? null )
-			&& self::COMPONENT_INSTANCE_WIDGET_TYPE === ( $element['widgetType'] ?? null );
 	}
 }

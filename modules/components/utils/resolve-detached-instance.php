@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Components\Utils;
 
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Resolve_Detached_Instance {
 	const OVERRIDE_TYPE = 'override';
 	const OVERRIDABLE_TYPE = Overridable_Prop_Type::META_KEY;
-	const COMPONENT_INSTANCE_WIDGET_TYPE = 'e-component';
 
 	public static function apply( array $element, array $overrides ): array {
 		$override_map = self::build_override_map( $overrides );
@@ -45,7 +45,7 @@ class Resolve_Detached_Instance {
 	}
 
 	private static function resolve_settings( array $element, array $override_map ): array {
-		if ( self::is_component_instance( $element ) ) {
+		if ( Component_Instance_Prop_Type::is_instance_element( $element ) ) {
 			return self::resolve_nested_instance_settings( $element['settings'], $override_map );
 		}
 
@@ -183,10 +183,5 @@ class Resolve_Detached_Instance {
 
 	private static function is_prop_value( $value ): bool {
 		return is_array( $value ) && isset( $value['$$type'] ) && array_key_exists( 'value', $value );
-	}
-
-	private static function is_component_instance( array $element ): bool {
-		return 'widget' === ( $element['elType'] ?? null )
-			&& self::COMPONENT_INSTANCE_WIDGET_TYPE === ( $element['widgetType'] ?? null );
 	}
 }

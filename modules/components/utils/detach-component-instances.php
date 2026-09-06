@@ -4,7 +4,6 @@ namespace Elementor\Modules\Components\Utils;
 
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
-use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,16 +25,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * that slipped past `Circular_Dependency_Validator`.
  */
 class Detach_Component_Instances {
-	private Components_Repository $repository;
+	/**
+	 * @var callable(int): ?array
+	 */
+	private $resolve_component_elements;
 
 	private array $stack = [];
 
 	public static function apply( array $elements ): array {
-		return ( new self() )->run( $elements );
+		return self::apply_with_resolver( $elements, [ self::class, 'default_resolve_component_elements' ] );
 	}
 
-	private function __construct() {
-		$this->repository = Components_Repository::make();
+	/**
+	 * Seam for DB-less unit tests: hands the tree walker a resolver callable that returns
+	 * ready-to-detach reconciled root elements for a given component id, or null when the
+	 * component is missing / cannot be resolved.
+	 *
+	 * @param callable(int): ?array $resolver
+	 */
+	public static function apply_with_resolver( array $elements, callable $resolver ): array {
+		return ( new self( $resolver ) )->run( $elements );
+	}
+
+	private function __construct( callable $resolve_component_elements ) {
+		$this->resolve_component_elements = $resolve_component_elements;
 	}
 
 	private function run( array $elements ): array {
@@ -55,7 +68,7 @@ class Detach_Component_Instances {
 			return [ $element ];
 		}
 
-		if ( $this->is_component_instance( $element ) ) {
+		if ( Component_Instance_Prop_Type::is_instance_element( $element ) ) {
 			$detached = $this->detach( $element );
 
 			if ( null !== $detached ) {
@@ -89,17 +102,18 @@ class Detach_Component_Instances {
 			return [];
 		}
 
-		$component = $this->repository->get( $component_id, false );
-
-		if ( ! $component ) {
-			return null;
-		}
-
 		$this->stack[] = $component_id;
 
 		try {
-			$overrides = $element['settings']['component_instance']['value']['overrides']['value'] ?? [];
-			$component_elements = Reconcile_Component_Instance_Elements::apply( $component->get_elements_data() );
+			$component_elements = ( $this->resolve_component_elements )( $component_id );
+
+			if ( ! is_array( $component_elements ) ) {
+				array_pop( $this->stack );
+
+				return null;
+			}
+
+			$overrides = Component_Instance_Prop_Type::extract_overrides( $element['settings'] ?? [] );
 
 			$resolved = [];
 			foreach ( $component_elements as $root ) {
@@ -107,7 +121,7 @@ class Detach_Component_Instances {
 					continue;
 				}
 
-				$resolved_root = Resolve_Detached_Instance::apply( $root, is_array( $overrides ) ? $overrides : [] );
+				$resolved_root = Resolve_Detached_Instance::apply( $root, $overrides );
 
 				foreach ( $this->process_element( $resolved_root ) as $processed ) {
 					$resolved[] = $processed;
@@ -124,8 +138,13 @@ class Detach_Component_Instances {
 		return $resolved;
 	}
 
-	private function is_component_instance( array $element ): bool {
-		return 'widget' === ( $element['elType'] ?? null )
-			&& Component_Instance::get_element_type() === ( $element['widgetType'] ?? null );
+	private static function default_resolve_component_elements( int $component_id ): ?array {
+		$component = Components_Repository::make()->get( $component_id, false );
+
+		if ( ! $component ) {
+			return null;
+		}
+
+		return Reconcile_Component_Instance_Elements::apply( $component->get_elements_data() );
 	}
 }
