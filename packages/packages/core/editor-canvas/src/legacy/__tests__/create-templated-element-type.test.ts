@@ -128,7 +128,7 @@ describe( 'createTemplatedElementView', () => {
 				legacyWindow.elementor.modules.elements.views.Widget.prototype as unknown as {
 					_renderChildren: () => void;
 				}
-			)._renderChildren = parentRenderChildren;
+			 )._renderChildren = parentRenderChildren;
 
 			const ViewClass = createTemplatedElementView( {
 				type: MOCK_ELEMENT_TYPE,
