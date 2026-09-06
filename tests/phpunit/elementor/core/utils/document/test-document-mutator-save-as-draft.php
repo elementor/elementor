@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
+class Test_Document_Mutator_Save_As_Draft extends Elementor_Test_Base {
 
 	private const NEW_ELEMENTS = [
 		[
