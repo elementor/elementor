@@ -109,6 +109,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 						->add_prop( 'display', $display_value )
 						->add_prop( 'width', $size )
 						->add_prop( 'height', $size )
+						->add_prop( 'overflow', String_Prop_Type::generate( 'hidden' ) )
 				),
 		];
 	}

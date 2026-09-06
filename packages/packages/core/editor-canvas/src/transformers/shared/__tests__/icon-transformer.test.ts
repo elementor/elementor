@@ -88,7 +88,9 @@ describe( 'iconTransformer', () => {
 		expect( ( result as { html: string } ).html ).toContain( 'fill="currentColor"' );
 		expect( ( result as { html: string } ).html ).toContain( `viewBox="0 0 ${ STAR_WIDTH } ${ STAR_HEIGHT }"` );
 		expect( ( result as { html: string } ).html ).toContain( 'aria-hidden="true"' );
-		expect( ( result as { html: string } ).html ).toContain( 'overflow: visible' );
+		expect( ( result as { html: string } ).html ).toContain( 'overflow: unset' );
+		expect( ( result as { html: string } ).html ).toContain( `width="${ STAR_WIDTH }"` );
+		expect( ( result as { html: string } ).html ).toContain( `height="${ STAR_HEIGHT }"` );
 	} );
 
 	it( 'resolves icons by alias name', async () => {

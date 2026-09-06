@@ -17,7 +17,6 @@ export function FontAwesomeGlyph( { icon, size, color, label }: FontAwesomeGlyph
 			width={ size }
 			height={ size }
 			fill={ color }
-			overflow="visible"
 			aria-hidden={ label ? undefined : true }
 			aria-label={ label }
 			role={ label ? 'img' : undefined }

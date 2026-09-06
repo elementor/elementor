@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Icon_Transformer extends Transformer_Base {
 	const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
 
-	const FA7_SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: visible;';
-
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$icon = [
 			'value' => $value['value'] ?? '',
@@ -68,6 +66,8 @@ class Icon_Transformer extends Transformer_Base {
 	private function build_fa7_svg( array $icon_data ): string {
 		$attributes = [
 			'viewBox' => '0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'],
+			'width' => $icon_data['width'],
+			'height' => $icon_data['height'],
 			'xmlns' => 'http://www.w3.org/2000/svg',
 			'aria-hidden' => 'true',
 		];
@@ -80,7 +80,7 @@ class Icon_Transformer extends Transformer_Base {
 
 		$svg = '<svg ' . Utils::render_html_attributes( $attributes ) . '>' . $paths_markup . '</svg>';
 
-		return $this->process_svg( $svg, self::FA7_SVG_INLINE_STYLES );
+		return $this->process_svg( $svg, self::SVG_INLINE_STYLES );
 	}
 
 	private function build_managed_svg( $icon_data ): string {
