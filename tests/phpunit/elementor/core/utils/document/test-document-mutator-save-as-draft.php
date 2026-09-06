@@ -33,7 +33,7 @@ class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
 		],
 	];
 
-	public function test_save_as_draft__published_post__writes_autosave_and_keeps_main_published() {
+	public function test_save_as_draft__preserve_flag_on__published_post__writes_autosave_and_keeps_main_published() {
 		// Arrange.
 		$this->act_as_admin();
 		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
@@ -41,7 +41,7 @@ class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
 		$document->save( [ 'elements' => self::ORIGINAL_ELEMENTS ] );
 
 		// Act.
-		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS );
+		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS, true );
 
 		// Assert.
 		$this->assertInstanceOf( Document::class, $result );
@@ -55,7 +55,22 @@ class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
 		$this->assertEquals( self::NEW_ELEMENTS, $result->get_elements_data() );
 	}
 
-	public function test_save_as_draft__private_post__writes_autosave_and_keeps_main_private() {
+	public function test_save_as_draft__preserve_flag_off__downgrades_publish_to_draft() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		// Act.
+		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS );
+
+		// Assert.
+		$this->assertTrue( $result );
+		$this->assertEquals( 'draft', get_post_status( $document->get_main_id() ) );
+		$this->assertEquals( self::NEW_ELEMENTS, $document->get_elements_data() );
+	}
+
+	public function test_save_as_draft__preserve_flag_on__private_post__writes_autosave() {
 		// Arrange.
 		$this->act_as_admin();
 		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'private' ] );
@@ -63,7 +78,7 @@ class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
 		$document->save( [ 'elements' => self::ORIGINAL_ELEMENTS ] );
 
 		// Act.
-		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS );
+		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS, true );
 
 		// Assert.
 		$this->assertInstanceOf( Document::class, $result );
@@ -72,14 +87,14 @@ class Document_Mutator_Save_As_Draft_Test extends Elementor_Test_Base {
 		$this->assertEquals( self::ORIGINAL_ELEMENTS, $document->get_elements_data() );
 	}
 
-	public function test_save_as_draft__draft_post__writes_to_main_document() {
+	public function test_save_as_draft__preserve_flag_on__draft_post__writes_to_main_document() {
 		// Arrange.
 		$this->act_as_admin();
 		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] );
 		$document = Plugin::$instance->documents->get( $post->ID );
 
 		// Act.
-		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS );
+		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS, true );
 
 		// Assert.
 		$this->assertInstanceOf( Document::class, $result );

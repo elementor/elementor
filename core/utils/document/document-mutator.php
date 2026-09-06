@@ -183,17 +183,39 @@ class Document_Mutator {
 	}
 
 	/**
-	 * Save an elements tree to a document without publishing it live.
+	 * Save an elements tree to a document.
 	 *
-	 * For `publish`/`private` posts the write is redirected to an autosave revision
-	 * (mirroring the editor's in-app "Save as Draft" flow), so the live page keeps
+	 * Default behavior (backwards compatible): downgrade a `publish` post to `draft`
+	 * before saving so no live changes leak out, then save on the main document.
+	 *
+	 * When `$preserve_live_status` is true: the main post status is kept intact and
+	 * writes on `publish`/`private` posts are redirected to an autosave revision
+	 * (mirroring the editor's in-app "Save as Draft" flow) so the live page keeps
 	 * serving the previous version until the user opens the editor and publishes.
-	 * Non-live statuses (draft, pending, etc.) are saved directly on the main document.
+	 * In this mode the return value is the Document actually written on success.
 	 *
-	 * @return Document|\WP_Error The document that was actually written on success.
+	 * @return bool|Document|\WP_Error
 	 */
-	public function save_as_draft( Document $document, array $elements ) {
-		$target = $this->resolve_save_target( $document );
+	public function save_as_draft( Document $document, array $elements, bool $preserve_live_status = false ) {
+		if ( $preserve_live_status ) {
+			return $this->save_preserving_live_status( $document, $elements );
+		}
+
+		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_status' => 'draft',
+			] );
+		}
+
+		return $document->save( [ 'elements' => $elements ] );
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private function save_preserving_live_status( Document $document, array $elements ) {
+		$target = $this->resolve_autosave_target( $document );
 
 		if ( is_wp_error( $target ) ) {
 			return $target;
@@ -219,7 +241,7 @@ class Document_Mutator {
 	/**
 	 * @return Document|\WP_Error
 	 */
-	private function resolve_save_target( Document $document ) {
+	private function resolve_autosave_target( Document $document ) {
 		$main_status = get_post_status( $document->get_main_id() );
 
 		if ( ! in_array( $main_status, [ 'publish', 'private' ], true ) ) {

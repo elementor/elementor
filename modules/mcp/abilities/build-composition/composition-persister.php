@@ -54,7 +54,7 @@ class Composition_Persister {
 			$root_ids[] = $this->find_last_root_id( $tree, $parent_id );
 		}
 
-		$save_result = $this->mutator->save_as_draft( $document, $tree );
+		$save_result = $this->mutator->save_as_draft( $document, $tree, true );
 		if ( is_wp_error( $save_result ) ) {
 			return $save_result;
 		}

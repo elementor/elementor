@@ -231,7 +231,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->with_edit_url( $response, $document );
 		}
 
-		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
+		$save_result = $this->get_mutator()->save_as_draft( $document, $tree, true );
 		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
 			$response['save_error'] = $save_result->get_error_message();
