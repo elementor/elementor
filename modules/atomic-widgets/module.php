@@ -715,7 +715,6 @@ class Module extends BaseModule {
 			// List markers (svg base style overrides)
 			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
 			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base svg { width: auto !important; }',
-			'.e-svg-base > svg { display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; }',
 
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );

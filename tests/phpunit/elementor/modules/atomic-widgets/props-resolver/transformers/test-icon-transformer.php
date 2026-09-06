@@ -57,9 +57,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'viewBox="0 0 576 512"', $result['html'] );
 		$this->assertStringContainsString( 'fill="currentColor"', $result['html'] );
 		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
-		$this->assertStringContainsString( 'overflow: unset', $result['html'] );
-		$this->assertStringContainsString( 'width="576"', $result['html'] );
-		$this->assertStringContainsString( 'height="512"', $result['html'] );
+		$this->assertStringContainsString( 'overflow: visible', $result['html'] );
 		$this->assertStringContainsString( self::FA7_STAR_PATH_FRAGMENT, $result['html'] );
 		$this->assertStringNotContainsString( 'M259.3 17.8', $result['html'] );
 	}

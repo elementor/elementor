@@ -184,7 +184,7 @@ function buildFontAwesomeSvg( iconData: FontAwesomeIconJson ): string | null {
 
 	const pathMarkup = paths.map( ( path ) => `<path d="${ escapeSvgPath( path ) }"></path>` ).join( '' );
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="${ width }" height="${ height }" viewBox="0 0 ${ width } ${ height }">${ pathMarkup }</svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ width } ${ height }">${ pathMarkup }</svg>`;
 }
 
 function normalizePaths( pathData: string | string[] ): string[] {
@@ -219,6 +219,9 @@ function processIconSvgContent( svgText: string ): string | null {
 	}
 
 	svgElement.setAttribute( 'aria-hidden', 'true' );
+	svgElement.style.setProperty( 'width', '100%' );
+	svgElement.style.setProperty( 'height', '100%' );
+	svgElement.style.setProperty( 'overflow', 'visible' );
 
 	return svgElement.outerHTML;
 }
