@@ -201,6 +201,13 @@ class Document_Mutator {
 			return $this->save_preserving_live_status( $document, $elements );
 		}
 
+		return $this->save_downgrading_publish_to_draft( $document, $elements );
+	}
+
+	/**
+	 * @return bool|int|\WP_Error
+	 */
+	private function save_downgrading_publish_to_draft( Document $document, array $elements ) {
 		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
 			wp_update_post( [
 				'ID' => $document->get_main_id(),

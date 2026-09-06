@@ -70,6 +70,21 @@ class Test_Document_Mutator_Save_As_Draft extends Elementor_Test_Base {
 		$this->assertEquals( self::NEW_ELEMENTS, $document->get_elements_data() );
 	}
 
+	public function test_save_as_draft__preserve_flag_off__private_post__saves_without_downgrade() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'private' ] );
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		// Act.
+		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS );
+
+		// Assert.
+		$this->assertTrue( $result );
+		$this->assertEquals( 'private', get_post_status( $document->get_main_id() ) );
+		$this->assertEquals( self::NEW_ELEMENTS, $document->get_elements_data() );
+	}
+
 	public function test_save_as_draft__preserve_flag_on__private_post__writes_autosave() {
 		// Arrange.
 		$this->act_as_admin();
