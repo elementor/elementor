@@ -59,14 +59,6 @@ class Composition_Persister {
 			return $save_result;
 		}
 
-		if ( ! $save_result ) {
-			return new \WP_Error(
-				'save_failed',
-				__( 'Could not save document.', 'elementor' ),
-				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
-			);
-		}
-
 		return [
 			'tree' => $tree,
 			'root_ids' => $root_ids,

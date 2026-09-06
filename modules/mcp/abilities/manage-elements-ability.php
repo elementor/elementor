@@ -232,19 +232,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
-		if ( is_wp_error( $save_result ) || ! $save_result ) {
+		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
-			$response['save_error'] = is_wp_error( $save_result )
-				? $save_result->get_error_message()
-				: __( 'Could not save document.', 'elementor' );
+			$response['save_error'] = $save_result->get_error_message();
 
 			return $this->with_edit_url( $response, $document );
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
 
-		$post = get_post( $document->get_main_id() );
-		$response['version'] = $post ? $post->post_modified_gmt : current_time( 'mysql', true );
+		$saved_post = $save_result->get_post();
+		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
 
 		return $this->with_edit_url( $response, $document );
 	}

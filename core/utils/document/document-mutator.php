@@ -183,20 +183,60 @@ class Document_Mutator {
 	}
 
 	/**
-	 * Save an elements tree to a document, downgrading `publish` to `draft`
-	 * first so no live changes leak out.
+	 * Save an elements tree to a document without publishing it live.
 	 *
-	 * @return true|int|\WP_Error
+	 * For `publish`/`private` posts the write is redirected to an autosave revision
+	 * (mirroring the editor's in-app "Save as Draft" flow), so the live page keeps
+	 * serving the previous version until the user opens the editor and publishes.
+	 * Non-live statuses (draft, pending, etc.) are saved directly on the main document.
+	 *
+	 * @return Document|\WP_Error The document that was actually written on success.
 	 */
 	public function save_as_draft( Document $document, array $elements ) {
-		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
-			wp_update_post( [
-				'ID' => $document->get_main_id(),
-				'post_status' => 'draft',
-			] );
+		$target = $this->resolve_save_target( $document );
+
+		if ( is_wp_error( $target ) ) {
+			return $target;
 		}
 
-		return $document->save( [ 'elements' => $elements ] );
+		$saved = $target->save( [ 'elements' => $elements ] );
+
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
+
+		if ( ! $saved ) {
+			return new \WP_Error(
+				'elementor_save_failed',
+				__( 'Could not save document.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $target;
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private function resolve_save_target( Document $document ) {
+		$main_status = get_post_status( $document->get_main_id() );
+
+		if ( ! in_array( $main_status, [ 'publish', 'private' ], true ) ) {
+			return $document;
+		}
+
+		$autosave = $document->get_autosave( 0, true );
+
+		if ( ! $autosave instanceof Document ) {
+			return new \WP_Error(
+				'elementor_autosave_failed',
+				__( 'Could not create autosave revision.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $autosave;
 	}
 
 	/**
