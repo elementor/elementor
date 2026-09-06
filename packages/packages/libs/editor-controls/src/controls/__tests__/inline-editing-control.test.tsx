@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { ControlActionsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { QueryClient, QueryClientProvider } from '@elementor/query';
+import { ThemeProvider } from '@elementor/ui';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
 import { InlineEditor } from '../../components/inline-editor';
@@ -180,5 +183,79 @@ describe( '<InlineEditingControl />', () => {
 			expect.objectContaining( { onEditorDestroy: expect.any( Function ) } ),
 			expect.anything()
 		);
+	} );
+
+	describe( 'dark mode styling', () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		const renderDarkModeControl = () => {
+			const objectPropType = {
+				key: '',
+				kind: 'object' as const,
+				meta: {},
+				settings: {},
+				default: null,
+				shape: {
+					title: propType,
+				},
+			};
+
+			return render(
+				<ThemeProvider colorScheme="dark">
+					<QueryClientProvider client={ queryClient }>
+						<PropProvider
+							propType={ objectPropType }
+							value={ { title: baseProps.value } }
+							setValue={ jest.fn() }
+						>
+							<PropKeyProvider bind="title">
+								<ControlActionsProvider items={ [] }>
+									<InlineEditingControl context={ { elementId: '1' } } />
+								</ControlActionsProvider>
+							</PropKeyProvider>
+						</PropProvider>
+					</QueryClientProvider>
+				</ThemeProvider>
+			);
+		};
+
+		const getEditorContainerBorderColor = ( root: HTMLElement ) => {
+			// eslint-disable-next-line testing-library/no-node-access -- border color is on a structural wrapper without an accessible role.
+			const borderedContainer = Array.from( root.querySelectorAll( 'div' ) ).find(
+				( element ) => getComputedStyle( element ).borderRadius === '8px'
+			);
+
+			return borderedContainer ? getComputedStyle( borderedContainer ).borderColor : '';
+		};
+
+		it( 'should use dark mode border colors on the editor container', () => {
+			// Arrange.
+			const { container: lightContainer } = renderControl(
+				<InlineEditingControl context={ { elementId: '1' } } />,
+				baseProps
+			);
+			const lightModeBorderColor = getEditorContainerBorderColor( lightContainer );
+
+			// Act.
+			const { container: darkContainer } = renderDarkModeControl();
+			const darkModeBorderColor = getEditorContainerBorderColor( darkContainer );
+
+			// Assert.
+			expect( lightModeBorderColor ).not.toBe( darkModeBorderColor );
+			expect( [ '#000', 'rgb(0, 0, 0)' ] ).not.toContain( darkModeBorderColor );
+		} );
+
+		it( 'should use white border color when the editor container is focused in dark mode', () => {
+			// Arrange.
+			const { container } = renderDarkModeControl();
+
+			// Act.
+			fireEvent.focus( screen.getByRole( 'textbox', { name: 'Inline editor' } ) );
+
+			// Assert.
+			expect( [ 'rgb(255, 255, 255)', '#fff', '#ffffff' ] ).toContain(
+				getEditorContainerBorderColor( container )
+			);
+		} );
 	} );
 } );

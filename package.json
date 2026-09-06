@@ -1,7 +1,7 @@
 {
   "name": "elementor",
   "slug": "elementor",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "packageManager": "npm@10.0.0",
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -24,7 +24,6 @@
     "env:setup": "bash scripts/setup-test-environment.sh",
     "env:setup:with-playwright": "bash scripts/setup-test-environment.sh && npx playwright install chromium",
     "wp-env": "wp-env",
-    "test:linux": "node ./run-on-linux.js",
     "setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
     "start-local-server": "npm run setup-templates && wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 && wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889",
     "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
@@ -35,8 +34,6 @@
     "test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",
     "test:playwright:elements-regression:core": "playwright test -c tests/elements-regression/playwright.config.ts tests/elements-regression/tests/elements-regression.test.ts",
     "test:playwright:elements-regression:atomic": "playwright test -c tests/elements-regression/playwright.config.ts tests/elements-regression/tests/atomic-elements-regression.test.ts",
-    "test:playwright:elements-regression:linux": "node ./tests/elements-regression/scripts/run-on-linux.js",
-    "test:playwright:elements-regression:linux:update-snapshots": "npm run test:playwright:elements-regression:linux -- -u",
     "test:jest": "jest --config='./tests/jest/jest.config.js'",
     "test:packages": "jest --config='./packages/jest.config.js'",
     "test": "npm run test:jest && npm run test:packages",
@@ -205,19 +202,47 @@
     "form-data": "4.0.4",
     "baseline-browser-mapping": "^2.9.19",
     "zod-validation-error": "^4.0.2",
-    "@babel/eslint-parser": { "eslint": "$eslint" },
-    "eslint-plugin-import": { "eslint": "$eslint" },
-    "eslint-plugin-react": { "eslint": "$eslint" },
-    "eslint-plugin-jsx-a11y": { "eslint": "$eslint" },
-    "eslint-plugin-jsdoc": { "eslint": "$eslint" },
-    "eslint-plugin-jest-dom": { "eslint": "$eslint" },
-    "eslint-plugin-testing-library": { "eslint": "$eslint" },
-    "eslint-plugin-local-rules": { "eslint": "$eslint" },
-    "eslint-plugin-no-jquery": { "eslint": "$eslint" },
-    "eslint-plugin-playwright": { "eslint": "$eslint" },
-    "eslint-plugin-simple-import-sort": { "eslint": "$eslint" },
-    "eslint-import-resolver-typescript": { "eslint": "$eslint" },
-    "@tanstack/eslint-plugin-query": { "eslint": "$eslint" },
-    "eslint-plugin-react-compiler": { "eslint": "$eslint" }
+    "@babel/eslint-parser": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-import": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-react": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jsx-a11y": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jsdoc": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jest-dom": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-testing-library": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-local-rules": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-no-jquery": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-playwright": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-simple-import-sort": {
+      "eslint": "$eslint"
+    },
+    "eslint-import-resolver-typescript": {
+      "eslint": "$eslint"
+    },
+    "@tanstack/eslint-plugin-query": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-react-compiler": {
+      "eslint": "$eslint"
+    }
   }
 }

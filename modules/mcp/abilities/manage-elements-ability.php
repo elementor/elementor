@@ -23,6 +23,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -231,20 +232,18 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->with_edit_url( $response, $document );
 		}
 
-		$save_result = $this->get_mutator()->save_as_draft( $document, $tree );
-		if ( is_wp_error( $save_result ) || ! $save_result ) {
+		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree );
+		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
-			$response['save_error'] = is_wp_error( $save_result )
-				? $save_result->get_error_message()
-				: __( 'Could not save document.', 'elementor' );
+			$response['save_error'] = $save_result->get_error_message();
 
 			return $this->with_edit_url( $response, $document );
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
 
-		$post = get_post( $document->get_main_id() );
-		$response['version'] = $post ? $post->post_modified_gmt : current_time( 'mysql', true );
+		$saved_post = $save_result->get_post();
+		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
 
 		return $this->with_edit_url( $response, $document );
 	}
@@ -400,6 +399,25 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$variables_service = $this->create_variables_service();
 		$warnings = [];
 
+		if ( null !== $interactions ) {
+			if ( ! is_array( $interactions ) ) {
+				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
+			}
+			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
+				return new \WP_Error(
+					'elementor_invalid_interactions',
+					__( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
+			}
+			$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
+			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
+			if ( $interactions_result['error'] ) {
+				return $interactions_result['error'];
+			}
+			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+		}
+
 		if ( ! empty( $settings ) ) {
 			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
 				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
@@ -440,22 +458,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
-		}
-
-		if ( null !== $interactions ) {
-			if ( ! is_array( $interactions ) ) {
-				return new \WP_Error( 'invalid_input', __( 'interactions must be an array of interaction items.', 'elementor' ) );
-			}
-			if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
-				$warnings[] = __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' );
-			} else {
-				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
-				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
-				if ( $interactions_result['error'] ) {
-					return $interactions_result['error'];
-				}
-				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
-			}
 		}
 
 		return [

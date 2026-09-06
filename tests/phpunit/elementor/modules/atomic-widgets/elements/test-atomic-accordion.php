@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -249,6 +250,59 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			$this->assertSame( 'e-accordion-item-content', $content['elType'] );
 			$this->assertTrue( $content['hydrateDefaultChildren'] );
 		}
+	}
+
+	/**
+	 * The indicator defaults to a chevron seeded on the slot's own `e-svg` child, not to the
+	 * neutral placeholder `e-svg`'s `svg` schema default carries for every other place that
+	 * element gets dropped.
+	 *
+	 * Asserted on the icon slot's config rather than on any one item's subtree because all three
+	 * ways a slot comes into existence — the two default items, an item added from the panel
+	 * repeater, and the slot re-attached when `show_icon` goes OFF -> ON without a stash — carry
+	 * `hydrateDefaultChildren` and resolve these exact children from this config client-side.
+	 */
+	public function test_icon_slot_seeds_its_svg_child_with_the_chevron() {
+		$default_children = $this->get_config( 'e-accordion-item-icon' )['default_children'];
+
+		$this->assertCount( 1, $default_children );
+
+		$svg = $default_children[0];
+		$this->assertSame( 'widget', $svg['elType'] );
+		$this->assertSame( 'e-svg', $svg['widgetType'] );
+
+		$this->assertSame(
+			[
+				'$$type' => 'svg-src',
+				'value' => [
+					'id' => null,
+					'url' => [
+						'$$type' => 'url',
+						'value' => Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL,
+					],
+				],
+			],
+			$svg['settings']['svg']
+		);
+
+		$this->assertNotSame(
+			Atomic_Svg::DEFAULT_SVG_URL,
+			$svg['settings']['svg']['value']['url']['value'],
+			'The accordion indicator must not fall back to the generic e-svg placeholder.'
+		);
+	}
+
+	/**
+	 * `Svg_Src_Transformer::transform()` resolves an unreachable file to an empty `html` string
+	 * instead of failing, so renaming or dropping the asset would surface as a silently missing
+	 * indicator rather than an error anywhere.
+	 */
+	public function test_default_icon_asset_ships_with_the_plugin() {
+		$this->assertFileExists( Atomic_Accordion_Item_Icon::DEFAULT_ICON_PATH );
+		$this->assertStringContainsString(
+			'<svg',
+			(string) file_get_contents( Atomic_Accordion_Item_Icon::DEFAULT_ICON_PATH )
+		);
 	}
 
 	// ---------------------------------------------------------------------

@@ -3,9 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
-use Elementor\Plugin;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -21,12 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const CONNECTOR_EXPERIMENT_NAME = 'mcp_connector';
+	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
 
 	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
+	}
+
+	public function enqueue_analytics_registrar(): void {
+		wp_enqueue_script(
+			self::ANALYTICS_REGISTRAR_HANDLE,
+			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
+			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public static function is_active() {
@@ -37,8 +45,6 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-
-		$this->register_connector_experiment();
 
 		$this->registry = self::build_core_registry();
 
@@ -92,26 +98,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		if ( ! self::is_connector_page_active() ) {
-			return;
-		}
-
-		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
-	}
-
-	public static function is_connector_page_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::CONNECTOR_EXPERIMENT_NAME );
-	}
-
-	private function register_connector_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::CONNECTOR_EXPERIMENT_NAME,
-			'title' => esc_html__( 'MCP Connector', 'elementor' ),
-			'description' => esc_html__( 'Enable the MCP connector admin page.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		] );
+		$menu_data_provider->register_menu(
+			new Editor_One_Mcp_Menu(),
+			[ 'preserve_label_casing' => true ]
+		);
 	}
 
 	public static function build_core_registry(): Ability_Registry {
@@ -153,6 +143,7 @@ class Module extends BaseModule {
 			new Abilities\Read_Resource_Ability( $registry ),
 			new Abilities\List_Components_Ability(),
 			new Abilities\Manage_Component_Ability(),
+			new Abilities\List_Posts_Ability(),
 		];
 
 		return $abilities;
