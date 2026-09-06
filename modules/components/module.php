@@ -16,6 +16,7 @@ use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
+use Elementor\Modules\Components\Utils\Detach_Component_Instances;
 use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
@@ -28,6 +29,22 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const EXPERIMENT_VARIANTS_NAME = 'e_component_variants';
 	const PACKAGES        = [ 'editor-components' ];
+
+	/**
+	 * Local kill switch for components import/export. Off by default: on export the module
+	 * detaches every `e-component` instance into plain elements, on import it strips any
+	 * `e-component` widgets that survived from a foreign zip. Flip to `true` in the source
+	 * to unblock the flag-on branch when working on the real feature (`Remap_Component_Instance_Ids`
+	 * and its test cover that path today).
+	 *
+	 * Not an experiment on purpose: experiments are serialized into exported kits by
+	 * `Site_Settings::export_experiments()` and rehydrated on import, so a hidden experiment
+	 * here would let a source-site override silently turn the guard off on every destination site.
+	 *
+	 * Remove this constant, `is_import_export_supported()` and every `! is_import_export_supported()`
+	 * branch once components are a first-class part of import/export.
+	 */
+	const IS_IMPORT_EXPORT_SUPPORTED = false;
 
 	/**
 	 * Variants meta must be persisted before `Global_Classes_Relations::on_document_save()`
@@ -65,6 +82,10 @@ class Module extends BaseModule {
 				2
 			);
 		}
+		if ( ! self::is_import_export_supported() ) {
+			add_filter( 'elementor/document/export/elements', fn( array $elements ) => Detach_Component_Instances::apply( $elements ) );
+		}
+
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 		add_filter( 'elementor/utils/find_element_recursive/inner_elements', fn( array $inner_elements, array $element_data ) => $this->get_inner_elements_for_search( $inner_elements, $element_data ), 10, 2 );
 
@@ -87,6 +108,10 @@ class Module extends BaseModule {
 
 	public static function is_variants_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VARIANTS_NAME );
+	}
+
+	public static function is_import_export_supported(): bool {
+		return self::IS_IMPORT_EXPORT_SUPPORTED;
 	}
 
 	/**
