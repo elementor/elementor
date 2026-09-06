@@ -118,7 +118,6 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 
 	const handleIconLibrarySelect = ( icon: { value: string; library: string } ) => {
 		setIconValue( createIconPropValue( icon.value, icon.library ) );
-		handleCloseIconLibrary();
 	};
 
 	const handleOpenIconLibrary = ( event: React.MouseEvent< HTMLElement > ) => {

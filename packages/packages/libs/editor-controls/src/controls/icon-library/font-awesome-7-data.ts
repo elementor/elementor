@@ -53,8 +53,10 @@ export function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
 	};
 }
 
+const FONT_AWESOME_ICON_NAME_PATTERN = /^fa\S*\s+fa-([^\s]+)/;
+
 export function getFontAwesome7IconName( iconValue: string ): string | null {
-	return iconValue.match( /^fa\S*\s+fa-(.+)$/ )?.[ 1 ] ?? null;
+	return iconValue.match( FONT_AWESOME_ICON_NAME_PATTERN )?.[ 1 ] ?? null;
 }
 
 export function resetFontAwesome7IconsCache() {
@@ -148,7 +150,7 @@ async function fetchLibrary( file: string, signal?: AbortSignal ): Promise< Cach
 
 function indexLibrary( icons: Record< string, FontAwesomeIconJson > ): CachedLibrary {
 	const definitions: FontAwesome7IconDefinition[] = [];
-	const lookup: Record< string, FontAwesome7IconDefinition > = {};
+	const lookup: Record< string, FontAwesome7IconDefinition > = Object.create( null );
 
 	for ( const [ name, iconData ] of Object.entries( icons ) ) {
 		const definition = toIconDefinition( name, iconData );

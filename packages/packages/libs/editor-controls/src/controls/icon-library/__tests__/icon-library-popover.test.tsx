@@ -85,6 +85,24 @@ describe( 'IconLibraryPopover', () => {
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'highlights the selected icon when the stored class uses an alias', () => {
+		// Arrange.
+		render(
+			<ThemeProvider>
+				<IconLibraryPopover
+					open
+					selectedIconClass="fa-solid fa-favorite"
+					selectedIconLibrary="fa-solid"
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+				/>
+			</ThemeProvider>
+		);
+
+		// Assert.
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	} );
+
 	it( 'filters by search and shows an empty state', () => {
 		// Arrange.
 		render(

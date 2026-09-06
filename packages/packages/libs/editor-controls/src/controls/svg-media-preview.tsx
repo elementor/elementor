@@ -49,7 +49,7 @@ const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
 
 const IconPreviewPlaceholder = () => (
 	<Box
-		aria-label={ __( 'Preview icon', 'elementor' ) }
+		aria-hidden
 		sx={ {
 			width: ICON_PREVIEW_SIZE,
 			height: ICON_PREVIEW_SIZE,

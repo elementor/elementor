@@ -105,6 +105,7 @@ describe( 'font-awesome-7-catalog', () => {
 		expect( createIconSelectionValue( 'fa-solid', 'star' ) ).toBe( 'fa-solid fa-star' );
 		expect( getSelectedIconId( 'fas fa-star', 'fa-solid' ) ).toBe( 'fa-solid:star' );
 		expect( getSelectedIconId( 'fa-solid fa-star', 'fa-solid' ) ).toBe( 'fa-solid:star' );
+		expect( getSelectedIconId( 'fa-solid fa-star fa-lg', 'fa-solid' ) ).toBe( 'fa-solid:star' );
 		expect( findFontAwesome7Icon( [ createIcon() ], 'fas fa-star', 'fa-solid' )?.id ).toBe( 'fa-solid:star' );
 		expect( findFontAwesome7Icon( [ createIcon() ], 'fa-solid fa-favorite', 'fa-solid' )?.id ).toBe(
 			'fa-solid:star'

@@ -22,8 +22,14 @@ const MEDIA_ACTION_GROUP_HEIGHT = 28;
 jest.mock( '../../hooks/use-unfiltered-files-upload' );
 jest.mock( '../icon-library/icon-library-popover', () => ( {
 	ICON_LIBRARY_POPOVER_WIDTH: 300,
-	IconLibraryPopover: jest.fn( ( { onSelect } ) => (
-		<button type="button" onClick={ () => onSelect( { value: 'fa-solid fa-star', library: 'fa-solid' } ) }>
+	IconLibraryPopover: jest.fn( ( { onSelect, onClose } ) => (
+		<button
+			type="button"
+			onClick={ () => {
+				onSelect( { value: 'fa-solid fa-star', library: 'fa-solid' } );
+				onClose();
+			} }
+		>
 			Pick star
 		</button>
 	) ),
@@ -401,7 +407,7 @@ describe( 'SvgMediaControl', () => {
 		renderControl( <SvgMediaControl showIconLibrary />, props );
 
 		// Assert
-		expect( screen.getByLabelText( 'Preview icon' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Preview icon' ) ).not.toBeInTheDocument();
 		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
 	} );
 

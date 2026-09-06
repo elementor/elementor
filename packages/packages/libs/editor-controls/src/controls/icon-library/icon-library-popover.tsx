@@ -15,8 +15,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	createIconSelectionValue,
 	filterFontAwesome7Icons,
+	findFontAwesome7Icon,
 	type FontAwesome7Icon,
-	getSelectedIconId,
 } from './font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
@@ -57,8 +57,8 @@ export const IconLibraryPopover = ( {
 
 	const items = useMemo( () => createIconLibraryItems( icons, searchValue ), [ icons, searchValue ] );
 	const selectedValue = useMemo(
-		() => getSelectedListValue( items, selectedIconClass, selectedIconLibrary ),
-		[ items, selectedIconClass, selectedIconLibrary ]
+		() => findFontAwesome7Icon( icons, selectedIconClass, selectedIconLibrary )?.id,
+		[ icons, selectedIconClass, selectedIconLibrary ]
 	);
 
 	const handleClose = () => {
@@ -226,9 +226,3 @@ const createIconLibraryItems = ( icons: FontAwesome7Icon[], searchValue: string 
 		type: 'item',
 		value: icon.id,
 	} ) );
-
-const getSelectedListValue = (
-	items: IconLibraryItem[],
-	selectedIconClass: string | null,
-	selectedIconLibrary: string | null
-) => items.find( ( item ) => item.id === getSelectedIconId( selectedIconClass, selectedIconLibrary ) )?.value;
