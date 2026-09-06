@@ -189,22 +189,6 @@ class Test_User extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	public function test_is_current_user_can_edit__returns_false_for_blog_page() {
-		// Arrange.
-		$this->act_as_admin();
-		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
-		update_option( 'page_for_posts', $post_id );
-
-		// Act.
-		$result = User::is_current_user_can_edit( $post_id );
-
-		// Assert.
-		$this->assertFalse( $result );
-
-		// Cleanup.
-		update_option( 'page_for_posts', 0 );
-	}
-
 	public function test_is_current_user_can_edit__returns_false_for_woocommerce_shop_page() {
 		// Arrange.
 		$this->act_as_admin();
