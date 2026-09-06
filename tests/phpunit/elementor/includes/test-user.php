@@ -177,6 +177,95 @@ class Test_User extends Elementor_Test_Base {
 		$this->assertEquals( [ 'test_notice' => [ 'is_viewed' => true, 'meta' => $new_meta ] ], $notices );
 	}
 
+	public function test_is_current_user_can_edit__returns_true_for_regular_page() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		// Act.
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_current_user_can_edit__returns_false_for_blog_page() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+		update_option( 'page_for_posts', $post_id );
+
+		// Act.
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertFalse( $result );
+
+		// Cleanup.
+		update_option( 'page_for_posts', 0 );
+	}
+
+	public function test_is_current_user_can_edit__returns_false_for_woocommerce_shop_page() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		// Simulate wc_get_page_id() returning this post as the shop page.
+		if ( ! function_exists( 'wc_get_page_id' ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+			function wc_get_page_id( $page ) {
+				global $mock_wc_shop_page_id;
+				if ( 'shop' === $page ) {
+					return $mock_wc_shop_page_id;
+				}
+				return -1;
+			}
+		}
+
+		global $mock_wc_shop_page_id;
+		$mock_wc_shop_page_id = $post_id;
+
+		// Act.
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertFalse( $result );
+
+		// Cleanup.
+		$mock_wc_shop_page_id = -1;
+	}
+
+	public function test_is_current_user_can_edit__returns_true_for_non_shop_page_when_woocommerce_active() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id      = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+		$shop_post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		// Ensure wc_get_page_id is defined (may already be from previous test).
+		if ( ! function_exists( 'wc_get_page_id' ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+			function wc_get_page_id( $page ) {
+				global $mock_wc_shop_page_id;
+				if ( 'shop' === $page ) {
+					return $mock_wc_shop_page_id;
+				}
+				return -1;
+			}
+		}
+
+		global $mock_wc_shop_page_id;
+		$mock_wc_shop_page_id = $shop_post_id;
+
+		// Act — editing a different page (not the shop page).
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertTrue( $result );
+
+		// Cleanup.
+		$mock_wc_shop_page_id = -1;
+	}
+
 	// BC tests
 	public function test_is_user_notice_viewed__BC__returns_true_when_viewed() {
 		// Arrange.
