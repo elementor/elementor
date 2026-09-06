@@ -214,7 +214,7 @@ const NoResults = ( { searchValue, onClear }: { searchValue: string; onClear: ()
 		<Typography align="center" variant="subtitle2" color="text.secondary" noWrap sx={ { maxWidth: '80%' } }>
 			&ldquo;{ searchValue }&rdquo;.
 		</Typography>
-		<Link color="secondary" variant="caption" component="button" onClick={ onClear }>
+		<Link color="secondary" variant="caption" component="button" type="button" onClick={ onClear }>
 			{ __( 'Clear & try again', 'elementor' ) }
 		</Link>
 	</Stack>

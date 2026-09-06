@@ -154,7 +154,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 	const iconLibraryWidth = iconLibraryAnchor?.width ?? ICON_LIBRARY_POPOVER_WIDTH;
 
 	return (
-		<Stack gap={ 1 } aria-label="SVG Control">
+		<Stack gap={ 1 } aria-label={ __( 'SVG control', 'elementor' ) }>
 			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ handleCloseUnfilteredModal } />
 			{ showIconLibrary && iconLibraryAnchor ? (
 				<Popover
