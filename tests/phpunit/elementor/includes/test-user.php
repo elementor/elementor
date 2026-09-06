@@ -4,6 +4,8 @@ namespace Elementor\Testing\Includes;
 use Elementor\User;
 use ElementorEditorTesting\Elementor_Test_Base;
 
+require_once __DIR__ . '/../../stubs/wc-stubs.php';
+
 class Test_User extends Elementor_Test_Base {
 
 	const OPTION_KEY = 'some-option-key';
@@ -194,18 +196,6 @@ class Test_User extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
 
-		// Simulate wc_get_page_id() returning this post as the shop page.
-		if ( ! function_exists( 'wc_get_page_id' ) ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-			function wc_get_page_id( $page ) {
-				global $mock_wc_shop_page_id;
-				if ( 'shop' === $page ) {
-					return $mock_wc_shop_page_id;
-				}
-				return -1;
-			}
-		}
-
 		global $mock_wc_shop_page_id;
 		$mock_wc_shop_page_id = $post_id;
 
@@ -224,18 +214,6 @@ class Test_User extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$post_id      = $this->factory()->post->create( [ 'post_type' => 'page' ] );
 		$shop_post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
-
-		// Ensure wc_get_page_id is defined (may already be from previous test).
-		if ( ! function_exists( 'wc_get_page_id' ) ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-			function wc_get_page_id( $page ) {
-				global $mock_wc_shop_page_id;
-				if ( 'shop' === $page ) {
-					return $mock_wc_shop_page_id;
-				}
-				return -1;
-			}
-		}
 
 		global $mock_wc_shop_page_id;
 		$mock_wc_shop_page_id = $shop_post_id;
