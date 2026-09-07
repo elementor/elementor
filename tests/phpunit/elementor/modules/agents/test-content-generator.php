@@ -243,7 +243,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 	public function test_clear_post_cache_removes_meta() {
 		$post_id = $this->factory()->post->create( [
 			'post_status'  => 'publish',
-			'post_content' => 'Something.',
+			'post_content' => 'Something with enough characters for extraction.',
 		] );
 
 		// Populate the meta cache.
