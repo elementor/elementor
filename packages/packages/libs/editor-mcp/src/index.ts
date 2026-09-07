@@ -12,6 +12,7 @@ export {
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 export { isAngieAvailable } from './utils/is-angie-available';
+export { isAngiePluginAvailable, waitForAngiePluginAvailable } from '@elementor-external/angie-sdk';
 export { isAngieSidebarOpen } from './utils/is-angie-sidebar-open';
 export * from './mcp-registry';
 export { createSampler } from './sampler';
