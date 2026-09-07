@@ -1,11 +1,23 @@
 import { createMockElement, createMockStyleDefinition } from 'test-utils';
-import { getCurrentDocumentId, getElements, getElementStyles, updateElementStyle } from '@elementor/editor-elements';
+import {
+	ELEMENT_STYLE_CHANGE_EVENT,
+	getCurrentDocumentId,
+	getElements,
+	getElementStyles,
+	updateElementStyle,
+} from '@elementor/editor-elements';
 import type { StyleDefinition } from '@elementor/editor-styles';
+import { __privateListenTo as listenTo } from '@elementor/editor-v1-adapters';
 
 import { InvalidElementsStyleProviderMetaError } from '../errors';
 import { documentElementsStylesProvider } from '../providers/document-elements-styles-provider';
 
 jest.mock( '@elementor/editor-elements' );
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	__privateListenTo: jest.fn(),
+} ) );
 
 describe( 'documentElementsStylesProvider', () => {
 	beforeEach( () => {
@@ -154,5 +166,95 @@ describe( 'documentElementsStylesProvider', () => {
 					elementsMeta
 				)
 		).toThrow( new InvalidElementsStyleProviderMetaError() );
+	} );
+
+	describe( 'subscribe', () => {
+		const setupListener = () => {
+			const unsubscribeFromEvents = jest.fn();
+			let emit = () => {};
+
+			jest.mocked( listenTo ).mockImplementation( ( _events, callback ) => {
+				emit = () =>
+					callback( {
+						type: 'window-event',
+						event: ELEMENT_STYLE_CHANGE_EVENT,
+						originalEvent: new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ),
+					} );
+
+				return unsubscribeFromEvents;
+			} );
+
+			const frames: FrameRequestCallback[] = [];
+
+			jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( frame: FrameRequestCallback ) => {
+				frames.push( frame );
+
+				return frames.length;
+			} );
+
+			return {
+				emitStyleRerenderEvent: () => emit(),
+				runFrame: ( index: number ) => frames[ index ]( 0 ),
+				frames: () => frames,
+				unsubscribeFromEvents,
+			};
+		};
+
+		it( 'should notify subscribers once per frame regardless of the number of events', () => {
+			// Arrange.
+			const listener = setupListener();
+			const subscriber = jest.fn();
+
+			documentElementsStylesProvider.subscribe( subscriber );
+
+			// Act.
+			listener.emitStyleRerenderEvent();
+			listener.emitStyleRerenderEvent();
+			listener.emitStyleRerenderEvent();
+
+			// Assert.
+			expect( listener.frames() ).toHaveLength( 1 );
+			expect( subscriber ).not.toHaveBeenCalled();
+
+			// Act.
+			listener.runFrame( 0 );
+
+			// Assert.
+			expect( subscriber ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should schedule a new frame after the pending one ran', () => {
+			// Arrange.
+			const listener = setupListener();
+			const subscriber = jest.fn();
+
+			documentElementsStylesProvider.subscribe( subscriber );
+
+			// Act.
+			listener.emitStyleRerenderEvent();
+			listener.runFrame( 0 );
+			listener.emitStyleRerenderEvent();
+			listener.runFrame( 1 );
+
+			// Assert.
+			expect( subscriber ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'should cancel a pending frame when unsubscribing', () => {
+			// Arrange.
+			const listener = setupListener();
+			const subscriber = jest.fn();
+			const cancelAnimationFrameSpy = jest.spyOn( window, 'cancelAnimationFrame' ).mockImplementation();
+
+			const unsubscribe = documentElementsStylesProvider.subscribe( subscriber );
+
+			// Act.
+			listener.emitStyleRerenderEvent();
+			unsubscribe();
+
+			// Assert.
+			expect( cancelAnimationFrameSpy ).toHaveBeenCalledTimes( 1 );
+			expect( listener.unsubscribeFromEvents ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 } );
