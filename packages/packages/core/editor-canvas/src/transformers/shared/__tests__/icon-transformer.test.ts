@@ -1,10 +1,10 @@
+import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
 import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
 import { iconPropType } from '../../../__tests__/prop-types';
 import { initSettingsTransformers } from '../../../init-settings-transformers';
 import { createPropsResolver } from '../../../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../../../settings-transformers-registry';
-import { resetFontAwesomeIconsCache } from '../icon-transformer';
 
 const STAR_PATH = 'M0 0h100v100H0z';
 const STAR_WIDTH = 576;
@@ -44,7 +44,7 @@ describe( 'iconTransformer', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		resetFontAwesomeIconsCache();
+		resetFontAwesome7IconsCache();
 		initSettingsTransformers();
 		window.elementorCommon = {
 			config: {
