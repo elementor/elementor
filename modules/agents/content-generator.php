@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents;
 
+use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
 use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
@@ -409,7 +410,7 @@ class Content_Generator {
 			}
 
 			// Respect noindex signals from SEO plugins.
-			if ( $this->is_noindex( $post->ID ) ) {
+			if ( Post_Noindex::is_noindex( $post->ID ) ) {
 				continue;
 			}
 
@@ -451,44 +452,6 @@ class Content_Generator {
 			$all,
 			static fn( \WP_Post_Type $pt ) => ! in_array( $pt->name, $excluded, true )
 		);
-	}
-
-	// -------------------------------------------------------------------------
-	// Noindex detection
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Return true if any active SEO plugin has marked this post as noindex,
-	 * or if the page/post is otherwise excluded from public indexing.
-	 */
-	private function is_noindex( int $post_id ): bool {
-		// Yoast SEO.
-		if ( '1' === get_post_meta( $post_id, '_yoast_wpseo_meta-robots-noindex', true ) ) {
-			return true;
-		}
-
-		// RankMath (stores as serialised array or comma-separated string).
-		$rm = get_post_meta( $post_id, 'rank_math_robots', true );
-
-		if ( is_array( $rm ) && in_array( 'noindex', $rm, true ) ) {
-			return true;
-		}
-
-		if ( is_string( $rm ) && false !== strpos( $rm, 'noindex' ) ) {
-			return true;
-		}
-
-		// All in One SEO.
-		if ( '1' === (string) get_post_meta( $post_id, '_aioseo_noindex', true ) ) {
-			return true;
-		}
-
-		// SEOPress.
-		if ( 'yes' === get_post_meta( $post_id, '_seopress_robots_index', true ) ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	// -------------------------------------------------------------------------

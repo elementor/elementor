@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Agents\Components\Readability;
 
 use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Classes\Post_Noindex;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -226,6 +227,15 @@ class Markdown_Endpoint extends Feature_Component {
 
 		if ( ! is_post_publicly_viewable( $post ) ) {
 			return;
+		}
+
+		if ( Post_Noindex::is_noindex( $post->ID ) ) {
+			global $wp_query;
+
+			$wp_query->set_404();
+			status_header( 404 );
+			nocache_headers();
+			exit;
 		}
 
 		$extractor    = new Content_Extractor();
