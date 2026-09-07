@@ -6,7 +6,13 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
+<<<<<<< HEAD
         "elementor/wp-one-package": "1.0.68"
+=======
+        "automattic/jetpack-autoloader": "^5",
+        "elementor/elementor-mcp-composer": "^1.0.11",
+        "elementor/wp-one-package": "1.0.69"
+>>>>>>> 89c1d6ae53 (Internal: Update wp-one-package to 1.0.69 and elementor-one-assets to 0.4.43 [ED-25521] (#37208))
     },
     "repositories": [
         {
