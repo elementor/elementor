@@ -8,7 +8,6 @@ import { canBeTemplated, type TemplatedElementConfig } from './create-templated-
 import {
 	createAfterRender,
 	createBeforeRender,
-	rerenderExistingChildren,
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
@@ -273,18 +272,12 @@ export function createNestedTemplatedElementView( {
 		},
 
 		async _renderChildren() {
-			if ( this._shouldReuseChildren() ) {
-				rerenderExistingChildren( this );
-			} else {
+			if ( ! this._domUpdateWasSkipped ) {
 				parentRenderChildren.call( this );
 			}
 
 			await waitForChildrenToComplete( this );
 			this._removeChildrenPlaceholder();
-		},
-
-		_shouldReuseChildren() {
-			return this._domUpdateWasSkipped && this.children?.length > 0;
 		},
 
 		_removeChildrenPlaceholder() {
