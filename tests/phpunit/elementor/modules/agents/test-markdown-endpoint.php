@@ -163,6 +163,19 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertSame( '', $output );
 	}
 
+	public function test_serve_markdown__blocks_noindex_post_without_markdown_body() {
+		// Arrange
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'Noindex Markdown Page',
+		] ) );
+		update_post_meta( $post->ID, '_yoast_wpseo_meta-robots-noindex', '1' );
+
+		// Act & Assert — 404 path exits without emitting markdown content.
+		$this->expectOutputString( '' );
+		$this->endpoint->serve_markdown( $post );
+	}
+
 	public function test_serve_markdown__serves_published_post_with_frontmatter() {
 		// Arrange
 		$post = get_post( $this->factory()->post->create( [

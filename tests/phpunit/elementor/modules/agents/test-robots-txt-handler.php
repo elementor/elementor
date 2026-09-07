@@ -7,6 +7,18 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 
+	private ?string $created_robots_path = null;
+
+	public function tearDown(): void {
+		if ( null !== $this->created_robots_path && file_exists( $this->created_robots_path ) ) {
+			unlink( $this->created_robots_path );
+		}
+
+		remove_all_filters( 'robots_txt' );
+
+		parent::tearDown();
+	}
+
 	public function test_add_rules__appends_managed_block() {
 		// Arrange
 		$handler = new Robots_Txt_Handler();
@@ -32,45 +44,46 @@ class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 		$this->assertSame( 1, substr_count( $second, Robots_Txt_Handler::BLOCK_END ) );
 	}
 
-	public function test_register__skips_filter_when_physical_robots_txt_exists() {
+	public function test_register__adds_robots_txt_filter_when_no_physical_file() {
 		// Arrange
+		if ( file_exists( ABSPATH . 'robots.txt' ) ) {
+			$this->markTestSkipped( 'Physical robots.txt already exists in the test environment.' );
+		}
+
 		$handler = new Robots_Txt_Handler();
-		$property = new \ReflectionProperty( Robots_Txt_Handler::class, 'physical_file_exists' );
-		$property->setAccessible( true );
-		$property->setValue( $handler, true );
-
-		// Act
-		$handler->register();
-
-		// Assert
-		$this->assertFalse( has_filter( 'robots_txt', [ $handler, 'add_rules' ] ) );
-	}
-
-	public function test_register__adds_filter_when_no_physical_robots_txt() {
-		// Arrange
-		$handler = new Robots_Txt_Handler();
-		$property = new \ReflectionProperty( Robots_Txt_Handler::class, 'physical_file_exists' );
-		$property->setAccessible( true );
-		$property->setValue( $handler, false );
 
 		// Act
 		$handler->register();
 
 		// Assert
 		$this->assertNotFalse( has_filter( 'robots_txt', [ $handler, 'add_rules' ] ) );
+		$this->assertFalse( $handler->get_status()['physical_file_exists'] );
 	}
 
-	public function test_get_status__reports_physical_file_flag() {
+	public function test_register__skips_filter_when_physical_robots_txt_exists() {
 		// Arrange
+		$robots_path = ABSPATH . 'robots.txt';
+
+		if ( ! file_exists( $robots_path ) ) {
+			file_put_contents( $robots_path, "User-agent: *\n" );
+			$this->created_robots_path = $robots_path;
+		}
+
 		$handler = new Robots_Txt_Handler();
-		$property = new \ReflectionProperty( Robots_Txt_Handler::class, 'physical_file_exists' );
-		$property->setAccessible( true );
-		$property->setValue( $handler, true );
 
 		// Act
-		$status = $handler->get_status();
+		$handler->register();
 
 		// Assert
-		$this->assertTrue( $status['physical_file_exists'] );
+		$this->assertTrue( $handler->get_status()['physical_file_exists'] );
+		$this->assertFalse( has_filter( 'robots_txt', [ $handler, 'add_rules' ] ) );
+	}
+
+	public function test_has_physical_robots_txt__matches_file_presence() {
+		// Arrange
+		$handler = new Robots_Txt_Handler();
+
+		// Act & Assert
+		$this->assertSame( file_exists( ABSPATH . 'robots.txt' ), $handler->has_physical_robots_txt() );
 	}
 }
