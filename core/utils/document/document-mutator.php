@@ -183,12 +183,31 @@ class Document_Mutator {
 	}
 
 	/**
-	 * Save an elements tree to a document, downgrading `publish` to `draft`
-	 * first so no live changes leak out.
+	 * Save an elements tree to a document.
 	 *
-	 * @return true|int|\WP_Error
+	 * Default behavior (backwards compatible): downgrade a `publish` post to `draft`
+	 * before saving so no live changes leak out, then save on the main document.
+	 *
+	 * When `$preserve_live_status` is true: the main post status is kept intact and
+	 * writes on `publish`/`private` posts are redirected to an autosave revision
+	 * (mirroring the editor's in-app "Save as Draft" flow) so the live page keeps
+	 * serving the previous version until the user opens the editor and publishes.
+	 * In this mode the return value is the Document actually written on success.
+	 *
+	 * @return bool|Document|\WP_Error
 	 */
-	public function save_as_draft( Document $document, array $elements ) {
+	public function save_as_draft( Document $document, array $elements, bool $preserve_live_status = false ) {
+		if ( $preserve_live_status ) {
+			return $this->save_preserving_live_status( $document, $elements );
+		}
+
+		return $this->save_downgrading_publish_to_draft( $document, $elements );
+	}
+
+	/**
+	 * @return bool|int|\WP_Error
+	 */
+	private function save_downgrading_publish_to_draft( Document $document, array $elements ) {
 		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
 			wp_update_post( [
 				'ID' => $document->get_main_id(),
@@ -197,6 +216,66 @@ class Document_Mutator {
 		}
 
 		return $document->save( [ 'elements' => $elements ] );
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private function save_preserving_live_status( Document $document, array $elements ) {
+		$target = $this->resolve_autosave_target( $document );
+
+		if ( is_wp_error( $target ) ) {
+			return $target;
+		}
+
+		$saved = $target->save( [ 'elements' => $elements ] );
+
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
+
+		if ( ! $saved ) {
+			return new \WP_Error(
+				'elementor_save_failed',
+				__( 'Could not save document.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $target;
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private function resolve_autosave_target( Document $document ) {
+		$main_document = Plugin::$instance->documents->get( $document->get_main_id() );
+
+		if ( ! $main_document instanceof Document ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Post not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		$main_status = get_post_status( $main_document->get_main_id() );
+
+		if ( ! in_array( $main_status, [ 'publish', 'private' ], true ) ) {
+			return $main_document;
+		}
+
+		$autosave = $main_document->get_autosave( 0, true );
+
+		if ( ! $autosave instanceof Document ) {
+			return new \WP_Error(
+				'elementor_autosave_failed',
+				__( 'Could not create autosave revision.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $autosave;
 	}
 
 	/**
