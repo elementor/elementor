@@ -8,9 +8,11 @@ import { __ } from '@wordpress/i18n';
 import { focusViolation } from '../hooks/focus-violation';
 import { type AuditMeta, type AuditViolation } from '../types';
 import { buildAngiePrompt } from '../utils/build-angie-prompt';
+import { isScoredAudit } from '../utils/is-scored-audit';
 import { onKeyboardClick } from '../utils/keyboard-click';
 import FixViolationWithAngie from './fix-violation-with-angie';
 import SeverityIcon from './severity-icons';
+import ViolationCtaButton from './violation-cta-button';
 import ViolationIcon from './violation-icons';
 
 type Props = {
@@ -33,9 +35,11 @@ function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violati
 	if ( violations ) {
 		return (
 			<>
-				<Typography variant="caption" color="text.secondary" fontWeight="bold">
-					{ violations.length }
-				</Typography>
+				{ isScoredAudit( audit ) && (
+					<Typography variant="caption" color="text.secondary" fontWeight="bold">
+						{ violations.length }
+					</Typography>
+				) }
 				<SeverityIcon severity={ audit.severity } />
 			</>
 		);
@@ -157,7 +161,18 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 									{ violation.angieFix && (
 										<FixViolationWithAngie prompt={ buildAngiePrompt( rowLabel ) } />
 									) }
-									<EyeIcon className="violation-hover-icon" fontSize="tiny" aria-hidden={ true } />
+									{ violation.ctaLabel && violation.externalUrl ? (
+										<ViolationCtaButton
+											ctaLabel={ violation.ctaLabel }
+											externalUrl={ violation.externalUrl }
+										/>
+									) : (
+										<EyeIcon
+											className="violation-hover-icon"
+											fontSize="tiny"
+											aria-hidden={ true }
+										/>
+									) }
 								</Box>
 							);
 						} ) }

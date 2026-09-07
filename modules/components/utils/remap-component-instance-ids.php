@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Components\Utils;
 
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
-use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,7 +35,7 @@ class Remap_Component_Instance_Ids {
 			return $element;
 		}
 
-		if ( self::is_component_instance( $element ) ) {
+		if ( Component_Instance_Prop_Type::is_instance_element( $element ) ) {
 			$element['settings'] = self::remap_component_id( $element['settings'] ?? [], $post_ids_map );
 		}
 
@@ -45,11 +44,6 @@ class Remap_Component_Instance_Ids {
 		}
 
 		return $element;
-	}
-
-	private static function is_component_instance( array $element ): bool {
-		return 'widget' === ( $element['elType'] ?? null )
-			&& Component_Instance::get_element_type() === ( $element['widgetType'] ?? null );
 	}
 
 	private static function remap_component_id( array $settings, array $post_ids_map ): array {

@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
@@ -167,7 +168,7 @@ class Widget_Context_Helper {
 			] );
 		}
 
-		$properties = self::build_configurable_properties_schema( $props_schema );
+		$properties = self::build_configurable_properties_schema( $props_schema, $widget_type );
 
 		return self::filter_nulls( [
 			'type' => 'object',
@@ -180,7 +181,7 @@ class Widget_Context_Helper {
 	/**
 	 * @param array<string, Prop_Type> $props_schema
 	 */
-	private static function build_configurable_properties_schema( array $props_schema ): array {
+	private static function build_configurable_properties_schema( array $props_schema, string $widget_type ): array {
 		$properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
@@ -188,15 +189,14 @@ class Widget_Context_Helper {
 				continue;
 			}
 
-			$properties[ $key ] = $prop_type->to_json_schema();
-		}
+			$schema = self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
+			$allowed_html_tags = Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( $widget_type, $key );
 
-		return self::apply_llm_schema_filters( $properties );
-	}
+			if ( null !== $allowed_html_tags ) {
+				$schema['allowed_html_tags'] = $allowed_html_tags;
+			}
 
-	private static function apply_llm_schema_filters( array $properties ): array {
-		foreach ( $properties as $key => $schema ) {
-			$properties[ $key ] = self::to_plain_llm_schema_from_json( $schema );
+			$properties[ $key ] = $schema;
 		}
 
 		return $properties;
