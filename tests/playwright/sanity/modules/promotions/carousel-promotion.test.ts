@@ -2,7 +2,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
-import { getPromotionWidget, openPromotionPopover } from './promotion-popover-helper';
+import { getPromotionWidgetByType, openPromotionPopover } from './promotion-popover-helper';
 import _path from 'path';
 
 const CAROUSEL_PROMOTION_CONTENT_PATTERN = /engaging slideshows with customizable slides/i;
@@ -14,10 +14,6 @@ test.describe( 'Carousel promotion test @promotions', () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
-	test.afterAll( async () => {
-		await wpCli( 'wp elementor experiments deactivate e_atomic_elements' );
-	} );
-
 	test( 'Carousel widget visible in Atomic Elements with nested-carousel icon', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
@@ -26,9 +22,10 @@ test.describe( 'Carousel promotion test @promotions', () => {
 		await category.locator( '.elementor-panel-category-title' ).click();
 		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
 
-		const carouselWidget = getPromotionWidget( category, 'Carousel' );
+		const carouselWidget = getPromotionWidgetByType( category, 'e-carousel' );
+		await carouselWidget.scrollIntoViewIfNeeded();
 		await expect( carouselWidget ).toBeVisible();
-		await expect( carouselWidget.locator( '.eicon-nested-carousel' ) ).toBeVisible();
+		await expect( carouselWidget.locator( '.eicon-nested-carousel' ) ).toHaveCount( 1 );
 	} );
 
 	test( 'Promotion popover shown on Carousel widget click', async ( { page, apiRequests }, testInfo ) => {
@@ -39,7 +36,7 @@ test.describe( 'Carousel promotion test @promotions', () => {
 		await category.locator( '.elementor-panel-category-title' ).click();
 		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
 
-		const carouselWidget = getPromotionWidget( category, 'Carousel' );
+		const carouselWidget = getPromotionWidgetByType( category, 'e-carousel' );
 		await expect( carouselWidget ).toBeVisible();
 
 		const popover = await openPromotionPopover( carouselWidget );
