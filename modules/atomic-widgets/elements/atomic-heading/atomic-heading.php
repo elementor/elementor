@@ -67,7 +67,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->description( 'The HTML tag for the heading element. One of: h1, h2, h3, h4, h5, or h6. Do not use p, span, or div.' ),
 
 			'title' => Escaped_Html_Prop_Type::make()
-				->allowed_html_tags( Escaped_Html_Prop_Type::heading_text_tags() )
 				->default( __( 'This is a title', 'elementor' ) )
 				->description( 'The text content of the heading.' )
 				->alias( 'text', 'content', 'heading' ),

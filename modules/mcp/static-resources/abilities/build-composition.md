@@ -80,7 +80,7 @@ Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
 - **boolean**: plain boolean (`true`)
-- **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). Do NOT wrap in `{ content, children }`. May contain inline HTML tags for text styling — same shape, just HTML inside the string. Allowed tags are listed per property as `allowed_html_tags` in `elementor/get-widget-schema` (e.g. `properties.title.allowed_html_tags` on `e-heading`). Tags outside that list are stripped server-side.
+- **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). May contain inline HTML tags for text styling.
   - Example: `"paragraph": "<strong>Contact support</strong> for a <s>free</s> discounted quote — <em>limited time</em> only."`
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:

@@ -63,7 +63,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'paragraph' => Escaped_Html_Prop_Type::make()
-				->allowed_html_tags( Escaped_Html_Prop_Type::paragraph_text_tags() )
 				->default( __( 'Type your paragraph here', 'elementor' ) )
 				->description( 'The text content of the paragraph.' )
 				->alias( 'text', 'content' ),

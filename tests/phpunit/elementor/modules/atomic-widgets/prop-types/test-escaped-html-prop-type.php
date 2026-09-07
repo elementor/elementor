@@ -209,32 +209,30 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		$this->assertSame( 'string', $schema['properties']['value']['type'] );
 	}
 
-	public function test_json_schema__exposes_allowed_html_tags_when_configured() {
-		// Arrange.
-		$prop_type = Escaped_Html_Prop_Type::make()
-			->allowed_html_tags( Escaped_Html_Prop_Type::heading_text_tags() );
-
-		// Act.
-		$schema = $prop_type->to_json_schema();
-
-		// Assert.
+	public function test_get_allowed_html_tags_for_prop__returns_heading_title_tags() {
 		$this->assertSame(
-			Escaped_Html_Prop_Type::heading_text_tags(),
-			$schema['properties']['value']['allowed_html_tags']
+			Escaped_Html_Prop_Type::HEADING_TEXT_TAGS,
+			Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( 'e-heading', 'title' )
 		);
 	}
 
-	public function test_heading_text_tags__matches_frontend_allowlist() {
+	public function test_get_allowed_html_tags_for_prop__returns_null_for_unknown_mapping() {
+		$this->assertNull(
+			Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( 'e-heading', 'text' )
+		);
+	}
+
+	public function test_heading_text_tags_const__matches_frontend_allowlist() {
 		$this->assertSame(
 			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'i', 'u', 'a', 'del', 'span', 'br' ],
-			Escaped_Html_Prop_Type::heading_text_tags()
+			Escaped_Html_Prop_Type::HEADING_TEXT_TAGS
 		);
 	}
 
-	public function test_paragraph_text_tags__matches_frontend_allowlist() {
+	public function test_paragraph_text_tags_const__matches_frontend_allowlist() {
 		$this->assertSame(
 			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'u', 'ul', 'ol', 'li', 'blockquote', 'a', 'del', 'span', 'br' ],
-			Escaped_Html_Prop_Type::paragraph_text_tags()
+			Escaped_Html_Prop_Type::PARAGRAPH_TEXT_TAGS
 		);
 	}
 }

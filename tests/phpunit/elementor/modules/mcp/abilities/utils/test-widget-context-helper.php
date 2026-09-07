@@ -25,7 +25,6 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 require_once __DIR__ . '/../../../../../stubs/elementor-utils-stub.php';
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -62,17 +61,5 @@ class Test_Widget_Context_Helper extends TestCase {
 		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type );
 
 		$this->assertArrayNotHasKey( 'enum', $schema );
-	}
-
-	public function test_to_plain_llm_schema__preserves_allowed_html_tags_on_escaped_html() {
-		$prop_type = Escaped_Html_Prop_Type::make()
-			->allowed_html_tags( Escaped_Html_Prop_Type::button_text_tags() );
-
-		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type );
-
-		$this->assertSame(
-			Escaped_Html_Prop_Type::button_text_tags(),
-			$schema['allowed_html_tags']
-		);
 	}
 }
