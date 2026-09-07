@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { ICON_LIBRARY_ROW_HEIGHT, IconLibraryPopover } from '../icon-library-popover';
+import {
+	ICON_LIBRARY_ROW_HEIGHT,
+	ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY,
+	IconLibraryPopover,
+} from '../icon-library-popover';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
 jest.mock( '../use-font-awesome-7-catalog' );
@@ -105,6 +109,8 @@ describe( 'IconLibraryPopover', () => {
 
 	it( 'filters by search and shows an empty state', () => {
 		// Arrange.
+		jest.useFakeTimers();
+
 		render(
 			<ThemeProvider>
 				<IconLibraryPopover
@@ -121,8 +127,16 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'missing' } } );
 
 		// Assert.
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
+
+		act( () => {
+			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
+		} );
+
 		expect( screen.getByText( /Sorry, nothing matched/ ) ).toBeInTheDocument();
 		expect( screen.getByText( /missing/ ) ).toBeInTheDocument();
+
+		jest.useRealTimers();
 	} );
 
 	it( 'shows a load failure when the catalog is empty', () => {
