@@ -31,6 +31,10 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 		return 'agent.json';
 	}
 
+	public function get_slug_aliases(): array {
+		return [ 'agent' ];
+	}
+
 	protected function generate_content(): array {
 		$home = trailingslashit( home_url() );
 

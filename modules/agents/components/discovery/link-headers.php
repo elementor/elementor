@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Site-wide (all frontend responses):
  *   Link: </llms.txt>; rel="llms-txt"; type="text/plain"
+ *   Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/json"
+ *   Link: </.well-known/auth.md>; rel="service-doc"; type="text/markdown"
  *
  * On singular exposed views only:
  *   Link: <{permalink}.md>; rel="alternate"; type="text/markdown"
@@ -121,6 +123,8 @@ class Link_Headers extends Feature_Component {
 
 		$links = [
 			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
+			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"',
+			'<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"',
 		];
 
 		/**

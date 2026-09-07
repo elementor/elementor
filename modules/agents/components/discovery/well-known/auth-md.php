@@ -27,6 +27,10 @@ class Auth_Md extends Abstract_Well_Known_Endpoint {
 		return 'auth.md';
 	}
 
+	public function get_slug_aliases(): array {
+		return [ 'auth' ];
+	}
+
 	public function get_content_type(): string {
 		return 'text/markdown';
 	}

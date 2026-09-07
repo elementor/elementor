@@ -31,6 +31,10 @@ class Webmcp_Manifest extends Abstract_Well_Known_Endpoint {
 		return 'webmcp.json';
 	}
 
+	public function get_slug_aliases(): array {
+		return [ 'webmcp' ];
+	}
+
 	/**
 	 * Not applicable until the WebMCP module activates.
 	 */

@@ -48,6 +48,11 @@ class Well_Known_Router {
 	 */
 	public function register_endpoint( Abstract_Well_Known_Endpoint $endpoint ): void {
 		$this->endpoints[ $endpoint->get_well_known_slug() ] = $endpoint;
+
+		// Also register extensionless aliases (see Abstract_Well_Known_Endpoint::get_slug_aliases()).
+		foreach ( $endpoint->get_slug_aliases() as $alias ) {
+			$this->endpoints[ $alias ] = $endpoint;
+		}
 	}
 
 	/**

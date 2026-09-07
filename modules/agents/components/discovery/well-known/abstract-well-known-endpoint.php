@@ -71,6 +71,23 @@ abstract class Abstract_Well_Known_Endpoint extends Feature_Component {
 		return true;
 	}
 
+	/**
+	 * Extensionless slug aliases for this endpoint.
+	 *
+	 * Some web servers intercept requests whose URL path ends with a known
+	 * file extension (.json, .md) and attempt to serve them as static assets,
+	 * returning 404 before WordPress runs. Aliases let the same endpoint be
+	 * reached at an extension-free path (e.g. 'agent' for 'agent.json').
+	 *
+	 * The canonical slug is always registered; aliases are registered in
+	 * addition. Override in subclasses that use extension-bearing slugs.
+	 *
+	 * @return string[]
+	 */
+	public function get_slug_aliases(): array {
+		return [];
+	}
+
 	// ------------------------------------------------------------------
 	// Feature_Component contract
 	// ------------------------------------------------------------------
