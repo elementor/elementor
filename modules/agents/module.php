@@ -383,7 +383,7 @@ class Module extends BaseModule {
 		// RankMath SEO.
 		if (
 			is_plugin_active( 'seo-by-rank-math/rank-math.php' ) &&
-			'on' === get_option( 'rank_math_modules', [] )['llms-txt'] ?? ''
+			'on' === ( get_option( 'rank_math_modules', [] )['llms-txt'] ?? '' )
 		) {
 			return true;
 		}
