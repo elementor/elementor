@@ -58,6 +58,7 @@ export const IconLibraryPopover = ( {
 		debouncedValue: searchValue,
 		inputValue: searchInputValue,
 		handleChange: handleSearchChange,
+		setImmediateValue: setSearchValue,
 	} = useDebounceState( { delay: ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY } );
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
 
@@ -68,7 +69,7 @@ export const IconLibraryPopover = ( {
 	);
 
 	const handleClose = () => {
-		handleSearchChange( '' );
+		setSearchValue( '' );
 		onClose();
 	};
 
@@ -86,7 +87,7 @@ export const IconLibraryPopover = ( {
 	};
 
 	const handleClearSearch = () => {
-		handleSearchChange( '' );
+		setSearchValue( '' );
 	};
 
 	return (

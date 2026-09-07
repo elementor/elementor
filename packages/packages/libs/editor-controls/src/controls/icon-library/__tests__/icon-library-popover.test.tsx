@@ -64,6 +64,10 @@ describe( 'IconLibraryPopover', () => {
 		} as never );
 	} );
 
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
 	it( 'selects an icon and closes', () => {
 		// Arrange.
 		const onSelect = jest.fn();
@@ -136,7 +140,10 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByText( /Sorry, nothing matched/ ) ).toBeInTheDocument();
 		expect( screen.getByText( /missing/ ) ).toBeInTheDocument();
 
-		jest.useRealTimers();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Clear & try again' } ) );
+
+		expect( screen.getByPlaceholderText( 'Search' ) ).toHaveValue( '' );
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows a load failure when the catalog is empty', () => {
