@@ -53,6 +53,9 @@ class Page_Context extends Endpoint_Base {
 			'ally_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=pojo-accessibility' ),
 			'cookiez_plugin_active' => Hints::is_plugin_active( 'cookiez/cookiez.php' ),
 			'cookiez_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=cookiez' ),
+			'cookiez_plugin_installed' => Hints::is_plugin_installed( 'cookiez/cookiez.php' ),
+			'cookiez_plugin_action_url' => Hints::get_plugin_action_url( 'cookiez' ),
+			'cookiez_scan_url' => admin_url( 'admin.php?page=cookiez-settings#cookie-management' ),
 			'image_optimization_plugin_active' => Hints::is_plugin_active( 'image-optimization/image-optimization.php' ),
 			'image_optimization_plugin_url' => Hints::get_plugin_action_url( 'image-optimization' ),
 		];

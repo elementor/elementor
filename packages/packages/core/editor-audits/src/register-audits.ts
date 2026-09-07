@@ -15,6 +15,7 @@ import * as preferGlobalColors from './audits/prefer-global-colors';
 import * as preferGlobalFonts from './audits/prefer-global-fonts';
 import * as privacyPolicy from './audits/privacy-policy';
 import * as robotsNoindex from './audits/robots-noindex';
+import * as scanForCookies from './audits/scan-for-cookies';
 import * as sectionsAndColumns from './audits/sections-and-columns';
 import * as siteIdentity from './audits/site-identity';
 import * as tooManyWidgets from './audits/too-many-widgets';
@@ -47,6 +48,7 @@ const AUDITS: Audit[] = [
 	privacyPolicy.audit,
 	accessibilityPolicy.audit,
 	cookiePolicy.audit,
+	scanForCookies.audit,
 ];
 
 export function registerAllAudits(): void {
