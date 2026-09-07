@@ -55,6 +55,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'text' => Escaped_Html_Prop_Type::make()
+				->allowed_html_tags( Escaped_Html_Prop_Type::button_text_tags() )
 				->default( __( 'Click here', 'elementor' ) )
 				->description( 'The text displayed on the button.' )
 				->alias( 'content', 'label' ),

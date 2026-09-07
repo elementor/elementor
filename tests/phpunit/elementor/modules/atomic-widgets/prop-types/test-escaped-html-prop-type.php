@@ -208,4 +208,33 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		$this->assertSame( 'escaped-html', $schema['properties']['$$type']['const'] );
 		$this->assertSame( 'string', $schema['properties']['value']['type'] );
 	}
+
+	public function test_json_schema__exposes_allowed_html_tags_when_configured() {
+		// Arrange.
+		$prop_type = Escaped_Html_Prop_Type::make()
+			->allowed_html_tags( Escaped_Html_Prop_Type::heading_text_tags() );
+
+		// Act.
+		$schema = $prop_type->to_json_schema();
+
+		// Assert.
+		$this->assertSame(
+			Escaped_Html_Prop_Type::heading_text_tags(),
+			$schema['properties']['value']['allowed_html_tags']
+		);
+	}
+
+	public function test_heading_text_tags__matches_frontend_allowlist() {
+		$this->assertSame(
+			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'i', 'u', 'a', 'del', 'span', 'br' ],
+			Escaped_Html_Prop_Type::heading_text_tags()
+		);
+	}
+
+	public function test_paragraph_text_tags__matches_frontend_allowlist() {
+		$this->assertSame(
+			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'u', 'ul', 'ol', 'li', 'blockquote', 'a', 'del', 'span', 'br' ],
+			Escaped_Html_Prop_Type::paragraph_text_tags()
+		);
+	}
 }
