@@ -140,6 +140,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Back
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
@@ -460,6 +461,7 @@ class Module extends BaseModule {
 
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
+			$elements_manager->register_element_type( new Carousel_Promotion() );
 		}
 	}
 
