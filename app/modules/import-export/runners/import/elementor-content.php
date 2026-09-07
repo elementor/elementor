@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 class Elementor_Content extends Import_Runner_Base {
@@ -33,7 +34,10 @@ class Elementor_Content extends Import_Runner_Base {
 		$result['content'] = [];
 		$this->import_session_id = $data['session_id'];
 
-		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
+		$elementor_post_types = array_diff(
+			ImportExportUtils::get_elementor_post_types(),
+			Components_Module::excluded_import_export_post_types()
+		);
 
 		foreach ( $elementor_post_types as $post_type ) {
 			if ( empty( $data['manifest']['content'][ $post_type ] ) ) {
