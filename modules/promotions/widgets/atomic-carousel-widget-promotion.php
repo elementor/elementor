@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Promotions\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,8 +16,7 @@ class Atomic_Carousel_Widget_Promotion {
 	}
 
 	private function is_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' )
-			&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_CAROUSEL_PROMOTION );
+		return Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
 	}
 
 	public function add_promotion_data( array $settings ): array {

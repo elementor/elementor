@@ -10,19 +10,12 @@ const categorySelector = '#elementor-panel-category-v4-elements';
 const carouselFixturePath = _path.resolve( __dirname, './templates/carousel-promotion.json' );
 
 test.describe( 'Carousel promotion test @promotions', () => {
-	test.describe.configure( { mode: 'serial' } );
-
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_carousel_promotion' );
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
+	test.afterAll( async () => {
+		await wpCli( 'wp elementor experiments deactivate e_atomic_elements' );
 	} );
 
 	test( 'Carousel widget visible in Atomic Elements with nested-carousel icon', async ( { page, apiRequests }, testInfo ) => {
@@ -69,19 +62,5 @@ test.describe( 'Carousel promotion test @promotions', () => {
 
 		await expect( page.locator( '.e-pro-promotion-placeholder' ) ).toHaveCount( 0 );
 		await expect( page.locator( '[data-e-type="e-carousel"]' ) ).toHaveCount( 0 );
-	} );
-
-	test( 'Carousel widget hidden when carousel promotion experiment is off', async ( { page, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments deactivate e_carousel_promotion' );
-
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.openNewPage();
-
-		const category = page.locator( categorySelector );
-		await category.locator( '.elementor-panel-category-title' ).click();
-		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
-
-		const carouselWidget = getPromotionWidget( category, 'Carousel' );
-		await expect( carouselWidget ).toHaveCount( 0 );
 	} );
 } );

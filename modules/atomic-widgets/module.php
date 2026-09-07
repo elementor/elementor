@@ -181,7 +181,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
 	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
-	const EXPERIMENT_CAROUSEL_PROMOTION = 'e_carousel_promotion';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -212,7 +211,6 @@ class Module extends BaseModule {
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
 		$this->register_icon_library_experiment();
-		$this->register_carousel_promotion_experiment();
 
 		$this->register_hooks();
 
@@ -304,21 +302,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ICON_LIBRARY,
 			'title' => esc_html__( 'SVG Library', 'elementor' ),
 			'description' => esc_html__( 'Enable SVG library support in the SVG element.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-	}
-
-	/**
-	 * Dev-only gate that keeps the Carousel panel promotion tile off trunk until GA.
-	 * Remove it once the element ships (ED-25385).
-	 */
-	private function register_carousel_promotion_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_CAROUSEL_PROMOTION,
-			'title' => esc_html__( 'Carousel promotion', 'elementor' ),
-			'description' => esc_html__( 'Show the Carousel widget promotion tile in the panel.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
