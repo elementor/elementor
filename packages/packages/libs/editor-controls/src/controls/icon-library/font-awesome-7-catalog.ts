@@ -37,8 +37,11 @@ export async function loadFontAwesome7Catalog( signal?: AbortSignal ): Promise< 
 	return catalogs.flat();
 }
 
-export function filterFontAwesome7Icons( icons: FontAwesome7Icon[], searchValue: string ): FontAwesome7Icon[] {
-	const query = searchValue.trim().toLowerCase();
+export function filterFontAwesome7Icons(
+	icons: FontAwesome7Icon[],
+	searchValue?: string | null
+): FontAwesome7Icon[] {
+	const query = searchValue?.trim().toLowerCase() ?? '';
 
 	if ( query === '' ) {
 		return icons;

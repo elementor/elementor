@@ -199,7 +199,7 @@ function toIconDefinition( name: string, iconData: unknown ): FontAwesome7IconDe
 function isValidIconTuple( iconData: unknown ): iconData is FontAwesomeIconJson {
 	return (
 		Array.isArray( iconData ) &&
-		iconData.length >= 5 &&
+		iconData.length > FONT_AWESOME_JSON.path &&
 		typeof iconData[ FONT_AWESOME_JSON.width ] === 'number' &&
 		typeof iconData[ FONT_AWESOME_JSON.height ] === 'number' &&
 		Array.isArray( iconData[ FONT_AWESOME_JSON.aliases ] )

@@ -98,6 +98,9 @@ describe( 'font-awesome-7-catalog', () => {
 		expect( filterFontAwesome7Icons( icons, 'STAR' ) ).toHaveLength( 1 );
 		expect( filterFontAwesome7Icons( icons, 'favorite' ) ).toHaveLength( 1 );
 		expect( filterFontAwesome7Icons( icons, 'missing' ) ).toHaveLength( 0 );
+		expect( filterFontAwesome7Icons( icons, '' ) ).toHaveLength( 2 );
+		expect( filterFontAwesome7Icons( icons, null ) ).toHaveLength( 2 );
+		expect( filterFontAwesome7Icons( icons, undefined ) ).toHaveLength( 2 );
 	} );
 
 	it( 'normalizes fas and fa-solid selected values', () => {

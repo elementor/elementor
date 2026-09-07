@@ -1,13 +1,16 @@
 import {
 	type FontAwesome7IconDefinition,
 	getFontAwesome7IconName,
-	resetFontAwesome7IconsCache,
 	resolveFontAwesome7Icon,
 } from '@elementor/editor-controls';
 
 import { createTransformer } from '../create-transformer';
 import type { TransformerOptions } from '../types';
 import { processSvgContent } from './process-svg-content';
+
+const EMPTY_ICON_RESULT = { html: null, url: null };
+const ICON_SVG_SIZE = '100%';
+const ICON_SVG_OVERFLOW = 'visible';
 
 type IconValue = {
 	value?: unknown;
@@ -19,25 +22,25 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 	const library = typeof value.library === 'string' ? value.library : null;
 
 	if ( ! iconValue || ! library ) {
-		return { html: null, url: null };
+		return EMPTY_ICON_RESULT;
 	}
 
 	const iconName = getFontAwesome7IconName( iconValue );
 
 	if ( ! iconName ) {
-		return { html: null, url: null };
+		return EMPTY_ICON_RESULT;
 	}
 
 	const iconData = await resolveFontAwesome7Icon( library, iconName, signal );
 
 	if ( ! iconData ) {
-		return { html: null, url: null };
+		return EMPTY_ICON_RESULT;
 	}
 
 	const svgText = buildFontAwesomeSvg( iconData );
 
 	if ( ! svgText ) {
-		return { html: null, url: null };
+		return EMPTY_ICON_RESULT;
 	}
 
 	const html = processIconSvgContent( svgText );
@@ -75,11 +78,9 @@ function processIconSvgContent( svgText: string ): string | null {
 	}
 
 	svgElement.setAttribute( 'aria-hidden', 'true' );
-	svgElement.style.setProperty( 'width', '100%' );
-	svgElement.style.setProperty( 'height', '100%' );
-	svgElement.style.setProperty( 'overflow', 'visible' );
+	svgElement.style.setProperty( 'width', ICON_SVG_SIZE );
+	svgElement.style.setProperty( 'height', ICON_SVG_SIZE );
+	svgElement.style.setProperty( 'overflow', ICON_SVG_OVERFLOW );
 
 	return svgElement.outerHTML;
 }
-
-export const resetFontAwesomeIconsCache = resetFontAwesome7IconsCache;
