@@ -196,9 +196,13 @@ class Markdown_Endpoint extends Feature_Component {
 	 * @param int $post_id The post being served.
 	 */
 	public function on_markdown_headers( int $post_id ): void {
-		header( 'Vary: Accept' );
-		header( 'Link: <' . esc_url( get_permalink( $post_id ) ) . '>; rel="canonical"' );
-		header( 'X-Robots-Tag: noindex' );
+		if ( headers_sent() ) {
+			return;
+		}
+
+		foreach ( $this->build_markdown_hook_headers( $post_id ) as $name => $value ) {
+			header( $name . ': ' . $value );
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -258,11 +262,41 @@ class Markdown_Endpoint extends Feature_Component {
 	 *                     Link header.
 	 */
 	public function send_headers( int $post_id ): void {
-		header( 'Content-Type: text/markdown; charset=utf-8' );
-		header( 'X-Content-Type-Options: nosniff' );
-		header( 'Vary: Accept' );
-		header( 'Link: <' . esc_url( get_permalink( $post_id ) ) . '>; rel="canonical"' );
-		header( 'X-Robots-Tag: noindex' );
+		if ( headers_sent() ) {
+			return;
+		}
+
+		foreach ( $this->build_response_headers( $post_id ) as $name => $value ) {
+			header( $name . ': ' . $value );
+		}
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function build_response_headers( int $post_id ): array {
+		return array_merge(
+			[
+				'Content-Type'           => 'text/markdown; charset=utf-8',
+				'X-Content-Type-Options' => 'nosniff',
+				'Vary'                   => 'Accept',
+				'X-Robots-Tag'           => 'noindex',
+			],
+			[
+				'Link' => '<' . esc_url( get_permalink( $post_id ) ) . '>; rel="canonical"',
+			]
+		);
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function build_markdown_hook_headers( int $post_id ): array {
+		return [
+			'Vary'         => 'Accept',
+			'Link'         => '<' . esc_url( get_permalink( $post_id ) ) . '>; rel="canonical"',
+			'X-Robots-Tag' => 'noindex',
+		];
 	}
 
 	// -------------------------------------------------------------------------

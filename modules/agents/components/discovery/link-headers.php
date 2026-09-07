@@ -150,6 +150,10 @@ class Link_Headers extends Feature_Component {
 	 * @param string[] $links
 	 */
 	private function send_link_headers( array $links ): void {
+		if ( headers_sent() ) {
+			return;
+		}
+
 		foreach ( $links as $link ) {
 			header( 'Link: ' . $link, false );
 		}

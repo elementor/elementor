@@ -2,8 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Content_Generator extends Elementor_Test_Base {
@@ -12,6 +14,8 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+		$this->ensure_active_kit_exists();
 		$this->generator = new Content_Generator( new Prompt_Injection_Sanitizer() );
 	}
 
@@ -291,5 +295,18 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 		$this->assertStringNotContainsString( 'Stale content that must not appear.', $output );
 		$this->assertStringContainsString( 'Fresh content that is long enough for extraction.', $output );
+	}
+
+	private function ensure_active_kit_exists(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
+
+		if ( ! Plugin::$instance->kits_manager->get_active_id() ) {
+			Kits_Manager::create_default_kit();
+		}
 	}
 }

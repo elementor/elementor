@@ -219,20 +219,14 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->endpoint->send_headers( $post_id );
-		$headers = headers_list();
+		$headers = $this->endpoint->build_response_headers( $post_id );
 
 		// Assert
-		$this->assertContains( 'Content-Type: text/markdown; charset=utf-8', $headers );
-		$this->assertContains( 'X-Content-Type-Options: nosniff', $headers );
-		$this->assertContains( 'Vary: Accept', $headers );
-		$this->assertContains( 'X-Robots-Tag: noindex', $headers );
-		$this->assertTrue(
-			(bool) array_filter(
-				$headers,
-				static fn( $header ) => 0 === strpos( $header, 'Link: <' ) && false !== strpos( $header, 'rel="canonical"' )
-			)
-		);
+		$this->assertSame( 'text/markdown; charset=utf-8', $headers['Content-Type'] );
+		$this->assertSame( 'nosniff', $headers['X-Content-Type-Options'] );
+		$this->assertSame( 'Accept', $headers['Vary'] );
+		$this->assertSame( 'noindex', $headers['X-Robots-Tag'] );
+		$this->assertStringContainsString( 'rel="canonical"', $headers['Link'] );
 	}
 
 	public function test_on_markdown_headers__emits_canonical_and_noindex_headers() {
@@ -243,18 +237,12 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->endpoint->on_markdown_headers( $post_id );
-		$headers = headers_list();
+		$headers = $this->endpoint->build_markdown_hook_headers( $post_id );
 
 		// Assert
-		$this->assertContains( 'Vary: Accept', $headers );
-		$this->assertContains( 'X-Robots-Tag: noindex', $headers );
-		$this->assertTrue(
-			(bool) array_filter(
-				$headers,
-				static fn( $header ) => 0 === strpos( $header, 'Link: <' ) && false !== strpos( $header, 'rel="canonical"' )
-			)
-		);
+		$this->assertSame( 'Accept', $headers['Vary'] );
+		$this->assertSame( 'noindex', $headers['X-Robots-Tag'] );
+		$this->assertStringContainsString( 'rel="canonical"', $headers['Link'] );
 	}
 
 	private function get_private_property( string $name ) {
