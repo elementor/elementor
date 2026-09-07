@@ -8,6 +8,7 @@ export function getPromotionWidget( category: Locator, widgetTitle: string ): Lo
 }
 
 export async function openPromotionPopover( widget: Locator ): Promise<Locator> {
+	await widget.evaluate( ( el ) => el.scrollIntoView( { block: 'center', behavior: 'instant' } ) );
 	await widget.click( { force: true } );
 
 	const popover = widget.page().locator( promotionPopoverSelector );
