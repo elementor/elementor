@@ -55,7 +55,6 @@ class Atomic_Carousel_Widget_Promotion {
 			'content' => __( 'Upgrade to build engaging slideshows with customizable slides, arrow navigation, pagination dots and autoplay controls.', 'elementor' ),
 			'ctaText' => __( 'Upgrade now', 'elementor' ),
 			'widgetCtaUrl' => Carousel_Promotion::MODAL_UPGRADE_URL,
-			'sectionCtaUrl' => Carousel_Promotion::SECTION_UPGRADE_URL,
 		];
 	}
 }

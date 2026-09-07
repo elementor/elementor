@@ -24,7 +24,6 @@ class Carousel_Promotion extends Atomic_Element_Base {
 	// Provisional go links — pending marketing (epic ED-25236 open question 9).
 	const CANVAS_UPGRADE_URL = 'https://go.elementor.com/go-pro-carousel-canvas-upgrade/';
 	const MODAL_UPGRADE_URL = 'https://go.elementor.com/go-pro-carousel-modal/';
-	const SECTION_UPGRADE_URL = 'https://go.elementor.com/go-pro-carousel-section/';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
