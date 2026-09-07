@@ -140,20 +140,39 @@ jobs:
                 }
               ]
             }
-      - name: Send Slack notification on release failure
-        uses: slackapi/slack-github-action@v3
+      - name: Post To Slack Failed Latest auto Release
         if: failure()
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          RUN_ID: ${{ github.run_id }}
+        uses: ./.github/workflows/post-to-slack
         with:
-          webhook: ${{ secrets.SLACK_COMPARE_PERFORMANCE_WEBHOOK_URL }}
-          webhook-type: webhook-trigger
-          payload: |
-            run_id: ${{ env.RUN_ID }}
-            repository: ${{ github.repository }}
-            branch: ${{ env.BASE_REF }}
-            pr_number: ${{ env.PR_NUMBER }}
-            pr_url: ${{ env.PR_URL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ vars.RELEASE_FAILURE_CHANNEL_ID }}
+          PAYLOAD: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":rotating_light: *Elementor* automated release from `${{ github.event.pull_request.base.ref }}` failed.\n\nNo new build was published for this merge."
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Merged PR <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> by ${{ github.actor }}"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "Open run :point_left:",
+                      "emoji": true
+                    },
+                    "value": "open-failed-run",
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                    "action_id": "button-action"
+                  }
+                }
+              ]
+            }
