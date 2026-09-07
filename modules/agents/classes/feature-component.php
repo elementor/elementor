@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Agents\Classes;
 
+use Elementor\Modules\Agents\Module;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -31,12 +34,11 @@ abstract class Feature_Component {
 	/**
 	 * Whether this component is enabled.
 	 *
-	 * Hardcoded true — this is the single seam a future settings screen
-	 * will hook into. Subclasses override ONLY to express hard dependency
-	 * gates (e.g. mcp-adapter present), never user preference.
+	 * Gated on the agent_ready experiment. Subclasses override ONLY to
+	 * express additional hard dependency gates (e.g. mcp-adapter present).
 	 */
 	public function is_enabled(): bool {
-		return true;
+		return Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_NAME );
 	}
 
 	/**

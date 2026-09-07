@@ -71,48 +71,46 @@ class Module extends BaseModule {
 		];
 	}
 
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
-		$sanitizer            = new Prompt_Injection_Sanitizer();
-		$this->generator      = new Content_Generator( $sanitizer );
-		$this->cache          = new Llms_Cache();
-		$this->robots_handler = new Robots_Txt_Handler();
+		$sanitizer              = new Prompt_Injection_Sanitizer();
+		$this->generator        = new Content_Generator( $sanitizer );
+		$this->cache            = new Llms_Cache();
+		$this->robots_handler   = new Robots_Txt_Handler();
+		$this->feature_registry = new Feature_Registry();
 
-		// HTTP endpoints.
+		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
+		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
+
+		if ( ! self::is_active() ) {
+			return;
+		}
+
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
 
-		// Editor integration.
-		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
-
-		// Cache invalidation — per-post inline cache (post meta) + assembled output (transients).
 		add_action( 'save_post',                     [ $this, 'on_post_change' ], 10, 2 );
 		add_action( 'trashed_post',                  [ $this, 'on_post_state_change' ] );
 		add_action( 'untrashed_post',                [ $this, 'on_post_state_change' ] );
 		add_action( 'before_delete_post',            [ $this, 'on_post_state_change' ] );
 		add_action( 'elementor/document/after_save', [ $this, 'on_elementor_document_save' ] );
 
-		// Global events that could change rendering for every post (theme/plugin changes).
 		add_action( 'switch_theme',       [ $this, 'on_global_change' ] );
 		add_action( 'activated_plugin',   [ $this, 'on_global_change' ] );
 		add_action( 'deactivated_plugin', [ $this, 'on_global_change' ] );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
 
-		// robots.txt coordination.
 		$this->robots_handler->register();
 
-		// Initialise the feature registry.
-		$this->feature_registry = new Feature_Registry();
-
-		// Initialise the well-known router (must come before endpoint registration).
 		$this->well_known_router = new Well_Known_Router();
 		$this->add_component( 'well_known_router', $this->well_known_router );
 		$this->well_known_router->init();
 
-		// Register /.well-known/ endpoints.
-		// Order: Phase 1.1 stubs first (is_applicable=false), ARD manifest last
-		// so it can introspect active peers via get_active_endpoints().
 		$this->register_well_known_endpoint( new Oauth_Authorization_Server() );
 		$this->register_well_known_endpoint( new Webmcp_Manifest() );
 		$this->register_well_known_endpoint( new Oauth_Protected_Resource() );
@@ -121,21 +119,11 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest() );
 
-		// Register discovery components.
 		$this->register_component( new Link_Headers() );
-
-		// Register readability components.
 		$this->register_component( new Markdown_Endpoint() );
 
-		// SEO plugin co-existence check (runs after plugins are loaded).
-		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
-
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-
-			// On first activation, detect any existing physical llms.txt.
-			add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
-		}
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
 	}
 
 	// -------------------------------------------------------------------------
@@ -146,7 +134,7 @@ class Module extends BaseModule {
 	 * @param Kit $kit
 	 */
 	public function register_kit_tabs( $kit ) {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+		if ( ! self::is_active() ) {
 			return;
 		}
 

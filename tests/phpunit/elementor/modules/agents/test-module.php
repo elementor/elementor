@@ -51,6 +51,29 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
+	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {
+		// Arrange
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+
+		$module = new Module();
+
+		$robots_handler = new \ReflectionProperty( Module::class, 'robots_handler' );
+		$robots_handler->setAccessible( true );
+		$robots = $robots_handler->getValue( $module );
+
+		// Assert
+		$this->assertFalse( Module::is_active() );
+		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_txt' ] ) );
+		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_full_txt' ] ) );
+		$this->assertFalse( has_filter( 'robots_txt', [ $robots, 'add_rules' ] ) );
+		$this->assertFalse( $module->get_component( 'link_headers' ) );
+		$this->assertFalse( $module->get_component( 'markdown_endpoint' ) );
+		$this->assertFalse( $module->get_component( 'well_known_router' ) );
+	}
+
 	public function test_get_llms_txt_content__returns_empty_when_not_configured() {
 		// Act
 		$content = $this->module->get_llms_txt_content();
