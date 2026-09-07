@@ -69,6 +69,35 @@ class Content_Extractor {
 	}
 
 	/**
+	 * Run the extractor chain once and return both the winning extractor ID
+	 * and the extracted body markdown.
+	 *
+	 * @param \WP_Post $post
+	 * @return array{id: string, body: string}
+	 */
+	public function extract_with_id( \WP_Post $post ): array {
+		foreach ( $this->get_active_extractors( $post ) as $extractor ) {
+			if ( ! $extractor->can_handle( $post ) ) {
+				continue;
+			}
+
+			$result = $extractor->extract( $post );
+
+			if ( $this->is_sufficient( $result ) ) {
+				return [
+					'id'   => $extractor->get_id(),
+					'body' => $result,
+				];
+			}
+		}
+
+		return [
+			'id'   => '',
+			'body' => '',
+		];
+	}
+
+	/**
 	 * Extract body markdown from a post using the extractor chain.
 	 *
 	 * Returns only body content — no frontmatter.
@@ -77,44 +106,19 @@ class Content_Extractor {
 	 * @return string Body markdown, or '' when no extractor produces content.
 	 */
 	public function extract( \WP_Post $post ): string {
-		foreach ( $this->get_active_extractors( $post ) as $extractor ) {
-			if ( ! $extractor->can_handle( $post ) ) {
-				continue;
-			}
-
-			$result = $extractor->extract( $post );
-
-			if ( $this->is_sufficient( $result ) ) {
-				return $result;
-			}
-		}
-
-		return '';
+		return $this->extract_with_id( $post )['body'];
 	}
 
 	/**
 	 * Return the ID of the extractor that would produce content for the post.
 	 *
-	 * Useful for recording cache provenance without extracting twice — the
-	 * caller should call `extract()` separately when the actual content is needed.
+	 * When both the extractor ID and body are needed, prefer `extract_with_id()`.
 	 *
 	 * @param \WP_Post $post
 	 * @return string Extractor ID, or '' when no extractor produces content.
 	 */
 	public function get_extractor_id( \WP_Post $post ): string {
-		foreach ( $this->get_active_extractors( $post ) as $extractor ) {
-			if ( ! $extractor->can_handle( $post ) ) {
-				continue;
-			}
-
-			$result = $extractor->extract( $post );
-
-			if ( $this->is_sufficient( $result ) ) {
-				return $extractor->get_id();
-			}
-		}
-
-		return '';
+		return $this->extract_with_id( $post )['id'];
 	}
 
 	// -------------------------------------------------------------------------

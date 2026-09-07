@@ -557,15 +557,15 @@ class Content_Generator {
 			return '';
 		}
 
-		$extractor    = new Content_Extractor();
-		$extractor_id = $extractor->get_extractor_id( $post );
-		$body         = $extractor->extract( $post );
+		$extractor   = new Content_Extractor();
+		$extraction  = $extractor->extract_with_id( $post );
 
-		if ( '' === $body ) {
+		if ( '' === $extraction['body'] ) {
 			return '';
 		}
 
-		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extractor_id );
+		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
+		$body        = $extraction['body'];
 
 		return $frontmatter . "\n\n" . $body;
 	}
