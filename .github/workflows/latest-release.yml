@@ -72,6 +72,7 @@ jobs:
         env:
           MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
       - name: Create GitHub release
+        id: create_release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -82,8 +83,11 @@ jobs:
           body: "Automated release for ${{ env.PACKAGE_VERSION }}"
           prerelease: ${{ env.PRERELEASE }}
           token: ${{ secrets.GITHUB_TOKEN }}
+      # The nightly steps continue on error so a rolling-build regression cannot fail a
+      # release that already published. They report separately to Slack below.
       - name: Prepare nightly release
         id: nightly
+        continue-on-error: true
         uses: elementor/elementor-editor-github-actions/actions/publish-nightly-release@main
         with:
           plugin-slug: elementor
@@ -94,7 +98,11 @@ jobs:
           pr-number: ${{ github.event.pull_request.number }}
           pr-title: ${{ github.event.pull_request.title }}
           pr-url: ${{ github.event.pull_request.html_url }}
+          merge-commit-sha: ${{ github.event.pull_request.merge_commit_sha }}
       - name: Update nightly release
+        id: update_nightly
+        continue-on-error: true
+        if: steps.nightly.outcome == 'success'
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -146,7 +154,7 @@ jobs:
               ]
             }
       - name: Post To Slack Failed Latest auto Release
-        if: failure()
+        if: failure() && vars.RELEASE_FAILURE_CHANNEL_ID != '' && steps.create_release.outcome != 'success'
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -175,6 +183,42 @@ jobs:
                       "emoji": true
                     },
                     "value": "open-failed-run",
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                    "action_id": "button-action"
+                  }
+                }
+              ]
+            }
+      - name: Post To Slack Failed Nightly Release
+        if: always() && vars.RELEASE_FAILURE_CHANNEL_ID != '' && (steps.nightly.outcome == 'failure' || steps.update_nightly.outcome == 'failure')
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ vars.RELEASE_FAILURE_CHANNEL_ID }}
+          PAYLOAD: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":warning: *Elementor* nightly build from `${{ github.event.pull_request.base.ref }}` failed to update.\n\nRelease `${{ env.PACKAGE_VERSION }}` was published, but the nightly release still points at the previous merge."
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Merged PR <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> by ${{ github.actor }}"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "Open run :point_left:",
+                      "emoji": true
+                    },
+                    "value": "open-failed-nightly-run",
                     "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
                     "action_id": "button-action"
                   }
