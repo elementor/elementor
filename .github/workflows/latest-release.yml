@@ -82,8 +82,27 @@ jobs:
           body: "Automated release for ${{ env.PACKAGE_VERSION }}"
           prerelease: ${{ env.PRERELEASE }}
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepare nightly release
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/publish-nightly-release.sh"
+      - name: Update nightly release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        with:
+          tag_name: ${{ env.NIGHTLY_TAG }}
+          target_commitish: ${{ github.event.pull_request.base.ref }}
+          name: Nightly ${{ env.NIGHTLY_TAG }}
+          files: ${{ env.NIGHTLY_ZIP_FILENAME }}
+          body_path: ${{ env.NIGHTLY_NOTES_FILENAME }}
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Post To Slack Created Latest auto Release
-        if: ${{ github.event.inputs.pre_release }} == false
+        if: ${{ env.PRERELEASE == 'false' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -116,6 +135,42 @@ jobs:
                     },
                     "value": "open-release",
                     "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
+                    "action_id": "button-action"
+                  }
+                }
+              ]
+            }
+      - name: Post To Slack Failed Latest auto Release
+        if: failure()
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+          PAYLOAD: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":rotating_light: *Elementor* automated release from `${{ github.event.pull_request.base.ref }}` failed.\n\nNo new build was published for this merge."
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Merged PR <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> by ${{ github.actor }}"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "Open run :point_left:",
+                      "emoji": true
+                    },
+                    "value": "open-failed-run",
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
                     "action_id": "button-action"
                   }
                 }
