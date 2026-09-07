@@ -46,7 +46,14 @@ class Llms_Cache {
 	 * @param string $content Generated content.
 	 */
 	public function set_llms( string $content ): void {
-		set_transient( self::TRANSIENT_LLMs, $content, $this->get_ttl() );
+		$ttl = $this->get_ttl();
+
+		if ( 0 === $ttl ) {
+			delete_transient( self::TRANSIENT_LLMs );
+			return;
+		}
+
+		set_transient( self::TRANSIENT_LLMs, $content, $ttl );
 		$this->touch_modified_time();
 	}
 
@@ -56,7 +63,14 @@ class Llms_Cache {
 	 * @param string $content Generated content.
 	 */
 	public function set_llms_full( string $content ): void {
-		set_transient( self::TRANSIENT_LLMs_FULL, $content, $this->get_ttl() );
+		$ttl = $this->get_ttl();
+
+		if ( 0 === $ttl ) {
+			delete_transient( self::TRANSIENT_LLMs_FULL );
+			return;
+		}
+
+		set_transient( self::TRANSIENT_LLMs_FULL, $content, $ttl );
 		$this->touch_modified_time();
 	}
 

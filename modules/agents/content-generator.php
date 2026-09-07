@@ -271,8 +271,8 @@ class Content_Generator {
 		$lines[] = '# ' . get_bloginfo( 'name' );
 		$lines[] = '';
 
-		$intro = isset( $overrides['intro'] )
-			? trim( $overrides['intro'] )
+		$intro = isset( $overrides['intro'] ) && '' !== trim( (string) $overrides['intro'] )
+			? trim( (string) $overrides['intro'] )
 			: $this->generate_intro();
 
 		if ( '' !== $intro ) {
@@ -511,7 +511,9 @@ class Content_Generator {
 
 		$content = $this->generate_inline_content( $post_id );
 
-		$this->write_inline_meta_cache( $post_id, $content );
+		if ( '' !== $content ) {
+			$this->write_inline_meta_cache( $post_id, $content );
+		}
 
 		return $content;
 	}
@@ -531,10 +533,7 @@ class Content_Generator {
 	 * Used when a global invalidation is needed (e.g. theme switch, plugin activation).
 	 */
 	public function clear_all_post_caches(): void {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-		$wpdb->delete( $wpdb->postmeta, [ 'meta_key' => self::INLINE_META_KEY ] );
+		delete_metadata( 'post', 0, self::INLINE_META_KEY, '', true );
 	}
 
 	// -------------------------------------------------------------------------

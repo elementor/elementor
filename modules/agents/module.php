@@ -293,25 +293,17 @@ class Module extends BaseModule {
 	 * @param mixed $document
 	 */
 	public function on_elementor_document_save( $document ) {
-		$post_id = $document instanceof \Elementor\Core\Base\Document
-			? $document->get_main_id()
-			: 0;
-
-		if ( $post_id ) {
-			$this->generator->clear_post_cache( $post_id );
+		if ( ! ( $document instanceof Kit ) ) {
+			return;
 		}
 
-		$this->invalidate_cache( $post_id );
+		$kit_id = $document->get_main_id();
 
-		if ( $document instanceof Kit ) {
-			/**
-			 * Fires when the /llms.txt response may have changed, so external
-			 * page-caches and CDNs can purge their copy.
-			 *
-			 * @param int $kit_id The saved kit post ID.
-			 */
-			do_action( 'elementor/agents/llms_txt/cache_invalidated', $document->get_main_id() );
+		if ( $kit_id ) {
+			$this->generator->clear_post_cache( $kit_id );
 		}
+
+		$this->invalidate_cache( $kit_id );
 	}
 
 	/**

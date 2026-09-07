@@ -201,7 +201,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$post_id = $this->factory()->post->create( [
 			'post_status'  => 'publish',
 			'post_title'   => 'Cached Post',
-			'post_content' => 'Body text.',
+			'post_content' => 'Body text with enough characters for extraction.',
 		] );
 
 		// Trigger generation (writes meta as side-effect).
@@ -211,7 +211,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 		$this->assertIsArray( $meta );
 		$this->assertArrayHasKey( 'content', $meta );
-		$this->assertStringContainsString( 'Body text.', $meta['content'] );
+		$this->assertStringContainsString( 'Body text with enough characters for extraction.', $meta['content'] );
 	}
 
 	public function test_inline_cache_is_served_on_second_call() {
@@ -257,7 +257,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		for ( $i = 0; $i < 3; $i++ ) {
 			$ids[] = $this->factory()->post->create( [
 				'post_status'  => 'publish',
-				'post_content' => "Body $i",
+				'post_content' => "Body content number $i with enough characters.",
 			] );
 		}
 
@@ -278,7 +278,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 	public function test_stale_cache_version_is_ignored() {
 		$post_id = $this->factory()->post->create( [
 			'post_status'  => 'publish',
-			'post_content' => 'Fresh content.',
+			'post_content' => 'Fresh content that is long enough for extraction.',
 		] );
 
 		// Plant a cache entry with a lower version number.
@@ -290,6 +290,6 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$output = $this->generator->generate_llms_full_txt();
 
 		$this->assertStringNotContainsString( 'Stale content that must not appear.', $output );
-		$this->assertStringContainsString( 'Fresh content.', $output );
+		$this->assertStringContainsString( 'Fresh content that is long enough for extraction.', $output );
 	}
 }

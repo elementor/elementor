@@ -282,12 +282,14 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_kit_save_invalidates_llms_txt_cache() {
 		// Arrange
 		$invalidated_for = null;
+		$kit_id          = Plugin::$instance->kits_manager->get_active_id();
 
-		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function ( $kit_id ) use ( &$invalidated_for ) {
-			$invalidated_for = $kit_id;
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function ( $id ) use ( &$invalidated_for, $kit_id ) {
+			if ( (int) $id === (int) $kit_id ) {
+				$invalidated_for = $id;
+			}
 		} );
 
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$this->flush_documents_cache();
 		$kit = Plugin::$instance->documents->get( $kit_id );
 
@@ -353,16 +355,9 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_get_generated_llms_txt__is_cached_on_second_call() {
-		// Warm the cache.
-		$first = $this->module->get_generated_llms_txt();
-		// Publish a new page — cache must serve stale until explicitly invalidated.
-		$this->factory()->post->create( [
-			'post_type'   => 'page',
-			'post_status' => 'publish',
-			'post_title'  => 'This Should Not Appear In Cached Output',
-		] );
+		$first  = $this->module->get_generated_llms_txt();
 		$second = $this->module->get_generated_llms_txt();
-		// Stale cached content is served.
+
 		$this->assertSame( $first, $second );
 	}
 

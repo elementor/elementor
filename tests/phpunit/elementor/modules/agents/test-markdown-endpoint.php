@@ -207,7 +207,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$output = $frontmatter . "\n\n" . $extraction['body'];
 
 		// Act & Assert
-		$this->assertMatchesRegularExpression( '/---\s*\n.*\n---/', $output );
+		$this->assertMatchesRegularExpression( '/---\s*\n[\s\S]*?\n---/', $output );
 		$this->assertStringContainsString( 'Body content for markdown.', $output );
 	}
 

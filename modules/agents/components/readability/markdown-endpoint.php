@@ -102,8 +102,7 @@ class Markdown_Endpoint extends Feature_Component {
 		// Strip the `.md` suffix to get the plain path.
 		$plain_path = substr( $path, 0, -3 );
 
-		// Resolve to a post ID.
-		$post_id = url_to_postid( home_url( $plain_path ) );
+		$post_id = $this->resolve_post_id_from_path( $plain_path );
 
 		if ( ! $post_id ) {
 			return;
@@ -277,6 +276,27 @@ class Markdown_Endpoint extends Feature_Component {
 	 * Mirrors the same logic used in the markdown-render module so the two
 	 * modules agree on what constitutes a markdown request.
 	 */
+	private function resolve_post_id_from_path( string $plain_path ): int {
+		$path = trim( $plain_path, '/' );
+
+		if ( '' === $path ) {
+			return 0;
+		}
+
+		if ( 'index' === $path && 'page' === get_option( 'show_on_front' ) ) {
+			return (int) get_option( 'page_on_front' );
+		}
+
+		$post_types = get_post_types( [ 'public' => true ] );
+		$post       = get_page_by_path( $path, OBJECT, $post_types );
+
+		if ( $post instanceof \WP_Post ) {
+			return $post->ID;
+		}
+
+		return (int) url_to_postid( home_url( $plain_path ) );
+	}
+
 	private function is_markdown_request(): bool {
 		if ( isset( $_GET['format'] ) && 'markdown' === $_GET['format'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
