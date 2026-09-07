@@ -13,6 +13,23 @@ on:
       - release/stable
       - '[0-9].[0-9][0-9]'
       - '[0-9][0-9].[0-9][0-9]'
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        type: choice
+        description: Branch to build and release from.
+        required: true
+        default: main
+        options:
+          - main
+          - release/beta
+          - release/stable
+          - other
+      custom_branch:
+        type: string
+        description: Branch name, used only when target_branch is "other".
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -25,13 +42,16 @@ concurrency:
 
 jobs:
   latest_release:
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip release' ))
     runs-on: ubuntu-22.04
+    env:
+      # Branch being released. A manual run picks it from the inputs, a merge takes the PR base.
+      RELEASE_BRANCH: ${{ github.event_name == 'workflow_dispatch' && (inputs.custom_branch != '' && inputs.custom_branch || inputs.target_branch) || github.event.pull_request.base.ref }}
     steps:
       - name: checkout branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ env.RELEASE_BRANCH }}
       - name: Get Configuration
         id: configuration
         uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
@@ -52,7 +72,7 @@ jobs:
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ env.CHANNEL }}
-          REF: ${{ github.ref }}
+          REF: ${{ github.event_name == 'workflow_dispatch' && env.RELEASE_BRANCH || github.ref }}
           POSTFIX: ${{ steps.set_postfix_value.outputs.postfix }}
       - name: Bump Channel Version
         id: bump_channel_version
@@ -94,11 +114,12 @@ jobs:
           plugin-zip: ${{ env.PLUGIN_ZIP_FILENAME }}
           package-version: ${{ env.PACKAGE_VERSION }}
           clean-package-version: ${{ env.CLEAN_PACKAGE_VERSION }}
-          base-ref: ${{ github.event.pull_request.base.ref }}
+          base-ref: ${{ env.RELEASE_BRANCH }}
           pr-number: ${{ github.event.pull_request.number }}
           pr-title: ${{ github.event.pull_request.title }}
           pr-url: ${{ github.event.pull_request.html_url }}
           merge-commit-sha: ${{ github.event.pull_request.merge_commit_sha }}
+          triggered-by: ${{ github.actor }}
       - name: Update nightly release
         id: update_nightly
         continue-on-error: true
@@ -108,7 +129,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           tag_name: ${{ steps.nightly.outputs.tag }}
-          target_commitish: ${{ github.event.pull_request.base.ref }}
+          target_commitish: ${{ env.RELEASE_BRANCH }}
           name: ${{ steps.nightly.outputs.release-name }}
           files: ${{ steps.nightly.outputs.zip }}
           body_path: ${{ steps.nightly.outputs.notes }}
@@ -166,14 +187,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":rotating_light: *Elementor* automated release from `${{ github.event.pull_request.base.ref }}` failed.\n\nNo new build was published for this merge."
+                    "text": ":rotating_light: *Elementor* automated release from `${{ env.RELEASE_BRANCH }}` failed.\n\nNo new build was published for this run."
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Merged PR <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> by ${{ github.actor }}"
+                    "text": "${{ github.event_name == 'workflow_dispatch' && format('Manual run by {0}', github.actor) || format('Merged PR <{0}|#{1}> by {2}', github.event.pull_request.html_url, github.event.pull_request.number, github.actor) }}"
                   },
                   "accessory": {
                     "type": "button",
@@ -202,14 +223,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":warning: *Elementor* nightly build from `${{ github.event.pull_request.base.ref }}` failed to update.\n\nRelease `${{ env.PACKAGE_VERSION }}` was published, but the nightly release still points at the previous merge."
+                    "text": ":warning: *Elementor* nightly build from `${{ env.RELEASE_BRANCH }}` failed to update.\n\nRelease `${{ env.PACKAGE_VERSION }}` was published, but the nightly release still points at the previous build."
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Merged PR <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> by ${{ github.actor }}"
+                    "text": "${{ github.event_name == 'workflow_dispatch' && format('Manual run by {0}', github.actor) || format('Merged PR <{0}|#{1}> by {2}', github.event.pull_request.html_url, github.event.pull_request.number, github.actor) }}"
                   },
                   "accessory": {
                     "type": "button",
