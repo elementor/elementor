@@ -178,6 +178,52 @@ class Test_Page_Context_Endpoint extends TestCase {
 		update_option( 'wp_page_for_privacy_policy', 0 );
 	}
 
+	public function test_privacy_policy_url_is_null_when_page_is_draft() {
+		// Arrange.
+		$privacy_page_id = $this->factory()->post->create( [
+			'post_title'  => 'Privacy Policy',
+			'post_status' => 'draft',
+			'post_type'   => 'page',
+		] );
+		update_option( 'wp_page_for_privacy_policy', $privacy_page_id );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['privacy_policy_url'] );
+
+		// Cleanup.
+		wp_delete_post( $privacy_page_id, true );
+		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
+	public function test_privacy_policy_url_is_null_when_assigned_page_was_deleted() {
+		// Arrange.
+		$privacy_page_id = $this->factory()->post->create( [
+			'post_title'  => 'Privacy Policy',
+			'post_status' => 'publish',
+			'post_type'   => 'page',
+		] );
+		update_option( 'wp_page_for_privacy_policy', $privacy_page_id );
+		wp_delete_post( $privacy_page_id, true );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['privacy_policy_url'] );
+
+		// Cleanup.
+		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
 	public function test_site_identity_all_set_when_configured() {
 		// Arrange.
 		update_option( 'blogname', 'My Studio' );

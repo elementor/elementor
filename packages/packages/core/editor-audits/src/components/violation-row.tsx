@@ -12,6 +12,7 @@ import { isScoredAudit } from '../utils/is-scored-audit';
 import { onKeyboardClick } from '../utils/keyboard-click';
 import FixViolationWithAngie from './fix-violation-with-angie';
 import SeverityIcon from './severity-icons';
+import ViolationCtaButton from './violation-cta-button';
 import ViolationIcon from './violation-icons';
 
 type Props = {
@@ -160,7 +161,18 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 									{ violation.angieFix && (
 										<FixViolationWithAngie prompt={ buildAngiePrompt( rowLabel ) } />
 									) }
-									<EyeIcon className="violation-hover-icon" fontSize="tiny" aria-hidden={ true } />
+									{ violation.ctaLabel && violation.externalUrl ? (
+										<ViolationCtaButton
+											ctaLabel={ violation.ctaLabel }
+											externalUrl={ violation.externalUrl }
+										/>
+									) : (
+										<EyeIcon
+											className="violation-hover-icon"
+											fontSize="tiny"
+											aria-hidden={ true }
+										/>
+									) }
 								</Box>
 							);
 						} ) }
