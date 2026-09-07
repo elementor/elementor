@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	PopoverBody,
 	PopoverHeader,
@@ -59,6 +59,7 @@ export const IconLibraryPopover = ( {
 		inputValue: searchInputValue,
 		handleChange: handleSearchChange,
 	} = useDebounceState( { delay: ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY } );
+	const [ searchValue, setSearchValue ] = useState( '' );
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
 
 	const items = useMemo( () => createIconLibraryItems( icons, searchValue ), [ icons, searchValue ] );
@@ -86,7 +87,7 @@ export const IconLibraryPopover = ( {
 	};
 
 	const handleClearSearch = () => {
-		handleSearchChange( '' );
+		setSearchValue( '' );
 	};
 
 	return (
@@ -98,8 +99,8 @@ export const IconLibraryPopover = ( {
 				sx={ { pl: ICON_LIBRARY_INLINE_SPACING, pr: 0.5 } }
 			/>
 			<SearchField
-				value={ searchInputValue }
-				onSearch={ handleSearchChange }
+				value={ searchValue }
+				onSearch={ setSearchValue }
 				placeholder={ __( 'Search', 'elementor' ) }
 				id="icon-library-search"
 				sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: 1 } }
