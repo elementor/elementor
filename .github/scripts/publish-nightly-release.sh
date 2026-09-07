@@ -2,6 +2,8 @@
 set -eo pipefail
 
 PLUGIN_SLUG="elementor"
+MAIN_BRANCH="main"
+MAIN_NIGHTLY_TAG="nightly"
 NIGHTLY_NOTES_FILENAME="nightly-release-notes.md"
 
 for REQUIRED_VAR in CLEAN_PACKAGE_VERSION PACKAGE_VERSION PLUGIN_ZIP_FILENAME BASE_REF; do
@@ -11,7 +13,12 @@ for REQUIRED_VAR in CLEAN_PACKAGE_VERSION PACKAGE_VERSION PLUGIN_ZIP_FILENAME BA
 	fi
 done
 
-NIGHTLY_TAG="${CLEAN_PACKAGE_VERSION}-nightly"
+if [[ "${BASE_REF}" == "${MAIN_BRANCH}" ]]; then
+	NIGHTLY_TAG="${MAIN_NIGHTLY_TAG}"
+else
+	NIGHTLY_TAG="${CLEAN_PACKAGE_VERSION}-nightly"
+fi
+
 NIGHTLY_ZIP_FILENAME="${PLUGIN_SLUG}-${NIGHTLY_TAG}.zip"
 NIGHTLY_COMMIT=$(git rev-parse HEAD)
 
@@ -32,6 +39,7 @@ printf 'Rolling build of `%s`, replaced on every merge. Not a stable release.\n\
 
 {
 	echo "NIGHTLY_TAG=${NIGHTLY_TAG}"
+	echo "NIGHTLY_RELEASE_NAME=Nightly (${BASE_REF})"
 	echo "NIGHTLY_ZIP_FILENAME=${NIGHTLY_ZIP_FILENAME}"
 	echo "NIGHTLY_NOTES_FILENAME=${NIGHTLY_NOTES_FILENAME}"
 } >> "$GITHUB_ENV"
