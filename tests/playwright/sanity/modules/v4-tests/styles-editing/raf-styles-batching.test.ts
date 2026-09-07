@@ -7,7 +7,7 @@ import { timeouts } from '../../../../config/timeouts';
 const COLOR_A = '#ff0000';
 const COLOR_B = '#00ff00';
 const COLOR_A_RGB = 'rgb(255, 0, 0)';
-    10|const COLOR_B_RGB = 'rgb(0, 255, 0)';
+const COLOR_B_RGB = 'rgb(0, 255, 0)';
 
 test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
@@ -17,7 +17,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		const page = await context.newPage();
-    20|		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
@@ -27,7 +27,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 	} );
 
 	test.beforeEach( async () => {
-    30|		editor = await wpAdmin.openNewPage();
+		editor = await wpAdmin.openNewPage();
 	} );
 
 	test( 'single style edit applies CSS after batching frame', async () => {
@@ -37,7 +37,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Background' );
 		await editor.v4Panel.style.setBackgroundColor( COLOR_A );
-    40|
+
 		const element = editor.getPreviewFrame().locator( '.e-heading-base' );
 		await expect( element ).toHaveCSS( 'background-color', COLOR_A_RGB, { timeout: timeouts.expect } );
 	} );
@@ -47,7 +47,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 		await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 
 		await editor.v4Panel.openTab( 'style' );
-    50|		await editor.v4Panel.style.openSection( 'Background' );
+		await editor.v4Panel.style.openSection( 'Background' );
 
 		await editor.v4Panel.style.setBackgroundColor( COLOR_A );
 		await editor.v4Panel.style.setBackgroundColor( COLOR_B );
@@ -57,7 +57,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 	} );
 
 	test( 'add then remove global class ends with the correct final CSS', async () => {
-    60|		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 
 		await editor.v4Panel.openTab( 'style' );
@@ -67,7 +67,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 		await editor.v4Panel.style.addGlobalClass( 'raf-test-class' );
 		await editor.v4Panel.style.removeGlobalClass( 'raf-test-class' );
 
-    70|		const element = editor.getPreviewFrame().locator( '.e-heading-base' );
+		const element = editor.getPreviewFrame().locator( '.e-heading-base' );
 		await expect( element ).toHaveCSS( 'background-color', COLOR_A_RGB, { timeout: timeouts.expect } );
 	} );
 
@@ -77,7 +77,7 @@ test.describe( 'rAF-coalesced document elements styles subscribe @v4-tests', () 
 
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Background' );
-    80|		await editor.v4Panel.style.setBackgroundColor( COLOR_A );
+		await editor.v4Panel.style.setBackgroundColor( COLOR_A );
 
 		await editor.publishAndViewPage();
 
