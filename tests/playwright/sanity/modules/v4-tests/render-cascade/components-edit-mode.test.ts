@@ -7,7 +7,7 @@ import { timeouts } from '../../../../config/timeouts';
 import { createComponent, createContentForComponent } from '../atomic-components/utils/creation';
 
 const PRO_MOCK_SCRIPT = `<script>window.elementorPro = { config: { isActive: true, version: '3.35.0' } };</script>`;
-    10|const COMPONENT_BG = '#ff8800';
+const COMPONENT_BG = '#ff8800';
 const COMPONENT_BG_RGB = 'rgb(255, 136, 0)';
 
 test.describe( 'Render cascade — components edit mode @v4-tests', () => {
@@ -18,7 +18,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 
 	const proMockRouteHandler = async ( route: Route ) => {
 		const response = await route.fetch();
-    20|		const contentType = response.headers()[ 'content-type' ] ?? '';
+		const contentType = response.headers()[ 'content-type' ] ?? '';
 
 		if ( ! contentType.includes( 'text/html' ) ) {
 			await route.fulfill( { response } );
@@ -28,7 +28,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		const html = await response.text();
 		await route.fulfill( {
 			response,
-    30|			body: html.replace( '<head>', `<head>${ PRO_MOCK_SCRIPT }` ),
+			body: html.replace( '<head>', `<head>${ PRO_MOCK_SCRIPT }` ),
 		} );
 	};
 
@@ -38,7 +38,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-    40|		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
 	test.afterAll( async () => {
@@ -48,7 +48,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 
 	test.beforeEach( async () => {
 		await page.route( proMockRoutePattern, proMockRouteHandler );
-    50|		editor = await wpAdmin.openNewPage();
+		editor = await wpAdmin.openNewPage();
 	} );
 
 	const openComponentEditMode = async ( instanceLocator: Locator ) => {
@@ -59,7 +59,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 	};
 
 	const exitComponentEditMode = async () => {
-    60|		await page.locator( EditorSelectors.components.exitEditModeButton ).click();
+		await page.locator( EditorSelectors.components.exitEditModeButton ).click();
 		await expect( page.locator( EditorSelectors.components.editModeHeader ) ).toBeHidden( {
 			timeout: timeouts.longAction,
 		} );
@@ -69,7 +69,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		await createContentForComponent( editor );
 		const componentName = `render-cascade-${ Date.now() }`;
 		const instanceId = await createComponent( page, editor, componentName );
-    70|
+
 		const previewFrame = editor.getPreviewFrame();
 		const instance = previewFrame.locator( `[data-id="${ instanceId }"]` );
 		await expect( instance ).toBeVisible();
@@ -79,7 +79,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		const beforeCid = await heading.getAttribute( 'data-model-cid' );
 
 		await openComponentEditMode( instance );
-    80|		await exitComponentEditMode();
+		await exitComponentEditMode();
 
 		await expect( heading ).toBeVisible();
 		const afterCid = await heading.getAttribute( 'data-model-cid' );
@@ -89,7 +89,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 	test( 'style edit inside component edit mode reflects on instance after exit', async () => {
 		await createContentForComponent( editor );
 		const componentName = `render-cascade-style-${ Date.now() }`;
-    90|		const instanceId = await createComponent( page, editor, componentName );
+		const instanceId = await createComponent( page, editor, componentName );
 
 		const previewFrame = editor.getPreviewFrame();
 		const instance = previewFrame.locator( `[data-id="${ instanceId }"]` );
@@ -99,7 +99,7 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		await inner.click();
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Background' );
-   100|		await editor.v4Panel.style.setBackgroundColor( COMPONENT_BG );
+		await editor.v4Panel.style.setBackgroundColor( COMPONENT_BG );
 
 		await expect( inner ).toHaveCSS( 'background-color', COMPONENT_BG_RGB, { timeout: timeouts.expect } );
 
@@ -109,5 +109,5 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		await expect( headingOnInstance ).toHaveCSS( 'background-color', COMPONENT_BG_RGB, {
 			timeout: timeouts.expect,
 		} );
-   110|	} );
+	} );
 } );

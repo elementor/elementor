@@ -7,7 +7,7 @@ import { timeouts } from '../../../../config/timeouts';
 const PARENT_CLASS = 'render-cascade-parent';
 const LEAF_CLASS = 'render-cascade-leaf';
 
-    10|test.describe( 'Render cascade — global class add/remove @v4-tests', () => {
+test.describe( 'Render cascade — global class add/remove @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let context: BrowserContext;
@@ -17,7 +17,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 		const page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
-    20|	} );
+	} );
 
 	test.afterAll( async () => {
 		await wpAdmin?.resetExperiments();
@@ -28,7 +28,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 		editor = await wpAdmin.openNewPage();
 	} );
 
-    30|	test( 'adding a class on a parent container keeps children rendered', async () => {
+	test( 'adding a class on a parent container keeps children rendered', async () => {
 		const parentId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: parentId } );
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container: parentId } );
@@ -38,7 +38,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 		await editor.v4Panel.style.addGlobalClass( PARENT_CLASS );
 
 		const previewFrame = editor.getPreviewFrame();
-    40|		const parent = previewFrame.locator( `[data-id="${ parentId }"]` );
+		const parent = previewFrame.locator( `[data-id="${ parentId }"]` );
 		await expect( parent ).toHaveClass( new RegExp( PARENT_CLASS ), { timeout: timeouts.expect } );
 
 		await expect( previewFrame.locator( `[data-id="${ headingId }"] .e-heading-base` ) ).toBeVisible();
@@ -48,7 +48,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 	test( 'removing a class on a parent container keeps children rendered', async () => {
 		const parentId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: parentId } );
-    50|
+
 		await editor.selectElement( parentId );
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.addGlobalClass( PARENT_CLASS );
@@ -59,7 +59,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 
 		await editor.v4Panel.style.removeGlobalClass( PARENT_CLASS );
 		await expect( parent ).not.toHaveClass( new RegExp( PARENT_CLASS ), { timeout: timeouts.expect } );
-    60|
+
 		await expect( previewFrame.locator( `[data-id="${ headingId }"] .e-heading-base` ) ).toBeVisible();
 	} );
 
@@ -69,7 +69,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 		const siblingId = await editor.addWidget( { widgetType: 'e-heading', container: parentId } );
 
 		const previewFrame = editor.getPreviewFrame();
-    70|		const sibling = previewFrame.locator( `[data-id="${ siblingId }"] .e-heading-base` );
+		const sibling = previewFrame.locator( `[data-id="${ siblingId }"] .e-heading-base` );
 		const beforeCid = await sibling.getAttribute( 'data-model-cid' );
 
 		await editor.selectElement( leafId );
@@ -79,7 +79,7 @@ const LEAF_CLASS = 'render-cascade-leaf';
 		const leaf = previewFrame.locator( `[data-id="${ leafId }"] .e-heading-base` );
 		await expect( leaf ).toHaveClass( new RegExp( LEAF_CLASS ), { timeout: timeouts.expect } );
 
-    80|		await editor.v4Panel.style.removeGlobalClass( LEAF_CLASS );
+		await editor.v4Panel.style.removeGlobalClass( LEAF_CLASS );
 		await expect( leaf ).not.toHaveClass( new RegExp( LEAF_CLASS ), { timeout: timeouts.expect } );
 
 		const afterCid = await sibling.getAttribute( 'data-model-cid' );
