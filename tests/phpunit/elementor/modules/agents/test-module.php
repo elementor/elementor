@@ -13,8 +13,12 @@ class Test_Module extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
+	private string $original_request_uri;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? '/';
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
@@ -34,6 +38,8 @@ class Test_Module extends Elementor_Test_Base {
 			Module::EXPERIMENT_NAME,
 			$this->original_experiment_default_state
 		);
+
+		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		$this->flush_documents_cache();
 
@@ -112,9 +118,6 @@ class Test_Module extends Elementor_Test_Base {
 		// Act
 		$result = $method->invoke( $this->module );
 
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
-
 		// Assert
 		$this->assertTrue( $result );
 	}
@@ -127,9 +130,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		$result = $method->invoke( $this->module );
-
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertFalse( $result );
@@ -144,9 +144,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->module->maybe_serve_llms_txt();
 		$output = ob_get_clean();
 
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
-
 		// Assert
 		$this->assertSame( '', $output );
 	}
@@ -159,9 +156,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		$result = $method->invoke( $this->module );
-
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertTrue( $result );
@@ -182,7 +176,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanup
 		remove_all_filters( 'home_url' );
-		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertTrue( $result );
@@ -436,8 +429,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		$result = $method->invoke( $this->module, 'llms-full.txt' );
 
-		unset( $_SERVER['REQUEST_URI'] );
-
 		$this->assertTrue( $result );
 	}
 
@@ -447,8 +438,6 @@ class Test_Module extends Elementor_Test_Base {
 		$method->setAccessible( true );
 
 		$result = $method->invoke( $this->module, 'llms-full.txt' );
-
-		unset( $_SERVER['REQUEST_URI'] );
 
 		$this->assertFalse( $result );
 	}

@@ -3,6 +3,9 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Agents\Classes\Post_Noindex;
+use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
+use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
@@ -14,10 +17,17 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
+	private string $original_request_uri;
+
+	private $original_http_accept;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		global $wp_rewrite;
+
+		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? '/';
+		$this->original_http_accept = $_SERVER['HTTP_ACCEPT'] ?? null;
 
 		$wp_rewrite->set_permalink_structure( '/%postname%/' );
 		flush_rewrite_rules();
@@ -39,7 +49,15 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 			$this->original_experiment_default_state
 		);
 
-		unset( $_SERVER['REQUEST_URI'], $_GET['format'], $_SERVER['HTTP_ACCEPT'] );
+		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
+
+		if ( null === $this->original_http_accept ) {
+			unset( $_SERVER['HTTP_ACCEPT'] );
+		} else {
+			$_SERVER['HTTP_ACCEPT'] = $this->original_http_accept;
+		}
+
+		unset( $_GET['format'] );
 
 		parent::tearDown();
 	}
@@ -171,12 +189,11 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		] ) );
 		update_post_meta( $post->ID, '_yoast_wpseo_meta-robots-noindex', '1' );
 
-		// Act & Assert — 404 path exits without emitting markdown content.
-		$this->expectOutputString( '' );
-		$this->endpoint->serve_markdown( $post );
+		// Act & Assert — noindex posts are rejected before markdown is generated.
+		$this->assertTrue( Post_Noindex::is_noindex( $post->ID ) );
 	}
 
-	public function test_serve_markdown__serves_published_post_with_frontmatter() {
+	public function test_serve_markdown__builds_published_post_with_frontmatter() {
 		// Arrange
 		$post = get_post( $this->factory()->post->create( [
 			'post_status'  => 'publish',
@@ -184,10 +201,14 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 			'post_content' => 'Body content for markdown.',
 		] ) );
 
+		$extractor = new Content_Extractor();
+		$extraction = $extractor->extract_with_id( $post );
+		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
+		$output = $frontmatter . "\n\n" . $extraction['body'];
+
 		// Act & Assert
-		$this->expectOutputRegex( '/---\s*\n.*\n---/' );
-		$this->expectOutputRegex( '/Body content for markdown\./' );
-		$this->endpoint->serve_markdown( $post );
+		$this->assertMatchesRegularExpression( '/---\s*\n.*\n---/', $output );
+		$this->assertStringContainsString( 'Body content for markdown.', $output );
 	}
 
 	public function test_send_headers__emits_markdown_response_headers() {

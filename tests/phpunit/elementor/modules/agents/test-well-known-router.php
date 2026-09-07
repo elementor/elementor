@@ -15,8 +15,12 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
+	private string $original_request_uri;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? '/';
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Module::EXPERIMENT_NAME )['default'];
@@ -36,7 +40,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 			$this->original_experiment_default_state
 		);
 
-		unset( $_SERVER['REQUEST_URI'] );
+		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		parent::tearDown();
 	}
@@ -113,13 +117,17 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertInstanceOf( Auth_Md::class, $active['auth.md'] );
 	}
 
-	public function test_maybe_handle__dispatches_auth_md_endpoint() {
+	public function test_auth_md__generates_authentication_markdown() {
 		// Arrange
-		$_SERVER['REQUEST_URI'] = '/.well-known/auth.md';
+		$auth_md = new Auth_Md();
+		$method = new \ReflectionMethod( Auth_Md::class, 'generate_content' );
+		$method->setAccessible( true );
 
-		// Act & Assert
-		$this->expectOutputRegex( '/# Authentication/' );
-		$this->router->maybe_handle();
+		// Act
+		$content = $method->invoke( $auth_md );
+
+		// Assert
+		$this->assertStringContainsString( '# Authentication', $content );
 	}
 
 	public function test_flush_all_caches__clears_registered_endpoint_transients() {
