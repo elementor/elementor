@@ -122,15 +122,15 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 						<Stack justifyContent="space-between" p={ 4 }>
 							<Stack gap={ 2.5 } justifyContent="center" sx={ { flex: 1, paddingInlineEnd: 2.5 } }>
 								<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
-									{ installState === 'error'
-										? __( 'Installation failed', 'elementor' )
-										: (
-											<>
-												{ __( 'Pages, layouts,', 'elementor' ) }
-												<br />
-												{ __( 'widgets and more', 'elementor' ) }
-											</>
-										) }
+									{ installState === 'error' ? (
+										__( 'Installation failed', 'elementor' )
+									) : (
+										<>
+											{ __( 'Pages, layouts,', 'elementor' ) }
+											<br />
+											{ __( 'widgets and more', 'elementor' ) }
+										</>
+									) }
 								</Typography>
 								<Typography variant="body2" fontWeight={ 500 }>
 									{ installState === 'error'
