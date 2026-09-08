@@ -16,16 +16,12 @@ function ensureStore() {
 	return /** @type {BackgroundVideoState} */ ( Alpine.store( STORE_NAME ) );
 }
 
-export function resolveDesignTimeState( state, fallback = PLAYING_STATE ) {
-	if ( PLAYING_STATE === state || PAUSED_STATE === state ) {
+export function resolveDesignTimeState( state ) {
+	if ( PAUSED_STATE === state || '' === state ) {
 		return state;
 	}
 
-	if ( '' === state ) {
-		return '';
-	}
-
-	return fallback;
+	return PLAYING_STATE;
 }
 
 export function getEditorState( elementId, fallback = PLAYING_STATE ) {

@@ -32,6 +32,11 @@ class Test_Atomic_Background_Video extends Elementor_Test_Base {
 			'$$type' => 'string',
 			'value' => '',
 		] ) );
+	}
+
+	public function test_null_state_value_is_valid() {
+		$schema = $this->get_define_props_schema();
+
 		$this->assertTrue( $schema['state']->validate( null ) );
 	}
 }

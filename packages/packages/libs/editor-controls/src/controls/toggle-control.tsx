@@ -68,7 +68,7 @@ export const ToggleControl = createControl(
 		return exclusive ? (
 			<ControlToggleButtonGroup
 				{ ...toggleButtonGroupProps }
-				value={ value || null }
+				value={ allowEmpty ? value || null : value ?? null }
 				onChange={ handleExclusiveToggle }
 				disabled={ disabled }
 				exclusive={ true }
