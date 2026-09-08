@@ -44,6 +44,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
+		$this->meta( 'is_compound', true );
 	}
 
 	public static function get_type() {

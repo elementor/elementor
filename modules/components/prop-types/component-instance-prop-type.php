@@ -11,8 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Instance_Prop_Type extends Object_Prop_Type {
+	const WIDGET_TYPE = 'e-component';
+
 	public static function get_key(): string {
 		return 'component-instance';
+	}
+
+	public static function is_instance_element( array $element ): bool {
+		return 'widget' === ( $element['elType'] ?? null )
+			&& self::WIDGET_TYPE === ( $element['widgetType'] ?? null );
 	}
 
 	protected function define_shape(): array {
