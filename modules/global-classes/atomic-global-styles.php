@@ -197,6 +197,10 @@ class Atomic_Global_Styles {
 			$added_posts = array_diff( $new_related_posts, $old_related_posts );
 			$removed_posts = array_diff( $old_related_posts, $new_related_posts );
 
+			if ( empty( $added_posts ) && empty( $removed_posts ) ) {
+				continue;
+			}
+
 			$cache_validity->validate( $forward_path, $new_related_posts );
 
 			foreach ( $added_posts as $added_post ) {
