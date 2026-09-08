@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useId } from 'react';
 import { CheckIcon, FilterIcon, LibraryIcon, ListIcon, StarFilledIcon, StarIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -23,6 +24,32 @@ import {
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
 const FILTER_INDICATOR_OFFSET = 4;
+const LIBRARY_FILTER_ORDER = {
+	regular: 0,
+	solid: 1,
+	brands: 2,
+} as const;
+
+const LIBRARY_FILTER_CONFIG: Record<
+	FontAwesome7Library,
+	{ getLabel: () => string; Icon: typeof StarIcon; order: number }
+> = {
+	'fa-regular': {
+		getLabel: () => __( 'Font Awesome - Regular', 'elementor' ),
+		Icon: StarIcon,
+		order: LIBRARY_FILTER_ORDER.regular,
+	},
+	'fa-solid': {
+		getLabel: () => __( 'Font Awesome - Solid', 'elementor' ),
+		Icon: StarFilledIcon,
+		order: LIBRARY_FILTER_ORDER.solid,
+	},
+	'fa-brands': {
+		getLabel: () => __( 'Font Awesome - Brands', 'elementor' ),
+		Icon: LibraryIcon,
+		order: LIBRARY_FILTER_ORDER.brands,
+	},
+};
 
 type IconLibraryFilterProps = {
 	value: FontAwesome7LibraryFilter;
@@ -30,15 +57,17 @@ type IconLibraryFilterProps = {
 };
 
 export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps ) => {
+	const popupId = useId();
 	const popupState = usePopupState( {
 		variant: 'popover',
-		popupId: 'icon-library-filter-menu',
+		popupId,
 	} );
-	const options = [
-		{ value: 'fa-regular', label: __( 'Font Awesome - Regular', 'elementor' ), Icon: StarIcon },
-		{ value: 'fa-solid', label: __( 'Font Awesome - Solid', 'elementor' ), Icon: StarFilledIcon },
-		{ value: 'fa-brands', label: __( 'Font Awesome - Brands', 'elementor' ), Icon: LibraryIcon },
-	] satisfies Array< { value: FontAwesome7Library; label: string; Icon: typeof StarIcon } >;
+	const options = FONT_AWESOME_7_LIBRARIES.map( ( { library } ) => ( {
+		value: library,
+		label: LIBRARY_FILTER_CONFIG[ library ].getLabel(),
+		Icon: LIBRARY_FILTER_CONFIG[ library ].Icon,
+		order: LIBRARY_FILTER_CONFIG[ library ].order,
+	} ) ).sort( ( firstOption, secondOption ) => firstOption.order - secondOption.order );
 	const isFiltered = value.length > 0;
 	const filterButtonLabel = isFiltered
 		? __( 'Filter by library, active', 'elementor' )
