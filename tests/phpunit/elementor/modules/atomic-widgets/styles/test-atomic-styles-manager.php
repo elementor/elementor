@@ -27,6 +27,10 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		// Mock the filesystem
 		$this->filesystemMock = $this->createMock( WP_Filesystem_Base::class );
 		$this->filesystemMock->method( 'abspath' )->willReturn( ABSPATH );
+		// Atomic write does put_contents(tmp) then move(tmp, final). Default `move` to true so
+		// tests that don't care about the write pipeline don't spuriously fall back to a direct
+		// overwrite.
+		$this->filesystemMock->method( 'move' )->willReturn( true );
 
 		global $wp_filesystem;
 		$wp_filesystem = $this->filesystemMock;
@@ -297,6 +301,13 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			return $this->get_test_style_defs();
 		};
 
+		// After the first render, self-heal now checks that the on-disk file exists and is
+		// non-empty before trusting the cache. Simulate a healthy filesystem so the second
+		// render treats the cache as valid.
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'exists' )->willReturn( true );
+		$this->filesystemMock->method( 'size' )->willReturn( 1024 );
+
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
 			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 10, 1 );
@@ -554,5 +565,142 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		} );
 
 		$this->assertCount( 2, $remaining_files_with_key, 'All files not nested under the provided keys should remain' );
+	}
+
+	public function test_self_heal__regenerates_across_renders_when_file_goes_missing() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$call_count = 0;
+		$get_style_defs = function () use ( &$call_count ) {
+			++$call_count;
+			return $this->get_test_style_defs();
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		// Simulate an unhealthy filesystem: files never observed on disk. That mimics the
+		// external-eviction scenario the manager needs to self-heal from (ED-24903).
+		$this->filesystemMock->method( 'exists' )->willReturn( false );
+		$this->filesystemMock->method( 'size' )->willReturn( 0 );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$this->assertEquals( 1, $call_count, 'First render invokes get_styles once' );
+
+		// Act - second render: files are still missing on disk.
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert - CSS_Files_Manager notices the missing files (should_exist=true but exists=false)
+		// and re-invokes get_styles to regenerate.
+		$this->assertEquals(
+			2,
+			$call_count,
+			'get_styles must be called again when should_exist=true but the file is missing on disk'
+		);
+	}
+
+	public function test_self_heal__legit_empty_breakpoint_stays_cached_across_renders() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$call_count = 0;
+		// Only desktop; other breakpoints legitimately have no CSS for this style.
+		$get_style_defs = function () use ( &$call_count ) {
+			++$call_count;
+			return [
+				'test-style' => [
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [ 'breakpoint' => 'desktop' ],
+							'props' => [ 'color' => 'red' ],
+						],
+					],
+				],
+			];
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		// Desktop file exists after the write; all other breakpoints (mobile, tablet, ...)
+		// legitimately have no file. The manager must not treat their absence as broken cache.
+		$this->filesystemMock->method( 'exists' )
+			->willReturnCallback( fn( $path ) => str_contains( $path, '-desktop.css' ) );
+		$this->filesystemMock->method( 'size' )->willReturn( 512 );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$this->assertEquals( 1, $call_count );
+
+		// Act - second render.
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert - no regeneration for breakpoints that legitimately produced no CSS.
+		$this->assertEquals(
+			1,
+			$call_count,
+			'Empty breakpoints must not force a regeneration on subsequent requests'
+		);
+	}
+
+	public function test_write_failure__does_not_mark_breakpoint_cache_valid() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = function () {
+			return [
+				'test-style' => [
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [ 'breakpoint' => 'desktop' ],
+							'props' => [ 'color' => 'red' ],
+						],
+					],
+				],
+			];
+		};
+
+		// Simulate a filesystem where the atomic write leg fails: tmp write returns false.
+		$this->filesystemMock->method( 'put_contents' )->willReturn( false );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act.
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert.
+		$cache_validity = new Cache_Validity();
+
+		$this->assertFalse(
+			$cache_validity->is_valid( [ $this->test_style_key, 'desktop' ] ),
+			'Write failures must leave the breakpoint cache invalid so the next request retries'
+		);
+
+		global $wp_styles;
+		$this->assertArrayNotHasKey(
+			$this->test_style_key . '-desktop',
+			$wp_styles->registered,
+			'A failed write must not enqueue a broken asset URL'
+		);
 	}
 }
