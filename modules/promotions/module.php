@@ -18,6 +18,7 @@ use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
+use Elementor\Modules\Promotions\Widgets\Atomic_Carousel_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
 use Elementor\Widgets_Manager;
@@ -281,6 +282,7 @@ class Module extends Base_Module {
 
 		( new Atomic_Form_Widget_Promotion() )->register();
 		( new Collection_Loop_Widget_Promotion() )->register();
+		( new Atomic_Carousel_Widget_Promotion() )->register();
 	}
 
 	public function inject_atomic_promotion_props( array $schema ): array {
