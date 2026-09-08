@@ -52,8 +52,7 @@
     "@elementor/locations": "4.4.0",
     "@elementor/session": "4.4.0",
     "@elementor/store": "4.4.0",
-    "@elementor/ui": "1.37.5",
-    "@wordpress/api-fetch": "^6.42.0"
+    "@elementor/ui": "1.37.5"
   },
   "peerDependencies": {
     "@wordpress/i18n": "^5.13.0",

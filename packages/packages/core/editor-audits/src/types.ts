@@ -35,8 +35,6 @@ export type AuditViolation = {
 	elementId?: string;
 	targetHint?: 'page-settings' | 'site-settings' | 'site-identity-settings' | 'element-settings';
 	externalUrl?: string;
-	installPluginSlug?: string;
-	installPluginFile?: string;
 	label: string;
 	detail?: string;
 	angieFix?: boolean;

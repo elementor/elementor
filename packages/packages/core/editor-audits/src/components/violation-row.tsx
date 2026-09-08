@@ -161,12 +161,10 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 									{ violation.angieFix && (
 										<FixViolationWithAngie prompt={ buildAngiePrompt( rowLabel ) } />
 									) }
-									{ violation.ctaLabel && ( violation.externalUrl || violation.installPluginSlug ) ? (
+									{ violation.ctaLabel && violation.externalUrl ? (
 										<ViolationCtaButton
 											ctaLabel={ violation.ctaLabel }
 											externalUrl={ violation.externalUrl }
-											installPluginSlug={ violation.installPluginSlug }
-											installPluginFile={ violation.installPluginFile }
 										/>
 									) : (
 										<EyeIcon

@@ -52,12 +52,14 @@ describe( audit.id, () => {
 		expect( result ).toEqual( { status: 'pass' } );
 	} );
 
-	it( 'fails with an Enable CTA pointing to Cookiez settings when Cookiez is active', async () => {
+	it( 'fails with an Enable CTA pointing to Cookiez settings when Cookiez is installed and active', async () => {
 		// Arrange.
 		mockFetchResponse( '<script src="https://www.googletagmanager.com/gtm.js?id=GTM-ABC123"></script>' );
 
 		// Act.
-		const result = await audit.evaluate( makeContext( { pageContext: { cookiez_plugin_active: true } } ) );
+		const result = await audit.evaluate(
+			makeContext( { pageContext: { cookiez_plugin_installed: true, cookiez_plugin_active: true } } )
+		);
 
 		// Assert.
 		expect( result.status ).toBe( 'fail' );
@@ -69,21 +71,52 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails with an Install CTA for Cookiez when no cookie consent plugin is active', async () => {
+	it( 'fails and links to the plugin action url when Cookiez is not installed', async () => {
 		// Arrange.
 		mockFetchResponse( '<script src="https://www.googletagmanager.com/gtm.js?id=GTM-ABC123"></script>' );
 
 		// Act.
-		const result = await audit.evaluate( makeContext( { pageContext: { cookiez_plugin_active: false } } ) );
+		const result = await audit.evaluate(
+			makeContext( {
+				pageContext: {
+					cookiez_plugin_installed: false,
+					cookiez_plugin_active: false,
+					cookiez_plugin_action_url: 'https://example.com/wp-admin/update.php?action=install-plugin',
+				},
+			} )
+		);
 
 		// Assert.
 		expect( result.status ).toBe( 'fail' );
 		if ( 'fail' === result.status ) {
-			expect( result.violations[ 0 ] ).toMatchObject( {
-				ctaLabel: 'Install',
-				installPluginSlug: 'cookiez',
-				installPluginFile: 'cookiez/cookiez.php',
-			} );
+			expect( result.violations[ 0 ].ctaLabel ).toBeUndefined();
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/update.php?action=install-plugin'
+			);
+		}
+	} );
+
+	it( 'fails and links to the plugin action url (activate) when Cookiez is installed but not active', async () => {
+		// Arrange.
+		mockFetchResponse( '<script src="https://www.googletagmanager.com/gtm.js?id=GTM-ABC123"></script>' );
+
+		// Act.
+		const result = await audit.evaluate(
+			makeContext( {
+				pageContext: {
+					cookiez_plugin_installed: true,
+					cookiez_plugin_active: false,
+					cookiez_plugin_action_url: 'https://example.com/wp-admin/plugins.php?action=activate',
+				},
+			} )
+		);
+
+		// Assert.
+		expect( result.status ).toBe( 'fail' );
+		if ( 'fail' === result.status ) {
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/plugins.php?action=activate'
+			);
 		}
 	} );
 } );

@@ -4,9 +4,6 @@ import { type Audit } from '../types';
 import { fetchRenderedHtml } from '../utils/fetch-rendered-html';
 import { hasConsentDefaultCall, hasGoogleTracking } from '../utils/scan-consent-signals';
 
-const COOKIEZ_SLUG = 'cookiez';
-const COOKIEZ_PLUGIN_FILE = 'cookiez/cookiez.php';
-
 export const audit: Audit = {
 	id: 'audits/google-consent-mode',
 	title: __( 'Google Consent Mode', 'elementor' ),
@@ -33,8 +30,9 @@ export const audit: Audit = {
 		}
 
 		const label = __( 'No Google Consent Mode signal was found on the page.', 'elementor' );
+		const isCookiezReady = ctx.pageContext.cookiez_plugin_installed && ctx.pageContext.cookiez_plugin_active;
 
-		if ( ctx.pageContext.cookiez_plugin_active ) {
+		if ( isCookiezReady ) {
 			return {
 				status: 'fail',
 				violations: [
@@ -54,9 +52,7 @@ export const audit: Audit = {
 				{
 					auditId: audit.id,
 					label,
-					ctaLabel: __( 'Install', 'elementor' ),
-					installPluginSlug: COOKIEZ_SLUG,
-					installPluginFile: COOKIEZ_PLUGIN_FILE,
+					externalUrl: ctx.pageContext.cookiez_plugin_action_url,
 				},
 			],
 		};
