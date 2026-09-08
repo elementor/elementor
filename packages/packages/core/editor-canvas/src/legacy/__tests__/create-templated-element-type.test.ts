@@ -5,7 +5,7 @@ import {
 	createTemplatedElementType,
 	createTemplatedElementView,
 } from '../create-templated-element-type';
-import { type ElementView } from '../types';
+import { type ElementView, type LegacyWindow } from '../types';
 
 const MOCK_ELEMENT_TYPE = 'test-element';
 const MOCK_HTML = '<div>Element</div>';
@@ -117,6 +117,55 @@ describe( 'createTemplatedElementView', () => {
 			expect( utils.register ).toHaveBeenCalledTimes( 2 );
 			expect( utils.register ).toHaveBeenCalledWith( 'template1', '<div>Template 1</div>' );
 			expect( utils.register ).toHaveBeenCalledWith( 'template2', '<div>Template 2</div>' );
+		} );
+	} );
+
+	describe( '_renderChildren', () => {
+		const setupView = () => {
+			const parentRenderChildren = jest.fn();
+			const legacyWindow = window as unknown as LegacyWindow;
+			(
+				legacyWindow.elementor.modules.elements.views.Widget.prototype as unknown as {
+					_renderChildren: () => void;
+				}
+			 )._renderChildren = parentRenderChildren;
+
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: createMockRenderer(),
+				element: createMockElementConfig(),
+			} );
+
+			const view = new ViewClass() as unknown as ElementView & {
+				_domUpdateWasSkipped: boolean;
+				_renderChildren: () => Promise< void >;
+			};
+
+			return { view, parentRenderChildren };
+		};
+
+		it( 'should call super._renderChildren when the DOM update was not skipped', async () => {
+			// Arrange.
+			const { view, parentRenderChildren } = setupView();
+			view._domUpdateWasSkipped = false;
+
+			// Act.
+			await view._renderChildren();
+
+			// Assert.
+			expect( parentRenderChildren ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should skip super._renderChildren when the DOM update was skipped', async () => {
+			// Arrange.
+			const { view, parentRenderChildren } = setupView();
+			view._domUpdateWasSkipped = true;
+
+			// Act.
+			await view._renderChildren();
+
+			// Assert.
+			expect( parentRenderChildren ).not.toHaveBeenCalled();
 		} );
 	} );
 
