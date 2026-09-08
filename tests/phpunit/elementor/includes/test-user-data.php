@@ -40,6 +40,35 @@ class Test_User_Data extends Elementor_Test_Base {
 		$this->assertContains( 'manage_options', $data['capabilities'] );
 	}
 
+	public function test_get_current_user__returns_role_manager_restrictions() {
+		// Arrange
+		$this->act_as( 'editor' );
+		add_filter( 'elementor/editor/user/restrictions', function( $restrictions ) {
+			$restrictions['editor'] = [ 'design' ];
+
+			return $restrictions;
+		} );
+
+		// Act
+		$response = $this->make_get_request();
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [ 'design' ], $response->get_data()['restrictions'] );
+	}
+
+	public function test_get_current_user__returns_empty_restrictions_for_unrestricted_role() {
+		// Arrange
+		$this->act_as( 'editor' );
+
+		// Act
+		$response = $this->make_get_request();
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [], $response->get_data()['restrictions'] );
+	}
+
 	public function test_get_current_user__returns_empty_suppressed_messages_when_none_set() {
 		// Arrange
 		$this->act_as_admin();
