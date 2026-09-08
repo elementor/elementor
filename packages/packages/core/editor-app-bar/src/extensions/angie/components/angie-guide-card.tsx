@@ -18,11 +18,17 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 					<Image
 						src={ imageUrl }
 						alt={ __( 'Angie', 'elementor' ) }
-						sx={ { height: 150, width: '100%', borderRadius: 1, display: 'block' } }
+						sx={ { width: '100%', borderRadius: 1, display: 'block' } }
 					/>
 					<CloseButton
 						edge="end"
-						sx={ { position: 'absolute', top: 16, right: 16 } }
+						sx={ {
+							position: 'absolute',
+							top: 16,
+							right: 16,
+							bgcolor: 'rgba(255,255,255,0.75)',
+							'&:hover': { bgcolor: 'rgba(255,255,255,0.95)' },
+						} }
 						slotProps={ { icon: { fontSize: 'small' } } }
 						onClick={ onClose }
 					/>
