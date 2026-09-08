@@ -31,9 +31,9 @@ test.describe( 'Render cascade — nested containers with interactivity @v4-test
 	} );
 
 	test( 'editing root container settings does not remount deep leaf widgets', async () => {
-		const rootId = await editor.addElement( { elType: 'container' }, 'document' );
-		const midId = await editor.addElement( { elType: 'container' }, rootId );
-		const innerId = await editor.addElement( { elType: 'container' }, midId );
+		const rootId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const midId = await editor.addElement( { elType: 'e-flexbox' }, rootId );
+		const innerId = await editor.addElement( { elType: 'e-flexbox' }, midId );
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container: innerId } );
 
 		const previewFrame = editor.getPreviewFrame();
@@ -56,9 +56,9 @@ test.describe( 'Render cascade — nested containers with interactivity @v4-test
 	} );
 
 	test( 'editing leaf container settings does not re-render sibling subtree', async () => {
-		const rootId = await editor.addElement( { elType: 'container' }, 'document' );
-		const siblingAId = await editor.addElement( { elType: 'container' }, rootId );
-		const siblingBId = await editor.addElement( { elType: 'container' }, rootId );
+		const rootId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const siblingAId = await editor.addElement( { elType: 'e-flexbox' }, rootId );
+		const siblingBId = await editor.addElement( { elType: 'e-flexbox' }, rootId );
 		const buttonInBId = await editor.addWidget( { widgetType: 'e-button', container: siblingBId } );
 
 		const previewFrame = editor.getPreviewFrame();

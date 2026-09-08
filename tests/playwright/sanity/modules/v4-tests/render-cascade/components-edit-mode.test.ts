@@ -34,6 +34,12 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 
 	const proMockRoutePattern = ( url: URL ) => 'elementor' === url.searchParams.get( 'action' );
 
+	const openCreateComponentFromContextMenu = async ( element: Locator ) => {
+		await element.click( { button: 'right' } );
+		await page.waitForSelector( EditorSelectors.contextMenu.menu );
+		await page.getByRole( 'menuitem', { name: 'Create component' } ).click();
+	};
+
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
@@ -65,10 +71,17 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 		} );
 	};
 
-	test( 'enter and exit component edit mode preserves child DOM', async () => {
-		await createContentForComponent( editor );
-		const componentName = `render-cascade-${ Date.now() }`;
+	const createComponentInstance = async ( componentName: string ): Promise<string> => {
+		const { locator } = await createContentForComponent( editor );
+		await openCreateComponentFromContextMenu( locator );
 		const instanceId = await createComponent( page, editor, componentName );
+		await exitComponentEditMode();
+		return instanceId;
+	};
+
+	test( 'enter and exit component edit mode preserves child DOM', async () => {
+		const componentName = `render-cascade-${ Date.now() }`;
+		const instanceId = await createComponentInstance( componentName );
 
 		const previewFrame = editor.getPreviewFrame();
 		const instance = previewFrame.locator( `[data-id="${ instanceId }"]` );
@@ -87,15 +100,14 @@ test.describe( 'Render cascade — components edit mode @v4-tests', () => {
 	} );
 
 	test( 'style edit inside component edit mode reflects on instance after exit', async () => {
-		await createContentForComponent( editor );
 		const componentName = `render-cascade-style-${ Date.now() }`;
-		const instanceId = await createComponent( page, editor, componentName );
+		const instanceId = await createComponentInstance( componentName );
 
 		const previewFrame = editor.getPreviewFrame();
 		const instance = previewFrame.locator( `[data-id="${ instanceId }"]` );
 		await openComponentEditMode( instance );
 
-		const inner = previewFrame.locator( `.e-heading-base` ).first();
+		const inner = previewFrame.locator( '.e-heading-base' ).first();
 		await inner.click();
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Background' );

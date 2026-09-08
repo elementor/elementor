@@ -29,7 +29,7 @@ test.describe( 'Render cascade — global class add/remove @v4-tests', () => {
 	} );
 
 	test( 'adding a class on a parent container keeps children rendered', async () => {
-		const parentId = await editor.addElement( { elType: 'container' }, 'document' );
+		const parentId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: parentId } );
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container: parentId } );
 
@@ -46,7 +46,7 @@ test.describe( 'Render cascade — global class add/remove @v4-tests', () => {
 	} );
 
 	test( 'removing a class on a parent container keeps children rendered', async () => {
-		const parentId = await editor.addElement( { elType: 'container' }, 'document' );
+		const parentId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: parentId } );
 
 		await editor.selectElement( parentId );

@@ -56,7 +56,7 @@ test.describe( 'Render cascade — simple elements @v4-tests', () => {
 	} );
 
 	test( 'editing root container style keeps child widgets rendered', async () => {
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container: containerId } );
 
@@ -76,7 +76,7 @@ test.describe( 'Render cascade — simple elements @v4-tests', () => {
 	} );
 
 	test( 'undo after edit restores previous DOM (skipped-render invalidation)', async () => {
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 
 		await editor.selectElement( containerId );
