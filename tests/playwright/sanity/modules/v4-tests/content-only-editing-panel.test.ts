@@ -21,6 +21,17 @@ const INFOTIP_LEARN_MORE_URL = 'https://go.elementor.com/content-only-access-inf
 const HEADING_WIDGET = EditorSelectors.v4.atoms.heading;
 const UPDATED_HEADING_TEXT = 'Content-only heading edit';
 
+// Elementor shows a modal "Take Over" confirm when another user still holds the post lock, and it
+// swallows pointer events on the panel. The lock outlives a closed browser context, so it has to be
+// released whenever this spec hands the same document to a different user.
+const clearPostLock = async ( postId: string ) => {
+	try {
+		await wpCli( `wp post meta delete ${ postId } _edit_lock` );
+	} catch {
+		// The wp-cli call exits non-zero when the lock was never written, which is fine.
+	}
+};
+
 test.describe( 'Content-only editing panel access @v4-tests', () => {
 	let contentOnlyUser: { id: string; username: string; password: string };
 	let sharedPostId: string;
@@ -61,6 +72,8 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 		await editor.publishPage();
 
 		await adminContext.close();
+
+		await clearPostLock( sharedPostId );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -131,6 +144,8 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 		} );
 
 		await editorContext.close();
+
+		await clearPostLock( sharedPostId );
 
 		await test.step( 'Administrator sees all editing panel tabs enabled on the same page', async () => {
 			const adminWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
