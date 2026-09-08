@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { getContainer, getElementSetting } from '@elementor/editor-elements';
-import { fireEvent, screen } from '@testing-library/react';
+import { ThemeProvider } from '@elementor/ui';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
@@ -241,6 +242,21 @@ describe( 'InlineEditorToolbar', () => {
 			expect( screen.getByLabelText( 'Clear' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( 'Bold' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should use white icon color in dark mode when rendered inside the control panel', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			render(
+				<ThemeProvider colorScheme="dark">
+					<InlineEditorToolbar editor={ mockEditor } inControlPanel />
+				</ThemeProvider>
+			);
+
+			// Assert.
+			expect( screen.getByLabelText( 'Bold' ) ).toHaveStyle( { color: 'rgb(255, 255, 255)' } );
 		} );
 	} );
 

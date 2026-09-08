@@ -25,6 +25,7 @@ class Menu_Data_Provider {
 	private ?array $cached_level4_sidebar_data = null;
 	private ?array $cached_flyout_menu_data = null;
 	private Slug_Normalizer $slug_normalizer;
+	private array $registration_options = [];
 
 	public static function instance(): self {
 		if ( null === self::$instance ) {
@@ -42,7 +43,11 @@ class Menu_Data_Provider {
 		return $this->slug_normalizer;
 	}
 
-	public function register_menu( Menu_Item_Interface $item ): void {
+	public function register_menu( Menu_Item_Interface $item, array $options = [] ): void {
+		if ( ! empty( $options['preserve_label_casing'] ) ) {
+			$this->registration_options[ $item->get_slug() ]['preserve_label_casing'] = true;
+		}
+
 		if ( ! ( $item instanceof Menu_Item_Third_Level_Interface ) ) {
 			$this->register_level4_item( $item );
 			return;
@@ -366,7 +371,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $this->title_case( $item->get_label() ),
+			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $url,
 			'group_id' => '',
 			'priority' => $this->get_item_priority( $item ),
@@ -402,7 +407,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $this->title_case( $item->get_label() ),
+			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
@@ -481,7 +486,7 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => $this->title_case( $item->get_label() ),
+					'label' => $this->format_flyout_label( $item, $item_slug ),
 					'url' => $url,
 					'priority' => $this->get_item_priority( $item ),
 					'event_id' => $this->resolve_event_id( $item, $item_slug ),
@@ -567,6 +572,16 @@ class Menu_Data_Provider {
 		$event_id = str_replace( [ '-', ' ' ], '_', $event_id );
 
 		return strtolower( $event_id );
+	}
+
+	private function format_flyout_label( Menu_Item_Interface $item, string $item_slug ): string {
+		$label = $item->get_label();
+
+		if ( ! empty( $this->registration_options[ $item_slug ]['preserve_label_casing'] ) ) {
+			return $label;
+		}
+
+		return $this->title_case( $label );
 	}
 
 	private function title_case( string $text ): string {
