@@ -8,10 +8,13 @@ import {
 
 export { FONT_AWESOME_7_LIBRARIES, getFontAwesome7EditorConfig } from './font-awesome-7-data';
 
+export type FontAwesome7Library = ( typeof FONT_AWESOME_7_LIBRARIES )[ number ][ 'library' ];
+export type FontAwesome7LibraryFilter = FontAwesome7Library[];
+
 export type FontAwesome7Icon = FontAwesome7IconDefinition & {
 	id: string;
 	label: string;
-	library: string;
+	library: FontAwesome7Library;
 	value: string;
 };
 
@@ -37,14 +40,20 @@ export async function loadFontAwesome7Catalog( signal?: AbortSignal ): Promise< 
 	return catalogs.flat();
 }
 
-export function filterFontAwesome7Icons( icons: FontAwesome7Icon[], searchValue?: string | null ): FontAwesome7Icon[] {
+export function filterFontAwesome7Icons(
+	icons: FontAwesome7Icon[],
+	searchValue?: string | null,
+	libraries: FontAwesome7LibraryFilter = []
+): FontAwesome7Icon[] {
 	const query = searchValue?.trim().toLowerCase() ?? '';
+	const libraryIcons =
+		libraries.length === 0 ? icons : icons.filter( ( icon ) => libraries.includes( icon.library ) );
 
 	if ( query === '' ) {
-		return icons;
+		return libraryIcons;
 	}
 
-	return icons.filter( ( icon ) => {
+	return libraryIcons.filter( ( icon ) => {
 		if ( icon.name.includes( query ) || icon.label.toLowerCase().includes( query ) ) {
 			return true;
 		}
@@ -93,7 +102,7 @@ export function findFontAwesome7Icon(
 	} );
 }
 
-function toCatalogIcon( icon: FontAwesome7IconDefinition, library: string ): FontAwesome7Icon {
+function toCatalogIcon( icon: FontAwesome7IconDefinition, library: FontAwesome7Library ): FontAwesome7Icon {
 	return {
 		...icon,
 		id: `${ library }:${ icon.name }`,
