@@ -43,6 +43,27 @@ export function AngieGuideLocation() {
 		};
 	}, [] );
 
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		const handleMouseDown = ( e: MouseEvent ) => {
+			const card = document.querySelector( '[data-testid="e-angie-guide-card"]' );
+			const button = document.querySelector( `[aria-label="${ ANGIE_BUTTON_ARIA_LABEL }"]` );
+
+			if ( card && ! card.contains( e.target as Node ) && button && ! button.contains( e.target as Node ) ) {
+				setAnchorEl( null );
+			}
+		};
+
+		document.addEventListener( 'mousedown', handleMouseDown );
+
+		return () => {
+			document.removeEventListener( 'mousedown', handleMouseDown );
+		};
+	}, [ isOpen ] );
+
 	const handleClose = () => setAnchorEl( null );
 
 	const handleInstall = async () => {
