@@ -7,7 +7,12 @@ export function getPromotionWidget( category: Locator, widgetTitle: string ): Lo
 	return category.locator( '.elementor-element' ).filter( { hasText: widgetTitle } ).first();
 }
 
+export function getPromotionWidgetByType( category: Locator, elementType: string ): Locator {
+	return category.locator( `[data-library-element-type="${ elementType }"]` ).first();
+}
+
 export async function openPromotionPopover( widget: Locator ): Promise<Locator> {
+	await widget.scrollIntoViewIfNeeded();
 	await widget.click( { force: true } );
 
 	const popover = widget.page().locator( promotionPopoverSelector );

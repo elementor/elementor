@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
 	PopoverBody,
 	PopoverHeader,
@@ -10,6 +10,7 @@ import {
 } from '@elementor/editor-ui';
 import { ComponentsIcon } from '@elementor/icons';
 import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from '@elementor/ui';
+import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -23,6 +24,7 @@ import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
 export const ICON_LIBRARY_POPOVER_WIDTH = 300;
 export const ICON_LIBRARY_ROW_HEIGHT = 48;
+export const ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY = 300;
 const ICON_TILE_SIZE = 40;
 const ICON_GLYPH_SIZE = 20;
 const ICON_LIBRARY_INLINE_SPACING = 1;
@@ -52,7 +54,12 @@ export const IconLibraryPopover = ( {
 	onClose,
 	width = ICON_LIBRARY_POPOVER_WIDTH,
 }: IconLibraryPopoverProps ) => {
-	const [ searchValue, setSearchValue ] = useState( '' );
+	const {
+		debouncedValue: searchValue,
+		inputValue: searchInputValue,
+		handleChange: handleSearchChange,
+		setImmediateValue: setSearchValue,
+	} = useDebounceState( { delay: ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY } );
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
 
 	const items = useMemo( () => createIconLibraryItems( icons, searchValue ), [ icons, searchValue ] );
@@ -92,8 +99,8 @@ export const IconLibraryPopover = ( {
 				sx={ { pl: ICON_LIBRARY_INLINE_SPACING, pr: 0.5 } }
 			/>
 			<SearchField
-				value={ searchValue }
-				onSearch={ setSearchValue }
+				value={ searchInputValue }
+				onSearch={ handleSearchChange }
 				placeholder={ __( 'Search', 'elementor' ) }
 				id="icon-library-search"
 				sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: 1 } }
