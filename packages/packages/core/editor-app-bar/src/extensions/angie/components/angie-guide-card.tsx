@@ -17,7 +17,14 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 				<Image
 					src={ imageUrl }
 					alt={ __( 'Angie', 'elementor' ) }
-					sx={ { width: '100%', maxHeight: 200, objectFit: 'cover', objectPosition: 'center top', borderRadius: 1, display: 'block' } }
+					sx={ {
+						width: '100%',
+						maxHeight: 200,
+						objectFit: 'cover',
+						objectPosition: 'center top',
+						borderRadius: 1,
+						display: 'block',
+					} }
 				/>
 				<CloseButton
 					sx={ {
