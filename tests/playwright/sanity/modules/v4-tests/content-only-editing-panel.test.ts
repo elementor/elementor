@@ -36,7 +36,7 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 			e_atomic_elements: 'active',
 			e_opt_in_v4: 'active',
 		} );
-		// wpCli runs through docker compose without a shell, so the JSON must not be shell-quoted.
+		// The wpCli helper runs through docker compose without a shell, so the JSON must not be shell-quoted.
 		await wpCli( `wp option update ${ ROLE_MANAGER_OPTION } ${ JSON.stringify( CONTENT_ONLY_ROLE_RESTRICTIONS ) } --format=json` );
 
 		contentOnlyUser = await apiRequests.createNewUser( request, {
