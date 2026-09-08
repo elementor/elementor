@@ -21,13 +21,21 @@ export const ContentOnlyInfotip = ( { children }: PropsWithChildren ) => {
 					<AlertTitle>{ __( 'Content-only access', 'elementor' ) }</AlertTitle>
 					<Box component="span">
 						{ __( 'Your Site Admin has limited this role to content editing.', 'elementor' ) }{ ' ' }
-						<Link href={ LEARN_MORE_URL } target="_blank" color="info.main">
+						<Link href={ LEARN_MORE_URL } target="_blank" rel="noreferrer" color="info.main">
 							{ __( 'Learn More', 'elementor' ) }
 						</Link>
 					</Box>
 				</Alert>
 			}
-			slotProps={ { popper: { sx: { width: INFOTIP_WIDTH } } } }
+			slotProps={ {
+				popper: {
+					sx: { width: INFOTIP_WIDTH },
+					// The popper is portaled, so it needs its own hover handlers to stay open while the pointer
+					// travels from the tab to the "Learn More" link.
+					onMouseEnter: () => setIsOpen( true ),
+					onMouseLeave: () => setIsOpen( false ),
+				},
+			} }
 		>
 			{ /* A disabled MUI tab sets pointer-events: none, so the trigger has to opt back in to receive hover. */ }
 			<Box
