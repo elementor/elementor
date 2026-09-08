@@ -73,6 +73,7 @@ test.describe( 'Background Video @v4-tests', () => {
 
 		const statesField = editor.page.locator( '[data-type="settings-field"]' ).filter( { hasText: 'States' } );
 		const playButton = statesField.getByRole( 'button', { name: 'Play' } );
+		await expect( playButton ).toHaveAttribute( 'aria-pressed', 'true' );
 
 		await playButton.click();
 
