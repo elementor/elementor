@@ -1,23 +1,26 @@
 const PLAYGROUND_TARGET = 'playground';
 const PLAYGROUND_DEFAULT_URL = 'http://127.0.0.1:9400';
+const PLAYGROUND_BRIDGE_PATH = '/wp-content/plugins/elementor/tests/playwright/playground/wp-cli-bridge.php';
 
 const isPlaygroundTarget = () => process.env.WP_CLI_TARGET === PLAYGROUND_TARGET;
 
 const runOnPlayground = async ( command: string ) => {
 	const baseUrl = process.env.PLAYGROUND_URL || PLAYGROUND_DEFAULT_URL;
 
-	const response = await fetch( `${ baseUrl }/?elementor_test_wp_cli_bridge=1`, {
+	const response = await fetch( `${ baseUrl }${ PLAYGROUND_BRIDGE_PATH }`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify( { command } ),
 	} );
 
-	const payload = await response.json().catch( () => ( { error: 'Non-JSON response' } ) );
+	const raw = await response.text();
 
 	if ( ! response.ok ) {
-		throw new Error(
-			`wpCli (playground) failed: ${ command }\nHTTP ${ response.status }\n${ JSON.stringify( payload ) }`,
-		);
+		throw new Error( `wpCli (playground) failed: ${ command }\nHTTP ${ response.status }\n${ raw }` );
+	}
+
+	if ( ! raw.startsWith( '{' ) ) {
+		throw new Error( `wpCli (playground) bridge did not run - got a non-JSON response for: ${ command }\n${ raw }` );
 	}
 };
 
