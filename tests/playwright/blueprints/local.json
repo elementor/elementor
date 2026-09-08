@@ -8,7 +8,7 @@
     "extraLibraries": [ "wp-cli" ],
 	"steps": [
 		{ "step": "login", "username": "admin", "password": "password" },
-		{
+        {
             "step": "defineWpConfigConsts",
             "consts": {
                 "WP_DISABLE_FATAL_ERROR_HANDLER": true,
@@ -16,6 +16,14 @@
                 "WP_DEBUG_DISPLAY": true,
                 "SCRIPT_DEBUG": true,
                 "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
+            }
+        },
+        {
+            "step": "writeFile",
+            "path": "/wordpress/wp-content/mu-plugins/elementor-test-wp-cli-bridge.php",
+            "data": {
+                "resource": "vfs",
+                "path": "/wordpress/wp-content/plugins/elementor/tests/playwright/playground-mu-plugin/wp-cli-bridge.php"
             }
         },
 		{
