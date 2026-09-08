@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Svg_Src_Transformer extends Transformer_Base {
 	const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
 
-	private const HTTP_OK = 200;
-
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$id = isset( $value['id'] ) ? (int) $value['id'] : null;
 		$url = $value['url'] ?? null;
@@ -51,9 +49,9 @@ class Svg_Src_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		return $this->is_same_site_url( $url )
-			? $this->fetch_local_svg_content( $url )
-			: $this->fetch_remote_svg_content( $url );
+		$local_content = $this->fetch_local_svg_content( $url );
+
+		return $local_content ? $local_content : $this->fetch_remote_svg_content( $url );
 	}
 
 	private function fetch_local_svg_content( string $url ): ?string {
@@ -75,7 +73,7 @@ class Svg_Src_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		if ( self::HTTP_OK !== wp_remote_retrieve_response_code( $response ) ) {
+		if ( \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return null;
 		}
 
@@ -84,16 +82,14 @@ class Svg_Src_Transformer extends Transformer_Base {
 		return $body ? $body : null;
 	}
 
-	private function is_same_site_url( string $url ): bool {
-		return 0 === strpos( $url, site_url() );
-	}
-
 	private function resolve_local_path( string $url ): ?string {
-		if ( ! $this->is_same_site_url( $url ) ) {
+		$site_url = site_url();
+
+		if ( 0 !== strpos( $url, $site_url ) ) {
 			return null;
 		}
 
-		$relative = substr( $url, strlen( site_url() ) );
+		$relative = substr( $url, strlen( $site_url ) );
 		$path = ABSPATH . ltrim( $relative, '/' );
 
 		return file_exists( $path ) ? $path : null;
