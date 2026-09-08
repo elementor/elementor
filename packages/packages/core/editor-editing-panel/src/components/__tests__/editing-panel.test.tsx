@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
-import { useUserRestrictions } from '@elementor/editor-current-user';
+import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
 import { type Element, type ElementType, useSelectedElementSettings } from '@elementor/editor-elements';
 import { screen } from '@testing-library/react';
 
@@ -14,11 +14,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 
 describe( '<EditingPanel />', () => {
 	beforeEach( () => {
-		jest.mocked( useUserRestrictions ).mockReturnValue( {
-			isRestricted: () => false,
-			restrictions: [],
-			hasContentOnlyAccess: false,
-		} );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( false );
 	} );
 
 	it( 'should render the selected element editing panel', () => {

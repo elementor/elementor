@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import * as React from 'react';
-import { useUserRestrictions } from '@elementor/editor-current-user';
+import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -37,7 +37,7 @@ const PanelTabContent = () => {
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
-	const { hasContentOnlyAccess } = useUserRestrictions();
+	const hasContentOnlyAccess = useHasContentOnlyAccess();
 
 	// A promoted element has no General tab, and its Style tab only renders an upsell, so restricting it would leave the panel empty.
 	const areDesignTabsRestricted = hasContentOnlyAccess && ! isPromotedElement;

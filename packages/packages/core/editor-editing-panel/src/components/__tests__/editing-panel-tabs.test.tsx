@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
-import { useUserRestrictions } from '@elementor/editor-current-user';
+import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { fireEvent, screen } from '@testing-library/react';
 
@@ -40,18 +40,6 @@ const STYLE_TAB_PANEL_TEXT = 'Style tab panel';
 const INTERACTIONS_TAB_PANEL_TEXT = 'Interactions tab panel';
 const INFOTIP_ROOT_SELECTOR = '[class*="MuiInfotip-root"]';
 
-const unrestrictedUser = {
-	isRestricted: () => false,
-	restrictions: [] as string[],
-	hasContentOnlyAccess: false,
-};
-
-const contentOnlyUser = {
-	isRestricted: ( restriction: string ) => restriction === 'design',
-	restrictions: [ 'design' ],
-	hasContentOnlyAccess: true,
-};
-
 const renderEditingPanelTabs = ( elementTypeKey: string = ELEMENT_TYPE ) => {
 	const element = { id: ELEMENT_ID, type: elementTypeKey };
 	const elementType = createMockElementType( { key: elementTypeKey, title: 'Heading' } );
@@ -82,7 +70,7 @@ const hasInfotipTrigger = ( tab: HTMLElement ) => {
 
 describe( '<EditingPanelTabs />', () => {
 	beforeEach( () => {
-		jest.mocked( useUserRestrictions ).mockReturnValue( unrestrictedUser );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( false );
 		jest.mocked( getWidgetsCache ).mockReturnValue( {} );
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
 			defaultSectionsExpanded: {
@@ -116,7 +104,7 @@ describe( '<EditingPanelTabs />', () => {
 
 	it( 'should render Style and Interactions tabs disabled for a content-only user', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( contentOnlyUser );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( true );
 		renderEditingPanelTabs();
 
 		// Act
@@ -135,7 +123,7 @@ describe( '<EditingPanelTabs />', () => {
 
 	it( 'should force the General tab when a content-only user stored tab was Style', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( contentOnlyUser );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( true );
 		jest.mocked( useStateByElement ).mockReturnValue( [ 'style', jest.fn() ] );
 		renderEditingPanelTabs();
 
@@ -152,7 +140,7 @@ describe( '<EditingPanelTabs />', () => {
 
 	it( 'should attach the content-only infotip to the restricted tabs', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( contentOnlyUser );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( true );
 
 		// Act
 		renderEditingPanelTabs();
@@ -164,7 +152,7 @@ describe( '<EditingPanelTabs />', () => {
 
 	it( 'should not attach the content-only infotip for an unrestricted user', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( unrestrictedUser );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( false );
 
 		// Act
 		renderEditingPanelTabs();
@@ -189,7 +177,7 @@ describe( '<EditingPanelTabs />', () => {
 
 	it( 'should keep the Style tab enabled for a promoted element when the user has content-only access', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( contentOnlyUser );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( true );
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
 			[ PROMOTED_ELEMENT_TYPE ]: {
 				title: 'Promoted widget',
