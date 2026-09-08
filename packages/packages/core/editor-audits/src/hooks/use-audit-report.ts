@@ -5,6 +5,7 @@ import { __useDispatch as useDispatch, __useSelector as useSelector } from '@ele
 import { runPageAudit } from '../runner';
 import { type GlobalState, selectError, selectReport, selectStatus, slice } from '../store';
 import { getPersistedReport, persistReport } from '../utils/report-storage';
+import { SessionExpiredError } from '../utils/session-expiration';
 
 export function useAuditReport() {
 	const status = useSelector( ( state: GlobalState ) => selectStatus( state ) );
@@ -35,6 +36,11 @@ export function useAuditReport() {
 			dispatch( slice.actions.runSucceeded( nextReport ) );
 			persistReport( documentIdToRun, nextReport );
 		} catch ( e ) {
+			if ( e instanceof SessionExpiredError ) {
+				dispatch( slice.actions.runAborted() );
+				return;
+			}
+
 			dispatch( slice.actions.runFailed( e instanceof Error ? e.message : 'Unknown error' ) );
 		}
 	};
