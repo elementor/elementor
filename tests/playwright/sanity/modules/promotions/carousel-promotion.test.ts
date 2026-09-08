@@ -2,6 +2,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
+import { DriverFactory } from '../../../drivers/driver-factory';
 import {
 	expandPanelCategory,
 	getPromotionWidgetByType,
@@ -21,11 +22,7 @@ test.describe( 'Carousel promotion test @promotions', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
+		await DriverFactory.resetExperiments( browser, testInfo, apiRequests );
 	} );
 
 	test( 'Carousel widget visible in Atomic Elements with nested-carousel icon', async ( { page, apiRequests }, testInfo ) => {

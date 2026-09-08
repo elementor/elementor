@@ -3,6 +3,7 @@ import { timeouts } from '../../../config/timeouts';
 
 export const promotionPopoverSelector = '.MuiTooltip-tooltip > .MuiBox-root';
 const WIDGET_SEARCH_INPUT = 'input#elementor-panel-elements-search-input';
+const MIN_EXPANDED_CATEGORY_ITEMS_HEIGHT = 20;
 
 export function getPromotionWidget( category: Locator, widgetTitle: string ): Locator {
 	return category.locator( '.elementor-element' ).filter( { hasText: widgetTitle } ).first();
@@ -15,6 +16,8 @@ export function getPromotionWidgetByType( category: Locator, elementType: string
 /**
  * Category titles toggle. Clicking an already-open accordion collapses it and hides the tiles
  * mid-animation — the original carousel flake.
+ *
+ * @param {Locator} category Panel category root (`#elementor-panel-category-*`).
  */
 export async function expandPanelCategory( category: Locator ): Promise<void> {
 	const items = category.locator( '.elementor-panel-category-items' );
@@ -28,7 +31,7 @@ export async function expandPanelCategory( category: Locator ): Promise<void> {
 	await expect.poll(
 		async () => items.evaluate( ( element ) => element.getBoundingClientRect().height ),
 		{ timeout: timeouts.longAction },
-	).toBeGreaterThan( 20 );
+	).toBeGreaterThan( MIN_EXPANDED_CATEGORY_ITEMS_HEIGHT );
 }
 
 export async function searchPanelWidgets( page: Page, searchTerm: string ): Promise<void> {
