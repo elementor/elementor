@@ -15,7 +15,7 @@ describe( audit.id, () => {
 		global.fetch = originalFetch;
 	} );
 
-	it( 'skips when the page has no frontend_url (e.g. not published)', async () => {
+	it( 'skips with an unpublished reason when the page has no frontend_url', async () => {
 		// Arrange.
 		global.fetch = jest.fn() as unknown as typeof fetch;
 
@@ -23,8 +23,19 @@ describe( audit.id, () => {
 		const result = await audit.evaluate( makeContext( { pageContext: { frontend_url: null } } ) );
 
 		// Assert.
-		expect( result.status ).toBe( 'skipped' );
+		expect( result ).toEqual( { status: 'skipped', reason: 'Page is not published.' } );
 		expect( global.fetch ).not.toHaveBeenCalled();
+	} );
+
+	it( 'skips with a fetch-failure reason when the published page could not be fetched', async () => {
+		// Arrange.
+		global.fetch = jest.fn().mockResolvedValue( { ok: false } ) as unknown as typeof fetch;
+
+		// Act.
+		const result = await audit.evaluate( makeContext() );
+
+		// Assert.
+		expect( result ).toEqual( { status: 'skipped', reason: 'Could not fetch the published page.' } );
 	} );
 
 	it( 'skips when no Google tracking product is detected on the rendered page', async () => {
@@ -35,7 +46,7 @@ describe( audit.id, () => {
 		const result = await audit.evaluate( makeContext() );
 
 		// Assert.
-		expect( result.status ).toBe( 'skipped' );
+		expect( result ).toEqual( { status: 'skipped', reason: 'No Google tracking product detected.' } );
 	} );
 
 	it( 'passes when a Google tracking product and a consent default call are both present', async () => {

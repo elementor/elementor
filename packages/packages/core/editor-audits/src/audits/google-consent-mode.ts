@@ -19,9 +19,17 @@ export const audit: Audit = {
 	severity: 'warning',
 	weight: 1,
 	evaluate: async ( ctx ) => {
+		if ( ! ctx.pageContext.frontend_url ) {
+			return { status: 'skipped', reason: __( 'Page is not published.', 'elementor' ) };
+		}
+
 		const html = await fetchRenderedHtml( ctx.pageContext.frontend_url );
 
-		if ( ! html || ! hasGoogleTracking( html ) ) {
+		if ( ! html ) {
+			return { status: 'skipped', reason: __( 'Could not fetch the published page.', 'elementor' ) };
+		}
+
+		if ( ! hasGoogleTracking( html ) ) {
 			return { status: 'skipped', reason: __( 'No Google tracking product detected.', 'elementor' ) };
 		}
 

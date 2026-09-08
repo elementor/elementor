@@ -4,8 +4,13 @@ import { fetchRenderedHtml } from '../fetch-rendered-html';
 describe( 'fetchRenderedHtml', () => {
 	const originalFetch = global.fetch;
 
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
+
 	afterEach( () => {
 		global.fetch = originalFetch;
+		jest.useRealTimers();
 	} );
 
 	it( 'returns null without calling fetch when url is null', async () => {
@@ -33,7 +38,28 @@ describe( 'fetchRenderedHtml', () => {
 		await fetchRenderedHtml( 'https://example.com/hello' );
 
 		// Assert.
-		expect( fetchMock ).toHaveBeenCalledWith( 'https://example.com/hello', { credentials: 'omit' } );
+		expect( fetchMock ).toHaveBeenCalledWith(
+			'https://example.com/hello',
+			expect.objectContaining( { credentials: 'omit', signal: expect.any( AbortSignal ) } )
+		);
+	} );
+
+	it( 'aborts and returns null when the request exceeds the fetch timeout', async () => {
+		// Arrange.
+		const fetchMock = jest.fn().mockImplementation( ( _url, { signal }: { signal: AbortSignal } ) => {
+			return new Promise( ( _resolve, reject ) => {
+				signal.addEventListener( 'abort', () => reject( new Error( 'aborted' ) ) );
+			} );
+		} );
+		global.fetch = fetchMock as unknown as typeof fetch;
+
+		// Act.
+		const pendingResult = fetchRenderedHtml( 'https://example.com/hello' );
+		await jest.advanceTimersByTimeAsync( 10_000 );
+		const pageHtml = await pendingResult;
+
+		// Assert.
+		expect( pageHtml ).toBeNull();
 	} );
 
 	it( 'returns the response text when the request succeeds', async () => {
