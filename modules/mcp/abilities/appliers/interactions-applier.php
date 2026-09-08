@@ -34,9 +34,20 @@ class Interactions_Applier {
 		}
 
 		$errors = [];
+		$warnings = [];
 
 		foreach ( $interactions as $config_id => $items ) {
 			if ( ! isset( $index[ $config_id ] ) ) {
+				continue;
+			}
+
+			if ( V3_Node_Bridge::is_v3_node( $index[ $config_id ] ) ) {
+				$widget_type = (string) ( $index[ $config_id ]['widgetType'] ?? '' );
+				$warnings[] = sprintf(
+					/* translators: %s: V3 widget type name. */
+					__( 'Interactions are V4-only. Skipped for V3 widget %s.', 'elementor' ),
+					$widget_type
+				);
 				continue;
 			}
 
@@ -72,13 +83,13 @@ class Interactions_Applier {
 					implode( ' ', $errors ),
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				),
-				'warnings' => [],
+				'warnings' => $warnings,
 			];
 		}
 
 		return [
 			'error' => null,
-			'warnings' => [],
+			'warnings' => $warnings,
 		];
 	}
 
