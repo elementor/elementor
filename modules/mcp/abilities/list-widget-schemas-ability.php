@@ -55,7 +55,7 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 					return true;
 				}
 
-				return Widget_Context_Helper::is_v3_allowlisted( (string) $type );
+				return Widget_Context_Helper::is_v3_supported( (string) $type );
 			},
 			ARRAY_FILTER_USE_BOTH
 		);
@@ -87,7 +87,13 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 		$schemas = [];
 
 		foreach ( $widgets as $widget_type => $config ) {
-			$schemas[ $widget_type ] = Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index );
+			$schema = Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index );
+
+			if ( null === $schema ) {
+				continue;
+			}
+
+			$schemas[ $widget_type ] = $schema;
 		}
 
 		return $schemas;
