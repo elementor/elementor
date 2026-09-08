@@ -1,0 +1,119 @@
+{
+    "controls": {
+        "section_style": {
+            "type": "section",
+            "tab": "style",
+            "label": "Style"
+        },
+        "align": {
+            "type": "choose",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Alignment",
+            "selectors": {
+                "{{WRAPPER}}": "text-align: {{VALUE}};"
+            },
+            "responsive": []
+        },
+        "text_color": {
+            "type": "color",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Text Color",
+            "selectors": {
+                "{{WRAPPER}}": "color: {{VALUE}};"
+            }
+        },
+        "typography_typography": {
+            "type": "popover_toggle",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Typography"
+        },
+        "typography_font_family": {
+            "type": "font",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Family",
+            "selectors": {
+                "{{WRAPPER}}": "font-family: \"{{VALUE}}\", Sans-serif;"
+            }
+        },
+        "typography_font_size": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Size",
+            "selectors": {
+                "{{WRAPPER}}": "font-size: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "typography_font_weight": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Weight",
+            "selectors": {
+                "{{WRAPPER}}": "font-weight: {{VALUE}};"
+            }
+        },
+        "typography_text_transform": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Transform",
+            "selectors": {
+                "{{WRAPPER}}": "text-transform: {{VALUE}};"
+            }
+        },
+        "typography_font_style": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Style",
+            "selectors": {
+                "{{WRAPPER}}": "font-style: {{VALUE}};"
+            }
+        },
+        "typography_text_decoration": {
+            "type": "select",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Decoration",
+            "selectors": {
+                "{{WRAPPER}}": "text-decoration: {{VALUE}};"
+            }
+        },
+        "typography_line_height": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Line Height",
+            "selectors": {
+                "{{WRAPPER}}": "line-height: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "typography_letter_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Letter Spacing",
+            "selectors": {
+                "{{WRAPPER}}": "letter-spacing: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        },
+        "typography_word_spacing": {
+            "type": "slider",
+            "tab": "style",
+            "section": "section_style",
+            "label": "Word Spacing",
+            "selectors": {
+                "{{WRAPPER}}": "word-spacing: {{SIZE}}{{UNIT}}"
+            },
+            "responsive": []
+        }
+    }
+}
