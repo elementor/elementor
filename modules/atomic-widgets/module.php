@@ -664,6 +664,7 @@ class Module extends BaseModule {
 			// No state pinned (editor "States" unselected): hide both buttons. The two `:not` guards lift
 			// specificity above the atomic base style so `display: none` wins. On the frontend Alpine always
 			// sets one of the state classes from real playback, so exactly one button shows there.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__controls,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
 			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's

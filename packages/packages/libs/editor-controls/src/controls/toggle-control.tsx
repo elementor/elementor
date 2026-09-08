@@ -14,6 +14,7 @@ export type ToggleControlProps< T extends PropValue > = {
 	exclusive?: boolean;
 	maxItems?: number;
 	convertOptions?: boolean;
+	allowEmpty?: boolean;
 };
 
 export const ToggleControl = createControl(
@@ -24,6 +25,7 @@ export const ToggleControl = createControl(
 		exclusive = true,
 		maxItems,
 		convertOptions = false,
+		allowEmpty = false,
 	}: ToggleControlProps< StringPropValue[ 'value' ] > ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( stringPropTypeUtil );
 
@@ -54,11 +56,20 @@ export const ToggleControl = createControl(
 			placeholder,
 		};
 
+		const handleExclusiveToggle = ( selectedValue: StringPropValue[ 'value' ] | null ) => {
+			if ( allowEmpty && ! selectedValue ) {
+				setValue( '' );
+				return;
+			}
+
+			setValue( selectedValue );
+		};
+
 		return exclusive ? (
 			<ControlToggleButtonGroup
 				{ ...toggleButtonGroupProps }
-				value={ value ?? null }
-				onChange={ setValue }
+				value={ value || null }
+				onChange={ handleExclusiveToggle }
 				disabled={ disabled }
 				exclusive={ true }
 			/>
