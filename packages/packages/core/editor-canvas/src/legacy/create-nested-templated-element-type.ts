@@ -1,4 +1,4 @@
-import { ELEMENT_STYLE_CHANGE_EVENT, type V1ElementModelProps } from '@elementor/editor-elements';
+import { type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
@@ -164,7 +164,6 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			this.model.trigger( 'render:complete' );
-			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 		},
 
 		async _renderTemplate() {
