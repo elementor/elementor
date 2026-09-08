@@ -24,7 +24,8 @@ class Content_Only_Save_Guard {
 	private const SETTING_CLASSES = 'classes';
 
 	public function register(): void {
-		add_filter( 'elementor/document/save/data', [ $this, 'filter_save_data' ], 10, 2 );
+		// Runs late so no other callback can reintroduce design fields after the guard has cleared them.
+		add_filter( 'elementor/document/save/data', [ $this, 'filter_save_data' ], 99, 2 );
 	}
 
 	public function filter_save_data( array $data, Document $document ): array {
@@ -61,6 +62,12 @@ class Content_Only_Save_Guard {
 	private function build_elements_map_by_id( array $elements ): array {
 		$map = [];
 
+		$this->build_elements_map_by_id_into( $elements, $map );
+
+		return $map;
+	}
+
+	private function build_elements_map_by_id_into( array $elements, array &$map ): void {
 		foreach ( $elements as $element ) {
 			if ( ! is_array( $element ) ) {
 				continue;
@@ -75,11 +82,9 @@ class Content_Only_Save_Guard {
 			$children = $element[ self::FIELD_ELEMENTS ] ?? [];
 
 			if ( is_array( $children ) && ! empty( $children ) ) {
-				$map = array_merge( $map, $this->build_elements_map_by_id( $children ) );
+				$this->build_elements_map_by_id_into( $children, $map );
 			}
 		}
-
-		return $map;
 	}
 
 	private function sanitize_elements_tree( array $elements, array $persisted_map, bool &$had_overrides ): array {
