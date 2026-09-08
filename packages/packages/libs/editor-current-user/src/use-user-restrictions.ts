@@ -10,6 +10,5 @@ export const useUserRestrictions = () => {
 	return {
 		isRestricted,
 		restrictions: data?.restrictions,
-		hasContentOnlyAccess: isRestricted( DESIGN_RESTRICTION ),
 	};
 };
