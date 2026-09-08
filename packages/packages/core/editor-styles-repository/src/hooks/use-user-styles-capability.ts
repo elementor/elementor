@@ -1,4 +1,4 @@
-import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
+import { useCurrentUserCapabilities, useUserRestrictions } from '@elementor/editor-current-user';
 
 import { stylesRepository } from '../styles-repository';
 import { type UserCapabilities } from '../types';
@@ -14,10 +14,22 @@ const DEFAULT_CAPABILITIES: UserCan = {
 	updateProps: true,
 };
 
+const DENIED_CAPABILITIES: UserCan = {
+	create: false,
+	delete: false,
+	update: false,
+	updateProps: false,
+};
+
 export const useUserStylesCapability = () => {
 	const { capabilities } = useCurrentUserCapabilities();
+	const { hasContentOnlyAccess } = useUserRestrictions();
 
 	const userCan = ( providerKey: string ): UserCan => {
+		if ( hasContentOnlyAccess ) {
+			return DENIED_CAPABILITIES;
+		}
+
 		const provider = stylesRepository.getProviderByKey( providerKey );
 
 		if ( ! provider?.capabilities ) {
