@@ -1,4 +1,4 @@
-import { DESIGN_RESTRICTION, useCurrentUserCapabilities, useUserRestrictions } from '@elementor/editor-current-user';
+import { useCurrentUserCapabilities, useHasContentOnlyAccess } from '@elementor/editor-current-user';
 import { renderHook } from '@testing-library/react';
 
 import { documentElementsStylesProvider } from '../../providers/document-elements-styles-provider';
@@ -31,11 +31,7 @@ const deniedCapabilities = {
 
 describe( 'useUserStylesCapability', () => {
 	beforeEach( () => {
-		jest.mocked( useUserRestrictions ).mockReturnValue( {
-			isRestricted: () => false,
-			restrictions: undefined,
-			hasContentOnlyAccess: false,
-		} );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( false );
 
 		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
 			capabilities: [ UPDATE_CAPABILITY ],
@@ -46,11 +42,7 @@ describe( 'useUserStylesCapability', () => {
 
 	it( 'should deny all capabilities for content-only users on a provider without capabilities', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( {
-			isRestricted: ( restriction ) => restriction === DESIGN_RESTRICTION,
-			restrictions: [ DESIGN_RESTRICTION ],
-			hasContentOnlyAccess: true,
-		} );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( true );
 
 		jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( documentElementsStylesProvider );
 
@@ -63,11 +55,7 @@ describe( 'useUserStylesCapability', () => {
 
 	it( 'should deny all capabilities for content-only users on a provider with capabilities', () => {
 		// Arrange
-		jest.mocked( useUserRestrictions ).mockReturnValue( {
-			isRestricted: ( restriction ) => restriction === DESIGN_RESTRICTION,
-			restrictions: [ DESIGN_RESTRICTION ],
-			hasContentOnlyAccess: true,
-		} );
+		jest.mocked( useHasContentOnlyAccess ).mockReturnValue( true );
 
 		jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( providerWithCapabilities as StylesProvider );
 
