@@ -1,5 +1,5 @@
 import { createMockStyleDefinition } from 'test-utils';
-import { getCurrentUser } from '@elementor/editor-current-user';
+import { getCurrentUser, isContentOnlyUser } from '@elementor/editor-current-user';
 import {
 	__privateRunCommandSync as runCommandSync,
 	type HookOptions,
@@ -30,6 +30,8 @@ describe( 'syncWithDocumentSave', () => {
 		jest.mocked( getCurrentUser ).mockReturnValue( {
 			capabilities: [ UPDATE_CLASS_CAPABILITY_KEY ],
 		} as never );
+
+		jest.mocked( isContentOnlyUser ).mockReturnValue( false );
 	} );
 
 	it( 'should sync global classes dirty state with the document dirty state', () => {
@@ -105,6 +107,37 @@ describe( 'syncWithDocumentSave', () => {
 			unsubscribe();
 		}
 	);
+
+	it( 'should not save global classes for content-only users', async () => {
+		// Arrange.
+		const triggerHook = mockRegisterDataHook();
+
+		jest.mocked( isContentOnlyUser ).mockReturnValue( true );
+
+		const unsubscribe = syncWithDocumentSave();
+
+		const styleDefinition = createMockStyleDefinition();
+
+		dispatch( slice.actions.add( styleDefinition ) );
+
+		// Act.
+		await triggerHook( 'dependency', 'document/save/save', { status: 'publish' } );
+
+		// Assert.
+		expect( apiClient.publish ).not.toHaveBeenCalled();
+
+		expect( selectIsDirty( getState() ) ).toBe( true );
+		expect( selectPreviewInitialData( getState() ) ).toEqual( {
+			items: {},
+			order: [],
+		} );
+		expect( selectFrontendInitialData( getState() ) ).toEqual( {
+			items: {},
+			order: [],
+		} );
+
+		unsubscribe();
+	} );
 
 	it( 'should not save global classes when the user does not have the capability', async () => {
 		// Arrange.
