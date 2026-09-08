@@ -57,6 +57,9 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		headingWidgetId = await editor.addWidget( { widgetType: HEADING_WIDGET, container: containerId } );
 
+		// The content-only user opens this post in a separate context, so the heading has to be persisted.
+		await editor.publishPage();
+
 		await adminContext.close();
 	} );
 
