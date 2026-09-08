@@ -18,7 +18,7 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 					<Image
 						src={ imageUrl }
 						alt={ __( 'Angie', 'elementor' ) }
-						sx={ { width: '100%', borderRadius: 1, display: 'block' } }
+						sx={ { width: '100%', maxHeight: 200, objectFit: 'cover', objectPosition: 'center top', borderRadius: 1, display: 'block' } }
 					/>
 					<CloseButton
 						edge="end"
@@ -26,8 +26,8 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 							position: 'absolute',
 							top: 16,
 							right: 16,
-							bgcolor: 'rgba(255,255,255,0.75)',
-							'&:hover': { bgcolor: 'rgba(255,255,255,0.95)' },
+							color: 'common.white',
+							filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
 						} }
 						slotProps={ { icon: { fontSize: 'small' } } }
 						onClick={ onClose }
