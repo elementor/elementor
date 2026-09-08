@@ -64,6 +64,8 @@ class User_Data {
 		$data = [
 			'suppressedMessages' => $suppressed_messages,
 			'capabilities' => $capabilities,
+			// array_values, because array_unique in the role manager can leave non-sequential keys, which json_encode would emit as an object.
+			'restrictions' => array_values( Plugin::$instance->role_manager->get_user_restrictions_array() ),
 		];
 
 		return new \WP_REST_Response( $data, 200 );
