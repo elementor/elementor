@@ -22,8 +22,8 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 				<CloseButton
 					sx={ {
 						position: 'absolute',
-						top: 24,
-						insetInlineEnd: 24,
+						top: 15,
+						insetInlineEnd: 15,
 						color: 'common.white',
 						filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
 						'&:hover': {
