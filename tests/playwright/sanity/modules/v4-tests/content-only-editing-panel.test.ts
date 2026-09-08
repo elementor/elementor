@@ -26,12 +26,13 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 	let sharedPostId: string;
 	let headingWidgetId: string;
 
-	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
-		const adminContext = await browser.newContext( { storageState: undefined } );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		// Keep the worker's admin storage state: the shared apiRequests nonce is bound to that
+		// session, so a freshly logged-in context would be rejected with an invalid nonce.
+		const adminContext = await browser.newContext();
 		const adminPage = await adminContext.newPage();
 		const adminWpAdmin = new WpAdminPage( adminPage, testInfo, apiRequests );
 
-		await adminWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 		await adminWpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
 			e_opt_in_v4: 'active',
@@ -39,7 +40,7 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 		// The wpCli helper runs through docker compose without a shell, so the JSON must not be shell-quoted.
 		await wpCli( `wp option update ${ ROLE_MANAGER_OPTION } ${ JSON.stringify( CONTENT_ONLY_ROLE_RESTRICTIONS ) } --format=json` );
 
-		contentOnlyUser = await apiRequests.createNewUser( request, {
+		contentOnlyUser = await apiRequests.createNewUser( adminPage.context().request, {
 			username: 'contentOnlyEditor',
 			password: 'password',
 			email: 'content-only-editor@test.com',
@@ -59,21 +60,16 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 		await adminContext.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
-		if ( contentOnlyUser?.id ) {
-			try {
-				await apiRequests.deleteUser( request, contentOnlyUser.id );
-			} catch {
-				// Cleanup should not fail the test run.
-			}
-		}
-
-		const cleanupContext = await browser.newContext( { storageState: undefined } );
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const cleanupContext = await browser.newContext();
 		const cleanupPage = await cleanupContext.newPage();
 		const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
 
 		try {
-			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
+			if ( contentOnlyUser?.id ) {
+				await apiRequests.deleteUser( cleanupPage.context().request, contentOnlyUser.id );
+			}
+
 			await wpCli( `wp option delete ${ ROLE_MANAGER_OPTION }` );
 			await cleanupWpAdmin.resetExperiments();
 		} catch {
