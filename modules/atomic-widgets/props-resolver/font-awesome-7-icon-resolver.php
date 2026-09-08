@@ -78,7 +78,7 @@ class Font_Awesome_7_Icon_Resolver {
 	}
 
 	private static function get_icon_name( string $value ): ?string {
-		if ( ! preg_match( '/^fa\S*\s+fa-(.+)$/', $value, $matches ) ) {
+		if ( ! preg_match( '/^fa\S*\s+fa-([^\s]+)/', $value, $matches ) ) {
 			return null;
 		}
 

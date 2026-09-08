@@ -28,6 +28,7 @@ export const audit: Audit = {
 					auditId: audit.id,
 					label: __( 'No privacy policy page is set.', 'elementor' ),
 					externalUrl: ctx.pageContext.privacy_settings_url,
+					ctaLabel: __( 'Create', 'elementor' ),
 				},
 			],
 		};
