@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
 import { timeouts } from '../../../config/timeouts';
+import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import EditorSelectors from '../../../selectors/editor-selectors';
@@ -12,6 +13,7 @@ const CONTENT_ONLY_ROLE_RESTRICTIONS = { [ EDITOR_ROLE ]: [ DESIGN_RESTRICTION ]
 const TAB_GENERAL = 'General';
 const TAB_STYLE = 'Style';
 const TAB_INTERACTIONS = 'Interactions';
+const INFOTIP_POPPER_SELECTOR = '.MuiTooltip-tooltip';
 const INFOTIP_TITLE = 'Content-only access';
 const INFOTIP_BODY = 'Your Site Admin has limited this role to content editing.';
 const INFOTIP_LEARN_MORE_LABEL = 'Learn More';
@@ -43,9 +45,12 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 			roles: [ EDITOR_ROLE ],
 		} );
 
-		const editor = await adminWpAdmin.openNewPage();
-		const postIdMatch = adminPage.url().match( /post=(\d+)/ );
-		sharedPostId = postIdMatch?.[ 1 ] ?? '';
+		sharedPostId = await adminWpAdmin.createNewPostWithAPI();
+		await adminPage.waitForLoadState( 'load', { timeout: timeouts.action } );
+		await adminWpAdmin.waitForPanel();
+		await adminWpAdmin.closeAnnouncementsIfVisible();
+
+		const editor = new EditorPage( adminPage, testInfo );
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		headingWidgetId = await editor.addWidget( { widgetType: HEADING_WIDGET, container: containerId } );
@@ -66,10 +71,15 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 		const cleanupPage = await cleanupContext.newPage();
 		const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
 
-		await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
-		await wpCli( `wp option delete ${ ROLE_MANAGER_OPTION }` );
-		await cleanupWpAdmin.resetExperiments();
-		await cleanupContext.close();
+		try {
+			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
+			await wpCli( `wp option delete ${ ROLE_MANAGER_OPTION }` );
+			await cleanupWpAdmin.resetExperiments();
+		} catch {
+			// Cleanup should not fail the test run.
+		} finally {
+			await cleanupContext.close();
+		}
 	} );
 
 	test( 'content-only editor sees restricted panel tabs while admin does not', async ( { browser, apiRequests, page }, testInfo ) => {
@@ -97,9 +107,13 @@ test.describe( 'Content-only editing panel access @v4-tests', () => {
 
 		await test.step( 'Hovering the disabled Style tab shows the content-only infotip', async () => {
 			await styleTab.hover();
-			await expect( editorPage.getByText( INFOTIP_TITLE ) ).toBeVisible( { timeout: timeouts.action } );
-			await expect( editorPage.getByText( INFOTIP_BODY ) ).toBeVisible();
-			const learnMoreLink = editorPage.getByRole( 'link', { name: INFOTIP_LEARN_MORE_LABEL } );
+
+			// The infotip renders in a portal, so scope the assertions to the popper itself.
+			const infotip = editorPage.locator( INFOTIP_POPPER_SELECTOR ).filter( { hasText: INFOTIP_TITLE } );
+
+			await expect( infotip ).toBeVisible( { timeout: timeouts.action } );
+			await expect( infotip.getByText( INFOTIP_BODY ) ).toBeVisible();
+			const learnMoreLink = infotip.getByRole( 'link', { name: INFOTIP_LEARN_MORE_LABEL } );
 			await expect( learnMoreLink ).toBeVisible();
 			await expect( learnMoreLink ).toHaveAttribute( 'href', INFOTIP_LEARN_MORE_URL );
 		} );
