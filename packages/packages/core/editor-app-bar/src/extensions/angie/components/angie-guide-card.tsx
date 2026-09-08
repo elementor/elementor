@@ -20,13 +20,16 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 					sx={ { width: '100%', maxHeight: 200, objectFit: 'cover', objectPosition: 'center top', borderRadius: 1, display: 'block' } }
 				/>
 				<CloseButton
-					edge="end"
 					sx={ {
 						position: 'absolute',
-						top: 16,
-						right: 16,
+						top: 24,
+						insetInlineEnd: 24,
 						color: 'common.white',
 						filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
+						'&:hover': {
+							bgcolor: 'rgba(255,255,255,0.2)',
+							color: 'common.white',
+						},
 					} }
 					slotProps={ { icon: { fontSize: 'small' } } }
 					onClick={ onClose }
