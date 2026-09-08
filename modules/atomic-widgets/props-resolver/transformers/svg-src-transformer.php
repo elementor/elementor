@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Svg_Src_Transformer extends Transformer_Base {
 	const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
 
+	private const HTTP_OK = 200;
+
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$id = isset( $value['id'] ) ? (int) $value['id'] : null;
 		$url = $value['url'] ?? null;
@@ -49,33 +51,49 @@ class Svg_Src_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		$local_path = $this->resolve_local_path( $url );
-
-		if ( $local_path ) {
-			$content = Utils::file_get_contents( $local_path );
-
-			if ( $content ) {
-				return $content;
-			}
-		}
-
-		$response = wp_safe_remote_get( $url );
-
-		if ( ! is_wp_error( $response ) ) {
-			return $response['body'];
-		}
-
-		return null;
+		return $this->is_same_site_url( $url )
+			? $this->fetch_local_svg_content( $url )
+			: $this->fetch_remote_svg_content( $url );
 	}
 
-	private function resolve_local_path( string $url ): ?string {
-		$site_url = site_url();
+	private function fetch_local_svg_content( string $url ): ?string {
+		$local_path = $this->resolve_local_path( $url );
 
-		if ( 0 !== strpos( $url, $site_url ) ) {
+		if ( ! $local_path ) {
 			return null;
 		}
 
-		$relative = substr( $url, strlen( $site_url ) );
+		$content = Utils::file_get_contents( $local_path );
+
+		return $content ? $content : null;
+	}
+
+	private function fetch_remote_svg_content( string $url ): ?string {
+		$response = wp_safe_remote_get( $url );
+
+		if ( is_wp_error( $response ) ) {
+			return null;
+		}
+
+		if ( self::HTTP_OK !== wp_remote_retrieve_response_code( $response ) ) {
+			return null;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		return $body ? $body : null;
+	}
+
+	private function is_same_site_url( string $url ): bool {
+		return 0 === strpos( $url, site_url() );
+	}
+
+	private function resolve_local_path( string $url ): ?string {
+		if ( ! $this->is_same_site_url( $url ) ) {
+			return null;
+		}
+
+		$relative = substr( $url, strlen( site_url() ) );
 		$path = ABSPATH . ltrim( $relative, '/' );
 
 		return file_exists( $path ) ? $path : null;
