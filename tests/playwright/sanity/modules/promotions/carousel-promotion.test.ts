@@ -2,8 +2,14 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
-import { getPromotionWidgetByType, openPromotionPopover } from './promotion-popover-helper';
+import {
+	expandPanelCategory,
+	getPromotionWidgetByType,
+	openPromotionPopover,
+	searchPanelWidgets,
+} from './promotion-popover-helper';
 import _path from 'path';
+import { timeouts } from '../../../config/timeouts';
 
 const CAROUSEL_PROMOTION_CONTENT_PATTERN = /engaging slideshows with customizable slides/i;
 const categorySelector = '#elementor-panel-category-v4-elements';
@@ -14,17 +20,26 @@ test.describe( 'Carousel promotion test @promotions', () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
+	} );
+
 	test( 'Carousel widget visible in Atomic Elements with nested-carousel icon', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
 		const category = page.locator( categorySelector );
-		await category.locator( '.elementor-panel-category-title' ).click();
-		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
+		await expandPanelCategory( category );
 
 		const carouselWidget = getPromotionWidgetByType( category, 'e-carousel' );
-		await carouselWidget.scrollIntoViewIfNeeded();
-		await expect( carouselWidget ).toBeVisible();
+		await expect( carouselWidget ).toBeVisible( { timeout: timeouts.longAction } );
+		await carouselWidget.evaluate( ( element ) => {
+			element.scrollIntoView( { block: 'center', inline: 'nearest', behavior: 'instant' } );
+		} );
 		await expect( carouselWidget.locator( '.eicon-nested-carousel' ) ).toHaveCount( 1 );
 	} );
 
@@ -32,14 +47,12 @@ test.describe( 'Carousel promotion test @promotions', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
-		const category = page.locator( categorySelector );
-		await category.locator( '.elementor-panel-category-title' ).click();
-		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
+		await searchPanelWidgets( page, 'Carousel' );
 
-		const carouselWidget = getPromotionWidgetByType( category, 'e-carousel' );
-		await expect( carouselWidget ).toBeVisible();
+		const carouselWidget = page.locator( '[data-library-element-type="e-carousel"]' ).first();
+		await expect( carouselWidget ).toBeVisible( { timeout: timeouts.longAction } );
 
-		const popover = await openPromotionPopover( carouselWidget );
+		const popover = await openPromotionPopover( carouselWidget, { hasText: 'Carousel' } );
 		await expect( popover.getByText( 'Carousel', { exact: true } ) ).toBeVisible();
 		await expect( popover.getByText( CAROUSEL_PROMOTION_CONTENT_PATTERN ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toHaveAttribute( 'href', /go-pro-carousel-modal/ );
