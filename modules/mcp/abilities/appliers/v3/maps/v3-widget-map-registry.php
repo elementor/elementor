@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class V3_Widget_Map_Registry {
 
 	const MAPS_DIR = __DIR__;
+	const REGISTERED_MAPS_FILE = __DIR__ . '/registered-maps.php';
 
 	/**
 	 * @var self|null
@@ -106,9 +107,11 @@ class V3_Widget_Map_Registry {
 	 */
 	private static function load_map_files(): array {
 		$maps = [];
-		$files = [
-			'heading' => self::MAPS_DIR . '/heading-map.php',
-		];
+		$files = is_readable( self::REGISTERED_MAPS_FILE ) ? require self::REGISTERED_MAPS_FILE : [];
+
+		if ( ! is_array( $files ) ) {
+			return $maps;
+		}
 
 		foreach ( $files as $widget_type => $path ) {
 			if ( ! is_readable( $path ) ) {
@@ -144,9 +147,9 @@ class V3_Widget_Map_Registry {
 			return Widget_Context_Helper::is_v3_allowlisted( $widget_type );
 		}
 
-		$compiled = $this->get_compiled_map( $widget_type );
+		$compiled = $this->get_validation_contract( $widget_type );
 
-		if ( null === $compiled || $compiled instanceof WP_Error ) {
+		if ( null === $compiled ) {
 			return false;
 		}
 
@@ -160,9 +163,43 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
+	 * Internal shape used by our system (is_supported, description lookup, etc.).
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public function get_validation_contract( string $widget_type ): ?array {
+		$compiled = $this->compile( $widget_type );
+
+		if ( null === $compiled || $compiled instanceof WP_Error ) {
+			return null;
+		}
+
+		return $compiled;
+	}
+
+	/**
+	 * Public shape exposed to the LLM as the widget contract.
+	 *
+	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array{targets: array<string, string[]>}}|null
+	 */
+	public function get_llm_contract( string $widget_type ): ?array {
+		$compiled = $this->get_validation_contract( $widget_type );
+
+		if ( null === $compiled ) {
+			return null;
+		}
+
+		return [
+			'description' => (string) ( $compiled['description'] ?? '' ),
+			'properties' => is_array( $compiled['settings'] ?? null ) ? $compiled['settings'] : [],
+			'style_targets' => $this->build_style_targets_shape( $compiled ),
+		];
+	}
+
+	/**
 	 * @return array<string, mixed>|WP_Error|null
 	 */
-	public function get_compiled_map( string $widget_type ) {
+	private function compile( string $widget_type ) {
 		if ( ! $this->is_experiment_active() ) {
 			return null;
 		}
@@ -188,7 +225,7 @@ class V3_Widget_Map_Registry {
 	 * @param array<string, mixed> $compiled_map
 	 * @return array{targets: array<string, string[]>}
 	 */
-	public function build_public_style_targets( array $compiled_map ): array {
+	private function build_style_targets_shape( array $compiled_map ): array {
 		$targets = [];
 
 		foreach ( $compiled_map['style_targets'] as $alias => $target ) {

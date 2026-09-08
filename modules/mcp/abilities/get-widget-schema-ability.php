@@ -84,22 +84,6 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 		if ( $is_v3 ) {
 			$schema = Widget_Context_Helper::build_widget_schema( $widget_type, $config );
 
-			if ( null === $schema && Widget_Context_Helper::is_standardized_maps_active() ) {
-				$compiled_map = \Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry::instance()->get_compiled_map( $widget_type );
-
-				if ( $compiled_map instanceof \WP_Error ) {
-					return new \WP_Error(
-						$compiled_map->get_error_code(),
-						$compiled_map->get_error_message(),
-						[
-							'status' => \WP_Http::INTERNAL_SERVER_ERROR,
-							'widget_type' => $widget_type,
-							'reason' => $compiled_map->get_error_data()['reason'] ?? null,
-						]
-					);
-				}
-			}
-
 			if ( null === $schema ) {
 				return new \WP_Error(
 					'elementor_not_found',

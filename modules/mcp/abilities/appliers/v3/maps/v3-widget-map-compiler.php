@@ -28,6 +28,8 @@ class V3_Widget_Map_Compiler {
 		'color' => [ 'color' ],
 	];
 
+	const ALLOWED_STATE_KEYS = [ 'default', 'hover' ];
+
 	/**
 	 * @param array<string, mixed> $map
 	 * @param array<string, mixed> $controls
@@ -93,7 +95,11 @@ class V3_Widget_Map_Compiler {
 					return $this->error( 'missing_field', (string) $property );
 				}
 
-				foreach ( $states as $descriptor ) {
+				foreach ( $states as $state_key => $descriptor ) {
+					if ( ! in_array( $state_key, self::ALLOWED_STATE_KEYS, true ) ) {
+						return $this->error( 'invalid_state_key', (string) $state_key );
+					}
+
 					$descriptor_error = $this->validate_descriptor( $descriptor, $controls );
 
 					if ( $descriptor_error instanceof WP_Error ) {

@@ -11,9 +11,28 @@ return [
 	'description' => 'V3 heading. Exposed only when the V4 atomic experiment is off; when V4 is on, use `e-heading` instead.',
 	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
-		'title' => [],
-		'link' => [],
-		'header_size' => [],
+		'title' => [
+			'type' => 'string',
+		],
+		'link' => [
+			'type' => 'object',
+			'properties' => [
+				'url' => [ 'type' => 'string' ],
+				'is_external' => [
+					'type' => 'string',
+					'enum' => [ 'on', '' ],
+				],
+				'nofollow' => [
+					'type' => 'string',
+					'enum' => [ 'on', '' ],
+				],
+			],
+		],
+		'header_size' => [
+			'type' => 'string',
+			'enum' => [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'span', 'p' ],
+			'default' => 'h2',
+		],
 	],
 	'default_style_target' => 'heading',
 	'style_targets' => [

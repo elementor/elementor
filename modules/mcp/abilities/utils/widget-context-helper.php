@@ -327,11 +327,10 @@ class Widget_Context_Helper {
 		}
 
 		if ( null !== $widget_type && self::is_v3_supported( $widget_type ) ) {
-			$registry = V3_Widget_Map_Registry::instance();
-			$compiled_map = $registry->get_compiled_map( $widget_type );
+			$contract = V3_Widget_Map_Registry::instance()->get_validation_contract( $widget_type );
 
-			if ( is_array( $compiled_map ) && is_string( $compiled_map['description'] ?? null ) && '' !== $compiled_map['description'] ) {
-				return $compiled_map['description'];
+			if ( is_array( $contract ) && is_string( $contract['description'] ?? null ) && '' !== $contract['description'] ) {
+				return $contract['description'];
 			}
 
 			if ( self::is_v3_allowlisted( $widget_type ) ) {
@@ -359,24 +358,23 @@ class Widget_Context_Helper {
 	}
 
 	private static function build_standardized_v3_widget_schema( string $widget_type, array $config ): ?array {
-		$registry = V3_Widget_Map_Registry::instance();
-		$compiled_map = $registry->get_compiled_map( $widget_type );
+		$contract = V3_Widget_Map_Registry::instance()->get_llm_contract( $widget_type );
 
-		if ( ! is_array( $compiled_map ) ) {
+		if ( null === $contract ) {
 			return null;
 		}
 
-		$allowed_keys = array_keys( $compiled_map['settings'] ?? [] );
-		$built = V3_Json_Schema_Builder::build( $config['controls'] ?? [], $allowed_keys );
+		$description = '' !== $contract['description']
+			? $contract['description']
+			: self::get_description( $config, $widget_type );
 
 		return self::filter_nulls( [
 			'type' => 'object',
 			'widget_version' => self::VERSION_V3,
-			'description' => self::get_description( $config, $widget_type ),
-			'properties' => $built['properties'],
-			'required' => $built['required'],
+			'description' => $description,
+			'properties' => $contract['properties'],
 			'additionalProperties' => false,
-			'style_targets' => $registry->build_public_style_targets( $compiled_map ),
+			'style_targets' => $contract['style_targets'],
 		] );
 	}
 }
