@@ -124,16 +124,16 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 								<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
 									{ installState === 'error'
 										? __( 'Installation failed', 'elementor' )
-										: __( 'Create custom widgets with Angie', 'elementor' ) }
+										: <>{ __( 'Pages, layouts,', 'elementor' ) }<br />{ __( 'widgets and more', 'elementor' ) }</> }
 								</Typography>
-								<Typography variant="body2">
+								<Typography variant="body2" fontWeight={ 500 }>
 									{ installState === 'error'
 										? __(
 												"We couldn't install Angie automatically. Click below to install it manually.",
 												'elementor'
 										  )
 										: __(
-												'Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.',
+												'Ask Angie to build you full pages, custom widgets, snippets, and code directly in Elementor. Install and activate Angie once on this site to start building.',
 												'elementor'
 										  ) }
 								</Typography>
@@ -154,7 +154,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 												{ interpolateLinks(
 													sprintf(
 														// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
-														__( 'I agree to the %1$s & %2$s.', 'elementor' ),
+														__( 'By installing, you agree to our %1$s & %2$s.', 'elementor' ),
 														'{{terms}}',
 														'{{privacy}}'
 													),
@@ -193,7 +193,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 									>
 										{ installState === 'installing'
 											? __( 'Installing…', 'elementor' )
-											: __( 'Install & Activate', 'elementor' ) }
+											: __( 'Install and activate', 'elementor' ) }
 									</Button>
 								) }
 							</Stack>

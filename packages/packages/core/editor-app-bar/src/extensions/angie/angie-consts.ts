@@ -15,6 +15,10 @@ export const ANGIE_DESCRIPTION = __(
 );
 
 export const AI_WIDGET_CTA_VIEWED_EVENT = 'ai_widget_cta_viewed' as const;
+// TODO(ED-25505): Replace with final card image URL when asset is ready.
 export const ANGIE_TOP_BAR_PROMOTION_IMAGE_URL =
-	'https://assets.elementor.com/packages/v1/images/angie-top-bar-promotion.svg';
-export const ANGIE_TOP_BAR_DESCRIPTION = __( 'Build custom widgets using simple instructions.', 'elementor' );
+	'https://assets.elementor.com/packages/v1/images/angie-modal-promotion.png';
+export const ANGIE_TOP_BAR_DESCRIPTION = __(
+	'Describe what you want to build in plain language and Angie generates it in native Elementor structure, fully editable and customizable.',
+	'elementor'
+);

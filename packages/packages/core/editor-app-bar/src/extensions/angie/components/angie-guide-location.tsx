@@ -9,7 +9,6 @@ import {
 	AI_WIDGET_CTA_VIEWED_EVENT,
 	ANGIE_BUTTON_ARIA_LABEL,
 	ANGIE_GUIDE_TOGGLE_EVENT,
-	ANGIE_LEARN_MORE_URL,
 	ANGIE_TOP_BAR_DESCRIPTION,
 	ANGIE_TOP_BAR_PROMOTION_IMAGE_URL,
 	CREATE_WIDGET_EVENT,
@@ -66,7 +65,6 @@ export function AngieGuideLocation() {
 					<AngieGuideCard
 						imageUrl={ ANGIE_TOP_BAR_PROMOTION_IMAGE_URL }
 						description={ ANGIE_TOP_BAR_DESCRIPTION }
-						learnMoreUrl={ ANGIE_LEARN_MORE_URL }
 						onInstall={ isAdmin ? handleInstall : undefined }
 						onClose={ handleClose }
 					/>
