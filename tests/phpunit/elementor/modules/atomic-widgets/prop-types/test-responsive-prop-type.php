@@ -134,4 +134,22 @@ class Test_Responsive_Prop_Type extends Elementor_Test_Base {
 		$this->assertNotNull( $prop_type->get_shape_field( 'desktop' )->get_default() );
 		$this->assertNull( $prop_type->get_shape_field( 'tablet' )->get_default() );
 	}
+
+	public function test_create_from__preserves_inner_float_and_meta() {
+		$inner = Number_Prop_Type::make()->float()->meta( 'suffix', '%' )->default( 1.5 );
+		$prop_type = Responsive_Prop_Type::create_from( $inner );
+		$desktop = $prop_type->get_shape_field( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP );
+		$tablet = $prop_type->get_shape_field( Breakpoints_Manager::BREAKPOINT_KEY_TABLET );
+
+		$this->assertSame( 1.5, $desktop->sanitize( [
+			'$$type' => 'number',
+			'value' => '1.5',
+		] )['value'] );
+		$this->assertSame( 1.5, $tablet->sanitize( [
+			'$$type' => 'number',
+			'value' => '1.5',
+		] )['value'] );
+		$this->assertSame( '%', $desktop->get_meta_item( 'suffix' ) );
+		$this->assertSame( '%', $tablet->get_meta_item( 'suffix' ) );
+	}
 }

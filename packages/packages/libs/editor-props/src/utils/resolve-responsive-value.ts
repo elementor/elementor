@@ -45,7 +45,13 @@ function unwrapResponsiveEntry( entry: unknown ): unknown {
 		return null;
 	}
 
-	if ( typeof entry === 'object' && ! Array.isArray( entry ) && entry !== null && '$$type' in entry && 'value' in entry ) {
+	if (
+		typeof entry === 'object' &&
+		! Array.isArray( entry ) &&
+		entry !== null &&
+		'$$type' in entry &&
+		'value' in entry
+	) {
 		return ( entry as { value: unknown } ).value;
 	}
 

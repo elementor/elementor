@@ -31,7 +31,9 @@ describe( 'resolveResponsiveValue', () => {
 	} );
 
 	it( 'skips a disabled breakpoint while cascading', () => {
-		expect( resolveResponsiveValue( { desktop: 3, laptop: 5, tablet: 2 }, 'tablet', [ 'desktop', 'tablet' ] ) ).toBe( 2 );
+		expect(
+			resolveResponsiveValue( { desktop: 3, laptop: 5, tablet: 2 }, 'tablet', [ 'desktop', 'tablet' ] )
+		).toBe( 2 );
 		expect( resolveResponsiveValue( { desktop: 3, laptop: 5 }, 'tablet', [ 'desktop', 'tablet' ] ) ).toBe( 3 );
 	} );
 

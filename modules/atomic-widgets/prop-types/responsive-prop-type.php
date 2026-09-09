@@ -120,8 +120,13 @@ class Responsive_Prop_Type extends Object_Prop_Type {
 	}
 
 	private static function duplicate_inner_prop_type( Transformable_Prop_Type $inner ): Transformable_Prop_Type {
-		$class = get_class( $inner );
+		$entry = clone $inner;
+		$entry->set_dependencies( [] );
 
-		return $class::make();
+		$default_property = new \ReflectionProperty( $entry, 'default' );
+		$default_property->setAccessible( true );
+		$default_property->setValue( $entry, null );
+
+		return $entry;
 	}
 }

@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-	responsivePropTypeUtil,
-	resolveResponsiveValue,
-	type ResponsivePropValue,
-} from '@elementor/editor-props';
+import { resolveResponsiveValue, responsivePropTypeUtil, type ResponsivePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
