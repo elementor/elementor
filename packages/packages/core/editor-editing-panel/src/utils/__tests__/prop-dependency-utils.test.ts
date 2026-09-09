@@ -148,6 +148,34 @@ describe( 'getElementSettingsWithDefaults', () => {
 			expect( result.conditional ).toEqual( defaultString );
 		} );
 	} );
+
+	describe( 'responsive object default', () => {
+		it( 'applies a desktop-only object default when the stored value is null', () => {
+			const responsiveDefault = {
+				$$type: 'responsive' as const,
+				value: { desktop: { $$type: 'number' as const, value: 3 } },
+			};
+			const schema: PropsSchema = {
+				slidesPerView: {
+					kind: 'object',
+					key: 'responsive',
+					default: responsiveDefault,
+					settings: {},
+					meta: {},
+					dependencies: undefined,
+					initial_value: null,
+					shape: {
+						desktop: plain( { default: { $$type: 'number', value: 3 } } ),
+						tablet: plain(),
+					},
+				},
+			};
+
+			const result = getElementSettingsWithDefaults( schema, { slidesPerView: null } );
+
+			expect( result.slidesPerView ).toEqual( responsiveDefault );
+		} );
+	} );
 } );
 
 describe( 'getUpdatedValues — overridable shape mismatch on restore', () => {
