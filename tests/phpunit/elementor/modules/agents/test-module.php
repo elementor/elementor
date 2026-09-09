@@ -13,8 +13,12 @@ class Test_Module extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
+	private string $original_request_uri;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? '/';
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
@@ -35,6 +39,8 @@ class Test_Module extends Elementor_Test_Base {
 			$this->original_experiment_default_state
 		);
 
+		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
+
 		$this->flush_documents_cache();
 
 		parent::tearDown();
@@ -49,6 +55,26 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $data['hidden'] );
 		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
+	}
+
+	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {
+		// Arrange
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+
+		$module = new Module();
+
+		$robots_handler = new \ReflectionProperty( Module::class, 'robots_handler' );
+		$robots_handler->setAccessible( true );
+		$robots = $robots_handler->getValue( $module );
+
+		// Assert
+		$this->assertFalse( Module::is_active() );
+		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_txt' ] ) );
+		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_full_txt' ] ) );
+		$this->assertFalse( has_filter( 'robots_txt', [ $robots, 'add_rules' ] ) );
 	}
 
 	public function test_get_llms_txt_content__returns_empty_when_not_configured() {
@@ -89,9 +115,6 @@ class Test_Module extends Elementor_Test_Base {
 		// Act
 		$result = $method->invoke( $this->module );
 
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
-
 		// Assert
 		$this->assertTrue( $result );
 	}
@@ -104,9 +127,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		$result = $method->invoke( $this->module );
-
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertFalse( $result );
@@ -121,9 +141,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->module->maybe_serve_llms_txt();
 		$output = ob_get_clean();
 
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
-
 		// Assert
 		$this->assertSame( '', $output );
 	}
@@ -136,9 +153,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		$result = $method->invoke( $this->module );
-
-		// Cleanup
-		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertTrue( $result );
@@ -159,7 +173,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanup
 		remove_all_filters( 'home_url' );
-		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertTrue( $result );
@@ -266,12 +279,14 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_kit_save_invalidates_llms_txt_cache() {
 		// Arrange
 		$invalidated_for = null;
+		$kit_id          = Plugin::$instance->kits_manager->get_active_id();
 
-		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function ( $kit_id ) use ( &$invalidated_for ) {
-			$invalidated_for = $kit_id;
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function ( $id ) use ( &$invalidated_for, $kit_id ) {
+			if ( (int) $id === (int) $kit_id ) {
+				$invalidated_for = $id;
+			}
 		} );
 
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 		$this->flush_documents_cache();
 		$kit = Plugin::$instance->documents->get( $kit_id );
 
@@ -320,5 +335,171 @@ class Test_Module extends Elementor_Test_Base {
 		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
 		$reflection->setAccessible( true );
 		$reflection->setValue( Plugin::$instance->documents, [] );
+	}
+
+	// -------------------------------------------------------------------------
+	// Auto-generation tests (added with content-generator epic)
+	// -------------------------------------------------------------------------
+
+	public function test_get_generated_llms_txt__starts_with_site_name() {
+		$output = $this->module->get_generated_llms_txt();
+		$this->assertStringContainsString( get_bloginfo( 'name' ), $output );
+	}
+
+	public function test_get_generated_llms_full_txt__starts_with_site_name() {
+		$output = $this->module->get_generated_llms_full_txt();
+		$this->assertStringContainsString( get_bloginfo( 'name' ), $output );
+	}
+
+	public function test_get_generated_llms_txt__is_cached_on_second_call() {
+		$first  = $this->module->get_generated_llms_txt();
+		$second = $this->module->get_generated_llms_txt();
+
+		$this->assertSame( $first, $second );
+	}
+
+	public function test_on_post_change__invalidates_cache() {
+		$first   = $this->module->get_generated_llms_txt();
+		$post_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Post After Cache Invalidation',
+		] );
+		// Simulate the save_post hook.
+		$this->module->on_post_change( $post_id, get_post( $post_id ) );
+
+		$second = $this->module->get_generated_llms_txt();
+
+		// Cache was cleared, new content is regenerated.
+		$this->assertStringContainsString( 'Post After Cache Invalidation', $second );
+	}
+
+	public function test_save_overrides__persists_and_invalidates_cache() {
+		// Warm the cache.
+		$this->module->get_generated_llms_txt();
+
+		$this->module->save_overrides( [
+			'intro'    => 'My saved intro.',
+			'optional' => 'My optional section.',
+		] );
+
+		$overrides = $this->module->get_overrides();
+
+		$this->assertSame( 'My saved intro.', $overrides['intro'] );
+		$this->assertSame( 'My optional section.', $overrides['optional'] );
+
+		// Cache should have been cleared.
+		$output = $this->module->get_generated_llms_txt();
+		$this->assertStringContainsString( '> My saved intro.', $output );
+	}
+
+	public function test_get_missing_requirements__returns_array() {
+		$warnings = $this->module->get_missing_requirements();
+		$this->assertIsArray( $warnings );
+	}
+
+	public function test_existing_file_decision__set_and_get() {
+		$this->module->set_existing_file_decision( 'replace' );
+		$this->assertSame( 'replace', get_option( Module::OPTION_EXISTING_FILE_DECISION ) );
+
+		// Keep is also valid.
+		$this->module->set_existing_file_decision( 'keep' );
+		$this->assertSame( 'keep', get_option( Module::OPTION_EXISTING_FILE_DECISION ) );
+
+		// Invalid value is rejected.
+		$this->module->set_existing_file_decision( 'invalid' );
+		$this->assertSame( 'keep', get_option( Module::OPTION_EXISTING_FILE_DECISION ) );
+
+		// Cleanup.
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
+	}
+
+	public function test_is_request_for_llms_full_txt__matches() {
+		$_SERVER['REQUEST_URI'] = '/llms-full.txt';
+		$method = new \ReflectionMethod( Module::class, 'is_request_for' );
+		$method->setAccessible( true );
+
+		$result = $method->invoke( $this->module, 'llms-full.txt' );
+
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_request_for_llms_full_txt__does_not_match_llms_txt() {
+		$_SERVER['REQUEST_URI'] = '/llms.txt';
+		$method = new \ReflectionMethod( Module::class, 'is_request_for' );
+		$method->setAccessible( true );
+
+		$result = $method->invoke( $this->module, 'llms-full.txt' );
+
+		$this->assertFalse( $result );
+	}
+
+	public function test_post_state_change__invalidates_cache_and_fires_action() {
+		$invalidated_for = null;
+
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function ( $id ) use ( &$invalidated_for ) {
+			$invalidated_for = $id;
+		} );
+
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'publish' ] );
+		$this->module->on_post_state_change( $post_id );
+
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+
+		$this->assertSame( $post_id, $invalidated_for );
+	}
+
+	// -------------------------------------------------------------------------
+	// Post-meta inline-content cache invalidation wired through Module
+	// -------------------------------------------------------------------------
+
+	public function test_on_post_change__clears_post_inline_meta_cache() {
+		$post_id = $this->factory()->post->create( [
+			'post_status'  => 'publish',
+			'post_content' => 'Initial body.',
+		] );
+
+		// Seed a fake inline meta cache entry.
+		update_post_meta( $post_id, \Elementor\Modules\Agents\Content_Generator::INLINE_META_KEY, [
+			'v'       => \Elementor\Modules\Agents\Content_Generator::INLINE_CACHE_VERSION,
+			'content' => '# Cached',
+		] );
+
+		$this->module->on_post_change( $post_id, get_post( $post_id ) );
+
+		$this->assertEmpty(
+			get_post_meta( $post_id, \Elementor\Modules\Agents\Content_Generator::INLINE_META_KEY, true )
+		);
+	}
+
+	public function test_on_post_state_change__clears_post_inline_meta_cache() {
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'publish' ] );
+
+		update_post_meta( $post_id, \Elementor\Modules\Agents\Content_Generator::INLINE_META_KEY, [
+			'v'       => \Elementor\Modules\Agents\Content_Generator::INLINE_CACHE_VERSION,
+			'content' => '# Cached',
+		] );
+
+		$this->module->on_post_state_change( $post_id );
+
+		$this->assertEmpty(
+			get_post_meta( $post_id, \Elementor\Modules\Agents\Content_Generator::INLINE_META_KEY, true )
+		);
+	}
+
+	public function test_on_global_change__clears_assembled_transients_and_fires_action() {
+		// Warm the assembled transient cache.
+		$this->module->get_generated_llms_txt();
+
+		$fired = false;
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function () use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$this->module->on_global_change();
+
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+
+		$this->assertTrue( $fired, 'cache_invalidated action must fire on global change' );
 	}
 }
