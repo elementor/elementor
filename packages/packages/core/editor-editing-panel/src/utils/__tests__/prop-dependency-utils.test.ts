@@ -11,7 +11,10 @@ const arr = ( ...items: string[] ) => ( {
 	$$type: 'string-array' as const,
 	value: items.map( str ),
 } );
-const plain = ( opts: { default?: ReturnType< typeof str > | ReturnType< typeof arr > | null } = {} ) => ( {
+const num = ( value: number ) => ( { $$type: 'number' as const, value } );
+const plain = (
+	opts: { default?: ReturnType< typeof str > | ReturnType< typeof arr > | ReturnType< typeof num > | null } = {}
+) => ( {
 	kind: 'plain' as const,
 	key: 'test',
 	default: opts.default ?? null,
@@ -165,7 +168,7 @@ describe( 'getElementSettingsWithDefaults', () => {
 					dependencies: undefined,
 					initial_value: null,
 					shape: {
-						desktop: plain( { default: { $$type: 'number', value: 3 } } ),
+						desktop: plain( { default: num( 3 ) } ),
 						tablet: plain(),
 					},
 				},
