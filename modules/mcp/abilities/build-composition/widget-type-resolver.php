@@ -42,6 +42,52 @@ class Widget_Type_Resolver {
 	}
 
 	/**
+	 * @return array{configs: array<string, array>, unknown_tag_errors: string[]}
+	 */
+	public function collect_referenced_widget_configs( \DOMDocument $dom ): array {
+		$configs = [];
+		$unknown_tag_errors = [];
+		$seen_unknown = [];
+
+		foreach ( $this->xml_parser->iterate_all_descendants( $dom ) as $node ) {
+			$tag = $this->xml_parser->get_tag_name( $node );
+
+			if ( isset( $configs[ $tag ] ) || isset( $seen_unknown[ $tag ] ) ) {
+				continue;
+			}
+
+			$config = $this->resolve_type_config( $tag );
+			if ( is_wp_error( $config ) ) {
+				$seen_unknown[ $tag ] = true;
+				$unknown_tag_errors[] = $config->get_error_message();
+				continue;
+			}
+			$configs[ $tag ] = $config;
+		}
+
+		return [
+			'configs' => $configs,
+			'unknown_tag_errors' => $unknown_tag_errors,
+		];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function collect_child_type_and_required_child_errors( \DOMDocument $dom, array $widget_configs ): array {
+		$root = $this->xml_parser->get_root( $dom );
+		if ( ! $root ) {
+			return [];
+		}
+
+		$errors = [];
+		$this->collect_child_type_errors( $root, $widget_configs, $errors );
+		$this->collect_required_child_errors( $root, $widget_configs, $errors );
+
+		return $errors;
+	}
+
+	/**
 	 * @return \WP_Error|null
 	 */
 	public function validate_child_types( \DOMDocument $dom, array $widget_configs ) {

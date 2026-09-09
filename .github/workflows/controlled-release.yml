@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
         default: true
-        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, beta→dev cascade, or npm packages publish)'
+        description: 'Mark as pre-release on GitHub (skips the entire publish workflow — no WordPress.org SVN, Slack, or npm packages publish)'
 
 permissions:
   contents: write
@@ -94,7 +94,10 @@ jobs:
             echo ""
             echo "[View draft release](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }})"
             echo ""
-            echo "> Before approving: I executed custom core with the build that was created by this action."
+            echo "Run [Playwright - Custom Core](https://github.com/elementor/elementor-pro/actions/workflows/playwright-custom-core.yml) in **elementor-pro**."
+            echo "Set **core_release_tag** to \`${{ inputs.version }}\` so tests use this draft zip, not the Core branch (which can keep moving)."
+            echo ""
+            echo "> Before approving: I executed Custom Core against this draft GitHub release."
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ── Job 5 ────────────────────────────────────────────────────────────────
@@ -218,3 +221,4 @@ jobs:
       JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
