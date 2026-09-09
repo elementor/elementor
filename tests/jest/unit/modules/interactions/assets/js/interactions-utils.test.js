@@ -2,6 +2,7 @@ import {
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	shouldResetElementStyles,
 	parseAnimationName,
 	skipInteraction,
 	extractAnimationConfig,
@@ -632,6 +633,25 @@ describe( 'interactions-utils', () => {
 
 			const result = extractInteractionId( interaction );
 			expect( result ).toBe( 'temp-abc123xyz' );
+		} );
+	} );
+
+	describe( 'shouldResetElementStyles', () => {
+		it( 'returns true for an "in" end state that matches the CSS default', () => {
+			expect( shouldResetElementStyles( { scale: [ 0, 1 ] } ) ).toBe( true );
+			expect( shouldResetElementStyles( { x: [ -100, 0 ], y: [ 50, 0 ] } ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ] } ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], x: [ -50, 0 ] } ) ).toBe( true );
+		} );
+
+		it( 'returns false for an "out" end state that is off-identity', () => {
+			expect( shouldResetElementStyles( { opacity: [ 1, 0 ] } ) ).toBe( false );
+			expect( shouldResetElementStyles( { scale: [ 1, 0 ] } ) ).toBe( false );
+			expect( shouldResetElementStyles( { x: [ 0, -100 ] } ) ).toBe( false );
+		} );
+
+		it( 'returns true when no end state differs from the CSS default', () => {
+			expect( shouldResetElementStyles( {} ) ).toBe( true );
 		} );
 	} );
 } );

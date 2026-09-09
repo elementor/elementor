@@ -11,9 +11,27 @@ import {
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
+	resetElementStyles,
+	shouldResetElementStyles,
 } from './interactions-utils.js';
 
 import { initBreakpoints } from './interactions-breakpoints.js';
+
+function restoreElementStyles( element, transition, keyframes ) {
+	element.style.transition = transition;
+
+	// Clear the inline transform/opacity left behind once the animation reaches a
+	// state that already matches the stylesheet default, so it does not mask
+	// `:hover` (and manually authored) CSS on the same element.
+	if ( shouldResetElementStyles( keyframes ) ) {
+		requestAnimationFrame( () => {
+			resetElementStyles( element );
+			// ResetElementStyles also clears transition; restore it so an
+			// authored inline transition is not removed by the cleanup.
+			element.style.transition = transition;
+		} );
+	}
+}
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
@@ -36,7 +54,7 @@ function scrollInAnimation( element, transition, animConfig, keyframes, options,
 	const viewOptions = { amount: 0, root: null };
 	const stop = inViewFunc( element, () => {
 		animateFunc( element, keyframes, options ).then( () => {
-			element.style.transition = transition;
+			restoreElementStyles( element, transition, keyframes );
 		} );
 		if ( false === animConfig.replay ) {
 			stop();
@@ -46,7 +64,7 @@ function scrollInAnimation( element, transition, animConfig, keyframes, options,
 
 function defaultAnimation( element, transition, keyframes, options, animateFunc ) {
 	animateFunc( element, keyframes, options ).then( () => {
-		element.style.transition = transition;
+		restoreElementStyles( element, transition, keyframes );
 	} );
 }
 
