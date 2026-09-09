@@ -173,6 +173,7 @@ describe( 'ClassManagerPanel', () => {
 				items: {},
 				order: [ 'class-1', 'class-2' ],
 				changes: { added: [], deleted: [], modified: [], order: true },
+				version: 0,
 			} );
 		} );
 	} );
@@ -202,6 +203,7 @@ describe( 'ClassManagerPanel', () => {
 				items: {},
 				order: [ 'class-2' ],
 				changes: { added: [], deleted: [ 'class-1' ], modified: [], order: true },
+				version: 0,
 			} );
 		} );
 	} );
@@ -233,6 +235,7 @@ describe( 'ClassManagerPanel', () => {
 				},
 				order: [ 'class-2', 'class-1' ],
 				changes: { added: [], deleted: [], modified: [ 'class-1' ], order: false },
+				version: 0,
 			} );
 		} );
 	} );
@@ -319,6 +322,7 @@ describe( 'ClassManagerPanel', () => {
 				items: {},
 				order: [ 'class-1', 'class-2' ],
 				changes: { added: [], deleted: [], modified: [], order: true },
+				version: 0,
 			} );
 		} );
 
@@ -433,6 +437,7 @@ describe( 'ClassManagerPanel', () => {
 				items: {},
 				order: [ 'class-1' ],
 				changes: { added: [], deleted: [ 'class-2' ], modified: [], order: true },
+				version: 0,
 			} );
 		} );
 	} );

@@ -18,6 +18,13 @@ class Global_Classes_Repository {
 	const META_KEY_FRONTEND = '_elementor_global_classes';
 	const META_KEY_PREVIEW = '_elementor_global_classes_preview';
 
+	/**
+	 * Optimistic-concurrency token written to the active Kit on every successful
+	 * global-classes save. Clients send it back on their next save so a stale or
+	 * overlapping write can be rejected instead of silently overwriting the kit index.
+	 */
+	const META_KEY_VERSION = '_elementor_global_classes_version';
+
 	const CONTEXT_FRONTEND = 'frontend';
 	const CONTEXT_PREVIEW = 'preview';
 
@@ -68,6 +75,33 @@ class Global_Classes_Repository {
 
 	public function get_order(): array {
 		return Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() )->get_order();
+	}
+
+	/**
+	 * Current optimistic-concurrency version of the kit's global classes index.
+	 * Returns 0 when no client has saved with a version yet.
+	 */
+	public function get_version(): int {
+		$kit = $this->get_kit();
+
+		if ( ! $kit ) {
+			return 0;
+		}
+
+		return (int) $kit->get_meta( self::META_KEY_VERSION );
+	}
+
+	/**
+	 * Advance the kit's global classes version after a successful save.
+	 */
+	public function bump_version(): void {
+		$kit = $this->get_kit();
+
+		if ( ! $kit ) {
+			return;
+		}
+
+		$kit->update_meta( self::META_KEY_VERSION, $this->get_version() + 1 );
 	}
 
 	public function update_order_and_labels( array $order, array $new_labels ): void {
