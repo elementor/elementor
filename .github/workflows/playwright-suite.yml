@@ -256,8 +256,6 @@ jobs:
       id-token: write
       actions: read
     if: ${{ always() && needs.Playwright.result != 'skipped' }}
-    env:
-      TRACE_RETENTION_DAYS: '3'
     steps:
       - name: Pull repo
         uses: actions/checkout@v6
@@ -297,7 +295,7 @@ jobs:
           fi
 
       - name: Install gcloud CLI
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: google-github-actions/setup-gcloud@v3
 
       - name: Download previous report for main branch
@@ -341,12 +339,12 @@ jobs:
 
       - name: Upload Allure report to GCP bucket
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        run: |
-          DEST="${{ github.ref == 'refs/heads/main' && 'main' || github.run_id }}"
-          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-allure-gcs.sh" \
-            allure-report \
-            "${{ vars.ALLURE_REPORTS_GCP_BUCKET }}" \
-            "${DEST}"
+        uses: google-github-actions/upload-cloud-storage@v3
+        with:
+          path: allure-report/
+          destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.ref == 'refs/heads/main' && 'main' || github.run_id }}
+          parent: false
+          glob: '**'
 
       - name: Add Allure report link to summary
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
