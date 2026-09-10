@@ -84,6 +84,11 @@ class Hints {
 				self::CAPABILITY => 'install_plugins',
 				self::NOT_HAS_OPTION => 'ea11y_access_token',
 			],
+			'ally_atomic_notice' => [
+				self::DISMISSED => 'ally_atomic_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::NOT_HAS_OPTION => 'ea11y_access_token',
+			],
 		];
 		if ( ! $hint_key ) {
 			return $hints;
@@ -228,6 +233,23 @@ class Hints {
 			admin_url( 'plugins.php?action=activate&plugin=' . $path ),
 			'activate-plugin_' . $path
 		);
+	}
+
+	/**
+	 * Decode_url_for_js
+	 *
+	 * `wp_nonce_url()` (used by `get_plugin_install_url()` and `get_plugin_activate_url()`) HTML-escapes
+	 * its result (e.g. `&` becomes `&amp;`) for direct raw HTML/template output, where the browser's HTML
+	 * parser decodes the entities back. Consumers that send the URL through a JSON REST response, editor
+	 * script settings, or a React/JS component prop use it as a raw string that is never HTML-parsed, so
+	 * it must be decoded back to a literal URL before being handed to those contexts.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	public static function decode_url_for_js( string $url ): string {
+		return wp_specialchars_decode( $url, ENT_QUOTES );
 	}
 
 	/**
