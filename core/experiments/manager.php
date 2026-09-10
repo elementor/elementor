@@ -90,7 +90,7 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( $experimental_data['mutable'] && is_admin() ) {
+		if ( $experimental_data['mutable'] && ( is_admin() || $this->is_experiments_ui_rest_request() ) ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
@@ -386,6 +386,14 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 			'generator_tag' => true,
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_experiments_ui',
+			'title' => esc_html__( 'New Experiments Page UI', 'elementor' ),
+			'description' => esc_html__( 'Redesigned experiments page with card layout, search, filtering, auto-save on toggle, dependency grouping, and bulk actions.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 
@@ -831,6 +839,51 @@ class Manager extends Base_Object {
 		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
 	}
 
+	public function is_feature_manageable( $feature_name ) {
+		$feature = $this->get_features( $feature_name );
+
+		if ( ! $feature || ! $feature['mutable'] ) {
+			return false;
+		}
+
+		$is_hidden = $feature[ static::TYPE_HIDDEN ];
+
+		if ( $is_hidden && ! $this->should_show_hidden() ) {
+			return false;
+		}
+
+		return ! $this->has_non_existing_dependency( $feature );
+	}
+
+	public function sync_feature_state_from_saved_option( $feature_name ) {
+		$feature = $this->get_features( $feature_name );
+
+		if ( ! $feature ) {
+			return;
+		}
+
+		$this->features[ $feature_name ]['state'] = get_option(
+			$this->get_feature_option_key( $feature_name ),
+			$feature['default']
+		);
+	}
+
+	private function is_experiments_ui_rest_request() {
+		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
+			return false;
+		}
+
+		$rest_route = $GLOBALS['wp']->query_vars['rest_route'] ?? '';
+
+		if ( is_string( $rest_route ) && '' !== $rest_route ) {
+			return 0 === strpos( $rest_route, '/elementor/v1/experiments-ui' );
+		}
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+		return false !== strpos( $request_uri, '/' . rest_get_url_prefix() . '/elementor/v1/experiments-ui' );
+	}
+
 	private function create_dependency_class( $dependency_name, $dependency_args ) {
 		if ( class_exists( $dependency_name ) ) {
 			return $dependency_name::instance();
@@ -940,6 +993,11 @@ class Manager extends Base_Object {
 		// Register CLI commands.
 		if ( Utils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor experiments', WP_CLI::class );
+		}
+
+		if ( file_exists( __DIR__ . '/ui/experiments-ui.php' ) ) {
+			require_once __DIR__ . '/ui/experiments-ui.php';
+			( new \Elementor\Core\Experiments\Ui\Experiments_Ui() )->register();
 		}
 	}
 
