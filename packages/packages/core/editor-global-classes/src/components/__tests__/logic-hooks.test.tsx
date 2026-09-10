@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockHttpResponse, createMockStyleDefinition, renderWithStore } from 'test-utils';
-import { getCurrentDocument } from '@elementor/editor-documents';
+import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { type HttpResponse } from '@elementor/http-client';
 import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
 import { waitFor } from '@testing-library/react';
@@ -18,7 +18,7 @@ jest.mock( '../../api', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-documents', () => ( {
-	getCurrentDocument: jest.fn(),
+	getV1CurrentDocument: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -32,7 +32,7 @@ describe( '<LogicHooks />', () => {
 	beforeEach( () => {
 		registerSlice( slice );
 		store = createStore();
-		jest.mocked( getCurrentDocument ).mockReturnValue( { id: 1 } as never );
+		jest.mocked( getV1CurrentDocument ).mockReturnValue( { id: 1 } as never );
 	} );
 
 	it( 'should load document classes on mount', async () => {

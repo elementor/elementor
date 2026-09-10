@@ -159,6 +159,67 @@ describe( 'store', () => {
 		} );
 	} );
 
+	describe( 'load', () => {
+		it( 'preserves already-loaded class definitions when the payload has empty items (no flash on doc switch)', () => {
+			// Arrange - simulate a doc that has classes already loaded into data.items
+			const existing = createMockStyleDefinition( { id: 'existing', label: 'Existing' } );
+			const order = [ 'existing' ];
+
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: { existing }, order },
+					preview: { items: { existing }, order },
+					classLabels: classLabelsFor( order, { existing } ),
+				} )
+			);
+
+			// Act - the "reset order/labels baseline" step of loadCurrentDocumentClasses
+			// dispatches load({items: {}, order: freshOrder}) before the current doc's items arrive.
+			// Without item preservation this wiped state.data.items and caused a visible flash.
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: {}, order },
+					preview: { items: {}, order },
+					classLabels: classLabelsFor( order, { existing } ),
+				} )
+			);
+
+			// Assert - definition survived the reset step; class order/labels are still fresh.
+			const data = selectData( getState() );
+			expect( data.items ).toEqual( { existing } );
+			expect( data.order ).toEqual( order );
+			expect( selectClassLabels( getState() ) ).toEqual( { existing: existing.label } );
+		} );
+
+		it( 'lets fresh payload items override stale ones on subsequent loads', () => {
+			// Arrange - a class is already loaded with an older label
+			const stale = createMockStyleDefinition( { id: 'shared', label: 'Old' } );
+			const order = [ 'shared' ];
+
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: { shared: stale }, order },
+					preview: { items: { shared: stale }, order },
+					classLabels: classLabelsFor( order, { shared: stale } ),
+				} )
+			);
+
+			// Act - re-load with a fresh definition for the same id
+			const fresh = createMockStyleDefinition( { id: 'shared', label: 'New' } );
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: { shared: fresh }, order },
+					preview: { items: { shared: fresh }, order },
+					classLabels: classLabelsFor( order, { shared: fresh } ),
+				} )
+			);
+
+			// Assert - fresh values win over stale ones during the merge
+			expect( selectData( getState() ).items ).toEqual( { shared: fresh } );
+			expect( selectClassLabels( getState() ) ).toEqual( { shared: fresh.label } );
+		} );
+	} );
+
 	describe( 'updateAfterTemplateImport', () => {
 		it( 'should add imported classes to all data sources without resetting existing data', () => {
 			// Arrange - simulate initial state with existing classes
