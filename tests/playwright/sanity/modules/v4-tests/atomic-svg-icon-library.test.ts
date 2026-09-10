@@ -47,6 +47,16 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await expect( popover ).toHaveScreenshot( 'icon-library-popover.png', SCREENSHOT_OPTIONS );
 		} );
 
+		await test.step( 'Library filter menu matches expected visuals', async () => {
+			await popover.getByRole( 'button', { name: 'Filter by library' } ).click();
+
+			const filterMenu = page.getByRole( 'menu', { name: 'Filter by library' } );
+
+			await expect( filterMenu ).toBeVisible();
+			await expect( filterMenu ).toHaveScreenshot( 'icon-library-filter-menu.png', SCREENSHOT_OPTIONS );
+			await page.keyboard.press( 'Escape' );
+		} );
+
 		await test.step( 'Library filter composes with search', async () => {
 			const search = popover.getByPlaceholder( 'Search' );
 

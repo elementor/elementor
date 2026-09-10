@@ -151,7 +151,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, selected: boolean ) => (
 	<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
 		<Icon fontSize="tiny" />
-		<Typography variant="caption" flex={ 1 }>
+		<Typography variant="caption" sx={ { flex: 1 } }>
 			{ label }
 		</Typography>
 		{ selected ? <CheckIcon fontSize="tiny" /> : null }
