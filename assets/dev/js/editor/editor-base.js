@@ -1304,7 +1304,13 @@ export default class EditorBase extends Marionette.Application {
 
 		this.trigger( 'preview:loaded', ! this.loaded /* IsFirst */ );
 
-		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
+		$e.internal( 'editor/documents/attach-preview' )
+			.catch( ( error ) => {
+				// Surface the failure instead of leaving the loading indicator visible forever.
+				// eslint-disable-next-line no-console
+				console.error( 'Elementor: Failed to attach the document to the preview.', error );
+			} )
+			.finally( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
 		this.loaded = true;
 	}
