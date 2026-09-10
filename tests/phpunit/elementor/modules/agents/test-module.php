@@ -75,7 +75,9 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_txt' ] ) );
 		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_full_txt' ] ) );
 		$this->assertFalse( has_filter( 'robots_txt', [ $robots, 'add_rules' ] ) );
+		$this->assertFalse( $module->get_component( 'link_headers' ) );
 		$this->assertFalse( $module->get_component( 'markdown_endpoint' ) );
+		$this->assertFalse( $module->get_component( 'well_known_router' ) );
 	}
 
 	public function test_get_llms_txt_content__returns_empty_when_not_configured() {
