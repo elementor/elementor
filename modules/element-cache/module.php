@@ -32,8 +32,6 @@ class Module extends BaseModule {
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_fields' ], 100 );
 		}
-
-		$this->clear_cache_on_site_changed();
 	}
 
 	public function get_unique_id() {
@@ -142,18 +140,5 @@ class Module extends BaseModule {
 				],
 			]
 		);
-	}
-
-	private function clear_cache_on_site_changed() {
-		add_action( 'activated_plugin', [ $this, 'clear_cache' ] );
-		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
-		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
-		add_action( 'upgrader_process_complete', [ $this, 'clear_cache' ] );
-
-		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'clear_cache' ] );
-	}
-
-	public function clear_cache() {
-		Plugin::$instance->files_manager->clear_cache();
 	}
 }
