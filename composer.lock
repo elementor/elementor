@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe0f81a7de8f7ffdd9e9321976b5d101",
+    "content-hash": "f2ed2e1b31401a8b9e0acf7105778a59",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -72,15 +72,15 @@
         },
         {
             "name": "elementor/elementor-mcp-composer",
-            "version": "1.0.10",
+            "version": "1.0.11",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.10"
+                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.11"
             },
             "require": {
                 "automattic/jetpack-autoloader": "^5",
                 "php": ">=7.4",
-                "wordpress/mcp-adapter": "^0.5.0"
+                "wordpress/mcp-adapter": "^0.6.1"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
@@ -109,7 +109,7 @@
                 "proprietary"
             ],
             "description": "Reusable Composer package for Elementor MCP integrations.",
-            "time": "2026-08-31T09:29:38+00:00"
+            "time": "2026-09-06T12:34:50+00:00"
         },
         {
             "name": "elementor/wp-notifications-package",
@@ -144,10 +144,10 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.68",
+            "version": "1.0.69",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.68"
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.69"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -174,56 +174,51 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "time": "2026-07-17T09:49:08+00:00"
+            "time": "2026-07-28T06:30:15+00:00"
         },
         {
             "name": "wordpress/mcp-adapter",
-            "version": "v0.5.0",
+            "version": "v0.6.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/WordPress/mcp-adapter.git",
-                "reference": "7bfc49f46b3ea7544dded49d5a606089f825a80b"
+                "url": "https://github.com/WordPress/mcp-adapter",
+                "reference": "23cb53e0b82f39238eec1c38cb055e28aa30fa7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress/mcp-adapter/zipball/7bfc49f46b3ea7544dded49d5a606089f825a80b",
-                "reference": "7bfc49f46b3ea7544dded49d5a606089f825a80b",
+                "url": "https://api.github.com/repos/WordPress/mcp-adapter/zipball/23cb53e0b82f39238eec1c38cb055e28aa30fa7c",
+                "reference": "23cb53e0b82f39238eec1c38cb055e28aa30fa7c",
                 "shasum": ""
             },
             "require": {
+                "automattic/jetpack-autoloader": "^5.0",
                 "ext-json": "*",
                 "php": "^7.4 || ^8.0",
                 "wordpress/php-mcp-schema": "^0.1.0"
             },
             "require-dev": {
-                "automattic/vipwpcs": "^3.0",
+                "automattic/vipwpcs": "^3.1",
                 "php-stubs/wordpress-stubs": "^6.9",
                 "php-stubs/wp-cli-stubs": "^2.12",
-                "phpcompatibility/php-compatibility": "10.x-dev as 9.99.99",
-                "phpcompatibility/phpcompatibility-wp": "^2.1",
+                "phpcompatibility/phpcompatibility-wp": "^3.0.0-alpha",
                 "phpstan/extension-installer": "^1.3",
-                "phpstan/php-8-stubs": "^0.4.24",
-                "phpstan/phpstan": "^2.1.22",
-                "phpstan/phpstan-deprecation-rules": "^2.0.3",
+                "phpstan/php-8-stubs": "^0.4.36",
+                "phpstan/phpstan": "^2.2.6",
+                "phpstan/phpstan-deprecation-rules": "^2.0.5",
                 "phpunit/phpunit": "^9.6",
                 "slevomat/coding-standard": "^8.0",
                 "szepeviktor/phpstan-wordpress": "^2.0",
-                "wp-phpunit/wp-phpunit": "^6.5",
-                "wpackagist-plugin/plugin-check": "^1.6",
+                "wp-phpunit/wp-phpunit": "^7.0",
                 "yoast/phpunit-polyfills": "^4.0"
             },
             "type": "wordpress-plugin",
-            "extra": {
-                "installer-paths": {
-                    "vendor/{$vendor}/{$name}/": [
-                        "wpackagist-plugin/plugin-check"
-                    ]
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "WP\\MCP\\": "includes/"
-                }
+                },
+                "exclude-from-classmap": [
+                    "tests/phpunit/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -251,7 +246,7 @@
                 "issues": "https://github.com/wordpress/mcp-adapter/issues",
                 "source": "https://github.com/wordpress/mcp-adapter"
             },
-            "time": "2026-04-14T12:12:58+00:00"
+            "time": "2026-08-13T05:16:13+00:00"
         },
         {
             "name": "wordpress/php-mcp-schema",
@@ -4890,13 +4885,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "7.4"
     },

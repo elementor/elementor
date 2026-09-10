@@ -10,9 +10,18 @@ type PopoverBodyProps = PropsWithChildren< {
 	height?: number | 'auto';
 	width?: number;
 	id?: string;
+	fillWidth?: boolean;
 } >;
 
-export const PopoverBody = ( { children, height = DEFAULT_POPOVER_HEIGHT, width, id }: PopoverBodyProps ) => {
+export const PopoverBody = ( {
+	children,
+	height = DEFAULT_POPOVER_HEIGHT,
+	width,
+	id,
+	fillWidth = false,
+}: PopoverBodyProps ) => {
+	const resolvedWidth = resolvePopoverWidth( width, fillWidth );
+
 	return (
 		<Box
 			display="flex"
@@ -20,8 +29,8 @@ export const PopoverBody = ( { children, height = DEFAULT_POPOVER_HEIGHT, width,
 			sx={ {
 				height,
 				overflow: 'hidden',
-				width: `${ width ? width - SECTION_PADDING_INLINE : FALLBACK_POPOVER_WIDTH }px`,
-				maxWidth: 496,
+				width: `${ resolvedWidth }px`,
+				maxWidth: fillWidth ? resolvedWidth : 496,
 			} }
 			id={ id }
 		>
@@ -29,3 +38,15 @@ export const PopoverBody = ( { children, height = DEFAULT_POPOVER_HEIGHT, width,
 		</Box>
 	);
 };
+
+function resolvePopoverWidth( width: number | undefined, fillWidth: boolean ): number {
+	if ( ! width ) {
+		return FALLBACK_POPOVER_WIDTH;
+	}
+
+	if ( fillWidth ) {
+		return width;
+	}
+
+	return width - SECTION_PADDING_INLINE;
+}
