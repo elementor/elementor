@@ -29,9 +29,11 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	cookiez_plugin_installed: true,
 	cookiez_plugin_action_url: '',
 	cookiez_scan_url: 'https://example.com/wp-admin/admin.php?page=cookiez-settings#cookie-management',
+	cookiez_consent_mode_settings_url: 'https://example.com/wp-admin/admin.php?page=cookiez-settings#settings',
 	image_optimization_plugin_active: true,
 	image_optimization_plugin_url:
 		'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization',
+	frontend_url: 'https://example.com/hello',
 };
 
 const DEFAULT_KIT: KitSnapshot = {
