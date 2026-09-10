@@ -89,7 +89,7 @@ class Module extends BaseModule {
 		}
 
 		status_header( 200 );
-		header( 'Content-Type: text/plain; charset=utf-8' );
+		header( 'Content-Type: text/markdown; charset=utf-8' );
 		Utils::print_unescaped_internal_string( $llms );
 		exit;
 	}
