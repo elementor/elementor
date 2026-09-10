@@ -28,15 +28,11 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 		add_filter( 'pre_http_request', function( $preempt, $args, $url ) {
 			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' ) {
-				return [
-					'body' => '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>',
-				];
+				return $this->mock_http_response( '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>' );
 			}
 
 			if ( $url === Atomic_Svg::DEFAULT_SVG_URL ) {
-				return [
-					'body' => file_get_contents( Atomic_Svg::DEFAULT_SVG_PATH ),
-				];
+				return $this->mock_http_response( file_get_contents( Atomic_Svg::DEFAULT_SVG_PATH ) );
 			}
 
 			return $preempt;
@@ -352,5 +348,18 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		// Assert.
 		$this->assertStringContainsString( 'id="my-custom-id"', $rendered_output );
 		$this->assertStringNotContainsString( 'id=&quot;', $rendered_output );
+	}
+
+	private function mock_http_response( string $body ) : array {
+		return [
+			'headers' => [],
+			'body' => $body,
+			'response' => [
+				'code' => WP_Http::OK,
+				'message' => 'OK',
+			],
+			'cookies' => [],
+			'filename' => null,
+		];
 	}
 }
