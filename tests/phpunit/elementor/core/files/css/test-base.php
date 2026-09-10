@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
@@ -331,5 +332,39 @@ class Test_Base extends Elementor_Test_Base {
 		$this->assertSame( [ 'registered-handle' ], $method->invoke( $css ) );
 
 		wp_deregister_style( 'registered-handle' );
+	}
+
+	public function test_update__experiment_active__sets_content_hash_meta() {
+		// Arrange.
+		$post_id = $this->factory()->post->create();
+		$css_file = new \Elementor\Core\Files\CSS\Post( $post_id );
+
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$css_file->update();
+
+		// Assert.
+		$this->assertNotEmpty( $css_file->get_meta( 'hash' ) );
+		$this->assertSame( md5( $css_file->get_content() ), $css_file->get_meta( 'hash' ) );
+
+		// Cleanup.
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_INACTIVE );
+		$css_file->delete();
+	}
+
+	public function test_update__experiment_inactive__does_not_set_content_hash_meta() {
+		// Arrange. Experiment stays inactive (default).
+		$post_id = $this->factory()->post->create();
+		$css_file = new \Elementor\Core\Files\CSS\Post( $post_id );
+
+		// Act.
+		$css_file->update();
+
+		// Assert.
+		$this->assertSame( '', $css_file->get_meta( 'hash' ) );
+
+		// Cleanup.
+		$css_file->delete();
 	}
 }
