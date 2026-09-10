@@ -6,8 +6,10 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Request_Path;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -94,6 +96,8 @@ class Module extends BaseModule {
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
 
 		$this->robots_handler->register();
+
+		$this->register_component( new Markdown_Endpoint() );
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
@@ -584,5 +588,14 @@ class Module extends BaseModule {
 	 */
 	public function get_feature_registry(): Feature_Registry {
 		return $this->feature_registry;
+	}
+
+	private function register_component( Feature_Component $component ): void {
+		$this->feature_registry->register( $component );
+		$this->add_component( $component->get_id(), $component );
+
+		if ( $component->is_enabled() ) {
+			$component->register();
+		}
 	}
 }
