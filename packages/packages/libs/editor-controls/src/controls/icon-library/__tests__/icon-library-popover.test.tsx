@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import {
 	ICON_LIBRARY_ROW_HEIGHT,
@@ -54,6 +54,17 @@ describe( 'IconLibraryPopover', () => {
 			width: 512,
 			height: 512,
 			paths: [ 'M1 1h10v10H1z' ],
+		},
+		{
+			id: 'fa-brands:github',
+			name: 'github',
+			label: 'github',
+			library: 'fa-brands',
+			value: 'fa-brands fa-github',
+			aliases: [],
+			width: 496,
+			height: 512,
+			paths: [ 'M2 2h10v10H2z' ],
 		},
 	];
 
@@ -109,6 +120,97 @@ describe( 'IconLibraryPopover', () => {
 
 		// Assert.
 		expect( screen.getByRole( 'option', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	} );
+
+	it( 'filters by library without clearing the search query', () => {
+		// Arrange.
+		jest.useFakeTimers();
+
+		render(
+			<ThemeProvider>
+				<IconLibraryPopover
+					open
+					selectedIconClass={ null }
+					selectedIconLibrary={ null }
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+				/>
+			</ThemeProvider>
+		);
+
+		const search = screen.getByPlaceholderText( 'Search' );
+
+		// Act.
+		fireEvent.change( search, { target: { value: 'star' } } );
+		act( () => {
+			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
+		expect( screen.getByRole( 'menuitemcheckbox', { name: 'All icons' } ) ).toBeChecked();
+		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Regular' } ) );
+
+		// Assert.
+		expect( search ).toHaveValue( 'star' );
+		expect( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Regular' } ) ).toBeChecked();
+		expect( screen.getByText( /Sorry, nothing matched/ ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Solid' } ) );
+		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
+
+		// Assert.
+		expect( search ).toHaveValue( 'star' );
+		expect( screen.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'option', { name: /github/i } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'supports keyboard navigation and restores focus when the filter menu closes', async () => {
+		// Arrange.
+		render(
+			<ThemeProvider>
+				<IconLibraryPopover
+					open
+					selectedIconClass={ null }
+					selectedIconLibrary={ null }
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+				/>
+			</ThemeProvider>
+		);
+
+		const filterButton = screen.getByRole( 'button', { name: 'Filter by library' } );
+
+		// Act.
+		act( () => filterButton.focus() );
+		fireEvent.click( filterButton );
+
+		const menu = screen.getByRole( 'menu', { name: 'Filter by library' } );
+		const allIconsOption = screen.getByRole( 'menuitemcheckbox', { name: 'All icons' } );
+
+		// Assert.
+		expect( filterButton ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( allIconsOption ).toBeChecked();
+		await waitFor( () => expect( allIconsOption ).toHaveFocus() );
+
+		// Act.
+		fireEvent.keyDown( menu, { key: 'ArrowDown' } );
+
+		const regularOption = screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Regular' } );
+
+		expect( regularOption ).toHaveFocus();
+
+		fireEvent.keyDown( regularOption, { key: 'Enter' } );
+
+		// Assert.
+		expect( regularOption ).toBeChecked();
+
+		// Act.
+		fireEvent.keyDown( menu, { key: 'Escape' } );
+
+		// Assert.
+		expect( filterButton ).toHaveFocus();
+		expect( filterButton ).toHaveAttribute( 'aria-expanded', 'false' );
 	} );
 
 	it( 'filters by search and shows an empty state', () => {
@@ -167,5 +269,35 @@ describe( 'IconLibraryPopover', () => {
 
 		// Assert.
 		expect( screen.getByText( /Icons couldn't be loaded/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'resets the library filter when closed', () => {
+		// Arrange.
+		const onClose = jest.fn();
+
+		render(
+			<ThemeProvider>
+				<IconLibraryPopover
+					open
+					selectedIconClass={ null }
+					selectedIconLibrary={ null }
+					onSelect={ jest.fn() }
+					onClose={ onClose }
+				/>
+			</ThemeProvider>
+		);
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
+		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ) );
+		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		// Assert.
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByRole( 'button', { name: 'Filter by library' } ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
+		expect( screen.getByRole( 'menuitemcheckbox', { name: 'All icons' } ) ).toBeChecked();
 	} );
 } );

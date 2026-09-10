@@ -43,7 +43,41 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		await test.step( 'Icon library popover lists glyphs', async () => {
 			await page.getByRole( 'button', { name: 'Icon library' } ).click();
 			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'Filter by library' } ) ).toBeVisible();
 			await expect( popover ).toHaveScreenshot( 'icon-library-popover.png', SCREENSHOT_OPTIONS );
+		} );
+
+		await test.step( 'Library filter menu matches expected visuals', async () => {
+			await popover.getByRole( 'button', { name: 'Filter by library' } ).click();
+
+			const filterMenu = page.getByRole( 'menu', { name: 'Filter by library' } );
+
+			await expect( filterMenu ).toBeVisible();
+			await expect( filterMenu ).toHaveScreenshot( 'icon-library-filter-menu.png', SCREENSHOT_OPTIONS );
+			await page.keyboard.press( 'Escape' );
+		} );
+
+		await test.step( 'Library filter composes with search', async () => {
+			const search = popover.getByPlaceholder( 'Search' );
+
+			await search.fill( 'github' );
+			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Solid' } ).click();
+			await page.keyboard.press( 'Escape' );
+			await expect( popover.getByText( /Sorry, nothing matched/ ) ).toBeVisible();
+			await expect( search ).toHaveValue( 'github' );
+
+			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ).click();
+			await page.keyboard.press( 'Escape' );
+			await expect( popover.getByRole( 'option', { name: /github/i } ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
+
+			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'All icons' } ).click();
+			await page.keyboard.press( 'Escape' );
+			await search.fill( '' );
+			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
 		} );
 
 		await test.step( 'Hovered row is visually highlighted', async () => {
