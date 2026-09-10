@@ -5,3 +5,5 @@ export { ensureUser } from './ensure-current-user';
 export { onSetUser } from './on-set-user';
 export { useCurrentUser } from './use-current-user';
 export { useUpdateCurrentUser } from './use-update-current-user';
+export { DESIGN_RESTRICTION, useUserRestrictions } from './use-user-restrictions';
+export { useHasContentOnlyAccess } from './use-has-content-only-access';
