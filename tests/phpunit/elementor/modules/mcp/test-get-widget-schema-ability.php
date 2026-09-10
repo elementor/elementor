@@ -2,8 +2,12 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -20,15 +24,68 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	private Get_Widget_Schema_Ability $ability;
 	private Widgets_Manager $original_widgets_manager;
 
+	/**
+	 * @var array<string, string>
+	 */
+	private array $original_experiment_states = [];
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->ability = new Get_Widget_Schema_Ability();
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
+			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
+			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		}
+
+		V3_Widget_Map_Registry::reset_instance();
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
 		parent::tearDown();
+	}
+
+	public function test_execute__rejects_heading_when_standardized_maps_inactive() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_registered_heading();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'heading' ] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_v3_not_supported', $result->get_error_code() );
+	}
+
+	public function test_execute__returns_standardized_heading_schema_when_experiment_active() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_registered_heading();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'heading' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
+		$this->assertArrayNotHasKey( 'message', $result );
+		$this->assertArrayHasKey( 'title', $result['properties'] );
+		$this->assertArrayHasKey( 'link', $result['properties'] );
+		$this->assertArrayHasKey( 'header_size', $result['properties'] );
+		$this->assertSame( [ 'color' ], $result['style_targets']['targets']['heading'] );
+		$this->assertStringContainsString( 'e-heading', $result['description'] );
+	}
+
+	public function test_execute__rejects_heading_when_atomic_elements_active() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_registered_heading();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'heading' ] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_v3_not_supported', $result->get_error_code() );
 	}
 
 	public function test_execute__rejects_v3_widget_type() {
@@ -113,5 +170,27 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 			}
 		);
 		Plugin::$instance->widgets_manager = $widgets_manager;
+	}
+
+	private function given_widget_manager_with_registered_heading(): void {
+		$heading = $this->original_widgets_manager->get_widget_types( 'heading' );
+		$heading->get_stack();
+	}
+
+	private function set_experiment_state( string $experiment_name, string $state ): void {
+		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
+			$features = Plugin::$instance->experiments->get_features( $experiment_name );
+
+			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
+				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
+				$features = Plugin::$instance->experiments->get_features( $experiment_name );
+			}
+
+			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
+		}
+
+		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
+		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		V3_Widget_Map_Registry::reset_instance();
 	}
 }
