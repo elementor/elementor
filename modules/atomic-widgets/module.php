@@ -676,9 +676,12 @@ class Module extends BaseModule {
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
 			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
-			// No state pinned (editor "States" unselected): hide both buttons. The two `:not` guards lift
-			// specificity above the atomic base style so `display: none` wins. On the frontend Alpine always
-			// sets one of the state classes from real playback, so exactly one button shows there.
+			// No state pinned (editor "States" unselected): hide the controls wrapper and both buttons. The
+			// two `:not` guards lift specificity above the atomic base style so `display: none` wins. The
+			// button rules are kept because the buttons can be reparented out of the wrapper. On the
+			// frontend Alpine always sets one of the state classes from real playback, so the controls show
+			// there with exactly one button.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__controls,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
 			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's
