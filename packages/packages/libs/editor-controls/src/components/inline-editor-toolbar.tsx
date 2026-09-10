@@ -26,11 +26,14 @@ import {
 import { type Editor, useEditorState } from '@tiptap/react';
 import { __ } from '@wordpress/i18n';
 
+import { InlineEditorToolbarActionsSlot, type InlineEditorToolbarSource } from './inline-editor-toolbar-actions';
 import { UrlPopover } from './url-popover';
 
 export type InlineEditorToolbarProps = {
 	editor: Editor;
 	elementId?: ElementID;
+	bind?: string;
+	source?: InlineEditorToolbarSource;
 	sx?: SxProps< Theme >;
 	inControlPanel?: boolean;
 };
@@ -42,6 +45,8 @@ type FormatAction = Omit< ToolbarButtonKeys, 'clear' >;
 export const InlineEditorToolbar = ( {
 	editor,
 	elementId,
+	bind,
+	source,
 	sx = {},
 	inControlPanel = false,
 }: InlineEditorToolbarProps ) => {
@@ -200,6 +205,15 @@ export const InlineEditorToolbar = ( {
 					</Tooltip>
 				) ) }
 			</ToggleButtonGroup>
+			{ elementId && bind && source && (
+				<InlineEditorToolbarActionsSlot
+					editor={ editor }
+					elementId={ elementId }
+					bind={ bind }
+					html={ editor.getHTML() }
+					source={ source }
+				/>
+			) }
 			<UrlPopover
 				popupState={ linkPopupState }
 				anchorRef={ toolbarRef }

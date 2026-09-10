@@ -20,7 +20,7 @@ type Props = ControlProps< {
 
 export const InlineEditingControl = createControl( ( { sx, attributes, props, context: { elementId } }: Props ) => {
 	const { setValue, placeholder, value } = useBoundProp( escapedHtmlPropTypeUtil );
-	const { value: rawValue } = usePropKeyContext();
+	const { bind, value: rawValue } = usePropKeyContext();
 	const content = value ?? extractInlineHtmlContent( rawValue );
 	const [ editor, setEditor ] = useState< Editor | null >( null );
 
@@ -40,6 +40,8 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 					<InlineEditorToolbar
 						editor={ editor }
 						elementId={ elementId }
+						bind={ bind }
+						source="panel"
 						sx={ ( theme: Theme ) => ( {
 							boxShadow: 'none',
 							border: '1px solid',
