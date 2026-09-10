@@ -211,6 +211,9 @@ jobs:
         run: |
           echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
           echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
+      - name: Install gcloud CLI
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: google-github-actions/setup-gcloud@v3
       - uses: actions/upload-artifact@v7
         name: Upload generated Allure report
         with:
@@ -220,12 +223,13 @@ jobs:
           retention-days: 1
       - name: Upload Allure report to GCP bucket
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/upload-cloud-storage@v3
-        with:
-          path: allure-report/
-          destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}
-          parent: false
-          glob: '**'
+        env:
+          TRACE_RETENTION_DAYS: '3'
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-allure-gcs.sh" \
+            allure-report \
+            "${{ vars.ALLURE_REPORTS_GCP_BUCKET }}" \
+            "${{ github.run_id }}"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
