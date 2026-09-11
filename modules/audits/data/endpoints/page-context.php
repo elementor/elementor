@@ -50,7 +50,7 @@ class Page_Context extends Endpoint_Base {
 			'privacy_policy_url' => $privacy_policy_url ? $privacy_policy_url : null,
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
-			'ally_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=pojo-accessibility' ),
+			'ally_plugin_url' => Hints::decode_url_for_js( Hints::get_plugin_action_url( 'pojo-accessibility' ) ),
 			'cookiez_plugin_active' => Hints::is_plugin_active( 'cookiez/cookiez.php' ),
 			'cookiez_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=cookiez' ),
 			'cookiez_plugin_installed' => Hints::is_plugin_installed( 'cookiez/cookiez.php' ),
