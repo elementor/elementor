@@ -439,4 +439,202 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		// Assert
 		$this->assertMatchesJsonSnapshot( $data );
 	}
+
+	public function test_migrate_props_inside_settings_variants() {
+		// Arrange
+		$document_data = [
+			[
+				'id' => 'element_with_variants',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'html',
+						'value' => 'Desktop Title',
+					],
+				],
+				'settings_variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'tablet' ],
+						'props' => [
+							'title' => [
+								'$$type' => 'html',
+								'value' => 'Tablet Title',
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			1100,
+			'_elementor_data',
+			function() {}
+		);
+
+		// Assert
+		$variant_props = $document_data[0]['settings_variants'][0]['props'];
+
+		$this->assertEquals( 'escaped-html', $document_data[0]['settings']['title']['$$type'] );
+		$this->assertEquals( 'escaped-html', $variant_props['title']['$$type'], 'variant prop should be migrated from html to escaped-html' );
+		$this->assertEquals( 'Tablet Title', $variant_props['title']['value'] );
+		$this->assertEquals( 'tablet', $document_data[0]['settings_variants'][0]['meta']['breakpoint'] );
+	}
+
+	public function test_migrate_widget_keys_inside_settings_variants() {
+		// Arrange
+		$document_data = [
+			[
+				'id' => 'element_with_renamed_variant_key',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'old-title' => [
+						'$$type' => 'escaped-html',
+						'value' => 'Desktop Title',
+					],
+				],
+				'settings_variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'mobile' ],
+						'props' => [
+							'old-title' => [
+								'$$type' => 'escaped-html',
+								'value' => 'Mobile Title',
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			1101,
+			'_elementor_data',
+			function() {}
+		);
+
+		// Assert
+		$variant_props = $document_data[0]['settings_variants'][0]['props'];
+
+		$this->assertArrayHasKey( 'title', $document_data[0]['settings'] );
+		$this->assertArrayHasKey( 'title', $variant_props, 'variant key should be renamed from old-title to title' );
+		$this->assertArrayNotHasKey( 'old-title', $variant_props );
+		$this->assertEquals( 'Mobile Title', $variant_props['title']['value'] );
+	}
+
+	public function test_migrate_settings_variants_on_element_with_children() {
+		// Arrange
+		$document_data = [
+			[
+				'id' => 'container_with_variants',
+				'elType' => 'e-flexbox',
+				'settings' => [
+					'tag' => [
+						'$$type' => 'string',
+						'value' => 'div',
+					],
+				],
+				'elements' => [
+					[
+						'id' => 'child_image',
+						'elType' => 'widget',
+						'widgetType' => 'e-image',
+						'settings' => [
+							'image' => [
+								'$$type' => 'old-image',
+								'value' => [ 'id' => 7 ],
+							],
+						],
+					],
+				],
+				'settings_variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'tablet' ],
+						'props' => [
+							'tag' => [
+								'$$type' => 'old-string',
+								'value' => 'section',
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			1102,
+			'_elementor_data',
+			function() {}
+		);
+
+		// Assert
+		$this->assertEquals(
+			'string',
+			$document_data[0]['settings_variants'][0]['props']['tag']['$$type'],
+			'variants are walked after child elements, so the parent widget context must still resolve'
+		);
+		$this->assertEquals( 'image', $document_data[0]['elements'][0]['settings']['image']['$$type'] );
+	}
+
+	public function test_widget_key_migrations_do_not_touch_style_variants() {
+		// Arrange
+		$document_data = [
+			[
+				'id' => 'element_with_styles',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'styles' => [
+					's-1' => [
+						'id' => 's-1',
+						'type' => 'class',
+						'variants' => [
+							[
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+								'props' => [
+									'old-title' => [
+										'$$type' => 'escaped-html',
+										'value' => 'Not a widget setting',
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$orchestrator = Migrations_Orchestrator::make( $this->fixtures_path );
+
+		// Act
+		$orchestrator->migrate(
+			$document_data,
+			1103,
+			'_elementor_data',
+			function() {}
+		);
+
+		// Assert
+		$style_props = $document_data[0]['styles']['s-1']['variants'][0]['props'];
+
+		$this->assertArrayHasKey( 'old-title', $style_props, 'style variant props are keyed by the style schema, not the widget schema' );
+		$this->assertArrayNotHasKey( 'title', $style_props );
+	}
 }
