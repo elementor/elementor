@@ -8,6 +8,9 @@ export const getElementSettingsVariants = ( elementID: ElementID ): SettingsVari
 	return structuredClone( container?.model.get( 'settings_variants' ) ?? [] );
 };
 
-export const getSettingsVariantByMeta = ( variants: SettingsVariant[], breakpoint: string ): SettingsVariant | undefined => {
+export const getSettingsVariantByMeta = (
+	variants: SettingsVariant[],
+	breakpoint: string
+): SettingsVariant | undefined => {
 	return variants.find( ( variant ) => variant.meta.breakpoint === breakpoint );
 };

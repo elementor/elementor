@@ -42,7 +42,7 @@ class Settings_Variants_Llm {
 	}
 
 	/**
-	 * @param array<string, Prop_Type> $schema
+	 * @param array<string, Prop_Type>                       $schema
 	 * @param array<int, array{meta?: array, props?: array}> $raw_variants
 	 * @return list<array{breakpoint: string, props: array}>
 	 */
@@ -77,7 +77,14 @@ class Settings_Variants_Llm {
 	}
 
 	/**
+	 * @param array                    &$node
+	 * @param mixed                    $incoming
 	 * @param array<string, Prop_Type> $schema
+	 * @param string                   $element_type
+	 * @param string                   $config_id
+	 * @param Plain_Values_Resolver    $plain_values_resolver
+	 * @param array                    &$errors
+	 * @param array                    &$warnings
 	 */
 	public static function apply(
 		array &$node,
@@ -263,7 +270,18 @@ class Settings_Variants_Llm {
 	}
 
 	/**
+	 * @param array                    $existing_props
+	 * @param array                    $incoming_props
 	 * @param array<string, Prop_Type> $responsive_schema
+	 * @param array                    $alias_map
+	 * @param string                   $element_type
+	 * @param string                   $config_id
+	 * @param mixed                    $index
+	 * @param Plain_Values_Resolver    $plain_values_resolver
+	 * @param array                    &$errors
+	 * @param array                    &$warnings
+	 *
+	 * @return array
 	 */
 	private static function merge_variant_props(
 		array $existing_props,

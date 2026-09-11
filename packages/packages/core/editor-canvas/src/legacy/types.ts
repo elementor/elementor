@@ -228,6 +228,7 @@ export type ElementModel = {
 	originId?: string;
 	elType: string;
 	settings: BackboneModel< Props >;
+	settings_variants?: V1ElementModelProps['settings_variants'];
 	editor_settings: Record< string, unknown >;
 	widgetType: string;
 	editSettings?: BackboneModel< { inactive?: boolean } >;

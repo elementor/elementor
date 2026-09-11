@@ -12,9 +12,7 @@ export function SettingsBreakpointProvider( { children }: PropsWithChildren ) {
 	const breakpoint = useActiveBreakpoint() ?? 'desktop';
 
 	return (
-		<SettingsBreakpointContext.Provider value={ { breakpoint } }>
-			{ children }
-		</SettingsBreakpointContext.Provider>
+		<SettingsBreakpointContext.Provider value={ { breakpoint } }>{ children }</SettingsBreakpointContext.Provider>
 	);
 }
 

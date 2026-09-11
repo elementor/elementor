@@ -1,4 +1,4 @@
-import { type V1ElementConfig } from '@elementor/editor-elements';
+import { type V1ElementConfig, type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
@@ -141,7 +141,8 @@ export function createTemplatedElementView( {
 			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
-					const settingsVariants = this.model.get( 'settings_variants' ) ?? [];
+					const settingsVariants: NonNullable< V1ElementModelProps[ 'settings_variants' ] > =
+						this.model.get( 'settings_variants' ) ?? [];
 					const renderContext = this.getResolverRenderContext();
 
 					return Promise.all( [

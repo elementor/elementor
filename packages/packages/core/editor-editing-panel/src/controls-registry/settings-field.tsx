@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
-	type ElementID,
 	ELEMENT_SETTINGS_VARIANTS_CHANGE_EVENT,
+	type ElementID,
 	getElementLabel,
 	getElementSettings,
 	getElementSettingsVariants,
@@ -14,7 +14,7 @@ import {
 } from '@elementor/editor-elements';
 import { type CreateOptions, type PropKey, type Props } from '@elementor/editor-props';
 import { useBreakpoints } from '@elementor/editor-responsive';
-import { undoable, __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
+import { __privateUseListenTo as useListenTo, undoable, windowEvent } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
@@ -55,8 +55,8 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	const isBreakpointOverride = isResponsive && breakpoint !== DESKTOP_BREAKPOINT;
 
 	const boundValue = isBreakpointOverride
-		? ( getSettingsVariantByMeta( variants, breakpoint )?.props?.[ bind ] ?? null )
-		: ( currentElementSettings?.[ bind ] ?? null );
+		? getSettingsVariantByMeta( variants, breakpoint )?.props?.[ bind ] ?? null
+		: currentElementSettings?.[ bind ] ?? null;
 
 	const inherited = isBreakpointOverride
 		? getInheritedSettingsValue( {

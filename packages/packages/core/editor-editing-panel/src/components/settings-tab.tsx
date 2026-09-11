@@ -24,38 +24,38 @@ export const SettingsTab = () => {
 			<SettingsBreakpointProvider>
 				<SectionsList>
 					{ elementType.controls.map( ( control, index ) => {
-					if ( isControl( control ) ) {
-						return <SettingsControl key={ getKey( control, element ) } control={ control } />;
-					}
-
-					const { type, value } = control;
-
-					if ( type === 'section' ) {
-						const sectionItems = renderSectionItems( {
-							items: value.items,
-							element,
-							propsSchema: elementType.propsSchema,
-							settings: currentSettings,
-						} );
-
-						if ( ! sectionItems.length ) {
-							return null;
+						if ( isControl( control ) ) {
+							return <SettingsControl key={ getKey( control, element ) } control={ control } />;
 						}
 
-						return (
-							<Section
-								title={ value.label }
-								key={ type + '.' + index }
-								defaultExpanded={ isDefaultExpanded( value.id ) }
-							>
-								{ sectionItems }
-							</Section>
-						);
-					}
+						const { type, value } = control;
 
-					return null;
-				} ) }
-			</SectionsList>
+						if ( type === 'section' ) {
+							const sectionItems = renderSectionItems( {
+								items: value.items,
+								element,
+								propsSchema: elementType.propsSchema,
+								settings: currentSettings,
+							} );
+
+							if ( ! sectionItems.length ) {
+								return null;
+							}
+
+							return (
+								<Section
+									title={ value.label }
+									key={ type + '.' + index }
+									defaultExpanded={ isDefaultExpanded( value.id ) }
+								>
+									{ sectionItems }
+								</Section>
+							);
+						}
+
+						return null;
+					} ) }
+				</SectionsList>
 			</SettingsBreakpointProvider>
 		</SessionStorageProvider>
 	);

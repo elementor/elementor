@@ -74,10 +74,7 @@ export {
 	type LinkInLinkRestriction,
 } from './link-restriction';
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
-export {
-	ELEMENT_SETTINGS_VARIANTS_CHANGE_EVENT,
-	settingsVariantsRerenderEvents,
-} from './settings-variants/consts';
+export { ELEMENT_SETTINGS_VARIANTS_CHANGE_EVENT, settingsVariantsRerenderEvents } from './settings-variants/consts';
 export {
 	updateElementSettingsVariant,
 	type UpdateElementSettingsVariantArgs,
