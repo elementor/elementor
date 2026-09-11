@@ -395,17 +395,20 @@ class Hints {
 	/**
 	 * Get_plugin_action_url
 	 *
+	 * Returns a decoded install/activate nonce URL (see `decode_url_for_js()`), since every current
+	 * caller consumes this over JSON/JS rather than raw HTML output.
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
 	 */
 	public static function get_plugin_action_url( $plugin ): string {
 		if ( ! self::is_plugin_installed( $plugin ) ) {
-			return self::get_plugin_install_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_install_url( $plugin ) );
 		}
 
 		if ( ! self::is_plugin_active( $plugin ) ) {
-			return self::get_plugin_activate_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_activate_url( $plugin ) );
 		}
 
 		return '';
