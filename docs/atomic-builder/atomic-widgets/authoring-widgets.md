@@ -40,6 +40,35 @@ protected static function define_props_schema(): array {
 
 PropValues use `{ $$type, value }` — see [../fundamentals/prop-value.md](../fundamentals/prop-value.md).
 
+Per-breakpoint settings opt in with `Responsive_Settings::enable()` — see [../fundamentals/prop-types.md](../fundamentals/prop-types.md#responsive-settings). Bind the **normal** control (`Number_Control`, `Select_Control`, …). `SettingsField` writes desktop to `settings` and other breakpoints to `settings_variants`.
+
+```php
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
+
+protected static function define_props_schema(): array {
+    return [
+        'count' => Number_Prop_Type::make()
+            ->default( 3 )
+            ->meta( Responsive_Settings::enable() ),
+    ];
+}
+
+protected function define_atomic_controls(): array {
+    return [
+        Section::make()
+            ->set_label( 'Layout' )
+            ->set_items( [
+                Number_Control::bind_to( 'count' )
+                    ->set_label( 'Items per row' )
+                    ->set_min( 1 ),
+            ] ),
+    ];
+}
+```
+
 ### Atomic controls
 
 `define_atomic_controls()` returns `Section` trees with controls bound via `ControlClass::bind_to( 'prop_key' )`. Every control must bind to a schema key.
@@ -47,6 +76,8 @@ PropValues use `{ $$type, value }` — see [../fundamentals/prop-value.md](../fu
 Built-in control types: `text`, `textarea`, `number`, `select`, `toggle`, `switch`, `size`, `link`, `image`, `svg-media`, `video`, `html-tag`, `inline-editing`, `chips`, `repeatable`, `date-time`, `date-range`, `time-range`, `query`, `query-chips`, `query-filter-repeater`, `attachment-type`, `email`, `tabs`.
 
 Filter: `elementor/atomic-widgets/controls`.
+
+> **Responsive settings** — mark the prop with `Responsive_Settings::enable()`. Do **not** register a per-type control. The settings panel (`SettingsField`) scopes writes to the app-bar breakpoint, the same way `StylesField` scopes style controls. MCP agents use the same opt-in: schema gets `x-responsive: true` plus reserved `settings_variants`.
 
 > `inline-editing` note: this control is a TipTap/ProseMirror rich-text editor (`editor-controls/src/components/inline-editor.tsx`) with a **fixed** extension set (bold, italic, strike, super/subscript, underline, link, hard-break, heading, paragraph). Raw angle brackets typed by the user are stored as text nodes and serialized entity-encoded (`<` → `&lt;`) by `editor.getHTML()`, so you cannot inject arbitrary HTML tags through it — only the enabled marks/nodes emit tags. This client-side encoding happens before submission, so it is only visible by inspecting saved postmeta.
 

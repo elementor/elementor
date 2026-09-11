@@ -1,4 +1,4 @@
-import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
+import { type Props, type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ChildDependencyRule } from '../children-dependencies/types';
@@ -70,6 +70,7 @@ export type V1Element = {
 			get?: ( index: number ) => HTMLElement | undefined;
 		};
 	};
+	render?: () => void;
 	parent?: V1Element;
 	lookup?: () => V1Element;
 };
@@ -157,6 +158,7 @@ export type V1ElementModelProps = {
 	elType: string;
 	id: string;
 	styles?: Record< StyleDefinitionID, StyleDefinition >;
+	settings_variants?: SettingsVariant[];
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
@@ -186,6 +188,15 @@ export type V1ElementEditorSettingsProps = {
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
+
+export type SettingsVariantMeta = {
+	breakpoint: string;
+};
+
+export type SettingsVariant = {
+	meta: SettingsVariantMeta;
+	props: Props;
+};
 
 export type V1ElementConfig< T = object, TChild = unknown > = {
 	icon?: string;

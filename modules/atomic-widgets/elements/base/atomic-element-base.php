@@ -32,6 +32,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $settings_variants = [];
 	protected $interactions = [];
 	protected $editor_settings = [];
 	protected $origin_id = null;
@@ -44,6 +45,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->settings_variants = $data['settings_variants'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
 

@@ -100,7 +100,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'element_id' => [ 'type' => 'string' ],
 								'settings' => [
 									'type' => 'object',
-									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
+									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation). For properties marked x-responsive, desktop values live here; put other breakpoints in settings.settings_variants as [{ breakpoint, props }]. Send settings_variants: [] to clear all overrides.',
 								],
 								'style' => [
 									'type' => 'string',

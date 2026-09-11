@@ -1,20 +1,4 @@
-import { responsivePropTypeUtil } from '../../prop-types/responsive';
 import { resolveResponsiveValue, responsiveFallbackChain } from '../resolve-responsive-value';
-
-describe( 'responsivePropTypeUtil', () => {
-	it( 'creates, extracts and validates a sparse breakpoint map', () => {
-		const value = responsivePropTypeUtil.create( {
-			desktop: { $$type: 'number', value: 3 },
-			tablet: { $$type: 'number', value: 2 },
-		} );
-
-		expect( responsivePropTypeUtil.isValid( value ) ).toBe( true );
-		expect( responsivePropTypeUtil.extract( value ) ).toEqual( {
-			desktop: { $$type: 'number', value: 3 },
-			tablet: { $$type: 'number', value: 2 },
-		} );
-	} );
-} );
 
 describe( 'resolveResponsiveValue', () => {
 	const value = {

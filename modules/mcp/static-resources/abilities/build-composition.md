@@ -80,6 +80,7 @@ Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
 - **number**: plain number (`42`)
 - **boolean**: plain boolean (`true`)
+- **responsive settings** (props with `x-responsive: true` in the widget schema): desktop value on the top-level key; other breakpoints in reserved `settings_variants`: `[{ "breakpoint": "tablet", "props": { "slides_per_view": 2 } }]`. Send `[]` to clear. Not v3 `_tablet` suffixes.
 - **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). May contain inline HTML tags for text styling.
   - Example: `"paragraph": "<strong>Contact support</strong> for a <s>free</s> discounted quote — <em>limited time</em> only."`
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`

@@ -44,7 +44,7 @@ Requires at least one of `settings`, `style`, or `classes`.
 
 | Field | Description |
 |-------|-------------|
-| `settings` | Partial plain settings map — merged onto existing (same shape as `element_config` in build-composition) |
+| `settings` | Partial plain settings map — merged onto existing (same shape as `element_config` in build-composition). For `x-responsive` props, desktop stays on the top-level keys; put other breakpoints in `settings.settings_variants` as `[{ breakpoint, props }]`. Send `settings_variants: []` to clear overrides. |
 | `style` | Raw CSS declarations; `null` resets a property |
 | `classes` | Array of global class **labels** to attach (prepended to existing) |
 

@@ -45,6 +45,46 @@ Built-in types in `modules/atomic-widgets/prop-types/`:
 
 Variables module adds `global-color-variable`, `global-font-variable`, `global-size-variable`. Components adds `overridable`, `component-instance`, `override`.
 
+### Responsive settings
+
+Per-breakpoint **settings** (not style props) opt in with `Responsive_Settings::enable()` on the inner prop type. Desktop stays in `settings[propKey]`. Other breakpoints are stored as element-level variants:
+
+```json
+{
+  "settings": {
+    "slides_per_view": { "$$type": "number", "value": 3 }
+  },
+  "settings_variants": [
+    {
+      "meta": { "breakpoint": "tablet" },
+      "props": { "slides_per_view": { "$$type": "number", "value": 2 } }
+    }
+  ]
+}
+```
+
+This is the same envelope styles use (`meta.breakpoint` beside `props`), so panel controls stay breakpoint-agnostic. `SettingsField` writes the active breakpoint: desktop → `settings`, anything else → `settings_variants`.
+
+```php
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
+
+'slides_per_view' => Number_Prop_Type::make()
+    ->default( 3 )
+    ->meta( Responsive_Settings::enable() ),
+```
+
+| Behavior | Detail |
+|----------|--------|
+| Opt-in | `Number_Prop_Type::make()->meta( Responsive_Settings::enable() )` — default off |
+| Desktop | Lives in the existing `settings` map |
+| Overrides | Sparse `settings_variants[]` with `{ meta: { breakpoint }, props }` — no desktop row |
+| Cascade | `Responsive_Settings::fallback_chain()` / `resolveResponsiveValue()` walk toward desktop |
+| CSS helpers | `css_var_fallback_chain()` for nested `var()` on custom properties |
+| Frontend | Resolved `settings` stay flat; variants emit as `data-e-settings-responsive` |
+
+> **MCP:** `get-widget-schema` marks those props with `x-responsive: true` and exposes a reserved `settings_variants` key (`[{ breakpoint, props }]`). Desktop stays in `settings`. `get-page-structure` (include_content) and `manage-elements` / `build-composition` round-trip the same shape. This is **not** the legacy v3 `_tablet` / `_mobile` suffix pattern.
+
 ### PHP ↔ TypeScript mapping
 
 | PHP | TS |
@@ -71,6 +111,8 @@ Variables module adds `global-color-variable`, `global-font-variable`, `global-s
 | `Prop_Type::to_json_schema()` | `to_json_schema(): array` | JSON Schema for LLM/agents |
 | `Plain_Prop_Type::make()` | `static make(): self` | Factory for plain types |
 | `Union_Prop_Type::create_from()` | `static create_from( Transformable_Prop_Type $type ): self` | Promote type to union |
+| `Responsive_Settings::enable()` | `static enable(): array` | Opt-in meta tuple for per-breakpoint settings |
+| `Responsive_Settings::fallback_chain()` | `static fallback_chain( string $breakpoint ): string[]` | Cascade order toward desktop |
 | `createPropUtils()` | `createPropUtils( key, valueSchema )` | TS factory with `.create()`, `.extract()`, `.isValid()` |
 | `propTypeToJsonSchema()` | `propTypeToJsonSchema( propType, suppressDynamic? )` | TS JSON Schema export |
 

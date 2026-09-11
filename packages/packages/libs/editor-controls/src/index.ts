@@ -13,7 +13,6 @@ export { ChipsControl } from './controls/chips-control';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
 export { NumberControl } from './controls/number-control';
-export { ResponsiveNumberControl } from './controls/responsive-number-control';
 export { EqualUnequalSizesControl } from './controls/equal-unequal-sizes-control';
 export { LinkedDimensionsControl } from './controls/linked-dimensions-control';
 export { FontFamilyControl } from './controls/font-family-control/font-family-control';

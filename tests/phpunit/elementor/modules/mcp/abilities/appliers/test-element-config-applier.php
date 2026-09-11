@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolv
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -388,13 +389,195 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertStringContainsString( 'my-hero', $result['error']->get_error_message() );
 	}
 
+	public function test_apply__writes_settings_variants_for_responsive_props() {
+		$applier = $this->make_applier();
+
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [
+				'title' => [
+					'$$type' => 'string',
+					'value' => 'Hello world',
+				],
+				'count' => [
+					'$$type' => 'number',
+					'value' => 3,
+				],
+			],
+		];
+
+		$index = [
+			'hero-title' => &$hero_title,
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-title' => [
+					'count' => 5,
+					'settings_variants' => [
+						[
+							'breakpoint' => 'tablet',
+							'props' => [
+								'count' => 2,
+							],
+						],
+					],
+				],
+			],
+			[
+				'mock-widget' => [ 'class' => Plain_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertSame( [ '$$type' => 'number', 'value' => 5 ], $hero_title['settings']['count'] );
+		$this->assertSame(
+			[
+				[
+					'meta' => [ 'breakpoint' => 'tablet' ],
+					'props' => [
+						'count' => [ '$$type' => 'number', 'value' => 2 ],
+					],
+				],
+			],
+			$hero_title['settings_variants']
+		);
+	}
+
+	public function test_apply__rejects_desktop_settings_variants() {
+		$applier = $this->make_applier();
+
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [],
+		];
+
+		$index = [
+			'hero-title' => &$hero_title,
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-title' => [
+					'settings_variants' => [
+						[
+							'breakpoint' => 'desktop',
+							'props' => [ 'count' => 1 ],
+						],
+					],
+				],
+			],
+			[
+				'mock-widget' => [ 'class' => Plain_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNotNull( $result['error'] );
+		$this->assertStringContainsString( 'desktop', $result['error']->get_error_message() );
+	}
+
+	public function test_apply__skips_non_responsive_keys_in_settings_variants() {
+		$applier = $this->make_applier();
+
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [
+				'title' => [
+					'$$type' => 'string',
+					'value' => 'Hello world',
+				],
+			],
+		];
+
+		$index = [
+			'hero-title' => &$hero_title,
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-title' => [
+					'settings_variants' => [
+						[
+							'breakpoint' => 'mobile',
+							'props' => [
+								'title' => 'nope',
+								'count' => 1,
+							],
+						],
+					],
+				],
+			],
+			[
+				'mock-widget' => [ 'class' => Plain_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertNotEmpty( $result['warnings'] );
+		$this->assertSame(
+			[
+				[
+					'meta' => [ 'breakpoint' => 'mobile' ],
+					'props' => [
+						'count' => [ '$$type' => 'number', 'value' => 1 ],
+					],
+				],
+			],
+			$hero_title['settings_variants']
+		);
+	}
+
+	public function test_apply__clears_settings_variants_with_empty_array() {
+		$applier = $this->make_applier();
+
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [
+				'title' => [
+					'$$type' => 'string',
+					'value' => 'Hello world',
+				],
+			],
+			'settings_variants' => [
+				[
+					'meta' => [ 'breakpoint' => 'tablet' ],
+					'props' => [
+						'count' => [ '$$type' => 'number', 'value' => 2 ],
+					],
+				],
+			],
+		];
+
+		$index = [
+			'hero-title' => &$hero_title,
+		];
+
+		$result = $applier->apply(
+			$index,
+			[
+				'hero-title' => [
+					'settings_variants' => [],
+				],
+			],
+			[
+				'mock-widget' => [ 'class' => Plain_Settings_Widget::class ],
+			]
+		);
+
+		$this->assertNull( $result['error'] );
+		$this->assertSame( [], $hero_title['settings_variants'] );
+	}
+
 }
 
 class Plain_Settings_Widget {
 	public static function get_props_schema(): array {
 		return [
 			'title' => String_Prop_Type::make()->required(),
-			'count' => Number_Prop_Type::make(),
+			'count' => Number_Prop_Type::make()->meta( Responsive_Settings::enable() ),
 			'visible' => Boolean_Prop_Type::make(),
 		];
 	}

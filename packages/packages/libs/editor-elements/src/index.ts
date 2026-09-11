@@ -46,6 +46,7 @@ export { getElementIcon } from './sync/get-element-icon';
 export { getElementLabel } from './sync/get-element-label';
 export { getElementTitle } from './sync/get-element-title';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
+export { getElementSettingsVariants, getSettingsVariantByMeta } from './sync/get-element-settings-variants';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
 export { getAllDescendants } from './sync/get-all-descendants';
@@ -73,6 +74,14 @@ export {
 	type LinkInLinkRestriction,
 } from './link-restriction';
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
+export {
+	ELEMENT_SETTINGS_VARIANTS_CHANGE_EVENT,
+	settingsVariantsRerenderEvents,
+} from './settings-variants/consts';
+export {
+	updateElementSettingsVariant,
+	type UpdateElementSettingsVariantArgs,
+} from './settings-variants/update-element-settings-variant';
 export {
 	createElementStyle,
 	shouldCreateNewLocalStyle,

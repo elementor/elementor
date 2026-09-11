@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
+use Elementor\Modules\Mcp\Abilities\Utils\Settings_Variants_Llm;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -37,14 +38,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles (as { __style_id, css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode), interactions, its rendered HTML tag when known, and default_styles (a raw CSS string of the widget base layer followed by the kit\'s site-wide default layer for that tag, in browser cascade order — includes selectors, @media(--breakpoint) blocks, and pseudo-states as the frontend renders them). V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings (plain JSON; desktop values plus optional settings_variants for per-breakpoint overrides), styles (as { __style_id, css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode), interactions, its rendered HTML tag when known, and default_styles (a raw CSS string of the widget base layer followed by the kit\'s site-wide default layer for that tag, in browser cascade order — includes selectors, @media(--breakpoint) blocks, and pseudo-states as the frontend renders them). V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). V3 nodes always have empty settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings (plain JSON; desktop values), settings_variants (per-breakpoint overrides as [{ breakpoint, props }] for properties marked x-responsive), styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). V3 nodes always have empty settings and styles.',
 					],
 				],
 			],
@@ -73,7 +74,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each V4 node\'s settings, styles (as { __style_id, css } — raw CSS string), interactions, rendered tag, and default_styles (raw CSS string: base layer + kit default for that tag). The styles.css value is round-trippable to build-composition.style / manage-elements.update.style in replace mode. Requires element_id.',
+						'description' => 'If true, includes each V4 node\'s settings, settings_variants (when authored), styles (as { __style_id, css } — raw CSS string), interactions, rendered tag, and default_styles (raw CSS string: base layer + kit default for that tag). settings_variants is round-trippable inside manage-elements.update.settings.settings_variants. Requires element_id.',
 					],
 				],
 			]
@@ -171,10 +172,22 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
+		$settings = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
+		$settings_variants = Settings_Variants_Llm::serialize(
+			$props_schema,
+			is_array( $node['settings_variants'] ?? null ) ? $node['settings_variants'] : []
+		);
+
+		if ( ! empty( $settings_variants ) ) {
+			$settings = is_array( $settings ) ? $settings : [];
+			$settings[ Settings_Variants_Llm::KEY ] = $settings_variants;
+		}
+
+		$skeleton['settings'] = $settings;
 		$skeleton['styles'] = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 
-		$resolved_settings = is_array( $skeleton['settings'] ) ? $skeleton['settings'] : [];
+		$resolved_settings = is_array( $settings ) ? $settings : [];
+		unset( $resolved_settings[ Settings_Variants_Llm::KEY ] );
 		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings );
 	}
 

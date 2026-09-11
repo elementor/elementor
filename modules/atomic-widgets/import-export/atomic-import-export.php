@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Interactions_Ids_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Interactions_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifier;
+use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Variants_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Ids_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
@@ -60,6 +61,7 @@ class Atomic_Import_Export {
 
 			$runners = [
 				Settings_Props_Modifier::make( $props_resolver, $element_instance::get_props_schema() ),
+				Settings_Variants_Props_Modifier::make( $props_resolver, $element_instance::get_props_schema() ),
 				Styles_Props_Modifier::make( $props_resolver, Style_Schema::get() ),
 				Interactions_Props_Modifier::make( $props_resolver, $interaction_item_schema ),
 			];

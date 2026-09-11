@@ -152,17 +152,17 @@ describe( 'getElementSettingsWithDefaults', () => {
 		} );
 	} );
 
-	describe( 'responsive object default', () => {
-		it( 'applies a desktop-only object default when the stored value is null', () => {
-			const responsiveDefault = {
-				$$type: 'responsive' as const,
+	describe( 'object default', () => {
+		it( 'applies an object default when the stored value is null', () => {
+			const objectDefault = {
+				$$type: 'object' as const,
 				value: { desktop: { $$type: 'number' as const, value: 3 } },
 			};
 			const schema: PropsSchema = {
 				slidesPerView: {
 					kind: 'object',
-					key: 'responsive',
-					default: responsiveDefault,
+					key: 'object',
+					default: objectDefault,
 					settings: {},
 					meta: {},
 					dependencies: undefined,
@@ -176,7 +176,7 @@ describe( 'getElementSettingsWithDefaults', () => {
 
 			const result = getElementSettingsWithDefaults( schema, { slidesPerView: null } );
 
-			expect( result.slidesPerView ).toEqual( responsiveDefault );
+			expect( result.slidesPerView ).toEqual( objectDefault );
 		} );
 	} );
 } );

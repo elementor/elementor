@@ -12,8 +12,10 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Parsers\Settings_Variants_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -180,6 +182,25 @@ trait Has_Atomic_Base {
 		return $result->unwrap();
 	}
 
+	private function parse_atomic_settings_variants( array $data ): array {
+		$variants = $data['settings_variants'] ?? [];
+
+		if ( ! is_array( $variants ) || empty( $variants ) ) {
+			return [];
+		}
+
+		$parser = Settings_Variants_Parser::make( static::get_props_schema() );
+		$result = $parser->parse( $variants );
+
+		if ( ! $result->is_valid() ) {
+			Logger::warning(
+				'Settings variants validation failed for widget `' . ( $data['id'] ?? 'unknown' ) . '`. ' . $result->errors()->to_string()
+			);
+		}
+
+		return $result->unwrap();
+	}
+
 	private function parse_atomic_interactions( $interactions ) {
 
 		if ( empty( $interactions ) ) {
@@ -263,6 +284,12 @@ trait Has_Atomic_Base {
 
 		$this->set_data_field_for_save(
 			$data,
+			'settings_variants',
+			$this->parse_atomic_settings_variants( $data )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
 			'editor_settings',
 			$this->parse_editor_settings( $data['editor_settings'] ?? [] )
 		);
@@ -316,6 +343,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
+		$raw_data['settings_variants'] = $this->settings_variants ?? [];
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
@@ -342,6 +370,39 @@ trait Has_Atomic_Base {
 		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
 
 		return $this->transform_link_for_render( $parsed );
+	}
+
+	public function get_atomic_settings_variants(): array {
+		$schema = Responsive_Settings::filter_schema( static::get_props_schema() );
+
+		if ( empty( $schema ) ) {
+			return [];
+		}
+
+		$variants = $this->settings_variants ?? [];
+		$resolved = [];
+		$resolver = Render_Props_Resolver::for_settings();
+
+		foreach ( $variants as $variant ) {
+			if ( ! is_array( $variant ) || empty( $variant['props'] ) || ! is_array( $variant['props'] ) ) {
+				continue;
+			}
+
+			$breakpoint = $variant['meta']['breakpoint'] ?? null;
+
+			if ( ! is_string( $breakpoint ) || ! Responsive_Settings::is_valid_breakpoint( $breakpoint ) ) {
+				continue;
+			}
+
+			$resolved[] = [
+				'meta' => [
+					'breakpoint' => $breakpoint,
+				],
+				'props' => $resolver->resolve( $schema, $variant['props'] ),
+			];
+		}
+
+		return $resolved;
 	}
 
 	protected function transform_link_for_render( array $parsed ): array {

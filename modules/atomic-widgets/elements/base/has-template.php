@@ -57,6 +57,7 @@ trait Has_Template {
 				'interaction_id' => $this->get_interaction_id(),
 				'type' => $this->get_name(),
 				'settings' => $settings,
+				'settings_variants' => $this->get_atomic_settings_variants(),
 				'tag' => static::get_computed_html_tag( $settings ),
 				'base_styles' => $this->get_base_styles_dictionary(),
 			];
