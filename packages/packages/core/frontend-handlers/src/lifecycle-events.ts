@@ -71,6 +71,7 @@ export const onElementRender = ( {
 
 	Array.from( elementTypeHandlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
+		const settingsVariants = element.getAttribute( 'data-e-settings-responsive' );
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
 			render: ( callback: ( event: Event ) => void ) => {
@@ -93,6 +94,7 @@ export const onElementRender = ( {
 			element,
 			signal: controller.signal,
 			settings: settings ? JSON.parse( settings ) : {},
+			settingsVariants: settingsVariants ? JSON.parse( settingsVariants ) : [],
 			listenToChildren,
 		} );
 
@@ -121,11 +123,13 @@ export const onElementSelectorRender = ( {
 
 		Array.from( handlers.values() ?? [] ).forEach( ( handler ) => {
 			const settings = element.getAttribute( 'data-e-settings' );
+			const settingsVariants = element.getAttribute( 'data-e-settings-responsive' );
 
 			const unmount = handler( {
 				element,
 				signal: controller.signal,
 				settings: settings ? JSON.parse( settings ) : {},
+				settingsVariants: settingsVariants ? JSON.parse( settingsVariants ) : [],
 			} );
 
 			if ( typeof unmount === 'function' ) {

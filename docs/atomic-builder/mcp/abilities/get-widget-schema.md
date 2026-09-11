@@ -74,6 +74,8 @@ Built by `Llm_Guidance_Builder` from widget config:
 
 Props in `NON_CONFIGURABLE_PROP_KEYS` (`classes`, `attributes`, etc.) are excluded unless `llm_configurable` meta is set. Base settings props get a hint in their schema description.
 
+Props opted in with `Responsive_Settings::enable()` get `x-responsive: true`. The schema then also includes reserved `settings_variants`: an array of `{ breakpoint, props }` (no `desktop` — that stays on the top-level keys). `get-page-structure` (include_content) and `manage-elements` / `build-composition` use the same plain-JSON shape.
+
 ### v3 fallback
 
 Widgets without `atomic_props_schema` but with legacy controls return:

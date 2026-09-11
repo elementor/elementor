@@ -1,4 +1,4 @@
-import { type V1ElementConfig } from '@elementor/editor-elements';
+import { type V1ElementConfig, type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
@@ -141,17 +141,36 @@ export function createTemplatedElementView( {
 			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
-					return resolveProps( {
-						props: settings,
-						signal,
-						renderContext: this.getResolverRenderContext(),
-					} );
+					const settingsVariants: NonNullable< V1ElementModelProps[ 'settings_variants' ] > =
+						this.model.get( 'settings_variants' ) ?? [];
+					const renderContext = this.getResolverRenderContext();
+
+					return Promise.all( [
+						resolveProps( {
+							props: settings,
+							signal,
+							renderContext,
+						} ),
+						Promise.all(
+							settingsVariants.map( async ( variant ) => ( {
+								meta: variant.meta,
+								props: await resolveProps( {
+									props: variant.props ?? {},
+									signal,
+									renderContext,
+								} ),
+							} ) )
+						),
+					] );
 				} )
-				.then( ( settings ) => {
-					return this.afterSettingsResolve( settings );
+				.then( ( [ settings, settingsVariants ] ) => {
+					return {
+						settings: this.afterSettingsResolve( settings ),
+						settingsVariants,
+					};
 				} )
-				.then( async ( settings ) => {
-					const settingsHash = JSON.stringify( settings );
+				.then( async ( { settings, settingsVariants } ) => {
+					const settingsHash = JSON.stringify( { settings, settingsVariants } );
 					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
 
 					if ( ! settingsChanged && this.isRendered ) {
@@ -167,6 +186,7 @@ export function createTemplatedElementView( {
 						interaction_id: this.getInteractionId(),
 						type,
 						settings,
+						settings_variants: settingsVariants,
 						tag: computeHtmlTag( settings, defaultHtmlTag, { followLink: htmlTagFollowsLink } ),
 						base_styles: baseStylesDictionary,
 						...( this.getResolverRenderContext?.() ?? {} ),

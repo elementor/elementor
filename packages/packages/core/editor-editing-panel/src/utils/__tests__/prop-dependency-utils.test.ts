@@ -11,7 +11,10 @@ const arr = ( ...items: string[] ) => ( {
 	$$type: 'string-array' as const,
 	value: items.map( str ),
 } );
-const plain = ( opts: { default?: ReturnType< typeof str > | ReturnType< typeof arr > | null } = {} ) => ( {
+const num = ( value: number ) => ( { $$type: 'number' as const, value } );
+const plain = (
+	opts: { default?: ReturnType< typeof str > | ReturnType< typeof arr > | ReturnType< typeof num > | null } = {}
+) => ( {
 	kind: 'plain' as const,
 	key: 'test',
 	default: opts.default ?? null,
@@ -146,6 +149,34 @@ describe( 'getElementSettingsWithDefaults', () => {
 
 			// Assert
 			expect( result.conditional ).toEqual( defaultString );
+		} );
+	} );
+
+	describe( 'object default', () => {
+		it( 'applies an object default when the stored value is null', () => {
+			const objectDefault = {
+				$$type: 'object' as const,
+				value: { desktop: { $$type: 'number' as const, value: 3 } },
+			};
+			const schema: PropsSchema = {
+				slidesPerView: {
+					kind: 'object',
+					key: 'object',
+					default: objectDefault,
+					settings: {},
+					meta: {},
+					dependencies: undefined,
+					initial_value: null,
+					shape: {
+						desktop: plain( { default: num( 3 ) } ),
+						tablet: plain(),
+					},
+				},
+			};
+
+			const result = getElementSettingsWithDefaults( schema, { slidesPerView: null } );
+
+			expect( result.slidesPerView ).toEqual( objectDefault );
 		} );
 	} );
 } );

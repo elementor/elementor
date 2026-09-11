@@ -864,6 +864,60 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'p', $settings['tag'] );
 	}
 
+	public function test_execute__includes_settings_variants_inside_settings_when_include_content_true() {
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$elements = [
+			[
+				'id' => 'widget1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'escaped-html',
+						'value' => 'Desktop title',
+					],
+				],
+				'settings_variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'tablet' ],
+						'props' => [
+							'title' => [
+								'$$type' => 'escaped-html',
+								'value' => 'Tablet title',
+							],
+						],
+					],
+				],
+				'styles' => [],
+				'elements' => [],
+			],
+		];
+
+		$this->mock_document_with_elements( $post_id, $elements );
+
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => 'widget1',
+			'include_content' => true,
+		] );
+
+		$node = $result['elements'][0];
+		$this->assertSame( 'Desktop title', $node['settings']['title'] );
+		$this->assertSame(
+			[
+				[
+					'breakpoint' => 'tablet',
+					'props' => [
+						'title' => 'Tablet title',
+					],
+				],
+			],
+			$node['settings']['settings_variants']
+		);
+	}
+
 	private function given_dynamic_tags( array $tags ): void {
 		$module = Dynamic_Tags_Module::instance();
 

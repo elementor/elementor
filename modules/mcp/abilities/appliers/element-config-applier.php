@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Settings_Variants_Llm;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -98,6 +99,8 @@ class Element_Config_Applier {
 
 			$schema = $this->type_resolver->get_props_schema( $tag, $widget_configs );
 
+			$variants_payload = Settings_Variants_Llm::peel( $settings );
+
 			if ( ! $schema ) {
 				$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $settings );
 				continue;
@@ -109,6 +112,19 @@ class Element_Config_Applier {
 
 			foreach ( $outcome['cleared'] as $cleared_key ) {
 				unset( $node['settings'][ $cleared_key ] );
+			}
+
+			if ( $variants_payload['present'] ) {
+				Settings_Variants_Llm::apply(
+					$node,
+					$variants_payload['value'],
+					$schema,
+					(string) $tag,
+					(string) $config_id,
+					$this->plain_values_resolver,
+					$errors,
+					$warnings
+				);
 			}
 
 			$validation_error = $this->validate_settings( $node['settings'], $schema );

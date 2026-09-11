@@ -132,6 +132,8 @@ class Migrations_Orchestrator {
 
 		Schema_Resolver::update_widget_context( $data );
 
+		$widget_context = Schema_Resolver::get_widget_context();
+
 		if ( $this->handle_widget_key_migrations( $data, $path ) ) {
 			$has_changes = true;
 		}
@@ -142,6 +144,11 @@ class Migrations_Orchestrator {
 			}
 
 			$path[] = $key;
+
+			// The widget context is shared across the recursion, so a previously walked
+			// branch (e.g. child `elements`) may have replaced it with a descendant's
+			// type. Restore this node's own context before each branch.
+			Schema_Resolver::set_widget_context( $widget_context );
 
 			if ( isset( $value['$$type'] ) ) {
 				$prop_type = Schema_Resolver::resolve( $key, $path );
@@ -160,7 +167,7 @@ class Migrations_Orchestrator {
 	}
 
 	private function handle_widget_key_migrations( array &$data, array $path ): bool {
-		if ( end( $path ) !== 'settings' ) {
+		if ( ! $this->is_widget_settings_container( $path ) ) {
 			return false;
 		}
 
@@ -196,6 +203,22 @@ class Migrations_Orchestrator {
 		}
 
 		return $this->migrate_pending_widget_keys( $data, $pending_widget_key_migrations );
+	}
+
+	/**
+	 * Whether the current node is a map of widget settings keyed by prop name, which is
+	 * either `settings` or a per-breakpoint `settings_variants[*].props`. Style variants
+	 * also end in `props`, but they are keyed by the style schema and must not match.
+	 */
+	private function is_widget_settings_container( array $path ): bool {
+		$node = end( $path );
+
+		if ( Schema_Resolver::WIDGET_SETTINGS_PATH === $node ) {
+			return true;
+		}
+
+		return Schema_Resolver::SETTINGS_VARIANTS_PROPS_PATH === $node
+			&& in_array( Schema_Resolver::SETTINGS_VARIANTS_PATH, $path, true );
 	}
 
 	private function migrate_pending_widget_keys( array &$data, array $pending_widget_key_migrations ): bool {

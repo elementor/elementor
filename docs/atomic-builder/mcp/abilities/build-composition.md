@@ -87,6 +87,7 @@ Plain JSON matching `elementor/get-widget-schema` output — no `$$type` wrapper
 - Text (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`) — not `{ content, children }`
 - Dynamic (where allowed): `{ "name": "post-title", "settings": { } }` — read `elementor://dynamic-tags`
 - Image: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }`
+- Responsive (`x-responsive` props): desktop on the top-level key; other breakpoints in `settings_variants`: `[{ "breakpoint": "tablet", "props": { "<key>": <plain> } }]`
 
 Omit keys listed in `llm_guidance.default_settings` unless the user requests a change.
 

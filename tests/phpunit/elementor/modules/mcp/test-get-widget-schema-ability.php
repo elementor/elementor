@@ -2,7 +2,11 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Settings_Variants_Llm;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -82,6 +86,26 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_input', $result->get_error_code() );
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function test_build_widget_schema__marks_responsive_props_and_exposes_settings_variants() {
+		$config = [
+			'atomic_props_schema' => [
+				'count' => Number_Prop_Type::make()->meta( Responsive_Settings::enable() ),
+				'title' => String_Prop_Type::make(),
+			],
+		];
+
+		$schema = Widget_Context_Helper::build_widget_schema( 'mock-widget', $config );
+
+		$this->assertTrue( $schema['properties']['count']['x-responsive'] );
+		$this->assertArrayNotHasKey( 'x-responsive', $schema['properties']['title'] );
+		$this->assertArrayHasKey( Settings_Variants_Llm::KEY, $schema['properties'] );
+		$this->assertSame( 'array', $schema['properties'][ Settings_Variants_Llm::KEY ]['type'] );
+		$this->assertArrayHasKey( 'count', $schema['properties'][ Settings_Variants_Llm::KEY ]['items']['properties']['props']['properties'] );
+		$this->assertArrayNotHasKey( 'title', $schema['properties'][ Settings_Variants_Llm::KEY ]['items']['properties']['props']['properties'] );
+		$this->assertContains( 'tablet', $schema['properties'][ Settings_Variants_Llm::KEY ]['items']['properties']['breakpoint']['enum'] );
+		$this->assertNotContains( 'desktop', $schema['properties'][ Settings_Variants_Llm::KEY ]['items']['properties']['breakpoint']['enum'] );
 	}
 
 	private function given_widget_manager_with_fake_v3_widget( string $type, array $controls = null ): void {

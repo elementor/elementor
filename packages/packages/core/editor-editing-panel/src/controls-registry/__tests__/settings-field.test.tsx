@@ -8,7 +8,13 @@ import {
 	renderWithTheme,
 } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
-import { getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
+import {
+	getElementLabel,
+	getElementSettings,
+	getElementSettingsVariants,
+	updateElementSettings,
+	updateElementSettingsVariant,
+} from '@elementor/editor-elements';
 import {
 	type AnyTransformable,
 	type Dependency,
@@ -17,21 +23,29 @@ import {
 	type PropValue,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
 import { mockElement } from '../../__tests__/utils';
 import { ElementProvider } from '../../contexts/element-context';
+import { SettingsBreakpointProvider } from '../../contexts/settings-breakpoint-context';
 import { SettingsField } from '../settings-field';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	updateElementSettings: jest.fn(),
+	updateElementSettingsVariant: jest.fn(),
 	getElementLabel: jest.fn(),
 	getElementSettings: jest.fn(),
+	getElementSettingsVariants: jest.fn( () => [] ),
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
+} ) );
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useActiveBreakpoint: jest.fn( () => 'desktop' ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop' }, { id: 'tablet' }, { id: 'mobile' } ] ),
 } ) );
 
 const bind = 'text';
@@ -249,6 +263,7 @@ describe( '<SettingsField />', () => {
 	afterEach( () => {
 		historyMock.afterEach();
 		jest.clearAllMocks();
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
 	} );
 
 	it( 'should set the initial value', () => {
@@ -396,6 +411,65 @@ describe( '<SettingsField />', () => {
 				props: { text: { $$type: 'string', value: 'New Value' } },
 				withHistory: false,
 			} );
+		} );
+	} );
+
+	describe( 'responsive settings variants', () => {
+		it( 'writes the active breakpoint override instead of desktop settings', () => {
+			jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
+			jest.mocked( getElementSettingsVariants ).mockReturnValue( [] );
+
+			const element = mockElement();
+			const elementType = createMockElementType( {
+				propsSchema: {
+					[ bind ]: createMockPropType( { kind: 'plain', meta: { responsive: true } } ),
+				},
+			} );
+
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType } settings={ defaultSettings }>
+					<SettingsBreakpointProvider>
+						<SettingsField bind={ bind } propDisplayName={ __( 'Test Prop', 'elementor' ) }>
+							<MockControl />
+						</SettingsField>
+					</SettingsBreakpointProvider>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: bind } );
+			fireEvent.change( input, { target: { value: 'tablet-value' } } );
+			jest.runAllTimers();
+
+			expect( jest.mocked( updateElementSettingsVariant ) ).toHaveBeenCalledWith( {
+				elementId: element.id,
+				breakpoint: 'tablet',
+				props: { [ bind ]: { $$type: 'string', value: 'tablet-value' } },
+			} );
+			expect( jest.mocked( updateElementSettings ) ).not.toHaveBeenCalled();
+		} );
+
+		it( 'shows the inherited desktop value as a placeholder', () => {
+			jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
+			jest.mocked( getElementSettingsVariants ).mockReturnValue( [] );
+
+			const element = mockElement();
+			const elementType = createMockElementType( {
+				propsSchema: {
+					[ bind ]: createMockPropType( { kind: 'plain', meta: { responsive: true } } ),
+				},
+			} );
+
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType } settings={ defaultSettings }>
+					<SettingsBreakpointProvider>
+						<SettingsField bind={ bind } propDisplayName={ __( 'Test Prop', 'elementor' ) }>
+							<MockControl />
+						</SettingsField>
+					</SettingsBreakpointProvider>
+				</ElementProvider>
+			);
+
+			expect( screen.getByRole( 'textbox', { name: bind } ) ).toHaveAttribute( 'placeholder', 'Hello, World!' );
 		} );
 	} );
 } );
@@ -1227,7 +1301,7 @@ describe( 'SettingsField dependency logic', () => {
 } );
 
 const MockControl = ( { bind: controlBind = bind }: { bind?: string } = {} ) => {
-	const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
+	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setValue( event.target.value );
@@ -1238,6 +1312,7 @@ const MockControl = ( { bind: controlBind = bind }: { bind?: string } = {} ) => 
 			type="text"
 			aria-label={ controlBind }
 			value={ value ?? '' }
+			placeholder={ typeof placeholder === 'string' ? placeholder : '' }
 			onChange={ handleChange }
 			disabled={ disabled }
 		/>

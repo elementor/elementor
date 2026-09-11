@@ -27,3 +27,7 @@ data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-
 {%- macro render_interactions(interactions) -%}
 data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 {%- endmacro -%}
+
+{%- macro render_settings_variants(settings_variants) -%}
+{%- if settings_variants is defined and settings_variants is not empty %} data-e-settings-responsive="{{ settings_variants | json_encode | e('html_attr') }}"{% endif -%}
+{%- endmacro -%}

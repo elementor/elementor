@@ -12,6 +12,12 @@ type SharedHandlerParams< TSettings extends Settings = Settings > = {
 	element: Element;
 	signal: AbortSignal;
 	settings: TSettings;
+	settingsVariants?: SettingsVariant[];
+};
+
+export type SettingsVariant = {
+	meta: { breakpoint: string };
+	props: Record< string, unknown >;
 };
 
 export type Handler = < TSettings extends Settings = Settings >(

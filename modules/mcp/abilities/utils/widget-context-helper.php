@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
@@ -183,6 +184,7 @@ class Widget_Context_Helper {
 	 */
 	private static function build_configurable_properties_schema( array $props_schema, string $widget_type ): array {
 		$properties = [];
+		$responsive_properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
 			if ( ! $prop_type instanceof Prop_Type || ! self::is_prop_key_configurable( $key, $prop_type ) ) {
@@ -196,7 +198,16 @@ class Widget_Context_Helper {
 				$schema['allowed_html_tags'] = $allowed_html_tags;
 			}
 
+			if ( Responsive_Settings::is_enabled( $prop_type ) ) {
+				$schema['x-responsive'] = true;
+				$responsive_properties[ $key ] = $schema;
+			}
+
 			$properties[ $key ] = $schema;
+		}
+
+		if ( ! empty( $responsive_properties ) ) {
+			$properties[ Settings_Variants_Llm::KEY ] = Settings_Variants_Llm::schema_property( $responsive_properties );
 		}
 
 		return $properties;

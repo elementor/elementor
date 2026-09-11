@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Responsive_Settings;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -1049,6 +1050,69 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
 		$this->assertArrayNotHasKey( 'interactions', $data_for_save );
+		$this->assertArrayNotHasKey( 'settings_variants', $data_for_save );
+	}
+
+	public function test_get_data_for_save__parses_settings_variants() {
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'count' => Number_Prop_Type::make()->default( 3 )->meta( Responsive_Settings::enable() ),
+				'title' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'count' => [ '$$type' => 'number', 'value' => 3 ],
+			],
+			'settings_variants' => [
+				[
+					'meta' => [ 'breakpoint' => 'tablet' ],
+					'props' => [
+						'count' => [ '$$type' => 'number', 'value' => 2 ],
+						'title' => [ '$$type' => 'string', 'value' => 'ignored' ],
+					],
+				],
+				[
+					'meta' => [ 'breakpoint' => 'not-real' ],
+					'props' => [
+						'count' => [ '$$type' => 'number', 'value' => 1 ],
+					],
+				],
+			],
+		] );
+
+		$data_for_save = $widget->get_data_for_save();
+
+		$this->assertCount( 1, $data_for_save['settings_variants'] );
+		$this->assertSame( 'tablet', $data_for_save['settings_variants'][0]['meta']['breakpoint'] );
+		$this->assertSame(
+			[ '$$type' => 'number', 'value' => 2 ],
+			$data_for_save['settings_variants'][0]['props']['count']
+		);
+		$this->assertArrayNotHasKey( 'title', $data_for_save['settings_variants'][0]['props'] );
+	}
+
+	public function test_get_raw_data__exposes_settings_variants() {
+		$variants = [
+			[
+				'meta' => [ 'breakpoint' => 'mobile' ],
+				'props' => [
+					'count' => [ '$$type' => 'number', 'value' => 1 ],
+				],
+			],
+		];
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'count' => Number_Prop_Type::make()->meta( Responsive_Settings::enable() ),
+			],
+			'settings' => [
+				'count' => [ '$$type' => 'number', 'value' => 3 ],
+			],
+			'settings_variants' => $variants,
+		] );
+
+		$raw = $widget->get_raw_data();
+
+		$this->assertSame( $variants, $raw['settings_variants'] );
 	}
 
 	public function test_get_data_for_save__throws_on_settings_validation_error() {
@@ -1085,6 +1149,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				parent::__construct( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
+					'settings_variants' => $options['settings_variants'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'editor_settings' => $options['editor_settings'] ?? [],
 					'elType' => 'widget',

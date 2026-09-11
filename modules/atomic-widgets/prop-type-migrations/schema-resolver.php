@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Schema_Resolver {
 	const WIDGET_SETTINGS_PATH = 'settings';
+	const SETTINGS_VARIANTS_PATH = 'settings_variants';
+	const SETTINGS_VARIANTS_PROPS_PATH = 'props';
 	const STYLE_VARIANTS_PATH = 'variants';
 	const STYLE_PROPS_PATH = 'props';
 	const INTERACTIONS_ITEMS_PATH = 'items';
@@ -30,8 +32,26 @@ class Schema_Resolver {
 		return self::$widget_context;
 	}
 
+	public static function set_widget_context( ?string $widget_context ): void {
+		self::$widget_context = $widget_context;
+	}
+
+	/**
+	 * Widget settings live either directly under `settings` or, for per-breakpoint
+	 * overrides, under `settings_variants[*].props`. Both resolve against the same
+	 * widget props schema, since variants reuse the settings prop keys.
+	 */
+	public static function is_widget_settings_path( array $path ): bool {
+		if ( in_array( self::WIDGET_SETTINGS_PATH, $path, true ) ) {
+			return true;
+		}
+
+		return in_array( self::SETTINGS_VARIANTS_PATH, $path, true )
+			&& in_array( self::SETTINGS_VARIANTS_PROPS_PATH, $path, true );
+	}
+
 	public static function resolve( string $key, array $path ): ?Prop_Type {
-		if ( in_array( self::WIDGET_SETTINGS_PATH, $path, true ) && self::$widget_context ) {
+		if ( self::is_widget_settings_path( $path ) && self::$widget_context ) {
 			$widget_context = self::make_widget_context( self::$widget_context );
 			return $widget_context['schema'][ $key ] ?? null;
 		} elseif ( in_array( self::STYLE_VARIANTS_PATH, $path, true ) && in_array( self::STYLE_PROPS_PATH, $path, true ) ) {

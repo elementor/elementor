@@ -36,14 +36,17 @@ Verified: `migrations-orchestrator.php`, `migration-interpreter.php`, `migration
 2. Walk tree; for objects with `$$type`, resolve expected type via `Schema_Resolver`
 3. On mismatch, find shortest path in manifest (`up` or `down`)
 4. Execute via `Migration_Interpreter`
-5. Handle widget-key renames under `settings`
+5. Handle widget-key renames under `settings` and `settings_variants[*].props`
 6. Persist via `$save_callback`; mark migrated
 
 | Path segment | Schema source |
 |--------------|---------------|
 | `settings` | Element `get_props_schema()` |
+| `settings_variants` → `props` | Element `get_props_schema()` |
 | `variants` → `props` | `Style_Schema::get()` |
 | `interactions` → `items` | `Interactions_Schema::get()` |
+
+Per-breakpoint settings ([../fundamentals/prop-types.md](../fundamentals/prop-types.md#responsive-settings)) reuse the settings prop keys, so a prop-type or widget-key migration covers desktop and every breakpoint variant in one entry — no separate manifest work.
 
 ### Manifest format
 
