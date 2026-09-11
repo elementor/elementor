@@ -1312,7 +1312,7 @@ const MockControl = ( { bind: controlBind = bind }: { bind?: string } = {} ) => 
 			type="text"
 			aria-label={ controlBind }
 			value={ value ?? '' }
-			placeholder={ typeof placeholder === 'string' ? placeholder : placeholder?.toString?.() ?? '' }
+			placeholder={ typeof placeholder === 'string' ? placeholder : '' }
 			onChange={ handleChange }
 			disabled={ disabled }
 		/>
