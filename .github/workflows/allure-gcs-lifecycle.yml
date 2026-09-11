@@ -1,0 +1,28 @@
+name: Allure GCS lifecycle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  apply:
+    name: Apply 3-day Allure object lifecycle
+    runs-on: ubuntu-22.04
+    env:
+      TRACE_RETENTION_DAYS: '3'
+    steps:
+      - name: GCP Authentication
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+          service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+      - name: Apply lifecycle
+        run: |
+          python3 -c "import json,os; days=int(os.environ['TRACE_RETENTION_DAYS']); json.dump({'rule':[{'action':{'type':'Delete'},'condition':{'age':days,'matchesSuffix':['.zip']}},{'action':{'type':'Delete'},'condition':{'age':days,'matchesPrefix':['main/data/']}}]}, open('/tmp/allure-lifecycle.json','w'))"
+          gcloud storage buckets update "gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}" --lifecycle-file=/tmp/allure-lifecycle.json
+          gcloud storage buckets describe "gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}" --format='yaml(name,lifecycle_config)'
