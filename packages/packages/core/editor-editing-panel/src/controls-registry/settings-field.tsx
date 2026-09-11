@@ -68,9 +68,9 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		  } )
 		: undefined;
 
-	const value = { [ bind ]: boundValue };
+	const value = { [ bind ]: boundValue } as Values;
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
-	const placeholder = isBreakpointOverride ? { [ bind ]: inherited ?? null } : undefined;
+	const placeholder = ( isBreakpointOverride ? { [ bind ]: inherited ?? null } : undefined ) as Values | undefined;
 
 	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
 		elementId,
