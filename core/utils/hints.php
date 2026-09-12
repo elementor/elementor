@@ -84,6 +84,11 @@ class Hints {
 				self::CAPABILITY => 'install_plugins',
 				self::NOT_HAS_OPTION => 'ea11y_access_token',
 			],
+			'ally_atomic_notice' => [
+				self::DISMISSED => 'ally_atomic_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::NOT_HAS_OPTION => 'ea11y_access_token',
+			],
 		];
 		if ( ! $hint_key ) {
 			return $hints;
@@ -231,6 +236,23 @@ class Hints {
 	}
 
 	/**
+	 * Decode_url_for_js
+	 *
+	 * `wp_nonce_url()` (used by `get_plugin_install_url()` and `get_plugin_activate_url()`) HTML-escapes
+	 * its result (e.g. `&` becomes `&amp;`) for direct raw HTML/template output, where the browser's HTML
+	 * parser decodes the entities back. Consumers that send the URL through a JSON REST response, editor
+	 * script settings, or a React/JS component prop use it as a raw string that is never HTML-parsed, so
+	 * it must be decoded back to a literal URL before being handed to those contexts.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	public static function decode_url_for_js( string $url ): string {
+		return wp_specialchars_decode( $url, ENT_QUOTES );
+	}
+
+	/**
 	 * Is_dismissed
 	 *
 	 * @param $key
@@ -373,17 +395,20 @@ class Hints {
 	/**
 	 * Get_plugin_action_url
 	 *
+	 * Returns a decoded install/activate nonce URL (see `decode_url_for_js()`), since every current
+	 * caller consumes this over JSON/JS rather than raw HTML output.
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
 	 */
 	public static function get_plugin_action_url( $plugin ): string {
 		if ( ! self::is_plugin_installed( $plugin ) ) {
-			return self::get_plugin_install_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_install_url( $plugin ) );
 		}
 
 		if ( ! self::is_plugin_active( $plugin ) ) {
-			return self::get_plugin_activate_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_activate_url( $plugin ) );
 		}
 
 		return '';

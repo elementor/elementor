@@ -10,6 +10,7 @@ import {
 	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
+	NoticeControl,
 	NumberControl,
 	QueryChipsControl,
 	QueryControl,
@@ -97,6 +98,7 @@ const controlTypes = {
 		propTypeUtil: timeRangePropTypeUtil,
 	},
 	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
+	notice: { component: NoticeControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

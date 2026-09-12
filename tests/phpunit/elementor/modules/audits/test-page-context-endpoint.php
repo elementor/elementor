@@ -352,6 +352,20 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertStringContainsString( 'options-privacy.php', $response['privacy_settings_url'] );
 	}
 
+	public function test_ally_plugin_url_is_a_decoded_nonce_url() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_plugin_url', $response );
+		$this->assertStringNotContainsString( '&amp;', $response['ally_plugin_url'] );
+		$this->assertStringContainsString( '&', $response['ally_plugin_url'] );
+	}
+
 	public function test_cookiez_scan_url_always_points_to_cookiez_settings_page() {
 		// Arrange.
 		$request = new \WP_REST_Request( 'GET', '' );
@@ -377,6 +391,22 @@ class Test_Page_Context_Endpoint extends TestCase {
 		// Assert.
 		$this->assertArrayHasKey( 'cookiez_plugin_action_url', $response );
 		$this->assertIsString( $response['cookiez_plugin_action_url'] );
+		$this->assertStringNotContainsString( '&amp;', $response['cookiez_plugin_action_url'] );
+		$this->assertStringContainsString( '&', $response['cookiez_plugin_action_url'] );
+	}
+
+	public function test_image_optimization_plugin_url_is_a_decoded_nonce_url() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'image_optimization_plugin_url', $response );
+		$this->assertStringNotContainsString( '&amp;', $response['image_optimization_plugin_url'] );
+		$this->assertStringContainsString( '&', $response['image_optimization_plugin_url'] );
 	}
 
 	public function test_cookiez_plugin_installed_is_boolean() {

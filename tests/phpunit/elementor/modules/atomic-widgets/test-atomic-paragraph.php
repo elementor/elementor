@@ -1,7 +1,9 @@
 <?php
 
+use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Plugin;
+use Elementor\User;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -130,5 +132,64 @@ class Test_Atomic_Paragraph extends Elementor_Test_Base {
 		// Assert.
 		$this->assertStringContainsString( 'id="my-custom-id"', $rendered_output );
 		$this->assertStringNotContainsString( 'id=&quot;', $rendered_output );
+	}
+
+	public function test__ally_promotion_notice_is_included_for_admin_by_default(): void {
+		// Arrange.
+		$this->act_as_admin();
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Paragraph::get_element_type(),
+		] );
+
+		// Act.
+		$notice_control = $this->find_ally_notice_control( $widget_instance );
+
+		// Assert.
+		$this->assertNotNull( $notice_control );
+		$this->assertSame( '_ally_notice', $notice_control->get_bind() );
+		$this->assertSame( 'ally_atomic_notice', $notice_control->get_props()['dismissible'] );
+
+		$button_url = $notice_control->get_props()['buttonUrl'];
+		$this->assertStringNotContainsString( '&amp;', $button_url );
+		$this->assertStringContainsString( '&', $button_url );
+	}
+
+	public function test__ally_promotion_notice_is_hidden_when_already_dismissed(): void {
+		// Arrange.
+		$this->act_as_admin();
+		update_user_meta( get_current_user_id(), User::DISMISSED_EDITOR_NOTICES_KEY, [ 'ally_atomic_notice' ] );
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Paragraph::get_element_type(),
+		] );
+
+		// Act.
+		$notice_control = $this->find_ally_notice_control( $widget_instance );
+
+		// Assert.
+		$this->assertNull( $notice_control );
+	}
+
+	private function find_ally_notice_control( $widget_instance ) {
+		foreach ( $widget_instance->get_atomic_controls() as $control ) {
+			if ( ! ( $control instanceof Section ) || 'content' !== $control->get_id() ) {
+				continue;
+			}
+
+			foreach ( $control->get_items() as $item ) {
+				if ( method_exists( $item, 'get_bind' ) && '_ally_notice' === $item->get_bind() ) {
+					return $item;
+				}
+			}
+		}
+
+		return null;
 	}
 }
