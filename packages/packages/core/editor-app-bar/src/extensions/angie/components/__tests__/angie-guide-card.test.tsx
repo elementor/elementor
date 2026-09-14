@@ -12,7 +12,7 @@ const defaultProps = {
 };
 
 describe( 'AngieGuideCard', () => {
-	it( 'renders the Try for free button when onInstall is provided', () => {
+	it( 'renders the Build with Angie button when onInstall is provided', () => {
 		// Arrange.
 		const onInstall = jest.fn();
 
@@ -20,15 +20,15 @@ describe( 'AngieGuideCard', () => {
 		renderWithTheme( <AngieGuideCard { ...defaultProps } onInstall={ onInstall } /> );
 
 		// Assert.
-		expect( screen.getByRole( 'button', { name: /try for free/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /build with angie/i } ) ).toBeInTheDocument();
 	} );
 
-	it( 'does not render the Try for free button when onInstall is not provided', () => {
+	it( 'does not render the Build with Angie button when onInstall is not provided', () => {
 		// Act.
 		renderWithTheme( <AngieGuideCard { ...defaultProps } /> );
 
 		// Assert.
-		expect( screen.queryByRole( 'button', { name: /try for free/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /build with angie/i } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'always renders the Learn More button regardless of onInstall', () => {
