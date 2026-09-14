@@ -381,10 +381,19 @@ class Test_Module extends Elementor_Test_Base {
 		// Warm the cache.
 		$this->module->get_generated_llms_txt();
 
+		$fired = false;
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function () use ( &$fired ) {
+			$fired = true;
+		} );
+
 		$this->module->save_overrides( [
 			'intro'    => 'My saved intro.',
 			'optional' => 'My optional section.',
 		] );
+
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+
+		$this->assertTrue( $fired, 'cache_invalidated action must fire when overrides are saved' );
 
 		$overrides = $this->module->get_overrides();
 

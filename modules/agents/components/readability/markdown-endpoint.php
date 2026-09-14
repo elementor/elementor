@@ -219,26 +219,8 @@ class Markdown_Endpoint extends Feature_Component {
 	 * @param \WP_Post $post The post to serve.
 	 */
 	public function serve_markdown( \WP_Post $post ): void {
-		// Basic content-scope check (full Content_Scope class comes in a later PR).
-		if ( 'publish' !== $post->post_status ) {
-			return;
-		}
-
-		if ( post_password_required( $post ) ) {
-			return;
-		}
-
-		if ( ! is_post_publicly_viewable( $post ) ) {
-			return;
-		}
-
-		if ( Post_Noindex::is_noindex( $post->ID ) ) {
-			global $wp_query;
-
-			$wp_query->set_404();
-			status_header( 404 );
-			nocache_headers();
-			exit;
+		if ( ! $this->is_markdown_access_allowed( $post ) ) {
+			$this->deny_markdown_access();
 		}
 
 		$extractor   = new Content_Extractor();
@@ -253,6 +235,30 @@ class Markdown_Endpoint extends Feature_Component {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output;
 		exit;
+	}
+
+	/**
+	 * @param \WP_Post $post
+	 * @return bool
+	 */
+	public function is_markdown_access_allowed( \WP_Post $post ): bool {
+		if ( 'publish' !== $post->post_status ) {
+			return false;
+		}
+
+		if ( post_password_required( $post ) ) {
+			return false;
+		}
+
+		if ( ! is_post_publicly_viewable( $post ) ) {
+			return false;
+		}
+
+		if ( Post_Noindex::is_noindex( $post->ID ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -329,6 +335,15 @@ class Markdown_Endpoint extends Feature_Component {
 		}
 
 		return (int) url_to_postid( home_url( $plain_path ) );
+	}
+
+	private function deny_markdown_access(): void {
+		global $wp_query;
+
+		$wp_query->set_404();
+		status_header( 404 );
+		nocache_headers();
+		exit;
 	}
 
 	private function is_markdown_request(): bool {

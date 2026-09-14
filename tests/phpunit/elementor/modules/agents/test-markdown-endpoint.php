@@ -133,64 +133,41 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
 	}
 
-	public function test_serve_markdown__skips_draft_post() {
-		// Arrange
+	public function test_serve_markdown__denies_draft_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'draft',
 			'post_title'  => 'Draft Markdown Page',
 		] ) );
 
-		// Act
-		ob_start();
-		$this->endpoint->serve_markdown( $post );
-		$output = ob_get_clean();
-
-		// Assert
-		$this->assertSame( '', $output );
+		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
-	public function test_serve_markdown__skips_private_post() {
-		// Arrange
+	public function test_serve_markdown__denies_private_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'private',
 			'post_title'  => 'Private Markdown Page',
 		] ) );
 
-		// Act
-		ob_start();
-		$this->endpoint->serve_markdown( $post );
-		$output = ob_get_clean();
-
-		// Assert
-		$this->assertSame( '', $output );
+		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
-	public function test_serve_markdown__skips_password_protected_post() {
-		// Arrange
+	public function test_serve_markdown__denies_password_protected_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status'   => 'publish',
 			'post_password' => 'secret',
 		] ) );
 
-		// Act
-		ob_start();
-		$this->endpoint->serve_markdown( $post );
-		$output = ob_get_clean();
-
-		// Assert
-		$this->assertSame( '', $output );
+		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
 	public function test_serve_markdown__blocks_noindex_post_without_markdown_body() {
-		// Arrange
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'publish',
 			'post_title'  => 'Noindex Markdown Page',
 		] ) );
 		update_post_meta( $post->ID, '_yoast_wpseo_meta-robots-noindex', '1' );
 
-		// Act & Assert — noindex posts are rejected before markdown is generated.
-		$this->assertTrue( Post_Noindex::is_noindex( $post->ID ) );
+		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
 	public function test_serve_markdown__builds_published_post_with_frontmatter() {
