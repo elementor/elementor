@@ -57,7 +57,10 @@ abstract class Form_Message extends Atomic_Element_Base {
 	}
 
 	protected function define_allowed_child_types() {
-		return [ Atomic_Paragraph::get_element_type() ];
+		// Empty: same as accordion item content. Panel atoms are created as `elType: widget`
+		// (widgetType e-paragraph / e-heading). A whitelist of those type strings rejects
+		// `widget`, and addElement then calls children.last() which is undefined when empty.
+		return [];
 	}
 
 	protected function define_default_children() {
