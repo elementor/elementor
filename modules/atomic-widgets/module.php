@@ -717,8 +717,6 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 
-			'.e-list-item-marker-base .e-paragraph-base { line-height: 1; }',
-
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
