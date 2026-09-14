@@ -649,6 +649,12 @@ class Module extends BaseModule {
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
+			// Base style is `display: none`. In the editor, still show the slot when it is
+			// selected (navigator / canvas), when a nested child is selected, or when empty
+			// so the plus/drop target has a hit area. Frontend and unselected Normal stay hidden.
+			'.elementor-edit-mode [data-element_type="e-form-success-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view)),',
+			'.elementor-edit-mode [data-element_type="e-form-error-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view))',
+			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
 			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
 			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; }',
