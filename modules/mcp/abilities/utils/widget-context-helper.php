@@ -63,6 +63,10 @@ class Widget_Context_Helper {
 		}
 
 		foreach ( Plugin::$instance->elements_manager->get_element_types() as $type => $instance ) {
+			if ( self::should_initialize_v3_controls_stack( (string) $type ) && method_exists( $instance, 'get_stack' ) ) {
+				$instance->get_stack();
+			}
+
 			$config = $instance->get_config();
 
 			if ( self::is_widget_eligible_for_llm( $config ) ) {
