@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Llms_Cache {
 
-	const TRANSIENT_LLMs     = 'elementor_agents_llms_txt';
-	const TRANSIENT_LLMs_FULL = 'elementor_agents_llms_full_txt';
+	const TRANSIENT_LLMS      = 'elementor_agents_llms_txt';
+	const TRANSIENT_LLMS_FULL = 'elementor_agents_llms_full_txt';
 	const TRANSIENT_MODIFIED  = 'elementor_agents_llms_modified';
 
 	/** Default TTL: 1 hour (3600 s). Long enough to be useful, short enough to self-heal. */
@@ -28,7 +28,7 @@ class Llms_Cache {
 	 * @return string|false Cached string, or false on cache miss.
 	 */
 	public function get_llms() {
-		return get_transient( self::TRANSIENT_LLMs );
+		return get_transient( self::TRANSIENT_LLMS );
 	}
 
 	/**
@@ -37,7 +37,7 @@ class Llms_Cache {
 	 * @return string|false Cached string, or false on cache miss.
 	 */
 	public function get_llms_full() {
-		return get_transient( self::TRANSIENT_LLMs_FULL );
+		return get_transient( self::TRANSIENT_LLMS_FULL );
 	}
 
 	/**
@@ -49,11 +49,11 @@ class Llms_Cache {
 		$ttl = $this->get_ttl();
 
 		if ( 0 === $ttl ) {
-			delete_transient( self::TRANSIENT_LLMs );
+			delete_transient( self::TRANSIENT_LLMS );
 			return;
 		}
 
-		set_transient( self::TRANSIENT_LLMs, $content, $ttl );
+		set_transient( self::TRANSIENT_LLMS, $content, $ttl );
 		$this->touch_modified_time();
 	}
 
@@ -66,11 +66,11 @@ class Llms_Cache {
 		$ttl = $this->get_ttl();
 
 		if ( 0 === $ttl ) {
-			delete_transient( self::TRANSIENT_LLMs_FULL );
+			delete_transient( self::TRANSIENT_LLMS_FULL );
 			return;
 		}
 
-		set_transient( self::TRANSIENT_LLMs_FULL, $content, $ttl );
+		set_transient( self::TRANSIENT_LLMS_FULL, $content, $ttl );
 		$this->touch_modified_time();
 	}
 
@@ -90,8 +90,8 @@ class Llms_Cache {
 	 * Called on post save/publish/trash and on manual regenerate.
 	 */
 	public function invalidate(): void {
-		delete_transient( self::TRANSIENT_LLMs );
-		delete_transient( self::TRANSIENT_LLMs_FULL );
+		delete_transient( self::TRANSIENT_LLMS );
+		delete_transient( self::TRANSIENT_LLMS_FULL );
 		delete_transient( self::TRANSIENT_MODIFIED );
 	}
 
