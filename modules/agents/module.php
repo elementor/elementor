@@ -118,6 +118,9 @@ class Module extends BaseModule {
 	// HTTP request handling
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Serve llms.txt when the request path matches.
+	 */
 	public function maybe_serve_llms_txt() {
 		if ( ! $this->is_request_for( 'llms.txt' ) ) {
 			return;
@@ -454,6 +457,9 @@ class Module extends BaseModule {
 	// HTTP serving helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param string $content Plain-text payload.
+	 */
 	private function serve_plain_text( string $content ): void {
 		if ( '' === $content ) {
 			return;
@@ -485,6 +491,10 @@ class Module extends BaseModule {
 	// Internal helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param array $packages Package slugs to register.
+	 * @return array
+	 */
 	private function add_packages( array $packages ): array {
 		return array_merge( $packages, self::PACKAGES );
 	}
