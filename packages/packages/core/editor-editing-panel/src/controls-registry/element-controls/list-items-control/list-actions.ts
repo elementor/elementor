@@ -21,7 +21,6 @@ export const LIST_ITEM_ELEMENT_TYPE = 'e-list-item';
 const LIST_ITEM_MARKER_ELEMENT_TYPE = 'e-list-item-marker';
 const LIST_ITEM_CONTENT_ELEMENT_TYPE = 'e-list-item-content';
 const PARAGRAPH_WIDGET_TYPE = 'e-paragraph';
-const SVG_WIDGET_TYPE = 'e-svg';
 
 const TRAILING_NUMBER = /(\d+)\s*$/;
 
@@ -69,9 +68,13 @@ const buildItemModel = ( position: number, showMarkers: boolean ): V1ElementData
 				elements: [
 					{
 						elType: 'widget',
-						widgetType: SVG_WIDGET_TYPE,
+						widgetType: PARAGRAPH_WIDGET_TYPE,
 						id: generateElementId(),
 						elements: [],
+						settings: {
+							tag: { $$type: 'string', value: 'span' },
+							paragraph: escapedHtmlPropTypeUtil.create( '&bull;' ),
+						},
 					},
 				],
 			},
