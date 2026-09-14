@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Query_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Filter_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
-use Closure;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,29 +33,37 @@ class Atomic_Prop_Remap_Handlers {
 		Atomic_Prop_Remap::FILTER_KEY_CURRENT_POST => null,
 	];
 
+	private static ?self $instance = null;
+
 	/**
 	 * @var callable|null
 	 */
-	private static $tag_resolver = null;
+	private $tag_resolver = null;
 
 	public static function register(): void {
-		Atomic_Prop_Remap_Registry::register( Query_Prop_Type::get_key(), self::handler( 'remap_query' ) );
-		Atomic_Prop_Remap_Registry::register( Query_Array_Prop_Type::get_key(), self::handler( 'remap_descend_value' ) );
-		Atomic_Prop_Remap_Registry::register( Query_Filter_Prop_Type::get_key(), self::handler( 'remap_query_filter' ) );
-		Atomic_Prop_Remap_Registry::register( Query_Filter_Array_Prop_Type::get_key(), self::handler( 'remap_descend_value' ) );
-		Atomic_Prop_Remap_Registry::register( Link_Prop_Type::get_key(), self::handler( 'remap_link' ) );
-		Atomic_Prop_Remap_Registry::register( Dynamic_Prop_Type::get_key(), self::handler( 'remap_dynamic' ) );
+		$instance = self::instance();
+
+		Atomic_Prop_Remap_Registry::register( Query_Prop_Type::get_key(), fn( ...$args ) => $instance->remap_query( ...$args ) );
+		Atomic_Prop_Remap_Registry::register( Query_Array_Prop_Type::get_key(), fn( ...$args ) => $instance->remap_descend_value( ...$args ) );
+		Atomic_Prop_Remap_Registry::register( Query_Filter_Prop_Type::get_key(), fn( ...$args ) => $instance->remap_query_filter( ...$args ) );
+		Atomic_Prop_Remap_Registry::register( Query_Filter_Array_Prop_Type::get_key(), fn( ...$args ) => $instance->remap_descend_value( ...$args ) );
+		Atomic_Prop_Remap_Registry::register( Link_Prop_Type::get_key(), fn( ...$args ) => $instance->remap_link( ...$args ) );
+		Atomic_Prop_Remap_Registry::register( Dynamic_Prop_Type::get_key(), fn( ...$args ) => $instance->remap_dynamic( ...$args ) );
 	}
 
 	public static function set_tag_resolver( ?callable $resolver ): void {
-		self::$tag_resolver = $resolver;
+		self::instance()->tag_resolver = $resolver;
 	}
 
-	private static function handler( string $method ): Closure {
-		return Closure::fromCallable( [ self::class, $method ] );
+	private static function instance(): self {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
-	private static function remap_query( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private function remap_query( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$kind = $context['kind'] ?? null;
 
 		if ( null === $kind ) {
@@ -75,7 +82,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	private static function remap_descend_value( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private function remap_descend_value( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		if ( isset( $atomic['value'] ) ) {
 			$atomic['value'] = $descend( $atomic['value'], $context );
 		}
@@ -83,7 +90,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	private static function remap_query_filter( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private function remap_query_filter( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$value = $atomic['value'] ?? null;
 
 		if ( ! is_array( $value ) ) {
@@ -107,7 +114,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	private static function remap_link( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private function remap_link( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$value = $atomic['value'] ?? null;
 
 		if ( ! is_array( $value ) ) {
@@ -125,7 +132,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	private static function remap_dynamic( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private function remap_dynamic( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$value = $atomic['value'] ?? null;
 
 		if ( ! is_array( $value ) ) {
@@ -134,8 +141,8 @@ class Atomic_Prop_Remap_Handlers {
 
 		$settings = $value['settings'] ?? [];
 
-		if ( self::is_legacy_flat_settings( $settings ) ) {
-			$value = self::remap_dynamic_via_tag( $value, $replacements );
+		if ( $this->is_legacy_flat_settings( $settings ) ) {
+			$value = $this->remap_dynamic_via_tag( $value, $replacements );
 			$settings = $value['settings'] ?? [];
 		}
 
@@ -154,14 +161,14 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	private static function remap_dynamic_via_tag( array $value, array $replacements ): array {
+	private function remap_dynamic_via_tag( array $value, array $replacements ): array {
 		$name = $value['name'] ?? '';
 
 		if ( ! is_string( $name ) || '' === $name ) {
 			return $value;
 		}
 
-		$tag = self::resolve_tag( $name, $value['settings'] ?? [] );
+		$tag = $this->resolve_tag( $name, $value['settings'] ?? [] );
 
 		if ( ! is_object( $tag ) ) {
 			return $value;
@@ -187,9 +194,9 @@ class Atomic_Prop_Remap_Handlers {
 		return $value;
 	}
 
-	private static function resolve_tag( string $name, array $settings ) {
-		if ( self::$tag_resolver ) {
-			return ( self::$tag_resolver )( $name, $settings );
+	private function resolve_tag( string $name, array $settings ) {
+		if ( $this->tag_resolver ) {
+			return ( $this->tag_resolver )( $name, $settings );
 		}
 
 		if ( ! class_exists( Plugin::class ) || empty( Plugin::$instance->dynamic_tags ) ) {
@@ -199,7 +206,7 @@ class Atomic_Prop_Remap_Handlers {
 		return Plugin::$instance->dynamic_tags->create_tag( '', $name, $settings );
 	}
 
-	private static function is_legacy_flat_settings( $settings ): bool {
+	private function is_legacy_flat_settings( $settings ): bool {
 		if ( ! is_array( $settings ) || empty( $settings ) ) {
 			return false;
 		}

@@ -118,7 +118,7 @@ class Atomic_Prop_Remap {
 		}
 
 		if ( function_exists( 'do_action' ) ) {
-			do_action( 'elementor/atomic-widgets/prop-remap/register' );
+			do_action( 'elementor/atomic-widgets/import/id-remap-handlers/register' );
 		}
 	}
 
