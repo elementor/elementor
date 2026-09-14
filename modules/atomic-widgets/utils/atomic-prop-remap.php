@@ -49,7 +49,7 @@ class Atomic_Prop_Remap {
 		);
 
 		if ( function_exists( 'apply_filters' ) ) {
-			self::$warnings = apply_filters( 'elementor/atomic_widgets/import_warnings', self::$warnings, $replacements );
+			self::$warnings = apply_filters( 'elementor/atomic-widgets/import_warnings', self::$warnings, $replacements );
 		}
 
 		return $remapped;

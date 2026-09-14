@@ -16,6 +16,12 @@ class Test_Atomic_Prop_Remap extends TestCase {
 	private const DESTINATION_POST_ID = 591;
 	private const UNMAPPED_POST_ID = 54;
 
+	private const SOURCE_TERM_ID = 12;
+	private const DESTINATION_TERM_ID = 512;
+
+	private const SOURCE_USER_ID = 7;
+	private const DESTINATION_USER_ID = 507;
+
 	protected function setUp(): void {
 		parent::setUp();
 		Atomic_Prop_Remap_Registry::reset();
@@ -240,6 +246,62 @@ class Test_Atomic_Prop_Remap extends TestCase {
 		$this->assertSame(
 			self::DESTINATION_POST_ID,
 			$result[0]['settings']['link']['value']['destination']['value']['settings']['post_id']['value']['id']['value']
+		);
+	}
+
+	public function test_apply__remaps_dynamic_query_term_id_setting() {
+		$elements = [
+			$this->make_widget( 'heading', [
+				'content' => [
+					'$$type' => 'dynamic',
+					'value' => [
+						'name' => 'term-title',
+						'group' => 'term',
+						'settings' => [
+							'term_id' => $this->make_query( self::SOURCE_TERM_ID, 'travel' ),
+						],
+					],
+				],
+			] ),
+		];
+
+		$result = Atomic_Prop_Remap::apply( $elements, [
+			'term_ids' => [
+				self::SOURCE_TERM_ID => self::DESTINATION_TERM_ID,
+			],
+		] );
+
+		$this->assertSame(
+			self::DESTINATION_TERM_ID,
+			$result[0]['settings']['content']['value']['settings']['term_id']['value']['id']['value']
+		);
+	}
+
+	public function test_apply__remaps_dynamic_query_author_id_setting() {
+		$elements = [
+			$this->make_widget( 'heading', [
+				'content' => [
+					'$$type' => 'dynamic',
+					'value' => [
+						'name' => 'author-name',
+						'group' => 'author',
+						'settings' => [
+							'author_id' => $this->make_query( self::SOURCE_USER_ID, 'admin' ),
+						],
+					],
+				],
+			] ),
+		];
+
+		$result = Atomic_Prop_Remap::apply( $elements, [
+			'user_ids' => [
+				self::SOURCE_USER_ID => self::DESTINATION_USER_ID,
+			],
+		] );
+
+		$this->assertSame(
+			self::DESTINATION_USER_ID,
+			$result[0]['settings']['content']['value']['settings']['author_id']['value']['id']['value']
 		);
 	}
 

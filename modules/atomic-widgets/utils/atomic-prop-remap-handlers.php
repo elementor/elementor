@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Query_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Filter_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
+use Closure;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,19 +40,23 @@ class Atomic_Prop_Remap_Handlers {
 	private static $tag_resolver = null;
 
 	public static function register(): void {
-		Atomic_Prop_Remap_Registry::register( Query_Prop_Type::get_key(), [ self::class, 'remap_query' ] );
-		Atomic_Prop_Remap_Registry::register( Query_Array_Prop_Type::get_key(), [ self::class, 'remap_descend_value' ] );
-		Atomic_Prop_Remap_Registry::register( Query_Filter_Prop_Type::get_key(), [ self::class, 'remap_query_filter' ] );
-		Atomic_Prop_Remap_Registry::register( Query_Filter_Array_Prop_Type::get_key(), [ self::class, 'remap_descend_value' ] );
-		Atomic_Prop_Remap_Registry::register( Link_Prop_Type::get_key(), [ self::class, 'remap_link' ] );
-		Atomic_Prop_Remap_Registry::register( Dynamic_Prop_Type::get_key(), [ self::class, 'remap_dynamic' ] );
+		Atomic_Prop_Remap_Registry::register( Query_Prop_Type::get_key(), self::handler( 'remap_query' ) );
+		Atomic_Prop_Remap_Registry::register( Query_Array_Prop_Type::get_key(), self::handler( 'remap_descend_value' ) );
+		Atomic_Prop_Remap_Registry::register( Query_Filter_Prop_Type::get_key(), self::handler( 'remap_query_filter' ) );
+		Atomic_Prop_Remap_Registry::register( Query_Filter_Array_Prop_Type::get_key(), self::handler( 'remap_descend_value' ) );
+		Atomic_Prop_Remap_Registry::register( Link_Prop_Type::get_key(), self::handler( 'remap_link' ) );
+		Atomic_Prop_Remap_Registry::register( Dynamic_Prop_Type::get_key(), self::handler( 'remap_dynamic' ) );
 	}
 
 	public static function set_tag_resolver( ?callable $resolver ): void {
 		self::$tag_resolver = $resolver;
 	}
 
-	public static function remap_query( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private static function handler( string $method ): Closure {
+		return Closure::fromCallable( [ self::class, $method ] );
+	}
+
+	private static function remap_query( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$kind = $context['kind'] ?? null;
 
 		if ( null === $kind ) {
@@ -70,7 +75,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	public static function remap_descend_value( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private static function remap_descend_value( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		if ( isset( $atomic['value'] ) ) {
 			$atomic['value'] = $descend( $atomic['value'], $context );
 		}
@@ -78,7 +83,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	public static function remap_query_filter( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private static function remap_query_filter( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$value = $atomic['value'] ?? null;
 
 		if ( ! is_array( $value ) ) {
@@ -102,7 +107,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	public static function remap_link( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private static function remap_link( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$value = $atomic['value'] ?? null;
 
 		if ( ! is_array( $value ) ) {
@@ -120,7 +125,7 @@ class Atomic_Prop_Remap_Handlers {
 		return $atomic;
 	}
 
-	public static function remap_dynamic( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
+	private static function remap_dynamic( array $atomic, array $replacements, callable $descend, array $context = [] ): array {
 		$value = $atomic['value'] ?? null;
 
 		if ( ! is_array( $value ) ) {
