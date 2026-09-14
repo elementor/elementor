@@ -24,4 +24,19 @@ class Test_Atomic_Background_Video extends Elementor_Test_Base {
 		$this->assertSame( 'playing', $schema['state']->get_default()['value'] );
 		$this->assertSame( [ 'playing', 'paused' ], $schema['state']->get_enum() );
 	}
+
+	public function test_empty_state_value_is_valid() {
+		$schema = $this->get_define_props_schema();
+
+		$this->assertTrue( $schema['state']->validate( [
+			'$$type' => 'string',
+			'value' => '',
+		] ) );
+	}
+
+	public function test_null_state_value_is_valid() {
+		$schema = $this->get_define_props_schema();
+
+		$this->assertTrue( $schema['state']->validate( null ) );
+	}
 }

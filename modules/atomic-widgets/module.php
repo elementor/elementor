@@ -676,9 +676,12 @@ class Module extends BaseModule {
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
 			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
-			// No state pinned (editor "States" unselected): hide both buttons. The two `:not` guards lift
-			// specificity above the atomic base style so `display: none` wins. On the frontend Alpine always
-			// sets one of the state classes from real playback, so exactly one button shows there.
+			// No state pinned (editor "States" unselected): hide the controls wrapper and both buttons. The
+			// two `:not` guards lift specificity above the atomic base style so `display: none` wins. The
+			// button rules are kept because the buttons can be reparented out of the wrapper. On the
+			// frontend Alpine always sets one of the state classes from real playback, so the controls show
+			// there with exactly one button.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__controls,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
 			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's
@@ -713,10 +716,6 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
-
-			// List markers (svg base style overrides)
-			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
-			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base svg { width: auto !important; }',
 
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
