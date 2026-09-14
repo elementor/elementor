@@ -103,6 +103,38 @@ describe( 'font-awesome-7-catalog', () => {
 		expect( filterFontAwesome7Icons( icons, undefined ) ).toHaveLength( 2 );
 	} );
 
+	it( 'filters by library and applies search within the active library', () => {
+		// Arrange.
+		const icons = [
+			createIcon(),
+			createIcon( {
+				id: 'fa-regular:star',
+				library: 'fa-regular',
+				value: 'fa-regular fa-star',
+			} ),
+			createIcon( {
+				id: 'fa-brands:github',
+				name: 'github',
+				label: 'github',
+				library: 'fa-brands',
+				value: 'fa-brands fa-github',
+				aliases: [],
+			} ),
+		];
+
+		// Act / Assert.
+		expect( filterFontAwesome7Icons( icons, '', [] ) ).toHaveLength( 3 );
+		expect( filterFontAwesome7Icons( icons, '', [ 'fa-solid' ] ) ).toEqual( [ icons[ 0 ] ] );
+		expect( filterFontAwesome7Icons( icons, '', [ 'fa-regular' ] ) ).toEqual( [ icons[ 1 ] ] );
+		expect( filterFontAwesome7Icons( icons, '', [ 'fa-brands' ] ) ).toEqual( [ icons[ 2 ] ] );
+		expect( filterFontAwesome7Icons( icons, 'star', [ 'fa-regular' ] ) ).toEqual( [ icons[ 1 ] ] );
+		expect( filterFontAwesome7Icons( icons, 'github', [ 'fa-solid' ] ) ).toEqual( [] );
+		expect( filterFontAwesome7Icons( icons, '', [ 'fa-solid', 'fa-brands' ] ) ).toEqual( [
+			icons[ 0 ],
+			icons[ 2 ],
+		] );
+	} );
+
 	it( 'normalizes fas and fa-solid selected values', () => {
 		// Arrange / Act / Assert.
 		expect( createIconSelectionValue( 'fa-solid', 'star' ) ).toBe( 'fa-solid fa-star' );
