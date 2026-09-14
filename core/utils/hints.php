@@ -23,7 +23,7 @@ class Hints {
 	const CAPABILITY = 'capability';
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
-	const NOT_HAS_OPTION = 'not_has_option';
+	const PLUGIN_CONNECTED = 'plugin_connected';
 
 	const INSTALL = 'install';
 	const ACTIVATE = 'activate';
@@ -72,7 +72,7 @@ class Hints {
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'manage_options',
 				self::NOT_DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-				self::NOT_HAS_OPTION => 'image_optimizer_access_token',
+				self::PLUGIN_CONNECTED => [ 'image_optimizer', 'image-optimization' ],
 			],
 			'image-optimization-media-modal' => [
 				self::DISMISSED => 'image-optimization-media-modal',
@@ -82,12 +82,12 @@ class Hints {
 			'ally_heading_notice' => [
 				self::DISMISSED => 'ally_heading_notice',
 				self::CAPABILITY => 'install_plugins',
-				self::NOT_HAS_OPTION => 'ea11y_access_token',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
 			],
 			'ally_atomic_notice' => [
 				self::DISMISSED => 'ally_atomic_notice',
 				self::CAPABILITY => 'install_plugins',
-				self::NOT_HAS_OPTION => 'ea11y_access_token',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
 			],
 		];
 		if ( ! $hint_key ) {
@@ -321,9 +321,10 @@ class Hints {
 
 					break;
 
-				case self::NOT_HAS_OPTION:
-					$option = get_option( $value );
-					if ( ! empty( $option ) ) {
+				case self::PLUGIN_CONNECTED:
+					[ $option_prefix, $plugin_slug ] = $value;
+
+					if ( self::is_plugin_connected( $option_prefix, $plugin_slug ) ) {
 						return false;
 					}
 
@@ -474,7 +475,15 @@ class Hints {
 		];
 	}
 
-	public static function is_plugin_connected( $option_prefix ): bool {
+	public static function is_plugin_connected( $option_prefix, $plugin_slug = null ): bool {
+		if ( null !== $plugin_slug && class_exists( '\ElementorOne\Connect\Facade' ) ) {
+			$facade = \ElementorOne\Connect\Facade::get( $plugin_slug );
+
+			if ( $facade ) {
+				return $facade->utils()->is_connected();
+			}
+		}
+
 		return ! empty( get_option( $option_prefix . '_access_token' ) );
 	}
 
