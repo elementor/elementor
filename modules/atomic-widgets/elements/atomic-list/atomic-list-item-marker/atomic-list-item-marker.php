@@ -2,17 +2,15 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -25,9 +23,6 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
-	const DEFAULT_ICON = 'images/chevron-check.svg';
-	const DEFAULT_ICON_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_ICON;
-	const DEFAULT_ICON_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_ICON;
 
 	public static $widget_description = 'A locked marker slot for a list item.';
 
@@ -94,6 +89,8 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 								'size' => '1lh',
 								'unit' => 'custom',
 							] ),
+							'display' => String_Prop_Type::generate( 'flex' ),
+							'align-items' => String_Prop_Type::generate( 'center' ),
 						] )
 				),
 		];
@@ -101,14 +98,10 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Atomic_Svg::generate()
+			Atomic_Paragraph::generate()
 				->settings( [
-					// Seed the marker slot with the widget-specific icon instead of `e-svg`'s
-					// generic placeholder so new list items render their intended marker immediately.
-					'svg' => Svg_Src_Prop_Type::generate( [
-						'id' => null,
-						'url' => Url_Prop_Type::generate( self::DEFAULT_ICON_URL ),
-					] ),
+					'tag' => String_Prop_Type::generate( 'span' ),
+					'paragraph' => Escaped_Html_Prop_Type::generate( '&bull;' ),
 				] )
 				->build(),
 		];
