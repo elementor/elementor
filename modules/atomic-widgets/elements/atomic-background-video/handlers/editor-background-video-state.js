@@ -1,9 +1,11 @@
 import { Alpine } from '@elementor/alpinejs';
 
 const STORE_NAME = 'editor-background-video-state';
+const PLAYING_STATE = 'playing';
+const PAUSED_STATE = 'paused';
 
 /**
- * @typedef {Record<string, 'playing' | 'paused'>} BackgroundVideoState
+ * @typedef {Record<string, 'playing' | 'paused' | ''>} BackgroundVideoState
  */
 
 function ensureStore() {
@@ -14,7 +16,15 @@ function ensureStore() {
 	return /** @type {BackgroundVideoState} */ ( Alpine.store( STORE_NAME ) );
 }
 
-export function getEditorState( elementId, fallback = 'playing' ) {
+export function resolveDesignTimeState( state ) {
+	if ( PAUSED_STATE === state || '' === state ) {
+		return state;
+	}
+
+	return PLAYING_STATE;
+}
+
+export function getEditorState( elementId, fallback = PLAYING_STATE ) {
 	const store = ensureStore();
 
 	return store[ elementId ] ?? fallback;

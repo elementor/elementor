@@ -56,9 +56,22 @@ class Page_Context extends Endpoint_Base {
 			'cookiez_plugin_installed' => Hints::is_plugin_installed( 'cookiez/cookiez.php' ),
 			'cookiez_plugin_action_url' => Hints::get_plugin_action_url( 'cookiez' ),
 			'cookiez_scan_url' => admin_url( 'admin.php?page=cookiez-settings#cookie-management' ),
+			'cookiez_consent_mode_settings_url' => admin_url( 'admin.php?page=cookiez-settings#settings' ),
 			'image_optimization_plugin_active' => Hints::is_plugin_active( 'image-optimization/image-optimization.php' ),
 			'image_optimization_plugin_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+
+			'frontend_url' => $this->get_published_frontend_url( $post ),
 		];
+	}
+
+	private function get_published_frontend_url( $post ): ?string {
+		if ( ! $post || 'publish' !== $post->post_status ) {
+			return null;
+		}
+
+		$permalink = get_permalink( $post );
+
+		return $permalink ? $permalink : null;
 	}
 
 	protected function register() {
