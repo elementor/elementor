@@ -174,8 +174,13 @@ export function createNestedTemplatedElementView( {
 			this._notifyStylesChanged();
 		},
 
-		// Rendering a parent re-renders its whole subtree, so notifying unconditionally would
-		// emit one style event per descendant for a change that touched a single element.
+		// `document/elements/create` fires before the nested template has fully painted, so the
+		// styles provider rebuilds CSS too early and misses the new local class IDs. Dispatching
+		// ELEMENT_STYLE_CHANGE_EVENT here — after the template and all children are in the DOM —
+		// gives the provider a second chance to regenerate CSS against the live class names.
+		//
+		// The reference-equality guard prevents a parent re-render from emitting one event per
+		// unchanged descendant (the styles object is stable when nothing changed for that element).
 		_notifyStylesChanged() {
 			const styles = this.model.get( 'styles' );
 
