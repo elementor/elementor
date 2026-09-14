@@ -58,6 +58,8 @@ class Opt_In {
 			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
 			update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
 		}
+
+		update_option( self::OPT_IN_CLICKED_OPTION, true );
 	}
 
 	public function ajax_opt_out_v4() {
@@ -74,8 +76,6 @@ class Opt_In {
 		}
 
 		$this->opt_in_v4();
-
-		update_option( self::OPT_IN_CLICKED_OPTION, true );
 	}
 
 	private function add_ajax_actions( Ajax $ajax ) {
