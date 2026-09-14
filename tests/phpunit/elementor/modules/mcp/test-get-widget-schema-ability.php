@@ -71,9 +71,11 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'message', $result );
 		$this->assertArrayHasKey( 'title', $result['properties'] );
 		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertArrayHasKey( 'header_size', $result['properties'] );
+		$this->assertArrayHasKey( 'tag', $result['properties'] );
 		$this->assertSame( [ 'color' ], $result['style_targets']['targets']['heading'] );
-		$this->assertStringContainsString( 'e-heading', $result['description'] );
+		$this->assertSame( 'Heading.', $result['description'] );
+		$this->assertSame( 'boolean', $result['properties']['link']['properties']['is_external']['type'] );
+		$this->assertArrayNotHasKey( 'convert', $result['properties']['link']['properties']['is_external'] );
 	}
 
 	public function test_execute__rejects_heading_when_atomic_elements_active() {

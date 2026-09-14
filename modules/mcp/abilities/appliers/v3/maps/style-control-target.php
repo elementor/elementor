@@ -13,14 +13,14 @@ class Style_Control_Target {
 	/**
 	 * @return array{kind: string, resolver: string, responsive: bool, destinations: array<int, array{setting: string, shape: string, resolver: string}>}
 	 */
-	public static function control( string $setting, string $resolver, bool $responsive = false ): array {
+	public static function control( string $key, string $resolver, bool $responsive = false ): array {
 		return [
 			'kind' => self::KIND_SIMPLE,
 			'resolver' => $resolver,
 			'responsive' => $responsive,
 			'destinations' => [
 				[
-					'setting' => $setting,
+					'setting' => $key,
 					'shape' => 'string',
 					'resolver' => $resolver,
 				],

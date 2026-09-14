@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 return [
 	'widget_type' => 'heading',
-	'description' => 'V3 heading. Exposed only when the V4 atomic experiment is off; when V4 is on, use `e-heading` instead.',
+	'description' => 'Heading.',
 	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
 		'title' => [
@@ -19,16 +19,22 @@ return [
 			'properties' => [
 				'url' => [ 'type' => 'string' ],
 				'is_external' => [
-					'type' => 'string',
-					'enum' => [ 'on', '' ],
+					'type' => 'boolean',
+					'convert' => [
+						'true' => 'on',
+						'false' => '',
+					],
 				],
 				'nofollow' => [
-					'type' => 'string',
-					'enum' => [ 'on', '' ],
+					'type' => 'boolean',
+					'convert' => [
+						'true' => 'on',
+						'false' => '',
+					],
 				],
 			],
 		],
-		'header_size' => [
+		'tag' => [
 			'type' => 'string',
 			'enum' => [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'span', 'p' ],
 			'default' => 'h2',
