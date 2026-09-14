@@ -3,8 +3,9 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use WP_Error;
 
@@ -191,34 +192,9 @@ class V3_Widget_Map_Registry {
 
 		return [
 			'description' => (string) ( $compiled['description'] ?? '' ),
-			'properties' => $this->to_llm_properties( is_array( $compiled['settings'] ?? null ) ? $compiled['settings'] : [] ),
+			'properties' => V3_Json_Schema_Builder::build_from_map( $compiled['settings'] )['properties'],
 			'style_targets' => $this->build_style_targets_shape( $compiled ),
 		];
-	}
-
-	/**
-	 * @param array<string, mixed> $settings
-	 * @return array<string, mixed>
-	 */
-	private function to_llm_properties( array $settings ): array {
-		$properties = [];
-
-		foreach ( $settings as $key => $schema ) {
-			if ( ! is_array( $schema ) ) {
-				$properties[ $key ] = $schema;
-				continue;
-			}
-
-			unset( $schema['convert'] );
-
-			if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
-				$schema['properties'] = $this->to_llm_properties( $schema['properties'] );
-			}
-
-			$properties[ $key ] = $schema;
-		}
-
-		return $properties;
 	}
 
 	/**

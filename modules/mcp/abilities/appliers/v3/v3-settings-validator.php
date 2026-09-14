@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,13 +31,21 @@ class V3_Settings_Validator {
 	 * }
 	 */
 	public static function validate_shape( string $widget_type, array $primitives, array $widget_config ): array {
-		$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
-		$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $primitives ) );
+		$contract = V3_Widget_Map_Registry::instance()->get_validation_contract( $widget_type );
+		$is_standardized = V3_Widget_Map_Registry::instance()->is_experiment_active() && null !== $contract;
+
+		if ( $is_standardized ) {
+			$schema = V3_Json_Schema_Builder::build_from_map( $contract['settings'] );
+		} else {
+			$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
+			$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $primitives ) );
+		}
+
 		$shape = V3_Json_Schema_Builder::check_settings_shape( $primitives, $schema );
 
 		if ( empty( $shape['errors'] ) ) {
 			return [
-				'valid' => $shape['valid'],
+				'valid' => $is_standardized ? self::resolve_map_settings( $shape['valid'], $contract['settings'] ) : $shape['valid'],
 				'error' => null,
 			];
 		}
@@ -47,12 +56,54 @@ class V3_Settings_Validator {
 		}
 
 		return [
-			'valid' => $shape['valid'],
+			'valid' => $is_standardized ? self::resolve_map_settings( $shape['valid'], $contract['settings'] ) : $shape['valid'],
 			'error' => new \WP_Error(
 				'elementor_invalid_settings',
 				implode( '; ', $messages ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			),
 		];
+	}
+
+	/**
+	 * @param array<string, mixed>                $settings
+	 * @param array<string, array<string, mixed>> $schemas
+	 * @return array<string, mixed>
+	 */
+	private static function resolve_map_settings( array $settings, array $schemas ): array {
+		$resolved = [];
+
+		foreach ( $settings as $public_key => $value ) {
+			$schema = $schemas[ $public_key ] ?? [];
+			$control_key = $schema['key'] ?? $public_key;
+
+			$resolved[ $control_key ] = self::convert_map_value( $value, $schema );
+		}
+
+		return $resolved;
+	}
+
+	private static function convert_map_value( $value, array $schema ) {
+		$convert = $schema['convert'] ?? null;
+
+		if ( is_array( $convert ) ) {
+			$conversion_key = is_bool( $value ) ? ( $value ? 'true' : 'false' ) : (string) $value;
+
+			if ( array_key_exists( $conversion_key, $convert ) ) {
+				return $convert[ $conversion_key ];
+			}
+		}
+
+		if ( is_array( $value ) && is_array( $schema['properties'] ?? null ) ) {
+			foreach ( $value as $key => $nested_value ) {
+				$nested_schema = $schema['properties'][ $key ] ?? null;
+
+				if ( is_array( $nested_schema ) ) {
+					$value[ $key ] = self::convert_map_value( $nested_value, $nested_schema );
+				}
+			}
+		}
+
+		return $value;
 	}
 }

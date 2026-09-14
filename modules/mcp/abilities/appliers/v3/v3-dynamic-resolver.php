@@ -72,8 +72,8 @@ class V3_Dynamic_Resolver {
 		}
 
 		$settings = $candidate['settings'] ?? [];
-		if ( ! is_array( $settings ) ) {
-			$settings = [];
+		if ( ! is_array( $settings ) || array_diff( array_keys( $candidate ), [ 'name', 'settings' ] ) ) {
+			return null;
 		}
 
 		return [

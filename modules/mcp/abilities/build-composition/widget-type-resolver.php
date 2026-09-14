@@ -139,7 +139,7 @@ class Widget_Type_Resolver {
 				'class' => get_class( $widget ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
 				$resolved['controls'] = (array) $widget->get_controls();
 			}
 

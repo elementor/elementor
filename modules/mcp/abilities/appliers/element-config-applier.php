@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -61,7 +62,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
@@ -82,6 +83,12 @@ class Element_Config_Applier {
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
+					$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+					$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
+
+					if ( empty( $node['settings']['__dynamic__'] ) ) {
+						unset( $node['settings']['__dynamic__'] );
+					}
 				}
 
 				if ( $shape['error'] ) {
@@ -226,6 +233,19 @@ class Element_Config_Applier {
 			$merged[ $key ] = $value;
 		}
 		return $merged;
+	}
+
+	private function is_v3_settings_node( array $node ): bool {
+		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+			return true;
+		}
+
+		$widget_type = $node['widgetType'] ?? null;
+
+		return 'widget' === ( $node['elType'] ?? null )
+			&& is_string( $widget_type )
+			&& Widget_Context_Helper::is_standardized_maps_active()
+			&& Widget_Context_Helper::is_v3_supported( $widget_type );
 	}
 
 	private function validate_settings( array $settings, array $schema ): ?string {

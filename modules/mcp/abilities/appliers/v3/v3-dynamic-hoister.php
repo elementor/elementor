@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,11 +30,16 @@ class V3_Dynamic_Hoister {
 		$primitives = [];
 		$shortcodes = [];
 		$errors = [];
+		$registry = V3_Widget_Map_Registry::instance();
+		$contract = $registry->is_experiment_active() ? $registry->get_validation_contract( $widget_type ) : null;
+		$map_settings = is_array( $contract['settings'] ?? null ) ? $contract['settings'] : null;
 
 		foreach ( $allowed as $key => $value ) {
-			$control = is_array( $controls[ $key ] ?? null ) ? $controls[ $key ] : [];
+			$map_schema = is_array( $map_settings[ $key ] ?? null ) ? $map_settings[ $key ] : [];
+			$control_key = is_string( $map_schema['key'] ?? null ) ? $map_schema['key'] : $key;
+			$control = is_array( $controls[ $control_key ] ?? null ) ? $controls[ $control_key ] : [];
 
-			if ( ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
+			if ( ( null !== $map_settings && true !== ( $map_schema['dynamic'] ?? false ) ) || ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
 				$primitives[ $key ] = $value;
 				continue;
 			}
@@ -87,7 +93,7 @@ class V3_Dynamic_Hoister {
 				continue;
 			}
 
-			$shortcodes[ $key ] = $shortcode;
+			$shortcodes[ $control_key ] = $shortcode;
 
 			if ( is_array( $value ) ) {
 				$remainder = V3_Dynamic_Resolver::extract_primitive_remainder( $value, $property );
