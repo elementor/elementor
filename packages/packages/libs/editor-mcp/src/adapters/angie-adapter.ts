@@ -13,7 +13,9 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	) {}
 
 	async activate(): Promise< void > {
-		await this.sdk.waitForReady();
+		// No waitForReady() here: registerLocalServer queues the server and the SDK flushes
+		// the queue once Angie reports ready. waitForReady() only resolves for the SDK copy
+		// that booted the sidebar, which is the host integration, never the editor bundle.
 		await this.registerEntries( this.getRegisteredMcpServers(), MAX_RETRIES );
 	}
 
