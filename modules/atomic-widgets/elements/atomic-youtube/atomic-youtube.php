@@ -41,7 +41,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'youtube', 'video', 'embed', 'media' ];
 	}
 
 	public function get_icon() {
