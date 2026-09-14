@@ -48,6 +48,37 @@ describe( 'ToggleControl', () => {
 				value: 'value2',
 			} );
 		} );
+
+		it( 'should persist an empty string when allowEmpty is true and the selected option is clicked', () => {
+			const props = {
+				setValue,
+				value: { $$type: 'string', value: 'value1' },
+				propType,
+			};
+
+			renderControl( <ToggleControl options={ mockOptions } exclusive={ true } allowEmpty={ true } />, props );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Option 1' } ) );
+
+			expect( setValue ).toHaveBeenCalledWith( {
+				$$type: 'string',
+				value: '',
+			} );
+		} );
+
+		it( 'should not persist an empty string when allowEmpty is false and the selected option is clicked', () => {
+			const props = {
+				setValue,
+				value: { $$type: 'string', value: 'value1' },
+				propType,
+			};
+
+			renderControl( <ToggleControl options={ mockOptions } exclusive={ true } />, props );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Option 1' } ) );
+
+			expect( setValue ).toHaveBeenCalledWith( null );
+		} );
 	} );
 
 	describe( ' non-exclusive mode', () => {
