@@ -10,6 +10,8 @@ use Elementor\Plugin;
 class Opt_In {
 	const EXPERIMENT_NAME = 'e_opt_in_v4';
 
+	const OPT_IN_CLICKED_OPTION = 'elementor_v4_opt_in_clicked';
+
 	const OPT_IN_FEATURES = [
 		self::EXPERIMENT_NAME,
 		'container',
@@ -72,6 +74,8 @@ class Opt_In {
 		}
 
 		$this->opt_in_v4();
+
+		update_option( self::OPT_IN_CLICKED_OPTION, true );
 	}
 
 	private function add_ajax_actions( Ajax $ajax ) {
