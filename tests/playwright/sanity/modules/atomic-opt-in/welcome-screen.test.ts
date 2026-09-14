@@ -22,7 +22,7 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 		await wpCli( 'wp option update e_editor_counter 3' );
 		await wpCli( 'wp option update elementor_v4_opt_in_clicked 1' );
 		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
-		await wpCli( "wp eval \"update_option('elementor_install_history', ['0.0.1' => 1]);\"" );
+		await wpCli( "wp eval update_option('elementor_install_history',['0.0.1'=>1]);" );
 
 		const testWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await testWpAdmin.openNewPage();
@@ -31,9 +31,9 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 	} );
 
 	test.afterAll( async () => {
-		await wpCli( "wp eval \"delete_option('elementor_v4_opt_in_clicked');\"" );
+		await wpCli( 'wp option delete elementor_v4_opt_in_clicked' );
 		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
-		await wpCli( "wp eval \"delete_option('elementor_install_history');\"" );
+		await wpCli( 'wp option delete elementor_install_history' );
 		await wpAdmin?.resetExperiments();
 		await context?.close();
 	} );
@@ -79,14 +79,14 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 test.describe( 'V4 activation welcome modal on new installations @promotions', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp option update e_editor_counter 3' );
-		await wpCli( "wp eval \"delete_option('elementor_v4_opt_in_clicked');\"" );
+		await wpCli( 'wp option delete elementor_v4_opt_in_clicked' );
 		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
-		await wpCli( "wp eval \"update_option('elementor_install_history', [ELEMENTOR_VERSION => time()]);\"" );
+		await wpCli( "wp eval update_option('elementor_install_history',[ELEMENTOR_VERSION=>time()]);" );
 	} );
 
 	test.afterAll( async () => {
 		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
-		await wpCli( "wp eval \"delete_option('elementor_install_history');\"" );
+		await wpCli( 'wp option delete elementor_install_history' );
 	} );
 
 	test( 'Welcome modal does not show on new installations', async ( { page, apiRequests }, testInfo ) => {
@@ -112,14 +112,14 @@ test.describe( 'V4 activation welcome modal on existing sites without opt-in cli
 		} );
 
 		await wpCli( 'wp option update e_editor_counter 3' );
-		await wpCli( "wp eval \"delete_option('elementor_v4_opt_in_clicked');\"" );
+		await wpCli( 'wp option delete elementor_v4_opt_in_clicked' );
 		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
-		await wpCli( "wp eval \"update_option('elementor_install_history', [ '3.35.0' => 1, ELEMENTOR_VERSION => time() ]);\"" );
+		await wpCli( "wp eval update_option('elementor_install_history',['3.35.0'=>1,ELEMENTOR_VERSION=>time()]);" );
 	} );
 
 	test.afterAll( async () => {
 		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
-		await wpCli( "wp eval \"delete_option('elementor_install_history');\"" );
+		await wpCli( 'wp option delete elementor_install_history' );
 		await wpAdmin?.resetExperiments();
 		await context?.close();
 	} );
