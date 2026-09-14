@@ -26,17 +26,26 @@ class Responsive_Prop_Type extends Object_Prop_Type {
 		$inner->set_dependencies( [] );
 
 		$inner_default = $inner->get_default();
+		$inner_initial = $inner->get_initial_value();
+		$inner_required = (bool) $inner->get_setting( 'required', false );
 		$shape = [];
 
 		foreach ( self::breakpoint_keys() as $breakpoint_key ) {
 			$entry = self::duplicate_inner_prop_type( $inner );
+			$is_desktop = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $breakpoint_key;
 
 			if (
-				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $breakpoint_key
+				$is_desktop
 				&& is_array( $inner_default )
 				&& array_key_exists( 'value', $inner_default )
 			) {
 				$entry->default( $inner_default['value'] );
+			}
+
+			if ( $is_desktop && null !== $inner_initial ) {
+				$initial_property = new \ReflectionProperty( $entry, 'initial_value' );
+				$initial_property->setAccessible( true );
+				$initial_property->setValue( $entry, $inner_initial );
 			}
 
 			$shape[ $breakpoint_key ] = $entry;
@@ -45,6 +54,10 @@ class Responsive_Prop_Type extends Object_Prop_Type {
 		$result = static::make()
 			->set_shape( $shape )
 			->set_dependencies( $dependencies );
+
+		if ( $inner_required ) {
+			$result->required();
+		}
 
 		if ( null !== $inner_default ) {
 			$result->default( [
@@ -55,8 +68,6 @@ class Responsive_Prop_Type extends Object_Prop_Type {
 		foreach ( $prop_meta as $key => $value ) {
 			$result->meta( $key, $value );
 		}
-
-		$inner_initial = $inner->get_initial_value();
 
 		if ( null !== $inner_initial ) {
 			$result->initial_value( [
@@ -122,10 +133,15 @@ class Responsive_Prop_Type extends Object_Prop_Type {
 	private static function duplicate_inner_prop_type( Transformable_Prop_Type $inner ): Transformable_Prop_Type {
 		$entry = clone $inner;
 		$entry->set_dependencies( [] );
+		$entry->optional();
 
 		$default_property = new \ReflectionProperty( $entry, 'default' );
 		$default_property->setAccessible( true );
 		$default_property->setValue( $entry, null );
+
+		$initial_property = new \ReflectionProperty( $entry, 'initial_value' );
+		$initial_property->setAccessible( true );
+		$initial_property->setValue( $entry, null );
 
 		return $entry;
 	}

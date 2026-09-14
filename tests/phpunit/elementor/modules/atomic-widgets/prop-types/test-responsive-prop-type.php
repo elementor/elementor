@@ -152,4 +152,51 @@ class Test_Responsive_Prop_Type extends Elementor_Test_Base {
 		$this->assertSame( '%', $desktop->get_meta_item( 'suffix' ) );
 		$this->assertSame( '%', $tablet->get_meta_item( 'suffix' ) );
 	}
+
+	public function test_validate__accepts_a_sparse_value_when_inner_is_required() {
+		$prop_type = Responsive_Prop_Type::create_from(
+			Number_Prop_Type::make()->required()->default( 3 )
+		);
+
+		$result = $prop_type->validate( [
+			'$$type' => 'responsive',
+			'value' => [
+				'desktop' => [
+					'$$type' => 'number',
+					'value' => 3,
+				],
+				'tablet' => [
+					'$$type' => 'number',
+					'value' => 2,
+				],
+			],
+		] );
+
+		$this->assertTrue( $result );
+		$this->assertTrue( $prop_type->get_setting( 'required', false ) );
+		$this->assertFalse(
+			$prop_type->get_shape_field( Breakpoints_Manager::BREAKPOINT_KEY_TABLET )->get_setting( 'required', false )
+		);
+
+		$schema_required = $prop_type->to_json_schema()['properties']['value']['required'] ?? [];
+
+		$this->assertNotContains( Breakpoints_Manager::BREAKPOINT_KEY_TABLET, $schema_required );
+		$this->assertNotContains( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE, $schema_required );
+	}
+
+	public function test_create_from__clears_initial_value_on_non_desktop_entries() {
+		$prop_type = Responsive_Prop_Type::create_from(
+			Number_Prop_Type::make()->initial_value( 5 )
+		);
+
+		$desktop = $prop_type->get_shape_field( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP );
+		$tablet = $prop_type->get_shape_field( Breakpoints_Manager::BREAKPOINT_KEY_TABLET );
+		$mobile = $prop_type->get_shape_field( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE );
+
+		$this->assertSame( 5, $desktop->get_initial_value()['value'] );
+		$this->assertNull( $tablet->get_initial_value() );
+		$this->assertNull( $mobile->get_initial_value() );
+		$this->assertSame( 5, $prop_type->get_initial_value()['value']['desktop']['value'] );
+		$this->assertArrayNotHasKey( 'tablet', $prop_type->get_initial_value()['value'] );
+	}
 }
