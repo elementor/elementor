@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
-use Elementor\Plugin;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -40,14 +38,7 @@ class Oauth_Protected_Resource extends Abstract_Well_Known_Endpoint {
 	 * this document describes.
 	 */
 	public function is_applicable(): bool {
-		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
-		$mcp    = $module ? $module->get_component( 'agents_mcp_server' ) : null;
-
-		// Applicable even before MCP lands (document describes the planned resource),
-		// but only if the MCP component is registered. Until then, return false so
-		// no misleading document is served.
-		// For MVP: applicable whenever the module is active (MCP will follow).
-		return true; // @todo tighten once agents_mcp_server component exists.
+		return (bool) apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false );
 	}
 
 	protected function generate_content(): array {

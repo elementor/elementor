@@ -76,6 +76,38 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
 	}
 
+	public function test_build_singular_markdown_link__includes_published_post() {
+		$post = get_post( $this->factory()->post->create( [
+			'post_status'  => 'publish',
+			'post_title'   => 'Link Header Markdown Page',
+			'post_content' => 'Body content long enough for extraction.',
+		] ) );
+
+		$link = $this->link_headers->build_singular_markdown_link( $post );
+
+		$this->assertNotNull( $link );
+		$this->assertStringContainsString( untrailingslashit( get_permalink( $post->ID ) ) . '.md', $link );
+	}
+
+	public function test_build_singular_markdown_link__omits_noindex_post() {
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'Noindex Link Header Page',
+		] ) );
+		update_post_meta( $post->ID, '_yoast_wpseo_meta-robots-noindex', '1' );
+
+		$this->assertNull( $this->link_headers->build_singular_markdown_link( $post ) );
+	}
+
+	public function test_build_singular_markdown_link__omits_draft_post() {
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'draft',
+			'post_title'  => 'Draft Link Header Page',
+		] ) );
+
+		$this->assertNull( $this->link_headers->build_singular_markdown_link( $post ) );
+	}
+
 	public function test_is_enabled__follows_agent_ready_experiment() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(

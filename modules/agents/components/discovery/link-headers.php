@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Agents\Components\Discovery;
 
 use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -69,12 +70,12 @@ class Link_Headers extends Feature_Component {
 		$links = $this->build_site_links();
 
 		if ( is_singular() ) {
-			$post_id   = get_queried_object_id();
-			$permalink = $post_id ? get_permalink( $post_id ) : false;
+			$post_id = get_queried_object_id();
+			$post    = $post_id ? get_post( $post_id ) : null;
+			$link    = $this->build_singular_markdown_link( $post );
 
-			if ( $permalink ) {
-				$links[] = '<' . esc_url_raw( untrailingslashit( $permalink ) ) . '.md>'
-					. '; rel="alternate"; type="text/markdown"';
+			if ( null !== $link ) {
+				$links[] = $link;
 			}
 		}
 
@@ -113,11 +114,6 @@ class Link_Headers extends Feature_Component {
 	// Helpers
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Build the site-wide Link header values (not singular-specific).
-	 *
-	 * @return string[]
-	 */
 	private function build_site_links(): array {
 		$home = untrailingslashit( home_url() );
 
@@ -142,6 +138,31 @@ class Link_Headers extends Feature_Component {
 		}
 
 		return $links;
+	}
+
+	/**
+	 * @param \WP_Post|null $post
+	 * @return string|null
+	 */
+	public function build_singular_markdown_link( $post ): ?string {
+		if ( ! ( $post instanceof \WP_Post ) ) {
+			return null;
+		}
+
+		$markdown_endpoint = new Markdown_Endpoint();
+
+		if ( ! $markdown_endpoint->is_markdown_access_allowed( $post ) ) {
+			return null;
+		}
+
+		$permalink = get_permalink( $post->ID );
+
+		if ( ! $permalink ) {
+			return null;
+		}
+
+		return '<' . esc_url_raw( untrailingslashit( $permalink ) ) . '.md>'
+			. '; rel="alternate"; type="text/markdown"';
 	}
 
 	/**
