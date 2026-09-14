@@ -439,15 +439,15 @@ class Module extends BaseModule {
 		$current = $this->get_overrides();
 
 		if ( isset( $overrides['intro'] ) ) {
-			$current['intro'] = sanitize_textarea_field( $overrides['intro'] );
+			$current['intro'] = $this->generator->prepare_override_text( $overrides['intro'] );
 		}
 
 		if ( isset( $overrides['optional'] ) ) {
-			$current['optional'] = sanitize_textarea_field( $overrides['optional'] );
+			$current['optional'] = $this->generator->prepare_override_text( $overrides['optional'] );
 		}
 
 		update_option( self::OPTION_OVERRIDES, $current, false );
-		$this->cache->invalidate();
+		$this->invalidate_cache( 0 );
 	}
 
 	// -------------------------------------------------------------------------

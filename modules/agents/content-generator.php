@@ -42,8 +42,9 @@ class Content_Generator {
 	 * Post-meta key for the per-post inline-content cache (used in llms-full.txt).
 	 * Bump INLINE_CACHE_VERSION to silently invalidate all cached entries.
 	 */
-	const INLINE_META_KEY      = '_elementor_agents_inline_cache';
-	const INLINE_CACHE_VERSION = 1;
+	const INLINE_META_KEY           = '_elementor_agents_inline_cache';
+	const INLINE_CACHE_VERSION      = 1;
+	const INLINE_CACHE_GEN_OPTION   = 'elementor_agents_inline_cache_gen';
 
 	/** Post types that should never appear in the output. */
 	const EXCLUDED_POST_TYPES = [
@@ -272,7 +273,7 @@ class Content_Generator {
 		$lines[] = '';
 
 		$intro = isset( $overrides['intro'] ) && '' !== trim( (string) $overrides['intro'] )
-			? trim( (string) $overrides['intro'] )
+			? $this->sanitizer->sanitize( trim( (string) $overrides['intro'] ) )
 			: $this->generate_intro();
 
 		if ( '' !== $intro ) {
@@ -529,11 +530,19 @@ class Content_Generator {
 	}
 
 	/**
+	 * Sanitize admin-editable override text before persistence.
+	 */
+	public function prepare_override_text( string $text ): string {
+		return $this->sanitizer->sanitize( sanitize_textarea_field( $text ) );
+	}
+
+	/**
 	 * Delete the cached inline content for every post at once.
 	 * Used when a global invalidation is needed (e.g. theme switch, plugin activation).
 	 */
 	public function clear_all_post_caches(): void {
-		delete_metadata( 'post', 0, self::INLINE_META_KEY, '', true );
+		$generation = $this->get_inline_cache_generation() + 1;
+		update_option( self::INLINE_CACHE_GEN_OPTION, $generation, false );
 	}
 
 	// -------------------------------------------------------------------------
@@ -587,6 +596,10 @@ class Content_Generator {
 			return false;
 		}
 
+		if ( (int) ( $meta['gen'] ?? 0 ) !== $this->get_inline_cache_generation() ) {
+			return false;
+		}
+
 		$content = $meta['content'] ?? false;
 
 		return is_string( $content ) ? $content : false;
@@ -595,6 +608,7 @@ class Content_Generator {
 	private function write_inline_meta_cache( int $post_id, string $content ): void {
 		update_post_meta( $post_id, self::INLINE_META_KEY, [
 			'v'       => self::INLINE_CACHE_VERSION,
+			'gen'     => $this->get_inline_cache_generation(),
 			'content' => $content,
 		] );
 	}
@@ -609,7 +623,7 @@ class Content_Generator {
 	 * @param array{title: string, url: string, description: string} $item
 	 */
 	private function format_link_line( array $item ): string {
-		$line = '- [' . $item['title'] . '](' . esc_url( $item['url'] ) . ')';
+		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url( $item['url'] ) . ')';
 
 		if ( '' !== $item['description'] ) {
 			$line .= ': ' . $item['description'];
@@ -625,7 +639,9 @@ class Content_Generator {
 	 * @param array{optional?: string} $overrides
 	 */
 	private function append_optional_section( array &$lines, array $overrides ): void {
-		$optional = trim( $overrides['optional'] ?? '' );
+		$optional = '' !== trim( $overrides['optional'] ?? '' )
+			? $this->sanitizer->sanitize( trim( $overrides['optional'] ) )
+			: '';
 
 		if ( '' === $optional ) {
 			return;
@@ -642,6 +658,18 @@ class Content_Generator {
 	 */
 	private function clean_title( string $title ): string {
 		return html_entity_decode( wp_strip_all_tags( $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	}
+
+	private function escape_markdown_link_text( string $text ): string {
+		return strtr( $text, [
+			'\\' => '\\\\',
+			'['  => '\\[',
+			']'  => '\\]',
+		] );
+	}
+
+	private function get_inline_cache_generation(): int {
+		return max( 1, (int) get_option( self::INLINE_CACHE_GEN_OPTION, 1 ) );
 	}
 
 	// -------------------------------------------------------------------------
