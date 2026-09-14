@@ -8,20 +8,16 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Frontmatter_Builder extends Elementor_Test_Base {
 
 	public function test_build_escapes_yaml_special_characters_in_title() {
-		add_filter( 'run_wptexturize', '__return_false' );
-
 		$post_id = $this->factory()->post->create( [
 			'post_status'  => 'publish',
-			'post_title'   => 'He said "hi"',
+			'post_title'   => 'C:\\Users\\Docs',
 			'post_content' => 'Body with enough characters for extraction.',
 		] );
 
 		$post = get_post( $post_id );
 		$yaml = ( new Frontmatter_Builder() )->build( $post );
 
-		remove_filter( 'run_wptexturize', '__return_false' );
-
-		$this->assertStringContainsString( 'title: "He said \\"hi\\""', $yaml );
+		$this->assertStringContainsString( 'title: "C:\\\\Users\\\\Docs"', $yaml );
 	}
 
 	public function test_build_escapes_newlines_in_description() {
