@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +43,12 @@ class V3_Widget_Map_Compiler {
 			return $shape_error;
 		}
 
+		$settings_error = $this->validate_settings( $map, $controls );
+
+		if ( $settings_error instanceof WP_Error ) {
+			return $settings_error;
+		}
+
 		return $this->validate_style_targets( $map, $controls );
 	}
 
@@ -70,6 +77,31 @@ class V3_Widget_Map_Compiler {
 
 		if ( ! isset( $map['style_targets'][ $map['default_style_target'] ] ) ) {
 			return $this->error( 'missing_default_style_target', $map['default_style_target'] );
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param array<string, mixed> $map
+	 * @param array<string, mixed> $controls
+	 * @return WP_Error|null
+	 */
+	private function validate_settings( array $map, array $controls ) {
+		foreach ( $map['settings'] as $public_key => $schema ) {
+			if ( ! is_string( $public_key ) || '' === $public_key || ! is_array( $schema ) ) {
+				return $this->error( 'invalid_setting_schema', (string) $public_key );
+			}
+
+			$control_key = $schema['key'] ?? $public_key;
+
+			if ( ! is_string( $control_key ) || '' === $control_key || ! is_array( $controls[ $control_key ] ?? null ) ) {
+				return $this->error( 'missing_control', is_string( $control_key ) ? $control_key : '' );
+			}
+
+			if ( true === ( $schema['dynamic'] ?? false ) && ! V3_Dynamic_Resolver::is_dynamic_capable( $controls[ $control_key ] ) ) {
+				return $this->error( 'incompatible_dynamic_control', $control_key );
+			}
 		}
 
 		return null;
