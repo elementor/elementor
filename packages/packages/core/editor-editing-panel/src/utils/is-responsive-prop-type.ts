@@ -5,7 +5,7 @@ export function isResponsivePropType( propType: PropType | undefined ): boolean 
 		return false;
 	}
 
-	if ( propType.meta?.responsive === true ) {
+	if ( 'key' in propType && propType.key === 'responsive' ) {
 		return true;
 	}
 
