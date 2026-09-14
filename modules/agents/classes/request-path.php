@@ -37,6 +37,8 @@ class Request_Path {
 
 		$path = untrailingslashit( $path );
 
-		return '/' . $filename === $path || $filename === ltrim( $path, '/' );
+		$trimmed_path = ltrim( $path, '/' );
+
+		return '/' . $filename === $path || $trimmed_path === $filename;
 	}
 }

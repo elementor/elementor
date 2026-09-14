@@ -377,8 +377,8 @@ class Content_Generator {
 	/**
 	 * Fetch published, indexable, public posts of a given type.
 	 *
-	 * @param string  $post_type
-	 * @param array   $query_overrides Additional WP_Query args.
+	 * @param string $post_type Post type slug.
+	 * @param array  $query_overrides Additional WP_Query args.
 	 * @return array<array{id: int, title: string, url: string, description: string}>
 	 */
 	private function get_posts_for_section( string $post_type, array $query_overrides = [] ): array {
@@ -635,8 +635,8 @@ class Content_Generator {
 	/**
 	 * Append the user-editable "Optional" section if supplied.
 	 *
-	 * @param string[] $lines  Passed by reference.
-	 * @param array{optional?: string} $overrides
+	 * @param string[]                 $lines Passed by reference.
+	 * @param array{optional?: string} $overrides Override values.
 	 */
 	private function append_optional_section( array &$lines, array $overrides ): void {
 		$optional = '' !== trim( $overrides['optional'] ?? '' )
@@ -676,6 +676,9 @@ class Content_Generator {
 	// Plugin detection
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @return bool
+	 */
 	private function is_woocommerce_active(): bool {
 		return class_exists( 'WooCommerce' );
 	}
