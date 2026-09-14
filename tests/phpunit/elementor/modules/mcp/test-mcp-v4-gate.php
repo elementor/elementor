@@ -96,7 +96,7 @@ class Test_Mcp_V4_Gate extends Elementor_Test_Base {
 		$data = $result->get_error_data();
 		$this->assertIsArray( $data );
 		$this->assertArrayHasKey( 'description_notice', $data );
-		$this->assertStringContainsString( 'Editor V4', $data['description_notice'] );
+		$this->assertStringContainsString( 'Atomic Editor', $data['description_notice'] );
 	}
 
 	// ---------- extensibility (Pro / third-party) ----------
@@ -138,9 +138,10 @@ class Test_Mcp_V4_Gate extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'elementor_v4_required', $result->get_error_code() );
-		$this->assertStringContainsString( 'Atomic Editor', $result->get_error_message() );
-		$this->assertStringContainsString( 'admin.php', $result->get_error_message() );
-		$this->assertStringContainsString( 'reconnect', $result->get_error_message() );
+		$this->assertSame(
+			'This site needs the Atomic Editor turned on before this can be built. Turn it on in WP Admin → Elementor → Settings → Atomic Editor, then try again.',
+			$result->get_error_message()
+		);
 	}
 
 	public function test_execute_guarded__calls_execute_for_gated_ability_when_v4_on() {
@@ -174,8 +175,7 @@ class Test_Mcp_V4_Gate extends Elementor_Test_Base {
 		$description = $ability->get_description_for_llm();
 
 		$this->assertStringContainsString( 'Bulk edit atomic elements.', $description, 'Original description must be preserved' );
-		$this->assertStringContainsString( 'Editor V4', $description );
-		$this->assertStringContainsString( 'INACTIVE', $description );
+		$this->assertStringContainsString( 'Note: needs Atomic Editor (currently off for this site).', $description );
 	}
 
 	public function test_description_for_llm__omits_v4_notice_when_gated_and_v4_on() {
@@ -202,7 +202,7 @@ class Test_Mcp_V4_Gate extends Elementor_Test_Base {
 		$description = $ability->get_resource_description();
 
 		$this->assertStringContainsString( 'Reusable CSS classes.', $description );
-		$this->assertStringContainsString( 'Editor V4', $description );
+		$this->assertStringContainsString( 'Note: needs Atomic Editor (currently off for this site).', $description );
 	}
 
 	// ---------- subclass may add its own unavailability reasons ----------

@@ -112,7 +112,7 @@ abstract class Abstract_Ability {
 	/**
 	 * Whether this ability may currently run.
 	 *
-	 * Subclasses may override to add reasons beyond the default V4 gate
+	 * Subclasses may override to add reasons beyond the default Atomic Editor gate
 	 * (missing plugin, licence tier, post-type support, ...). Return `true`
 	 * when available, or a `\WP_Error` explaining why not. Include a
 	 * `description_notice` entry in the error data to add a short hint to

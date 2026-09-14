@@ -53,14 +53,10 @@ class Mcp_V4_Gate {
 	private static function v4_required_error(): \WP_Error {
 		return new \WP_Error(
 			'elementor_v4_required',
-			sprintf(
-				/* translators: %s: URL to the Atomic Editor settings tab */
-				__( 'This tool requires Editor V4 (Atomic Editor), which is NOT active on this site. Enable it at WP Admin → Elementor → Settings → Atomic Editor, or open %s directly. After activating, reconnect / refresh your MCP client. Site admins can also run: wp elementor experiments activate e_opt_in_v4 e_atomic_elements', 'elementor' ),
-				admin_url( 'admin.php?page=elementor#tab-editor-v4-opt-in' )
-			),
+			__( 'This site needs the Atomic Editor turned on before this can be built. Turn it on in WP Admin → Elementor → Settings → Atomic Editor, then try again.', 'elementor' ),
 			[
 				'status' => 403,
-				'description_notice' => __( 'NOTE: Requires Editor V4 (Atomic Editor), which is currently INACTIVE on this site. Calling this tool will return an error with opt-in instructions until V4 is enabled.', 'elementor' ),
+				'description_notice' => __( 'Note: needs Atomic Editor (currently off for this site).', 'elementor' ),
 			]
 		);
 	}
