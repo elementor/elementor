@@ -231,6 +231,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		// Overwrite the meta with a sentinel value — the generator must return this.
 		update_post_meta( $post_id, Content_Generator::INLINE_META_KEY, [
 			'v'       => Content_Generator::INLINE_CACHE_VERSION,
+			'gen'     => 1,
 			'content' => '# Sentinel from cache',
 		] );
 
@@ -256,7 +257,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertEmpty( get_post_meta( $post_id, Content_Generator::INLINE_META_KEY, true ) );
 	}
 
-	public function test_clear_all_post_caches_removes_meta_for_all_posts() {
+	public function test_clear_all_post_caches_invalidates_without_deleting_meta() {
 		$ids = [];
 		for ( $i = 0; $i < 3; $i++ ) {
 			$ids[] = $this->factory()->post->create( [
@@ -267,7 +268,6 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 		$this->generator->generate_llms_full_txt();
 
-		// Confirm meta was written.
 		foreach ( $ids as $id ) {
 			$this->assertNotEmpty( get_post_meta( $id, Content_Generator::INLINE_META_KEY, true ) );
 		}
@@ -275,8 +275,26 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->generator->clear_all_post_caches();
 
 		foreach ( $ids as $id ) {
-			$this->assertEmpty( get_post_meta( $id, Content_Generator::INLINE_META_KEY, true ) );
+			$this->assertNotEmpty( get_post_meta( $id, Content_Generator::INLINE_META_KEY, true ) );
 		}
+
+		$output = $this->generator->generate_llms_full_txt();
+
+		foreach ( $ids as $id ) {
+			$this->assertStringContainsString( get_the_title( $id ), $output );
+		}
+	}
+
+	public function test_llms_txt_escapes_markdown_in_post_title() {
+		$this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'See [docs](http://evil.test)',
+		] );
+
+		$output = $this->generator->generate_llms_txt();
+
+		$this->assertStringContainsString( 'See \\[docs\\](http://evil.test)', $output );
+		$this->assertStringNotContainsString( 'See [docs](http://evil.test)', $output );
 	}
 
 	public function test_stale_cache_version_is_ignored() {
