@@ -89,7 +89,7 @@ class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( \WP_Http::OK, $response->get_status() );
-		$this->assertArrayHasKey( 'posts', $response->get_data() );
+		$this->assertArrayHasKey( 'posts', $response->get_data()['data'] );
 	}
 
 	public function test_mcp_proxy__does_not_block_gated_tool_when_atomic_editor_active() {
