@@ -56,7 +56,7 @@ class Well_Known_Router {
 	}
 
 	/**
-	 * template_redirect handler.
+	 * Template_redirect handler.
 	 * Intercepts /.well-known/* requests and dispatches to the matching endpoint.
 	 */
 	public function maybe_handle(): void {

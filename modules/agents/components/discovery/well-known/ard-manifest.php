@@ -61,6 +61,10 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 	// Internals
 	// ------------------------------------------------------------------
 
+	/**
+	 * @param string $home Site home URL.
+	 * @return array
+	 */
 	private function build_capabilities( string $home ): array {
 		$caps = [];
 

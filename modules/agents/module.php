@@ -94,14 +94,14 @@ class Module extends BaseModule {
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
 
-		add_action( 'save_post',                     [ $this, 'on_post_change' ], 10, 2 );
-		add_action( 'trashed_post',                  [ $this, 'on_post_state_change' ] );
-		add_action( 'untrashed_post',                [ $this, 'on_post_state_change' ] );
-		add_action( 'before_delete_post',            [ $this, 'on_post_state_change' ] );
+		add_action( 'save_post', [ $this, 'on_post_change' ], 10, 2 );
+		add_action( 'trashed_post', [ $this, 'on_post_state_change' ] );
+		add_action( 'untrashed_post', [ $this, 'on_post_state_change' ] );
+		add_action( 'before_delete_post', [ $this, 'on_post_state_change' ] );
 		add_action( 'elementor/document/after_save', [ $this, 'on_elementor_document_save' ] );
 
-		add_action( 'switch_theme',       [ $this, 'on_global_change' ] );
-		add_action( 'activated_plugin',   [ $this, 'on_global_change' ] );
+		add_action( 'switch_theme', [ $this, 'on_global_change' ] );
+		add_action( 'activated_plugin', [ $this, 'on_global_change' ] );
 		add_action( 'deactivated_plugin', [ $this, 'on_global_change' ] );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
 
@@ -145,6 +145,9 @@ class Module extends BaseModule {
 	// HTTP request handling
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Serve llms.txt when the request path matches.
+	 */
 	public function maybe_serve_llms_txt() {
 		if ( ! $this->is_request_for( 'llms.txt' ) ) {
 			return;
@@ -481,6 +484,9 @@ class Module extends BaseModule {
 	// HTTP serving helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param string $content Plain-text payload.
+	 */
 	private function serve_plain_text( string $content ): void {
 		if ( '' === $content ) {
 			return;
@@ -512,6 +518,10 @@ class Module extends BaseModule {
 	// Internal helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param array $packages Package slugs to register.
+	 * @return array
+	 */
 	private function add_packages( array $packages ): array {
 		return array_merge( $packages, self::PACKAGES );
 	}

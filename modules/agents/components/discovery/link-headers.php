@@ -89,9 +89,9 @@ class Link_Headers extends Feature_Component {
 	 * Only wires onto /elementor/* routes — skips the WP REST API broadly so
 	 * we don't pollute unrelated endpoints.
 	 *
-	 * @param  \WP_HTTP_Response  $response
-	 * @param  \WP_REST_Server    $server
-	 * @param  \WP_REST_Request   $request
+	 * @param \WP_HTTP_Response $response Response object.
+	 * @param \WP_REST_Server   $server   REST server instance.
+	 * @param \WP_REST_Request  $request  REST request object.
 	 * @return \WP_HTTP_Response
 	 */
 	public function add_rest_headers( $response, $server, $request ) {
@@ -114,6 +114,11 @@ class Link_Headers extends Feature_Component {
 	// Helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Build the site-wide Link header values (not singular-specific).
+	 *
+	 * @return string[]
+	 */
 	private function build_site_links(): array {
 		$home = untrailingslashit( home_url() );
 

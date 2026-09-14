@@ -92,6 +92,9 @@ abstract class Abstract_Well_Known_Endpoint extends Feature_Component {
 	// Feature_Component contract
 	// ------------------------------------------------------------------
 
+	/**
+	 * @return string
+	 */
 	public function get_layer(): string {
 		return 'discovery';
 	}
