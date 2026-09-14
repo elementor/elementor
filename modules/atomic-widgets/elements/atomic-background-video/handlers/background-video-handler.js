@@ -1,6 +1,6 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-import { getEditorState, isEditorPreview } from './editor-background-video-state';
+import { getEditorState, isEditorPreview, resolveDesignTimeState } from './editor-background-video-state';
 
 const PLAYING_CLASS = 'e--playing';
 const PAUSED_CLASS = 'e--paused';
@@ -74,7 +74,7 @@ register( {
 			isPlaying: video ? ! video.paused : false,
 			isEditor: isEditorPreview(),
 			get editorState() {
-				return getEditorState( elementId, settings.state || 'playing' );
+				return getEditorState( elementId, resolveDesignTimeState( settings.state ) );
 			},
 
 			get previewState() {
