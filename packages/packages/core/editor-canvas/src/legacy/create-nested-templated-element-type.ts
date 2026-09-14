@@ -27,6 +27,8 @@ export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 
 export type ModelExtensions = Record< string, unknown >;
 
+const STYLES_REFERENCE_UNTRACKED = Symbol( 'styles-reference-untracked' );
+
 export type CreateNestedTemplatedElementTypeOptions = {
 	type: string;
 	renderer: DomRenderer;
@@ -114,7 +116,7 @@ export function createNestedTemplatedElementView( {
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
 		_lastResolvedSettingsHash: null as string | null,
-		_lastRenderedStyles: undefined as ElementModel[ 'styles' ],
+		_lastRenderedStyles: STYLES_REFERENCE_UNTRACKED as typeof STYLES_REFERENCE_UNTRACKED | ElementModel[ 'styles' ],
 		_domUpdateWasSkipped: false,
 
 		template: false,
@@ -180,11 +182,16 @@ export function createNestedTemplatedElementView( {
 		// gives the provider a second chance to regenerate CSS against the live class names.
 		//
 		// The reference-equality guard prevents a parent re-render from emitting one event per
-		// unchanged descendant (the styles object is stable when nothing changed for that element).
+		// unchanged descendant. Use a sentinel for the initial state — otherwise elements with no
+		// local styles (undefined === undefined) would never notify, and descendants like e-heading
+		// that rely on this post-paint refresh would lose their CSS after detach.
 		_notifyStylesChanged() {
 			const styles = this.model.get( 'styles' );
 
-			if ( styles === this._lastRenderedStyles ) {
+			if (
+				this._lastRenderedStyles !== STYLES_REFERENCE_UNTRACKED &&
+				styles === this._lastRenderedStyles
+			) {
 				return;
 			}
 
