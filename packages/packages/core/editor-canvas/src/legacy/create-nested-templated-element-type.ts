@@ -12,6 +12,7 @@ import {
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
 import { type ElementType, type ElementView, type LegacyWindow, type NestedTemplatedElementViewClass } from './types';
+import { parseShell, syncAttributes, type Shell } from './wrapper-shell';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -106,7 +107,9 @@ export function createNestedTemplatedElementView( {
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
+		_lastRenderedHtml: null as string | null,
 		_lastResolvedSettingsHash: null as string | null,
+		_lastShell: null as Shell | null,
 		_domUpdateWasSkipped: false,
 
 		template: false,
@@ -123,6 +126,7 @@ export function createNestedTemplatedElementView( {
 
 		invalidateRenderCache() {
 			this._lastResolvedSettingsHash = null;
+			this._lastShell = null;
 		},
 
 		renderOnChange() {
@@ -134,12 +138,22 @@ export function createNestedTemplatedElementView( {
 			this._abortController = new AbortController();
 
 			const process = signalizedProcess( this._abortController.signal )
-				.then( () => this._beforeRender() )
-				.then( () => this._renderTemplate() )
+				.then( () => {
+					this._beforeRender();
+				} )
+				.then( async () => {
+					await this._renderTemplate();
+				} )
 				// Dispatch the render event after the template is ready
-				.then( () => this._onTemplateReady() )
-				.then( () => this._renderChildren() )
-				.then( () => this._afterRender() );
+				.then( () => {
+					this._onTemplateReady();
+				} )
+				.then( async () => {
+					await this._renderChildren();
+				} )
+				.then( () => {
+					this._afterRender();
+				} );
 
 			this._currentRenderPromise = process.execute();
 
@@ -212,7 +226,23 @@ export function createNestedTemplatedElementView( {
 						return;
 					}
 
+					const newShell = parseShell( html );
+					const oldShell = this._lastShell;
+
+					if ( oldShell && newShell && newShell.tag === oldShell.tag && newShell.inner === oldShell.inner ) {
+						const el = this.$el.get( 0 );
+						if ( el ) {
+							syncAttributes( el, newShell.attrs );
+						}
+						this._lastRenderedHtml = html;
+						this._lastShell = newShell;
+						this._domUpdateWasSkipped = true;
+						return;
+					}
+
 					this._attachTwigContent( html );
+					this._lastRenderedHtml = html;
+					this._lastShell = newShell;
 				} );
 
 			await process.execute();

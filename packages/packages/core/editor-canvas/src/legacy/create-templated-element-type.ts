@@ -18,6 +18,7 @@ import {
 	type RenderContext,
 	type TemplatedElementView,
 } from './types';
+import { parseShell, syncAttributes, type Shell } from './wrapper-shell';
 
 export type CreateTemplatedElementTypeOptions = {
 	type: string;
@@ -78,7 +79,9 @@ export function createTemplatedElementView( {
 
 	return class extends BaseView {
 		_abortController: AbortController | null = null;
+		_lastRenderedHtml: string | null = null;
 		_lastResolvedSettingsHash: string | null = null;
+		_lastShell: Shell | null = null;
 		_domUpdateWasSkipped = false;
 
 		getTemplateType() {
@@ -103,6 +106,7 @@ export function createTemplatedElementView( {
 
 		invalidateRenderCache() {
 			this._lastResolvedSettingsHash = null;
+			this._lastShell = null;
 		}
 
 		render() {
@@ -110,10 +114,18 @@ export function createTemplatedElementView( {
 			this._abortController = new AbortController();
 
 			const process = signalizedProcess( this._abortController.signal )
-				.then( () => this._beforeRender() )
-				.then( () => this._renderTemplate() )
-				.then( () => this._renderChildren() )
-				.then( () => this._afterRender() );
+				.then( () => {
+					this._beforeRender();
+				} )
+				.then( async () => {
+					await this._renderTemplate();
+				} )
+				.then( async () => {
+					await this._renderChildren();
+				} )
+				.then( () => {
+					this._afterRender();
+				} );
 
 			this._currentRenderPromise = process.execute();
 
@@ -172,7 +184,23 @@ export function createTemplatedElementView( {
 						return;
 					}
 
+					const newShell = parseShell( html );
+					const oldShell = this._lastShell;
+
+					if ( oldShell && newShell && newShell.tag === oldShell.tag && newShell.inner === oldShell.inner ) {
+						const el = this.$el.get( 0 );
+						if ( el ) {
+							syncAttributes( el, newShell.attrs );
+						}
+						this._lastRenderedHtml = html;
+						this._lastShell = newShell;
+						this._domUpdateWasSkipped = true;
+						return;
+					}
+
 					this.$el.html( html );
+					this._lastRenderedHtml = html;
+					this._lastShell = newShell;
 				} );
 
 			await process.execute();

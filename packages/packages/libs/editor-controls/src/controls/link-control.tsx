@@ -63,10 +63,12 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
-	const debouncedCheckRestriction = useDebouncedCallback( () => {
+	const checkRestriction = ( { transitionOnly = false }: { transitionOnly?: boolean } = {} ) => {
 		const newRestriction = getLinkInLinkRestriction( elementId, value ?? linkPlaceholder );
+		const restrictionJustAppeared = newRestriction.shouldRestrict && ! linkInLinkRestriction.shouldRestrict;
+		const shouldClear = transitionOnly ? restrictionJustAppeared : newRestriction.shouldRestrict;
 
-		if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
+		if ( shouldClear && isActive && ! linkPlaceholder ) {
 			setIsActive( false );
 
 			if ( value !== null ) {
@@ -75,14 +77,20 @@ export const LinkControl = createControl( ( props: Props ) => {
 		}
 
 		setLinkInLinkRestriction( ( prev ) => ( isSameRestriction( prev, newRestriction ) ? prev : newRestriction ) );
-	}, 300 );
+	};
+
+	const debouncedCheckRestriction = useDebouncedCallback( () => checkRestriction(), 300 );
+	const debouncedCheckRestrictionOnCommandEnd = useDebouncedCallback(
+		() => checkRestriction( { transitionOnly: true } ),
+		300
+	);
 
 	useListenTo(
 		commandEndEvent( 'document/elements/set-settings' ),
 		() => {
-			debouncedCheckRestriction();
+			debouncedCheckRestrictionOnCommandEnd();
 		},
-		[ debouncedCheckRestriction ]
+		[ debouncedCheckRestrictionOnCommandEnd ]
 	);
 
 	useEffect( () => {
