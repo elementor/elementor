@@ -213,6 +213,33 @@ describe( 'IconLibraryPopover', () => {
 		expect( filterButton ).toHaveAttribute( 'aria-expanded', 'false' );
 	} );
 
+	it( 'closes the filter menu when its trigger is clicked again', async () => {
+		// Arrange.
+		render(
+			<ThemeProvider>
+				<IconLibraryPopover
+					open
+					selectedIconClass={ null }
+					selectedIconLibrary={ null }
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+				/>
+			</ThemeProvider>
+		);
+
+		const filterButton = screen.getByRole( 'button', { name: 'Filter by library' } );
+
+		// Act.
+		fireEvent.click( filterButton );
+		fireEvent.click( filterButton );
+
+		// Assert.
+		await waitFor( () => {
+			expect( screen.queryByRole( 'menu', { name: 'Filter by library' } ) ).not.toBeInTheDocument();
+		} );
+		expect( filterButton ).toHaveAttribute( 'aria-expanded', 'false' );
+	} );
+
 	it( 'filters by search and shows an empty state', () => {
 		// Arrange.
 		jest.useFakeTimers();

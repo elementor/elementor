@@ -3,7 +3,7 @@ import { useId } from 'react';
 import { CheckIcon, FilterIcon, LibraryIcon, ListIcon, StarFilledIcon, StarIcon } from '@elementor/icons';
 import {
 	bindMenu,
-	bindTrigger,
+	bindToggle,
 	Box,
 	Menu,
 	MenuItem,
@@ -94,7 +94,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 					size="tiny"
 					selected={ popupState.isOpen }
 					sx={ { position: 'relative', flexShrink: 0 } }
-					{ ...bindTrigger( popupState ) }
+					{ ...bindToggle( popupState ) }
 					aria-expanded={ popupState.isOpen }
 				>
 					<FilterIcon fontSize="tiny" />
