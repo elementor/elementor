@@ -461,6 +461,9 @@ class Module extends BaseModule {
 	// HTTP serving helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param string $content Plain-text payload.
+	 */
 	private function serve_plain_text( string $content ): void {
 		if ( '' === $content ) {
 			return;
@@ -492,6 +495,10 @@ class Module extends BaseModule {
 	// Internal helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param array $packages Package slugs to register.
+	 * @return array
+	 */
 	private function add_packages( array $packages ): array {
 		return array_merge( $packages, self::PACKAGES );
 	}
