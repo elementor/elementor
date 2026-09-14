@@ -211,6 +211,7 @@ jobs:
     if: ${{ !inputs.prerelease && github.repository_owner == 'elementor' }}
     permissions:
       contents: read
+      id-token: write
     uses: ./.github/workflows/publish-packages.yml
     with:
       version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
