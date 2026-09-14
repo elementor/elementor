@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 return [
 	'widget_type' => 'heading',
-	'description' => 'Heading.',
+	'description' => 'Text heading with optional link and HTML tag (h1–h6, div, span, or p).',
 	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
 		'title' => [

@@ -73,7 +73,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'link', $result['properties'] );
 		$this->assertArrayHasKey( 'tag', $result['properties'] );
 		$this->assertSame( [ 'color' ], $result['style_targets']['targets']['heading'] );
-		$this->assertSame( 'Heading.', $result['description'] );
+		$this->assertSame( 'Text heading with optional link and HTML tag (h1–h6, div, span, or p).', $result['description'] );
 		$this->assertSame( 'boolean', $result['properties']['link']['properties']['is_external']['type'] );
 		$this->assertArrayNotHasKey( 'convert', $result['properties']['link']['properties']['is_external'] );
 	}
