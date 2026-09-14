@@ -21,7 +21,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 	};
 
 	const getListMarkers = ( listRoot: Locator ): Locator => {
-		return listRoot.locator( '.e-list-item__marker .e-svg-base' );
+		return listRoot.locator( '.e-list-item__marker .e-paragraph-base' );
 	};
 
 	const getListParagraphs = ( listRoot: Locator ): Locator => {

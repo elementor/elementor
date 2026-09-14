@@ -717,9 +717,7 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 
-			// List markers (svg base style overrides)
-			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
-			'.e-list-item-marker-base.e-list-item-marker-base .e-svg-base svg { width: auto !important; }',
+			'.e-list-item-marker-base .e-paragraph-base { line-height: 1; }',
 
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
