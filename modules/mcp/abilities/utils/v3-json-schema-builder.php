@@ -108,16 +108,21 @@ class V3_Json_Schema_Builder {
 	 *
 	 * @param mixed      $value         Setting value to check.
 	 * @param array|null $entry_schema  Schema entry from `build()['properties'][$key]`.
+	 * @param bool       $strict        Whether to enforce full mapped-object constraints.
 	 * @return string|null Human-readable reason when shape mismatches; null when acceptable.
 	 */
-	public static function check_value_shape( $value, ?array $entry_schema ): ?string {
+	public static function check_value_shape( $value, ?array $entry_schema, bool $strict = false ): ?string {
 		if ( ! is_array( $entry_schema ) ) {
 			return null;
 		}
 
 		if ( isset( $entry_schema['anyOf'] ) && is_array( $entry_schema['anyOf'] ) ) {
+			if ( ! $strict ) {
+				return null;
+			}
+
 			foreach ( $entry_schema['anyOf'] as $candidate_schema ) {
-				if ( is_array( $candidate_schema ) && null === self::check_value_shape( $value, $candidate_schema ) ) {
+				if ( is_array( $candidate_schema ) && null === self::check_value_shape( $value, $candidate_schema, true ) ) {
 					return null;
 				}
 			}
@@ -140,17 +145,19 @@ class V3_Json_Schema_Builder {
 		}
 
 		if ( 'object' === $expected_type && is_array( $value ) && isset( $entry_schema['properties'] ) && is_array( $entry_schema['properties'] ) ) {
-			foreach ( $entry_schema['required'] ?? [] as $required_key ) {
-				if ( is_string( $required_key ) && ! array_key_exists( $required_key, $value ) ) {
-					return sprintf( 'missing required property "%s".', $required_key );
+			if ( $strict ) {
+				foreach ( $entry_schema['required'] ?? [] as $required_key ) {
+					if ( is_string( $required_key ) && ! array_key_exists( $required_key, $value ) ) {
+						return sprintf( 'missing required property "%s".', $required_key );
+					}
 				}
-			}
 
-			if ( false === ( $entry_schema['additionalProperties'] ?? null ) ) {
-				$unknown_keys = array_diff( array_keys( $value ), array_keys( $entry_schema['properties'] ) );
+				if ( false === ( $entry_schema['additionalProperties'] ?? null ) ) {
+					$unknown_keys = array_diff( array_keys( $value ), array_keys( $entry_schema['properties'] ) );
 
-				if ( ! empty( $unknown_keys ) ) {
-					return sprintf( 'unsupported property "%s".', reset( $unknown_keys ) );
+					if ( ! empty( $unknown_keys ) ) {
+						return sprintf( 'unsupported property "%s".', reset( $unknown_keys ) );
+					}
 				}
 			}
 
@@ -159,7 +166,17 @@ class V3_Json_Schema_Builder {
 					continue;
 				}
 
-				$shape_error = self::check_value_shape( $value[ $prop_key ], $prop_schema );
+				if ( ! $strict ) {
+					$sub_expected = $prop_schema['type'] ?? null;
+
+					if ( $sub_expected && ! self::value_matches_type( $value[ $prop_key ], $sub_expected ) ) {
+						return sprintf( 'invalid shape at "%s" (expected %s, got %s).', $prop_key, $sub_expected, self::json_type_of( $value[ $prop_key ] ) );
+					}
+
+					continue;
+				}
+
+				$shape_error = self::check_value_shape( $value[ $prop_key ], $prop_schema, true );
 
 				if ( null !== $shape_error ) {
 					return sprintf( 'invalid shape at "%s": %s', $prop_key, $shape_error );
@@ -173,9 +190,10 @@ class V3_Json_Schema_Builder {
 	/**
 	 * @param array<string, mixed> $settings Settings keyed by control name.
 	 * @param array                $schema   Output of `build()`.
+	 * @param bool                 $strict   Whether to enforce full mapped-object constraints.
 	 * @return array{valid: array<string, mixed>, errors: array<string, string>}
 	 */
-	public static function check_settings_shape( array $settings, array $schema ): array {
+	public static function check_settings_shape( array $settings, array $schema, bool $strict = false ): array {
 		$valid = [];
 		$errors = [];
 
@@ -191,7 +209,7 @@ class V3_Json_Schema_Builder {
 				continue;
 			}
 
-			$shape_error = self::check_value_shape( $value, $entry_schema );
+			$shape_error = self::check_value_shape( $value, $entry_schema, $strict );
 
 			if ( null !== $shape_error ) {
 				$errors[ $key ] = $shape_error;

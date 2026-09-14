@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
@@ -64,6 +65,8 @@ class Element_Config_Applier {
 
 			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
+				$registry = V3_Widget_Map_Registry::instance();
+				$is_standardized = $registry->is_experiment_active() && null !== $registry->get_validation_contract( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
@@ -83,11 +86,14 @@ class Element_Config_Applier {
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
-					$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
-					$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
 
-					if ( empty( $node['settings']['__dynamic__'] ) ) {
-						unset( $node['settings']['__dynamic__'] );
+					if ( $is_standardized ) {
+						$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+						$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
+
+						if ( empty( $node['settings']['__dynamic__'] ) ) {
+							unset( $node['settings']['__dynamic__'] );
+						}
 					}
 				}
 

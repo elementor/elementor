@@ -72,6 +72,23 @@ class Test_V3_Dynamic_Resolver extends TestCase {
 		);
 	}
 
+	public function test_extract_input__normalizes_non_array_settings_for_legacy_compatibility() {
+		// Arrange.
+		$value = [ 'name' => 'post-title', 'settings' => 'invalid' ];
+
+		// Act.
+		$result = V3_Dynamic_Resolver::extract_input( $value, null );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'name' => 'post-title',
+				'settings' => [],
+			],
+			$result
+		);
+	}
+
 	public function test_extract_input__extracts_nested_dynamic_on_url_control_property() {
 		// Arrange.
 		$value = [

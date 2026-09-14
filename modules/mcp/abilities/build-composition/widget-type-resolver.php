@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -130,6 +131,22 @@ class Widget_Type_Resolver {
 	public function resolve_type_config( string $type ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
+			if (
+				Widget_Context_Helper::is_standardized_maps_active()
+				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				&& ! Widget_Context_Helper::is_v3_supported( $type )
+			) {
+				return new \WP_Error(
+					'elementor_v3_not_supported',
+					__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+					[
+						'status' => \WP_Http::BAD_REQUEST,
+						'widget_type' => $type,
+						'version' => 'v3',
+					]
+				);
+			}
+
 			$config = $widget->get_config();
 			$resolved = [
 				'elType' => 'widget',

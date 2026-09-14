@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +43,15 @@ class V3_Dynamic_Hoister {
 			if ( ( null !== $map_settings && true !== ( $map_schema['dynamic'] ?? false ) ) || ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
 				$primitives[ $key ] = $value;
 				continue;
+			}
+
+			if ( null !== $map_settings && is_array( $value ) ) {
+				$public_schema = V3_Json_Schema_Builder::build_from_map( [ $key => $map_schema ] )['properties'][ $key ];
+
+				if ( null !== V3_Json_Schema_Builder::check_value_shape( $value, $public_schema, true ) ) {
+					$primitives[ $key ] = $value;
+					continue;
+				}
 			}
 
 			$control_dynamic = is_array( $control['dynamic'] ?? null ) ? $control['dynamic'] : [];

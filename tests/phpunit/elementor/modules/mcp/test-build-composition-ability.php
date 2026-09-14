@@ -515,6 +515,28 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
 	}
 
+	public function test_execute__rejects_standardized_v3_heading_when_atomic_elements_active() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<heading configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [ 'title' => 'Unsupported Heading' ],
+			],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_unknown_type', $result->get_error_code() );
+		$this->assertStringContainsString( 'legacy V3 widget', $result->get_error_message() );
+	}
+
 	public function test_execute__skips_unsupported_prop_and_warns() {
 		// Arrange
 		$this->act_as_admin();

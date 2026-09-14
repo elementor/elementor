@@ -1007,6 +1007,45 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_execute__allowlisted_v3_static_update_preserves_dynamic_setting_when_standardized_maps_inactive() {
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->random_element_id();
+		$this->register_v3_heading_dynamic_tag();
+		$tag = Plugin::$instance->dynamic_tags->create_tag( 'legacy', 'mcp-v3-heading-title', [] );
+		$this->assertInstanceOf( Tag::class, $tag );
+		$shortcode = Plugin::$instance->dynamic_tags->tag_to_text( $tag );
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $v3_id,
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [
+					'__dynamic__' => [ 'menu' => $shortcode ],
+				],
+				'elements' => [],
+			],
+		] );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'menu' => '3' ],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertSame( '3', $node['settings']['menu'] );
+		$this->assertArrayHasKey( 'menu', $node['settings']['__dynamic__'] ?? [] );
+		$this->assertSame( $shortcode, $node['settings']['__dynamic__']['menu'] );
+	}
+
 	public function test_execute__allowlisted_v3_classes_write_to_css_classes() {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );

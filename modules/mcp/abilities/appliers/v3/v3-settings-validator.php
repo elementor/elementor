@@ -41,7 +41,7 @@ class V3_Settings_Validator {
 			$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $primitives ) );
 		}
 
-		$shape = V3_Json_Schema_Builder::check_settings_shape( $primitives, $schema );
+		$shape = V3_Json_Schema_Builder::check_settings_shape( $primitives, $schema, $is_standardized );
 
 		if ( empty( $shape['errors'] ) ) {
 			return [
