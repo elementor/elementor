@@ -165,14 +165,39 @@ class Widget_Type_Resolver {
 
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
 		if ( $element ) {
+			if (
+				Widget_Context_Helper::is_standardized_maps_active()
+				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				&& ! Widget_Context_Helper::is_v3_supported( $type )
+			) {
+				return new \WP_Error(
+					'elementor_v3_not_supported',
+					__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+					[
+						'status' => \WP_Http::BAD_REQUEST,
+						'widget_type' => $type,
+						'version' => 'v3',
+					]
+				);
+			}
+
 			$config = $element->get_config();
-			return [
+			$resolved = [
 				'elType' => $type,
 				'widgetType' => null,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
 				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $element ),
 			];
+
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
+				if ( method_exists( $element, 'get_stack' ) ) {
+					$element->get_stack();
+				}
+				$resolved['controls'] = (array) $element->get_controls();
+			}
+
+			return $resolved;
 		}
 
 		return new \WP_Error(

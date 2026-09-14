@@ -40,7 +40,21 @@ class V3_Dynamic_Hoister {
 			$control_key = is_string( $map_schema['key'] ?? null ) ? $map_schema['key'] : $key;
 			$control = is_array( $controls[ $control_key ] ?? null ) ? $controls[ $control_key ] : [];
 
-			if ( ( null !== $map_settings && true !== ( $map_schema['dynamic'] ?? false ) ) || ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
+			if ( null !== $map_settings && true !== ( $map_schema['dynamic'] ?? false ) ) {
+				if ( $this->value_contains_disallowed_dynamic( $value, $control ) ) {
+					$errors[] = sprintf(
+						'V3 widget "%s" property "%s": dynamic tags are not supported on this field.',
+						$widget_type,
+						$key
+					);
+					continue;
+				}
+
+				$primitives[ $key ] = $value;
+				continue;
+			}
+
+			if ( ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
 				$primitives[ $key ] = $value;
 				continue;
 			}
@@ -125,6 +139,17 @@ class V3_Dynamic_Hoister {
 	 * @param string $key
 	 * @param array  $input
 	 */
+	private function value_contains_disallowed_dynamic( $value, array $control ): bool {
+		$control_dynamic = is_array( $control['dynamic'] ?? null ) ? $control['dynamic'] : [];
+		$property = is_string( $control_dynamic['property'] ?? null ) ? $control_dynamic['property'] : null;
+
+		if ( V3_Dynamic_Resolver::contains_dynamic_input( $value, $property ) ) {
+			return true;
+		}
+
+		return V3_Dynamic_Resolver::contains_nested_dynamic_input( $value );
+	}
+
 	private function generate_tag_id( string $widget_type, string $key, array $input ): string {
 		$encoded_settings = wp_json_encode( $input['settings'] );
 

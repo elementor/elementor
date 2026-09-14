@@ -845,6 +845,33 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'header_size', $heading['settings'] ?? [] );
 	}
 
+	public function test_update__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_v3_heading_on_document( $post_id );
+		$this->enable_standardized_v3_maps();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'name' => 'post-url',
+							'settings' => [],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertStringContainsString( 'dynamic tags are not supported', $result['results'][0]['message'] );
+	}
+
 	public function test_update__applies_dynamic_standardized_v3_heading_title() {
 		// Arrange
 		$this->act_as_admin();

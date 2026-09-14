@@ -430,15 +430,37 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$heading = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'heading'
-		);
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'container', $elements[0]['elType'] ?? null );
+		$heading = $this->find_element_by_widget_type( $elements, 'heading' );
 		$this->assertSame( 'Mapped Heading', $heading['settings']['title'] ?? null );
 		$this->assertSame( 'h3', $heading['settings']['header_size'] ?? null );
 		$this->assertSame( 'on', $heading['settings']['link']['is_external'] ?? null );
 		$this->assertSame( '', $heading['settings']['link']['nofollow'] ?? null );
 		$this->assertArrayNotHasKey( 'tag', $heading['settings'] );
+	}
+
+	public function test_execute__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<heading configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [
+					'link' => [
+						'name' => 'post-url',
+						'settings' => [],
+					],
+				],
+			],
+		] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
+		$this->assertStringContainsString( 'dynamic tags are not supported', $result->get_error_message() );
 	}
 
 	public function test_execute__rejects_unknown_standardized_v3_heading_setting() {

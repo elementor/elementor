@@ -55,6 +55,24 @@ class Test_V3_Dynamic_Resolver extends TestCase {
 		$this->assertNull( $result );
 	}
 
+	public function test_contains_nested_dynamic_input__detects_dynamic_shape_on_nested_field() {
+		$value = [
+			'url' => [ 'name' => 'post-url', 'settings' => [] ],
+			'is_external' => true,
+		];
+
+		$this->assertTrue( V3_Dynamic_Resolver::contains_nested_dynamic_input( $value ) );
+	}
+
+	public function test_contains_nested_dynamic_input__returns_false_for_plain_link_object() {
+		$value = [
+			'url' => 'https://example.com',
+			'is_external' => true,
+		];
+
+		$this->assertFalse( V3_Dynamic_Resolver::contains_nested_dynamic_input( $value ) );
+	}
+
 	public function test_extract_input__extracts_top_level_dynamic_shape() {
 		// Arrange.
 		$value = [ 'name' => 'post-title', 'settings' => [ 'fallback' => 'Hi' ] ];

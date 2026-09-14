@@ -246,12 +246,13 @@ class Element_Config_Applier {
 			return true;
 		}
 
-		$widget_type = $node['widgetType'] ?? null;
+		if ( ! Widget_Context_Helper::is_standardized_maps_active() ) {
+			return false;
+		}
 
-		return 'widget' === ( $node['elType'] ?? null )
-			&& is_string( $widget_type )
-			&& Widget_Context_Helper::is_standardized_maps_active()
-			&& Widget_Context_Helper::is_v3_supported( $widget_type );
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+
+		return is_string( $type ) && Widget_Context_Helper::is_v3_supported( $type );
 	}
 
 	private function validate_settings( array $settings, array $schema ): ?string {

@@ -90,12 +90,21 @@ class V3_Widget_Map_Registry {
 			static function ( string $widget_type ): ?array {
 				$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
 
-				if ( ! $widget || ! method_exists( $widget, 'get_stack' ) ) {
+				if ( $widget && method_exists( $widget, 'get_stack' ) ) {
+					$widget->get_stack();
+					$controls = $widget->get_controls();
+
+					return is_array( $controls ) ? $controls : null;
+				}
+
+				$element = Plugin::$instance->elements_manager->get_element_types( $widget_type );
+
+				if ( ! $element || ! method_exists( $element, 'get_stack' ) ) {
 					return null;
 				}
 
-				$widget->get_stack();
-				$controls = $widget->get_controls();
+				$element->get_stack();
+				$controls = $element->get_controls();
 
 				return is_array( $controls ) ? $controls : null;
 			},

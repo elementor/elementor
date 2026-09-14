@@ -351,6 +351,10 @@ class V3_Json_Schema_Builder {
 			}
 		}
 
+		if ( ! $is_dynamic && 'object' === ( $schema['type'] ?? null ) && is_array( $schema['properties'] ?? null ) ) {
+			$schema['additionalProperties'] = false;
+		}
+
 		return $is_dynamic ? self::wrap_with_dynamic_branch( $schema, [], null ) : $schema;
 	}
 
