@@ -3,7 +3,6 @@
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -73,40 +72,62 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_marker_slot_default_children_seed_list_marker_svg(): void {
-		$children = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['default_children'];
+	public function test_marker_slot_centers_marker_content(): void {
+		$props = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['base_styles']['e-list-item-marker-base']['variants'][0]['props'];
 
-		$this->assertCount( 1, $children );
-		$svg = $children[0];
-
-		$this->assertSame( 'widget', $svg['elType'] );
-		$this->assertSame( 'e-svg', $svg['widgetType'] );
 		$this->assertSame(
 			[
-				'$$type' => 'svg-src',
-				'value' => [
-					'id' => null,
-					'url' => [
-						'$$type' => 'url',
-						'value' => Atomic_List_Item_Marker::DEFAULT_ICON_URL,
-					],
-				],
+				'$$type' => 'string',
+				'value' => 'flex',
 			],
-			$svg['settings']['svg']
+			$props['display']
 		);
 
-		$this->assertNotSame(
-			Atomic_Svg::DEFAULT_SVG_URL,
-			$svg['settings']['svg']['value']['url']['value'],
-			'The list marker must not fall back to the generic e-svg placeholder.'
+		$this->assertSame(
+			[
+				'$$type' => 'string',
+				'value' => 'center',
+			],
+			$props['align-items']
 		);
 	}
 
-	public function test_default_marker_asset_ships_with_the_plugin(): void {
-		$this->assertFileExists( Atomic_List_Item_Marker::DEFAULT_ICON_PATH );
-		$this->assertStringContainsString(
-			'<svg',
-			(string) file_get_contents( Atomic_List_Item_Marker::DEFAULT_ICON_PATH )
+	public function test_marker_slot_default_children_seed_list_marker_paragraph(): void {
+		$children = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['default_children'];
+
+		$this->assertCount( 1, $children );
+		$paragraph = $children[0];
+
+		$this->assertSame( 'widget', $paragraph['elType'] );
+		$this->assertSame( 'e-paragraph', $paragraph['widgetType'] );
+		$this->assertSame(
+			[
+				'$$type' => 'string',
+				'value' => 'span',
+			],
+			$paragraph['settings']['tag']
 		);
+
+		$this->assertSame(
+			[
+				'$$type' => 'escaped-html',
+				'value' => '&bull;',
+			],
+			$paragraph['settings']['paragraph']
+		);
+	}
+
+	public function test_marker_children_dependency_stashes_marker_when_hidden(): void {
+		$dependencies = $this->get_config( Atomic_List_Item::get_element_type() )['children_dependencies'];
+
+		$this->assertCount( 1, $dependencies );
+		$this->assertSame( Atomic_List_Item_Marker::get_element_type(), $dependencies[0]['child_type'] );
+		$this->assertTrue( $dependencies[0]['stash'] );
+		$this->assertSame( 'eq', $dependencies[0]['when']['terms'][0]['operator'] );
+		$this->assertSame( [ 'show_markers' ], $dependencies[0]['when']['terms'][0]['path'] );
+		$this->assertTrue( $dependencies[0]['when']['terms'][0]['value'] );
+		$this->assertSame( 'first', $dependencies[0]['position']['kind'] );
+		$this->assertSame( Atomic_List_Item_Marker::get_element_type(), $dependencies[0]['default_model']['elType'] );
+		$this->assertTrue( $dependencies[0]['default_model']['hydrateDefaultChildren'] );
 	}
 }

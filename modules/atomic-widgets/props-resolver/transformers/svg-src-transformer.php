@@ -49,23 +49,37 @@ class Svg_Src_Transformer extends Transformer_Base {
 			return null;
 		}
 
+		$local_content = $this->fetch_local_svg_content( $url );
+
+		return $local_content ? $local_content : $this->fetch_remote_svg_content( $url );
+	}
+
+	private function fetch_local_svg_content( string $url ): ?string {
 		$local_path = $this->resolve_local_path( $url );
 
-		if ( $local_path ) {
-			$content = Utils::file_get_contents( $local_path );
-
-			if ( $content ) {
-				return $content;
-			}
+		if ( ! $local_path ) {
+			return null;
 		}
 
+		$content = Utils::file_get_contents( $local_path );
+
+		return $content ? $content : null;
+	}
+
+	private function fetch_remote_svg_content( string $url ): ?string {
 		$response = wp_safe_remote_get( $url );
 
-		if ( ! is_wp_error( $response ) ) {
-			return $response['body'];
+		if ( is_wp_error( $response ) ) {
+			return null;
 		}
 
-		return null;
+		if ( \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return null;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		return $body ? $body : null;
 	}
 
 	private function resolve_local_path( string $url ): ?string {
