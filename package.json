@@ -53,7 +53,7 @@
     "packages:release": "turbo build && npm run release -w elementor-packages",
     "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
     "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
-    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\""
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"WP_CLI_TARGET=playground npm run test:playwright -- --ui\""
   },
   "engines": {
     "node": ">=24.15.0",
@@ -163,7 +163,7 @@
     "webpack": "^5.97.1"
   },
   "dependencies": {
-    "@elementor/elementor-one-assets": "0.4.38",
+    "@elementor/elementor-one-assets": "0.4.43",
     "@elementor/icons": "~1.75.1",
     "@elementor/ui": "1.39.1",
     "@reach/router": "1.3.4",

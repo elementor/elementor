@@ -155,8 +155,18 @@ describe( 'list-items-control actions', () => {
 		expect( markerChild ).toEqual(
 			expect.objectContaining( {
 				elType: 'widget',
-				widgetType: 'e-svg',
+				widgetType: 'e-paragraph',
 				elements: [],
+				settings: {
+					tag: {
+						$$type: 'string',
+						value: 'span',
+					},
+					paragraph: {
+						$$type: 'escaped-html',
+						value: '&bull;',
+					},
+				},
 			} )
 		);
 		expect( content ).toEqual(

@@ -22,7 +22,7 @@ class Publish_Document_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Publish Elementor Document', 'elementor' ),
-			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete, because subsequent edits may downgrade the document back to draft. Idempotent: publishing an already-published document is a no-op success.', 'elementor' ),
+			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements or build-composition on published pages are staged in an autosave and do not go live until you publish. Idempotent: publishing an already-published document is a no-op success.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',

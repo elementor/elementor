@@ -60,7 +60,8 @@ class Llm_Guidance_Builder {
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {
 		$allowed_child_types = $config['allowed_child_types'] ?? [];
-		$allowed_parents = $parents_index[ $widget_type ] ?? [];
+		$emit_allowed_parents = empty( $config['show_in_panel'] );
+		$allowed_parents = $emit_allowed_parents ? ( $parents_index[ $widget_type ] ?? [] ) : [];
 
 		return array_filter(
 			[

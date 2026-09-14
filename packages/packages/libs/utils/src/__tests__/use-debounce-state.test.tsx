@@ -7,8 +7,7 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.runOnlyPendingTimers();
-	jest.clearAllTimers();
+	jest.useRealTimers();
 	jest.clearAllMocks();
 } );
 
@@ -70,5 +69,18 @@ describe( 'useDebounceState (hook only)', () => {
 		} );
 
 		expect( result.current.debouncedValue ).toBe( 'second' );
+	} );
+
+	it( 'should immediately update both values and cancel the pending debounce', () => {
+		const { result } = renderHook( () => useDebounceState( { delay: 300 } ) );
+
+		act( () => {
+			result.current.handleChange( 'pending' );
+			result.current.setImmediateValue( '' );
+			jest.advanceTimersByTime( 300 );
+		} );
+
+		expect( result.current.inputValue ).toBe( '' );
+		expect( result.current.debouncedValue ).toBe( '' );
 	} );
 } );
