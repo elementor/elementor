@@ -69,8 +69,10 @@ export type PageContextResponse = {
 	cookiez_plugin_installed: boolean;
 	cookiez_plugin_action_url: string;
 	cookiez_scan_url: string;
+	cookiez_consent_mode_settings_url: string;
 	image_optimization_plugin_active: boolean;
 	image_optimization_plugin_url: string;
+	frontend_url: string | null;
 	site_identity: {
 		site_name_set: boolean;
 		site_description_set: boolean;
