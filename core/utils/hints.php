@@ -24,6 +24,7 @@ class Hints {
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
 	const PLUGIN_CONNECTED = 'plugin_connected';
+	const NOT_HAS_OPTION = 'not_has_option';
 
 	const INSTALL = 'install';
 	const ACTIVATE = 'activate';
@@ -325,6 +326,14 @@ class Hints {
 					[ $option_prefix, $plugin_slug ] = $value;
 
 					if ( self::is_plugin_connected( $option_prefix, $plugin_slug ) ) {
+						return false;
+					}
+
+					break;
+
+				case self::NOT_HAS_OPTION:
+					$option = get_option( $value );
+					if ( ! empty( $option ) ) {
 						return false;
 					}
 
