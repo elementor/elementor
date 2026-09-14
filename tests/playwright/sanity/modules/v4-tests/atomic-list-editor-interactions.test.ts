@@ -25,7 +25,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 	};
 
 	const getListParagraphs = ( listRoot: Locator ): Locator => {
-		return listRoot.locator( '[data-widget_type="e-paragraph.default"]' );
+		return listRoot.locator( '.e-list-item__content [data-widget_type="e-paragraph.default"]' );
 	};
 
 	const getListItemIds = async ( listRoot: Locator ): Promise<string[]> => {
