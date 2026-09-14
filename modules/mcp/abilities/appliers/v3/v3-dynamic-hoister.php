@@ -134,11 +134,6 @@ class V3_Dynamic_Hoister {
 		];
 	}
 
-	/**
-	 * @param string $widget_type
-	 * @param string $key
-	 * @param array  $input
-	 */
 	private function value_contains_disallowed_dynamic( $value, array $control ): bool {
 		$control_dynamic = is_array( $control['dynamic'] ?? null ) ? $control['dynamic'] : [];
 		$property = is_string( $control_dynamic['property'] ?? null ) ? $control_dynamic['property'] : null;
@@ -150,6 +145,11 @@ class V3_Dynamic_Hoister {
 		return V3_Dynamic_Resolver::contains_nested_dynamic_input( $value );
 	}
 
+	/**
+	 * @param string $widget_type
+	 * @param string $key
+	 * @param array  $input
+	 */
 	private function generate_tag_id( string $widget_type, string $key, array $input ): string {
 		$encoded_settings = wp_json_encode( $input['settings'] );
 
