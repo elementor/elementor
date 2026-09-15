@@ -9,6 +9,7 @@ use Elementor\Modules\Components\Circular_Dependency_Validator;
 use Elementor\Modules\Components\Components_Access_Controller;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -37,6 +38,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/manage-component';
+	}
+
+	public function is_available_for_current_mode(): bool {
+		return Components_Module::is_experiment_active();
 	}
 
 	protected function get_definition(): Ability_Definition {
