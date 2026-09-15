@@ -1,6 +1,6 @@
 # Video demo — examples
 
-## Editor bug (record)
+## Editor bug
 
 ```markdown
 ## Video demo
@@ -16,21 +16,21 @@
 ```markdown
 ## Video demo
 #skip_video
-Task adds a new Style control; video recording is editor-bugs only for now.
+Task adds a new Style control; video demo is editor-bugs only.
 ```
 
-## Skip — needs Pro
+## Skip — cannot run on Core Playground
 
 ```markdown
 ## Video demo
 #skip_video
-Fix is in Atomic Form (Pro). Core Playground cannot show this editor path yet.
+Fix needs a plugin that playground-preview does not install.
 ```
 
-## Skip — docs / skill-only
+## Skip — this skill / docs
 
 ```markdown
 ## Video demo
 #skip_video
-Docs-only change to agent skill text; no user-facing editor UI.
+Docs-only change to Cursor skill text; no editor UI.
 ```

@@ -1,22 +1,22 @@
 ---
-description: Editor-bug PRs must include a ## Video demo section; others skip
+description: Editor-bug PRs in this repo must include a ## Video demo section
 alwaysApply: true
 ---
 
-# Video demo on Elementor PRs (editor bugs only)
+# Video demo on PRs
 
-Before `gh pr create` or `gh pr edit` on `elementor/elementor` or
-`elementor/elementor-pro`, read [SKILL.md](mdc:.cursor/skills/video-proof-demo/SKILL.md)
-and author `## Video demo`. Applies to `/pr`, `create-ship-deploy`, Cloud
-Agents, and manual PR creation.
+**Trigger:** this file. `alwaysApply: true` means every Cursor agent in this
+checkout must author `## Video demo` before `gh pr create` or `gh pr edit`.
+
+**How to write it:** [SKILL.md](mdc:.cursor/skills/video-proof-demo/SKILL.md)
+
+**Where to run the steps:** this repo’s `playground-preview` deployment
+(`.github/workflows/playground-preview.yml`, blueprint
+`tests/playwright/blueprints/pr-preview.json`). Not a local site.
 
 - Order: `## Summary` → `## Test plan` → `## Video demo` → `## Jira`
-- **Record now:** Jira `Bug` whose user-visible surface is the Elementor
-  editor and which can run on Core Playground. One Where / Steps / Pass /
-  Fail block plus `**Broken:**` (caption only — do not act out the bug)
-- **Everyone else:** keep the heading with `#skip_video` + one sentence
+- Editor Bug that Core Playground can show → `**Broken:**` + Where / Steps /
+  Pass / Fail (do not act out the bug)
+- Anything else → heading + `#skip_video` + one sentence
 - Never leave placeholders; never ask the user to write the section
 - Steps use visible in-app labels only
-
-The `## Video demo` section is read by the recorder against
-`playground-preview`. Write it for that runner, not for human reviewers.
