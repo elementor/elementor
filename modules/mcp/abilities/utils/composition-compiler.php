@@ -34,6 +34,7 @@ final class Composition_Compiler {
 
 	private const DEFAULT_PARENT_ID = 'document';
 	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
+	private const DOCUMENT_ROOT_V3_WRAPPER = 'container';
 
 	public const COMPONENT_PARENT_ID = 'component';
 
@@ -236,14 +237,15 @@ final class Composition_Compiler {
 			];
 		}
 
-		$wrapper_config = $type_resolver->resolve_type_config( self::DOCUMENT_ROOT_WRAPPER );
+		$wrapper_tag = $this->resolve_document_root_wrapper();
+		$wrapper_config = $type_resolver->resolve_type_config( $wrapper_tag );
 		if ( is_wp_error( $wrapper_config ) ) {
 			return $wrapper_config;
 		}
 
-		$widget_configs[ self::DOCUMENT_ROOT_WRAPPER ] = $wrapper_config;
+		$widget_configs[ $wrapper_tag ] = $wrapper_config;
 
-		$wrapper = $dom->createElement( self::DOCUMENT_ROOT_WRAPPER );
+		$wrapper = $dom->createElement( $wrapper_tag );
 		$root->appendChild( $wrapper );
 
 		foreach ( $root_children as $child ) {
@@ -252,8 +254,25 @@ final class Composition_Compiler {
 
 		return [
 			'widget_configs' => $widget_configs,
-			'warnings' => [ __( 'Direct document-root content was wrapped in an e-div-block element.', 'elementor' ) ],
+			'warnings' => [
+				sprintf(
+					/* translators: %s: wrapper element tag */
+					__( 'Direct document-root content was wrapped in a %s element.', 'elementor' ),
+					$wrapper_tag
+				),
+			],
 		];
+	}
+
+	private function resolve_document_root_wrapper(): string {
+		if (
+			Widget_Context_Helper::is_standardized_maps_active()
+			&& Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER )
+		) {
+			return self::DOCUMENT_ROOT_V3_WRAPPER;
+		}
+
+		return self::DOCUMENT_ROOT_WRAPPER;
 	}
 
 	private function as_map( $value ): array {
