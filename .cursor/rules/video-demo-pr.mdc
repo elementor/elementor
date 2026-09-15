@@ -1,22 +1,22 @@
 ---
-description: Every Elementor PR body must include a ## Video demo section
+description: Editor-bug PRs must include a ## Video demo section; others skip
 alwaysApply: true
 ---
 
-# Video demo section is mandatory on Elementor PRs
+# Video demo on Elementor PRs (editor bugs only)
 
-Before running `gh pr create` or `gh pr edit` on `elementor/elementor` or
+Before `gh pr create` or `gh pr edit` on `elementor/elementor` or
 `elementor/elementor-pro`, read [SKILL.md](mdc:.cursor/skills/video-proof-demo/SKILL.md)
-and author the `## Video demo` section yourself. This applies to `/pr`,
-`create-ship-deploy`, Cloud Agents, and manual PR creation.
+and author `## Video demo`. Applies to `/pr`, `create-ship-deploy`, Cloud
+Agents, and manual PR creation.
 
-- Order in the body: `## Summary` → `## Test plan` → `## Video demo` → `## Jira`
-- Every UI PR gets one Where / Steps / Pass / Fail block; bugs add a `**Broken:**` caption line
-- Never script the broken behaviour — `playground-preview.yml` installs only the fixed PR build
-- No useful UI → keep the heading with `#skip_video` + one sentence why
-- Never leave placeholders and never ask the user to write the section
-- Steps use visible in-app labels only — no file paths, GitHub, or CI references
+- Order: `## Summary` → `## Test plan` → `## Video demo` → `## Jira`
+- **Record now:** Jira `Bug` whose user-visible surface is the Elementor
+  editor and which can run on Core Playground. One Where / Steps / Pass /
+  Fail block plus `**Broken:**` (caption only — do not act out the bug)
+- **Everyone else:** keep the heading with `#skip_video` + one sentence
+- Never leave placeholders; never ask the user to write the section
+- Steps use visible in-app labels only
 
-The `## Video demo` section is read by the demo recorder, which drives Playwright
-against the PR's `playground-preview` deployment. Write it for that runner, not
-for human reviewers — they read Summary and Test plan.
+The `## Video demo` section is read by the recorder against
+`playground-preview`. Write it for that runner, not for human reviewers.

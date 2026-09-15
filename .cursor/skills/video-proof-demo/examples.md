@@ -1,16 +1,6 @@
 # Video demo — examples
 
-## Feature (editor control)
-
-```markdown
-## Video demo
-**Where:** Edit with Elementor → select a container → Style → Position
-**Steps:** add a Flexbox container → open Style → Position → set Position to Absolute → set Z-index to 10
-**Pass:** Z-index control is enabled and accepts 10; canvas shows the positioned container
-**Fail:** Z-index stays disabled or value does not apply
-```
-
-## Bug (Broken caption + fixed path)
+## Editor bug (record)
 
 ```markdown
 ## Video demo
@@ -21,20 +11,26 @@
 **Fail:** Z-index remains disabled on Tablet
 ```
 
-## Smoke (CI / infra PR that still benefits from a screenshot)
-
-```markdown
-## Video demo
-**Where:** WordPress admin → Pages → Add New → Edit with Elementor
-**Steps:** open Elementor → wait until the panel and canvas load → capture screenshot
-**Pass:** editor shell is visible with panel and canvas
-**Fail:** blank preview iframe or editor error overlay
-```
-
-## Skip (docs / skill-only)
+## Skip — not an editor bug
 
 ```markdown
 ## Video demo
 #skip_video
-Docs-only change to agent skill text; no user-facing UI.
+Task adds a new Style control; video recording is editor-bugs only for now.
+```
+
+## Skip — needs Pro
+
+```markdown
+## Video demo
+#skip_video
+Fix is in Atomic Form (Pro). Core Playground cannot show this editor path yet.
+```
+
+## Skip — docs / skill-only
+
+```markdown
+## Video demo
+#skip_video
+Docs-only change to agent skill text; no user-facing editor UI.
 ```

@@ -8,12 +8,12 @@ This directory contains AI agent configuration for test generation and code assi
 - **`tests-code-style.mdc`** - Technical testing rules and code quality standards
   - Code quality, test reliability, browser/environment rules
   - Applies only to test files (`globs: *test*`)
-- **`video-demo-pr.mdc`** - Requires a `## Video demo` section in every PR body
+- **`video-demo-pr.mdc`** - Requires a `## Video demo` section; full block only for editor bugs
   - Always applied; pairs with the `video-proof-demo` skill
 
 ### Skills (`/skills/`)
 - **`video-proof-demo/`** - How to author the `## Video demo` PR section
-  - Where / Steps / Pass / Fail, plus a `Broken` caption line for bugs
+  - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption; others `#skip_video`
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts

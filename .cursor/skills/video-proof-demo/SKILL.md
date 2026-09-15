@@ -1,86 +1,72 @@
 ---
 name: video-proof-demo
 description: >-
-  Author the ## Video demo section for Elementor PRs (Where / Steps /
-  Pass / Fail). Bugs add a Broken caption line; the demo always runs the fixed
-  build. Use when opening or updating an elementor/elementor or elementor-pro
-  PR, when running /pr or create-ship-deploy, or when the user asks for a demo
-  script / video proof section. Does not record video — that is a later
-  record-demo + Playwright step.
+  Author the ## Video demo section for Elementor editor-bug PRs (Broken
+  caption + Where / Steps / Pass / Fail). Other tickets get #skip_video.
+  Use when opening or updating an elementor/elementor PR, when running /pr
+  or create-ship-deploy, or when the user asks for a demo script. Does not
+  record video — recording is a separate demo-video / Playwright step.
 ---
 
 # Video demo (Elementor)
 
-The demo script lives in the **PR body** as a `## Video demo` section, not
-behind a label. A future `record-demo` + Playwright job will drive the browser
-from this section against the PR's WordPress Playground preview.
+The demo script lives in the **PR body** as a `## Video demo` section.
+A recorder (demo-video skill, Cursor browser video, or a later CI job) drives
+the PR's WordPress Playground preview from this section.
+
+**Current scope: editor bugs only.** Features, Tasks, frontend-only fixes,
+Pro-only widgets, and infra PRs keep the heading with `#skip_video`.
 
 ## When this applies
 
-**Relevant PRs** (always add `## Video demo` with real Where / Steps / Pass / Fail, plus `**Broken:**` for bugs):
+**Record (fill Where / Steps / Pass / Fail):**
 
-- User-visible editor, canvas, widgets, frontend, or WP-admin UI changes
-- `/pr` / `create-ship-deploy` when the diff or Jira ticket is UI-facing
-- User asks to "add video demo" or "demo steps"
+- Jira type is `Bug` (or the PR is clearly a regression fix)
+- The user-visible surface is the **Elementor editor** (panel, canvas,
+  navigator, Style / Content controls, editor chrome)
+- The change can be shown in Core Playground (no Pro-only widget required)
 
-**Not relevant** (still add the heading, but only `#skip_video` + one sentence why):
+**Skip (heading + `#skip_video` + one sentence):**
 
-- Docs-only, skill text, pure backend/API with no useful UI, or changes that cannot be shown in Playground
+- Story / Task / new feature
+- Frontend-only, WP-admin-only, or API with no editor UI
+- Needs Elementor Pro (or another plugin) that Playground does not install
+- Docs, skills, CI, or anything that cannot be shown in the editor
 
 ## Rules
 
-1. **Audience of this section** = the recording agent, Playwright runner, not
-   human reviewers. Reviewers read Problem / Summary; the agent reads Where /
-   Steps / Pass / Fail.
-2. **In-app UI only.** Describe WordPress admin and Elementor editor surfaces
-   with **visible labels** (buttons, tabs, panel names). Never: file paths,
-   GitHub, Actions artifacts, PR comments, or "check the workflow".
-3. **Environment when recording** = the PR Playground preview URL (deployment
-   `playground-preview`). Do not assume `*****.local`.
-4. **Intro overlays** — assume Playground blueprints pre-dismiss welcome /
-   announcement popovers (`_e_welcome_popover_displayed`, etc.). Do not spend
-   Steps closing them unless this PR specifically changes that UI.
-5. **Never perform the bug.** `playground-preview.yml` installs only the PR's
-   own build artifact, which already contains the fix, so broken behaviour
-   cannot be reproduced there. State it in a `**Broken:**` caption line and
-   demo the fixed path.
+1. **Audience of this section** = the recording agent, not human reviewers.
+   Reviewers read Summary / Test plan.
+2. **In-app UI only.** Visible labels (buttons, tabs, panel names). Never file
+   paths, GitHub, or CI.
+3. **Environment** = PR Playground (`playground-preview`). Not `*.local`.
+4. **Intro overlays** — Playground blueprints already dismiss welcome
+   popovers. Do not spend Steps closing them unless this PR changes that UI.
+5. **Never perform the bug.** Playground installs only the PR build (the
+   fix). Put the old behaviour in `**Broken:**` as an opening caption, then
+   demo the fixed editor path. That *is* the “video of the bug that was
+   fixed”: what was wrong, then what the editor does now.
 
-## Classify the change
+## Classify
 
 | Signal | Mode |
 |--------|------|
-| Jira type `Bug`, or fix/regression language | **Bug** → `**Broken:**` caption + one Where / Steps / Pass / Fail |
-| Jira `Story` / `Task`, or new behaviour | **Feature** → single Where / Steps / Pass / Fail |
-| Docs-only, skill text, no useful UI | **`#skip_video`** |
-| Infra / CI but a screenshot still helps | **Smoke** — open editor (or relevant admin screen) → confirm loaded → capture |
-
-Prefer smoke over `#skip_video` when a still image helps reviewers.
+| Jira `Bug` + editor UI + Core Playground | **Record** → `**Broken:**` + Where / Steps / Pass / Fail |
+| Anything else | **`#skip_video`** |
 
 ## PR body contract
 
-Always include the exact heading `## Video demo` on Elementor / Elementor Pro PRs opened via `/pr`. On relevant (UI) PRs, fill Where / Steps / Pass / Fail. On non-relevant PRs, keep the heading and put `#skip_video` under it.
+Always include the heading `## Video demo`. Order: Summary → Test plan →
+Video demo → Jira.
 
-### Feature (or Task with UI)
-
-```markdown
-## Video demo
-**Where:** <screen path using visible labels, e.g. WP Admin → Pages → Edit with Elementor → Style → Position>
-**Steps:** <ordered in-app actions the recorder can perform>
-**Pass:** <visible success state>
-**Fail:** <visible failure / missing state>
-```
-
-### Bug
-
-Same shape as a feature, plus a `**Broken:**` line the recorder renders as an
-opening caption. Do not script the broken behaviour as Steps — see rule 5.
+### Editor bug (record)
 
 ```markdown
 ## Video demo
-**Broken:** <one sentence in user terms: what used to happen>
-**Where:** <entry point using visible labels>
+**Broken:** <one sentence in user terms: what used to happen in the editor>
+**Where:** <editor path using visible labels>
 **Steps:** <happy path on the PR build>
-**Pass:** <fixed behaviour visible>
+**Pass:** <fixed editor behaviour visible>
 **Fail:** <bug still visible>
 ```
 
@@ -89,34 +75,38 @@ opening caption. Do not script the broken behaviour as Steps — see rule 5.
 ```markdown
 ## Video demo
 #skip_video
-<One sentence: why nothing visual helps (e.g. docs-only skill text).>
-```
-
-### Smoke (non-app change, screenshot for humans)
-
-```markdown
-## Video demo
-**Where:** WordPress admin → Edit with Elementor
-**Steps:** open a new page → Edit with Elementor → wait until canvas loads → capture screenshot
-**Pass:** editor chrome and canvas are visible
-**Fail:** blank iframe, fatal error, or editor never loads
+<One sentence: not an editor bug, needs Pro, or no useful editor UI.>
 ```
 
 ## Authoring checklist
 
-- Steps are imperative and short.
-- Pass / Fail are **observable on screen**, not "unit tests pass".
-- `**Broken:**` is one sentence, past tense, and contains no steps.
-- Keep total demo under ~90s of actions when possible.
-- For editor work: name Style / Content tabs, section titles, control labels.
-- For containers/layout: note that empty boxes need border or background to be visible on video (recorder may add this).
-- Link Playground in Summary/Test plan if useful for humans; **do not** put "open the Playground URL from the deployment" inside Steps — the runner resolves the preview URL itself.
+- Steps are imperative and short; stay in the editor.
+- Pass / Fail are observable on screen.
+- `**Broken:**` is one sentence, past tense, no steps.
+- Keep the demo under ~90s when possible.
+- Name Style / Content tabs, section titles, control labels.
+- Empty containers need a border or background so they show on video.
+- Do not put “open the Playground URL” in Steps — the runner resolves it.
 
-## Out of scope (this skill)
+## Recording (separate from this skill)
 
-- Recording, ffmpeg, narration, uploading `demo.mp4`
-- Creating GitHub labels (`needs-demo` is retired; `record-demo` is future)
-- Compiling to `storyboard.json` (optional later bridge from this section)
+After the PR exists and CI has a plugin zip:
+
+1. Read `## Video demo`. If `#skip_video`, do not record.
+2. Boot the PR Playground (or run the **demo-video** skill with
+   `DEMO_PR_REPO=elementor/elementor`).
+3. Follow Steps. Render `**Broken:**` as the first caption.
+4. Attach `demo.mp4` to the PR (manual for now; CI later).
+
+Cursor browser `start_video` is an allowed camera for a dry-run. Do not
+record the local site.
+
+## Out of scope (for now)
+
+- Feature / Task demos
+- Frontend (published page) demos
+- Pro Playground / Pro widgets
+- Automatic GitHub Action on every push
 
 ## Examples
 
@@ -124,7 +114,10 @@ See [examples.md](examples.md).
 
 ## Integration
 
-- **`/pr`**: **Auto-author** both `## Test plan` and `## Video demo` from the Jira ticket + diff when opening the PR. Never leave placeholders; never ask the user to write these sections unless two demo paths are equally plausible. Order: Summary → Test plan → Video demo → Jira.
+- **`/pr`**: Auto-author `## Test plan` and `## Video demo` from Jira + diff.
+  Never leave placeholders. Editor bugs get a full block; everything else
+  gets `#skip_video`.
 - **`create-ship-deploy`**: inherits via `/pr`.
-- **`demo-video` skill**: when recording manually, prefer Steps from this PR section over inventing a new plan.
-- **Existing PRs**: if the user asks to add demo/test plan to an open PR, generate the sections and update the PR body with `gh pr edit` (do not make them paste manually).
+- **`demo-video` skill**: prefer this PR section over inventing a plan.
+- **Existing PRs**: if asked, `gh pr edit` the section in; do not make the
+  user paste it.
