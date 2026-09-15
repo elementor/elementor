@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Promotions;
 
+use Elementor\Core\Base\Document;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -26,19 +27,38 @@ class Conversion_Banner {
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
 	const THEME_SETTINGS_PAGE_SUFFIX = '-settings';
 	const GO_PRO_TITLE_PREFIX = 'Go Pro';
+	const MIN_ELEMENTOR_PAGES_TO_TRIGGER = 2;
+	const PENDING_TRANSIENT_KEY = 'elementor_conversion_banner_pages_pending';
+	const PENDING_TTL = DAY_IN_SECONDS;
+	const UNLOCK_OPTION_KEY = 'elementor_conversion_banner_unlocked';
 
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
 
 		add_filter( self::HELLO_THEME_CONFIG_FILTER, [ $this, 'suppress_hello_theme_banner' ] );
 
+		add_action( 'added_post_meta', [ $this, 'maybe_invalidate_pending_cache' ], 10, 4 );
+		add_action( 'updated_post_meta', [ $this, 'maybe_invalidate_pending_cache' ], 10, 4 );
+
 		add_action( 'current_screen', [ $this, 'maybe_register_banner_hooks' ] );
+	}
+
+	public function maybe_invalidate_pending_cache( $meta_id, $post_id, $meta_key, $meta_value ): void {
+		if ( Document::BUILT_WITH_ELEMENTOR_META_KEY !== $meta_key ) {
+			return;
+		}
+
+		if ( '1' === get_option( self::UNLOCK_OPTION_KEY ) ) {
+			return;
+		}
+
+		delete_transient( self::PENDING_TRANSIENT_KEY );
 	}
 
 	public function maybe_register_banner_hooks(): void {
 		$placement = $this->get_active_placement();
 
-		if ( empty( $placement ) ) {
+		if ( empty( $placement ) || ! self::has_min_elementor_pages() ) {
 			return;
 		}
 
@@ -236,7 +256,40 @@ class Conversion_Banner {
 	}
 
 	private static function should_display(): bool {
-		return ! Utils::has_pro() && ! self::is_dismissed();
+		return ! Utils::has_pro() && ! self::is_dismissed() && self::has_min_elementor_pages();
+	}
+
+	private static function has_min_elementor_pages(): bool {
+		if ( '1' === get_option( self::UNLOCK_OPTION_KEY ) ) {
+			return true;
+		}
+
+		if ( get_transient( self::PENDING_TRANSIENT_KEY ) ) {
+			return false;
+		}
+
+		$query = new \WP_Query( [
+			'fields' => 'ids',
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'meta_value' => 'builder',
+			'no_found_rows' => true,
+			'post_status' => 'publish',
+			'post_type' => 'any',
+			'posts_per_page' => self::MIN_ELEMENTOR_PAGES_TO_TRIGGER,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		] );
+
+		if ( count( $query->posts ) >= self::MIN_ELEMENTOR_PAGES_TO_TRIGGER ) {
+			update_option( self::UNLOCK_OPTION_KEY, '1', true );
+			delete_transient( self::PENDING_TRANSIENT_KEY );
+
+			return true;
+		}
+
+		set_transient( self::PENDING_TRANSIENT_KEY, 1, self::PENDING_TTL );
+
+		return false;
 	}
 
 	private static function is_user_allowed(): bool {
