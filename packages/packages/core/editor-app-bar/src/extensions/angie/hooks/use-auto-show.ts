@@ -9,7 +9,11 @@ export function useAutoShow() {
 		}
 
 		const id = setTimeout( () => {
-			window.dispatchEvent( new CustomEvent( CREATE_WIDGET_EVENT ) );
+			window.dispatchEvent(
+				new CustomEvent( CREATE_WIDGET_EVENT, {
+					detail: { entry_point: 'auto_show' },
+				} )
+			);
 		}, 0 );
 
 		return () => clearTimeout( id );
