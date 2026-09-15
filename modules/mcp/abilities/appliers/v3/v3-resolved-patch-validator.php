@@ -82,7 +82,8 @@ class V3_Resolved_Patch_Validator {
 	}
 
 	/**
-	 * @param mixed $value
+	 * @param string $shape
+	 * @param mixed  $value
 	 * @return string|null Non-null returns are error reasons.
 	 */
 	private static function check_shape( string $shape, $value ): ?string {

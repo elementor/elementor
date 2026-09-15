@@ -155,7 +155,9 @@ class Style_Applier {
 		}
 
 		if ( $is_empty_css ) {
-			return [ 'warnings' => $warnings ];
+			return [
+				'warnings' => $warnings,
+			];
 		}
 
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
@@ -173,7 +175,9 @@ class Style_Applier {
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
-			return [ 'warnings' => $warnings ];
+			return [
+				'warnings' => $warnings,
+			];
 		}
 
 		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
@@ -196,21 +200,8 @@ class Style_Applier {
 				);
 		}
 
-		return [ 'warnings' => $warnings ];
-	}
-
-	/**
-	 * @param array{code: string, style_target: ?string, property: ?string, state: ?string, reason: string} $detail
-	 * @return array{code: string, widget_type: ?string, style_target: ?string, property: ?string, state: ?string, reason: string}
-	 */
-	private static function stamp_widget_type_on_detail( array $detail, string $widget_type ): array {
 		return [
-			'code' => (string) ( $detail['code'] ?? '' ),
-			'widget_type' => '' !== $widget_type ? $widget_type : null,
-			'style_target' => $detail['style_target'] ?? null,
-			'property' => $detail['property'] ?? null,
-			'state' => $detail['state'] ?? null,
-			'reason' => (string) ( $detail['reason'] ?? '' ),
+			'warnings' => $warnings,
 		];
 	}
 

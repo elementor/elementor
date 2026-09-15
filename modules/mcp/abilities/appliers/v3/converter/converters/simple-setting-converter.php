@@ -105,9 +105,7 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 			return true;
 		}
 
-		$target = (string) ( $override['_map_target'] ?? '' );
 		$property = (string) ( $rule['property'] ?? '' );
-		$state = $rule['state'] ?? null;
 
 		$ctx->warn(
 			sprintf(
