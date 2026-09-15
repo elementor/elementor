@@ -1,59 +1,38 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 
-const mockIsAngieAvailable = jest.fn();
+const mockIsAngiePluginAvailable = jest.fn();
+const mockWaitForAngiePluginAvailable = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => ( {
-	isAngieAvailable: () => mockIsAngieAvailable(),
+	isAngiePluginAvailable: () => mockIsAngiePluginAvailable(),
+	waitForAngiePluginAvailable: () => mockWaitForAngiePluginAvailable(),
 } ) );
 
 import { useIsAngieAvailable } from '../use-is-angie-available';
 
-type ObserverCallback = MutationCallback;
-
-class MockMutationObserver {
-	static instances: MockMutationObserver[] = [];
-	callback: ObserverCallback;
-	disconnect = jest.fn();
-
-	constructor( callback: ObserverCallback ) {
-		this.callback = callback;
-		MockMutationObserver.instances.push( this );
-	}
-
-	observe() {}
-
-	trigger() {
-		this.callback( [], this as unknown as MutationObserver );
-	}
-}
-
 describe( 'useIsAngieAvailable', () => {
-	const originalMutationObserver = globalThis.MutationObserver;
-
 	beforeEach( () => {
-		mockIsAngieAvailable.mockReset();
-		MockMutationObserver.instances = [];
-		globalThis.MutationObserver = MockMutationObserver as unknown as typeof MutationObserver;
+		mockIsAngiePluginAvailable.mockReset();
+		mockWaitForAngiePluginAvailable.mockReset();
 	} );
 
-	afterEach( () => {
-		globalThis.MutationObserver = originalMutationObserver;
-	} );
-
-	it( 'should return true when Angie is already available', () => {
+	it( 'should return true when the Angie plugin is already available on mount', () => {
 		// Arrange.
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginAvailable.mockReturnValue( true );
+		mockWaitForAngiePluginAvailable.mockResolvedValue( true );
 
 		// Act.
 		const { result } = renderHook( () => useIsAngieAvailable() );
 
 		// Assert.
 		expect( result.current ).toBe( true );
+		expect( mockWaitForAngiePluginAvailable ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should return false when Angie is not available yet', () => {
+	it( 'should return false when the Angie plugin is not available yet', () => {
 		// Arrange.
-		mockIsAngieAvailable.mockReturnValue( false );
+		mockIsAngiePluginAvailable.mockReturnValue( false );
+		mockWaitForAngiePluginAvailable.mockReturnValue( new Promise( () => undefined ) );
 
 		// Act.
 		const { result } = renderHook( () => useIsAngieAvailable() );
@@ -62,23 +41,47 @@ describe( 'useIsAngieAvailable', () => {
 		expect( result.current ).toBe( false );
 	} );
 
-	it( 'should update when Angie becomes available after mount', () => {
+	it( 'should update when the Angie plugin becomes available after mount', async () => {
 		// Arrange.
-		mockIsAngieAvailable.mockReturnValue( false );
+		mockIsAngiePluginAvailable.mockReturnValue( false );
+		let resolveWait: ( value: boolean ) => void = () => undefined;
+		mockWaitForAngiePluginAvailable.mockReturnValue(
+			new Promise< boolean >( ( resolve ) => {
+				resolveWait = resolve;
+			} )
+		);
 
 		const { result } = renderHook( () => useIsAngieAvailable() );
-
 		expect( result.current ).toBe( false );
 
 		// Act.
-		mockIsAngieAvailable.mockReturnValue( true );
-
-		act( () => {
-			MockMutationObserver.instances[ 0 ]?.trigger();
+		await act( async () => {
+			resolveWait( true );
 		} );
 
 		// Assert.
-		expect( result.current ).toBe( true );
-		expect( MockMutationObserver.instances[ 0 ]?.disconnect ).toHaveBeenCalled();
+		await waitFor( () => expect( result.current ).toBe( true ) );
+	} );
+
+	it( 'should ignore plugin becoming available after unmount', async () => {
+		// Arrange.
+		mockIsAngiePluginAvailable.mockReturnValue( false );
+		let resolveWait: ( value: boolean ) => void = () => undefined;
+		mockWaitForAngiePluginAvailable.mockReturnValue(
+			new Promise< boolean >( ( resolve ) => {
+				resolveWait = resolve;
+			} )
+		);
+
+		const { result, unmount } = renderHook( () => useIsAngieAvailable() );
+
+		// Act.
+		unmount();
+		await act( async () => {
+			resolveWait( true );
+		} );
+
+		// Assert.
+		expect( result.current ).toBe( false );
 	} );
 } );

@@ -1,32 +1,25 @@
 import { useEffect, useState } from 'react';
-import { isAngieAvailable } from '@elementor/editor-mcp';
+import { isAngiePluginAvailable, waitForAngiePluginAvailable } from '@elementor/editor-mcp';
 
 export function useIsAngieAvailable(): boolean {
-	const [ available, setAvailable ] = useState( () => isAngieAvailable() );
+	const [ available, setAvailable ] = useState( () => isAngiePluginAvailable() );
 
 	useEffect( () => {
 		if ( available ) {
 			return;
 		}
 
-		if ( isAngieAvailable() ) {
-			setAvailable( true );
-			return;
-		}
+		let cancelled = false;
 
-		const observer = new MutationObserver( () => {
-			if ( isAngieAvailable() ) {
-				observer.disconnect();
+		void waitForAngiePluginAvailable().then( ( pluginAvailable ) => {
+			if ( ! cancelled && pluginAvailable ) {
 				setAvailable( true );
 			}
 		} );
 
-		observer.observe( document.body, {
-			childList: true,
-			subtree: true,
-		} );
-
-		return () => observer.disconnect();
+		return () => {
+			cancelled = true;
+		};
 	}, [ available ] );
 
 	return available;

@@ -1,5 +1,8 @@
 import { getSDK } from './utils/get-sdk';
+export type { AngieMcpSdk, LoadSidebarV2Options, WidgetConfig } from '@elementor-external/angie-sdk';
+export { LAYOUT_FLOATING_CHAT } from '@elementor-external/angie-sdk';
 export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
+export { createAngieMcpSdkInstance } from './utils/create-angie-mcp-sdk-instance';
 
 export {
 	McpServer,
@@ -9,6 +12,7 @@ export {
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 export { isAngieAvailable } from './utils/is-angie-available';
+export { isAngiePluginAvailable, waitForAngiePluginAvailable } from '@elementor-external/angie-sdk';
 export { isAngieSidebarOpen } from './utils/is-angie-sidebar-open';
 export * from './mcp-registry';
 export { createSampler } from './sampler';
