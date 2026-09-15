@@ -1,0 +1,22 @@
+---
+description: Every Elementor PR body must include a ## Video demo section
+alwaysApply: true
+---
+
+# Video demo section is mandatory on Elementor PRs
+
+Before running `gh pr create` or `gh pr edit` on `elementor/elementor` or
+`elementor/elementor-pro`, read [SKILL.md](mdc:.cursor/skills/video-proof-demo/SKILL.md)
+and author the `## Video demo` section yourself. This applies to `/pr`,
+`create-ship-deploy`, Cloud Agents, and manual PR creation.
+
+- Order in the body: `## Summary` → `## Test plan` → `## Video demo` → `## Jira`
+- Every UI PR gets one Where / Steps / Pass / Fail block; bugs add a `**Broken:**` caption line
+- Never script the broken behaviour — `playground-preview.yml` installs only the fixed PR build
+- No useful UI → keep the heading with `#skip_video` + one sentence why
+- Never leave placeholders and never ask the user to write the section
+- Steps use visible in-app labels only — no file paths, GitHub, or CI references
+
+The `## Video demo` section is read by the demo recorder, which drives Playwright
+against the PR's `playground-preview` deployment. Write it for that runner, not
+for human reviewers — they read Summary and Test plan.
