@@ -37,13 +37,23 @@ class Conversion_Banner {
 
 		add_filter( self::HELLO_THEME_CONFIG_FILTER, [ $this, 'suppress_hello_theme_banner' ] );
 
-		add_action( 'added_post_meta', [ $this, 'maybe_invalidate_pending_cache' ], 10, 4 );
-		add_action( 'updated_post_meta', [ $this, 'maybe_invalidate_pending_cache' ], 10, 4 );
-
 		add_action( 'current_screen', [ $this, 'maybe_register_banner_hooks' ] );
 	}
 
-	public function maybe_invalidate_pending_cache( $meta_id, $post_id, $meta_key, $meta_value ): void {
+	public static function register_cache_invalidation_hooks(): void {
+		static $hooks_registered = false;
+
+		if ( $hooks_registered ) {
+			return;
+		}
+
+		$hooks_registered = true;
+
+		add_action( 'added_post_meta', [ self::class, 'maybe_invalidate_pending_cache' ], 10, 4 );
+		add_action( 'updated_post_meta', [ self::class, 'maybe_invalidate_pending_cache' ], 10, 4 );
+	}
+
+	public static function maybe_invalidate_pending_cache( $meta_id, $post_id, $meta_key, $meta_value ): void {
 		if ( Document::BUILT_WITH_ELEMENTOR_META_KEY !== $meta_key ) {
 			return;
 		}

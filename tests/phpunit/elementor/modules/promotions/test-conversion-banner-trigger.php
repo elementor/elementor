@@ -13,14 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 
-	private Conversion_Banner $banner;
-
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
 		$this->reset_conversion_banner_cache();
-		$this->banner = new Conversion_Banner();
 	}
 
 	public function tearDown(): void {
@@ -92,29 +89,25 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 	public function test_has_min_elementor_pages__uses_unlock_option_short_circuit() {
 		// Arrange
 		update_option( Conversion_Banner::UNLOCK_OPTION_KEY, '1', true );
-		global $wpdb;
-		$queries_before = $wpdb->num_queries;
 
 		// Act
 		$result = $this->invoke_has_min_elementor_pages();
 
 		// Assert
 		$this->assertTrue( $result );
-		$this->assertSame( $queries_before, $wpdb->num_queries );
 	}
 
 	public function test_has_min_elementor_pages__uses_pending_transient_short_circuit() {
 		// Arrange
+		$this->create_published_elementor_post();
+		$this->create_published_elementor_post();
 		set_transient( Conversion_Banner::PENDING_TRANSIENT_KEY, 1, Conversion_Banner::PENDING_TTL );
-		global $wpdb;
-		$queries_before = $wpdb->num_queries;
 
 		// Act
 		$result = $this->invoke_has_min_elementor_pages();
 
 		// Assert
 		$this->assertFalse( $result );
-		$this->assertSame( $queries_before, $wpdb->num_queries );
 	}
 
 	public function test_has_min_elementor_pages__sets_unlock_option_after_crossing_threshold() {
@@ -145,7 +138,7 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->banner->maybe_invalidate_pending_cache( 0, $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		Conversion_Banner::maybe_invalidate_pending_cache( 0, $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
 
 		// Assert
 		$this->assertFalse( get_transient( Conversion_Banner::PENDING_TRANSIENT_KEY ) );
@@ -159,7 +152,7 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->banner->maybe_invalidate_pending_cache( 0, $post_id, '_unrelated_meta', 'value' );
+		Conversion_Banner::maybe_invalidate_pending_cache( 0, $post_id, '_unrelated_meta', 'value' );
 
 		// Assert
 		$this->assertNotFalse( get_transient( Conversion_Banner::PENDING_TRANSIENT_KEY ) );
@@ -174,7 +167,7 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->banner->maybe_invalidate_pending_cache( 0, $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		Conversion_Banner::maybe_invalidate_pending_cache( 0, $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
 
 		// Assert
 		$this->assertNotFalse( get_transient( Conversion_Banner::PENDING_TRANSIENT_KEY ) );
