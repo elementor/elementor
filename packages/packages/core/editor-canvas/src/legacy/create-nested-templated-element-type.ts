@@ -188,10 +188,7 @@ export function createNestedTemplatedElementView( {
 		_notifyStylesChanged() {
 			const styles = this.model.get( 'styles' );
 
-			if (
-				this._lastRenderedStyles !== STYLES_REFERENCE_UNTRACKED &&
-				styles === this._lastRenderedStyles
-			) {
+			if ( this._lastRenderedStyles !== STYLES_REFERENCE_UNTRACKED && styles === this._lastRenderedStyles ) {
 				return;
 			}
 
