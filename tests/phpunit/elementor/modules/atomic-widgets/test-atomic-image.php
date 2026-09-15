@@ -68,15 +68,13 @@ class Test_Atomic_Image extends Elementor_Test_Base {
 		$this->assertNull( $notice_control );
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
-	 */
 	public function test__io_promotion_notice_is_hidden_when_plugin_is_active(): void {
 		// Arrange.
-		define( 'IMAGE_OPTIMIZATION_VERSION', '1.0.0' );
-
 		$this->act_as_admin();
+		$force_image_optimization_active = static function () {
+			return [ 'image-optimization/image-optimization.php' ];
+		};
+		add_filter( 'pre_option_active_plugins', $force_image_optimization_active );
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
 			'id' => 'e8e55a1',
@@ -90,6 +88,33 @@ class Test_Atomic_Image extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertNull( $notice_control );
+
+		// Cleanup.
+		remove_filter( 'pre_option_active_plugins', $force_image_optimization_active );
+	}
+
+	public function test__io_promotion_notice_shows_one_install_copy_when_one_subscription_and_not_installed(): void {
+		// Arrange.
+		$this->act_as_admin();
+		update_option( 'elementor_one_access_token', 'test-token' );
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Image::get_element_type(),
+		] );
+
+		// Act.
+		$notice_control = $this->find_io_notice_control( $widget_instance );
+
+		// Assert.
+		$this->assertNotNull( $notice_control );
+		$this->assertSame( 'Install now', $notice_control->get_props()['buttonText'] );
+		$this->assertStringContainsString( 'plg_campaign=io-plg-atoms-one-install', $notice_control->get_props()['buttonUrl'] );
+
+		// Cleanup.
+		delete_option( 'elementor_one_access_token' );
 	}
 
 	private function find_io_notice_control( $widget_instance ) {
