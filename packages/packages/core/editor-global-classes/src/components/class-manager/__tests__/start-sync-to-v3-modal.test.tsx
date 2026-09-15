@@ -13,6 +13,7 @@ const renderModal = ( props = {} ) => {
 		classId: 'class-1',
 		onExternalClose: jest.fn(),
 		onConfirm: jest.fn(),
+		onSuppressMessage: jest.fn(),
 	};
 
 	return {
@@ -73,6 +74,34 @@ describe( 'StartSyncToV3Modal', () => {
 
 		expect( props.onExternalClose ).toHaveBeenCalled();
 		expect( props.onConfirm ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should suppress the message when confirming with "Don\'t show again" checked', () => {
+		const { props } = renderModal();
+
+		fireEvent.click( screen.getByRole( 'checkbox' ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Sync to Global Fonts' } ) );
+
+		expect( props.onSuppressMessage ).toHaveBeenCalledTimes( 1 );
+		expect( props.onConfirm ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should not suppress the message when confirming without "Don\'t show again" checked', () => {
+		const { props } = renderModal();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Sync to Global Fonts' } ) );
+
+		expect( props.onSuppressMessage ).not.toHaveBeenCalled();
+		expect( props.onConfirm ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should not suppress the message when cancelling with "Don\'t show again" checked', () => {
+		const { props } = renderModal();
+
+		fireEvent.click( screen.getByRole( 'checkbox' ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+		expect( props.onSuppressMessage ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should not track when modal is closed', () => {
