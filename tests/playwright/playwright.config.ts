@@ -50,6 +50,7 @@ export default defineConfig( {
 		actionTimeout: timeouts.action,
 		navigationTimeout: timeouts.navigation,
 		trace: 'retain-on-failure',
+		// Passing tests delete this clip. Editor-bug proofs use describeVideoProof() so video stays on.
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		baseURL: process.env.BASE_URL ||
 			( ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) )
