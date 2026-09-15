@@ -292,7 +292,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return null;
 		}
 
-		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
 			return null;
 		}
 
