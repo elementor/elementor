@@ -247,6 +247,44 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
 
+  video-proof:
+    name: Playwright video proof
+    needs: Playwright
+    if: |
+      always() &&
+      needs.Playwright.result == 'success' &&
+      inputs.pull_request_number != ''
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Download Playwright test-results
+        continue-on-error: true
+        uses: actions/download-artifact@v8
+        with:
+          pattern: playwright-test-results-*
+          path: playwright-shard-results
+          merge-multiple: true
+      - name: Collect clips and comment
+        env:
+          PR_NUMBER: ${{ inputs.pull_request_number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PLAYWRIGHT_RESULTS_DIR: playwright-shard-results
+          PLAYWRIGHT_VIDEO_PROOF_DIR: playwright-video-proof
+        run: bash .github/scripts/post-playwright-video-proof.sh
+      - name: Upload video-proof artifact
+        if: hashFiles('playwright-video-proof/**/*.webm') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-video-proof
+          path: playwright-video-proof/
+          if-no-files-found: ignore
+          retention-days: 7
+
   Build-report:
     needs: Playwright
     runs-on: ubuntu-22.04

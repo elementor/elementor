@@ -27,6 +27,25 @@ This command runs the "default" test package.
 If you want to run a different package: `npm run test:playwright -- --grep="@nested-tabs"` or
 `TEST_SUITE=@nested-tabs npm run test:playwright`
 
+## Video proof (editor bugs)
+
+CI keeps Playwright video only when a test fails (`retain-on-failure`). For an editor-bug PR, wrap the new coverage with `describeVideoProof()` from `tests/playwright/video-proof.ts` so the clip is kept on pass.
+
+After a green Playwright job, CI comments on the PR with a link to the `playwright-video-proof` artifact (GitHub cannot play `.webm` in the PR body).
+
+```ts
+import { parallelTest as test } from '../parallelTest';
+import { describeVideoProof } from '../video-proof';
+
+describeVideoProof( 'ED-25568 empty message accepts a paragraph', () => {
+	test( 'adds a paragraph into the empty success message', async ( { page } ) => {
+		// …
+	} );
+} );
+```
+
+Adjust the relative import to the test file.
+
 ## Troubleshooting Guide
 Problem: When running any test locally when we update config to a local site from localhost8888.
 
