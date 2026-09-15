@@ -129,6 +129,11 @@ class V3_Style_Mapper {
 			];
 
 			if ( ! $this->dispatch_rule( $ctx, $meta, $rule ) ) {
+				if ( $meta->is_map_driven() ) {
+					$this->report_unsupported_property( $ctx, $meta, $rule );
+					continue;
+				}
+
 				$ctx->mark_unmapped( $this->unmapped_serializer->serialize_declaration(
 					$breakpoint,
 					$state,
@@ -151,13 +156,37 @@ class V3_Style_Mapper {
 		return false;
 	}
 
-	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
-		$overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type )
-			?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-		$controls = $widget_config['controls'] ?? [];
-		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+	private function report_unsupported_property( V3_Conversion_Context $ctx, V3_Context_Meta $meta, array $rule ): void {
+		$property = (string) ( $rule['property'] ?? '' );
+		$state = $rule['state'] ?? null;
 
-		return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
+		$ctx->warn_structured(
+			sprintf(
+				/* translators: 1: CSS property, 2: widget type */
+				__( 'CSS property %1$s is not supported by the %2$s map and was dropped.', 'elementor' ),
+				$property,
+				$meta->widget_type()
+			),
+			[
+				'code' => 'unsupported_css_property',
+				'style_target' => null,
+				'property' => '' !== $property ? $property : null,
+				'state' => is_string( $state ) ? $state : null,
+				'reason' => 'no_map_target',
+			]
+		);
+	}
+
+	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
+		$map_overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );
+		$overrides = $map_overrides ?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$is_map_driven = null !== $map_overrides;
+		$controls = $widget_config['controls'] ?? [];
+		$generic_index = $is_map_driven
+			? []
+			: V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+
+		return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index, $is_map_driven );
 	}
 
 	private function finalize( V3_Conversion_Context $ctx, V3_Context_Meta $meta ): array {
