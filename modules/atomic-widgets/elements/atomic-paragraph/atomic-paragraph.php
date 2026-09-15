@@ -40,7 +40,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'paragraph', 'text', 'content' ];
 	}
 
 	public function get_icon() {
