@@ -24,6 +24,7 @@ import {
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
 const FILTER_INDICATOR_OFFSET = 4;
+const FILTER_TOOLTIP_ENTER_DELAY = 0;
 const LIBRARY_FILTER_ORDER = {
 	regular: 0,
 	solid: 1,
@@ -87,7 +88,12 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 
 	return (
 		<>
-			<Tooltip title={ __( 'Filter by library', 'elementor' ) } placement="top">
+			<Tooltip
+				title={ __( 'Filter by library', 'elementor' ) }
+				placement="top"
+				enterDelay={ FILTER_TOOLTIP_ENTER_DELAY }
+				enterNextDelay={ FILTER_TOOLTIP_ENTER_DELAY }
+			>
 				<ToggleButton
 					aria-label={ filterButtonLabel }
 					value="filter"
