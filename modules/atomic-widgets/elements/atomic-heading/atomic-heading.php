@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Has_Ally_Promotion_Notice;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
@@ -25,6 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
+	use Has_Ally_Promotion_Notice;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
@@ -57,7 +59,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		return array_merge( [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -74,18 +76,19 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
-		];
+		], static::get_ally_promotion_notice_prop_schema() );
 	}
 
 	protected function define_atomic_controls(): array {
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_id( 'content' )
-			->set_items( [
+			->set_items( array_filter( [
 				Inline_Editing_Control::bind_to( 'title' )
 					->set_placeholder( __( 'Type your title here', 'elementor' ) )
 					->set_label( __( 'Title', 'elementor' ) ),
-			] );
+				$this->get_ally_promotion_notice_control(),
+			] ) );
 
 		return [
 			$content_section,
