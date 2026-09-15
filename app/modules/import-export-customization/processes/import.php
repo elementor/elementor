@@ -9,6 +9,7 @@ use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
@@ -786,6 +787,8 @@ class Import {
 
 			if ( isset( $data['elements'] ) ) {
 				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
+				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
 
@@ -801,6 +804,17 @@ class Import {
 
 			$document->save( $data );
 		}
+	}
+
+	private function merge_atomic_prop_remap_warnings( array $warnings ): void {
+		if ( empty( $warnings ) ) {
+			return;
+		}
+
+		$existing = $this->runners_import_metadata['atomic_prop_remap']['warnings'] ?? [];
+		$this->runners_import_metadata['atomic_prop_remap'] = [
+			'warnings' => array_merge( $existing, $warnings ),
+		];
 	}
 
 	private function update_instance_data_in_import_session_option() {
