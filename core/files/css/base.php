@@ -139,6 +139,10 @@ abstract class Base extends Base_File {
 
 		$content = $this->get_content();
 
+		if ( $this->is_optimized_css_files_active() ) {
+			$meta['hash'] = $this->generate_content_hash( $content );
+		}
+
 		if ( empty( $content ) ) {
 			$meta['status'] = self::CSS_STATUS_EMPTY;
 			$meta['css'] = '';
