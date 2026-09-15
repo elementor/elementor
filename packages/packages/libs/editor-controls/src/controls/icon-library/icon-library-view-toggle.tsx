@@ -84,15 +84,13 @@ export const IconLibraryViewToggle = ( { value, onChange }: IconLibraryViewToggl
 	);
 };
 
-const ViewMenuItem = ( {
-	label,
-	selected,
-	onClick,
-}: {
+type ViewMenuItemProps = {
 	label: string;
 	selected: boolean;
 	onClick: () => void;
-} ) => (
+};
+
+const ViewMenuItem = ( { label, selected, onClick }: ViewMenuItemProps ) => (
 	<MenuItem role="menuitemradio" aria-checked={ selected } selected={ selected } onClick={ onClick }>
 		<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
 			<Typography variant="caption" sx={ { flex: 1 } }>

@@ -93,9 +93,9 @@ describe( 'IconLibraryPopover', () => {
 		renderPopover();
 
 		// Assert.
-		expect( screen.getByTestId( 'icon-library-grid' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
-		expect( screen.queryByTestId( 'icon-library-list' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'listbox' ) ).not.toBeInTheDocument();
 		expect( jest.mocked( useVirtualizer ).mock.calls.at( -1 )?.[ 0 ].count ).toBe(
 			Math.ceil( icons.length / ICON_LIBRARY_GRID_COLUMNS )
 		);
@@ -111,7 +111,7 @@ describe( 'IconLibraryPopover', () => {
 		renderPopover();
 
 		// Assert.
-		expect( screen.getByTestId( 'icon-library-list' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
