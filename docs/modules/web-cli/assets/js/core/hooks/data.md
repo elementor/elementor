@@ -2,10 +2,10 @@
 *  **Description**: `$e.hooks.data` API is a manager of _DATA_ hooks that allows you to create custom **data manipulation** 
 of *elementor* data model, and create dependencies. The _hooks_ are attached
 to  `$e.commands`, and each **hook** is being fired _before/after/catch_ a command, that's being executed by `$e.run()`
-*  **Location**: *core/common/assets/js/api/core/hooks/data.js*
+*  **Location**: *modules/web-cli/assets/js/core/hooks/data.js*
 *  **Parent**: [`{HooksBase}`](#HooksBase)
 *  **Methods**: Please look at parent: `{HooksBase}` for all the methods.
-* ***Important***: All hooks should be created by extending [`{( $e.modules.hookData )}`](#e-modules-hooks-data) located at: `core/common/assets/js/api/modules/hooks/data/`.
+* ***Important***: All hooks should be created by extending [`{( $e.modules.hookData )}`](#e-modules-hooks-data) located at: `modules/web-cli/assets/js/modules/hooks/data/`.
 	
 	| Class                             | Description                                                                                            
 	|-----------------------------------|--------------------------------------------------------------------------------
