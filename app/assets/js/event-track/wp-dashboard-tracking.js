@@ -224,7 +224,7 @@ export default class WpDashboardTracking {
 	}
 
 	static isNavigatingAwayFromElementor( targetUrl ) {
-		if ( ! targetUrl ) {
+		if ( ! targetUrl || 'string' !== typeof targetUrl ) {
 			return false;
 		}
 
@@ -233,6 +233,26 @@ export default class WpDashboardTracking {
 		}
 
 		return ! this.isElementorPage( targetUrl );
+	}
+
+	/**
+	 * Get a form's submission URL as a string.
+	 *
+	 * `HTMLFormElement.action` is normally a string, but it gets shadowed by a form control
+	 * (e.g. `<input name="action">`) when the form contains a named element called "action" -
+	 * a common WordPress admin-post/admin-ajax pattern. In that case `form.action` resolves to
+	 * that element instead of the URL, so we fall back to the raw attribute.
+	 *
+	 * @param {HTMLFormElement} form
+	 *
+	 * @return {string}
+	 */
+	static getFormActionUrl( form ) {
+		if ( 'string' === typeof form.action ) {
+			return form.action;
+		}
+
+		return form.getAttribute( 'action' ) || window.location.href;
 	}
 
 	static isLinkOpeningInNewTab( link ) {
@@ -263,10 +283,12 @@ export default class WpDashboardTracking {
 
 		const handleFormSubmit = ( event ) => {
 			const form = event.target;
-			if ( form.action ) {
-				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( form.action ) ) {
+			const targetUrl = this.getFormActionUrl( form );
+
+			if ( targetUrl ) {
+				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( targetUrl ) ) {
 					this.trackSessionEnd( 'navigate_away' );
-				} else if ( this.isElementorPage( form.action ) ) {
+				} else if ( this.isElementorPage( targetUrl ) ) {
 					this.isNavigatingToElementor = true;
 				}
 			}
