@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	PopoverBody,
 	PopoverHeader,
@@ -18,8 +18,10 @@ import {
 	filterFontAwesome7Icons,
 	findFontAwesome7Icon,
 	type FontAwesome7Icon,
+	type FontAwesome7LibraryFilter,
 } from './font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './font-awesome-glyph';
+import { IconLibraryFilter } from './icon-library-filter';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
 export const ICON_LIBRARY_POPOVER_WIDTH = 300;
@@ -60,9 +62,13 @@ export const IconLibraryPopover = ( {
 		handleChange: handleSearchChange,
 		setImmediateValue: setSearchValue,
 	} = useDebounceState( { delay: ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY } );
+	const [ activeLibraries, setActiveLibraries ] = useState< FontAwesome7LibraryFilter >( [] );
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
 
-	const items = useMemo( () => createIconLibraryItems( icons, searchValue ), [ icons, searchValue ] );
+	const items = useMemo(
+		() => createIconLibraryItems( icons, searchValue, activeLibraries ),
+		[ activeLibraries, icons, searchValue ]
+	);
 	const selectedValue = useMemo(
 		() => findFontAwesome7Icon( icons, selectedIconClass, selectedIconLibrary )?.id,
 		[ icons, selectedIconClass, selectedIconLibrary ]
@@ -70,6 +76,7 @@ export const IconLibraryPopover = ( {
 
 	const handleClose = () => {
 		setSearchValue( '' );
+		setActiveLibraries( [] );
 		onClose();
 	};
 
@@ -98,13 +105,16 @@ export const IconLibraryPopover = ( {
 				icon={ <ComponentsIcon fontSize="tiny" /> }
 				sx={ { pl: ICON_LIBRARY_INLINE_SPACING, pr: 0.5 } }
 			/>
-			<SearchField
-				value={ searchInputValue }
-				onSearch={ handleSearchChange }
-				placeholder={ __( 'Search', 'elementor' ) }
-				id="icon-library-search"
-				sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: 1 } }
-			/>
+			<Stack direction="row" alignItems="center" gap={ 1 } sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: 1 } }>
+				<SearchField
+					value={ searchInputValue }
+					onSearch={ handleSearchChange }
+					placeholder={ __( 'Search', 'elementor' ) }
+					id="icon-library-search"
+					sx={ { flex: 1, px: 0, pb: 0 } }
+				/>
+				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
+			</Stack>
 			<Divider />
 			<Box sx={ { flex: 1, overflow: 'auto', minHeight: 0 } }>
 				<IconLibraryContent
@@ -112,6 +122,7 @@ export const IconLibraryPopover = ( {
 					items={ items }
 					selectedValue={ selectedValue }
 					searchValue={ searchValue }
+					isCatalogAvailable={ icons.length > 0 }
 					onSelect={ handleSelect }
 					onClose={ handleClose }
 					onClearSearch={ handleClearSearch }
@@ -126,6 +137,7 @@ type IconLibraryContentProps = {
 	items: IconLibraryItem[];
 	selectedValue: string | undefined;
 	searchValue: string;
+	isCatalogAvailable: boolean;
 	onSelect: ( id: string ) => void;
 	onClose: () => void;
 	onClearSearch: () => void;
@@ -136,6 +148,7 @@ const IconLibraryContent = ( {
 	items,
 	selectedValue,
 	searchValue,
+	isCatalogAvailable,
 	onSelect,
 	onClose,
 	onClearSearch,
@@ -153,7 +166,13 @@ const IconLibraryContent = ( {
 			onClose={ onClose }
 			itemHeight={ ICON_LIBRARY_ROW_HEIGHT }
 			menuItemContentTemplate={ IconLibraryRow }
-			noResultsComponent={ <IconLibraryEmptyState searchValue={ searchValue } onClear={ onClearSearch } /> }
+			noResultsComponent={
+				<IconLibraryEmptyState
+					searchValue={ searchValue }
+					isCatalogAvailable={ isCatalogAvailable }
+					onClear={ onClearSearch }
+				/>
+			}
 			data-testid="icon-library-list"
 		/>
 	);
@@ -165,8 +184,16 @@ const IconLibraryLoadingState = () => (
 	</Stack>
 );
 
-const IconLibraryEmptyState = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => {
-	if ( searchValue.trim() === '' ) {
+const IconLibraryEmptyState = ( {
+	searchValue,
+	isCatalogAvailable,
+	onClear,
+}: {
+	searchValue: string;
+	isCatalogAvailable: boolean;
+	onClear: () => void;
+} ) => {
+	if ( ! isCatalogAvailable ) {
 		return <CatalogUnavailable />;
 	}
 
@@ -218,17 +245,25 @@ const NoResults = ( { searchValue, onClear }: { searchValue: string; onClear: ()
 		<Typography align="center" variant="subtitle2" color="text.secondary">
 			{ __( 'Sorry, nothing matched', 'elementor' ) }
 		</Typography>
-		<Typography align="center" variant="subtitle2" color="text.secondary" noWrap sx={ { maxWidth: '80%' } }>
-			&ldquo;{ searchValue }&rdquo;.
-		</Typography>
-		<Link color="secondary" variant="caption" component="button" type="button" onClick={ onClear }>
-			{ __( 'Clear & try again', 'elementor' ) }
-		</Link>
+		{ searchValue ? (
+			<>
+				<Typography align="center" variant="subtitle2" color="text.secondary" noWrap sx={ { maxWidth: '80%' } }>
+					&ldquo;{ searchValue }&rdquo;.
+				</Typography>
+				<Link color="secondary" variant="caption" component="button" type="button" onClick={ onClear }>
+					{ __( 'Clear & try again', 'elementor' ) }
+				</Link>
+			</>
+		) : null }
 	</Stack>
 );
 
-const createIconLibraryItems = ( icons: FontAwesome7Icon[], searchValue: string ): IconLibraryItem[] =>
-	filterFontAwesome7Icons( icons, searchValue ).map( ( icon ) => ( {
+const createIconLibraryItems = (
+	icons: FontAwesome7Icon[],
+	searchValue: string,
+	libraries: FontAwesome7LibraryFilter
+): IconLibraryItem[] =>
+	filterFontAwesome7Icons( icons, searchValue, libraries ).map( ( icon ) => ( {
 		...icon,
 		type: 'item',
 		value: icon.id,

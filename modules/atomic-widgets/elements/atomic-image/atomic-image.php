@@ -38,7 +38,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'image', 'photo', 'picture' ];
 	}
 
 	public function get_icon() {

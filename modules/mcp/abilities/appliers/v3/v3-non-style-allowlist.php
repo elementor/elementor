@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -17,7 +19,11 @@ class V3_Non_Style_Allowlist {
 	 * @return array{allowed: array<string, mixed>, rejected: string[], error: \WP_Error|null}
 	 */
 	public static function filter( string $widget_type, array $settings ): array {
-		$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
+		$registry = V3_Widget_Map_Registry::instance();
+		$contract = $registry->get_validation_contract( $widget_type );
+		$allowed_keys = $registry->is_experiment_active() && null !== $contract
+			? array_keys( $contract['settings'] )
+			: V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
 		$allowed_lookup = array_fill_keys( $allowed_keys, true );
 
 		$allowed = [];
