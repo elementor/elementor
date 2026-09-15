@@ -23,6 +23,11 @@ class V3_Conversion_Context {
 	private array $warnings = [];
 
 	/**
+	 * @var array<int, array{code: string, style_target: ?string, property: ?string, state: ?string, reason: string}>
+	 */
+	private array $warning_details = [];
+
+	/**
 	 * @var array<string, array{
 	 *     prefix: string,
 	 *     breakpoint: string,
@@ -77,6 +82,29 @@ class V3_Conversion_Context {
 		$this->warnings[] = $message;
 	}
 
+	/**
+	 * Records a structured warning alongside its human-readable message. Used by the
+	 * map-driven path to emit `invalid_resolved_value` / `unsupported_css_property`
+	 * details that {@see \Elementor\Modules\Mcp\Abilities\Build_Composition_Ability}
+	 * and {@see \Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability} propagate
+	 * to callers in the `warning_details` field.
+	 *
+	 * @param array{code: string, style_target?: ?string, property?: ?string, state?: ?string, reason: string} $detail
+	 */
+	public function warn_structured( string $message, array $detail ): void {
+		if ( '' !== $message ) {
+			$this->warnings[] = $message;
+		}
+
+		$this->warning_details[] = [
+			'code' => (string) ( $detail['code'] ?? '' ),
+			'style_target' => $detail['style_target'] ?? null,
+			'property' => $detail['property'] ?? null,
+			'state' => $detail['state'] ?? null,
+			'reason' => (string) ( $detail['reason'] ?? '' ),
+		];
+	}
+
 	public function settings_patch(): array {
 		return $this->settings_patch;
 	}
@@ -93,6 +121,13 @@ class V3_Conversion_Context {
 	 */
 	public function warnings(): array {
 		return $this->warnings;
+	}
+
+	/**
+	 * @return array<int, array{code: string, style_target: ?string, property: ?string, state: ?string, reason: string}>
+	 */
+	public function warning_details(): array {
+		return $this->warning_details;
 	}
 
 	/**

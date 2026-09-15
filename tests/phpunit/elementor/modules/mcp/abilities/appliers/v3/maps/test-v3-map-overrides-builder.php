@@ -29,14 +29,43 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertSame(
-			[
-				'color' => [
-					'setting' => 'title_color',
-					'resolver' => 'color',
+		$this->assertSame( 'title_color', $result['color']['setting'] );
+		$this->assertSame( 'color', $result['color']['resolver'] );
+		$this->assertArrayHasKey( '_map_descriptor', $result['color'] );
+	}
+
+	public function test_from_style_targets__attaches_target_alias() {
+		$style_targets = [
+			'heading' => [
+				'css_properties' => [
+					'color' => [
+						'default' => Style_Control_Target::control( 'title_color', 'color' ),
+					],
 				],
 			],
-			$result
+		];
+
+		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
+
+		$this->assertSame( 'heading', $result['color']['_map_target'] );
+	}
+
+	public function test_from_style_targets__attaches_source_descriptor_for_validator() {
+		$style_targets = [
+			'heading' => [
+				'css_properties' => [
+					'color' => [
+						'default' => Style_Control_Target::control( 'title_color', 'color' ),
+					],
+				],
+			],
+		];
+
+		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
+
+		$this->assertSame(
+			Style_Control_Target::control( 'title_color', 'color' ),
+			$result['color']['_map_descriptor']
 		);
 	}
 

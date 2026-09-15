@@ -9,6 +9,8 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters\Simple_Sett
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters\Typography_Group_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use PHPUnit\Framework\TestCase;
 
@@ -116,6 +118,58 @@ class Test_V3_Converters extends TestCase {
 		$this->assertTrue( $converter->is_supported( $this->rule( 'gap', '12px' ), $meta ) );
 		$this->assertTrue( $converter->convert( $ctx, $this->rule( 'gap', '12px' ), $meta ) );
 		$this->assertSame( [ 'unit' => 'px', 'size' => 12.0 ], $ctx->settings_patch()['extra_gap'] );
+	}
+
+	public function test_simple_setting_converter__map_backed_override_accepts_valid_patch() {
+		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
+			'heading' => [
+				'css_properties' => [
+					'color' => [ 'default' => Style_Control_Target::control( 'title_color', 'color' ) ],
+				],
+			],
+		] );
+
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$meta = $this->meta( $overrides );
+		$ctx = new V3_Conversion_Context();
+
+		$converter->convert( $ctx, $this->rule( 'color', '#111' ), $meta );
+
+		$this->assertSame( [ 'title_color' => '#111' ], $ctx->settings_patch() );
+		$this->assertSame( [], $ctx->warning_details() );
+	}
+
+	public function test_simple_setting_converter__map_backed_override_drops_invalid_resolved_value() {
+		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
+			'heading' => [
+				'css_properties' => [
+					'font-size' => [
+						'default' => [
+							'kind' => Style_Control_Target::KIND_SIMPLE,
+							'resolver' => 'dimension',
+							'responsive' => false,
+							'destinations' => [
+								[ 'setting' => 'title_size', 'shape' => 'string', 'resolver' => 'dimension' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$meta = $this->meta( $overrides, [], [ 'title_size' => [] ] );
+		$ctx = new V3_Conversion_Context();
+
+		$result = $converter->convert( $ctx, $this->rule( 'font-size', '20px' ), $meta );
+
+		$this->assertTrue( $result, 'Converter must consume the declaration so it does not fall to custom_css.' );
+		$this->assertSame( [], $ctx->settings_patch(), 'Invalid patches must not be merged atomically.' );
+		$details = $ctx->warning_details();
+		$this->assertCount( 1, $details );
+		$this->assertSame( 'invalid_resolved_value', $details[0]['code'] );
+		$this->assertSame( 'heading', $details[0]['style_target'] );
+		$this->assertSame( 'font-size', $details[0]['property'] );
 	}
 
 	public function test_generic_index_converter__drops_when_non_desktop_variant_missing() {

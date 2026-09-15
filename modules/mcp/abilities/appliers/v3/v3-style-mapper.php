@@ -59,7 +59,7 @@ class V3_Style_Mapper {
 	 * @param string $css_string
 	 * @param string $widget_type
 	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
-	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[]}
+	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], warning_details: array<int, array{code: string, style_target: ?string, property: ?string, state: ?string, reason: string}>}
 	 */
 	public function apply( string $css_string, string $widget_type, array $widget_config ): array {
 		$css_string = trim( $css_string );
@@ -180,6 +180,7 @@ class V3_Style_Mapper {
 			'settings_patch' => $settings_patch,
 			'unmapped_css' => $this->unmapped_serializer->join( $ctx->unmapped_parts() ),
 			'warnings' => $ctx->warnings(),
+			'warning_details' => $ctx->warning_details(),
 		];
 	}
 
@@ -188,6 +189,7 @@ class V3_Style_Mapper {
 			'settings_patch' => [],
 			'unmapped_css' => '',
 			'warnings' => [],
+			'warning_details' => [],
 		];
 	}
 

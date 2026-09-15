@@ -32,7 +32,7 @@ class V3_Map_Overrides_Builder {
 	public static function from_style_targets( array $style_targets ): array {
 		$overrides = [];
 
-		foreach ( $style_targets as $target ) {
+		foreach ( $style_targets as $alias => $target ) {
 			$css_properties = $target['css_properties'] ?? [];
 
 			if ( ! is_array( $css_properties ) ) {
@@ -45,7 +45,7 @@ class V3_Map_Overrides_Builder {
 				}
 
 				foreach ( $states as $state => $descriptor ) {
-					$entry = self::translate_descriptor( (string) $property, (string) $state, $descriptor );
+					$entry = self::translate_descriptor( (string) $alias, (string) $property, (string) $state, $descriptor );
 
 					if ( null !== $entry ) {
 						$overrides[ $entry['match_key'] ] = $entry['override'];
@@ -62,7 +62,7 @@ class V3_Map_Overrides_Builder {
 	 *
 	 * @return array{match_key: string, override: array{setting: string, resolver: string, responsive?: bool}}|null
 	 */
-	private static function translate_descriptor( string $property, string $state, $descriptor ): ?array {
+	private static function translate_descriptor( string $target, string $property, string $state, $descriptor ): ?array {
 		if ( ! is_array( $descriptor ) ) {
 			return null;
 		}
@@ -80,6 +80,8 @@ class V3_Map_Overrides_Builder {
 		$override = [
 			'setting' => (string) $destination['setting'],
 			'resolver' => (string) $destination['resolver'],
+			'_map_descriptor' => $descriptor,
+			'_map_target' => $target,
 		];
 
 		if ( ! empty( $descriptor['responsive'] ) ) {
