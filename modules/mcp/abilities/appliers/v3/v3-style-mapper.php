@@ -59,7 +59,7 @@ class V3_Style_Mapper {
 	 * @param string $css_string
 	 * @param string $widget_type
 	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
-	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], warning_details: array<int, array{code: string, style_target: ?string, property: ?string, state: ?string, reason: string}>}
+	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[]}
 	 */
 	public function apply( string $css_string, string $widget_type, array $widget_config ): array {
 		$css_string = trim( $css_string );
@@ -158,22 +158,13 @@ class V3_Style_Mapper {
 
 	private function report_unsupported_property( V3_Conversion_Context $ctx, V3_Context_Meta $meta, array $rule ): void {
 		$property = (string) ( $rule['property'] ?? '' );
-		$state = $rule['state'] ?? null;
 
-		$ctx->warn_structured(
+		$ctx->warn(
 			sprintf(
-				/* translators: 1: CSS property, 2: widget type */
-				__( 'CSS property %1$s is not supported by the %2$s map and was dropped.', 'elementor' ),
-				$property,
-				$meta->widget_type()
-			),
-			[
-				'code' => 'unsupported_css_property',
-				'style_target' => null,
-				'property' => '' !== $property ? $property : null,
-				'state' => is_string( $state ) ? $state : null,
-				'reason' => 'no_map_target',
-			]
+				/* translators: %s: CSS property name */
+				__( 'CSS property %s is not supported by this Elementor widget and was skipped.', 'elementor' ),
+				$property
+			)
 		);
 	}
 
@@ -209,7 +200,6 @@ class V3_Style_Mapper {
 			'settings_patch' => $settings_patch,
 			'unmapped_css' => $this->unmapped_serializer->join( $ctx->unmapped_parts() ),
 			'warnings' => $ctx->warnings(),
-			'warning_details' => $ctx->warning_details(),
 		];
 	}
 
@@ -218,7 +208,6 @@ class V3_Style_Mapper {
 			'settings_patch' => [],
 			'unmapped_css' => '',
 			'warnings' => [],
-			'warning_details' => [],
 		];
 	}
 

@@ -254,7 +254,7 @@ class V3_Widget_Map_Registry {
 
 	/**
 	 * @param array<string, mixed> $compiled_map
-	 * @return array{targets: array<string, string[]>}
+	 * @return array<string, string[]>
 	 */
 	private function build_style_targets_shape( array $compiled_map ): array {
 		$targets = [];
@@ -267,6 +267,6 @@ class V3_Widget_Map_Registry {
 			$targets[ $alias ] = array_values( array_map( 'strval', array_keys( $target['css_properties'] ) ) );
 		}
 
-		return [ 'targets' => $targets ];
+		return $targets;
 	}
 }

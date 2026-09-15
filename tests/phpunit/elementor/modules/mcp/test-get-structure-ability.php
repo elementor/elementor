@@ -375,7 +375,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			[ 'title' => 'Hello' ],
 			$child['settings']
 		);
-		$this->assertSame( [], $child['styles'] );
+		$this->assertSame( [ 'css' => '' ], $child['styles'] );
 	}
 
 	public function test_execute__styles_empty_when_only_global_class_refs() {
@@ -421,7 +421,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			[ 'classes' => [ 'g-abc' ] ],
 			$node['settings']
 		);
-		$this->assertSame( [], $node['styles'] );
+		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
 	public function test_execute__serializes_realistic_local_style_id_with_e_prefix() {
@@ -751,7 +751,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$node = $result['elements'][0];
 		$this->assertArrayNotHasKey( 'version', $node );
 		$this->assertEquals( (object) [], $node['settings'] );
-		$this->assertEquals( (object) [], $node['styles'] );
+		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
 	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
@@ -785,10 +785,10 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$node = $result['elements'][0];
 		$this->assertArrayNotHasKey( 'version', $node );
-		$this->assertArrayNotHasKey( 'styles', $node );
+		$this->assertArrayNotHasKey( 'style', $node );
 		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
-		$this->assertStringContainsString( 'color: #222222;', $node['style'] );
-		$this->assertStringContainsString( 'filter: blur(2px);', $node['style'] );
+		$this->assertStringContainsString( 'color: #222222;', $node['styles']['css'] );
+		$this->assertStringContainsString( 'filter: blur(2px);', $node['styles']['css'] );
 	}
 
 	public function test_execute__omits_version_for_unknown_type() {

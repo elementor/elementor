@@ -93,12 +93,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$subtrees = $compiled['elements'];
 		$warnings = $compiled['warnings'];
-		$warning_details = $compiled['warning_details'] ?? [];
 		$dom = $compiled['dom'];
 		$xml_parser = $compiled['xml_parser'];
 
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $warning_details, $mode, [] );
+			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
@@ -109,7 +108,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $warning_details, $mode, $persisted['removed_ids'] );
+		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
 	}
 
 	private function get_ability_description(): string {
@@ -142,21 +141,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
 					'description' => 'Non-fatal notices, e.g. props skipped because the target widget does not support them, or CSS that fell back to custom_css. The composition was still built.',
-				],
-				'warning_details' => [
-					'type' => 'array',
-					'items' => [
-						'type' => 'object',
-						'properties' => [
-							'code' => [ 'type' => 'string' ],
-							'widget_type' => [ 'type' => 'string' ],
-							'style_target' => [ 'type' => 'string' ],
-							'property' => [ 'type' => 'string' ],
-							'state' => [ 'type' => 'string' ],
-							'reason' => [ 'type' => 'string' ],
-						],
-					],
-					'description' => 'Structured counterpart to warnings. Populated when the standardized V3 map path drops a declaration (e.g. invalid_resolved_value); each entry pinpoints the widget, style target, and CSS property that was skipped.',
 				],
 				'removed_element_ids' => [
 					'type' => 'array',
@@ -286,7 +270,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 		\DOMDocument $dom,
 		array $root_ids,
 		array $warnings,
-		array $warning_details,
 		string $mode,
 		array $removed_ids
 	): array {
@@ -303,10 +286,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
-		}
-
-		if ( ! empty( $warning_details ) ) {
-			$response['warning_details'] = $warning_details;
 		}
 
 		if ( self::MODE_REPLACE_CHILDREN === $mode ) {

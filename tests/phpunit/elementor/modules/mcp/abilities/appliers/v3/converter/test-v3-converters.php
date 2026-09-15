@@ -136,7 +136,7 @@ class Test_V3_Converters extends TestCase {
 		$converter->convert( $ctx, $this->rule( 'color', '#111' ), $meta );
 
 		$this->assertSame( [ 'title_color' => '#111' ], $ctx->settings_patch() );
-		$this->assertSame( [], $ctx->warning_details() );
+		$this->assertSame( [], $ctx->warnings() );
 	}
 
 	public function test_simple_setting_converter__map_backed_override_drops_invalid_resolved_value() {
@@ -165,11 +165,9 @@ class Test_V3_Converters extends TestCase {
 
 		$this->assertTrue( $result, 'Converter must consume the declaration so it does not fall to custom_css.' );
 		$this->assertSame( [], $ctx->settings_patch(), 'Invalid patches must not be merged atomically.' );
-		$details = $ctx->warning_details();
-		$this->assertCount( 1, $details );
-		$this->assertSame( 'invalid_resolved_value', $details[0]['code'] );
-		$this->assertSame( 'heading', $details[0]['style_target'] );
-		$this->assertSame( 'font-size', $details[0]['property'] );
+		$warnings = $ctx->warnings();
+		$this->assertCount( 1, $warnings );
+		$this->assertStringContainsString( 'font-size', $warnings[0] );
 	}
 
 	public function test_generic_index_converter__drops_when_non_desktop_variant_missing() {

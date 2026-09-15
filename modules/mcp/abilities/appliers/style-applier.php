@@ -34,21 +34,19 @@ class Style_Applier {
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
 	 * @param string                $style_apply_mode `patch` or `replace`.
 	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
-	 * @return array{error: \WP_Error|null, warnings: string[], warning_details: array<int, array{code: string, widget_type: ?string, style_target: ?string, property: ?string, state: ?string, reason: string}>}
+	 * @return array{error: \WP_Error|null, warnings: string[]}
 	 */
 	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error'    => null,
 				'warnings' => [],
-				'warning_details' => [],
 			];
 		}
 
 		$active_breakpoints = $this->get_active_breakpoints();
 		$errors             = [];
 		$warnings           = [];
-		$warning_details    = [];
 
 		foreach ( $styles as $config_id => $css_string ) {
 			if ( ! is_string( $css_string ) ) {
@@ -66,9 +64,6 @@ class Style_Applier {
 				$v3_result = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
 				foreach ( $v3_result['warnings'] as $warning ) {
 					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
-				}
-				foreach ( $v3_result['warning_details'] as $detail ) {
-					$warning_details[] = $detail;
 				}
 				unset( $node );
 				continue;
@@ -131,7 +126,6 @@ class Style_Applier {
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			) : null,
 			'warnings' => $warnings,
-			'warning_details' => $warning_details,
 		];
 	}
 
@@ -140,11 +134,10 @@ class Style_Applier {
 	 * @param string               $css_string
 	 * @param string               $style_apply_mode
 	 * @param array<string, array> $widget_configs
-	 * @return array{warnings: string[], warning_details: array<int, array{code: string, widget_type: ?string, style_target: ?string, property: ?string, state: ?string, reason: string}>}
+	 * @return array{warnings: string[]}
 	 */
 	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
-		$warning_details = [];
 		$widget_type = $node['widgetType'] ?? '';
 		$widget_config = [];
 
@@ -162,7 +155,7 @@ class Style_Applier {
 		}
 
 		if ( $is_empty_css ) {
-			return [ 'warnings' => $warnings, 'warning_details' => $warning_details ];
+			return [ 'warnings' => $warnings ];
 		}
 
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
@@ -170,10 +163,6 @@ class Style_Applier {
 
 		foreach ( $result['warnings'] as $warning ) {
 			$warnings[] = $warning;
-		}
-
-		foreach ( $result['warning_details'] ?? [] as $detail ) {
-			$warning_details[] = self::stamp_widget_type_on_detail( $detail, (string) $widget_type );
 		}
 
 		if ( ! empty( $result['settings_patch'] ) ) {
@@ -184,7 +173,7 @@ class Style_Applier {
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
-			return [ 'warnings' => $warnings, 'warning_details' => $warning_details ];
+			return [ 'warnings' => $warnings ];
 		}
 
 		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
@@ -207,7 +196,7 @@ class Style_Applier {
 				);
 		}
 
-		return [ 'warnings' => $warnings, 'warning_details' => $warning_details ];
+		return [ 'warnings' => $warnings ];
 	}
 
 	/**

@@ -109,21 +109,12 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 		$property = (string) ( $rule['property'] ?? '' );
 		$state = $rule['state'] ?? null;
 
-		$ctx->warn_structured(
+		$ctx->warn(
 			sprintf(
-				/* translators: 1: CSS property, 2: style-target alias, 3: rejection reason */
-				__( '%1$s on style target %2$s produced an invalid value and was dropped (%3$s).', 'elementor' ),
-				$property,
-				$target,
-				$result['reason'] ?? V3_Resolved_Patch_Validator::REASON_INVALID_SHAPE
-			),
-			[
-				'code' => 'invalid_resolved_value',
-				'style_target' => '' !== $target ? $target : null,
-				'property' => '' !== $property ? $property : null,
-				'state' => is_string( $state ) ? $state : null,
-				'reason' => (string) ( $result['reason'] ?? V3_Resolved_Patch_Validator::REASON_INVALID_SHAPE ),
-			]
+				/* translators: %s: CSS property name */
+				__( 'CSS property %s is not supported by this Elementor widget and was skipped.', 'elementor' ),
+				$property
+			)
 		);
 
 		return false;

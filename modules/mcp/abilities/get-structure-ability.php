@@ -38,14 +38,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each V4 node\'s settings, styles (as { __style_id, css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode), interactions, its rendered HTML tag when known, and default_styles (a raw CSS string of the widget base layer followed by the kit\'s site-wide default layer for that tag, in browser cascade order — includes selectors, @media(--breakpoint) blocks, and pseudo-states as the frontend renders them). V3 nodes are returned with empty settings and styles. Only works for posts that were saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). V3 nodes always have empty settings and styles.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
 					],
 				],
 			],
@@ -74,7 +74,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each V4 node\'s settings, styles (as { __style_id, css } — raw CSS string), interactions, rendered tag, and default_styles (raw CSS string: base layer + kit default for that tag). The styles.css value is round-trippable to build-composition.style / manage-elements.update.style in replace mode. Requires element_id.',
+						'description' => 'If true, includes each node\'s settings and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
 					],
 				],
 			]
@@ -168,12 +168,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 		if ( ! $props_schema ) {
 			$skeleton['settings'] = (object) [];
-			$skeleton['styles'] = (object) [];
+			$skeleton['styles'] = [ 'css' => '' ];
 			return;
 		}
 
 		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
-		$skeleton['styles'] = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
+		$skeleton['styles'] = $this->normalize_styles( Local_Style_Serializer::serialize( $node['styles'] ?? [] ) );
 
 		$resolved_settings = is_array( $skeleton['settings'] ) ? $skeleton['settings'] : [];
 		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings );
@@ -250,6 +250,10 @@ class Get_Structure_Ability extends Abstract_Ability {
 		return $this->default_styles_repository;
 	}
 
+	private function normalize_styles( array $serialized ): array {
+		return empty( $serialized ) ? [ 'css' => '' ] : $serialized;
+	}
+
 	private function populate_v3_content( array &$skeleton, array $node ): void {
 		$widget_type = (string) ( $node['widgetType'] ?? '' );
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
@@ -260,7 +264,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 		if ( ! $has_map && empty( $bridge_non_style ) && empty( $bridge_style ) ) {
 			$skeleton['settings'] = (object) [];
-			$skeleton['style'] = '';
+			$skeleton['styles'] = [ 'css' => '' ];
 			return;
 		}
 
@@ -271,7 +275,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
-		$skeleton['style'] = $style;
+		$skeleton['styles'] = [ 'css' => $style ];
 	}
 
 	private function normalize_interactions( $interactions ): array {
