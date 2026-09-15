@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
+use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,6 +24,11 @@ abstract class Abstract_Ability {
 	abstract public function execute( $input = [] );
 
 	final public function execute_guarded( $input = [] ) {
+		$availability = $this->is_available();
+		if ( is_wp_error( $availability ) ) {
+			return $availability;
+		}
+
 		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_destructive();
 
 		if ( $is_mutating ) {
@@ -51,9 +57,14 @@ abstract class Abstract_Ability {
 	public function register(): void {
 		$definition = $this->definition()->to_array();
 		$definition['execute_callback'] = [ $this, 'execute_guarded' ];
+		$definition['description'] = $this->get_description_for_llm();
+
 		$meta = is_array( $definition['meta'] ?? null ) ? $definition['meta'] : [];
 		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
 		$mcp['public'] = true;
+		if ( isset( $mcp['description'] ) ) {
+			$mcp['description'] = $this->maybe_append_unavailable_notice( (string) $mcp['description'] );
+		}
 		$meta['mcp'] = $mcp;
 		$meta['show_in_rest'] = true;
 		$definition['meta'] = $meta;
@@ -77,7 +88,13 @@ abstract class Abstract_Ability {
 	}
 
 	public function get_resource_description(): ?string {
-		return $this->mcp_meta()['description'] ?? $this->definition()->description;
+		$base = $this->mcp_meta()['description'] ?? $this->definition()->description;
+
+		return $this->maybe_append_unavailable_notice( (string) $base );
+	}
+
+	public function get_description_for_llm(): string {
+		return $this->maybe_append_unavailable_notice( (string) $this->definition()->description );
 	}
 
 	public function get_display_name(): string {
@@ -90,6 +107,21 @@ abstract class Abstract_Ability {
 		}
 
 		return substr( $this->get_id(), strlen( self::ABILITY_ID_PREFIX ) );
+	}
+
+	/**
+	 * Whether this ability may currently run.
+	 *
+	 * Subclasses may override to add reasons beyond the default Atomic Editor gate
+	 * (missing plugin, licence tier, post-type support, ...). Return `true`
+	 * when available, or a `\WP_Error` explaining why not. Include a
+	 * `description_notice` entry in the error data to add a short hint to
+	 * this ability's description in `tools/list` / `elementor/list-resources`.
+	 *
+	 * @return true|\WP_Error
+	 */
+	public function is_available() {
+		return Mcp_V4_Gate::is_available( $this->get_id() );
 	}
 
 	public function is_exposed_via_proxy(): bool {
@@ -120,5 +152,23 @@ abstract class Abstract_Ability {
 		$meta = $this->definition()->meta;
 
 		return is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
+	}
+
+	private function maybe_append_unavailable_notice( string $description ): string {
+		$availability = $this->is_available();
+		if ( ! is_wp_error( $availability ) ) {
+			return $description;
+		}
+
+		$data = $availability->get_error_data();
+		$notice = is_array( $data ) && isset( $data['description_notice'] )
+			? (string) $data['description_notice']
+			: $availability->get_error_message();
+
+		if ( '' === $notice ) {
+			return $description;
+		}
+
+		return '' === $description ? $notice : rtrim( $description ) . ' ' . $notice;
 	}
 }
