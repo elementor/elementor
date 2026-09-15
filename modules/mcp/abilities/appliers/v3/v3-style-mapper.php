@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
@@ -151,7 +152,8 @@ class V3_Style_Mapper {
 	}
 
 	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type )
+			?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$controls = $widget_config['controls'] ?? [];
 		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
 

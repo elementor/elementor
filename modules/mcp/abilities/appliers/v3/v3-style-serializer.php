@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry_Factory;
@@ -30,7 +31,8 @@ class V3_Style_Serializer {
 	}
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type )
+			?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$controls = $widget_config['controls'] ?? [];
 		$generic = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
 
