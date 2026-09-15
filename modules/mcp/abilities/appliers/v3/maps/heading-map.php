@@ -13,6 +13,7 @@ return [
 	'settings' => [
 		'title' => [
 			'type' => 'string',
+			'dynamic' => true,
 		],
 		'link' => [
 			'type' => 'object',
@@ -38,6 +39,7 @@ return [
 			'type' => 'string',
 			'enum' => [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'span', 'p' ],
 			'default' => 'h2',
+			'key' => 'header_size',
 		],
 	],
 	'default_style_target' => 'heading',

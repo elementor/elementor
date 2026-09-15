@@ -23,6 +23,7 @@ class Hints {
 	const CAPABILITY = 'capability';
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
+	const PLUGIN_CONNECTED = 'plugin_connected';
 	const NOT_HAS_OPTION = 'not_has_option';
 
 	const INSTALL = 'install';
@@ -72,7 +73,7 @@ class Hints {
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'manage_options',
 				self::NOT_DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-				self::NOT_HAS_OPTION => 'image_optimizer_access_token',
+				self::PLUGIN_CONNECTED => [ 'image_optimizer', 'image-optimization' ],
 			],
 			'image-optimization-media-modal' => [
 				self::DISMISSED => 'image-optimization-media-modal',
@@ -82,7 +83,12 @@ class Hints {
 			'ally_heading_notice' => [
 				self::DISMISSED => 'ally_heading_notice',
 				self::CAPABILITY => 'install_plugins',
-				self::NOT_HAS_OPTION => 'ea11y_access_token',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
+			],
+			'ally_atomic_notice' => [
+				self::DISMISSED => 'ally_atomic_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
 			],
 		];
 		if ( ! $hint_key ) {
@@ -231,6 +237,23 @@ class Hints {
 	}
 
 	/**
+	 * Decode_url_for_js
+	 *
+	 * `wp_nonce_url()` (used by `get_plugin_install_url()` and `get_plugin_activate_url()`) HTML-escapes
+	 * its result (e.g. `&` becomes `&amp;`) for direct raw HTML/template output, where the browser's HTML
+	 * parser decodes the entities back. Consumers that send the URL through a JSON REST response, editor
+	 * script settings, or a React/JS component prop use it as a raw string that is never HTML-parsed, so
+	 * it must be decoded back to a literal URL before being handed to those contexts.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	public static function decode_url_for_js( string $url ): string {
+		return wp_specialchars_decode( $url, ENT_QUOTES );
+	}
+
+	/**
 	 * Is_dismissed
 	 *
 	 * @param $key
@@ -294,6 +317,15 @@ class Hints {
 
 				case self::PLUGIN_ACTIVE:
 					if ( ! self::is_plugin_active( $value ) ) {
+						return false;
+					}
+
+					break;
+
+				case self::PLUGIN_CONNECTED:
+					[ $option_prefix, $plugin_slug ] = $value;
+
+					if ( self::is_plugin_connected( $option_prefix, $plugin_slug ) ) {
 						return false;
 					}
 
@@ -373,17 +405,20 @@ class Hints {
 	/**
 	 * Get_plugin_action_url
 	 *
+	 * Returns a decoded install/activate nonce URL (see `decode_url_for_js()`), since every current
+	 * caller consumes this over JSON/JS rather than raw HTML output.
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
 	 */
 	public static function get_plugin_action_url( $plugin ): string {
 		if ( ! self::is_plugin_installed( $plugin ) ) {
-			return self::get_plugin_install_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_install_url( $plugin ) );
 		}
 
 		if ( ! self::is_plugin_active( $plugin ) ) {
-			return self::get_plugin_activate_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_activate_url( $plugin ) );
 		}
 
 		return '';
@@ -449,7 +484,15 @@ class Hints {
 		];
 	}
 
-	public static function is_plugin_connected( $option_prefix ): bool {
+	public static function is_plugin_connected( $option_prefix, $plugin_slug = null ): bool {
+		if ( null !== $plugin_slug && class_exists( '\ElementorOne\Connect\Facade' ) ) {
+			$facade = \ElementorOne\Connect\Facade::get( $plugin_slug );
+
+			if ( $facade ) {
+				return $facade->utils()->is_connected();
+			}
+		}
+
 		return ! empty( get_option( $option_prefix . '_access_token' ) );
 	}
 
