@@ -43,6 +43,7 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 
 	private function controls(): array {
 		return [
+			'title' => [ 'type' => 'text' ],
 			'title_color' => [ 'type' => 'color' ],
 			'title_size' => [ 'type' => 'number' ],
 		];
