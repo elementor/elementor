@@ -1,6 +1,5 @@
 import { doAfterRender } from '@elementor/editor-canvas';
 import {
-	ELEMENT_STYLE_CHANGE_EVENT,
 	getContainer,
 	replaceElement,
 	selectElement,
@@ -108,7 +107,6 @@ export async function detachComponentInstance( {
 				} );
 
 				selectElement( detachedElement.id );
-				refreshStylesAfterSubtreeRender( detachedElement.id );
 
 				const componentUid = selectComponent( getState(), componentId )?.uid;
 				trackComponentEvent( {
@@ -147,7 +145,6 @@ export async function detachComponentInstance( {
 				// Wait for the instance to be restored
 				doAfterRender( [ restoredInstance.id ], () => {
 					selectElement( restoredInstance.id );
-					dispatchElementStylesChanged();
 				} );
 
 				return restoredInstance;
@@ -171,7 +168,6 @@ export async function detachComponentInstance( {
 				);
 
 				selectElement( detachedElement.id );
-				refreshStylesAfterSubtreeRender( detachedElement.id );
 
 				return {
 					...doReturn,
@@ -186,16 +182,6 @@ export async function detachComponentInstance( {
 	);
 
 	return undoableDetach();
-}
-
-function refreshStylesAfterSubtreeRender( rootElementId: string ) {
-	doAfterRender( [ rootElementId ], () => {
-		dispatchElementStylesChanged();
-	} );
-}
-
-function dispatchElementStylesChanged() {
-	window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 }
 
 function extractInstanceOverrides( instanceContainer: NonNullable< ReturnType< typeof getContainer > > ) {
