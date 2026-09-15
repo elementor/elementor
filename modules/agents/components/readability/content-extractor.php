@@ -62,7 +62,11 @@ class Content_Extractor {
 		 */
 		$extractors = apply_filters( 'elementor/agents/markdown/extractors', $defaults );
 
-		// Sort by priority (ascending) and store.
+		$extractors = array_values( array_filter(
+			$extractors,
+			static fn( $extractor ) => $extractor instanceof Extractor_Interface
+		) );
+
 		usort( $extractors, static fn( Extractor_Interface $a, Extractor_Interface $b ) => $a->get_priority() <=> $b->get_priority() );
 
 		$this->extractors = $extractors;
