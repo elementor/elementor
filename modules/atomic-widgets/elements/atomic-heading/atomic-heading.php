@@ -39,7 +39,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'heading', 'title', 'text', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
 	}
 
 	public function get_icon() {
