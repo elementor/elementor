@@ -57,19 +57,28 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	public function test_has_min_elementor_pages__ignores_draft_posts() {
+	public function test_has_min_elementor_pages__counts_draft_posts() {
 		// Arrange
-		$post_id = $this->factory()->post->create( [
-			'post_status' => 'draft',
-		] );
-		update_post_meta( $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		$this->create_elementor_post( 'draft' );
 		$this->create_published_elementor_post();
 
 		// Act
 		$result = $this->invoke_has_min_elementor_pages();
 
 		// Assert
-		$this->assertFalse( $result );
+		$this->assertTrue( $result );
+	}
+
+	public function test_has_min_elementor_pages__counts_two_draft_posts() {
+		// Arrange
+		$this->create_elementor_post( 'draft' );
+		$this->create_elementor_post( 'draft' );
+
+		// Act
+		$result = $this->invoke_has_min_elementor_pages();
+
+		// Assert
+		$this->assertTrue( $result );
 	}
 
 	public function test_has_min_elementor_pages__ignores_posts_without_meta() {
@@ -88,7 +97,7 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 
 	public function test_has_min_elementor_pages__uses_unlock_option_short_circuit() {
 		// Arrange
-		update_option( Conversion_Banner::UNLOCK_OPTION_KEY, '1', true );
+		update_option( Conversion_Banner::UNLOCK_OPTION_KEY, Conversion_Banner::UNLOCK_OPTION_VALUE, true );
 
 		// Act
 		$result = $this->invoke_has_min_elementor_pages();
@@ -119,7 +128,7 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 		$this->invoke_has_min_elementor_pages();
 
 		// Assert
-		$this->assertSame( '1', get_option( Conversion_Banner::UNLOCK_OPTION_KEY ) );
+		$this->assertSame( Conversion_Banner::UNLOCK_OPTION_VALUE, get_option( Conversion_Banner::UNLOCK_OPTION_KEY ) );
 	}
 
 	public function test_has_min_elementor_pages__sets_pending_transient_when_below_threshold() {
@@ -160,7 +169,7 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 
 	public function test_maybe_invalidate_pending_cache__noop_when_already_unlocked() {
 		// Arrange
-		update_option( Conversion_Banner::UNLOCK_OPTION_KEY, '1', true );
+		update_option( Conversion_Banner::UNLOCK_OPTION_KEY, Conversion_Banner::UNLOCK_OPTION_VALUE, true );
 		set_transient( Conversion_Banner::PENDING_TRANSIENT_KEY, 1, Conversion_Banner::PENDING_TTL );
 		$post_id = $this->factory()->post->create( [
 			'post_status' => 'publish',
@@ -174,8 +183,12 @@ class Test_Conversion_Banner_Trigger extends Elementor_Test_Base {
 	}
 
 	private function create_published_elementor_post(): int {
+		return $this->create_elementor_post( 'publish' );
+	}
+
+	private function create_elementor_post( string $post_status ): int {
 		$post_id = $this->factory()->post->create( [
-			'post_status' => 'publish',
+			'post_status' => $post_status,
 		] );
 		update_post_meta( $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
 

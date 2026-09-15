@@ -31,6 +31,7 @@ class Conversion_Banner {
 	const PENDING_TRANSIENT_KEY = 'elementor_conversion_banner_pages_pending';
 	const PENDING_TTL = DAY_IN_SECONDS;
 	const UNLOCK_OPTION_KEY = 'elementor_conversion_banner_unlocked';
+	const UNLOCK_OPTION_VALUE = '1';
 
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
@@ -58,7 +59,7 @@ class Conversion_Banner {
 			return;
 		}
 
-		if ( '1' === get_option( self::UNLOCK_OPTION_KEY ) ) {
+		if ( self::is_unlocked() ) {
 			return;
 		}
 
@@ -269,8 +270,12 @@ class Conversion_Banner {
 		return ! Utils::has_pro() && ! self::is_dismissed() && self::has_min_elementor_pages();
 	}
 
+	private static function is_unlocked(): bool {
+		return self::UNLOCK_OPTION_VALUE === get_option( self::UNLOCK_OPTION_KEY );
+	}
+
 	private static function has_min_elementor_pages(): bool {
-		if ( '1' === get_option( self::UNLOCK_OPTION_KEY ) ) {
+		if ( self::is_unlocked() ) {
 			return true;
 		}
 
@@ -283,7 +288,7 @@ class Conversion_Banner {
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'meta_value' => 'builder',
 			'no_found_rows' => true,
-			'post_status' => 'publish',
+			'post_status' => 'any',
 			'post_type' => 'any',
 			'posts_per_page' => self::MIN_ELEMENTOR_PAGES_TO_TRIGGER,
 			'update_post_meta_cache' => false,
@@ -291,7 +296,7 @@ class Conversion_Banner {
 		] );
 
 		if ( count( $query->posts ) >= self::MIN_ELEMENTOR_PAGES_TO_TRIGGER ) {
-			update_option( self::UNLOCK_OPTION_KEY, '1', true );
+			update_option( self::UNLOCK_OPTION_KEY, self::UNLOCK_OPTION_VALUE, true );
 			delete_transient( self::PENDING_TRANSIENT_KEY );
 
 			return true;
