@@ -222,6 +222,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( ! empty( $outcome['warnings'] ) ) {
 				$extra['warnings'] = $outcome['warnings'];
 			}
+			if ( ! empty( $outcome['warning_details'] ) ) {
+				$extra['warning_details'] = $outcome['warning_details'];
+			}
 			$results->add_success( $index, $action, $extra );
 		}
 
@@ -398,6 +401,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$variables_service = $this->create_variables_service();
 		$warnings = [];
+		$warning_details = [];
 
 		if ( null !== $interactions ) {
 			if ( ! is_array( $interactions ) ) {
@@ -458,11 +462,15 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings = array_merge( $warnings, $style_result['warnings'] );
+			if ( ! empty( $style_result['warning_details'] ) ) {
+				$warning_details = array_merge( $warning_details, $style_result['warning_details'] );
+			}
 		}
 
 		return [
 			'tree' => $tree,
 			'warnings' => $warnings,
+			'warning_details' => $warning_details,
 		];
 	}
 

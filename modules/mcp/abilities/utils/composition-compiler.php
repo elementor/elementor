@@ -136,6 +136,7 @@ final class Composition_Compiler {
 		return [
 			'elements' => $subtrees,
 			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warning_details' => $style_result['warning_details'] ?? [],
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];

@@ -33,19 +33,21 @@ class Style_Applier {
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
 	 * @param string                $style_apply_mode `patch` or `replace`.
 	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
-	 * @return array{error: \WP_Error|null, warnings: string[]}
+	 * @return array{error: \WP_Error|null, warnings: string[], warning_details: array<int, array{code: string, widget_type: ?string, style_target: ?string, property: ?string, state: ?string, reason: string}>}
 	 */
 	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		if ( empty( $styles ) ) {
 			return [
 				'error'    => null,
 				'warnings' => [],
+				'warning_details' => [],
 			];
 		}
 
 		$active_breakpoints = $this->get_active_breakpoints();
 		$errors             = [];
 		$warnings           = [];
+		$warning_details    = [];
 
 		foreach ( $styles as $config_id => $css_string ) {
 			if ( ! is_string( $css_string ) ) {
@@ -60,9 +62,12 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$v3_warnings = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
-				foreach ( $v3_warnings as $warning ) {
+				$v3_result = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
+				foreach ( $v3_result['warnings'] as $warning ) {
 					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
+				}
+				foreach ( $v3_result['warning_details'] as $detail ) {
+					$warning_details[] = $detail;
 				}
 				unset( $node );
 				continue;
@@ -125,6 +130,7 @@ class Style_Applier {
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			) : null,
 			'warnings' => $warnings,
+			'warning_details' => $warning_details,
 		];
 	}
 
@@ -133,10 +139,11 @@ class Style_Applier {
 	 * @param string               $css_string
 	 * @param string               $style_apply_mode
 	 * @param array<string, array> $widget_configs
-	 * @return string[] Warnings (without config-id prefix).
+	 * @return array{warnings: string[], warning_details: array<int, array{code: string, widget_type: ?string, style_target: ?string, property: ?string, state: ?string, reason: string}>}
 	 */
 	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
+		$warning_details = [];
 		$widget_type = $node['widgetType'] ?? '';
 		$widget_config = [];
 
@@ -154,7 +161,7 @@ class Style_Applier {
 		}
 
 		if ( $is_empty_css ) {
-			return $warnings;
+			return [ 'warnings' => $warnings, 'warning_details' => $warning_details ];
 		}
 
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
@@ -162,6 +169,10 @@ class Style_Applier {
 
 		foreach ( $result['warnings'] as $warning ) {
 			$warnings[] = $warning;
+		}
+
+		foreach ( $result['warning_details'] ?? [] as $detail ) {
+			$warning_details[] = self::stamp_widget_type_on_detail( $detail, (string) $widget_type );
 		}
 
 		if ( ! empty( $result['settings_patch'] ) ) {
@@ -189,7 +200,22 @@ class Style_Applier {
 				);
 		}
 
-		return $warnings;
+		return [ 'warnings' => $warnings, 'warning_details' => $warning_details ];
+	}
+
+	/**
+	 * @param array{code: string, style_target: ?string, property: ?string, state: ?string, reason: string} $detail
+	 * @return array{code: string, widget_type: ?string, style_target: ?string, property: ?string, state: ?string, reason: string}
+	 */
+	private static function stamp_widget_type_on_detail( array $detail, string $widget_type ): array {
+		return [
+			'code' => (string) ( $detail['code'] ?? '' ),
+			'widget_type' => '' !== $widget_type ? $widget_type : null,
+			'style_target' => $detail['style_target'] ?? null,
+			'property' => $detail['property'] ?? null,
+			'state' => $detail['state'] ?? null,
+			'reason' => (string) ( $detail['reason'] ?? '' ),
+		];
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {
