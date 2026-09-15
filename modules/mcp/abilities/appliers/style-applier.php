@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -60,8 +61,8 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$v3_warnings = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
-				foreach ( $v3_warnings as $warning ) {
+				$v3_result = $this->apply_v3_style( $node, $css_string, $style_apply_mode, $widget_configs );
+				foreach ( $v3_result['warnings'] as $warning ) {
 					$warnings[] = sprintf( '[%s] %s', $config_id, $warning );
 				}
 				unset( $node );
@@ -133,7 +134,7 @@ class Style_Applier {
 	 * @param string               $css_string
 	 * @param string               $style_apply_mode
 	 * @param array<string, array> $widget_configs
-	 * @return string[] Warnings (without config-id prefix).
+	 * @return array{warnings: string[]}
 	 */
 	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
@@ -154,7 +155,9 @@ class Style_Applier {
 		}
 
 		if ( $is_empty_css ) {
-			return $warnings;
+			return [
+				'warnings' => $warnings,
+			];
 		}
 
 		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
@@ -168,7 +171,15 @@ class Style_Applier {
 			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
 
+		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( (string) $widget_type );
 		$unmapped = $result['unmapped_css'] ?? '';
+
+		if ( $is_map_driven ) {
+			return [
+				'warnings' => $warnings,
+			];
+		}
+
 		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
 		if ( null !== $pro_warning ) {
 			$warnings[] = $pro_warning;
@@ -189,7 +200,9 @@ class Style_Applier {
 				);
 		}
 
-		return $warnings;
+		return [
+			'warnings' => $warnings,
+		];
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {

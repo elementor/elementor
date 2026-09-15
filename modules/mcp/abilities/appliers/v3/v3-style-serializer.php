@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry_Factory;
@@ -30,9 +31,13 @@ class V3_Style_Serializer {
 	}
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
-		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$map_overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );
+		$is_map_driven = null !== $map_overrides;
+		$overrides = $map_overrides ?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$controls = $widget_config['controls'] ?? [];
-		$generic = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+		$generic = $is_map_driven
+			? []
+			: V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
 
 		$blocks = new V3_Block_Accumulator();
 
@@ -47,6 +52,11 @@ class V3_Style_Serializer {
 		}
 
 		$mapped_css = $this->renderer->render( $blocks );
+
+		if ( $is_map_driven ) {
+			return $mapped_css;
+		}
+
 		$custom_css = $this->unwrap_custom_css( $settings['custom_css'] ?? null );
 
 		if ( '' === $mapped_css ) {
