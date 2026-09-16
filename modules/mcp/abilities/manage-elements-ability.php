@@ -140,23 +140,31 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		$input = is_array( $input ) ? $input : [];
+		$started_at = hrtime( true );
+		$input      = is_array( $input ) ? $input : [];
+		$post_id    = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
+		$operations = $input['operations'] ?? null;
 
 		if ( empty( $input['post_id'] ) ) {
-			return $this->bad_request( __( 'post_id is required.', 'elementor' ) );
+			$error = $this->bad_request( __( 'post_id is required.', 'elementor' ) );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			return $error;
 		}
 
-		$operations = $input['operations'] ?? null;
 		if ( ! is_array( $operations ) ) {
-			return $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+			$error = $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			return $error;
 		}
 
 		if ( empty( $operations ) ) {
-			return $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+			$error = $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			return $error;
 		}
 
 		if ( count( $operations ) > self::MAX_BATCH_SIZE ) {
-			return new \WP_Error(
+			$error = new \WP_Error(
 				'batch_size_exceeded',
 				sprintf(
 					/* translators: %d: maximum operations per request */
@@ -168,31 +176,37 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'max_allowed' => self::MAX_BATCH_SIZE,
 				]
 			);
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			return $error;
 		}
 
-		$post_id = (int) $input['post_id'];
-
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return new \WP_Error(
+			$error = new \WP_Error(
 				'elementor_forbidden',
 				__( 'You do not have permission to edit this post.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			return $error;
 		}
 
 		$document = $this->resolve_document( $post_id );
 		if ( is_wp_error( $document ) ) {
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $document );
 			return $document;
 		}
 
-		return $this->handle_bulk( $document, $operations );
+		return $this->handle_bulk( $document, $operations, $started_at );
 	}
 
-	private function handle_bulk( Document $document, array $operations ): array {
-		$results           = new Bulk_Operations_Result();
-		$tree              = $this->get_tree( $document );
-		$any_change        = false;
-		$pending_events    = [];
+	private function handle_bulk( Document $document, array $operations, int $started_at ): array {
+		$results             = new Bulk_Operations_Result();
+		$tree                = $this->get_tree( $document );
+		$any_change          = false;
+		$pending_events      = [];
+		$all_warning_codes   = [];
+		$class_attachments   = 0;
+		$interactions_count  = 0;
 
 		foreach ( $operations as $index => $operation ) {
 			$index = (int) $index;
@@ -226,24 +240,32 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 			$results->add_success( $index, $action, $extra );
 
+			$all_warning_codes  = array_merge( $all_warning_codes, $outcome['warning_codes'] ?? [] );
+			$class_attachments  += count( $outcome['event_metadata']['applied_classes'] ?? [] );
+			$interactions_count += count( $outcome['event_metadata']['interactions_events'] ?? [] );
+
 			if ( ! empty( $outcome['event_metadata'] ) ) {
 				$pending_events[] = [ 'action' => $action ] + $outcome['event_metadata'];
 			}
 		}
 
-		$response = $results->to_array();
+		$response            = $results->to_array();
 		$response['post_id'] = (int) $document->get_main_id();
+		$post_id             = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
-			return $this->with_edit_url( $response, $document );
+			$response = $this->with_edit_url( $response, $document );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warning_codes, $class_attachments, $interactions_count );
+			return $response;
 		}
 
 		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree );
 		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
 			$response['save_error'] = $save_result->get_error_message();
-
-			return $this->with_edit_url( $response, $document );
+			$response = $this->with_edit_url( $response, $document );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, $save_result, $operations, $response, $all_warning_codes, $class_attachments, $interactions_count );
+			return $response;
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
@@ -252,8 +274,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
-
-		return $this->with_edit_url( $response, $document );
+		$response = $this->with_edit_url( $response, $document );
+		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warning_codes, $class_attachments, $interactions_count );
+		return $response;
 	}
 
 	private function with_edit_url( array $response, Document $document ): array {
@@ -329,6 +352,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => [],
+			'warning_codes' => [],
 		];
 	}
 
@@ -342,6 +366,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => [],
+			'warning_codes' => [],
 			'event_metadata' => [
 				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
 			],
@@ -384,6 +409,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => [],
+			'warning_codes' => [],
 		];
 	}
 
@@ -430,6 +456,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$variables_service    = $this->create_variables_service();
 		$warnings             = [];
+		$warning_codes        = [];
 		$applied_classes      = [];
 		$variable_connections = [];
 		$interactions_events  = [];
@@ -476,7 +503,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				if ( $config_result['error'] ) {
 					return $config_result['error'];
 				}
-				$warnings = array_merge( $warnings, $config_result['warnings'] );
+				$warnings      = array_merge( $warnings, $config_result['warnings'] );
+				$warning_codes = array_merge( $warning_codes, $config_result['warning_codes'] ?? [] );
 			}
 		}
 
@@ -499,12 +527,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				return $style_result['error'];
 			}
 			$warnings             = array_merge( $warnings, $style_result['warnings'] );
+			$warning_codes        = array_merge( $warning_codes, $style_result['warning_codes'] ?? [] );
 			$variable_connections = $style_result['variable_connections'][ $element_id ] ?? [];
 		}
 
 		return [
 			'tree'           => $tree,
 			'warnings'       => $warnings,
+			'warning_codes'  => $warning_codes,
 			'event_metadata' => [
 				'element_id'           => $element_id,
 				'element_type'         => (string) $element_type,
@@ -517,13 +547,15 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	protected function build_interactions_events( string $element_type, array $previous_items, array $new_items ): array {
 		if ( [] === $new_items ) {
-			return [ [
-				'event_name' => 'interactions_cleared',
-				'payload'    => [
-					'affected_element_type' => $element_type,
-					'target_value'          => count( $previous_items ),
+			return [
+				[
+					'event_name' => 'interactions_cleared',
+					'payload'    => [
+						'affected_element_type' => $element_type,
+						'target_value'          => count( $previous_items ),
+					],
 				],
-			] ];
+			];
 		}
 
 		$previous_by_id = [];
@@ -774,5 +806,73 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				$this->walk_tree_for_class_counts( $element['elements'], $counts );
 			}
 		}
+	}
+
+	private function emit_mcp_manage_elements_executed(
+		int $started_at,
+		int $post_id,
+		?Document $document = null,
+		?\WP_Error $top_level_error = null,
+		array $operations = [],
+		array $response = [],
+		array $warning_codes = [],
+		int $class_attachments = 0,
+		int $interactions_count = 0
+	): void {
+		$duration_ms = (int) round( ( hrtime( true ) - $started_at ) / 1_000_000 );
+
+		$batch_status = $response['status'] ?? 'error';
+		if ( null !== $top_level_error ) {
+			$status     = 'error';
+			$error_code = $top_level_error->get_error_code();
+		} else {
+			$status     = 'ok' === $batch_status ? 'success' : ( 'partial_error' === $batch_status ? 'partial' : 'error' );
+			$error_code = null;
+		}
+
+		$failed_results = array_filter( $response['results'] ?? [], fn( $r ) => 'error' === ( $r['status'] ?? '' ) );
+		$failed_count   = count( $failed_results );
+		$failed_codes   = array_values( array_unique( array_column( $failed_results, 'code' ) ) );
+
+		$ops_count  = count( $operations );
+		$by_action  = [];
+		foreach ( $operations as $op ) {
+			$action = $op['action'] ?? '';
+			if ( '' !== $action ) {
+				$by_action[ $action ] = ( $by_action[ $action ] ?? 0 ) + 1;
+			}
+		}
+
+		$dominant_action = '';
+		if ( ! empty( $by_action ) ) {
+			arsort( $by_action );
+			$dominant_action = (string) array_key_first( $by_action );
+		}
+
+		$payload = [
+			'tool_name'                  => $this->get_ability_id(),
+			'status'                     => $status,
+			'duration_ms'                => $duration_ms,
+			'post_id'                    => $post_id,
+			'action'                     => $dominant_action,
+			'operations_count'           => $ops_count,
+			'operations_by_type'         => $by_action,
+			'failed_operations_count'    => $failed_count,
+			'failed_operation_codes'     => $failed_codes,
+			'class_attachments_count'    => $class_attachments,
+			'interactions_applied_count' => $interactions_count,
+			'warning_count'              => count( array_unique( $warning_codes ) ),
+			'warning_types'              => array_values( array_unique( $warning_codes ) ),
+		];
+
+		if ( null !== $document ) {
+			$payload['document_type'] = $document->get_name();
+		}
+
+		if ( null !== $error_code ) {
+			$payload['error_code'] = $error_code;
+		}
+
+		Mcp_Event_Dispatcher::emit( 'mcp_manage_elements_executed', $payload );
 	}
 }

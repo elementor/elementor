@@ -105,19 +105,24 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		$input = is_array( $input ) ? $input : [];
+		$started_at = hrtime( true );
+		$input      = is_array( $input ) ? $input : [];
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
-			return $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+			$error = $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+			$this->emit_mcp_manage_classes_executed( $started_at, [], $error );
+			return $error;
 		}
 
 		if ( empty( $operations ) ) {
-			return $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+			$error = $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+			$this->emit_mcp_manage_classes_executed( $started_at, [], $error );
+			return $error;
 		}
 
 		if ( count( $operations ) > self::MAX_BATCH_SIZE ) {
-			return new \WP_Error(
+			$error = new \WP_Error(
 				'batch_size_exceeded',
 				sprintf(
 					/* translators: %d: maximum operations per request */
@@ -129,9 +134,13 @@ class Manage_Classes_Ability extends Abstract_Ability {
 					'max_allowed' => self::MAX_BATCH_SIZE,
 				]
 			);
+			$this->emit_mcp_manage_classes_executed( $started_at, $operations, $error );
+			return $error;
 		}
 
-		return $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations );
+		$this->emit_mcp_manage_classes_executed( $started_at, $operations, null, $response );
+		return $response;
 	}
 
 	private function handle_bulk( array $operations ): array {
@@ -628,5 +637,86 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				'name' => $row['label'] ?? '',
 			] );
 		}
+	}
+
+	private function emit_mcp_manage_classes_executed(
+		int $started_at,
+		array $operations,
+		?\WP_Error $top_level_error = null,
+		array $response = []
+	): void {
+		$duration_ms = (int) round( ( hrtime( true ) - $started_at ) / 1_000_000 );
+
+		$batch_status = $response['status'] ?? 'error';
+		if ( null !== $top_level_error ) {
+			$status     = 'error';
+			$error_code = $top_level_error->get_error_code();
+		} else {
+			$status     = 'ok' === $batch_status ? 'success' : ( 'partial_error' === $batch_status ? 'partial' : 'error' );
+			$error_code = null;
+		}
+
+		$failed_results = array_filter( $response['results'] ?? [], fn( $r ) => 'error' === ( $r['status'] ?? '' ) );
+		$failed_count   = count( $failed_results );
+		$failed_codes   = array_values( array_unique( array_column( $failed_results, 'code' ) ) );
+
+		$ops_count = count( $operations );
+		$by_action = [];
+		$mode_used = null;
+		$all_css   = '';
+
+		foreach ( $operations as $op ) {
+			$action = $op['action'] ?? '';
+			if ( '' !== $action ) {
+				$by_action[ $action ] = ( $by_action[ $action ] ?? 0 ) + 1;
+			}
+
+			if ( 'update' === $action ) {
+				$mode_used = $mode_used ?? ( $op['mode'] ?? 'patch' );
+			}
+
+			if ( isset( $op['css'] ) && is_string( $op['css'] ) ) {
+				$all_css .= ' ' . $op['css'];
+			}
+		}
+
+		$dominant_action = '';
+		if ( ! empty( $by_action ) ) {
+			arsort( $by_action );
+			$dominant_action = (string) array_key_first( $by_action );
+		}
+
+		$vars_count = 0;
+		$var_labels = [];
+		if ( '' !== trim( $all_css ) ) {
+			preg_match_all( '/var\(--([a-zA-Z0-9_-]+)\)/', $all_css, $matches );
+			$var_labels = array_values( array_unique( $matches[1] ?? [] ) );
+			$vars_count = count( $matches[0] ?? [] );
+		}
+
+		$payload = [
+			'tool_name'                  => $this->get_ability_id(),
+			'status'                     => $status,
+			'duration_ms'                => $duration_ms,
+			'action'                     => $dominant_action,
+			'operations_count'           => $ops_count,
+			'operations_by_type'         => $by_action,
+			'failed_operations_count'    => $failed_count,
+			'failed_operation_codes'     => $failed_codes,
+			'variables_referenced_count' => $vars_count,
+			'variable_labels'            => $var_labels,
+			'warning_count'              => 0,
+			'warning_types'              => [],
+		];
+
+		if ( null !== $mode_used ) {
+			$payload['mode_used'] = $mode_used;
+		}
+
+		if ( null !== $error_code ) {
+			$payload['error_code'] = $error_code;
+		}
+
+		Mcp_Event_Dispatcher::emit( 'mcp_manage_classes_executed', $payload );
 	}
 }
