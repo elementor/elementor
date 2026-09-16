@@ -227,6 +227,7 @@ export const IconLibraryGrid = ( {
 						<Box
 							key={ virtualRow.key }
 							role="row"
+							aria-rowindex={ virtualRow.index + 1 }
 							sx={ {
 								position: 'absolute',
 								top: 0,
@@ -262,6 +263,7 @@ export const IconLibraryGrid = ( {
 												component="button"
 												type="button"
 												role="gridcell"
+												aria-colindex={ columnIndex + 1 }
 												aria-label={ item.label }
 												aria-selected={ isSelected }
 												tabIndex={ tabIndex }

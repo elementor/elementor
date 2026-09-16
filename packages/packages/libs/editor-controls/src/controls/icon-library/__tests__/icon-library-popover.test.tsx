@@ -109,7 +109,8 @@ describe( 'IconLibraryPopover', () => {
 
 		// Assert.
 		expect( screen.getByRole( 'grid' ) ).toHaveAttribute( 'aria-colcount', String( ICON_LIBRARY_GRID_COLUMNS ) );
-		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'row' )[ 0 ] ).toHaveAttribute( 'aria-rowindex', '1' );
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-colindex', '1' );
 	} );
 
 	it( 'preserves search, filter, and selection when switching views', () => {
