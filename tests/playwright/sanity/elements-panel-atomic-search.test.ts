@@ -9,6 +9,19 @@ test.describe( 'Elements panel search — atomic priority @atomic-widgets', () =
 		const editor = await wpAdmin.openNewPage();
 		await editor.openElementsPanel();
 
+		// Debug — verify preconditions before searching
+		const debug = await page.evaluate( () => {
+			const win = window as unknown as Record<string, any>;
+			const eHeading = win.elementor?.widgetsCache?.[ 'e-heading' ];
+			return {
+				atomic: eHeading?.atomic,
+				hasAtomicPropsSchema: !! eHeading?.atomic_props_schema,
+				eAtomicExp: win.elementorCommon?.config?.experimentalFeatures?.e_atomic_elements,
+			};
+		} );
+		// eslint-disable-next-line no-console
+		console.log( '[atomic-search-debug]', JSON.stringify( debug ) );
+
 		// Act — search for "heading" which matches both e-heading (V4) and Heading (V3)
 		await page.locator( '#elementor-panel-elements-search-wrapper input' ).fill( 'heading' );
 
