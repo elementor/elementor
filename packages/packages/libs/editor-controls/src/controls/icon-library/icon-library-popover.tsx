@@ -128,7 +128,7 @@ export const IconLibraryPopover = ( {
 				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
 			</Stack>
 			<Divider />
-			<Box sx={ { flex: 1, overflow: 'auto', minHeight: 0 } }>
+			<Box sx={ { flex: 1, overflow: 'hidden', minHeight: 0, minWidth: 0 } }>
 				<IconLibraryContent
 					isLoading={ isLoading }
 					items={ items }

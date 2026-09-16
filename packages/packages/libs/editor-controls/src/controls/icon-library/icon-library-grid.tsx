@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Box, Tooltip } from '@elementor/ui';
+import { Box, Tooltip, useTheme } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './font-awesome-glyph';
 
 export const ICON_LIBRARY_GRID_COLUMNS = 4;
-export const ICON_LIBRARY_GRID_ROW_HEIGHT = 60;
 export const ICON_LIBRARY_GRID_CELL_WIDTH = 53;
-export const ICON_LIBRARY_GRID_CELL_HEIGHT = 52;
 export const ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY = 1000;
 
 const ICON_GLYPH_SIZE = 20;
 const GRID_OVERSCAN = 6;
 const GRID_COLUMN_GAP = 1;
-const GRID_HORIZONTAL_PADDING = 2;
-const GRID_VERTICAL_PADDING = 0.5;
+const GRID_HORIZONTAL_PADDING = 1;
 const HOME_END_KEYS = new Set( [ 'Home', 'End' ] );
 
 type IconLibraryGridItem = FontAwesome7Icon & {
@@ -39,16 +36,18 @@ export const IconLibraryGrid = ( {
 	onClose,
 	noResultsComponent,
 }: IconLibraryGridProps ) => {
+	const theme = useTheme();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const cellRefs = useRef( new Map< string, HTMLButtonElement >() );
 	const shouldRestoreFocusRef = useRef( false );
 	const selectedIndex = items.findIndex( ( item ) => item.id === selectedValue );
 	const [ focusedIndex, setFocusedIndex ] = useState( selectedIndex >= 0 ? selectedIndex : 0 );
+	const [ cellSize, setCellSize ] = useState( ICON_LIBRARY_GRID_CELL_WIDTH );
 	const rowCount = Math.ceil( items.length / ICON_LIBRARY_GRID_COLUMNS );
 	const virtualizer = useVirtualizer( {
 		count: rowCount,
 		getScrollElement: () => containerRef.current,
-		estimateSize: () => ICON_LIBRARY_GRID_ROW_HEIGHT,
+		estimateSize: () => cellSize,
 		overscan: GRID_OVERSCAN,
 	} );
 	const focusedItem = items[ focusedIndex ];
@@ -86,6 +85,37 @@ export const IconLibraryGrid = ( {
 		cell.focus();
 		shouldRestoreFocusRef.current = false;
 	} );
+
+	useLayoutEffect( () => {
+		const container = containerRef.current;
+
+		if ( ! container ) {
+			return;
+		}
+
+		const measureCellSize = () => {
+			const columnGap = Number.parseFloat( theme.spacing( GRID_COLUMN_GAP ) );
+			const inlinePadding = Number.parseFloat( theme.spacing( GRID_HORIZONTAL_PADDING ) ) * 2;
+			const availableWidth =
+				container.clientWidth - inlinePadding - columnGap * ( ICON_LIBRARY_GRID_COLUMNS - 1 );
+			const nextSize = Math.floor( availableWidth / ICON_LIBRARY_GRID_COLUMNS );
+
+			setCellSize( nextSize > 0 ? nextSize : ICON_LIBRARY_GRID_CELL_WIDTH );
+		};
+
+		measureCellSize();
+		const resizeObserver = new ResizeObserver( measureCellSize );
+		resizeObserver.observe( container );
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, [ theme ] );
+
+	useLayoutEffect( () => {
+		virtualizer.measure();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ cellSize ] );
 
 	if ( items.length === 0 && noResultsComponent ) {
 		return noResultsComponent;
@@ -149,7 +179,7 @@ export const IconLibraryGrid = ( {
 	};
 
 	return (
-		<Box ref={ containerRef } sx={ { height: '100%', overflowY: 'auto' } }>
+		<Box ref={ containerRef } sx={ { height: '100%', overflowX: 'hidden', overflowY: 'auto', minWidth: 0 } }>
 			<Box
 				role="grid"
 				aria-rowcount={ rowCount }
@@ -175,12 +205,10 @@ export const IconLibraryGrid = ( {
 								height: virtualRow.size,
 								transform: `translateY(${ virtualRow.start }px)`,
 								display: 'grid',
-								gridTemplateColumns: `repeat(${ ICON_LIBRARY_GRID_COLUMNS }, ${ ICON_LIBRARY_GRID_CELL_WIDTH }px)`,
+								gridTemplateColumns: `repeat(${ ICON_LIBRARY_GRID_COLUMNS }, minmax(0, 1fr))`,
 								columnGap: GRID_COLUMN_GAP,
-								justifyContent: 'center',
-								alignItems: 'center',
+								alignItems: 'stretch',
 								px: GRID_HORIZONTAL_PADDING,
-								py: GRID_VERTICAL_PADDING,
 								boxSizing: 'border-box',
 							} }
 						>
@@ -224,10 +252,10 @@ export const IconLibraryGrid = ( {
 												boxSizing: 'border-box',
 												appearance: 'none',
 												m: 0,
-												width: ICON_LIBRARY_GRID_CELL_WIDTH,
-												height: ICON_LIBRARY_GRID_CELL_HEIGHT,
-												minWidth: ICON_LIBRARY_GRID_CELL_WIDTH,
-												minHeight: ICON_LIBRARY_GRID_CELL_HEIGHT,
+												width: '100%',
+												height: '100%',
+												minWidth: 0,
+												minHeight: 0,
 												display: 'flex',
 												alignItems: 'center',
 												justifyContent: 'center',

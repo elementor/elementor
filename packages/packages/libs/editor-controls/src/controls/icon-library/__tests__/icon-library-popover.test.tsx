@@ -28,6 +28,7 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 			),
 			getTotalSize: jest.fn().mockReturnValue( config.count * rowHeight ),
 			scrollToIndex,
+			measure: jest.fn(),
 			getVirtualIndexes: jest.fn().mockReturnValue( indices ),
 		};
 	} ),
