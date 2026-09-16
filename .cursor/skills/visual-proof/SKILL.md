@@ -1,19 +1,20 @@
 ---
-name: video-proof-demo
+name: visual-proof
 description: >-
-  Author the ## Video demo section on elementor/elementor PRs. Editor bugs
-  get Broken + Where / Steps / Pass / Fail. Everything else gets #skip_video.
-  Triggered by the always-on video-demo-pr rule when creating or editing a PR.
+  Author the ## Visual proof section on elementor/elementor PRs. Editor bugs
+  get Broken + Where / Steps / Pass / Fail. Everything else gets #skip_proof.
+  Triggered by the always-on visual-proof-pr rule when creating or editing a PR.
 ---
 
-# Video demo
+# Visual proof
 
-Cursor agents in this checkout must put a `## Video demo` section in the PR
-body. This skill is how to write it. Recording the clip is not this skill.
+Cursor agents in this checkout must put a `## Visual proof` section in the PR
+body. This skill is how to write it. Capturing screenshots or a clip is not
+this skill.
 
 ## What triggers it
 
-`.cursor/rules/video-demo-pr.mdc` has `alwaysApply: true`. It runs in every
+`.cursor/rules/visual-proof-pr.mdc` has `alwaysApply: true`. It runs in every
 Cursor session on this repo when the agent is about to `gh pr create` or
 `gh pr edit`.
 
@@ -23,7 +24,7 @@ PR from GitHub’s UI, nothing fills it in.
 
 ## Environment (this repo)
 
-The demo target is the PR’s **playground-preview** deployment, not a local
+The proof target is the PR’s **playground-preview** deployment, not a local
 site.
 
 | Piece | Path |
@@ -41,7 +42,7 @@ deployment URL posted after the build artifact exists.
 Login: `admin` / `password`. Landing page is `/wp-admin`.
 
 Playground only has this plugin. If the bug cannot be shown there, use
-`#skip_video`.
+`#skip_proof`.
 
 ## When to fill vs skip
 
@@ -51,7 +52,7 @@ Playground only has this plugin. If the bug cannot be shown there, use
 - User-visible **editor** UI (panel, canvas, navigator, Style / Content)
 - Can be shown on Core Playground above
 
-**`#skip_video`** + one sentence:
+**`#skip_proof`** + one sentence:
 
 - Story / Task / feature
 - No editor UI
@@ -60,22 +61,22 @@ Playground only has this plugin. If the bug cannot be shown there, use
 
 ## Rules
 
-1. Write for a future recorder, not for human reviewers (they read Summary).
+1. Write for a future capture step, not for human reviewers (they read Summary).
 2. Visible in-app labels only. No file paths, no GitHub, no workflow names
    inside **Steps**.
 3. Do not act out the bug. Playground has the **fixed** zip. Put the old
-   behaviour in `**Broken:**`, then demo the fixed path.
+   behaviour in `**Broken:**`, then show the fixed path.
 4. Do not spend Steps dismissing welcome popovers — the blueprint already
    sets `_e_welcome_popover_displayed`.
 
 ## PR body
 
-Order: Summary → Test plan → Video demo → Jira.
+Order: Summary → Test plan → Visual proof → Jira.
 
 ### Editor bug
 
 ```markdown
-## Video demo
+## Visual proof
 **Broken:** <one sentence: what used to happen in the editor>
 **Where:** <editor path using visible labels>
 **Steps:** <happy path on this PR’s Playground>
@@ -86,8 +87,8 @@ Order: Summary → Test plan → Video demo → Jira.
 ### Skip
 
 ```markdown
-## Video demo
-#skip_video
+## Visual proof
+#skip_proof
 <One sentence why this cannot be shown in Core Playground editor.>
 ```
 
@@ -97,7 +98,7 @@ Order: Summary → Test plan → Video demo → Jira.
 - Pass / Fail are on-screen, not “tests pass”.
 - `**Broken:**` is past tense and has no steps.
 - Aim for under ~90s of actions.
-- Empty containers need a border or background or they vanish on video.
+- Empty containers need a border or background or they vanish in a capture.
 
 ## Examples
 
