@@ -147,14 +147,14 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ).click();
 			await page.keyboard.press( 'Escape' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
-			await expect( popover.getByRole( 'option', { name: /github/i } ) ).toBeVisible();
+			await expect( popover.getByRole( 'option', { name: /github/i } ).first() ).toBeVisible();
 
 			await popover.getByRole( 'button', { name: 'List view' } ).click();
 			await page.getByRole( 'menuitemradio', { name: 'Grid' } ).click();
 
 			await expect( search ).toHaveValue( 'github' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
-			await expect( popover.getByRole( 'gridcell', { name: /github/i } ) ).toBeVisible();
+			await expect( popover.getByRole( 'gridcell', { name: /github/i } ).first() ).toBeVisible();
 			await expect( popover.getByRole( 'gridcell', { name: /star/i } ) ).toHaveCount( 0 );
 
 			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
@@ -162,20 +162,20 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 
 			await expect( search ).toHaveValue( 'github' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
-			await expect( popover.getByRole( 'option', { name: /github/i } ) ).toBeVisible();
+			await expect( popover.getByRole( 'option', { name: /github/i } ).first() ).toBeVisible();
 		} );
 
 		await test.step( 'Grid icon names appear in a tooltip after one second', async () => {
 			await popover.getByRole( 'button', { name: 'List view' } ).click();
 			await page.getByRole( 'menuitemradio', { name: 'Grid' } ).click();
 
-			const githubCell = popover.getByRole( 'gridcell', { name: /github/i } );
+			const githubCell = popover.getByRole( 'gridcell', { name: /github/i } ).first();
 
 			await page.clock.install();
 			await githubCell.hover();
-			await expect( page.getByRole( 'tooltip', { name: 'github' } ) ).toHaveCount( 0 );
+			await expect( page.getByRole( 'tooltip', { name: /github/i } ) ).toHaveCount( 0 );
 			await page.clock.fastForward( GRID_ICON_TOOLTIP_DELAY_MS );
-			await expect( page.getByRole( 'tooltip', { name: 'github' } ) ).toBeVisible();
+			await expect( page.getByRole( 'tooltip', { name: /github/i } ).first() ).toBeVisible();
 			await page.clock.resume();
 		} );
 
