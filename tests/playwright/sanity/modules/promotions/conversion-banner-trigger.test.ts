@@ -32,7 +32,7 @@ const resetBannerTriggerState = async (): Promise<void> => {
 
 const clearElementorBuiltMeta = async (): Promise<void> => {
 	await wpCli(
-		'wp eval global $wpdb; $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key = \'_elementor_edit_mode\'");',
+		'wp eval $GLOBALS["wpdb"]->query( "DELETE FROM " . $GLOBALS["wpdb"]->postmeta . " WHERE meta_key = \'_elementor_edit_mode\'" );',
 	);
 };
 
