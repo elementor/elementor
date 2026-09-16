@@ -59,7 +59,9 @@ const createPublishedElementorPage = async (
 		content: '',
 	} );
 
-	await wpCli( `wp post meta update ${ postId } ${ ELEMENTOR_EDIT_MODE } builder` );
+	await apiRequests.updatePostMeta( request, 'pages', postId, {
+		[ ELEMENTOR_EDIT_MODE ]: 'builder',
+	} );
 	testPageIds.push( postId );
 
 	return postId;
