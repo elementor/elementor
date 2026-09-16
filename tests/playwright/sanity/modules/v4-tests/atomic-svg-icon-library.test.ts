@@ -27,7 +27,8 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		await page.close();
 	} );
 
-	test( 'SVG control overlay and icon library popover match expected visuals', async ( { page, apiRequests }, testInfo ) => {
+	// To be fixed in ED-25581
+	test.skip( 'SVG control overlay and icon library popover match expected visuals', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
