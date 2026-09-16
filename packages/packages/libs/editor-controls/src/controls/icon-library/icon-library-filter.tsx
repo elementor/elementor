@@ -20,11 +20,11 @@ import {
 	type FontAwesome7Library,
 	type FontAwesome7LibraryFilter,
 } from './font-awesome-7-catalog';
+import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
 const FILTER_INDICATOR_OFFSET = 4;
-const FILTER_TOOLTIP_ENTER_DELAY = 0;
 const LIBRARY_FILTER_ORDER = {
 	regular: 0,
 	solid: 1,
@@ -91,8 +91,8 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 			<Tooltip
 				title={ __( 'Filter by library', 'elementor' ) }
 				placement="top"
-				enterDelay={ FILTER_TOOLTIP_ENTER_DELAY }
-				enterNextDelay={ FILTER_TOOLTIP_ENTER_DELAY }
+				enterDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
+				enterNextDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
 			>
 				<ToggleButton
 					aria-label={ filterButtonLabel }

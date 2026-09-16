@@ -14,10 +14,11 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
+
 export type IconLibraryView = 'grid' | 'list';
 
 const VIEW_MENU_WIDTH = 122;
-const ACTION_TOOLTIP_ENTER_DELAY = 0;
 
 type IconLibraryViewToggleProps = {
 	value: IconLibraryView;
@@ -39,8 +40,8 @@ export const IconLibraryViewToggle = ( { value, onChange }: IconLibraryViewToggl
 			<Tooltip
 				title={ viewButtonLabel }
 				placement="top"
-				enterDelay={ ACTION_TOOLTIP_ENTER_DELAY }
-				enterNextDelay={ ACTION_TOOLTIP_ENTER_DELAY }
+				enterDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
+				enterNextDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
 			>
 				<ToggleButton
 					aria-label={ viewButtonLabel }

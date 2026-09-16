@@ -54,8 +54,19 @@ export const IconLibraryGrid = ( {
 	const focusedItem = items[ focusedIndex ];
 
 	useLayoutEffect( () => {
+		setFocusedIndex( ( current ) => {
+			if ( items.length === 0 ) {
+				return 0;
+			}
+
+			if ( selectedIndex >= 0 ) {
+				return selectedIndex;
+			}
+
+			return Math.min( current, items.length - 1 );
+		} );
+
 		if ( selectedIndex >= 0 ) {
-			setFocusedIndex( selectedIndex );
 			virtualizer.scrollToIndex( Math.floor( selectedIndex / ICON_LIBRARY_GRID_COLUMNS ) );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -200,6 +211,7 @@ export const IconLibraryGrid = ( {
 												onSelect( item.id );
 												onClose();
 											} }
+											onFocus={ () => setFocusedIndex( index ) }
 											onKeyDown={ ( event: React.KeyboardEvent< HTMLButtonElement > ) =>
 												handleKeyDown( event, index )
 											}

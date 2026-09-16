@@ -379,6 +379,41 @@ describe( 'IconLibraryPopover', () => {
 		expect( wordpress ).toHaveFocus();
 	} );
 
+	it( 'moves the roving tab index to the pointer-focused cell', () => {
+		// Arrange.
+		renderPopover();
+
+		const star = screen.getByRole( 'gridcell', { name: /star/i } );
+		const heart = screen.getByRole( 'gridcell', { name: /heart/i } );
+
+		// Assert.
+		expect( star ).toHaveAttribute( 'tabIndex', '0' );
+
+		// Act.
+		act( () => heart.focus() );
+
+		// Assert.
+		expect( heart ).toHaveAttribute( 'tabIndex', '0' );
+		expect( star ).toHaveAttribute( 'tabIndex', '-1' );
+	} );
+
+	it( 'clamps grid focus when the filtered list shrinks', () => {
+		// Arrange.
+		renderPopover();
+
+		const heart = screen.getByRole( 'gridcell', { name: /heart/i } );
+
+		// Act.
+		act( () => heart.focus() );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
+		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ) );
+		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
+
+		// Assert.
+		expect( screen.getByRole( 'gridcell', { name: /wordpress/i } ) ).toHaveAttribute( 'tabIndex', '0' );
+		expect( screen.getByRole( 'gridcell', { name: /github/i } ) ).toHaveAttribute( 'tabIndex', '-1' );
+	} );
+
 	it( 'restores focus after an off-screen grid row mounts', () => {
 		// Arrange.
 		mockVisibleIndices = [ 0 ];
