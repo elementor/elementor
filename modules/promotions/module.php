@@ -86,8 +86,12 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
-		if ( Conversion_Banner::should_display_banner() ) {
-			new Conversion_Banner();
+		if ( ! Utils::has_pro() ) {
+			Conversion_Banner::register_cache_invalidation_hooks();
+
+			if ( Conversion_Banner::should_display_banner() ) {
+				new Conversion_Banner();
+			}
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
