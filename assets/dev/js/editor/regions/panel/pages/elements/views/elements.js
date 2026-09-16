@@ -45,18 +45,21 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 
 		if ( filterValue && elementorCommon.config.experimentalFeatures?.e_atomic_elements ) {
 			// When V4 atomic elements are active, show them first in search results.
-			this.collection.comparator = ( a, b ) => {
-				const aIsAtomic = elementor.helpers.isAtomicWidget( a );
-				const bIsAtomic = elementor.helpers.isAtomicWidget( b );
-				if ( aIsAtomic && ! bIsAtomic ) {
-					return -1;
-				}
-				if ( ! aIsAtomic && bIsAtomic ) {
-					return 1;
-				}
-				return 0;
-			};
-			this.collection.sort();
+			// Set the comparator once when search starts; Backbone maintains order on subsequent keystrokes.
+			if ( ! this.collection.comparator ) {
+				this.collection.comparator = ( a, b ) => {
+					const aIsAtomic = elementor.helpers.isAtomicWidget( a );
+					const bIsAtomic = elementor.helpers.isAtomicWidget( b );
+					if ( aIsAtomic && ! bIsAtomic ) {
+						return -1;
+					}
+					if ( ! aIsAtomic && bIsAtomic ) {
+						return 1;
+					}
+					return 0;
+				};
+				this.collection.sort();
+			}
 		} else {
 			this.collection.comparator = null;
 		}
