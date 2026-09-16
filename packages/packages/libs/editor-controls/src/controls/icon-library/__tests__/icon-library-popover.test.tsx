@@ -265,6 +265,35 @@ describe( 'IconLibraryPopover', () => {
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'selects a grid icon with Enter and Space', () => {
+		// Arrange.
+		const onSelect = jest.fn();
+		const onClose = jest.fn();
+
+		const { unmount } = renderPopover( { onSelect, onClose } );
+		switchToGridView();
+
+		// Act.
+		fireEvent.keyDown( screen.getByRole( 'gridcell', { name: /star/i } ), { key: 'Enter' } );
+
+		// Assert.
+		expect( onSelect ).toHaveBeenCalledWith( { value: 'fa-solid fa-star', library: 'fa-solid' } );
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+
+		// Arrange.
+		unmount();
+		onSelect.mockClear();
+		onClose.mockClear();
+		renderPopover( { onSelect, onClose } );
+
+		// Act.
+		fireEvent.keyDown( screen.getByRole( 'gridcell', { name: /star/i } ), { key: ' ' } );
+
+		// Assert.
+		expect( onSelect ).toHaveBeenCalledWith( { value: 'fa-solid fa-star', library: 'fa-solid' } );
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'falls back to the default view when session storage is invalid', () => {
 		// Arrange.
 		sessionStorage.setItem( 'editor-controls/icon-library-view', JSON.stringify( { item: 'cards' } ) );
