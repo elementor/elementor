@@ -3,19 +3,9 @@ import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Elements panel search — atomic priority @atomic-widgets', () => {
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await context.close();
-	} );
-
 	test( 'V4 atomic elements appear before V3 widgets in search results when e_atomic_elements is active', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange
+		// Arrange — e_atomic_elements is active by default for new sites (new_site.default_active: true)
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
-
 		const editor = await wpAdmin.openNewPage();
 		await editor.openElementsPanel();
 
