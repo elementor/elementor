@@ -29,6 +29,7 @@ class Carousel_Promotion extends Atomic_Element_Base {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
 		$this->meta( 'is_pro_promotion', true );
+		$this->meta( 'llm_support', false );
 		// Do not set is_compound: Pro Atomic_Carousel only sets is_container. That flag
 		// drives isCompoundAtomicType() wrap-in-flexbox, which the real element does not use.
 	}

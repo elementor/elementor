@@ -2,6 +2,7 @@
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Preserved_Element;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +13,22 @@ class Test_Atomic_Form_Promotion extends Elementor_Test_Base {
 
 	public function test_element_type_matches_pro_form_type() {
 		$this->assertSame( 'e-form', Atomic_Form_Promotion::get_element_type() );
+	}
+
+	public function test_llm_support_meta_is_disabled() {
+		// Arrange.
+		$promotion = new Atomic_Form_Promotion(
+			[
+				'id' => 'test_form_promotion',
+				'elType' => 'e-form',
+				'settings' => [],
+			],
+			null
+		);
+
+		// Assert.
+		$this->assertFalse( $promotion->get_meta_item( 'llm_support' ) );
+		$this->assertFalse( Widget_Context_Helper::is_widget_eligible_for_llm( $promotion->get_config() ) );
 	}
 
 	public function test_props_schema_reuses_real_form_props() {
