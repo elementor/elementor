@@ -31,7 +31,7 @@ class Post_Noindex {
 			return true;
 		}
 
-		if ( 'yes' === get_post_meta( $post_id, '_seopress_robots_index', true ) ) {
+		if ( 'no' === get_post_meta( $post_id, '_seopress_robots_index', true ) ) {
 			return true;
 		}
 
