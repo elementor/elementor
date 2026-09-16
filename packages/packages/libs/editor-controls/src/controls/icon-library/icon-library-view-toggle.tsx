@@ -42,6 +42,7 @@ export const IconLibraryViewToggle = ( { value, onChange }: IconLibraryViewToggl
 				placement="top"
 				enterDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
 				enterNextDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
+				disableInteractive
 			>
 				<ToggleButton
 					aria-label={ viewButtonLabel }
