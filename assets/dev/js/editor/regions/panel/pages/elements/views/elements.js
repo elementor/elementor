@@ -46,8 +46,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		if ( filterValue && elementorCommon.config.experimentalFeatures?.e_atomic_elements ) {
 			// When V4 atomic elements are active, show them first in search results.
 			this.collection.comparator = ( a, b ) => {
-				const aIsAtomic = ( a.get( 'widgetType' ) || '' ).startsWith( 'e-' );
-				const bIsAtomic = ( b.get( 'widgetType' ) || '' ).startsWith( 'e-' );
+				const aIsAtomic = elementor.helpers.isAtomicWidget( a );
+				const bIsAtomic = elementor.helpers.isAtomicWidget( b );
 				if ( aIsAtomic && ! bIsAtomic ) {
 					return -1;
 				}
