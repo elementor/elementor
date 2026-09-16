@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Box, Tooltip, useTheme } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { __ } from '@wordpress/i18n';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './font-awesome-glyph';
@@ -128,16 +129,15 @@ export const IconLibraryGrid = ( {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [ theme ] );
+	}, [ theme, items.length ] );
 
 	useLayoutEffect( () => {
 		virtualizer.measure();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ cellSize, columnCount ] );
 
-	if ( items.length === 0 && noResultsComponent ) {
-		return noResultsComponent;
-	}
+	const isRtl = theme.direction === 'rtl' || document.documentElement.dir === 'rtl';
+	const horizontalOffset = isRtl ? -1 : 1;
 
 	const moveFocus = ( nextIndex: number ) => {
 		if ( nextIndex < 0 || nextIndex >= items.length ) {
@@ -159,13 +159,13 @@ export const IconLibraryGrid = ( {
 
 		if ( event.key === 'ArrowRight' ) {
 			event.preventDefault();
-			moveFocus( index + 1 );
+			moveFocus( index + horizontalOffset );
 			return;
 		}
 
 		if ( event.key === 'ArrowLeft' ) {
 			event.preventDefault();
-			moveFocus( index - 1 );
+			moveFocus( index - horizontalOffset );
 			return;
 		}
 
@@ -207,18 +207,22 @@ export const IconLibraryGrid = ( {
 				overflowY: 'auto',
 			} }
 		>
-			<Box
-				role="grid"
-				aria-rowcount={ rowCount }
-				aria-colcount={ columnCount }
-				data-testid="icon-library-grid"
-				sx={ {
-					width: '100%',
-					minWidth: 0,
-					height: virtualizer.getTotalSize(),
-					position: 'relative',
-				} }
-			>
+			{ items.length === 0 && noResultsComponent ? (
+				noResultsComponent
+			) : (
+				<Box
+					role="grid"
+					aria-label={ __( 'Icons', 'elementor' ) }
+					aria-rowcount={ rowCount }
+					aria-colcount={ columnCount }
+					data-testid="icon-library-grid"
+					sx={ {
+						width: '100%',
+						minWidth: 0,
+						height: virtualizer.getTotalSize(),
+						position: 'relative',
+					} }
+				>
 				{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
 					const startIndex = virtualRow.index * columnCount;
 					const rowItems = items.slice( startIndex, startIndex + columnCount );
@@ -250,6 +254,7 @@ export const IconLibraryGrid = ( {
 								return (
 									<Box
 										key={ item.id }
+										role="presentation"
 										sx={ { minWidth: 0, minHeight: 0, width: '100%', height: '100%' } }
 									>
 										<Tooltip
@@ -258,6 +263,7 @@ export const IconLibraryGrid = ( {
 											enterDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
 											enterNextDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
 											disableInteractive
+											disableFocusListener
 										>
 											<Box
 												component="button"
@@ -329,7 +335,8 @@ export const IconLibraryGrid = ( {
 						</Box>
 					);
 				} ) }
-			</Box>
+				</Box>
+			) }
 		</Box>
 	);
 };

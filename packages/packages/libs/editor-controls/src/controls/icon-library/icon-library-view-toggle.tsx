@@ -98,7 +98,7 @@ const ViewMenuItem = ( { label, selected, onClick }: ViewMenuItemProps ) => (
 			<Typography variant="caption" sx={ { flex: 1 } }>
 				{ label }
 			</Typography>
-			{ selected ? <CheckIcon fontSize="tiny" /> : null }
+			{ selected ? <CheckIcon fontSize="tiny" aria-hidden="true" /> : null }
 		</Stack>
 	</MenuItem>
 );

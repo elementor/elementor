@@ -64,6 +64,13 @@ const switchToGridView = () => {
 	fireEvent.click( screen.getByRole( 'menuitemradio', { name: 'Grid' } ) );
 };
 
+const restoreClientWidth = () => {
+	Object.defineProperty( HTMLElement.prototype, 'clientWidth', {
+		configurable: true,
+		get: () => 0,
+	} );
+};
+
 describe( 'IconLibraryPopover', () => {
 	const icons = [
 		createIcon( 'star', 'fa-solid', [ 'favorite' ] ),
@@ -82,10 +89,22 @@ describe( 'IconLibraryPopover', () => {
 			data: icons,
 			isLoading: false,
 		} as never );
+
+		if ( ! globalThis.ResizeObserver ) {
+			globalThis.ResizeObserver = class {
+				observe() {}
+				unobserve() {}
+				disconnect() {}
+			} as unknown as typeof ResizeObserver;
+		}
+
+		restoreClientWidth();
 	} );
 
 	afterEach( () => {
 		jest.useRealTimers();
+		document.documentElement.removeAttribute( 'dir' );
+		restoreClientWidth();
 	} );
 
 	it( 'opens in list view by default', () => {
@@ -111,6 +130,66 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'grid' ) ).toHaveAttribute( 'aria-colcount', String( ICON_LIBRARY_GRID_COLUMNS ) );
 		expect( screen.getAllByRole( 'row' )[ 0 ] ).toHaveAttribute( 'aria-rowindex', '1' );
 		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-colindex', '1' );
+	} );
+
+	it( 'fits as many equal columns as the popover width allows', () => {
+		// Arrange.
+		Object.defineProperty( HTMLElement.prototype, 'clientWidth', {
+			configurable: true,
+			get: () => 500,
+		} );
+
+		renderPopover();
+
+		// Act.
+		switchToGridView();
+
+		// Assert.
+		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toHaveAttribute( 'aria-colcount', '8' );
+	} );
+
+	it( 'keeps measuring the grid after an empty search is cleared', () => {
+		// Arrange.
+		jest.useFakeTimers();
+		renderPopover();
+		switchToGridView();
+
+		// Act.
+		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'missing' } } );
+		act( () => {
+			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
+		} );
+
+		// Assert.
+		expect( screen.getByText( /Sorry, nothing matched/ ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Clear & try again' } ) );
+
+		// Assert.
+		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'reverses horizontal grid keys in RTL', () => {
+		// Arrange.
+		document.documentElement.setAttribute( 'dir', 'rtl' );
+		renderPopover();
+		switchToGridView();
+
+		const star = screen.getByRole( 'gridcell', { name: /star/i } );
+
+		// Act.
+		act( () => star.focus() );
+		fireEvent.keyDown( star, { key: 'ArrowRight' } );
+
+		// Assert.
+		expect( star ).toHaveFocus();
+
+		// Act.
+		fireEvent.keyDown( star, { key: 'ArrowLeft' } );
+
+		// Assert.
+		expect( screen.getByRole( 'gridcell', { name: /circle/i } ) ).toHaveFocus();
 	} );
 
 	it( 'preserves search, filter, and selection when switching views', () => {
