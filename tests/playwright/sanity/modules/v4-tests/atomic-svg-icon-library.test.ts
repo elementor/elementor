@@ -40,11 +40,11 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 
 		const popover = page.locator( '#icon-library' );
 
-		await test.step( 'Icon library popover opens in list view', async () => {
+		await test.step( 'Icon library popover opens in grid view', async () => {
 			await page.getByRole( 'button', { name: 'Icon library' } ).click();
-			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'gridcell' ).first() ).toBeVisible();
 			await expect( popover.getByRole( 'button', { name: 'Filter by library' } ) ).toBeVisible();
-			await expect( popover.getByRole( 'button', { name: 'List view' } ) ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'Grid view' } ) ).toBeVisible();
 			await expect( popover ).toHaveScreenshot( 'icon-library-popover.png', SCREENSHOT_OPTIONS );
 		} );
 
@@ -71,34 +71,34 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
 			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ).click();
 			await page.keyboard.press( 'Escape' );
-			await expect( popover.getByRole( 'option', { name: /github/i } ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'gridcell', { name: /github/i } ).first() ).toBeVisible();
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
 
 			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
 			await page.getByRole( 'menuitemcheckbox', { name: 'All icons' } ).click();
 			await page.keyboard.press( 'Escape' );
 			await search.fill( '' );
-			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'gridcell' ).first() ).toBeVisible();
 		} );
 
-		await test.step( 'View menu and grid view match expected visuals', async () => {
-			await popover.getByRole( 'button', { name: 'List view' } ).click();
+		await test.step( 'View menu and list view match expected visuals', async () => {
+			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
 
 			const viewMenu = page.getByRole( 'menu', { name: 'View' } );
 
 			await expect( viewMenu ).toBeVisible();
 			await expect( viewMenu ).toHaveScreenshot( 'icon-library-view-menu.png', SCREENSHOT_OPTIONS );
-			await page.getByRole( 'menuitemradio', { name: 'Grid' } ).click();
-			await expect( popover.getByRole( 'gridcell' ).first() ).toBeVisible();
-			await expect( popover ).toHaveScreenshot( 'icon-library-grid-view.png', SCREENSHOT_OPTIONS );
+			await page.getByRole( 'menuitemradio', { name: 'List' } ).click();
+			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+			await expect( popover ).toHaveScreenshot( 'icon-library-list-view.png', SCREENSHOT_OPTIONS );
 		} );
 
-		await test.step( 'Grid view persists after close and reopen', async () => {
+		await test.step( 'List view persists after close and reopen', async () => {
 			await popover.getByRole( 'button', { name: 'close' } ).click();
 			await svgControl.hover();
 			await page.getByRole( 'button', { name: 'Icon library' } ).click();
-			await expect( popover.getByRole( 'gridcell' ).first() ).toBeVisible();
-			await expect( popover.getByRole( 'button', { name: 'Grid view' } ) ).toBeVisible();
+			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'List view' } ) ).toBeVisible();
 		} );
 
 		await test.step( 'View switch preserves filter and search', async () => {
@@ -108,16 +108,18 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
 			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ).click();
 			await page.keyboard.press( 'Escape' );
-			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
-			await page.getByRole( 'menuitemradio', { name: 'List' } ).click();
+			await popover.getByRole( 'button', { name: 'List view' } ).click();
+			await page.getByRole( 'menuitemradio', { name: 'Grid' } ).click();
 			await expect( search ).toHaveValue( 'github' );
-			await expect( popover.getByRole( 'option', { name: /github/i } ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'gridcell', { name: /github/i } ).first() ).toBeVisible();
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
 
 			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
 			await page.getByRole( 'menuitemcheckbox', { name: 'All icons' } ).click();
 			await page.keyboard.press( 'Escape' );
 			await search.fill( '' );
+			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
+			await page.getByRole( 'menuitemradio', { name: 'List' } ).click();
 		} );
 
 		await test.step( 'Hovered row is visually highlighted', async () => {
