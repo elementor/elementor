@@ -3,6 +3,7 @@ import * as cookiePolicy from './audits/cookie-policy';
 import * as deepNesting from './audits/deep-nesting';
 import * as defaultDesignSystem from './audits/default-design-system';
 import * as deprecatedWidgets from './audits/deprecated-widgets';
+import * as googleConsentMode from './audits/google-consent-mode';
 import * as headingStructure from './audits/heading-structure';
 import * as hiddenElements from './audits/hidden-elements';
 import * as imagesAltText from './audits/images-alt-text';
@@ -49,6 +50,7 @@ const AUDITS: Audit[] = [
 	accessibilityPolicy.audit,
 	cookiePolicy.audit,
 	scanForCookies.audit,
+	googleConsentMode.audit,
 ];
 
 export function registerAllAudits(): void {

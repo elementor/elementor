@@ -29,7 +29,13 @@ describe( '<AccordionItemsControl />', () => {
 			settings: {},
 		} );
 
-		jest.mocked( useElementEditorSettings ).mockReturnValue( {} );
+		jest.mocked( useElementEditorSettings ).mockImplementation( ( elementId: string ) => {
+			const match = String( elementId ).match( /^item-(\d+)$/ );
+			if ( ! match ) {
+				return {};
+			}
+			return { title: `Accordion Item ${ Number( match[ 1 ] ) + 1 }` };
+		} );
 	} );
 
 	// The control is intentionally not wrapped in a `SettingsField`, so this also proves that
@@ -69,5 +75,26 @@ describe( '<AccordionItemsControl />', () => {
 		// Assert.
 		expect( screen.queryByLabelText( 'Hide' ) ).not.toBeInTheDocument();
 		expect( screen.getAllByLabelText( 'Duplicate' ) ).toHaveLength( 2 );
+	} );
+
+	it( 'should show the live editor title on the repeater row, not the children snapshot', () => {
+		// Arrange.
+		jest.mocked( useElementChildren ).mockReturnValue( {
+			'e-accordion-item': [ { id: 'item-0', editorSettings: { title: 'Accordion Item 1' } } ],
+		} );
+
+		jest.mocked( useElementEditorSettings ).mockImplementation( ( elementId: string ) => {
+			if ( elementId === 'item-0' ) {
+				return { title: 'Shipping' };
+			}
+			return {};
+		} );
+
+		// Act.
+		renderWithTheme( <AccordionItemsControl label="Accordion Items" /> );
+
+		// Assert.
+		expect( screen.getByText( 'Shipping' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Accordion Item 1' ) ).not.toBeInTheDocument();
 	} );
 } );

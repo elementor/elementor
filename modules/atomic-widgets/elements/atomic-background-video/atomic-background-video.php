@@ -151,6 +151,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							'paused' => [ 'title' => esc_html__( 'Pause', 'elementor' ) ],
 						] )
 						->set_exclusive( true )
+						->set_allow_empty( true )
 						->set_convert_options( true )
 						->set_size( 'tiny' )
 						->set_full_width( true ),
