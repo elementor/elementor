@@ -73,10 +73,16 @@ class Custom_Css_Sanitizer {
 			if ( ctype_xdigit( $next ) ) {
 				$hex = '';
 				$hex_end = $index + 1;
+				$hex_digit_count = 0;
 
-				while ( $hex_end < $length && strlen( $hex ) < self::MAX_CSS_HEX_ESCAPE_LENGTH && ctype_xdigit( $css[ $hex_end ] ) ) {
+				while (
+					$hex_end < $length
+					&& $hex_digit_count < self::MAX_CSS_HEX_ESCAPE_LENGTH
+					&& ctype_xdigit( $css[ $hex_end ] )
+				) {
 					$hex .= $css[ $hex_end ];
 					$hex_end++;
+					$hex_digit_count++;
 				}
 
 				if ( $hex_end < $length && $this->is_css_escape_terminator_whitespace( $css[ $hex_end ] ) ) {
