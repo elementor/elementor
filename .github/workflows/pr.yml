@@ -228,6 +228,49 @@ jobs:
       pr_number: ${{ github.event.pull_request.number }}
       head_sha: ${{ github.event.pull_request.head.sha }}
 
+  visual-proof-shots:
+    name: Visual proof shots
+    needs: [playground-preview]
+    if: |
+      always() &&
+      needs.playground-preview.result == 'success' &&
+      github.event.pull_request.draft == false &&
+      startsWith(github.repository, 'elementor/') &&
+      github.event.action != 'ready_for_review' &&
+      github.event.action != 'labeled' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      deployments: read
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+      - name: Parse Visual proof section
+        run: node .github/scripts/visual-proof/parse-section.js --test
+      - name: Capture Playground shots and comment
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: bash .github/scripts/visual-proof/run.sh
+      - name: Upload shots artifact
+        if: hashFiles('visual-proof-shots/*.png') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-proof-shots
+          path: visual-proof-shots/
+          if-no-files-found: ignore
+          retention-days: 7
+
   lint-js:
     name: Lint JS
     runs-on: ubuntu-22.04
