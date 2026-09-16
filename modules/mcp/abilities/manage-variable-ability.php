@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -148,6 +149,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				$watermark = $batch_result['watermark'] ?? null;
 
 				$this->merge_batch_results( $batch_result['results'], $index_map, $results );
+				$this->emit_variable_events( $batch_result['results'] );
 			} catch ( FatalError $e ) {
 				return new \WP_Error(
 					'unexpected_server_error',
@@ -277,5 +279,40 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function emit_variable_events( array $batch_results ): void {
+		$event_by_action = [
+			'create' => 'variable_created',
+			'update' => 'variable_updated',
+		];
+
+		$var_type_labels = [
+			self::TYPE_COLOR       => 'color',
+			self::TYPE_FONT        => 'font',
+			self::TYPE_SIZE        => 'size',
+			self::TYPE_CUSTOM_SIZE => 'size',
+		];
+
+		foreach ( $batch_results as $result ) {
+			if ( 'ok' !== ( $result['status'] ?? '' ) ) {
+				continue;
+			}
+
+			$action = $result['action'] ?? '';
+
+			if ( ! isset( $event_by_action[ $action ] ) ) {
+				continue;
+			}
+
+			$raw_type = $result['type'] ?? '';
+			$var_type = $var_type_labels[ $raw_type ] ?? $raw_type;
+
+			Mcp_Event_Dispatcher::emit( $event_by_action[ $action ], [
+				'id'       => $result['id'] ?? '',
+				'name'     => $result['label'] ?? '',
+				'var_type' => $var_type,
+			] );
+		}
 	}
 }
