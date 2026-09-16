@@ -176,7 +176,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'max_allowed' => self::MAX_BATCH_SIZE,
 				]
 			);
-			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error, $operations );
 			return $error;
 		}
 
@@ -186,13 +186,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				__( 'You do not have permission to edit this post.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
-			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error, $operations );
 			return $error;
 		}
 
 		$document = $this->resolve_document( $post_id );
 		if ( is_wp_error( $document ) ) {
-			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $document );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $document, $operations );
 			return $document;
 		}
 
@@ -264,7 +264,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$response['status'] = 'error';
 			$response['save_error'] = $save_result->get_error_message();
 			$response = $this->with_edit_url( $response, $document );
-			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, $save_result, $operations, $response, $all_warning_codes, $class_attachments, $interactions_count );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, $save_result, $operations, $response, $all_warning_codes, 0, 0 );
 			return $response;
 		}
 
@@ -838,7 +838,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$by_action  = [];
 		foreach ( $operations as $op ) {
 			$action = $op['action'] ?? '';
-			if ( '' !== $action ) {
+			if ( is_string( $action ) && '' !== $action ) {
 				$by_action[ $action ] = ( $by_action[ $action ] ?? 0 ) + 1;
 			}
 		}

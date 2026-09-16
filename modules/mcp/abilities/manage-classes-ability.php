@@ -667,7 +667,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 		foreach ( $operations as $op ) {
 			$action = $op['action'] ?? '';
-			if ( '' !== $action ) {
+			if ( is_string( $action ) && '' !== $action ) {
 				$by_action[ $action ] = ( $by_action[ $action ] ?? 0 ) + 1;
 			}
 

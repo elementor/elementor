@@ -62,7 +62,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$post_id   = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
 		$dry_run   = ! empty( $input['dry_run'] );
-		$mode      = $input['mode'] ?? self::MODE_APPEND;
+		$mode      = is_string( $input['mode'] ?? null ) ? $input['mode'] : self::MODE_APPEND;
 
 		$validation_error = $this->validate_input( $input );
 		if ( $validation_error ) {
