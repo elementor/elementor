@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { ICON_LIBRARY_GRID_COLUMNS, ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
+import { ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
@@ -59,6 +59,11 @@ const renderPopover = ( props: Partial< React.ComponentProps< typeof IconLibrary
 		</ThemeProvider>
 	);
 
+const switchToGridView = () => {
+	fireEvent.click( screen.getByRole( 'button', { name: 'List view' } ) );
+	fireEvent.click( screen.getByRole( 'menuitemradio', { name: 'Grid' } ) );
+};
+
 const switchToListView = () => {
 	fireEvent.click( screen.getByRole( 'button', { name: 'Grid view' } ) );
 	fireEvent.click( screen.getByRole( 'menuitemradio', { name: 'List' } ) );
@@ -107,30 +112,32 @@ describe( 'IconLibraryPopover', () => {
 		restoreClientWidth();
 	} );
 
-	it( 'opens in grid view by default', () => {
+	it( 'opens in list view by default', () => {
 		// Arrange.
-		renderPopover();
-
-		// Assert.
-		expect( screen.getByRole( 'grid' ) ).toHaveAttribute( 'aria-colcount', String( ICON_LIBRARY_GRID_COLUMNS ) );
-		expect( screen.getAllByRole( 'row' )[ 0 ] ).toHaveAttribute( 'aria-rowindex', '1' );
-		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-colindex', '1' );
-		expect( screen.queryByRole( 'listbox' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'persists list view after unmount and remount', () => {
-		// Arrange.
-		const { unmount } = renderPopover();
-
-		// Act.
-		switchToListView();
-		unmount();
 		renderPopover();
 
 		// Assert.
 		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'grid' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'persists the selected view after the picker is closed and reopened', () => {
+		// Arrange.
+		const onClose = jest.fn();
+		const { unmount } = renderPopover( { onClose } );
+
+		// Act.
+		switchToGridView();
+		fireEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+		unmount();
+		renderPopover();
+
+		// Assert.
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Grid view' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'listbox' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'fits as many equal columns as the popover width allows', () => {
@@ -141,6 +148,7 @@ describe( 'IconLibraryPopover', () => {
 		} );
 
 		renderPopover();
+		switchToGridView();
 
 		// Assert.
 		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toHaveAttribute( 'aria-colcount', '8' );
@@ -150,6 +158,7 @@ describe( 'IconLibraryPopover', () => {
 		// Arrange.
 		jest.useFakeTimers();
 		renderPopover();
+		switchToGridView();
 
 		// Act.
 		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'missing' } } );
@@ -171,6 +180,7 @@ describe( 'IconLibraryPopover', () => {
 		// Arrange.
 		document.documentElement.setAttribute( 'dir', 'rtl' );
 		renderPopover();
+		switchToGridView();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 
@@ -206,6 +216,15 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
 		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Solid' } ) );
 		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
+		switchToGridView();
+
+		// Assert.
+		expect( search ).toHaveValue( 'star' );
+		expect( screen.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.queryByRole( 'gridcell', { name: /github/i } ) ).not.toBeInTheDocument();
+
+		// Act.
 		switchToListView();
 
 		// Assert.
@@ -221,7 +240,6 @@ describe( 'IconLibraryPopover', () => {
 		const onClose = jest.fn();
 
 		renderPopover( { onSelect, onClose } );
-		switchToListView();
 
 		// Act.
 		fireEvent.click( screen.getByRole( 'option', { name: /star/i } ) );
@@ -239,7 +257,7 @@ describe( 'IconLibraryPopover', () => {
 		} );
 
 		// Assert.
-		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
 	} );
 
 	it( 'filters by library without clearing the search query', () => {
@@ -270,8 +288,8 @@ describe( 'IconLibraryPopover', () => {
 		// Assert.
 		expect( search ).toHaveValue( 'star' );
 		expect( screen.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'gridcell', { name: /github/i } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'option', { name: /github/i } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'supports keyboard navigation and restores focus when the filter menu closes', async () => {
@@ -338,7 +356,7 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'missing' } } );
 
 		// Assert.
-		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
 
 		act( () => {
 			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
@@ -350,7 +368,7 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Clear & try again' } ) );
 
 		expect( screen.getByPlaceholderText( 'Search' ) ).toHaveValue( '' );
-		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows a load failure when the catalog is empty', () => {
@@ -389,6 +407,7 @@ describe( 'IconLibraryPopover', () => {
 	it( 'moves grid focus with two-dimensional keys including incomplete last rows', () => {
 		// Arrange.
 		renderPopover();
+		switchToGridView();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 
@@ -456,6 +475,7 @@ describe( 'IconLibraryPopover', () => {
 	it( 'moves the roving tab index to the pointer-focused cell', () => {
 		// Arrange.
 		renderPopover();
+		switchToGridView();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 		const heart = screen.getByRole( 'gridcell', { name: /heart/i } );
@@ -474,6 +494,7 @@ describe( 'IconLibraryPopover', () => {
 	it( 'clamps grid focus when the filtered list shrinks', () => {
 		// Arrange.
 		renderPopover();
+		switchToGridView();
 
 		const heart = screen.getByRole( 'gridcell', { name: /heart/i } );
 
@@ -492,6 +513,7 @@ describe( 'IconLibraryPopover', () => {
 		// Arrange.
 		mockVisibleIndices = [ 0 ];
 		const { rerender } = renderPopover();
+		switchToGridView();
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 
 		expect( screen.queryByRole( 'gridcell', { name: /bell/i } ) ).not.toBeInTheDocument();
@@ -522,9 +544,10 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'gridcell', { name: /bell/i } ) ).toHaveFocus();
 	} );
 
-	it( 'shows grid icon tooltips after the delay and action tooltips immediately', async () => {
+	it( 'shows a grid icon name tooltip only after one second', async () => {
 		// Arrange.
 		renderPopover();
+		switchToGridView();
 		jest.useFakeTimers();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
