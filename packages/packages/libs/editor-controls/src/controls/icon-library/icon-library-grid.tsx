@@ -223,118 +223,119 @@ export const IconLibraryGrid = ( {
 						position: 'relative',
 					} }
 				>
-				{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
-					const startIndex = virtualRow.index * columnCount;
-					const rowItems = items.slice( startIndex, startIndex + columnCount );
+					{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
+						const startIndex = virtualRow.index * columnCount;
+						const rowItems = items.slice( startIndex, startIndex + columnCount );
 
-					return (
-						<Box
-							key={ virtualRow.key }
-							role="row"
-							aria-rowindex={ virtualRow.index + 1 }
-							sx={ {
-								position: 'absolute',
-								top: 0,
-								left: 0,
-								width: '100%',
-								height: virtualRow.size,
-								transform: `translateY(${ virtualRow.start }px)`,
-								display: 'grid',
-								gridTemplateColumns: `repeat(${ columnCount }, minmax(0, 1fr))`,
-								gap: GRID_COLUMN_GAP,
-								px: GRID_HORIZONTAL_PADDING,
-								boxSizing: 'border-box',
-							} }
-						>
-							{ rowItems.map( ( item, columnIndex ) => {
-								const index = startIndex + columnIndex;
-								const isSelected = selectedValue === item.id;
-								const tabIndex = focusedIndex === index ? 0 : -1;
+						return (
+							<Box
+								key={ virtualRow.key }
+								role="row"
+								aria-rowindex={ virtualRow.index + 1 }
+								sx={ {
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									width: '100%',
+									height: virtualRow.size,
+									transform: `translateY(${ virtualRow.start }px)`,
+									display: 'grid',
+									gridTemplateColumns: `repeat(${ columnCount }, minmax(0, 1fr))`,
+									gap: GRID_COLUMN_GAP,
+									px: GRID_HORIZONTAL_PADDING,
+									boxSizing: 'border-box',
+								} }
+							>
+								{ rowItems.map( ( item, columnIndex ) => {
+									const index = startIndex + columnIndex;
+									const isSelected = selectedValue === item.id;
+									const tabIndex = focusedIndex === index ? 0 : -1;
 
-								return (
-									<Box
-										key={ item.id }
-										role="presentation"
-										sx={ { minWidth: 0, minHeight: 0, width: '100%', height: '100%' } }
-									>
-										<Tooltip
-											title={ item.label }
-											placement="top"
-											enterDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
-											enterNextDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
-											disableInteractive
-											disableFocusListener
+									return (
+										<Box
+											key={ item.id }
+											role="presentation"
+											sx={ { minWidth: 0, minHeight: 0, width: '100%', height: '100%' } }
 										>
-											<Box
-												component="button"
-												type="button"
-												role="gridcell"
-												aria-colindex={ columnIndex + 1 }
-												aria-label={ item.label }
-												aria-selected={ isSelected }
-												tabIndex={ tabIndex }
-												ref={ ( node: HTMLButtonElement | null ) => {
-													if ( node ) {
-														cellRefs.current.set( item.id, node );
-													} else {
-														cellRefs.current.delete( item.id );
-													}
-												} }
-												onClick={ () => {
-													onSelect( item.id );
-													onClose();
-												} }
-												onFocus={ () => setFocusedIndex( index ) }
-												onKeyDown={ ( event: React.KeyboardEvent< HTMLButtonElement > ) =>
-													handleKeyDown( event, index )
-												}
-												sx={ {
-													boxSizing: 'border-box',
-													appearance: 'none',
-													m: 0,
-													width: '100%',
-													height: '100%',
-													minWidth: 0,
-													minHeight: 0,
-													display: 'flex',
-													alignItems: 'center',
-													justifyContent: 'center',
-													border: '1px solid',
-													borderColor: 'divider',
-													borderRadius: 1,
-													color: 'text.tertiary',
-													bgcolor: 'transparent',
-													p: 0,
-													cursor: 'pointer',
-													font: 'inherit',
-													lineHeight: 0,
-													overflow: 'hidden',
-													'&:hover, &:focus': {
-														bgcolor: 'action.hover',
-													},
-													'&[aria-selected="true"]': {
-														bgcolor: 'action.selected',
-													},
-													'&[aria-selected="true"]:hover, &[aria-selected="true"]:focus': {
-														bgcolor: 'action.selected',
-													},
-												} }
+											<Tooltip
+												title={ item.label }
+												placement="top"
+												enterDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
+												enterNextDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
+												disableInteractive
+												disableFocusListener
 											>
-												{ item.paths.length > 0 ? (
-													<FontAwesomeGlyph
-														icon={ item }
-														size={ ICON_GLYPH_SIZE }
-														color="currentColor"
-													/>
-												) : null }
-											</Box>
-										</Tooltip>
-									</Box>
-								);
-							} ) }
-						</Box>
-					);
-				} ) }
+												<Box
+													component="button"
+													type="button"
+													role="gridcell"
+													aria-colindex={ columnIndex + 1 }
+													aria-label={ item.label }
+													aria-selected={ isSelected }
+													tabIndex={ tabIndex }
+													ref={ ( node: HTMLButtonElement | null ) => {
+														if ( node ) {
+															cellRefs.current.set( item.id, node );
+														} else {
+															cellRefs.current.delete( item.id );
+														}
+													} }
+													onClick={ () => {
+														onSelect( item.id );
+														onClose();
+													} }
+													onFocus={ () => setFocusedIndex( index ) }
+													onKeyDown={ ( event: React.KeyboardEvent< HTMLButtonElement > ) =>
+														handleKeyDown( event, index )
+													}
+													sx={ {
+														boxSizing: 'border-box',
+														appearance: 'none',
+														m: 0,
+														width: '100%',
+														height: '100%',
+														minWidth: 0,
+														minHeight: 0,
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'center',
+														border: '1px solid',
+														borderColor: 'divider',
+														borderRadius: 1,
+														color: 'text.tertiary',
+														bgcolor: 'transparent',
+														p: 0,
+														cursor: 'pointer',
+														font: 'inherit',
+														lineHeight: 0,
+														overflow: 'hidden',
+														'&:hover, &:focus': {
+															bgcolor: 'action.hover',
+														},
+														'&[aria-selected="true"]': {
+															bgcolor: 'action.selected',
+														},
+														'&[aria-selected="true"]:hover, &[aria-selected="true"]:focus':
+															{
+																bgcolor: 'action.selected',
+															},
+													} }
+												>
+													{ item.paths.length > 0 ? (
+														<FontAwesomeGlyph
+															icon={ item }
+															size={ ICON_GLYPH_SIZE }
+															color="currentColor"
+														/>
+													) : null }
+												</Box>
+											</Tooltip>
+										</Box>
+									);
+								} ) }
+							</Box>
+						);
+					} ) }
 				</Box>
 			) }
 		</Box>
