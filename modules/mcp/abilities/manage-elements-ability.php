@@ -528,8 +528,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$previous_by_id = [];
 		foreach ( $previous_items as $item ) {
-			$id = $item['interaction_id'] ?? null;
-			if ( is_string( $id ) && '' !== $id ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+
+			$id = $this->extract_interaction_id( $item );
+			if ( null !== $id ) {
 				$previous_by_id[ $id ] = true;
 			}
 		}
@@ -558,12 +562,35 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return $events;
 	}
 
+	private function extract_interaction_id( array $item ): ?string {
+		if ( isset( $item['interaction_id'] ) && is_string( $item['interaction_id'] ) && '' !== $item['interaction_id'] ) {
+			return $item['interaction_id'];
+		}
+
+		$nested = $item['value']['interaction_id']['value'] ?? $item['interaction_id']['value'] ?? null;
+
+		if ( is_string( $nested ) && '' !== $nested ) {
+			return $nested;
+		}
+
+		return null;
+	}
+
 	private function stringify_interaction_field( $value ): string {
 		if ( is_string( $value ) ) {
 			return $value;
 		}
 
 		if ( is_array( $value ) ) {
+			if ( isset( $value['effect'] ) && is_string( $value['effect'] ) ) {
+				return $value['effect'];
+			}
+
+			$nested_effect = $value['value']['effect']['value'] ?? $value['effect']['value'] ?? null;
+			if ( is_string( $nested_effect ) && '' !== $nested_effect ) {
+				return $nested_effect;
+			}
+
 			if ( isset( $value['value'] ) && ( is_string( $value['value'] ) || is_numeric( $value['value'] ) ) ) {
 				return (string) $value['value'];
 			}

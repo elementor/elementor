@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 
@@ -197,9 +198,11 @@ class Composition_Persister {
 		}
 
 		if ( 'e-component' === ( $node['widgetType'] ?? '' ) ) {
+			[ 'id' => $component_id, 'name' => $component_name ] = $this->resolve_component_instance_meta( $node );
+
 			Mcp_Event_Dispatcher::emit( 'component_instance_added', [
-				'id'               => (string) ( $node['settings']['component_id'] ?? '' ),
-				'name'             => '',
+				'id'               => $component_id,
+				'name'             => $component_name,
 				'top_element_type' => $top_element_type,
 			] );
 		}
@@ -207,6 +210,29 @@ class Composition_Persister {
 		foreach ( $node['elements'] ?? [] as $child ) {
 			$this->walk_and_emit_insertion_events( $child, $top_element_type );
 		}
+	}
+
+	/**
+	 * @return array{id: string, name: string}
+	 */
+	private function resolve_component_instance_meta( array $node ): array {
+		$raw_id = $node['settings']['component_instance']['value']['component_id']['value'] ?? null;
+
+		if ( null === $raw_id || '' === $raw_id ) {
+			return [
+				'id'   => '',
+				'name' => '',
+			];
+		}
+
+		$component_id = (int) $raw_id;
+		$component    = Components_Repository::make()->get( $component_id, false );
+		$name         = $component ? $component->get_post()->post_title : '';
+
+		return [
+			'id'   => (string) $component_id,
+			'name' => (string) $name,
+		];
 	}
 
 	private function resolve_top_element_type( array $tree, string $parent_id ): string {

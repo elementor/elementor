@@ -61,7 +61,71 @@ class Test_Mcp_Events extends TestCase {
 		) );
 	}
 
+	private function event_metadata( array $payload ): array {
+		return $payload['metadata'] ?? [];
+	}
+
 	// ── Envelope standard ────────────────────────────────────────────────────
+
+	public function test_emit__class_created_keeps_id_top_level_and_name_in_metadata() {
+		// Arrange / Act
+		Mcp_Event_Dispatcher::emit( 'class_created', [
+			'id'          => 'g-abc',
+			'name'        => 'hero',
+			'target_name' => 'apply_class',
+		] );
+
+		// Assert
+		$payload = $this->captured_events[0]['payload'];
+		$this->assertSame( 'apply_class', $payload['target_name'] );
+		$this->assertSame( 'g-abc', $payload['id'] );
+		$this->assertSame( 'hero', $payload['name'] );
+		$this->assertSame( 'hero', $payload['metadata']['name'] );
+		$this->assertArrayNotHasKey( 'id', $payload['metadata'] );
+	}
+
+	public function test_emit__class_applied_has_no_metadata_object() {
+		Mcp_Event_Dispatcher::emit( 'class_applied', [
+			'target_name'                 => 'apply_class',
+			'id'                          => 'g-abc',
+			'name'                        => 'hero',
+			'affected_element_type'       => 'e-heading',
+			'total_instances_after_apply' => 3,
+		] );
+
+		$payload = $this->captured_events[0]['payload'];
+		$this->assertSame( 'g-abc', $payload['id'] );
+		$this->assertSame( 3, $payload['total_instances_after_apply'] );
+		$this->assertArrayNotHasKey( 'metadata', $payload );
+	}
+
+	public function test_emit__component_created_metadata_includes_feature_name() {
+		Mcp_Event_Dispatcher::emit( 'component_created', [
+			'id'                      => '53647',
+			'name'                    => 'CTA Banner',
+			'nested_elements_count'   => 9,
+			'nested_components_count' => 1,
+			'top_element_type'        => 'e-flexbox',
+		] );
+
+		$payload = $this->captured_events[0]['payload'];
+		$this->assertSame( '53647', $payload['id'] );
+		$this->assertSame( 'Components', $payload['metadata']['feature_name'] );
+		$this->assertSame( 1, $payload['metadata']['nested_components_count'] );
+	}
+
+	public function test_emit__variable_connected_metadata_excludes_id() {
+		Mcp_Event_Dispatcher::emit( 'variable_connected', [
+			'id'           => 'e-gv-abc',
+			'var_type'     => 'color',
+			'control_path' => 'color',
+		] );
+
+		$payload = $this->captured_events[0]['payload'];
+		$this->assertSame( 'e-gv-abc', $payload['id'] );
+		$this->assertSame( 'color', $payload['metadata']['var_type'] );
+		$this->assertArrayNotHasKey( 'id', $payload['metadata'] );
+	}
 
 	public function test_emit__always_includes_standard_envelope() {
 		// Arrange / Act
@@ -77,6 +141,7 @@ class Test_Mcp_Events extends TestCase {
 		$this->assertSame( 'mcp_tool', $entry['payload']['executed_by'] );
 		$this->assertSame( 'test_event', $entry['payload']['interaction_result'] );
 		$this->assertSame( 'value', $entry['payload']['extra'] );
+		$this->assertArrayNotHasKey( 'metadata', $entry['payload'] );
 	}
 
 	// ── class_created fan-out ────────────────────────────────────────────────
@@ -98,7 +163,10 @@ class Test_Mcp_Events extends TestCase {
 		$creates = $this->all_payloads_for( 'class_created' );
 		$this->assertCount( 2, $creates );
 
-		$names = array_column( array_column( $creates, 'payload' ), 'name' );
+		$names = array_map(
+			fn( $entry ) => $entry['payload']['name'] ?? '',
+			$creates
+		);
 		$this->assertContains( 'hero-section', $names );
 		$this->assertContains( 'btn-primary', $names );
 	}
@@ -165,6 +233,9 @@ class Test_Mcp_Events extends TestCase {
 		$this->assertSame( 'var-123', $payload['id'] );
 		$this->assertSame( 'primary-blue', $payload['name'] );
 		$this->assertSame( 'color', $payload['var_type'] );
+		$this->assertSame( 'primary-blue', $payload['metadata']['name'] );
+		$this->assertSame( 'color', $payload['metadata']['var_type'] );
+		$this->assertArrayNotHasKey( 'id', $payload['metadata'] );
 	}
 
 	public function test_manage_variable__emits_variable_updated_per_ok_update() {
@@ -193,6 +264,7 @@ class Test_Mcp_Events extends TestCase {
 		$this->assertCount( 1, $events );
 		$payload = $events[0]['payload'];
 		$this->assertSame( 'font', $payload['var_type'] );
+		$this->assertSame( 'font', $payload['metadata']['var_type'] );
 	}
 
 	public function test_manage_variable__no_event_on_error_result() {
@@ -267,7 +339,7 @@ class Test_Mcp_Events extends TestCase {
 		// Assert
 		$events = $this->all_payloads_for( 'variable_created' );
 		$this->assertCount( 1, $events );
-		$this->assertSame( 'size', $events[0]['payload']['var_type'] );
+		$this->assertSame( 'size', $this->event_metadata( $events[0]['payload'] )['var_type'] );
 	}
 
 	// ── element_added — duplicate path ───────────────────────────────────────
@@ -291,6 +363,7 @@ class Test_Mcp_Events extends TestCase {
 			$this->emitted_names()
 		);
 		$this->assertSame( 'e-flexbox', $this->captured_events[0]['payload']['element_name'] );
+		$this->assertSame( 'e-flexbox', $this->captured_events[0]['payload']['metadata']['element_name'] );
 		$this->assertSame( 'e-heading', $this->captured_events[1]['payload']['element_name'] );
 		$this->assertSame( 'e-image', $this->captured_events[2]['payload']['element_name'] );
 	}
@@ -311,6 +384,37 @@ class Test_Mcp_Events extends TestCase {
 		$this->assertSame( 'interactions_cleared', $events[0]['event_name'] );
 		$this->assertSame( 'e-heading', $events[0]['payload']['affected_element_type'] );
 		$this->assertSame( 2, $events[0]['payload']['target_value'] );
+	}
+
+	public function test_manage_elements__interactions_updated_when_previous_items_are_atomic_shape() {
+		// Arrange
+		$ability = $this->make_elements_ability_testable();
+		$stored_item = [
+			'$$type' => 'interaction-item',
+			'value'  => [
+				'interaction_id' => [ '$$type' => 'string', 'value' => 'proof-scroll' ],
+				'trigger'        => [ '$$type' => 'string', 'value' => 'scrollIn' ],
+			],
+		];
+
+		// Act
+		$events = $ability->call_build_interactions_events(
+			'e-heading',
+			[ $stored_item ],
+			[
+				[
+					'interaction_id' => 'proof-scroll',
+					'trigger'        => 'hover',
+					'animation'      => [ 'effect' => 'scale', 'type' => 'in' ],
+				],
+			]
+		);
+
+		// Assert
+		$this->assertCount( 1, $events );
+		$this->assertSame( 'interaction_updated', $events[0]['event_name'] );
+		$this->assertSame( 'hover', $events[0]['payload']['interaction_trigger'] );
+		$this->assertSame( 'scale', $events[0]['payload']['interaction_effect'] );
 	}
 
 	public function test_manage_elements__interactions_created_vs_updated_by_interaction_id() {
