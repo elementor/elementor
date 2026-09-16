@@ -54,6 +54,11 @@ async function clickFirst( frame, role, name ) {
 	return true;
 }
 
+async function clickFirstInWp( page, role, name ) {
+	const frame = await waitForWpFrame( page );
+	return clickFirst( frame, role, name );
+}
+
 async function main() {
 	if ( ! PLAYGROUND_URL ) {
 		throw new Error( 'PLAYGROUND_URL is required' );
@@ -67,7 +72,7 @@ async function main() {
 
 	try {
 		await page.goto( PLAYGROUND_URL, { waitUntil: 'domcontentloaded', timeout: 120000 } );
-		const frame = await waitForWpFrame( page );
+		await waitForWpFrame( page );
 		await addCaption( page, BROKEN_CAPTION || 'Playground ready' );
 		await page.waitForTimeout( 1000 );
 
@@ -82,15 +87,17 @@ async function main() {
 
 		await shot( 'wp-admin' );
 
-		await clickFirst( frame, 'link', 'Pages' );
+		await clickFirstInWp( page, 'link', 'Pages' );
 		await page.waitForTimeout( 2000 );
+		await waitForWpFrame( page );
 		await shot( 'pages' );
 
-		const openedEditor = await clickFirst( frame, 'link', 'Add New' ) || await clickFirst( frame, 'link', 'Add New Page' );
+		const openedEditor = await clickFirstInWp( page, 'link', 'Add New' ) || await clickFirstInWp( page, 'link', 'Add New Page' );
 		if ( openedEditor ) {
 			await page.waitForTimeout( 2000 );
-			await clickFirst( frame, 'button', 'Edit with Elementor' ) || await clickFirst( frame, 'link', 'Edit with Elementor' );
+			await clickFirstInWp( page, 'button', 'Edit with Elementor' ) || await clickFirstInWp( page, 'link', 'Edit with Elementor' );
 			await page.waitForTimeout( 8000 );
+			await waitForWpFrame( page );
 			await shot( 'elementor-editor' );
 		}
 	} finally {

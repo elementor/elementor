@@ -18,16 +18,16 @@ require_env GITHUB_REPOSITORY
 require_env PR_NUMBER
 require_env HEAD_SHA
 
-BODY=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body --jq .body)
-
-DECISION=$(node -e '
+DECISION=$(
+	gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body --jq .body | node -e '
 	const { shouldCaptureVisualProof, extractBrokenCaption } = require(process.argv[1]);
 	const fs = require("fs");
 	const body = fs.readFileSync(0, "utf8");
 	const result = shouldCaptureVisualProof(body);
 	const broken = extractBrokenCaption(result.section);
 	process.stdout.write(JSON.stringify({ ...result, broken }));
-' "${SCRIPT_DIR}/parse-section.js" <<<"$BODY")
+	' "${SCRIPT_DIR}/parse-section.js"
+)
 
 REASON=$(echo "$DECISION" | jq -r .reason)
 CAPTURE=$(echo "$DECISION" | jq -r .capture)
@@ -52,7 +52,7 @@ fi
 
 PLAYGROUND_URL=$(
 	gh api "repos/${GITHUB_REPOSITORY}/deployments/${DEPLOYMENT_ID}/statuses" \
-		--jq '[.[] | select(.environment_url != null and .environment_url != "")][0].environment_url // empty'
+		--jq '[.[] | select(.state == "success" and .environment_url != null and .environment_url != "")][0].environment_url // empty'
 )
 
 if [[ -z "$PLAYGROUND_URL" ]]; then
@@ -70,7 +70,7 @@ npm install --no-package-lock --no-fund --silent playwright@1.55.1
 npx playwright install chromium
 
 cd "$REPO_ROOT"
-NODE_PATH="${SCRIPT_DIR}/node_modules" node "${SCRIPT_DIR}/capture.mjs"
+NODE_PATH="${SCRIPT_DIR}/node_modules" node "${SCRIPT_DIR}/capture.cjs"
 
 export GITHUB_SERVER_URL="${GITHUB_SERVER_URL:-https://github.com}"
 export GITHUB_RUN_ID="${GITHUB_RUN_ID:-0}"
