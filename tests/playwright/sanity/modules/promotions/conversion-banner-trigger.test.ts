@@ -30,7 +30,7 @@ const resetBannerTriggerState = async (): Promise<void> => {
 
 	try {
 		await wpCli(
-			`wp eval '$introduction = (array) get_user_meta( 1, "elementor_introduction", true ); unset( $introduction["${ CONVERSION_BANNER_DISMISS_KEY }"] ); update_user_meta( 1, "elementor_introduction", $introduction );'`,
+			`wp eval update_user_meta(1,"elementor_introduction",array_diff_key((array)get_user_meta(1,"elementor_introduction",true),array("${ CONVERSION_BANNER_DISMISS_KEY }"=>true)));`,
 		);
 	} catch {
 		// Introduction meta may not exist yet.
@@ -40,9 +40,7 @@ const resetBannerTriggerState = async (): Promise<void> => {
 };
 
 const clearElementorEditModeMeta = async (): Promise<void> => {
-	await wpCli(
-		`wp eval 'global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = '${ ELEMENTOR_EDIT_MODE }'" );'`,
-	);
+	await wpCli( `wp eval delete_metadata("post",0,"${ ELEMENTOR_EDIT_MODE }","",true);` );
 };
 
 const deleteTestPages = async ( request: APIRequestContext, apiRequests: ApiRequests ): Promise<void> => {
