@@ -517,13 +517,15 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	protected function build_interactions_events( string $element_type, array $previous_items, array $new_items ): array {
 		if ( [] === $new_items ) {
-			return [ [
-				'event_name' => 'interactions_cleared',
-				'payload'    => [
-					'affected_element_type' => $element_type,
-					'target_value'          => count( $previous_items ),
+			return [
+				[
+					'event_name' => 'interactions_cleared',
+					'payload'    => [
+						'affected_element_type' => $element_type,
+						'target_value'          => count( $previous_items ),
+					],
 				],
-			] ];
+			];
 		}
 
 		$previous_by_id = [];

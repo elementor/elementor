@@ -114,8 +114,7 @@ class Mcp_Event_Dispatcher {
 			}
 
 			Events_Manager_Module::dispatch_event( $interaction_result, $payload );
-		} catch ( \Throwable $e ) {
-			// Event emission must never affect the ability response.
+		} catch ( \Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 		}
 	}
 
