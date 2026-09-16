@@ -72,12 +72,13 @@ class Module extends BaseModule {
 		$this->robots_handler   = new Robots_Txt_Handler();
 		$this->feature_registry = new Feature_Registry();
 
-		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
 		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
 
 		if ( ! self::is_active() ) {
 			return;
 		}
+
+		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
 
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
@@ -107,10 +108,6 @@ class Module extends BaseModule {
 	 * @param Kit $kit
 	 */
 	public function register_kit_tabs( $kit ) {
-		if ( ! self::is_active() ) {
-			return;
-		}
-
 		$kit->register_tab( 'settings-agents', Settings_Agents::class );
 	}
 
