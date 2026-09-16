@@ -61,7 +61,7 @@ class Composition_Persister {
 			return $save_result;
 		}
 
-		$this->emit_component_instance_added_events( $tree, $parent_id, $root_ids );
+		$this->emit_insertion_events( $tree, $parent_id, $root_ids );
 
 		return [
 			'tree' => $tree,
@@ -173,7 +173,7 @@ class Composition_Persister {
 		}
 	}
 
-	private function emit_component_instance_added_events( array $tree, string $parent_id, array $root_ids ): void {
+	private function emit_insertion_events( array $tree, string $parent_id, array $root_ids ): void {
 		$top_element_type = $this->resolve_top_element_type( $tree, $parent_id );
 
 		foreach ( $root_ids as $root_id ) {
@@ -183,11 +183,11 @@ class Composition_Persister {
 				continue;
 			}
 
-			$this->walk_and_emit_element_events( $root_node, $top_element_type );
+			$this->walk_and_emit_insertion_events( $root_node, $top_element_type );
 		}
 	}
 
-	private function walk_and_emit_element_events( array $node, string $top_element_type ): void {
+	private function walk_and_emit_insertion_events( array $node, string $top_element_type ): void {
 		$element_name = $node['widgetType'] ?? $node['elType'] ?? '';
 
 		if ( '' !== $element_name ) {
@@ -205,7 +205,7 @@ class Composition_Persister {
 		}
 
 		foreach ( $node['elements'] ?? [] as $child ) {
-			$this->walk_and_emit_element_events( $child, $top_element_type );
+			$this->walk_and_emit_insertion_events( $child, $top_element_type );
 		}
 	}
 
