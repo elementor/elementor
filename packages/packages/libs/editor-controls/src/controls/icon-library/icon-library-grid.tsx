@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './font-awesome-glyph';
 
-export const ICON_LIBRARY_GRID_COLUMNS = 4;
+export const ICON_LIBRARY_GRID_FALLBACK_COLUMN_COUNT = 4;
 export const ICON_LIBRARY_GRID_MIN_CELL_SIZE = 52;
 export const ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY = 1000;
 
@@ -22,7 +22,7 @@ const getGridMetrics = ( containerWidth: number, columnGap: number, inlinePaddin
 
 	if ( availableWidth <= 0 ) {
 		return {
-			columnCount: ICON_LIBRARY_GRID_COLUMNS,
+			columnCount: ICON_LIBRARY_GRID_FALLBACK_COLUMN_COUNT,
 			cellSize: ICON_LIBRARY_GRID_MIN_CELL_SIZE,
 		};
 	}
@@ -74,6 +74,7 @@ export const IconLibraryGrid = ( {
 		overscan: GRID_OVERSCAN,
 	} );
 	const focusedItem = items[ focusedIndex ];
+	const visibleRowIndexes = virtualizer.getVirtualIndexes().join( ',' );
 
 	useLayoutEffect( () => {
 		setFocusedIndex( ( current ) => {
@@ -92,7 +93,7 @@ export const IconLibraryGrid = ( {
 			virtualizer.scrollToIndex( Math.floor( selectedIndex / columnCount ) );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedValue, items ] );
+	}, [ columnCount, items, selectedIndex, selectedValue ] );
 
 	useLayoutEffect( () => {
 		if ( ! shouldRestoreFocusRef.current || ! focusedItem ) {
@@ -107,7 +108,7 @@ export const IconLibraryGrid = ( {
 
 		cell.focus();
 		shouldRestoreFocusRef.current = false;
-	} );
+	}, [ focusedItem?.id, visibleRowIndexes ] );
 
 	useLayoutEffect( () => {
 		const container = containerRef.current;

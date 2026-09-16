@@ -33,6 +33,10 @@ export const ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY = 300;
 export const ICON_LIBRARY_VIEW_STORAGE_KEY = 'icon-library-view';
 export const ICON_LIBRARY_VIEW_STORAGE_PREFIX = 'editor-controls';
 const DEFAULT_ICON_LIBRARY_VIEW: IconLibraryView = 'list';
+
+const isIconLibraryView = ( value: unknown ): value is IconLibraryView => {
+	return value === 'grid' || value === 'list';
+};
 const ICON_TILE_SIZE = 40;
 const ICON_GLYPH_SIZE = 20;
 const ICON_LIBRARY_INLINE_SPACING = 1;
@@ -73,7 +77,7 @@ export const IconLibraryPopover = ( {
 		ICON_LIBRARY_VIEW_STORAGE_KEY,
 		ICON_LIBRARY_VIEW_STORAGE_PREFIX
 	);
-	const view = storedView ?? DEFAULT_ICON_LIBRARY_VIEW;
+	const view = isIconLibraryView( storedView ) ? storedView : DEFAULT_ICON_LIBRARY_VIEW;
 	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
 
 	const items = useMemo(

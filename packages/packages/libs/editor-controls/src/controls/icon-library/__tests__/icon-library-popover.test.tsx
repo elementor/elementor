@@ -249,6 +249,38 @@ describe( 'IconLibraryPopover', () => {
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'selects a grid icon and closes', () => {
+		// Arrange.
+		const onSelect = jest.fn();
+		const onClose = jest.fn();
+
+		renderPopover( { onSelect, onClose } );
+		switchToGridView();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'gridcell', { name: /star/i } ) );
+
+		// Assert.
+		expect( onSelect ).toHaveBeenCalledWith( { value: 'fa-solid fa-star', library: 'fa-solid' } );
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'falls back to the default view when session storage is invalid', () => {
+		// Arrange.
+		sessionStorage.setItem( 'editor-controls/icon-library-view', JSON.stringify( { item: 'cards' } ) );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'List view' } ) );
+
+		// Assert.
+		expect( screen.getByRole( 'menuitemradio', { name: 'List' } ) ).toBeChecked();
+	} );
+
 	it( 'highlights the selected icon when the stored class uses an alias', () => {
 		// Arrange.
 		renderPopover( {
