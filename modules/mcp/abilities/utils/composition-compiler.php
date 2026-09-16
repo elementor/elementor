@@ -261,18 +261,8 @@ final class Composition_Compiler {
 
 		return [
 			'widget_configs' => $widget_configs,
-<<<<<<< HEAD
 			'warnings' => [ __( 'Direct document-root content was wrapped in an e-div-block element.', 'elementor' ) ],
-=======
-			'warnings' => [
-				sprintf(
-					/* translators: %s: wrapper element tag */
-					__( 'Direct document-root content was wrapped in a %s element.', 'elementor' ),
-					$wrapper_tag
-				),
-			],
 			'warning_codes' => [ 'root_auto_wrapped' ],
->>>>>>> bd2d33324d (Internal: Add per-tool MCP performance monitoring events [ED-25572] (#37308))
 		];
 	}
 
