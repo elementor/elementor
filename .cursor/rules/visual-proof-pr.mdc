@@ -1,0 +1,22 @@
+---
+description: Editor-bug PRs in this repo must include a ## Visual proof section
+alwaysApply: true
+---
+
+# Visual proof on PRs
+
+**Trigger:** this file. `alwaysApply: true` means every Cursor agent in this
+checkout must author `## Visual proof` before `gh pr create` or `gh pr edit`.
+
+**How to write it:** [SKILL.md](mdc:.cursor/skills/visual-proof/SKILL.md)
+
+**Where to run the steps:** this repo’s `playground-preview` deployment
+(`.github/workflows/playground-preview.yml`, blueprint
+`tests/playwright/blueprints/pr-preview.json`). Not a local site.
+
+- Order: `## Summary` → `## Test plan` → `## Visual proof` → `## Jira`
+- Editor Bug that Core Playground can show → `**Broken:**` + Where / Steps /
+  Pass / Fail (do not act out the bug)
+- Anything else → heading + `#skip_proof` + one sentence
+- Never leave placeholders; never ask the user to write the section
+- Steps use visible in-app labels only

@@ -8,6 +8,14 @@ This directory contains AI agent configuration for test generation and code assi
 - **`tests-code-style.mdc`** - Technical testing rules and code quality standards
   - Code quality, test reliability, browser/environment rules
   - Applies only to test files (`globs: *test*`)
+- **`visual-proof-pr.mdc`** - Always on. Triggers `## Visual proof` on PR create/edit
+  - Pairs with the `visual-proof` skill
+  - Environment is this repo’s `playground-preview` workflow
+
+### Skills (`/skills/`)
+- **`visual-proof/`** - How to author `## Visual proof` for this repo
+  - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption
+  - Others: `#skip_proof`
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts
