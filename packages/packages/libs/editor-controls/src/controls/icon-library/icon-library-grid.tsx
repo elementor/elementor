@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Box, Stack, Tooltip } from '@elementor/ui';
+import { Box, Tooltip } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
@@ -158,8 +158,6 @@ export const IconLibraryGrid = ( {
 				sx={ {
 					height: virtualizer.getTotalSize(),
 					position: 'relative',
-					px: GRID_HORIZONTAL_PADDING,
-					py: GRID_VERTICAL_PADDING,
 				} }
 			>
 				{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
@@ -167,18 +165,23 @@ export const IconLibraryGrid = ( {
 					const rowItems = items.slice( startIndex, startIndex + ICON_LIBRARY_GRID_COLUMNS );
 
 					return (
-						<Stack
+						<Box
 							key={ virtualRow.key }
 							role="row"
-							direction="row"
-							gap={ GRID_COLUMN_GAP }
 							sx={ {
 								position: 'absolute',
 								top: 0,
-								left: 0,
-								right: 0,
+								insetInline: 0,
 								height: virtualRow.size,
 								transform: `translateY(${ virtualRow.start }px)`,
+								display: 'grid',
+								gridTemplateColumns: `repeat(${ ICON_LIBRARY_GRID_COLUMNS }, ${ ICON_LIBRARY_GRID_CELL_WIDTH }px)`,
+								columnGap: GRID_COLUMN_GAP,
+								justifyContent: 'center',
+								alignItems: 'center',
+								px: GRID_HORIZONTAL_PADDING,
+								py: GRID_VERTICAL_PADDING,
+								boxSizing: 'border-box',
 							} }
 						>
 							{ rowItems.map( ( item, columnIndex ) => {
@@ -193,6 +196,7 @@ export const IconLibraryGrid = ( {
 										placement="top"
 										enterDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
 										enterNextDelay={ ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY }
+										disableInteractive
 									>
 										<Box
 											component="button"
@@ -217,19 +221,26 @@ export const IconLibraryGrid = ( {
 												handleKeyDown( event, index )
 											}
 											sx={ {
+												boxSizing: 'border-box',
+												appearance: 'none',
+												m: 0,
 												width: ICON_LIBRARY_GRID_CELL_WIDTH,
 												height: ICON_LIBRARY_GRID_CELL_HEIGHT,
+												minWidth: ICON_LIBRARY_GRID_CELL_WIDTH,
+												minHeight: ICON_LIBRARY_GRID_CELL_HEIGHT,
 												display: 'flex',
 												alignItems: 'center',
 												justifyContent: 'center',
-												border: 1,
+												border: '1px solid',
 												borderColor: 'divider',
 												borderRadius: 1,
 												color: 'text.tertiary',
 												bgcolor: 'transparent',
 												p: 0,
 												cursor: 'pointer',
-												flexShrink: 0,
+												font: 'inherit',
+												lineHeight: 0,
+												overflow: 'hidden',
 												'&:hover, &:focus': {
 													bgcolor: 'action.hover',
 												},
@@ -252,7 +263,7 @@ export const IconLibraryGrid = ( {
 									</Tooltip>
 								);
 							} ) }
-						</Stack>
+						</Box>
 					);
 				} ) }
 			</Box>
