@@ -25,10 +25,10 @@ CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
 `playground-preview`. It captures Playground screenshots when the section is
 filled, and skips when the section is missing or has `#skip_proof`.
 
-Those shots always walk WP Admin → Pages → Edit with Elementor (up to 3
-PNGs). They do **not** follow the PR’s **Steps**. Treat them as “Playground
-editor is reachable,” not as proof of the specific bug. `**Broken:**` is
-only a caption overlay.
+Those shots always walk a **fixed** Playground path: WP Admin → Pages →
+Add New → Edit with Elementor (up to 3 PNGs). `**Broken:**` is only a
+caption overlay. **Steps** are for humans and future work; CI does not
+execute them. Do not treat the PNGs as proof of the specific bug.
 
 ## Environment (this repo)
 
@@ -69,8 +69,8 @@ Playground only has this plugin. If the bug cannot be shown there, use
 
 ## Rules
 
-1. Write Steps for humans and a future agent capture. Today’s CI walk
-   ignores them and only opens the editor.
+1. Write **Steps** for humans and future capture work. Today’s CI walk
+   ignores them and only opens the editor on the fixed path above.
 2. Visible in-app labels only. No file paths, no GitHub, no workflow names
    inside **Steps**.
 3. Do not act out the bug. Playground has the **fixed** zip. Put the old

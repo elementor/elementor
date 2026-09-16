@@ -16,6 +16,7 @@ This directory contains AI agent configuration for test generation and code assi
 - **`visual-proof/`** - How to author `## Visual proof` for this repo
   - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption
   - Others: `#skip_proof`
+  - CI currently screenshots a fixed Playground path; it does not run Steps
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts

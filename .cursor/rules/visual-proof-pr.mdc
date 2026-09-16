@@ -18,5 +18,7 @@ checkout must author `## Visual proof` before `gh pr create` or `gh pr edit`.
 - Editor Bug that Core Playground can show → `**Broken:**` + Where / Steps /
   Pass / Fail (do not act out the bug)
 - Anything else → heading + `#skip_proof` + one sentence
+- CI shots are a fixed walk (WP Admin → Pages → Add New → Edit with
+  Elementor). They are not proof of the **Steps**.
 - Never leave placeholders; never ask the user to write the section
 - Steps use visible in-app labels only

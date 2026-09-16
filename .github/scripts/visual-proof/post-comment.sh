@@ -65,7 +65,7 @@ COMMENT_SECTIONS=()
 COMMENT_SECTIONS+=("${MARKER}")
 COMMENT_SECTIONS+=("## Visual proof")
 COMMENT_SECTIONS+=("")
-COMMENT_SECTIONS+=("Shots from this PR’s Playground preview. Generic walk: WP Admin → Pages → Edit with Elementor (not the PR’s **Steps**).")
+COMMENT_SECTIONS+=("Shots from this PR’s Playground preview. Generic walk: WP Admin → Pages → Add New → Edit with Elementor (not the PR’s **Steps**).")
 COMMENT_SECTIONS+=("")
 
 count=0
