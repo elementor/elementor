@@ -15,6 +15,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -174,6 +175,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			);
 
 			$this->clear_cache();
+			$this->emit_class_created_events( $results );
 		}
 
 		return $results->to_array() + [ 'order' => $new_order ];
@@ -613,5 +615,18 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
 			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	private function emit_class_created_events( Bulk_Operations_Result $results ): void {
+		foreach ( $results->to_array()['results'] as $row ) {
+			if ( 'ok' !== ( $row['status'] ?? '' ) || 'create' !== ( $row['action'] ?? '' ) ) {
+				continue;
+			}
+
+			Mcp_Event_Dispatcher::emit( 'class_created', [
+				'id'   => $row['id'] ?? '',
+				'name' => $row['label'] ?? '',
+			] );
+		}
 	}
 }

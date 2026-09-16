@@ -25,6 +25,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -188,9 +189,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function handle_bulk( Document $document, array $operations ): array {
-		$results = new Bulk_Operations_Result();
-		$tree = $this->get_tree( $document );
-		$any_change = false;
+		$results           = new Bulk_Operations_Result();
+		$tree              = $this->get_tree( $document );
+		$any_change        = false;
+		$pending_events    = [];
 
 		foreach ( $operations as $index => $operation ) {
 			$index = (int) $index;
@@ -223,6 +225,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				$extra['warnings'] = $outcome['warnings'];
 			}
 			$results->add_success( $index, $action, $extra );
+
+			if ( 'update' === $action && ! empty( $outcome['event_metadata'] ) ) {
+				$pending_events[] = $outcome['event_metadata'];
+			}
 		}
 
 		$response = $results->to_array();
@@ -241,6 +247,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
+
+		$this->emit_update_events( $pending_events, $tree );
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
@@ -396,8 +404,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 		$widget_configs = [ $element_type => $widget_config ];
 
-		$variables_service = $this->create_variables_service();
-		$warnings = [];
+		$variables_service    = $this->create_variables_service();
+		$warnings             = [];
+		$applied_classes      = [];
+		$variable_connections = [];
 
 		if ( null !== $interactions ) {
 			if ( ! is_array( $interactions ) ) {
@@ -449,6 +459,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( $class_error ) {
 				return $class_error;
 			}
+			$applied_classes = $classes;
 		}
 
 		if ( $has_style ) {
@@ -457,12 +468,19 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}
-			$warnings = array_merge( $warnings, $style_result['warnings'] );
+			$warnings             = array_merge( $warnings, $style_result['warnings'] );
+			$variable_connections = $style_result['variable_connections'][ $element_id ] ?? [];
 		}
 
 		return [
-			'tree' => $tree,
-			'warnings' => $warnings,
+			'tree'           => $tree,
+			'warnings'       => $warnings,
+			'event_metadata' => [
+				'element_id'          => $element_id,
+				'element_type'        => (string) $element_type,
+				'applied_classes'     => $applied_classes,
+				'variable_connections' => $variable_connections,
+			],
 		];
 	}
 
@@ -562,5 +580,66 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function get_active_breakpoints(): array {
 		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
+	}
+
+	private function emit_update_events( array $pending_events, array $tree ): void {
+		if ( empty( $pending_events ) ) {
+			return;
+		}
+
+		$all_labels   = $this->create_global_classes_repository()->all_labels();
+		$class_counts = $this->count_class_usage_in_tree( $tree );
+
+		foreach ( $pending_events as $meta ) {
+			$element_type = $meta['element_type'];
+
+			foreach ( $meta['applied_classes'] as $label ) {
+				$class_id = array_search( $label, $all_labels, true );
+
+				if ( false === $class_id ) {
+					continue;
+				}
+
+				Mcp_Event_Dispatcher::emit( 'class_applied', [
+					'target_name'                 => 'apply_class',
+					'id'                          => (string) $class_id,
+					'name'                        => $label,
+					'affected_element_type'       => $element_type,
+					'total_instances_after_apply' => $class_counts[ $class_id ] ?? 0,
+				] );
+			}
+
+			foreach ( $meta['variable_connections'] as $connection ) {
+				Mcp_Event_Dispatcher::emit( 'variable_connected', [
+					'id'           => $connection['variable_id'],
+					'var_type'     => $connection['var_type'],
+					'control_path' => $connection['control_path'],
+				] );
+			}
+		}
+	}
+
+	private function count_class_usage_in_tree( array $tree ): array {
+		$counts = [];
+		$this->walk_tree_for_class_counts( $tree, $counts );
+		return $counts;
+	}
+
+	private function walk_tree_for_class_counts( array $elements, array &$counts ): void {
+		foreach ( $elements as $element ) {
+			$class_values = $element['settings']['classes']['value'] ?? [];
+
+			if ( is_array( $class_values ) ) {
+				foreach ( $class_values as $class_id ) {
+					if ( is_string( $class_id ) && ! str_starts_with( $class_id, Style_Applier::LOCAL_STYLE_ID_PREFIX ) ) {
+						$counts[ $class_id ] = ( $counts[ $class_id ] ?? 0 ) + 1;
+					}
+				}
+			}
+
+			if ( ! empty( $element['elements'] ) ) {
+				$this->walk_tree_for_class_counts( $element['elements'], $counts );
+			}
+		}
 	}
 }

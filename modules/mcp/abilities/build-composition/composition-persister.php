@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -59,6 +60,8 @@ class Composition_Persister {
 		if ( is_wp_error( $save_result ) ) {
 			return $save_result;
 		}
+
+		$this->emit_component_instance_added_events( $tree, $parent_id, $root_ids );
 
 		return [
 			'tree' => $tree,
@@ -168,5 +171,47 @@ class Composition_Persister {
 				$this->apply_ids_recursive( $child, $child_subtrees[ $index ] );
 			}
 		}
+	}
+
+	private function emit_component_instance_added_events( array $tree, string $parent_id, array $root_ids ): void {
+		$top_element_type = $this->resolve_top_element_type( $tree, $parent_id );
+
+		foreach ( $root_ids as $root_id ) {
+			$root_node = $this->mutator->find_by_id( $tree, $root_id );
+
+			if ( null === $root_node ) {
+				continue;
+			}
+
+			$this->walk_and_emit_component_instances( $root_node, $top_element_type );
+		}
+	}
+
+	private function walk_and_emit_component_instances( array $node, string $top_element_type ): void {
+		if ( 'e-component' === ( $node['widgetType'] ?? '' ) ) {
+			Mcp_Event_Dispatcher::emit( 'component_instance_added', [
+				'id'               => (string) ( $node['settings']['component_id'] ?? '' ),
+				'name'             => '',
+				'top_element_type' => $top_element_type,
+			] );
+		}
+
+		foreach ( $node['elements'] ?? [] as $child ) {
+			$this->walk_and_emit_component_instances( $child, $top_element_type );
+		}
+	}
+
+	private function resolve_top_element_type( array $tree, string $parent_id ): string {
+		if ( self::DOCUMENT_ROOT === $parent_id ) {
+			return 'document';
+		}
+
+		$parent = $this->mutator->find_by_id( $tree, $parent_id );
+
+		if ( null === $parent ) {
+			return '';
+		}
+
+		return $parent['widgetType'] ?? $parent['elType'] ?? '';
 	}
 }
