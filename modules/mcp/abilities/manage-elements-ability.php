@@ -226,8 +226,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 			$results->add_success( $index, $action, $extra );
 
-			if ( 'update' === $action && ! empty( $outcome['event_metadata'] ) ) {
-				$pending_events[] = $outcome['event_metadata'];
+			if ( ! empty( $outcome['event_metadata'] ) ) {
+				$pending_events[] = [ 'action' => $action ] + $outcome['event_metadata'];
 			}
 		}
 
@@ -333,6 +333,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function apply_duplicate( array $tree, string $element_id ) {
+		$source_node = $this->get_mutator()->find_by_id( $tree, $element_id );
 		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
 		if ( is_wp_error( $new_tree ) ) {
 			return $this->to_public_error( $new_tree );
@@ -341,7 +342,30 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => [],
+			'event_metadata' => [
+				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
+			],
 		];
+	}
+
+	private function collect_element_types( array $node ): array {
+		$types = [];
+		$stack = [ $node ];
+
+		while ( ! empty( $stack ) ) {
+			$current = array_pop( $stack );
+			$type    = $current['widgetType'] ?? $current['elType'] ?? '';
+
+			if ( '' !== $type ) {
+				$types[] = $type;
+			}
+
+			foreach ( $current['elements'] ?? [] as $child ) {
+				$stack[] = $child;
+			}
+		}
+
+		return $types;
 	}
 
 	private function apply_move( array $tree, string $element_id, array $operation ) {
@@ -408,6 +432,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$warnings             = [];
 		$applied_classes      = [];
 		$variable_connections = [];
+		$interactions_events  = [];
 
 		if ( null !== $interactions ) {
 			if ( ! is_array( $interactions ) ) {
@@ -420,12 +445,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				);
 			}
+
+			$previous_items = $node_snapshot['interactions']['items'] ?? [];
+
 			$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
 			if ( $interactions_result['error'] ) {
 				return $interactions_result['error'];
 			}
 			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+
+			$interactions_events = $this->build_interactions_events( (string) $element_type, $previous_items, $interactions );
 		}
 
 		if ( ! empty( $settings ) ) {
@@ -476,12 +506,73 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			'tree'           => $tree,
 			'warnings'       => $warnings,
 			'event_metadata' => [
-				'element_id'          => $element_id,
-				'element_type'        => (string) $element_type,
-				'applied_classes'     => $applied_classes,
+				'element_id'           => $element_id,
+				'element_type'         => (string) $element_type,
+				'applied_classes'      => $applied_classes,
 				'variable_connections' => $variable_connections,
+				'interactions_events'  => $interactions_events,
 			],
 		];
+	}
+
+	protected function build_interactions_events( string $element_type, array $previous_items, array $new_items ): array {
+		if ( [] === $new_items ) {
+			return [ [
+				'event_name' => 'interactions_cleared',
+				'payload'    => [
+					'affected_element_type' => $element_type,
+					'target_value'          => count( $previous_items ),
+				],
+			] ];
+		}
+
+		$previous_by_id = [];
+		foreach ( $previous_items as $item ) {
+			$id = $item['interaction_id'] ?? null;
+			if ( is_string( $id ) && '' !== $id ) {
+				$previous_by_id[ $id ] = true;
+			}
+		}
+
+		$events = [];
+
+		foreach ( $new_items as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+
+			$id            = $item['interaction_id'] ?? '';
+			$is_update     = is_string( $id ) && '' !== $id && isset( $previous_by_id[ $id ] );
+			$event_name    = $is_update ? 'interaction_updated' : 'interaction_created';
+
+			$events[] = [
+				'event_name' => $event_name,
+				'payload'    => [
+					'affected_element_type' => $element_type,
+					'interaction_trigger'   => $this->stringify_interaction_field( $item['trigger'] ?? '' ),
+					'interaction_effect'    => $this->stringify_interaction_field( $item['animation'] ?? '' ),
+				],
+			];
+		}
+
+		return $events;
+	}
+
+	private function stringify_interaction_field( $value ): string {
+		if ( is_string( $value ) ) {
+			return $value;
+		}
+
+		if ( is_array( $value ) ) {
+			if ( isset( $value['value'] ) && ( is_string( $value['value'] ) || is_numeric( $value['value'] ) ) ) {
+				return (string) $value['value'];
+			}
+			if ( isset( $value['$$type'] ) && is_string( $value['$$type'] ) ) {
+				return (string) $value['$$type'];
+			}
+		}
+
+		return '';
 	}
 
 	private function resolve_document( int $post_id ) {
@@ -591,9 +682,20 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$class_counts = $this->count_class_usage_in_tree( $tree );
 
 		foreach ( $pending_events as $meta ) {
-			$element_type = $meta['element_type'];
+			$action = $meta['action'] ?? '';
 
-			foreach ( $meta['applied_classes'] as $label ) {
+			if ( 'duplicate' === $action ) {
+				foreach ( $meta['duplicated_element_types'] ?? [] as $element_name ) {
+					Mcp_Event_Dispatcher::emit( 'element_added', [
+						'element_name' => $element_name,
+					] );
+				}
+				continue;
+			}
+
+			$element_type = $meta['element_type'] ?? '';
+
+			foreach ( $meta['applied_classes'] ?? [] as $label ) {
 				$class_id = array_search( $label, $all_labels, true );
 
 				if ( false === $class_id ) {
@@ -615,6 +717,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					'var_type'     => $connection['var_type'],
 					'control_path' => $connection['control_path'],
 				] );
+			}
+
+			foreach ( $meta['interactions_events'] ?? [] as $ie ) {
+				Mcp_Event_Dispatcher::emit( $ie['event_name'], $ie['payload'] );
 			}
 		}
 	}

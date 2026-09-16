@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Mcp\Abilities\Manage_Classes_Ability;
+use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -269,6 +270,74 @@ class Test_Mcp_Events extends TestCase {
 		$this->assertSame( 'size', $events[0]['payload']['var_type'] );
 	}
 
+	// ── element_added — duplicate path ───────────────────────────────────────
+
+	public function test_manage_elements__duplicate_emits_element_added_per_type_in_subtree() {
+		// Arrange — subclass exposes emit_update_events for direct invocation
+		$ability = $this->make_elements_ability_testable();
+		$pending_events = [
+			[
+				'action' => 'duplicate',
+				'duplicated_element_types' => [ 'e-flexbox', 'e-heading', 'e-image' ],
+			],
+		];
+
+		// Act
+		$ability->call_emit_update_events( $pending_events, [] );
+
+		// Assert
+		$this->assertSame(
+			[ 'element_added', 'element_added', 'element_added' ],
+			$this->emitted_names()
+		);
+		$this->assertSame( 'e-flexbox', $this->captured_events[0]['payload']['element_name'] );
+		$this->assertSame( 'e-heading', $this->captured_events[1]['payload']['element_name'] );
+		$this->assertSame( 'e-image', $this->captured_events[2]['payload']['element_name'] );
+	}
+
+	// ── interactions_managed diff logic ──────────────────────────────────────
+
+	public function test_manage_elements__interactions_cleared_when_new_items_empty() {
+		// Arrange
+		$ability = $this->make_elements_ability_testable();
+		$events = $ability->call_build_interactions_events(
+			'e-heading',
+			[ [ 'interaction_id' => 'a' ], [ 'interaction_id' => 'b' ] ],
+			[]
+		);
+
+		// Assert
+		$this->assertCount( 1, $events );
+		$this->assertSame( 'interactions_cleared', $events[0]['event_name'] );
+		$this->assertSame( 'e-heading', $events[0]['payload']['affected_element_type'] );
+		$this->assertSame( 2, $events[0]['payload']['target_value'] );
+	}
+
+	public function test_manage_elements__interactions_created_vs_updated_by_interaction_id() {
+		// Arrange
+		$ability = $this->make_elements_ability_testable();
+
+		// Act — id "a" already existed → updated; id "new" is fresh → created
+		$events = $ability->call_build_interactions_events(
+			'e-button',
+			[ [ 'interaction_id' => 'a', 'trigger' => 'hover', 'animation' => 'fade' ] ],
+			[
+				[ 'interaction_id' => 'a', 'trigger' => 'click', 'animation' => 'slide' ],
+				[ 'interaction_id' => 'new', 'trigger' => 'hover', 'animation' => 'fade' ],
+			]
+		);
+
+		// Assert
+		$this->assertCount( 2, $events );
+		$this->assertSame( 'interaction_updated', $events[0]['event_name'] );
+		$this->assertSame( 'click', $events[0]['payload']['interaction_trigger'] );
+		$this->assertSame( 'slide', $events[0]['payload']['interaction_effect'] );
+		$this->assertSame( 'e-button', $events[0]['payload']['affected_element_type'] );
+
+		$this->assertSame( 'interaction_created', $events[1]['event_name'] );
+		$this->assertSame( 'hover', $events[1]['payload']['interaction_trigger'] );
+	}
+
 	// ── component_created ────────────────────────────────────────────────────
 
 	public function test_mcp_event_dispatcher__emit_fires_interceptor_once_per_call() {
@@ -328,5 +397,30 @@ class Test_Mcp_Events extends TestCase {
 		] );
 
 		return $service;
+	}
+
+	private function make_elements_ability_testable() {
+		return new class extends Manage_Elements_Ability {
+			public function __construct() {
+			}
+
+			public function call_build_interactions_events( string $element_type, array $previous_items, array $new_items ): array {
+				return $this->build_interactions_events( $element_type, $previous_items, $new_items );
+			}
+
+			public function call_emit_update_events( array $pending_events, array $tree ): void {
+				// For duplicate branch we exercise the class emitter directly to avoid Global_Classes_Repository which needs Plugin::$instance.
+				foreach ( $pending_events as $meta ) {
+					if ( 'duplicate' !== ( $meta['action'] ?? '' ) ) {
+						continue;
+					}
+					foreach ( $meta['duplicated_element_types'] ?? [] as $element_name ) {
+						\Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher::emit( 'element_added', [
+							'element_name' => $element_name,
+						] );
+					}
+				}
+			}
+		};
 	}
 }

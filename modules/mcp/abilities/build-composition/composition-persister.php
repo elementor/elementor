@@ -183,11 +183,19 @@ class Composition_Persister {
 				continue;
 			}
 
-			$this->walk_and_emit_component_instances( $root_node, $top_element_type );
+			$this->walk_and_emit_element_events( $root_node, $top_element_type );
 		}
 	}
 
-	private function walk_and_emit_component_instances( array $node, string $top_element_type ): void {
+	private function walk_and_emit_element_events( array $node, string $top_element_type ): void {
+		$element_name = $node['widgetType'] ?? $node['elType'] ?? '';
+
+		if ( '' !== $element_name ) {
+			Mcp_Event_Dispatcher::emit( 'element_added', [
+				'element_name' => $element_name,
+			] );
+		}
+
 		if ( 'e-component' === ( $node['widgetType'] ?? '' ) ) {
 			Mcp_Event_Dispatcher::emit( 'component_instance_added', [
 				'id'               => (string) ( $node['settings']['component_id'] ?? '' ),
@@ -197,7 +205,7 @@ class Composition_Persister {
 		}
 
 		foreach ( $node['elements'] ?? [] as $child ) {
-			$this->walk_and_emit_component_instances( $child, $top_element_type );
+			$this->walk_and_emit_element_events( $child, $top_element_type );
 		}
 	}
 
