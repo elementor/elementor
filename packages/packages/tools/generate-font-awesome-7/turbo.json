@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "cache": false,
+      "outputs": ["../../../../assets/lib/font-awesome-7/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": false
+    }
+  }
+}

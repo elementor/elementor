@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { cpSync, mkdirSync, rmSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -9,6 +10,13 @@ import { minimatch } from 'minimatch';
 
 import { BUILD_DIR, ROOT } from './shared/paths.mjs';
 import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
+
+const FONT_AWESOME_7_JSON_DIR = join( ROOT, 'assets/lib/font-awesome-7/json' );
+const FONT_AWESOME_7_JSON_FILES = [ 'solid.json', 'regular.json', 'brands.json' ];
+const FONT_AWESOME_7_GENERATE_SCRIPT = join(
+	ROOT,
+	'packages/packages/tools/generate-font-awesome-7/src/generate.ts'
+);
 
 /**
  * Directories that are excluded with no later re-inclusion, pruned up front so the scan does not
@@ -65,8 +73,37 @@ function selectPluginFiles( candidates ) {
 	return [ ...selected ];
 }
 
+function hasFontAwesome7Catalog() {
+	return FONT_AWESOME_7_JSON_FILES.every( ( fileName ) => existsSync( join( FONT_AWESOME_7_JSON_DIR, fileName ) ) );
+}
+
+function generateFontAwesome7Catalog() {
+	const result = spawnSync( process.execPath, [ '--experimental-strip-types', FONT_AWESOME_7_GENERATE_SCRIPT ], {
+		cwd: ROOT,
+		stdio: 'inherit',
+	} );
+
+	if ( result.error || result.status !== 0 ) {
+		throw new Error( 'Failed to generate Font Awesome 7 catalog' );
+	}
+}
+
+function ensureFontAwesome7Catalog() {
+	if ( hasFontAwesome7Catalog() ) {
+		return;
+	}
+
+	generateFontAwesome7Catalog();
+
+	if ( ! hasFontAwesome7Catalog() ) {
+		throw new Error( 'Font Awesome 7 catalog was not written to assets/lib/font-awesome-7/json' );
+	}
+}
+
 export function assemblePlugin() {
 	const startedAt = Date.now();
+
+	ensureFontAwesome7Catalog();
 
 	rmSync( BUILD_DIR, { recursive: true, force: true } );
 
