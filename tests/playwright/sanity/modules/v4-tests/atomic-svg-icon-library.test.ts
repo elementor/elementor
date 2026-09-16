@@ -108,7 +108,6 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await popover.getByRole( 'button', { name: /^Filter by library/ } ).click();
 			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ).click();
 			await page.keyboard.press( 'Escape' );
-			await search.hover();
 			await popover.getByRole( 'button', { name: 'List view' } ).click();
 			await page.getByRole( 'menuitemradio', { name: 'Grid' } ).click();
 			await expect( search ).toHaveValue( 'github' );
@@ -122,7 +121,6 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		} );
 
 		await test.step( 'Hovered row is visually highlighted', async () => {
-			await search.hover();
 			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
 			await page.getByRole( 'menuitemradio', { name: 'List' } ).click();
 			await popover.getByRole( 'option' ).nth( 1 ).hover();
