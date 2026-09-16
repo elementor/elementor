@@ -8,7 +8,10 @@ import { parallelTest as test } from '../../../parallelTest';
 const BANNER_READY_SELECTOR = '#e-conversion-banner.e-conversion-banner--ready';
 const ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
 const PENDING_TRANSIENT = 'elementor_conversion_banner_pages_pending';
+const TEST_PAGE_TITLE_PREFIX = 'Conversion banner PW';
 const UNLOCK_OPTION = 'elementor_conversion_banner_unlocked';
+
+const testPageIds: string[] = [];
 
 const resetBannerTriggerState = async (): Promise<void> => {
 	try {
@@ -30,10 +33,20 @@ const resetBannerTriggerState = async (): Promise<void> => {
 	}
 };
 
-const clearElementorBuiltMeta = async (): Promise<void> => {
-	await wpCli(
-		'wp eval $GLOBALS["wpdb"]->query( "DELETE FROM " . $GLOBALS["wpdb"]->postmeta . " WHERE meta_key = \'_elementor_edit_mode\'" );',
-	);
+const deleteTestPages = async ( request: APIRequestContext, apiRequests: ApiRequests ): Promise<void> => {
+	while ( testPageIds.length ) {
+		const postId = testPageIds.pop();
+
+		if ( ! postId ) {
+			continue;
+		}
+
+		try {
+			await apiRequests.delete( request, 'pages', postId );
+		} catch {
+			// Page may already be removed.
+		}
+	}
 };
 
 const createPublishedElementorPage = async (
@@ -41,20 +54,25 @@ const createPublishedElementorPage = async (
 	apiRequests: ApiRequests,
 ): Promise<string> => {
 	const postId = await apiRequests.create( request, 'pages', {
-		title: `Conversion banner PW ${ Date.now() }-${ Math.random().toString( 36 ).slice( 2, 8 ) }`,
+		title: `${ TEST_PAGE_TITLE_PREFIX } ${ Date.now() }-${ Math.random().toString( 36 ).slice( 2, 8 ) }`,
 		status: 'publish',
 		content: '',
 	} );
 
 	await wpCli( `wp post meta update ${ postId } ${ ELEMENTOR_EDIT_MODE } builder` );
+	testPageIds.push( postId );
 
 	return postId;
 };
 
 test.describe.serial( 'Conversion banner admin trigger @promotions', () => {
-	test.beforeEach( async () => {
+	test.beforeEach( async ( { page, apiRequests } ) => {
 		await resetBannerTriggerState();
-		await clearElementorBuiltMeta();
+		await deleteTestPages( page.context().request, apiRequests );
+	} );
+
+	test.afterEach( async ( { page, apiRequests } ) => {
+		await deleteTestPages( page.context().request, apiRequests );
 	} );
 
 	test( 'Does not show the banner with fewer than two Elementor pages', async ( { page, apiRequests }, testInfo ) => {
