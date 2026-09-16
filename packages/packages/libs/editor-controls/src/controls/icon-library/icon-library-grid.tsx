@@ -153,6 +153,7 @@ export const IconLibraryGrid = ( {
 			<Box
 				role="grid"
 				aria-rowcount={ rowCount }
+				aria-colcount={ ICON_LIBRARY_GRID_COLUMNS }
 				data-testid="icon-library-grid"
 				sx={ {
 					height: virtualizer.getTotalSize(),

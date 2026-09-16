@@ -93,7 +93,7 @@ describe( 'IconLibraryPopover', () => {
 		renderPopover();
 
 		// Assert.
-		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'grid' ) ).toHaveAttribute( 'aria-colcount', String( ICON_LIBRARY_GRID_COLUMNS ) );
 		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'listbox' ) ).not.toBeInTheDocument();
 		expect( jest.mocked( useVirtualizer ).mock.calls.at( -1 )?.[ 0 ].count ).toBe(
