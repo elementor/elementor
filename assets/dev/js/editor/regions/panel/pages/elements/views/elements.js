@@ -43,6 +43,24 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	onFilterChanged() {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
+		if ( filterValue && elementorCommon.config.experimentalFeatures?.e_atomic_elements ) {
+			// When V4 atomic elements are active, show them first in search results.
+			this.collection.comparator = ( a, b ) => {
+				const aIsAtomic = ( a.get( 'widgetType' ) || '' ).startsWith( 'e-' );
+				const bIsAtomic = ( b.get( 'widgetType' ) || '' ).startsWith( 'e-' );
+				if ( aIsAtomic && ! bIsAtomic ) {
+					return -1;
+				}
+				if ( ! aIsAtomic && bIsAtomic ) {
+					return 1;
+				}
+				return 0;
+			};
+			this.collection.sort();
+		} else {
+			this.collection.comparator = null;
+		}
+
 		if ( ! filterValue ) {
 			this.onFilterEmpty();
 		}
