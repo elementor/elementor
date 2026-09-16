@@ -3,6 +3,7 @@ import {
 	findNextFocusableAfter,
 	getEscapeAnchor,
 	isEditableTarget,
+	isInsideCodeEditor,
 	isInsideOverlay,
 } from 'elementor-editor-utils/keyboard-nav';
 
@@ -121,6 +122,26 @@ describe( 'keyboard-nav - escapeFromPanelField', () => {
 		expect( document.activeElement ).toBe( input );
 	} );
 
+	it( 'still blurs a code editor when Escape was default-prevented by the editor', () => {
+		renderPanel( `
+			<div class="elementor-control elementor-control-type-code">
+				<div class="monaco-editor"><textarea id="css"></textarea></div>
+			</div>
+		` );
+
+		const textarea = document.getElementById( 'css' );
+		const wrapper = panel.querySelector( '.elementor-control' );
+
+		textarea.focus();
+		textarea.addEventListener( 'keydown', ( event ) => event.preventDefault() );
+		panel.addEventListener( 'keydown', ( event ) => escapeFromPanelField( event, panel ) );
+
+		pressEscape();
+
+		expect( document.activeElement ).toBe( wrapper );
+		expect( isInsideCodeEditor( textarea ) ).toBe( true );
+	} );
+
 	it( 'ignores fields inside an overlay that owns the escape key', () => {
 		renderPanel( `
 			<div role="dialog">
@@ -205,6 +226,7 @@ describe( 'keyboard-nav - escape helpers', () => {
 		[ '<div contenteditable="true"></div>', true ],
 		[ '<button></button>', false ],
 		[ '<div class="monaco-editor"><textarea></textarea></div>', true ],
+		[ '<div class="ace_editor"><textarea class="ace_text-input"></textarea></div>', true ],
 	] )( 'isEditableTarget( %s ) is %s', ( html, expected ) => {
 		document.body.innerHTML = html;
 

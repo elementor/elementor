@@ -7,6 +7,10 @@ const EDITABLE_SELECTOR = [
 
 const MONACO_SELECTOR = '.monaco-editor';
 
+const ACE_SELECTOR = '.ace_editor';
+
+const CODE_EDITOR_SELECTOR = [ MONACO_SELECTOR, ACE_SELECTOR ].join( ', ' );
+
 const ESCAPE_OWNER_SELECTOR = [
 	'.dialog-widget',
 	'[role="dialog"]',
@@ -157,7 +161,19 @@ export function isEditableTarget( element ) {
 		return false;
 	}
 
-	return element.matches( EDITABLE_SELECTOR ) || !! element.closest( MONACO_SELECTOR );
+	return element.matches( EDITABLE_SELECTOR ) || !! element.closest( CODE_EDITOR_SELECTOR );
+}
+
+/**
+ * @param {HTMLElement|Element|null} element
+ * @return {boolean} Whether the element is inside Ace or Monaco (they preventDefault Escape before the panel handler runs).
+ */
+export function isInsideCodeEditor( element ) {
+	if ( ! element || 'function' !== typeof element.closest ) {
+		return false;
+	}
+
+	return !! element.closest( CODE_EDITOR_SELECTOR );
 }
 
 /**
@@ -287,17 +303,21 @@ function parkFocusOnAnchor( anchor, root ) {
  * @return {boolean} Whether the event was handled.
  */
 export function escapeFromPanelField( event, root ) {
-	const isDefaultPrevented = 'function' === typeof event.isDefaultPrevented
-		? event.isDefaultPrevented()
-		: event.defaultPrevented;
-
-	if ( 'Escape' !== event.key || isDefaultPrevented ) {
+	if ( 'Escape' !== event.key ) {
 		return false;
 	}
 
 	const field = root.ownerDocument.activeElement;
 
 	if ( ! isEditableTarget( field ) || ! root.contains( field ) || isInsideOverlay( field ) ) {
+		return false;
+	}
+
+	const isDefaultPrevented = 'function' === typeof event.isDefaultPrevented
+		? event.isDefaultPrevented()
+		: event.defaultPrevented;
+
+	if ( isDefaultPrevented && ! isInsideCodeEditor( field ) ) {
 		return false;
 	}
 
