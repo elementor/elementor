@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { ICON_LIBRARY_GRID_COLUMNS, ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
