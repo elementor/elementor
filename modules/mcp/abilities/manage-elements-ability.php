@@ -24,6 +24,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
+use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
@@ -819,16 +820,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		int $class_attachments = 0,
 		int $interactions_count = 0
 	): void {
-		$duration_ms = (int) round( ( hrtime( true ) - $started_at ) / 1_000_000 );
+		$duration_ms = Tool_Performance_Metrics::duration_ms_since( $started_at );
 
-		$batch_status = $response['status'] ?? 'error';
-		if ( null !== $top_level_error ) {
-			$status     = 'error';
-			$error_code = $top_level_error->get_error_code();
-		} else {
-			$status     = 'ok' === $batch_status ? 'success' : ( 'partial_error' === $batch_status ? 'partial' : 'error' );
-			$error_code = null;
-		}
+		[ 'status' => $status, 'error_code' => $error_code ] = Tool_Performance_Metrics::resolve_status( $response, $top_level_error );
 
 		$failed_results = array_filter( $response['results'] ?? [], fn( $r ) => 'error' === ( $r['status'] ?? '' ) );
 		$failed_count   = count( $failed_results );

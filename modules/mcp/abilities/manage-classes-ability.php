@@ -15,6 +15,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -645,16 +646,9 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		?\WP_Error $top_level_error = null,
 		array $response = []
 	): void {
-		$duration_ms = (int) round( ( hrtime( true ) - $started_at ) / 1_000_000 );
+		$duration_ms = Tool_Performance_Metrics::duration_ms_since( $started_at );
 
-		$batch_status = $response['status'] ?? 'error';
-		if ( null !== $top_level_error ) {
-			$status     = 'error';
-			$error_code = $top_level_error->get_error_code();
-		} else {
-			$status     = 'ok' === $batch_status ? 'success' : ( 'partial_error' === $batch_status ? 'partial' : 'error' );
-			$error_code = null;
-		}
+		[ 'status' => $status, 'error_code' => $error_code ] = Tool_Performance_Metrics::resolve_status( $response, $top_level_error );
 
 		$failed_results = array_filter( $response['results'] ?? [], fn( $r ) => 'error' === ( $r['status'] ?? '' ) );
 		$failed_count   = count( $failed_results );

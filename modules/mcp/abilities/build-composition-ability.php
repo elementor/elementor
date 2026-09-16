@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
@@ -137,7 +138,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		array $response = [],
 		array $removed_ids = []
 	): void {
-		$duration_ms = (int) round( ( hrtime( true ) - $started_at ) / 1_000_000 );
+		$duration_ms = Tool_Performance_Metrics::duration_ms_since( $started_at );
 
 		$status     = null === $error ? 'success' : 'error';
 		$error_code = null !== $error ? $error->get_error_code() : null;
