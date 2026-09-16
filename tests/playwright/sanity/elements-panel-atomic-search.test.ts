@@ -11,6 +11,7 @@ test.describe( 'Elements panel search — atomic priority @atomic-widgets', () =
 
 		// Debug — verify preconditions before searching
 		const debug = await page.evaluate( () => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const win = window as unknown as Record<string, any>;
 			const eHeading = win.elementor?.widgetsCache?.[ 'e-heading' ];
 			return {
