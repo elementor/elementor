@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from './parallelTest';
-import WpAdminPage from './pages/wp-admin-page';
+import { parallelTest as test } from '../parallelTest';
+import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Elements panel search — atomic priority @atomic-widgets', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -27,7 +27,7 @@ test.describe( 'Elements panel search — atomic priority @atomic-widgets', () =
 		await panelItems.first().waitFor();
 
 		const elementTypes = await panelItems.evaluateAll( ( els ) =>
-			els.map( ( el ) => ( el as HTMLElement ).dataset.libraryElementType ?? '' )
+			els.map( ( el ) => ( el as HTMLElement ).dataset.libraryElementType ?? '' ),
 		);
 
 		const v4HeadingIndex = elementTypes.indexOf( 'e-heading' );
