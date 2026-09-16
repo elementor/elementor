@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -137,6 +138,8 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		$component = $this->get_repository()->get( $component_id, false );
+
+		$this->emit_component_created_event( $title, $component_id, $elements );
 
 		$response = [
 			'success' => true,
@@ -733,6 +736,43 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'description' => 'archive targets.',
 				],
 			],
+		];
+	}
+
+	private function emit_component_created_event( string $title, int $component_id, array $elements ): void {
+		[ 'elements_count' => $nested_elements_count, 'components_count' => $nested_components_count ] = $this->count_nested_elements( $elements );
+		$top_element_type = $elements[0]['elType'] ?? ( $elements[0]['widgetType'] ?? '' );
+
+		Mcp_Event_Dispatcher::emit( 'component_created', [
+			'id'                      => (string) $component_id,
+			'name'                    => $title,
+			'nested_elements_count'   => $nested_elements_count,
+			'nested_components_count' => $nested_components_count,
+			'top_element_type'        => $top_element_type,
+		] );
+	}
+
+	private function count_nested_elements( array $elements ): array {
+		$elements_count   = count( $elements );
+		$components_count = 0;
+
+		foreach ( $elements as $element ) {
+			if ( 'e-component' === ( $element['widgetType'] ?? '' ) ) {
+				$components_count++;
+			}
+
+			$children = $element['elements'] ?? [];
+
+			if ( ! empty( $children ) ) {
+				$child_counts      = $this->count_nested_elements( $children );
+				$elements_count   += $child_counts['elements_count'];
+				$components_count += $child_counts['components_count'];
+			}
+		}
+
+		return [
+			'elements_count'   => $elements_count,
+			'components_count' => $components_count,
 		];
 	}
 }
