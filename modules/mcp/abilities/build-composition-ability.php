@@ -9,6 +9,8 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -55,28 +57,33 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		$input = is_array( $input ) ? $input : [];
+		$started_at = hrtime( true );
+		$input      = is_array( $input ) ? $input : [];
+
+		$post_id   = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
+		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
+		$dry_run   = ! empty( $input['dry_run'] );
+		$mode      = is_string( $input['mode'] ?? null ) ? $input['mode'] : self::MODE_APPEND;
 
 		$validation_error = $this->validate_input( $input );
 		if ( $validation_error ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $validation_error );
 			return $validation_error;
 		}
 
-		$post_id = (int) $input['post_id'];
-		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
-		$dry_run = ! empty( $input['dry_run'] );
-		$mode = $input['mode'] ?? self::MODE_APPEND;
-
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return new \WP_Error(
+			$error = new \WP_Error(
 				'elementor_forbidden',
 				__( 'You do not have permission to edit this post.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $error );
+			return $error;
 		}
 
 		$document = $this->resolve_document( $post_id );
 		if ( is_wp_error( $document ) ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $document );
 			return $document;
 		}
 
@@ -88,27 +95,122 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$parent_id
 		);
 		if ( is_wp_error( $compiled ) ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $compiled, null, [], $document );
 			return $compiled;
 		}
 
-		$subtrees = $compiled['elements'];
-		$warnings = $compiled['warnings'];
-		$dom = $compiled['dom'];
-		$xml_parser = $compiled['xml_parser'];
+		$subtrees      = $compiled['elements'];
+		$warnings      = $compiled['warnings'];
+		$warning_codes = $compiled['warning_codes'] ?? [];
+		$dom           = $compiled['dom'];
+		$xml_parser    = $compiled['xml_parser'];
 
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
+			return $response;
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
 		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $persisted, $subtrees, $warning_codes, $document );
 			return $persisted;
 		}
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
+
+		return $response;
+	}
+
+	private function emit_mcp_build_composition_executed(
+		int $started_at,
+		int $post_id,
+		string $mode,
+		bool $dry_run,
+		?\WP_Error $error = null,
+		?array $subtrees = null,
+		array $warning_codes = [],
+		?Document $document = null,
+		array $response = [],
+		array $removed_ids = []
+	): void {
+		$duration_ms = Tool_Performance_Metrics::duration_ms_since( $started_at );
+
+		$status     = null === $error ? 'success' : 'error';
+		$error_code = null !== $error ? $error->get_error_code() : null;
+
+		$operations_count   = 0;
+		$operations_by_type = [];
+		$class_attachments  = 0;
+		$interactions_count = 0;
+		$removed_count      = count( $removed_ids );
+
+		if ( null !== $subtrees ) {
+			$this->collect_composition_counts( $subtrees, $operations_count, $operations_by_type, $class_attachments, $interactions_count );
+		}
+
+		$style_input       = [];
+		$vars_referenced   = 0;
+		$document_type     = null !== $document ? $this->resolve_document_type( $document ) : null;
+
+		$payload = [
+			'tool_name'                  => $this->get_ability_id(),
+			'status'                     => $status,
+			'duration_ms'                => $duration_ms,
+			'post_id'                    => $post_id,
+			'mode'                       => $mode,
+			'dry_run'                    => $dry_run,
+			'operations_count'           => $operations_count,
+			'operations_by_type'         => $operations_by_type,
+			'class_attachments_count'    => $class_attachments,
+			'interactions_applied_count' => $interactions_count,
+			'removed_count'              => $removed_count,
+			'warning_count'              => count( $warning_codes ),
+			'warning_types'              => array_values( array_unique( $warning_codes ) ),
+		];
+
+		if ( null !== $document_type ) {
+			$payload['document_type'] = $document_type;
+		}
+
+		if ( null !== $error_code ) {
+			$payload['error_code'] = $error_code;
+		}
+
+		Mcp_Event_Dispatcher::emit( 'mcp_build_composition_executed', $payload );
+	}
+
+	private function collect_composition_counts( array $subtrees, int &$count, array &$by_type, int &$class_attachments, int &$interactions ): void {
+		$stack = $subtrees;
+
+		while ( ! empty( $stack ) ) {
+			$node = array_pop( $stack );
+			$type = $node['widgetType'] ?? $node['elType'] ?? '';
+
+			if ( '' !== $type ) {
+				++$count;
+				$by_type[ $type ] = ( $by_type[ $type ] ?? 0 ) + 1;
+			}
+
+			$classes = $node['settings']['classes']['value'] ?? [];
+			$class_attachments += count( array_filter( (array) $classes, fn( $c ) => is_string( $c ) && str_starts_with( $c, 'g-' ) ) );
+
+			if ( ! empty( $node['interactions']['items'] ) && is_array( $node['interactions']['items'] ) ) {
+				$interactions += count( $node['interactions']['items'] );
+			}
+
+			foreach ( $node['elements'] ?? [] as $child ) {
+				$stack[] = $child;
+			}
+		}
+	}
+
+	private function resolve_document_type( Document $document ): string {
+		return $document->get_name();
 	}
 
 	private function get_ability_description(): string {
