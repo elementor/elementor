@@ -225,6 +225,35 @@ class Test_Mcp_Tool_Performance_Events extends TestCase {
 		$this->assertIsInt( $payload['duration_ms'] );
 	}
 
+	public function test_manage_variable_variable_types_includes_updates_from_response_not_input() {
+		// Arrange — update op has no `type` in input, but batch result carries it
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'process_batch' )->willReturn( [
+			'results'   => [
+				[ 'status' => 'ok', 'action' => 'create', 'id' => 'v1', 'label' => 'accent', 'type' => 'global-color-variable' ],
+				[ 'status' => 'ok', 'action' => 'update', 'id' => 'v2', 'label' => 'sizing',  'type' => 'global-size-variable' ],
+			],
+			'watermark' => 'w1',
+		] );
+		$ability = $this->make_variable_ability( $service );
+
+		// Act — note: update op input has NO `type` field
+		$ability->execute( [
+			'operations' => [
+				[ 'action' => 'create', 'type' => 'global-color-variable', 'label' => 'accent', 'value' => '#f00' ],
+				[ 'action' => 'update', 'id' => 'v2', 'label' => 'sizing', 'value' => '8px' ],
+			],
+		] );
+
+		// Assert — variable_types includes both create AND update types
+		$payload = $this->first_payload( 'mcp_manage_global_variable_executed' );
+		$this->assertNotNull( $payload );
+		$this->assertSame(
+			[ 'global-color-variable' => 1, 'global-size-variable' => 1 ],
+			$payload['variable_types']
+		);
+	}
+
 	public function test_manage_variable_emits_on_validation_failure() {
 		// Arrange
 		$ability = $this->make_variable_ability();

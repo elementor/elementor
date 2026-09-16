@@ -353,8 +353,11 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			if ( is_string( $action ) && '' !== $action ) {
 				$by_action[ $action ] = ( $by_action[ $action ] ?? 0 ) + 1;
 			}
+		}
 
-			$type = $op['type'] ?? '';
+		$ok_results = array_filter( $response['results'] ?? [], fn( $r ) => 'ok' === ( $r['status'] ?? '' ) );
+		foreach ( $ok_results as $row ) {
+			$type = $row['type'] ?? '';
 			if ( is_string( $type ) && '' !== $type ) {
 				$variable_types[ $type ] = ( $variable_types[ $type ] ?? 0 ) + 1;
 			}
