@@ -182,13 +182,15 @@ const IconLibraryContent = ( {
 
 	if ( view === 'grid' ) {
 		return (
-			<IconLibraryGrid
-				items={ items }
-				selectedValue={ selectedValue }
-				onSelect={ onSelect }
-				onClose={ onClose }
-				noResultsComponent={ emptyState }
-			/>
+			<Box sx={ { width: '100%', height: '100%', minWidth: 0, minHeight: 0 } }>
+				<IconLibraryGrid
+					items={ items }
+					selectedValue={ selectedValue }
+					onSelect={ onSelect }
+					onClose={ onClose }
+					noResultsComponent={ emptyState }
+				/>
+			</Box>
 		);
 	}
 
