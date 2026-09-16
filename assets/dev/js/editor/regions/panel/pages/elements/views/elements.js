@@ -44,24 +44,19 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( filterValue && elementorCommon.config.experimentalFeatures?.e_atomic_elements ) {
-			// When V4 atomic elements are active, show them first in search results.
-			// Set the comparator once when search starts; Backbone maintains order on subsequent keystrokes.
-			if ( ! this.collection.comparator ) {
-				this.collection.comparator = ( a, b ) => {
-					const aIsAtomic = a.get( 'atomic' );
-					const bIsAtomic = b.get( 'atomic' );
-					if ( aIsAtomic && ! bIsAtomic ) {
-						return -1;
-					}
-					if ( ! aIsAtomic && bIsAtomic ) {
-						return 1;
-					}
-					return 0;
-				};
-				this.collection.sort();
-			}
+			// Use Marionette's viewComparator to render V4 atomic elements before V3 widgets.
+			// This hooks into _filteredSortedModels() without firing a collection sort event.
+			this.viewComparator = ( a, b ) => {
+				if ( a.get( 'atomic' ) && ! b.get( 'atomic' ) ) {
+					return -1;
+				}
+				if ( ! a.get( 'atomic' ) && b.get( 'atomic' ) ) {
+					return 1;
+				}
+				return 0;
+			};
 		} else {
-			this.collection.comparator = null;
+			this.viewComparator = null;
 		}
 
 		if ( ! filterValue ) {
