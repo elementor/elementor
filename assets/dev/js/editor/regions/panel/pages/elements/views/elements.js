@@ -48,8 +48,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			// Set the comparator once when search starts; Backbone maintains order on subsequent keystrokes.
 			if ( ! this.collection.comparator ) {
 				this.collection.comparator = ( a, b ) => {
-					const aIsAtomic = elementor.helpers.isAtomicWidget( a );
-					const bIsAtomic = elementor.helpers.isAtomicWidget( b );
+					const aIsAtomic = a.get( 'atomic' );
+					const bIsAtomic = b.get( 'atomic' );
 					if ( aIsAtomic && ! bIsAtomic ) {
 						return -1;
 					}
