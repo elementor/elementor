@@ -59,8 +59,32 @@ CSS;
 		$result = $this->sanitizer->sanitize( $css );
 
 		// Assert.
-		$this->assertStringNotContainsString( 'expression(', strtolower( $result ) );
+		$this->assertStringNotContainsString( 'expression', strtolower( $result ) );
 		$this->assertStringContainsString( 'height: 10px;', $result );
+	}
+
+	public function test_sanitize__removes_expression_calls_with_whitespace_before_paren(): void {
+		// Arrange.
+		$css = 'width: expression (alert(1)); height: 10px;';
+
+		// Act.
+		$result = $this->sanitizer->sanitize( $css );
+
+		// Assert.
+		$this->assertStringNotContainsString( 'expression', strtolower( $result ) );
+		$this->assertStringContainsString( 'height: 10px;', $result );
+	}
+
+	public function test_sanitize__neutralizes_javascript_urls_obfuscated_with_css_escapes(): void {
+		// Arrange.
+		$css = 'background: url(\6avascript:alert(1)); color: red;';
+
+		// Act.
+		$result = $this->sanitizer->sanitize( $css );
+
+		// Assert.
+		$this->assertStringNotContainsString( 'javascript:', strtolower( $result ) );
+		$this->assertStringContainsString( 'color: red;', $result );
 	}
 
 	public function test_sanitize__removes_style_breakout(): void {
