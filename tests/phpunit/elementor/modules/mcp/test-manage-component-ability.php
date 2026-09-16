@@ -9,7 +9,9 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -30,6 +32,11 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	private Documents_Manager $original_documents;
 	private Widgets_Manager $original_widgets_manager;
 	private Elements_Manager $original_elements_manager;
+
+	/**
+	 * @var array<string, string>
+	 */
+	private array $original_experiment_states = [];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -55,9 +62,16 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		] );
 
 		Mock_Pro_License_API::reset();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
+			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
+			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		}
+
+		V3_Widget_Map_Registry::reset_instance();
 		Plugin::$instance->documents = $this->original_documents;
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
 		Plugin::$instance->elements_manager = $this->original_elements_manager;
@@ -806,6 +820,23 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 			],
 			'elements' => [],
 		];
+	}
+
+	private function set_experiment_state( string $experiment_name, string $state ): void {
+		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
+			$features = Plugin::$instance->experiments->get_features( $experiment_name );
+
+			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
+				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
+				$features = Plugin::$instance->experiments->get_features( $experiment_name );
+			}
+
+			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
+		}
+
+		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
+		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		V3_Widget_Map_Registry::reset_instance();
 	}
 
 	private function error_message( $result ): string {

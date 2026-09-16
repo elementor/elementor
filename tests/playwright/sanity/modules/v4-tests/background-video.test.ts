@@ -64,4 +64,25 @@ test.describe( 'Background Video @v4-tests', () => {
 		await expect( previewRoot ).toHaveClass( /e-background-video--paused/ );
 		await expect( previewRoot ).not.toHaveClass( /e-background-video--playing/ );
 	} );
+
+	test( 'User can deselect the active Background Video state', async () => {
+		const elementId = await editor.addElement( { elType: elementType }, 'document' );
+
+		await editor.selectElement( elementId );
+		await editor.v4Panel.openTab( 'general' );
+
+		const statesField = editor.page.locator( '[data-type="settings-field"]' ).filter( { hasText: 'States' } );
+		const playButton = statesField.getByRole( 'button', { name: 'Play' } );
+		await expect( playButton ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		await playButton.click();
+
+		await expect( playButton ).toHaveAttribute( 'aria-pressed', 'false' );
+		await expect( statesField.getByRole( 'button', { name: 'Pause' } ) ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		const previewRoot = editor.getPreviewFrame().locator( editor.getWidgetSelector( elementId ) );
+		await expect( previewRoot ).not.toHaveClass( /e-background-video--playing/ );
+		await expect( previewRoot ).not.toHaveClass( /e-background-video--paused/ );
+		await expect( editor.getPreviewFrame().locator( `${ editor.getWidgetSelector( elementId ) } .e-background-video__controls` ) ).toBeHidden();
+	} );
 } );

@@ -10,6 +10,8 @@ use Elementor\Plugin;
 class Opt_In {
 	const EXPERIMENT_NAME = 'e_opt_in_v4';
 
+	const OPT_IN_CLICKED_OPTION = 'elementor_v4_opt_in_clicked';
+
 	const OPT_IN_FEATURES = [
 		self::EXPERIMENT_NAME,
 		'container',
@@ -56,6 +58,8 @@ class Opt_In {
 			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
 			update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
 		}
+
+		update_option( self::OPT_IN_CLICKED_OPTION, true );
 	}
 
 	public function ajax_opt_out_v4() {

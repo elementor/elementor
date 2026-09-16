@@ -25,6 +25,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -188,9 +189,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function handle_bulk( Document $document, array $operations ): array {
-		$results = new Bulk_Operations_Result();
-		$tree = $this->get_tree( $document );
-		$any_change = false;
+		$results           = new Bulk_Operations_Result();
+		$tree              = $this->get_tree( $document );
+		$any_change        = false;
+		$pending_events    = [];
 
 		foreach ( $operations as $index => $operation ) {
 			$index = (int) $index;
@@ -223,6 +225,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				$extra['warnings'] = $outcome['warnings'];
 			}
 			$results->add_success( $index, $action, $extra );
+
+			if ( ! empty( $outcome['event_metadata'] ) ) {
+				$pending_events[] = [ 'action' => $action ] + $outcome['event_metadata'];
+			}
 		}
 
 		$response = $results->to_array();
@@ -241,6 +247,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		Plugin::$instance->files_manager->clear_cache();
+
+		$this->emit_update_events( $pending_events, $tree );
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
@@ -292,7 +300,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return null;
 		}
 
-		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
 			return null;
 		}
 
@@ -325,6 +333,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function apply_duplicate( array $tree, string $element_id ) {
+		$source_node = $this->get_mutator()->find_by_id( $tree, $element_id );
 		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
 		if ( is_wp_error( $new_tree ) ) {
 			return $this->to_public_error( $new_tree );
@@ -333,7 +342,30 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => [],
+			'event_metadata' => [
+				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
+			],
 		];
+	}
+
+	private function collect_element_types( array $node ): array {
+		$types = [];
+		$stack = [ $node ];
+
+		while ( ! empty( $stack ) ) {
+			$current = array_pop( $stack );
+			$type    = $current['widgetType'] ?? $current['elType'] ?? '';
+
+			if ( '' !== $type ) {
+				$types[] = $type;
+			}
+
+			foreach ( $current['elements'] ?? [] as $child ) {
+				$stack[] = $child;
+			}
+		}
+
+		return $types;
 	}
 
 	private function apply_move( array $tree, string $element_id, array $operation ) {
@@ -396,8 +428,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 		$widget_configs = [ $element_type => $widget_config ];
 
-		$variables_service = $this->create_variables_service();
-		$warnings = [];
+		$variables_service    = $this->create_variables_service();
+		$warnings             = [];
+		$applied_classes      = [];
+		$variable_connections = [];
+		$interactions_events  = [];
 
 		if ( null !== $interactions ) {
 			if ( ! is_array( $interactions ) ) {
@@ -410,12 +445,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				);
 			}
+
+			$previous_items = $node_snapshot['interactions']['items'] ?? [];
+
 			$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 			$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
 			if ( $interactions_result['error'] ) {
 				return $interactions_result['error'];
 			}
 			$warnings = array_merge( $warnings, $interactions_result['warnings'] );
+
+			$interactions_events = $this->build_interactions_events( (string) $element_type, $previous_items, $interactions );
 		}
 
 		if ( ! empty( $settings ) ) {
@@ -449,6 +489,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( $class_error ) {
 				return $class_error;
 			}
+			$applied_classes = $classes;
 		}
 
 		if ( $has_style ) {
@@ -457,13 +498,110 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( $style_result['error'] ) {
 				return $style_result['error'];
 			}
-			$warnings = array_merge( $warnings, $style_result['warnings'] );
+			$warnings             = array_merge( $warnings, $style_result['warnings'] );
+			$variable_connections = $style_result['variable_connections'][ $element_id ] ?? [];
 		}
 
 		return [
-			'tree' => $tree,
-			'warnings' => $warnings,
+			'tree'           => $tree,
+			'warnings'       => $warnings,
+			'event_metadata' => [
+				'element_id'           => $element_id,
+				'element_type'         => (string) $element_type,
+				'applied_classes'      => $applied_classes,
+				'variable_connections' => $variable_connections,
+				'interactions_events'  => $interactions_events,
+			],
 		];
+	}
+
+	protected function build_interactions_events( string $element_type, array $previous_items, array $new_items ): array {
+		if ( [] === $new_items ) {
+			return [
+				[
+					'event_name' => 'interactions_cleared',
+					'payload'    => [
+						'affected_element_type' => $element_type,
+						'target_value'          => count( $previous_items ),
+					],
+				],
+			];
+		}
+
+		$previous_by_id = [];
+		foreach ( $previous_items as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+
+			$id = $this->extract_interaction_id( $item );
+			if ( null !== $id ) {
+				$previous_by_id[ $id ] = true;
+			}
+		}
+
+		$events = [];
+
+		foreach ( $new_items as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+
+			$id            = $item['interaction_id'] ?? '';
+			$is_update     = is_string( $id ) && '' !== $id && isset( $previous_by_id[ $id ] );
+			$event_name    = $is_update ? 'interaction_updated' : 'interaction_created';
+
+			$events[] = [
+				'event_name' => $event_name,
+				'payload'    => [
+					'affected_element_type' => $element_type,
+					'interaction_trigger'   => $this->stringify_interaction_field( $item['trigger'] ?? '' ),
+					'interaction_effect'    => $this->stringify_interaction_field( $item['animation'] ?? '' ),
+				],
+			];
+		}
+
+		return $events;
+	}
+
+	private function extract_interaction_id( array $item ): ?string {
+		if ( isset( $item['interaction_id'] ) && is_string( $item['interaction_id'] ) && '' !== $item['interaction_id'] ) {
+			return $item['interaction_id'];
+		}
+
+		$nested = $item['value']['interaction_id']['value'] ?? $item['interaction_id']['value'] ?? null;
+
+		if ( is_string( $nested ) && '' !== $nested ) {
+			return $nested;
+		}
+
+		return null;
+	}
+
+	private function stringify_interaction_field( $value ): string {
+		if ( is_string( $value ) ) {
+			return $value;
+		}
+
+		if ( is_array( $value ) ) {
+			if ( isset( $value['effect'] ) && is_string( $value['effect'] ) ) {
+				return $value['effect'];
+			}
+
+			$nested_effect = $value['value']['effect']['value'] ?? $value['effect']['value'] ?? null;
+			if ( is_string( $nested_effect ) && '' !== $nested_effect ) {
+				return $nested_effect;
+			}
+
+			if ( isset( $value['value'] ) && ( is_string( $value['value'] ) || is_numeric( $value['value'] ) ) ) {
+				return (string) $value['value'];
+			}
+			if ( isset( $value['$$type'] ) && is_string( $value['$$type'] ) ) {
+				return (string) $value['$$type'];
+			}
+		}
+
+		return '';
 	}
 
 	private function resolve_document( int $post_id ) {
@@ -562,5 +700,81 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function get_active_breakpoints(): array {
 		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
+	}
+
+	private function emit_update_events( array $pending_events, array $tree ): void {
+		if ( empty( $pending_events ) ) {
+			return;
+		}
+
+		$all_labels   = $this->create_global_classes_repository()->all_labels();
+		$class_counts = $this->count_class_usage_in_tree( $tree );
+
+		foreach ( $pending_events as $meta ) {
+			$action = $meta['action'] ?? '';
+
+			if ( 'duplicate' === $action ) {
+				foreach ( $meta['duplicated_element_types'] ?? [] as $element_name ) {
+					Mcp_Event_Dispatcher::emit( 'element_added', [
+						'element_name' => $element_name,
+					] );
+				}
+				continue;
+			}
+
+			$element_type = $meta['element_type'] ?? '';
+
+			foreach ( $meta['applied_classes'] ?? [] as $label ) {
+				$class_id = array_search( $label, $all_labels, true );
+
+				if ( false === $class_id ) {
+					continue;
+				}
+
+				Mcp_Event_Dispatcher::emit( 'class_applied', [
+					'target_name'                 => 'apply_class',
+					'id'                          => (string) $class_id,
+					'name'                        => $label,
+					'affected_element_type'       => $element_type,
+					'total_instances_after_apply' => $class_counts[ $class_id ] ?? 0,
+				] );
+			}
+
+			foreach ( $meta['variable_connections'] as $connection ) {
+				Mcp_Event_Dispatcher::emit( 'variable_connected', [
+					'id'           => $connection['variable_id'],
+					'var_type'     => $connection['var_type'],
+					'control_path' => $connection['control_path'],
+				] );
+			}
+
+			foreach ( $meta['interactions_events'] ?? [] as $ie ) {
+				Mcp_Event_Dispatcher::emit( $ie['event_name'], $ie['payload'] );
+			}
+		}
+	}
+
+	private function count_class_usage_in_tree( array $tree ): array {
+		$counts = [];
+		$this->walk_tree_for_class_counts( $tree, $counts );
+		return $counts;
+	}
+
+	private function walk_tree_for_class_counts( array $elements, array &$counts ): void {
+		foreach ( $elements as $element ) {
+			$class_values = $element['settings']['classes']['value'] ?? [];
+
+			if ( is_array( $class_values ) ) {
+				foreach ( $class_values as $class_id ) {
+					if ( is_string( $class_id ) && ! str_starts_with( $class_id, Style_Applier::LOCAL_STYLE_ID_PREFIX ) ) {
+						$counts[ $class_id ] = ( $counts[ $class_id ] ?? 0 ) + 1;
+					}
+				}
+			}
+
+			if ( ! empty( $element['elements'] ) ) {
+				$this->walk_tree_for_class_counts( $element['elements'], $counts );
+			}
+		}
 	}
 }

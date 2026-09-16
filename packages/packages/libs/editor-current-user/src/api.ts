@@ -11,6 +11,7 @@ type GetUserPayload = {
 export type UserModel = {
 	suppressedMessages: string[];
 	capabilities: string[];
+	restrictions: string[];
 };
 
 const getUserPayload: GetUserPayload = { params: { context: 'edit' } };
@@ -20,9 +21,9 @@ export const apiClient = {
 		httpService()
 			.get< UserModel >( RESOURCE_URL, getUserPayload )
 			.then( ( res ) => {
-				const { capabilities = [], suppressedMessages = [] } = res.data;
+				const { capabilities = [], suppressedMessages = [], restrictions = [] } = res.data;
 
-				return { capabilities, suppressedMessages };
+				return { capabilities, suppressedMessages, restrictions };
 			} ),
 	update: ( data: Partial< User > ) =>
 		httpService().patch< Partial< UserModel > >( RESOURCE_URL, {
