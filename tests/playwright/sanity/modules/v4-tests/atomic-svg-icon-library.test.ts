@@ -140,6 +140,9 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
 
 		await test.step( 'Switching views does not reset the library filter', async () => {
+			const search = popover.getByPlaceholder( 'Search' );
+
+			await search.fill( 'github' );
 			await popover.getByRole( 'button', { name: 'Filter by library' } ).click();
 			await page.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Brands' } ).click();
 			await page.keyboard.press( 'Escape' );
@@ -149,6 +152,7 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await popover.getByRole( 'button', { name: 'List view' } ).click();
 			await page.getByRole( 'menuitemradio', { name: 'Grid' } ).click();
 
+			await expect( search ).toHaveValue( 'github' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
 			await expect( popover.getByRole( 'gridcell', { name: /github/i } ) ).toBeVisible();
 			await expect( popover.getByRole( 'gridcell', { name: /star/i } ) ).toHaveCount( 0 );
@@ -156,6 +160,7 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
 			await page.getByRole( 'menuitemradio', { name: 'List' } ).click();
 
+			await expect( search ).toHaveValue( 'github' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
 			await expect( popover.getByRole( 'option', { name: /github/i } ) ).toBeVisible();
 		} );
