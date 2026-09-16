@@ -108,7 +108,7 @@ export const IconLibraryGrid = ( {
 
 		cell.focus();
 		shouldRestoreFocusRef.current = false;
-	}, [ focusedItem?.id, visibleRowIndexes ] );
+	}, [ focusedItem, visibleRowIndexes ] );
 
 	useLayoutEffect( () => {
 		const container = containerRef.current;
