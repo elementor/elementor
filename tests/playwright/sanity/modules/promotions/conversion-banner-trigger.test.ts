@@ -13,6 +13,8 @@ const UNLOCK_OPTION = 'elementor_conversion_banner_unlocked';
 
 const testPageIds: string[] = [];
 
+const CONVERSION_BANNER_DISMISS_KEY = 'conversion_banner_go_pro';
+
 const resetBannerTriggerState = async (): Promise<void> => {
 	try {
 		await wpCli( `wp option delete ${ UNLOCK_OPTION }` );
@@ -27,10 +29,20 @@ const resetBannerTriggerState = async (): Promise<void> => {
 	}
 
 	try {
-		await wpCli( 'wp user meta delete 1 elementor_introduction' );
+		await wpCli(
+			`wp eval '$introduction = (array) get_user_meta( 1, "elementor_introduction", true ); unset( $introduction["${ CONVERSION_BANNER_DISMISS_KEY }"] ); update_user_meta( 1, "elementor_introduction", $introduction );'`,
+		);
 	} catch {
 		// Introduction meta may not exist yet.
 	}
+
+	await clearElementorEditModeMeta();
+};
+
+const clearElementorEditModeMeta = async (): Promise<void> => {
+	await wpCli(
+		`wp eval 'global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = '${ ELEMENTOR_EDIT_MODE }'" );'`,
+	);
 };
 
 const deleteTestPages = async ( request: APIRequestContext, apiRequests: ApiRequests ): Promise<void> => {
@@ -59,9 +71,7 @@ const createPublishedElementorPage = async (
 		content: '',
 	} );
 
-	await apiRequests.updatePostMeta( request, 'pages', postId, {
-		[ ELEMENTOR_EDIT_MODE ]: 'builder',
-	} );
+	await wpCli( `wp post meta update ${ postId } ${ ELEMENTOR_EDIT_MODE } builder` );
 	testPageIds.push( postId );
 
 	return postId;
