@@ -18,9 +18,12 @@ this skill.
 Cursor session on this repo when the agent is about to `gh pr create` or
 `gh pr edit`.
 
-There is no GitHub label and no Actions job in this PR. If the rule is
-present in the checkout, the agent writes the section. If someone opens the
-PR from GitHub’s UI, nothing fills it in.
+The rule is what makes an agent write the section. If someone opens the PR
+from GitHub’s UI, nothing fills it in.
+
+CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
+`playground-preview`. It captures Playground screenshots when the section is
+filled, and skips when the section is missing or has `#skip_proof`.
 
 ## Environment (this repo)
 
