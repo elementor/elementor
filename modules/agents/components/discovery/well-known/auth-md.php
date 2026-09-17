@@ -67,7 +67,7 @@ class Auth_Md extends Abstract_Well_Known_Endpoint {
 
 ## Authentication Methods
 
-### Application Passwords (active)
+{$oauth_section}### Application Passwords (active)
 
 WordPress Application Passwords provide per-agent, individually-revocable
 credentials without requiring a full OAuth setup.
@@ -90,7 +90,7 @@ Authorization: Basic base64(username:application_password)
 
 **Required capability:** `elementor_agent_read`
 
-{$oauth_section}---
+---
 
 ## Scopes
 

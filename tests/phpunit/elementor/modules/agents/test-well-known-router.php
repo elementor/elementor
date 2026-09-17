@@ -130,6 +130,42 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringContainsString( '# Authentication', $content );
 	}
 
+	public function test_auth_md__lists_oauth_before_application_passwords_when_applicable() {
+		// Arrange
+		add_filter( 'elementor/agents/oauth_authorization_server/is_applicable', '__return_true' );
+		$auth_md = new Auth_Md();
+		$method  = new \ReflectionMethod( Auth_Md::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $auth_md );
+
+		// Cleanup
+		remove_filter( 'elementor/agents/oauth_authorization_server/is_applicable', '__return_true' );
+
+		// Assert
+		$this->assertStringContainsString( '### OAuth 2.1 + PKCE (available)', $content );
+		$this->assertStringContainsString( '### Application Passwords (active)', $content );
+		$this->assertLessThan(
+			strpos( $content, '### Application Passwords (active)' ),
+			strpos( $content, '### OAuth 2.1 + PKCE (available)' )
+		);
+	}
+
+	public function test_auth_md__omits_oauth_section_when_not_applicable() {
+		// Arrange
+		$auth_md = new Auth_Md();
+		$method  = new \ReflectionMethod( Auth_Md::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $auth_md );
+
+		// Assert
+		$this->assertStringContainsString( '### Application Passwords (active)', $content );
+		$this->assertStringNotContainsString( '### OAuth 2.1 + PKCE (available)', $content );
+	}
+
 	public function test_flush_all_caches__clears_registered_endpoint_transients() {
 		// Arrange
 		$auth_md = new Auth_Md();
