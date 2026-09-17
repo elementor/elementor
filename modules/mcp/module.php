@@ -51,7 +51,6 @@ class Module extends BaseModule {
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
-		( new Tool_Input_Schema_Sanitizer() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
