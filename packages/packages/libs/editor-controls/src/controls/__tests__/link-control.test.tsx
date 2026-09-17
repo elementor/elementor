@@ -641,7 +641,7 @@ describe( '<LinkControl />', () => {
 		} );
 	} );
 
-	it( 'should NOT call setValue when restriction is already active when subsequent set-settings commands fire', async () => {
+	it( 'should NOT call setValue on set-settings command end when restriction did not newly become active', async () => {
 		// Arrange - restriction is already active on mount.
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
 			shouldRestrict: true,
@@ -681,7 +681,7 @@ describe( '<LinkControl />', () => {
 
 		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
 
-		// Assert - restriction was already active on mount; no new transition occurred so setValue must not fire.
+		// Assert - restriction was already active on mount; it did not newly become restricted, so setValue must not fire.
 		expect( setValueSpy ).not.toHaveBeenCalled();
 	} );
 
