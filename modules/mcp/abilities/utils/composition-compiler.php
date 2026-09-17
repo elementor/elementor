@@ -135,6 +135,12 @@ final class Composition_Compiler {
 		return [
 			'elements' => $subtrees,
 			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warning_codes' => array_values( array_unique( array_merge(
+				$wrapping_result['warning_codes'] ?? [],
+				$config_result['warning_codes'] ?? [],
+				$style_result['warning_codes'] ?? [],
+				$interactions_result['warning_codes'] ?? []
+			) ) ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];
@@ -204,6 +210,7 @@ final class Composition_Compiler {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -212,6 +219,7 @@ final class Composition_Compiler {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -233,6 +241,7 @@ final class Composition_Compiler {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -253,6 +262,7 @@ final class Composition_Compiler {
 		return [
 			'widget_configs' => $widget_configs,
 			'warnings' => [ __( 'Direct document-root content was wrapped in an e-div-block element.', 'elementor' ) ],
+			'warning_codes' => [ 'root_auto_wrapped' ],
 		];
 	}
 
@@ -313,6 +323,7 @@ final class Composition_Compiler {
 			return [
 				'error' => null,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -320,12 +331,13 @@ final class Composition_Compiler {
 			return [
 				'error' => null,
 				'warnings' => [ __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ) ],
+				'warning_codes' => [ 'interactions_experiment_off' ],
 			];
 		}
 
 		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 
-		return $applier->apply( $index, $interactions );
+		return $applier->apply( $index, $interactions ) + [ 'warning_codes' => [] ];
 	}
 
 	private function is_variables_active(): bool {

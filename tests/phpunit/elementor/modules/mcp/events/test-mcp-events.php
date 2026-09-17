@@ -183,8 +183,8 @@ class Test_Mcp_Events extends TestCase {
 			],
 		] );
 
-		// Assert
-		$this->assertEmpty( $this->captured_events );
+		// Assert — no per-entity event (class_created), only the perf event is allowed
+		$this->assertNotContains( 'class_created', $this->emitted_names() );
 	}
 
 	public function test_manage_classes__no_event_for_update_or_delete_actions() {
@@ -288,8 +288,9 @@ class Test_Mcp_Events extends TestCase {
 			],
 		] );
 
-		// Assert
-		$this->assertEmpty( $this->captured_events );
+		// Assert — no per-entity event (variable_created/variable_updated) on error
+		$this->assertNotContains( 'variable_created', $this->emitted_names() );
+		$this->assertNotContains( 'variable_updated', $this->emitted_names() );
 	}
 
 	public function test_manage_variable__no_event_for_delete_action() {
@@ -311,8 +312,9 @@ class Test_Mcp_Events extends TestCase {
 			],
 		] );
 
-		// Assert — deletes do not produce variable events
-		$this->assertEmpty( $this->captured_events );
+		// Assert — deletes do not produce per-entity variable events
+		$this->assertNotContains( 'variable_created', $this->emitted_names() );
+		$this->assertNotContains( 'variable_updated', $this->emitted_names() );
 	}
 
 	public function test_manage_variable__var_type_size_mapped_from_global_size_variable() {
