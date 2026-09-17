@@ -38,6 +38,10 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		return 'elementor/manage-default-styles';
 	}
 
+	public function is_available_for_current_mode(): bool {
+		return AtomicWidgetsModule::is_active();
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Default Styles (Site-Wide)', 'elementor' ),
