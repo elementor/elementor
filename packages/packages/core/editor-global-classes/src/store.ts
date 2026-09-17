@@ -74,8 +74,17 @@ export const slice = createSlice( {
 		) {
 			state.initialData.frontend = frontend;
 			state.initialData.preview = preview;
-			state.data = preview;
-			state.classLabels = classLabels;
+
+			// Merge (instead of replace) so definitions previously loaded for other documents
+			// (e.g. embedded components rendered on the current page) don't disappear between
+			// the "reset order/labels" step and the "load current document items" step in
+			// loadCurrentDocumentClasses. Fresh values in the payload always win.
+			state.data = {
+				items: { ...state.data.items, ...preview.items },
+				order: preview.order,
+			};
+
+			state.classLabels = { ...state.classLabels, ...classLabels };
 
 			state.isDirty = false;
 		},
