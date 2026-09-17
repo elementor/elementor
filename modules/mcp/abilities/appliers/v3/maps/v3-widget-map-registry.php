@@ -85,8 +85,12 @@ class V3_Widget_Map_Registry {
 	public static function create_default(): self {
 		return new self(
 			new V3_Widget_Map_Compiler(),
-			static fn() => Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
-			static fn() => Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
+			static fn() => class_exists( \Elementor\Plugin::class )
+				&& isset( Plugin::$instance->experiments )
+				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
+			static fn() => class_exists( \Elementor\Plugin::class )
+				&& isset( Plugin::$instance->experiments )
+				&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
 				$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
 
@@ -188,6 +192,23 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
+	 * Returns the flat bridge-shaped `[ match_key => override ]` translation of the compiled
+	 * map's `style_targets`, or null when the map is absent, invalid, or the experiment is off.
+	 * Call sites should fall back to {@see V3_Widget_Bridge_Registry::get_style_overrides()} on null.
+	 *
+	 * @return array<string, array{setting: string, resolver: string, responsive?: bool}>|null
+	 */
+	public function get_style_overrides_from_map( string $widget_type ): ?array {
+		$compiled = $this->get_validation_contract( $widget_type );
+
+		if ( null === $compiled ) {
+			return null;
+		}
+
+		return V3_Map_Overrides_Builder::from_style_targets( $compiled['style_targets'] ?? [] );
+	}
+
+	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
 	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array{targets: array<string, string[]>}}|null
@@ -233,7 +254,7 @@ class V3_Widget_Map_Registry {
 
 	/**
 	 * @param array<string, mixed> $compiled_map
-	 * @return array{targets: array<string, string[]>}
+	 * @return array<string, string[]>
 	 */
 	private function build_style_targets_shape( array $compiled_map ): array {
 		$targets = [];
@@ -246,6 +267,6 @@ class V3_Widget_Map_Registry {
 			$targets[ $alias ] = array_values( array_map( 'strval', array_keys( $target['css_properties'] ) ) );
 		}
 
-		return [ 'targets' => $targets ];
+		return $targets;
 	}
 }

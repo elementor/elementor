@@ -120,10 +120,8 @@ class CSS_Files_Manager {
 	}
 
 	/**
-	 * Write to a temp file first and then move it into place. The move step is atomic on
-	 * POSIX filesystems, so the public URL cannot serve a partial or zero-byte asset while a
-	 * concurrent render is in progress. If the atomic move is not supported by the current
-	 * filesystem adapter, fall back to a direct write.
+	 * Write to a temp file first and then replace the destination with it, so a concurrent
+	 * render can never see a partial, zero-byte or absent asset on the public URL.
 	 */
 	private function write_atomically( string $filesystem_path, string $css ): bool {
 		$filesystem = $this->get_filesystem();
@@ -140,17 +138,34 @@ class CSS_Files_Manager {
 			return false;
 		}
 
-		if ( ! method_exists( $filesystem, 'move' ) || ! $filesystem->move( $tmp_path, $filesystem_path, true ) ) {
-			$fallback = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
-
-			if ( $filesystem->exists( $tmp_path ) ) {
-				$filesystem->delete( $tmp_path );
-			}
-
-			return false !== $fallback;
+		if ( $this->replace_file( $tmp_path, $filesystem_path ) ) {
+			return true;
 		}
 
-		return true;
+		$fallback = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
+
+		if ( $filesystem->exists( $tmp_path ) ) {
+			$filesystem->delete( $tmp_path );
+		}
+
+		return false !== $fallback;
+	}
+
+	/**
+	 * `WP_Filesystem_Direct::move()` unlinks the destination before renaming, leaving a window
+	 * in which the already-enqueued URL 404s. A bare `rename()` replaces the file in place with
+	 * no such window - atomically on POSIX, and via `MoveFileEx` on Windows - so it is preferred
+	 * whenever the adapter is local. Remote adapters keep the `move()` path.
+	 */
+	private function replace_file( string $tmp_path, string $destination ): bool {
+		$filesystem = $this->get_filesystem();
+
+		if ( $filesystem instanceof \WP_Filesystem_Direct ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename
+			return @rename( $tmp_path, $destination );
+		}
+
+		return method_exists( $filesystem, 'move' ) && $filesystem->move( $tmp_path, $destination, true );
 	}
 
 	private function ensure_directory_exists( string $directory ): bool {
