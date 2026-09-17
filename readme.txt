@@ -1,6 +1,6 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
-Tags: page builder, editor, landing page, drag-and-drop, elementor,
+Tags: ai, drag-and-drop, editor, landing page, mcp
 Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 7.4
