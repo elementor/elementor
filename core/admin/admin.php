@@ -427,46 +427,24 @@ class Admin extends App {
 	 * @return string The content that will be printed.
 	 */
 	public function admin_footer_text( $footer_text ) {
-		if ( ! $this->should_show_admin_footer_rating() ) {
+		$current_screen = get_current_screen();
+
+		if ( $current_screen && str_ends_with( $current_screen->id, 'elementor-mcp' ) ) {
 			return $footer_text;
 		}
 
-		$footer_text = sprintf(
-			/* translators: 1: Elementor, 2: Link to plugin review */
-			__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
-			'<strong>' . esc_html__( 'Elementor', 'elementor' ) . '</strong>',
-			'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
-		);
+		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->id, 'elementor' ) );
+
+		if ( $is_elementor_screen ) {
+			$footer_text = sprintf(
+				/* translators: 1: Elementor, 2: Link to plugin review */
+				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
+				'<strong>' . esc_html__( 'Elementor', 'elementor' ) . '</strong>',
+				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+			);
+		}
 
 		return $footer_text;
-	}
-
-	private function should_show_admin_footer_rating(): bool {
-		$current_screen = get_current_screen();
-
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		$screen_id = $current_screen->id ?? '';
-
-		if ( false === strpos( $screen_id, 'elementor' ) ) {
-			return false;
-		}
-
-		$mcp_admin_page_slug = 'elementor-mcp';
-
-		if ( str_ends_with( $screen_id, $mcp_admin_page_slug ) ) {
-			return false;
-		}
-
-		$admin_page = Utils::get_super_global_value( $_GET, 'page' );
-
-		if ( is_string( $admin_page ) && $mcp_admin_page_slug === $admin_page ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
