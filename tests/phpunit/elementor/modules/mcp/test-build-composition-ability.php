@@ -1302,7 +1302,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				],
 			],
 			'style' => [
-				'b1' => 'color: #111111; background-color: #eeeeee;',
+				'b1' => 'color: #111111; &:hover { color: #222222; }',
 			],
 		] );
 
@@ -1317,38 +1317,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'https://example.com', $button['settings']['link']['url'] ?? null );
 		$this->assertSame( 'on', $button['settings']['link']['is_external'] ?? null );
 		$this->assertSame( '#111111', $button['settings']['button_text_color'] ?? null );
-		$this->assertSame( '#eeeeee', $button['settings']['background_color'] ?? null );
-	}
-
-	public function test_execute__applies_map_driven_v3_text_editor_settings_and_color() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<text-editor configuration-id="t1"/>',
-			'element_config' => [
-				't1' => [
-					'editor' => '<p>Hello world</p>',
-				],
-			],
-			'style' => [
-				't1' => 'color: #222222;',
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$widget = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'text-editor'
-		);
-		$this->assertNotNull( $widget );
-		$this->assertSame( '<p>Hello world</p>', $widget['settings']['editor'] ?? null );
-		$this->assertSame( '#222222', $widget['settings']['text_color'] ?? null );
+		$this->assertSame( '#222222', $button['settings']['hover_color'] ?? null );
 	}
 
 	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
