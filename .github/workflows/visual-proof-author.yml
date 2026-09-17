@@ -42,5 +42,3 @@ jobs:
           product-name: 'Elementor'
           cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
           model: ${{ vars.PR_REVIEW_MODEL }}
-          skill-file: .cursor/skills/visual-proof/SKILL.md
-          examples-file: .cursor/skills/visual-proof/examples.md

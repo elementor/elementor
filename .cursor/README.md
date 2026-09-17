@@ -13,11 +13,7 @@ This directory contains AI agent configuration for test generation and code assi
   - Environment is this repo’s `playground-preview` workflow
 
 ### Skills (`/skills/`)
-- **`visual-proof/`** - How to author `## Visual proof` for this repo
-  - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption
-  - Others: `#skip_proof`
-  - CI screenshots and records a Playground clip (storyboard actor follows Steps; generic walk is fallback)
-  - `visual-proof-author.yml` calls the shared github-actions author (opened / ready_for_review, if missing)
+- **Visual proof authoring** - CI `visual-proof-author.yml` writes `## Visual proof` sections when missing (opened / ready_for_review). The skill is bundled in the shared `elementor/elementor-editor-github-actions` `visual-proof-author` action, not stored locally. Local agents must not write `## Visual proof` (see `.cursor/rules/visual-proof-pr.mdc`).
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts

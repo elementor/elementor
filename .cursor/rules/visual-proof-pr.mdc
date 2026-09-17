@@ -12,7 +12,9 @@ on `gh pr create` or `gh pr edit`.
 `.github/workflows/visual-proof-author.yml`, only when the section is still
 missing and the PR is **opened** or marked **ready for review**.
 
-**How CI writes it:** [SKILL.md](mdc:.cursor/skills/visual-proof/SKILL.md)
+**How CI writes it:** the skill bundled in the shared
+`elementor/elementor-editor-github-actions` `visual-proof-author` action
+(not a local skill file).
 
 - Leave `## Visual proof` out of the PR body unless a human already put it there
 - Do not ask the user to fill it in
