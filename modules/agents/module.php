@@ -66,17 +66,17 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$sanitizer              = new Prompt_Injection_Sanitizer();
-		$this->generator        = new Content_Generator( $sanitizer );
-		$this->cache            = new Llms_Cache();
-		$this->robots_handler   = new Robots_Txt_Handler();
-		$this->feature_registry = new Feature_Registry();
-
 		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
 
 		if ( ! self::is_active() ) {
 			return;
 		}
+
+		$sanitizer              = new Prompt_Injection_Sanitizer();
+		$this->generator        = new Content_Generator( $sanitizer );
+		$this->cache            = new Llms_Cache();
+		$this->robots_handler   = new Robots_Txt_Handler();
+		$this->feature_registry = new Feature_Registry();
 
 		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
 
