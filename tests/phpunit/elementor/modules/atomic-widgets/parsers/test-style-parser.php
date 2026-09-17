@@ -1,9 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Parsers;
 
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Style_Parser extends Elementor_Test_Base {
@@ -326,6 +327,39 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		// Assert.
 		$this->assert_parse_result_invalid($result, ['label']);
 		$this->assertEquals('class_name_double_hyphen', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__sanitizes_custom_css_security_vectors_without_validation_errors() {
+		// Arrange.
+		$modern_css = '&:has(> .child):hover { color: red; } @supports (width < 100px) { display: block; }';
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => 'desktop',
+					],
+					'props' => [],
+					'custom_css' => [
+						'raw' => Utils::encode_string( $modern_css . ' background: url(javascript:alert(1));' ),
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+		$sanitized = Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] );
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertStringContainsString( '&:has(> .child):hover', $sanitized );
+		$this->assertStringContainsString( '@supports (width < 100px)', $sanitized );
+		$this->assertStringNotContainsString( 'javascript:', strtolower( $sanitized ) );
 	}
 
 	public function test_parse__label_starting_with_hyphen_digit_fails_validation() {

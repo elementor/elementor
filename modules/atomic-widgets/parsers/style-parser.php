@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\AtomicWidgets\Styles\Custom_Css_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 
 class Style_Parser {
@@ -211,7 +212,7 @@ class Style_Parser {
 		}
 
 		$custom_css = Utils::decode_string( $variant['custom_css']['raw'] );
-		$custom_css = sanitize_textarea_field( $custom_css );
+		$custom_css = Custom_Css_Sanitizer::make()->sanitize( $custom_css );
 		$custom_css = [ 'raw' => Utils::encode_string( $custom_css ) ];
 
 		return empty( $custom_css['raw'] ) ? null : $custom_css;
