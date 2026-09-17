@@ -11,6 +11,7 @@ use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
+use Elementor\Modules\Mcp\Utils\Tool_Input_Schema_Sanitizer;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,6 +52,7 @@ class Module extends BaseModule {
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
+		( new Tool_Input_Schema_Sanitizer() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
