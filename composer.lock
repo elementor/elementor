@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9596fa42a27a19b46fd381ad6137fd57",
+    "content-hash": "0573c5ca85695d0b2c5a0351863a946c",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -72,10 +72,10 @@
         },
         {
             "name": "elementor/elementor-mcp-composer",
-            "version": "1.0.13",
+            "version": "1.0.15",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.13"
+                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.15"
             },
             "require": {
                 "automattic/jetpack-autoloader": "^5",
@@ -109,7 +109,7 @@
                 "proprietary"
             ],
             "description": "Reusable Composer package for Elementor MCP integrations.",
-            "time": "2026-09-15T14:29:50+00:00"
+            "time": "2026-09-17T09:15:50+00:00"
         },
         {
             "name": "elementor/wp-notifications-package",
@@ -4895,5 +4895,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
