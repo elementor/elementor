@@ -9,10 +9,30 @@ MARKER="<!-- visual-proof-ci -->"
 ASSETS_BRANCH="ci/visual-proof-assets"
 MAX_SHOTS="${VISUAL_PROOF_MAX_SHOTS:-3}"
 
+log() {
+	echo "[visual-proof:comment] $*"
+}
+
+err() {
+	echo "[visual-proof:comment] $*" >&2
+}
+
+gh_api() {
+	local err_file
+	err_file=$(mktemp)
+	if ! gh api "$@" 2>"$err_file"; then
+		err "gh api failed: $*"
+		err "$(cat "$err_file")"
+		rm -f "$err_file"
+		return 1
+	fi
+	rm -f "$err_file"
+}
+
 require_env() {
 	local name="$1"
 	if [[ -z "${!name:-}" ]]; then
-		echo "${name} is required" >&2
+		err "${name} is required"
 		exit 1
 	fi
 }
@@ -24,19 +44,29 @@ require_env PR_NUMBER
 
 run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
+log "step=start PR_NUMBER=${PR_NUMBER} assets_branch=${ASSETS_BRANCH} ARTIFACTS_DIR=${ARTIFACTS_DIR}"
+
+png_count=0
+if [[ -d "$ARTIFACTS_DIR" ]]; then
+	png_count=$(find "$ARTIFACTS_DIR" -type f -name '*.png' | wc -l | tr -d ' ')
+fi
+log "step=scan png_count=${png_count}"
+
 if [[ ! -d "$ARTIFACTS_DIR" ]] || [[ -z "$(find "$ARTIFACTS_DIR" -type f -name '*.png' -print -quit)" ]]; then
-	echo "No PNG shots in ${ARTIFACTS_DIR}; skipping comment"
+	log "No PNG shots in ${ARTIFACTS_DIR}; skipping comment"
 	exit 0
 fi
 
 ensure_assets_branch() {
-	if gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${ASSETS_BRANCH}" &>/dev/null; then
+	if gh_api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${ASSETS_BRANCH}" &>/dev/null; then
+		log "step=assets-branch exists=${ASSETS_BRANCH}"
 		return 0
 	fi
+	log "step=assets-branch creating ${ASSETS_BRANCH}"
 	local default_branch base_sha
-	default_branch=$(gh api "repos/${GITHUB_REPOSITORY}" --jq .default_branch)
-	base_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${default_branch}" --jq .object.sha)
-	gh api "repos/${GITHUB_REPOSITORY}/git/refs" \
+	default_branch=$(gh_api "repos/${GITHUB_REPOSITORY}" --jq .default_branch)
+	base_sha=$(gh_api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${default_branch}" --jq .object.sha)
+	gh_api "repos/${GITHUB_REPOSITORY}/git/refs" \
 		-f ref="refs/heads/${ASSETS_BRANCH}" \
 		-f sha="${base_sha}" >/dev/null
 }
@@ -54,11 +84,15 @@ upload_png() {
 		--arg branch "${ASSETS_BRANCH}" \
 		--rawfile content "$b64_file" \
 		'{message: $message, content: $content, branch: $branch}' >"$payload_file"
-	gh api "repos/${GITHUB_REPOSITORY}/contents/${repo_path}" -X PUT --input "$payload_file" >/dev/null
+	if ! gh_api "repos/${GITHUB_REPOSITORY}/contents/${repo_path}" -X PUT --input "$payload_file" >/dev/null; then
+		rm -f "$b64_file" "$payload_file"
+		return 1
+	fi
 	rm -f "$b64_file" "$payload_file"
 	echo "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/raw/${ASSETS_BRANCH}/${repo_path}"
 }
 
+log "step=assets-branch ensuring ${ASSETS_BRANCH}"
 ensure_assets_branch
 
 COMMENT_SECTIONS=()
@@ -73,6 +107,7 @@ while IFS= read -r -d '' file; do
 	count=$((count + 1))
 	name=$(basename "$file")
 	object_path="ci/visual-proof/pr-${PR_NUMBER}/run-${GITHUB_RUN_ID}/${name}"
+	log "step=upload-png name=${name}"
 	if url=$(upload_png "$file" "$object_path"); then
 		COMMENT_SECTIONS+=("**${name}**")
 		COMMENT_SECTIONS+=("![${name}](${url})")
@@ -87,17 +122,22 @@ COMMENT_SECTIONS+=("_Also on the [workflow run](${run_url})._")
 
 COMMENT_BODY=$(printf '%s\n' "${COMMENT_SECTIONS[@]}")
 
+log "step=find-comment looking for existing visual-proof-ci marker"
 existing_id=$(
-	gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --paginate \
+	gh_api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --paginate \
 		--jq "[.[] | select(.body | contains(\"visual-proof-ci\")) | .id][0] // empty" || true
 )
 
 payload=$(jq -n --arg body "$COMMENT_BODY" '{body: $body}')
 
 if [[ -n "${existing_id:-}" && "${existing_id}" != "null" ]]; then
-	echo "$payload" | gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_id}" -X PATCH --input -
-	echo "Updated visual-proof comment ${existing_id} on PR #${PR_NUMBER}"
+	log "step=upsert mode=update comment_id=${existing_id}"
+	echo "$payload" | gh_api "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_id}" -X PATCH --input - >/dev/null
+	log "Updated visual-proof comment ${existing_id} on PR #${PR_NUMBER}"
 else
-	echo "$payload" | gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --input -
-	echo "Posted visual-proof comment on PR #${PR_NUMBER}"
+	log "step=upsert mode=create"
+	echo "$payload" | gh_api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --input - >/dev/null
+	log "Posted visual-proof comment on PR #${PR_NUMBER}"
 fi
+
+log "step=done"

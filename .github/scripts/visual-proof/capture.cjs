@@ -9,6 +9,14 @@ const PLAYGROUND_URL = process.env.PLAYGROUND_URL || '';
 const BROKEN_CAPTION = process.env.VISUAL_PROOF_BROKEN || '';
 const MAX_SHOTS = 3;
 
+function log( message ) {
+	console.log( `[visual-proof:capture] ${ message }` );
+}
+
+function err( message ) {
+	console.error( `[visual-proof:capture] ${ message }` );
+}
+
 async function waitForWpFrame( page ) {
 	for ( let attempt = 0; attempt < 45; attempt++ ) {
 		const frame = page.frame( { name: 'wp' } );
@@ -18,6 +26,7 @@ async function waitForWpFrame( page ) {
 			if ( looksReady ) {
 				const hasBody = await frame.evaluate( () => Boolean( document.body && document.body.innerHTML.length > 20 ) ).catch( () => false );
 				if ( hasBody ) {
+					log( `frame ready attempt=${ attempt + 1 } url=${ url }` );
 					return frame;
 				}
 			}
@@ -25,7 +34,7 @@ async function waitForWpFrame( page ) {
 		await page.waitForTimeout( 2000 );
 	}
 
-	throw new Error( 'Playground WordPress frame did not become ready' );
+	throw new Error( 'Playground WordPress frame did not become ready after 45 attempts' );
 }
 
 async function addCaption( page, text ) {
@@ -56,10 +65,14 @@ async function clickFirst( frame, role, name ) {
 
 async function clickFirstInWp( page, role, name ) {
 	const frame = await waitForWpFrame( page );
-	return clickFirst( frame, role, name );
+	const ok = await clickFirst( frame, role, name );
+	log( `click role=${ role } name=${ name } ${ ok ? 'success' : 'fail' }` );
+	return ok;
 }
 
 async function main() {
+	log( `PLAYGROUND_URL present=${ Boolean( PLAYGROUND_URL ) } value=${ PLAYGROUND_URL || '(empty)' }` );
+
 	if ( ! PLAYGROUND_URL ) {
 		throw new Error( 'PLAYGROUND_URL is required' );
 	}
@@ -71,18 +84,22 @@ async function main() {
 	const shots = [];
 
 	try {
+		log( 'start goto' );
 		await page.goto( PLAYGROUND_URL, { waitUntil: 'domcontentloaded', timeout: 120000 } );
+		log( 'goto done' );
 		await waitForWpFrame( page );
 		await addCaption( page, BROKEN_CAPTION || 'Playground ready' );
 		await page.waitForTimeout( 1000 );
 
 		const shot = async ( name ) => {
 			if ( shots.length >= MAX_SHOTS ) {
+				log( `screenshot skipped name=${ name } (max ${ MAX_SHOTS })` );
 				return;
 			}
 			const file = path.join( OUT_DIR, `${ String( shots.length + 1 ).padStart( 2, '0' ) }-${ name }.png` );
 			await page.screenshot( { path: file, fullPage: false } );
 			shots.push( file );
+			log( `screenshot path=${ file }` );
 		};
 
 		await shot( 'wp-admin' );
@@ -99,19 +116,24 @@ async function main() {
 			await page.waitForTimeout( 8000 );
 			await waitForWpFrame( page );
 			await shot( 'elementor-editor' );
+		} else {
+			log( 'click Add New / Add New Page fail; skipping editor shot' );
 		}
 	} finally {
 		await browser.close();
 	}
 
+	log( `final shot count=${ shots.length }` );
+
 	if ( 0 === shots.length ) {
-		throw new Error( 'No screenshots were captured' );
+		throw new Error( 'No screenshots were captured (zero PNG files written)' );
 	}
 
-	console.log( `Captured ${ shots.length } screenshot(s) in ${ OUT_DIR }` );
+	log( `Captured ${ shots.length } screenshot(s) in ${ OUT_DIR }` );
 }
 
 main().catch( ( error ) => {
-	console.error( error.message || error );
+	err( error.message || String( error ) );
+	console.error( error );
 	process.exit( 1 );
 } );
