@@ -1,0 +1,56 @@
+name: Visual proof author
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+    branches:
+      - main
+      - release/beta
+      - release/stable
+      - '[0-9].[0-9][0-9]'
+
+concurrency:
+  group: visual-proof-author-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  author:
+    name: Author Visual proof section
+    if: |
+      startsWith(github.repository, 'elementor/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+
+      - name: Install Cursor CLI
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
+
+      - name: Author ## Visual proof if missing
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_REVIEW_MODEL: ${{ vars.PR_REVIEW_MODEL }}
+        run: bash .github/scripts/visual-proof/author.sh

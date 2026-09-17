@@ -17,6 +17,7 @@ This directory contains AI agent configuration for test generation and code assi
   - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption
   - Others: `#skip_proof`
   - CI currently screenshots a fixed Playground path; it does not run Steps
+  - `visual-proof-author.yml` fills a missing section on PR opened (cursor-agent)
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts

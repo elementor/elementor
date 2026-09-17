@@ -18,8 +18,13 @@ this skill.
 Cursor session on this repo when the agent is about to `gh pr create` or
 `gh pr edit`.
 
-The rule is what makes an agent write the section. If someone opens the PR
-from GitHub’s UI, nothing fills it in.
+The rule is what makes a **local** Cursor agent write the section. GitHub’s
+New PR form does not.
+
+CI workflow `.github/workflows/visual-proof-author.yml` runs `cursor-agent`
+when a same-repo PR is **opened** (or marked ready for review) and `## Visual
+proof` is still missing. It does not run on every push. Capture remains a
+separate job (`visual-proof-shots`).
 
 CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
 `playground-preview`. It captures Playground screenshots when the section is
