@@ -34,15 +34,51 @@ function shouldCaptureVisualProof( body ) {
 	return { capture: true, reason: 'ready', section };
 }
 
-function extractBrokenCaption( section ) {
-	const match = section.match( /\*\*Broken:\*\*\s*(.+)/i );
+function extractLabeledField( section, label ) {
+	if ( 'string' !== typeof section || ! section.trim() ) {
+		return '';
+	}
+
+	const escaped = label.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+	const match = section.match( new RegExp( '\\*\\*' + escaped + ':\\*\\*\\s*([\\s\\S]*?)(?=\\n\\*\\*|$)', 'i' ) );
 	return match ? match[ 1 ].trim() : '';
+}
+
+function extractBrokenCaption( section ) {
+	const match = ( section || '' ).match( /\*\*Broken:\*\*\s*(.+)/i );
+	if ( match ) {
+		return match[ 1 ].trim();
+	}
+	return extractLabeledField( section, 'Broken' );
+}
+
+function buildOverlayCaption( section ) {
+	const broken = extractBrokenCaption( section );
+	const where = extractLabeledField( section, 'Where' );
+	const steps = extractLabeledField( section, 'Steps' ).replace( /\s+/g, ' ' );
+	const parts = [];
+
+	if ( broken ) {
+		parts.push( 'Broken: ' + broken );
+	}
+	if ( where ) {
+		parts.push( 'Where: ' + where );
+	}
+	if ( steps ) {
+		parts.push( 'Steps: ' + steps );
+	}
+
+	const text = parts.join( ' · ' );
+	const max = 700;
+	return text.length > max ? text.slice( 0, max - 1 ) + '…' : text;
 }
 
 module.exports = {
 	extractVisualProofSection,
 	shouldCaptureVisualProof,
 	extractBrokenCaption,
+	extractLabeledField,
+	buildOverlayCaption,
 };
 
 if ( require.main === module && '--test' === process.argv[ 2 ] ) {
@@ -61,6 +97,11 @@ if ( require.main === module && '--test' === process.argv[ 2 ] ) {
 	assert.equal(
 		extractBrokenCaption( '**Broken:** Z-index stayed disabled.\n**Where:** Editor' ),
 		'Z-index stayed disabled.',
+	);
+	assert.ok(
+		buildOverlayCaption(
+			'**Broken:** Z-index stayed disabled.\n**Where:** Style → Position\n**Steps:** set Absolute then Z-index 5',
+		).includes( 'Steps: set Absolute then Z-index 5' ),
 	);
 
 	const withGitstream = [

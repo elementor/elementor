@@ -8,6 +8,7 @@ ARTIFACTS_DIR="${VISUAL_PROOF_OUT_DIR:-visual-proof-shots}"
 MARKER="<!-- visual-proof-ci -->"
 ASSETS_BRANCH="ci/visual-proof-assets"
 MAX_SHOTS="${VISUAL_PROOF_MAX_SHOTS:-3}"
+MAX_VIDEO_BYTES="${VISUAL_PROOF_MAX_VIDEO_BYTES:-40000000}"
 
 log() {
 	echo "[visual-proof:comment] $*"
@@ -71,16 +72,17 @@ ensure_assets_branch() {
 		-f sha="${base_sha}" >/dev/null
 }
 
-upload_png() {
+upload_blob() {
 	local local_path="$1"
 	local repo_path="$2"
+	local message="$3"
 	local b64_file payload_file
 
 	b64_file=$(mktemp)
 	payload_file=$(mktemp)
 	base64 -w 0 "$local_path" >"$b64_file"
 	jq -n \
-		--arg message "Visual proof shot (PR #${PR_NUMBER}, run ${GITHUB_RUN_ID})" \
+		--arg message "$message" \
 		--arg branch "${ASSETS_BRANCH}" \
 		--rawfile content "$b64_file" \
 		'{message: $message, content: $content, branch: $branch}' >"$payload_file"
@@ -99,7 +101,7 @@ COMMENT_SECTIONS=()
 COMMENT_SECTIONS+=("${MARKER}")
 COMMENT_SECTIONS+=("## Visual proof")
 COMMENT_SECTIONS+=("")
-COMMENT_SECTIONS+=("Shots from this PR’s Playground preview. Generic walk: WP Admin → Pages → Add New → Edit with Elementor (not the PR’s **Steps**).")
+COMMENT_SECTIONS+=("Shots and a short recording from this PR’s Playground preview. Generic walk: WP Admin → Pages → Add New → Edit with Elementor. Overlay text comes from the PR’s **Visual proof** section; CI does not execute **Steps**.")
 COMMENT_SECTIONS+=("")
 
 count=0
@@ -108,7 +110,7 @@ while IFS= read -r -d '' file; do
 	name=$(basename "$file")
 	object_path="ci/visual-proof/pr-${PR_NUMBER}/run-${GITHUB_RUN_ID}/${name}"
 	log "step=upload-png name=${name}"
-	if url=$(upload_png "$file" "$object_path"); then
+	if url=$(upload_blob "$file" "$object_path" "Visual proof shot (PR #${PR_NUMBER}, run ${GITHUB_RUN_ID})"); then
 		COMMENT_SECTIONS+=("**${name}**")
 		COMMENT_SECTIONS+=("![${name}](${url})")
 		COMMENT_SECTIONS+=("")
@@ -117,6 +119,28 @@ while IFS= read -r -d '' file; do
 		break
 	fi
 done < <(find "$ARTIFACTS_DIR" -type f -name '*.png' -print0 | sort -z)
+
+video_file=""
+if [[ -f "${ARTIFACTS_DIR}/visual-proof.mp4" ]]; then
+	video_file="${ARTIFACTS_DIR}/visual-proof.mp4"
+elif [[ -f "${ARTIFACTS_DIR}/visual-proof.webm" ]]; then
+	video_file="${ARTIFACTS_DIR}/visual-proof.webm"
+fi
+
+if [[ -n "$video_file" ]]; then
+	video_size=$(wc -c < "$video_file" | tr -d ' ')
+	log "step=upload-video file=$(basename "$video_file") bytes=${video_size}"
+	if [[ "$video_size" -le "$MAX_VIDEO_BYTES" ]]; then
+		vname=$(basename "$video_file")
+		vpath="ci/visual-proof/pr-${PR_NUMBER}/run-${GITHUB_RUN_ID}/${vname}"
+		if vurl=$(upload_blob "$video_file" "$vpath" "Visual proof video (PR #${PR_NUMBER}, run ${GITHUB_RUN_ID})"); then
+			COMMENT_SECTIONS+=("**Recording** ([${vname}](${vurl})) — GitHub may not play this inline; download if needed.")
+			COMMENT_SECTIONS+=("")
+		fi
+	else
+		err "step=upload-video skipped (over ${MAX_VIDEO_BYTES} bytes); see workflow artifacts"
+	fi
+fi
 
 COMMENT_SECTIONS+=("_Also on the [workflow run](${run_url})._")
 

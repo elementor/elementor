@@ -27,13 +27,14 @@ proof` is still missing. It does not run on every push. Capture remains a
 separate job (`visual-proof-shots`).
 
 CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
-`playground-preview`. It captures Playground screenshots when the section is
-filled, and skips when the section is missing or has `#skip_proof`.
+`playground-preview`. It captures Playground screenshots **and a short
+webm/mp4** when the section is filled, and skips when the section is missing
+or has `#skip_proof`.
 
-Those shots always walk a **fixed** Playground path: WP Admin → Pages →
-Add New → Edit with Elementor (up to 3 PNGs). `**Broken:**` is only a
-caption overlay. **Steps** are for humans and future work; CI does not
-execute them. Do not treat the PNGs as proof of the specific bug.
+The walk is still **fixed**: WP Admin → Pages → Add New → Edit with
+Elementor. Overlay text is taken from **Broken / Where / Steps** in the PR
+body. **Steps are not executed.** Do not treat the clip or PNGs as proof of
+the specific bug. This is not the marketplace `demo-video` skill.
 
 ## Environment (this repo)
 

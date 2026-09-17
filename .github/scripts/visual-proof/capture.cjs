@@ -6,6 +6,7 @@ const path = require( 'path' );
 
 const OUT_DIR = process.env.VISUAL_PROOF_OUT_DIR || 'visual-proof-shots';
 const PLAYGROUND_URL = process.env.PLAYGROUND_URL || '';
+const OVERLAY_FILE = process.env.VISUAL_PROOF_OVERLAY_FILE || '';
 const BROKEN_CAPTION = process.env.VISUAL_PROOF_BROKEN || '';
 const MAX_SHOTS = 3;
 
@@ -15,6 +16,16 @@ function log( message ) {
 
 function err( message ) {
 	console.error( `[visual-proof:capture] ${ message }` );
+}
+
+function overlayText() {
+	if ( OVERLAY_FILE && fs.existsSync( OVERLAY_FILE ) ) {
+		const fromFile = fs.readFileSync( OVERLAY_FILE, 'utf8' ).trim();
+		if ( fromFile ) {
+			return fromFile;
+		}
+	}
+	return BROKEN_CAPTION || 'Playground ready';
 }
 
 async function waitForWpFrame( page ) {
@@ -47,7 +58,7 @@ async function addCaption( page, text ) {
 		if ( ! bar ) {
 			bar = document.createElement( 'div' );
 			bar.id = 'e-visual-proof-caption';
-			bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:2147483647;padding:12px 16px;background:#1f2937;color:#fff;font:14px/1.4 sans-serif;';
+			bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:2147483647;padding:12px 16px;background:#1f2937;color:#fff;font:14px/1.4 sans-serif;white-space:pre-wrap;max-height:28%;overflow:hidden;';
 			document.body.appendChild( bar );
 		}
 		bar.textContent = caption;
@@ -70,6 +81,27 @@ async function clickFirstInWp( page, role, name ) {
 	return ok;
 }
 
+async function saveRecording( page ) {
+	const context = page.context();
+	const video = page.video();
+	await page.close();
+	await context.close();
+	if ( ! video ) {
+		log( 'video recorder not attached' );
+		return;
+	}
+
+	const rawPath = await video.path();
+	if ( ! rawPath || ! fs.existsSync( rawPath ) ) {
+		log( 'video file missing after context close' );
+		return;
+	}
+
+	const dest = path.join( OUT_DIR, 'visual-proof.webm' );
+	fs.copyFileSync( rawPath, dest );
+	log( `video path=${ dest }` );
+}
+
 async function main() {
 	log( `PLAYGROUND_URL present=${ Boolean( PLAYGROUND_URL ) } value=${ PLAYGROUND_URL || '(empty)' }` );
 
@@ -78,9 +110,18 @@ async function main() {
 	}
 
 	fs.mkdirSync( OUT_DIR, { recursive: true } );
+	const videoDir = path.join( OUT_DIR, 'video-raw' );
+	fs.mkdirSync( videoDir, { recursive: true } );
+
+	const caption = overlayText();
+	log( `overlay chars=${ caption.length }` );
 
 	const browser = await chromium.launch( { headless: true } );
-	const page = await browser.newPage( { viewport: { width: 1440, height: 900 } } );
+	const context = await browser.newContext( {
+		viewport: { width: 1440, height: 900 },
+		recordVideo: { dir: videoDir, size: { width: 1440, height: 900 } },
+	} );
+	const page = await context.newPage();
 	const shots = [];
 
 	try {
@@ -88,7 +129,7 @@ async function main() {
 		await page.goto( PLAYGROUND_URL, { waitUntil: 'domcontentloaded', timeout: 120000 } );
 		log( 'goto done' );
 		await waitForWpFrame( page );
-		await addCaption( page, BROKEN_CAPTION || 'Playground ready' );
+		await addCaption( page, caption );
 		await page.waitForTimeout( 1000 );
 
 		const shot = async ( name ) => {
@@ -120,6 +161,11 @@ async function main() {
 			log( 'click Add New / Add New Page fail; skipping editor shot' );
 		}
 	} finally {
+		try {
+			await saveRecording( page );
+		} catch ( videoError ) {
+			err( `video save failed: ${ videoError.message || videoError }` );
+		}
 		await browser.close();
 	}
 
