@@ -14,7 +14,8 @@ const openIconLibrary = async ( page, svgControl, popover ) => {
 	await expect( popover ).toBeVisible();
 };
 
-test.describe( 'Atomic SVG icon library @v4-tests', () => {
+// To be fixed in ED-25581
+test.describe.skip( 'Atomic SVG icon library @v4-tests', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_svg_library' );
 	} );
@@ -27,8 +28,7 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		await page.close();
 	} );
 
-	// To be fixed in ED-25581
-	test.skip( 'SVG control overlay and icon library popover match expected visuals', async ( { page, apiRequests }, testInfo ) => {
+	test( 'SVG control overlay and icon library popover match expected visuals', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
