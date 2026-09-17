@@ -96,11 +96,12 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 
 	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
 		$this->act_as_admin();
+		$this->given_registered_v3_widget_stack( 'button' );
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
 		$result = $this->ability->execute( [ 'widget_type' => 'button' ] );
 
-		$this->assertIsArray( $result );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'text', $result['properties'] );
 		$this->assertArrayHasKey( 'link', $result['properties'] );
@@ -109,11 +110,12 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 
 	public function test_execute__returns_standardized_text_editor_schema_when_experiment_active() {
 		$this->act_as_admin();
+		$this->given_registered_v3_widget_stack( 'text-editor' );
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
 		$result = $this->ability->execute( [ 'widget_type' => 'text-editor' ] );
 
-		$this->assertIsArray( $result );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'editor', $result['properties'] );
 		$this->assertSame( [ 'color' ], $result['style_targets']['text-editor'] );
@@ -218,6 +220,13 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	private function given_widget_manager_with_registered_heading(): void {
 		$heading = $this->original_widgets_manager->get_widget_types( 'heading' );
 		$heading->get_stack();
+	}
+
+	private function given_registered_v3_widget_stack( string $widget_type ): void {
+		$widget = $this->original_widgets_manager->get_widget_types( $widget_type );
+		if ( $widget && method_exists( $widget, 'get_stack' ) ) {
+			$widget->get_stack();
+		}
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
