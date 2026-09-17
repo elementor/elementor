@@ -86,15 +86,15 @@ export VISUAL_PROOF_OUT_DIR="$OUT_DIR"
 export VISUAL_PROOF_BROKEN="$BROKEN"
 
 cd "$SCRIPT_DIR"
-log "step=npm-install about to install playwright@1.55.1 in ${SCRIPT_DIR}"
-if ! npm install --no-package-lock --no-fund playwright@1.55.1; then
+log "step=npm-install about to install local package.json playwright in ${SCRIPT_DIR} (workspaces off)"
+if ! npm install --no-package-lock --no-fund --workspaces=false --loglevel error; then
 	err "step=npm-install failed"
 	exit 1
 fi
 log "step=npm-install ok"
 
-log "step=playwright-install about to run npx playwright install chromium"
-if ! npx playwright install chromium; then
+log "step=playwright-install about to run ./node_modules/.bin/playwright install chromium"
+if ! ./node_modules/.bin/playwright install chromium; then
 	err "step=playwright-install failed"
 	exit 1
 fi

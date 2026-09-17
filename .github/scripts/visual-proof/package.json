@@ -1,0 +1,8 @@
+{
+  "name": "elementor-visual-proof-ci",
+  "private": true,
+  "description": "CI-only Playwright install for Visual proof shots. Not part of the plugin workspaces.",
+  "dependencies": {
+    "playwright": "1.55.1"
+  }
+}
