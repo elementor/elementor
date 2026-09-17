@@ -253,7 +253,7 @@ jobs:
       - name: Capture Playground shots and comment
         # SHA from elementor/elementor-editor-github-actions#55; retarget to main after that PR merges.
         continue-on-error: true
-        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@322fd7f98dc7270244371772fe12967ccff830f3
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@d44fcedc6ac349a709d176e243bb35b0b0ba755f
         with:
           pr-number: ${{ github.event.pull_request.number }}
           head-sha: ${{ github.event.pull_request.head.sha }}

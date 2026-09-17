@@ -34,7 +34,7 @@ jobs:
 
       - name: Author ## Visual proof if missing
         # SHA from elementor/elementor-editor-github-actions#55; retarget to main after that PR merges.
-        uses: elementor/elementor-editor-github-actions/actions/visual-proof-author@322fd7f98dc7270244371772fe12967ccff830f3
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-author@d44fcedc6ac349a709d176e243bb35b0b0ba755f
         with:
           pr-number: ${{ github.event.pull_request.number }}
           pr-head-sha: ${{ github.event.pull_request.head.sha }}
