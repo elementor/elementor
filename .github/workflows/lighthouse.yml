@@ -84,6 +84,9 @@ jobs:
   build-plugin-lh:
     if: github.event_name == 'push' || github.event_name == 'merge_group'
     name: Lighthouse build artifact
+    permissions:
+      contents: read
+      pull-requests: write
     uses: ./.github/workflows/build.yml
     with:
       job_name: Lighthouse build artifact
