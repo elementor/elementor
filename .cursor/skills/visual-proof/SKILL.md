@@ -26,9 +26,11 @@ Capture remains a separate job (`visual-proof-shots`) using the shared
 them.
 
 CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
-`playground-preview`. It captures Playground screenshots **and a short
-webm/mp4** when the section is filled, and skips when the section is missing
-or has `#skip_proof`.
+`playground-preview` on normal PR pushes. When a **draft is marked ready
+for review**, Playground is not rebuilt in that event; shots still run if
+a `playground-preview` deployment already exists for the head SHA. It
+captures Playground screenshots **and a short webm/mp4** when the section
+is filled, and skips when the section is missing or has `#skip_proof`.
 
 When `CURSOR_APIKEY` is set, a **storyboard actor** (`cursor-agent`) writes
 and runs Playwright that follows **Steps** (then **Pass**) on Playground.

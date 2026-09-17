@@ -233,12 +233,14 @@ jobs:
     needs: [playground-preview]
     if: |
       always() &&
-      needs.playground-preview.result == 'success' &&
       github.event.pull_request.draft == false &&
       startsWith(github.repository, 'elementor/') &&
-      github.event.action != 'ready_for_review' &&
       github.event.action != 'labeled' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (
+        needs.playground-preview.result == 'success' ||
+        github.event.action == 'ready_for_review'
+      )
     runs-on: ubuntu-22.04
     timeout-minutes: 25
     permissions:
@@ -249,7 +251,8 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v6
       - name: Capture Playground shots and comment
-        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@ci/ED-25578-visual-proof-actions
+        # SHA from elementor/elementor-editor-github-actions#55; retarget to main after that PR merges.
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@322fd7f98dc7270244371772fe12967ccff830f3
         with:
           pr-number: ${{ github.event.pull_request.number }}
           head-sha: ${{ github.event.pull_request.head.sha }}
