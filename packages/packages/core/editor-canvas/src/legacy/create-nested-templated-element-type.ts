@@ -8,17 +8,11 @@ import { canBeTemplated, type TemplatedElementConfig } from './create-templated-
 import {
 	createAfterRender,
 	createBeforeRender,
-	rerenderExistingChildren,
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
-import {
-	type ElementModel,
-	type ElementType,
-	type ElementView,
-	type LegacyWindow,
-	type NestedTemplatedElementViewClass,
-} from './types';
+import { type ElementType, type ElementView, type LegacyWindow, type NestedTemplatedElementViewClass } from './types';
+import { parseShell, syncAttributes, type Shell } from './wrapper-shell';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -26,8 +20,6 @@ export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 };
 
 export type ModelExtensions = Record< string, unknown >;
-
-const STYLES_REFERENCE_UNTRACKED = Symbol( 'styles-reference-untracked' );
 
 export type CreateNestedTemplatedElementTypeOptions = {
 	type: string;
@@ -115,8 +107,9 @@ export function createNestedTemplatedElementView( {
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
+		_lastRenderedHtml: null as string | null,
 		_lastResolvedSettingsHash: null as string | null,
-		_lastRenderedStyles: STYLES_REFERENCE_UNTRACKED as typeof STYLES_REFERENCE_UNTRACKED | ElementModel[ 'styles' ],
+		_lastShell: null as Shell | null,
 		_domUpdateWasSkipped: false,
 
 		template: false,
@@ -133,6 +126,7 @@ export function createNestedTemplatedElementView( {
 
 		invalidateRenderCache() {
 			this._lastResolvedSettingsHash = null;
+			this._lastShell = null;
 		},
 
 		renderOnChange() {
@@ -144,12 +138,22 @@ export function createNestedTemplatedElementView( {
 			this._abortController = new AbortController();
 
 			const process = signalizedProcess( this._abortController.signal )
-				.then( () => this._beforeRender() )
-				.then( () => this._renderTemplate() )
+				.then( () => {
+					this._beforeRender();
+				} )
+				.then( async () => {
+					await this._renderTemplate();
+				} )
 				// Dispatch the render event after the template is ready
-				.then( () => this._onTemplateReady() )
-				.then( () => this._renderChildren() )
-				.then( () => this._afterRender() );
+				.then( () => {
+					this._onTemplateReady();
+				} )
+				.then( async () => {
+					await this._renderChildren();
+				} )
+				.then( () => {
+					this._afterRender();
+				} );
 
 			this._currentRenderPromise = process.execute();
 
@@ -173,27 +177,6 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			this.model.trigger( 'render:complete' );
-			this._notifyStylesChanged();
-		},
-
-		// `document/elements/create` fires before the nested template has fully painted, so the
-		// styles provider rebuilds CSS too early and misses the new local class IDs. Dispatching
-		// ELEMENT_STYLE_CHANGE_EVENT here — after the template and all children are in the DOM —
-		// gives the provider a second chance to regenerate CSS against the live class names.
-		//
-		// The reference-equality guard prevents a parent re-render from emitting one event per
-		// unchanged descendant. Use a sentinel for the initial state — otherwise elements with no
-		// local styles (undefined === undefined) would never notify, and descendants like e-heading
-		// that rely on this post-paint refresh would lose their CSS after detach.
-		_notifyStylesChanged() {
-			const styles = this.model.get( 'styles' );
-
-			if ( this._lastRenderedStyles !== STYLES_REFERENCE_UNTRACKED && styles === this._lastRenderedStyles ) {
-				return;
-			}
-
-			this._lastRenderedStyles = styles;
-
 			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 		},
 
@@ -243,7 +226,23 @@ export function createNestedTemplatedElementView( {
 						return;
 					}
 
+					const newShell = parseShell( html );
+					const oldShell = this._lastShell;
+
+					if ( oldShell && newShell && newShell.tag === oldShell.tag && newShell.inner === oldShell.inner ) {
+						const el = this.$el.get( 0 );
+						if ( el ) {
+							syncAttributes( el, newShell.attrs );
+						}
+						this._lastRenderedHtml = html;
+						this._lastShell = newShell;
+						this._domUpdateWasSkipped = true;
+						return;
+					}
+
 					this._attachTwigContent( html );
+					this._lastRenderedHtml = html;
+					this._lastShell = newShell;
 				} );
 
 			await process.execute();
@@ -303,18 +302,12 @@ export function createNestedTemplatedElementView( {
 		},
 
 		async _renderChildren() {
-			if ( this._shouldReuseChildren() ) {
-				rerenderExistingChildren( this );
-			} else {
+			if ( ! this._domUpdateWasSkipped ) {
 				parentRenderChildren.call( this );
 			}
 
 			await waitForChildrenToComplete( this );
 			this._removeChildrenPlaceholder();
-		},
-
-		_shouldReuseChildren() {
-			return this._domUpdateWasSkipped && this.children?.length > 0;
 		},
 
 		_removeChildrenPlaceholder() {
