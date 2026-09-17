@@ -1,5 +1,6 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
+import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
@@ -13,10 +14,10 @@ import {
 } from './twig-rendering-utils';
 import {
 	type ElementType,
-	type ElementView,
 	type LegacyWindow,
 	type NamespacedRenderContext,
 	type RenderContext,
+	type TemplatedElementView,
 } from './types';
 
 export type CreateTemplatedElementTypeOptions = {
@@ -27,7 +28,8 @@ export type CreateTemplatedElementTypeOptions = {
 
 export type TemplatedElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
->;
+> &
+	Pick< V1ElementConfig, 'default_html_tag' | 'html_tag_follows_link' >;
 
 export function createTemplatedElementType( {
 	type,
@@ -66,10 +68,10 @@ export function createTemplatedElementView( {
 	type,
 	renderer,
 	element,
-}: CreateTemplatedElementTypeOptions ): typeof ElementView {
+}: CreateTemplatedElementTypeOptions ): typeof TemplatedElementView {
 	const BaseView = createElementViewClassDeclaration();
 
-	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+	const { templateKey, baseStylesDictionary, resolveProps, defaultHtmlTag, htmlTagFollowsLink } = setupTwigRenderer( {
 		type,
 		renderer,
 		element,
@@ -165,7 +167,9 @@ export function createTemplatedElementView( {
 						interaction_id: this.getInteractionId(),
 						type,
 						settings,
+						tag: computeHtmlTag( settings, defaultHtmlTag, { followLink: htmlTagFollowsLink } ),
 						base_styles: baseStylesDictionary,
+						...( this.getResolverRenderContext?.() ?? {} ),
 					};
 
 					return renderer.render( templateKey, context );

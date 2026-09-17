@@ -104,13 +104,6 @@ export default class EditorBase extends Marionette.Application {
 			element: '.elementor-tags-list',
 			ignore: '.elementor-control-dynamic-switcher',
 		},
-		panelFooterSubMenus: {
-			element: '.elementor-panel-footer-tool.elementor-toggle-state',
-			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'e-open' );
-			},
-		},
 		panelResponsiveSwitchers: {
 			element: '.elementor-control-responsive-switchers',
 			callback: ( $elementsToHide ) => {
@@ -1169,6 +1162,29 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
+	async refreshWidgets() {
+		const data = await elementorCommon.ajax.addRequest( 'refresh_widgets_config' );
+
+		this.widgetsCache = {};
+		this.addWidgetsCache( data.widgets );
+
+		elementor.config.document.panel.elements_categories = data.categories;
+
+		if ( elementor.config.locale !== elementor.config.user.locale ) {
+			this.translateControlsDefaults( elementor.config.locale );
+		}
+
+		this.kitManager.renderGlobalsDefaultCSS();
+
+		elementor.hooks.doAction( 'elementor/widgets/refreshed' );
+
+		$e.routes.refreshContainer( 'panel' );
+
+		$e.run( 'preview/reload' );
+
+		return data;
+	}
+
 	translateControlsDefaults( locale ) {
 		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
 			data: { locale },
@@ -1297,6 +1313,12 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
+
+		const eventsManager = elementorCommon.eventsManager;
+
+		if ( eventsManager ) {
+			eventsManager.dispatchEvent( eventsManager.config?.names?.elementorEditor?.editorLoaded, {} );
+		}
 	}
 
 	onEditModeSwitched() {

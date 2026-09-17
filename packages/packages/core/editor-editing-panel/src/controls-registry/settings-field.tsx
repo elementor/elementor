@@ -1,22 +1,23 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, type SetValueMeta, useBoundProp } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type ElementID, getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
-	isDependency,
-	isDependencyMet,
 	type PropKey,
 	type Props,
-	type PropsSchema,
-	type PropType,
+	responsiveFallbackChain,
+	responsivePropTypeUtil,
 } from '@elementor/editor-props';
+import { type BreakpointId, useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
+import { isResponsivePropType } from '../utils/is-responsive-prop-type';
 import {
+	extractDependencyEffect,
 	extractOrderedDependencies,
 	getElementSettingsWithDefaults,
 	getUpdatedValues,
@@ -31,24 +32,7 @@ type SettingsFieldProps = {
 };
 
 const HISTORY_DEBOUNCE_WAIT = 800;
-
-const extractDependencyEffect = ( bind: string, propsSchema: PropsSchema, currentElementSettings: Props ) => {
-	const elementSettingsForDepCheck = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
-	const propType = propsSchema[ bind ];
-	const depCheck = isDependencyMet( propType?.dependencies, elementSettingsForDepCheck );
-	const isHidden =
-		! depCheck.isMet &&
-		! isDependency( depCheck.failingDependencies[ 0 ] ) &&
-		depCheck.failingDependencies[ 0 ]?.effect === 'hide';
-	return {
-		isDisabled: ( prop: PropType ) => {
-			const result = ! isDependencyMet( prop?.dependencies, elementSettingsForDepCheck ).isMet;
-			return result;
-		},
-		isHidden,
-		settingsWithDefaults: elementSettingsForDepCheck as Values,
-	};
-};
+const DESKTOP_BREAKPOINT: BreakpointId = 'desktop';
 
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
@@ -58,18 +42,15 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	} = useElement();
 
 	const value = { [ bind ]: currentElementSettings?.[ bind ] ?? null };
-
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
 
 	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
 		elementId,
 		propDisplayName,
 	} );
-	const { isDisabled, isHidden, settingsWithDefaults } = extractDependencyEffect(
-		bind,
-		propsSchema,
-		currentElementSettings
-	);
+
+	const { isDisabled, isHidden } = extractDependencyEffect( bind, propsSchema, currentElementSettings );
+
 	if ( isHidden ) {
 		return null;
 	}
@@ -79,6 +60,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
 
+		const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
 		const settings = getUpdatedValues( newValue, dependents, propsSchema, settingsWithDefaults, elementId );
 		if ( withHistory ) {
 			undoableUpdateElementProp( settings );
@@ -89,7 +71,36 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+			<PropKeyProvider bind={ bind }>
+				{ isResponsivePropType( propsSchema[ bind ] ) ? (
+					<ResponsiveBinding>{ children }</ResponsiveBinding>
+				) : (
+					children
+				) }
+			</PropKeyProvider>
+		</PropProvider>
+	);
+};
+
+const ResponsiveBinding = ( { children }: { children: React.ReactNode } ) => {
+	const { value, setValue, propType, disabled } = useBoundProp( responsivePropTypeUtil );
+	const breakpoint = useActiveBreakpoint() ?? DESKTOP_BREAKPOINT;
+	const activeBreakpoints = ( useBreakpoints() ?? [] ).map( ( { id } ) => id );
+
+	const inherited = responsiveFallbackChain( breakpoint )
+		.filter( ( key ) => key !== breakpoint && activeBreakpoints.includes( key as BreakpointId ) )
+		.map( ( key ) => value?.[ key ] )
+		.find( ( entry ) => entry !== null && entry !== undefined );
+
+	return (
+		<PropProvider
+			propType={ propType }
+			value={ value }
+			setValue={ setValue }
+			placeholder={ { [ breakpoint ]: inherited } }
+			isDisabled={ () => disabled }
+		>
+			<PropKeyProvider bind={ breakpoint }>{ children }</PropKeyProvider>
 		</PropProvider>
 	);
 };

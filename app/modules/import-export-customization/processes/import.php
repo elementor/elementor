@@ -9,6 +9,8 @@ use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Elementor_Content;
@@ -307,16 +309,7 @@ class Import {
 			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
 
-		$data = [
-			'session_id' => $this->session_id,
-			'include' => $this->settings_include,
-			'manifest' => $this->manifest,
-			'site_settings' => $this->site_settings,
-			'selected_plugins' => $this->settings_selected_plugins,
-			'customization' => $this->settings_customization,
-			'extracted_directory_path' => $this->extracted_directory_path,
-			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
-		];
+		$data = $this->build_runner_data();
 
 		$this->init_import_session();
 
@@ -362,16 +355,7 @@ class Import {
 			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
 
-		$data = [
-			'session_id' => $this->session_id,
-			'include' => $this->settings_include,
-			'manifest' => $this->manifest,
-			'site_settings' => $this->site_settings,
-			'selected_plugins' => $this->settings_selected_plugins,
-			'customization' => $this->settings_customization,
-			'extracted_directory_path' => $this->extracted_directory_path,
-			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
-		];
+		$data = $this->build_runner_data();
 
 		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
@@ -471,7 +455,25 @@ class Import {
 	}
 
 	public function get_runners_name(): array {
-		return array_keys( $this->runners );
+		$data = $this->build_runner_data();
+
+		return array_keys( array_filter(
+			$this->runners,
+			fn( $runner ) => $runner->should_import( $data )
+		) );
+	}
+
+	private function build_runner_data(): array {
+		return [
+			'session_id' => $this->session_id,
+			'include' => $this->settings_include,
+			'manifest' => $this->manifest,
+			'site_settings' => $this->site_settings,
+			'selected_plugins' => $this->settings_selected_plugins,
+			'customization' => $this->settings_customization,
+			'extracted_directory_path' => $this->extracted_directory_path,
+			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
+		];
 	}
 
 	public function get_manifest() {
@@ -784,6 +786,9 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
+				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
+				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
 
@@ -799,6 +804,17 @@ class Import {
 
 			$document->save( $data );
 		}
+	}
+
+	private function merge_atomic_prop_remap_warnings( array $warnings ): void {
+		if ( empty( $warnings ) ) {
+			return;
+		}
+
+		$existing = $this->runners_import_metadata['atomic_prop_remap']['warnings'] ?? [];
+		$this->runners_import_metadata['atomic_prop_remap'] = [
+			'warnings' => array_merge( $existing, $warnings ),
+		];
 	}
 
 	private function update_instance_data_in_import_session_option() {

@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosInstance } from 'axios';
+import axios, { type AxiosError, type AxiosInstance, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 
 import { env } from './env';
 
@@ -9,6 +9,75 @@ export type HttpResponse< TData, TMeta = Record< string, unknown > > = {
 
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 1000;
+const CACHE_TTL_MS = 20_000;
+
+type CacheEntry = {
+	response: AxiosResponse;
+	timestamp: number;
+};
+
+const cache = new Map< string, CacheEntry >();
+const cacheableUrls = new Map< string, number >();
+
+export function registerUrlForCache( partialUrl: string, ttlMs: number = CACHE_TTL_MS ): void {
+	cacheableUrls.set( partialUrl, ttlMs );
+}
+
+function getUrlCacheTtl( url: string ): number | null {
+	for ( const [ pattern, ttl ] of cacheableUrls ) {
+		if ( url.includes( pattern ) ) {
+			return ttl;
+		}
+	}
+
+	return null;
+}
+
+function getCacheKey( config: InternalAxiosRequestConfig ): string {
+	const url = config.url ?? '';
+	const params = config.params ? JSON.stringify( config.params ) : '';
+	return `${ config.baseURL ?? '' }${ url }${ params }`;
+}
+
+function getCachedResponse( config: InternalAxiosRequestConfig ): AxiosResponse | null {
+	if ( config.method?.toLowerCase() !== 'get' ) {
+		return null;
+	}
+
+	const url = `${ config.baseURL ?? '' }${ config.url ?? '' }`;
+	const ttl = getUrlCacheTtl( url );
+	if ( ttl === null ) {
+		return null;
+	}
+
+	const key = getCacheKey( config );
+	const entry = cache.get( key );
+
+	if ( ! entry ) {
+		return null;
+	}
+
+	if ( Date.now() - entry.timestamp > ttl ) {
+		cache.delete( key );
+		return null;
+	}
+
+	return entry.response;
+}
+
+function setCachedResponse( config: InternalAxiosRequestConfig | undefined, response: AxiosResponse ): void {
+	if ( ! config || config.method?.toLowerCase() !== 'get' ) {
+		return;
+	}
+
+	const url = `${ config.baseURL ?? '' }${ config.url ?? '' }`;
+	if ( getUrlCacheTtl( url ) === null ) {
+		return;
+	}
+
+	const key = getCacheKey( config );
+	cache.set( key, { response, timestamp: Date.now() } );
+}
 
 // Only idempotent / safe methods are retried. POST and PATCH are excluded because
 // a 500 may arrive after the server partially completed the operation, and retrying
@@ -28,13 +97,35 @@ export const httpService = () => {
 			},
 		} );
 
+		instance.interceptors.request.use( ( config ) => {
+			const cachedResponse = getCachedResponse( config );
+			if ( cachedResponse ) {
+				const controller = new AbortController();
+				controller.abort();
+				return {
+					...config,
+					signal: controller.signal,
+					__cachedResponse: cachedResponse,
+				} as typeof config;
+			}
+			return config;
+		} );
+
 		instance.interceptors.response.use(
-			( response ) => response,
+			( response ) => {
+				setCachedResponse( response.config, response );
+				return response;
+			},
 			async ( error: AxiosError ) => {
 				const config = error.config as typeof error.config & {
+					__cachedResponse?: AxiosResponse;
 					__retryCount?: number;
 					__baseTimeout?: number;
 				};
+
+				if ( config?.__cachedResponse ) {
+					return config.__cachedResponse;
+				}
 
 				if ( ! config || ! shouldRetry( error ) ) {
 					return Promise.reject( error );

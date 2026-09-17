@@ -1,30 +1,23 @@
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { createAndRegisterAdapters, signalMcpReady } from './mcp-registry';
 
-import { activateMcpRegistration } from './mcp-registry';
-import { getSDK } from './utils/get-sdk';
-import { isAngieAvailable } from './utils/is-angie-available';
-
-export function init() {
-	if ( isExperimentActive( 'editor_mcp' ) && isAngieAvailable() ) {
-		return getSDK().waitForReady();
+let isInitialized = false;
+export async function startMCPServer() {
+	if ( isInitialized ) {
+		return;
 	}
-	return Promise.resolve();
+	isInitialized = true;
+	try {
+		await createAndRegisterAdapters();
+	} catch ( error ) {
+		/* eslint-disable-next-line no-console */
+		console.error( 'MCP adapter activation failed:', error );
+	} finally {
+		signalMcpReady();
+	}
 }
 
-export function startMCPServer() {
-	if ( isExperimentActive( 'editor_mcp' ) && isAngieAvailable() ) {
-		const sdk = getSDK();
-		sdk.waitForReady().then( () => activateMcpRegistration( sdk ) );
-	}
-	return Promise.resolve();
+if ( typeof document !== 'undefined' ) {
+	document.addEventListener( 'DOMContentLoaded', () => void startMCPServer(), { once: true } );
+} else {
+	void startMCPServer();
 }
-
-document.addEventListener(
-	'DOMContentLoaded',
-	() => {
-		startMCPServer();
-	},
-	{
-		once: true,
-	}
-);

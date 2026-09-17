@@ -39,4 +39,39 @@ abstract class Common_App extends Base_User_App {
 
 		parent::action_reset();
 	}
+
+	public static function get_connect_user_id_from_access_token( $token ) {
+		if ( ! is_string( $token ) ) {
+			return null;
+		}
+
+		$parts = explode( '.', $token );
+
+		if ( count( $parts ) !== 3 ) {
+			return null;
+		}
+
+		try {
+			$payload_encoded = $parts[1];
+
+			$payload_encoded = str_pad( $payload_encoded, strlen( $payload_encoded ) + ( 4 - strlen( $payload_encoded ) % 4 ) % 4, '=' );
+
+			$payload_json = base64_decode( strtr( $payload_encoded, '-_', '+/' ), true );
+
+			$payload = json_decode( $payload_json, true );
+
+			if ( ! isset( $payload['sub'] ) ) {
+				return null;
+			}
+
+			return $payload['sub'];
+		} catch ( \Exception $e ) {
+			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
+			return null;
+		}
+	}
+
+	protected function get_connect_user_id() {
+		return self::get_connect_user_id_from_access_token( $this->get( 'access_token' ) );
+	}
 }

@@ -34,4 +34,12 @@ describe( '@elementor/editor-app-bar - useElementsPanelActionProps', () => {
 		expect( useRouteStatus ).toHaveBeenCalledTimes( 1 );
 		expect( useRouteStatus ).toHaveBeenCalledWith( 'panel/elements' );
 	} );
+
+	it( 'should expose a stable untranslated DOM id', () => {
+		// Act.
+		const { result } = renderHook( () => useActionProps() );
+
+		// Assert.
+		expect( result.current.id ).toBe( 'ele-add-element' );
+	} );
 } );

@@ -4,6 +4,7 @@ export {
 	useQuery,
 	useInfiniteQuery,
 	useMutation,
+	useIsMutating,
 	useQueryClient,
 	QueryClient,
 	QueryClientProvider,

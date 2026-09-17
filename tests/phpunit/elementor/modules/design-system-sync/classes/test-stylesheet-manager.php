@@ -3,6 +3,9 @@
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Core\Files\Base as Base_File;
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -18,6 +21,8 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		( new Global_Class_Post_Type() )->register_post_type();
 
 		Variables_Provider::clear_cache();
 		Classes_Provider::clear_cache();
@@ -79,7 +84,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->assertIsInt( $result['version'] );
 	}
 
-	public function test_generate__deletes_file_when_no_synced_variables() {
+	public function test_generate__returns_null_when_no_synced_variables() {
 		// Arrange
 		$this->set_kit_variables( [
 			'var-1' => [
@@ -91,9 +96,10 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->stylesheet_manager->generate();
+		$result = $this->stylesheet_manager->generate();
 
 		// Assert
+		$this->assertNull( $result );
 		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
 	}
 
@@ -263,6 +269,99 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->assertStringContainsString( '--e-global-typography-v4-heading-font-weight:', $css );
 	}
 
+	private function generate_with_synced_class(): void {
+		$this->set_kit_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Heading',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+	}
+
+	public function test_invalidate_sync_stylesheet__deletes_file_on_frontend_context() {
+		// Arrange
+		$this->generate_with_synced_class();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		// Act
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [] );
+
+		// Assert
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+	}
+
+	public function test_invalidate_sync_stylesheet__keeps_file_on_preview_context() {
+		// Arrange
+		$this->generate_with_synced_class();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		// Act
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_PREVIEW, [] );
+
+		// Assert
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+	}
+
+	public function test_enqueue__regenerates_stale_file_after_synced_classes_change() {
+		// Arrange
+		$this->set_kit_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Heading',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+		$this->assertStringContainsString( 'v4-heading', file_get_contents( $this->stylesheet_manager->get_path() ) );
+
+		// Act
+		$this->set_kit_classes( [
+			'g-2' => [
+				'id' => 'g-2',
+				'type' => 'class',
+				'label' => 'Caption',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 12, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+
+		( new Stylesheet_Manager() )->enqueue();
+
+		// Assert
+		$css = file_get_contents( $this->stylesheet_manager->get_path() );
+		$this->assertStringContainsString( '--e-global-typography-v4-caption-font-size:', $css );
+		$this->assertStringNotContainsString( 'v4-heading', $css );
+	}
+
 	public function test_generate__skips_non_synced_classes() {
 		// Arrange
 		$this->set_kit_classes( [
@@ -351,7 +450,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 					[
 						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
 						'props' => [
-							'font-family' => [ '$$type' => 'string', 'value' => 'Roboto' ],
+							'font-family' => [ '$$type' => 'font-family', 'value' => 'Roboto' ],
 							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 18, 'unit' => 'px' ] ],
 							'font-weight' => [ '$$type' => 'string', 'value' => '600' ],
 							'font-style' => [ '$$type' => 'string', 'value' => 'italic' ],
@@ -469,13 +568,9 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 	}
 
 	private function set_kit_classes( array $classes ): void {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => $classes,
-			'order' => array_keys( $classes ),
-		] );
 		Classes_Provider::clear_cache();
+
+		Global_Classes_Repository::make()->put( $classes, array_keys( $classes ) );
 	}
 
 	private function clear_kit_variables(): void {
@@ -490,7 +585,21 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit ) {
-			$kit->delete_meta( '_elementor_global_classes' );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Order::META_KEY );
+			$kit->delete_meta( Global_Classes_Sync_Map::META_KEY );
+		}
+
+		$posts = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $posts as $post_id ) {
+			wp_delete_post( $post_id, true );
 		}
 	}
 

@@ -203,7 +203,7 @@ class Container extends Element_Base {
 			return;
 		}
 
-		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+		$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
 		$this->add_render_attribute(
 			'background-video-container',
@@ -217,7 +217,7 @@ class Container extends Element_Base {
 		}
 
 		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
-			<?php if ( $video_properties ) : ?>
+			<?php if ( $is_embed_video ) : ?>
 				<div class="elementor-background-video-embed" role="presentation"></div>
 				<?php
 			else :
@@ -1413,7 +1413,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1426,7 +1426,7 @@ class Container extends Element_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
@@ -1457,7 +1457,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1470,7 +1470,7 @@ class Container extends Element_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',

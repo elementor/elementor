@@ -4,9 +4,9 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { CreatableAutocomplete } from '../creatable-autocomplete';
 
 const options = [
-	{ label: 'Option 1', value: '1' },
-	{ label: 'Option 2', value: '2' },
-	{ label: 'Option 3', value: '3' },
+	{ label: 'option-1', value: '1' },
+	{ label: 'option-2', value: '2' },
+	{ label: 'option-3', value: '3' },
 ];
 
 const entityName = {
@@ -42,28 +42,28 @@ describe( 'CreatableAutocomplete', () => {
 
 	it( 'should render options properly, before and after filter', async () => {
 		// Arrange
-		setup( { selected: [ { label: 'Option 2', value: '2' } ], placeholder, entityName } );
+		setup( { selected: [ { label: 'option-2', value: '2' } ], placeholder, entityName } );
 
 		// Assert
 		const dropdown = screen.getAllByRole( 'listbox' )[ 0 ];
 		expect( dropdown ).toBeInTheDocument();
 
 		// Selected options should not be displayed in the dropdown, but as chips above
-		expect( screen.getByText( 'Option 2' ) ).toBeInTheDocument();
-		expect( within( dropdown ).queryByText( 'Option 2' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'option-2' ) ).toBeInTheDocument();
+		expect( within( dropdown ).queryByText( 'option-2' ) ).not.toBeInTheDocument();
 
 		// The dropdown should display all available options
-		expect( within( dropdown ).getByRole( 'option', { name: 'Option 1' } ) ).toBeInTheDocument();
-		expect( within( dropdown ).getByRole( 'option', { name: 'Option 3' } ) ).toBeInTheDocument();
+		expect( within( dropdown ).getByRole( 'option', { name: 'option-1' } ) ).toBeInTheDocument();
+		expect( within( dropdown ).getByRole( 'option', { name: 'option-3' } ) ).toBeInTheDocument();
 
 		// Act
 		const input = screen.getByPlaceholderText( 'Type to search/add test option' );
-		fireEvent.change( input, { target: { value: 'Option 1' } } );
+		fireEvent.change( input, { target: { value: 'option-1' } } );
 
 		// Assert
 		// The dropdown should filter options based on user input
-		expect( within( dropdown ).getByRole( 'option', { name: 'Option 1' } ) ).toBeInTheDocument();
-		expect( within( dropdown ).queryByText( 'Option 3' ) ).not.toBeInTheDocument();
+		expect( within( dropdown ).getByRole( 'option', { name: 'option-1' } ) ).toBeInTheDocument();
+		expect( within( dropdown ).queryByText( 'option-3' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show create option button when user typing', async () => {
@@ -87,28 +87,28 @@ describe( 'CreatableAutocomplete', () => {
 
 	it( 'should call onSelect when an existing option is selected', async () => {
 		// Arrange.
-		const { onSelect } = setup( { selected: [ { label: 'Option 1', value: '1' } ] } );
+		const { onSelect } = setup( { selected: [ { label: 'option-1', value: '1' } ] } );
 
 		// Act.
 		const input = screen.getByRole( 'combobox' );
-		fireEvent.change( input, { target: { value: 'Option 2' } } );
+		fireEvent.change( input, { target: { value: 'option-2' } } );
 		fireEvent.keyDown( input, { key: 'Enter' } );
 
 		// Assert.
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
 		expect( onSelect ).toHaveBeenCalledWith(
 			[
-				{ label: 'Option 1', value: '1' },
-				{ label: 'Option 2', value: '2' },
+				{ label: 'option-1', value: '1' },
+				{ label: 'option-2', value: '2' },
 			],
 			'selectOption',
-			{ label: 'Option 2', value: '2' }
+			{ label: 'option-2', value: '2' }
 		);
 	} );
 
 	it( 'should call onCreate when a new option is created', async () => {
 		// Arrange.
-		const { onCreate } = setup( { selected: [ { label: 'Option 1', value: '1' } ] } );
+		const { onCreate } = setup( { selected: [ { label: 'option-1', value: '1' } ] } );
 
 		// Act.
 		const input = screen.getByRole( 'combobox' );

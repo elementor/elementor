@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { createContext, type PropsWithChildren, useContext } from 'react';
+import { createContext, type PropsWithChildren, useContext, useMemo } from 'react';
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
+import { classesPropTypeUtil, type ClassesPropValue, type PropValue } from '@elementor/editor-props';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 
+import { useDefaultStyleTagFromPreview } from '../hooks/use-default-style-tag-from-preview';
 import { useStylesRerender } from '../hooks/use-styles-rerender';
 import { createStylesInheritance } from '../styles-inheritance/create-styles-inheritance';
 import {
@@ -64,9 +65,25 @@ export function useStylesInheritanceChain( path: string[] ): SnapshotPropValue[]
 	return context.getInheritanceChain( snapshot, path, topLevelPropType );
 }
 
+const EMPTY_INHERITED_VALUES: Record< string, PropValue > = {};
+
+export function useInheritedValues( propKeys: string[] ): Record< string, PropValue > {
+	const snapshot = useStylesInheritanceSnapshot();
+
+	return useMemo( () => {
+		if ( ! snapshot || propKeys.length === 0 ) {
+			return EMPTY_INHERITED_VALUES;
+		}
+
+		return Object.fromEntries( propKeys.map( ( key ) => [ key, snapshot[ key ]?.[ 0 ]?.value ?? null ] ) );
+	}, [ snapshot, propKeys ] );
+}
+
 const useAppliedStyles = () => {
 	const currentClassesProp = useClassesProp();
 	const baseStyles = useBaseStyles();
+	const defaultTagStyleId = useDefaultTagStyleId();
+	const { id: activeStyleId } = useStyle();
 
 	useStylesRerender();
 
@@ -74,7 +91,14 @@ const useAppliedStyles = () => {
 
 	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
 
-	return stylesRepository.all().filter( ( style ) => [ ...baseStyles, ...appliedStyles ].includes( style.id ) );
+	const applicableIds = [
+		...baseStyles,
+		...appliedStyles,
+		...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ),
+		...( activeStyleId ? [ activeStyleId ] : [] ),
+	];
+
+	return stylesRepository.all().filter( ( style ) => applicableIds.includes( style.id ) );
 };
 
 const useBaseStyles = () => {
@@ -83,4 +107,10 @@ const useBaseStyles = () => {
 	const widgetCache = widgetsCache?.[ elementType.key ];
 
 	return Object.keys( widgetCache?.base_styles ?? {} );
+};
+
+const useDefaultTagStyleId = () => {
+	const { element } = useElement();
+
+	return useDefaultStyleTagFromPreview( element.id );
 };

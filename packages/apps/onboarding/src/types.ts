@@ -1,15 +1,13 @@
 export type ExtendedWindow = Window & {
 	elementorCommon?: {
 		config?: {
+			isRTL?: boolean;
 			library_connect?: Record< string, unknown >;
 		};
 	};
 };
 
 export const StepId = {
-	BUILDING_FOR: 'building_for',
-	SITE_ABOUT: 'site_about',
-	EXPERIENCE_LEVEL: 'experience_level',
 	THEME_SELECTION: 'theme_selection',
 	SITE_FEATURES: 'site_features',
 } as const;
@@ -49,7 +47,7 @@ export interface OnboardingChoices {
 	site_features: string[];
 }
 
-export type ThemeSlug = 'hello-elementor' | 'hello-biz';
+export type ThemeSlug = 'hello-elementor';
 
 export interface OnboardingConfig {
 	version: string;
@@ -61,10 +59,12 @@ export interface OnboardingConfig {
 	steps: Step[];
 	isConnected: boolean;
 	shouldShowProInstallScreen: boolean;
+	isHelloThemeActive?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		signUp: string;
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;
@@ -93,6 +93,7 @@ export interface OnboardingState {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		signUp: string;
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;

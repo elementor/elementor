@@ -23,6 +23,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
+	use Concerns\Has_Json_Schema_Meta;
 
 	/**
 	 * @var array<Prop_Type>
@@ -116,6 +117,10 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function should_persist( $value ): bool {
+		return ! empty( $value['value'] );
+	}
+
 	public function sanitize_value( $value ) {
 		foreach ( $this->get_shape() as $key => $prop_type ) {
 			if ( ! isset( $value[ $key ] ) ) {
@@ -123,6 +128,11 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			}
 
 			$sanitized_value = $prop_type->sanitize( $value[ $key ] );
+
+			if ( ! $prop_type->should_persist( $sanitized_value ) ) {
+				unset( $value[ $key ] );
+				continue;
+			}
 
 			$value[ $key ] = $sanitized_value;
 		}
@@ -167,5 +177,43 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		}
 
 		return $this;
+	}
+
+	public function to_json_schema(): array {
+		$schema = $this->with_json_schema_meta( [] );
+
+		$schema['type'] = 'object';
+
+		$value_properties = [];
+		$value_required = [];
+
+		foreach ( $this->get_shape() as $key => $prop_type ) {
+			$value_properties[ $key ] = $prop_type->to_json_schema();
+
+			if ( $prop_type->get_setting( 'required', false ) ) {
+				$value_required[] = $key;
+			}
+		}
+
+		$value_schema = [
+			'type' => 'object',
+			'properties' => $value_properties,
+			'additionalProperties' => false,
+		];
+
+		if ( ! empty( $value_required ) ) {
+			$value_schema['required'] = $value_required;
+		}
+
+		$schema['properties'] = [
+			'$$type' => [
+				'type' => 'string',
+				'const' => static::get_key(),
+			],
+			'value' => $value_schema,
+		];
+		$schema['required'] = [ '$$type', 'value' ];
+
+		return $schema;
 	}
 }

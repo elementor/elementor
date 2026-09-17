@@ -25,6 +25,21 @@ class Component_Override_Parser extends Override_Parser {
 		return new static();
 	}
 
+	public function resolve_override_value_prop_type( string $override_key, int $component_id ): ?Prop_Type {
+		$component_overridable_props = $this->get_component_overridable_props( $component_id );
+		$matching = $this->get_matching_component_overridable_prop( $override_key, $component_overridable_props );
+
+		if ( ! $matching ) {
+			return null;
+		}
+
+		try {
+			return $this->get_overridable_prop_type( $matching );
+		} catch ( \Exception $e ) {
+			return null;
+		}
+	}
+
 	public function validate_override( string $override_key, ?array $override_value, array $schema_source ): bool {
 		if ( ! isset( $schema_source['id'] ) ) {
 			return false;

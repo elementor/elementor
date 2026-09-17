@@ -1,10 +1,23 @@
 import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 
-export type ClassState = {
-	name: 'selected';
-	value: 'e--selected';
-};
+export type ClassState =
+	| {
+			name: 'selected';
+			value: 'e--selected';
+	  }
+	| {
+			name: 'disabled';
+			value: 'e--disabled';
+	  }
+	| {
+			name: 'playing';
+			value: 'e--playing';
+	  }
+	| {
+			name: 'paused';
+			value: 'e--paused';
+	  };
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';
 
@@ -47,3 +60,15 @@ export type StyleDefinition = {
 };
 
 export type StyleDefinitionsMap = Record< StyleDefinition[ 'id' ], StyleDefinition >;
+
+export type Variable = {
+	key?: string;
+	label: string;
+	value: string;
+	type: string;
+	deleted?: boolean;
+	deleted_at?: string;
+	sync_to_v3?: boolean;
+};
+
+export type StyleVariables = Record< string, Variable >;

@@ -7,10 +7,10 @@ import {
 	createTemplatedElementView,
 	type ElementModel,
 	type ElementType,
-	type ElementView,
 	type LegacyWindow,
 	type NamespacedRenderContext,
 	type RenderContext,
+	type TemplatedElementView,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
@@ -26,6 +26,7 @@ import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { detachComponentInstance } from './utils/detach-component-instance';
 import { formatComponentElementsId } from './utils/format-component-elements-id';
 import { isProComponentsSupported, isProOutdatedForComponents } from './utils/is-pro-components-supported';
+import { reconcileComponentInstanceElements } from './utils/reconcile-component-instance-elements';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -151,7 +152,7 @@ export function createComponentType( options: ComponentTypeOptions ): typeof Ele
 	};
 }
 
-function createComponentView( options: ComponentTypeOptions ): typeof ElementView {
+function createComponentView( options: ComponentTypeOptions ): typeof TemplatedElementView {
 	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 
 	return class extends createTemplatedElementView( options ) {
@@ -190,8 +191,18 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 		getResolverRenderContext(): RenderContext | undefined {
 			const namespaceKey = this.getNamespaceKey();
 			const context = this.getRenderContext();
+			const ownContext = context?.[ namespaceKey ];
 
-			return context?.[ namespaceKey ];
+			if ( ! ownContext ) {
+				return this._parent?.getResolverRenderContext?.();
+			}
+
+			const parentResolverContext = this._parent?.getResolverRenderContext?.();
+
+			return {
+				...parentResolverContext,
+				...ownContext,
+			};
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
@@ -209,7 +220,11 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 
 				const instanceId = this.model.get( 'id' );
 				const elements = componentInstance.elements ?? [];
-				const formattedElements = formatComponentElementsId( elements, [ instanceId ] );
+				const reconciledElements = reconcileComponentInstanceElements(
+					elements,
+					componentInstance.overrides ?? {}
+				);
+				const formattedElements = formatComponentElementsId( reconciledElements, [ instanceId ] );
 
 				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
 
@@ -331,7 +346,7 @@ function createComponentView( options: ComponentTypeOptions ): typeof ElementVie
 
 			trackComponentEvent( {
 				action: 'edited',
-				source: 'user',
+				executedBy: 'user',
 				component_uid: editorSettings?.component_uid,
 				component_name: editorSettings?.title,
 				location,

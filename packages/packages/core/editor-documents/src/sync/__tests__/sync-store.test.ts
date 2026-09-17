@@ -1,11 +1,12 @@
 import { createMockDocumentData, dispatchCommandAfter, dispatchCommandBefore, dispatchV1ReadyEvent } from 'test-utils';
+import { __privateSetReady } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice, type SliceState, type Store } from '@elementor/store';
 
 import { slice } from '../../store';
 import { selectActiveDocument } from '../../store/selectors';
 import { type Document, type ExitTo, type ExtendedWindow, type V1Document, type V1DocumentsManager } from '../../types';
 import { syncStore } from '../index';
-import { getV1DocumentPermalink, getV1DocumentsExitTo } from '../utils';
+import { getV1DocumentPermalink, getV1DocumentsExitTo, getV1DocumentWpPreview } from '../utils';
 import { makeDocumentsManager } from './test-utils';
 
 type WindowWithOptionalElementor = Omit< ExtendedWindow, 'elementor' > & {
@@ -21,7 +22,9 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		__registerSlice( slice );
 		store = __createStore();
 
+		__privateSetReady( false );
 		syncStore();
+		__privateSetReady( true );
 	} );
 
 	afterEach( () => {
@@ -56,6 +59,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 				links: {
 					platformEdit: 'https://localhost/wp-admin/post.php?post=1&action=edit',
 					permalink: 'https://localhost/?p=1',
+					wpPreview: 'https://localhost/?p=1&preview_id=1&preview_nonce=mock_nonce&preview=true',
 				},
 				isDirty: false,
 				isSaving: false,
@@ -82,6 +86,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 				links: {
 					platformEdit: 'https://localhost/wp-admin/post.php?post=2&action=edit',
 					permalink: 'https://localhost/?p=2',
+					wpPreview: 'https://localhost/?p=2&preview_id=2&preview_nonce=mock_nonce&preview=true',
 				},
 				isDirty: false,
 				isSaving: false,
@@ -130,6 +135,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 			links: {
 				platformEdit: 'https://localhost/wp-admin/post.php?post=2&action=edit',
 				permalink: 'https://localhost/?p=2',
+				wpPreview: 'https://localhost/?p=2&preview_id=2&preview_nonce=mock_nonce&preview=true',
 			},
 			status: {
 				value: 'publish',
@@ -439,6 +445,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 			const currentDocument = selectActiveDocument( store.getState() );
 			const platformEdit = getV1DocumentsExitTo( mockDocument );
 			const permalink = getV1DocumentPermalink( mockDocument );
+			const wpPreview = getV1DocumentWpPreview( mockDocument );
 
 			expect( currentDocument ).toEqual< Document >( {
 				id: 1,
@@ -450,6 +457,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 				links: {
 					platformEdit,
 					permalink,
+					wpPreview,
 				},
 				status: {
 					value: 'publish',

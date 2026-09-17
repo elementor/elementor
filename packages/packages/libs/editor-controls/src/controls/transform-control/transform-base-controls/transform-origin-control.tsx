@@ -54,7 +54,7 @@ const ControlFields = ( { control }: { control: ( typeof TRANSFORM_ORIGIN_FIELDS
 						<ControlFormLabel>{ control.label }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
-						<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
+						<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } />
 					</Grid>
 				</PopoverGridContainer>
 			</PropKeyProvider>

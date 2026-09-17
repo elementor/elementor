@@ -1,15 +1,12 @@
 import { type RenderContext } from '@elementor/editor-canvas';
 import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
-import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
 	componentName: string;
 };
 
 export type ComponentId = number;
-
-export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
 
 export type Component = PublishedComponent | UnpublishedComponent;
 
@@ -92,7 +89,7 @@ export type ExtendedWindow = Window & {
 
 export type ComponentOverridable = {
 	override_key: string;
-	origin_value: TransformablePropValue< string >;
+	origin_value: TransformablePropValue< string > | null;
 };
 
 export type ComponentRenderContext = RenderContext< {

@@ -1,4 +1,4 @@
-import { type SizeUnit } from '../types';
+import { type ExtendedSizeOption, type SizeUnit } from '../types';
 
 export const getLengthUnits = () => {
 	return ( window.elementor?.config?.size_units?.length ?? [] ) as SizeUnit[];
@@ -13,5 +13,5 @@ export const getTimeUnits = () => {
 };
 
 export const getExtendedUnits = () => {
-	return ( window.elementor?.config?.size_units?.extended_units ?? [] ) as SizeUnit[];
+	return ( window.elementor?.config?.size_units?.extended_units ?? [] ) as ExtendedSizeOption[];
 };

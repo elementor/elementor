@@ -4,11 +4,16 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { GapControl } from '../gap-control';
 
+const settings = {
+	available_units: [ 'px', 'rem' ],
+};
+
 const propType = createMockPropType( {
 	kind: 'object',
+	settings,
 	shape: {
-		column: createMockPropType( { kind: 'object' } ),
-		row: createMockPropType( { kind: 'object' } ),
+		column: createMockPropType( { kind: 'object', settings } ),
+		row: createMockPropType( { kind: 'object', settings } ),
 	},
 } );
 
@@ -194,6 +199,39 @@ describe( 'GapControl', () => {
 			value: {
 				column: { $$type: 'size', value: { unit: 'px', size: 100 } },
 				row: { $$type: 'size', value: { unit: 'px', size: 0 } },
+			},
+		} );
+	} );
+
+	it( 'should not nest layout-direction when editing a cleared value that has a layout-direction placeholder', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const bind = 'gap';
+		const label = 'Gaps';
+
+		const placeholder = {
+			$$type: 'layout-direction',
+			value: {
+				column: { $$type: 'size', value: { unit: 'px', size: 20 } },
+				row: { $$type: 'size', value: { unit: 'px', size: 20 } },
+			},
+		};
+
+		const props = { setValue, value: null, placeholder, bind, propType };
+
+		renderControl( <GapControl label={ label } />, props );
+
+		const columnInput = screen.getAllByRole( 'spinbutton' )[ 0 ];
+
+		// Act.
+		fireEvent.input( columnInput, { target: { value: 100 } } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'layout-direction',
+			value: {
+				column: { $$type: 'size', value: { unit: 'px', size: 100 } },
+				row: { $$type: 'size', value: { unit: 'px', size: 20 } },
 			},
 		} );
 	} );

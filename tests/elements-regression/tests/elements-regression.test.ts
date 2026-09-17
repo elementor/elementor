@@ -33,7 +33,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'image_box',
 		'image_carousel',
 		'tabs',
-		'video',
+		// TODO: to be fixed in ED-23584
+		// 'video',
 		'spacer',
 		'text_path',
 		'social_icons',

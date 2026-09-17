@@ -3,11 +3,11 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { DEFAULT_TEST_URLS, mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
 import { t } from '../../../utils/translations';
-import { FEATURE_OPTIONS } from '../site-features';
+import { COOKIE_CONSENT_FEATURE_ID, FEATURE_OPTIONS } from '../../components/site-features';
 
 const SITE_FEATURES_PROGRESS = {
 	current_step_id: 'site_features',
-	current_step_index: 4,
+	current_step_index: 0,
 };
 
 const STEP_TITLE = 'What do you want to include in your site?';
@@ -72,9 +72,50 @@ describe( 'SiteFeatures', () => {
 				expect( within( card ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
 			} );
 		} );
+
+		it( 'renders Interactions as a core feature', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			expect( screen.getByText( 'Interactions' ) ).toBeInTheDocument();
+			const card = screen.getByTestId( 'feature-card-interactions' );
+			expect( within( card ).getByText( BUILT_IN_LABEL ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not render Hello theme or WooCommerce', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			expect( screen.queryByText( 'Hello theme' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'WooCommerce' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'places Cookie Consent after Email deliverability', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			const ids = FEATURE_OPTIONS.map( ( option ) => option.id );
+			expect( ids.indexOf( COOKIE_CONSENT_FEATURE_ID ) ).toBeGreaterThan( ids.indexOf( 'email_deliverability' ) );
+		} );
 	} );
 
 	describe( 'Default selection state', () => {
+		it( 'does not select Cookie Consent by default', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			const cookieButton = screen.getByRole( 'button', { name: 'Cookie Consent' } );
+			expect( cookieButton ).toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+
 		it( 'pro features are not selected by default', () => {
 			renderApp( {
 				isConnected: true,
@@ -172,13 +213,15 @@ describe( 'SiteFeatures', () => {
 				const button = screen.getByRole( 'button', { name: t( option.labelKey ) } );
 				expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 			} );
-			const unselectedButton = screen.getByRole( 'button', { name: t( unselectedOption.labelKey ) } );
+			const unselectedButton = screen.getByRole( 'button', {
+				name: t( unselectedOption.labelKey ),
+			} );
 			expect( unselectedButton ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );
 
 	describe( 'ProPlanNotice visibility', () => {
-		it( 'is hidden when no pro features are selected', () => {
+		it( 'is hidden when no paid features are selected', () => {
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
@@ -206,6 +249,16 @@ describe( 'SiteFeatures', () => {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
 				choices: { site_features: [ firstOneOption.id ] },
+			} );
+
+			expect( screen.getByText( /Elementor One/ ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows One notice when Cookie Consent is selected', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+				choices: { site_features: [ COOKIE_CONSENT_FEATURE_ID ] },
 			} );
 
 			expect( screen.getByText( /Elementor One/ ) ).toBeInTheDocument();

@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
 import { convertToPixels } from '../../../../utils/unit-conversions';
-import type { Unit } from './typography-constants';
+import { UNITS, type Unit } from './typography-constants';
 
 export async function addWidgetWithOpenTypographySection(
 	driver: EditorDriver,
@@ -96,6 +96,11 @@ export async function verifySpacingEditor( params:
 				windowHeight: window.innerHeight,
 			};
 		}, cssProperty );
+
+		if ( UNITS.percent === expectedUnit ) {
+			expect( computedStyles.spacing ).toBe( `${ expectedValue }%` );
+			return;
+		}
 
 		if ( 0 === expectedValue ) {
 			verifyZeroSpacing( computedStyles.spacing );

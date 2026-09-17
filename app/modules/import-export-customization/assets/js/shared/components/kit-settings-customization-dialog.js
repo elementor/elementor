@@ -17,11 +17,11 @@ function isExperimentActive( experimentName ) {
 }
 
 function isClassesFeatureActive() {
-	return isExperimentActive( 'e_classes' ) && isExperimentActive( 'e_atomic_elements' );
+	return isExperimentActive( 'e_atomic_elements' );
 }
 
 function isVariablesFeatureActive() {
-	return isExperimentActive( 'e_variables' ) && isExperimentActive( 'e_atomic_elements' );
+	return isExperimentActive( 'e_atomic_elements' );
 }
 
 const transformAnalyticsData = ( payload ) => {

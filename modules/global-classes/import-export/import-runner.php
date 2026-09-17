@@ -4,8 +4,8 @@ namespace Elementor\Modules\GlobalClasses\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,6 +37,11 @@ class Import_Runner extends Import_Runner_Base {
 			return [];
 		}
 
+		$global_classes['order'] = Global_Classes_Parser::sanitize_order(
+			$global_classes['items'] ?? [],
+			$global_classes['order'] ?? []
+		);
+
 		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
 
 		if ( ! $global_classes_result->is_valid() ) {
@@ -45,7 +50,7 @@ class Import_Runner extends Import_Runner_Base {
 
 		$global_classes = $global_classes_result->unwrap();
 
-		Global_Classes_Repository::make()->put(
+		Global_Classes_Repository::make( $kit )->put(
 			$global_classes['items'],
 			$global_classes['order']
 		);

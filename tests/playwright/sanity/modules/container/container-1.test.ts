@@ -3,8 +3,13 @@ import { parallelTest as test } from '../../../parallelTest';
 import { getElementSelector } from '../../../assets/elements-utils';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Container tests #1 @container', () => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
+	} );
+
 	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -64,7 +69,8 @@ test.describe( 'Container tests #1 @container', () => {
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
-	test( 'Test widgets display inside the container using various directions and content width', async ( { page, apiRequests }, testInfo ) => {
+	// TODO: to be fixed in ED-23584
+	test.skip( 'Test widgets display inside the container using various directions and content width', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();

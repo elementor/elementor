@@ -33,6 +33,7 @@ type RepeatableControlProps = {
 	patternLabel?: string;
 	placeholder?: string;
 	propKey?: string;
+	isSortable?: boolean;
 	addItemTooltipProps?: TooltipAddItemActionProps;
 };
 
@@ -48,6 +49,7 @@ export const RepeatableControl = createControl(
 		patternLabel,
 		placeholder,
 		propKey,
+		isSortable,
 		addItemTooltipProps,
 	}: RepeatableControlProps ) => {
 		const { propTypeUtil: childPropTypeUtil, isItemDisabled } = childControlConfig;
@@ -71,6 +73,7 @@ export const RepeatableControl = createControl(
 		);
 
 		const { propType, value, setValue } = useBoundProp( childArrayPropTypeUtil );
+		const newItemIndex = addItemTooltipProps?.newItemIndex === null ? undefined : 0;
 
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
@@ -83,11 +86,11 @@ export const RepeatableControl = createControl(
 						<RepeaterHeader label={ repeaterLabel }>
 							<TooltipAddItemAction
 								{ ...addItemTooltipProps }
-								newItemIndex={ 0 }
+								newItemIndex={ newItemIndex }
 								ariaLabel={ repeaterLabel }
 							/>
 						</RepeaterHeader>
-						<ItemsContainer isSortable={ false }>
+						<ItemsContainer isSortable={ isSortable }>
 							<Item
 								Icon={ ItemIcon }
 								Label={ ItemLabel }

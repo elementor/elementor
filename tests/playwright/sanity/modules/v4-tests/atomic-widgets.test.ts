@@ -67,6 +67,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 			test( 'Widget is displayed in canvas and frontend', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
+
 				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
@@ -89,6 +90,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
 			} );
+
 			test( 'Widget can be removed from canvas', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();

@@ -2,6 +2,7 @@
 export { ImageControl } from './controls/image-control';
 export { TextControl } from './controls/text-control';
 export { TextAreaControl } from './controls/text-area-control';
+export { MentionTextAreaControl } from './controls/mention-text-area-control';
 export { SizeControl } from './controls/size-control';
 export { StrokeControl } from './controls/stroke-control';
 export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control';
@@ -19,7 +20,9 @@ export { ItemSelector } from './components/item-selector';
 export { UrlControl } from './controls/url-control';
 export { LinkControl } from './controls/link-control';
 export { HtmlTagControl } from './controls/html-tag-control';
+export { QueryChipsControl } from './controls/query-chips-control';
 export { QueryControl } from './controls/query-control';
+export { QueryFilterRepeaterControl } from './controls/query-filter-repeater-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
@@ -34,11 +37,23 @@ export { TransformSettingsControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
+export {
+	getFontAwesome7IconName,
+	resetFontAwesome7IconsCache,
+	resolveFontAwesome7Icon,
+	type FontAwesome7IconDefinition,
+} from './controls/icon-library/font-awesome-7-data';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
+export { DateRangeControl } from './controls/date-range-control';
+export { TimeStringControl } from './controls/time-string-control';
+export { TimeRangeControl } from './controls/time-range-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
+export { AttachmentTypeControl } from './controls/attachment-type-control';
+export { NoticeControl } from './controls/notice-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
+export { GridSpanControl } from './controls/grid-span-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -96,6 +111,7 @@ export {
 	type ControlReplacement,
 } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
+export { default as ControlActions } from './control-actions/control-actions';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';

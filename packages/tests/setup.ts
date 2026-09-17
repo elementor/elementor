@@ -8,10 +8,16 @@ import {
 import { __resetEnv } from '@elementor/env';
 import { __flushAllInjections } from '@elementor/locations';
 import { __deleteStore } from '@elementor/store';
+import { cleanup } from '@testing-library/react';
 import { TextEncoder, TextDecoder } from 'util';
 
 jest.mock( '@elementor/http-client' );
-jest.mock( '@elementor/editor-mcp', () => ( {} ) );
+jest.mock( '@elementor/editor-mcp', () => {
+	const { toolPrompts } = jest.requireActual< typeof import( '@elementor/editor-mcp' ) >(
+		'@elementor/editor-mcp'
+	);
+	return { toolPrompts };
+} );
 globalThis.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
 globalThis.TextEncoder = TextEncoder as typeof globalThis.TextEncoder;
 globalThis.TextDecoder = TextDecoder as typeof globalThis.TextDecoder;
@@ -83,6 +89,10 @@ beforeEach( () => {
 afterEach( () => {
 	jest.clearAllMocks();
 	jest.useRealTimers();
+
+	// Unmount rendered components before flushing injections/listeners, so that reactive
+	// locations don't trigger React state updates on already-torn-down test instances.
+	cleanup();
 
 	__flushAllInjections();
 	flushListeners();

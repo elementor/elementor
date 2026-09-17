@@ -5,7 +5,6 @@ import {
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
-	isFreeFrontendSupportedTrigger,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -16,7 +15,7 @@ import {
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-function scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
+function scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
@@ -27,7 +26,7 @@ function scrollOutAnimation( element, transition, keyframes, resetKeyframes, opt
 				element.style.transition = transition;
 			} );
 			if ( false === animConfig.replay ) {
-				stop();
+				Promise.resolve().then( () => stop() );
 			}
 		};
 	}, viewOptions );
@@ -72,7 +71,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const transition = element.style.transition;
 	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
 		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
@@ -88,11 +87,7 @@ function processElementInteractions( element, interactions, animateFunc, inViewF
 	interactions.forEach( ( interaction ) => {
 		const animConfig = extractAnimationConfig( interaction );
 
-		if (
-			animConfig &&
-			! skipInteraction( animConfig ) &&
-			isFreeFrontendSupportedTrigger( animConfig.trigger )
-		) {
+		if ( animConfig && ! skipInteraction( animConfig ) ) {
 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
 		}
 	} );
@@ -119,13 +114,9 @@ function initInteractions() {
 					return;
 				}
 
-				const element = document.querySelector( `[data-interaction-id="${ elementId }"]` );
-
-				if ( ! element ) {
-					return;
-				}
-
-				processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				document.querySelectorAll( `[data-interaction-id="${ elementId }"]` ).forEach( ( element ) => {
+					processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				} );
 			} );
 
 			return;

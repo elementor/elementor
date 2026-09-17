@@ -101,9 +101,22 @@ class App extends BaseApp {
 	 */
 	public function register_scripts() {
 		wp_register_script(
+			'elementor-vendors-redux',
+			$this->get_js_assets_url( 'vendors-redux' ),
+			[
+				'react',
+				'react-dom',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-common-modules',
 			$this->get_js_assets_url( 'common-modules' ),
-			[],
+			[
+				'elementor-vendors-redux',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -272,6 +285,7 @@ class App extends BaseApp {
 				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			],
 			'editor_events' => Events_Manager::get_editor_events_config(),
+			'allowedHTMLWrapperTags' => Utils::get_allowed_html_wrapper_tags(),
 		];
 
 		/**

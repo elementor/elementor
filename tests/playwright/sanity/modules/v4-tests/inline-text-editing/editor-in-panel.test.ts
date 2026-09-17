@@ -51,4 +51,62 @@ test.describe( 'Inline Editing Control in Editor Panel @v4-tests', () => {
 
 		await expect( panelInlineEditor ).toHaveText( TEST_WORD );
 	} );
+
+	test( 'Panel inline editor toolbar applies formatting to text and canvas', async () => {
+		const FORMATTED_WORD = INLINE_EDITING_SELECTORS.attributes.bold;
+		const PLAIN_PREFIX = 'plain ';
+		const PLAIN_SUFFIX = ' plain';
+
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const paragraphId = await editor.addWidget( {
+			widgetType: INLINE_EDITING_SELECTORS.e_paragraph,
+			container: containerId,
+		} );
+
+		await editor.selectElement( paragraphId );
+
+		const contentSection = editor.getPanelContentSection();
+		const panelInlineEditor = editor.getPanelInlineEditor();
+		const canvasParagraph = editor.previewFrame.locator(
+			`.elementor-element-${ paragraphId } ${ INLINE_EDITING_SELECTORS.atomsBaseClass.paragraph }`,
+		);
+
+		await expect( panelInlineEditor ).toBeVisible();
+		await expect( contentSection.getByRole( 'button', { name: INLINE_EDITING_SELECTORS.formatButtonLabels.bold } ) ).toBeVisible();
+
+		await panelInlineEditor.click();
+		await panelInlineEditor.clear();
+
+		await test.step( 'Apply bold while typing using the panel toolbar', async () => {
+			await page.keyboard.type( PLAIN_PREFIX );
+			await editor.togglePanelInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.bold );
+			await page.keyboard.type( FORMATTED_WORD );
+			await editor.togglePanelInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.bold );
+			await page.keyboard.type( PLAIN_SUFFIX );
+		} );
+
+		const SELECTION_FORMATS = [
+			{ attribute: INLINE_EDITING_SELECTORS.attributes.underline, label: 'underline' },
+			{ attribute: INLINE_EDITING_SELECTORS.attributes.italic, label: 'italic' },
+			{ attribute: INLINE_EDITING_SELECTORS.attributes.strikethrough, label: 'strikethrough' },
+			{ attribute: INLINE_EDITING_SELECTORS.attributes.code, label: 'code' },
+		] as const;
+
+		await page.pause();
+		for ( const { attribute, label } of SELECTION_FORMATS ) {
+			await test.step( `Apply ${ label } to selected text using the panel toolbar`, async () => {
+				await editor.selectPanelInlineEditedText( FORMATTED_WORD );
+				await editor.togglePanelInlineEditingAttribute( attribute );
+			} );
+		}
+
+		await test.step( 'Verify formatting in the panel and on the canvas', async () => {
+			await expect( panelInlineEditor.locator( 'strong' ) ).toContainText( FORMATTED_WORD );
+			await expect( panelInlineEditor.locator( 'u' ) ).toContainText( FORMATTED_WORD );
+
+			await expect( canvasParagraph.locator( 'strong' ) ).toContainText( FORMATTED_WORD );
+			await expect( canvasParagraph.locator( 'u' ) ).toContainText( FORMATTED_WORD );
+		} );
+	} );
 } );

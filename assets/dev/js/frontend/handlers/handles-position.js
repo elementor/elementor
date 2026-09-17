@@ -10,21 +10,45 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		return elementor.settings.page.model.attributes.scroll_snap;
 	}
 
-	isFirstElement() {
-		return this.$element[ 0 ] === document.querySelector( '.elementor-section-wrap > .elementor-element:first-child' );
-	}
-
 	isOverflowHidden() {
 		return 'hidden' === this.$element.css( 'overflow' );
 	}
 
-	getOffset() {
-		if ( 'body' === elementor.config.document.container ) {
-			return this.$element.offset().top;
+	isEmbeddedEditArea() {
+		const editAreaElement = this.getEditAreaElement();
+
+		if ( ! editAreaElement ) {
+			return false;
 		}
 
-		const $container = jQuery( elementor.config.document.container );
-		return this.$element.offset().top - $container.offset().top;
+		return null !== editAreaElement.closest( '.elementor-embedded-editor' );
+	}
+
+	getEditAreaElement() {
+		const $closestEditArea = this.$element.closest( '.elementor-edit-area-active' );
+
+		if ( $closestEditArea.length ) {
+			return $closestEditArea[ 0 ];
+		}
+
+		const document = elementor.documents.getCurrent();
+		const $editArea = document?.$element;
+
+		if ( $editArea?.length ) {
+			return $editArea[ 0 ];
+		}
+
+		return this.$element.closest( '.elementor-edit-area' )[ 0 ];
+	}
+
+	getEditAreaOffset() {
+		const editAreaElement = this.getEditAreaElement();
+
+		if ( ! editAreaElement ) {
+			return Number.POSITIVE_INFINITY;
+		}
+
+		return this.$element[ 0 ].getBoundingClientRect().top - editAreaElement.getBoundingClientRect().top;
 	}
 
 	setHandlesPosition() {
@@ -39,9 +63,9 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		const { top } = this.$element[ 0 ].getBoundingClientRect();
+		const viewportTop = this.$element[ 0 ].getBoundingClientRect().top;
 
-		if ( top < handlesHeight || this.isOverflowHidden() ) {
+		if ( viewportTop < handlesHeight || this.isOverflowHidden() || ( this.isEmbeddedEditArea() && this.getEditAreaOffset() < handlesHeight ) ) {
 			this.$element.addClass( handlesInsideClass );
 		} else {
 			this.$element.removeClass( handlesInsideClass );

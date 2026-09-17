@@ -1,0 +1,54 @@
+{
+  "up": [
+    {
+      "op": { "fn": "set", "path": "value.start.$$type", "value": "size" }
+    },
+    {
+      "op": { "fn": "move", "src": "value.offsetTop.value", "dest": "value.start.value.size", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "value.start.value.unit", "value": "%" }
+    },
+    {
+      "op": { "fn": "delete", "path": "value.offsetTop" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.end.$$type", "value": "size" }
+    },
+    {
+      "op": { "fn": "move", "src": "value.offsetBottom.value", "dest": "value.end.value.size", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "value.end.value.unit", "value": "%" }
+    },
+    {
+      "op": { "fn": "delete", "path": "value.offsetBottom", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "config-v2" }
+    }
+  ],
+  "down": [
+    {
+      "op": { "fn": "move", "src": "value.start.value.size", "dest": "value.offsetTop.value", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "value.offsetTop.$$type", "value": "number" }
+    },
+    {
+      "op": { "fn": "delete", "path": "value.start", "clean": false }
+    },
+    {
+      "op": { "fn": "move", "src": "value.end.value.size", "dest": "value.offsetBottom.value", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "value.offsetBottom.$$type", "value": "number" }
+    },
+    {
+      "op": { "fn": "delete", "path": "value.end", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "config" }
+    }
+  ]
+}

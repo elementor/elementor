@@ -72,6 +72,15 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertFileExists( $stylesheet->get_path() );
 	}
 
+	public function test_generate__returns_204_when_no_synced_data() {
+		// Act
+		$response = $this->controller->generate();
+
+		// Assert
+		$this->assertEquals( Controller::HTTP_NO_CONTENT, $response->get_status() );
+		$this->assertNull( $response->get_data() );
+	}
+
 	public function test_generate__returns_500_on_write_failure() {
 		// Arrange
 		$stylesheet = $this->createMock( Stylesheet_Manager::class );

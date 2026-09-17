@@ -77,6 +77,34 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals( $expected_document_settings, $document->get_db_document_settings() );
 	}
 
+	public function test_should_enqueue_cached_style_allows_non_post_handles() {
+		$document = Plugin::$instance->documents->get( $this->factory()->create_and_get_default_post()->ID );
+		$method = new \ReflectionMethod( $document, 'should_enqueue_cached_style' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $document, 'elementor-global' ) );
+	}
+
+	public function test_should_enqueue_cached_style_skips_post_handles_without_frontend_style() {
+		$document = Plugin::$instance->documents->get( $this->factory()->create_and_get_default_post()->ID );
+		$method = new \ReflectionMethod( $document, 'should_enqueue_cached_style' );
+		$method->setAccessible( true );
+
+		$this->assertFalse( $method->invoke( $document, 'elementor-post-123' ) );
+	}
+
+	public function test_should_enqueue_cached_style_allows_post_handles_when_frontend_style_is_registered() {
+		wp_register_style( 'elementor-frontend', 'https://example.com/frontend.css' );
+
+		$document = Plugin::$instance->documents->get( $this->factory()->create_and_get_default_post()->ID );
+		$method = new \ReflectionMethod( $document, 'should_enqueue_cached_style' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $document, 'elementor-post-123' ) );
+
+		wp_deregister_style( 'elementor-frontend' );
+	}
+
 	public function test_on_import_update_dynamic_content__using_on_import_replace_dynamic_content() {
 		// Arrange.
 		require_once __DIR__ . '/document.php';

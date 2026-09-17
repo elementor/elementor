@@ -192,4 +192,8 @@ class Widget_Spacer extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		return '';
+	}
 }

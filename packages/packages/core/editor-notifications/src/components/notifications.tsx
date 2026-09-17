@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
 import { closeSnackbar, type CustomContentProps, SnackbarProvider } from 'notistack';
-import { CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
+import { AlertCircleFilled, CircleCheckFilledIcon, CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
 import { __getStore as getStore, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
 
 import { useEnqueueNotification } from '../hooks/use-enqueue-notifications';
-import { notifyAction } from '../slice';
+import { clearAction, notifyAction } from '../slice';
+import { getAppBarHeight } from '../sync/get-app-bar-height';
 import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
 import { type NotificationData, type Notifications } from '../types';
 
@@ -16,6 +17,7 @@ const AUTO_HIDE_DURATION = 8000;
 const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	const filteredProps = getFilteredSnackbarProps( props );
 	const panelWidth = getEditingPanelWidth();
+	const appBarHeight = getAppBarHeight();
 
 	return (
 		<ThemeProvider palette="unstable">
@@ -25,6 +27,7 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 				sx={ {
 					'&.MuiPaper-root': { minWidth: 'max-content' },
 					ml: panelWidth + 'px',
+					mt: `-${ appBarHeight }px`,
 				} }
 			/>
 		</ThemeProvider>
@@ -32,12 +35,13 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 } );
 
 interface AlertSnackbarProps extends CustomContentProps {
-	color: 'promotion' | 'info';
+	color: 'promotion' | 'info' | 'success' | 'error';
 	icon: React.ReactElement;
 }
 
 const AlertSnackbar = forwardRef< HTMLDivElement, AlertSnackbarProps >( ( { color, icon, ...props }, ref ) => {
 	const panelWidth = getEditingPanelWidth();
+	const appBarHeight = getAppBarHeight();
 
 	return (
 		<ThemeProvider colorScheme="light" palette="unstable">
@@ -51,6 +55,7 @@ const AlertSnackbar = forwardRef< HTMLDivElement, AlertSnackbarProps >( ( { colo
 				onClose={ () => closeSnackbar( props.id ) }
 				sx={ {
 					ml: panelWidth + 'px',
+					mt: `-${ appBarHeight }px`,
 					'& .MuiAlert-message': { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' },
 					'& .MuiAlert-content': { whiteSpace: 'nowrap' },
 				} }
@@ -69,10 +74,20 @@ const InfoSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, 
 	<AlertSnackbar ref={ ref } color="info" icon={ <InfoCircleFilledIcon /> } { ...props } />
 ) );
 
+const SuccessSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="success" icon={ <CircleCheckFilledIcon /> } { ...props } />
+) );
+
+const ErrorSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="error" icon={ <AlertCircleFilled /> } { ...props } />
+) );
+
 const muiToEuiMapper = {
 	default: DefaultCustomSnackbar,
 	promotion: PromotionSnackbar,
 	info: InfoSnackbar,
+	success: SuccessSnackbar,
+	error: ErrorSnackbar,
 };
 
 const Handler = () => {
@@ -88,8 +103,10 @@ const Wrapper = () => {
 		<SnackbarProvider
 			maxSnack={ 3 }
 			autoHideDuration={ AUTO_HIDE_DURATION }
+			disableWindowBlurListener
 			anchorOrigin={ { horizontal: 'center', vertical: 'bottom' } }
 			Components={ muiToEuiMapper }
+			domRoot={ document.body }
 		>
 			<Handler />
 		</SnackbarProvider>
@@ -106,12 +123,20 @@ export function notify( notification: NotificationData ) {
 	store?.dispatch( notifyAction( notification ) );
 }
 
+export function dismissNotification( id: NotificationData[ 'id' ] ) {
+	const store = getStore();
+
+	closeSnackbar( id );
+	store?.dispatch( clearAction( { id } ) );
+}
+
 /*
  * This function can be used to trigger notifications from within a React component.
  * This is the preferred way to trigger notifications.
  */
 export function NotifyReact( notification: NotificationData ) {
 	const dispatch = useDispatch();
+
 	dispatch( notifyAction( notification ) );
 }
 

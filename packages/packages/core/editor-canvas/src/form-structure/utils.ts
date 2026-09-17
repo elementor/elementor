@@ -7,6 +7,7 @@ type Model = {
 
 export type CreateArgs = {
 	container?: V1Element;
+	containers?: V1Element[];
 	model?: Model;
 };
 
@@ -40,6 +41,11 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-label',
 	'e-form-checkbox',
 	'e-form-submit-button',
+	'e-form-select',
+	'e-form-radio-button',
+	'e-form-file-upload',
+	'e-form-date-picker',
+	'e-form-time-picker',
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
@@ -48,6 +54,10 @@ export function getArgsElementType( args: CreateArgs ): string | undefined {
 
 export function getElementType( element?: V1Element ): string | undefined {
 	return element?.model.get( 'widgetType' ) || element?.model.get( 'elType' );
+}
+
+export function getClipboardElementType( element?: ClipboardElement ): string | undefined {
+	return element?.widgetType || element?.elType;
 }
 
 export function isElementWithinFormSelector( element?: V1Element ): boolean {
@@ -72,7 +82,7 @@ export function hasElementTypes( element: V1Element, types: Set< string > ): boo
 
 export function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
 	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
+		const elementType = getClipboardElementType( element );
 
 		if ( elementType === type ) {
 			return true;
@@ -84,7 +94,7 @@ export function hasClipboardElementType( elements: ClipboardElement[], type: str
 
 export function hasClipboardElementTypes( elements: ClipboardElement[], types: Set< string > ): boolean {
 	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
+		const elementType = getClipboardElementType( element );
 
 		if ( elementType && types.has( elementType ) ) {
 			return true;
@@ -92,4 +102,62 @@ export function hasClipboardElementTypes( elements: ClipboardElement[], types: S
 
 		return element.elements ? hasClipboardElementTypes( element.elements, types ) : false;
 	} );
+}
+
+export function movedContainersIncludeAtomicFormRoot( containers: ( V1Element | undefined )[] ): boolean {
+	return containers.some( ( container ) => getElementType( container ) === FORM_ELEMENT_TYPE );
+}
+
+export function clipboardRootsAreAtomicForms( elements: ClipboardElement[] ): boolean {
+	if ( ! elements.length ) {
+		return false;
+	}
+
+	return elements.every( ( el ) => getClipboardElementType( el ) === FORM_ELEMENT_TYPE );
+}
+
+export function hasFormAncestor( node: Element ): boolean {
+	return node.closest( FORM_ELEMENT_TYPE ) !== null;
+}
+
+export function collectFormAncestorErrors( xml: Document ): string[] {
+	const errors: string[] = [];
+	for ( const node of xml.querySelectorAll( '*' ) ) {
+		if ( ! FORM_FIELD_ELEMENT_TYPES.has( node.tagName.toLowerCase() ) ) {
+			continue;
+		}
+		if ( hasFormAncestor( node ) ) {
+			continue;
+		}
+		const id = node.getAttribute( 'configuration-id' );
+		errors.push(
+			`<${ node.tagName }${
+				id ? ` configuration-id="${ id }"` : ''
+			}> must be nested inside <e-form> (any ancestor depth is allowed).`
+		);
+	}
+	return errors;
+}
+
+export function collectSubmitButtonErrors( xml: Document ): string[] {
+	const errors: string[] = [];
+	for ( const form of xml.querySelectorAll( 'e-form' ) ) {
+		const submitButtons = form.querySelectorAll( 'e-form-submit-button' );
+		if ( submitButtons.length === 0 ) {
+			errors.push( `<e-form> has no <e-form-submit-button>.` );
+		} else if ( submitButtons.length > 1 ) {
+			errors.push( `<e-form> has ${ submitButtons.length } submit buttons — only 1 is allowed.` );
+		}
+	}
+	return errors;
+}
+
+export function collectEmptyMessageErrors( xml: Document ): string[] {
+	const errors: string[] = [];
+	for ( const node of xml.querySelectorAll( 'e-form-success-message, e-form-error-message' ) ) {
+		if ( node.children.length === 0 ) {
+			errors.push( `<${ node.tagName }> must have at least one child element (e.g. <e-atomic-paragraph>).` );
+		}
+	}
+	return errors;
 }

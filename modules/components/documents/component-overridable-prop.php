@@ -56,4 +56,28 @@ class Component_Overridable_Prop {
 	public static function make( array $overridable_prop ): self {
 		return new self( $overridable_prop );
 	}
+
+	public function to_associative_array(): array {
+		$result = [
+			'overrideKey' => $this->override_key,
+			'elementId'   => $this->element_id,
+			'elType'      => $this->el_type,
+			'widgetType'  => $this->widget_type,
+			'propKey'     => $this->prop_key,
+			'label'       => $this->label,
+			'originValue' => $this->origin_value,
+			'groupId'     => $this->group_id,
+		];
+
+		if ( $this->origin_prop_fields ) {
+			$result['originPropFields'] = [
+				'elType'     => $this->origin_prop_fields['el_type'],
+				'widgetType' => $this->origin_prop_fields['widget_type'],
+				'propKey'    => $this->origin_prop_fields['prop_key'],
+				'elementId'  => $this->origin_prop_fields['element_id'],
+			];
+		}
+
+		return $result;
+	}
 }

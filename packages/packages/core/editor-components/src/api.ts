@@ -92,14 +92,15 @@ export const apiClient = {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
-	getOverridableProps: async ( componentId: number ) =>
+	getOverridableProps: async ( componentIds: number[] ) =>
 		await httpService()
-			.get< HttpResponse< OverridableProps > >( `${ BASE_URL }/overridable-props`, {
-				params: {
-					componentId: componentId.toString(),
-				},
-			} )
-			.then( ( res ) => res.data.data ),
+			.get< HttpResponse< Record< number, OverridableProps | null >, { errors: Record< number, string > } > >(
+				`${ BASE_URL }/overridable-props`,
+				{
+					params: { 'componentIds[]': componentIds },
+				}
+			)
+			.then( ( res ) => res.data ),
 	updateArchivedComponents: async ( componentIds: number[], status: DocumentSaveStatus ) =>
 		await httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(

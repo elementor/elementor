@@ -8,10 +8,11 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
@@ -37,11 +38,15 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'button', 'cta', 'link', 'click' ];
 	}
 
 	public function get_icon() {
 		return 'eicon-e-button';
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'button' );
 	}
 
 	protected static function define_props_schema(): array {
@@ -49,12 +54,10 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'text' => Html_V3_Prop_Type::make()
-				->default( [
-					'content'  => String_Prop_Type::generate( __( 'Click here', 'elementor' ) ),
-					'children' => [],
-				] )
-				->description( 'The text displayed on the button.' ),
+			'text' => Escaped_Html_Prop_Type::make()
+				->default( __( 'Click here', 'elementor' ) )
+				->description( 'The text displayed on the button.' )
+				->alias( 'content', 'label' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -72,6 +75,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Inline_Editing_Control::bind_to( 'text' )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) )
@@ -146,5 +150,20 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$text = wp_strip_all_tags( $settings['text'] ?? '' );
+
+		if ( empty( $text ) ) {
+			return '';
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			return '[' . $text . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return '**' . $text . '**';
 	}
 }

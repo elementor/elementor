@@ -1,0 +1,23 @@
+{
+  "id": "g-sync-1",
+  "type": "class",
+  "label": "Synced1",
+  "sync_to_v3": true,
+  "variants": [
+    {
+      "meta": {
+        "breakpoint": "desktop",
+        "state": null
+      },
+      "props": {
+        "font-size": {
+          "$$type": "size",
+          "value": {
+            "size": 24,
+            "unit": "px"
+          }
+        }
+      }
+    }
+  ]
+}

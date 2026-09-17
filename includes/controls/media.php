@@ -349,18 +349,18 @@ class Control_Media extends Control_Base_Multiple {
 
 		if ( $one_subscription ) {
 			if ( ! $is_installed ) {
-				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimizer is included in your ONE subscription.', 'elementor' );
+				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimization is included in your ONE subscription.', 'elementor' );
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = Hints::get_plugin_install_url( $plugin_slug );
 				$source = 'io-editor-image-one-install';
 			} elseif ( ! $is_active ) {
-				$content = esc_html__( 'Your ONE subscription includes Image Optimizer. Activate it to optimize images and improve site performance.', 'elementor' );
+				$content = esc_html__( 'Your ONE subscription includes Image Optimization. Activate it to optimize images and improve site performance.', 'elementor' );
 				$button_text = esc_html__( 'Activate now', 'elementor' );
 				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
 				$source = 'io-editor-image-one-activate';
 			}
 		} else {
-			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimization.', 'elementor' );
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = Hints::get_plugin_install_url( $plugin_slug );

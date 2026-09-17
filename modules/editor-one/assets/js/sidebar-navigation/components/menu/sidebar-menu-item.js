@@ -1,5 +1,6 @@
 import { useCallback, useState } from '@wordpress/element';
 import { Collapse, List, ListItem, ListItemText } from '@elementor/ui';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 import PropTypes from 'prop-types';
 import { ChildListItem, ChildMenuItemButton, DEFAULT_ICON, ExpandIcon, ICON_MAP, MenuIcon, MenuItemButton } from '../shared';
 
@@ -33,15 +34,28 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 
 	const handleClick = useCallback( () => {
 		if ( hasChildren ) {
-			setIsExpanded( ( prev ) => {
-				const newState = ! prev;
-				localStorage.setItem( `${ STORAGE_KEY_PREFIX }${ item.slug }`, String( newState ) );
-				return newState;
+			const newState = ! isExpanded;
+			setIsExpanded( newState );
+			localStorage.setItem( `${ STORAGE_KEY_PREFIX }${ item.slug }`, String( newState ) );
+			EditorOneEventManager.sendSidebarMenuGroupToggled( {
+				eventId: item.event_id,
+				isExpanded: newState,
 			} );
-		} else {
-			window.location.href = item.url;
+			return;
 		}
-	}, [ hasChildren, item.slug, item.url ] );
+
+		EditorOneEventManager.sendSidebarMenuItemClicked( {
+			eventId: item.event_id,
+		} );
+		window.location.href = item.url;
+	}, [ hasChildren, isExpanded, item.event_id, item.slug, item.url ] );
+
+	const handleChildClick = useCallback( ( childItem ) => {
+		EditorOneEventManager.sendSidebarMenuItemClicked( {
+			eventId: childItem.event_id,
+			groupEventId: item.event_id,
+		} );
+	}, [ item.event_id ] );
 
 	return (
 		<>
@@ -62,6 +76,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 								<ChildMenuItemButton
 									component="a"
 									href={ childItem.url }
+									onClick={ () => handleChildClick( childItem ) }
 									selected={ childItem.slug === activeChildSlug }
 								>
 									<ListItemText

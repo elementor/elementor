@@ -173,6 +173,6 @@ test.describe( 'URL Actions', () => {
 		// Reload so the hash will be parsed.
 		await page.reload();
 		// Test that the lightbox was NOT OPENED on this page.
-		await expect( frontendSinglelightboxImage ).not.toBeVisible();
+		await expect( frontendSinglelightboxImage ).toBeHidden();
 	} );
 } );

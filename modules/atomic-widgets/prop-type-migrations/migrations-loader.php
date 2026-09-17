@@ -9,7 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Loader {
-	private static ?self $instance = null;
+	private const TRANSIENT_KEY = 'elementor_migrations_manifest';
+	private const TRANSIENT_TTL = 12 * HOUR_IN_SECONDS;
 
 	private ?array $manifest = null;
 
@@ -19,21 +20,20 @@ class Migrations_Loader {
 
 	private string $manifest_file;
 
-	private function __construct( string $base_path, string $manifest_file = 'manifest.json' ) {
+	private ?string $fallback_base_path;
+
+	private function __construct( string $base_path, string $manifest_file = 'manifest.json', ?string $fallback_base_path = null ) {
 		$this->base_path = rtrim( $base_path, '/' ) . '/';
 		$this->manifest_file = $manifest_file;
+		$this->fallback_base_path = $fallback_base_path ? rtrim( $fallback_base_path, '/' ) . '/' : null;
 	}
 
-	public static function make( string $base_path, string $manifest_file = 'manifest.json' ): self {
-		if ( null === self::$instance ) {
-			self::$instance = new self( $base_path, $manifest_file );
-		}
-
-		return self::$instance;
+	public static function make( string $base_path, string $manifest_file = 'manifest.json', ?string $fallback_base_path = null ): self {
+		return new self( $base_path, $manifest_file, $fallback_base_path );
 	}
 
 	public static function destroy(): void {
-		self::$instance = null;
+		delete_transient( self::TRANSIENT_KEY );
 	}
 
 	public function find_migration_path( string $source_type, string $target_type ): ?array {
@@ -264,18 +264,35 @@ class Migrations_Loader {
 		}
 
 		$manifest_path = $this->base_path . $this->manifest_file;
+		$fetched_from_remote = false;
 
-		$contents = $this->read_source( $manifest_path );
+		if ( $this->is_url( $manifest_path ) ) {
+			$this->manifest = $this->get_manifest_from_transient();
+
+			if ( null !== $this->manifest ) {
+				return $this->manifest;
+			}
+
+			$contents = $this->read_remote_source( $manifest_path );
+			$fetched_from_remote = false !== $contents;
+		} else {
+			$contents = $this->read_local_source( $manifest_path );
+		}
+
+		if ( false === $contents ) {
+			$fallback_path = $this->resolve_fallback_path( $manifest_path );
+
+			if ( $fallback_path ) {
+				$contents = $this->read_local_source( $fallback_path );
+			}
+		}
 
 		if ( false === $contents ) {
 			Logger::warning( 'Migrations manifest not found', [
 				'path' => $manifest_path,
 			] );
 
-			$this->manifest = [
-				'widgetKeys' => [],
-				'propTypes' => [],
-			];
+			$this->manifest = $this->empty_manifest();
 			return $this->manifest;
 		}
 
@@ -287,34 +304,102 @@ class Migrations_Loader {
 				'error' => json_last_error_msg(),
 			] );
 
-			$this->manifest = [
-				'widgetKeys' => [],
-				'propTypes' => [],
-			];
+			$this->manifest = $this->empty_manifest();
 			return $this->manifest;
 		}
 
 		$this->manifest = $manifest;
 
+		if ( $fetched_from_remote ) {
+			$this->save_manifest_to_transient( $manifest );
+		}
+
 		return $this->manifest;
+	}
+
+	private function get_manifest_from_transient(): ?array {
+		$cached = get_transient( self::TRANSIENT_KEY );
+
+		if ( ! is_array( $cached ) ) {
+			return null;
+		}
+
+		if ( ( $cached['version'] ?? '' ) !== Migrations_Cache::get_version_fingerprint() ) {
+			delete_transient( self::TRANSIENT_KEY );
+			return null;
+		}
+
+		return $cached['manifest'] ?? null;
+	}
+
+	private function save_manifest_to_transient( array $manifest ): void {
+		set_transient( self::TRANSIENT_KEY, [
+			'version' => Migrations_Cache::get_version_fingerprint(),
+			'manifest' => $manifest,
+		], self::TRANSIENT_TTL );
+	}
+
+	private function empty_manifest(): array {
+		return [
+			'widgetKeys' => [],
+			'propTypes' => [],
+		];
 	}
 
 	private function read_source( string $path ) {
 		if ( $this->is_url( $path ) ) {
-			$response = wp_remote_get( $path, [ 'timeout' => 10 ] );
+			$contents = $this->read_remote_source( $path );
 
-			if ( is_wp_error( $response ) ) {
+			if ( false !== $contents ) {
+				return $contents;
+			}
+
+			$fallback_path = $this->resolve_fallback_path( $path );
+
+			if ( ! $fallback_path ) {
 				return false;
 			}
 
-			return wp_remote_retrieve_body( $response );
+			return $this->read_local_source( $fallback_path );
 		}
 
+		return $this->read_local_source( $path );
+	}
+
+	private function read_remote_source( string $path ) {
+		$response = wp_remote_get( $path, [ 'timeout' => 3 ] );
+
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+
+		if ( $response_code < 200 || $response_code >= 300 ) {
+			return false;
+		}
+
+		return wp_remote_retrieve_body( $response );
+	}
+
+	private function read_local_source( string $path ) {
 		if ( ! file_exists( $path ) ) {
 			return false;
 		}
 
 		return file_get_contents( $path );
+	}
+
+	private function resolve_fallback_path( string $path ): ?string {
+		if ( ! $this->fallback_base_path ) {
+			return null;
+		}
+
+		if ( $this->is_url( $path ) && str_starts_with( $path, $this->base_path ) ) {
+			return $this->fallback_base_path . substr( $path, strlen( $this->base_path ) );
+		}
+
+		return $this->fallback_base_path . basename( $path );
 	}
 
 	private function is_url( string $path ): bool {

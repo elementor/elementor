@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Template {
 
+	private static function get_macros_template_key(): string {
+		return 'elementor/macros';
+	}
+
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 
@@ -22,11 +26,23 @@ trait Has_Template {
 		return $config;
 	}
 
+	protected function transform_link_for_render( array $parsed ): array {
+		return $parsed;
+	}
+
+	protected function get_shared_templates(): array {
+		return [
+			self::get_macros_template_key() => __DIR__ . '/_macros.html.twig',
+		];
+	}
+
 	protected function render() {
 		try {
 			$renderer = Template_Renderer::instance();
 
-			foreach ( $this->get_templates() as $name => $path ) {
+			$all_templates = array_merge( $this->get_shared_templates(), $this->get_templates() );
+
+			foreach ( $all_templates as $name => $path ) {
 				if ( $renderer->is_registered( $name ) ) {
 					continue;
 				}
@@ -34,11 +50,14 @@ trait Has_Template {
 				$renderer->register( $name, $path );
 			}
 
+			$settings = $this->get_atomic_settings();
+
 			$context = [
 				'id' => $this->get_id(),
 				'interaction_id' => $this->get_interaction_id(),
 				'type' => $this->get_name(),
-				'settings' => $this->get_atomic_settings(),
+				'settings' => $settings,
+				'tag' => static::get_computed_html_tag( $settings ),
 				'base_styles' => $this->get_base_styles_dictionary(),
 			];
 
@@ -54,7 +73,7 @@ trait Has_Template {
 	protected function get_templates_contents() {
 		return array_map(
 			fn ( $path ) => Utils::file_get_contents( $path ),
-			$this->get_templates()
+			array_merge( $this->get_shared_templates(), $this->get_templates() )
 		);
 	}
 

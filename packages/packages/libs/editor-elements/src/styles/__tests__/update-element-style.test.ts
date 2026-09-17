@@ -90,6 +90,52 @@ describe( 'updateElementStyle', () => {
 		);
 	} );
 
+	it( 'should not call updateElementSettings when no classes were removed', () => {
+		// Arrange.
+		const existingStyle: StyleDefinition = {
+			id: 'existing-style-id',
+			label: 'Existing Style',
+			type: 'class',
+			variants: [
+				{
+					meta: { breakpoint: null, state: null },
+					props: { gap: '10px' },
+					custom_css: null,
+				},
+			],
+		};
+
+		const element = createMockElement( {
+			model: {
+				id: 'test-element-id',
+				styles: {
+					[ existingStyle.id ]: existingStyle,
+				},
+			},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [ existingStyle.id ],
+				},
+			},
+		} );
+
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+			return elementId === 'test-element-id' ? element : null;
+		} );
+
+		// Act.
+		updateElementStyle( {
+			elementId: 'test-element-id',
+			styleId: existingStyle.id,
+			meta: { breakpoint: null, state: null },
+			props: { gap: '20px' },
+		} );
+
+		// Assert.
+		expect( updateElementSettings ).not.toHaveBeenCalled();
+	} );
+
 	it( 'should throw for non existing style', () => {
 		// Arrange.
 		const existingStyle: StyleDefinition = {
@@ -271,16 +317,7 @@ describe( 'updateElementStyle', () => {
 			},
 		] );
 
-		expect( updateElementSettings ).toHaveBeenCalledWith( {
-			id: 'test-element-id',
-			props: {
-				classes: {
-					$$type: 'classes',
-					value: [ existingStyle.id ],
-				},
-			},
-			withHistory: false,
-		} );
+		expect( updateElementSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should remove empty styles', () => {

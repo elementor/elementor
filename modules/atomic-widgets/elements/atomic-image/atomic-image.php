@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
@@ -37,11 +38,21 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'image', 'photo', 'picture' ];
 	}
 
 	public function get_icon() {
 		return 'eicon-e-image';
+	}
+
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'img', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
 	}
 
 	protected static function define_props_schema(): array {
@@ -65,6 +76,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Image_Control::bind_to( 'image' )
 						->set_label( __( 'Image', 'elementor' ) ),
@@ -92,8 +104,10 @@ class Atomic_Image extends Atomic_Widget_Base {
 			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
 						->add_prop( 'display', 'inherit' )
 						->add_prop( 'width', 'fit-content' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
@@ -107,5 +121,18 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-image' => __DIR__ . '/atomic-image.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$src = $settings['image']['src'] ?? '';
+
+		if ( empty( $src ) ) {
+			return '';
+		}
+
+		$alt = $settings['image']['alt'] ?? '';
+
+		return '![' . $alt . '](' . esc_url( $src ) . ')';
 	}
 }

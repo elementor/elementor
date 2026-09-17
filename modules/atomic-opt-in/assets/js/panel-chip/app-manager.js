@@ -1,5 +1,6 @@
 import App from './app';
 import { createRoot } from 'react-dom/client';
+import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
 
 export class AppManager {
 	constructor() {
@@ -46,23 +47,6 @@ export class AppManager {
 		this.popover = null;
 	}
 
-	setupIframeEventListeners() {
-		const previewIframe = document.getElementById( 'elementor-preview-iframe' );
-
-		if ( previewIframe ) {
-			const iframeDocument = previewIframe.contentWindow.document;
-			const handleClick = () => this.unmount();
-
-			iframeDocument.addEventListener( 'click', handleClick );
-			iframeDocument.addEventListener( 'keydown', handleClick );
-
-			this.unbindIframeEvents = () => {
-				iframeDocument.removeEventListener( 'click', handleClick );
-				iframeDocument.removeEventListener( 'keydown', handleClick );
-			};
-		}
-	}
-
 	setupRouteListener() {
 		this.onRoute = ( component, route ) => {
 			if ( route !== 'panel/elements/categories' && route !== 'panel/editor/content' ) {
@@ -75,7 +59,7 @@ export class AppManager {
 	}
 
 	attachEditorEventListeners() {
-		this.setupIframeEventListeners();
+		this.unbindIframeEvents = bindPreviewIframeEvents( () => this.unmount() );
 		this.setupRouteListener();
 	}
 

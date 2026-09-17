@@ -16,7 +16,6 @@ import {
 	PERSONA_VALUE_MAP,
 	STEP_NUMBERS,
 	STEP_SPEC_NAMES,
-	TARGET_NAME_PERSONA,
 	THEME_VALUE_MAP,
 } from './events';
 
@@ -27,7 +26,6 @@ function dispatchDirectly( eventName: string, payload: Record< string, unknown >
 
 function trackEvent( isActive: boolean, eventName: string, payload: Partial< OnboardingEventPayload > ): void {
 	const fullPayload: Record< string, unknown > = {
-		app_type: 'editor',
 		window_name: 'core_onboarding',
 		...payload,
 	};
@@ -118,73 +116,37 @@ export function trackStepViewed( isActive: boolean, viewedStepId: string ): void
 	} );
 }
 
-export function trackPersonaSelected( isActive: boolean, value: string ): void {
-	trackEvent( isActive, OnboardingEventName.PERSONA_SELECTED, {
-		interaction_type: 'click',
-		target_type: 'button',
-		target_name: TARGET_NAME_PERSONA,
-		interaction_result: 'selected_and_next',
-		target_value: PERSONA_VALUE_MAP[ value ] ?? value,
-		target_location: 'onboarding',
-		location_l1: 'select_persona',
-		location_l2: STEP_NUMBERS.building_for,
-		interaction_description: 'user chooses persona type and automatically being redirected to next step',
-	} );
-}
+export type ThemeSelectedSource = 'theme_selection' | 'site_features';
 
-export function trackSiteTopicSelected( isActive: boolean, topics: string[] ): void {
-	trackEvent( isActive, OnboardingEventName.SITE_TOPIC_SELECTED, {
-		interaction_type: 'click',
-		target_type: 'cards',
-		target_name: 'what_is_your_site_about',
-		interaction_result: 'selected',
-		target_value: topics,
-		target_location: 'onboarding',
-		location_l1: 'site_topic',
-		location_l2: STEP_NUMBERS.site_about,
-		interaction_description: 'user multiselects site topics',
-	} );
-}
+export function trackThemeSelected( isActive: boolean, theme: string, source: ThemeSelectedSource ): void {
+	const isSiteFeatures = source === 'site_features';
 
-export function trackExperienceSelected( isActive: boolean, level: string ): void {
-	trackEvent( isActive, OnboardingEventName.EXPERIENCE_SELECTED, {
-		interaction_type: 'click',
-		target_type: 'button',
-		target_name: 'how_experienced_are_you',
-		interaction_result: 'selected_and_next',
-		target_value: EXPERIENCE_VALUE_MAP[ level ] ?? level,
-		target_location: 'onboarding',
-		location_l1: 'select_experience',
-		location_l2: STEP_NUMBERS.experience_level,
-		interaction_description: 'user chooses experience_level and automatically being redirected to next step',
-	} );
-}
-
-export function trackThemeSuggested( isActive: boolean, theme: string ): void {
-	trackEvent( isActive, OnboardingEventName.THEME_SUGGESTED, {
-		interaction_type: 'exposure',
-		target_type: 'chip',
-		target_name: 'recommended',
-		interaction_result: 'theme_recommended',
-		target_value: THEME_VALUE_MAP[ theme ] ?? theme,
-		target_location: 'onboarding',
-		location_l1: 'select_theme',
-		location_l2: STEP_NUMBERS.theme_selection,
-		interaction_description: 'user got a recommendation for a certain theme',
-	} );
-}
-
-export function trackThemeSelected( isActive: boolean, theme: string ): void {
 	trackEvent( isActive, OnboardingEventName.THEME_SELECTED, {
 		interaction_type: 'click',
 		target_type: 'button',
-		target_name: 'continue_with_this_theme',
+		target_name: isSiteFeatures ? 'continue_with_free' : 'continue_with_hello',
 		interaction_result: 'theme_installed',
 		target_value: THEME_VALUE_MAP[ theme ] ?? theme,
 		target_location: 'onboarding',
-		location_l1: 'select_theme',
-		location_l2: STEP_NUMBERS.theme_selection,
-		interaction_description: 'user installed a certain theme',
+		location_l1: isSiteFeatures ? 'pro_features' : 'select_theme',
+		location_l2: isSiteFeatures ? STEP_NUMBERS.site_features : STEP_NUMBERS.theme_selection,
+		interaction_description: isSiteFeatures
+			? 'user installed hello theme on pro features step'
+			: 'user installed a certain theme',
+	} );
+}
+
+export function trackThemeUnselected( isActive: boolean ): void {
+	trackEvent( isActive, OnboardingEventName.THEME_UNSELECTED, {
+		interaction_type: 'click',
+		target_type: 'button',
+		target_name: 'hello_theme',
+		interaction_result: 'theme_install_skipped',
+		target_value: 'hello_theme',
+		target_location: 'onboarding',
+		location_l1: 'pro_features',
+		location_l2: STEP_NUMBERS.site_features,
+		interaction_description: 'user unselected hello theme box and continued',
 	} );
 }
 
@@ -324,18 +286,18 @@ export function trackSummary( isActive: boolean, snapshot: ObSummarySnapshot ): 
 			),
 		},
 		{
-			key: 'theme_recommended',
-			value: ( (): string => {
-				const raw = snapshot.themeRecommended ?? snapshot.choices.theme_selection ?? 'none';
-				return raw === 'none' || ! raw ? 'none' : THEME_VALUE_MAP[ raw ] ?? raw;
-			} )(),
-		},
-		{
 			key: 'theme_installed',
-			value:
-				snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined
-					? THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
-					: 'none',
+			value: ( (): string => {
+				if ( snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined ) {
+					return THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection;
+				}
+
+				if ( ( snapshot.choices.site_features ?? [] ).includes( 'hello_theme' ) ) {
+					return 'hello';
+				}
+
+				return 'none';
+			} )(),
 		},
 		{
 			key: 'pro_features',

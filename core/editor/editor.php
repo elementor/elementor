@@ -4,8 +4,9 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
-use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
+use Elementor\Core\Editor\Loader\Editor_Loader;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -66,7 +67,7 @@ class Editor {
 	public $promotion;
 
 	/**
-	 * @var Editor_Loader_Interface
+	 * @var Editor_Loader
 	 */
 	private $loader;
 
@@ -116,6 +117,8 @@ class Editor {
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
+
+		self::send_document_isolation_policy_header();
 
 		add_filter( 'show_admin_bar', '__return_false' );
 
@@ -207,6 +210,65 @@ class Editor {
 
 		wp_safe_redirect( $document->get_edit_url() );
 		die;
+	}
+
+	/**
+	 * Whether the current request targets the Elementor editor.
+	 *
+	 * Unlike `is_edit_mode()`, this is not affected by temporary `set_edit_mode()` overrides.
+	 *
+	 * @since 4.1.0
+	 * @access public
+	 *
+	 * @return bool Whether the current request targets the Elementor editor.
+	 */
+	public function is_editor_request() {
+		$common = Plugin::$instance->common;
+
+		if ( $common ) {
+			/** @var Module ajax */
+			$ajax_data = $common->get_component( 'ajax' )->get_current_action_data();
+
+			if ( ! empty( $ajax_data ) && 'get_document_config' === $ajax_data['action'] ) {
+				return true;
+			}
+		}
+
+		if ( $this->is_editor_admin_screen() ) {
+			return true;
+		}
+
+		return $this->is_editor_ajax_request();
+	}
+
+	private function is_editor_admin_screen(): bool {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		return isset( $_GET['action'] ) && 'elementor' === $_GET['action'] && in_array( $screen->base, [ 'post', 'toplevel_page_elementor' ], true );
+	}
+
+	private function is_editor_ajax_request(): bool {
+		$actions = apply_filters( 'elementor/editor/ajax_actions', [
+			'elementor',
+
+			// Templates
+			'elementor_get_templates',
+			'elementor_save_template',
+			'elementor_get_template',
+			'elementor_delete_template',
+			'elementor_import_template',
+			'elementor_library_direct_actions',
+		] );
+
+		return isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions, true );
 	}
 
 	/**
@@ -543,6 +605,64 @@ class Editor {
 	}
 
 	/**
+	 * Whether the Document-Isolation-Policy header should be sent on the
+	 * Elementor editor screen and the editor preview iframe.
+	 *
+	 * DIP places the document in its own agent cluster, which is the prerequisite
+	 * for cross-origin isolation features such as SharedArrayBuffer (required by
+	 * WordPress core's client-side media processing introduced in WP 7.1).
+	 *
+	 * Both the editor parent document and the preview iframe must send the same
+	 * DIP header so they join the same agent cluster and synchronous DOM access
+	 * between them (e.g. `iframe.contentWindow.elementorFrontend`) keeps working.
+	 *
+	 * The header is only honored by browsers on a secure context (HTTPS or
+	 * localhost) so the helper short-circuits on insecure origins to avoid
+	 * sending a header that the browser will ignore.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return bool
+	 */
+	public static function should_use_document_isolation_policy() {
+		if ( ! is_ssl() ) {
+			$raw_host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+			$host = strtolower( (string) strtok( $raw_host, ':' ) );
+
+			if ( 'localhost' !== $host && ! str_ends_with( $host, '.localhost' ) ) {
+				return false;
+			}
+		}
+
+		/**
+		 * Filters whether Elementor sends the Document-Isolation-Policy header
+		 * on the editor screen and preview iframe.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @param bool $enabled Whether DIP is enabled. Defaults to true on a secure context.
+		 */
+		return (bool) apply_filters( 'elementor/editor/use_document_isolation_policy', true );
+	}
+
+	/**
+	 * Send the Document-Isolation-Policy header for the current response.
+	 *
+	 * Safe to call from both the Elementor editor screen handler and the
+	 * preview iframe handler. No-op when {@see self::should_use_document_isolation_policy()}
+	 * returns false.
+	 *
+	 * @since 4.1.0
+	 */
+	public static function send_document_isolation_policy_header() {
+		if ( ! self::should_use_document_isolation_policy() || headers_sent() ) {
+			return;
+		}
+
+		header( 'Document-Isolation-Policy: isolate-and-credentialless' );
+	}
+
+	/**
 	 * Signals to WordPress that Elementor is replacing the block editor on its own editor page,
 	 * so that block-editor-specific behaviour (e.g. WP 7.0 COOP/COEP isolation headers) is not
 	 * applied when the Elementor editor is active.
@@ -601,11 +721,22 @@ class Editor {
 	/**
 	 * Get loader.
 	 *
-	 * @return Editor_Loader_Interface
+	 * @return Editor_Loader
 	 */
 	private function get_loader() {
 		if ( ! $this->loader ) {
-			$this->loader = Editor_Loader_Factory::create();
+			$this->loader = new Editor_Loader(
+				new Collection( [
+					'assets_url' => ELEMENTOR_ASSETS_URL,
+					'min_suffix' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+					'direction_suffix' => is_rtl() ? '-rtl' : '',
+				] ),
+				( new Assets_Config_Provider() )->set_path_resolver(
+					function ( $name ) {
+						return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+					}
+				)
+			);
 
 			$this->loader->init();
 		}

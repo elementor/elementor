@@ -5,7 +5,9 @@ namespace Elementor\Modules\EditorOne\Classes;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,6 +25,7 @@ class Menu_Data_Provider {
 	private ?array $cached_level4_sidebar_data = null;
 	private ?array $cached_flyout_menu_data = null;
 	private Slug_Normalizer $slug_normalizer;
+	private array $registration_options = [];
 
 	public static function instance(): self {
 		if ( null === self::$instance ) {
@@ -40,7 +43,11 @@ class Menu_Data_Provider {
 		return $this->slug_normalizer;
 	}
 
-	public function register_menu( Menu_Item_Interface $item ): void {
+	public function register_menu( Menu_Item_Interface $item, array $options = [] ): void {
+		if ( ! empty( $options['preserve_label_casing'] ) ) {
+			$this->registration_options[ $item->get_slug() ]['preserve_label_casing'] = true;
+		}
+
 		if ( ! ( $item instanceof Menu_Item_Third_Level_Interface ) ) {
 			$this->register_level4_item( $item );
 			return;
@@ -288,17 +295,22 @@ class Menu_Data_Provider {
 	}
 
 	private function build_level3_flyout_items(): array {
-		return $this->build_flyout_items( false );
+		return $this->build_flyout_items( false, Menu_Config::get_excluded_level3_slugs() );
 	}
 
 	private function build_flyout_items_with_expanded_third_party(): array {
-		return $this->build_flyout_items( true );
+		return $this->build_flyout_items(
+			true,
+			array_merge(
+				Menu_Config::get_excluded_level3_slugs(),
+				Menu_Config::get_excluded_flyout_menu_level3_slugs()
+			)
+		);
 	}
 
-	private function build_flyout_items( bool $expand_third_party ): array {
+	private function build_flyout_items( bool $expand_third_party, array $excluded_slugs ): array {
 		$items = [];
 		$existing_slugs = [];
-		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
 		$excluded_level4_slugs = $expand_third_party ? Menu_Config::get_excluded_level4_slugs() : [];
 
 		foreach ( $this->level3_items as $group_items ) {
@@ -359,11 +371,12 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $this->title_case( $item->get_label() ),
+			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $url,
 			'group_id' => '',
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_first,
+			'event_id' => $this->resolve_event_id( $item, $item_slug ),
 		];
 	}
 
@@ -394,12 +407,13 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $this->title_case( $item->get_label() ),
+			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_third_party_parent,
+			'event_id' => $this->resolve_event_id( $item, $item_slug ),
 		];
 	}
 
@@ -472,9 +486,10 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => $this->title_case( $item->get_label() ),
+					'label' => $this->format_flyout_label( $item, $item_slug ),
 					'url' => $url,
 					'priority' => $this->get_item_priority( $item ),
+					'event_id' => $this->resolve_event_id( $item, $item_slug ),
 				];
 
 				$existing_labels[] = $label_lower;
@@ -532,6 +547,41 @@ class Menu_Data_Provider {
 		usort( $items, function ( array $a, array $b ): int {
 			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
 		} );
+	}
+
+	private function resolve_event_id( Menu_Item_Interface $item, string $item_slug ): string {
+		if ( $item instanceof Menu_Item_With_Event_Id_Interface ) {
+			return $item->get_event_id();
+		}
+
+		return $this->derive_event_id_from_slug( $item_slug );
+	}
+
+	private function derive_event_id_from_slug( string $slug ): string {
+		$slug_event_map = [
+			'edit.php?post_type=elementor_library' => 'saved_templates',
+			'elementor-app' => 'theme_builder',
+		];
+
+		if ( isset( $slug_event_map[ $slug ] ) ) {
+			return $slug_event_map[ $slug ];
+		}
+
+		$event_id = preg_replace( '/^elementor-/', '', $slug );
+		$event_id = preg_replace( '/[?#].*$/', '', $event_id );
+		$event_id = str_replace( [ '-', ' ' ], '_', $event_id );
+
+		return strtolower( $event_id );
+	}
+
+	private function format_flyout_label( Menu_Item_Interface $item, string $item_slug ): string {
+		$label = $item->get_label();
+
+		if ( ! empty( $this->registration_options[ $item_slug ]['preserve_label_casing'] ) ) {
+			return $label;
+		}
+
+		return $this->title_case( $label );
 	}
 
 	private function title_case( string $text ): string {

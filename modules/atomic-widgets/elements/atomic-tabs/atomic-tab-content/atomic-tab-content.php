@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Conten
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -25,9 +26,11 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A tab content panel. Accepts any widget type inside. The index of this e-tab-content MUST match the index of the corresponding e-tab in the e-tabs-menu.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		$this->meta( 'llm_support', false );
+		$this->meta( 'permanently_locked', true );
 	}
 
 	public static function get_type() {
@@ -52,6 +55,10 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 
 	public function should_show_in_panel() {
 		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div' );
 	}
 
 	protected static function define_props_schema(): array {

@@ -1,6 +1,6 @@
 type Settings = Record< string, unknown >;
 
-type ChildRenderCallback = () => void;
+type ChildRenderCallback = ( event: Event ) => void;
 
 interface ListenToChildrenAPI {
 	render: ( callback: ChildRenderCallback ) => void;

@@ -40,6 +40,8 @@ abstract class Query {
 
 	abstract protected function get_endpoint_registration_args(): array;
 
+	abstract protected function permission_check( \WP_REST_Request $request ): bool;
+
 	public function register( $endpoint, bool $override_existing_endpoints = false ): void {
 		register_rest_route( self::NAMESPACE, $endpoint, [
 			[
@@ -100,10 +102,24 @@ abstract class Query {
 	}
 
 
-	private function validate_access_permission( $request ): bool {
+	protected function validate_access_permission( \WP_REST_Request $request ): bool {
 		$nonce = $request->get_header( self::NONCE_KEY );
 
-		return current_user_can( 'edit_posts' ) && wp_verify_nonce( $nonce, 'wp_rest' );
+		return $this->permission_check( $request ) && wp_verify_nonce( $nonce, 'wp_rest' );
+	}
+
+	protected function filter_keys_conversion_map( array $requested_map, array $allowed_map ): array {
+		$sanitized_map = [];
+
+		foreach ( $requested_map as $source_key => $destination_key ) {
+			if ( ! isset( $allowed_map[ $source_key ] ) ) {
+				continue;
+			}
+
+			$sanitized_map[ $source_key ] = $destination_key;
+		}
+
+		return ! empty( $sanitized_map ) ? $sanitized_map : $allowed_map;
 	}
 
 	/**

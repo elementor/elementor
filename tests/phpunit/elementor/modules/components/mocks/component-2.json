@@ -22,14 +22,8 @@
             ]
           },
           "title": {
-            "$$type": "html-v3",
-            "value": {
-              "content": {
-                "$$type": "string",
-                "value": "Component 2 Heading"
-              },
-              "children": []
-            }
+            "$$type": "escaped-html",
+            "value": "Component 2 Heading"
           }
         },
         "elements": [],
@@ -47,7 +41,7 @@
                 },
                 "props": {
                   "font-family": {
-                    "$$type": "string",
+                    "$$type": "font-family",
                     "value": "Roboto"
                   },
                   "color": {
@@ -60,9 +54,7 @@
             ]
           }
         },
-        "editor_settings": [],
-        "version": "0.0",
-        "interactions": []
+        "version": "0.0"
       },
       {
         "id": "component-2-image-id",
@@ -117,9 +109,7 @@
             ]
           }
         },
-        "editor_settings": [],
-        "version": "0.0",
-        "interactions": []
+        "version": "0.0"
       }
     ],
     "isInner": false,
@@ -157,8 +147,6 @@
         ]
       }
     },
-    "editor_settings": [],
-    "version": "0.0",
-    "interactions": []
+    "version": "0.0"
   }
 ]

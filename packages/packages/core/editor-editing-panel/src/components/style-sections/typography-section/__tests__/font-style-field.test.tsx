@@ -10,6 +10,7 @@ jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 const renderFontStyleField = () => {

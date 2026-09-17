@@ -10,6 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Filtered_Promotions_Manager {
 
+	const EDITOR_PANEL_STICKY_FILTER = 'elementor/editor/panel/get_pro_details-sticky';
+
+	public static function get_editor_panel_sticky_promotion(): array {
+		$promotion_data = [
+			'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
+			'message' => __( 'Access all Pro widgets.', 'elementor' ),
+			'button_text' => __( 'Upgrade Now', 'elementor' ),
+		];
+
+		return self::get_filtered_promotion_data( $promotion_data, self::EDITOR_PANEL_STICKY_FILTER, 'url' );
+	}
+
 	/**
 	 * @param array  $promotion_data
 	 * @param string $filter_name

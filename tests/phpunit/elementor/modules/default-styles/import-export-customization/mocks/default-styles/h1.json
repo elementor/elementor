@@ -1,0 +1,20 @@
+{
+  "id": "h1",
+  "label": "h1",
+  "cssName": "e-default-h1",
+  "type": "class",
+  "variants": [
+    {
+      "meta": {
+        "breakpoint": "desktop",
+        "state": null
+      },
+      "props": {
+        "color": {
+          "$$type": "color",
+          "value": "blue"
+        }
+      }
+    }
+  ]
+}

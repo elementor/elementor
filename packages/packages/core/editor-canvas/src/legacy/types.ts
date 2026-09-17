@@ -1,4 +1,5 @@
-import { type V1Element } from '@elementor/editor-elements';
+import { type Root } from 'react-dom/client';
+import { type V1Element, type V1ElementModelProps } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
 export type RenderContext< T = unknown > = Record< string, T >;
@@ -6,6 +7,11 @@ export type RenderContext< T = unknown > = Record< string, T >;
 export type NamespacedRenderContext< T = RenderContext > = Record< string, T | undefined >;
 
 export type LegacyWindow = Window & {
+	elementorCommon?: {
+		helpers?: {
+			getUniqueId?: () => string;
+		};
+	};
 	jQuery: JQueryStatic;
 	elementor: {
 		config: {
@@ -36,7 +42,7 @@ export type LegacyWindow = Window & {
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
 			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
-			_elementTypes: Record< string, ElementType >;
+			elementTypes: Record< string, ElementType >;
 		};
 		$preview: JQueryElement &
 			[
@@ -61,11 +67,13 @@ export declare class ElementType {
 	getView(): typeof ElementView;
 }
 
-type MarionetteExtendable< TBase = unknown > = {
+export type MarionetteExtendable< TInstance = unknown > = {
 	extend: < TExtended extends object >(
-		properties: TExtended & ThisType< TBase & TExtended >
-	) => TBase & TExtended & MarionetteExtendable< TBase & TExtended >;
+		properties: TExtended & ThisType< TInstance & TExtended >
+	) => typeof ElementView & MarionetteExtendable< TInstance & TExtended >;
 };
+
+export type NestedTemplatedElementViewClass = typeof ElementView & MarionetteExtendable< ElementView >;
 
 export declare class ElementView {
 	getChildType(): string[];
@@ -87,6 +95,8 @@ export declare class ElementView {
 	};
 
 	constructor( ...args: unknown[] );
+
+	addElement( data: Partial< V1ElementModelProps >, options?: object ): unknown;
 
 	onRender( ...args: unknown[] ): void;
 
@@ -117,7 +127,7 @@ export declare class ElementView {
 
 	_renderTemplate(): void;
 
-	_renderChildren(): void;
+	_renderChildren(): Promise< void >;
 
 	_beforeRender(): void;
 
@@ -162,6 +172,16 @@ export declare class ElementView {
 	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
 
 	once: ( event: string, callback: () => void ) => void;
+
+	getContainer(): V1Element;
+
+	initialize?( ...args: unknown[] ): void;
+
+	listenTo( target: unknown, event: string, callback: () => void ): void;
+}
+
+export declare class TemplatedElementView extends ElementView {
+	_doAfterRender( callback: () => void ): void;
 }
 
 type JQueryElement = {
@@ -182,6 +202,8 @@ export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
+	on: ( event: string, callback: () => void ) => void;
+	off: ( event: string, callback: () => void ) => void;
 	trigger: ( event: string, ...args: unknown[] ) => void;
 };
 
@@ -207,6 +229,7 @@ export type ElementModel = {
 	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
+	styles?: V1ElementModelProps[ 'styles' ];
 	widgetType: string;
 	editSettings?: BackboneModel< { inactive?: boolean } >;
 	elements?: BackboneCollection< ElementModel >;
@@ -219,7 +242,7 @@ type ToJSON< T > = {
 	[ K in keyof T ]: T[ K ] extends BackboneModel< infer M > ? ToJSON< M > : T[ K ];
 };
 
-type ContextMenuGroup = {
+export type ContextMenuGroup = {
 	name: string;
 	actions: ContextMenuAction[];
 };
@@ -241,4 +264,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: Root;
+	reactContainer: HTMLElement;
 };

@@ -55,7 +55,7 @@ import { getUniqueId } from '../editor/context/requests-ids';
 			}
 		};
 
-		const removeAiIndicator = ( ) => {
+		const removeAiIndicator = () => {
 			const textPanel = document.querySelector( '.e-text-ai' );
 			if ( textPanel ) {
 				textPanel.remove();

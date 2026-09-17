@@ -16,14 +16,8 @@
             "value": {
               "override_key": "prop-0",
               "origin_value": {
-                "$$type": "html-v3",
-                "value": {
-                  "content": {
-                    "$$type": "string",
-                    "value": "Click here"
-                  },
-                  "children": []
-                }
+                "$$type": "escaped-html",
+                "value": "Click here"
               }
             }
           },

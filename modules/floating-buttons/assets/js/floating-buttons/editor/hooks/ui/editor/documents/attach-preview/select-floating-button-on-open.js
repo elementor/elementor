@@ -7,7 +7,7 @@ export class SelectLoadingButtonOnOpen extends $e.modules.hookUI.After {
 		return 'elementor-floating-buttons-select-on-open';
 	}
 
-	getConditions( ) {
+	getConditions() {
 		return 'floating-buttons' === elementor?.config?.document?.type;
 	}
 

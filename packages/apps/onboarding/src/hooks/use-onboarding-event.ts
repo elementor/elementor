@@ -8,23 +8,21 @@ import type {
 } from '../analytics/events';
 import {
 	flushQueue,
+	type ThemeSelectedSource,
 	trackBackClicked,
 	trackConnect,
 	trackErrorReported,
-	trackExperienceSelected,
 	trackLoginType,
 	trackOnboardingInitialized,
-	trackPersonaSelected,
 	trackProFeaturesSelected,
 	trackProInstall,
 	trackResumeOnboarding,
 	trackSiteStarterSelected,
-	trackSiteTopicSelected,
 	trackSkipClicked,
 	trackStepViewed,
 	trackSummary,
 	trackThemeSelected,
-	trackThemeSuggested,
+	trackThemeUnselected,
 	trackUpgradeClicked,
 } from '../analytics/onboarding-tracking';
 import { useTrackingState } from '../analytics/tracking-context';
@@ -40,11 +38,9 @@ export function useOnboardingEvent() {
 			trackConnect: ( success: boolean, error?: string ) => trackConnect( isActive, success, error ),
 			trackProInstall: ( action: 'install' | 'later' ) => trackProInstall( isActive, action ),
 			trackStepViewed: ( viewedStepId: string ) => trackStepViewed( isActive, viewedStepId ),
-			trackPersonaSelected: ( value: string ) => trackPersonaSelected( isActive, value ),
-			trackSiteTopicSelected: ( topics: string[] ) => trackSiteTopicSelected( isActive, topics ),
-			trackExperienceSelected: ( level: string ) => trackExperienceSelected( isActive, level ),
-			trackThemeSuggested: ( theme: string ) => trackThemeSuggested( isActive, theme ),
-			trackThemeSelected: ( theme: string ) => trackThemeSelected( isActive, theme ),
+			trackThemeSelected: ( theme: string, source: ThemeSelectedSource ) =>
+				trackThemeSelected( isActive, theme, source ),
+			trackThemeUnselected: () => trackThemeUnselected( isActive ),
 			trackProFeaturesSelected: ( params: {
 				targetName: 'continue_with_free' | 'compare plans';
 				features: string[];

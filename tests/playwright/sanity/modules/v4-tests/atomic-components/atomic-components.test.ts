@@ -43,7 +43,6 @@ test.describe( 'Atomic Components @v4-tests', () => {
 
 		await wpAdminPage.setExperiments( {
 			e_atomic_elements: 'active',
-			e_components: 'active',
 		} );
 	} );
 

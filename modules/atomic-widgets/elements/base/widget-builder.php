@@ -7,6 +7,7 @@ class Widget_Builder {
 	protected $settings = [];
 	protected $is_locked = false;
 	protected $editor_settings = [];
+	protected $meta = [];
 
 	public static function make( string $widget_type ) {
 		return new self( $widget_type );
@@ -31,6 +32,11 @@ class Widget_Builder {
 		return $this;
 	}
 
+	public function meta( array $meta ) {
+		$this->meta = $meta;
+		return $this;
+	}
+
 	public function build() {
 		$widget_data = [
 			'elType' => 'widget',
@@ -39,6 +45,10 @@ class Widget_Builder {
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
 		];
+
+		if ( ! empty( $this->meta ) ) {
+			$widget_data['meta'] = $this->meta;
+		}
 
 		return $widget_data;
 	}

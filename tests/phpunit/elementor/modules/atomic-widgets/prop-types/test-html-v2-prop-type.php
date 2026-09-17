@@ -257,4 +257,55 @@ class Test_Html_V2_Prop_Type extends TestCase {
 		$this->assertCount( 1, $result['value']['children'] );
 		$this->assertSame( 'e-2', $result['value']['children'][0]['id'] );
 	}
+
+	public function test_sanitize__adds_empty_children_when_missing() {
+		// Arrange.
+		$prop_type = Html_V2_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => 'Hello',
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'Hello', $result['value']['content'] );
+		$this->assertSame( [], $result['value']['children'] );
+	}
+
+	public function test_should_persist__false_for_empty_html() {
+		// Arrange.
+		$prop_type = Html_V2_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => null,
+				'children' => [],
+			],
+		] );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function test_should_persist__true_for_non_empty_content() {
+		// Arrange.
+		$prop_type = Html_V2_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => 'Hello',
+				'children' => [],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
 }

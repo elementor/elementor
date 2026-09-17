@@ -45,7 +45,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 
 			try {
 				await apiRequests.deleteUser( page.context().request, testUser.id );
-			} catch ( error ) {
+			} catch {
 				// Silently handle cleanup errors - test cleanup should not fail the test
 			}
 
@@ -64,7 +64,6 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await adminWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await adminWpAdmin.setExperiments( {
 				e_atomic_elements: 'active',
-				e_classes: 'active', // Enable global classes experiment
 			} );
 
 			await adminContext.close();
@@ -139,7 +138,6 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await adminWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await adminWpAdmin.setExperiments( {
 				e_atomic_elements: 'active',
-				e_classes: 'active',
 			} );
 
 			await adminContext.close();

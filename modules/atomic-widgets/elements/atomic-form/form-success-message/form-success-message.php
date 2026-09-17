@@ -2,12 +2,19 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Message\Form_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Form_Success_Message extends Form_Message {
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div' );
+	}
+
+	public static $widget_description = 'Shown when the form is submitted successfully. Hidden by default, displayed automatically when the form submission result is success.';
 
 	public static function get_type() {
 		return 'e-form-success-message';
@@ -27,6 +34,10 @@ class Form_Success_Message extends Form_Message {
 
 	protected static function get_text_color(): string {
 		return '#2F532E';
+	}
+
+	protected static function get_default_status_paragraph_text(): string {
+		return __( 'Great! We’ve received your information.', 'elementor' );
 	}
 
 	protected function get_css_id_control_meta(): array {

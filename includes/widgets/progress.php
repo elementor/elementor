@@ -575,4 +575,33 @@ class Widget_Progress extends Widget_Base {
 		</div>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$title = Utils::html_to_plain_text( $settings['title'] ?? '' );
+		$inner_text = Utils::html_to_plain_text( $settings['inner_text'] ?? '' );
+		$percent = $settings['percent']['size'] ?? ( $settings['percent'] ?? '' );
+
+		$parts = [];
+
+		if ( ! empty( $title ) ) {
+			$parts[] = $title;
+		}
+
+		if ( ! empty( $inner_text ) ) {
+			$parts[] = $inner_text;
+		}
+
+		if ( empty( $parts ) && empty( $percent ) ) {
+			return '';
+		}
+
+		$label = implode( ' - ', $parts );
+
+		if ( ! empty( $percent ) ) {
+			return ! empty( $label ) ? $label . ': ' . $percent . '%' : $percent . '%';
+		}
+
+		return $label;
+	}
 }

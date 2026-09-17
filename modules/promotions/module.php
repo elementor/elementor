@@ -5,6 +5,7 @@ namespace Elementor\Modules\Promotions;
 use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as Base_Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
@@ -13,14 +14,18 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
+use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
-use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
+use Elementor\Modules\Promotions\Widgets\Atomic_Carousel_Widget_Promotion;
+use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
+use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,7 +39,7 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro();
+		return ! Utils::has_pro() || ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -44,6 +49,15 @@ class Module extends Base_Module {
 	public function __construct() {
 		parent::__construct();
 
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
+		if ( Utils::has_pro() ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+			$this->register_atomic_promotions();
+
+			return;
+		}
+
 		add_action( 'admin_init', function () {
 			$this->handle_external_redirects();
 		} );
@@ -51,6 +65,10 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
+
+		if ( Utils::is_sale_time() ) {
+			add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
+		}
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -69,9 +87,15 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
-		if ( Utils::has_pro() ) {
-			return;
+		if ( ! Utils::has_pro() ) {
+			Conversion_Banner::register_cache_invalidation_hooks();
+
+			if ( Conversion_Banner::should_display_banner() ) {
+				new Conversion_Banner();
+			}
 		}
+
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Controls\Promotion_Control() );
@@ -79,21 +103,8 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
-
-		// Add Ally promo
-		Ally_Dashboard_Widget::init();
 
 		$this->register_atomic_promotions();
-	}
-
-	/**
-	 * Get Ally Scanner URL
-	 *
-	 * @return string
-	 */
-	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
 	}
 
 	private function handle_external_redirects() {
@@ -102,10 +113,30 @@ class Module extends Base_Module {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $page ) {
+		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
 			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
+	}
+
+	public function override_one_menu_upgrade_label_during_sale( $menu ) {
+		global $submenu;
+
+		$parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
+		$upgrade_slug = 'elementor-one-upgrade';
+
+		if ( empty( $submenu[ $parent_slug ] ) ) {
+			return $menu;
+		}
+
+		foreach ( $submenu[ $parent_slug ] as &$item ) {
+			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
+				$item[0] = esc_html__( 'Sale!', 'elementor' ) . '<br />' . esc_html__( 'Upgrade Now', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
+			}
+		}
+
+		return $menu;
 	}
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
@@ -133,6 +164,7 @@ class Module extends Base_Module {
 				'backbone-marionette',
 				'elementor-editor-modules',
 				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -181,6 +213,12 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
 		];
+	}
+
+	public function add_editing_panel_sticky_promotion( array $settings ): array {
+		$settings['editingPanelStickyPromotion'] = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
+
+		return $settings;
 	}
 
 	public function add_v4_promotions_data( array $settings ): array {
@@ -245,6 +283,10 @@ class Module extends Base_Module {
 				);
 			}
 		} );
+
+		( new Atomic_Form_Widget_Promotion() )->register();
+		( new Collection_Loop_Widget_Promotion() )->register();
+		( new Atomic_Carousel_Widget_Promotion() )->register();
 	}
 
 	public function inject_atomic_promotion_props( array $schema ): array {

@@ -3,32 +3,57 @@
 namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Ajax\Render_Element_Action;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
+use Elementor\Modules\AtomicWidgets\Elements\Grid\Grid;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Pro_Promotion_Data_Preservation;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Svg_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Svg_Src_Import_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Icon_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Svg_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Escaped_Html_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V2_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V3_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
@@ -40,12 +65,14 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Stop
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Multi_Props_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Position_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Grid_Track_Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Font_Family_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
@@ -69,9 +96,12 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Range_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Time_Range_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
@@ -80,9 +110,12 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
@@ -98,22 +131,44 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Content\Atomic_Background_Video_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Controls\Atomic_Background_Video_Controls;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Range_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Time_Range_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -122,19 +177,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
+	const EXPERIMENT_LIST = 'e_list';
+	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
+	const EXPERIMENT_ACCORDION = 'e_accordion';
+	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
 
 	const PACKAGES = [
 		'editor-canvas',
-		'editor-controls', // TODO: Need to be registered and not enqueued.
+		'editor-controls',
 		'editor-editing-panel',
-		'editor-elements', // TODO: Need to be registered and not enqueued.
-		'editor-props', // TODO: Need to be registered and not enqueued.
-		'editor-styles', // TODO: Need to be registered and not enqueued.
+		'editor-elements',
+		'editor-props',
+		'editor-styles',
 		'editor-styles-repository',
 		'editor-interactions',
 		'editor-templates',
+		'editor-design-system',
+		'editor-site-settings',
 	];
 
 	public function get_name() {
@@ -148,24 +207,37 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->register_experimental_features();
+		$this->register_list_experiment();
+		$this->register_icon_button_experiment();
+		$this->register_accordion_experiment();
+		$this->register_icon_library_experiment();
+
 		$this->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
+		add_filter( 'elementor/common/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
 		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
 		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
+
+		add_action( 'elementor/ajax/register_actions', fn ( Ajax $ajax ) => ( new Render_Element_Action() )->register( $ajax ) );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/plain/transformers/register', fn ( $transformers ) => $this->register_plain_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
@@ -184,47 +256,56 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_experimental_features() {
+	/**
+	 * Dev-only gate that keeps the V4 List element off trunk while it is built across
+	 * several pull requests. Remove it once the element passes QA.
+	 */
+	private function register_list_experiment() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_indications_popover',
-			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'name' => self::EXPERIMENT_LIST,
+			'title' => esc_html__( 'List', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 List element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
+	}
 
+	/**
+	 * Dev-only gate that keeps the V4 Icon Button element off trunk while it is built across
+	 * several pull requests. Remove it once the element passes QA.
+	 */
+	private function register_icon_button_experiment() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
-			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
-			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
+			'name' => self::EXPERIMENT_ICON_BUTTON,
+			'title' => esc_html__( 'Icon Button', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Icon Button element.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
+	}
 
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_EDITOR_MCP,
-			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
-			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
+	private function register_accordion_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ACCORDION,
+			'title' => esc_html__( 'Accordion', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
+		] );
+	}
 
-		Plugin::$instance->experiments->add_feature([
-			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
-			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
-			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
+	private function register_icon_library_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_ICON_LIBRARY,
+			'title' => esc_html__( 'SVG Library', 'elementor' ),
+			'description' => esc_html__( 'Enable SVG library support in the SVG element.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		// When a new feature affects settings or style schema, global class, interactions, variable, etc
-		// anything in need of addressing migration for BC purposes, add it here.
-		$migrations_affecting_features = [];
-
-		Migrations_Orchestrator::register_affecting_feature_flag_hooks( $migrations_affecting_features );
+		] );
 	}
 
 	private function register_hooks() {
@@ -235,7 +316,32 @@ class Module extends BaseModule {
 		( new Atomic_Widget_Base_Styles() )->register_hooks();
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
+		Atomic_Prop_Remap::register_builtin_handlers();
 		( new Atomic_Widgets_Database_Updater() )->register();
+		( new Css_Converter_REST_API() )->register_hooks();
+		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+
+		add_filter( 'elementor/allowed_html_wrapper_tags', [ $this, 'add_inline_html_tags' ] );
+	}
+
+	public function add_inline_html_tags( array $tags ): array {
+		return array_merge( $tags, [
+			'b',
+			'i',
+			'em',
+			'u',
+			'ul',
+			'ol',
+			'li',
+			'blockquote',
+			'del',
+			'br',
+			'span',
+			'strong',
+			'sup',
+			'sub',
+			's',
+		] );
 	}
 
 	private function add_packages( $packages ) {
@@ -252,10 +358,46 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	private function add_font_awesome_7_config( $settings ) {
+		if ( ! isset( $settings['fontAwesome'] ) || ! is_array( $settings['fontAwesome'] ) ) {
+			$settings['fontAwesome'] = [];
+		}
+
+		$settings['fontAwesome']['v7'] = Font_Awesome_7_Icon_Resolver::get_editor_config();
+
+		return $settings;
+	}
+
 	private function add_supported_units( $settings ) {
 		$settings['supported_size_units'] = Size_Constants::all_supported_units();
 
 		$settings['size_units'] = Size_Constants::grouped_units();
+
+		return $settings;
+	}
+
+	/**
+	 * Background Video is a container element, so core lists it among the atomic *elements*, which
+	 * always precede the atomic *widgets* in the widgets panel — `Document::get_config()` builds the
+	 * panel list as `array_merge( $elements_config, $widget_types_config )`, and the panel renders
+	 * tiles in that insertion order (there is no per-tile ordering field). The spec requires the tile
+	 * at the very bottom of the Atomic Elements section, after Divider and Video (both widgets), so we
+	 * re-append its config last in the initial document's widget list that seeds the editor cache.
+	 */
+	private function move_background_video_to_panel_end( $settings ) {
+		$type = Atomic_Background_Video::get_element_type();
+
+		if ( empty( $settings['initial_document']['widgets'][ $type ] ) ) {
+			return $settings;
+		}
+
+		$widgets = $settings['initial_document']['widgets'];
+		$config = $widgets[ $type ];
+
+		unset( $widgets[ $type ] );
+		$widgets[ $type ] = $config;
+
+		$settings['initial_document']['widgets'] = $widgets;
 
 		return $settings;
 	}
@@ -271,9 +413,23 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 	}
 
+	private function register_list_element( Elements_Manager $elements_manager ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_LIST ) ) {
+			return $this;
+		}
+
+		$elements_manager->register_element_type( new Atomic_List() );
+		$elements_manager->register_element_type( new Atomic_List_Item() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Marker() );
+		$elements_manager->register_element_type( new Atomic_List_Item_Content() );
+
+		return $this;
+	}
+
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
+		$elements_manager->register_element_type( new Grid() );
 
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
@@ -281,10 +437,32 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
+		$this->register_list_element( $elements_manager );
+
+		$elements_manager->register_element_type( new Atomic_Accordion() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
+
+		$elements_manager->register_element_type( new Atomic_Background_Video() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Content() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Controls() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Play() );
+		$elements_manager->register_element_type( new Atomic_Background_Video_Pause() );
+
 		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
 			$elements_manager->register_element_type( new Form_Success_Message() );
 			$elements_manager->register_element_type( new Form_Error_Message() );
+		} elseif ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		}
+
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
+			$elements_manager->register_element_type( new Carousel_Promotion() );
 		}
 	}
 
@@ -293,13 +471,18 @@ class Module extends BaseModule {
 		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Transformer() );
+		$transformers->register( Icon_Prop_Type::get_key(), new Icon_Transformer() );
 		$transformers->register( Video_Src_Prop_Type::get_key(), new Video_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
+		$transformers->register( Date_Range_Prop_Type::get_key(), new Date_Range_Transformer() );
+		$transformers->register( Time_Range_Prop_Type::get_key(), new Time_Range_Transformer() );
 		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
 		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
+		$transformers->register( Escaped_Html_Prop_Type::get_key(), new Escaped_Html_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -313,13 +496,16 @@ class Module extends BaseModule {
 	}
 
 	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
+		$transformers->register( Font_Family_Prop_Type::get_key(), new Font_Family_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Grid_Track_Size_Prop_Type::get_key(), new Grid_Track_Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
 		$transformers->register( Flex_Prop_Type::get_key(), new Flex_Transformer() );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Span_Prop_Type::get_key(), new Span_Transformer() );
 	}
 
 	private function register_background_styles_transformers( Transformers_Registry $transformers ): void {
@@ -381,16 +567,53 @@ class Module extends BaseModule {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Import_Transformer() );
+		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Import_Transformer() );
 	}
 
 	public function register_export_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
+		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Export_Transformer() );
+	}
+
+	public function register_plain_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Plain_Transformer() );
+	}
+
+	private function register_settings_resolvers( Plain_Resolvers_Registry $registry ): void {
+		$registry->register_fallback( new Passthrough_Plain_Resolver() );
+		$registry->register( Number_Prop_Type::get_key(), new Number_Plain_Resolver() );
+		$registry->register( Boolean_Prop_Type::get_key(), new Boolean_Plain_Resolver() );
+		$registry->register( String_Prop_Type::get_key(), new String_Plain_Resolver() );
+		$registry->register( Size_Prop_Type::get_key(), new Size_Plain_Resolver() );
+	}
+
+	public function get_settings_plain_values_resolver(): Plain_Values_Resolver {
+		static $resolver = null;
+
+		if ( null !== $resolver ) {
+			return $resolver;
+		}
+
+		$registry = new Plain_Resolvers_Registry();
+
+		do_action( 'elementor/atomic-widgets/settings-resolvers/register', $registry );
+
+		$resolver = new Plain_Values_Resolver( $registry );
+
+		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
+		$registry->register( Escaped_Html_Prop_Type::get_key(), new String_Plain_Resolver() );
+
+		return $resolver;
 	}
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
+
+	public static function is_svg_library_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ICON_LIBRARY );
 	}
 
 	private function get_element_usage_name( $title, $type ) {
@@ -417,12 +640,14 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-atomic-widgets-editor', 'elementor' );
 	}
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-		<span class="elementor-panel-heading-category-chip">
-				<?php echo esc_html__( 'New', 'elementor' ); ?><i class="eicon-info"></i>
+		<span class="elementor-panel-heading-category-chip" aria-label="<?php echo esc_attr__( 'New', 'elementor' ); ?>">
+				<i class="eicon-info" aria-hidden="true"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php
@@ -439,8 +664,87 @@ class Module extends BaseModule {
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
+			// Base style is `display: none`. In the editor, still show the slot when it is
+			// selected (navigator / canvas), when a nested child is selected, or when empty
+			// so the plus/drop target has a hit area. Frontend and unselected Normal stay hidden.
+			'.elementor-edit-mode [data-element_type="e-form-success-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view)),',
+			'.elementor-edit-mode [data-element_type="e-form-error-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view))',
+			'{ display: block; }',
+			'.e-background-video { position: relative; overflow: hidden; }',
+			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
+			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; }',
+			// Editor empty state: content is a nested flex child inside padded root (overflow:hidden).
+			// Let content shrink to the inner flex area, then grow the empty-view to fill it.
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view.elementor-empty-view { position: relative; flex: 1 1 auto; min-height: 120px; height: auto; width: 100%; }',
+			'.elementor-edit-mode .e-background-video__content.e-atomic-element:has(> .elementor-empty-view) > .elementor-empty-view > .elementor-first-add { position: absolute; inset: 0; width: 100%; height: 100%; }',
+			'.e-background-video__controls { z-index: 2; }',
+			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
+			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
+			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
+			// No state pinned (editor "States" unselected): hide the controls wrapper and both buttons. The
+			// two `:not` guards lift specificity above the atomic base style so `display: none` wins. The
+			// button rules are kept because the buttons can be reparented out of the wrapper. On the
+			// frontend Alpine always sets one of the state classes from real playback, so the controls show
+			// there with exactly one button.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__controls,',
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
+			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's
+			// base style in Chrome/Firefox, but Safari renders `::-webkit-details-marker` regardless of
+			// `display`, so a stray triangle would sit next to our chevron unless the pseudo-element is
+			// killed explicitly. `list-style: none` is kept for completeness (browsers that box the
+			// marker as a list-item marker box), the `::-webkit-details-marker` rule is what actually
+			// fixes Safari.
+			'.e-accordion-item-header-base { list-style: none; }',
+			'.e-accordion-item-header-base::-webkit-details-marker { display: none; }',
+			// Animated expand/collapse via `::details-content` (block-size 0 -> auto) needs
+			// `interpolate-size: allow-keywords` on the <details> element to let `block-size: auto`
+			// participate in the transition. Graceful degradation is deliberate here, but the two failure
+			// modes are different: `interpolate-size` is a real CSS property with a valid selector
+			// (`.e-accordion-item-base`), so that rule always PARSES everywhere — an unsupporting browser
+			// just drops the one unknown *declaration* inside it (inert on its own; harmless). The two
+			// `::details-content` rules are different: `::details-content` is an unrecognised
+			// pseudo-element there, which invalidates the *whole selector*, so the *entire rule* is
+			// dropped, not just a declaration. That whole-rule drop is what structurally guarantees
+			// "collapse to 0" and "expand on [open]" can never apply one without the other — both live
+			// behind the identical `::details-content` requirement, so an unsupporting browser parses
+			// neither and simply keeps the browser's native <details> toggle (content already shown/hidden
+			// correctly without any CSS from us): an instant toggle, never a silently blanked panel.
+			'.e-accordion-item-base { interpolate-size: allow-keywords; }',
+			'.e-accordion-item-base::details-content {',
+			'block-size: 0; overflow: hidden;',
+			'transition: block-size .3s ease, content-visibility .3s ease allow-discrete;',
+			'}',
+			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
+			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
+			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
+	}
+
+	private function enqueue_promotion_styles() {
+		if ( \Elementor\Utils::has_pro() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion',
+			$this->get_css_assets_url( 'modules/atomic-widgets/editor' ),
+			[ 'elementor-atomic-widgets-promotion-fonts' ],
+			ELEMENTOR_VERSION
+		);
 	}
 }

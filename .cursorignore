@@ -1,0 +1,13 @@
+node_modules/
+vendor/
+vendor_prefixed/
+build/
+assets/css/
+assets/js/
+.turbo/
+coverage/
+coverage-report/
+test-results/
+playwright-report/
+docker-output/
+tmp/

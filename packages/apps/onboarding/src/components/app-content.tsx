@@ -13,11 +13,8 @@ import { useOnboardingEvent } from '../hooks/use-onboarding-event';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { useVideoPreload } from '../hooks/use-video-preload';
-import { BuildingFor } from '../steps/screens/building-for';
-import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { ProInstall } from '../steps/screens/pro-install';
-import { SiteAbout } from '../steps/screens/site-about';
 import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
@@ -92,6 +89,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		trackUpgradeClicked,
 		trackResumeOnboarding,
 		trackSummary,
+		trackThemeSelected,
 		trackErrorReported,
 		activateTracking,
 		flushQueue,
@@ -129,15 +127,17 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const checkProInstallScreen = useCheckProInstallScreen();
 
 	const handleConnectSuccess = useCallback(
-		async ( data: ConnectSuccessData ) => {
+		async ( data: ConnectSuccessData, loginType: 'elementor_login' | 'social_login' ) => {
 			trackConnect( true );
-			trackLoginType( 'elementor_login' );
+			trackLoginType( loginType );
 
 			const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
 
 			if ( data.tracking_opted_in ) {
 				setCanSendEvents( true );
 			}
+
+			updateLibraryConnectConfig( data );
 
 			if ( shouldEnableTracking ) {
 				initializeAndEnableTracking( ( mp ) => {
@@ -149,8 +149,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 				} );
 			}
 
-			updateLibraryConnectConfig( data );
-
 			const result = await checkProInstallScreen();
 			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
 			actions.setConnected( true );
@@ -160,7 +158,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,
-		onSuccess: handleConnectSuccess,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'elementor_login' ),
+	} );
+
+	const handleSignUp = useElementorConnect( {
+		connectUrl: urls.signUp,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'social_login' ),
 	} );
 
 	function handleContinueAsGuest( event: React.SyntheticEvent ) {
@@ -185,30 +188,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'user_exit',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
 			}
 		);
-	}, [
-		actions,
-		choices,
-		completedSteps,
-		isConnected,
-		isGuest,
-		onClose,
-		stepId,
-		trackErrorReported,
-		trackSummary,
-		updateProgress,
-	] );
+	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, trackSummary, updateProgress ] );
 
 	function handleBack() {
 		trackBackClicked( stepId );
@@ -239,18 +225,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 			},
 			{
 				onSuccess: redirectToNewPage,
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'complete_step',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					redirectToNewPage();
 				},
 			}
 		);
-	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage, trackErrorReported ] );
+	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage ] );
 
 	const handleSkip = useCallback( () => {
 		trackSkipClicked( stepId );
@@ -273,13 +253,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 				{
 					onSuccess: redirectToNewPage,
-					onError: ( error ) => {
-						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'skip_and_complete',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-						} );
+					onError: () => {
 						redirectToNewPage();
 					},
 				}
@@ -297,13 +271,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				onSuccess: () => {
 					actions.nextStep();
 				},
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'skip_step',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					actions.nextStep();
 				},
 			}
@@ -318,7 +286,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		stepId,
 		stepIndex,
 		totalSteps,
-		trackErrorReported,
 		trackSkipClicked,
 		trackSummary,
 		updateProgress,
@@ -327,18 +294,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData, {
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'save',
-						targetName: Object.keys( choiceData )[ 0 ] ?? stepId,
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to save choices',
-					} );
-				},
-			} );
+			updateChoices.mutate( choiceData );
 		},
-		[ updateChoices, trackErrorReported, stepId ]
+		[ updateChoices ]
 	);
 
 	const handleContinue = useCallback(
@@ -350,17 +308,27 @@ export function AppContent( { onClose }: AppContentProps ) {
 				} );
 			}
 
+			let effectiveDirectChoice = directChoice;
+
+			if ( stepId === StepId.THEME_SELECTION && ! effectiveDirectChoice ) {
+				effectiveDirectChoice = { theme_selection: 'hello-elementor' };
+			}
+
 			const storedChoice = choices[ stepId as keyof typeof choices ];
-			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
+			const choiceData =
+				effectiveDirectChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
 
 			if ( choiceData ) {
 				saveChoicesFireAndForget( choiceData );
 			}
 
 			if ( stepId === StepId.THEME_SELECTION ) {
-				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
+				const themeSlug = ( choiceData?.theme_selection ??
+					choices.theme_selection ??
+					'hello-elementor' ) as string;
 
 				if ( themeSlug && isLast ) {
+					trackThemeSelected( themeSlug, 'theme_selection' );
 					isCompletingRef.current = true;
 					setIsCompleting( true );
 					installTheme.mutate( themeSlug, {
@@ -368,7 +336,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						onError: ( error ) => {
 							trackErrorReported( {
 								targetType: 'install',
-								targetName: 'continue_with_this_theme',
+								targetName: 'continue_with_hello',
 								stepId: 'theme_selection',
 								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
 							} );
@@ -380,11 +348,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 				}
 
 				if ( themeSlug ) {
+					trackThemeSelected( themeSlug, 'theme_selection' );
 					installTheme.mutate( themeSlug, {
 						onError: ( error ) => {
 							trackErrorReported( {
 								targetType: 'install',
-								targetName: 'continue_with_this_theme',
+								targetName: 'continue_with_hello',
 								stepId: 'theme_selection',
 								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
 							} );
@@ -418,13 +387,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
-					onError: ( error ) => {
-						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'complete_step',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-						} );
+					onError: () => {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
@@ -449,6 +412,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			trackErrorReported,
 			trackProFeaturesSelected,
 			trackSummary,
+			trackThemeSelected,
 		]
 	);
 
@@ -461,7 +425,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const getContinueLabel = () => {
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
-			return t( 'steps.theme_selection.continue_with_theme' );
+			return t( 'steps.theme_selection.v2.continue_with_theme' );
 		}
 
 		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {
@@ -477,14 +441,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const renderStepContent = () => {
 		switch ( stepId ) {
-			case StepId.BUILDING_FOR:
-				return <BuildingFor onComplete={ handleContinue } />;
-			case StepId.SITE_ABOUT:
-				return <SiteAbout />;
-			case StepId.EXPERIENCE_LEVEL:
-				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.THEME_SELECTION:
-				return <ThemeSelection onComplete={ handleContinue } />;
+				return <ThemeSelection />;
 			case StepId.SITE_FEATURES:
 				return <SiteFeatures />;
 			default:
@@ -501,11 +459,22 @@ export function AppContent( { onClose }: AppContentProps ) {
 			<BaseLayout
 				topBar={
 					<TopBar>
-						<TopBarContent showUpgrade={ false } showClose={ false } />
+						<TopBarContent
+							showUpgrade
+							showClose={ false }
+							onUpgrade={ () => {
+								trackUpgradeClicked( 'login' );
+								window.open( urls.upgradeUrl, '_blank' );
+							} }
+						/>
 					</TopBar>
 				}
 			>
-				<Login onConnect={ handleConnect } onContinueAsGuest={ handleContinueAsGuest } />
+				<Login
+					onConnect={ handleConnect }
+					onSignUp={ handleSignUp }
+					onContinueAsGuest={ handleContinueAsGuest }
+				/>
 			</BaseLayout>
 		);
 	}
@@ -556,11 +525,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				</Footer>
 			}
 		>
-			<SplitLayout
-				left={ renderStepContent() }
-				rightConfig={ rightPanelConfig }
-				progress={ { currentStep: stepIndex, totalSteps } }
-			/>
+			<SplitLayout left={ renderStepContent() } rightConfig={ rightPanelConfig } />
 		</BaseLayout>
 	);
 }

@@ -1148,6 +1148,19 @@ class Frontend extends App {
 		$data = $document->get_elements_data();
 
 		/**
+		 * Filters document elements data after loading.
+		 *
+		 * Allows modification of elements data when loading (not saving).
+		 * Useful for migrations, transformations, or data enrichment.
+		 *
+		 * @since 4.0.0
+		 *
+		 * @param array                         $data      The elements data array.
+		 * @param \Elementor\Core\Base\Document $document  The document instance.
+		 */
+		$data = apply_filters( 'elementor/document/load/data', $data, $document );
+
+		/**
 		 * Frontend builder content data.
 		 *
 		 * Filters the builder content in the frontend.
@@ -1413,7 +1426,7 @@ class Frontend extends App {
 			],
 			'i18n' => [
 				'shareOnFacebook' => esc_html__( 'Share on Facebook', 'elementor' ),
-				'shareOnTwitter' => esc_html__( 'Share on Twitter', 'elementor' ),
+				'shareOnX' => esc_html__( 'Share on X', 'elementor' ),
 				'pinIt' => esc_html__( 'Pin it', 'elementor' ),
 				'download' => esc_html__( 'Download', 'elementor' ),
 				'downloadImage' => esc_html__( 'Download image', 'elementor' ),

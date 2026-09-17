@@ -1,4 +1,4 @@
-import { type StylesCollection, type StylesProvider, type UserCapabilities } from '../types';
+import { type PregeneratedLinkItem, type StylesCollection, type StylesProvider, type UserCapabilities } from '../types';
 
 export type CreateStylesProviderOptions = {
 	key: string | ( () => string );
@@ -21,6 +21,7 @@ export type CreateStylesProviderOptions = {
 		tracking?: StylesProvider[ 'actions' ][ 'tracking' ];
 	};
 	capabilities?: UserCapabilities;
+	isPregeneratedLink?: ( pregeneratedLinkItem: PregeneratedLinkItem ) => boolean;
 };
 
 const DEFAULT_LIMIT = 10000;
@@ -34,6 +35,7 @@ export function createStylesProvider( {
 	labels,
 	actions,
 	capabilities,
+	isPregeneratedLink,
 }: CreateStylesProviderOptions ): StylesProvider {
 	return {
 		getKey: typeof key === 'string' ? () => key : key,
@@ -56,5 +58,6 @@ export function createStylesProvider( {
 			updateCustomCss: actions.updateCustomCss,
 			tracking: actions.tracking,
 		},
+		isPregeneratedLink,
 	};
 }

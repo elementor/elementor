@@ -3,31 +3,23 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { apiClient } from '../../api';
 import { selectIsOverridablePropsLoaded, slice } from '../store';
 
-export function loadComponentsOverridableProps( componentIds: number[] ) {
-	if ( ! componentIds.length ) {
+type Options = {
+	// Bypasses the "already loaded" guard, forcing a re-fetch for the given ids.
+	// Used when we know the cached data may be stale (e.g. entering a component's edit mode),
+	// since other users may have changed the component's overridable props during the session.
+	force?: boolean;
+};
+
+export async function loadComponentsOverridableProps( componentIds: number[], { force = false }: Options = {} ) {
+	const idsToLoad = force
+		? componentIds
+		: componentIds.filter( ( id ) => ! selectIsOverridablePropsLoaded( getState(), id ) );
+
+	if ( ! idsToLoad.length ) {
 		return;
 	}
 
-	return Promise.all( componentIds.map( loadComponentOverrides ) );
-}
+	const { data } = await apiClient.getOverridableProps( idsToLoad );
 
-async function loadComponentOverrides( componentId: number ) {
-	const isOverridablePropsLoaded = selectIsOverridablePropsLoaded( getState(), componentId );
-
-	if ( isOverridablePropsLoaded ) {
-		return;
-	}
-
-	const overridableProps = await apiClient.getOverridableProps( componentId );
-
-	if ( ! overridableProps ) {
-		return;
-	}
-
-	dispatch(
-		slice.actions.setOverridableProps( {
-			componentId,
-			overridableProps,
-		} )
-	);
+	dispatch( slice.actions.loadOverridableProps( data ) );
 }

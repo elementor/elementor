@@ -15,11 +15,26 @@ declare global {
 				};
 			};
 		};
+		elementorCommon?: {
+			eventsManager?: {
+				getExperimentVariant?: ( experimentName: string, defaultValue: string ) => Promise< string > | string;
+			};
+		};
 		ElementorConfig?: {
 			nonce?: string;
 		};
 	}
 }
+
+const CONSTRAINED_MODAL_VIEWPORT = {
+	width: 1366,
+	height: 500,
+};
+
+const MIN_SCROLLABLE_OFFSET = 1;
+const CENTER_POSITION_DIVISOR = 2;
+const SAVE_TEMPLATE_EXPERIMENT_NAME = 'save-template-cloud';
+const SAVE_TEMPLATE_VARIANT_B = 'B';
 
 const cloudTemplatesMock = {
 	templates: {
@@ -233,6 +248,23 @@ test.describe( 'Cloud Templates', () => {
 				}
 				window.elementor.config.library_connect.is_connected = true;
 			}
+		} );
+	};
+
+	const mockSaveTemplateExperimentVariant = async ( page: Page, variant: string ) => {
+		await page.evaluate( ( { experimentName: saveTemplateExperimentName, saveTemplateVariant } ) => {
+			const eventsManager = window.elementorCommon?.eventsManager;
+
+			if ( ! eventsManager ) {
+				return;
+			}
+
+			eventsManager.getExperimentVariant = async ( experimentName, defaultValue ) => {
+				return saveTemplateExperimentName === experimentName ? saveTemplateVariant : defaultValue;
+			};
+		}, {
+			experimentName: SAVE_TEMPLATE_EXPERIMENT_NAME,
+			saveTemplateVariant: variant,
 		} );
 	};
 
@@ -515,6 +547,75 @@ test.describe( 'Cloud Templates', () => {
 
 		await expect( templateItems ).toHaveCount( 5 );
 		await expect( templateItems.nth( 1 ) ).toContainText( folderTitle );
+	} );
+
+	test( 'should allow scrolling to the save button on constrained screens', async ( { page, apiRequests }, testInfo ) => {
+		await page.setViewportSize( CONSTRAINED_MODAL_VIEWPORT );
+
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await mockAdminAjaxCatchAll( page );
+		await mockTemplatesApiCatchAll( page );
+		await mockTemplatesQuotaRoute( page );
+		await mockConnect( page );
+		await mockSaveTemplateExperimentVariant( page, SAVE_TEMPLATE_VARIANT_B );
+
+		const getQuotaResponse = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
+		const previewFrame = editor.getPreviewFrame();
+		await previewFrame.waitForSelector( '.elementor-add-section-inner', { timeout: 10000 } );
+
+		const arrowButton = page.locator( 'button[aria-label="Save Options"]' ).first();
+		await arrowButton.click();
+
+		const saveAsTemplateMenuItem = page.getByRole( 'menuitem', { name: 'Save as Template' } );
+		await expect( saveAsTemplateMenuItem ).toBeVisible();
+		await saveAsTemplateMenuItem.click();
+		await getQuotaResponse;
+
+		const variantBSaveTemplateView = page.locator( '#elementor-template-library-save-template-variant-b' );
+		await expect( variantBSaveTemplateView ).toBeVisible();
+
+		const modalMessage = page.locator( '#elementor-template-library-modal .dialog-message' );
+		await expect( modalMessage ).toHaveCSS( 'overflow-y', 'auto' );
+
+		const isScrollable = await modalMessage.evaluate(
+			( message, minScrollableOffset ) => message.scrollHeight - message.clientHeight > minScrollableOffset,
+			MIN_SCROLLABLE_OFFSET,
+		);
+		expect( isScrollable ).toBe( true );
+
+		const templateNameInput = page.locator( '#elementor-template-library-save-template-name' );
+		await templateNameInput.fill( 'Template with Reachable Save Button' );
+
+		const cloudTemplatesCheckbox = page.locator( '.source-selections-input.cloud input[type="checkbox"]' );
+		await cloudTemplatesCheckbox.check();
+
+		const saveButton = page.locator( '#elementor-template-library-save-template-submit' );
+		await saveButton.scrollIntoViewIfNeeded();
+
+		const isSaveButtonReachable = await saveButton.evaluate( ( button, centerPositionDivisor ) => {
+			const modalMessageElement = button.closest( '.dialog-message' );
+
+			if ( ! modalMessageElement ) {
+				return false;
+			}
+
+			const buttonRect = button.getBoundingClientRect();
+			const modalMessageRect = modalMessageElement.getBoundingClientRect();
+			const centerX = buttonRect.left + ( buttonRect.width / centerPositionDivisor );
+			const centerY = buttonRect.top + ( buttonRect.height / centerPositionDivisor );
+			const topElement = document.elementFromPoint( centerX, centerY );
+
+			return buttonRect.top >= modalMessageRect.top &&
+				buttonRect.bottom <= modalMessageRect.bottom &&
+				!! topElement &&
+				( button === topElement || button.contains( topElement ) );
+		}, CENTER_POSITION_DIVISOR );
+
+		expect( isSaveButtonReachable ).toBe( true );
 	} );
 
 	test( 'should save template to cloud', async ( { page, apiRequests }, testInfo ) => {

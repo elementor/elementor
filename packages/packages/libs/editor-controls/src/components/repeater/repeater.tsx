@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type SetValueMeta } from '../../bound-prop-context';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
+import { usePopoverDismiss } from '../../hooks/use-repeater-popover-dismiss';
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../control-repeater/locations';
 import { SectionContent } from '../section-content';
 import { RepeaterHeader } from './repeater-header';
@@ -80,44 +81,39 @@ type BaseItemSettings< T > = {
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
 	onPopoverOpen?: ( value: T ) => void;
-	onPopoverClose?: () => void;
+	onPopoverClose?: ( value: T ) => void;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
 	getId: ( { item, index }: { item: T; index: number } ) => string;
 };
 
-type RepeaterProps< T > =
-	| {
-			label: string;
-			values?: T[];
-			openOnAdd?: boolean;
-			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
-			disabled?: boolean;
-			disableAddItemButton?: boolean;
-			addButtonInfotipContent?: React.ReactNode;
-			showDuplicate?: boolean;
-			showToggle?: boolean;
-			showRemove?: boolean;
-			openItem?: number;
-			isSortable: false;
-			itemSettings: BaseItemSettings< T >;
-	  }
-	| {
-			label: string;
-			values?: T[];
-			openOnAdd?: boolean;
-			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
-			disabled?: boolean;
-			disableAddItemButton?: boolean;
-			addButtonInfotipContent?: React.ReactNode;
-			showDuplicate?: boolean;
-			showToggle?: boolean;
-			showRemove?: boolean;
-			openItem?: number;
-			isSortable?: true;
-			itemSettings: SortableItemSettings< T >;
-	  };
+type BaseProps< T > = {
+	label: string;
+	values?: T[];
+	openOnAdd?: boolean;
+	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
+	disabled?: boolean;
+	disableAddItemButton?: boolean;
+	addButtonInfotipContent?: React.ReactNode;
+	showDuplicate?: boolean;
+	showToggle?: boolean;
+	showRemove?: boolean;
+	openItem?: number;
+	adornment?: React.FC;
+};
+
+type SortableProps< T > = BaseProps< T > & {
+	isSortable?: true;
+	itemSettings: SortableItemSettings< T >;
+};
+
+type NonSortableProps< T > = BaseProps< T > & {
+	isSortable?: false;
+	itemSettings: BaseItemSettings< T >;
+};
+
+type RepeaterProps< T > = SortableProps< T > | NonSortableProps< T >;
 
 const EMPTY_OPEN_ITEM = -1;
 
@@ -135,6 +131,7 @@ export const Repeater = < T, >( {
 	addButtonInfotipContent,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 	isSortable = true,
+	adornment = ControlAdornments,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
@@ -231,7 +228,7 @@ export const Repeater = < T, >( {
 
 	return (
 		<SectionContent gap={ 2 }>
-			<RepeaterHeader label={ label } adornment={ ControlAdornments }>
+			<RepeaterHeader label={ label } adornment={ adornment }>
 				{ shouldShowInfotip ? (
 					<Infotip
 						placement="right"
@@ -312,7 +309,7 @@ type RepeaterItemProps< T > = {
 	openOnMount: boolean;
 	onOpen: () => void;
 	onPopoverOpen?: ( value: T ) => void;
-	onPopoverClose?: () => void;
+	onPopoverClose?: ( value: T ) => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
 	showRemove: boolean;
@@ -340,18 +337,25 @@ const RepeaterItem = < T, >( {
 	actions,
 	value,
 }: RepeaterItemProps< T > ) => {
-	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, () => {
-		onOpen();
-		onPopoverOpen?.( value );
-	} );
+	const wrappedOnPopoverClose = onPopoverClose ? () => onPopoverClose( value ) : undefined;
+	const { popoverState, popoverProps, ref, setRef } = usePopover(
+		openOnMount,
+		() => {
+			onOpen();
+			onPopoverOpen?.( value );
+		},
+		wrappedOnPopoverClose
+	);
 	const triggerProps = bindTrigger( popoverState );
+
+	usePopoverDismiss( { isOpen: popoverState.isOpen, onClose: popoverProps.onClose } );
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 	const removeLabel = __( 'Remove', 'elementor' );
 
 	return (
-		<>
+		<Box sx={ { display: 'contents' } }>
 			<RepeaterTag
 				disabled={ disabled }
 				label={ label }
@@ -392,22 +396,14 @@ const RepeaterItem = < T, >( {
 					</>
 				}
 			/>
-			<RepeaterPopover
-				width={ ref?.getBoundingClientRect().width }
-				{ ...popoverProps }
-				onClose={ () => {
-					popoverProps.onClose?.();
-					onPopoverClose?.();
-				} }
-				anchorEl={ ref }
-			>
+			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
 				<Box>{ children( { anchorEl: ref } ) }</Box>
 			</RepeaterPopover>
-		</>
+		</Box>
 	);
 };
 
-const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
+const usePopover = ( openOnMount: boolean, onOpen: () => void, onPopoverClose?: () => void ) => {
 	const [ ref, setRef ] = useState< HTMLElement | null >( null );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
@@ -422,10 +418,15 @@ const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ref ] );
 
+	const onClose = () => {
+		popoverProps.onClose?.();
+		onPopoverClose?.();
+	};
+
 	return {
 		popoverState,
 		ref,
 		setRef,
-		popoverProps,
+		popoverProps: { ...popoverProps, onClose },
 	};
 };

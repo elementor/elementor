@@ -20,7 +20,7 @@ class Promotion_Control extends Base_Data_Control {
 						<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 					<# } #>
 					<span class="e-control-promotion__lock-wrapper">
-						<i class="eicon-lock"></i>
+						<i class="eicon-upgrade-crown-full"></i>
 					</span>
 					<div class="elementor-control-input-wrapper">
 						<label class="elementor-switch elementor-control-unit-2 e-control-promotion-switch">

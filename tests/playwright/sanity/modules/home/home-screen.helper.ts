@@ -1,4 +1,4 @@
-import { type Page, type APIRequestContext } from '@playwright/test';
+import { type Page, type Locator, type APIRequestContext, expect } from '@playwright/test';
 import { resolve } from 'path';
 import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';
@@ -129,14 +129,14 @@ export const navigateToHomeScreen = async ( page: Page ) => {
 	return page.locator( '#e-home-screen' );
 };
 
-export const getScreenshotName = async ( page: Page, baseName: string ): Promise<string> => {
-	const hasBranch7 = await page.locator( '[class*="branch-7"]' ).count() > 0;
-	if ( ! hasBranch7 ) {
-		return baseName;
-	}
+const WP_NIGHTLY_SNAPSHOT_SUFFIX = '-wp-nightly';
 
-	const extension = baseName.lastIndexOf( '.' );
-	return `${ baseName.slice( 0, extension ) }-with-wordpress7${ baseName.slice( extension ) }`;
+export const expectScreenshot = async ( locator: Locator, baseName: string ): Promise<void> => {
+	const snapshotName = 'nightly' === process.env.WP_VERSION
+		? baseName.replace( /(\.[^.]+)$/, `${ WP_NIGHTLY_SNAPSHOT_SUFFIX }$1` )
+		: baseName;
+
+	await expect( locator ).toHaveScreenshot( snapshotName );
 };
 
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {

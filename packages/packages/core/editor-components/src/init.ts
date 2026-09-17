@@ -8,7 +8,7 @@ import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
-import { stylesRepository } from '@elementor/editor-styles-repository';
+import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
@@ -26,15 +26,12 @@ import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
-import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
 import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
 import { type ExtendedWindow } from './types';
 
 export function init() {
-	stylesRepository.register( componentsStylesProvider );
-
 	registerSlice( slice );
 
 	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
@@ -59,14 +56,20 @@ export function init() {
 		component: PopulateStore,
 	} );
 
-	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
-		const { id, config } = getV1CurrentDocument();
+	registerDataHook( 'after', 'editor/documents/attach-preview', () => {
+		const { id, config } = getV1CurrentDocument() ?? {};
 
-		if ( id ) {
-			removeComponentStyles( id );
+		if ( ! id ) {
+			return;
 		}
 
-		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
+		removeComponentStyles( id );
+
+		void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
+	} );
+
+	embeddedDocumentsManager.onDocumentLoad( ( _documentId, data ) => {
+		void loadComponentsAssets( data.elements ?? [] );
 	} );
 
 	injectIntoLogic( {

@@ -305,7 +305,9 @@ const getGradientValue = ( value: BackgroundOverlayItemPropValue ) => {
 	const gradient = value.value;
 
 	const stops = gradient.stops.value
-		?.map( ( { value: { color, offset } }: ColorStop ) => `${ color.value } ${ offset.value ?? 0 }%` )
+		?.map( ( { value: { color, offset } }: ColorStop ) =>
+			offset ? `${ color.value } ${ offset.value ?? 0 }%` : `${ color.value }`
+		)
 		?.join( ',' );
 
 	if ( gradient.type.value === 'linear' ) {

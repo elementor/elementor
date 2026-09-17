@@ -6,7 +6,7 @@ import { useBoundProp } from '../bound-prop-context/use-bound-prop';
 import { createControl } from '../create-control';
 
 export const SwitchControl = createControl( () => {
-	const { value, setValue, disabled } = useBoundProp( booleanPropTypeUtil );
+	const { value, setValue, disabled, placeholder } = useBoundProp( booleanPropTypeUtil );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setValue( event.target.checked );
@@ -15,7 +15,7 @@ export const SwitchControl = createControl( () => {
 	return (
 		<Box sx={ { display: 'flex', justifyContent: 'flex-end' } }>
 			<Switch
-				checked={ !! value }
+				checked={ !! ( value || placeholder ) }
 				onChange={ handleChange }
 				size="small"
 				disabled={ disabled }

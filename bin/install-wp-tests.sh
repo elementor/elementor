@@ -97,6 +97,10 @@ install_test_suite() {
 }
 
 install_db() {
+	if [ -n "${SKIP_INSTALL_DB:-}" ]; then
+		return 0
+	fi
+
 	# parse DB_HOST for port or socket references
 	local PARTS=(${DB_HOST//\:/ })
 	local DB_HOSTNAME=${PARTS[0]};

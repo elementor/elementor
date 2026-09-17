@@ -47,7 +47,7 @@ export const validateInput = {
 			if ( ! propSchema ) {
 				errors.push( `Property "${ propName }" is not defined in the schema.` );
 				hasInvalidKey = true;
-			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
+			} else if ( ! Schema.isPropKeyConfigurable( propName, propSchema ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
 				const { valid } = Schema.validatePropValue( propSchema, propValue as PropValue );

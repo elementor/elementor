@@ -2,7 +2,6 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\GlobalClasses\Module as Global_Classes_Module;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Plugin;
 
@@ -102,10 +101,13 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	public function get_classes_count(): int {
-		$classes_repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make();
-		$classes_data = $classes_repository->all()->get();
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		return count( $classes_data['items'] ?? [] );
+		if ( ! $kit ) {
+			return 0;
+		}
+
+		return count( \Elementor\Modules\GlobalClasses\Global_Classes_Order::make( $kit )->set_preview( false )->get_order() );
 	}
 
 	public function get_variables_count(): int {
@@ -116,7 +118,7 @@ class Site_Settings extends Export_Runner_Base {
 
 		foreach ( $collection->all() as $variable ) {
 			if ( ! $variable->is_deleted() ) {
-				$count++;
+				++$count;
 			}
 		}
 
@@ -124,8 +126,7 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	public function is_classes_feature_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( Global_Classes_Module::NAME )
-			&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
 
 	public function is_variables_feature_active(): bool {

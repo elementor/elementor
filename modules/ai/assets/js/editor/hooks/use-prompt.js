@@ -29,7 +29,7 @@ const usePrompt = ( fetchData, initialState ) => {
 	const [ data, setData ] = useState( initialState );
 	const { updateUsagePercentage, usagePercentage } = useRequestIds();
 	const send = useRef( ( async ( payload ) => ( payload ) ) );
-	const sendUsageData = useRef( ( ( ) => {} ) );
+	const sendUsageData = useRef( ( () => {} ) );
 
 	useEffect( () => {
 		const newUsageValue = data?.usagePercentage;

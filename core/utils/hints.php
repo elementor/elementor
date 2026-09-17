@@ -23,6 +23,7 @@ class Hints {
 	const CAPABILITY = 'capability';
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
+	const PLUGIN_CONNECTED = 'plugin_connected';
 	const NOT_HAS_OPTION = 'not_has_option';
 
 	const INSTALL = 'install';
@@ -72,7 +73,7 @@ class Hints {
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'manage_options',
 				self::NOT_DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-				self::NOT_HAS_OPTION => 'image_optimizer_access_token',
+				self::PLUGIN_CONNECTED => [ 'image_optimizer', 'image-optimization' ],
 			],
 			'image-optimization-media-modal' => [
 				self::DISMISSED => 'image-optimization-media-modal',
@@ -82,7 +83,12 @@ class Hints {
 			'ally_heading_notice' => [
 				self::DISMISSED => 'ally_heading_notice',
 				self::CAPABILITY => 'install_plugins',
-				self::NOT_HAS_OPTION => 'ea11y_access_token',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
+			],
+			'ally_atomic_notice' => [
+				self::DISMISSED => 'ally_atomic_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
 			],
 		];
 		if ( ! $hint_key ) {
@@ -231,6 +237,23 @@ class Hints {
 	}
 
 	/**
+	 * Decode_url_for_js
+	 *
+	 * `wp_nonce_url()` (used by `get_plugin_install_url()` and `get_plugin_activate_url()`) HTML-escapes
+	 * its result (e.g. `&` becomes `&amp;`) for direct raw HTML/template output, where the browser's HTML
+	 * parser decodes the entities back. Consumers that send the URL through a JSON REST response, editor
+	 * script settings, or a React/JS component prop use it as a raw string that is never HTML-parsed, so
+	 * it must be decoded back to a literal URL before being handed to those contexts.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	public static function decode_url_for_js( string $url ): string {
+		return wp_specialchars_decode( $url, ENT_QUOTES );
+	}
+
+	/**
 	 * Is_dismissed
 	 *
 	 * @param $key
@@ -299,6 +322,15 @@ class Hints {
 
 					break;
 
+				case self::PLUGIN_CONNECTED:
+					[ $option_prefix, $plugin_slug ] = $value;
+
+					if ( self::is_plugin_connected( $option_prefix, $plugin_slug ) ) {
+						return false;
+					}
+
+					break;
+
 				case self::NOT_HAS_OPTION:
 					$option = get_option( $value );
 					if ( ! empty( $option ) ) {
@@ -362,6 +394,10 @@ class Hints {
 	 * @return bool
 	 */
 	public static function is_plugin_active( $plugin ): bool {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return is_plugin_active( $plugin );
 	}
@@ -369,17 +405,20 @@ class Hints {
 	/**
 	 * Get_plugin_action_url
 	 *
+	 * Returns a decoded install/activate nonce URL (see `decode_url_for_js()`), since every current
+	 * caller consumes this over JSON/JS rather than raw HTML output.
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
 	 */
 	public static function get_plugin_action_url( $plugin ): string {
 		if ( ! self::is_plugin_installed( $plugin ) ) {
-			return self::get_plugin_install_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_install_url( $plugin ) );
 		}
 
 		if ( ! self::is_plugin_active( $plugin ) ) {
-			return self::get_plugin_activate_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_activate_url( $plugin ) );
 		}
 
 		return '';
@@ -445,7 +484,15 @@ class Hints {
 		];
 	}
 
-	public static function is_plugin_connected( $option_prefix ): bool {
+	public static function is_plugin_connected( $option_prefix, $plugin_slug = null ): bool {
+		if ( null !== $plugin_slug && class_exists( '\ElementorOne\Connect\Facade' ) ) {
+			$facade = \ElementorOne\Connect\Facade::get( $plugin_slug );
+
+			if ( $facade ) {
+				return $facade->utils()->is_connected();
+			}
+		}
+
 		return ! empty( get_option( $option_prefix . '_access_token' ) );
 	}
 
@@ -456,16 +503,16 @@ class Hints {
 	private static function get_all_widget_content( $step, $one_subscription = false ) {
 		if ( $one_subscription ) {
 			$steps = [
-				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Ally, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
-				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Ally. Activate it to place an accessibility widget on your site.', 'elementor' ),
-				self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Web Accessibility, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Web Accessibility. Activate it to place an accessibility widget on your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
 				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
 			];
 		} else {
 			$steps = [
-				self::INSTALL => esc_html__( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
-				self::ACTIVATE => esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' ),
-				self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::INSTALL => esc_html__( 'Install Web Accessibility to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Activate the Web Accessibility plugin to turn its accessibility features on across your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
 				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
 			];
 		}
@@ -531,7 +578,7 @@ class Hints {
 		}
 
 		$data = [
-			'title' => __( 'Ally web accessibility', 'elementor' ),
+			'title' => __( 'Web accessibility', 'elementor' ),
 			'content' => self::get_all_widget_content( $step, $one_subscription ),
 			'action_button' => self::get_ally_cta_button( $step, $one_subscription ),
 		];

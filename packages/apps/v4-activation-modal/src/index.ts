@@ -1,4 +1,4 @@
-export { V4ActivationModal, ModalHeader, ModalFooter, FeatureItem } from './components';
-export { useAutoplayCarousel } from './hooks/use-autoplay-carousel';
+export { ModalHeader, ModalFooter, FeatureItem } from './components';
+export { useAutoplayCarousel } from '@elementor/editor-modal-shell';
 export { App } from './app';
 export { init } from './init';

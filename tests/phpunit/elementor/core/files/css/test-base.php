@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -287,5 +288,48 @@ class Test_Base extends Elementor_Test_Base {
 			function() {},
 			'SIZE'
 		);
+	}
+
+	public function test_should_skip_enqueue_when_rendering_markdown() {
+		Widget_Content_Render_Mode::set_current( Widget_Content_Render_Mode::MARKDOWN );
+
+		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
+
+		Widget_Content_Render_Mode::set_current( Widget_Content_Render_Mode::NORMAL );
+	}
+
+	public function test_should_skip_enqueue_in_editor_request() {
+		$_REQUEST['action'] = 'elementor';
+
+		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
+
+		unset( $_REQUEST['action'] );
+	}
+
+	public function test_get_registered_enqueue_dependencies_filters_unregistered_handles() {
+		$css = $this->getMockBuilder( \Elementor\Core\Files\CSS\Post::class )
+			->setConstructorArgs( [ 0 ] )
+			->onlyMethods( [ 'get_enqueue_dependencies' ] )
+			->getMock();
+
+		$css->method( 'get_enqueue_dependencies' )->willReturn( [
+			'registered-handle',
+			'unregistered-handle',
+		] );
+
+		wp_register_style( 'registered-handle', 'https://example.com/style.css' );
+
+		$method = new \ReflectionMethod( $css, 'get_registered_enqueue_dependencies' );
+		$method->setAccessible( true );
+
+		$this->assertSame( [ 'registered-handle' ], $method->invoke( $css ) );
+
+		wp_deregister_style( 'registered-handle' );
 	}
 }

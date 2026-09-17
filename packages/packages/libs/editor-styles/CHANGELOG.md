@@ -185,7 +185,7 @@
 
 ### Minor Changes
 
-- b18d1a6: Added Pseudo classess to css class selectors
+- b18d1a6: Added Pseudo classes to css class selectors
 
 ### Patch Changes
 

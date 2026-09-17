@@ -183,7 +183,7 @@ class Component_Mocks {
 						],
 						'props' => [
 							'font-family' => [
-								'$$type' => 'string',
+								'$$type' => 'font-family',
 								'value' => 'Roboto'
 							],
 							'color' => [

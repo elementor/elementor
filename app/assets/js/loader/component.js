@@ -14,6 +14,9 @@ export default class Component extends ComponentModalBase {
 				$e.run( 'app/load', args );
 
 				this.iframe.style.display = '';
+				if ( this.backdrop ) {
+					this.backdrop.style.display = '';
+				}
 				document.body.style.overflow = 'hidden';
 			},
 		};

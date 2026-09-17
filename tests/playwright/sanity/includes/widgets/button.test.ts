@@ -4,6 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import ButtonWidget from '../../../pages/widgets/button_widget';
 import _path from 'path';
+import { timeouts } from '../../../config/timeouts';
 
 const defaultBtnName = 'Click here';
 
@@ -15,10 +16,11 @@ test( 'Button widget sanity test', async ( { page, apiRequests }, testInfo ) => 
 	// Act.
 	await editor.addWidget( { widgetType: 'button' } );
 
-	const button = await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
+	const button = editor.getPreviewFrame().locator( EditorSelectors.button.getByName( defaultBtnName ) );
+	await button.waitFor( { state: 'visible', timeout: timeouts.action } );
 
 	// Assert.
-	expect( await button.innerText() ).toBe( 'Click here' );
+	await expect( button ).toHaveText( 'Click here' );
 } );
 
 test( 'Button controls should return to default', async ( { page, apiRequests }, testInfo ) => {

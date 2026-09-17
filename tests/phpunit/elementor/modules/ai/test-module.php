@@ -193,4 +193,5 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$this->assertFalse( $module->is_ai_enabled() );
 	}
+
 }

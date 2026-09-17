@@ -110,6 +110,18 @@ class Test_Panel_Elements_Banner extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'id="elementor-panel-get-pro-elements-sticky"', $output );
 	}
 
+	public function test_category_promotion_uses_custom_text_when_provided() {
+		// Arrange
+		$this->ensure_pro_not_defined();
+
+		// Act
+		$output = $this->render_template();
+
+		// Assert
+		$this->assertStringContainsString( 'promotion.text ||', $output );
+		$this->assertStringContainsString( wp_json_encode( __( 'Upgrade', 'elementor' ) ), $output );
+	}
+
 	private function render_template(): string {
 		ob_start();
 		include $this->template_path;

@@ -27,6 +27,86 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		Render_Props_Resolver::reset();
 	}
 
+	/**
+	 * @dataProvider font_family_css_quoting_data_provider
+	 */
+	public function test_render__font_family_css_quoting( array $font_family_prop, string $expected_css ) {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-family' => $font_family_prop,
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( $expected_css, $css );
+	}
+
+	public function font_family_css_quoting_data_provider() {
+		return [
+			'multi-word with digit' => [
+				[ '$$type' => 'font-family', 'value' => 'My Font 3' ],
+				'font-family:"My Font 3";',
+			],
+			'multi-word without digit' => [
+				[ '$$type' => 'font-family', 'value' => 'Open Sans' ],
+				'font-family:"Open Sans";',
+			],
+			'single-word' => [
+				[ '$$type' => 'font-family', 'value' => 'Arial' ],
+				'font-family:Arial;',
+			],
+			'generic-family sans-serif' => [
+				[ '$$type' => 'font-family', 'value' => 'sans-serif' ],
+				'font-family:sans-serif;',
+			],
+			'generic-family serif' => [
+				[ '$$type' => 'font-family', 'value' => 'serif' ],
+				'font-family:serif;',
+			],
+			'generic-family monospace' => [
+				[ '$$type' => 'font-family', 'value' => 'monospace' ],
+				'font-family:monospace;',
+			],
+			'css-wide-keyword inherit' => [
+				[ '$$type' => 'font-family', 'value' => 'inherit' ],
+				'font-family:inherit;',
+			],
+			'css-wide-keyword initial' => [
+				[ '$$type' => 'font-family', 'value' => 'initial' ],
+				'font-family:initial;',
+			],
+			'css-wide-keyword unset' => [
+				[ '$$type' => 'font-family', 'value' => 'unset' ],
+				'font-family:unset;',
+			],
+			'already-double-quoted' => [
+				[ '$$type' => 'font-family', 'value' => '"Open Sans"' ],
+				'font-family:"Open Sans";',
+			],
+			'already-single-quoted' => [
+				[ '$$type' => 'font-family', 'value' => "'Poppins'" ],
+				"font-family:'Poppins';",
+			],
+			'css-variable-reference' => [
+				[ '$$type' => 'font-family', 'value' => 'var(--primary-font)' ],
+				'font-family:var(--primary-font);',
+			],
+		];
+	}
+
 	public function test_render__basic_style() {
 		// Arrange.
 		$styles = [
@@ -833,7 +913,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-	public function test_render__style_with_background_with_fields_of_similar_valus() {
+	public function test_render__style_with_background_with_fields_of_similar_values() {
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
@@ -1066,7 +1146,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 							'border-radius' => [
-								'$$type' => 'border-radius',
+								'$$type' => 'border-radius-v2',
 								'value' => [
 									'start-start' => [
 										'$$type' => 'size',
@@ -1093,7 +1173,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 							'border-width' => [
-								'$$type' => 'border-width',
+								'$$type' => 'border-width-v2',
 								'value' => [
 									'block-start' => [
 										'$$type' => 'size',
@@ -1357,6 +1437,32 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render_atomic_widget_styles__flex_shrink_only_preserves_basis_auto() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style-shrink-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( null, 0 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.test-style-shrink-only{flex:0 0 auto;}', $css );
 	}
 
 	public function test_render__style_variant_with_custom_css() {

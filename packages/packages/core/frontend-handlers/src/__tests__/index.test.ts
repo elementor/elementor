@@ -623,6 +623,58 @@ describe( 'Frontend Handlers', () => {
 			// Assert
 			expect( childRenderCallback ).not.toHaveBeenCalled();
 		} );
+
+		it( 'should pass the event object to the render callback', () => {
+			// Arrange
+			const PARENT_ID = 'parent-1';
+			const CHILD_ID = 'child-1';
+			const childRenderCallback = jest.fn();
+
+			register( {
+				elementType: PARENT_ELEMENT_TYPE,
+				id: HANDLER_IDS.handler_1,
+				callback: ( { listenToChildren } ) => {
+					listenToChildren( [ CHILD_ELEMENT_TYPE ] ).render( childRenderCallback );
+					return undefined;
+				},
+			} );
+
+			const parent = document.createElement( 'div' );
+			parent.setAttribute( 'data-e-type', PARENT_ELEMENT_TYPE );
+			parent.setAttribute( 'data-id', PARENT_ID );
+			document.body.appendChild( parent );
+
+			const child = document.createElement( 'div' );
+			child.setAttribute( 'data-e-type', CHILD_ELEMENT_TYPE );
+			child.setAttribute( 'data-id', CHILD_ID );
+			parent.appendChild( child );
+
+			// Act
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: PARENT_ID, type: PARENT_ELEMENT_TYPE, element: parent },
+				} )
+			);
+
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: CHILD_ID, type: CHILD_ELEMENT_TYPE, element: child },
+				} )
+			);
+
+			// Assert
+			expect( childRenderCallback ).toHaveBeenCalledTimes( 1 );
+			expect( childRenderCallback ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'elementor/element/rendered',
+					detail: expect.objectContaining( {
+						element: child,
+						elementType: CHILD_ELEMENT_TYPE,
+						elementId: CHILD_ID,
+					} ),
+				} )
+			);
+		} );
 	} );
 
 	describe( 'Multiple Element Instances', () => {

@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
 use Elementor\Widget_Base;
@@ -30,9 +29,11 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
+
 		$this->origin_id = $data['origin_id'] ?? null;
 	}
 
@@ -73,10 +74,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['base_styles'] = $this->get_base_styles();
 		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
+		$config['base_settings'] = $this->get_base_settings();
 		$config['atomic_props_schema'] = $props_schema;
 		$config['atomic_pseudo_states'] = $this->define_atomic_pseudo_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
+		$config['default_html_tag'] = static::get_computed_html_tag( [] );
+		$config['html_tag_follows_link'] = static::html_tag_follows_link();
 		$config['meta'] = $this->get_meta();
 
 		return $config;
@@ -94,10 +98,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public static function generate() {
 		return Widget_Builder::make( static::get_element_type() );
-	}
-
-	public function get_script_depends() {
-		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
 	}
 
 	public function get_interaction_id() {

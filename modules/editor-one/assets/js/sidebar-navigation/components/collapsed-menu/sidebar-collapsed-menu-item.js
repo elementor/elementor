@@ -1,4 +1,5 @@
 import { useState } from '@wordpress/element';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
 import CollapsedMenuItemPopover from './collapsed-menu-item-popover';
@@ -27,6 +28,9 @@ const SidebarCollapsedMenuItem = ( {
 
 	const handleClick = () => {
 		if ( ! hasChildren ) {
+			EditorOneEventManager.sendSidebarMenuItemClicked( {
+				eventId: item.event_id,
+			} );
 			window.location.href = item.url;
 		}
 	};

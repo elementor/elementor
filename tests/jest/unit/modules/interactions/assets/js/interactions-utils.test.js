@@ -3,6 +3,7 @@ import {
 	getTransformBaselineFromComputedStyle,
 	preserveTransformKeyframes,
 	parseAnimationName,
+	skipInteraction,
 	extractAnimationConfig,
 	extractInteractionId,
 	getAnimateFunction,
@@ -11,23 +12,72 @@ import {
 	parseInteractionsData,
 } from 'elementor/modules/interactions/assets/js/interactions-utils';
 
-import { mockInteraction, mockBreakpoints, mockAnimation, mockTiming, mockConfig } from './utils';
+import { initBreakpoints } from 'elementor/modules/interactions/assets/js/interactions-breakpoints.js';
+
+import {
+	mockInteraction,
+	mockBreakpoints,
+	mockAnimation,
+	mockTiming,
+	mockConfig,
+	stubInteractionsConfig,
+} from './utils';
 
 describe( 'interactions-utils', () => {
 	beforeAll( () => {
-		window.ElementorInteractionsConfig = {
-			constants: {
-				defaultReplay: false,
-				defaultRelativeTo: 'viewport',
-				defaultStart: 0,
-				defaultEnd: 100,
-				slideDistance: 100,
-				scaleStart: 0,
-				defaultEasing: 'easeIn',
-				defaultDuration: 600,
-				defaultDelay: 0,
-			},
-		};
+		stubInteractionsConfig();
+
+		Object.defineProperty( window, 'innerWidth', {
+			value: 1024,
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	beforeEach( () => {
+		jest.resetModules();
+	} );
+
+	describe( 'skipInteraction', () => {
+		it( 'should skip interaction when trigger is not supported', () => {
+			const result = skipInteraction( { trigger: 'not-supported' } );
+			expect( result ).toBe( true );
+		} );
+
+		it( 'should skip interaction when effect is custom', () => {
+			const result = skipInteraction( { trigger: 'load', effect: 'custom' } );
+			expect( result ).toBe( true );
+		} );
+
+		it( 'should skip interaction when breakpoint is excluded', () => {
+			window.innerWidth = 1600;
+
+			initBreakpoints();
+
+			const result = skipInteraction( {
+				trigger: 'load',
+				effect: 'fade',
+				breakpoints: {
+					excluded: [ 'desktop' ],
+				},
+			} );
+
+			expect( result ).toBe( true );
+		} );
+
+		it( 'should not skip interaction when breakpoint is not excluded', () => {
+			window.innerWidth = 1024;
+
+			initBreakpoints();
+
+			const result = skipInteraction( {
+				trigger: 'load',
+				effect: 'fade',
+				breakpoints: { excluded: [ 'mobile' ] },
+			} );
+
+			expect( result ).toBe( false );
+		} );
 	} );
 
 	describe( 'getKeyframes', () => {

@@ -125,14 +125,16 @@ class Atomic_Styles_Manager {
 
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
 
+				// `CSS_Files_Manager::get()` owns the per-breakpoint decision: it consults the
+				// cache-validity leaf under `$breakpoint_path` (including the `should_exist`
+				// meta), regenerates when the cache is invalid or when a should-be-present file
+				// is missing on disk, and validates the leaf on success. See ED-24903.
 				$style_file = $this->css_files_manager->get(
 					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
 					$render_css,
-					$this->cache_validity->is_valid( $breakpoint_path )
+					$breakpoint_path
 				);
-
-				$this->cache_validity->validate( $breakpoint_path );
 
 				if ( ! $style_file ) {
 					continue;
@@ -154,13 +156,8 @@ class Atomic_Styles_Manager {
 
 		return Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) use ( $style_fonts ) {
-			if ( 'font-family' !== $key ) {
-				return;
-			}
-
-			$style_fonts->add( $value );
-		} )->render( $styles );
+		)->on_font_enqueue( fn( $font ) => $style_fonts->add( $font ) )
+			->render( $styles );
 	}
 
 	private function get_breakpoint_media( string $breakpoint_key ): ?string {
@@ -182,12 +179,22 @@ class Atomic_Styles_Manager {
 			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
 				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
+				if ( empty( $breakpoint ) ) {
+					$breakpoint = self::DEFAULT_BREAKPOINT;
+				}
+
 				if ( ! isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
-					$group[ $breakpoint ][ $style['id'] ] = [
+					$style_for_breakpoint = [
 						'id' => $style['id'],
 						'type' => $style['type'],
 						'variants' => [],
 					];
+
+					if ( isset( $style['cssName'] ) ) {
+						$style_for_breakpoint['cssName'] = $style['cssName'];
+					}
+
+					$group[ $breakpoint ][ $style['id'] ] = $style_for_breakpoint;
 				}
 
 				$group[ $breakpoint ][ $style['id'] ]['variants'][] = $variant;

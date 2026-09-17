@@ -4,8 +4,6 @@ import AtomicElementEmptyView from './container/atomic-element-empty-view';
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 
 export default function createAtomicElementBaseView( type ) {
-	const resolvedTagCache = new WeakMap();
-
 	const AtomicElementView = BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
@@ -13,21 +11,14 @@ export default function createAtomicElementBaseView( type ) {
 
 		_childrenRenderPromises: [],
 
-		tagName() {
-			return resolvedTagCache.get( this.model ) ?? this._resolveTag();
-		},
+		_createElement( tag ) {
+			const previewDocument = elementor.$preview?.[ 0 ]?.contentDocument;
 
-		_resolveTag() {
-			const renderContext = this.getResolverRenderContext?.();
-			const tagSetting = this.model.getSetting( 'tag' );
-			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
-			const tagValue = resolvedTag?.value ?? resolvedTag;
-
-			if ( this._hasLink( renderContext ) ) {
-				return 'a';
+			if ( previewDocument ) {
+				return previewDocument.createElement( tag );
 			}
 
-			return tagValue || this.model.config.default_html_tag || 'div';
+			return document.createElement( tag );
 		},
 
 		getChildViewContainer() {
@@ -54,177 +45,6 @@ export default function createAtomicElementBaseView( type ) {
 
 		getResolverRenderContext() {
 			return this._parent?.getResolverRenderContext?.();
-		},
-
-		className() {
-			const generatedClasses = this.getGeneratedClasses();
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() } ${ generatedClasses }`;
-		},
-
-		getGeneratedClasses() {
-			const propsSchema = this.model.config.atomic_props_schema || {};
-			const generatedClasses = [];
-
-			Object.keys( propsSchema ).forEach( ( key ) => {
-				const propMeta = propsSchema[ key ]?.meta;
-				if ( propMeta?.generates_class ) {
-					const classPattern = propMeta.generates_class;
-					const settingValue = this.model.getSetting( key );
-					const value = settingValue?.value ?? settingValue;
-
-					if ( value && 'string' === typeof value ) {
-						const className = classPattern.replace( '{value}', value );
-						generatedClasses.push( className );
-					}
-				}
-			} );
-
-			return generatedClasses.join( ' ' );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		ui() {
-			var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-			ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
-
-			return ui;
-		},
-
-		attributes() {
-			const attr = BaseElementView.prototype.attributes.apply( this );
-			const local = {};
-			const cssId = this.model.getSetting( '_cssid' );
-			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
-			const initialAttributes = this?.model?.config?.initial_attributes ?? {};
-
-			if ( cssId ) {
-				local.id = cssId.value;
-			}
-
-			local[ 'data-interaction-id' ] = this.getInteractionId();
-
-			customAttributes.forEach( ( attribute ) => {
-				const key = attribute.value?.key?.value;
-				const value = attribute.value?.value?.value;
-
-				if ( key && value ) {
-					local[ key ] = value;
-				}
-			} );
-
-			return {
-				...attr,
-				...initialAttributes,
-				...local,
-			};
-		},
-
-		// TODO: Copied from `views/column.js`.
-		attachElContent() {
-			BaseElementView.prototype.attachElContent.apply( this, arguments );
-
-			const $tooltip = jQuery( '<div>', {
-				class: 'elementor-column-percents-tooltip',
-				'data-side': elementorCommon.config.isRTL ? 'right' : 'left',
-			} );
-
-			this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentSize( size ) {
-			if ( ! size ) {
-				size = this.el.getBoundingClientRect().width;
-			}
-
-			return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentsForDisplay() {
-			const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
-
-			return width.toFixed( 1 ) + '%';
-		},
-
-		renderOnChange( settings ) {
-			const changed = settings.changedAttributes();
-
-			setTimeout( () => {
-				this.updateHandlesPosition();
-			} );
-
-			if ( ! changed ) {
-				return;
-			}
-
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
-				return;
-			}
-
-			BaseElementView.prototype.renderOnChange.apply( this, settings );
-
-			if ( changed.attributes ) {
-				const $elAttrs = this.$el[ 0 ].attributes;
-				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
-					const attrName = $elAttrs[ i ].name;
-					if ( attrName !== 'class' ) {
-						this.$el.removeAttr( attrName );
-					}
-				}
-
-				const newAttrs = this.attributes();
-				Object.entries( newAttrs ).forEach( ( [ key, value ] ) => {
-					if ( key !== 'class' && value !== undefined ) {
-						this.$el.attr( key, value );
-					}
-				} );
-
-				return;
-			}
-
-			// Check if classes changed OR if any setting with generates_class metadata changed
-			const propsSchema = this.model.config.atomic_props_schema || {};
-			const hasGeneratesClassChange = Object.keys( changed ).some( ( key ) => propsSchema[ key ]?.meta?.generates_class );
-
-			if ( changed.classes || hasGeneratesClassChange ) {
-			// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
-			// and would be lost when replacing the class attribute.
-				const preservedClasses = Array.from( this.$el[ 0 ].classList ).filter( ( cls ) => cls.startsWith( 'e--' ) );
-				this.$el.attr( 'class', this.className() );
-				preservedClasses.forEach( ( cls ) => this.$el[ 0 ].classList.add( cls ) );
-
-				return;
-			}
-
-			if ( changed._cssid ) {
-				if ( changed._cssid.value ) {
-					this.$el.attr( 'id', changed._cssid.value );
-				} else {
-					this.$el.removeAttr( 'id' );
-				}
-
-				return;
-			}
-
-			this.$el.addClass( this.getClasses() );
-		},
-
-		isTagChanged( changed ) {
-			const hasParent = Boolean( this._parent );
-			const hasTagOrLinkChange = changed?.tag !== undefined || changed?.link !== undefined;
-			const isTagMismatch = this.tagName()?.toLowerCase() !== this.el.tagName.toLowerCase();
-
-			return hasTagOrLinkChange && hasParent && isTagMismatch;
-		},
-
-		rerenderEntireView() {
-			const parent = this._parent;
-			this._parent.removeChildView( this );
-
-			parent.addChild( this.model, AtomicElementView, this._index );
 		},
 
 		render() {
@@ -266,66 +86,19 @@ export default function createAtomicElementBaseView( type ) {
 		_renderWithDomRecreation( resolve ) {
 			BaseElementView.prototype.render.apply( this, arguments );
 			this._waitForChildrenToComplete().then( () => {
-				this._applyResolvedAttributes();
 				resolve();
 			} );
 		},
 
 		_beforeRender() {
 			this._isRendering = true;
-			this._invalidateTagCache();
 			this.triggerMethod( 'before:render', this );
-		},
-
-		_invalidateTagCache() {
-			resolvedTagCache.delete( this.model );
-		},
-
-		_cacheResolvedTag( tag ) {
-			resolvedTagCache.set( this.model, tag );
 		},
 
 		_afterRender() {
 			this._isRendering = false;
 			this.isRendered = true;
 			this.triggerMethod( 'render', this );
-			this._applyResolvedAttributes();
-		},
-
-		_applyResolvedAttributes() {
-			if ( ! this._parent ) {
-				return;
-			}
-
-			if ( this._shouldRecreateForTagChange() ) {
-				return;
-			}
-
-			this._applyLinkAttributes();
-		},
-
-		_shouldRecreateForTagChange() {
-			const resolvedTag = this.tagName();
-			const currentTag = this.el.tagName.toLowerCase();
-
-			if ( resolvedTag === currentTag ) {
-				return false;
-			}
-
-			this._cacheResolvedTag( resolvedTag );
-			this.rerenderEntireView();
-			return true;
-		},
-
-		_applyLinkAttributes() {
-			this.$el.removeAttr( 'href' );
-			this.$el.removeAttr( 'data-action-link' );
-
-			const link = this.getLink();
-
-			if ( link ) {
-				this.$el.attr( link.attr, link.value );
-			}
 		},
 
 		async _waitForChildrenToComplete() {
@@ -361,9 +134,34 @@ export default function createAtomicElementBaseView( type ) {
 
 			// Defer to wait for everything to render.
 			setTimeout( () => {
+				if ( this.isAtomicGridContainer() ) {
+					this.reInitEmptyView();
+				}
+
 				this.droppableInitialize();
 				this.updateHandlesPosition();
 			} );
+		},
+
+		destroyEmptyView() {
+			if ( this.isAtomicGridContainer() ) {
+				return;
+			}
+
+			return Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		},
+
+		isAtomicGridContainer() {
+			return 'e-grid' === type;
+		},
+
+		reInitEmptyView() {
+			if ( this.el?.querySelector( ':scope > .elementor-empty-view' ) ) {
+				return;
+			}
+
+			delete this._showingEmptyView;
+			this.showEmptyView();
 		},
 
 		onDestroy() {
@@ -382,58 +180,6 @@ export default function createAtomicElementBaseView( type ) {
 					},
 				} ),
 			);
-		},
-
-		_hasLink( renderContext ) {
-			const linkSetting = this.model.getSetting( 'link' );
-			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
-
-			if ( 'link' !== resolvedLink?.$$type ) {
-				return false;
-			}
-
-			const destination = this._resolvePropValue( resolvedLink.value?.destination, renderContext );
-
-			return !! destination?.value;
-		},
-
-		getLink() {
-			const renderContext = this.getResolverRenderContext?.();
-			const linkSetting = this.model.getSetting( 'link' );
-			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
-
-			if ( 'link' !== resolvedLink?.$$type ) {
-				return null;
-			}
-
-			const destination = this._resolvePropValue( resolvedLink.value?.destination, renderContext );
-
-			if ( ! destination?.value ) {
-				return null;
-			}
-
-			const { $$type, value } = destination;
-
-			if ( 'dynamic' === $$type ) {
-				const resolvedValue = this.handleDynamicLink( value );
-
-				if ( ! resolvedValue ) {
-					return null;
-				}
-
-				return {
-					attr: 'action' === value.settings?.group ? 'data-action-link' : 'href',
-					value: resolvedValue,
-				};
-			}
-
-			const isPostId = 'number' === $$type;
-			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
-
-			return {
-				attr: 'href',
-				value: hrefPrefix + value,
-			};
 		},
 
 		droppableInitialize() {
@@ -456,9 +202,8 @@ export default function createAtomicElementBaseView( type ) {
 			];
 
 			const isAdministrator = elementor.config.user.is_administrator;
-			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
-			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+			if ( isAdministrator ) {
 				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
 				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
 				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
@@ -579,7 +324,7 @@ export default function createAtomicElementBaseView( type ) {
 			const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 			return {
-				axis: null,
+				axis: this.isAtomicGridContainer() ? 'vertical' : null,
 				items,
 				groups: [ 'elementor-element' ],
 				horizontalThreshold: 0,
@@ -596,34 +341,18 @@ export default function createAtomicElementBaseView( type ) {
 
 					const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 						draggedElement = draggedView?.getContainer().view.el,
-						containerElement = event.currentTarget.parentElement,
+						isEmptyViewTarget = this.emptyViewIsCurrentlyBeingDraggedOver(),
+						containerElement = isEmptyViewTarget ? this.el : event.currentTarget.parentElement,
 						elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
 
-					let targetIndex = elements.indexOf( event.currentTarget );
+					let targetIndex = isEmptyViewTarget ? elements.length : elements.indexOf( event.currentTarget );
 
 					if ( this.isPanelElement( draggedView, draggedElement ) ) {
-						if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+						if ( this.draggingOnBottomOrRightSide( side ) && ! isEmptyViewTarget ) {
 							targetIndex++;
 						}
 
 						this.onDrop( event, { at: targetIndex } );
-
-						if ( elementorCommon?.eventsManager?.dispatchEvent ) {
-							const selectedElement = elementor.channels.panelElements.request( 'element:selected' );
-
-							if ( selectedElement ) {
-								const elType = selectedElement.model?.get( 'elType' ) ?? '';
-								const widgetType = selectedElement.model?.get( 'widgetType' ) ?? '';
-								const elementName = 'widget' === elType ? widgetType : elType;
-
-								elementorCommon.eventsManager.dispatchEvent( 'add_element', {
-									location: 'editor_panel',
-									element_name: elementName,
-									element_type: elType,
-									widget_type: widgetType,
-								} );
-							}
-						}
 
 						return;
 					}
@@ -632,8 +361,8 @@ export default function createAtomicElementBaseView( type ) {
 						return;
 					}
 
-					if ( this.emptyViewIsCurrentlyBeingDraggedOver() ) {
-						this.moveDroppedItem( draggedView, 0 );
+					if ( isEmptyViewTarget ) {
+						this.moveDroppedItem( draggedView, targetIndex );
 						return;
 					}
 
@@ -793,29 +522,6 @@ export default function createAtomicElementBaseView( type ) {
 			this.addSectionView = addSectionView;
 		},
 
-		getClasses() {
-			const transformer = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry?.get?.( 'classes' );
-
-			if ( ! transformer ) {
-				return [];
-			}
-
-			return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
-		},
-
-		getClassString() {
-			const classes = this.getClasses();
-			const base = this.getBaseClass();
-
-			return [ base, ...classes ].join( ' ' );
-		},
-
-		getBaseClass() {
-			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
-
-			return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
-		},
-
 		isOverflowHidden() {
 			const elementStyles = window.getComputedStyle( this.el );
 			const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
@@ -849,83 +555,6 @@ export default function createAtomicElementBaseView( type ) {
 				return true;
 			}
 			return 0 === this.model.collection.indexOf( this.model );
-		},
-
-		getDynamicLinkValue( name, settings ) {
-			const simpleTransform = ( props ) => {
-				const transformed = Object.entries( props ).map( ( [ settingKey, settingValue ] ) => {
-					const value = 'object' === typeof settingValue && 'value' in settingValue ? settingValue.value : settingValue;
-
-					return [ settingKey, value ];
-				} );
-
-				return Object.fromEntries( transformed );
-			};
-
-			const getTagValue = () => {
-				const tag = elementor.dynamicTags.createTag( 'v4-dynamic-tag', name, simpleTransform( settings ) );
-
-				if ( ! tag ) {
-					return null;
-				}
-
-				return elementor.dynamicTags.loadTagDataFromCache( tag ) ?? null;
-			};
-
-			const tagValue = getTagValue();
-
-			if ( tagValue !== null ) {
-				return tagValue;
-			}
-
-			return new Promise( ( resolve ) => {
-				elementor.dynamicTags.refreshCacheFromServer( () => {
-					resolve( getTagValue() );
-				} );
-			} );
-		},
-
-		handleDynamicLink( linkValue ) {
-			const result = this.getDynamicLinkValue( linkValue.name, linkValue.settings );
-
-			if ( ! result ) {
-				return null;
-			}
-
-			if ( 'string' === typeof result ) {
-				return result;
-			}
-
-			result.then( ( href ) => {
-				this.el.removeAttribute( 'href' );
-
-				const attribute = 'action' === linkValue.group ? 'data-action-link' : 'href';
-
-				this.el.setAttribute( attribute, href );
-			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
-
-			return null;
-		},
-
-		_resolvePropValue( prop, renderContext ) {
-			if ( ! prop || typeof prop !== 'object' ) {
-				return prop;
-			}
-
-			if ( 'overridable' !== prop.$$type ) {
-				return prop;
-			}
-
-			const registry = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry;
-			const transformer = registry?.get?.( 'overridable' );
-
-			if ( ! transformer ) {
-				return prop.value?.origin_value;
-			}
-
-			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
-
-			return this._resolvePropValue( transformed, renderContext );
 		},
 
 		getInteractionId() {

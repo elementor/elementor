@@ -1,7 +1,9 @@
-import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
+import { ELEMENT_STYLE_CHANGE_EVENT, type V1ElementModelProps } from '@elementor/editor-elements';
 
+import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
+import { createPendingElement } from './create-pending-element';
 import { canBeTemplated, type TemplatedElementConfig } from './create-templated-element-type';
 import {
 	createAfterRender,
@@ -10,7 +12,13 @@ import {
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import {
+	type ElementModel,
+	type ElementType,
+	type ElementView,
+	type LegacyWindow,
+	type NestedTemplatedElementViewClass,
+} from './types';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -18,6 +26,8 @@ export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 };
 
 export type ModelExtensions = Record< string, unknown >;
+
+const STYLES_REFERENCE_UNTRACKED = Symbol( 'styles-reference-untracked' );
 
 export type CreateNestedTemplatedElementTypeOptions = {
 	type: string;
@@ -89,10 +99,10 @@ export function createNestedTemplatedElementView( {
 	type,
 	renderer,
 	element,
-}: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
+}: CreateNestedTemplatedElementViewOptions ): NestedTemplatedElementViewClass {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+	const { templateKey, baseStylesDictionary, resolveProps, defaultHtmlTag, htmlTagFollowsLink } = setupTwigRenderer( {
 		type,
 		renderer,
 		element,
@@ -101,13 +111,21 @@ export function createNestedTemplatedElementView( {
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
 	const parentOpenEditingPanel = AtomicElementBaseView.prototype._openEditingPanel;
+	const parentAddElement = AtomicElementBaseView.prototype.addElement;
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
 		_lastResolvedSettingsHash: null as string | null,
+		_lastRenderedStyles: STYLES_REFERENCE_UNTRACKED as typeof STYLES_REFERENCE_UNTRACKED | ElementModel[ 'styles' ],
 		_domUpdateWasSkipped: false,
 
 		template: false,
+
+		attributes() {
+			return {
+				'data-model-cid': this.model.cid,
+			};
+		},
 
 		getTemplateType() {
 			return 'twig';
@@ -155,6 +173,27 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			this.model.trigger( 'render:complete' );
+			this._notifyStylesChanged();
+		},
+
+		// `document/elements/create` fires before the nested template has fully painted, so the
+		// styles provider rebuilds CSS too early and misses the new local class IDs. Dispatching
+		// ELEMENT_STYLE_CHANGE_EVENT here — after the template and all children are in the DOM —
+		// gives the provider a second chance to regenerate CSS against the live class names.
+		//
+		// The reference-equality guard prevents a parent re-render from emitting one event per
+		// unchanged descendant. Use a sentinel for the initial state — otherwise elements with no
+		// local styles (undefined === undefined) would never notify, and descendants like e-heading
+		// that rely on this post-paint refresh would lose their CSS after detach.
+		_notifyStylesChanged() {
+			const styles = this.model.get( 'styles' );
+
+			if ( this._lastRenderedStyles !== STYLES_REFERENCE_UNTRACKED && styles === this._lastRenderedStyles ) {
+				return;
+			}
+
+			this._lastRenderedStyles = styles;
+
 			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 		},
 
@@ -173,7 +212,8 @@ export function createNestedTemplatedElementView( {
 					} );
 				} )
 				.then( async ( settings ) => {
-					const settingsHash = JSON.stringify( settings );
+					const resolvedSettings = this.afterSettingsResolve( settings );
+					const settingsHash = JSON.stringify( resolvedSettings );
 					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
 
 					if ( ! settingsChanged && this.isRendered ) {
@@ -188,10 +228,12 @@ export function createNestedTemplatedElementView( {
 						id: model.get( 'id' ),
 						interaction_id: this.getInteractionId(),
 						type,
-						settings,
+						settings: resolvedSettings,
+						tag: computeHtmlTag( resolvedSettings, defaultHtmlTag, { followLink: htmlTagFollowsLink } ),
 						base_styles: baseStylesDictionary,
 						editor_attributes: buildEditorAttributes( model ),
 						editor_classes: buildEditorClasses( model ),
+						...( this.getResolverRenderContext?.() ?? {} ),
 					};
 
 					return renderer.render( templateKey, context );
@@ -209,6 +251,10 @@ export function createNestedTemplatedElementView( {
 			this.bindUIElements();
 
 			this.triggerMethod( 'render:template' );
+		},
+
+		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
+			return settings;
 		},
 
 		getRenderContext() {
@@ -240,14 +286,20 @@ export function createNestedTemplatedElementView( {
 
 			this._destroyAlpine();
 
+			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
+			const needsTagSwap = oldEl.tagName !== newEl.tagName;
+			const targetEl = needsTagSwap ? ( oldEl.ownerDocument ?? document ).createElement( newEl.tagName ) : oldEl;
+
 			Array.from( newEl.attributes ).forEach( ( attr ) => {
-				oldEl.setAttribute( attr.name, attr.value );
+				targetEl.setAttribute( attr.name, attr.value );
 			} );
 
-			oldEl.setAttribute( 'draggable', 'true' );
+			targetEl.innerHTML = overlayHTML + newEl.innerHTML;
 
-			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
-			oldEl.innerHTML = overlayHTML + newEl.innerHTML;
+			if ( needsTagSwap ) {
+				oldEl.replaceWith( targetEl );
+				this.setElement( legacyWindow.jQuery( targetEl as unknown as string ) );
+			}
 		},
 
 		async _renderChildren() {
@@ -368,11 +420,19 @@ export function createNestedTemplatedElementView( {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
 		},
 
+		addElement( data: Partial< V1ElementModelProps >, options?: { edit?: boolean; at?: number } ) {
+			if ( this.isRendered ) {
+				return parentAddElement.call( this, data, options );
+			}
+
+			return createPendingElement( this, data, options );
+		},
+
 		getInteractionId() {
 			const originId = this.model.get( 'originId' );
 			const id = this.model.get( 'id' );
 
 			return originId ?? id;
 		},
-	} ) as unknown as typeof ElementView;
+	} ) as NestedTemplatedElementViewClass;
 }

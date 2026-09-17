@@ -2,10 +2,14 @@ import { getElementChildren } from './get-element-children';
 import { getRandomStyleId } from './get-random-style-id';
 
 export function regenerateLocalStyleIds( container ) {
+	if ( ! container?.model ) {
+		return;
+	}
+
 	const allElements = getElementChildren( container.model );
 
 	const styledElements = allElements.filter( ( model ) => {
-		return Object.keys( model.get( 'styles' ) ?? {} ).length > 0;
+		return model && Object.keys( model.get( 'styles' ) ?? {} ).length > 0;
 	} );
 
 	updateElementsStyleIdsInsideOut( styledElements );

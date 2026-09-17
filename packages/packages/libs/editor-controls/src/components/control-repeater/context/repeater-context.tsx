@@ -4,6 +4,7 @@ import { type PropTypeUtil } from '@elementor/editor-props';
 import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { usePopoverDismiss } from '../../../hooks/use-repeater-popover-dismiss';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { eventBus } from '../../../services/event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
@@ -143,6 +144,18 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		const newItems = [ ...items.slice( 0, index ), updatedItem, ...items.slice( index + 1 ) ];
 		setItems( newItems );
 	};
+
+	const closePopover = () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		setOpenItemIndex( EMPTY_OPEN_ITEM );
+		setRowRef( null );
+		popoverState.close();
+	};
+
+	usePopoverDismiss( { isOpen, onClose: closePopover } );
 
 	return (
 		<RepeaterContext.Provider

@@ -1,3 +1,5 @@
+import { isWidgetNew as checkIsWidgetNew } from './utils/is-widget-new';
+
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
@@ -106,6 +108,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		( elementor.config.atomicWidgetPromotions || [] ).forEach( ( { type, widgets } ) => {
+			( widgets || [] ).forEach( ( widget ) => {
+				elementsCollection.add( {
+					name: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					categories: JSON.parse( widget.categories ),
+					editable: false,
+					promotionType: type,
+					widgetType: widget.name,
+				} );
+			} );
+		} );
+
 		if ( elementor.config.integrationWidgets ) {
 			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
 
@@ -126,8 +142,13 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
-					replacements = widget.replacements,
+				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+
+				if ( ! originalWidget ) {
+					return;
+				}
+
+				const replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
 
 				if ( ! this.shouldAddWidget( presetWidget ) ) {
@@ -141,6 +162,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.elementsCollection = elementsCollection;
 	},
 
+	isWidgetNew( item ) {
+		return checkIsWidgetNew( item, elementor.config.version );
+	},
+
 	getCollectionItem( item ) {
 		return {
 			title: item.title,
@@ -152,6 +177,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			custom: item.custom,
 			editable: item.editable,
 			hideOnSearch: item.hide_on_search,
+			isNew: this.isWidgetNew( item ),
 		};
 	},
 
@@ -242,6 +268,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			options = viewDetails.options || {};
 
 		viewDetails.region.show( new viewDetails.view( options ) );
+
+		if ( 'elements' === viewName ) {
+			this.appendStickyPromotion();
+		}
+	},
+
+	appendStickyPromotion() {
+		if ( this.$( '#elementor-panel-get-pro-elements-sticky' ).length ) {
+			return;
+		}
+
+		const html = Marionette.Renderer.render( '#tmpl-elementor-panel-element-sticky-promotion', {} ).trim();
+
+		if ( html ) {
+			this.$el.append( html );
+		}
 	},
 
 	clearSearchInput() {

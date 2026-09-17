@@ -140,6 +140,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 						await nestedAccordionItemTitleFront.nth( i ).click();
 					}
 				} );
+
 				await page.waitForTimeout( 1000 );
 
 				// Assert.

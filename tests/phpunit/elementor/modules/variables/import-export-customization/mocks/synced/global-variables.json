@@ -1,0 +1,19 @@
+{
+  "data": {
+    "e-gv-synced": {
+      "type": "global-color-variable",
+      "label": "Synced Color",
+      "value": "#ff5733",
+      "order": 1,
+      "sync_to_v3": true
+    },
+    "e-gv-unsynced": {
+      "type": "global-color-variable",
+      "label": "Unsynced Color",
+      "value": "#33ff57",
+      "order": 2
+    }
+  },
+  "watermark": 5,
+  "version": 1
+}

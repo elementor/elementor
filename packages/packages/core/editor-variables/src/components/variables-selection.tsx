@@ -95,6 +95,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 			onSettings();
 			trackVariablesManagerEvent( {
 				action: 'openManager',
+				source: 'vars-popover',
 				varType: variableType,
 				controlPath: path.join( '.' ),
 			} );

@@ -14,6 +14,7 @@ export {
 
 export {
 	setReady as __privateSetReady,
+	isReady as __privateIsReady,
 	listenTo as __privateListenTo,
 	flushListeners as __privateFlushListeners,
 	dispatchReadyEvent as __privateDispatchReadyEvent,

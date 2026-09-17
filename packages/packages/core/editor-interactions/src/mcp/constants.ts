@@ -1,5 +1,11 @@
 export const MAX_INTERACTIONS_PER_ELEMENT = 5;
-export const EDITOR_INTERACTIONS_MCP_INSTRUCTIONS = `MCP server for managing element interactions and animations. Use this to add, modify, or remove animations and motion effects triggered by user events such as page load or scroll-into-view.
+export const EDITOR_INTERACTIONS_MCP_SHORT_DESCRIPTION = `Everything related to V4 ( Atomic ) interactions.
+# Interactions
+- Create/update/delete interactions
+- Get list of interactions
+- Get details of an interaction
+`;
+export const EDITOR_INTERACTIONS_MCP_DESCRIPTION = `MCP server for managing element interactions and animations. Use this to add, modify, or remove animations and motion effects triggered by user events such as page load or scroll-into-view.
 		** IMPORTANT **
 		Use the "interactions-schema" resource to get the schema of the interactions.
 		Actions:
@@ -8,7 +14,7 @@ export const EDITOR_INTERACTIONS_MCP_INSTRUCTIONS = `MCP server for managing ele
 		- update: Update an existing interaction by its interactionId.
 		- delete: Remove a specific interaction by its interactionId.
 		- clear: Remove all interactions from the element.
-		
+
 		For add/update, provide: trigger, effect, effectType, direction (required for slide effect), duration, delay, easing.
 		Use excludedBreakpoints to disable the animation on specific responsive breakpoints (e.g. ["mobile", "tablet"]).
 		Example Get Request:

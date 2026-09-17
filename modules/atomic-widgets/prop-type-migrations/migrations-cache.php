@@ -45,6 +45,18 @@ class Migrations_Cache {
 		update_post_meta( $id, $cache_meta_key, self::get_migration_state( $manifest_hash ) );
 	}
 
+	/**
+	 * Clear migration cache for a specific entity
+	 *
+	 * @param int    $id Meta ID, can be post ID or any other unique ID
+	 * @param string $data_identifier Unique identifier for Data. Different DB tables migrate separately, and therefore cached individually
+	 * @return void
+	 */
+	public static function clear_migration_cache( int $id, string $data_identifier ): void {
+		$cache_meta_key = self::get_cache_meta_key( $data_identifier );
+		delete_post_meta( $id, $cache_meta_key );
+	}
+
 	public static function clear_all(): void {
 		global $wpdb;
 
@@ -70,6 +82,16 @@ class Migrations_Cache {
 		] );
 	}
 
+	public static function get_version_fingerprint(): string {
+		$fingerprint = ELEMENTOR_VERSION;
+
+		if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) {
+			$fingerprint .= ':' . ELEMENTOR_PRO_VERSION;
+		}
+
+		return $fingerprint;
+	}
+
 	private static function get_cache_meta_key( string $data_identifier ): string {
 		return self::MIGRATIONS_STATE_META_KEY . '_' . substr( md5( $data_identifier ), 0, 4 );
 	}
@@ -79,6 +101,6 @@ class Migrations_Cache {
 			return '';
 		}
 
-		return ELEMENTOR_VERSION . ':' . $manifest_hash;
+		return self::get_version_fingerprint() . ':' . $manifest_hash;
 	}
 }

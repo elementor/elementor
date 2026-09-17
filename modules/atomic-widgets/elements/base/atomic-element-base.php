@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
@@ -17,6 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
 	use Has_Meta;
+
+	/**
+	 * Maps atomic element type → the minor version when the "New" badge expires.
+	 * Format: 'element-type' => 'major.minor'  (patch is ignored during comparison).
+	 *
+	 * @var array<string, string>
+	 */
+	private const NEW_ATOMIC_ELEMENTS = [
+		'e-background-video' => '4.3',
+		'e-accordion' => '4.3',
+		'e-list' => '4.3',
+	];
 
 	protected $version = '0.0';
 	protected $styles = [];
@@ -34,10 +46,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
-		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
+
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
+
 		$this->origin_id = $data['origin_id'] ?? null;
 	}
 
@@ -85,6 +98,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['atomic_pseudo_states'] = $this->define_atomic_pseudo_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
+		$config['base_settings'] = $this->get_base_settings();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = $this->should_show_in_panel();
 		$config['categories'] = $this->define_panel_categories();
@@ -92,11 +106,14 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
 		$config['default_children'] = $this->define_default_children();
+		$config['children_dependencies'] = $this->get_children_dependencies_config();
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
-		$config['default_html_tag'] = $this->define_default_html_tag();
+		$config['default_html_tag'] = static::get_computed_html_tag( [] );
+		$config['html_tag_follows_link'] = static::html_tag_follows_link();
 		$config['meta'] = $this->get_meta();
 		$config['allowed_child_types'] = $this->define_allowed_child_types();
+		$config['new_until_version'] = self::NEW_ATOMIC_ELEMENTS[ $this->get_name() ] ?? '';
 
 		return $config;
 	}
@@ -113,8 +130,35 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
-	protected function define_default_html_tag() {
-		return 'div';
+	/**
+	 * Declare settings→children reconcile rules for this element.
+	 *
+	 * Each rule ties a `Dependency_Manager` condition on this element's
+	 * settings to the presence of a specific child element type. The generic
+	 * client-side reconciler (`@elementor/editor-elements/children-dependencies`)
+	 * attaches / detaches the child at the model layer as the condition flips,
+	 * without per-widget v1 hooks.
+	 *
+	 * @return Child_Dependency[]
+	 */
+	protected function define_children_dependencies(): array {
+		return [];
+	}
+
+	private function get_children_dependencies_config(): array {
+		$config = [];
+
+		foreach ( $this->define_children_dependencies() as $dependency ) {
+			if ( ! $dependency instanceof Child_Dependency ) {
+				throw new \InvalidArgumentException(
+					esc_html( static::class . '::define_children_dependencies() must return Child_Dependency instances.' )
+				);
+			}
+
+			$config[] = $dependency->build();
+		}
+
+		return $config;
 	}
 
 	protected function define_initial_attributes() {
@@ -160,10 +204,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * @return string
 	 */
 	protected function get_html_tag(): string {
-		$settings = $this->get_atomic_settings();
-		$default_html_tag = $this->define_default_html_tag();
-
-		return ! empty( $settings['link']['href'] ) ? $settings['link']['tag'] : ( $settings['tag'] ?? $default_html_tag );
+		return static::get_computed_html_tag( $this->get_atomic_settings() );
 	}
 
 	/**
@@ -184,6 +225,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function print_custom_attributes() {
 		$settings = $this->get_atomic_settings();
 		$attributes = $settings['attributes'] ?? '';
+
+		if ( isset( $settings['link']['attributes'] ) ) {
+			$attributes .= ' ' . ( $settings['link']['attributes'] ?? '' );
+		}
+
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ' ' . $attributes;

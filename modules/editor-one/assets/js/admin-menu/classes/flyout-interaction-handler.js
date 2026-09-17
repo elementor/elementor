@@ -1,3 +1,5 @@
+import { MenuEventsTracker } from './menu-events-tracker';
+
 export class FlyoutInteractionHandler {
 	constructor() {
 		this.activeMenu = null;
@@ -83,6 +85,8 @@ export class FlyoutInteractionHandler {
 	}
 
 	showFlyout( parentLi, flyoutMenu ) {
+		const wasAlreadyVisible = flyoutMenu.classList.contains( 'elementor-submenu-flyout-visible' );
+
 		if ( this.activeMenu && this.activeMenu !== flyoutMenu ) {
 			this.hideFlyout( this.activeMenu );
 		}
@@ -92,6 +96,10 @@ export class FlyoutInteractionHandler {
 		flyoutMenu.classList.add( 'elementor-submenu-flyout-visible' );
 		this.activeMenu = flyoutMenu;
 		this.activeParent = parentLi;
+
+		if ( ! wasAlreadyVisible ) {
+			MenuEventsTracker.trackEditorSubMenuOpened();
+		}
 	}
 
 	hideFlyout( flyoutMenu ) {

@@ -4,9 +4,11 @@ namespace Elementor\Modules\Components\Widgets;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\Transformers\Overridable_Transformer;
+use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +18,7 @@ class Component_Instance extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'e-component';
+		return Component_Instance_Prop_Type::WIDGET_TYPE;
 	}
 
 	public function show_in_panel() {
@@ -99,5 +101,30 @@ class Component_Instance extends Atomic_Widget_Base {
 		}
 
 		return $overrides;
+	}
+
+	public function get_inner_elements_data_for_search(): array {
+		$component_id = $this->get_component_id();
+
+		if ( null === $component_id ) {
+			return [];
+		}
+
+		$repository = new Components_Repository();
+		$component = $repository->get( $component_id );
+
+		if ( ! $component ) {
+			return [];
+		}
+
+		$elements_data = $component->get_elements_data();
+
+		return Format_Component_Elements_Id::format( $elements_data, [ $this->get_id() ] );
+	}
+
+	private function get_component_id(): ?int {
+		$component_id = Component_Instance_Prop_Type::extract_component_id( $this->get_settings() );
+
+		return null === $component_id ? null : (int) $component_id;
 	}
 }

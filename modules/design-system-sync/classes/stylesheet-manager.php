@@ -20,8 +20,12 @@ class Stylesheet_Manager extends Base_File {
 		parent::__construct( self::FILE_NAME );
 	}
 
-	public function generate(): array {
+	public function generate(): ?array {
 		$this->update();
+
+		if ( ! file_exists( $this->get_path() ) ) {
+			return null;
+		}
 
 		return [
 			'url' => $this->get_url(),

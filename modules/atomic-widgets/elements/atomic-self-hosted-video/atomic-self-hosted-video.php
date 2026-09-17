@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Video_Control;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -64,6 +65,10 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return 'eicon-video';
 	}
 
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'video' );
+	}
+
 	protected static function define_props_schema(): array {
 		$playsinline_dependencies = Dependency_Manager::make()
 			->where([
@@ -96,7 +101,8 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'source' => Video_Src_Prop_Type::make(),
+			'source' => Video_Src_Prop_Type::make()
+				->alias( 'video', 'src' ),
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
 			'playsinline' => Boolean_Prop_Type::make()
 				->default( false )
@@ -132,6 +138,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items([
 					Video_Control::bind_to( 'source' )
 						->set_label( esc_html__( 'Video', 'elementor' ) ),

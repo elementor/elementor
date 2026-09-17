@@ -167,7 +167,7 @@ class Utils {
 			$max_base_length = $max_length - strlen( $suffix_str );
 			$base_label = mb_substr( $label, 0, $max_base_length );
 			$new_label = $base_label . $suffix_str;
-			$suffix++;
+			++$suffix;
 		} while ( in_array( strtolower( $new_label ), $existing_labels, true ) && $suffix < $max_suffix_attempts );
 
 		return $new_label;

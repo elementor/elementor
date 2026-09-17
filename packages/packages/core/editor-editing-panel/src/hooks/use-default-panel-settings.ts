@@ -1,5 +1,3 @@
-import { createContext, useContext } from 'react';
-
 import { useElement } from '../contexts/element-context';
 
 type Defaults = {
@@ -7,15 +5,17 @@ type Defaults = {
 	defaultTab: string;
 };
 
+export type { Defaults as ElementPanelDefaults };
+
 const fallbackEditorSettings: Defaults = {
 	defaultSectionsExpanded: {
-		settings: [ 'Content', 'Settings' ],
+		settings: [ 'content', 'settings' ],
 		style: [],
 	},
 	defaultTab: 'settings',
 };
 
-const defaultPanelSettingsContext = createContext< Record< string, Defaults | undefined > >( {
+const elementPanelDefaults: Record< string, Defaults > = {
 	'e-div-block': {
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
@@ -24,14 +24,21 @@ const defaultPanelSettingsContext = createContext< Record< string, Defaults | un
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
 	},
+	'e-grid': {
+		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
+		defaultTab: 'style',
+	},
 	'e-divider': {
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
 	},
-} );
+};
+
+export function registerElementPanelDefaults( type: string, defaults: Defaults ): void {
+	elementPanelDefaults[ type ] = defaults;
+}
 
 export const useDefaultPanelSettings = () => {
 	const { element } = useElement();
-	const defaults = useContext( defaultPanelSettingsContext )[ element.type ];
-	return defaults || fallbackEditorSettings;
+	return elementPanelDefaults[ element.type ] ?? fallbackEditorSettings;
 };

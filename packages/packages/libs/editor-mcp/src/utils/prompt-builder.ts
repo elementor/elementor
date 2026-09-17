@@ -44,15 +44,9 @@ class ToolPrompts {
 		return `# ${ this.name }
 # Description
 ${ this._description }
-
-${ this._parameters.length ? '# Parameters' : '' }
-${ Object.values( this._parameters ).join( '\n\n' ) }
-
-${ this._examples.length ? '# Examples' : '' }
-${ this.examples }
-
-${ this._furtherInstructions.length ? '# Further Instructions' : '' }
-${ this._furtherInstructions.join( '\n\n' ) }
+${ this._parameters.length ? '# Parameters\n' + Object.values( this._parameters ).join( '\n\n' ) : '' }
+${ this._examples.length ? '# Examples\n' + this.examples : '' }
+${ this._furtherInstructions.length ? '# Further Instructions\n' + this._furtherInstructions.join( '\n\n' ) : '' }
 `.trim();
 	}
 }

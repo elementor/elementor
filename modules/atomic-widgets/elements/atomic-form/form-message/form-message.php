@@ -1,18 +1,20 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Message;
 
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,13 +26,18 @@ abstract class Form_Message extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A container for form status messages (success or error). Hidden by default, shown based on form submission state.';
+
 	abstract protected static function get_background_color(): string;
 
 	abstract protected static function get_text_color(): string;
 
+	abstract protected static function get_default_status_paragraph_text(): string;
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
+		$this->meta( 'permanently_locked', true );
 	}
 
 	public function get_icon() {
@@ -46,6 +53,20 @@ abstract class Form_Message extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+		];
+	}
+
+	protected function define_allowed_child_types() {
+		return [];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Paragraph::generate()
+				->settings( [
+					'paragraph' => Escaped_Html_Prop_Type::generate( static::get_default_status_paragraph_text() ),
+				] )
+				->build(),
 		];
 	}
 
@@ -82,7 +103,6 @@ abstract class Form_Message extends Atomic_Element_Base {
 								'size' => 12,
 								'unit' => 'px',
 							] ),
-							'font-family' => String_Prop_Type::generate( 'Poppins' ),
 						] )
 				),
 		];

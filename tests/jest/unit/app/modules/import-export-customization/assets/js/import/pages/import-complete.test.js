@@ -63,7 +63,7 @@ describe( 'ImportComplete Page', () => {
 		// Act
 		render( <ImportComplete /> );
 		// Assert
-		expect( screen.getByText( /Your website templates is now live on your site!/i ) ).toBeTruthy();
+		expect( screen.getByText( /Your website template is now live on your site!/i ) ).toBeTruthy();
 		expect( screen.getByText( /You've imported and applied the following to your site:/i ) ).toBeTruthy();
 		expect( screen.getByText( /What's included:/i ) ).toBeTruthy();
 		expect( screen.getByText( /Site settings/i ) ).toBeTruthy();

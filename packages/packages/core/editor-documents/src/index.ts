@@ -18,6 +18,7 @@ export {
 	getV1CurrentDocument,
 	isDocumentDirty,
 	invalidateDocumentData,
+	reloadCurrentDocument,
 	switchToDocument,
 } from './sync/utils';
 

@@ -15,7 +15,6 @@ export default function useDocumentViewPageProps() {
 			const eventName = config?.names?.editorOne?.topBarPublishDropdown;
 			if ( eventName ) {
 				dispatchEvent?.( eventName, {
-					app_type: config?.appTypes?.editor,
 					window_name: config?.appTypes?.editor,
 					interaction_type: config?.triggers?.click?.toLowerCase(),
 					target_type: config?.targetTypes?.dropdownItem,

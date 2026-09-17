@@ -33,6 +33,7 @@ export default function QuotaNotification( { usagePercentage } ) {
 					<>
 						<strong>{ __( 'Website template storage is full.', 'elementor' ) }</strong>
 						{ ' ' }
+						{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 						{ __( 'Get more space ', 'elementor' ) }
 					</>
 				),
@@ -56,6 +57,7 @@ export default function QuotaNotification( { usagePercentage } ) {
 							sprintf( __( 'Website template storage is %1$s%% full.', 'elementor' ), Math.round( usagePercentage ) )
 						}</strong>
 						{ ' ' }
+						{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 						{ __( 'Get more space ', 'elementor' ) }
 					</>
 				),

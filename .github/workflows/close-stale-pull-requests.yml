@@ -1,0 +1,71 @@
+name: Close stale pull requests
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close-stale:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Close pull requests with no updates in configured months
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STALE_PR_MONTHS: ${{ vars.STALE_PR_MONTHS || '3' }}
+        run: |
+          set -euo pipefail
+
+          THRESHOLD=$(date -d "${STALE_PR_MONTHS} months ago" +%s)
+
+          gh pr list --repo "${{ github.repository }}" --state open --limit 1000 \
+            --json number,title,updatedAt > prs.json
+
+          if [ "$(jq length prs.json)" -eq 0 ]; then
+            echo "No open pull requests"
+            exit 0
+          fi
+
+          COMMENT="$(cat <<'STALE_PR_COMMENT'
+          Hi there 👋
+
+          Thank you for the time and effort you put into this PR and for contributing to Elementor. We truly appreciate your work and engagement with the community.
+
+          After internal considerations, we’ve decided not to move forward with this PR at this time.
+
+          Please note this is not a reflection on the quality or value of your contribution.
+
+          Thank you again for contributing to Elementor and being part of the community. 🙏
+
+          We're always happy to review new submissions and collaborate further.
+
+          Sincerely,
+          The Elementor Team
+          STALE_PR_COMMENT
+          )"
+
+          STALE_COUNT=0
+
+          while read -r pr; do
+            NUMBER=$(echo "$pr" | jq -r '.number')
+            TITLE=$(echo "$pr" | jq -r '.title')
+            UPDATED_AT=$(echo "$pr" | jq -r '.updatedAt')
+            UPDATED_TS=$(date --date="$UPDATED_AT" +%s)
+
+            if [ "$UPDATED_TS" -lt "$THRESHOLD" ]; then
+              echo "Closing stale PR #${NUMBER}: '${TITLE}' (last updated: ${UPDATED_AT})"
+              if ! gh pr close "$NUMBER" --repo "${{ github.repository }}" --comment "$COMMENT"; then
+                echo "Failed to close PR #${NUMBER}"
+                continue
+              fi
+              STALE_COUNT=$((STALE_COUNT + 1))
+            else
+              echo "Skipping PR #${NUMBER} — still within activity window (last updated: ${UPDATED_AT})"
+            fi
+          done < <(jq -c '.[]' prs.json)
+
+          echo "Closed ${STALE_COUNT} stale pull request(s)"

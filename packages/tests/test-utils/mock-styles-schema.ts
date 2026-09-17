@@ -312,9 +312,9 @@ export const mockStylesSchema = {
 					},
 				},
 			},
-			'border-radius': {
+			'border-radius-v2': {
 				kind: 'object',
-				key: 'border-radius',
+				key: 'border-radius-v2',
 				default: null,
 				meta: {},
 				settings: {},
@@ -437,7 +437,7 @@ export const mockStylesSchema = {
 	},
 	'border-width': {
 		kind: 'object',
-		key: 'border-width',
+		key: 'border-width-v2',
 		default: null,
 		meta: {},
 		settings: {},

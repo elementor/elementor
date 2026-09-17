@@ -20,6 +20,7 @@ describe( 'dispatchers', () => {
 			route: jest.fn(),
 			routes: {
 				register: jest.fn(),
+				getCurrent: jest.fn(),
 			},
 		};
 	} );

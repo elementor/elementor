@@ -1,3 +1,6 @@
+import { createV4FlexboxFromPreset } from './v4-flexbox-preset';
+import { createV4GridFromPreset } from './v4-grid-preset';
+
 /**
  * @typedef {import('../container/container')} Container
  */
@@ -14,6 +17,10 @@ export class ContainerHelper {
 	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
 	static CONTAINER_TYPE_GRID = 'grid';
 	static V4_DEFAULT_CONTAINER_TYPE = 'e-flexbox';
+
+	static isV4OptIn() {
+		return !! elementorCommon?.config?.experimentalFeatures?.e_opt_in_v4;
+	}
 
 	/**
 	 * Create multiple container elements.
@@ -141,6 +148,54 @@ export class ContainerHelper {
 	}
 
 	/**
+	 * Create a grid container element based on a layout wizard preset.
+	 *
+	 * @param {string}    structure       - Grid preset structure (e.g. `1-2`, `2-3`).
+	 * @param {Container} target          - The target container of the newly created element.
+	 * @param {Object}    options         - Additional command options.
+	 * @param {Object}    modelAttributes - Additional model attributes (V3 only).
+	 *
+	 * @return {Container} - Container created on.
+	 */
+	static createContainerFromGridPreset( structure, target = elementor.getPreviewContainer(), options = {}, modelAttributes = {} ) {
+		if ( ContainerHelper.isV4OptIn() ) {
+			return createV4GridFromPreset( structure, target, options );
+		}
+
+		const parsedStructure = elementor.presetsFactory.getParsedGridStructure( structure );
+
+		return ContainerHelper.createContainer(
+			{
+				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
+				grid_columns_grid: {
+					unit: 'fr',
+					size: parsedStructure.columns,
+				},
+				grid_rows_grid: {
+					unit: 'fr',
+					size: parsedStructure.rows,
+				},
+				grid_rows_grid_mobile: {
+					unit: 'fr',
+					size: parsedStructure.rows,
+				},
+			},
+			target,
+			options,
+			{
+				title: __( 'Grid', 'elementor' ),
+				custom: {
+					isPreset: true,
+					preset_settings: {
+						presetIcon: 'eicon-container-grid',
+					},
+				},
+				...modelAttributes,
+			},
+		);
+	}
+
+	/**
 	 * Create a Container element based on a preset.
 	 *
 	 * @param {string}    preset                       - Preset structure of the sub containers (e.g. `33-66-66-33`).
@@ -151,6 +206,10 @@ export class ContainerHelper {
 	 * @return {Container} - Container created on.
 	 */
 	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
+		if ( ContainerHelper.isV4OptIn() ) {
+			return createV4FlexboxFromPreset( preset, target, options );
+		}
+
 		const historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
 				title: __( 'Container', 'elementor' ),

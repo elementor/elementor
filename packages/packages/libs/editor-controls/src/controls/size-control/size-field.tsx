@@ -107,7 +107,7 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 					</InputAdornment>
 				),
 			} }
-			inputProps={ { min, step: 'any', 'arial-label': ariaLabel } }
+			inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
 		/>
 	);
 };

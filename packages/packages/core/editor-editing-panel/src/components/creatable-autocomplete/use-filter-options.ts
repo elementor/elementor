@@ -2,6 +2,12 @@ import { createFilterOptions } from '@elementor/ui';
 
 import { type InternalOption, type Option } from './types';
 
+const STRIP_NON_CLASS_CHARS = /[^a-zA-Z0-9_-]/g;
+
+function normalizeClassSearch( value: string ) {
+	return value.replace( STRIP_NON_CLASS_CHARS, '' ).toLowerCase();
+}
+
 export function useFilterOptions< TOption extends Option >( parameters: {
 	options: TOption[];
 	selected: TOption[];
@@ -10,7 +16,9 @@ export function useFilterOptions< TOption extends Option >( parameters: {
 } ) {
 	const { options, selected, onCreate, entityName } = parameters;
 
-	const filter = createFilterOptions< InternalOption< TOption > >();
+	const filter = createFilterOptions< InternalOption< TOption > >( {
+		matchFrom: 'any',
+	} );
 
 	const filterOptions = (
 		optionList: InternalOption< TOption >[],
@@ -23,7 +31,7 @@ export function useFilterOptions< TOption extends Option >( parameters: {
 
 		const filteredOptions = filter(
 			optionList.filter( ( option ) => ! selectedValues.includes( option.value ) ),
-			params
+			{ ...params, inputValue: normalizeClassSearch( params.inputValue ) }
 		);
 
 		const isExisting = options.some( ( option ) => params.inputValue === option.label );

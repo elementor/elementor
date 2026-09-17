@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Variables\ImportExportCustomization;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\Variables\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -16,6 +17,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 	private const VARIABLES_META_KEY = '_elementor_global_variables';
 
 	public function setUp(): void {
+		$this->ensure_active_kit_is_valid();
+
 		parent::setUp();
 
 		$this->clear_variables();
@@ -25,6 +28,33 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->clear_variables();
 
 		parent::tearDown();
+	}
+
+	/**
+	 * The previous test class may have left OPTION_ACTIVE pointing to a kit that was wiped
+	 * by WP_UnitTestCase::tear_down_after_class(). create_default_kit() short-circuits when
+	 * the option is set, so we must clear the dangling option before parent::setUp() runs.
+	 */
+	private function ensure_active_kit_is_valid(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
+	}
+
+	/**
+	 * Tests that call create_new_kit() switch OPTION_ACTIVE to a fresh kit. After the class
+	 * finishes, _delete_all_data() wipes that kit's post but the option still points at the
+	 * deleted ID. Reset the options here so the next test class's create_default_kit() will
+	 * provision a fresh default kit.
+	 */
+	public static function tearDownAfterClass(): void {
+		delete_option( Kits_Manager::OPTION_ACTIVE );
+		delete_option( Kits_Manager::OPTION_PREVIOUS );
+
+		parent::tearDownAfterClass();
 	}
 
 	private function clear_variables(): void {
@@ -42,11 +72,11 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$this->assertArrayHasKey( 'data', $result );
-		$this->assertArrayHasKey( 'e-gv-123', $result['data'] );
-		$this->assertArrayHasKey( 'e-gv-456', $result['data'] );
-		$this->assertEquals( 'Primary Color', $result['data']['e-gv-123']['label'] );
-		$this->assertEquals( 'Primary Font', $result['data']['e-gv-456']['label'] );
+		$this->assertCount( 2, $result['created'] );
+		$this->assertEmpty( $result['renamed'] );
+		$this->assertEmpty( $result['replaced'] );
+		$this->assertEmpty( $result['skipped'] );
+		$this->assertEmpty( $result['failed'] );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$repository = new Variables_Repository( $kit );
@@ -55,6 +85,76 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertCount( 2, $collection->all() );
 		$this->assertEquals( 'Primary Color', $collection->get( 'e-gv-123' )->label() );
 		$this->assertEquals( 'Primary Font', $collection->get( 'e-gv-456' )->label() );
+	}
+
+	public function test_import__preserves_sync_to_v3_flag() {
+		// Act.
+		( new Import_Runner() )->import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+		], [] );
+
+		// Assert.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertTrue( $collection->get( 'e-gv-synced' )->sync_to_v3() );
+		$this->assertFalse( $collection->get( 'e-gv-unsynced' )->sync_to_v3() );
+	}
+
+	private function seed_variable( string $id, string $label, bool $sync_to_v3 ): void {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$kit->update_json_meta( self::VARIABLES_META_KEY, [
+			'data' => [
+				$id => [
+					'type' => 'global-color-variable',
+					'label' => $label,
+					'value' => '#000000',
+					'order' => 1,
+					'sync_to_v3' => $sync_to_v3,
+				],
+			],
+			'watermark' => 1,
+		] );
+	}
+
+	public function test_replace__applies_incoming_sync_to_v3_flag() {
+		// Arrange.
+		$this->seed_variable( 'e-gv-local', 'Synced Color', false );
+
+		// Act.
+		$result = ( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+			'customization' => [ 'design-system' => [ 'conflict_resolution' => 'replace' ] ],
+		], [] );
+
+		// Assert.
+		$this->assertCount( 1, $result['replaced'] );
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertTrue( $collection->get( 'e-gv-local' )->sync_to_v3() );
+	}
+
+	public function test_replace__clears_sync_to_v3_when_incoming_is_unsynced() {
+		// Arrange.
+		$this->seed_variable( 'e-gv-local', 'Unsynced Color', true );
+
+		// Act.
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+			'customization' => [ 'design-system' => [ 'conflict_resolution' => 'replace' ] ],
+		], [] );
+
+		// Assert.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertFalse( $collection->get( 'e-gv-local' )->sync_to_v3() );
 	}
 
 	public function test_import__invalid_data_missing_required_fields() {
@@ -76,7 +176,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$this->assertSame( [], $result );
+		$this->assertSame( Import_Runner::EMPTY_RESULT, $result );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$saved = $kit->get_json_meta( self::VARIABLES_META_KEY );
@@ -92,7 +192,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$this->assertSame( [], $result );
+		$this->assertSame( Import_Runner::EMPTY_RESULT, $result );
 	}
 
 	public function test_import__skips_deleted_variables() {
@@ -355,5 +455,225 @@ class Test_Import_Runner extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 'global-variables', $name );
+	}
+
+	public function test_import__merges_with_previous_kit_variables_after_kit_creation() {
+		// Arrange - save variables on the current (soon-to-be previous) kit.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Existing Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Simulate what site-settings runner does: create a new empty active kit.
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
+
+		// Act - import with imported_data indicating a new kit was created.
+		$result = ( new Import_Runner() )->import(
+			[
+				'include' => [ 'settings' ],
+				'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			],
+			[ 'site-settings' => [ 'imported_kit_id' => $new_kit_id ] ]
+		);
+
+		// Assert - merged result on the new active kit should contain both existing and imported variables.
+		$new_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$new_repository = new Variables_Repository( $new_kit );
+		$updated_collection = $new_repository->load();
+
+		$this->assertCount( 3, $updated_collection->all() );
+		$this->assertNotNull( $updated_collection->get( 'e-gv-existing' ) );
+		$this->assertNotNull( $updated_collection->get( 'e-gv-123' ) );
+		$this->assertNotNull( $updated_collection->get( 'e-gv-456' ) );
+	}
+
+	public function test_import__skip_drops_imported_on_label_conflict() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'skip',
+				],
+			],
+		], [] );
+
+		// Assert
+		$updated_collection = $repository->load();
+		$this->assertCount( 2, $updated_collection->all() );
+		$this->assertEquals( '#000000', $updated_collection->get( 'e-gv-existing' )->value() );
+
+		$labels = [];
+		foreach ( $updated_collection->all() as $variable ) {
+			$labels[] = $variable->label();
+		}
+		$this->assertContains( 'Primary Color', $labels );
+		$this->assertContains( 'Primary Font', $labels );
+		$this->assertCount( 1, array_keys( $labels, 'Primary Color' ) );
+	}
+
+	public function test_import__replace_overwrites_value_on_label_and_type_match() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+		], [] );
+
+		// Assert
+		$updated_collection = $repository->load();
+		$this->assertCount( 2, $updated_collection->all() );
+		$this->assertEquals( '#ff5733', $updated_collection->get( 'e-gv-existing' )->value() );
+		$this->assertEquals( 'Primary Color', $updated_collection->get( 'e-gv-existing' )->label() );
+	}
+
+	public function test_import__replace_renames_on_label_match_type_mismatch() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'font',
+					'label' => 'Primary Color',
+					'value' => 'Arial',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+		], [] );
+
+		// Assert
+		$updated_collection = $repository->load();
+		$this->assertCount( 3, $updated_collection->all() );
+
+		$labels = [];
+		foreach ( $updated_collection->all() as $variable ) {
+			$labels[] = $variable->label();
+		}
+		$this->assertContains( 'Primary Color', $labels );
+		$this->assertContains( 'Primary Color_1', $labels );
+		$this->assertContains( 'Primary Font', $labels );
+	}
+
+	public function test_import__merges_with_previous_kit_resolves_label_conflict() {
+		// Arrange - save a variable with the same label as one being imported.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
+
+		// Act.
+		( new Import_Runner() )->import(
+			[
+				'include' => [ 'settings' ],
+				'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			],
+			[ 'site-settings' => [ 'imported_kit_id' => $new_kit_id ] ]
+		);
+
+		// Assert - existing "Primary Color" preserved, imported "Primary Color" gets a suffix.
+		$new_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$new_repository = new Variables_Repository( $new_kit );
+		$updated_collection = $new_repository->load();
+
+		$labels = [];
+		foreach ( $updated_collection->all() as $variable ) {
+			$labels[] = $variable->label();
+		}
+
+		$this->assertContains( 'Primary Color', $labels );
+		$this->assertContains( 'Primary Color_1', $labels );
 	}
 }
