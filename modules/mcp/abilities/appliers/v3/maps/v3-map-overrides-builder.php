@@ -58,10 +58,10 @@ class V3_Map_Overrides_Builder {
 	}
 
 	/**
-	 * @param array $descriptor
 	 * @param string $target
 	 * @param string $property
 	 * @param string $state
+	 * @param mixed  $descriptor
 	 *
 	 * @return array{match_key: string, override: array{setting: string, resolver: string, responsive?: bool}}|null
 	 */
