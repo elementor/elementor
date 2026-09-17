@@ -6,7 +6,7 @@ Opinionated guidance for building WordPress sites with Elementor via MCP. Load b
 Title, featured image, excerpt, price, meta, CTA link → V4 widget (`e-heading`, `e-image`, `e-paragraph`, `e-button`) + a dynamic tag from [elementor://dynamic-tags]. Do NOT use the V3 `theme-post-title` / `theme-post-featured-image` / `theme-post-excerpt` widgets when a V4 + dynamic tag combination works — reserve them for cases where the V4 equivalent is not viable. This applies everywhere: singles, archives, loop items, and standalone pages.
 
 ## Repeating layouts / detail pages
-When the user describes a design that repeats across posts or pages ("each project", "the product detail page", "make every blog post look like this", "each item links to a page like this"), that is ONE `single` / `single-<cpt>` template driven by dynamic data — NOT N duplicated pages. Never loop `elementor/manage-site-parts` `action: create` to make one page per item.
+When the user describes a design that repeats across posts or pages ("each project", "the product detail page", "make every blog post look like this", "each item links to a page like this"), that is ONE `single` / `single-<cpt>` template driven by dynamic data — NOT N duplicated pages. Never loop `elementor/manage-site-parts` `action: create` to make one page per item. The same rule applies to any other Theme Builder document type (e.g. popup): one reusable document driven by dynamic data, not one per item.
 
 ### Condition scoping — include-all + exclude exceptions
 Real sites have one repeating design for a post type plus a few one-off exceptions (bespoke Home, a landing page). Default to a broad include with explicit exclusions:
