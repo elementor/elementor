@@ -1,6 +1,6 @@
 # Visual proof — examples
 
-## Editor bug
+## Bug or Editor Bug (fill visual proof)
 
 ```markdown
 ## Visual proof
@@ -11,12 +11,12 @@
 **Fail:** Z-index remains disabled on Tablet
 ```
 
-## Skip — not an editor bug
+## Skip — not a bug (Task/Story)
 
 ```markdown
 ## Visual proof
 #skip_proof
-Task adds a new Style control; visual proof is editor-bugs only.
+Task adds a new Style control; visual proof is for bugs only.
 ```
 
 ## Skip — cannot run on Core Playground

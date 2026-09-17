@@ -16,4 +16,4 @@ missing and the PR is **opened** or marked **ready for review**.
 
 - Leave `## Visual proof` out of the PR body unless a human already put it there
 - Do not ask the user to fill it in
-- Capture (`visual-proof-shots`) follows CI-written **Steps**; it does not author them
+- Capture (`visual-proof-shots`) tries to follow CI-written **Steps** via storyboard actor; when that produces no screenshots, it falls back to generic Admin → Pages → Edit with Elementor walk

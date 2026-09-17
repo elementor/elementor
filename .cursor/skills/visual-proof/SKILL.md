@@ -21,6 +21,11 @@ CI workflow `.github/workflows/visual-proof-author.yml` calls the shared
 still missing. It does not run on every push. If a human already wrote the
 section, CI leaves it alone.
 
+**Note:** the author workflow does **not** run on `synchronize` (normal PR
+pushes). PRs that never re-fire `opened` or `ready_for_review` after this
+workflow lands will not get CI authorship unless someone toggles
+ready-for-review or manually edits the body.
+
 Capture remains a separate job (`visual-proof-shots`) using the shared
 `visual-proof-shots` action. That job follows **Steps**; it does not write
 them.
