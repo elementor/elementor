@@ -94,6 +94,31 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( [ 'background-color' ], $result['style_targets']['container'] );
 	}
 
+	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
+		$this->act_as_admin();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'button' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
+		$this->assertArrayHasKey( 'text', $result['properties'] );
+		$this->assertArrayHasKey( 'link', $result['properties'] );
+		$this->assertSame( [ 'color', 'background-color' ], $result['style_targets']['button'] );
+	}
+
+	public function test_execute__returns_standardized_text_editor_schema_when_experiment_active() {
+		$this->act_as_admin();
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'text-editor' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
+		$this->assertArrayHasKey( 'editor', $result['properties'] );
+		$this->assertSame( [ 'color' ], $result['style_targets']['text-editor'] );
+	}
+
 	public function test_execute__rejects_heading_when_atomic_elements_active() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_registered_heading();

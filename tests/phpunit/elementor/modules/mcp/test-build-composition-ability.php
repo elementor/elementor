@@ -1249,6 +1249,125 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_execute__applies_map_driven_v3_container_settings_and_style() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<container configuration-id="c1"/>',
+			'element_config' => [
+				'c1' => [
+					'content_width' => 'full',
+				],
+			],
+			'style' => [
+				'c1' => 'container { background-color: #ff0000; }',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$container = $this->find_element_by_callback(
+			$elements,
+			static fn( array $element ) => 'container' === ( $element['elType'] ?? null )
+				&& 'full' === ( $element['settings']['content_width'] ?? null )
+		);
+		$this->assertNotNull( $container, 'Expected a mapped container with content_width=full.' );
+		$this->assertSame( '#ff0000', $container['settings']['background_color'] ?? null );
+		$this->assertArrayNotHasKey( 'custom_css', $container['settings'] );
+	}
+
+	public function test_execute__applies_map_driven_v3_button_settings_and_color() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<button configuration-id="b1"/>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Click me',
+					'link' => [
+						'url' => 'https://example.com',
+						'is_external' => true,
+						'nofollow' => false,
+					],
+				],
+			],
+			'style' => [
+				'b1' => 'button { color: #111111; background-color: #eeeeee; }',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$button = $this->find_element_by_widget_type(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			'button'
+		);
+		$this->assertNotNull( $button );
+		$this->assertSame( 'Click me', $button['settings']['text'] ?? null );
+		$this->assertSame( 'https://example.com', $button['settings']['link']['url'] ?? null );
+		$this->assertSame( 'on', $button['settings']['link']['is_external'] ?? null );
+		$this->assertSame( '#111111', $button['settings']['button_text_color'] ?? null );
+		$this->assertSame( '#eeeeee', $button['settings']['background_color'] ?? null );
+		$this->assertArrayNotHasKey( 'custom_css', $button['settings'] );
+	}
+
+	public function test_execute__applies_map_driven_v3_text_editor_settings_and_color() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<text-editor configuration-id="t1"/>',
+			'element_config' => [
+				't1' => [
+					'editor' => '<p>Hello world</p>',
+				],
+			],
+			'style' => [
+				't1' => 'text-editor { color: #222222; }',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$widget = $this->find_element_by_widget_type(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			'text-editor'
+		);
+		$this->assertNotNull( $widget );
+		$this->assertSame( '<p>Hello world</p>', $widget['settings']['editor'] ?? null );
+		$this->assertSame( '#222222', $widget['settings']['text_color'] ?? null );
+		$this->assertArrayNotHasKey( 'custom_css', $widget['settings'] );
+	}
+
+	public function test_execute__rejects_unmapped_v3_section_when_standardized_maps_active() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<section configuration-id="s1"/>',
+		] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_unknown_type', $result->get_error_code() );
+	}
+
 	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
