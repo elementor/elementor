@@ -28,7 +28,7 @@ Every single template has one optional editorial slot: a `theme-post-content` wi
 
 `theme-post-content` is the widget name. Emit `<theme-post-content>` in `xml_structure` with no `element_config` — the composition write path accepts it as-is.
 
-- Wrap with `e-div-block`, NOT `e-flexbox` — a row-direction default would squeeze the article body. Style the wrapper's `max-width` / `padding`.
+- Wrap `theme-post-content` in `e-div-block`. Style the wrapper's `max-width` / `padding`.
 - Exactly one `theme-post-content` per single template.
 - `theme-post-content` is for the single-template body slot ONLY — never place it inside a loop item, archive, header, footer, or reusable component; the surrounding loop already repeats the article body.
 

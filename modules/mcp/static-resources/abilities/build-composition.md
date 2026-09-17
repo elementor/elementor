@@ -39,7 +39,7 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
-- Containers: "e-flexbox", "e-div-block", "e-tabs"
+- Containers: "e-div-block", "e-tabs"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
@@ -146,8 +146,8 @@ NEVER SPECIFY:
 
 vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
 
-GOOD: `<e-flexbox>content naturally sizes</e-flexbox>`
-BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-flexbox>`
+GOOD: `<e-div-block>content naturally sizes</e-div-block>`
+BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-div-block>`
 
 ## Layout Variety (Break the Template)
 - AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
@@ -216,7 +216,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-flexbox configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-flexbox>",
+  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
   "element_config": {
     "Section Title": {
       "tag": "h2",
@@ -229,7 +229,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   }
 }
 ```
-Note: No height/width specified on any element - flexbox handles layout automatically.
+Note: No height/width specified on any element — content sizes naturally.
 
 # FURTHER INSTRUCTIONS
 Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.
