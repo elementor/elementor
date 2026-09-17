@@ -42,7 +42,7 @@ class Test_Module extends Elementor_Test_Base {
 		$_GET['format'] = 'markdown';
 		unset( $_SERVER['HTTP_ACCEPT'] );
 		$module = new Module();
-		$method = new \ReflectionMethod( Module::class, 'is_markdown_request' );
+		$method = new \ReflectionMethod( Module::class, 'is_content_negotiation_markdown_request' );
 		$method->setAccessible( true );
 
 		// Act
@@ -60,7 +60,7 @@ class Test_Module extends Elementor_Test_Base {
 		unset( $_GET['format'] );
 		$_SERVER['HTTP_ACCEPT'] = 'text/markdown, text/html;q=0.9';
 		$module = new Module();
-		$method = new \ReflectionMethod( Module::class, 'is_markdown_request' );
+		$method = new \ReflectionMethod( Module::class, 'is_content_negotiation_markdown_request' );
 		$method->setAccessible( true );
 
 		// Act
@@ -68,6 +68,23 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanup
 		unset( $_SERVER['HTTP_ACCEPT'] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_markdown_path_request_is_recognized() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/sample-page/index.md';
+		$module = new Module();
+		$method = new \ReflectionMethod( Module::class, 'is_markdown_path_request' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $module );
+
+		// Cleanup
+		unset( $_SERVER['REQUEST_URI'] );
 
 		// Assert
 		$this->assertTrue( $result );
