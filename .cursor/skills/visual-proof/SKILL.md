@@ -61,7 +61,7 @@ Playground only has this plugin. If the bug cannot be shown there, use
 
 **Fill** (Broken + Where / Steps / Pass / Fail):
 
-- Jira type `Bug` (or a clear regression fix)
+- Jira type `Bug` or `Editor Bug` (or a clear regression fix)
 - User-visible **editor** UI (panel, canvas, navigator, Style / Content)
 - Can be shown on Core Playground above
 
