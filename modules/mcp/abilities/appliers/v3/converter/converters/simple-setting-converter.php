@@ -6,6 +6,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Resolved_Patch_Validator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Resolvers;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -49,10 +50,16 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 		}
 
 		if ( 'box_shadow' === $resolver && is_array( $resolved ) ) {
-			$ctx->merge_patch( [
+			$patch = [
 				$setting . '_type' => $resolved['box_shadow_type'],
 				$setting => $resolved['box_shadow'],
-			] );
+			];
+
+			if ( ! $this->accept_map_patch( $ctx, $override, $rule, $patch ) ) {
+				return true;
+			}
+
+			$ctx->merge_patch( $patch );
 
 			return true;
 		}
@@ -68,8 +75,46 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 			return false;
 		}
 
-		$ctx->merge_patch( [ $key => $resolved ] );
+		$patch = [ $key => $resolved ];
+
+		if ( ! $this->accept_map_patch( $ctx, $override, $rule, $patch ) ) {
+			return true;
+		}
+
+		$ctx->merge_patch( $patch );
 
 		return true;
+	}
+
+	/**
+	 * Runs the resolved-patch validator when the override was produced from a compiled
+	 * V3 widget map (see {@see \Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder}).
+	 * Returns false when the patch must be dropped atomically; emits a structured warning
+	 * on the shared conversion context in that case.
+	 */
+	private function accept_map_patch( V3_Conversion_Context $ctx, array $override, array $rule, array $patch ): bool {
+		$descriptor = $override['_map_descriptor'] ?? null;
+
+		if ( ! is_array( $descriptor ) ) {
+			return true;
+		}
+
+		$result = V3_Resolved_Patch_Validator::validate( $descriptor, $patch );
+
+		if ( $result['valid'] ) {
+			return true;
+		}
+
+		$property = (string) ( $rule['property'] ?? '' );
+
+		$ctx->warn(
+			sprintf(
+				/* translators: %s: CSS property name */
+				__( 'CSS property %s is not supported by this Elementor widget and was skipped.', 'elementor' ),
+				$property
+			)
+		);
+
+		return false;
 	}
 }
