@@ -7,7 +7,7 @@ set -euo pipefail
 ARTIFACTS_DIR="${VISUAL_PROOF_OUT_DIR:-visual-proof-shots}"
 MARKER="<!-- visual-proof-ci -->"
 ASSETS_BRANCH="ci/visual-proof-assets"
-MAX_SHOTS="${VISUAL_PROOF_MAX_SHOTS:-3}"
+MAX_SHOTS="${VISUAL_PROOF_MAX_SHOTS:-6}"
 MAX_VIDEO_BYTES="${VISUAL_PROOF_MAX_VIDEO_BYTES:-40000000}"
 
 log() {
@@ -101,7 +101,11 @@ COMMENT_SECTIONS=()
 COMMENT_SECTIONS+=("${MARKER}")
 COMMENT_SECTIONS+=("## Visual proof")
 COMMENT_SECTIONS+=("")
-COMMENT_SECTIONS+=("Shots and a short recording from this PR’s Playground preview. Generic walk: WP Admin → Pages → Add New → Edit with Elementor. Overlay text comes from the PR’s **Visual proof** section; CI does not execute **Steps**.")
+if [[ "${VISUAL_PROOF_SOURCE:-fallback}" == "actor" ]]; then
+	COMMENT_SECTIONS+=("Shots and a short recording from this PR’s Playground preview. A storyboard actor followed **Steps** from the PR’s **Visual proof** section (happy path / Pass). Overlay text includes **Broken**; CI does not recreate the bug.")
+else
+	COMMENT_SECTIONS+=("Shots and a short recording from this PR’s Playground preview. Generic walk: WP Admin → Pages → Add New → Edit with Elementor (storyboard actor unavailable or produced no shots). Overlay text comes from the PR’s **Visual proof** section.")
+fi
 COMMENT_SECTIONS+=("")
 
 count=0

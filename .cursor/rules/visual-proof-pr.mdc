@@ -1,24 +1,19 @@
 ---
-description: Editor-bug PRs in this repo must include a ## Visual proof section
+description: Visual proof on elementor/elementor PRs is authored in CI, not by local agents
 alwaysApply: true
 ---
 
 # Visual proof on PRs
 
-**Trigger:** this file. `alwaysApply: true` means every Cursor agent in this
-checkout must author `## Visual proof` before `gh pr create` or `gh pr edit`.
+**Trigger:** this file. Local Cursor agents must **not** write `## Visual proof`
+on `gh pr create` or `gh pr edit`.
 
-**How to write it:** [SKILL.md](mdc:.cursor/skills/visual-proof/SKILL.md)
+**Who writes it:** CI `cursor-agent` in
+`.github/workflows/visual-proof-author.yml`, only when the section is still
+missing and the PR is **opened** or marked **ready for review**.
 
-**Where to run the steps:** this repo’s `playground-preview` deployment
-(`.github/workflows/playground-preview.yml`, blueprint
-`tests/playwright/blueprints/pr-preview.json`). Not a local site.
+**How CI writes it:** [SKILL.md](mdc:.cursor/skills/visual-proof/SKILL.md)
 
-- Order: `## Summary` → `## Test plan` → `## Visual proof` → `## Jira`
-- Editor Bug that Core Playground can show → `**Broken:**` + Where / Steps /
-  Pass / Fail (do not act out the bug)
-- Anything else → heading + `#skip_proof` + one sentence
-- CI shots are a fixed walk (WP Admin → Pages → Add New → Edit with
-  Elementor). They are not proof of the **Steps**.
-- Never leave placeholders; never ask the user to write the section
-- Steps use visible in-app labels only
+- Leave `## Visual proof` out of the PR body unless a human already put it there
+- Do not ask the user to fill it in
+- Capture (`visual-proof-shots`) follows CI-written **Steps**; it does not author them

@@ -8,16 +8,16 @@ This directory contains AI agent configuration for test generation and code assi
 - **`tests-code-style.mdc`** - Technical testing rules and code quality standards
   - Code quality, test reliability, browser/environment rules
   - Applies only to test files (`globs: *test*`)
-- **`visual-proof-pr.mdc`** - Always on. Triggers `## Visual proof` on PR create/edit
-  - Pairs with the `visual-proof` skill
+- **`visual-proof-pr.mdc`** - Always on. Local agents must **not** write `## Visual proof`
+  - CI `visual-proof-author.yml` writes it when the section is missing on opened / ready_for_review
   - Environment is this repo’s `playground-preview` workflow
 
 ### Skills (`/skills/`)
 - **`visual-proof/`** - How to author `## Visual proof` for this repo
   - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption
   - Others: `#skip_proof`
-  - CI screenshots and records a short Playground clip (fixed walk; Steps are overlay only)
-  - `visual-proof-author.yml` fills a missing section on PR opened (cursor-agent)
+  - CI screenshots and records a Playground clip (storyboard actor follows Steps; generic walk is fallback)
+  - `visual-proof-author.yml` is the only Cursor job that writes Steps (opened / ready_for_review, if missing)
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts

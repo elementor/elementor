@@ -240,7 +240,7 @@ jobs:
       github.event.action != 'labeled' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-22.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     permissions:
       contents: write
       pull-requests: write
@@ -253,14 +253,20 @@ jobs:
         with:
           node-version: 24.15.0
           package-manager-cache: false
+      - name: Install Cursor CLI
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
       - name: Parse Visual proof section
         run: node .github/scripts/visual-proof/parse-section.js --test
       - name: Capture Playground shots and comment
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_REVIEW_MODEL: ${{ vars.PR_REVIEW_MODEL }}
         run: bash .github/scripts/visual-proof/run.sh
       - name: Upload shots artifact
         if: hashFiles('visual-proof-shots/*.png') != ''

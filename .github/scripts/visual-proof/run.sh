@@ -26,10 +26,7 @@ require_env GITHUB_REPOSITORY
 require_env PR_NUMBER
 require_env HEAD_SHA
 
-log "step=start PR_NUMBER=${PR_NUMBER} HEAD_SHA=${HEAD_SHA} GITHUB_REPOSITORY=${GITHUB_REPOSITORY}"
-
-log "step=parse-section about to read PR body via gh|node"
-DECISION=$(
+parse_visual_proof_section() {
 	gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body --jq .body | node -e '
 	const { shouldCaptureVisualProof, extractBrokenCaption, buildOverlayCaption } = require(process.argv[1]);
 	const fs = require("fs");
@@ -39,7 +36,27 @@ DECISION=$(
 	const overlay = buildOverlayCaption(result.section);
 	process.stdout.write(JSON.stringify({ ...result, broken, overlay }));
 	' "${SCRIPT_DIR}/parse-section.js"
-)
+}
+
+log "step=start PR_NUMBER=${PR_NUMBER} HEAD_SHA=${HEAD_SHA} GITHUB_REPOSITORY=${GITHUB_REPOSITORY}"
+
+log "step=parse-section about to read PR body via gh|node"
+DECISION=$(parse_visual_proof_section)
+
+# Author job runs in parallel on opened / ready_for_review. Wait for it to
+# write ## Visual proof before skipping capture as missing-section.
+if [[ "$(echo "$DECISION" | jq -r .reason)" == "missing-section" ]]; then
+	log "step=wait-author polling PR body for Visual proof (up to 4 minutes)"
+	for _ in 1 2 3 4 5 6 7 8; do
+		sleep 30
+		DECISION=$(parse_visual_proof_section)
+		REASON=$(echo "$DECISION" | jq -r .reason)
+		log "step=wait-author reason=${REASON}"
+		if [[ "$REASON" != "missing-section" ]]; then
+			break
+		fi
+	done
+fi
 
 REASON=$(echo "$DECISION" | jq -r .reason)
 CAPTURE=$(echo "$DECISION" | jq -r .capture)
@@ -84,10 +101,17 @@ log "step=resolve-url PLAYGROUND_URL=${PLAYGROUND_URL}"
 
 mkdir -p "$OUT_DIR"
 printf '%s' "$OVERLAY" > "${OUT_DIR}/overlay.txt"
+echo "$DECISION" | jq -r '.section // empty' > "${OUT_DIR}/section.md"
 export PLAYGROUND_URL
 export VISUAL_PROOF_OUT_DIR="$OUT_DIR"
 export VISUAL_PROOF_BROKEN="$BROKEN"
 export VISUAL_PROOF_OVERLAY_FILE="${OUT_DIR}/overlay.txt"
+export VISUAL_PROOF_SECTION_FILE="${OUT_DIR}/section.md"
+export VISUAL_PROOF_SOURCE="fallback"
+
+png_count() {
+	find "$OUT_DIR" -maxdepth 1 -type f -name '*.png' 2>/dev/null | wc -l | tr -d ' '
+}
 
 cd "$SCRIPT_DIR"
 log "step=npm-install about to install local package.json playwright in ${SCRIPT_DIR} (workspaces off)"
@@ -105,12 +129,28 @@ fi
 log "step=playwright-install ok"
 
 cd "$REPO_ROOT"
-log "step=capture about to run capture.cjs OUT_DIR=${OUT_DIR}"
-if ! NODE_PATH="${SCRIPT_DIR}/node_modules" node "${SCRIPT_DIR}/capture.cjs"; then
-	err "step=capture failed"
-	exit 1
+
+if [[ -n "${CURSOR_API_KEY:-}" ]]; then
+	log "step=actor about to run act.sh"
+	if bash "${SCRIPT_DIR}/act.sh"; then
+		export VISUAL_PROOF_SOURCE="actor"
+		log "step=actor ok png_count=$(png_count)"
+	else
+		err "step=actor failed; falling back to generic walk"
+	fi
+else
+	log "step=actor skipped (CURSOR_API_KEY empty)"
 fi
-log "step=capture ok"
+
+if [[ "$(png_count)" -eq 0 ]]; then
+	log "step=capture about to run capture.cjs OUT_DIR=${OUT_DIR}"
+	if ! NODE_PATH="${SCRIPT_DIR}/node_modules" node "${SCRIPT_DIR}/capture.cjs"; then
+		err "step=capture failed"
+		exit 1
+	fi
+	export VISUAL_PROOF_SOURCE="fallback"
+	log "step=capture ok"
+fi
 
 if command -v ffmpeg >/dev/null 2>&1 && [[ -f "${OUT_DIR}/visual-proof.webm" ]]; then
 	log "step=ffmpeg about to transcode visual-proof.webm to mp4"

@@ -1,40 +1,37 @@
 ---
 name: visual-proof
 description: >-
-  Author the ## Visual proof section on elementor/elementor PRs. Editor bugs
-  get Broken + Where / Steps / Pass / Fail. Everything else gets #skip_proof.
-  Triggered by the always-on visual-proof-pr rule when creating or editing a PR.
+  How CI cursor-agent writes ## Visual proof on elementor/elementor PRs.
+  Used by visual-proof-author.yml when the section is missing on opened or
+  ready_for_review. Local agents must not write this section.
 ---
 
 # Visual proof
 
-Cursor agents in this checkout must put a `## Visual proof` section in the PR
-body. This skill is how to write it. Capturing screenshots or a clip is not
-this skill.
+This skill is for the **CI author** (`visual-proof-author.yml`). Local Cursor
+agents must not add `## Visual proof` on `gh pr create` or `gh pr edit`.
+Capturing screenshots or a clip is not this skill.
 
 ## What triggers it
 
-`.cursor/rules/visual-proof-pr.mdc` has `alwaysApply: true`. It runs in every
-Cursor session on this repo when the agent is about to `gh pr create` or
-`gh pr edit`.
-
-The rule is what makes a **local** Cursor agent write the section. GitHub’s
-New PR form does not.
-
 CI workflow `.github/workflows/visual-proof-author.yml` runs `cursor-agent`
-when a same-repo PR is **opened** (or marked ready for review) and `## Visual
-proof` is still missing. It does not run on every push. Capture remains a
-separate job (`visual-proof-shots`).
+when a same-repo PR is **opened** or marked **ready for review**, and only if
+`## Visual proof` is still missing. It does not run on every push. If a human
+already wrote the section, CI leaves it alone.
+
+Capture remains a separate job (`visual-proof-shots`). That job follows
+**Steps**; it does not write them.
 
 CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
 `playground-preview`. It captures Playground screenshots **and a short
 webm/mp4** when the section is filled, and skips when the section is missing
 or has `#skip_proof`.
 
-The walk is still **fixed**: WP Admin → Pages → Add New → Edit with
-Elementor. Overlay text is taken from **Broken / Where / Steps** in the PR
-body. **Steps are not executed.** Do not treat the clip or PNGs as proof of
-the specific bug. This is not the marketplace `demo-video` skill.
+When `CURSOR_APIKEY` is set, a **storyboard actor** (`cursor-agent`) writes
+and runs Playwright that follows **Steps** (then **Pass**) on Playground.
+If that produces no PNGs, CI falls back to WP Admin → Pages → Add New →
+Edit with Elementor. Overlay text still includes **Broken**; the actor must
+not recreate the bug. This is not the marketplace `demo-video` skill.
 
 ## Environment (this repo)
 
@@ -75,8 +72,8 @@ Playground only has this plugin. If the bug cannot be shown there, use
 
 ## Rules
 
-1. Write **Steps** for humans and future capture work. Today’s CI walk
-   ignores them and only opens the editor on the fixed path above.
+1. Write **Steps** the actor can click: short, visible labels, stay in the
+   editor. If the actor cannot follow them, CI uses the generic Admin walk.
 2. Visible in-app labels only. No file paths, no GitHub, no workflow names
    inside **Steps**.
 3. Do not act out the bug. Playground has the **fixed** zip. Put the old
