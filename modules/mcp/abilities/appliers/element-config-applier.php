@@ -46,6 +46,7 @@ class Element_Config_Applier {
 	public function apply( array &$config_id_index, array $element_config, array $widget_configs, ?Document $document = null ): array {
 		$errors = [];
 		$warnings = [];
+		$warning_codes = [];
 		$component_entries = [];
 
 		foreach ( $element_config as $config_id => $settings ) {
@@ -103,7 +104,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings );
+			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings, $warning_codes );
 
 			$node['settings'] = array_merge( $node['settings'] ?? [], $outcome['resolved'] );
 
@@ -131,6 +132,7 @@ class Element_Config_Applier {
 		return [
 			'error' => $this->combine_errors( $errors, $component_error ),
 			'warnings' => $warnings,
+			'warning_codes' => array_values( array_unique( $warning_codes ) ),
 		];
 	}
 
@@ -164,7 +166,8 @@ class Element_Config_Applier {
 		string $element_type,
 		string $config_id,
 		array &$errors,
-		array &$warnings
+		array &$warnings,
+		array &$warning_codes = []
 	): array {
 		$alias_map = Prop_Canonicalizer::build_alias_map( $schema );
 		$resolved = [];
@@ -180,6 +183,7 @@ class Element_Config_Applier {
 					$name,
 					$element_type
 				);
+				$warning_codes[] = 'prop_not_supported';
 				continue;
 			}
 
