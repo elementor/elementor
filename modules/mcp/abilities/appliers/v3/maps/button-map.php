@@ -44,6 +44,9 @@ return [
 					'default' => Style_Control_Target::control( 'button_text_color', 'color' ),
 					'hover' => Style_Control_Target::control( 'hover_color', 'color' ),
 				],
+				'background-color' => [
+					'default' => Style_Control_Target::control( 'background_color', 'color' ),
+				],
 			],
 		],
 	],
