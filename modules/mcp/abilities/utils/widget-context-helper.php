@@ -31,7 +31,7 @@ class Widget_Context_Helper {
 
 	const VERSION_V4 = 'v4';
 
-	const MCP_EXCLUDED_ELEMENT_TYPES = [
+	const MCP_UNPROMOTED_ELEMENT_TYPES = [
 		'e-flexbox',
 	];
 
@@ -59,7 +59,7 @@ class Widget_Context_Helper {
 		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $type => $instance ) {
 			$type = (string) $type;
 
-			if ( self::is_type_excluded_from_mcp( $type ) ) {
+			if ( self::is_type_unpromoted_in_widget_list( $type ) ) {
 				continue;
 			}
 
@@ -77,7 +77,7 @@ class Widget_Context_Helper {
 		foreach ( Plugin::$instance->elements_manager->get_element_types() as $type => $instance ) {
 			$type = (string) $type;
 
-			if ( self::is_type_excluded_from_mcp( $type ) ) {
+			if ( self::is_type_unpromoted_in_widget_list( $type ) ) {
 				continue;
 			}
 
@@ -133,8 +133,8 @@ class Widget_Context_Helper {
 		return empty( $config['atomic_props_schema'] ) ? self::VERSION_V3 : self::VERSION_V4;
 	}
 
-	public static function is_type_excluded_from_mcp( string $widget_type ): bool {
-		return in_array( $widget_type, self::MCP_EXCLUDED_ELEMENT_TYPES, true );
+	public static function is_type_unpromoted_in_widget_list( string $widget_type ): bool {
+		return in_array( $widget_type, self::MCP_UNPROMOTED_ELEMENT_TYPES, true );
 	}
 
 	public static function is_v3_allowlisted( string $widget_type ): bool {

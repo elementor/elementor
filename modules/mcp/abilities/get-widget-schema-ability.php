@@ -56,15 +56,6 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 			);
 		}
 
-		if ( Widget_Context_Helper::is_type_excluded_from_mcp( $widget_type ) ) {
-			return new \WP_Error(
-				'elementor_not_found',
-				/* translators: %s: widget type */
-				sprintf( __( 'Unknown widget type: %s.', 'elementor' ), $widget_type ),
-				[ 'status' => \WP_Http::NOT_FOUND ]
-			);
-		}
-
 		$config = Widget_Context_Helper::get_widget_config( $widget_type );
 
 		if ( ! $config || ! Widget_Context_Helper::is_widget_eligible_for_llm( $config ) ) {

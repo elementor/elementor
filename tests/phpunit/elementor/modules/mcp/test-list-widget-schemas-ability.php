@@ -157,7 +157,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertNotContains( 'fake-v3', $types );
 	}
 
-	public function test_execute__excludes_e_flexbox_from_mcp_surface() {
+	public function test_execute__does_not_promote_e_flexbox_in_list_but_get_widget_schema_succeeds() {
 		$this->act_as_admin();
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
@@ -170,8 +170,8 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertNotContains( 'e-flexbox', $types );
 
 		$get_result = $this->get_schema_ability->execute( [ 'widget_type' => 'e-flexbox' ] );
-		$this->assertWPError( $get_result );
-		$this->assertSame( 'elementor_not_found', $get_result->get_error_code() );
+		$this->assertIsArray( $get_result );
+		$this->assertArrayHasKey( 'properties', $get_result );
 	}
 
 	/**
