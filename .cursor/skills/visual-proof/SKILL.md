@@ -14,13 +14,16 @@ Capturing screenshots or a clip is not this skill.
 
 ## What triggers it
 
-CI workflow `.github/workflows/visual-proof-author.yml` runs `cursor-agent`
-when a same-repo PR is **opened** or marked **ready for review**, and only if
-`## Visual proof` is still missing. It does not run on every push. If a human
-already wrote the section, CI leaves it alone.
+CI workflow `.github/workflows/visual-proof-author.yml` calls the shared
+`visual-proof-author` action
+(`elementor/elementor-editor-github-actions`) when a same-repo PR is
+**opened** or marked **ready for review**, and only if `## Visual proof` is
+still missing. It does not run on every push. If a human already wrote the
+section, CI leaves it alone.
 
-Capture remains a separate job (`visual-proof-shots`). That job follows
-**Steps**; it does not write them.
+Capture remains a separate job (`visual-proof-shots`) using the shared
+`visual-proof-shots` action. That job follows **Steps**; it does not write
+them.
 
 CI job `visual-proof-shots` in `.github/workflows/pr.yml` runs after
 `playground-preview`. It captures Playground screenshots **and a short

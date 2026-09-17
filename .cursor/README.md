@@ -17,7 +17,7 @@ This directory contains AI agent configuration for test generation and code assi
   - Editor bugs: Where / Steps / Pass / Fail plus a `Broken` caption
   - Others: `#skip_proof`
   - CI screenshots and records a Playground clip (storyboard actor follows Steps; generic walk is fallback)
-  - `visual-proof-author.yml` is the only Cursor job that writes Steps (opened / ready_for_review, if missing)
+  - `visual-proof-author.yml` calls the shared github-actions author (opened / ready_for_review, if missing)
 
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts

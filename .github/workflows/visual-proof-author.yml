@@ -32,25 +32,14 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          package-manager-cache: false
-
-      - name: Install Cursor CLI
-        run: |
-          curl https://cursor.com/install -fsS | bash
-          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
-
       - name: Author ## Visual proof if missing
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          PR_REVIEW_MODEL: ${{ vars.PR_REVIEW_MODEL }}
-        run: bash .github/scripts/visual-proof/author.sh
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-author@ci/ED-25578-visual-proof-actions
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          pr-head-sha: ${{ github.event.pull_request.head.sha }}
+          pr-base-sha: ${{ github.event.pull_request.base.sha }}
+          product-name: 'Elementor'
+          cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
+          model: ${{ vars.PR_REVIEW_MODEL }}
+          skill-file: .cursor/skills/visual-proof/SKILL.md
+          examples-file: .cursor/skills/visual-proof/examples.md

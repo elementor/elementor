@@ -248,34 +248,15 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          package-manager-cache: false
-      - name: Install Cursor CLI
-        run: |
-          curl https://cursor.com/install -fsS | bash
-          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
-      - name: Parse Visual proof section
-        run: node .github/scripts/visual-proof/parse-section.js --test
       - name: Capture Playground shots and comment
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR_REVIEW_MODEL: ${{ vars.PR_REVIEW_MODEL }}
-        run: bash .github/scripts/visual-proof/run.sh
-      - name: Upload shots artifact
-        if: hashFiles('visual-proof-shots/*.png') != ''
-        uses: actions/upload-artifact@v7
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@ci/ED-25578-visual-proof-actions
         with:
-          name: visual-proof-shots
-          path: visual-proof-shots/
-          if-no-files-found: ignore
-          retention-days: 7
+          pr-number: ${{ github.event.pull_request.number }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
+          product-name: 'Elementor'
+          cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
+          model: ${{ vars.PR_REVIEW_MODEL }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   lint-js:
     name: Lint JS
