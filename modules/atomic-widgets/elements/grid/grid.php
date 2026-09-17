@@ -51,7 +51,7 @@ class Grid extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'grid', 'layout' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'container', 'wrapper', 'section', 'row', 'column', 'grid', 'columns', 'gallery', 'layout' ];
 	}
 
 	public function get_icon() {

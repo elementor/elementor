@@ -63,7 +63,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$result = $this->ability->execute( [] );
 
 		$this->assertArrayHasKey( 'heading', $result );
-		$this->assertSame( [ 'color' ], $result['heading']['style_targets']['targets']['heading'] );
+		$this->assertSame( [ 'color' ], $result['heading']['style_targets']['heading'] );
 	}
 
 	public function test_execute__excludes_heading_when_atomic_elements_active() {
