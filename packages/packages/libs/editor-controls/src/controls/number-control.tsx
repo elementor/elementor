@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { numberPropTypeUtil, type PropType } from '@elementor/editor-props';
 import { InputAdornment, Typography } from '@elementor/ui';
 
@@ -6,6 +7,7 @@ import { useBoundProp } from '../bound-prop-context';
 import { NumberInput } from '../components/number-input';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { clamp, isEmptyDraft, isInRange, parseNumberDraft } from '../utils/number-value';
 
 const isEmptyOrNaN = ( value?: string | number | null ) =>
 	value === null || value === undefined || value === '' || Number.isNaN( Number( value ) );
@@ -43,27 +45,62 @@ export const NumberControl = createControl(
 	} ) => {
 		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
 
-		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const {
-				value: eventValue,
-				validity: { valid: isInputValid },
-			} = event.target;
+		// `null` means "not editing" — the input mirrors the bound value.
+		const [ draft, setDraft ] = useState< string | null >( null );
 
-			let updatedValue;
+		const handleInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			const raw = event.target.value;
 
-			if ( isEmptyOrNaN( eventValue ) ) {
-				updatedValue = null;
-			} else {
-				const formattedValue = shouldForceInt ? +parseInt( eventValue ) : Number( eventValue );
+			setDraft( raw );
 
-				updatedValue = Math.min(
-					Math.max( formattedValue, min ?? Number.MIN_SAFE_INTEGER ),
-					max ?? Number.MAX_SAFE_INTEGER
-				);
+			if ( isEmptyDraft( raw ) ) {
+				setValue( null );
+
+				return;
 			}
 
-			setValue( updatedValue, undefined, { validation: () => isInputValid } );
+			const parsed = parseNumberDraft( raw, shouldForceInt );
+
+			// A type="number" input sanitises non-numeric text to "" before we see it, so this
+			// branch is unreachable today. Falling through would coerce null to 0 in the range
+			// check and commit a value the user never typed.
+			if ( parsed === null ) {
+				return;
+			}
+
+			if ( isInRange( parsed, min, max ) ) {
+				setValue( parsed );
+			}
 		};
+
+		const handleBlur = () => {
+			const raw = draft;
+
+			setDraft( null );
+			restoreValue();
+
+			if ( raw === null ) {
+				return;
+			}
+
+			if ( isEmptyDraft( raw ) ) {
+				if ( ! propType.settings.required ) {
+					setValue( null );
+				}
+
+				return;
+			}
+
+			const parsed = parseNumberDraft( raw, shouldForceInt );
+
+			if ( parsed === null ) {
+				return;
+			}
+
+			setValue( clamp( parsed, min, max ) );
+		};
+
+		const displayValue = draft ?? ( isEmptyOrNaN( value ) ? '' : String( value ) );
 
 		return (
 			<ControlActions>
@@ -72,9 +109,9 @@ export const NumberControl = createControl(
 					type="number"
 					fullWidth
 					disabled={ inputDisabled ?? disabled }
-					value={ isEmptyOrNaN( value ) ? '' : value }
-					onInput={ handleChange }
-					onBlur={ restoreValue }
+					value={ displayValue }
+					onInput={ handleInput }
+					onBlur={ handleBlur }
 					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
 					inputProps={ { step, min } }
 					InputProps={ {
