@@ -1,6 +1,7 @@
 <?php
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,6 +29,15 @@ class Test_Carousel_Promotion extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertTrue( (bool) $promotion->get_meta_item( 'is_container' ) );
+	}
+
+	public function test_llm_support_meta_is_disabled() {
+		// Arrange.
+		$promotion = $this->make_promotion_instance();
+
+		// Assert.
+		$this->assertFalse( $promotion->get_meta_item( 'llm_support' ) );
+		$this->assertFalse( Widget_Context_Helper::is_widget_eligible_for_llm( $promotion->get_config() ) );
 	}
 
 	public function test_should_not_print_empty() {

@@ -23,6 +23,7 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
 		$this->meta( 'is_pro_promotion', true );
+		$this->meta( 'llm_support', false );
 	}
 
 	public static function get_type() {
