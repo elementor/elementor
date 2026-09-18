@@ -28,21 +28,24 @@ const renderSuffix = ( propType: PropType ) => {
 export const NumberControl = createControl(
 	( {
 		placeholder: labelPlaceholder,
-		max = Number.MAX_SAFE_INTEGER,
-		min = -Number.MAX_SAFE_INTEGER,
-		step = 1,
+		max: maxProp,
+		min: minProp,
+		step: stepProp,
 		shouldForceInt = false,
 		startIcon,
 		disabled: inputDisabled,
 	}: {
 		placeholder?: string;
-		max?: number;
-		min?: number;
-		step?: number;
+		max?: number | null;
+		min?: number | null;
+		step?: number | null;
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
 		disabled?: boolean;
 	} ) => {
+		const max = maxProp ?? Number.MAX_SAFE_INTEGER;
+		const min = minProp ?? -Number.MAX_SAFE_INTEGER;
+		const step = stepProp ?? 1;
 		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
 
 		// `null` means "not editing" — the input mirrors the bound value.
@@ -61,8 +64,7 @@ export const NumberControl = createControl(
 
 			const parsed = parseNumberDraft( raw, shouldForceInt );
 
-			// Type-required: `isInRange` takes a number. It also stops a non-finite parse such as
-			// `1e999` from clearing the prop; a type="number" input rarely delivers either.
+			// Type-required: `isInRange` and `clamp` both take a number.
 			if ( parsed === null ) {
 				return;
 			}
@@ -97,6 +99,12 @@ export const NumberControl = createControl(
 				return;
 			}
 
+			// handleInput already committed anything in range; re-committing adds a redundant
+			// store write and, past the history debounce, a no-op undo step.
+			if ( isInRange( parsed, min, max ) ) {
+				return;
+			}
+
 			setValue( clamp( parsed, min, max ) );
 		};
 
@@ -113,7 +121,7 @@ export const NumberControl = createControl(
 					onInput={ handleInput }
 					onBlur={ handleBlur }
 					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
-					inputProps={ { step, min, max } }
+					inputProps={ { step, min, ...( maxProp !== null && maxProp !== undefined && { max } ) } }
 					InputProps={ {
 						startAdornment: startIcon ? (
 							<InputAdornment position="start" disabled={ inputDisabled ?? disabled }>

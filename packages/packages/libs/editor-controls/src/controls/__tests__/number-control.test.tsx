@@ -197,6 +197,63 @@ describe( 'NumberControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
 	} );
 
+	it( 'should treat a null max from the PHP control config as unbounded', () => {
+		// Arrange — Number_Control::get_props() emits null for an unset max.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 4 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 1 } max={ null } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '5' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'number', value: 5 } );
+	} );
+
+	it( 'should treat a null min from the PHP control config as unbounded', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 4 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ null } max={ 100 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '-5' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'number', value: -5 } );
+	} );
+
+	it( 'should not re-commit on blur a value already committed while typing', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '900' } } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
+
+		// Act.
+		setValue.mockClear();
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
 	it( 'should keep the field empty while editing instead of restoring the prop default', () => {
 		// Arrange.
 		const propTypeWithDefault = createMockPropType( {
@@ -407,5 +464,19 @@ describe( 'NumberControl', () => {
 		expect( input ).toHaveAttribute( 'min', '100' );
 		expect( input ).toHaveAttribute( 'max', '3000' );
 		expect( input ).toHaveAttribute( 'step', '1' );
+	} );
+
+	it( 'should not emit a native max attribute when unbounded', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		// Act.
+		renderControl( <NumberControl />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( input ).not.toHaveAttribute( 'max' );
 	} );
 } );
