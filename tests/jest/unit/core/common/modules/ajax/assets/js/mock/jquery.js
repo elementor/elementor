@@ -67,6 +67,45 @@ const createDeferred = () => {
 
 			return deferred;
 		},
+
+		promise() {
+			const promise = {
+				done: ( callback ) => {
+					deferred.done( callback );
+
+					return promise;
+				},
+
+				fail: ( callback ) => {
+					deferred.fail( callback );
+
+					return promise;
+				},
+
+				always: ( callback ) => {
+					deferred.always( callback );
+
+					return promise;
+				},
+
+				state: () => deferred.state,
+
+				promise: () => promise,
+
+				then: ( onDone, onFail ) => {
+					const next = createDeferred();
+
+					deferred.done( ( value ) => next.resolve( onDone ? onDone( value ) : value ) );
+					deferred.fail( ( value ) => next.reject( onFail ? onFail( value ) : value ) );
+
+					return next.promise();
+				},
+
+				catch: ( onFail ) => promise.then( undefined, onFail ),
+			};
+
+			return promise;
+		},
 	};
 
 	return deferred;
