@@ -61,9 +61,8 @@ export const NumberControl = createControl(
 
 			const parsed = parseNumberDraft( raw, shouldForceInt );
 
-			// A type="number" input sanitises non-numeric text to "" before we see it, so this
-			// branch is unreachable today. Falling through would coerce null to 0 in the range
-			// check and commit a value the user never typed.
+			// Type-required: `isInRange` takes a number. It also stops a non-finite parse such as
+			// `1e999` from clearing the prop; a type="number" input rarely delivers either.
 			if ( parsed === null ) {
 				return;
 			}
@@ -93,6 +92,7 @@ export const NumberControl = createControl(
 
 			const parsed = parseNumberDraft( raw, shouldForceInt );
 
+			// As above — falling through would commit `clamp( null, … )`, a value never typed.
 			if ( parsed === null ) {
 				return;
 			}
@@ -113,7 +113,7 @@ export const NumberControl = createControl(
 					onInput={ handleInput }
 					onBlur={ handleBlur }
 					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
-					inputProps={ { step, min } }
+					inputProps={ { step, min, max } }
 					InputProps={ {
 						startAdornment: startIcon ? (
 							<InputAdornment position="start" disabled={ inputDisabled ?? disabled }>

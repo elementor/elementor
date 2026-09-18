@@ -175,6 +175,7 @@ describe( 'NumberControl', () => {
 		fireEvent.blur( input );
 
 		// Assert.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
 	} );
 
@@ -192,6 +193,7 @@ describe( 'NumberControl', () => {
 		fireEvent.blur( input );
 
 		// Assert.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
 	} );
 
@@ -368,7 +370,12 @@ describe( 'NumberControl', () => {
 		const nullDefaultPropType = createMockPropType( { kind: 'plain', default: null } );
 
 		const setValue = jest.fn();
-		const props = { setValue, value: { $$type: 'number', value: 12 }, bind: 'number', propType: nullDefaultPropType };
+		const props = {
+			setValue,
+			value: { $$type: 'number', value: 12 },
+			bind: 'number',
+			propType: nullDefaultPropType,
+		};
 
 		renderControl( <NumberControl min={ 0 } max={ 10000 } />, props );
 
@@ -384,5 +391,21 @@ describe( 'NumberControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( null );
 		// renderControl keeps the bound value static, so display falls back to '12' once the draft resets.
 		expect( input ).toHaveDisplayValue( '12' );
+	} );
+
+	it( 'should bound the native input with both min and max', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		// Act.
+		renderControl( <NumberControl min={ 100 } max={ 3000 } step={ 1 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( input ).toHaveAttribute( 'min', '100' );
+		expect( input ).toHaveAttribute( 'max', '3000' );
+		expect( input ).toHaveAttribute( 'step', '1' );
 	} );
 } );
