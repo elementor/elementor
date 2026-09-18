@@ -300,4 +300,84 @@ describe( 'NumberControl', () => {
 		// Assert.
 		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '900' );
 	} );
+
+	it( 'should restore the previous value on blur when a required field is emptied', () => {
+		// Arrange.
+		const requiredPropType = createMockPropType( {
+			kind: 'plain',
+			settings: { required: true },
+		} );
+
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType: requiredPropType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '' );
+		expect( setValue ).not.toHaveBeenCalled();
+
+		// Act.
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '600' );
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should clear an optional field on blur when it is emptied', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( null );
+	} );
+
+	it( 'should not commit anything on blur when the field was never edited', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		// Act.
+		fireEvent.blur( screen.getByRole( 'spinbutton' ) );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should keep a null-default field working when cleared', () => {
+		// Arrange — mirrors Video start_time / end_time: default null, min 0.
+		const nullDefaultPropType = createMockPropType( { kind: 'plain', default: null } );
+
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 12 }, bind: 'number', propType: nullDefaultPropType };
+
+		renderControl( <NumberControl min={ 0 } max={ 10000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( null );
+		expect( input ).toHaveDisplayValue( '12' );
+	} );
 } );
