@@ -45,7 +45,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
-	{ pluginName: 'template-kit-import', installSource: 'api' },
+	// { pluginName: 'template-kit-import', installSource: 'api' },
 	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
