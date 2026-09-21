@@ -39,4 +39,14 @@ describe( 'SeverityFilterChips', () => {
 		// Assert.
 		expect( onChange ).toHaveBeenCalledWith( 'all' );
 	} );
+
+	it( 'exposes the selected chip via aria-pressed', () => {
+		// Arrange & Act.
+		renderWithTheme( <SeverityFilterChips selected="error" onChange={ jest.fn() } /> );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Errors', pressed: true } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'All', pressed: false } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Warnings', pressed: false } ) ).toBeInTheDocument();
+	} );
 } );

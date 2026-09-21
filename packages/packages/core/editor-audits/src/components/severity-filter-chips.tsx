@@ -50,6 +50,7 @@ function FilterChip( { label, icon, isSelected, onClick }: FilterChipProps ) {
 			variant="filled"
 			color="default"
 			onClick={ onClick }
+			aria-pressed={ isSelected }
 			sx={ { bgcolor: isSelected ? 'action.selected' : 'transparent' } }
 		/>
 	);
