@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -49,6 +50,48 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $data['hidden'] );
 		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
+	}
+
+	public function test_editor_one_menu_hooks_are_registered_when_experiment_is_active() {
+		// Assert
+		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
+		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
+	}
+
+	public function test_editor_one_menu_hooks_are_not_registered_when_experiment_is_inactive() {
+		// Arrange
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+		$inactive_module = new Module();
+
+		// Act & Assert
+		$this->assertFalse( has_action( 'elementor/editor-one/menu/register', [ $inactive_module, 'register_editor_one_menu' ] ) );
+		$this->assertFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $inactive_module, 'enqueue_assets_for_editor_one_menu' ] ) );
+
+		// Cleanup
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+	}
+
+	public function test_register_editor_one_menu__registers_agents_ready_menu_item() {
+		// Arrange
+		$instance_property = ( new \ReflectionClass( Menu_Data_Provider::class ) )->getProperty( 'instance' );
+		$instance_property->setAccessible( true );
+		$instance_property->setValue( null, null );
+		$menu_data_provider = Menu_Data_Provider::instance();
+
+		// Act
+		$this->module->register_editor_one_menu( $menu_data_provider );
+
+		// Assert
+		$this->assertTrue( $menu_data_provider->is_item_already_registered( Module::PAGE_ID ) );
+
+		// Cleanup
+		$instance_property->setValue( null, null );
 	}
 
 	public function test_get_llms_txt_content__returns_empty_when_not_configured() {
