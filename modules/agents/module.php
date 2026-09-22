@@ -32,7 +32,7 @@ class Module extends BaseModule {
 
 	const SCRIPT_HANDLE = 'e-agents-ready-app';
 
-const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
+	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
 	public function get_name() {
 		return 'agents';
