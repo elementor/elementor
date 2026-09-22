@@ -209,7 +209,7 @@ async function getCachedLibrary(
 		return inFlight;
 	}
 
-	const request = loadCustomLibrary( library, signal ).then( ( icons ) => {
+	const request = loadCustomLibrary( library ).then( ( icons ) => {
 		if ( icons.length > 0 ) {
 			libraryCache.set( library.name, icons );
 		}
@@ -226,17 +226,14 @@ async function getCachedLibrary(
 	}
 }
 
-async function loadCustomLibrary(
-	library: CustomIconLibraryConfig,
-	signal?: AbortSignal
-): Promise< FontAwesome7Icon[] > {
-	const payload = await loadLibraryPayload( library, signal );
+async function loadCustomLibrary( library: CustomIconLibraryConfig ): Promise< FontAwesome7Icon[] > {
+	const payload = await loadLibraryPayload( library );
 	const parsedIcons = parseCustomIcons( payload );
 
 	return parsedIcons.map( ( icon ) => toCatalogIcon( library, icon ) );
 }
 
-async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
+async function loadLibraryPayload( library: CustomIconLibraryConfig ): Promise< unknown > {
 	if ( library.icons !== undefined ) {
 		return { icons: library.icons };
 	}
@@ -246,18 +243,14 @@ async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: Ab
 	}
 
 	try {
-		const response = await fetch( library.fetchJson, { signal, mode: 'cors' } );
+		const response = await fetch( library.fetchJson, { mode: 'cors' } );
 
 		if ( ! response.ok ) {
 			return null;
 		}
 
 		return response.json();
-	} catch ( err ) {
-		if ( err instanceof DOMException && err.name === 'AbortError' ) {
-			throw err;
-		}
-
+	} catch {
 		return null;
 	}
 }
