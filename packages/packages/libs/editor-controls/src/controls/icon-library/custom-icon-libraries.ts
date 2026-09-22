@@ -210,7 +210,9 @@ async function getCachedLibrary(
 	}
 
 	const request = loadCustomLibrary( library, signal ).then( ( icons ) => {
-		libraryCache.set( library.name, icons );
+		if ( icons.length > 0 ) {
+			libraryCache.set( library.name, icons );
+		}
 
 		return icons;
 	} );
@@ -251,7 +253,11 @@ async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: Ab
 		}
 
 		return response.json();
-	} catch {
+	} catch ( err ) {
+		if ( err instanceof DOMException && err.name === 'AbortError' ) {
+			throw err;
+		}
+
 		return null;
 	}
 }
