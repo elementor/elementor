@@ -1,4 +1,5 @@
 import { enqueueIconFonts } from '../open-icon-library';
+import { resolveIconFontGlyph, resetCustomIconFontCache } from './custom-icon-font-svg';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
 const NATIVE_TAB_NAMES = new Set(['all', 'recommended', 'GoPro']);
@@ -27,7 +28,9 @@ type ParsedCustomIcon = {
 	svgMarkup?: string;
 };
 
-export function resetCustomIconLibrariesCache() {}
+export function resetCustomIconLibrariesCache() {
+	resetCustomIconFontCache();
+}
 
 export function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
 	const libraries = getIconManagerLibraries();
@@ -95,7 +98,7 @@ export async function resolveCustomIcon(
 		return icon;
 	}
 
-	const enriched = await enrichIconFromSiblingFiles( config.fetchJson, icon, signal );
+	const enriched = await enrichIconFromSiblingFiles( config.fetchJson, icon, config, signal );
 
 	return enriched;
 }
@@ -103,6 +106,7 @@ export async function resolveCustomIcon(
 async function enrichIconFromSiblingFiles(
 	fetchJson: string,
 	icon: FontAwesome7Icon,
+	library: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< FontAwesome7Icon > {
 	const directory = getDirectoryUrl( fetchJson );
@@ -134,7 +138,42 @@ async function enrichIconFromSiblingFiles(
 		};
 	}
 
+	// config.json has no path data (glyphs are unicode references in an SVG font).
+	// Try the SVG font referenced from the CSS file.
+	const cssUrl = pickCssUrl( library, directory );
+	const fontGlyph = await resolveIconFontGlyph(
+		{ url: cssUrl, prefix: library.prefix },
+		icon.name,
+		nameCandidates,
+		signal
+	);
+
+	if ( fontGlyph?.svgMarkup ) {
+		return { ...icon, svgMarkup: fontGlyph.svgMarkup };
+	}
+
+	if ( fontGlyph && fontGlyph.paths.length > 0 ) {
+		return { ...icon, paths: fontGlyph.paths, width: fontGlyph.width, height: fontGlyph.height };
+	}
+
 	return icon;
+}
+
+function pickCssUrl( library: CustomIconLibraryConfig, directory: string ): string {
+	if ( typeof library.url === 'string' && library.url !== '' ) {
+		return library.url;
+	}
+
+	if ( Array.isArray( library.enqueue ) ) {
+		const first = library.enqueue.find( ( u ) => typeof u === 'string' && u !== '' );
+
+		if ( first ) {
+			return first;
+		}
+	}
+
+	// Fontello always stores its CSS at css/fontello.css relative to the root directory.
+	return `${ directory }css/fontello.css`;
 }
 
 function getBareNameCandidates( name: string ): string[] {
