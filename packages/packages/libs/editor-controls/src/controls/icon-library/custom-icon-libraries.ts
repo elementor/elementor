@@ -477,9 +477,7 @@ async function getCachedSiblingSvg(
 		}
 	}
 
-	siblingSvgCache.set( cacheKey, null );
-
-	return markup;
+	return null;
 }
 
 async function fetchSiblingSvg(
