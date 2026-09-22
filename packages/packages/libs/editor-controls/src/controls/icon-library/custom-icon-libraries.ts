@@ -1,4 +1,5 @@
 import { enqueueIconFonts } from '../open-icon-library';
+import { resolveIconFontGlyph, resetCustomIconFontCache } from './custom-icon-font-svg';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 import { sanitizeSvgMarkup } from './sanitize-svg-markup';
 
@@ -103,6 +104,7 @@ export function resetCustomIconLibrariesCache() {
 	libraryCache.clear();
 	libraryInFlight.clear();
 	siblingSvgCache.clear();
+	resetCustomIconFontCache();
 }
 
 export async function loadCustomIconLibraries( signal?: AbortSignal ): Promise< FontAwesome7Icon[] > {
@@ -237,13 +239,36 @@ async function hydrateCatalogIcon(
 	icon: FontAwesome7Icon,
 	signal?: AbortSignal
 ): Promise< FontAwesome7Icon > {
-	if ( icon.paths.length > 0 || icon.svgMarkup || ! library.fetchJson ) {
+	if ( icon.paths.length > 0 || icon.svgMarkup ) {
 		return icon;
 	}
 
-	const svgMarkup = await getCachedSiblingSvg( library, icon.name, signal );
+	if ( library.fetchJson ) {
+		const siblingMarkup = await getCachedSiblingSvg( library, icon.name, signal );
 
-	return svgMarkup ? { ...icon, svgMarkup } : icon;
+		if ( siblingMarkup ) {
+			return { ...icon, svgMarkup: siblingMarkup };
+		}
+	}
+
+	const fontGlyph = await resolveIconFontGlyph(
+		library,
+		icon.name,
+		getIconNameCandidates( library, icon.name ),
+		signal
+	);
+
+	if ( ! fontGlyph ) {
+		return icon;
+	}
+
+	return {
+		...icon,
+		paths: fontGlyph.paths,
+		width: fontGlyph.width,
+		height: fontGlyph.height,
+		svgMarkup: fontGlyph.svgMarkup,
+	};
 }
 
 async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {

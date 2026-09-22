@@ -1,6 +1,5 @@
 import {
 	type FontAwesome7IconDefinition,
-	getCustomIconLibraryConfigs,
 	getFontAwesome7IconName,
 	isDeletedCustomIconLibrary,
 	resolveCustomIcon,
@@ -16,9 +15,6 @@ const EMPTY_ICON_RESULT = { html: null, url: null };
 const ICON_SVG_SIZE = '100%';
 const ICON_SVG_OVERFLOW = 'visible';
 const DEFAULT_SVG_RELATIVE_PATH = 'images/default-svg.svg';
-const WEBFONT_HOST_STYLE =
-	'display:flex;align-items:center;justify-content:center;width:100%;height:100%;container-type:size;';
-const WEBFONT_GLYPH_STYLE = 'font-size:100cqmin;line-height:1;font-style:normal;font-weight:normal;';
 
 type IconValue = {
 	value?: unknown;
@@ -45,22 +41,12 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: customHtml, url: null };
 	}
 
-	if ( getCustomIconLibraryConfigs().some( ( config ) => config.name === library ) ) {
-		return { html: buildWebfontIconHtml( iconValue ), url: null };
-	}
-
 	if ( isDeletedCustomIconLibrary( library, iconValue ) ) {
 		return resolveDefaultSvg( signal );
 	}
 
 	return EMPTY_ICON_RESULT;
 } );
-
-function buildWebfontIconHtml( iconClass: string ): string {
-	const safeClass = iconClass.replace( /"/g, '' ).replace( /</g, '' );
-
-	return `<span style="${ WEBFONT_HOST_STYLE }" aria-hidden="true"><i class="${ safeClass }" style="${ WEBFONT_GLYPH_STYLE }"></i></span>`;
-}
 
 async function resolveDefaultSvg( signal?: AbortSignal ) {
 	const assetsUrl = window.elementorCommon?.config?.urls?.assets;

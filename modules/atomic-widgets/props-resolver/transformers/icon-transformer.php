@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Icon_Library_Editor_Config;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Library_Svg_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
@@ -68,17 +69,6 @@ class Icon_Transformer extends Transformer_Base {
 			];
 		}
 
-		$tab = $this->get_registered_icon_library_tab( $icon['library'] );
-
-		if ( $tab ) {
-			$this->enqueue_custom_library_styles( $tab );
-
-			return [
-				'html' => $this->build_webfont_icon_html( $icon['value'] ),
-				'url' => null,
-			];
-		}
-
 		if ( $this->is_deleted_custom_icon_library( $icon ) ) {
 			return $this->transform_default_svg();
 		}
@@ -87,37 +77,6 @@ class Icon_Transformer extends Transformer_Base {
 			'html' => '',
 			'url' => null,
 		];
-	}
-
-	private function enqueue_custom_library_styles( array $tab ): void {
-		$name = is_string( $tab['name'] ?? null ) ? $tab['name'] : '';
-		$url = is_string( $tab['url'] ?? null ) ? $tab['url'] : '';
-		$handle = '' !== $name ? 'elementor-icons-' . $name : '';
-		$version = isset( $tab['ver'] ) && ( is_string( $tab['ver'] ) || is_numeric( $tab['ver'] ) ) ? (string) $tab['ver'] : null;
-
-		if ( $handle && $url ) {
-			wp_enqueue_style( $handle, $url, [], $version );
-		} elseif ( $handle ) {
-			wp_enqueue_style( $handle );
-		}
-
-		if ( empty( $tab['enqueue'] ) || ! is_array( $tab['enqueue'] ) ) {
-			return;
-		}
-
-		foreach ( $tab['enqueue'] as $index => $enqueue_url ) {
-			if ( ! is_string( $enqueue_url ) || '' === $enqueue_url ) {
-				continue;
-			}
-
-			wp_enqueue_style( $handle . '-enqueue-' . $index, $enqueue_url, [], $version );
-		}
-	}
-
-	private function build_webfont_icon_html( string $icon_class ): string {
-		$safe_class = esc_attr( $icon_class );
-
-		return '<span style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;container-type:size;" aria-hidden="true"><i class="' . $safe_class . '" style="font-size:100cqmin;line-height:1;font-style:normal;font-weight:normal;"></i></span>';
 	}
 
 	private function fetch_registered_custom_library_svg( array $icon ): ?string {
@@ -129,21 +88,19 @@ class Icon_Transformer extends Transformer_Base {
 
 		$fetch_json = $tab['fetchJson'] ?? '';
 
-		if ( ! is_string( $fetch_json ) || '' === $fetch_json ) {
-			return null;
-		}
+		if ( is_string( $fetch_json ) && '' !== $fetch_json ) {
+			foreach ( $this->get_custom_icon_file_names( $icon['value'], $tab ) as $name ) {
+				foreach ( $this->get_custom_icon_svg_urls( $fetch_json, $name ) as $url ) {
+					$content = $this->read_svg_url( $url );
 
-		foreach ( $this->get_custom_icon_file_names( $icon['value'], $tab ) as $name ) {
-			foreach ( $this->get_custom_icon_svg_urls( $fetch_json, $name ) as $url ) {
-				$content = $this->read_svg_url( $url );
-
-				if ( $content ) {
-					return $content;
+					if ( $content ) {
+						return $content;
+					}
 				}
 			}
 		}
 
-		return null;
+		return ( new Custom_Icon_Library_Svg_Resolver() )->resolve( $icon, $tab );
 	}
 
 	private function get_registered_icon_library_tab( string $library ): ?array {
