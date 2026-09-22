@@ -228,6 +228,40 @@ jobs:
       pr_number: ${{ github.event.pull_request.number }}
       head_sha: ${{ github.event.pull_request.head.sha }}
 
+  visual-proof-shots:
+    name: Visual proof shots
+    needs: [playground-preview]
+    if: |
+      always() &&
+      github.event.pull_request.draft == false &&
+      startsWith(github.repository, 'elementor/') &&
+      github.event.action != 'labeled' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (
+        needs.playground-preview.result == 'success' ||
+        github.event.action == 'ready_for_review'
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: write # Required for uploading capture assets to ci/visual-proof-assets branch
+      pull-requests: write
+      deployments: read
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Capture Playground shots and comment
+        # SHA from elementor/elementor-editor-github-actions#55; retarget to main after that PR merges.
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@d44fcedc6ac349a709d176e243bb35b0b0ba755f
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
+          product-name: 'Elementor'
+          cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
+          model: ${{ vars.PR_REVIEW_MODEL }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   lint-js:
     name: Lint JS
     runs-on: ubuntu-22.04

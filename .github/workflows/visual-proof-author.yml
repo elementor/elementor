@@ -1,0 +1,44 @@
+name: Visual proof author
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+    branches:
+      - main
+      - release/beta
+      - release/stable
+      - '[0-9].[0-9][0-9]'
+
+concurrency:
+  group: visual-proof-author-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  author:
+    name: Author Visual proof section
+    if: |
+      startsWith(github.repository, 'elementor/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Author ## Visual proof if missing
+        # SHA from elementor/elementor-editor-github-actions#55; retarget to main after that PR merges.
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-author@main
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          pr-head-sha: ${{ github.event.pull_request.head.sha }}
+          pr-base-sha: ${{ github.event.pull_request.base.sha }}
+          product-name: 'Elementor'
+          cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
+          model: ${{ vars.PR_REVIEW_MODEL }}
