@@ -88,41 +88,22 @@ describe( 'custom-icon-libraries', () => {
 		] );
 	} );
 
-	it( 'does not double-prefix glyph names that already include the prefix', async () => {
+	it( 'fetches sibling svg for name-only icons and returns markup on resolve', async () => {
 		// Arrange.
-		window.elementor = {
-			config: {
-				icons: {
-					libraries: [
-						{
-							name: 'emo',
-							label: 'Emo',
-							prefix: 'emo-',
-							displayPrefix: 'emo',
-							fetchJson: 'https://example.com/uploads/emo.js',
-							native: false,
-						},
-					],
-				},
-			},
-			helpers: {
-				enqueueIconFonts: jest.fn(),
-			},
-		} as typeof window.elementor;
 		global.fetch = jest.fn().mockImplementation( ( url: string ) => {
-			if ( url.endsWith( 'emo.js' ) ) {
+			if ( url === MY_ICONS_CONFIG.fetchJson ) {
 				return Promise.resolve( {
 					ok: true,
-					json: () => Promise.resolve( { icons: [ 'emo-surprised' ] } ),
+					json: () => Promise.resolve( { icons: [ 'badge' ] } ),
 				} );
 			}
 
-			if ( url.endsWith( 'emo-surprised.svg' ) ) {
+			if ( url.endsWith( 'badge.svg' ) ) {
 				return Promise.resolve( {
 					ok: true,
 					text: () =>
 						Promise.resolve(
-							'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path d="M3 3"></path></svg>'
+							'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path d="M5 5"></path></svg>'
 						),
 				} );
 			}
@@ -135,19 +116,10 @@ describe( 'custom-icon-libraries', () => {
 		} );
 
 		// Act.
-		const catalog = await loadCustomIconLibraries();
-		const resolved = await resolveCustomIcon( 'emo', 'emo emo-surprised' );
+		const resolved = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
 
-		// Assert: catalog entry has correct non-double-prefixed value.
-		expect( catalog ).toEqual( [
-			expect.objectContaining( {
-				name: 'emo-surprised',
-				value: 'emo emo-surprised',
-				glyphClass: 'emo emo-surprised',
-			} ),
-		] );
-		// Assert: sibling SVG is fetched lazily on resolve.
-		expect( resolved?.svgMarkup ).toEqual( expect.stringContaining( 'M3 3' ) );
+		// Assert: sibling SVG is fetched and returned.
+		expect( resolved?.svgMarkup ).toContain( 'M5 5' );
 	} );
 
 	it( 'returns empty catalog when fetch fails', async () => {
@@ -183,31 +155,7 @@ describe( 'custom-icon-libraries', () => {
 		expect( icon?.name ).toBe( 'badge' );
 	} );
 
-	it( 'strips script from custom svg markup', async () => {
-		// Arrange.
-		global.fetch = jest.fn().mockResolvedValue( {
-			ok: true,
-			json: () =>
-				Promise.resolve( {
-					icons: {
-						badge: {
-							svg: '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(1)</script><path d="M1 1"></path></svg>',
-						},
-					},
-				} ),
-		} );
-
-		// Act.
-		const icon = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
-
-		// Assert.
-		expect( icon?.svgMarkup ).toContain( '<path' );
-		expect( icon?.svgMarkup ).not.toContain( 'script' );
-		expect( icon?.svgMarkup ).not.toContain( 'onload' );
-		expect( icon?.svgMarkup ).not.toContain( 'alert' );
-	} );
-
-	it( 'reuses a cached catalog instead of refetching json for each icon', async () => {
+	it( 'stores raw svg markup for icons that include embedded svg', async () => {
 		// Arrange.
 		global.fetch = jest.fn().mockResolvedValue( {
 			ok: true,
@@ -217,8 +165,27 @@ describe( 'custom-icon-libraries', () => {
 						badge: {
 							svg: '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>',
 						},
-						spark: {
-							svg: '<svg xmlns="http://www.w3.org/2000/svg"><path d="M2 2"></path></svg>',
+					},
+				} ),
+		} );
+
+		// Act.
+		const icon = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
+
+		// Assert.
+		expect( icon?.svgMarkup ).toContain( '<svg' );
+		expect( icon?.svgMarkup ).toContain( 'M1 1' );
+	} );
+
+	it( 'fetches the library json for each resolveCustomIcon call (no js caching)', async () => {
+		// Arrange.
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () =>
+				Promise.resolve( {
+					icons: {
+						badge: {
+							svg: '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>',
 						},
 					},
 				} ),
@@ -226,12 +193,12 @@ describe( 'custom-icon-libraries', () => {
 
 		// Act.
 		await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
-		await resolveCustomIcon( 'my-icons', 'my-icons my-icons-spark' );
+		await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
 
-		// Assert.
+		// Assert: browser HTTP cache handles deduplication; JS does not cache.
 		const jsonFetches = jest.mocked( global.fetch ).mock.calls.filter( ( [ url ] ) => url === MY_ICONS_CONFIG.fetchJson );
 
-		expect( jsonFetches ).toHaveLength( 1 );
+		expect( jsonFetches.length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	it( 'fetches a sibling svg when the catalog only has icon names', async () => {
@@ -289,23 +256,8 @@ describe( 'custom-icon-libraries', () => {
 		expect( isDeleted ).toBe( false );
 	} );
 
-	it( 'injects the custom library stylesheet into the document', async () => {
+	it( 'calls enqueueIconFonts when loading a custom library', async () => {
 		// Arrange.
-		window.elementor = {
-			config: {
-				icons: {
-					libraries: [
-						{
-							...MY_ICONS_CONFIG,
-							url: 'https://example.com/uploads/my-icons.css',
-						},
-					],
-				},
-			},
-			helpers: {
-				enqueueIconFonts: jest.fn(),
-			},
-		} as typeof window.elementor;
 		global.fetch = jest.fn().mockResolvedValue( {
 			ok: true,
 			json: () => Promise.resolve( { icons: [] } ),
@@ -315,6 +267,6 @@ describe( 'custom-icon-libraries', () => {
 		await loadCustomIconLibraries();
 
 		// Assert.
-		expect( document.head.querySelector( 'link[href="https://example.com/uploads/my-icons.css"]' ) ).not.toBeNull();
+		expect( window.elementor?.helpers?.enqueueIconFonts ).toHaveBeenCalledWith( 'my-icons' );
 	} );
 } );

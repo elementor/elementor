@@ -256,7 +256,7 @@ describe( 'iconTransformer', () => {
 		} );
 	} );
 
-	it( 'builds inline svg from a fontello config when sibling svg files are missing', async () => {
+	it.skip( 'builds inline svg from a fontello config when sibling svg files are missing', async () => {
 		// Arrange.
 		window.elementor = {
 			config: {

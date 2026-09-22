@@ -44,7 +44,6 @@ export {
 	type FontAwesome7IconDefinition,
 } from './controls/icon-library/font-awesome-7-data';
 export {
-	getCustomIconLibraryConfigs,
 	isDeletedCustomIconLibrary,
 	resetCustomIconLibrariesCache,
 	resolveCustomIcon,
