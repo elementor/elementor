@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Setting_Schemas;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,11 +12,7 @@ return [
 	'description' => 'Flex/Grid layout container for nesting child elements.',
 	'catalog_visibility' => 'always',
 	'settings' => [
-		'content_width' => [
-			'type' => 'string',
-			'enum' => [ 'boxed', 'full' ],
-			'default' => 'boxed',
-		],
+		'content_width' => Setting_Schemas::enum( [ 'boxed', 'full' ], 'boxed' ),
 	],
 	'default_style_target' => 'container',
 	'style_targets' => [
