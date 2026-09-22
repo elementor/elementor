@@ -7,11 +7,13 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,6 +48,7 @@ class Element_Config_Applier {
 	public function apply( array &$config_id_index, array $element_config, array $widget_configs, ?Document $document = null ): array {
 		$errors = [];
 		$warnings = [];
+		$warning_codes = [];
 		$component_entries = [];
 
 		foreach ( $element_config as $config_id => $settings ) {
@@ -61,8 +64,10 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
+				$registry = V3_Widget_Map_Registry::instance();
+				$is_standardized = $registry->is_experiment_active() && null !== $registry->get_validation_contract( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
@@ -82,6 +87,15 @@ class Element_Config_Applier {
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
+
+					if ( $is_standardized ) {
+						$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+						$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
+
+						if ( empty( $node['settings']['__dynamic__'] ) ) {
+							unset( $node['settings']['__dynamic__'] );
+						}
+					}
 				}
 
 				if ( $shape['error'] ) {
@@ -103,7 +117,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings );
+			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings, $warning_codes );
 
 			$node['settings'] = array_merge( $node['settings'] ?? [], $outcome['resolved'] );
 
@@ -131,6 +145,7 @@ class Element_Config_Applier {
 		return [
 			'error' => $this->combine_errors( $errors, $component_error ),
 			'warnings' => $warnings,
+			'warning_codes' => array_values( array_unique( $warning_codes ) ),
 		];
 	}
 
@@ -164,7 +179,8 @@ class Element_Config_Applier {
 		string $element_type,
 		string $config_id,
 		array &$errors,
-		array &$warnings
+		array &$warnings,
+		array &$warning_codes = []
 	): array {
 		$alias_map = Prop_Canonicalizer::build_alias_map( $schema );
 		$resolved = [];
@@ -180,6 +196,7 @@ class Element_Config_Applier {
 					$name,
 					$element_type
 				);
+				$warning_codes[] = 'prop_not_supported';
 				continue;
 			}
 
@@ -226,6 +243,20 @@ class Element_Config_Applier {
 			$merged[ $key ] = $value;
 		}
 		return $merged;
+	}
+
+	private function is_v3_settings_node( array $node ): bool {
+		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+			return true;
+		}
+
+		if ( ! Widget_Context_Helper::is_standardized_maps_active() ) {
+			return false;
+		}
+
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+
+		return is_string( $type ) && Widget_Context_Helper::is_v3_supported( $type );
 	}
 
 	private function validate_settings( array $settings, array $schema ): ?string {

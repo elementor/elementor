@@ -40,28 +40,28 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 					<InlineEditorToolbar
 						editor={ editor }
 						elementId={ elementId }
-						sx={ {
+						sx={ ( theme: Theme ) => ( {
 							boxShadow: 'none',
 							border: '1px solid',
-							borderColor: 'grey.200',
+							borderColor: theme.palette.text.secondary,
 							mb: 0.5,
-						} }
+						} ) }
 						inControlPanel={ true }
 					/>
 				) }
 				<Box
-					sx={ {
+					sx={ ( theme: Theme ) => ( {
 						p: 0.8,
 						border: '1px solid',
-						borderColor: 'grey.200',
+						borderColor: theme.palette.text.secondary,
 						borderRadius: '8px',
 						transition: 'border-color .2s ease, box-shadow .2s ease',
 						'&:hover': {
-							borderColor: 'black',
+							borderColor: theme.palette.text.primary,
 						},
 						'&:focus-within': {
-							borderColor: 'black',
-							boxShadow: '0 0 0 1px black',
+							borderColor: theme.palette.text.primary,
+							boxShadow: `0 0 0 1px ${ theme.palette.text.primary }`,
 						},
 						'& .ProseMirror:focus': {
 							outline: 'none',
@@ -88,7 +88,7 @@ export const InlineEditingControl = createControl( ( { sx, attributes, props, co
 							all: 'unset',
 						},
 						...sx,
-					} }
+					} ) }
 					{ ...attributes }
 					{ ...props }
 				>

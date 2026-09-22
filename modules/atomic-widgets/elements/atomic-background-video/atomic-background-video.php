@@ -68,7 +68,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'video', 'background', 'media' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'video', 'background', 'bg', 'media', 'autoplay', 'hero', 'film', 'mp4' ];
 	}
 
 	public function get_icon() {
@@ -113,6 +113,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 			'show_controls' => Boolean_Prop_Type::make()->default( true ),
 			'state' => String_Prop_Type::make()
 				->enum( [ 'playing', 'paused' ] )
+				->default( 'playing' )
 				->set_dependencies( $state_dependencies )
 				->meta( Overridable_Prop_Type::ignore() ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -150,6 +151,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							'paused' => [ 'title' => esc_html__( 'Pause', 'elementor' ) ],
 						] )
 						->set_exclusive( true )
+						->set_allow_empty( true )
 						->set_convert_options( true )
 						->set_size( 'tiny' )
 						->set_full_width( true ),

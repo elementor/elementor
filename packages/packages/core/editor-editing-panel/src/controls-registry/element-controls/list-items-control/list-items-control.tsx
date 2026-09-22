@@ -16,7 +16,7 @@ const getEffectiveListItemLabel = ( label: string | undefined, fallbackLabel: st
 };
 
 const getDefaultListItemLabel = ( index: number ) => {
-	return `Item ${ index + 1 }`;
+	return `List item ${ index + 1 }`;
 };
 
 export const ListItemsControl = ( { label }: { label: string } ) => {
@@ -88,7 +88,7 @@ const ListItemsControlContent = ( { label }: { label: string } ) => {
 			adornment={ () => null }
 			itemSettings={ {
 				getId: ( { item } ) => item.id,
-				initialValues: { id: '', title: 'Item' },
+				initialValues: { id: '', title: 'List item' },
 				Label: ItemLabel,
 				Content: ItemContent,
 				Icon: () => null,

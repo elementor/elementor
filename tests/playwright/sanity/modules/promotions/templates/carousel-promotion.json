@@ -1,0 +1,14 @@
+{
+	"content": [
+		{
+			"id": "car001",
+			"elType": "e-carousel",
+			"settings": [],
+			"elements": []
+		}
+	],
+	"page_settings": [],
+	"version": "0.4",
+	"title": "carousel-promotion",
+	"type": "page"
+}

@@ -13,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
@@ -41,6 +40,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Are
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Pro_Promotion_Data_Preservation;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Svg_Src_Export_Transformer;
@@ -139,6 +139,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Back
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Pause\Atomic_Background_Video_Pause;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Play\Atomic_Background_Video_Play;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
@@ -158,6 +159,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Time_Ran
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
@@ -214,6 +216,8 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
+		add_filter( 'elementor/common/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
@@ -312,6 +316,7 @@ class Module extends BaseModule {
 		( new Atomic_Widget_Base_Styles() )->register_hooks();
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
+		Atomic_Prop_Remap::register_builtin_handlers();
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
@@ -349,6 +354,16 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
+
+		return $settings;
+	}
+
+	private function add_font_awesome_7_config( $settings ) {
+		if ( ! isset( $settings['fontAwesome'] ) || ! is_array( $settings['fontAwesome'] ) ) {
+			$settings['fontAwesome'] = [];
+		}
+
+		$settings['fontAwesome']['v7'] = Font_Awesome_7_Icon_Resolver::get_editor_config();
 
 		return $settings;
 	}
@@ -447,6 +462,7 @@ class Module extends BaseModule {
 
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
+			$elements_manager->register_element_type( new Carousel_Promotion() );
 		}
 	}
 
@@ -587,7 +603,6 @@ class Module extends BaseModule {
 		$resolver = new Plain_Values_Resolver( $registry );
 
 		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
-		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
 		$registry->register( Escaped_Html_Prop_Type::get_key(), new String_Plain_Resolver() );
 
 		return $resolver;
@@ -649,6 +664,12 @@ class Module extends BaseModule {
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
+			// Base style is `display: none`. In the editor, still show the slot when it is
+			// selected (navigator / canvas), when a nested child is selected, or when empty
+			// so the plus/drop target has a hit area. Frontend and unselected Normal stay hidden.
+			'.elementor-edit-mode [data-element_type="e-form-success-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view)),',
+			'.elementor-edit-mode [data-element_type="e-form-error-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view))',
+			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
 			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',
 			'.e-background-video__content { position: relative; z-index: 1; flex: 1 1 auto; }',
@@ -661,9 +682,12 @@ class Module extends BaseModule {
 			'.e-background-video__play, .e-background-video__pause { appearance: none; -webkit-appearance: none; }',
 			'.e-background-video.e-background-video--playing .e-background-video__play { display: none; }',
 			'.e-background-video.e-background-video--paused .e-background-video__pause { display: none; }',
-			// No state pinned (editor "States" unselected): hide both buttons. The two `:not` guards lift
-			// specificity above the atomic base style so `display: none` wins. On the frontend Alpine always
-			// sets one of the state classes from real playback, so exactly one button shows there.
+			// No state pinned (editor "States" unselected): hide the controls wrapper and both buttons. The
+			// two `:not` guards lift specificity above the atomic base style so `display: none` wins. The
+			// button rules are kept because the buttons can be reparented out of the wrapper. On the
+			// frontend Alpine always sets one of the state classes from real playback, so the controls show
+			// there with exactly one button.
+			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__controls,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__play,',
 			'.e-background-video:not(.e-background-video--playing):not(.e-background-video--paused) .e-background-video__pause { display: none; }',
 			// Accordion: `<summary>` already loses its native marker via `display: flex` on the header's
@@ -698,6 +722,7 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

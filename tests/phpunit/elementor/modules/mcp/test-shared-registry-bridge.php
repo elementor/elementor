@@ -33,7 +33,7 @@ class Test_Shared_Registry_Bridge extends TestCase {
 				continue;
 			}
 
-			$this->assertGreaterThanOrEqual( '1.0.4', $package['version'] );
+			$this->assertTrue( version_compare( $package['version'], '1.0.4', '>=' ), "Expected version >= 1.0.4, got {$package['version']}" );
 			return;
 		}
 
@@ -66,10 +66,8 @@ class Test_Shared_Registry_Bridge extends TestCase {
 
 		$this->assertStringNotContainsString( 'mcp_connector', $module_source );
 		$this->assertStringNotContainsString( 'is_connector_page_active', $module_source );
-		$this->assertStringContainsString(
-			'$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );',
-			$module_source
-		);
+		$this->assertStringContainsString( '$menu_data_provider->register_menu(', $module_source );
+		$this->assertStringContainsString( 'new Editor_One_Mcp_Menu()', $module_source );
 
 		$menu_source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/admin-menu-items/editor-one-mcp-menu.php'

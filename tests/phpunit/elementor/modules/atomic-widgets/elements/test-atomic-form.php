@@ -5,6 +5,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -107,6 +109,30 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 			$email_value['from']['value']
 		);
 		$this->assertSame( '[all-fields]', $email_value['message']['value'] );
+	}
+
+	/**
+	 * @dataProvider form_message_classes_provider
+	 */
+	public function test_form_message_does_not_restrict_child_types( string $class_name ) {
+		$message = new $class_name( [
+			'id' => 'test_form_message',
+			'elType' => $class_name::get_element_type(),
+			'settings' => [],
+		], null );
+
+		$reflection = new \ReflectionMethod( $class_name, 'get_initial_config' );
+		$reflection->setAccessible( true );
+		$config = $reflection->invoke( $message );
+
+		$this->assertSame( [], $config['allowed_child_types'] );
+	}
+
+	public function form_message_classes_provider(): array {
+		return [
+			'success message' => [ Form_Success_Message::class ],
+			'error message' => [ Form_Error_Message::class ],
+		];
 	}
 
 	public function test_initial_config_includes_base_settings() {
