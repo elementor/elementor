@@ -183,6 +183,19 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_execute__always_includes_media_library_upload_url() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_attachment( 'image/png', 'photo.png' );
+
+		// Act
+		$result = $this->ability->execute( [] );
+
+		// Assert
+		$this->assertArrayHasKey( 'media_library_upload_url', $result );
+		$this->assertSame( admin_url( 'media-new.php' ), $result['media_library_upload_url'] );
+	}
+
 	public function test_execute__empty_result_includes_upload_hint() {
 		// Arrange — no attachments in this test's factory scope; still filter to guarantee empty
 		$this->act_as_admin();
@@ -193,7 +206,7 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( 0, $result['total'] );
 		$this->assertArrayHasKey( 'llm_instructions', $result );
-		$this->assertNotEmpty( $result['llm_instructions'] );
+		$this->assertStringContainsString( 'media_library_upload_url', $result['llm_instructions'] );
 	}
 
 	private function create_attachment( string $mime_type, string $filename, string $title = '' ): int {
