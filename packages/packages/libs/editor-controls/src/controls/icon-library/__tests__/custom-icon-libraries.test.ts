@@ -286,4 +286,33 @@ describe( 'custom-icon-libraries', () => {
 		// Assert.
 		expect( isDeleted ).toBe( false );
 	} );
+
+	it( 'injects the custom library stylesheet into the document', async () => {
+		// Arrange.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							...MY_ICONS_CONFIG,
+							url: 'https://example.com/uploads/my-icons.css',
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () => Promise.resolve( { icons: [] } ),
+		} );
+
+		// Act.
+		await loadCustomIconLibraries();
+
+		// Assert.
+		expect( document.head.querySelector( 'link[href="https://example.com/uploads/my-icons.css"]' ) ).not.toBeNull();
+	} );
 } );

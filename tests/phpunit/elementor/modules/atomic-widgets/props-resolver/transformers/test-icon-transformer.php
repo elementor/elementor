@@ -254,7 +254,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
 	}
 
-	public function test_transform__does_not_fallback_when_custom_library_exists() {
+	public function test_transform__renders_webfont_markup_when_custom_library_has_no_svg() {
 		// Arrange.
 		$additional_tabs = static function ( $tabs ) {
 			$tabs['my-icons'] = [
@@ -280,7 +280,8 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		remove_filter( 'elementor/icons_manager/additional_tabs', $additional_tabs );
 
 		// Assert.
-		$this->assertSame( '', $result['html'] );
+		$this->assertStringContainsString( 'my-icons my-icons-badge', $result['html'] );
+		$this->assertStringContainsString( '<i ', $result['html'] );
 		$this->assertNull( $result['url'] );
 	}
 

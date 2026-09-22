@@ -256,7 +256,7 @@ describe( 'iconTransformer', () => {
 		} );
 	} );
 
-	it( 'does not fall back when a custom library is still registered', async () => {
+	it( 'renders a webfont glyph when a custom library has no svg files', async () => {
 		// Arrange.
 		window.elementor = {
 			config: {
@@ -268,6 +268,7 @@ describe( 'iconTransformer', () => {
 							prefix: 'my-icons-',
 							displayPrefix: 'my-icons',
 							fetchJson: 'https://example.com/uploads/my-icons.js',
+							url: 'https://example.com/uploads/my-icons.css',
 							native: false,
 						},
 					],
@@ -286,7 +287,12 @@ describe( 'iconTransformer', () => {
 		const result = await resolveSavedIcon( 'my-icons my-icons-badge', 'my-icons' );
 
 		// Assert.
-		expect( result ).toEqual( { html: null, url: null } );
+		expect( result ).toEqual( {
+			html: expect.stringContaining( 'my-icons my-icons-badge' ),
+			url: null,
+		} );
+		expect( ( result as { html: string } ).html ).toContain( '<i class="my-icons my-icons-badge"' );
+		expect( document.head.querySelector( 'link[href="https://example.com/uploads/my-icons.css"]' ) ).not.toBeNull();
 		expect( global.fetch ).not.toHaveBeenCalledWith(
 			'https://example.com/assets/images/default-svg.svg',
 			expect.anything()

@@ -38,6 +38,67 @@ export function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
 	return libraries.filter( isCustomIconLibraryConfig );
 }
 
+export function enqueueCustomIconLibraryStyles( library: CustomIconLibraryConfig ) {
+	enqueueIconFonts( library.name );
+
+	const urls = getCustomIconStylesheetUrls( library );
+	const documents = getStyleDocuments();
+
+	documents.forEach( ( targetDocument ) => {
+		urls.forEach( ( url ) => appendStylesheet( targetDocument, url ) );
+	} );
+}
+
+function getCustomIconStylesheetUrls( library: CustomIconLibraryConfig ): string[] {
+	const urls: string[] = [];
+
+	if ( Array.isArray( library.enqueue ) ) {
+		library.enqueue.forEach( ( url ) => {
+			if ( typeof url === 'string' && url !== '' ) {
+				urls.push( withAssetVersion( url, library.ver ) );
+			}
+		} );
+	}
+
+	if ( typeof library.url === 'string' && library.url !== '' ) {
+		urls.push( withAssetVersion( library.url, library.ver ) );
+	}
+
+	return urls;
+}
+
+function withAssetVersion( url: string, version?: string ): string {
+	if ( ! version ) {
+		return url;
+	}
+
+	const separator = url.includes( '?' ) ? '&' : '?';
+
+	return `${ url }${ separator }ver=${ encodeURIComponent( version ) }`;
+}
+
+function getStyleDocuments(): Document[] {
+	const documents: Document[] = [ document ];
+	const previewDocument = window.elementor?.$preview?.[ 0 ]?.contentDocument;
+
+	if ( previewDocument ) {
+		documents.push( previewDocument );
+	}
+
+	return documents;
+}
+
+function appendStylesheet( targetDocument: Document, href: string ) {
+	if ( targetDocument.querySelector( `link[href="${ href }"]` ) ) {
+		return;
+	}
+
+	const link = targetDocument.createElement( 'link' );
+	link.rel = 'stylesheet';
+	link.href = href;
+	targetDocument.head.appendChild( link );
+}
+
 export function resetCustomIconLibrariesCache() {
 	libraryCache.clear();
 	libraryInFlight.clear();
@@ -131,7 +192,7 @@ async function getCachedLibrary(
 	library: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< FontAwesome7Icon[] > {
-	enqueueIconFonts( library.name );
+	enqueueCustomIconLibraryStyles( library );
 
 	const cached = libraryCache.get( library.name );
 
