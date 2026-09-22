@@ -206,6 +206,51 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<path', $result['html'] );
 	}
 
+	public function test_transform__uses_custom_library_svg_html_filter() {
+		// Arrange.
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'my-icons my-icons-badge',
+			'library' => 'my-icons',
+		];
+		$filter = static function ( $html, $icon ) {
+			if ( 'my-icons' !== $icon['library'] ) {
+				return $html;
+			}
+
+			return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M1 1"></path></svg>';
+		};
+
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter, 10, 2 );
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<svg', $result['html'] );
+		$this->assertStringContainsString( 'd="M1 1"', $result['html'] );
+		$this->assertStringContainsString( 'fill="currentColor"', $result['html'] );
+		$this->assertNull( $result['url'] );
+	}
+
+	public function test_transform__returns_empty_html_for_unknown_custom_library() {
+		// Arrange.
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'missing-set missing-set-ghost',
+			'library' => 'missing-set',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertSame( '', $result['html'] );
+		$this->assertNull( $result['url'] );
+	}
+
 	private function create_filtered_json_dir(): string {
 		$json_dir = sys_get_temp_dir() . '/elementor-fa7-json-' . uniqid( '', true );
 

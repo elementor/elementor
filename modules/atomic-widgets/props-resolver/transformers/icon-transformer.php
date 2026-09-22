@@ -28,7 +28,38 @@ class Icon_Transformer extends Transformer_Base {
 			return $this->transform_font_awesome_7( $icon );
 		}
 
-		return $this->transform_managed_icon( $icon );
+		$managed_icon = $this->transform_managed_icon( $icon );
+
+		if ( '' !== $managed_icon['html'] ) {
+			return $managed_icon;
+		}
+
+		return $this->transform_custom_library_icon( $icon );
+	}
+
+	private function transform_custom_library_icon( array $icon ): array {
+		/**
+		 * Filters inline SVG markup for a custom icon library value.
+		 *
+		 * @param string $html Sanitizable SVG markup. Default empty.
+		 * @param array  $icon {
+		 *     @type string $value   Saved icon class.
+		 *     @type string $library Icon library key.
+		 * }
+		 */
+		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
+
+		if ( ! is_string( $html ) || '' === $html ) {
+			return [
+				'html' => '',
+				'url' => null,
+			];
+		}
+
+		return [
+			'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
+			'url' => null,
+		];
 	}
 
 	private function transform_font_awesome_7( array $icon ): array {
