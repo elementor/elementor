@@ -3,12 +3,12 @@
 namespace Elementor\Modules\Agents;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -32,7 +32,11 @@ class Module extends BaseModule {
 
 	const SCRIPT_HANDLE = 'e-agents-ready-app';
 
-const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
+	const CONFIG_OBJECT_NAME = 'elementorAgentsReadyConfig';
+
+	const AJAX_OPT_IN_ACTION = 'agents_ready_opt_in';
+
+	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
 	public function get_name() {
 		return 'agents';
@@ -43,7 +47,7 @@ const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Agents llms.txt', 'elementor' ),
 			'description' => esc_html__( 'Expose llms.txt from site settings at the site root for AI agents.', 'elementor' ),
-			'hidden' => true,
+			'hidden' => false,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
@@ -55,12 +59,12 @@ const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
 		add_action( 'elementor/document/after_save', [ $this, 'maybe_invalidate_llms_txt_cache' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
-
-			add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
-			add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
+			add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		}
 	}
 
@@ -78,12 +82,32 @@ const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			$this->get_js_assets_url( 'agents-ready' ),
-			[ 'react', 'react-dom', 'elementor-common' ],
+			[ 'react', 'react-dom', 'elementor-common', 'elementor-v2-ui' ],
 			ELEMENTOR_VERSION,
 			true
 		);
 
+		wp_localize_script(
+			self::SCRIPT_HANDLE,
+			self::CONFIG_OBJECT_NAME,
+			$this->get_app_config()
+		);
+
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
+	}
+
+	public function register_ajax_actions( Ajax $ajax ): void {
+		$ajax->register_ajax_action( self::AJAX_OPT_IN_ACTION, [ $this, 'ajax_opt_in' ] );
+	}
+
+	public function ajax_opt_in(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new \Exception( 'Permission denied' );
+		}
+
+		$feature_key = Plugin::$instance->experiments->get_feature_option_key( self::EXPERIMENT_NAME );
+
+		update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
 	}
 
 	/**
@@ -162,7 +186,13 @@ const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 		return is_string( $llms ) ? $llms : '';
 	}
 
-	private function add_packages( $packages ) {
+	private function get_app_config(): array {
+		return [
+			'isExperimentActive' => Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ),
+		];
+	}
+
+	public function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
 
