@@ -136,16 +136,18 @@ describe( 'custom-icon-libraries', () => {
 
 		// Act.
 		const catalog = await loadCustomIconLibraries();
+		const resolved = await resolveCustomIcon( 'emo', 'emo emo-surprised' );
 
-		// Assert.
+		// Assert: catalog entry has correct non-double-prefixed value.
 		expect( catalog ).toEqual( [
 			expect.objectContaining( {
 				name: 'emo-surprised',
 				value: 'emo emo-surprised',
 				glyphClass: 'emo emo-surprised',
-				svgMarkup: expect.stringContaining( 'M3 3' ),
 			} ),
 		] );
+		// Assert: sibling SVG is fetched lazily on resolve.
+		expect( resolved?.svgMarkup ).toEqual( expect.stringContaining( 'M3 3' ) );
 	} );
 
 	it( 'returns empty catalog when fetch fails', async () => {
