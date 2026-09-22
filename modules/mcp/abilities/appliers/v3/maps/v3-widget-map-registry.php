@@ -92,25 +92,16 @@ class V3_Widget_Map_Registry {
 				&& isset( Plugin::$instance->experiments )
 				&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
-				$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+				$source = Plugin::$instance->widgets_manager->get_widget_types( $widget_type )
+					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
 
-				if ( $widget && method_exists( $widget, 'get_stack' ) ) {
-					$widget->get_stack();
-					$controls = $widget->get_controls();
-
-					return is_array( $controls ) ? $controls : null;
-				}
-
-				$element = Plugin::$instance->elements_manager->get_element_types( $widget_type );
-
-				if ( ! $element || ! method_exists( $element, 'get_stack' ) ) {
+				if ( ! $source || ! method_exists( $source, 'get_stack' ) ) {
 					return null;
 				}
 
-				$element->get_stack();
-				$controls = $element->get_controls();
+				$stack = $source->get_stack();
 
-				return is_array( $controls ) ? $controls : null;
+				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
 			},
 			self::load_map_files()
 		);
