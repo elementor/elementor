@@ -1,6 +1,7 @@
 import {
 	type FontAwesome7IconDefinition,
 	getFontAwesome7IconName,
+	isDeletedCustomIconLibrary,
 	resolveCustomIcon,
 	resolveFontAwesome7Icon,
 } from '@elementor/editor-controls';
@@ -8,10 +9,12 @@ import {
 import { createTransformer } from '../create-transformer';
 import type { TransformerOptions } from '../types';
 import { processSvgContent } from './process-svg-content';
+import { svgSrcTransformer } from './svg-src-transformer';
 
 const EMPTY_ICON_RESULT = { html: null, url: null };
 const ICON_SVG_SIZE = '100%';
 const ICON_SVG_OVERFLOW = 'visible';
+const DEFAULT_SVG_RELATIVE_PATH = 'images/default-svg.svg';
 
 type IconValue = {
 	value?: unknown;
@@ -38,8 +41,28 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: customHtml, url: null };
 	}
 
+	if ( isDeletedCustomIconLibrary( library, iconValue ) ) {
+		return resolveDefaultSvg( signal );
+	}
+
 	return EMPTY_ICON_RESULT;
 } );
+
+async function resolveDefaultSvg( signal?: AbortSignal ) {
+	const assetsUrl = window.elementorCommon?.config?.urls?.assets;
+
+	if ( typeof assetsUrl !== 'string' || assetsUrl === '' ) {
+		return EMPTY_ICON_RESULT;
+	}
+
+	return svgSrcTransformer(
+		{
+			id: null,
+			url: `${ assetsUrl }${ DEFAULT_SVG_RELATIVE_PATH }`,
+		},
+		{ key: 'svg', signal }
+	);
+}
 
 async function resolveFontAwesomeSvg(
 	library: string,

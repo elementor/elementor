@@ -4,6 +4,9 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers;
 
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
+use Elementor\Icons_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Icon_Library_Editor_Config;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
@@ -49,17 +52,68 @@ class Icon_Transformer extends Transformer_Base {
 		 */
 		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
 
-		if ( ! is_string( $html ) || '' === $html ) {
+		if ( is_string( $html ) && '' !== $html ) {
 			return [
-				'html' => '',
+				'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
 				'url' => null,
 			];
 		}
 
+		if ( $this->is_deleted_custom_icon_library( $icon ) ) {
+			return $this->transform_default_svg();
+		}
+
 		return [
-			'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
+			'html' => '',
 			'url' => null,
 		];
+	}
+
+	private function is_deleted_custom_icon_library( array $icon ): bool {
+		$library = $icon['library'];
+		$value = $icon['value'];
+
+		if ( '' === $library || '' === $value ) {
+			return false;
+		}
+
+		if ( false === strpos( $value, $library ) ) {
+			return false;
+		}
+
+		if ( in_array( $library, Icon_Library_Editor_Config::SKIPPED_TAB_NAMES, true ) ) {
+			return false;
+		}
+
+		if ( Font_Icon_Svg_Data_Manager::get_font_family( $library ) ) {
+			return false;
+		}
+
+		return ! $this->is_registered_icon_library( $library );
+	}
+
+	private function is_registered_icon_library( string $library ): bool {
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( $name === $library ) {
+				return true;
+			}
+
+			if ( is_array( $tab ) && ( $tab['name'] ?? '' ) === $library ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function transform_default_svg(): array {
+		return ( new Svg_Src_Transformer() )->transform(
+			[
+				'id' => null,
+				'url' => Atomic_Svg::DEFAULT_SVG_URL,
+			],
+			Props_Resolver_Context::make()
+		);
 	}
 
 	private function transform_font_awesome_7( array $icon ): array {

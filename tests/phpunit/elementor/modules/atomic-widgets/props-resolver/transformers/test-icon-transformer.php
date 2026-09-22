@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver\Transformers;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Icon_Transformer;
@@ -235,8 +236,9 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertNull( $result['url'] );
 	}
 
-	public function test_transform__returns_empty_html_for_unknown_custom_library() {
+	public function test_transform__falls_back_to_default_svg_when_custom_library_is_deleted() {
 		// Arrange.
+		$this->stub_default_svg_http_response();
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'missing-set missing-set-ghost',
@@ -247,8 +249,63 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
+		$this->assertStringContainsString( '<svg', $result['html'] );
+		$this->assertStringContainsString( 'M24.9999 4.31543', $result['html'] );
+		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
+	}
+
+	public function test_transform__does_not_fallback_when_custom_library_exists() {
+		// Arrange.
+		$additional_tabs = static function ( $tabs ) {
+			$tabs['my-icons'] = [
+				'name' => 'my-icons',
+				'label' => 'My Icons',
+				'native' => false,
+			];
+
+			return $tabs;
+		};
+
+		add_filter( 'elementor/icons_manager/additional_tabs', $additional_tabs );
+
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'my-icons my-icons-badge',
+			'library' => 'my-icons',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		remove_filter( 'elementor/icons_manager/additional_tabs', $additional_tabs );
+
+		// Assert.
 		$this->assertSame( '', $result['html'] );
 		$this->assertNull( $result['url'] );
+	}
+
+	private function stub_default_svg_http_response(): void {
+		add_filter(
+			'pre_http_request',
+			static function ( $preempt, $args, $url ) {
+				if ( Atomic_Svg::DEFAULT_SVG_URL !== $url ) {
+					return $preempt;
+				}
+
+				return [
+					'headers' => [],
+					'body' => file_get_contents( Atomic_Svg::DEFAULT_SVG_PATH ),
+					'response' => [
+						'code' => 200,
+						'message' => 'OK',
+					],
+					'cookies' => [],
+					'filename' => null,
+				];
+			},
+			10,
+			3
+		);
 	}
 
 	private function create_filtered_json_dir(): string {

@@ -1,4 +1,9 @@
-import { loadCustomIconLibraries, resetCustomIconLibrariesCache, resolveCustomIcon } from '../custom-icon-libraries';
+import {
+	isDeletedCustomIconLibrary,
+	loadCustomIconLibraries,
+	resetCustomIconLibrariesCache,
+	resolveCustomIcon,
+} from '../custom-icon-libraries';
 
 const MY_ICONS_CONFIG = {
 	name: 'my-icons',
@@ -196,5 +201,26 @@ describe( 'custom-icon-libraries', () => {
 			'https://example.com/uploads/badge.svg',
 			expect.objectContaining( { mode: 'cors' } )
 		);
+	} );
+
+	it( 'detects a deleted custom library from a leftover selection', () => {
+		// Arrange.
+		window.elementor = {
+			config: { icons: { libraries: [ { name: 'fa-solid', native: true } ] } },
+		} as typeof window.elementor;
+
+		// Act.
+		const isDeleted = isDeletedCustomIconLibrary( 'missing-set', 'missing-set missing-set-ghost' );
+
+		// Assert.
+		expect( isDeleted ).toBe( true );
+	} );
+
+	it( 'does not treat a registered custom library as deleted', () => {
+		// Act.
+		const isDeleted = isDeletedCustomIconLibrary( 'my-icons', 'my-icons my-icons-badge' );
+
+		// Assert.
+		expect( isDeleted ).toBe( false );
 	} );
 } );

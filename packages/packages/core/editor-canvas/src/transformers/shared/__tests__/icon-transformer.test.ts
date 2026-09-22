@@ -225,6 +225,74 @@ describe( 'iconTransformer', () => {
 		} );
 	} );
 
+	it( 'falls back to the default svg when a custom library has been deleted', async () => {
+		// Arrange.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [ { name: 'fa-solid', prefix: 'fa-', native: true } ],
+				},
+			},
+		} as typeof window.elementor;
+		const defaultSvg =
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			headers: new Headers( { 'content-type': 'image/svg+xml' } ),
+			text: () => Promise.resolve( defaultSvg ),
+		} );
+
+		// Act.
+		const result = await resolveSavedIcon( 'missing-set missing-set-ghost', 'missing-set' );
+
+		// Assert.
+		expect( global.fetch ).toHaveBeenCalledWith(
+			'https://example.com/assets/images/default-svg.svg',
+			expect.anything()
+		);
+		expect( result ).toEqual( {
+			html: expect.stringContaining( 'M24.9999 4.31543' ),
+			url: 'https://example.com/assets/images/default-svg.svg',
+		} );
+	} );
+
+	it( 'does not fall back when a custom library is still registered', async () => {
+		// Arrange.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							label: 'My Icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							fetchJson: 'https://example.com/uploads/my-icons.js',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () => Promise.resolve( { icons: {} } ),
+		} );
+
+		// Act.
+		const result = await resolveSavedIcon( 'my-icons my-icons-badge', 'my-icons' );
+
+		// Assert.
+		expect( result ).toEqual( { html: null, url: null } );
+		expect( global.fetch ).not.toHaveBeenCalledWith(
+			'https://example.com/assets/images/default-svg.svg',
+			expect.anything()
+		);
+	} );
+
 	it( 'returns null html when value or library is missing', async () => {
 		// Act.
 		const resolve = createPropsResolver( {

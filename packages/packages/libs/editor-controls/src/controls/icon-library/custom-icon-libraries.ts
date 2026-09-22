@@ -51,6 +51,28 @@ export async function loadCustomIconLibraries( signal?: AbortSignal ): Promise< 
 	return catalogs.flat();
 }
 
+export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
+	if ( ! library || ! iconValue.includes( library ) ) {
+		return false;
+	}
+
+	if ( NATIVE_TAB_NAMES.has( library ) || library.startsWith( 'fa-' ) ) {
+		return false;
+	}
+
+	return ! getIconManagerLibraries().some( ( item ) => getLibraryName( item ) === library );
+}
+
+function getLibraryName( value: unknown ): string | null {
+	if ( ! value || typeof value !== 'object' ) {
+		return null;
+	}
+
+	const name = ( value as { name?: unknown } ).name;
+
+	return typeof name === 'string' && name !== '' ? name : null;
+}
+
 export async function resolveCustomIcon(
 	library: string,
 	iconValue: string,
