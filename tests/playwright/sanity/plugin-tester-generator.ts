@@ -45,7 +45,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
-	{ pluginName: 'template-kit-import', installSource: 'api' },
+	// Skip: latest wordpress.org package requires PHP 8.3; Playwright PR/merge CI is 8.2 (WP install 500 incompatible_php_required_version).
+	// { pluginName: 'template-kit-import', installSource: 'api' },
 	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
