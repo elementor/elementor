@@ -15,7 +15,8 @@ const WIDGETS_CACHE = {
 	'e-div-block': { title: 'Div block', controls: {}, meta: { is_container: true } },
 };
 
-const makeWidgets = ( count: number ) => Array.from( { length: count }, ( _, i ) => makeWidget( `w${ i }`, 'text' ) );
+const makeWidgets = ( count: number, widgetType = 'text' ) =>
+	Array.from( { length: count }, ( _, i ) => makeWidget( `w${ i }`, widgetType ) );
 
 const makeElement = ( id: string, elType: string, elements: ElementSnapshotNode[] = [] ): ElementSnapshotNode => ( {
 	id,
@@ -53,6 +54,21 @@ describe( audit.id, () => {
 		// Arrange.
 		mockGetWidgetsCache.mockReturnValue( WIDGETS_CACHE );
 		const tree = [ ...makeWidgets( 100 ), makeElement( 'tabs-1', 'e-tabs' ) ];
+
+		// Act.
+		const result = await audit.evaluate( makeContext( { tree } ) );
+
+		// Assert.
+		expect( result.status ).toBe( 'fail' );
+	} );
+
+	it( 'counts v4 leaf widgets (e.g. Heading) via elType, even when they carry no compound/container meta', async () => {
+		// Arrange.
+		mockGetWidgetsCache.mockReturnValue( {
+			...WIDGETS_CACHE,
+			'e-heading': { title: 'Heading', controls: {}, meta: {} },
+		} );
+		const tree = makeWidgets( 101, 'e-heading' );
 
 		// Act.
 		const result = await audit.evaluate( makeContext( { tree } ) );
