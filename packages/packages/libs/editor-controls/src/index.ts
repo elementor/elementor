@@ -43,6 +43,7 @@ export {
 	resolveFontAwesome7Icon,
 	type FontAwesome7IconDefinition,
 } from './controls/icon-library/font-awesome-7-data';
+export { resolveCustomIcon } from './controls/icon-library/custom-icon-libraries';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { DateRangeControl } from './controls/date-range-control';
