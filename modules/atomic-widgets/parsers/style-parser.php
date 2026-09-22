@@ -207,15 +207,19 @@ class Style_Parser {
 	}
 
 	private function sanitize_custom_css( array $variant ) {
-		if ( empty( $variant['custom_css']['raw'] ) ) {
+		$raw = $variant['custom_css']['raw'] ?? null;
+
+		if ( empty( $raw ) ) {
 			return null;
 		}
 
-		$custom_css = Utils::decode_string( $variant['custom_css']['raw'] );
-		$custom_css = Custom_Css_Sanitizer::make()->sanitize( $custom_css );
-		$custom_css = [ 'raw' => Utils::encode_string( $custom_css ) ];
+		$sanitized_encoded = Custom_Css_Sanitizer::make()->sanitize_encoded( $raw );
 
-		return empty( $custom_css['raw'] ) ? null : $custom_css;
+		if ( null === $sanitized_encoded ) {
+			return null;
+		}
+
+		return [ 'raw' => $sanitized_encoded ];
 	}
 
 	/**

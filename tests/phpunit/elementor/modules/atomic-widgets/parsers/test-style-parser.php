@@ -362,6 +362,35 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'javascript:', strtolower( $sanitized ) );
 	}
 
+	public function test_parse__drops_custom_css_when_raw_is_invalid_base64() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => 'desktop',
+					],
+					'props' => [],
+					'custom_css' => [
+						'raw' => '!!!not-base64!!!',
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertNull( $parsed['variants'][0]['custom_css'] );
+	}
+
 	public function test_parse__label_starting_with_hyphen_digit_fails_validation() {
 		// Arrange.
 		$style = [

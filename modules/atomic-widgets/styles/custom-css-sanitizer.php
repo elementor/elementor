@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -20,16 +22,38 @@ class Custom_Css_Sanitizer {
 		return new self();
 	}
 
+	public function sanitize_encoded( $encoded ): ?string {
+		if ( ! is_string( $encoded ) || '' === $encoded ) {
+			return null;
+		}
+
+		$decoded = Utils::decode_string( $encoded, null );
+
+		if ( ! is_string( $decoded ) ) {
+			return null;
+		}
+
+		$sanitized = $this->sanitize( $decoded );
+
+		if ( '' === $sanitized ) {
+			return null;
+		}
+
+		return Utils::encode_string( $sanitized );
+	}
+
 	public function sanitize( string $css ): string {
-		$css = $this->normalize_encoding( $css );
-		$css = str_replace( "\0", '', $css );
-		$css = $this->decode_css_escapes( $css );
+		$css = $this->prepare( $css );
 		$css = $this->remove_html_injection_vectors( $css );
 		$css = $this->remove_blocked_declarations( $css );
-		$css = $this->neutralize_blocked_value_needles( $css );
-		$css = $this->remove_expression_calls( $css );
 
-		return trim( $css );
+		return trim( $this->remove_execution_vectors( $css ) );
+	}
+
+	private function prepare( string $css ): string {
+		$css = $this->normalize_encoding( $css );
+
+		return str_replace( "\0", '', $css );
 	}
 
 	private function normalize_encoding( string $css ): string {
@@ -38,6 +62,47 @@ class Custom_Css_Sanitizer {
 		}
 
 		return $css;
+	}
+
+	private function remove_html_injection_vectors( string $css ): string {
+		$css = preg_replace( '/<\/style\b[^>]*>/i', '', $css );
+		$css = preg_replace( '/<script\b[^>]*>.*?<\/script>/is', '', $css );
+		$css = preg_replace( '/<script\b[^>]*>/i', '', $css );
+
+		if ( function_exists( 'strip_tags' ) ) {
+			$css = strip_tags( $css );
+		}
+
+		return $css ?? '';
+	}
+
+	private function remove_blocked_declarations( string $css ): string {
+		$css = preg_replace( '/\bbehavior\s*:[^;}]*/i', '', $css );
+		$css = preg_replace( '/-moz-binding\s*:[^;}]*/i', '', $css );
+
+		return $css ?? '';
+	}
+
+	private function remove_execution_vectors( string $css ): string {
+		$decoded = $this->decode_css_escapes( $css );
+
+		if ( ! $this->contains_execution_vectors( $decoded ) ) {
+			return $css;
+		}
+
+		$decoded = $this->neutralize_blocked_value_needles( $decoded );
+
+		return $this->remove_expression_calls( $decoded );
+	}
+
+	private function contains_execution_vectors( string $css ): bool {
+		foreach ( self::BLOCKED_VALUE_NEEDLES as $needle ) {
+			if ( false !== stripos( $css, $needle ) ) {
+				return true;
+			}
+		}
+
+		return (bool) preg_match( '/\bexpression\s*\(/i', $css );
 	}
 
 	private function decode_css_escapes( string $css ): string {
@@ -60,6 +125,13 @@ class Custom_Css_Sanitizer {
 
 			$next = $css[ $index + 1 ];
 
+			if ( '\\' === $next ) {
+				$decoded .= '\\\\';
+				$index += 2;
+
+				continue;
+			}
+
 			if ( $this->is_css_escaped_newline( $next ) ) {
 				$index += 2;
 
@@ -71,26 +143,8 @@ class Custom_Css_Sanitizer {
 			}
 
 			if ( ctype_xdigit( $next ) ) {
-				$hex = '';
-				$hex_end = $index + 1;
-				$hex_digit_count = 0;
-
-				while (
-					$hex_end < $length
-					&& $hex_digit_count < self::MAX_CSS_HEX_ESCAPE_LENGTH
-					&& ctype_xdigit( $css[ $hex_end ] )
-				) {
-					$hex .= $css[ $hex_end ];
-					$hex_end++;
-					$hex_digit_count++;
-				}
-
-				if ( $hex_end < $length && $this->is_css_escape_terminator_whitespace( $css[ $hex_end ] ) ) {
-					$hex_end++;
-				}
-
-				$decoded .= $this->code_point_to_utf8( (int) hexdec( $hex ) );
-				$index = $hex_end;
+				[ $decoded_char, $index ] = $this->decode_hex_escape_at( $css, $index, $length );
+				$decoded .= $decoded_char;
 
 				continue;
 			}
@@ -100,6 +154,31 @@ class Custom_Css_Sanitizer {
 		}
 
 		return $decoded;
+	}
+
+	private function decode_hex_escape_at( string $css, int $index, int $length ): array {
+		$hex = '';
+		$hex_end = $index + 1;
+		$hex_digit_count = 0;
+
+		while (
+			$hex_end < $length
+			&& $hex_digit_count < self::MAX_CSS_HEX_ESCAPE_LENGTH
+			&& ctype_xdigit( $css[ $hex_end ] )
+		) {
+			$hex .= $css[ $hex_end ];
+			$hex_end++;
+			$hex_digit_count++;
+		}
+
+		if ( $hex_end < $length && $this->is_css_escape_terminator_whitespace( $css[ $hex_end ] ) ) {
+			$hex_end++;
+		}
+
+		return [
+			$this->code_point_to_utf8( (int) hexdec( $hex ) ),
+			$hex_end,
+		];
 	}
 
 	private function is_css_escaped_newline( string $char ): bool {
@@ -126,25 +205,6 @@ class Custom_Css_Sanitizer {
 		}
 
 		return '';
-	}
-
-	private function remove_html_injection_vectors( string $css ): string {
-		$css = preg_replace( '/<\/style\b[^>]*>/i', '', $css );
-		$css = preg_replace( '/<script\b[^>]*>.*?<\/script>/is', '', $css );
-		$css = preg_replace( '/<script\b[^>]*>/i', '', $css );
-
-		if ( function_exists( 'strip_tags' ) ) {
-			$css = strip_tags( $css );
-		}
-
-		return $css ?? '';
-	}
-
-	private function remove_blocked_declarations( string $css ): string {
-		$css = preg_replace( '/\bbehavior\s*:[^;}]*/i', '', $css );
-		$css = preg_replace( '/-moz-binding\s*:[^;}]*/i', '', $css );
-
-		return $css ?? '';
 	}
 
 	private function neutralize_blocked_value_needles( string $css ): string {

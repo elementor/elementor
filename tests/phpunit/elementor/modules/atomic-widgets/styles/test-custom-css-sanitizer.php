@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\Styles\Custom_Css_Sanitizer;
+use Elementor\Utils;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -123,5 +124,66 @@ CSS;
 		// Assert.
 		$this->assertStringNotContainsString( 'data:text/html', strtolower( $result ) );
 		$this->assertStringContainsString( 'color: black;', $result );
+	}
+
+	public function test_sanitize__preserves_literal_backslash_in_content(): void {
+		// Arrange.
+		$css = 'content: "\\\\"; color: red;';
+
+		// Act.
+		$result = $this->sanitizer->sanitize( $css );
+
+		// Assert.
+		$this->assertSame( $css, $result );
+	}
+
+	public function test_sanitize_encoded__round_trips_valid_css(): void {
+		// Arrange.
+		$css = 'color: red;';
+		$encoded = Utils::encode_string( $css );
+
+		// Act.
+		$result = $this->sanitizer->sanitize_encoded( $encoded );
+
+		// Assert.
+		$this->assertSame( $encoded, $result );
+		$this->assertSame( $css, Utils::decode_string( $result ) );
+	}
+
+	public function test_sanitize_encoded__returns_null_for_invalid_base64(): void {
+		// Arrange.
+		$invalid_encoded = '!!!not-base64!!!';
+
+		// Act.
+		$result = $this->sanitizer->sanitize_encoded( $invalid_encoded );
+
+		// Assert.
+		$this->assertNull( $result );
+	}
+
+	public function test_sanitize_encoded__returns_null_for_non_string_input(): void {
+		// Arrange.
+		$invalid_encoded = false;
+
+		// Act.
+		$result = $this->sanitizer->sanitize_encoded( $invalid_encoded );
+
+		// Assert.
+		$this->assertNull( $result );
+	}
+
+	public function test_sanitize_encoded__sanitizes_then_re_encodes(): void {
+		// Arrange.
+		$css = 'color: red; background: url(javascript:alert(1));';
+		$encoded = Utils::encode_string( $css );
+
+		// Act.
+		$result = $this->sanitizer->sanitize_encoded( $encoded );
+		$decoded = Utils::decode_string( $result );
+
+		// Assert.
+		$this->assertIsString( $result );
+		$this->assertStringContainsString( 'color: red;', $decoded );
+		$this->assertStringNotContainsString( 'javascript:', strtolower( $decoded ) );
 	}
 }
