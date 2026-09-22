@@ -53,7 +53,14 @@ class Custom_Icon_Library_Svg_Resolver {
 			$directories[] = trailingslashit( dirname( $source ) );
 		}
 
-		return array_values( array_unique( $directories ) );
+		$post_id = isset( $tab['custom_icon_post_id'] ) ? (int) $tab['custom_icon_post_id'] : 0;
+
+		if ( $post_id ) {
+			$upload_dir = wp_upload_dir();
+			$directories[] = trailingslashit( $upload_dir['baseurl'] ) . 'elementor/custom-icons/' . $post_id . '/';
+		}
+
+		return array_values( array_unique( array_filter( $directories ) ) );
 	}
 
 	private function get_icon_names( string $value, array $tab ): array {

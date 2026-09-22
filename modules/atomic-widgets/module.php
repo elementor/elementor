@@ -218,6 +218,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
 		add_filter( 'elementor/common/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->enrich_custom_icon_library_fetch_urls( $settings ), 20 );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->move_background_video_to_panel_end( $settings ) );
 		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
@@ -354,6 +355,36 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
+
+		return $settings;
+	}
+
+	private function enrich_custom_icon_library_fetch_urls( $settings ) {
+		if ( empty( $settings['icons']['libraries'] ) || ! is_array( $settings['icons']['libraries'] ) ) {
+			return $settings;
+		}
+
+		$upload_dir = wp_upload_dir();
+		$upload_basedir = trailingslashit( $upload_dir['basedir'] );
+		$upload_baseurl = trailingslashit( $upload_dir['baseurl'] );
+
+		foreach ( $settings['icons']['libraries'] as &$library ) {
+			if ( ! is_array( $library ) || ! empty( $library['fetchJson'] ) ) {
+				continue;
+			}
+
+			$post_id = isset( $library['custom_icon_post_id'] ) ? (int) $library['custom_icon_post_id'] : 0;
+
+			if ( ! $post_id ) {
+				continue;
+			}
+
+			$config_path = $upload_basedir . 'elementor/custom-icons/' . $post_id . '/config.json';
+
+			if ( file_exists( $config_path ) ) {
+				$library['fetchJson'] = $upload_baseurl . 'elementor/custom-icons/' . $post_id . '/config.json';
+			}
+		}
 
 		return $settings;
 	}

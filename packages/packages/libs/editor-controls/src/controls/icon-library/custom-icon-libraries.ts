@@ -182,26 +182,24 @@ async function loadCustomLibrary(library: CustomIconLibraryConfig, signal?: Abor
 	return parsedIcons.map((icon) => toCatalogIcon(library, icon));
 }
 
-async function loadLibraryPayload(library: CustomIconLibraryConfig, signal?: AbortSignal): Promise<unknown> {
-	if (library.icons !== undefined) {
+async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
+	if ( library.fetchJson ) {
+		try {
+			const response = await fetch( library.fetchJson, { signal, mode: 'cors' } );
+
+			if ( response.ok ) {
+				return response.json();
+			}
+		} catch {
+			// fall through to inline icons
+		}
+	}
+
+	if ( library.icons !== undefined ) {
 		return { icons: library.icons };
 	}
 
-	if (!library.fetchJson) {
-		return null;
-	}
-
-	try {
-		const response = await fetch(library.fetchJson, { signal, mode: 'cors' });
-
-		if (!response.ok) {
-			return null;
-		}
-
-		return response.json();
-	} catch {
-		return null;
-	}
+	return null;
 }
 
 function parseCustomIcons(payload: unknown): ParsedCustomIcon[] {
