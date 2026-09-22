@@ -400,12 +400,12 @@ describe( 'NumberControl', () => {
 
 		// Act.
 		fireEvent.input( input, { target: { value: '' } } );
+		expect( setValue ).toHaveBeenCalledWith( null );
 		setValue.mockClear();
 		fireEvent.blur( input );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledTimes( 1 );
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValue ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should not commit anything on blur when the field was never edited', () => {
@@ -440,12 +440,12 @@ describe( 'NumberControl', () => {
 
 		// Act.
 		fireEvent.input( input, { target: { value: '' } } );
+		expect( setValue ).toHaveBeenCalledWith( null );
 		setValue.mockClear();
 		fireEvent.blur( input );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledTimes( 1 );
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValue ).not.toHaveBeenCalled();
 		// renderControl keeps the bound value static, so display falls back to '12' once the draft resets.
 		expect( input ).toHaveDisplayValue( '12' );
 	} );

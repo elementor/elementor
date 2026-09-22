@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { numberPropTypeUtil, type PropType } from '@elementor/editor-props';
 import { InputAdornment, Typography } from '@elementor/ui';
 
@@ -50,6 +50,7 @@ export const NumberControl = createControl(
 
 		// `null` means "not editing" — the input mirrors the bound value.
 		const [ draft, setDraft ] = useState< string | null >( null );
+		const committedNullOnInputRef = useRef( false );
 
 		const handleInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const raw = event.target.value;
@@ -57,10 +58,15 @@ export const NumberControl = createControl(
 			setDraft( raw );
 
 			if ( isEmptyDraft( raw ) ) {
-				setValue( null );
+				if ( ! propType.settings.required ) {
+					setValue( null );
+					committedNullOnInputRef.current = true;
+				}
 
 				return;
 			}
+
+			committedNullOnInputRef.current = false;
 
 			const parsed = parseNumberDraft( raw, shouldForceInt );
 
@@ -76,7 +82,9 @@ export const NumberControl = createControl(
 
 		const handleBlur = () => {
 			const raw = draft;
+			const committedNullOnInput = committedNullOnInputRef.current;
 
+			committedNullOnInputRef.current = false;
 			setDraft( null );
 			restoreValue();
 
@@ -85,7 +93,8 @@ export const NumberControl = createControl(
 			}
 
 			if ( isEmptyDraft( raw ) ) {
-				if ( ! propType.settings.required ) {
+				// handleInput already committed null for optional clears; skip the redundant blur write.
+				if ( ! propType.settings.required && ! committedNullOnInput ) {
 					setValue( null );
 				}
 
