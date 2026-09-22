@@ -1,7 +1,8 @@
 import { enqueueIconFonts } from '../open-icon-library';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
+import { sanitizeSvgMarkup } from './sanitize-svg-markup';
 
-const NATIVE_TAB_NAMES = new Set(['all', 'recommended', 'GoPro']);
+const NATIVE_TAB_NAMES = new Set( [ 'all', 'recommended', 'GoPro' ] );
 const DEFAULT_ICON_SIZE = 512;
 const CUSTOM_SVG_FETCH_TIMEOUT_MS = 4000;
 
@@ -27,15 +28,25 @@ type ParsedCustomIcon = {
 	svgMarkup?: string;
 };
 
+const libraryCache = new Map< string, FontAwesome7Icon[] >();
+const libraryInFlight = new Map< string, Promise< FontAwesome7Icon[] > >();
+const siblingSvgCache = new Map< string, string | null >();
+
 export function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
 	const libraries = getIconManagerLibraries();
 
-	return libraries.filter(isCustomIconLibraryConfig);
+	return libraries.filter( isCustomIconLibraryConfig );
 }
 
-export async function loadCustomIconLibraries(signal?: AbortSignal): Promise<FontAwesome7Icon[]> {
+export function resetCustomIconLibrariesCache() {
+	libraryCache.clear();
+	libraryInFlight.clear();
+	siblingSvgCache.clear();
+}
+
+export async function loadCustomIconLibraries( signal?: AbortSignal ): Promise< FontAwesome7Icon[] > {
 	const libraries = getCustomIconLibraryConfigs();
-	const catalogs = await Promise.all(libraries.map((library) => loadCustomLibrary(library, signal)));
+	const catalogs = await Promise.all( libraries.map( ( library ) => getCachedLibrary( library, signal ) ) );
 
 	return catalogs.flat();
 }
@@ -44,29 +55,34 @@ export async function resolveCustomIcon(
 	library: string,
 	iconValue: string,
 	signal?: AbortSignal
-): Promise<FontAwesome7Icon | null> {
-	const icons = await loadCustomIconLibraries(signal);
-	const icon = icons.find(
-		(item) => item.library === library && (item.value === iconValue || item.id === `${library}:${iconValue}`)
-	);
+): Promise< FontAwesome7Icon | null > {
+	const config = getCustomIconLibraryConfigs().find( ( item ) => item.name === library );
 
-	if (!icon) {
+	if ( ! config ) {
 		return null;
 	}
 
-	if (icon.paths.length > 0 || icon.svgMarkup) {
+	const icons = await getCachedLibrary( config, signal );
+	const icon = icons.find(
+		( item ) =>
+			item.library === library && ( item.value === iconValue || item.id === `${ library }:${ iconValue }` )
+	);
+
+	if ( ! icon ) {
+		return null;
+	}
+
+	if ( icon.paths.length > 0 || icon.svgMarkup ) {
 		return icon;
 	}
 
-	const config = getCustomIconLibraryConfigs().find((item) => item.name === library);
-
-	if (!config?.fetchJson) {
+	if ( ! config.fetchJson ) {
 		return icon;
 	}
 
-	const svgMarkup = await fetchSiblingSvg(config.fetchJson, icon.name, signal);
+	const svgMarkup = await getCachedSiblingSvg( config.fetchJson, icon.name, signal );
 
-	if (!svgMarkup) {
+	if ( ! svgMarkup ) {
 		return icon;
 	}
 
@@ -76,28 +92,62 @@ export async function resolveCustomIcon(
 	};
 }
 
-async function loadCustomLibrary(library: CustomIconLibraryConfig, signal?: AbortSignal): Promise<FontAwesome7Icon[]> {
-	enqueueIconFonts(library.name);
+async function getCachedLibrary(
+	library: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< FontAwesome7Icon[] > {
+	enqueueIconFonts( library.name );
 
-	const payload = await loadLibraryPayload(library, signal);
-	const parsedIcons = parseCustomIcons(payload);
+	const cached = libraryCache.get( library.name );
 
-	return parsedIcons.map((icon) => toCatalogIcon(library, icon));
+	if ( cached ) {
+		return cached;
+	}
+
+	const inFlight = libraryInFlight.get( library.name );
+
+	if ( inFlight ) {
+		return inFlight;
+	}
+
+	const request = loadCustomLibrary( library, signal ).then( ( icons ) => {
+		libraryCache.set( library.name, icons );
+
+		return icons;
+	} );
+
+	libraryInFlight.set( library.name, request );
+
+	try {
+		return await request;
+	} finally {
+		libraryInFlight.delete( library.name );
+	}
 }
 
-async function loadLibraryPayload(library: CustomIconLibraryConfig, signal?: AbortSignal): Promise<unknown> {
-	if (library.icons !== undefined) {
+async function loadCustomLibrary(
+	library: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< FontAwesome7Icon[] > {
+	const payload = await loadLibraryPayload( library, signal );
+	const parsedIcons = parseCustomIcons( payload );
+
+	return parsedIcons.map( ( icon ) => toCatalogIcon( library, icon ) );
+}
+
+async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
+	if ( library.icons !== undefined ) {
 		return { icons: library.icons };
 	}
 
-	if (!library.fetchJson) {
+	if ( ! library.fetchJson ) {
 		return null;
 	}
 
 	try {
-		const response = await fetch(library.fetchJson, { signal, mode: 'cors' });
+		const response = await fetch( library.fetchJson, { signal, mode: 'cors' } );
 
-		if (!response.ok) {
+		if ( ! response.ok ) {
 			return null;
 		}
 
@@ -107,90 +157,90 @@ async function loadLibraryPayload(library: CustomIconLibraryConfig, signal?: Abo
 	}
 }
 
-function parseCustomIcons(payload: unknown): ParsedCustomIcon[] {
-	if (!payload || typeof payload !== 'object') {
+function parseCustomIcons( payload: unknown ): ParsedCustomIcon[] {
+	if ( ! payload || typeof payload !== 'object' ) {
 		return [];
 	}
 
-	const icons = (payload as { icons?: unknown }).icons;
+	const icons = ( payload as { icons?: unknown } ).icons;
 
-	if (Array.isArray(icons)) {
-		return icons.flatMap(parseIconEntry).filter((icon) => icon.name !== '');
+	if ( Array.isArray( icons ) ) {
+		return icons.flatMap( parseIconEntry ).filter( ( icon ) => icon.name !== '' );
 	}
 
-	if (icons && typeof icons === 'object') {
-		return Object.entries(icons)
-			.flatMap(([name, value]) => parseNamedIcon(name, value))
-			.filter((icon) => icon.name !== '');
+	if ( icons && typeof icons === 'object' ) {
+		return Object.entries( icons )
+			.flatMap( ( [ name, value ] ) => parseNamedIcon( name, value ) )
+			.filter( ( icon ) => icon.name !== '' );
 	}
 
 	return [];
 }
 
-function parseIconEntry(entry: unknown): ParsedCustomIcon[] {
-	if (typeof entry === 'string') {
-		return [createParsedIcon(entry)];
+function parseIconEntry( entry: unknown ): ParsedCustomIcon[] {
+	if ( typeof entry === 'string' ) {
+		return [ createParsedIcon( entry ) ];
 	}
 
-	if (!entry || typeof entry !== 'object') {
+	if ( ! entry || typeof entry !== 'object' ) {
 		return [];
 	}
 
-	if ('name' in entry && typeof (entry as { name: unknown }).name === 'string') {
-		return [parseNamedIcon((entry as { name: string }).name, entry)[0] ?? createParsedIcon('')];
+	if ( 'name' in entry && typeof ( entry as { name: unknown } ).name === 'string' ) {
+		return [ parseNamedIcon( ( entry as { name: string } ).name, entry )[ 0 ] ?? createParsedIcon( '' ) ];
 	}
 
-	const [name, value] = Object.entries(entry)[0] ?? [];
+	const [ name, value ] = Object.entries( entry )[ 0 ] ?? [];
 
-	if (typeof name !== 'string') {
+	if ( typeof name !== 'string' ) {
 		return [];
 	}
 
-	return parseNamedIcon(name, value);
+	return parseNamedIcon( name, value );
 }
 
-function parseNamedIcon(name: string, value: unknown): ParsedCustomIcon[] {
-	const parsed = createParsedIcon(name);
+function parseNamedIcon( name: string, value: unknown ): ParsedCustomIcon[] {
+	const parsed = createParsedIcon( name );
 
-	if (typeof value === 'string' && looksLikeSvg(value)) {
-		parsed.svgMarkup = value;
-		return [parsed];
+	if ( typeof value === 'string' ) {
+		parsed.svgMarkup = sanitizeSvgMarkup( value ) ?? undefined;
+		return [ parsed ];
 	}
 
-	if (!value || typeof value !== 'object') {
-		return [parsed];
+	if ( ! value || typeof value !== 'object' ) {
+		return [ parsed ];
 	}
 
-	const record = value as Record<string, unknown>;
+	const record = value as Record< string, unknown >;
 
-	if (typeof record.svg === 'string' && looksLikeSvg(record.svg)) {
-		parsed.svgMarkup = record.svg;
+	if ( typeof record.svg === 'string' ) {
+		parsed.svgMarkup = sanitizeSvgMarkup( record.svg ) ?? undefined;
 	}
 
-	if (Array.isArray(record.paths)) {
-		parsed.paths = record.paths.filter((path): path is string => typeof path === 'string' && path !== '');
-	} else if (typeof record.path === 'string' && record.path !== '') {
-		parsed.paths = [record.path];
+	if ( Array.isArray( record.paths ) ) {
+		parsed.paths = record.paths.filter( ( path ): path is string => typeof path === 'string' && path !== '' );
+	} else if ( typeof record.path === 'string' && record.path !== '' ) {
+		parsed.paths = [ record.path ];
 	}
 
-	if (typeof record.width === 'number') {
+	if ( typeof record.width === 'number' ) {
 		parsed.width = record.width;
 	}
 
-	if (typeof record.height === 'number') {
+	if ( typeof record.height === 'number' ) {
 		parsed.height = record.height;
 	}
 
-	if (Array.isArray(record.aliases)) {
-		parsed.aliases = record.aliases.filter((alias): alias is string => typeof alias === 'string');
+	if ( Array.isArray( record.aliases ) ) {
+		parsed.aliases = record.aliases.filter( ( alias ): alias is string => typeof alias === 'string' );
 	}
 
-	return [parsed];
+	return [ parsed ];
 }
 
-function createParsedIcon(name: string): ParsedCustomIcon {
+function createParsedIcon( name: string ): ParsedCustomIcon {
 	return {
-		name: name.trim().replace(/^:/, '').replace(/:$/, ''),
+		name: name.trim().replace( /^:/, '' ).replace( /:$/, '' ),
 		aliases: [],
 		width: DEFAULT_ICON_SIZE,
 		height: DEFAULT_ICON_SIZE,
@@ -198,13 +248,13 @@ function createParsedIcon(name: string): ParsedCustomIcon {
 	};
 }
 
-function toCatalogIcon(library: CustomIconLibraryConfig, icon: ParsedCustomIcon): FontAwesome7Icon {
-	const value = createCustomIconSelectionValue(library, icon.name);
+function toCatalogIcon( library: CustomIconLibraryConfig, icon: ParsedCustomIcon ): FontAwesome7Icon {
+	const value = createCustomIconSelectionValue( library, icon.name );
 
 	return {
-		id: `${library.name}:${icon.name}`,
+		id: `${ library.name }:${ icon.name }`,
 		name: icon.name,
-		label: icon.name.replace(/-/g, ' '),
+		label: icon.name.replace( /-/g, ' ' ),
 		library: library.name,
 		value,
 		aliases: icon.aliases,
@@ -216,52 +266,67 @@ function toCatalogIcon(library: CustomIconLibraryConfig, icon: ParsedCustomIcon)
 	};
 }
 
-export function createCustomIconSelectionValue(library: CustomIconLibraryConfig, name: string): string {
+export function createCustomIconSelectionValue( library: CustomIconLibraryConfig, name: string ): string {
 	const prefix = library.prefix;
-	const displayPrefix = library.displayPrefix || prefix.replace(/-$/, '');
+	const displayPrefix = library.displayPrefix || prefix.replace( /-$/, '' );
 
-	return `${displayPrefix} ${prefix}${name}`.trim();
-}
-
-function looksLikeSvg(value: string): boolean {
-	return value.includes('<svg');
+	return `${ displayPrefix } ${ prefix }${ name }`.trim();
 }
 
 function getIconManagerLibraries(): unknown[] {
 	const config = window.elementor?.config as { icons?: { libraries?: unknown } } | undefined;
 
-	return Array.isArray(config?.icons?.libraries) ? config.icons.libraries : [];
+	return Array.isArray( config?.icons?.libraries ) ? config.icons.libraries : [];
 }
 
-function isCustomIconLibraryConfig(value: unknown): value is CustomIconLibraryConfig {
-	if (!value || typeof value !== 'object') {
+function isCustomIconLibraryConfig( value: unknown ): value is CustomIconLibraryConfig {
+	if ( ! value || typeof value !== 'object' ) {
 		return false;
 	}
 
-	const library = value as Partial<CustomIconLibraryConfig> & { name?: unknown };
+	const library = value as Partial< CustomIconLibraryConfig > & { name?: unknown };
 
-	if (typeof library.name !== 'string' || library.name === '' || NATIVE_TAB_NAMES.has(library.name)) {
+	if ( typeof library.name !== 'string' || library.name === '' || NATIVE_TAB_NAMES.has( library.name ) ) {
 		return false;
 	}
 
-	if (library.native === true || library.name.startsWith('fa-')) {
+	if ( library.native === true || library.name.startsWith( 'fa-' ) ) {
 		return false;
 	}
 
-	if (typeof library.prefix !== 'string') {
+	if ( typeof library.prefix !== 'string' ) {
 		return false;
 	}
 
-	return Boolean(library.fetchJson) || library.icons !== undefined;
+	return Boolean( library.fetchJson ) || library.icons !== undefined;
 }
 
-async function fetchSiblingSvg(fetchJson: string, iconName: string, signal?: AbortSignal): Promise<string | null> {
-	const candidates = getSiblingSvgUrls(fetchJson, iconName);
+async function getCachedSiblingSvg(
+	fetchJson: string,
+	iconName: string,
+	signal?: AbortSignal
+): Promise< string | null > {
+	const cacheKey = `${ fetchJson }:${ iconName }`;
+	const cached = siblingSvgCache.get( cacheKey );
 
-	for (const url of candidates) {
-		const markup = await fetchSvgMarkup(url, signal);
+	if ( cached !== undefined ) {
+		return cached;
+	}
 
-		if (markup) {
+	const markup = await fetchSiblingSvg( fetchJson, iconName, signal );
+
+	siblingSvgCache.set( cacheKey, markup );
+
+	return markup;
+}
+
+async function fetchSiblingSvg( fetchJson: string, iconName: string, signal?: AbortSignal ): Promise< string | null > {
+	const candidates = getSiblingSvgUrls( fetchJson, iconName );
+
+	for ( const url of candidates ) {
+		const markup = await fetchSvgMarkup( url, signal );
+
+		if ( markup ) {
 			return markup;
 		}
 	}
@@ -269,39 +334,39 @@ async function fetchSiblingSvg(fetchJson: string, iconName: string, signal?: Abo
 	return null;
 }
 
-function getSiblingSvgUrls(fetchJson: string, iconName: string): string[] {
+function getSiblingSvgUrls( fetchJson: string, iconName: string ): string[] {
 	try {
-		const jsonUrl = new URL(fetchJson);
-		const directory = jsonUrl.href.slice(0, jsonUrl.href.lastIndexOf('/') + 1);
-		const encodedName = encodeURIComponent(iconName);
+		const jsonUrl = new URL( fetchJson );
+		const directory = jsonUrl.href.slice( 0, jsonUrl.href.lastIndexOf( '/' ) + 1 );
+		const encodedName = encodeURIComponent( iconName );
 
-		return [`${directory}${encodedName}.svg`, `${directory}svg/${encodedName}.svg`];
+		return [ `${ directory }${ encodedName }.svg`, `${ directory }svg/${ encodedName }.svg` ];
 	} catch {
 		return [];
 	}
 }
 
-async function fetchSvgMarkup(url: string, signal?: AbortSignal): Promise<string | null> {
+async function fetchSvgMarkup( url: string, signal?: AbortSignal ): Promise< string | null > {
 	const controller = new AbortController();
-	const timeoutId = window.setTimeout(() => controller.abort(), CUSTOM_SVG_FETCH_TIMEOUT_MS);
+	const timeoutId = window.setTimeout( () => controller.abort(), CUSTOM_SVG_FETCH_TIMEOUT_MS );
 	const abortFromParent = () => controller.abort();
 
-	signal?.addEventListener('abort', abortFromParent, { once: true });
+	signal?.addEventListener( 'abort', abortFromParent, { once: true } );
 
 	try {
-		const response = await fetch(url, { signal: controller.signal, mode: 'cors' });
+		const response = await fetch( url, { signal: controller.signal, mode: 'cors' } );
 
-		if (!response.ok) {
+		if ( ! response.ok ) {
 			return null;
 		}
 
 		const markup = await response.text();
 
-		return looksLikeSvg(markup) ? markup : null;
+		return sanitizeSvgMarkup( markup );
 	} catch {
 		return null;
 	} finally {
-		window.clearTimeout(timeoutId);
-		signal?.removeEventListener('abort', abortFromParent);
+		window.clearTimeout( timeoutId );
+		signal?.removeEventListener( 'abort', abortFromParent );
 	}
 }

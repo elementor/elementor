@@ -76,6 +76,7 @@
     "@tiptap/starter-kit": "^3.11.1",
     "@wordpress/i18n": "^5.13.0",
     "dayjs": "^1.11.18",
+    "dompurify": "^3.2.6",
     "primereact": "^10.9.7"
   },
   "devDependencies": {

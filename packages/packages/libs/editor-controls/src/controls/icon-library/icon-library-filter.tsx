@@ -39,17 +39,17 @@ const LIBRARY_FILTER_CONFIG: Record<
 	{ getLabel: () => string; Icon: typeof StarIcon; order: number }
 > = {
 	'fa-regular': {
-		getLabel: () => __('Font Awesome - Regular', 'elementor'),
+		getLabel: () => __( 'Font Awesome - Regular', 'elementor' ),
 		Icon: StarIcon,
 		order: LIBRARY_FILTER_ORDER.regular,
 	},
 	'fa-solid': {
-		getLabel: () => __('Font Awesome - Solid', 'elementor'),
+		getLabel: () => __( 'Font Awesome - Solid', 'elementor' ),
 		Icon: StarFilledIcon,
 		order: LIBRARY_FILTER_ORDER.solid,
 	},
 	'fa-brands': {
-		getLabel: () => __('Font Awesome - Brands', 'elementor'),
+		getLabel: () => __( 'Font Awesome - Brands', 'elementor' ),
 		Icon: LibraryIcon,
 		order: LIBRARY_FILTER_ORDER.brands,
 	},
@@ -57,69 +57,69 @@ const LIBRARY_FILTER_CONFIG: Record<
 
 type IconLibraryFilterProps = {
 	value: FontAwesome7LibraryFilter;
-	onChange: (value: FontAwesome7LibraryFilter) => void;
+	onChange: ( value: FontAwesome7LibraryFilter ) => void;
 };
 
-export const IconLibraryFilter = ({ value, onChange }: IconLibraryFilterProps) => {
+export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps ) => {
 	const popupId = useId();
-	const popupState = usePopupState({
+	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId,
-	});
+	} );
 	const customLibraries = getCustomIconLibraryConfigs();
-	const nativeOptions = FONT_AWESOME_7_LIBRARIES.map(({ library }) => ({
+	const nativeOptions = FONT_AWESOME_7_LIBRARIES.map( ( { library } ) => ( {
 		value: library,
-		label: LIBRARY_FILTER_CONFIG[library].getLabel(),
-		Icon: LIBRARY_FILTER_CONFIG[library].Icon,
-		order: LIBRARY_FILTER_CONFIG[library].order,
-	})).sort((firstOption, secondOption) => firstOption.order - secondOption.order);
-	const customOptions = customLibraries.map((library) => ({
+		label: LIBRARY_FILTER_CONFIG[ library ].getLabel(),
+		Icon: LIBRARY_FILTER_CONFIG[ library ].Icon,
+		order: LIBRARY_FILTER_CONFIG[ library ].order,
+	} ) ).sort( ( firstOption, secondOption ) => firstOption.order - secondOption.order );
+	const customOptions = customLibraries.map( ( library ) => ( {
 		value: library.name,
 		label: library.label || library.name,
 		Icon: LibraryIcon,
-	}));
+	} ) );
 	const selectableCount = nativeOptions.length + customOptions.length;
 	const isFiltered = value.length > 0;
 	const filterButtonLabel = isFiltered
-		? __('Filter by library, active', 'elementor')
-		: __('Filter by library', 'elementor');
+		? __( 'Filter by library, active', 'elementor' )
+		: __( 'Filter by library', 'elementor' );
 
 	const handleAllIconsClick = () => {
-		onChange([]);
+		onChange( [] );
 	};
 
-	const handleLibraryClick = (library: string) => {
-		const nextValue = value.includes(library)
-			? value.filter((selectedLibrary) => selectedLibrary !== library)
-			: [...value, library];
+	const handleLibraryClick = ( library: string ) => {
+		const nextValue = value.includes( library )
+			? value.filter( ( selectedLibrary ) => selectedLibrary !== library )
+			: [ ...value, library ];
 
-		onChange(nextValue.length === selectableCount ? [] : nextValue);
+		onChange( nextValue.length === selectableCount ? [] : nextValue );
 	};
 
 	return (
 		<>
 			<Tooltip
-				title={__('Filter by library', 'elementor')}
+				title={ __( 'Filter by library', 'elementor' ) }
 				placement="top"
-				enterDelay={ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY}
-				enterNextDelay={ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY}
+				enterDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
+				enterNextDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
 				disableInteractive
 			>
 				<ToggleButton
-					aria-label={filterButtonLabel}
+					aria-label={ filterButtonLabel }
 					value="filter"
 					size="tiny"
-					selected={popupState.isOpen}
-					sx={{ position: 'relative', flexShrink: 0 }}
-					{...bindToggle(popupState)}
-					aria-expanded={popupState.isOpen}
+					selected={ popupState.isOpen }
+					sx={ { position: 'relative', flexShrink: 0 } }
+					{ ...bindToggle( popupState ) }
+					aria-expanded={ popupState.isOpen }
 				>
 					<FilterIcon fontSize="tiny" />
-					{isFiltered ? (
+					{ isFiltered ? (
 						<Box
 							component="span"
 							aria-hidden="true"
-							sx={{
+							sx={ {
 								position: 'absolute',
 								insetBlockStart: FILTER_INDICATOR_OFFSET,
 								insetInlineEnd: FILTER_INDICATOR_OFFSET,
@@ -127,69 +127,69 @@ export const IconLibraryFilter = ({ value, onChange }: IconLibraryFilterProps) =
 								height: FILTER_INDICATOR_SIZE,
 								borderRadius: '50%',
 								bgcolor: 'secondary.main',
-							}}
+							} }
 						/>
-					) : null}
+					) : null }
 				</ToggleButton>
 			</Tooltip>
 			<Menu
-				{...bindMenu(popupState)}
-				MenuListProps={{
+				{ ...bindMenu( popupState ) }
+				MenuListProps={ {
 					dense: true,
 					autoFocusItem: true,
-					'aria-label': __('Filter by library', 'elementor'),
-				}}
-				sx={{ '& .MuiPaper-root': { minWidth: FILTER_MENU_WIDTH } }}
+					'aria-label': __( 'Filter by library', 'elementor' ),
+				} }
+				sx={ { '& .MuiPaper-root': { minWidth: FILTER_MENU_WIDTH } } }
 			>
 				<MenuItem
 					role="menuitemcheckbox"
-					aria-checked={!isFiltered}
-					selected={!isFiltered}
-					onClick={handleAllIconsClick}
+					aria-checked={ ! isFiltered }
+					selected={ ! isFiltered }
+					onClick={ handleAllIconsClick }
 				>
-					{renderFilterMenuItemContent(__('All icons', 'elementor'), ListIcon, !isFiltered)}
+					{ renderFilterMenuItemContent( __( 'All icons', 'elementor' ), ListIcon, ! isFiltered ) }
 				</MenuItem>
-				{nativeOptions.map(({ value: library, label, Icon }) => (
+				{ nativeOptions.map( ( { value: library, label, Icon } ) => (
 					<MenuItem
-						key={library}
+						key={ library }
 						role="menuitemcheckbox"
-						aria-checked={value.includes(library)}
-						selected={value.includes(library)}
-						onClick={() => handleLibraryClick(library)}
+						aria-checked={ value.includes( library ) }
+						selected={ value.includes( library ) }
+						onClick={ () => handleLibraryClick( library ) }
 					>
-						{renderFilterMenuItemContent(label, Icon, value.includes(library))}
+						{ renderFilterMenuItemContent( label, Icon, value.includes( library ) ) }
 					</MenuItem>
-				))}
-				{customOptions.length > 0
+				) ) }
+				{ customOptions.length > 0
 					? [
 							<Divider key="custom-libraries-divider" />,
 							<ListSubheader key="custom-libraries-header" disableSticky>
-								{__('My Libraries', 'elementor')}
+								{ __( 'My Libraries', 'elementor' ) }
 							</ListSubheader>,
-							...customOptions.map(({ value: library, label, Icon }) => (
+							...customOptions.map( ( { value: library, label, Icon } ) => (
 								<MenuItem
-									key={library}
+									key={ library }
 									role="menuitemcheckbox"
-									aria-checked={value.includes(library)}
-									selected={value.includes(library)}
-									onClick={() => handleLibraryClick(library)}
+									aria-checked={ value.includes( library ) }
+									selected={ value.includes( library ) }
+									onClick={ () => handleLibraryClick( library ) }
 								>
-									{renderFilterMenuItemContent(label, Icon, value.includes(library))}
+									{ renderFilterMenuItemContent( label, Icon, value.includes( library ) ) }
 								</MenuItem>
-							)),
+							) ),
 					  ]
-					: null}
+					: null }
 			</Menu>
 		</>
 	);
 };
 
-const renderFilterMenuItemContent = (label: string, Icon: typeof ListIcon, selected: boolean) => (
-	<Stack direction="row" alignItems="center" gap={1} width="100%">
+const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, selected: boolean ) => (
+	<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
 		<Icon fontSize="tiny" />
-		<Typography variant="caption" sx={{ flex: 1 }}>
-			{label}
+		<Typography variant="caption" sx={ { flex: 1 } }>
+			{ label }
 		</Typography>
-		{selected ? <CheckIcon fontSize="tiny" aria-hidden="true" /> : null}
+		{ selected ? <CheckIcon fontSize="tiny" aria-hidden="true" /> : null }
 	</Stack>
 );

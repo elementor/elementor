@@ -1,4 +1,4 @@
-import { loadCustomIconLibraries, resolveCustomIcon } from '../custom-icon-libraries';
+import { loadCustomIconLibraries, resetCustomIconLibrariesCache, resolveCustomIcon } from '../custom-icon-libraries';
 
 const MY_ICONS_CONFIG = {
 	name: 'my-icons',
@@ -9,10 +9,11 @@ const MY_ICONS_CONFIG = {
 	native: false,
 };
 
-describe('custom-icon-libraries', () => {
+describe( 'custom-icon-libraries', () => {
 	const originalElementor = window.elementor;
 
-	beforeEach(() => {
+	beforeEach( () => {
+		resetCustomIconLibrariesCache();
 		window.elementor = {
 			config: {
 				icons: {
@@ -34,103 +35,166 @@ describe('custom-icon-libraries', () => {
 				enqueueIconFonts: jest.fn(),
 			},
 		} as typeof window.elementor;
-	});
+	} );
 
-	afterEach(() => {
+	afterEach( () => {
 		window.elementor = originalElementor;
+		resetCustomIconLibrariesCache();
 		jest.restoreAllMocks();
-	});
+	} );
 
-	it('loads name-only custom libraries and skips native tabs', async () => {
+	it( 'loads name-only custom libraries and skips native tabs', async () => {
 		// Arrange.
-		global.fetch = jest.fn().mockResolvedValue({
+		global.fetch = jest.fn().mockResolvedValue( {
 			ok: true,
-			json: () => Promise.resolve({ icons: ['badge', 'spark'] }),
-		});
+			json: () => Promise.resolve( { icons: [ 'badge', 'spark' ] } ),
+		} );
 
 		// Act.
 		const catalog = await loadCustomIconLibraries();
 
 		// Assert.
-		expect(global.fetch).toHaveBeenCalledTimes(1);
-		expect(global.fetch).toHaveBeenCalledWith(MY_ICONS_CONFIG.fetchJson, expect.objectContaining({ mode: 'cors' }));
-		expect(window.elementor?.helpers?.enqueueIconFonts).toHaveBeenCalledWith('my-icons');
-		expect(catalog).toEqual([
-			expect.objectContaining({
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+		expect( global.fetch ).toHaveBeenCalledWith(
+			MY_ICONS_CONFIG.fetchJson,
+			expect.objectContaining( { mode: 'cors' } )
+		);
+		expect( window.elementor?.helpers?.enqueueIconFonts ).toHaveBeenCalledWith( 'my-icons' );
+		expect( catalog ).toEqual( [
+			expect.objectContaining( {
 				id: 'my-icons:badge',
 				library: 'my-icons',
 				value: 'my-icons my-icons-badge',
 				glyphClass: 'my-icons my-icons-badge',
-			}),
-			expect.objectContaining({
+			} ),
+			expect.objectContaining( {
 				id: 'my-icons:spark',
 				value: 'my-icons my-icons-spark',
-			}),
-		]);
-	});
+			} ),
+		] );
+	} );
 
-	it('returns empty catalog when fetch fails', async () => {
+	it( 'returns empty catalog when fetch fails', async () => {
 		// Arrange.
-		global.fetch = jest.fn().mockRejectedValue(new Error('network'));
+		global.fetch = jest.fn().mockRejectedValue( new Error( 'network' ) );
 
 		// Act.
 		const catalog = await loadCustomIconLibraries();
 
 		// Assert.
-		expect(catalog).toEqual([]);
-	});
+		expect( catalog ).toEqual( [] );
+	} );
 
-	it('resolves custom icons that include svg markup', async () => {
+	it( 'resolves custom icons that include svg markup', async () => {
 		// Arrange.
-		global.fetch = jest.fn().mockResolvedValue({
+		global.fetch = jest.fn().mockResolvedValue( {
 			ok: true,
 			json: () =>
-				Promise.resolve({
+				Promise.resolve( {
 					icons: {
 						badge: {
 							svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M1 1"></path></svg>',
 						},
 					},
-				}),
-		});
+				} ),
+		} );
 
 		// Act.
-		const icon = await resolveCustomIcon('my-icons', 'my-icons my-icons-badge');
+		const icon = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
 
 		// Assert.
-		expect(icon?.svgMarkup).toContain('<svg');
-		expect(icon?.name).toBe('badge');
-	});
+		expect( icon?.svgMarkup ).toContain( '<svg' );
+		expect( icon?.name ).toBe( 'badge' );
+	} );
 
-	it('fetches a sibling svg when the catalog only has icon names', async () => {
+	it( 'strips script from custom svg markup', async () => {
 		// Arrange.
-		global.fetch = jest.fn().mockImplementation((url: string) => {
-			if (url.endsWith('my-icons.js')) {
-				return Promise.resolve({
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () =>
+				Promise.resolve( {
+					icons: {
+						badge: {
+							svg: '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(1)</script><path d="M1 1"></path></svg>',
+						},
+					},
+				} ),
+		} );
+
+		// Act.
+		const icon = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
+
+		// Assert.
+		expect( icon?.svgMarkup ).toContain( '<path' );
+		expect( icon?.svgMarkup ).not.toContain( 'script' );
+		expect( icon?.svgMarkup ).not.toContain( 'onload' );
+		expect( icon?.svgMarkup ).not.toContain( 'alert' );
+	} );
+
+	it( 'reuses a cached catalog instead of refetching json for each icon', async () => {
+		// Arrange.
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () =>
+				Promise.resolve( {
+					icons: {
+						badge: {
+							svg: '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>',
+						},
+						spark: {
+							svg: '<svg xmlns="http://www.w3.org/2000/svg"><path d="M2 2"></path></svg>',
+						},
+					},
+				} ),
+		} );
+
+		// Act.
+		await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
+		await resolveCustomIcon( 'my-icons', 'my-icons my-icons-spark' );
+
+		// Assert.
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+		expect( global.fetch ).toHaveBeenCalledWith(
+			MY_ICONS_CONFIG.fetchJson,
+			expect.objectContaining( { mode: 'cors' } )
+		);
+	} );
+
+	it( 'fetches a sibling svg when the catalog only has icon names', async () => {
+		// Arrange.
+		global.fetch = jest.fn().mockImplementation( ( url: string ) => {
+			if ( url.endsWith( 'my-icons.js' ) ) {
+				return Promise.resolve( {
 					ok: true,
-					json: () => Promise.resolve({ icons: ['badge'] }),
-				});
+					json: () => Promise.resolve( { icons: [ 'badge' ] } ),
+				} );
 			}
 
-			if (url.endsWith('badge.svg')) {
-				return Promise.resolve({
+			if ( url.endsWith( 'badge.svg' ) ) {
+				return Promise.resolve( {
 					ok: true,
 					text: () =>
-						Promise.resolve('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path d="M2 2"></path></svg>'),
-				});
+						Promise.resolve(
+							'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path d="M2 2"></path></svg>'
+						),
+				} );
 			}
 
-			return Promise.resolve({ ok: false, json: () => Promise.resolve({}), text: () => Promise.resolve('') });
-		});
+			return Promise.resolve( {
+				ok: false,
+				json: () => Promise.resolve( {} ),
+				text: () => Promise.resolve( '' ),
+			} );
+		} );
 
 		// Act.
-		const icon = await resolveCustomIcon('my-icons', 'my-icons my-icons-badge');
+		const icon = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
 
 		// Assert.
-		expect(icon?.svgMarkup).toContain('M2 2');
-		expect(global.fetch).toHaveBeenCalledWith(
+		expect( icon?.svgMarkup ).toContain( 'M2 2' );
+		expect( global.fetch ).toHaveBeenCalledWith(
 			'https://example.com/uploads/badge.svg',
-			expect.objectContaining({ mode: 'cors' })
+			expect.objectContaining( { mode: 'cors' } )
 		);
-	});
-});
+	} );
+} );
