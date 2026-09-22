@@ -379,10 +379,20 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			$config_path = $upload_basedir . 'elementor/custom-icons/' . $post_id . '/config.json';
+			$candidates = [
+				$upload_basedir . 'elementor/custom-icons/' . $library['name'] . '/config.json',
+				$upload_basedir . 'elementor/custom-icons/' . $post_id . '/config.json',
+			];
 
-			if ( file_exists( $config_path ) ) {
-				$library['fetchJson'] = $upload_baseurl . 'elementor/custom-icons/' . $post_id . '/config.json';
+			foreach ( $candidates as $index => $config_path ) {
+				if ( file_exists( $config_path ) ) {
+					$base_urls = [
+						$upload_baseurl . 'elementor/custom-icons/' . $library['name'] . '/config.json',
+						$upload_baseurl . 'elementor/custom-icons/' . $post_id . '/config.json',
+					];
+					$library['fetchJson'] = $base_urls[ $index ];
+					break;
+				}
 			}
 		}
 

@@ -57,7 +57,13 @@ class Custom_Icon_Library_Svg_Resolver {
 
 		if ( $post_id ) {
 			$upload_dir = wp_upload_dir();
-			$directories[] = trailingslashit( $upload_dir['baseurl'] ) . 'elementor/custom-icons/' . $post_id . '/';
+			$upload_base = trailingslashit( $upload_dir['baseurl'] ) . 'elementor/custom-icons/';
+			$directories[] = $upload_base . $post_id . '/';
+
+			$library_name = $tab['name'] ?? '';
+			if ( '' !== $library_name ) {
+				$directories[] = $upload_base . $library_name . '/';
+			}
 		}
 
 		return array_values( array_unique( array_filter( $directories ) ) );
