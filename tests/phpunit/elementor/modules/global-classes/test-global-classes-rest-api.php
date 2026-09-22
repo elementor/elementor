@@ -413,6 +413,107 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'NewClassLabel', $classes['items']['g-new']['label'] );
 	}
 
+	public function test_put__frontend_publish_preserves_unpublished_classes_in_preview_order() {
+		// Arrange
+		$this->act_as_admin();
+
+		$published_class = $this->create_global_class( 'g-published' );
+		$unpublished_class = $this->create_global_class( 'g-unpublished' );
+
+		$this->seed_global_classes_posts( [
+			'items' => [
+				'g-published' => $published_class,
+			],
+			'order' => [ 'g-published' ],
+		] );
+
+		Global_Class_Post::create(
+			$unpublished_class['id'],
+			$unpublished_class['label'],
+			[
+				'type' => $unpublished_class['type'],
+				'variants' => $unpublished_class['variants'],
+			]
+		);
+
+		Global_Classes_Order::make( $this->kit )
+			->set_preview( true )
+			->set_order( [ 'g-unpublished', 'g-published' ] );
+		Global_Classes_Labels::make( $this->kit )
+			->set_preview( true )
+			->set_labels( [ 'g-unpublished' => $unpublished_class['label'] ] );
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$request->set_body_params( [
+			'items' => [],
+			'order' => [ 'g-unpublished', 'g-published' ],
+			'changes' => [
+				'added' => [],
+				'deleted' => [],
+				'modified' => [],
+				'order' => true,
+			],
+			'context' => Global_Classes_Repository::CONTEXT_FRONTEND,
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertSame(
+			[ 'g-unpublished', 'g-published' ],
+			Global_Classes_Order::make( $this->kit )->set_preview( true )->get_order()
+		);
+		$this->assertSame(
+			[ 'g-published' ],
+			Global_Classes_Order::make( $this->kit )->get_order()
+		);
+	}
+
+	public function test_put__frontend_publish_does_not_restore_deleted_class_to_preview_order() {
+		// Arrange
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+		$class_2 = $this->create_global_class( 'g-2' );
+
+		$this->seed_global_classes_posts( [
+			'items' => [
+				'g-1' => $class_1,
+				'g-2' => $class_2,
+			],
+			'order' => [ 'g-1', 'g-2' ],
+		] );
+
+		Global_Classes_Order::make( $this->kit )
+			->set_preview( true )
+			->set_order( [ 'g-1', 'g-2' ] );
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$request->set_body_params( [
+			'items' => [],
+			'order' => [ 'g-1' ],
+			'changes' => [
+				'added' => [],
+				'deleted' => [ 'g-2' ],
+				'modified' => [],
+				'order' => true,
+			],
+			'context' => Global_Classes_Repository::CONTEXT_FRONTEND,
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertSame(
+			[ 'g-1' ],
+			Global_Classes_Order::make( $this->kit )->set_preview( true )->get_order()
+		);
+	}
+
 	public function test_put__fails_when_unauthorized() {
 		// Arrange.
 		$this->act_as_editor();
@@ -1387,6 +1488,28 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( [ 'g-4-123' ], $data['meta']['order'] );
 	}
 
+	public function test_styles__returns_null_for_class_not_registered_in_context() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts( $this->mock_global_classes );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-4-124' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-4-124' => 'bluey' ] );
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/styles' );
+		$request->set_param( 'ids', 'g-4-123' );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$data = $response->get_data();
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( property_exists( $data['data'], 'g-4-123' ) );
+		$this->assertNull( $data['data']->{'g-4-123'} );
+		$this->assertSame( [], $data['meta']['order'] );
+	}
+
 	public function test_post__returns_explicit_null_for_missing_classes() {
 		$this->act_as_admin();
 
@@ -1406,6 +1529,31 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertNotNull( $data['data']->{'g-4-123'} );
 		$this->assertTrue( property_exists( $data['data'], 'g-missing' ) );
 		$this->assertNull( $data['data']->{'g-missing'} );
+	}
+
+	public function test_post__returns_null_for_class_not_registered_in_context() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts( $this->mock_global_classes );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-4-124' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-4-124' => 'bluey' ] );
+
+		$post_id = $this->factory()->post->create();
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY_FRONTEND, 'g-4-123' );
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/post' );
+		$request->set_param( 'post_id', $post_id );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$data = $response->get_data();
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( property_exists( $data['data'], 'g-4-123' ) );
+		$this->assertNull( $data['data']->{'g-4-123'} );
+		$this->assertSame( [], $data['meta']['order'] );
 	}
 
 	public function test_register_routes__endpoints_exist() {

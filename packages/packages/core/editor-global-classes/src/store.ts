@@ -238,7 +238,7 @@ export const slice = createSlice( {
 				if ( ! ( id in state.data.items ) ) {
 					state.data.items[ id ] = previewClassData;
 				}
-				if ( ! ( id in state.initialData.frontend.items ) ) {
+				if ( frontendClassData && ! ( id in state.initialData.frontend.items ) ) {
 					state.initialData.frontend.items[ id ] = frontendClassData;
 				}
 				if ( ! ( id in state.initialData.preview.items ) ) {
