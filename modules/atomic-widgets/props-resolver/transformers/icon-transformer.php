@@ -59,6 +59,15 @@ class Icon_Transformer extends Transformer_Base {
 			];
 		}
 
+		$library_svg = $this->fetch_registered_custom_library_svg( $icon );
+
+		if ( $library_svg ) {
+			return [
+				'html' => $this->process_svg( $library_svg, self::SVG_INLINE_STYLES ),
+				'url' => null,
+			];
+		}
+
 		if ( $this->is_deleted_custom_icon_library( $icon ) ) {
 			return $this->transform_default_svg();
 		}
@@ -67,6 +76,108 @@ class Icon_Transformer extends Transformer_Base {
 			'html' => '',
 			'url' => null,
 		];
+	}
+
+	private function fetch_registered_custom_library_svg( array $icon ): ?string {
+		$tab = $this->get_registered_icon_library_tab( $icon['library'] );
+
+		if ( ! $tab ) {
+			return null;
+		}
+
+		$fetch_json = $tab['fetchJson'] ?? '';
+
+		if ( ! is_string( $fetch_json ) || '' === $fetch_json ) {
+			return null;
+		}
+
+		foreach ( $this->get_custom_icon_file_names( $icon['value'], $tab ) as $name ) {
+			foreach ( $this->get_custom_icon_svg_urls( $fetch_json, $name ) as $url ) {
+				$content = $this->read_svg_url( $url );
+
+				if ( $content ) {
+					return $content;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private function get_registered_icon_library_tab( string $library ): ?array {
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) ) {
+				continue;
+			}
+
+			if ( $name === $library || ( $tab['name'] ?? '' ) === $library ) {
+				return $tab;
+			}
+		}
+
+		return null;
+	}
+
+	private function get_custom_icon_file_names( string $value, array $tab ): array {
+		$prefix = is_string( $tab['prefix'] ?? null ) ? $tab['prefix'] : '';
+		$display_prefix = is_string( $tab['displayPrefix'] ?? null ) ? $tab['displayPrefix'] : rtrim( $prefix, '-' );
+		$remaining = trim( $value );
+		$names = [ $remaining ];
+
+		if ( '' !== $display_prefix && 0 === strpos( $remaining, $display_prefix . ' ' ) ) {
+			$remaining = trim( substr( $remaining, strlen( $display_prefix ) + 1 ) );
+			$names[] = $remaining;
+		}
+
+		if ( '' !== $prefix && 0 === strpos( $remaining, $prefix ) ) {
+			$names[] = substr( $remaining, strlen( $prefix ) );
+		} elseif ( '' !== $prefix ) {
+			$names[] = $prefix . $remaining;
+		}
+
+		return array_values( array_unique( array_filter( $names ) ) );
+	}
+
+	private function get_custom_icon_svg_urls( string $fetch_json, string $name ): array {
+		$directory = trailingslashit( dirname( $fetch_json ) );
+		$encoded = rawurlencode( $name );
+
+		return [
+			$directory . $encoded . '.svg',
+			$directory . 'svg/' . $encoded . '.svg',
+		];
+	}
+
+	private function read_svg_url( string $url ): ?string {
+		$local_path = $this->resolve_local_svg_path( $url );
+
+		if ( $local_path ) {
+			$content = Utils::file_get_contents( $local_path );
+
+			return $content ? $content : null;
+		}
+
+		$response = wp_safe_remote_get( $url );
+
+		if ( is_wp_error( $response ) || \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return null;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		return $body ? $body : null;
+	}
+
+	private function resolve_local_svg_path( string $url ): ?string {
+		$site_url = site_url();
+
+		if ( 0 !== strpos( $url, $site_url ) ) {
+			return null;
+		}
+
+		$path = ABSPATH . ltrim( substr( $url, strlen( $site_url ) ), '/' );
+
+		return file_exists( $path ) ? $path : null;
 	}
 
 	private function is_deleted_custom_icon_library( array $icon ): bool {
@@ -89,21 +200,7 @@ class Icon_Transformer extends Transformer_Base {
 			return false;
 		}
 
-		return ! $this->is_registered_icon_library( $library );
-	}
-
-	private function is_registered_icon_library( string $library ): bool {
-		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
-			if ( $name === $library ) {
-				return true;
-			}
-
-			if ( is_array( $tab ) && ( $tab['name'] ?? '' ) === $library ) {
-				return true;
-			}
-		}
-
-		return false;
+		return ! $this->get_registered_icon_library_tab( $library );
 	}
 
 	private function transform_default_svg(): array {

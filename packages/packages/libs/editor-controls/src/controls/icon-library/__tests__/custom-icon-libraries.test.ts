@@ -50,16 +50,25 @@ describe( 'custom-icon-libraries', () => {
 
 	it( 'loads name-only custom libraries and skips native tabs', async () => {
 		// Arrange.
-		global.fetch = jest.fn().mockResolvedValue( {
-			ok: true,
-			json: () => Promise.resolve( { icons: [ 'badge', 'spark' ] } ),
+		global.fetch = jest.fn().mockImplementation( ( url: string ) => {
+			if ( url.endsWith( 'my-icons.js' ) ) {
+				return Promise.resolve( {
+					ok: true,
+					json: () => Promise.resolve( { icons: [ 'badge', 'spark' ] } ),
+				} );
+			}
+
+			return Promise.resolve( {
+				ok: false,
+				json: () => Promise.resolve( {} ),
+				text: () => Promise.resolve( '' ),
+			} );
 		} );
 
 		// Act.
 		const catalog = await loadCustomIconLibraries();
 
 		// Assert.
-		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 		expect( global.fetch ).toHaveBeenCalledWith(
 			MY_ICONS_CONFIG.fetchJson,
 			expect.objectContaining( { mode: 'cors' } )
@@ -75,6 +84,66 @@ describe( 'custom-icon-libraries', () => {
 			expect.objectContaining( {
 				id: 'my-icons:spark',
 				value: 'my-icons my-icons-spark',
+			} ),
+		] );
+	} );
+
+	it( 'does not double-prefix glyph names that already include the prefix', async () => {
+		// Arrange.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'emo',
+							label: 'Emo',
+							prefix: 'emo-',
+							displayPrefix: 'emo',
+							fetchJson: 'https://example.com/uploads/emo.js',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		global.fetch = jest.fn().mockImplementation( ( url: string ) => {
+			if ( url.endsWith( 'emo.js' ) ) {
+				return Promise.resolve( {
+					ok: true,
+					json: () => Promise.resolve( { icons: [ 'emo-surprised' ] } ),
+				} );
+			}
+
+			if ( url.endsWith( 'emo-surprised.svg' ) ) {
+				return Promise.resolve( {
+					ok: true,
+					text: () =>
+						Promise.resolve(
+							'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path d="M3 3"></path></svg>'
+						),
+				} );
+			}
+
+			return Promise.resolve( {
+				ok: false,
+				json: () => Promise.resolve( {} ),
+				text: () => Promise.resolve( '' ),
+			} );
+		} );
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert.
+		expect( catalog ).toEqual( [
+			expect.objectContaining( {
+				name: 'emo-surprised',
+				value: 'emo emo-surprised',
+				glyphClass: 'emo emo-surprised',
+				svgMarkup: expect.stringContaining( 'M3 3' ),
 			} ),
 		] );
 	} );
@@ -158,11 +227,9 @@ describe( 'custom-icon-libraries', () => {
 		await resolveCustomIcon( 'my-icons', 'my-icons my-icons-spark' );
 
 		// Assert.
-		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
-		expect( global.fetch ).toHaveBeenCalledWith(
-			MY_ICONS_CONFIG.fetchJson,
-			expect.objectContaining( { mode: 'cors' } )
-		);
+		const jsonFetches = jest.mocked( global.fetch ).mock.calls.filter( ( [ url ] ) => url === MY_ICONS_CONFIG.fetchJson );
+
+		expect( jsonFetches ).toHaveLength( 1 );
 	} );
 
 	it( 'fetches a sibling svg when the catalog only has icon names', async () => {
@@ -197,10 +264,6 @@ describe( 'custom-icon-libraries', () => {
 
 		// Assert.
 		expect( icon?.svgMarkup ).toContain( 'M2 2' );
-		expect( global.fetch ).toHaveBeenCalledWith(
-			'https://example.com/uploads/badge.svg',
-			expect.objectContaining( { mode: 'cors' } )
-		);
 	} );
 
 	it( 'detects a deleted custom library from a leftover selection', () => {

@@ -85,10 +85,7 @@ export async function resolveCustomIcon(
 	}
 
 	const icons = await getCachedLibrary( config, signal );
-	const icon = icons.find(
-		( item ) =>
-			item.library === library && ( item.value === iconValue || item.id === `${ library }:${ iconValue }` )
-	);
+	const icon = icons.find( ( item ) => isMatchingCustomIcon( item, config, iconValue ) );
 
 	if ( ! icon ) {
 		return null;
@@ -102,7 +99,7 @@ export async function resolveCustomIcon(
 		return icon;
 	}
 
-	const svgMarkup = await getCachedSiblingSvg( config.fetchJson, icon.name, signal );
+	const svgMarkup = await getCachedSiblingSvg( config, icon.name, signal );
 
 	if ( ! svgMarkup ) {
 		return icon;
@@ -112,6 +109,22 @@ export async function resolveCustomIcon(
 		...icon,
 		svgMarkup,
 	};
+}
+
+function isMatchingCustomIcon(
+	icon: FontAwesome7Icon,
+	library: CustomIconLibraryConfig,
+	iconValue: string
+): boolean {
+	if ( icon.library !== library.name ) {
+		return false;
+	}
+
+	if ( icon.value === iconValue || icon.glyphClass === iconValue || icon.id === `${ library.name }:${ iconValue }` ) {
+		return true;
+	}
+
+	return getIconNameCandidates( library, iconValue ).includes( icon.name );
 }
 
 async function getCachedLibrary(
@@ -153,8 +166,23 @@ async function loadCustomLibrary(
 ): Promise< FontAwesome7Icon[] > {
 	const payload = await loadLibraryPayload( library, signal );
 	const parsedIcons = parseCustomIcons( payload );
+	const catalog = parsedIcons.map( ( icon ) => toCatalogIcon( library, icon ) );
 
-	return parsedIcons.map( ( icon ) => toCatalogIcon( library, icon ) );
+	return Promise.all( catalog.map( ( icon ) => hydrateCatalogIcon( library, icon, signal ) ) );
+}
+
+async function hydrateCatalogIcon(
+	library: CustomIconLibraryConfig,
+	icon: FontAwesome7Icon,
+	signal?: AbortSignal
+): Promise< FontAwesome7Icon > {
+	if ( icon.paths.length > 0 || icon.svgMarkup || ! library.fetchJson ) {
+		return icon;
+	}
+
+	const svgMarkup = await getCachedSiblingSvg( library, icon.name, signal );
+
+	return svgMarkup ? { ...icon, svgMarkup } : icon;
 }
 
 async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
@@ -289,10 +317,37 @@ function toCatalogIcon( library: CustomIconLibraryConfig, icon: ParsedCustomIcon
 }
 
 export function createCustomIconSelectionValue( library: CustomIconLibraryConfig, name: string ): string {
-	const prefix = library.prefix;
+	const prefix = library.prefix || '';
 	const displayPrefix = library.displayPrefix || prefix.replace( /-$/, '' );
+	const className = prefix && name.startsWith( prefix ) ? name : `${ prefix }${ name }`;
 
-	return `${ displayPrefix } ${ prefix }${ name }`.trim();
+	if ( ! displayPrefix || className.startsWith( `${ displayPrefix } ` ) ) {
+		return className.trim();
+	}
+
+	return `${ displayPrefix } ${ className }`.trim();
+}
+
+function getIconNameCandidates( library: CustomIconLibraryConfig, iconValue: string ): string[] {
+	const prefix = library.prefix || '';
+	const displayPrefix = library.displayPrefix || prefix.replace( /-$/, '' );
+	const names = new Set< string >();
+	let remaining = iconValue.trim();
+
+	names.add( remaining );
+
+	if ( displayPrefix && remaining.startsWith( `${ displayPrefix } ` ) ) {
+		remaining = remaining.slice( displayPrefix.length + 1 ).trim();
+		names.add( remaining );
+	}
+
+	if ( prefix && remaining.startsWith( prefix ) ) {
+		names.add( remaining.slice( prefix.length ) );
+	} else if ( prefix ) {
+		names.add( `${ prefix }${ remaining }` );
+	}
+
+	return [ ...names ].filter( Boolean );
 }
 
 function getIconManagerLibraries(): unknown[] {
@@ -324,26 +379,38 @@ function isCustomIconLibraryConfig( value: unknown ): value is CustomIconLibrary
 }
 
 async function getCachedSiblingSvg(
-	fetchJson: string,
+	library: CustomIconLibraryConfig,
 	iconName: string,
 	signal?: AbortSignal
 ): Promise< string | null > {
-	const cacheKey = `${ fetchJson }:${ iconName }`;
+	if ( ! library.fetchJson ) {
+		return null;
+	}
+
+	const cacheKey = `${ library.fetchJson }:${ iconName }`;
 	const cached = siblingSvgCache.get( cacheKey );
 
 	if ( cached !== undefined ) {
 		return cached;
 	}
 
-	const markup = await fetchSiblingSvg( fetchJson, iconName, signal );
+	const markup = await fetchSiblingSvg( library, iconName, signal );
 
 	siblingSvgCache.set( cacheKey, markup );
 
 	return markup;
 }
 
-async function fetchSiblingSvg( fetchJson: string, iconName: string, signal?: AbortSignal ): Promise< string | null > {
-	const candidates = getSiblingSvgUrls( fetchJson, iconName );
+async function fetchSiblingSvg(
+	library: CustomIconLibraryConfig,
+	iconName: string,
+	signal?: AbortSignal
+): Promise< string | null > {
+	if ( ! library.fetchJson ) {
+		return null;
+	}
+
+	const candidates = getSiblingSvgUrls( library.fetchJson, getIconNameCandidates( library, iconName ) );
 
 	for ( const url of candidates ) {
 		const markup = await fetchSvgMarkup( url, signal );
@@ -356,13 +423,20 @@ async function fetchSiblingSvg( fetchJson: string, iconName: string, signal?: Ab
 	return null;
 }
 
-function getSiblingSvgUrls( fetchJson: string, iconName: string ): string[] {
+function getSiblingSvgUrls( fetchJson: string, iconNames: string[] ): string[] {
 	try {
 		const jsonUrl = new URL( fetchJson );
 		const directory = jsonUrl.href.slice( 0, jsonUrl.href.lastIndexOf( '/' ) + 1 );
-		const encodedName = encodeURIComponent( iconName );
+		const urls: string[] = [];
 
-		return [ `${ directory }${ encodedName }.svg`, `${ directory }svg/${ encodedName }.svg` ];
+		iconNames.forEach( ( iconName ) => {
+			const encodedName = encodeURIComponent( iconName );
+
+			urls.push( `${ directory }${ encodedName }.svg` );
+			urls.push( `${ directory }svg/${ encodedName }.svg` );
+		} );
+
+		return urls;
 	} catch {
 		return [];
 	}
