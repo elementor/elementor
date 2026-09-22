@@ -47,7 +47,7 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act & Assert
 		$this->assertSame( Module::EXPERIMENT_NAME, $data['name'] );
-		$this->assertTrue( $data['hidden'] );
+		$this->assertFalse( $data['hidden'] );
 		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
@@ -56,9 +56,10 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
+		$this->assertNotFalse( has_filter( 'elementor/editor/v2/packages', [ $this->module, 'add_packages' ] ) );
 	}
 
-	public function test_editor_one_menu_hooks_are_not_registered_when_experiment_is_inactive() {
+	public function test_editor_one_menu_hooks_are_registered_when_experiment_is_inactive() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
 			Module::EXPERIMENT_NAME,
@@ -67,14 +68,37 @@ class Test_Module extends Elementor_Test_Base {
 		$inactive_module = new Module();
 
 		// Act & Assert
-		$this->assertFalse( has_action( 'elementor/editor-one/menu/register', [ $inactive_module, 'register_editor_one_menu' ] ) );
-		$this->assertFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $inactive_module, 'enqueue_assets_for_editor_one_menu' ] ) );
+		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $inactive_module, 'register_editor_one_menu' ] ) );
+		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $inactive_module, 'enqueue_assets_for_editor_one_menu' ] ) );
+		$this->assertFalse( has_filter( 'elementor/editor/v2/packages', [ $inactive_module, 'add_packages' ] ) );
 
 		// Cleanup
 		Plugin::$instance->experiments->set_feature_default_state(
 			Module::EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
 		);
+	}
+
+	public function test_ajax_opt_in__activates_experiment_for_admin() {
+		// Arrange
+		$this->act_as_admin();
+		$feature_key = Plugin::$instance->experiments->get_feature_option_key( Module::EXPERIMENT_NAME );
+		update_option( $feature_key, Experiments_Manager::STATE_INACTIVE );
+
+		// Act
+		$this->module->ajax_opt_in();
+
+		// Assert
+		$this->assertSame( Experiments_Manager::STATE_ACTIVE, get_option( $feature_key ) );
+	}
+
+	public function test_ajax_opt_in__rejects_unauthorized_user() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act & Assert
+		$this->expectException( \Exception::class );
+		$this->module->ajax_opt_in();
 	}
 
 	public function test_register_editor_one_menu__registers_agents_ready_menu_item() {
