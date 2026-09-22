@@ -117,6 +117,7 @@ describe( 'IconLibraryPopover', () => {
 		document.documentElement.removeAttribute( 'dir' );
 		restoreClientWidth();
 		delete ( window as { elementor?: typeof window.elementor } ).elementor;
+		window.elementorCommon = undefined as unknown as typeof window.elementorCommon;
 	} );
 
 	it( 'opens in list view by default', () => {
@@ -700,6 +701,24 @@ describe( 'IconLibraryPopover', () => {
 				enqueueIconFonts: jest.fn(),
 			},
 		} as typeof window.elementor;
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						jsonFiles: [ 'solid', 'regular', 'brands' ],
+						jsonBaseUrl: 'https://example.com/assets/lib/font-awesome-7/json/',
+						filter: [
+							{ type: 'all', label: 'All icons', icon: 'list' },
+							{ type: 'item', value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
+							{ type: 'item', value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
+							{ type: 'item', value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'library' },
+							{ type: 'group', label: 'My libraries' },
+							{ type: 'item', value: 'my-icons', label: 'My Icons', icon: 'library' },
+						],
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
 		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
 			data: [ customIcon ],
 			isLoading: false,
@@ -714,7 +733,7 @@ describe( 'IconLibraryPopover', () => {
 
 		// Act.
 		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
-		expect( screen.getByText( 'My Libraries' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'My libraries' ) ).toBeInTheDocument();
 		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'My Icons' } ) );
 		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
 

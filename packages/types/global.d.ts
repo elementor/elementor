@@ -81,6 +81,7 @@ declare global {
 					v7?: {
 						jsonFiles?: string[];
 						jsonBaseUrl?: string;
+						filter?: unknown;
 					};
 				};
 				urls?: {

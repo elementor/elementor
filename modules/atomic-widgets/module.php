@@ -37,10 +37,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
+use Elementor\Modules\AtomicWidgets\Icon_Library_Editor_Config;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Pro_Promotion_Data_Preservation;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Svg_Src_Export_Transformer;
@@ -363,7 +363,7 @@ class Module extends BaseModule {
 			$settings['fontAwesome'] = [];
 		}
 
-		$settings['fontAwesome']['v7'] = Font_Awesome_7_Icon_Resolver::get_editor_config();
+		$settings['fontAwesome']['v7'] = Icon_Library_Editor_Config::get();
 
 		return $settings;
 	}

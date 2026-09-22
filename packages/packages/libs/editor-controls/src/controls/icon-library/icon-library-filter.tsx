@@ -17,42 +17,25 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getCustomIconLibraryConfigs } from './custom-icon-libraries';
+import { type FontAwesome7LibraryFilter } from './font-awesome-7-catalog';
 import {
-	FONT_AWESOME_7_LIBRARIES,
-	type FontAwesome7Library,
-	type FontAwesome7LibraryFilter,
-} from './font-awesome-7-catalog';
+	getIconLibraryFilterItems,
+	getSelectableFilterValues,
+	ICON_LIBRARY_FILTER_TYPE_ALL,
+	ICON_LIBRARY_FILTER_TYPE_GROUP,
+	type IconLibraryFilterEntry,
+} from './icon-library-filter-items';
 import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
 const FILTER_INDICATOR_OFFSET = 4;
-const LIBRARY_FILTER_ORDER = {
-	regular: 0,
-	solid: 1,
-	brands: 2,
-} as const;
 
-const LIBRARY_FILTER_CONFIG: Record<
-	FontAwesome7Library,
-	{ getLabel: () => string; Icon: typeof StarIcon; order: number }
-> = {
-	'fa-regular': {
-		getLabel: () => __( 'Font Awesome - Regular', 'elementor' ),
-		Icon: StarIcon,
-		order: LIBRARY_FILTER_ORDER.regular,
-	},
-	'fa-solid': {
-		getLabel: () => __( 'Font Awesome - Solid', 'elementor' ),
-		Icon: StarFilledIcon,
-		order: LIBRARY_FILTER_ORDER.solid,
-	},
-	'fa-brands': {
-		getLabel: () => __( 'Font Awesome - Brands', 'elementor' ),
-		Icon: LibraryIcon,
-		order: LIBRARY_FILTER_ORDER.brands,
-	},
+const FILTER_ICONS: Record< string, typeof ListIcon > = {
+	list: ListIcon,
+	star: StarIcon,
+	'star-filled': StarFilledIcon,
+	library: LibraryIcon,
 };
 
 type IconLibraryFilterProps = {
@@ -66,19 +49,8 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 		variant: 'popover',
 		popupId,
 	} );
-	const customLibraries = getCustomIconLibraryConfigs();
-	const nativeOptions = FONT_AWESOME_7_LIBRARIES.map( ( { library } ) => ( {
-		value: library,
-		label: LIBRARY_FILTER_CONFIG[ library ].getLabel(),
-		Icon: LIBRARY_FILTER_CONFIG[ library ].Icon,
-		order: LIBRARY_FILTER_CONFIG[ library ].order,
-	} ) ).sort( ( firstOption, secondOption ) => firstOption.order - secondOption.order );
-	const customOptions = customLibraries.map( ( library ) => ( {
-		value: library.name,
-		label: library.label || library.name,
-		Icon: LibraryIcon,
-	} ) );
-	const selectableCount = nativeOptions.length + customOptions.length;
+	const entries = getIconLibraryFilterItems();
+	const selectableValues = getSelectableFilterValues( entries );
 	const isFiltered = value.length > 0;
 	const filterButtonLabel = isFiltered
 		? __( 'Filter by library, active', 'elementor' )
@@ -93,7 +65,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 			? value.filter( ( selectedLibrary ) => selectedLibrary !== library )
 			: [ ...value, library ];
 
-		onChange( nextValue.length === selectableCount ? [] : nextValue );
+		onChange( nextValue.length === selectableValues.length ? [] : nextValue );
 	};
 
 	return (
@@ -141,48 +113,61 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 				} }
 				sx={ { '& .MuiPaper-root': { minWidth: FILTER_MENU_WIDTH } } }
 			>
-				<MenuItem
-					role="menuitemcheckbox"
-					aria-checked={ ! isFiltered }
-					selected={ ! isFiltered }
-					onClick={ handleAllIconsClick }
-				>
-					{ renderFilterMenuItemContent( __( 'All icons', 'elementor' ), ListIcon, ! isFiltered ) }
-				</MenuItem>
-				{ nativeOptions.map( ( { value: library, label, Icon } ) => (
-					<MenuItem
-						key={ library }
-						role="menuitemcheckbox"
-						aria-checked={ value.includes( library ) }
-						selected={ value.includes( library ) }
-						onClick={ () => handleLibraryClick( library ) }
-					>
-						{ renderFilterMenuItemContent( label, Icon, value.includes( library ) ) }
-					</MenuItem>
-				) ) }
-				{ customOptions.length > 0
-					? [
-							<Divider key="custom-libraries-divider" />,
-							<ListSubheader key="custom-libraries-header" disableSticky>
-								{ __( 'My Libraries', 'elementor' ) }
-							</ListSubheader>,
-							...customOptions.map( ( { value: library, label, Icon } ) => (
-								<MenuItem
-									key={ library }
-									role="menuitemcheckbox"
-									aria-checked={ value.includes( library ) }
-									selected={ value.includes( library ) }
-									onClick={ () => handleLibraryClick( library ) }
-								>
-									{ renderFilterMenuItemContent( label, Icon, value.includes( library ) ) }
-								</MenuItem>
-							) ),
-					  ]
-					: null }
+				{ entries.flatMap( ( entry, index ) =>
+					renderFilterEntry( entry, index, value, isFiltered, handleAllIconsClick, handleLibraryClick )
+				) }
 			</Menu>
 		</>
 	);
 };
+
+const renderFilterEntry = (
+	entry: IconLibraryFilterEntry,
+	index: number,
+	selectedLibraries: FontAwesome7LibraryFilter,
+	isFiltered: boolean,
+	onAllIconsClick: () => void,
+	onLibraryClick: ( library: string ) => void
+): React.ReactNode[] => {
+	if ( entry.type === ICON_LIBRARY_FILTER_TYPE_GROUP ) {
+		return [
+			<Divider key={ `divider-${ index }` } />,
+			<ListSubheader key={ `group-${ index }` } disableSticky>
+				{ entry.label }
+			</ListSubheader>,
+		];
+	}
+
+	if ( entry.type === ICON_LIBRARY_FILTER_TYPE_ALL ) {
+		return [
+			<MenuItem
+				key={ `all-${ index }` }
+				role="menuitemcheckbox"
+				aria-checked={ ! isFiltered }
+				selected={ ! isFiltered }
+				onClick={ onAllIconsClick }
+			>
+				{ renderFilterMenuItemContent( entry.label, getFilterIcon( entry.icon ), ! isFiltered ) }
+			</MenuItem>,
+		];
+	}
+
+	const isSelected = selectedLibraries.includes( entry.value );
+
+	return [
+		<MenuItem
+			key={ entry.value }
+			role="menuitemcheckbox"
+			aria-checked={ isSelected }
+			selected={ isSelected }
+			onClick={ () => onLibraryClick( entry.value ) }
+		>
+			{ renderFilterMenuItemContent( entry.label, getFilterIcon( entry.icon ), isSelected ) }
+		</MenuItem>,
+	];
+};
+
+const getFilterIcon = ( icon?: string ) => FILTER_ICONS[ icon ?? '' ] ?? LibraryIcon;
 
 const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, selected: boolean ) => (
 	<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
