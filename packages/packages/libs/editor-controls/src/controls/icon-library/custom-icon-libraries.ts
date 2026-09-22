@@ -64,9 +64,24 @@ export async function resolveCustomIcon(
 	signal?: AbortSignal
 ): Promise<FontAwesome7Icon | null> {
 	const icons = await loadCustomIconLibraries(signal);
-	const icon = icons.find(
-		(item) => item.library === library && (item.value === iconValue || item.id === `${library}:${iconValue}`)
-	);
+	const config = getCustomIconLibraryConfigs().find((item) => item.name === library);
+	const icon = icons.find( ( item ) => {
+		if ( item.library !== library ) return false;
+		if ( item.value === iconValue || item.id === `${ library }:${ iconValue }` ) return true;
+		if ( item.glyphClass === iconValue ) return true;
+		if ( config ) {
+			const prefix = config.prefix || '';
+			const displayPrefix = config.displayPrefix || prefix.replace( /-$/, '' );
+			const withoutDisplay = displayPrefix && iconValue.startsWith( `${ displayPrefix } ` )
+				? iconValue.slice( displayPrefix.length + 1 )
+				: iconValue;
+			const bare = prefix && withoutDisplay.startsWith( prefix )
+				? withoutDisplay.slice( prefix.length )
+				: withoutDisplay;
+			return item.name === bare || item.name === withoutDisplay;
+		}
+		return false;
+	} );
 
 	if (!icon) {
 		return null;
@@ -75,8 +90,6 @@ export async function resolveCustomIcon(
 	if (icon.paths.length > 0 || icon.svgMarkup) {
 		return icon;
 	}
-
-	const config = getCustomIconLibraryConfigs().find((item) => item.name === library);
 
 	if (!config?.fetchJson) {
 		return icon;
@@ -234,11 +247,16 @@ function toCatalogIcon(library: CustomIconLibraryConfig, icon: ParsedCustomIcon)
 	};
 }
 
-export function createCustomIconSelectionValue(library: CustomIconLibraryConfig, name: string): string {
-	const prefix = library.prefix;
-	const displayPrefix = library.displayPrefix || prefix.replace(/-$/, '');
+export function createCustomIconSelectionValue( library: CustomIconLibraryConfig, name: string ): string {
+	const prefix = library.prefix || '';
+	const displayPrefix = library.displayPrefix || prefix.replace( /-$/, '' );
+	const className = prefix && name.startsWith( prefix ) ? name : `${ prefix }${ name }`;
 
-	return `${displayPrefix} ${prefix}${name}`.trim();
+	if ( ! displayPrefix || className.startsWith( `${ displayPrefix } ` ) ) {
+		return className.trim();
+	}
+
+	return `${ displayPrefix } ${ className }`.trim();
 }
 
 function looksLikeSvg(value: string): boolean {
