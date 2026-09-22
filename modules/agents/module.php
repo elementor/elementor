@@ -47,7 +47,7 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Agents llms.txt', 'elementor' ),
 			'description' => esc_html__( 'Expose llms.txt from site settings at the site root for AI agents.', 'elementor' ),
-			'hidden' => false,
+			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
