@@ -241,7 +241,7 @@ jobs:
         needs.playground-preview.result == 'success' ||
         github.event.action == 'ready_for_review'
       )
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
       contents: write # Required for uploading capture assets to ci/visual-proof-assets branch
