@@ -279,6 +279,7 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-color': '#ee00ff',
+				'background-image': 'none',
 			},
 		},
 		{
