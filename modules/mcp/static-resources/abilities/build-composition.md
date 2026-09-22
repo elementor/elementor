@@ -39,10 +39,16 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
-- Containers: "e-div-block", "e-tabs"
+- Containers: "e-div-block", "e-grid", "e-flexbox"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
+
+## LAYOUTS
+Every element accepts the same layout styles. Set them in the `style` map for that configuration-id — not as an attribute on the XML tag.
+
+- `display: block` — children stack vertically in normal document flow and take the full width of the parent. Use this for sections and a heading followed by text.
+- `display: flex` — `flex-direction` defaults to `row`, so children sit side by side. For stacked content, set `flex-direction: column`. Set `flex-direction` on every multi-child flex container; otherwise children render in a row with no warning.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
