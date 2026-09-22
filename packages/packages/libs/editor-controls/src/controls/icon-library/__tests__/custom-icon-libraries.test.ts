@@ -235,6 +235,78 @@ describe( 'custom-icon-libraries', () => {
 		expect( icon?.svgMarkup ).toContain( 'M2 2' );
 	} );
 
+	it( 'extracts svg paths from fontello config.json when fetchjson returns only names', async () => {
+		// Arrange.
+		global.fetch = jest.fn().mockImplementation( ( url: string ) => {
+			if ( url === MY_ICONS_CONFIG.fetchJson ) {
+				return Promise.resolve( {
+					ok: true,
+					json: () => Promise.resolve( { icons: [ 'my-icons-badge' ] } ),
+				} );
+			}
+
+			if ( url.endsWith( 'config.json' ) ) {
+				return Promise.resolve( {
+					ok: true,
+					json: () =>
+						Promise.resolve( {
+							units_per_em: 1000,
+							glyphs: [ { css: 'badge', svg: { path: 'M50 50', width: 1000 } } ],
+						} ),
+				} );
+			}
+
+			return Promise.resolve( { ok: false, json: () => Promise.resolve( {} ), text: () => Promise.resolve( '' ) } );
+		} );
+
+		// Act.
+		const icon = await resolveCustomIcon( 'my-icons', 'my-icons my-icons-badge' );
+
+		// Assert.
+		expect( icon?.paths ).toEqual( [ 'M50 50' ] );
+	} );
+
+	it( 'reads glyph paths from fontello config.json used directly as fetchJson', async () => {
+		// Arrange — when Pro uses config.json itself as fetchJson.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							label: 'My Icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							fetchJson: 'https://example.com/uploads/my-icons/config.json',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () =>
+				Promise.resolve( {
+					units_per_em: 1000,
+					glyphs: [ { css: 'badge', svg: { path: 'M10 20', width: 1000 } } ],
+				} ),
+		} );
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert — paths extracted directly from the config.json glyphs.
+		expect( catalog ).toEqual( [
+			expect.objectContaining( {
+				name: 'badge',
+				paths: [ 'M10 20' ],
+				value: 'my-icons my-icons-badge',
+			} ),
+		] );
+	} );
+
 	it( 'detects a deleted custom library from a leftover selection', () => {
 		// Arrange.
 		window.elementor = {
