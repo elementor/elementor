@@ -77,18 +77,19 @@ class V3_Node_Bridge {
 	}
 
 	public static function is_v3_node( array $node ): bool {
-		// V3 non-widget elements (containers/sections) are intentionally not supported at this layer for now.
-		if ( 'widget' !== ( $node['elType'] ?? null ) ) {
+		$el_type = $node['elType'] ?? null;
+
+		if ( 'widget' !== $el_type && 'container' !== $el_type ) {
 			return false;
 		}
 
-		$type = $node['widgetType'] ?? null;
+		$type = $node['widgetType'] ?? $node['elType'] ?? null;
 
 		if ( ! is_string( $type ) ) {
 			return false;
 		}
 
-		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+		if ( 'widget' === $el_type && Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
 			return true;
 		}
 
