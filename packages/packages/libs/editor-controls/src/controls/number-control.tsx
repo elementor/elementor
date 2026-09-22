@@ -9,6 +9,7 @@ import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { clamp, isEmptyDraft, isInRange, parseNumberDraft } from '../utils/number-value';
 
+// Bound value and placeholder only. Draft parsing uses isEmptyDraft / parseNumberDraft.
 const isEmptyOrNaN = ( value?: string | number | null ) =>
 	value === null || value === undefined || value === '' || Number.isNaN( Number( value ) );
 
@@ -86,6 +87,7 @@ export const NumberControl = createControl(
 
 			committedNullOnInputRef.current = false;
 			setDraft( null );
+			// restoreValue() only clears the validation latch in use-bound-prop; it does not revert the model.
 			restoreValue();
 
 			if ( raw === null ) {

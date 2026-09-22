@@ -113,6 +113,7 @@ describe( 'NumberControl', () => {
 		expect( input ).toHaveAttribute( 'placeholder', '123' );
 	} );
 
+	// ED-25510: Carousel Transition Speed is 100..3000. Typing through a below-min value must not clamp.
 	it( 'should not clamp or commit while typing through an intermediate below-min value', () => {
 		// Arrange.
 		const setValue = jest.fn();
@@ -144,6 +145,7 @@ describe( 'NumberControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 200 } );
 	} );
 
+	// ED-25510: Collection Loop items-per-page max is 100. Typing above max must not commit.
 	it( 'should not rewrite or commit while typing a value above max', () => {
 		// Arrange.
 		const setValue = jest.fn();
@@ -358,6 +360,38 @@ describe( 'NumberControl', () => {
 
 		// Assert.
 		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '900' );
+	} );
+
+	it( 'should keep an in-progress draft when the bound value changes externally', () => {
+		// Holding the draft until blur is intentional. Undo, responsive inherit, or another
+		// control can change the model while this field is focused; blur commits the draft.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		const { rerender } = renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '2' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '2' );
+		expect( setValue ).not.toHaveBeenCalled();
+
+		// Act — external update while the draft is still held.
+		rerender( <NumberControl min={ 100 } max={ 3000 } />, {
+			value: { number: { $$type: 'number', value: 900 } },
+		} );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '2' );
+
+		// Act.
+		fireEvent.blur( input );
+
+		// Assert — blur commits the draft (clamped), not the newer external value.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
 	} );
 
 	it( 'should restore the previous value on blur when a required field is emptied', () => {
