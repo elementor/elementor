@@ -182,49 +182,6 @@ describe( 'iconTransformer', () => {
 		expect( result ).toEqual( { html: null, url: null } );
 	} );
 
-	it( 'returns processed inline svg for a custom library icon with markup', async () => {
-		// Arrange.
-		window.elementor = {
-			config: {
-				icons: {
-					libraries: [
-						{
-							name: 'my-icons',
-							label: 'My Icons',
-							prefix: 'my-icons-',
-							displayPrefix: 'my-icons',
-							fetchJson: 'https://example.com/uploads/my-icons.js',
-							native: false,
-						},
-					],
-				},
-			},
-			helpers: {
-				enqueueIconFonts: jest.fn(),
-			},
-		} as typeof window.elementor;
-		global.fetch = jest.fn().mockResolvedValue( {
-			ok: true,
-			json: () =>
-				Promise.resolve( {
-					icons: {
-						badge: {
-							svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="${ STAR_PATH }"></path></svg>`,
-						},
-					},
-				} ),
-		} );
-
-		// Act.
-		const result = await resolveSavedIcon( 'my-icons my-icons-badge', 'my-icons' );
-
-		// Assert.
-		expect( result ).toEqual( {
-			html: expect.stringContaining( STAR_PATH ),
-			url: null,
-		} );
-	} );
-
 	it( 'falls back to the default svg when a custom library has been deleted', async () => {
 		// Arrange.
 		window.elementor = {
@@ -254,72 +211,6 @@ describe( 'iconTransformer', () => {
 			html: expect.stringContaining( 'M24.9999 4.31543' ),
 			url: 'https://example.com/assets/images/default-svg.svg',
 		} );
-	} );
-
-	it.skip( 'builds inline svg from a fontello config when sibling svg files are missing', async () => {
-		// Arrange.
-		window.elementor = {
-			config: {
-				icons: {
-					libraries: [
-						{
-							name: 'emo',
-							label: 'Emo',
-							prefix: 'emo-',
-							displayPrefix: 'emo',
-							fetchJson: 'https://example.com/uploads/emo.js',
-							url: 'https://example.com/uploads/emo.css',
-							native: false,
-						},
-					],
-				},
-			},
-			helpers: {
-				enqueueIconFonts: jest.fn(),
-			},
-		} as typeof window.elementor;
-		global.fetch = jest.fn().mockImplementation( ( url: string ) => {
-			if ( url.endsWith( 'emo.js' ) ) {
-				return Promise.resolve( {
-					ok: true,
-					json: () => Promise.resolve( { icons: [ 'emo-surprised' ] } ),
-				} );
-			}
-
-			if ( url.endsWith( 'config.json' ) ) {
-				return Promise.resolve( {
-					ok: true,
-					text: () =>
-						Promise.resolve(
-							JSON.stringify( {
-								units_per_em: 1000,
-								glyphs: [
-									{
-										css: 'emo-surprised',
-										svg: { path: 'M10 10', width: 1000 },
-									},
-								],
-							} )
-						),
-				} );
-			}
-
-			return Promise.resolve( {
-				ok: false,
-				json: () => Promise.resolve( {} ),
-				text: () => Promise.resolve( '' ),
-			} );
-		} );
-
-		// Act.
-		const result = await resolveSavedIcon( 'emo emo-surprised', 'emo' );
-
-		// Assert.
-		expect( result ).toEqual( {
-			html: expect.stringContaining( 'M10 10' ),
-			url: null,
-		} );
-		expect( ( result as { html: string } ).html ).toContain( '<svg' );
 	} );
 
 	it( 'returns null html when value or library is missing', async () => {

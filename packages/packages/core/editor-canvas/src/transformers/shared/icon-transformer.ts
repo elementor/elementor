@@ -2,7 +2,6 @@ import {
 	type FontAwesome7IconDefinition,
 	getFontAwesome7IconName,
 	isDeletedCustomIconLibrary,
-	resolveCustomIcon,
 	resolveFontAwesome7Icon,
 } from '@elementor/editor-controls';
 
@@ -33,12 +32,6 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 
 	if ( fontAwesomeHtml ) {
 		return { html: fontAwesomeHtml, url: null };
-	}
-
-	const customHtml = await resolveCustomSvg( library, iconValue, signal );
-
-	if ( customHtml ) {
-		return { html: customHtml, url: null };
 	}
 
 	if ( isDeletedCustomIconLibrary( library, iconValue ) ) {
@@ -82,22 +75,6 @@ async function resolveFontAwesomeSvg(
 	}
 
 	const svgText = buildPathSvg( iconData );
-
-	return svgText ? processIconSvgContent( svgText ) : null;
-}
-
-async function resolveCustomSvg( library: string, iconValue: string, signal?: AbortSignal ): Promise< string | null > {
-	const icon = await resolveCustomIcon( library, iconValue, signal );
-
-	if ( ! icon ) {
-		return null;
-	}
-
-	if ( icon.svgMarkup ) {
-		return processIconSvgContent( icon.svgMarkup );
-	}
-
-	const svgText = buildPathSvg( icon );
 
 	return svgText ? processIconSvgContent( svgText ) : null;
 }

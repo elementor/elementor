@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Icon_Library_Editor_Config;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,15 +59,6 @@ class Icon_Transformer extends Transformer_Base {
 			];
 		}
 
-		$library_svg = $this->fetch_registered_custom_library_svg( $icon );
-
-		if ( $library_svg ) {
-			return [
-				'html' => $this->process_svg( $library_svg, self::SVG_INLINE_STYLES ),
-				'url' => null,
-			];
-		}
-
 		if ( $this->is_deleted_custom_icon_library( $icon ) ) {
 			return $this->transform_default_svg();
 		}
@@ -75,16 +67,6 @@ class Icon_Transformer extends Transformer_Base {
 			'html' => '',
 			'url' => null,
 		];
-	}
-
-	private function fetch_registered_custom_library_svg( array $icon ): ?string {
-		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
-
-		if ( is_string( $html ) && '' !== $html ) {
-			return $html;
-		}
-
-		return null;
 	}
 
 	private function get_registered_icon_library_tab( string $library ): ?array {

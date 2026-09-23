@@ -3,7 +3,6 @@ import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
 const NATIVE_TAB_NAMES = new Set(['all', 'recommended', 'GoPro']);
 const DEFAULT_ICON_SIZE = 512;
-const CUSTOM_SVG_FETCH_TIMEOUT_MS = 4000;
 
 export type CustomIconLibraryConfig = {
 	name: string;
@@ -72,26 +71,7 @@ export async function resolveCustomIcon(
 		return null;
 	}
 
-	if (icon.paths.length > 0 || icon.svgMarkup) {
-		return icon;
-	}
-
-	const config = getCustomIconLibraryConfigs().find((item) => item.name === library);
-
-	if (!config?.fetchJson) {
-		return icon;
-	}
-
-	const svgMarkup = await fetchSiblingSvg(config.fetchJson, icon.name, signal);
-
-	if (!svgMarkup) {
-		return icon;
-	}
-
-	return {
-		...icon,
-		svgMarkup,
-	};
+	return icon;
 }
 
 async function loadCustomLibrary(library: CustomIconLibraryConfig, signal?: AbortSignal): Promise<FontAwesome7Icon[]> {
@@ -271,55 +251,4 @@ function isCustomIconLibraryConfig(value: unknown): value is CustomIconLibraryCo
 	}
 
 	return Boolean(library.fetchJson) || library.icons !== undefined;
-}
-
-async function fetchSiblingSvg(fetchJson: string, iconName: string, signal?: AbortSignal): Promise<string | null> {
-	const candidates = getSiblingSvgUrls(fetchJson, iconName);
-
-	for (const url of candidates) {
-		const markup = await fetchSvgMarkup(url, signal);
-
-		if (markup) {
-			return markup;
-		}
-	}
-
-	return null;
-}
-
-function getSiblingSvgUrls(fetchJson: string, iconName: string): string[] {
-	try {
-		const jsonUrl = new URL(fetchJson);
-		const directory = jsonUrl.href.slice(0, jsonUrl.href.lastIndexOf('/') + 1);
-		const encodedName = encodeURIComponent(iconName);
-
-		return [`${directory}${encodedName}.svg`, `${directory}svg/${encodedName}.svg`];
-	} catch {
-		return [];
-	}
-}
-
-async function fetchSvgMarkup(url: string, signal?: AbortSignal): Promise<string | null> {
-	const controller = new AbortController();
-	const timeoutId = window.setTimeout(() => controller.abort(), CUSTOM_SVG_FETCH_TIMEOUT_MS);
-	const abortFromParent = () => controller.abort();
-
-	signal?.addEventListener('abort', abortFromParent, { once: true });
-
-	try {
-		const response = await fetch(url, { signal: controller.signal, mode: 'cors' });
-
-		if (!response.ok) {
-			return null;
-		}
-
-		const markup = await response.text();
-
-		return looksLikeSvg(markup) ? markup : null;
-	} catch {
-		return null;
-	} finally {
-		window.clearTimeout(timeoutId);
-		signal?.removeEventListener('abort', abortFromParent);
-	}
 }
