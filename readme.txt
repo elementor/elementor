@@ -356,6 +356,10 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.3.1 - 2026-09-23 =
+
+* Fix: Top bar translations are not displayed correctly on Elementor admin pages
+
 = 4.3.0 - 2026-09-22 =
 
 * New: Introducing Elementor MCP - enabling compatible AI tools to build pages, edit elements, and work with your design system
