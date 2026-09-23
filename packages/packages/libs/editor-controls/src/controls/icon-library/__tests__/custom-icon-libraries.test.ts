@@ -22,12 +22,22 @@ const MY_ICONS_CONFIG = {
 
 describe( 'custom-icon-libraries', () => {
 	const originalElementor = window.elementor;
+	const originalElementorCommon = window.elementorCommon;
 	const get = jest.fn();
 
 	beforeEach( () => {
 		resetCustomIconSvgCache();
 		get.mockResolvedValue( { data: { data: { icons: {} }, meta: {} } } );
 		jest.mocked( httpService ).mockReturnValue( { get } as never );
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						customIconLibrariesEnabled: true,
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
 		window.elementor = {
 			config: {
 				icons: {
@@ -46,6 +56,7 @@ describe( 'custom-icon-libraries', () => {
 
 	afterEach( () => {
 		window.elementor = originalElementor;
+		window.elementorCommon = originalElementorCommon;
 		jest.restoreAllMocks();
 	} );
 
@@ -137,6 +148,7 @@ describe( 'custom-icon-libraries', () => {
 			config: {
 				fontAwesome: {
 					v7: {
+						customIconLibrariesEnabled: true,
 						customIconPacks: {
 							'-1': {
 								configUrl: 'https://example.com/uploads/elementor/custom-icons/-1/config.json',
@@ -220,6 +232,30 @@ describe( 'custom-icon-libraries', () => {
 		// Assert.
 		expect( isDeletedCustomIconLibrary( 'missing-set', 'missing-set missing-set-ghost' ) ).toBe( true );
 		expect( isDeletedCustomIconLibrary( '-1', 'icon icon-emo-surprised' ) ).toBe( true );
+	} );
+
+	it( 'hides custom libraries when the site is not a connected Pro install', async () => {
+		// Arrange.
+		global.fetch = jest.fn();
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						customIconLibrariesEnabled: false,
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+		const html = await resolveCustomIconSvg( 'my-icons', 'my-icons my-icons-badge' );
+
+		// Assert.
+		expect( catalog ).toEqual( [] );
+		expect( html ).toBeNull();
+		expect( global.fetch ).not.toHaveBeenCalled();
+		expect( isDeletedCustomIconLibrary( 'my-icons', 'my-icons my-icons-badge' ) ).toBe( true );
 	} );
 
 	it( 'drops cached svg markup after the custom library is removed', async () => {

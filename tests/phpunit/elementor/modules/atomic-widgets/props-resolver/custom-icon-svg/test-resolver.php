@@ -25,6 +25,7 @@ class Test_Resolver extends Elementor_Test_Base {
 		Resolver::reset_memory();
 		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
 		remove_all_filters( 'elementor/atomic-widgets/custom-icon-library-dir' );
+		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		$this->remove_pack_dir();
 
 		parent::tearDown();
@@ -32,6 +33,7 @@ class Test_Resolver extends Elementor_Test_Base {
 
 	public function test_resolve__returns_empty_when_library_files_remain_but_tab_is_unregistered() {
 		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 		$this->copy_fontello_pack( 'pw-fontello' );
 
 		add_filter(
@@ -80,6 +82,34 @@ class Test_Resolver extends Elementor_Test_Base {
 		$this->assertSame( '', $without_tab );
 		$this->assertStringContainsString( 'M0 0H100V100H0Z', $with_tab );
 		$this->assertSame( '', $after_delete );
+	}
+
+	public function test_resolve__returns_empty_when_pro_license_is_inactive() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_false' );
+		add_filter(
+			'elementor/icons_manager/additional_tabs',
+			static function ( $tabs ) {
+				$tabs['pw-fontello'] = [
+					'name' => 'pw-fontello',
+					'label' => 'PW Fontello',
+					'prefix' => 'icon-',
+					'native' => false,
+					'icons' => [ 'emo-surprised' ],
+				];
+
+				return $tabs;
+			}
+		);
+
+		// Act.
+		$svg = Resolver::resolve( [
+			'library' => 'pw-fontello',
+			'value' => 'icon icon-emo-surprised',
+		] );
+
+		// Assert.
+		$this->assertSame( '', $svg );
 	}
 
 	private function copy_fontello_pack( string $library ): void {

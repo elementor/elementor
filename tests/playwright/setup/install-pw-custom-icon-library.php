@@ -33,6 +33,7 @@ add_filter( 'elementor/icons_manager/additional_tabs', static function ( \$tabs 
 	];
 	return \$tabs;
 } );
+add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 PHP;
 
 file_put_contents( $mu_dir . 'elementor-pw-custom-icons.php', $mu_plugin );

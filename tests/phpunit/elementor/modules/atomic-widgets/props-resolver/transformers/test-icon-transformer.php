@@ -34,6 +34,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( self::JSON_BASE_PATH_FILTER );
+		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		Font_Awesome_7_Icon_Resolver::reset();
 		$this->remove_filtered_json_dir();
 
@@ -209,6 +210,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 	public function test_transform__uses_custom_library_svg_html_filter() {
 		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'my-icons my-icons-badge',
@@ -256,6 +258,25 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 	public function test_transform__falls_back_to_default_svg_when_numeric_custom_library_is_deleted() {
 		// Arrange.
+		$this->stub_default_svg_http_response();
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'icon icon-emo-surprised',
+			'library' => '-1',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertStringContainsString( '<svg', $result['html'] );
+		$this->assertStringContainsString( 'M24.9999 4.31543', $result['html'] );
+		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
+	}
+
+	public function test_transform__falls_back_to_default_svg_when_pro_license_is_inactive() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_false' );
 		$this->stub_default_svg_http_response();
 		$transformer = new Icon_Transformer();
 		$value = [

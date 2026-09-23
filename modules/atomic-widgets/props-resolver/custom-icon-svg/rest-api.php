@@ -52,6 +52,14 @@ class Rest_Api {
 				->build();
 		}
 
+		if ( ! Availability::is_enabled() ) {
+			if ( is_string( $value ) && '' !== $value ) {
+				return Response_Builder::make( [ 'html' => '' ] )->build();
+			}
+
+			return Response_Builder::make( [ 'icons' => [] ] )->build();
+		}
+
 		if ( is_string( $value ) && '' !== $value ) {
 			return Response_Builder::make( [
 				'html' => Resolver::resolve( [

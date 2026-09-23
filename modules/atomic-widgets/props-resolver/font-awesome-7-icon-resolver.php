@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Fontello_Converter;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Icomoon_Converter;
 
@@ -50,11 +51,14 @@ class Font_Awesome_7_Icon_Resolver {
 	const SKIPPED_TAB_NAMES = [ 'all', 'recommended', 'GoPro' ];
 
 	public static function get_editor_config(): array {
+		$custom_icon_libraries_enabled = Availability::is_enabled();
+
 		return [
 			'jsonFiles' => self::ALLOWED_JSON_FILES,
 			'jsonBaseUrl' => self::get_json_base_url(),
-			'filter' => self::get_filter_items(),
-			'customIconPacks' => self::get_custom_icon_packs(),
+			'filter' => self::get_filter_items( $custom_icon_libraries_enabled ),
+			'customIconPacks' => $custom_icon_libraries_enabled ? self::get_custom_icon_packs() : [],
+			'customIconLibrariesEnabled' => $custom_icon_libraries_enabled,
 		];
 	}
 
@@ -91,7 +95,7 @@ class Font_Awesome_7_Icon_Resolver {
 		];
 	}
 
-	private static function get_filter_items(): array {
+	private static function get_filter_items( bool $custom_icon_libraries_enabled ): array {
 		$items = [
 			[
 				'type' => self::FILTER_TYPE_ALL,
@@ -119,6 +123,10 @@ class Font_Awesome_7_Icon_Resolver {
 		];
 
 		$custom_items = [];
+
+		if ( ! $custom_icon_libraries_enabled ) {
+			return $items;
+		}
 
 		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
 			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {

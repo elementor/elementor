@@ -21,6 +21,10 @@ class Resolver {
 	}
 
 	public static function resolve( array $icon ): string {
+		if ( ! Availability::is_enabled() ) {
+			return '';
+		}
+
 		$library = isset( $icon['library'] ) && is_string( $icon['library'] ) ? $icon['library'] : '';
 		$value = isset( $icon['value'] ) && is_string( $icon['value'] ) ? $icon['value'] : '';
 
@@ -60,6 +64,10 @@ class Resolver {
 	}
 
 	public static function resolve_library( string $library ): array {
+		if ( ! Availability::is_enabled() ) {
+			return [];
+		}
+
 		$tab = self::tab_for_library( $library );
 
 		if ( ! $tab ) {

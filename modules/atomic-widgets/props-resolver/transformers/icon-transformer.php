@@ -6,6 +6,7 @@ use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
@@ -40,6 +41,10 @@ class Icon_Transformer extends Transformer_Base {
 	}
 
 	private function transform_custom_library_icon( array $icon ): array {
+		if ( ! Availability::is_enabled() ) {
+			return $this->transform_default_svg();
+		}
+
 		/**
 		 * Filters inline SVG markup for a custom icon library value.
 		 *

@@ -86,6 +86,7 @@ declare global {
 							string,
 							{ configUrl?: string; fontUrl?: string; selectionUrl?: string }
 						>;
+						customIconLibrariesEnabled?: boolean;
 					};
 				};
 				urls?: {

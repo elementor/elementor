@@ -47,7 +47,7 @@ export function useCustomIconLibraries( enabled: boolean ) {
 	return useQuery< FontAwesome7Icon[] >( {
 		queryKey: CUSTOM_ICON_LIBRARIES_QUERY_KEY,
 		queryFn: ( { signal } ) => loadCustomIconLibraries( signal ),
-		enabled,
+		enabled: enabled && areCustomIconLibrariesEnabled(),
 		staleTime: Infinity,
 	} );
 }
@@ -79,7 +79,15 @@ export async function resolveCustomIconSvg(
 	return typeof markup === 'string' && markup !== '' ? markup : null;
 }
 
+function areCustomIconLibrariesEnabled(): boolean {
+	return true === window.elementorCommon?.config?.fontAwesome?.v7?.customIconLibrariesEnabled;
+}
+
 function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
+	if ( ! areCustomIconLibrariesEnabled() ) {
+		return [];
+	}
+
 	const libraries = window.elementor?.config as { icons?: { libraries?: unknown } } | undefined;
 	const items = Array.isArray( libraries?.icons?.libraries ) ? libraries.icons.libraries : [];
 
