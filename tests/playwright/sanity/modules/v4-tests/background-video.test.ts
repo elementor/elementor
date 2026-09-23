@@ -121,7 +121,7 @@ test.describe( 'Background Video @v4-tests', () => {
 		await test.step( 'Frontend renders the selected tag', async () => {
 			await editor.publishAndViewPage();
 
-			const frontendRoot = editor.page.locator( `[data-e-type="${ elementType }"]` );
+			const frontendRoot = editor.page.locator( `[data-id="${ elementId }"][data-e-type="${ elementType }"]` );
 
 			await expect( frontendRoot ).toHaveClass( /e-default-section/ );
 			await expect( frontendRoot ).toHaveClass( /e-background-video--playing/ );

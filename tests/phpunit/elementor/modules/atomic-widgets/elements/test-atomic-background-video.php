@@ -100,6 +100,8 @@ class Test_Atomic_Background_Video extends Elementor_Test_Base {
 
 		$this->assertStringNotContainsString( '<script', $html );
 		$this->assertMatchesRegularExpression( '/^\s*<div\s/', $html );
+		$this->assertStringContainsString( 'e-default-div', $html );
+		$this->assertStringNotContainsString( 'e-default-script', $html );
 	}
 
 	private function render_background_video( array $settings ): string {
