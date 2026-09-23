@@ -7,11 +7,9 @@ use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Icon_Library_Editor_Config;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Library_Svg_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -80,27 +78,13 @@ class Icon_Transformer extends Transformer_Base {
 	}
 
 	private function fetch_registered_custom_library_svg( array $icon ): ?string {
-		$tab = $this->get_registered_icon_library_tab( $icon['library'] );
+		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
 
-		if ( ! $tab ) {
-			return null;
+		if ( is_string( $html ) && '' !== $html ) {
+			return $html;
 		}
 
-		$fetch_json = $tab['fetchJson'] ?? '';
-
-		if ( is_string( $fetch_json ) && '' !== $fetch_json ) {
-			foreach ( $this->get_custom_icon_file_names( $icon['value'], $tab ) as $name ) {
-				foreach ( $this->get_custom_icon_svg_urls( $fetch_json, $name ) as $url ) {
-					$content = $this->read_svg_url( $url );
-
-					if ( $content ) {
-						return $content;
-					}
-				}
-			}
-		}
-
-		return ( new Custom_Icon_Library_Svg_Resolver() )->resolve( $icon, $tab );
+		return null;
 	}
 
 	private function get_registered_icon_library_tab( string $library ): ?array {
@@ -115,68 +99,6 @@ class Icon_Transformer extends Transformer_Base {
 		}
 
 		return null;
-	}
-
-	private function get_custom_icon_file_names( string $value, array $tab ): array {
-		$prefix = is_string( $tab['prefix'] ?? null ) ? $tab['prefix'] : '';
-		$display_prefix = is_string( $tab['displayPrefix'] ?? null ) ? $tab['displayPrefix'] : rtrim( $prefix, '-' );
-		$remaining = trim( $value );
-		$names = [ $remaining ];
-
-		if ( '' !== $display_prefix && 0 === strpos( $remaining, $display_prefix . ' ' ) ) {
-			$remaining = trim( substr( $remaining, strlen( $display_prefix ) + 1 ) );
-			$names[] = $remaining;
-		}
-
-		if ( '' !== $prefix && 0 === strpos( $remaining, $prefix ) ) {
-			$names[] = substr( $remaining, strlen( $prefix ) );
-		} elseif ( '' !== $prefix ) {
-			$names[] = $prefix . $remaining;
-		}
-
-		return array_values( array_unique( array_filter( $names ) ) );
-	}
-
-	private function get_custom_icon_svg_urls( string $fetch_json, string $name ): array {
-		$directory = trailingslashit( dirname( $fetch_json ) );
-		$encoded = rawurlencode( $name );
-
-		return [
-			$directory . $encoded . '.svg',
-			$directory . 'svg/' . $encoded . '.svg',
-		];
-	}
-
-	private function read_svg_url( string $url ): ?string {
-		$local_path = $this->resolve_local_svg_path( $url );
-
-		if ( $local_path ) {
-			$content = Utils::file_get_contents( $local_path );
-
-			return $content ? $content : null;
-		}
-
-		$response = wp_safe_remote_get( $url );
-
-		if ( is_wp_error( $response ) || \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
-			return null;
-		}
-
-		$body = wp_remote_retrieve_body( $response );
-
-		return $body ? $body : null;
-	}
-
-	private function resolve_local_svg_path( string $url ): ?string {
-		$site_url = site_url();
-
-		if ( 0 !== strpos( $url, $site_url ) ) {
-			return null;
-		}
-
-		$path = ABSPATH . ltrim( substr( $url, strlen( $site_url ) ), '/' );
-
-		return file_exists( $path ) ? $path : null;
 	}
 
 	private function is_deleted_custom_icon_library( array $icon ): bool {
