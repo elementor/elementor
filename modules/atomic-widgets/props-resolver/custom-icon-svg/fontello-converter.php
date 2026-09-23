@@ -50,6 +50,77 @@ class Fontello_Converter implements Svg_Converter {
 		return Fontello_Glyph_Parser::to_svg( $config, $font, $icon_name, $prefix );
 	}
 
+	public static function tab_from_disk( string $library ): ?array {
+		$tab = [ 'name' => $library ];
+		$dir = self::pack_dir( $tab );
+
+		if ( '' === $dir || ! self::is_fontello_pack( $dir ) ) {
+			return null;
+		}
+
+		$config_raw = file_get_contents( $dir . '/config.json' );
+		$config = is_string( $config_raw ) ? json_decode( $config_raw, true ) : null;
+		$prefix = '';
+		$names = [];
+
+		if ( is_array( $config ) ) {
+			if ( isset( $config['css_prefix_text'] ) && is_string( $config['css_prefix_text'] ) ) {
+				$prefix = $config['css_prefix_text'];
+			}
+
+			$names = self::names_from_config( $config );
+		}
+
+		return [
+			'name' => $library,
+			'prefix' => $prefix,
+			'displayPrefix' => '',
+			'icons' => $names,
+			'custom_icon_type' => 'fontello',
+		];
+	}
+
+	public static function names_from_config( array $config ): array {
+		if ( empty( $config['glyphs'] ) || ! is_array( $config['glyphs'] ) ) {
+			return [];
+		}
+
+		$names = [];
+
+		foreach ( $config['glyphs'] as $glyph ) {
+			if ( ! is_array( $glyph ) || empty( $glyph['css'] ) || ! is_string( $glyph['css'] ) ) {
+				continue;
+			}
+
+			$names[] = $glyph['css'];
+		}
+
+		return $names;
+	}
+
+	public static function pack_urls( array $tab ): array {
+		$dir = self::pack_dir( $tab );
+
+		if ( '' === $dir || ! self::is_fontello_pack( $dir ) || ! function_exists( 'wp_upload_dir' ) ) {
+			return [];
+		}
+
+		$uploads = wp_upload_dir();
+		$basedir = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? rtrim( $uploads['basedir'], '/\\' ) : '';
+		$baseurl = isset( $uploads['baseurl'] ) && is_string( $uploads['baseurl'] ) ? rtrim( $uploads['baseurl'], '/' ) : '';
+
+		if ( '' === $basedir || '' === $baseurl || ! str_starts_with( $dir, $basedir ) ) {
+			return [];
+		}
+
+		$url = $baseurl . str_replace( '\\', '/', substr( $dir, strlen( $basedir ) ) );
+
+		return [
+			'configUrl' => $url . '/config.json',
+			'fontUrl' => $url . '/font/fontello.svg',
+		];
+	}
+
 	public static function pack_dir( array $tab ): string {
 		$candidates = self::pack_dir_candidates( $tab );
 

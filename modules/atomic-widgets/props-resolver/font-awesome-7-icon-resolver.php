@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Icons_Manager;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Fontello_Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -52,6 +53,7 @@ class Font_Awesome_7_Icon_Resolver {
 			'jsonFiles' => self::ALLOWED_JSON_FILES,
 			'jsonBaseUrl' => self::get_json_base_url(),
 			'filter' => self::get_filter_items(),
+			'customIconPacks' => self::get_custom_icon_packs(),
 		];
 	}
 
@@ -151,6 +153,40 @@ class Font_Awesome_7_Icon_Resolver {
 		];
 
 		return array_merge( $items, $custom_items );
+	}
+
+	private static function get_custom_icon_packs(): array {
+		$packs = [];
+
+		if ( ! class_exists( Icons_Manager::class ) ) {
+			return $packs;
+		}
+
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
+				continue;
+			}
+
+			$library = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : (string) $name;
+
+			if ( '' === $library || in_array( $library, self::SKIPPED_TAB_NAMES, true ) ) {
+				continue;
+			}
+
+			$urls = Fontello_Converter::pack_urls( $tab + [ 'name' => $library ] );
+
+			if ( empty( $urls ) ) {
+				$urls = Fontello_Converter::pack_urls( [ 'name' => $library ] );
+			}
+
+			if ( empty( $urls ) ) {
+				continue;
+			}
+
+			$packs[ $library ] = $urls;
+		}
+
+		return $packs;
 	}
 
 	private static function get_icon_name( string $value ): ?string {

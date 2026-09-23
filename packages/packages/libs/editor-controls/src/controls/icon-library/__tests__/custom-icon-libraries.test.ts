@@ -132,6 +132,20 @@ describe( 'custom-icon-libraries', () => {
 				json: () => Promise.resolve( JSON.parse( config ) ),
 			} );
 		} ) as jest.Mock;
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						customIconPacks: {
+							'-1': {
+								configUrl: 'https://example.com/uploads/elementor/custom-icons/-1/config.json',
+								fontUrl: 'https://example.com/uploads/elementor/custom-icons/-1/font/fontello.svg',
+							},
+						},
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
 		window.elementor = {
 			config: {
 				icons: {
@@ -140,7 +154,6 @@ describe( 'custom-icon-libraries', () => {
 							name: '-1',
 							prefix: 'icon-',
 							displayPrefix: '',
-							fetchJson: 'https://example.com/uploads/elementor/custom-icons/-1/config.json',
 							icons: [ 'emo-surprised' ],
 							native: false,
 						},

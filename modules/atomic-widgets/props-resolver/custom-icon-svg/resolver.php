@@ -36,7 +36,7 @@ class Resolver {
 			return '';
 		}
 
-		$tab = self::get_tab( $library );
+		$tab = self::tab_for_library( $library );
 
 		if ( ! $tab ) {
 			return '';
@@ -60,7 +60,7 @@ class Resolver {
 	}
 
 	public static function resolve_library( string $library ): array {
-		$tab = self::get_tab( $library );
+		$tab = self::tab_for_library( $library );
 
 		if ( ! $tab ) {
 			return [];
@@ -99,6 +99,29 @@ class Resolver {
 		return is_string( $sanitized ) ? $sanitized : '';
 	}
 
+	private static function tab_for_library( string $library ): ?array {
+		$tab = self::get_tab( $library );
+		$from_disk = Fontello_Converter::tab_from_disk( $library );
+
+		if ( $tab && $from_disk ) {
+			if ( empty( $tab['prefix'] ) && ! empty( $from_disk['prefix'] ) ) {
+				$tab['prefix'] = $from_disk['prefix'];
+			}
+
+			if ( empty( $tab['icons'] ) && ! empty( $from_disk['icons'] ) ) {
+				$tab['icons'] = $from_disk['icons'];
+			}
+
+			if ( empty( $tab['custom_icon_type'] ) ) {
+				$tab['custom_icon_type'] = 'fontello';
+			}
+
+			return $tab;
+		}
+
+		return $tab ?: $from_disk;
+	}
+
 	private static function get_tab( string $library ): ?array {
 		if ( ! class_exists( Icons_Manager::class ) ) {
 			return null;
@@ -120,24 +143,36 @@ class Resolver {
 	}
 
 	private static function icon_names( array $tab ): array {
-		if ( empty( $tab['icons'] ) || ! is_array( $tab['icons'] ) ) {
+		$names = [];
+
+		if ( ! empty( $tab['icons'] ) && is_array( $tab['icons'] ) ) {
+			foreach ( $tab['icons'] as $key => $entry ) {
+				if ( is_string( $entry ) && '' !== $entry ) {
+					$names[] = $entry;
+					continue;
+				}
+
+				if ( is_string( $key ) && '' !== $key && ! is_numeric( $key ) ) {
+					$names[] = $key;
+				}
+			}
+		}
+
+		if ( ! empty( $names ) ) {
+			return $names;
+		}
+
+		$dir = Fontello_Converter::pack_dir( $tab );
+		$config_path = $dir . '/config.json';
+
+		if ( '' === $dir || ! is_readable( $config_path ) ) {
 			return [];
 		}
 
-		$names = [];
+		$config_raw = file_get_contents( $config_path );
+		$config = is_string( $config_raw ) ? json_decode( $config_raw, true ) : null;
 
-		foreach ( $tab['icons'] as $key => $entry ) {
-			if ( is_string( $entry ) && '' !== $entry ) {
-				$names[] = $entry;
-				continue;
-			}
-
-			if ( is_string( $key ) && '' !== $key && ! is_numeric( $key ) ) {
-				$names[] = $key;
-			}
-		}
-
-		return $names;
+		return is_array( $config ) ? Fontello_Converter::names_from_config( $config ) : [];
 	}
 
 	private static function cache_key( string $library, string $value, array $tab ): string {
