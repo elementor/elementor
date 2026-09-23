@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -148,7 +149,7 @@ class Style_Applier {
 	private function apply_v3_style( array &$node, string $css_string, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		$warnings = [];
 		$codes    = [];
-		$widget_type = $node['widgetType'] ?? '';
+		$widget_type = $node['widgetType'] ?? $node['elType'] ?? '';
 		$widget_config = [];
 
 		if ( is_string( $widget_type ) && '' !== $widget_type ) {
@@ -182,7 +183,16 @@ class Style_Applier {
 			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
 
+		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( (string) $widget_type );
 		$unmapped = $result['unmapped_css'] ?? '';
+
+		if ( $is_map_driven ) {
+			return [
+				'warnings' => $warnings,
+				'codes' => $codes,
+			];
+		}
+
 		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
 		if ( null !== $pro_warning ) {
 			$warnings[] = $pro_warning;

@@ -85,28 +85,23 @@ class V3_Widget_Map_Registry {
 	public static function create_default(): self {
 		return new self(
 			new V3_Widget_Map_Compiler(),
-			static fn() => Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
-			static fn() => Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
+			static fn() => class_exists( \Elementor\Plugin::class )
+				&& isset( Plugin::$instance->experiments )
+				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
+			static fn() => class_exists( \Elementor\Plugin::class )
+				&& isset( Plugin::$instance->experiments )
+				&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
-				$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+				$source = Plugin::$instance->widgets_manager->get_widget_types( $widget_type )
+					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
 
-				if ( $widget && method_exists( $widget, 'get_stack' ) ) {
-					$widget->get_stack();
-					$controls = $widget->get_controls();
-
-					return is_array( $controls ) ? $controls : null;
-				}
-
-				$element = Plugin::$instance->elements_manager->get_element_types( $widget_type );
-
-				if ( ! $element || ! method_exists( $element, 'get_stack' ) ) {
+				if ( ! $source || ! method_exists( $source, 'get_stack' ) ) {
 					return null;
 				}
 
-				$element->get_stack();
-				$controls = $element->get_controls();
+				$stack = $source->get_stack();
 
-				return is_array( $controls ) ? $controls : null;
+				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
 			},
 			self::load_map_files()
 		);
@@ -188,6 +183,23 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
+	 * Returns the flat bridge-shaped `[ match_key => override ]` translation of the compiled
+	 * map's `style_targets`, or null when the map is absent, invalid, or the experiment is off.
+	 * Call sites should fall back to {@see V3_Widget_Bridge_Registry::get_style_overrides()} on null.
+	 *
+	 * @return array<string, array{setting: string, resolver: string, responsive?: bool}>|null
+	 */
+	public function get_style_overrides_from_map( string $widget_type ): ?array {
+		$compiled = $this->get_validation_contract( $widget_type );
+
+		if ( null === $compiled ) {
+			return null;
+		}
+
+		return V3_Map_Overrides_Builder::from_style_targets( $compiled['style_targets'] ?? [] );
+	}
+
+	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
 	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array{targets: array<string, string[]>}}|null
@@ -233,7 +245,7 @@ class V3_Widget_Map_Registry {
 
 	/**
 	 * @param array<string, mixed> $compiled_map
-	 * @return array{targets: array<string, string[]>}
+	 * @return array<string, string[]>
 	 */
 	private function build_style_targets_shape( array $compiled_map ): array {
 		$targets = [];
@@ -246,6 +258,6 @@ class V3_Widget_Map_Registry {
 			$targets[ $alias ] = array_values( array_map( 'strval', array_keys( $target['css_properties'] ) ) );
 		}
 
-		return [ 'targets' => $targets ];
+		return $targets;
 	}
 }
