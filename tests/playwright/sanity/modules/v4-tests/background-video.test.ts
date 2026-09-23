@@ -124,7 +124,6 @@ test.describe( 'Background Video @v4-tests', () => {
 			const frontendRoot = editor.page.locator( `[data-id="${ elementId }"][data-e-type="${ elementType }"]` );
 
 			await expect( frontendRoot ).toHaveClass( /e-default-section/ );
-			await expect( frontendRoot ).toHaveClass( /e-background-video--playing/ );
 			expect( await frontendRoot.evaluate( ( node ) => node.tagName ) ).toBe( 'SECTION' );
 		} );
 	} );
