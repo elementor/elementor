@@ -39,4 +39,14 @@ class Test_Atomic_Background_Video extends Elementor_Test_Base {
 
 		$this->assertTrue( $schema['state']->validate( null ) );
 	}
+
+	public function test_tag_prop_includes_main_and_nav() {
+		$schema = $this->get_define_props_schema();
+
+		$this->assertSame( 'div', $schema['tag']->get_default()['value'] );
+		$this->assertSame(
+			[ 'div', 'header', 'section', 'article', 'aside', 'footer', 'main', 'nav' ],
+			$schema['tag']->get_enum()
+		);
+	}
 }
