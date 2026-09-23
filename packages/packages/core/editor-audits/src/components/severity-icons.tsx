@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AlertCircleIcon, AlertTriangleFilledIcon, InfoCircleIcon } from '@elementor/icons';
+import { AlertCircleIcon, AlertTriangleFilledIcon, BulbIcon } from '@elementor/icons';
 
 import { type AuditSeverity } from '../types';
 
@@ -13,7 +13,7 @@ type SeverityConfig = {
 const SEVERITY_CONFIG: Record< AuditSeverity, SeverityConfig > = {
 	error: { Icon: AlertTriangleFilledIcon, color: 'error' },
 	warning: { Icon: AlertCircleIcon, color: 'warning' },
-	info: { Icon: InfoCircleIcon, color: 'info' },
+	info: { Icon: BulbIcon, color: 'info' },
 };
 
 type Props = {
