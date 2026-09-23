@@ -126,14 +126,17 @@ class Font_Awesome_7_Icon_Resolver {
 				continue;
 			}
 
-			if ( empty( $tab['name'] ) || ! is_string( $tab['name'] ) || empty( $tab['label'] ) || ! is_string( $tab['label'] ) ) {
+			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
+			$tab_label = isset( $tab['label'] ) && is_string( $tab['label'] ) ? $tab['label'] : '';
+
+			if ( '' === $tab_name || '' === $tab_label ) {
 				continue;
 			}
 
 			$custom_items[] = [
 				'type' => self::FILTER_TYPE_ITEM,
-				'value' => $tab['name'],
-				'label' => $tab['label'],
+				'value' => $tab_name,
+				'label' => $tab_label,
 				'icon' => 'library',
 			];
 		}

@@ -80,7 +80,7 @@ class Fontello_Glyph_Parser {
 	private static function find_glyph( string $svg_font, int $codepoint, string $icon_name ): ?array {
 		$document = new \DOMDocument();
 		$previous = libxml_use_internal_errors( true );
-		$loaded = $document->loadXML( $svg_font );
+		$loaded = $document->loadXML( self::strip_doctype( $svg_font ), LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $previous );
 
@@ -125,6 +125,12 @@ class Fontello_Glyph_Parser {
 		}
 
 		return null;
+	}
+
+	private static function strip_doctype( string $svg_font ): string {
+		$stripped = preg_replace( '/<!DOCTYPE[^>]*>/si', '', $svg_font );
+
+		return is_string( $stripped ) ? $stripped : $svg_font;
 	}
 
 	private static function unicode_codepoint( string $unicode ): ?int {

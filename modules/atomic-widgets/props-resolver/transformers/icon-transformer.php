@@ -74,7 +74,9 @@ class Icon_Transformer extends Transformer_Base {
 				continue;
 			}
 
-			if ( $name === $library || ( $tab['name'] ?? '' ) === $library ) {
+			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
+
+			if ( (string) $name === $library || $tab_name === $library ) {
 				return $tab;
 			}
 		}

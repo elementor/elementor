@@ -28,6 +28,9 @@ class Rest_Api {
 					'library' => [
 						'type' => 'string',
 						'required' => true,
+						'sanitize_callback' => static function ( $value ) {
+							return is_scalar( $value ) ? (string) $value : '';
+						},
 					],
 					'value' => [
 						'type' => 'string',

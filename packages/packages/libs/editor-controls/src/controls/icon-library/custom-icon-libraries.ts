@@ -3,6 +3,7 @@ import { useQuery } from '@elementor/query';
 
 import { enqueueIconFonts } from '../open-icon-library';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
+import { fontelloSvgUrlFromConfig, parseFontelloSvgFont } from './fontello-svg-font';
 
 const NATIVE_TAB_NAMES = new Set( [ 'all', 'recommended', 'GoPro' ] );
 const DEFAULT_ICON_SIZE = 512;
@@ -25,15 +26,17 @@ export function resetCustomIconSvgCache() {
 }
 
 export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
-	if ( ! library || ! iconValue.includes( library ) ) {
+	const libraryName = String( library );
+
+	if ( ! libraryName || ! iconValue.includes( libraryName ) ) {
 		return false;
 	}
 
-	if ( NATIVE_TAB_NAMES.has( library ) || library.startsWith( 'fa-' ) ) {
+	if ( NATIVE_TAB_NAMES.has( libraryName ) || libraryName.startsWith( 'fa-' ) ) {
 		return false;
 	}
 
-	return ! getCustomIconLibraryConfigs().some( ( item ) => item.name === library );
+	return ! getCustomIconLibraryConfigs().some( ( item ) => item.name === libraryName );
 }
 
 export function useCustomIconLibraries( enabled: boolean ) {
@@ -58,7 +61,8 @@ export async function resolveCustomIconSvg(
 	iconValue: string,
 	signal?: AbortSignal
 ): Promise< string | null > {
-	const map = await loadLibrarySvgMap( library, signal );
+	const config = getCustomIconLibraryConfigs().find( ( item ) => item.name === String( library ) );
+	const map = await loadLibrarySvgMap( String( library ), config, signal );
 	const markup = map[ iconValue ];
 
 	return typeof markup === 'string' && markup !== '' ? markup : null;
@@ -68,25 +72,50 @@ function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
 	const libraries = window.elementor?.config as { icons?: { libraries?: unknown } } | undefined;
 	const items = Array.isArray( libraries?.icons?.libraries ) ? libraries.icons.libraries : [];
 
-	return items.filter( isCustomIconLibraryConfig );
+	return items.flatMap( ( value ) => {
+		const library = normalizeCustomIconLibraryConfig( value );
+
+		return library ? [ library ] : [];
+	} );
 }
 
-function isCustomIconLibraryConfig( value: unknown ): value is CustomIconLibraryConfig {
+function normalizeCustomIconLibraryConfig( value: unknown ): CustomIconLibraryConfig | null {
 	if ( ! value || typeof value !== 'object' ) {
-		return false;
+		return null;
 	}
 
-	const library = value as CustomIconLibraryConfig;
+	const library = value as CustomIconLibraryConfig & { name?: unknown; prefix?: unknown };
+	const name = coerceLibraryName( library.name );
 
-	if ( typeof library.name !== 'string' || library.name === '' || NATIVE_TAB_NAMES.has( library.name ) ) {
-		return false;
+	if ( name === '' || NATIVE_TAB_NAMES.has( name ) || library.native === true || name.startsWith( 'fa-' ) ) {
+		return null;
 	}
 
-	if ( library.native === true || library.name.startsWith( 'fa-' ) || typeof library.prefix !== 'string' ) {
-		return false;
+	if ( typeof library.prefix !== 'string' ) {
+		return null;
 	}
 
-	return Boolean( library.fetchJson ) || library.icons !== undefined;
+	if ( ! library.fetchJson && library.icons === undefined ) {
+		return null;
+	}
+
+	return {
+		...library,
+		name,
+		prefix: library.prefix,
+	};
+}
+
+function coerceLibraryName( value: unknown ): string {
+	if ( typeof value === 'string' ) {
+		return value;
+	}
+
+	if ( typeof value === 'number' && Number.isFinite( value ) ) {
+		return String( value );
+	}
+
+	return '';
 }
 
 async function loadCustomLibrary(
@@ -96,7 +125,7 @@ async function loadCustomLibrary(
 	enqueueIconFonts( library.name );
 
 	const names = parseIconNames( await loadLibraryPayload( library, signal ) );
-	const svgMap = await loadLibrarySvgMap( library.name, signal );
+	const svgMap = await loadLibrarySvgMap( library.name, library, signal );
 
 	return names.map( ( name ) => {
 		const value = createCustomIconSelectionValue( library, name );
@@ -117,25 +146,87 @@ async function loadCustomLibrary(
 	} );
 }
 
-async function loadLibrarySvgMap( library: string, signal?: AbortSignal ): Promise< Record< string, string > > {
+async function loadLibrarySvgMap(
+	library: string,
+	config?: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< Record< string, string > > {
 	const cached = svgMapCache.get( library );
 
-	if ( cached ) {
+	if ( cached && Object.keys( cached ).length > 0 ) {
 		return cached;
 	}
 
+	const fromRest = await loadSvgMapFromRest( library, signal );
+
+	if ( Object.keys( fromRest ).length > 0 ) {
+		svgMapCache.set( library, fromRest );
+
+		return fromRest;
+	}
+
+	const fromFont = config ? await loadSvgMapFromFontelloPack( config, signal ) : {};
+
+	if ( Object.keys( fromFont ).length > 0 ) {
+		svgMapCache.set( library, fromFont );
+
+		return fromFont;
+	}
+
+	return {};
+}
+
+async function loadSvgMapFromRest( library: string, signal?: AbortSignal ): Promise< Record< string, string > > {
 	try {
 		const { data } = await httpService().get< HttpResponse< { icons?: Record< string, string > } > >(
 			CUSTOM_ICON_SVG_URL,
-			{ params: { library }, signal }
+			{ params: { library: String( library ) }, signal }
 		);
 		const icons = data.data?.icons && typeof data.data.icons === 'object' ? data.data.icons : {};
-		svgMapCache.set( library, icons );
 
 		return icons;
 	} catch {
-		svgMapCache.set( library, {} );
+		return {};
+	}
+}
 
+async function loadSvgMapFromFontelloPack(
+	library: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< Record< string, string > > {
+	if ( ! library.fetchJson ) {
+		return {};
+	}
+
+	const fontUrl = fontelloSvgUrlFromConfig( library.fetchJson );
+
+	if ( ! fontUrl ) {
+		return {};
+	}
+
+	try {
+		const [ configResponse, fontResponse ] = await Promise.all( [
+			fetch( library.fetchJson, { signal, mode: 'cors' } ),
+			fetch( fontUrl, { signal, mode: 'cors' } ),
+		] );
+
+		if ( ! configResponse.ok || ! fontResponse.ok ) {
+			return {};
+		}
+
+		const configJson = await configResponse.text();
+		const svgFont = await fontResponse.text();
+		const names = parseIconNames( JSON.parse( configJson ) );
+		const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
+
+		return parseFontelloSvgFont(
+			configJson,
+			svgFont,
+			library.prefix,
+			library.displayPrefix ?? '',
+			payloadNames
+		);
+	} catch {
 		return {};
 	}
 }

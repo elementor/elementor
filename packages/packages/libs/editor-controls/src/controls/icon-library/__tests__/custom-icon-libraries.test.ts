@@ -78,6 +78,85 @@ describe( 'custom-icon-libraries', () => {
 		] );
 	} );
 
+	it( 'accepts numeric custom library names', async () => {
+		// Arrange.
+		global.fetch = jest.fn();
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: -1,
+							prefix: 'icon-',
+							displayPrefix: '',
+							icons: [ 'emo-surprised' ],
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert.
+		expect( catalog[ 0 ] ).toEqual(
+			expect.objectContaining( {
+				id: '-1:emo-surprised',
+				library: '-1',
+				value: 'icon icon-emo-surprised',
+			} )
+		);
+		expect( get ).toHaveBeenCalledWith(
+			'elementor/v1/atomic-widgets/custom-icon-svg',
+			expect.objectContaining( { params: { library: '-1' } } )
+		);
+	} );
+
+	it( 'parses fontello.svg when the rest map is empty', async () => {
+		// Arrange.
+		const font = `<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><defs><font horiz-adv-x="1000"><font-face units-per-em="1000"/><glyph glyph-name="emo-surprised" unicode="&#xe800;" d="M0 0H100V100H0Z" horiz-adv-x="696"/></font></defs></svg>`;
+		const config = JSON.stringify( { glyphs: [ { css: 'emo-surprised', code: 59392 } ] } );
+		global.fetch = jest.fn( ( input: RequestInfo | URL ) => {
+			const url = String( input );
+
+			if ( url.endsWith( 'font/fontello.svg' ) ) {
+				return Promise.resolve( { ok: true, text: () => Promise.resolve( font ) } );
+			}
+
+			return Promise.resolve( {
+				ok: true,
+				text: () => Promise.resolve( config ),
+				json: () => Promise.resolve( JSON.parse( config ) ),
+			} );
+		} ) as jest.Mock;
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: '-1',
+							prefix: 'icon-',
+							displayPrefix: '',
+							fetchJson: 'https://example.com/uploads/elementor/custom-icons/-1/config.json',
+							icons: [ 'emo-surprised' ],
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert.
+		expect( catalog[ 0 ]?.svgMarkup ).toContain( 'M0 0H100V100H0Z' );
+	} );
+
 	it( 'attaches svg markup from the custom icon svg endpoint', async () => {
 		// Arrange.
 		const markup = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>';
