@@ -175,6 +175,83 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '## Optional', $output );
 	}
 
+	// -------------------------------------------------------------------------
+	// llms-full.txt posts-per-type limit
+	// -------------------------------------------------------------------------
+
+	public function test_llms_full_txt_caps_posts_per_type_by_default() {
+		$this->draft_all_published_posts_of_type( 'post' );
+
+		$titles = [];
+		for ( $i = 0; $i < 21; $i++ ) {
+			$title    = "Cap Test Post $i";
+			$titles[] = $title;
+			$this->factory()->post->create( [
+				'post_status' => 'publish',
+				'post_title'  => $title,
+				'post_date'   => gmdate( 'Y-m-d H:i:s', time() - $i * MINUTE_IN_SECONDS ),
+			] );
+		}
+
+		$full_output = $this->generator->generate_llms_full_txt();
+		$llms_output = $this->generator->generate_llms_txt();
+
+		// Newest 20 (indexes 0..19) must be present; the oldest (index 20) must be dropped.
+		for ( $i = 0; $i < 20; $i++ ) {
+			$this->assertStringContainsString( $titles[ $i ], $full_output );
+		}
+		$this->assertStringNotContainsString( $titles[20], $full_output );
+
+		// llms.txt is unaffected by the llms-full.txt cap.
+		foreach ( $titles as $title ) {
+			$this->assertStringContainsString( $title, $llms_output );
+		}
+	}
+
+	public function test_llms_full_txt_posts_per_type_filter_overrides_default() {
+		$this->draft_all_published_posts_of_type( 'post' );
+
+		for ( $i = 0; $i < 3; $i++ ) {
+			$this->factory()->post->create( [
+				'post_status' => 'publish',
+				'post_title'  => "Filter Test Post $i",
+				'post_date'   => gmdate( 'Y-m-d H:i:s', time() - $i * MINUTE_IN_SECONDS ),
+			] );
+		}
+
+		$filter = static function ( $limit, $post_type ) {
+			return 'post' === $post_type ? 2 : $limit;
+		};
+
+		add_filter( 'elementor/agents/llms_full/posts_per_type', $filter, 10, 2 );
+		$output = $this->generator->generate_llms_full_txt();
+		remove_filter( 'elementor/agents/llms_full/posts_per_type', $filter, 10 );
+
+		$this->assertStringContainsString( 'Filter Test Post 0', $output );
+		$this->assertStringContainsString( 'Filter Test Post 1', $output );
+		$this->assertStringNotContainsString( 'Filter Test Post 2', $output );
+	}
+
+	/**
+	 * Drafts any published posts of the given type left behind by earlier
+	 * tests, so post-count assertions in these tests are deterministic.
+	 */
+	private function draft_all_published_posts_of_type( string $post_type ): void {
+		$ids = get_posts( [
+			'post_type'      => $post_type,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+		] );
+
+		foreach ( $ids as $id ) {
+			wp_update_post( [
+				'ID'          => $id,
+				'post_status' => 'draft',
+			] );
+		}
+	}
+
 	public function test_missing_requirements_warns_when_tagline_empty() {
 		$original = get_option( 'blogdescription' );
 		update_option( 'blogdescription', '' );
