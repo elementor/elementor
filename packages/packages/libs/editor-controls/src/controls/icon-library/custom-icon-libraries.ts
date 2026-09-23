@@ -123,7 +123,7 @@ function coerceLibraryName( value: unknown ): string {
 	return '';
 }
 
-function getPackUrls( library: string ): { configUrl?: string; fontUrl?: string } {
+function getPackUrls( library: string ): { configUrl?: string; fontUrl?: string; selectionUrl?: string } {
 	const packs = window.elementorCommon?.config?.fontAwesome?.v7?.customIconPacks;
 
 	if ( ! packs || typeof packs !== 'object' ) {

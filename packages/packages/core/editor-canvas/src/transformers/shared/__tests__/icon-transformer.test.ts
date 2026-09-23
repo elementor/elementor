@@ -1,16 +1,11 @@
-import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
-import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-
-import { iconPropType } from '../../../__tests__/prop-types';
-import { initSettingsTransformers } from '../../../init-settings-transformers';
-import { createPropsResolver } from '../../../renderers/create-props-resolver';
-import { settingsTransformersRegistry } from '../../../settings-transformers-registry';
-
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: () => ( {
 		get: jest.fn().mockRejectedValue( new Error( 'no custom svg' ) ),
 	} ),
 } ) );
+
+import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
+import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
 import { iconPropType } from '../../../__tests__/prop-types';
 import { initSettingsTransformers } from '../../../init-settings-transformers';
