@@ -17,8 +17,6 @@ copy( $source . '/font/fontello.svg', $font_dir . '/fontello.svg' );
 $mu_dir = trailingslashit( WPMU_PLUGIN_DIR );
 wp_mkdir_p( $mu_dir );
 
-$fetch_json = trailingslashit( $uploads['baseurl'] ) . 'elementor/custom-icons/' . $library . '/config.json';
-
 $mu_plugin = <<<PHP
 <?php
 add_filter( 'elementor/icons_manager/additional_tabs', static function ( \$tabs ) {
