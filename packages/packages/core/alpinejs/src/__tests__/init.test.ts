@@ -1,4 +1,5 @@
 import { Alpine } from '@alpinejs/csp';
+
 import { init } from '../init';
 
 jest.mock( '@alpinejs/csp', () => ( {
