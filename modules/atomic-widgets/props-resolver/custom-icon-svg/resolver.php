@@ -101,25 +101,30 @@ class Resolver {
 
 	private static function tab_for_library( string $library ): ?array {
 		$tab = self::get_tab( $library );
+
+		if ( ! $tab ) {
+			return null;
+		}
+
 		$from_disk = Fontello_Converter::tab_from_disk( $library ) ?? Icomoon_Converter::tab_from_disk( $library );
 
-		if ( $tab && $from_disk ) {
-			if ( empty( $tab['prefix'] ) && ! empty( $from_disk['prefix'] ) ) {
-				$tab['prefix'] = $from_disk['prefix'];
-			}
-
-			if ( empty( $tab['icons'] ) && ! empty( $from_disk['icons'] ) ) {
-				$tab['icons'] = $from_disk['icons'];
-			}
-
-			if ( empty( $tab['custom_icon_type'] ) ) {
-				$tab['custom_icon_type'] = 'fontello';
-			}
-
+		if ( ! $from_disk ) {
 			return $tab;
 		}
 
-		return $tab ?: $from_disk;
+		if ( empty( $tab['prefix'] ) && ! empty( $from_disk['prefix'] ) ) {
+			$tab['prefix'] = $from_disk['prefix'];
+		}
+
+		if ( empty( $tab['icons'] ) && ! empty( $from_disk['icons'] ) ) {
+			$tab['icons'] = $from_disk['icons'];
+		}
+
+		if ( empty( $tab['custom_icon_type'] ) ) {
+			$tab['custom_icon_type'] = 'fontello';
+		}
+
+		return $tab;
 	}
 
 	private static function get_tab( string $library ): ?array {

@@ -49,6 +49,9 @@ class Test_Fontello_Glyph_Parser extends TestCase {
 		$svg = Fontello_Glyph_Parser::to_svg( $config, $font, 'missing', 'icon-' );
 
 		// Assert.
+		$this->assertSame( '', $svg );
+	}
+
 	public function test_to_svg__uses_current_color_fill() {
 		// Arrange.
 		$fixture = __DIR__ . '/fixtures/fontello';

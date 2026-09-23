@@ -92,7 +92,7 @@ class Icon_Transformer extends Transformer_Base {
 			return false;
 		}
 
-		if ( false === strpos( $value, $library ) ) {
+		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
 			return false;
 		}
 

@@ -35,14 +35,14 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: fontAwesomeHtml, url: null };
 	}
 
+	if ( isDeletedCustomIconLibrary( library, iconValue ) ) {
+		return resolveDefaultSvg( signal );
+	}
+
 	const customHtml = await resolveCustomSvg( library, iconValue, signal );
 
 	if ( customHtml ) {
 		return { html: customHtml, url: null };
-	}
-
-	if ( isDeletedCustomIconLibrary( library, iconValue ) ) {
-		return resolveDefaultSvg( signal );
 	}
 
 	return EMPTY_ICON_RESULT;

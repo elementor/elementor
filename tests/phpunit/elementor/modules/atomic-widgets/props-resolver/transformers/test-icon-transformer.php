@@ -254,6 +254,24 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
 	}
 
+	public function test_transform__falls_back_to_default_svg_when_numeric_custom_library_is_deleted() {
+		// Arrange.
+		$this->stub_default_svg_http_response();
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'icon icon-emo-surprised',
+			'library' => '-1',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertStringContainsString( '<svg', $result['html'] );
+		$this->assertStringContainsString( 'M24.9999 4.31543', $result['html'] );
+		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
+	}
+
 	private function stub_default_svg_http_response(): void {
 		add_filter(
 			'pre_http_request',

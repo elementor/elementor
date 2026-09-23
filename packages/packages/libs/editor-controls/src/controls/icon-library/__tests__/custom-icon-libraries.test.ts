@@ -4,6 +4,7 @@ import {
 	isDeletedCustomIconLibrary,
 	loadCustomIconLibraries,
 	resetCustomIconSvgCache,
+	resolveCustomIconSvg,
 } from '../custom-icon-libraries';
 
 jest.mock( '@elementor/http-client', () => ( {
@@ -218,5 +219,30 @@ describe( 'custom-icon-libraries', () => {
 
 		// Assert.
 		expect( isDeletedCustomIconLibrary( 'missing-set', 'missing-set missing-set-ghost' ) ).toBe( true );
+		expect( isDeletedCustomIconLibrary( '-1', 'icon icon-emo-surprised' ) ).toBe( true );
+	} );
+
+	it( 'drops cached svg markup after the custom library is removed', async () => {
+		// Arrange.
+		const markup = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>';
+		get.mockResolvedValue( {
+			data: {
+				data: { icons: { 'my-icons my-icons-badge': markup } },
+				meta: {},
+			},
+		} );
+
+		await loadCustomIconLibraries();
+
+		window.elementor = {
+			config: { icons: { libraries: [ { name: 'fa-solid', native: true } ] } },
+		} as typeof window.elementor;
+
+		// Act.
+		const html = await resolveCustomIconSvg( 'my-icons', 'my-icons my-icons-badge' );
+
+		// Assert.
+		expect( html ).toBeNull();
+		expect( isDeletedCustomIconLibrary( 'my-icons', 'my-icons my-icons-badge' ) ).toBe( true );
 	} );
 } );

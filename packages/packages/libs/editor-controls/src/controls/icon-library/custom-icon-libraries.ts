@@ -32,7 +32,7 @@ export function resetCustomIconSvgCache() {
 export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
 	const libraryName = String( library );
 
-	if ( ! libraryName || ! iconValue.includes( libraryName ) ) {
+	if ( ! libraryName || ! iconValue ) {
 		return false;
 	}
 
@@ -66,6 +66,13 @@ export async function resolveCustomIconSvg(
 	signal?: AbortSignal
 ): Promise< string | null > {
 	const config = getCustomIconLibraryConfigs().find( ( item ) => item.name === String( library ) );
+
+	if ( ! config ) {
+		svgMapCache.delete( String( library ) );
+
+		return null;
+	}
+
 	const map = await loadLibrarySvgMap( String( library ), config, signal );
 	const markup = map[ iconValue ];
 
@@ -176,6 +183,12 @@ async function loadLibrarySvgMap(
 	config?: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< Record< string, string > > {
+	if ( ! config ) {
+		svgMapCache.delete( library );
+
+		return {};
+	}
+
 	const cached = svgMapCache.get( library );
 
 	if ( cached && Object.keys( cached ).length > 0 ) {
