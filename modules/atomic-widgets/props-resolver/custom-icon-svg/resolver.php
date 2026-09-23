@@ -109,7 +109,9 @@ class Resolver {
 				continue;
 			}
 
-			if ( $name === $library || ( $tab['name'] ?? '' ) === $library ) {
+			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
+
+			if ( (string) $name === $library || $tab_name === $library ) {
 				return $tab;
 			}
 		}
@@ -124,9 +126,14 @@ class Resolver {
 
 		$names = [];
 
-		foreach ( $tab['icons'] as $entry ) {
+		foreach ( $tab['icons'] as $key => $entry ) {
 			if ( is_string( $entry ) && '' !== $entry ) {
 				$names[] = $entry;
+				continue;
+			}
+
+			if ( is_string( $key ) && '' !== $key && ! is_numeric( $key ) ) {
+				$names[] = $key;
 			}
 		}
 
@@ -166,14 +173,14 @@ class Resolver {
 	}
 
 	private static function cache_set( string $key, string $markup, array $tab, string $value ): void {
+		if ( '' === $markup ) {
+			return;
+		}
+
 		self::$memory[ $key ] = $markup;
 
 		if ( function_exists( 'wp_cache_set' ) ) {
 			wp_cache_set( $key, $markup, self::CACHE_GROUP );
-		}
-
-		if ( '' === $markup ) {
-			return;
 		}
 
 		if ( ! function_exists( 'wp_mkdir_p' ) || ! function_exists( 'sanitize_file_name' ) ) {
