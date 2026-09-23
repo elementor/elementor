@@ -22,6 +22,12 @@ return [
 				'background-color' => [
 					'default' => Style_Control_Target::control( 'background_color', 'color' ),
 				],
+				'padding' => [
+					'default' => Style_Control_Target::control( 'padding', 'sides', true ),
+				],
+				'margin' => [
+					'default' => Style_Control_Target::control( 'margin', 'sides', true ),
+				],
 			],
 		],
 	],

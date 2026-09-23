@@ -72,7 +72,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'title', $result['properties'] );
 		$this->assertArrayHasKey( 'link', $result['properties'] );
 		$this->assertArrayHasKey( 'tag', $result['properties'] );
-		$this->assertSame( [ 'color' ], $result['style_targets']['heading'] );
+		$this->assertSame( [ 'color', 'font-size', 'line-height', 'font-weight' ], $result['style_targets']['heading'] );
 		$this->assertSame( 'Text heading with optional link and HTML tag (h1–h6, div, span, or p).', $result['description'] );
 		$this->assertSame( 'string', $result['properties']['title']['anyOf'][0]['type'] );
 		$this->assertSame( 'object', $result['properties']['title']['anyOf'][1]['type'] );
@@ -91,7 +91,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'content_width', $result['properties'] );
 		$this->assertSame( [ 'boxed', 'full' ], $result['properties']['content_width']['enum'] );
-		$this->assertSame( [ 'background-color' ], $result['style_targets']['container'] );
+		$this->assertSame( [ 'background-color', 'padding', 'margin' ], $result['style_targets']['container'] );
 	}
 
 	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
@@ -106,7 +106,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'text', $result['properties'] );
 		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertSame( [ 'color', 'background-color' ], $result['style_targets']['button'] );
+		$this->assertSame( [ 'color', 'background-color', 'font-size', 'font-weight', 'padding' ], $result['style_targets']['button'] );
 	}
 
 	public function test_execute__rejects_heading_when_atomic_elements_active() {

@@ -128,16 +128,18 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 		$this->assertSame( 'background_color', $result['background-color']['setting'] );
 	}
 
-	public function test_from_style_targets__non_simple_kind_is_skipped() {
+	public function test_from_style_targets__unsupported_kind_is_skipped() {
 		$style_targets = [
 			'heading' => [
 				'css_properties' => [
-					'font-size' => [
+					'border' => [
 						'default' => [
-							'kind' => 'typography',
-							'resolver' => 'dimension',
-							'responsive' => true,
-							'destinations' => [],
+							'kind' => 'border',
+							'resolver' => 'border',
+							'responsive' => false,
+							'destinations' => [
+								[ 'setting' => 'border_border', 'shape' => 'string', 'resolver' => 'border' ],
+							],
 						],
 					],
 				],
@@ -147,5 +149,24 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
 		$this->assertSame( [], $result );
+	}
+
+	public function test_from_style_targets__typography_field_carries_group_toggle() {
+		$style_targets = [
+			'heading' => [
+				'css_properties' => [
+					'font-size' => [
+						'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ),
+					],
+				],
+			],
+		];
+
+		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
+
+		$this->assertSame( 'typography_font_size', $result['font-size']['setting'] );
+		$this->assertSame( 'slider', $result['font-size']['resolver'] );
+		$this->assertTrue( $result['font-size']['responsive'] );
+		$this->assertSame( [ 'typography_typography' => 'custom' ], $result['font-size']['companion_settings'] );
 	}
 }

@@ -26,11 +26,15 @@ class Responsive_Key_Resolver {
 		}
 
 		$suffixed = $setting . '_' . $breakpoint;
-		if ( ! $meta->has_control( $suffixed ) ) {
+		if ( ! $meta->has_control( $suffixed ) && ! $this->accepts_non_duplicated_variant( $setting, $meta ) ) {
 			return null;
 		}
 
 		return $suffixed;
+	}
+
+	private function accepts_non_duplicated_variant( string $setting, V3_Context_Meta $meta ): bool {
+		return $meta->is_map_driven() && $meta->is_responsive_control( $setting );
 	}
 
 	/**

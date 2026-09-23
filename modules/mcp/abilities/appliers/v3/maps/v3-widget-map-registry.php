@@ -200,6 +200,19 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
+	 * Full control stack (content and style buckets) the map was compiled against.
+	 * `get_config()['controls']` omits split style controls, so responsive style keys
+	 * must be looked up here.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function get_registered_controls( string $widget_type ): array {
+		$get_controls = $this->get_controls;
+
+		return $get_controls( $widget_type ) ?? [];
+	}
+
+	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
 	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array{targets: array<string, string[]>}}|null

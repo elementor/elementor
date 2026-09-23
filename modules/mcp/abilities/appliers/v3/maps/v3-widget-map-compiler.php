@@ -27,9 +27,21 @@ class V3_Widget_Map_Compiler {
 
 	const COMPATIBLE_CONTROL_TYPES = [
 		'color' => [ 'color' ],
+		'slider' => [ 'slider' ],
+		'dimension' => [ 'slider' ],
+		'line_height' => [ 'slider' ],
+		'sides' => [ 'dimensions' ],
+		Style_Control_Target::TYPOGRAPHY_TOGGLE_RESOLVER => [ 'popover_toggle' ],
+	];
+
+	const SUPPORTED_DESCRIPTOR_KINDS = [
+		Style_Control_Target::KIND_SIMPLE,
+		Style_Control_Target::KIND_TYPOGRAPHY,
 	];
 
 	const ALLOWED_STATE_KEYS = [ 'default', 'hover' ];
+
+	const RESPONSIVE_PROBE_SUFFIX = '_mobile';
 
 	/**
 	 * @param array<string, mixed> $map
@@ -158,7 +170,7 @@ class V3_Widget_Map_Compiler {
 			return $this->error( 'invalid_descriptor_kind', '' );
 		}
 
-		if ( Style_Control_Target::KIND_SIMPLE !== $descriptor['kind'] ) {
+		if ( ! in_array( $descriptor['kind'], self::SUPPORTED_DESCRIPTOR_KINDS, true ) ) {
 			return $this->error( 'invalid_descriptor_kind', $descriptor['kind'] );
 		}
 
@@ -187,7 +199,25 @@ class V3_Widget_Map_Compiler {
 			}
 		}
 
+		$primary_setting = $destinations[0]['setting'];
+
+		if ( ! empty( $descriptor['responsive'] ) && ! $this->is_responsive_control( $primary_setting, $controls ) ) {
+			return $this->error( 'incompatible_responsive_control', $primary_setting );
+		}
+
 		return null;
+	}
+
+	/**
+	 * Responsive controls are either registered once with `is_responsive` (when responsive
+	 * control duplication is off) or duplicated per device with a `_<device>` suffix.
+	 *
+	 * @param string               $setting
+	 * @param array<string, mixed> $controls
+	 */
+	private function is_responsive_control( string $setting, array $controls ): bool {
+		return ! empty( $controls[ $setting ]['is_responsive'] )
+			|| isset( $controls[ $setting . self::RESPONSIVE_PROBE_SUFFIX ] );
 	}
 
 	private function is_resolver_compatible( string $resolver, string $control_type ): bool {

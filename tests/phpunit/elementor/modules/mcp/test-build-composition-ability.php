@@ -15,6 +15,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -1318,6 +1319,110 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'on', $button['settings']['link']['is_external'] ?? null );
 		$this->assertSame( '#111111', $button['settings']['button_text_color'] ?? null );
 		$this->assertSame( '#222222', $button['settings']['hover_color'] ?? null );
+	}
+
+	public function test_execute__applies_map_driven_v3_heading_typography_and_reads_it_back() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+		$css = 'font-size: 32px; line-height: 1.4; font-weight: 700; @media(--mobile) { font-size: 20px; }';
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<heading configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [ 'title' => 'Typography' ],
+			],
+			'style' => [ 'h1' => $css ],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$heading = $this->find_element_by_widget_type(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			'heading'
+		);
+		$this->assertNotNull( $heading );
+		$settings = $heading['settings'];
+		$this->assertSame( 'custom', $settings['typography_typography'] ?? null );
+		$this->assertEquals( [ 'unit' => 'px', 'size' => 32 ], $settings['typography_font_size'] ?? null );
+		$this->assertEquals( [ 'unit' => 'custom', 'size' => 1.4 ], $settings['typography_line_height'] ?? null );
+		$this->assertSame( '700', $settings['typography_font_weight'] ?? null );
+		$this->assertEquals( [ 'unit' => 'px', 'size' => 20 ], $settings['typography_font_size_mobile'] ?? null );
+		$this->assertArrayNotHasKey( 'custom_css', $settings );
+
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+		$structure = ( new Get_Structure_Ability() )->execute( [
+			'post_id' => $post_id,
+			'element_id' => $heading['id'],
+			'include_content' => true,
+		] );
+		$this->assertIsArray( $structure, is_wp_error( $structure ) ? $structure->get_error_message() : 'unknown' );
+		$readback_css = $structure['elements'][0]['styles']['css'];
+		$this->assertStringContainsString( 'font-size: 32px;', $readback_css );
+		$this->assertStringContainsString( 'line-height: 1.4;', $readback_css );
+		$this->assertStringContainsString( 'font-weight: 700;', $readback_css );
+		$this->assertStringContainsString( 'font-size: 20px;', $readback_css );
+	}
+
+	public function test_execute__applies_map_driven_v3_button_padding_and_font_size() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<button configuration-id="b1"/>',
+			'element_config' => [
+				'b1' => [ 'text' => 'Padded' ],
+			],
+			'style' => [ 'b1' => 'padding: 12px 24px; font-size: 18px;' ],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$button = $this->find_element_by_widget_type(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			'button'
+		);
+		$this->assertNotNull( $button );
+		$this->assertSame( '12', $button['settings']['text_padding']['top'] ?? null );
+		$this->assertSame( '24', $button['settings']['text_padding']['right'] ?? null );
+		$this->assertSame( 'px', $button['settings']['text_padding']['unit'] ?? null );
+		$this->assertEquals( [ 'unit' => 'px', 'size' => 18 ], $button['settings']['typography_font_size'] ?? null );
+		$this->assertSame( 'custom', $button['settings']['typography_typography'] ?? null );
+	}
+
+	public function test_execute__applies_map_driven_v3_container_responsive_padding() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<container configuration-id="c1"/>',
+			'element_config' => [
+				'c1' => [ 'content_width' => 'full' ],
+			],
+			'style' => [ 'c1' => 'padding: 40px; @media(--tablet) { padding: 20px; }' ],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$container = $this->find_element_by_callback(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			static fn( array $element ) => 'container' === ( $element['elType'] ?? null )
+				&& 'full' === ( $element['settings']['content_width'] ?? null )
+		);
+		$this->assertNotNull( $container );
+		$this->assertSame( '40', $container['settings']['padding']['top'] ?? null );
+		$this->assertSame( '20', $container['settings']['padding_tablet']['top'] ?? null );
 	}
 
 	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {

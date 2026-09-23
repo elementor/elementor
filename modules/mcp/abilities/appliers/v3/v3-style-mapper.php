@@ -169,9 +169,15 @@ class V3_Style_Mapper {
 	}
 
 	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
-		$map_overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );
+		$registry = V3_Widget_Map_Registry::instance();
+		$map_overrides = $registry->get_style_overrides_from_map( $widget_type );
 		$overrides = $map_overrides ?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$is_map_driven = null !== $map_overrides;
+
+		if ( $is_map_driven ) {
+			$widget_config['controls'] = $registry->get_registered_controls( $widget_type );
+		}
+
 		$controls = $widget_config['controls'] ?? [];
 		$generic_index = $is_map_driven
 			? []

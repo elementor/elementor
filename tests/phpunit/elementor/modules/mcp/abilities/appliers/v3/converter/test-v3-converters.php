@@ -170,6 +170,62 @@ class Test_V3_Converters extends TestCase {
 		$this->assertStringContainsString( 'font-size', $warnings[0] );
 	}
 
+	public function test_simple_setting_converter__map_typography_field_switches_group_to_custom() {
+		// Arrange.
+		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
+			'heading' => [
+				'css_properties' => [
+					'font-weight' => [ 'default' => Style_Control_Target::typography( 'typography', 'font_weight', 'text' ) ],
+				],
+			],
+		] );
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$ctx = new V3_Conversion_Context();
+
+		// Act.
+		$converter->convert( $ctx, $this->rule( 'font-weight', '700' ), $this->meta( $overrides ) );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'typography_font_weight' => '700',
+				'typography_typography' => 'custom',
+			],
+			$ctx->settings_patch()
+		);
+		$this->assertSame( [], $ctx->warnings() );
+	}
+
+	public function test_simple_setting_converter__map_responsive_write_validates_against_base_destination() {
+		// Arrange.
+		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
+			'heading' => [
+				'css_properties' => [
+					'font-size' => [ 'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ) ],
+				],
+			],
+		] );
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$meta = $this->meta( $overrides, [], [ 'typography_font_size' => [], 'typography_font_size_tablet' => [] ] );
+		$ctx = new V3_Conversion_Context();
+
+		// Act.
+		$converter->convert( $ctx, $this->rule( 'font-size', '18px', null, 'tablet' ), $meta );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'typography_font_size_tablet' => [
+					'unit' => 'px',
+					'size' => 18.0,
+				],
+				'typography_typography' => 'custom',
+			],
+			$ctx->settings_patch()
+		);
+		$this->assertSame( [], $ctx->warnings() );
+	}
+
 	public function test_generic_index_converter__drops_when_non_desktop_variant_missing() {
 		$converter = new Generic_Index_Converter();
 		$meta = $this->meta(
