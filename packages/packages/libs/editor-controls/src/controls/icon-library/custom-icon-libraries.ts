@@ -15,6 +15,8 @@ type CustomIconLibraryConfig = {
 	prefix: string;
 	displayPrefix?: string;
 	fetchJson?: string;
+	configUrl?: string;
+	fontUrl?: string;
 	icons?: unknown;
 	native?: boolean;
 };
@@ -103,6 +105,7 @@ function normalizeCustomIconLibraryConfig( value: unknown ): CustomIconLibraryCo
 		...library,
 		name,
 		prefix: library.prefix,
+		...getPackUrls( name ),
 	};
 }
 
@@ -116,6 +119,25 @@ function coerceLibraryName( value: unknown ): string {
 	}
 
 	return '';
+}
+
+function getPackUrls( library: string ): { configUrl?: string; fontUrl?: string } {
+	const packs = window.elementorCommon?.config?.fontAwesome?.v7?.customIconPacks;
+
+	if ( ! packs || typeof packs !== 'object' ) {
+		return {};
+	}
+
+	const pack = packs[ library ];
+
+	if ( ! pack || typeof pack !== 'object' ) {
+		return {};
+	}
+
+	return {
+		configUrl: typeof pack.configUrl === 'string' ? pack.configUrl : undefined,
+		fontUrl: typeof pack.fontUrl === 'string' ? pack.fontUrl : undefined,
+	};
 }
 
 async function loadCustomLibrary(
@@ -178,35 +200,51 @@ async function loadLibrarySvgMap(
 
 async function loadSvgMapFromRest( library: string, signal?: AbortSignal ): Promise< Record< string, string > > {
 	try {
-		const { data } = await httpService().get< HttpResponse< { icons?: Record< string, string > } > >(
+		const response = await httpService().get< HttpResponse< { icons?: Record< string, string > } > >(
 			CUSTOM_ICON_SVG_URL,
 			{ params: { library: String( library ) }, signal }
 		);
-		const icons = data.data?.icons && typeof data.data.icons === 'object' ? data.data.icons : {};
 
-		return icons;
+		return unwrapIconMap( response );
 	} catch {
 		return {};
 	}
+}
+
+function unwrapIconMap( payload: unknown ): Record< string, string > {
+	let current: unknown = payload;
+
+	for ( let depth = 0; depth < 4; depth++ ) {
+		if ( ! current || typeof current !== 'object' ) {
+			return {};
+		}
+
+		const record = current as Record< string, unknown >;
+
+		if ( record.icons && typeof record.icons === 'object' && ! Array.isArray( record.icons ) ) {
+			return record.icons as Record< string, string >;
+		}
+
+		current = 'data' in record ? record.data : undefined;
+	}
+
+	return {};
 }
 
 async function loadSvgMapFromFontelloPack(
 	library: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< Record< string, string > > {
-	if ( ! library.fetchJson ) {
-		return {};
-	}
+	const configUrl = library.configUrl ?? library.fetchJson;
+	const fontUrl = library.fontUrl ?? ( library.fetchJson ? fontelloSvgUrlFromConfig( library.fetchJson ) : null );
 
-	const fontUrl = fontelloSvgUrlFromConfig( library.fetchJson );
-
-	if ( ! fontUrl ) {
+	if ( ! configUrl || ! fontUrl ) {
 		return {};
 	}
 
 	try {
 		const [ configResponse, fontResponse ] = await Promise.all( [
-			fetch( library.fetchJson, { signal, mode: 'cors' } ),
+			fetch( configUrl, { signal, mode: 'cors' } ),
 			fetch( fontUrl, { signal, mode: 'cors' } ),
 		] );
 
@@ -216,7 +254,7 @@ async function loadSvgMapFromFontelloPack(
 
 		const configJson = await configResponse.text();
 		const svgFont = await fontResponse.text();
-		const names = parseIconNames( JSON.parse( configJson ) );
+		const names = parseIconNames( safeJson( configJson ) );
 		const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
 
 		return parseFontelloSvgFont(
@@ -228,6 +266,14 @@ async function loadSvgMapFromFontelloPack(
 		);
 	} catch {
 		return {};
+	}
+}
+
+function safeJson( value: string ): unknown {
+	try {
+		return JSON.parse( value );
+	} catch {
+		return null;
 	}
 }
 
@@ -274,6 +320,20 @@ function parseIconNames( payload: unknown ): string[] {
 
 	if ( icons && typeof icons === 'object' ) {
 		return Object.keys( icons ).map( normalizeIconName ).filter( Boolean );
+	}
+
+	const glyphs = ( payload as { glyphs?: unknown } ).glyphs;
+
+	if ( Array.isArray( glyphs ) ) {
+		return glyphs
+			.flatMap( ( entry ) => {
+				if ( entry && typeof entry === 'object' && 'css' in entry && typeof entry.css === 'string' ) {
+					return [ normalizeIconName( entry.css ) ];
+				}
+
+				return [];
+			} )
+			.filter( Boolean );
 	}
 
 	return [];
