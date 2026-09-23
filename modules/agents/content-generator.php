@@ -212,8 +212,10 @@ class Content_Generator {
 
 		// Append the user-editable optional section to the output directly,
 		// since $output was already built from $lines before the content loop.
-		if ( ! empty( $overrides['optional'] ) ) {
-			$output .= "\n## Optional\n\n" . trim( $overrides['optional'] ) . "\n";
+		$optional = $this->get_sanitized_optional( $overrides );
+
+		if ( '' !== $optional ) {
+			$output .= "\n## Optional\n\n" . $optional . "\n";
 		}
 
 		return $output;
@@ -639,9 +641,7 @@ class Content_Generator {
 	 * @param array{optional?: string} $overrides Override values.
 	 */
 	private function append_optional_section( array &$lines, array $overrides ): void {
-		$optional = '' !== trim( $overrides['optional'] ?? '' )
-			? $this->sanitizer->sanitize( trim( $overrides['optional'] ) )
-			: '';
+		$optional = $this->get_sanitized_optional( $overrides );
 
 		if ( '' === $optional ) {
 			return;
@@ -651,6 +651,22 @@ class Content_Generator {
 		$lines[] = '';
 		$lines[] = $optional;
 		$lines[] = '';
+	}
+
+	/**
+	 * Sanitize the user-editable "Optional" override for rendering.
+	 *
+	 * Shared by generate_llms_txt() and generate_llms_full_txt() so both
+	 * files neutralize prompt-injection patterns the same way.
+	 *
+	 * @param array{optional?: string} $overrides Override values.
+	 */
+	private function get_sanitized_optional( array $overrides ): string {
+		$optional = trim( $overrides['optional'] ?? '' );
+
+		return '' !== $optional
+			? $this->sanitizer->sanitize( $optional )
+			: '';
 	}
 
 	/**
