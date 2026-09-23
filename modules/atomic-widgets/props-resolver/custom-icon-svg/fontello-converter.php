@@ -205,7 +205,7 @@ class Fontello_Converter implements Svg_Converter {
 		return isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? $uploads['basedir'] : '';
 	}
 
-	private static function icon_name_from_value( string $icon_value, string $prefix ): string {
+	public static function icon_name_from_value( string $icon_value, string $prefix ): string {
 		$parts = preg_split( '/\s+/', trim( $icon_value ) ) ?: [];
 		$last = $parts[ count( $parts ) - 1 ] ?? $icon_value;
 

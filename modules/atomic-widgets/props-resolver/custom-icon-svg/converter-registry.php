@@ -13,7 +13,7 @@ class Converter_Registry {
 	public static function all(): array {
 		$converters = apply_filters(
 			'elementor/atomic-widgets/icon/svg-converters',
-			[ new Fontello_Converter() ]
+			[ new Fontello_Converter(), new Icomoon_Converter() ]
 		);
 
 		if ( ! is_array( $converters ) ) {
@@ -33,6 +33,10 @@ class Converter_Registry {
 
 		foreach ( self::all() as $converter ) {
 			if ( '' !== $type && $converter instanceof Fontello_Converter && 'fontello' !== $type ) {
+				continue;
+			}
+
+			if ( '' !== $type && $converter instanceof Icomoon_Converter && 'icomoon' !== $type ) {
 				continue;
 			}
 

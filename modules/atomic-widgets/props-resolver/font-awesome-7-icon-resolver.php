@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Fontello_Converter;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Icomoon_Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -177,6 +178,14 @@ class Font_Awesome_7_Icon_Resolver {
 
 			if ( empty( $urls ) ) {
 				$urls = Fontello_Converter::pack_urls( [ 'name' => $library ] );
+			}
+
+			if ( empty( $urls ) ) {
+				$urls = Icomoon_Converter::pack_urls( $tab + [ 'name' => $library ] );
+			}
+
+			if ( empty( $urls ) ) {
+				$urls = Icomoon_Converter::pack_urls( [ 'name' => $library ] );
 			}
 
 			if ( empty( $urls ) ) {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Box } from '@elementor/ui';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
@@ -12,11 +13,25 @@ type FontAwesomeGlyphProps = {
 export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
 	if ( icon.svgMarkup ) {
 		return (
-			<span
+			<Box
+				component="span"
 				aria-hidden={ label ? undefined : true }
 				aria-label={ label }
 				role={ label ? 'img' : undefined }
-				style={ { width: size, height: size, color, display: 'inline-flex' } }
+				sx={ {
+					width: size,
+					height: size,
+					color,
+					display: 'inline-flex',
+					'& svg': {
+						width: '100%',
+						height: '100%',
+						fill: 'currentColor',
+					},
+					'& path': {
+						fill: 'currentColor',
+					},
+				} }
 				dangerouslySetInnerHTML={ { __html: icon.svgMarkup } }
 			/>
 		);

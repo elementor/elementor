@@ -23,6 +23,19 @@ describe( 'parseFontelloSvgFont', () => {
 		// Assert.
 		expect( map[ 'icon icon-emo-surprised' ] ).toContain( 'M0 0H100V100H0Z' );
 		expect( map[ 'icon icon-emo-surprised' ] ).toContain( 'scale(1,-1)' );
-		expect( map[ 'icon icon-emo-surprised' ] ).toContain( 'viewBox="0 0 696 1000"' );
+		expect( map[ 'icon icon-emo-surprised' ] ).toContain( 'fill="currentColor"' );
+	} );
+
+	it( 'uses a path embedded in config.json without the svg font', () => {
+		// Arrange.
+		const config = JSON.stringify( {
+			glyphs: [ { css: 'home', svg: { path: 'M10 10H20V20H10Z', width: 32 } } ],
+		} );
+
+		// Act.
+		const map = parseFontelloSvgFont( config, '', 'icon-', '', [ 'home' ] );
+
+		// Assert.
+		expect( map[ 'icon icon-home' ] ).toContain( 'M10 10H20V20H10Z' );
 	} );
 } );

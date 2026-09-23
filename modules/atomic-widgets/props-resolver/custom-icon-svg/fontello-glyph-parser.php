@@ -8,6 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Fontello_Glyph_Parser {
 	public static function to_svg( string $config_json, string $svg_font, string $icon_name, string $prefix = '' ): string {
+		$from_config = self::svg_path_from_config( $config_json, $icon_name, $prefix );
+
+		if ( $from_config ) {
+			return $from_config;
+		}
+
 		$codepoint = self::find_codepoint( $config_json, $icon_name, $prefix );
 
 		if ( null === $codepoint ) {
@@ -28,11 +34,57 @@ class Fontello_Glyph_Parser {
 			return '';
 		}
 
+		return self::markup( $path, $advance, $units );
+	}
+
+	private static function svg_path_from_config( string $config_json, string $icon_name, string $prefix ): string {
+		$data = json_decode( $config_json, true );
+
+		if ( ! is_array( $data ) || empty( $data['glyphs'] ) || ! is_array( $data['glyphs'] ) ) {
+			return '';
+		}
+
+		$candidates = self::name_candidates( $icon_name, $prefix );
+
+		foreach ( $data['glyphs'] as $glyph ) {
+			if ( ! is_array( $glyph ) ) {
+				continue;
+			}
+
+			$css = isset( $glyph['css'] ) && is_string( $glyph['css'] ) ? $glyph['css'] : '';
+
+			if ( '' === $css || ! in_array( $css, $candidates, true ) ) {
+				continue;
+			}
+
+			$path = '';
+
+			if ( isset( $glyph['svg'] ) && is_string( $glyph['svg'] ) ) {
+				$path = $glyph['svg'];
+			} elseif ( isset( $glyph['svg']['path'] ) && is_string( $glyph['svg']['path'] ) ) {
+				$path = $glyph['svg']['path'];
+			}
+
+			if ( '' === $path ) {
+				return '';
+			}
+
+			$advance = isset( $glyph['svg']['width'] ) && is_numeric( $glyph['svg']['width'] )
+				? (int) $glyph['svg']['width']
+				: 1000;
+
+			return self::markup( $path, $advance > 0 ? $advance : 1000, 1000 );
+		}
+
+		return '';
+	}
+
+	private static function markup( string $path, int $advance, int $units ): string {
 		$escaped_path = htmlspecialchars( $path, ENT_QUOTES, 'UTF-8' );
 
-		return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $advance . ' ' . $units . '">'
+		return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $advance . ' ' . $units . '" fill="currentColor" width="100%" height="100%">'
 			. '<g transform="translate(0,' . $units . ') scale(1,-1)">'
-			. '<path d="' . $escaped_path . '"></path>'
+			. '<path d="' . $escaped_path . '" fill="currentColor"></path>'
 			. '</g>'
 			. '</svg>';
 	}
