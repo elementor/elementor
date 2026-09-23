@@ -1,3 +1,4 @@
+import { type HttpResponse, httpService } from '@elementor/http-client';
 import { useQuery } from '@elementor/query';
 
 import { enqueueIconFonts } from '../open-icon-library';
@@ -6,6 +7,7 @@ import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 const NATIVE_TAB_NAMES = new Set( [ 'all', 'recommended', 'GoPro' ] );
 const DEFAULT_ICON_SIZE = 512;
 const CUSTOM_ICON_LIBRARIES_QUERY_KEY = [ 'custom-icon-libraries' ];
+const CUSTOM_ICON_SVG_URL = 'elementor/v1/atomic-widgets/custom-icon-svg';
 
 type CustomIconLibraryConfig = {
 	name: string;
@@ -15,6 +17,12 @@ type CustomIconLibraryConfig = {
 	icons?: unknown;
 	native?: boolean;
 };
+
+const svgMapCache = new Map< string, Record< string, string > >();
+
+export function resetCustomIconSvgCache() {
+	svgMapCache.clear();
+}
 
 export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
 	if ( ! library || ! iconValue.includes( library ) ) {
@@ -43,6 +51,17 @@ export async function loadCustomIconLibraries( signal?: AbortSignal ): Promise< 
 	);
 
 	return catalogs.flat();
+}
+
+export async function resolveCustomIconSvg(
+	library: string,
+	iconValue: string,
+	signal?: AbortSignal
+): Promise< string | null > {
+	const map = await loadLibrarySvgMap( library, signal );
+	const markup = map[ iconValue ];
+
+	return typeof markup === 'string' && markup !== '' ? markup : null;
 }
 
 function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
@@ -77,6 +96,7 @@ async function loadCustomLibrary(
 	enqueueIconFonts( library.name );
 
 	const names = parseIconNames( await loadLibraryPayload( library, signal ) );
+	const svgMap = await loadLibrarySvgMap( library.name, signal );
 
 	return names.map( ( name ) => {
 		const value = createCustomIconSelectionValue( library, name );
@@ -92,8 +112,32 @@ async function loadCustomLibrary(
 			height: DEFAULT_ICON_SIZE,
 			paths: [],
 			glyphClass: value,
+			svgMarkup: svgMap[ value ],
 		};
 	} );
+}
+
+async function loadLibrarySvgMap( library: string, signal?: AbortSignal ): Promise< Record< string, string > > {
+	const cached = svgMapCache.get( library );
+
+	if ( cached ) {
+		return cached;
+	}
+
+	try {
+		const { data } = await httpService().get< HttpResponse< { icons?: Record< string, string > } > >(
+			CUSTOM_ICON_SVG_URL,
+			{ params: { library }, signal }
+		);
+		const icons = data.data?.icons && typeof data.data.icons === 'object' ? data.data.icons : {};
+		svgMapCache.set( library, icons );
+
+		return icons;
+	} catch {
+		svgMapCache.set( library, {} );
+
+		return {};
+	}
 }
 
 async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
@@ -122,17 +166,19 @@ function parseIconNames( payload: unknown ): string[] {
 	const icons = ( payload as { icons?: unknown } ).icons;
 
 	if ( Array.isArray( icons ) ) {
-		return icons.flatMap( ( entry ) => {
-			if ( typeof entry === 'string' ) {
-				return [ normalizeIconName( entry ) ];
-			}
+		return icons
+			.flatMap( ( entry ) => {
+				if ( typeof entry === 'string' ) {
+					return [ normalizeIconName( entry ) ];
+				}
 
-			if ( entry && typeof entry === 'object' && 'name' in entry && typeof entry.name === 'string' ) {
-				return [ normalizeIconName( entry.name ) ];
-			}
+				if ( entry && typeof entry === 'object' && 'name' in entry && typeof entry.name === 'string' ) {
+					return [ normalizeIconName( entry.name ) ];
+				}
 
-			return [];
-		} ).filter( Boolean );
+				return [];
+			} )
+			.filter( Boolean );
 	}
 
 	if ( icons && typeof icons === 'object' ) {

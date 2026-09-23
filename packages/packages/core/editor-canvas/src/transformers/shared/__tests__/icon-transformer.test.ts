@@ -6,6 +6,17 @@ import { initSettingsTransformers } from '../../../init-settings-transformers';
 import { createPropsResolver } from '../../../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../../../settings-transformers-registry';
 
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: () => ( {
+		get: jest.fn().mockRejectedValue( new Error( 'no custom svg' ) ),
+	} ),
+} ) );
+
+import { iconPropType } from '../../../__tests__/prop-types';
+import { initSettingsTransformers } from '../../../init-settings-transformers';
+import { createPropsResolver } from '../../../renderers/create-props-resolver';
+import { settingsTransformersRegistry } from '../../../settings-transformers-registry';
+
 const STAR_PATH = 'M0 0h100v100H0z';
 const STAR_WIDTH = 576;
 const STAR_HEIGHT = 512;

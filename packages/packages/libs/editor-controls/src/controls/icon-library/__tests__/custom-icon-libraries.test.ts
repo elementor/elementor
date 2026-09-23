@@ -1,4 +1,14 @@
-import { isDeletedCustomIconLibrary, loadCustomIconLibraries } from '../custom-icon-libraries';
+import { httpService } from '@elementor/http-client';
+
+import {
+	isDeletedCustomIconLibrary,
+	loadCustomIconLibraries,
+	resetCustomIconSvgCache,
+} from '../custom-icon-libraries';
+
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: jest.fn(),
+} ) );
 
 const MY_ICONS_CONFIG = {
 	name: 'my-icons',
@@ -11,8 +21,12 @@ const MY_ICONS_CONFIG = {
 
 describe( 'custom-icon-libraries', () => {
 	const originalElementor = window.elementor;
+	const get = jest.fn();
 
 	beforeEach( () => {
+		resetCustomIconSvgCache();
+		get.mockResolvedValue( { data: { data: { icons: {} }, meta: {} } } );
+		jest.mocked( httpService ).mockReturnValue( { get } as never );
 		window.elementor = {
 			config: {
 				icons: {
@@ -62,6 +76,43 @@ describe( 'custom-icon-libraries', () => {
 				value: 'my-icons my-icons-spark',
 			} ),
 		] );
+	} );
+
+	it( 'attaches svg markup from the custom icon svg endpoint', async () => {
+		// Arrange.
+		const markup = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>';
+		get.mockResolvedValue( {
+			data: {
+				data: { icons: { 'my-icons my-icons-badge': markup } },
+				meta: {},
+			},
+		} );
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							icons: [ 'badge' ],
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert.
+		expect( get ).toHaveBeenCalledWith(
+			'elementor/v1/atomic-widgets/custom-icon-svg',
+			expect.objectContaining( { params: { library: 'my-icons' } } )
+		);
+		expect( catalog[ 0 ]?.svgMarkup ).toBe( markup );
 	} );
 
 	it( 'detects a deleted custom library from a leftover selection', () => {

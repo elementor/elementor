@@ -17,6 +17,7 @@ export type FontAwesome7Icon = FontAwesome7IconDefinition & {
 	library: string;
 	value: string;
 	glyphClass?: string;
+	svgMarkup?: string;
 };
 
 export async function loadFontAwesome7Catalog( signal?: AbortSignal ): Promise< FontAwesome7Icon[] > {

@@ -10,6 +10,18 @@ type FontAwesomeGlyphProps = {
 };
 
 export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
+	if ( icon.svgMarkup ) {
+		return (
+			<span
+				aria-hidden={ label ? undefined : true }
+				aria-label={ label }
+				role={ label ? 'img' : undefined }
+				style={ { width: size, height: size, color, display: 'inline-flex' } }
+				dangerouslySetInnerHTML={ { __html: icon.svgMarkup } }
+			/>
+		);
+	}
+
 	if ( icon.paths.length > 0 ) {
 		return (
 			<svg
