@@ -748,7 +748,18 @@ class Manager extends Base_Object {
 			return;
 		}
 
-		Plugin::$instance->files_manager->clear_cache();
+		// The state above is already updated, so `is_feature_active()` reflects the new
+		// value here. Every experiment toggle purges CSS as a broad safety measure, not
+		// just toggling `e_optimized_css_files` itself — so gate on whether that feature
+		// is *currently* active, not on which feature was just toggled. Otherwise, once a
+		// user has opted in, flipping any *other* experiment would still hard-delete their
+		// CSS files, defeating the point of having opted in.
+		if ( $this->is_feature_active( 'e_optimized_css_files' ) ) {
+			Plugin::$instance->files_manager->invalidate_cache();
+		} else {
+			Plugin::$instance->files_manager->clear_cache();
+		}
+
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $old_state, $new_state );
 		}
