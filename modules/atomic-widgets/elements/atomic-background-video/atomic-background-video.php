@@ -76,7 +76,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	public static function get_computed_html_tag( array $settings ): string {
-		return Html_Tag_Computer::compute( $settings, 'div' );
+		return Utils::validate_html_tag( Html_Tag_Computer::compute( $settings, 'div' ) );
 	}
 
 	protected static function define_props_schema(): array {
