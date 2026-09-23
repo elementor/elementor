@@ -1,8 +1,7 @@
 import { type LinkPropValue } from '@elementor/editor-props';
 
-import { getContainer } from './sync/get-container';
 import { getElementSetting } from './sync/get-element-setting';
-import { type ExtendedWindow } from './sync/types';
+import { getPreviewElementDOM } from './sync/get-preview-element-dom';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
 
@@ -144,32 +143,7 @@ function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boo
 }
 
 function getElementDOM( id: string ) {
-	try {
-		const fromContainer = getContainer( id )?.view?.el;
-
-		if ( fromContainer ) {
-			return fromContainer;
-		}
-
-		// Inner elements of component instances are rendered from Twig and have
-		// no V1 Backbone view, so getContainer(id) returns null. Fall back to
-		// querying the preview iframe document directly so link-in-link
-		// restriction still works for those elements.
-		return queryPreviewDOMByElementId( id );
-	} catch {
-		return null;
-	}
-}
-
-function queryPreviewDOMByElementId( id: string ): HTMLElement | null {
-	const previewDocument = ( window as unknown as ExtendedWindow ).elementor?.getPreviewContainer?.()?.view?.el
-		?.ownerDocument;
-
-	if ( ! previewDocument ) {
-		return null;
-	}
-
-	return previewDocument.querySelector< HTMLElement >( `[data-id="${ id }"]` );
+	return getPreviewElementDOM( id );
 }
 
 function isElementorElement( element: Element ): boolean {

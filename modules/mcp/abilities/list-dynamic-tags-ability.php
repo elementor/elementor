@@ -31,6 +31,7 @@ class List_Dynamic_Tags_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'application/json',
+					'name'        => 'Dynamic Tags',
 					'description' => self::DESCRIPTION,
 				],
 			],

@@ -18,7 +18,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Variable Guide', 'elementor' ),
-			__( 'Detailed guide for using the manage-global-variable tool.', 'elementor' ),
+			__( 'Detailed guide for using the manage-global-variable tool. Covers available types, naming rules, value rules, and operation examples.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -27,7 +27,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 					'uri' => self::URI,
 					'public' => true,
 					'mimeType' => 'text/plain',
-					'description' => __( 'Detailed guide for using the manage-global-variable tool', 'elementor' ),
+					'description' => __( 'Detailed guide for using the manage-global-variable tool. Covers available types, naming rules, value rules, and operation examples.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'manage_options' )
@@ -49,7 +49,7 @@ Create, update, or delete V4 global CSS variables. These are distinct from legac
 
 # Available Types
 - **global-color-variable** — CSS color value. Example: `#FF0000`, `rgba(255,0,0,1)`, `hsl(0,100%,50%)`
-- **global-font-variable** — Font family name ONLY — NOT a size or px value. Example: `Roboto`, `Open Sans`. NEVER pass px/rem here.
+- **global-font-variable** — A single **Google Font family name** only. Do **NOT** include fallback stacks, quotes, generic families (`sans-serif`, `serif`, `monospace`), or size/px values. Example: `Roboto`, `Playfair Display`. Bad: `Inter, "Helvetica Neue", Arial, sans-serif`.
 {$size_section}
 
 # Naming Rules
@@ -62,6 +62,8 @@ Create, update, or delete V4 global CSS variables. These are distinct from legac
 - Provide a **plain CSS value** only — do NOT pass JSON, legacy-globals object structures, or variable references
 - Values are inserted as-is: `--css-var: <value>`
 - NEVER store a px/rem value inside a `global-font-variable` — use `global-size-variable` (Pro) instead
+- Font values MUST be a single family name; NEVER a comma-separated list
+- Font values MUST come from Google Fonts (no system-only names, no custom user fonts)
 
 # Operations
 - **create** — requires `type`, `label`, `value`. Label must be unique.
@@ -74,6 +76,8 @@ Create a brand color:
 
 Create a heading font:
 { "action": "create", "type": "global-font-variable", "label": "font-heading", "value": "Playfair Display" }
+
+Do NOT pass a fallback stack. `{ "value": "Inter, sans-serif" }` is stored as `Inter` only.
 
 Update a variable's value (keep exact label):
 { "action": "update", "id": "abc123", "label": "brand-primary", "value": "#0D47A1" }

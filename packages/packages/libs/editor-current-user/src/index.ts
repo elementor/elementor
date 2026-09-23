@@ -1,7 +1,10 @@
 export { useSuppressedMessage } from './use-suppressed-message';
 export { useCurrentUserCapabilities } from './use-current-user-capabilities';
 export { getCurrentUser } from './get-current-user';
+export { isContentOnlyUser } from './is-content-only-user';
 export { ensureUser } from './ensure-current-user';
 export { onSetUser } from './on-set-user';
 export { useCurrentUser } from './use-current-user';
 export { useUpdateCurrentUser } from './use-update-current-user';
+export { DESIGN_RESTRICTION, useUserRestrictions } from './use-user-restrictions';
+export { useHasContentOnlyAccess } from './use-has-content-only-access';

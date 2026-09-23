@@ -28,7 +28,7 @@ class Interactions_Schema_Resource_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'application/json',
-					'description' => __( 'Native interaction item shape, enums, and defaults for build-composition.', 'elementor' ),
+					'description' => __( 'Interaction item shape, enums, and defaults for build-composition.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

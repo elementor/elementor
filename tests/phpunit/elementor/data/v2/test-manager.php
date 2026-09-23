@@ -302,6 +302,8 @@ class Test_Manager extends Data_Test_Base {
 			'onboarding/pro-install-screen' => 'onboarding',
 			'onboarding/install-pro' => 'onboarding',
 			'onboarding/install-theme' => 'onboarding',
+			'audits/index' => 'audits/{id}',
+			'audits/page-context' => 'audits/page-context',
 		], $this->manager->command_formats );
 	}
 }

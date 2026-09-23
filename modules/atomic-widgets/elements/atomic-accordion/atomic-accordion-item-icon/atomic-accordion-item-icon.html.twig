@@ -1,0 +1,7 @@
+{% import 'elementor/macros' as m %}
+{# The indicator is purely decorative — hidden from assistive technology. Hardcoded, not a prop. #}
+<div class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
+    {{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }} aria-hidden="true"
+    {{- m.render_custom_attributes(settings, editor_attributes) }}>
+    <!-- elementor-children-placeholder -->
+</div>

@@ -11,6 +11,10 @@ export default function Layout( props ) {
 	const { return_to: returnTo } = useQueryParams().getAll();
 
 	const onClose = useCallback( () => {
+		if ( window.top !== window ) {
+			window.top.$e.run( 'app/close' );
+			return;
+		}
 		if ( returnTo && safeRedirect( returnTo ) ) {
 			return;
 		}

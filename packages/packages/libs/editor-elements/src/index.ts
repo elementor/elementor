@@ -12,7 +12,12 @@ export {
 } from './children-dependencies';
 
 // hooks
-export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
+export {
+	useElementChildren,
+	type ElementChildren,
+	type ElementModel,
+	type UseElementChildrenOptions,
+} from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';
@@ -32,6 +37,7 @@ export {
 } from './sync/duplicate-elements';
 export { generateElementId } from './sync/generate-element-id';
 export { getContainer, selectElement } from './sync/get-container';
+export { getPreviewElementDOM } from './sync/get-preview-element-dom';
 export { addModelToParent, findModelInDocument, removeModelFromParent, resolveContainer } from './sync/resolve-element';
 export { getCurrentDocumentContainer } from './sync/get-current-document-container';
 export { getCurrentDocumentId } from './sync/get-current-document-id';
@@ -76,4 +82,9 @@ export { deleteElementStyle } from './styles/delete-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 
 export { getElementInteractions } from './sync/get-element-interactions';
+export {
+	DEFAULT_STYLE_CLASS_PREFIX,
+	getDefaultStyleTagFromPreviewElement,
+	parseDefaultStyleTagFromClassList,
+} from './utils/get-default-style-tag-from-preview';
 export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';

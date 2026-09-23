@@ -3,7 +3,7 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Utils\Kit_Utils;
 use WP_Post;
 

@@ -116,6 +116,50 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_enqueue__uses_css_name_when_distinct_from_id() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = function () {
+			return [
+				[
+					'id' => 'h2',
+					'type' => 'class',
+					'cssName' => 'e-default-h2',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+							],
+							'props' => [
+								'color' => 'red',
+							],
+						],
+					],
+				],
+			];
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		$this->filesystemMock->expects( $this->once() )
+			->method( 'put_contents' )
+			->with(
+				$this->anything(),
+				'.elementor .e-default-h2{color:red;}'
+			);
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 100, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+	}
+
 	public function test_enqueue__enqueues_styles() {
 		// Arrange.
 		$styles_manager = new Atomic_Styles_Manager();

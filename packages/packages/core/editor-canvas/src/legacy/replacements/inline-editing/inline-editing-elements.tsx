@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
+	escapedHtmlPropTypeUtil,
 	htmlV3PropTypeUtil,
-	parseHtmlChildren,
 	type PropType,
 	type PropValue,
 	stringPropTypeUtil,
@@ -126,20 +126,33 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
+
+		if ( escapedHtmlPropTypeUtil.isValid( propValue ) ) {
+			return escapedHtmlPropTypeUtil.extract( propValue ) ?? '';
+		}
+
 		const extracted = htmlV3PropTypeUtil.extract( propValue );
 
 		return stringPropTypeUtil.extract( extracted?.content ?? null ) ?? '';
 	}
 
+	createContentPropValue( value: string | null ): PropValue {
+		const content = value || '';
+		const propTypeKey = this.getInlineEditablePropTypeKey();
+
+		if ( propTypeKey === htmlV3PropTypeUtil.key ) {
+			return htmlV3PropTypeUtil.create( {
+				content: stringPropTypeUtil.create( content ),
+				children: [],
+			} );
+		}
+
+		return escapedHtmlPropTypeUtil.create( content );
+	}
+
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
-		const html = value || '';
-		const parsed = parseHtmlChildren( html );
-
-		const valueToSave = htmlV3PropTypeUtil.create( {
-			content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
-			children: parsed.children,
-		} );
+		const valueToSave = this.createContentPropValue( value );
 
 		undoable(
 			{
@@ -174,7 +187,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		if ( propType.kind === 'union' ) {
-			const textKeys = [ htmlV3PropTypeUtil.key, stringPropTypeUtil.key ];
+			const textKeys = [ escapedHtmlPropTypeUtil.key, htmlV3PropTypeUtil.key, stringPropTypeUtil.key ];
 
 			for ( const key of textKeys ) {
 				if ( propType.prop_types[ key ] ) {

@@ -20,7 +20,7 @@ class Editor_One_Submissions_Menu extends Base_Promotion_Template implements Men
 	}
 
 	public function get_parent_slug(): string {
-		return Menu_Config::ELEMENTOR_MENU_SLUG;
+		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 	}
 
 	public function get_label(): string {

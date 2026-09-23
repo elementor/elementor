@@ -18,6 +18,10 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 		return 'elementor/create-preview-link';
 	}
 
+	public function is_exposed_via_proxy(): bool {
+		return false;
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Create Elementor Public Preview Link', 'elementor' ),

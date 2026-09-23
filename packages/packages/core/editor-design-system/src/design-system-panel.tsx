@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { reloadCurrentDocument } from '@elementor/editor-documents';
-import { __createPanel as createPanel } from '@elementor/editor-panels';
+import { createPanel } from '@elementor/editor-panels';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 
 import { DesignSystemPanelContent } from './components/design-system-panel-content';

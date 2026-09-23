@@ -66,6 +66,11 @@ function isStyleEmpty( style: StyleDefinition ) {
 
 function clearRemovedClasses( container: V1Element, { oldIds, newIds }: { oldIds: string[]; newIds: string[] } ) {
 	const removedIds = oldIds.filter( ( id ) => ! newIds.includes( id ) );
+
+	if ( ! removedIds.length ) {
+		return;
+	}
+
 	const classesProps = structuredClone( getClassesProps( container ) );
 
 	classesProps.forEach( ( [ , prop ] ) => {

@@ -22,11 +22,8 @@ export const OnboardingEventName = {
 export const STEP_NUMBERS: Record< string, string > = {
 	login: '0',
 	pro_install: '0',
-	building_for: '1',
-	site_about: '2',
-	experience_level: '3',
-	theme_selection: '4',
-	site_features: '4',
+	theme_selection: '1',
+	site_features: '1',
 };
 
 export const TARGET_NAME_PERSONA = 'who_are_you_building_for';

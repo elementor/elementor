@@ -32,8 +32,8 @@ class Atomic_Styles_Manager {
 	private array $fonts = [];
 
 	public function __construct() {
-		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
+		$this->css_files_manager = new CSS_Files_Manager( $this->cache_validity );
 	}
 
 	public static function instance() {
@@ -179,12 +179,22 @@ class Atomic_Styles_Manager {
 			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
 				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
+				if ( empty( $breakpoint ) ) {
+					$breakpoint = self::DEFAULT_BREAKPOINT;
+				}
+
 				if ( ! isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
-					$group[ $breakpoint ][ $style['id'] ] = [
+					$style_for_breakpoint = [
 						'id' => $style['id'],
 						'type' => $style['type'],
 						'variants' => [],
 					];
+
+					if ( isset( $style['cssName'] ) ) {
+						$style_for_breakpoint['cssName'] = $style['cssName'];
+					}
+
+					$group[ $breakpoint ][ $style['id'] ] = $style_for_breakpoint;
 				}
 
 				$group[ $breakpoint ][ $style['id'] ]['variants'][] = $variant;

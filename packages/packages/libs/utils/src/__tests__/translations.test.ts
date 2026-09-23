@@ -115,5 +115,25 @@ describe( 'createTranslate', () => {
 
 			expect( t( 'fallback.key' ) ).toBe( 'Remote Value' );
 		} );
+
+		it( 'should fall back to default when remote value is an empty string', () => {
+			setTranslations( { 'fallback.key': '' } );
+			const t = createTranslate( {
+				configKey: CONFIG_KEY,
+				defaultStrings: { 'fallback.key': 'Default Value' },
+			} );
+
+			expect( t( 'fallback.key' ) ).toBe( 'Default Value' );
+		} );
+
+		it( 'should fall back to default when remote value is whitespace only', () => {
+			setTranslations( { 'fallback.key': '   ' } );
+			const t = createTranslate( {
+				configKey: CONFIG_KEY,
+				defaultStrings: { 'fallback.key': 'Default Value' },
+			} );
+
+			expect( t( 'fallback.key' ) ).toBe( 'Default Value' );
+		} );
 	} );
 } );

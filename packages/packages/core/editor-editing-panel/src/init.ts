@@ -1,5 +1,5 @@
 import { injectIntoLogic } from '@elementor/editor';
-import { __registerPanel as registerPanel } from '@elementor/editor-panels';
+import { registerPanel } from '@elementor/editor-panels';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 
 import { EditingPanelHooks } from './components/editing-panel-hooks';

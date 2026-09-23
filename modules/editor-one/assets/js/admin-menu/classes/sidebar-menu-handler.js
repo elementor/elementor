@@ -48,6 +48,8 @@ export class SidebarMenuHandler {
 			targetSlug = 'elementor';
 		} else if ( 'e-form-submissions' === page ) {
 			targetSlug = 'e-form-submissions';
+		} else if ( 'elementor-mcp' === page ) {
+			targetSlug = 'elementor-mcp';
 		} else if ( 'elementor-theme-builder' === page ) {
 			targetSlug = 'elementor-theme-builder';
 		}

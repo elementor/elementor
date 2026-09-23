@@ -13,6 +13,7 @@
     ],
     "jsx": "react",
     "moduleResolution": "Bundler",
+    "ignoreDeprecations": "6.0",
     "esModuleInterop": false,
     "isolatedModules": true,
     "strict": true,

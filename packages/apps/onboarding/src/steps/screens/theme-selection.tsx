@@ -20,7 +20,7 @@ export function ThemeSelection() {
 	const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
 	const isInstalled = isHelloThemeActive || ( isStepCompleted && choices.theme_selection === HELLO_THEME.slug );
 
-	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
+	const greetingText = useMemo( () => getGreetingText( null ), [] );
 
 	return (
 		<Stack spacing={ 7.5 } width="100%" sx={ { flex: 1 } } data-testid="theme-selection-step">

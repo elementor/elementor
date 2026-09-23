@@ -10,6 +10,7 @@ import {
 	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
+	NoticeControl,
 	NumberControl,
 	QueryChipsControl,
 	QueryControl,
@@ -33,7 +34,7 @@ import {
 	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailsPropTypeUtil,
-	htmlV3PropTypeUtil,
+	escapedHtmlPropTypeUtil,
 	imagePropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
@@ -84,7 +85,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: escapedHtmlPropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
 	'date-range': {
 		component: DateRangeControl,
@@ -97,6 +98,7 @@ const controlTypes = {
 		propTypeUtil: timeRangePropTypeUtil,
 	},
 	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
+	notice: { component: NoticeControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

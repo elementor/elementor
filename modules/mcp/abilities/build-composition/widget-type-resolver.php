@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 
@@ -41,6 +43,52 @@ class Widget_Type_Resolver {
 	}
 
 	/**
+	 * @return array{configs: array<string, array>, unknown_tag_errors: string[]}
+	 */
+	public function collect_referenced_widget_configs( \DOMDocument $dom ): array {
+		$configs = [];
+		$unknown_tag_errors = [];
+		$seen_unknown = [];
+
+		foreach ( $this->xml_parser->iterate_all_descendants( $dom ) as $node ) {
+			$tag = $this->xml_parser->get_tag_name( $node );
+
+			if ( isset( $configs[ $tag ] ) || isset( $seen_unknown[ $tag ] ) ) {
+				continue;
+			}
+
+			$config = $this->resolve_type_config( $tag );
+			if ( is_wp_error( $config ) ) {
+				$seen_unknown[ $tag ] = true;
+				$unknown_tag_errors[] = $config->get_error_message();
+				continue;
+			}
+			$configs[ $tag ] = $config;
+		}
+
+		return [
+			'configs' => $configs,
+			'unknown_tag_errors' => $unknown_tag_errors,
+		];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function collect_child_type_and_required_child_errors( \DOMDocument $dom, array $widget_configs ): array {
+		$root = $this->xml_parser->get_root( $dom );
+		if ( ! $root ) {
+			return [];
+		}
+
+		$errors = [];
+		$this->collect_child_type_errors( $root, $widget_configs, $errors );
+		$this->collect_required_child_errors( $root, $widget_configs, $errors );
+
+		return $errors;
+	}
+
+	/**
 	 * @return \WP_Error|null
 	 */
 	public function validate_child_types( \DOMDocument $dom, array $widget_configs ) {
@@ -51,6 +99,7 @@ class Widget_Type_Resolver {
 
 		$errors = [];
 		$this->collect_child_type_errors( $root, $widget_configs, $errors );
+		$this->collect_required_child_errors( $root, $widget_configs, $errors );
 
 		if ( empty( $errors ) ) {
 			return null;
@@ -82,15 +131,32 @@ class Widget_Type_Resolver {
 	public function resolve_type_config( string $type ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
+			if (
+				Widget_Context_Helper::is_standardized_maps_active()
+				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				&& ! Widget_Context_Helper::is_v3_supported( $type )
+			) {
+				return new \WP_Error(
+					'elementor_v3_not_supported',
+					__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+					[
+						'status' => \WP_Http::BAD_REQUEST,
+						'widget_type' => $type,
+						'version' => 'v3',
+					]
+				);
+			}
+
 			$config = $widget->get_config();
 			$resolved = [
 				'elType' => 'widget',
 				'widgetType' => $type,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
+				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $widget ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
 				$resolved['controls'] = (array) $widget->get_controls();
 			}
 
@@ -99,13 +165,39 @@ class Widget_Type_Resolver {
 
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
 		if ( $element ) {
+			if (
+				Widget_Context_Helper::is_standardized_maps_active()
+				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				&& ! Widget_Context_Helper::is_v3_supported( $type )
+			) {
+				return new \WP_Error(
+					'elementor_v3_not_supported',
+					__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+					[
+						'status' => \WP_Http::BAD_REQUEST,
+						'widget_type' => $type,
+						'version' => 'v3',
+					]
+				);
+			}
+
 			$config = $element->get_config();
-			return [
+			$resolved = [
 				'elType' => $type,
 				'widgetType' => null,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
+				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $element ),
 			];
+
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
+				if ( method_exists( $element, 'get_stack' ) ) {
+					$element->get_stack();
+				}
+				$resolved['controls'] = (array) $element->get_controls();
+			}
+
+			return $resolved;
 		}
 
 		return new \WP_Error(
@@ -143,6 +235,35 @@ class Widget_Type_Resolver {
 			}
 
 			$this->collect_child_type_errors( $child, $widget_configs, $errors );
+		}
+	}
+
+	private function collect_required_child_errors( \DOMElement $node, array $widget_configs, array &$errors ): void {
+		$parent_tag = $this->xml_parser->get_tag_name( $node );
+		$parent_config = $widget_configs[ $parent_tag ] ?? null;
+		$default_children = is_array( $parent_config ) ? ( $parent_config['default_children'] ?? [] ) : [];
+		$required_types = Default_Children_Utils::get_required_child_types( $default_children );
+
+		if ( ! empty( $required_types ) ) {
+			$actual_child_types = array_map(
+				fn( \DOMElement $child ) => $this->xml_parser->get_tag_name( $child ),
+				$this->xml_parser->get_child_elements( $node )
+			);
+
+			foreach ( $required_types as $required_type ) {
+				if ( ! in_array( $required_type, $actual_child_types, true ) ) {
+					$errors[] = sprintf(
+						/* translators: 1: parent tag 2: required child tag */
+						__( '"%1$s" requires a direct child "%2$s".', 'elementor' ),
+						$parent_tag,
+						$required_type
+					);
+				}
+			}
+		}
+
+		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
+			$this->collect_required_child_errors( $child, $widget_configs, $errors );
 		}
 	}
 }

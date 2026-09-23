@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -76,6 +78,215 @@ class V3_Json_Schema_Builder {
 		];
 	}
 
+	/**
+	 * @param array<string, array<string, mixed>> $settings
+	 * @return array{properties: array<string, array>, required: string[]}
+	 */
+	public static function build_from_map( array $settings ): array {
+		$properties = [];
+
+		foreach ( $settings as $key => $schema ) {
+			if ( ! is_string( $key ) || ! is_array( $schema ) ) {
+				continue;
+			}
+
+			$properties[ $key ] = self::to_public_map_schema( $schema );
+		}
+
+		return [
+			'properties' => $properties,
+			'required' => [],
+		];
+	}
+
+	/**
+	 * Shallow shape check against the schema object emitted by `build()`.
+	 *
+	 * This is not full JSON Schema validation — only `type`, `enum`, and one-level nested
+	 * `properties.type` are enforced. V3 has no runtime `Props_Parser`; this catches the
+	 * array-vs-scalar and unknown-enum classes without pulling in a general JSON-Schema validator.
+	 *
+	 * @param mixed      $value         Setting value to check.
+	 * @param array|null $entry_schema  Schema entry from `build()['properties'][$key]`.
+	 * @param bool       $strict        Whether to enforce full mapped-object constraints.
+	 * @return string|null Human-readable reason when shape mismatches; null when acceptable.
+	 */
+	public static function check_value_shape( $value, ?array $entry_schema, bool $strict = false ): ?string {
+		if ( ! is_array( $entry_schema ) ) {
+			return null;
+		}
+
+		if ( isset( $entry_schema['anyOf'] ) && is_array( $entry_schema['anyOf'] ) ) {
+			if ( ! $strict ) {
+				return null;
+			}
+
+			foreach ( $entry_schema['anyOf'] as $candidate_schema ) {
+				if ( is_array( $candidate_schema ) && null === self::check_value_shape( $value, $candidate_schema, true ) ) {
+					return null;
+				}
+			}
+
+			return 'value does not match any supported shape.';
+		}
+
+		$expected_type = $entry_schema['type'] ?? null;
+
+		if ( isset( $entry_schema['enum'] ) && is_array( $entry_schema['enum'] ) ) {
+			if ( ! self::value_matches_enum( $value, $entry_schema['enum'] ) ) {
+				return sprintf( 'value must be one of [%s].', implode( ', ', array_map( 'strval', $entry_schema['enum'] ) ) );
+			}
+
+			return null;
+		}
+
+		if ( $expected_type && ! self::value_matches_type( $value, $expected_type ) ) {
+			return sprintf( 'invalid shape (expected %s, got %s).', $expected_type, self::json_type_of( $value ) );
+		}
+
+		if ( 'object' === $expected_type && is_array( $value ) && isset( $entry_schema['properties'] ) && is_array( $entry_schema['properties'] ) ) {
+			if ( $strict ) {
+				foreach ( $entry_schema['required'] ?? [] as $required_key ) {
+					if ( is_string( $required_key ) && ! array_key_exists( $required_key, $value ) ) {
+						return sprintf( 'missing required property "%s".', $required_key );
+					}
+				}
+
+				if ( false === ( $entry_schema['additionalProperties'] ?? null ) ) {
+					$unknown_keys = array_diff( array_keys( $value ), array_keys( $entry_schema['properties'] ) );
+
+					if ( ! empty( $unknown_keys ) ) {
+						return sprintf( 'unsupported property "%s".', reset( $unknown_keys ) );
+					}
+				}
+			}
+
+			foreach ( $entry_schema['properties'] as $prop_key => $prop_schema ) {
+				if ( ! is_string( $prop_key ) || ! array_key_exists( $prop_key, $value ) ) {
+					continue;
+				}
+
+				if ( ! $strict ) {
+					$sub_expected = $prop_schema['type'] ?? null;
+
+					if ( $sub_expected && ! self::value_matches_type( $value[ $prop_key ], $sub_expected ) ) {
+						return sprintf( 'invalid shape at "%s" (expected %s, got %s).', $prop_key, $sub_expected, self::json_type_of( $value[ $prop_key ] ) );
+					}
+
+					continue;
+				}
+
+				$shape_error = self::check_value_shape( $value[ $prop_key ], $prop_schema, true );
+
+				if ( null !== $shape_error ) {
+					return sprintf( 'invalid shape at "%s": %s', $prop_key, $shape_error );
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param array<string, mixed> $settings Settings keyed by control name.
+	 * @param array                $schema   Output of `build()`.
+	 * @param bool                 $strict   Whether to enforce full mapped-object constraints.
+	 * @return array{valid: array<string, mixed>, errors: array<string, string>}
+	 */
+	public static function check_settings_shape( array $settings, array $schema, bool $strict = false ): array {
+		$valid = [];
+		$errors = [];
+
+		foreach ( $settings as $key => $value ) {
+			if ( ! is_string( $key ) ) {
+				continue;
+			}
+
+			$entry_schema = $schema['properties'][ $key ] ?? null;
+
+			if ( ! is_array( $entry_schema ) ) {
+				$errors[ $key ] = 'no schema for allowlisted key.';
+				continue;
+			}
+
+			$shape_error = self::check_value_shape( $value, $entry_schema, $strict );
+
+			if ( null !== $shape_error ) {
+				$errors[ $key ] = $shape_error;
+				continue;
+			}
+
+			$valid[ $key ] = $value;
+		}
+
+		return [
+			'valid' => $valid,
+			'errors' => $errors,
+		];
+	}
+
+	private static function json_type_of( $value ): string {
+		if ( is_string( $value ) ) {
+			return 'string';
+		}
+
+		if ( is_bool( $value ) ) {
+			return 'boolean';
+		}
+
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return 'number';
+		}
+
+		if ( null === $value ) {
+			return 'null';
+		}
+
+		if ( is_array( $value ) ) {
+			if ( empty( $value ) ) {
+				return 'array';
+			}
+
+			return array_keys( $value ) === range( 0, count( $value ) - 1 ) ? 'array' : 'object';
+		}
+
+		return gettype( $value );
+	}
+
+	private static function value_matches_type( $value, string $expected_type ): bool {
+		if ( is_array( $value ) && [] === $value && in_array( $expected_type, [ 'array', 'object' ], true ) ) {
+			return true;
+		}
+
+		if ( 'number' === $expected_type && is_numeric( $value ) ) {
+			return true;
+		}
+
+		return self::json_type_of( $value ) === $expected_type;
+	}
+
+	private static function value_matches_enum( $value, array $allowed_values ): bool {
+		foreach ( $allowed_values as $allowed ) {
+			if ( self::values_equal_loosely( $value, $allowed ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static function values_equal_loosely( $left, $right ): bool {
+		if ( $left === $right ) {
+			return true;
+		}
+
+		if ( is_scalar( $left ) && is_scalar( $right ) ) {
+			return (string) $left === (string) $right;
+		}
+
+		return false;
+	}
+
 	private static function build_entry( array $control, ?string $control_type ): ?array {
 		$entry = self::type_entry( $control, $control_type );
 
@@ -83,11 +294,79 @@ class V3_Json_Schema_Builder {
 			$entry['default'] = $control['default'];
 		}
 
-		if ( isset( $control['description'] ) && is_string( $control['description'] ) ) {
-			$entry['description'] = trim( strip_tags( $control['description'] ) );
+		$description = isset( $control['description'] ) && is_string( $control['description'] )
+			? trim( strip_tags( $control['description'] ) )
+			: null;
+
+		if ( V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
+			return self::wrap_with_dynamic_branch( $entry, $control['dynamic']['categories'] ?? [], $description );
+		}
+
+		if ( null !== $description ) {
+			$entry['description'] = $description;
 		}
 
 		return $entry;
+	}
+
+	private static function wrap_with_dynamic_branch( array $primitive_entry, array $categories, ?string $description ): array {
+		$dynamic_entry = [
+			'type' => 'object',
+			'required' => [ 'name' ],
+			'additionalProperties' => false,
+			'properties' => [
+				'name' => [ 'type' => 'string' ],
+				'settings' => [
+					'type' => 'object',
+					'additionalProperties' => true,
+				],
+			],
+			'description' => self::dynamic_branch_description( $categories ),
+		];
+
+		$wrapped = [
+			'anyOf' => [
+				$primitive_entry,
+				$dynamic_entry,
+			],
+		];
+
+		if ( null !== $description ) {
+			$wrapped['description'] = $description;
+		}
+
+		return $wrapped;
+	}
+
+	private static function to_public_map_schema( array $schema ): array {
+		$is_dynamic = true === ( $schema['dynamic'] ?? false );
+
+		unset( $schema['convert'], $schema['dynamic'], $schema['key'] );
+
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
+			foreach ( $schema['properties'] as $key => $property_schema ) {
+				if ( is_string( $key ) && is_array( $property_schema ) ) {
+					$schema['properties'][ $key ] = self::to_public_map_schema( $property_schema );
+				}
+			}
+		}
+
+		if ( ! $is_dynamic && 'object' === ( $schema['type'] ?? null ) && is_array( $schema['properties'] ?? null ) ) {
+			$schema['additionalProperties'] = false;
+		}
+
+		return $is_dynamic ? self::wrap_with_dynamic_branch( $schema, [], null ) : $schema;
+	}
+
+	private static function dynamic_branch_description( array $categories ): string {
+		if ( empty( $categories ) ) {
+			return 'Bind THIS value to a dynamic tag from elementor://dynamic-tags. Shape: { "name": "<tag>", "settings": { ... } }.';
+		}
+
+		return sprintf(
+			'Bind THIS value to a dynamic tag from elementor://dynamic-tags whose categories intersect [%s]. Shape: { "name": "<tag>", "settings": { ... } }.',
+			implode( ', ', array_map( 'strval', $categories ) )
+		);
 	}
 
 	private static function type_entry( array $control, ?string $control_type ): array {

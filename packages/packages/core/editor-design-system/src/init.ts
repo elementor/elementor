@@ -1,6 +1,6 @@
 import { injectIntoLogic } from '@elementor/editor';
 import { toolsMenu } from '@elementor/editor-app-bar';
-import { __registerPanel as registerPanel } from '@elementor/editor-panels';
+import { registerPanel } from '@elementor/editor-panels';
 
 import { DesignSystemEntrypoints } from './components/design-system-entrypoints';
 import { panel } from './design-system-panel';
@@ -16,7 +16,7 @@ export function init() {
 
 	toolsMenu.registerToggleAction( {
 		id: 'open-design-system-toolbar',
-		priority: 21,
+		priority: 4,
 		useProps: useOpenDesignSystemToolbar,
 	} );
 }

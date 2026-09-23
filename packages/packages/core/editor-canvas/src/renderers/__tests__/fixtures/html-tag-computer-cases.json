@@ -1,0 +1,87 @@
+[
+	{
+		"settings": {},
+		"default": "div",
+		"followLink": true,
+		"expected": "div"
+	},
+	{
+		"settings": { "tag": "header" },
+		"default": "div",
+		"followLink": true,
+		"expected": "header"
+	},
+	{
+		"settings": { "tag": "" },
+		"default": "div",
+		"followLink": true,
+		"expected": "div"
+	},
+	{
+		"settings": {
+			"link": {
+				"href": "https://example.com",
+				"tag": "a"
+			}
+		},
+		"default": "div",
+		"followLink": true,
+		"expected": "a"
+	},
+	{
+		"settings": {
+			"link": {
+				"tag": "a"
+			}
+		},
+		"default": "button",
+		"followLink": true,
+		"expected": "button"
+	},
+	{
+		"settings": {
+			"link": {
+				"tag": "a",
+				"attributes": "href=\"https://example.com\""
+			}
+		},
+		"default": "div",
+		"followLink": true,
+		"expected": "a"
+	},
+	{
+		"settings": {
+			"tag": "div",
+			"link": {
+				"href": "https://example.com",
+				"tag": "a"
+			}
+		},
+		"default": "div",
+		"followLink": true,
+		"expected": "a"
+	},
+	{
+		"settings": {
+			"tag": "div",
+			"link": {
+				"href": "https://example.com",
+				"tag": "a"
+			}
+		},
+		"default": "div",
+		"followLink": false,
+		"expected": "div"
+	},
+	{
+		"settings": {
+			"tag": {
+				"$$type": "string",
+				"value": "h3"
+			}
+		},
+		"default": "h2",
+		"followLink": true,
+		"expected": "h3"
+	}
+]

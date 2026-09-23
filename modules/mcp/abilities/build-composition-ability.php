@@ -4,29 +4,13 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
-use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
-use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
-use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
-use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Interactions\Module as Interactions_Module;
-use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
-use Elementor\Modules\Variables\Module as Variables_Module;
-use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
-use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,6 +34,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 		return 'elementor/build-composition';
 	}
 
+	public function is_exposed_via_proxy(): bool {
+		return false;
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Build Composition', 'elementor' ),
@@ -60,7 +48,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			fn() => current_user_can( 'edit_posts' ),
@@ -69,111 +57,160 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		$input = is_array( $input ) ? $input : [];
+		$started_at = hrtime( true );
+		$input      = is_array( $input ) ? $input : [];
+
+		$post_id   = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
+		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
+		$dry_run   = ! empty( $input['dry_run'] );
+		$mode      = is_string( $input['mode'] ?? null ) ? $input['mode'] : self::MODE_APPEND;
 
 		$validation_error = $this->validate_input( $input );
 		if ( $validation_error ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $validation_error );
 			return $validation_error;
 		}
 
-		$post_id = (int) $input['post_id'];
-		$parent_id = $input['parent_id'] ?? self::DEFAULT_PARENT_ID;
-		$dry_run = ! empty( $input['dry_run'] );
-		$mode = $input['mode'] ?? self::MODE_APPEND;
-
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return new \WP_Error(
+			$error = new \WP_Error(
 				'elementor_forbidden',
 				__( 'You do not have permission to edit this post.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $error );
+			return $error;
 		}
 
 		$document = $this->resolve_document( $post_id );
 		if ( is_wp_error( $document ) ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $document );
 			return $document;
 		}
 
-		$xml_parser = new Xml_Parser();
-		$type_resolver = new Widget_Type_Resolver( $xml_parser );
-		$subtree_builder = new Subtree_Builder( $xml_parser );
-
-		$dom = $xml_parser->parse( (string) $input['xml_structure'] );
-		if ( is_wp_error( $dom ) ) {
-			return $dom;
-		}
-
 		$elements_data = $document->get_elements_data();
-		$form_structure_error = ( new Form_Structure_Validator( $xml_parser ) )->validate(
-			$dom,
+		$compiled = Composition_Compiler::make()->compile(
+			$input,
+			$document,
 			is_array( $elements_data ) ? $elements_data : [],
 			$parent_id
 		);
-
-		if ( $form_structure_error ) {
-			return $form_structure_error;
+		if ( is_wp_error( $compiled ) ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $compiled, null, [], $document );
+			return $compiled;
 		}
 
-		$widget_configs = $type_resolver->collect_used( $dom );
-		if ( is_wp_error( $widget_configs ) ) {
-			return $widget_configs;
-		}
-
-		$child_type_error = $type_resolver->validate_child_types( $dom, $widget_configs );
-		if ( $child_type_error ) {
-			return $child_type_error;
-		}
-
-		$subtrees = $subtree_builder->build( $dom, $widget_configs );
-		if ( empty( $subtrees ) ) {
-			return new \WP_Error(
-				'empty_composition',
-				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-flexbox configuration-id="..."></e-flexbox>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
-
-		$variables_service = $this->create_variables_service();
-
-		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
-		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs, $document );
-		if ( $config_result['error'] ) {
-			return $config_result['error'];
-		}
-
-		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-		$class_error = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
-		if ( $class_error ) {
-			return $class_error;
-		}
-
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
-		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs );
-		if ( $style_result['error'] ) {
-			return $style_result['error'];
-		}
-
-		$interactions_result = $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) );
-		if ( $interactions_result['error'] ) {
-			return $interactions_result['error'];
-		}
-
-		$warnings = array_merge( $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] );
+		$subtrees      = $compiled['elements'];
+		$warnings      = $compiled['warnings'];
+		$warning_codes = $compiled['warning_codes'] ?? [];
+		$dom           = $compiled['dom'];
+		$xml_parser    = $compiled['xml_parser'];
 
 		if ( $dry_run ) {
-			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
+			return $response;
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
 		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $persisted, $subtrees, $warning_codes, $document );
 			return $persisted;
 		}
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
+
+		return $response;
+	}
+
+	private function emit_mcp_build_composition_executed(
+		int $started_at,
+		int $post_id,
+		string $mode,
+		bool $dry_run,
+		?\WP_Error $error = null,
+		?array $subtrees = null,
+		array $warning_codes = [],
+		?Document $document = null,
+		array $response = [],
+		array $removed_ids = []
+	): void {
+		$duration_ms = Tool_Performance_Metrics::duration_ms_since( $started_at );
+
+		$status     = null === $error ? 'success' : 'error';
+		$error_code = null !== $error ? $error->get_error_code() : null;
+
+		$operations_count   = 0;
+		$operations_by_type = [];
+		$class_attachments  = 0;
+		$interactions_count = 0;
+		$removed_count      = count( $removed_ids );
+
+		if ( null !== $subtrees ) {
+			$this->collect_composition_counts( $subtrees, $operations_count, $operations_by_type, $class_attachments, $interactions_count );
+		}
+
+		$style_input       = [];
+		$vars_referenced   = 0;
+		$document_type     = null !== $document ? $this->resolve_document_type( $document ) : null;
+
+		$payload = [
+			'tool_name'                  => $this->get_ability_id(),
+			'status'                     => $status,
+			'duration_ms'                => $duration_ms,
+			'post_id'                    => $post_id,
+			'mode'                       => $mode,
+			'dry_run'                    => $dry_run,
+			'operations_count'           => $operations_count,
+			'operations_by_type'         => $operations_by_type,
+			'class_attachments_count'    => $class_attachments,
+			'interactions_applied_count' => $interactions_count,
+			'removed_count'              => $removed_count,
+			'warning_count'              => count( $warning_codes ),
+			'warning_types'              => array_values( array_unique( $warning_codes ) ),
+		];
+
+		if ( null !== $document_type ) {
+			$payload['document_type'] = $document_type;
+		}
+
+		if ( null !== $error_code ) {
+			$payload['error_code'] = $error_code;
+		}
+
+		Mcp_Event_Dispatcher::emit( 'mcp_build_composition_executed', $payload );
+	}
+
+	private function collect_composition_counts( array $subtrees, int &$count, array &$by_type, int &$class_attachments, int &$interactions ): void {
+		$stack = $subtrees;
+
+		while ( ! empty( $stack ) ) {
+			$node = array_pop( $stack );
+			$type = $node['widgetType'] ?? $node['elType'] ?? '';
+
+			if ( '' !== $type ) {
+				++$count;
+				$by_type[ $type ] = ( $by_type[ $type ] ?? 0 ) + 1;
+			}
+
+			$classes = $node['settings']['classes']['value'] ?? [];
+			$class_attachments += count( array_filter( (array) $classes, fn( $c ) => is_string( $c ) && str_starts_with( $c, 'g-' ) ) );
+
+			if ( ! empty( $node['interactions']['items'] ) && is_array( $node['interactions']['items'] ) ) {
+				$interactions += count( $node['interactions']['items'] );
+			}
+
+			foreach ( $node['elements'] ?? [] as $child ) {
+				$stack[] = $child;
+			}
+		}
+	}
+
+	private function resolve_document_type( Document $document ): string {
+		return $document->get_name();
 	}
 
 	private function get_ability_description(): string {
@@ -195,7 +232,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'edit_url' => [
 					'type' => 'string',
 					'format' => 'uri',
-					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
+					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor).',
 				],
 				'version' => [ 'type' => 'string' ],
 				'resolved_xml' => [
@@ -360,91 +397,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		return $response;
 	}
 
-	private function as_map( $value ): array {
-		if ( is_object( $value ) ) {
-			$value = (array) $value;
-		}
-		return is_array( $value ) ? $value : [];
-	}
-
 	private function get_mutator(): Document_Mutator {
 		return $this->mutator ?? Document_Mutator::instance();
-	}
-
-	private function create_css_converter( ?Variables_Service $variables_service ): Css_Converter {
-		$variable_transformer = $variables_service
-			? new Variable_Prop_Value_Transformer( $variables_service )
-			: null;
-
-		return new Css_Converter(
-			Converter_Registry_Factory::create( $variables_service ),
-			new Null_Failure_Reporter(),
-			Expander_Registry_Factory::create( $variables_service ),
-			$variable_transformer
-		);
-	}
-
-	private function create_variables_service(): ?Variables_Service {
-		if ( ! $this->is_variables_active() ) {
-			return null;
-		}
-
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( ! $kit ) {
-			return null;
-		}
-
-		return new Variables_Service(
-			new Variables_Repository( $kit ),
-			new Batch_Processor()
-		);
-	}
-
-	private function get_plain_values_resolver(): Plain_Values_Resolver {
-		return AtomicWidgetsModule::instance()->get_settings_plain_values_resolver();
-	}
-
-	/**
-	 * @param array<string, array&>            $index
-	 * @param array<string, array<int, array>> $interactions
-	 *
-	 * @return array{error: \WP_Error|null, warnings: string[]}
-	 */
-	private function apply_interactions( array &$index, array $interactions ): array {
-		if ( empty( $interactions ) ) {
-			return [
-				'error' => null,
-				'warnings' => [],
-			];
-		}
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
-			return [
-				'error' => null,
-				'warnings' => [ __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ) ],
-			];
-		}
-
-		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
-
-		return $applier->apply( $index, $interactions );
-	}
-
-	private function is_variables_active(): bool {
-		$experiments = Plugin::$instance->experiments;
-
-		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
-			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
-	}
-
-	private function get_active_breakpoints(): array {
-		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
-	}
-
-	private function create_global_classes_repository(): Global_Classes_Repository {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		return Global_Classes_Repository::make( $kit );
 	}
 }
