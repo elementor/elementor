@@ -51,6 +51,7 @@ export { TimeRangeControl } from './controls/time-range-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
 export { AttachmentTypeControl } from './controls/attachment-type-control';
+export { NoticeControl } from './controls/notice-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
 export { GridSpanControl } from './controls/grid-span-control';
 

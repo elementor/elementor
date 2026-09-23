@@ -68,7 +68,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'video', 'background', 'media' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'video', 'background', 'bg', 'media', 'autoplay', 'hero', 'film', 'mp4' ];
 	}
 
 	public function get_icon() {

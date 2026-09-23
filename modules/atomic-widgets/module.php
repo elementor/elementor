@@ -13,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Dynamic_Plain_Resolver;
-use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Html_V3_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
@@ -160,6 +159,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Time_Ran
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
@@ -299,6 +299,7 @@ class Module extends BaseModule {
 		( new Atomic_Widget_Base_Styles() )->register_hooks();
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
+		Atomic_Prop_Remap::register_builtin_handlers();
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
@@ -581,7 +582,6 @@ class Module extends BaseModule {
 		$resolver = new Plain_Values_Resolver( $registry );
 
 		$registry->register( Dynamic_Prop_Type::get_key(), new Dynamic_Plain_Resolver( $resolver ) );
-		$registry->register( Html_V3_Prop_Type::get_key(), new Html_V3_Plain_Resolver( $resolver ) );
 		$registry->register( Escaped_Html_Prop_Type::get_key(), new String_Plain_Resolver() );
 
 		return $resolver;
@@ -642,6 +642,12 @@ class Module extends BaseModule {
 			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
+			'{ display: block; }',
+			// Base style is `display: none`. In the editor, still show the slot when it is
+			// selected (navigator / canvas), when a nested child is selected, or when empty
+			// so the plus/drop target has a hit area. Frontend and unselected Normal stay hidden.
+			'.elementor-edit-mode [data-element_type="e-form-success-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view)),',
+			'.elementor-edit-mode [data-element_type="e-form-error-message"]:is(.elementor-element-editable, :has(.elementor-element-editable), :has(> .elementor-empty-view))',
 			'{ display: block; }',
 			'.e-background-video { position: relative; overflow: hidden; }',
 			'.e-background-video__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 0; }',

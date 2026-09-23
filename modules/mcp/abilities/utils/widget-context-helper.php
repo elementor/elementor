@@ -31,6 +31,10 @@ class Widget_Context_Helper {
 
 	const VERSION_V4 = 'v4';
 
+	const MCP_UNPROMOTED_ELEMENT_TYPES = [
+		'e-flexbox',
+	];
+
 	const V3_ALLOWLIST = [
 		'nav-menu',
 		'theme-post-content',
@@ -44,6 +48,8 @@ class Widget_Context_Helper {
 
 	const V3_FALLBACK_FIELDS_NOTE = 'All properties are optional. Object-typed properties describe common shapes but do not include exhaustive inner validation.';
 
+	const ALLOWED_HTML_TAGS_NOTE = 'May contain inline HTML written directly in the string (e.g. "Hello <strong>world</strong>"), limited to these tags: %s. Any other tag is stripped on save.';
+
 	/**
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
 	 */
@@ -51,7 +57,13 @@ class Widget_Context_Helper {
 		$eligible = [];
 
 		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $type => $instance ) {
-			if ( self::should_initialize_v3_controls_stack( (string) $type ) && method_exists( $instance, 'get_stack' ) ) {
+			$type = (string) $type;
+
+			if ( self::is_type_unpromoted_in_widget_list( $type ) ) {
+				continue;
+			}
+
+			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
 				$instance->get_stack();
 			}
 
@@ -63,7 +75,13 @@ class Widget_Context_Helper {
 		}
 
 		foreach ( Plugin::$instance->elements_manager->get_element_types() as $type => $instance ) {
-			if ( self::should_initialize_v3_controls_stack( (string) $type ) && method_exists( $instance, 'get_stack' ) ) {
+			$type = (string) $type;
+
+			if ( self::is_type_unpromoted_in_widget_list( $type ) ) {
+				continue;
+			}
+
+			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
 				$instance->get_stack();
 			}
 
@@ -113,6 +131,10 @@ class Widget_Context_Helper {
 
 	public static function get_widget_version( array $config ): string {
 		return empty( $config['atomic_props_schema'] ) ? self::VERSION_V3 : self::VERSION_V4;
+	}
+
+	public static function is_type_unpromoted_in_widget_list( string $widget_type ): bool {
+		return in_array( $widget_type, self::MCP_UNPROMOTED_ELEMENT_TYPES, true );
 	}
 
 	public static function is_v3_allowlisted( string $widget_type ): bool {
@@ -213,13 +235,48 @@ class Widget_Context_Helper {
 			$allowed_html_tags = Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( $widget_type, $key );
 
 			if ( null !== $allowed_html_tags ) {
-				$schema['allowed_html_tags'] = $allowed_html_tags;
+				$schema = self::describe_allowed_html_tags( $schema, $allowed_html_tags );
 			}
 
 			$properties[ $key ] = $schema;
 		}
 
 		return $properties;
+	}
+
+	/**
+	 * Keeps the machine-readable tag list while spelling out in the description that the string
+	 * itself may carry that markup — a bare `allowed_html_tags` key is non-standard JSON Schema
+	 * and reads as ambiguous next to `type: string`.
+	 */
+	private static function describe_allowed_html_tags( array $schema, array $allowed_html_tags ): array {
+		$schema['allowed_html_tags'] = $allowed_html_tags;
+
+		$tag_list = implode( ', ', array_map( fn( $tag ) => "<{$tag}>", $allowed_html_tags ) );
+		$note = sprintf( self::ALLOWED_HTML_TAGS_NOTE, $tag_list );
+
+		if ( ! isset( $schema['anyOf'] ) || ! is_array( $schema['anyOf'] ) ) {
+			return self::append_description( $schema, $note );
+		}
+
+		// The markup rule belongs on the static string variant only — a dynamic-tag branch
+		// resolves its own value and never carries inline HTML from the caller.
+		$schema['anyOf'] = array_map(
+			fn( $branch ) => is_array( $branch ) && 'string' === ( $branch['type'] ?? null )
+				? self::append_description( $branch, $note )
+				: $branch,
+			$schema['anyOf']
+		);
+
+		return $schema;
+	}
+
+	private static function append_description( array $schema, string $note ): array {
+		$schema['description'] = isset( $schema['description'] )
+			? $schema['description'] . ' ' . $note
+			: $note;
+
+		return $schema;
 	}
 
 	public static function to_plain_llm_schema( Prop_Type $prop_type ): array {

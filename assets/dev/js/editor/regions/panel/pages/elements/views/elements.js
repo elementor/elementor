@@ -9,6 +9,25 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 
 	initialize() {
 		this.listenTo( elementor.channels.panelElements, 'filter:change', this.onFilterChanged );
+		// Apply comparator immediately — the view may be created mid-search (filter:change already fired).
+		this._syncAtomicComparator();
+	},
+
+	_syncAtomicComparator() {
+		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
+		if ( filterValue && elementorCommon.config.experimentalFeatures?.e_atomic_elements ) {
+			this.viewComparator = ( a, b ) => {
+				if ( a.get( 'atomic' ) && ! b.get( 'atomic' ) ) {
+					return -1;
+				}
+				if ( ! a.get( 'atomic' ) && b.get( 'atomic' ) ) {
+					return 1;
+				}
+				return 0;
+			};
+		} else {
+			this.viewComparator = null;
+		}
 	},
 
 	filter( childModel ) {
@@ -42,6 +61,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 
 	onFilterChanged() {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
+
+		this._syncAtomicComparator();
 
 		if ( ! filterValue ) {
 			this.onFilterEmpty();

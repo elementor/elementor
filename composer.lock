@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2ed2e1b31401a8b9e0acf7105778a59",
+    "content-hash": "24d5308311251c19324b20547482392a",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -72,10 +72,10 @@
         },
         {
             "name": "elementor/elementor-mcp-composer",
-            "version": "1.0.11",
+            "version": "1.0.16",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.11"
+                "url": "https://composer.elementor.com/download/elementor/elementor-mcp-composer/1.0.16"
             },
             "require": {
                 "automattic/jetpack-autoloader": "^5",
@@ -109,7 +109,7 @@
                 "proprietary"
             ],
             "description": "Reusable Composer package for Elementor MCP integrations.",
-            "time": "2026-09-06T12:34:50+00:00"
+            "time": "2026-09-17T13:20:36+00:00"
         },
         {
             "name": "elementor/wp-notifications-package",
@@ -144,10 +144,10 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.69",
+            "version": "1.0.70",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.69"
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.70"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -174,7 +174,7 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "time": "2026-07-28T06:30:15+00:00"
+            "time": "2026-09-18T08:52:58+00:00"
         },
         {
             "name": "wordpress/mcp-adapter",
@@ -4895,5 +4895,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

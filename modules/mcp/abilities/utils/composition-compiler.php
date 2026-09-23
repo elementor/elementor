@@ -101,7 +101,7 @@ final class Composition_Compiler {
 		if ( empty( $subtrees ) ) {
 			return new \WP_Error(
 				'empty_composition',
-				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-flexbox configuration-id="..."></e-flexbox>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-div-block configuration-id="..."></e-div-block>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
@@ -136,6 +136,12 @@ final class Composition_Compiler {
 		return [
 			'elements' => $subtrees,
 			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warning_codes' => array_values( array_unique( array_merge(
+				$wrapping_result['warning_codes'] ?? [],
+				$config_result['warning_codes'] ?? [],
+				$style_result['warning_codes'] ?? [],
+				$interactions_result['warning_codes'] ?? []
+			) ) ),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];
@@ -205,6 +211,7 @@ final class Composition_Compiler {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -213,6 +220,7 @@ final class Composition_Compiler {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -234,6 +242,7 @@ final class Composition_Compiler {
 			return [
 				'widget_configs' => $widget_configs,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -261,6 +270,7 @@ final class Composition_Compiler {
 					$wrapper_tag
 				),
 			],
+			'warning_codes' => [ 'root_auto_wrapped' ],
 		];
 	}
 
@@ -332,6 +342,7 @@ final class Composition_Compiler {
 			return [
 				'error' => null,
 				'warnings' => [],
+				'warning_codes' => [],
 			];
 		}
 
@@ -339,12 +350,13 @@ final class Composition_Compiler {
 			return [
 				'error' => null,
 				'warnings' => [ __( 'Interactions experiment is not active. Interactions were not applied.', 'elementor' ) ],
+				'warning_codes' => [ 'interactions_experiment_off' ],
 			];
 		}
 
 		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 
-		return $applier->apply( $index, $interactions );
+		return $applier->apply( $index, $interactions ) + [ 'warning_codes' => [] ];
 	}
 
 	private function is_variables_active(): bool {
