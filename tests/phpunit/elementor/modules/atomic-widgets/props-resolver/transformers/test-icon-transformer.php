@@ -254,36 +254,6 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
 	}
 
-	public function test_transform__returns_empty_html_when_custom_library_has_no_svg_source() {
-		// Arrange.
-		$additional_tabs = static function ( $tabs ) {
-			$tabs['my-icons'] = [
-				'name' => 'my-icons',
-				'label' => 'My Icons',
-				'native' => false,
-			];
-
-			return $tabs;
-		};
-
-		add_filter( 'elementor/icons_manager/additional_tabs', $additional_tabs );
-
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'my-icons my-icons-badge',
-			'library' => 'my-icons',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		remove_filter( 'elementor/icons_manager/additional_tabs', $additional_tabs );
-
-		// Assert.
-		$this->assertSame( '', $result['html'] );
-		$this->assertNull( $result['url'] );
-	}
-
 	private function stub_default_svg_http_response(): void {
 		add_filter(
 			'pre_http_request',

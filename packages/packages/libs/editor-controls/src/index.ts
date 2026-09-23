@@ -37,17 +37,13 @@ export { TransformSettingsControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
+export { isDeletedCustomIconLibrary } from './controls/icon-library/custom-icon-libraries';
 export {
 	getFontAwesome7IconName,
 	resetFontAwesome7IconsCache,
 	resolveFontAwesome7Icon,
 	type FontAwesome7IconDefinition,
 } from './controls/icon-library/font-awesome-7-data';
-export {
-	isDeletedCustomIconLibrary,
-	resetCustomIconLibrariesCache,
-	resolveCustomIcon,
-} from './controls/icon-library/custom-icon-libraries';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { DateRangeControl } from './controls/date-range-control';

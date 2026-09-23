@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Icons_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -37,10 +39,19 @@ class Font_Awesome_7_Icon_Resolver {
 		return str_starts_with( $library, self::LIBRARY_PREFIX );
 	}
 
+	const FILTER_TYPE_ALL = 'all';
+
+	const FILTER_TYPE_GROUP = 'group';
+
+	const FILTER_TYPE_ITEM = 'item';
+
+	const SKIPPED_TAB_NAMES = [ 'all', 'recommended', 'GoPro' ];
+
 	public static function get_editor_config(): array {
 		return [
 			'jsonFiles' => self::ALLOWED_JSON_FILES,
 			'jsonBaseUrl' => self::get_json_base_url(),
+			'filter' => self::get_filter_items(),
 		];
 	}
 
@@ -75,6 +86,68 @@ class Font_Awesome_7_Icon_Resolver {
 			'height' => $icon_tuple[ self::TUPLE_HEIGHT ],
 			'paths' => $paths,
 		];
+	}
+
+	private static function get_filter_items(): array {
+		$items = [
+			[
+				'type' => self::FILTER_TYPE_ALL,
+				'label' => esc_html__( 'All icons', 'elementor' ),
+				'icon' => 'list',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-regular',
+				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
+				'icon' => 'star',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-solid',
+				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
+				'icon' => 'star-filled',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-brands',
+				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
+				'icon' => 'library',
+			],
+		];
+
+		$custom_items = [];
+
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
+				continue;
+			}
+
+			if ( in_array( $name, self::SKIPPED_TAB_NAMES, true ) ) {
+				continue;
+			}
+
+			if ( empty( $tab['name'] ) || ! is_string( $tab['name'] ) || empty( $tab['label'] ) || ! is_string( $tab['label'] ) ) {
+				continue;
+			}
+
+			$custom_items[] = [
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => $tab['name'],
+				'label' => $tab['label'],
+				'icon' => 'library',
+			];
+		}
+
+		if ( empty( $custom_items ) ) {
+			return $items;
+		}
+
+		$items[] = [
+			'type' => self::FILTER_TYPE_GROUP,
+			'label' => esc_html__( 'My libraries', 'elementor' ),
+		];
+
+		return array_merge( $items, $custom_items );
 	}
 
 	private static function get_icon_name( string $value ): ?string {

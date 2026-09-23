@@ -2,13 +2,13 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { useCustomIconLibraries } from '../custom-icon-libraries';
 import { ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
-import { useCustomIconLibraries } from '../use-custom-icon-libraries';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
 jest.mock( '../use-font-awesome-7-catalog' );
-jest.mock( '../use-custom-icon-libraries' );
+jest.mock( '../custom-icon-libraries' );
 
 const scrollToIndex = jest.fn();
 let mockVisibleIndices: number[] | null = null;

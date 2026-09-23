@@ -14,6 +14,7 @@ import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from 
 import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
+import { useCustomIconLibraries } from './custom-icon-libraries';
 import {
 	createIconSelectionValue,
 	filterFontAwesome7Icons,
@@ -21,11 +22,10 @@ import {
 	type FontAwesome7Icon,
 	type FontAwesome7LibraryFilter,
 } from './font-awesome-7-catalog';
+import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { IconLibraryFilter } from './icon-library-filter';
-import { IconLibraryGlyph } from './icon-library-glyph';
 import { IconLibraryGrid } from './icon-library-grid';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
-import { useCustomIconLibraries } from './use-custom-icon-libraries';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
 export const ICON_LIBRARY_POPOVER_WIDTH = 300;
@@ -258,7 +258,7 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					flexShrink: 0,
 				} }
 			>
-				<IconLibraryGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
+				<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
 			</Box>
 			<Typography variant="caption" color="text.primary" noWrap>
 				{ icon.label }

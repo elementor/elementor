@@ -18,18 +18,14 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { type FontAwesome7LibraryFilter } from './font-awesome-7-catalog';
-import {
-	getIconLibraryFilterItems,
-	getSelectableFilterValues,
-	ICON_LIBRARY_FILTER_TYPE_ALL,
-	ICON_LIBRARY_FILTER_TYPE_GROUP,
-	type IconLibraryFilterEntry,
-} from './icon-library-filter-items';
 import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
 const FILTER_INDICATOR_OFFSET = 4;
+const FILTER_TYPE_ALL = 'all';
+const FILTER_TYPE_GROUP = 'group';
+const FILTER_TYPE_ITEM = 'item';
 
 const FILTER_ICONS: Record< string, typeof ListIcon > = {
 	list: ListIcon,
@@ -37,6 +33,18 @@ const FILTER_ICONS: Record< string, typeof ListIcon > = {
 	'star-filled': StarFilledIcon,
 	library: LibraryIcon,
 };
+
+const DEFAULT_FILTER = [
+	{ type: FILTER_TYPE_ALL, label: 'All icons', icon: 'list' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'library' },
+] as const;
+
+type FilterEntry =
+	| { type: typeof FILTER_TYPE_ALL; label: string; icon?: string }
+	| { type: typeof FILTER_TYPE_GROUP; label: string }
+	| { type: typeof FILTER_TYPE_ITEM; value: string; label: string; icon?: string };
 
 type IconLibraryFilterProps = {
 	value: FontAwesome7LibraryFilter;
@@ -49,16 +57,14 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 		variant: 'popover',
 		popupId,
 	} );
-	const entries = getIconLibraryFilterItems();
-	const selectableValues = getSelectableFilterValues( entries );
+	const entries = getFilterEntries();
+	const selectableValues = entries.flatMap( ( entry ) =>
+		entry.type === FILTER_TYPE_ITEM ? [ entry.value ] : []
+	);
 	const isFiltered = value.length > 0;
 	const filterButtonLabel = isFiltered
 		? __( 'Filter by library, active', 'elementor' )
 		: __( 'Filter by library', 'elementor' );
-
-	const handleAllIconsClick = () => {
-		onChange( [] );
-	};
 
 	const handleLibraryClick = ( library: string ) => {
 		const nextValue = value.includes( library )
@@ -114,7 +120,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 				sx={ { '& .MuiPaper-root': { minWidth: FILTER_MENU_WIDTH } } }
 			>
 				{ entries.flatMap( ( entry, index ) =>
-					renderFilterEntry( entry, index, value, isFiltered, handleAllIconsClick, handleLibraryClick )
+					renderFilterEntry( entry, index, value, isFiltered, () => onChange( [] ), handleLibraryClick )
 				) }
 			</Menu>
 		</>
@@ -122,14 +128,14 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 };
 
 const renderFilterEntry = (
-	entry: IconLibraryFilterEntry,
+	entry: FilterEntry,
 	index: number,
 	selectedLibraries: FontAwesome7LibraryFilter,
 	isFiltered: boolean,
 	onAllIconsClick: () => void,
 	onLibraryClick: ( library: string ) => void
 ): React.ReactNode[] => {
-	if ( entry.type === ICON_LIBRARY_FILTER_TYPE_GROUP ) {
+	if ( entry.type === FILTER_TYPE_GROUP ) {
 		return [
 			<Divider key={ `divider-${ index }` } />,
 			<ListSubheader key={ `group-${ index }` } disableSticky>
@@ -138,7 +144,7 @@ const renderFilterEntry = (
 		];
 	}
 
-	if ( entry.type === ICON_LIBRARY_FILTER_TYPE_ALL ) {
+	if ( entry.type === FILTER_TYPE_ALL ) {
 		return [
 			<MenuItem
 				key={ `all-${ index }` }
@@ -178,3 +184,50 @@ const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, sele
 		{ selected ? <CheckIcon fontSize="tiny" aria-hidden="true" /> : null }
 	</Stack>
 );
+
+function getFilterEntries(): FilterEntry[] {
+	const filter = window.elementorCommon?.config?.fontAwesome?.v7?.filter;
+
+	if ( ! Array.isArray( filter ) ) {
+		return [ ...DEFAULT_FILTER ];
+	}
+
+	const entries = filter.map( parseFilterEntry ).filter( ( entry ): entry is FilterEntry => entry !== null );
+
+	return entries.length > 0 ? entries : [ ...DEFAULT_FILTER ];
+}
+
+function parseFilterEntry( value: unknown ): FilterEntry | null {
+	if ( ! value || typeof value !== 'object' ) {
+		return null;
+	}
+
+	const entry = value as { type?: unknown; label?: unknown; value?: unknown; icon?: unknown };
+
+	if ( typeof entry.label !== 'string' || entry.label === '' ) {
+		return null;
+	}
+
+	if ( entry.type === FILTER_TYPE_GROUP ) {
+		return { type: FILTER_TYPE_GROUP, label: entry.label };
+	}
+
+	if ( entry.type === FILTER_TYPE_ALL ) {
+		return {
+			type: FILTER_TYPE_ALL,
+			label: entry.label,
+			icon: typeof entry.icon === 'string' ? entry.icon : undefined,
+		};
+	}
+
+	if ( entry.type === FILTER_TYPE_ITEM && typeof entry.value === 'string' && entry.value !== '' ) {
+		return {
+			type: FILTER_TYPE_ITEM,
+			value: entry.value,
+			label: entry.label,
+			icon: typeof entry.icon === 'string' ? entry.icon : undefined,
+		};
+	}
+
+	return null;
+}

@@ -1,4 +1,4 @@
-import { resetCustomIconLibrariesCache, resetFontAwesome7IconsCache } from '@elementor/editor-controls';
+import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
 import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
 import { iconPropType } from '../../../__tests__/prop-types';
@@ -46,7 +46,6 @@ describe( 'iconTransformer', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		resetFontAwesome7IconsCache();
-		resetCustomIconLibrariesCache();
 		initSettingsTransformers();
 		window.elementorCommon = {
 			config: {
@@ -66,7 +65,6 @@ describe( 'iconTransformer', () => {
 	afterEach( () => {
 		window.elementorCommon = originalElementorCommon;
 		window.elementor = originalElementor;
-		resetCustomIconLibrariesCache();
 		jest.restoreAllMocks();
 	} );
 

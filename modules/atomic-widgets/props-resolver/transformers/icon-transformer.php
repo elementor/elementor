@@ -6,7 +6,6 @@ use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
-use Elementor\Modules\AtomicWidgets\Icon_Library_Editor_Config;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
@@ -95,7 +94,7 @@ class Icon_Transformer extends Transformer_Base {
 			return false;
 		}
 
-		if ( in_array( $library, Icon_Library_Editor_Config::SKIPPED_TAB_NAMES, true ) ) {
+		if ( in_array( $library, Font_Awesome_7_Icon_Resolver::SKIPPED_TAB_NAMES, true ) ) {
 			return false;
 		}
 

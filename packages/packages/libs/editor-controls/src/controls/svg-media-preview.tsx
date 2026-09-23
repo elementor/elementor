@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Box, CardMedia, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useCustomIconLibraries } from './icon-library/custom-icon-libraries';
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
-import { IconLibraryGlyph } from './icon-library/icon-library-glyph';
-import { useCustomIconLibraries } from './icon-library/use-custom-icon-libraries';
+import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
 const ICON_PREVIEW_SIZE = 50;
@@ -43,7 +43,7 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 
 const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
 	<Box sx={ { color: ICON_PREVIEW_COLOR } }>
-		<IconLibraryGlyph
+		<FontAwesomeGlyph
 			icon={ icon }
 			size={ ICON_PREVIEW_SIZE }
 			color={ ICON_PREVIEW_COLOR }

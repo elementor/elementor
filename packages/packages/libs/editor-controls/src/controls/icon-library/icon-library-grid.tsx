@@ -5,7 +5,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { __ } from '@wordpress/i18n';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
-import { IconLibraryGlyph } from './icon-library-glyph';
+import { FontAwesomeGlyph } from './font-awesome-glyph';
 
 export const ICON_LIBRARY_GRID_FALLBACK_COLUMN_COUNT = 4;
 export const ICON_LIBRARY_GRID_MIN_CELL_SIZE = 52;
@@ -322,7 +322,7 @@ export const IconLibraryGrid = ( {
 															},
 													} }
 												>
-													<IconLibraryGlyph
+													<FontAwesomeGlyph
 														icon={ item }
 														size={ ICON_GLYPH_SIZE }
 														color="currentColor"

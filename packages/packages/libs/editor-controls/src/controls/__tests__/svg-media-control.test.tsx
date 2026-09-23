@@ -37,7 +37,7 @@ jest.mock( '../icon-library/icon-library-popover', () => ( {
 jest.mock( '../icon-library/use-font-awesome-7-catalog', () => ( {
 	useFontAwesome7Catalog: jest.fn( () => ( { data: [], isLoading: false } ) ),
 } ) );
-jest.mock( '../icon-library/use-custom-icon-libraries', () => ( {
+jest.mock( '../icon-library/custom-icon-libraries', () => ( {
 	useCustomIconLibraries: jest.fn( () => ( { data: [], isLoading: false } ) ),
 } ) );
 jest.mock( '@elementor/wp-media', () => ( {
