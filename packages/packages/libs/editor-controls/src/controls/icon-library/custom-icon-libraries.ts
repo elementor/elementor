@@ -1,5 +1,4 @@
 import { enqueueIconFonts } from '../open-icon-library';
-import { resolveIconFontGlyph, resetCustomIconFontCache } from './custom-icon-font-svg';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
 const NATIVE_TAB_NAMES = new Set(['all', 'recommended', 'GoPro']);
@@ -28,15 +27,7 @@ type ParsedCustomIcon = {
 	svgMarkup?: string;
 };
 
-export function resetCustomIconLibrariesCache() {
-	resetCustomIconFontCache();
-}
-
-export function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
-	const libraries = getIconManagerLibraries();
-
-	return libraries.filter(isCustomIconLibraryConfig);
-}
+export function resetCustomIconLibrariesCache() {}
 
 export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
 	if ( ! library || ! iconValue.includes( library ) ) {
@@ -54,6 +45,12 @@ export function isDeletedCustomIconLibrary( library: string, iconValue: string )
 	} );
 }
 
+export function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
+	const libraries = getIconManagerLibraries();
+
+	return libraries.filter(isCustomIconLibraryConfig);
+}
+
 export async function loadCustomIconLibraries(signal?: AbortSignal): Promise<FontAwesome7Icon[]> {
 	const libraries = getCustomIconLibraryConfigs();
 	const catalogs = await Promise.all(libraries.map((library) => loadCustomLibrary(library, signal)));
@@ -67,24 +64,9 @@ export async function resolveCustomIcon(
 	signal?: AbortSignal
 ): Promise<FontAwesome7Icon | null> {
 	const icons = await loadCustomIconLibraries(signal);
-	const config = getCustomIconLibraryConfigs().find((item) => item.name === library);
-	const icon = icons.find( ( item ) => {
-		if ( item.library !== library ) return false;
-		if ( item.value === iconValue || item.id === `${ library }:${ iconValue }` ) return true;
-		if ( item.glyphClass === iconValue ) return true;
-		if ( config ) {
-			const prefix = config.prefix || '';
-			const displayPrefix = config.displayPrefix || prefix.replace( /-$/, '' );
-			const withoutDisplay = displayPrefix && iconValue.startsWith( `${ displayPrefix } ` )
-				? iconValue.slice( displayPrefix.length + 1 )
-				: iconValue;
-			const bare = prefix && withoutDisplay.startsWith( prefix )
-				? withoutDisplay.slice( prefix.length )
-				: withoutDisplay;
-			return item.name === bare || item.name === withoutDisplay;
-		}
-		return false;
-	} );
+	const icon = icons.find(
+		(item) => item.library === library && (item.value === iconValue || item.id === `${library}:${iconValue}`)
+	);
 
 	if (!icon) {
 		return null;
@@ -94,122 +76,22 @@ export async function resolveCustomIcon(
 		return icon;
 	}
 
+	const config = getCustomIconLibraryConfigs().find((item) => item.name === library);
+
 	if (!config?.fetchJson) {
 		return icon;
 	}
 
-	const enriched = await enrichIconFromSiblingFiles( config.fetchJson, icon, config, signal );
+	const svgMarkup = await fetchSiblingSvg(config.fetchJson, icon.name, signal);
 
-	return enriched;
-}
-
-async function enrichIconFromSiblingFiles(
-	fetchJson: string,
-	icon: FontAwesome7Icon,
-	library: CustomIconLibraryConfig,
-	signal?: AbortSignal
-): Promise< FontAwesome7Icon > {
-	const directory = getDirectoryUrl( fetchJson );
-
-	if ( ! directory ) {
+	if (!svgMarkup) {
 		return icon;
 	}
 
-	// Try sibling .svg file first
-	const svgMarkup = await fetchSiblingSvg( fetchJson, icon.name, signal );
-
-	if ( svgMarkup ) {
-		return { ...icon, svgMarkup };
-	}
-
-	// Try Fontello config.json in the same directory for path data
-	const configJson = await fetchJson_( `${ directory }config.json`, signal );
-	const configIcons = parseCustomIcons( configJson );
-	const nameCandidates = getBareNameCandidates( icon.name );
-	const match = configIcons.find( ( c ) => nameCandidates.includes( c.name ) );
-
-	if ( match && ( match.paths.length > 0 || match.svgMarkup ) ) {
-		return {
-			...icon,
-			paths: match.paths,
-			width: match.width,
-			height: match.height,
-			svgMarkup: match.svgMarkup,
-		};
-	}
-
-	// config.json has no path data (glyphs are unicode references in an SVG font).
-	// Try the SVG font referenced from the CSS file.
-	const cssUrl = pickCssUrl( library, directory );
-	const fontGlyph = await resolveIconFontGlyph(
-		{ url: cssUrl, prefix: library.prefix },
-		icon.name,
-		nameCandidates,
-		signal
-	);
-
-	if ( fontGlyph?.svgMarkup ) {
-		return { ...icon, svgMarkup: fontGlyph.svgMarkup };
-	}
-
-	if ( fontGlyph && fontGlyph.paths.length > 0 ) {
-		return { ...icon, paths: fontGlyph.paths, width: fontGlyph.width, height: fontGlyph.height };
-	}
-
-	return icon;
-}
-
-function pickCssUrl( library: CustomIconLibraryConfig, directory: string ): string {
-	if ( typeof library.url === 'string' && library.url !== '' ) {
-		return library.url;
-	}
-
-	if ( Array.isArray( library.enqueue ) ) {
-		const first = library.enqueue.find( ( u ) => typeof u === 'string' && u !== '' );
-
-		if ( first ) {
-			return first;
-		}
-	}
-
-	// Fontello always stores its CSS at css/fontello.css relative to the root directory.
-	return `${ directory }css/fontello.css`;
-}
-
-function getBareNameCandidates( name: string ): string[] {
-	const candidates: string[] = [ name ];
-	let rest = name;
-
-	while ( rest.includes( '-' ) ) {
-		rest = rest.slice( rest.indexOf( '-' ) + 1 );
-		candidates.push( rest );
-	}
-
-	return candidates;
-}
-
-function getDirectoryUrl( url: string ): string | null {
-	try {
-		const parsed = new URL( url );
-
-		return parsed.href.slice( 0, parsed.href.lastIndexOf( '/' ) + 1 );
-	} catch {
-		return null;
-	}
-}
-
-async function fetchJson_( url: string, signal?: AbortSignal ): Promise< unknown > {
-	try {
-		const response = await fetch( url, { signal, mode: 'cors' } );
-
-		if ( ! response.ok ) {
-			return null;
-		}
-
-		return response.json();
-	} catch {
-		return null;
-	}
+	return {
+		...icon,
+		svgMarkup,
+	};
 }
 
 async function loadCustomLibrary(library: CustomIconLibraryConfig, signal?: AbortSignal): Promise<FontAwesome7Icon[]> {
@@ -221,24 +103,26 @@ async function loadCustomLibrary(library: CustomIconLibraryConfig, signal?: Abor
 	return parsedIcons.map((icon) => toCatalogIcon(library, icon));
 }
 
-async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
-	if ( library.fetchJson ) {
-		try {
-			const response = await fetch( library.fetchJson, { signal, mode: 'cors' } );
-
-			if ( response.ok ) {
-				return response.json();
-			}
-		} catch {
-			// fall through to inline icons
-		}
-	}
-
-	if ( library.icons !== undefined ) {
+async function loadLibraryPayload(library: CustomIconLibraryConfig, signal?: AbortSignal): Promise<unknown> {
+	if (library.icons !== undefined) {
 		return { icons: library.icons };
 	}
 
-	return null;
+	if (!library.fetchJson) {
+		return null;
+	}
+
+	try {
+		const response = await fetch(library.fetchJson, { signal, mode: 'cors' });
+
+		if (!response.ok) {
+			return null;
+		}
+
+		return response.json();
+	} catch {
+		return null;
+	}
 }
 
 function parseCustomIcons(payload: unknown): ParsedCustomIcon[] {
@@ -246,14 +130,7 @@ function parseCustomIcons(payload: unknown): ParsedCustomIcon[] {
 		return [];
 	}
 
-	const record = payload as Record< string, unknown >;
-
-	// Fontello config.json format: { glyphs: [{ css: 'name', svg: { path, width }, ... }] }
-	if ( Array.isArray( record.glyphs ) ) {
-		return record.glyphs.flatMap( parseFontelloGlyph ).filter( ( icon ) => icon.name !== '' );
-	}
-
-	const icons = record.icons;
+	const icons = (payload as { icons?: unknown }).icons;
 
 	if (Array.isArray(icons)) {
 		return icons.flatMap(parseIconEntry).filter((icon) => icon.name !== '');
@@ -266,34 +143,6 @@ function parseCustomIcons(payload: unknown): ParsedCustomIcon[] {
 	}
 
 	return [];
-}
-
-function parseFontelloGlyph( glyph: unknown ): ParsedCustomIcon[] {
-	if ( ! glyph || typeof glyph !== 'object' ) {
-		return [];
-	}
-
-	const entry = glyph as Record< string, unknown >;
-	const name = typeof entry.css === 'string' ? entry.css.trim() : '';
-
-	if ( ! name ) {
-		return [];
-	}
-
-	const parsed = createParsedIcon( name );
-	const svg = entry.svg && typeof entry.svg === 'object' ? entry.svg as Record< string, unknown > : null;
-
-	if ( svg ) {
-		if ( typeof svg.path === 'string' && svg.path !== '' ) {
-			parsed.paths = [ svg.path ];
-		}
-
-		if ( typeof svg.width === 'number' ) {
-			parsed.width = svg.width;
-		}
-	}
-
-	return [ parsed ];
 }
 
 function parseIconEntry(entry: unknown): ParsedCustomIcon[] {
@@ -385,16 +234,11 @@ function toCatalogIcon(library: CustomIconLibraryConfig, icon: ParsedCustomIcon)
 	};
 }
 
-export function createCustomIconSelectionValue( library: CustomIconLibraryConfig, name: string ): string {
-	const prefix = library.prefix || '';
-	const displayPrefix = library.displayPrefix || prefix.replace( /-$/, '' );
-	const className = prefix && name.startsWith( prefix ) ? name : `${ prefix }${ name }`;
+export function createCustomIconSelectionValue(library: CustomIconLibraryConfig, name: string): string {
+	const prefix = library.prefix;
+	const displayPrefix = library.displayPrefix || prefix.replace(/-$/, '');
 
-	if ( ! displayPrefix || className.startsWith( `${ displayPrefix } ` ) ) {
-		return className.trim();
-	}
-
-	return `${ displayPrefix } ${ className }`.trim();
+	return `${displayPrefix} ${prefix}${name}`.trim();
 }
 
 function looksLikeSvg(value: string): boolean {
