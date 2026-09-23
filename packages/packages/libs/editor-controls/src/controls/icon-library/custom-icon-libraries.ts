@@ -4,6 +4,7 @@ import { useQuery } from '@elementor/query';
 import { enqueueIconFonts } from '../open-icon-library';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 import { fontelloSvgUrlFromConfig, parseFontelloSvgFont } from './fontello-svg-font';
+import { parseIcomoonSelection } from './icomoon-selection';
 
 const NATIVE_TAB_NAMES = new Set( [ 'all', 'recommended', 'GoPro' ] );
 const DEFAULT_ICON_SIZE = 512;
@@ -17,6 +18,7 @@ type CustomIconLibraryConfig = {
 	fetchJson?: string;
 	configUrl?: string;
 	fontUrl?: string;
+	selectionUrl?: string;
 	icons?: unknown;
 	native?: boolean;
 };
@@ -137,6 +139,7 @@ function getPackUrls( library: string ): { configUrl?: string; fontUrl?: string 
 	return {
 		configUrl: typeof pack.configUrl === 'string' ? pack.configUrl : undefined,
 		fontUrl: typeof pack.fontUrl === 'string' ? pack.fontUrl : undefined,
+		selectionUrl: typeof pack.selectionUrl === 'string' ? pack.selectionUrl : undefined,
 	};
 }
 
@@ -235,6 +238,27 @@ async function loadSvgMapFromFontelloPack(
 	library: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< Record< string, string > > {
+	if ( library.selectionUrl ) {
+		try {
+			const response = await fetch( library.selectionUrl, { signal, mode: 'cors' } );
+
+			if ( response.ok ) {
+				const selectionJson = await response.text();
+				const names = parseIconNames( safeJson( selectionJson ) );
+				const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
+
+				return parseIcomoonSelection(
+					selectionJson,
+					library.prefix,
+					library.displayPrefix ?? '',
+					payloadNames
+				);
+			}
+		} catch {
+			return {};
+		}
+	}
+
 	const configUrl = library.configUrl ?? library.fetchJson;
 	const fontUrl = library.fontUrl ?? ( library.fetchJson ? fontelloSvgUrlFromConfig( library.fetchJson ) : null );
 
@@ -311,6 +335,18 @@ function parseIconNames( payload: unknown ): string[] {
 
 				if ( entry && typeof entry === 'object' && 'name' in entry && typeof entry.name === 'string' ) {
 					return [ normalizeIconName( entry.name ) ];
+				}
+
+				if (
+					entry &&
+					typeof entry === 'object' &&
+					'properties' in entry &&
+					entry.properties &&
+					typeof entry.properties === 'object' &&
+					'name' in entry.properties &&
+					typeof entry.properties.name === 'string'
+				) {
+					return [ normalizeIconName( entry.properties.name ) ];
 				}
 
 				return [];

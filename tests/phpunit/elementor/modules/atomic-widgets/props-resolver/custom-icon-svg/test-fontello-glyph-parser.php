@@ -49,6 +49,38 @@ class Test_Fontello_Glyph_Parser extends TestCase {
 		$svg = Fontello_Glyph_Parser::to_svg( $config, $font, 'missing', 'icon-' );
 
 		// Assert.
-		$this->assertSame( '', $svg );
+	public function test_to_svg__uses_current_color_fill() {
+		// Arrange.
+		$fixture = __DIR__ . '/fixtures/fontello';
+		$config = file_get_contents( $fixture . '/config.json' );
+		$font = file_get_contents( $fixture . '/font/fontello.svg' );
+
+		// Act.
+		$svg = Fontello_Glyph_Parser::to_svg( $config, $font, 'emo-surprised', 'icon-' );
+
+		// Assert.
+		$this->assertStringContainsString( 'fill="currentColor"', $svg );
+	}
+
+	public function test_to_svg__uses_svg_path_from_config_when_present() {
+		// Arrange.
+		$config = wp_json_encode( [
+			'glyphs' => [
+				[
+					'css' => 'home',
+					'svg' => [
+						'path' => 'M10 10H20V20H10Z',
+						'width' => 32,
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$svg = Fontello_Glyph_Parser::to_svg( $config, '', 'home', 'icon-' );
+
+		// Assert.
+		$this->assertStringContainsString( 'M10 10H20V20H10Z', $svg );
+		$this->assertStringContainsString( 'fill="currentColor"', $svg );
 	}
 }

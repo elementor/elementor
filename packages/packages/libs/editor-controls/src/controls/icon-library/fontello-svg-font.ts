@@ -1,5 +1,5 @@
 type FontelloConfig = {
-	glyphs?: Array< { css?: unknown; code?: unknown } >;
+	glyphs?: Array< { css?: unknown; code?: unknown; svg?: unknown } >;
 };
 
 type GlyphRecord = {
@@ -21,12 +21,14 @@ export function parseFontelloSvgFont(
 	iconNames: string[]
 ): Record< string, string > {
 	const codepoints = parseConfigCodepoints( configJson, prefix );
+	const configPaths = parseConfigSvgPaths( configJson, prefix );
 	const glyphs = parseSvgFontGlyphs( svgFont );
 	const resolvedDisplayPrefix = displayPrefix || prefix.replace( /-$/, '' );
 	const result: Record< string, string > = {};
 
 	for ( const name of iconNames ) {
-		const glyph = findGlyph( glyphs, codepoints, name, prefix );
+		const fromConfig = configPaths.get( name ) ?? ( prefix && name.startsWith( prefix ) ? configPaths.get( name.slice( prefix.length ) ) : undefined );
+		const glyph = fromConfig ?? findGlyph( glyphs, codepoints, name, prefix );
 
 		if ( ! glyph ) {
 			continue;
@@ -69,6 +71,51 @@ function parseConfigCodepoints( configJson: string, prefix: string ): Map< strin
 
 			if ( prefix !== '' && ! glyph.css.startsWith( prefix ) ) {
 				map.set( `${ prefix }${ glyph.css }`, glyph.code );
+			}
+		}
+	} catch {
+		return map;
+	}
+
+	return map;
+}
+
+function parseConfigSvgPaths( configJson: string, prefix: string ): Map< string, GlyphRecord > {
+	const map = new Map< string, GlyphRecord >();
+
+	try {
+		const data = JSON.parse( configJson ) as FontelloConfig;
+
+		if ( ! Array.isArray( data.glyphs ) ) {
+			return map;
+		}
+
+		for ( const glyph of data.glyphs ) {
+			if ( typeof glyph.css !== 'string' || glyph.css === '' ) {
+				continue;
+			}
+
+			let path = '';
+			let advance = 1000;
+
+			if ( typeof glyph.svg === 'string' ) {
+				path = glyph.svg;
+			} else if ( glyph.svg && typeof glyph.svg === 'object' && 'path' in glyph.svg && typeof glyph.svg.path === 'string' ) {
+				path = glyph.svg.path;
+				if ( 'width' in glyph.svg && typeof glyph.svg.width === 'number' && glyph.svg.width > 0 ) {
+					advance = glyph.svg.width;
+				}
+			}
+
+			if ( path === '' ) {
+				continue;
+			}
+
+			const record = { d: path, units: 1000, advance };
+			map.set( glyph.css, record );
+
+			if ( prefix !== '' && ! glyph.css.startsWith( prefix ) ) {
+				map.set( `${ prefix }${ glyph.css }`, record );
 			}
 		}
 	} catch {
@@ -147,9 +194,9 @@ function findGlyph(
 
 function buildIconSvg( glyph: GlyphRecord ): string {
 	return (
-		`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ glyph.advance } ${ glyph.units }">` +
+		`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ glyph.advance } ${ glyph.units }" fill="currentColor" width="100%" height="100%">` +
 		`<g transform="translate(0,${ glyph.units }) scale(1,-1)">` +
-		`<path d="${ escapeAttribute( glyph.d ) }"></path>` +
+		`<path d="${ escapeAttribute( glyph.d ) }" fill="currentColor"></path>` +
 		`</g></svg>`
 	);
 }

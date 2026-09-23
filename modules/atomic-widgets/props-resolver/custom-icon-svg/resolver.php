@@ -101,7 +101,7 @@ class Resolver {
 
 	private static function tab_for_library( string $library ): ?array {
 		$tab = self::get_tab( $library );
-		$from_disk = Fontello_Converter::tab_from_disk( $library );
+		$from_disk = Fontello_Converter::tab_from_disk( $library ) ?? Icomoon_Converter::tab_from_disk( $library );
 
 		if ( $tab && $from_disk ) {
 			if ( empty( $tab['prefix'] ) && ! empty( $from_disk['prefix'] ) ) {
