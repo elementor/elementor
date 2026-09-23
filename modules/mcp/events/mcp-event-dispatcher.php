@@ -107,6 +107,8 @@ class Mcp_Event_Dispatcher {
 			$payload['metadata'] = $metadata;
 		}
 
+		Events_Manager_Module::debug_log( "mcp emit event={$interaction_result}" );
+
 		try {
 			if ( null !== self::$interceptor ) {
 				( self::$interceptor )( $interaction_result, $payload );
@@ -114,7 +116,8 @@ class Mcp_Event_Dispatcher {
 			}
 
 			Events_Manager_Module::dispatch_event( $interaction_result, $payload );
-		} catch ( \Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+		} catch ( \Throwable $e ) {
+			Events_Manager_Module::debug_log( "mcp emit threw event={$interaction_result} msg=" . $e->getMessage() );
 		}
 	}
 

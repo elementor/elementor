@@ -76,8 +76,19 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	public static function debug_log( string $message ): void {
+		if ( ! defined( 'ELEMENTOR_EDITOR_EVENTS_DEBUG' ) || ! ELEMENTOR_EDITOR_EVENTS_DEBUG ) {
+			return;
+		}
+
+		error_log( '[ElementorEvents] ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+	}
+
 	public static function dispatch_event( string $event_name, array $properties = [] ): void {
-		if ( ! self::can_send_events() ) {
+		$block_reason = self::gate_block_reason();
+
+		if ( null !== $block_reason ) {
+			self::debug_log( "dispatch_event blocked event={$event_name} reason={$block_reason}" );
 			return;
 		}
 
@@ -95,10 +106,35 @@ class Module extends BaseModule {
 				'source' => 'server',
 			];
 
-			Server_Events_Client::track( $event_name, array_merge( $properties, $context ) );
+			self::debug_log( "dispatch_event -> track event={$event_name} distinct_id=" . ( $user_id ?? 'null' ) );
+
+			$tracked = Server_Events_Client::track( $event_name, array_merge( $properties, $context ) );
+
+			self::debug_log( "dispatch_event track returned event={$event_name} result=" . ( $tracked ? 'true' : 'false' ) );
 		} catch ( \Throwable $e ) {
+			self::debug_log( "dispatch_event threw event={$event_name} msg=" . $e->getMessage() );
 			return;
 		}
+	}
+
+	private static function gate_block_reason(): ?string {
+		if ( empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) ) {
+			return 'mixpanel_token_empty';
+		}
+
+		if ( ! Tracker::is_allow_track() ) {
+			return 'tracker_not_allowed';
+		}
+
+		if ( Tracker::has_terms_changed() ) {
+			return 'tracker_terms_changed';
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			return 'experiment_inactive';
+		}
+
+		return null;
 	}
 
 	public static function get_experimental_data(): array {

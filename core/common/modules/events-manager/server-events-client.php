@@ -14,6 +14,7 @@ class Server_Events_Client {
 		// The SDK is bundled via php-scoper (see php-scoper/mixpanel-inc.php), so this is only
 		// a defensive guard in case the prefixed dependency is ever missing from the build.
 		if ( ! class_exists( Mixpanel::class ) ) {
+			Module::debug_log( "track skipped event={$event_name} reason=mixpanel_class_missing" );
 			return false;
 		}
 
@@ -30,8 +31,11 @@ class Server_Events_Client {
 
 			$client->track( $event_name, $properties );
 
+			Module::debug_log( "track queued event={$event_name} host=" . Module::get_mixpanel_api_host() );
+
 			return true;
 		} catch ( \Throwable $e ) {
+			Module::debug_log( "track threw event={$event_name} msg=" . $e->getMessage() );
 			return false;
 		}
 	}
