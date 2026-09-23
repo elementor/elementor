@@ -9,6 +9,7 @@ import { cjsExternalsPlugin } from './plugins/cjs-externals.mjs';
 import { dynamicExternalsPlugin } from './plugins/dynamic-externals.mjs';
 import { frontendChunksPlugin } from './plugins/frontend-chunks.mjs';
 import { i18nStringsPlugin } from './plugins/i18n-strings.mjs';
+import { elementorOneLocaleImportsPlugin } from './plugins/elementor-one-locale-imports.mjs';
 import { MULTI_SOURCE_ENTRY_ID, multiSourceEntryPlugin } from './plugins/multi-source-entry.mjs';
 import { webpackShimsPlugin } from './plugins/webpack-shims.mjs';
 import { loadAliases } from './shared/aliases.mjs';
@@ -88,6 +89,7 @@ export function createEntryConfig( {
 	const plugins = [
 		multiSourceEntryPlugin( { sources } ),
 		webpackShimsPlugin(),
+		elementorOneLocaleImportsPlugin(),
 	];
 
 	// The `frontend` entry runs the loader instead of inlining, so the plugin only attaches when a
