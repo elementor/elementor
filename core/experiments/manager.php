@@ -1026,6 +1026,7 @@ class Manager extends Base_Object {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Developer notice; message is escaped.
 		_doing_it_wrong( __METHOD__, esc_html( $message ), ELEMENTOR_VERSION );
 	}
 
