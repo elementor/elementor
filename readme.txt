@@ -356,8 +356,6 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
-<<<<<<< ours
-=======
 = 4.3.2 - 2026-09-24 =
 
 * Tweak: Improved the Editor onboarding flow for a smoother getting-started experience.
@@ -371,7 +369,6 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 * Fix: Top bar translations are not displayed correctly on Elementor admin pages
 
->>>>>>> theirs
 = 4.3.0 - 2026-09-22 =
 
 * New: Introducing Elementor MCP - enabling compatible AI tools to build pages, edit elements, and work with your design system
