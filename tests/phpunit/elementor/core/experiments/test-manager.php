@@ -356,12 +356,12 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 		];
 
-		// Assert.
-		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature test_feature cannot be initialized before dependency feature: feature-that-not-exists' );
-
 		// Act.
-		$this->add_test_feature( $test_feature_data );
+		$feature = $this->add_test_feature( $test_feature_data );
+
+		// Assert.
+		$this->assertNotEmpty( $feature );
+		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
 	}
 
 	public function test_feature_can_be_added_as_hidden() {
@@ -375,7 +375,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $feature['hidden'] );
 	}
 
-	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
+	public function test_add_feature__allows_hidden_dependency_for_compatibility() {
 		// Arrange.
 		$this->add_test_feature( [
 			'name' => 'regular-dependency',
@@ -384,16 +384,12 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$this->add_test_feature( [
 			'name' => 'hidden-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'state' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 		] );
 
-		// Expect.
-		$this->expectException( Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Depending on a hidden experiment is not allowed.' );
-
 		// Act.
-		$this->add_test_feature( [
+		$dependant = $this->add_test_feature( [
 			'name' => 'dependant',
 			'state' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
@@ -401,6 +397,10 @@ class Test_Manager extends Elementor_Test_Base {
 				'hidden-dependency',
 			],
 		] );
+
+		// Assert.
+		$this->assertNotEmpty( $dependant );
+		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $dependant['state'] );
 	}
 
 	public function test_get_features() {
@@ -558,7 +558,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$is_non_exist_active = $experiments->is_feature_active( 'not_exists_feature' );
 
-		$this->assertFalse( $is_non_exist_active );
+		$this->assertTrue( $is_non_exist_active );
 	}
 
 	public function test_is_feature_active__saved_state() {
@@ -597,7 +597,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNull( $feature );
 	}
 
-	public function test_validate_dependency__throws_when_a_dependency_is_not_available() {
+	public function test_validate_dependency__allows_activation_when_a_dependency_is_not_available() {
 		// Arrange.
 		$test_feature_data = [
 			'name' => Module_A::instance()->get_name(),
@@ -606,17 +606,19 @@ class Test_Manager extends Elementor_Test_Base {
 				Module_B::class,
 			],
 		];
-		// Assert.
-		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature module-a cannot be initialized before dependency feature: Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B' );
 
 		$this->add_test_feature( $test_feature_data );
-
 
 		// Act.
 		update_option(
 			$this->experiments->get_feature_option_key( $test_feature_data['name'] ),
 			Experiments_Manager::STATE_ACTIVE
+		);
+
+		// Assert.
+		$this->assertEquals(
+			Experiments_Manager::STATE_ACTIVE,
+			get_option( $this->experiments->get_feature_option_key( $test_feature_data['name'] ) )
 		);
 	}
 

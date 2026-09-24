@@ -257,13 +257,22 @@ class Manager extends Base_Object {
 	public function is_feature_active( $feature_name, $check_dependencies = false ) {
 		$feature = $this->get_features( $feature_name );
 
-		if ( ! $feature || self::STATE_ACTIVE !== $this->get_feature_actual_state( $feature ) ) {
+		if ( ! $feature ) {
+			return true;
+		}
+
+		if ( self::STATE_ACTIVE !== $this->get_feature_actual_state( $feature ) ) {
 			return false;
 		}
 
 		if ( $check_dependencies && isset( $feature['dependencies'] ) && is_array( $feature['dependencies'] ) ) {
 			foreach ( $feature['dependencies'] as $dependency ) {
 				$dependent_feature = $this->get_features( $dependency->get_name() );
+
+				if ( $this->is_dependency_treated_as_active( $dependent_feature ) ) {
+					continue;
+				}
+
 				$feature_state = self::STATE_ACTIVE === $this->get_feature_actual_state( $dependent_feature );
 
 				if ( ! $feature_state ) {
@@ -782,16 +791,8 @@ class Manager extends Base_Object {
 			foreach ( $feature['dependencies'] as $dependency ) {
 				$dependency_feature = $this->get_features( $dependency->get_name() );
 
-				if ( ! $dependency_feature ) {
-					$rollback( $feature_option_key, self::STATE_INACTIVE );
-
-					throw new Exceptions\Dependency_Exception(
-						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency->get_name() )
-						)
-					);
+				if ( $this->is_dependency_treated_as_active( $dependency_feature ) ) {
+					continue;
 				}
 
 				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
@@ -947,32 +948,29 @@ class Manager extends Base_Object {
 	 * @param array $experimental_data
 	 * @return array
 	 *
-	 * @throws Exceptions\Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 			$feature = $this->get_features( $dependency );
 
-			if ( ! isset( $feature ) ) {
-				// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
-				throw new Exceptions\Dependency_Exception(
-					sprintf(
-						'Feature %s cannot be initialized before dependency feature: %s.',
-						esc_html( $experimental_data['name'] ),
-						esc_html( $dependency )
-					)
-				);
-			}
-
-			if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
-				throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
-			}
-
 			$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
+
+			if ( $this->is_dependency_treated_as_active( $feature ) ) {
+				continue;
+			}
+
 			$experimental_data = $this->set_feature_default_state_to_match_dependencies( $feature, $experimental_data );
 		}
 
 		return $experimental_data;
+	}
+
+	private function is_dependency_treated_as_active( $dependency_feature ): bool {
+		if ( ! $dependency_feature ) {
+			return true;
+		}
+
+		return ! empty( $dependency_feature[ static::TYPE_HIDDEN ] );
 	}
 
 	/**
