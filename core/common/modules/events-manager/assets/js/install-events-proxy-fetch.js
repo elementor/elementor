@@ -8,25 +8,60 @@ function isProxyRequestUrl( url, proxyPrefixes ) {
 	return proxyPrefixes.some( ( prefix ) => url.startsWith( prefix ) );
 }
 
-function stripMixpanelAuthorization( init, token ) {
-	if ( ! init?.headers || ! token ) {
-		return init;
+function isFetchRequest( input ) {
+	return 'function' === typeof Request && input instanceof Request;
+}
+
+function mergeFetchHeaders( input, init ) {
+	const headers = new Headers();
+
+	if ( isFetchRequest( input ) ) {
+		input.headers.forEach( ( value, key ) => {
+			headers.set( key, value );
+		} );
 	}
 
-	const mixpanelAuthorization = buildMixpanelAuthorization( token );
-	const headers = new Headers( init.headers );
-	const authorization = headers.get( 'Authorization' );
+	if ( init?.headers ) {
+		new Headers( init.headers ).forEach( ( value, key ) => {
+			headers.set( key, value );
+		} );
+	}
 
-	if ( authorization !== mixpanelAuthorization ) {
-		return init;
+	return headers;
+}
+
+function stripMixpanelAuthorization( input, init, token ) {
+	if ( ! token ) {
+		return { input, init, stripped: false };
+	}
+
+	const headers = mergeFetchHeaders( input, init );
+	const mixpanelAuthorization = buildMixpanelAuthorization( token );
+
+	if ( headers.get( 'Authorization' ) !== mixpanelAuthorization ) {
+		return { input, init, stripped: false };
 	}
 
 	headers.delete( 'Authorization' );
 
+	const credentials = init.credentials ?? 'include';
+
+	if ( isFetchRequest( input ) ) {
+		return {
+			input: new Request( input, { headers, credentials } ),
+			init: undefined,
+			stripped: true,
+		};
+	}
+
 	return {
-		...init,
-		credentials: init.credentials ?? 'include',
-		headers,
+		input,
+		init: {
+			...init,
+			credentials,
+			headers,
+		},
+		stripped: true,
 	};
 }
 
@@ -45,9 +80,13 @@ export function installEventsProxyFetch( proxyApiHost, proxyLibBasePath, token )
 			return nativeFetch( input, init );
 		}
 
-		const nextInit = stripMixpanelAuthorization( init, token );
+		const { input: nextInput, init: nextInit } = stripMixpanelAuthorization( input, init, token );
 
-		return nativeFetch( input, nextInit );
+		if ( undefined === nextInit ) {
+			return nativeFetch( nextInput );
+		}
+
+		return nativeFetch( nextInput, nextInit );
 	};
 
 	window[ INSTALLED_FLAG ] = true;
