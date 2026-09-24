@@ -62,13 +62,12 @@ abstract class Abstract_Ability {
 
 		$meta = is_array( $definition['meta'] ?? null ) ? $definition['meta'] : [];
 		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
-		$is_mcp_enabled = self::is_mcp_enabled();
-		$mcp['public'] = $is_mcp_enabled;
+		$mcp['public'] = self::is_mcp_enabled();
 		if ( isset( $mcp['description'] ) ) {
 			$mcp['description'] = $this->maybe_append_unavailable_notice( (string) $mcp['description'] );
 		}
 		$meta['mcp'] = $mcp;
-		$meta['show_in_rest'] = $is_mcp_enabled;
+		$meta['show_in_rest'] = true;
 		$definition['meta'] = $meta;
 		wp_register_ability( $this->get_id(), $definition );
 	}
