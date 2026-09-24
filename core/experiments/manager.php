@@ -1026,7 +1026,7 @@ class Manager extends Base_Object {
 			return;
 		}
 
-		_doing_it_wrong( __METHOD__, $message, ELEMENTOR_VERSION );
+		_doing_it_wrong( __METHOD__, esc_html( $message ), ELEMENTOR_VERSION );
 	}
 
 	/**

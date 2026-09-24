@@ -347,6 +347,8 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_add_feature__adding_non_existing_dependency() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
 		// Arrange.
 		$test_feature_data = [
 			'name' => 'test_feature',
@@ -391,6 +393,8 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_add_feature__allows_hidden_dependency_for_compatibility() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
 		// Arrange.
 		$this->add_test_feature( [
 			'name' => 'regular-dependency',
@@ -581,6 +585,8 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active__check_dependencies_treats_missing_and_hidden_as_active() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
 		$this->add_test_feature( [
 			'name' => 'dependant-missing-dep',
 			'default' => Experiments_Manager::STATE_ACTIVE,
@@ -602,6 +608,8 @@ class Test_Manager extends Elementor_Test_Base {
 				'hidden-dependency',
 			],
 		] );
+
+		$this->experiments->set_feature_default_state( 'dependant-hidden-dep', Experiments_Manager::STATE_ACTIVE );
 
 		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-missing-dep', true ) );
 		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-hidden-dep', true ) );
@@ -644,6 +652,8 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_validate_dependency__allows_activation_when_a_dependency_is_not_available() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
 		// Arrange.
 		$test_feature_data = [
 			'name' => Module_A::instance()->get_name(),
@@ -838,6 +848,16 @@ class Test_Manager extends Elementor_Test_Base {
 		}
 
 		return $this->experiments->add_feature( $test_feature_data );
+	}
+
+	private function expect_experiment_dep_compat_warnings_if_debug( int $count ): void {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$this->expect_doing_it_wrong( 'Elementor\Core\Experiments\Manager::warn_removed_or_hidden_dependency' );
+		}
 	}
 
 	public function test_on_state_change_callback() {
