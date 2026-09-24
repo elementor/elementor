@@ -80,11 +80,14 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 			'catalog' => $home . '.well-known/api-catalog',
 		];
 
-		// Auth documentation — always present when this module is active.
+		// Auth documentation — always present. protected_resource only when that endpoint is served.
 		$caps['auth'] = [
-			'protected_resource' => $home . '.well-known/oauth-protected-resource',
-			'documentation'      => $home . '.well-known/auth.md',
+			'documentation' => $home . '.well-known/auth.md',
 		];
+
+		if ( ( new Oauth_Protected_Resource() )->is_applicable() ) {
+			$caps['auth']['protected_resource'] = $home . '.well-known/oauth-protected-resource';
+		}
 
 		// MCP server — added when the agents MCP component is registered and active.
 		$caps = $this->maybe_add_mcp( $caps, $home );
