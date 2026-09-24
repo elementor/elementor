@@ -347,6 +347,8 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_add_feature__adding_non_existing_dependency() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
 		// Arrange.
 		$test_feature_data = [
 			'name' => 'test_feature',
@@ -356,12 +358,27 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 		];
 
-		// Assert.
-		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature test_feature cannot be initialized before dependency feature: feature-that-not-exists' );
-
 		// Act.
-		$this->add_test_feature( $test_feature_data );
+		$feature = $this->add_test_feature( $test_feature_data );
+
+		// Assert.
+		$this->assertNotEmpty( $feature );
+		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
+	}
+
+	public function test_add_feature__missing_dependency_warns_when_wp_debug_enabled() {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			$this->markTestSkipped( 'WP_DEBUG is required to assert _doing_it_wrong.' );
+		}
+
+		$this->expect_doing_it_wrong( 'Elementor\Core\Experiments\Manager::warn_removed_or_hidden_dependency' );
+
+		$this->add_test_feature( [
+			'name' => 'test_feature_wp_debug',
+			'dependencies' => [
+				'feature-that-not-exists',
+			],
+		] );
 	}
 
 	public function test_feature_can_be_added_as_hidden() {
@@ -375,32 +392,38 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $feature['hidden'] );
 	}
 
-	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
+	public function test_add_feature__allows_hidden_dependency_for_compatibility() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
 		// Arrange.
 		$this->add_test_feature( [
 			'name' => 'regular-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		] );
 
 		$this->add_test_feature( [
 			'name' => 'hidden-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 		] );
 
-		// Expect.
-		$this->expectException( Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Depending on a hidden experiment is not allowed.' );
-
 		// Act.
-		$this->add_test_feature( [
+		$dependant = $this->add_test_feature( [
 			'name' => 'dependant',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'regular-dependency',
 				'hidden-dependency',
 			],
 		] );
+
+		// Assert.
+		$this->assertNotEmpty( $dependant );
+		$this->assertInstanceOf( Wrap_Core_Dependency::class, $dependant['dependencies'][0] );
+		$this->assertInstanceOf( Wrap_Core_Dependency::class, $dependant['dependencies'][1] );
+		$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $dependant['default'] );
+		$this->experiments->set_feature_default_state( 'dependant', Experiments_Manager::STATE_ACTIVE );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant', true ) );
 	}
 
 	public function test_get_features() {
@@ -561,6 +584,37 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $is_non_exist_active );
 	}
 
+	public function test_is_feature_active__check_dependencies_treats_missing_and_hidden_as_active() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-missing-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-experiment',
+			],
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'hidden-dependency',
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => true,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-hidden-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'hidden-dependency',
+			],
+		] );
+
+		$this->experiments->set_feature_default_state( 'dependant-hidden-dep', Experiments_Manager::STATE_ACTIVE );
+
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-missing-dep', true ) );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-hidden-dep', true ) );
+	}
+
 	public function test_is_feature_active__saved_state() {
 		add_option( 'elementor_experiment-test_feature', Experiments_Manager::STATE_ACTIVE );
 
@@ -597,7 +651,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNull( $feature );
 	}
 
-	public function test_validate_dependency__throws_when_a_dependency_is_not_available() {
+	public function test_validate_dependency__allows_activation_when_a_dependency_is_not_available() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
 		// Arrange.
 		$test_feature_data = [
 			'name' => Module_A::instance()->get_name(),
@@ -606,17 +662,19 @@ class Test_Manager extends Elementor_Test_Base {
 				Module_B::class,
 			],
 		];
-		// Assert.
-		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature module-a cannot be initialized before dependency feature: Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B' );
 
 		$this->add_test_feature( $test_feature_data );
-
 
 		// Act.
 		update_option(
 			$this->experiments->get_feature_option_key( $test_feature_data['name'] ),
 			Experiments_Manager::STATE_ACTIVE
+		);
+
+		// Assert.
+		$this->assertEquals(
+			Experiments_Manager::STATE_ACTIVE,
+			get_option( $this->experiments->get_feature_option_key( $test_feature_data['name'] ) )
 		);
 	}
 
@@ -790,6 +848,16 @@ class Test_Manager extends Elementor_Test_Base {
 		}
 
 		return $this->experiments->add_feature( $test_feature_data );
+	}
+
+	private function expect_experiment_dep_compat_warnings_if_debug( int $count ): void {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$this->expect_doing_it_wrong( 'Elementor\Core\Experiments\Manager::warn_removed_or_hidden_dependency' );
+		}
 	}
 
 	public function test_on_state_change_callback() {
