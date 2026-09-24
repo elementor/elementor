@@ -133,7 +133,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
 	}
 
-	public function test_serve_markdown__denies_draft_post() {
+	public function test_is_markdown_access_allowed__denies_draft_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'draft',
 			'post_title'  => 'Draft Markdown Page',
@@ -142,7 +142,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
-	public function test_serve_markdown__denies_private_post() {
+	public function test_is_markdown_access_allowed__denies_private_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'private',
 			'post_title'  => 'Private Markdown Page',
@@ -151,7 +151,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
-	public function test_serve_markdown__denies_password_protected_post() {
+	public function test_is_markdown_access_allowed__denies_password_protected_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status'   => 'publish',
 			'post_password' => 'secret',
@@ -160,7 +160,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
-	public function test_serve_markdown__blocks_noindex_post_without_markdown_body() {
+	public function test_is_markdown_access_allowed__denies_noindex_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'publish',
 			'post_title'  => 'Noindex Markdown Page',
