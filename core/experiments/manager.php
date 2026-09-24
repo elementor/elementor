@@ -247,10 +247,16 @@ class Manager extends Base_Object {
 	/**
 	 * Is Feature Active
 	 *
+	 * Unregistered feature names are treated as permanently active for backward
+	 * compatibility when experiments are removed from Core. Callers must not rely
+	 * on a false return value to detect typos or unknown experiment names.
+	 *
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param string $feature_name
+	 * @param string $feature_name       Experiment feature name.
+	 * @param bool   $check_dependencies When true, also require dependency experiments to be active.
+	 *                                   Missing or hidden dependencies are treated as active.
 	 *
 	 * @return bool
 	 */

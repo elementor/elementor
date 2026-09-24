@@ -561,6 +561,35 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $is_non_exist_active );
 	}
 
+	public function test_is_feature_active__check_dependencies_treats_missing_and_hidden_as_active() {
+		$this->add_test_feature( [
+			'name' => 'dependant-missing-dep',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-experiment',
+			],
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'hidden-dependency',
+			'state' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => true,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-hidden-dep',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'hidden-dependency',
+			],
+		] );
+
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-missing-dep', true ) );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-hidden-dep', true ) );
+	}
+
 	public function test_is_feature_active__saved_state() {
 		add_option( 'elementor_experiment-test_feature', Experiments_Manager::STATE_ACTIVE );
 
