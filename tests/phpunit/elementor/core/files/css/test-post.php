@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Post extends Elementor_Test_Base {
@@ -37,6 +38,8 @@ class Test_Post extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_filter( 'update_post_metadata', [ $this, 'store_identical_meta_as_concurrent_request' ], 1 );
+
+		Plugin::$instance->data_manager_v2->kill_server();
 
 		parent::tearDown();
 	}
