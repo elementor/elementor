@@ -42,7 +42,7 @@ class List_Assets_Ability extends Abstract_Ability {
 		'video/3gpp2',
 	];
 
-	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Ask the user to upload the images or SVG icons they want to use (WP Admin → Media → Add New), then call this tool again. Do not fabricate attachment ids.';
+	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Ask the user to upload the images, SVGs, or videos they want to use — share the `media_library_upload_url` returned in this response as a markdown link so they can open it directly — then call this tool again. Do not fabricate attachment ids.';
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-assets';
@@ -74,6 +74,7 @@ class List_Assets_Ability extends Abstract_Ability {
 					'total' => [ 'type' => 'integer' ],
 					'page' => [ 'type' => 'integer' ],
 					'per_page' => [ 'type' => 'integer' ],
+					'media_library_upload_url' => [ 'type' => 'string' ],
 					'llm_instructions' => [ 'type' => 'string' ],
 				],
 			],
@@ -149,6 +150,7 @@ class List_Assets_Ability extends Abstract_Ability {
 			'total' => (int) $query->found_posts,
 			'page' => $page,
 			'per_page' => $per_page,
+			'media_library_upload_url' => admin_url( 'media-new.php' ),
 		];
 
 		if ( 0 === $response['total'] ) {

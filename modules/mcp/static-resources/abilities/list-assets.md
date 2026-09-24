@@ -1,1 +1,3 @@
 Lists images and SVG assets already uploaded to the WordPress Media Library, so you can reference them by attachment `id` when composing pages. Use `type: "video"` to discover uploaded videos referenced by `e-self-hosted-video` / `e-background-video`.
+
+Every response includes `media_library_upload_url` — a direct link to the WordPress Media Library upload screen. Share it as a markdown link whenever you ask the user to upload missing assets. If no matching images, SVGs, or videos are found, ask the user to upload the assets they want to use, share `media_library_upload_url` as a markdown link so they can open it directly, then call this tool again.

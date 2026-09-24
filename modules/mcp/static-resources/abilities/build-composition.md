@@ -91,8 +91,8 @@ Match the widget schema shape:
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`.
-  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
-- **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
+  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, ask the user to upload their images to the Media Library — share the `media_library_upload_url` from `elementor/list-assets` as a markdown link — then re-call `elementor/list-assets` and use the returned attachment `id`.
+- **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one via the `media_library_upload_url` from `elementor/list-assets` (share it as a markdown link), otherwise omit the icon or use a text label — never fabricate an id.
 - **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` with `type: "video"`): `{ "id": 123 }`
   - External URL: `{ "url": "https://example.com/clip.mp4" }`
@@ -197,7 +197,7 @@ Attach element interactions via the `interactions` parameter — a record mappin
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
-- SVG widgets require an uploaded attachment: discover one via `elementor/list-assets` with `type: "svg"` and reference it by `id`. External URLs on `e-svg` render an empty div. When none exists, ask the user to upload, otherwise omit the icon or use a text label.
+- SVG widgets require an uploaded attachment: discover one via `elementor/list-assets` with `type: "svg"` and reference it by `id`. External URLs on `e-svg` render an empty div. When none exists, ask the user to upload via the `media_library_upload_url` returned by `elementor/list-assets` (share it as a markdown link), otherwise omit the icon or use a text label.
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
 # MODE
