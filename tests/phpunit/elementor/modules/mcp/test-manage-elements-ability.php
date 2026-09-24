@@ -536,14 +536,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 	}
 
-	public function test_update__null_setting_on_required_prop_returns_invalid_settings_error() {
+	public function test_update__null_setting_on_required_prop_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
-
-		$node_before = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertNotNull( $node_before );
-		$title_before = $node_before['settings']['title'] ?? null;
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -559,12 +555,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
+		$this->assertStringContainsString( 'tag', implode( ' ', $result['results'][0]['warnings'] ?? [] ) );
 
 		$node_after = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( $title_before, $node_after['settings']['title'] ?? null );
+		$this->assertArrayNotHasKey( 'title', $node_after['settings'] ?? [] );
+		$this->assertNotSame( 'h99', $node_after['settings']['tag']['value'] ?? null );
 	}
 
 	public function test_update__null_unknown_setting_warns_without_clearing() {
@@ -592,7 +589,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $warnings[0] );
 	}
 
-	public function test_update__rejects_unknown_class_label_as_per_op_error() {
+	public function test_update__unknown_class_label_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -608,9 +605,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_unknown_global_class', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$warning = $result['results'][0]['warning_details'][0] ?? [];
+		$this->assertSame( 'unknown_global_class', $warning['code'] ?? null );
+		$this->assertSame( $heading_id, $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
 	}
 
 	public function test_update__applies_plain_dynamic_title() {
@@ -655,7 +654,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( '120', $node['settings']['title']['value']['settings']['length']['value'] ?? null );
 	}
 
-	public function test_update__rejects_invalid_title_shape_as_per_op_error() {
+	public function test_update__invalid_title_shape_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -671,9 +670,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
+		$this->assertSame( $heading_id, $result['results'][0]['warning_details'][0]['config_id'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotSame(
+			[ 'content' => 'not-a-valid-escaped-html-shape', 'children' => [] ],
+			$node['settings']['title']['value'] ?? null
+		);
 	}
 
 	public function test_update__style_merges_into_existing_local_style_from_build_composition() {
@@ -1274,7 +1279,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertTrue( empty( $items ) );
 	}
 
-	public function test_bulk__failed_interactions_update_does_not_persist_settings() {
+	public function test_bulk__invalid_interactions_update_still_persists_settings() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -1305,13 +1310,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 
 		$this->assertIsArray( $result );
-		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['status'] );
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
-		$this->assertSame( 'error', $result['results'][1]['status'] );
-		$this->assertSame( 'elementor_invalid_interactions', $result['results'][1]['code'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertSame( 'interaction_invalid', $result['results'][1]['warning_details'][0]['code'] ?? null );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Saved', $node['settings']['title']['value'] );
+		$this->assertSame( 'Leaked', $node['settings']['title']['value'] );
 	}
 
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
