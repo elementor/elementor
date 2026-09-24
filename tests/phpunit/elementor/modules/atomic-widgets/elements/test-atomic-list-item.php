@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item\Atomic_List_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Content\Atomic_List_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
@@ -15,6 +16,12 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		$this->assertNotNull( $element_type, "Element type {$type} is not registered." );
 
 		return $element_type->get_config();
+	}
+
+	public function test_list_element_is_registered(): void {
+		$config = $this->get_config( Atomic_List::get_element_type() );
+
+		$this->assertIsArray( $config );
 	}
 
 	public function test_get_data_for_save__preserves_sanitized_editor_settings_label(): void {

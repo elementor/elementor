@@ -1,6 +1,6 @@
 === Elementor Website Builder - more than just a page builder ===
 Contributors: elemntor
-Tags: page builder, editor, landing page, drag-and-drop, elementor,
+Tags: ai, drag-and-drop, editor, landing page, mcp
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -356,42 +356,30 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
-= 4.2.4 - 2026-08-31 =
+= 4.3.0 - 2026-09-22 =
 
-* Tweak: Updated WordPress compatibility to version 7.1
-* Fix: Improved code security enforcement in query handling
-
-= 4.2.3 - 2026-08-19 =
-
-* Fix: Improved code security enforcement in template handling
-* Fix: Invalid style properties prevent pages from being published
-
-= 4.2.2 - 2026-08-06 =
-
-* Fix: Editor top bar integrations may not appear in non-English languages
-
-= 4.2.1 - 2026-07-28 =
-
-* Fix: Improved code security enforcement in template handling
-* Fix: Improved code security enforcement in document handling
-* Fix: Invalid border-radius values in Global Classes prevent class changes - Atomic Editor
-* Fix: Atomic Variables synced from Atomic Classes are missing after site import - Atomic Editor
-
-= 4.2.0 - 2026-07-20 =
-
-* New: Introducing Grid for building advanced row and column layouts - Atomic Editor
-* Tweak: Improved Angie layout, composition, and design system creation from prompts and images - Atomic Editor
-* Tweak: Added dynamic tag support for AI-generated element properties
-* Fix: VideoPress URLs do not display on the frontend when used in Background Video and Lightbox dynamic tags ([#24467](https://github.com/elementor/elementor/issues/24467))
-* Fix: Grid containers can cause slower Editor performance on complex pages
-* Fix: Filters do not work as expected in Website Templates
-* Fix: The Save as Template button is unreachable when the modal does not fit the browser viewport
-* Fix: AI-related Editor features show a console error when required services are not available yet
-* Fix: Missing classes can affect the editing panel when they are still applied to elements - Atomic Editor
-* Fix: Unsaved Class changes are not detected when switching between Design System tabs - Atomic Editor
-* Fix: Custom Font names with spaces or special characters do not work in the Font Family control - Atomic Editor
-* Fix: The drop indicator is missing when dragging Atomic elements inside row Containers - Atomic Editor
-* Fix: Global Classes can be shared across multiple Kits instead of being separated per Kit - Atomic Editor
-* Fix: Angie cannot update text in some Atomic elements - Atomic Editor
+* New: Introducing Elementor MCP - enabling compatible AI tools to build pages, edit elements, and work with your design system
+* New: Introducing a dedicated Elementor MCP page for connecting external AI tools to your site
+* New: Introducing Background Video for placing locally uploaded videos behind section content, with built-in play and pause controls
+* New: Introducing Accordion for building expandable and collapsible content sections with nested content
+* New: Introducing Default Styles for setting and managing styles for supported HTML tags globally
+* Tweak: Added 'nav' and 'main' HTML tag options to Flexbox and Div Block elements ([#33682](https://github.com/elementor/elementor/issues/33682))
+* Tweak: Removed the WordPress section from the widget panel
+* Tweak: Added text decoration controls to the inline text editing toolbar in Heading and Paragraph elements
+* Tweak: Improved element duplication to prevent duplicate IDs
+* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
+* Tweak: Updated Grid layout presets to use Atomic Grid
+* Tweak: Improved nested elements by auto-wrapping them in a Flexbox Container
+* Tweak: Improved the Elementor switch mode button text in the WordPress editor
+* Tweak: Improved Atomic element references when importing kits
+* Fix: Components may not load correctly on pages with multiple or nested Components ([#36647](https://github.com/elementor/elementor/issues/36647))
+* Fix: Divider is not visible inside row containers
+* Fix: Select field names and values are incorrect in submitted forms in Form element
+* Fix: Duplicate IDs may be generated in Tabs element
+* Fix: Draft classes are deleted when importing a Kit
+* Fix: Incorrect ARIA semantics in Floating Button
+* Fix: Converting a local class to a Global Class may not work
+* Fix: Parent Container handles are missing in the Editor for Single template documents
+* Fix: "Edit with Elementor" button incorrectly appears on the Shop archive page
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

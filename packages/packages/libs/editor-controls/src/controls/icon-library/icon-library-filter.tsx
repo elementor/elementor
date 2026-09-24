@@ -20,6 +20,7 @@ import {
 	type FontAwesome7Library,
 	type FontAwesome7LibraryFilter,
 } from './font-awesome-7-catalog';
+import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
@@ -87,7 +88,13 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 
 	return (
 		<>
-			<Tooltip title={ __( 'Filter by library', 'elementor' ) } placement="top">
+			<Tooltip
+				title={ __( 'Filter by library', 'elementor' ) }
+				placement="top"
+				enterDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
+				enterNextDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
+				disableInteractive
+			>
 				<ToggleButton
 					aria-label={ filterButtonLabel }
 					value="filter"
@@ -154,6 +161,6 @@ const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, sele
 		<Typography variant="caption" sx={ { flex: 1 } }>
 			{ label }
 		</Typography>
-		{ selected ? <CheckIcon fontSize="tiny" /> : null }
+		{ selected ? <CheckIcon fontSize="tiny" aria-hidden="true" /> : null }
 	</Stack>
 );

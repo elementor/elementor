@@ -68,13 +68,12 @@ class Test_Module extends Elementor_Test_Base {
 
 		$robots_handler = new \ReflectionProperty( Module::class, 'robots_handler' );
 		$robots_handler->setAccessible( true );
-		$robots = $robots_handler->getValue( $module );
 
 		// Assert
 		$this->assertFalse( Module::is_active() );
+		$this->assertFalse( $robots_handler->isInitialized( $module ) );
 		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_txt' ] ) );
 		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_full_txt' ] ) );
-		$this->assertFalse( has_filter( 'robots_txt', [ $robots, 'add_rules' ] ) );
 		$this->assertFalse( $module->get_component( 'markdown_endpoint' ) );
 	}
 

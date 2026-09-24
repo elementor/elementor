@@ -101,6 +101,42 @@ describe( 'saveGlobalClasses', () => {
 		} );
 	} );
 
+	it( 'should mark a preview-only lazily loaded class as added when publishing', async () => {
+		// Arrange
+		const previewOnlyClass = createMockStyleDefinition( { id: 'preview-only' } );
+		const order = [ previewOnlyClass.id ];
+
+		dispatch(
+			slice.actions.load( {
+				frontend: { items: {}, order: [] },
+				preview: { items: {}, order },
+				classLabels: classLabelsFor( order, { [ previewOnlyClass.id ]: previewOnlyClass } ),
+			} )
+		);
+
+		dispatch(
+			slice.actions.mergeExistingClasses( {
+				preview: { [ previewOnlyClass.id ]: previewOnlyClass },
+				frontend: {},
+			} )
+		);
+
+		// Act
+		await saveGlobalClasses( { context: 'frontend' } );
+
+		// Assert
+		expect( apiClient.publish ).toHaveBeenCalledWith( {
+			items: { [ previewOnlyClass.id ]: previewOnlyClass },
+			order,
+			changes: {
+				added: [ previewOnlyClass.id ],
+				deleted: [],
+				modified: [],
+				order: true,
+			},
+		} );
+	} );
+
 	it( 'should correctly detect modified classes', async () => {
 		// Arrange
 		const originalClass = createMockStyleDefinition( { id: 'class-1', label: 'Original' } );

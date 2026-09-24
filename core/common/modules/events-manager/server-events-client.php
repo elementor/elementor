@@ -21,7 +21,7 @@ class Server_Events_Client {
 			// The SDK's own instance getter is itself a singleton keyed by token - it returns the
 			// existing instance or creates a new one if it doesn't exist yet.
 			$client = Mixpanel::getInstance( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN, [
-				'host' => Module::get_mixpanel_api_host(),
+				'host' => wp_parse_url( Module::get_mixpanel_api_host(), PHP_URL_HOST ),
 				'consumer' => 'wp',
 				'consumers' => [
 					'wp' => Wp_Http_Consumer::class,
