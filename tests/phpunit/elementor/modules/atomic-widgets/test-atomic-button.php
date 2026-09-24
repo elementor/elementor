@@ -1,12 +1,37 @@
 <?php
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class Test_Atomic_Button extends Elementor_Test_Base {
 	use MatchesSnapshots;
+
+	public function test__base_styles_include_white_space_normal(): void {
+		// Arrange.
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Button::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		// Act.
+		$base_styles = $widget_instance->get_base_styles();
+		$base_style_id = Atomic_Button::get_element_type() . '-base';
+		$props = $base_styles[ $base_style_id ]['variants'][0]['props'];
+
+		// Assert.
+		$this->assertArrayHasKey( 'white-space', $props );
+		$this->assertEquals(
+			String_Prop_Type::generate( 'normal' ),
+			$props['white-space']
+		);
+	}
 
 	public function test__render_button(): void {
 		// Arrange.
