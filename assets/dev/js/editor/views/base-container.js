@@ -1,4 +1,5 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { cloneElementTree } from 'elementor/packages/packages/libs/editor-elements/src/sync/clone-element-tree';
 import { isCompoundAtomicType } from 'elementor-editor/utils/element-types';
 
 /**
@@ -285,21 +286,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	cloneItem( item ) {
-		const self = this;
-
-		if ( item instanceof Backbone.Model ) {
-			return item.clone();
-		}
-
-		item.id = elementorCommon.helpers.getUniqueId();
-
-		item.settings._element_id = '';
-
-		item.elements.forEach( function( childItem, index ) {
-			item.elements[ index ] = self.cloneItem( childItem );
-		} );
-
-		return item;
+		return cloneElementTree( item );
 	},
 
 	lookup() {

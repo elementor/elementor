@@ -40,7 +40,7 @@ export function findModelInDocument( id: string ): BackboneModel | null {
 export function addModelToParent(
 	parentId: string,
 	childData: V1ElementModelProps,
-	options?: { at?: number }
+	options?: { at?: number; clone?: boolean }
 ): boolean {
 	return getDocumentUtils()?.addModelToParent?.( parentId, childData, options ) ?? false;
 }
