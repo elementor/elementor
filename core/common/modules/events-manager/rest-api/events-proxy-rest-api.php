@@ -16,7 +16,7 @@ class Events_Proxy_REST_API {
 	const REQUEST_TIMEOUT = 3;
 	const MAX_BODY_BYTES = 10 * MB_IN_BYTES;
 
-	const FORWARDED_REQUEST_HEADERS = [ 'content-type', 'authorization', 'content-encoding' ];
+	const FORWARDED_REQUEST_HEADERS = [ 'content-type', 'content-encoding' ];
 
 	const RAW_RESPONSE_HEADER = 'X-Elementor-Raw-Proxy-Response';
 
@@ -167,6 +167,12 @@ class Events_Proxy_REST_API {
 			}
 		}
 
+		$mixpanel_authorization = $this->build_mixpanel_authorization_header();
+
+		if ( '' !== $mixpanel_authorization ) {
+			$headers['authorization'] = $mixpanel_authorization;
+		}
+
 		$remote_address = Utils::get_super_global_value( $_SERVER, 'REMOTE_ADDR' );
 		$host = Utils::get_super_global_value( $_SERVER, 'HTTP_HOST' );
 
@@ -179,6 +185,16 @@ class Events_Proxy_REST_API {
 		}
 
 		return $headers;
+	}
+
+	private function build_mixpanel_authorization_header(): string {
+		$token = ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN;
+
+		if ( empty( $token ) ) {
+			return '';
+		}
+
+		return 'Basic ' . base64_encode( $token . ':' );
 	}
 
 	private function build_raw_response( string $body, int $status, string $content_type = '' ) {
