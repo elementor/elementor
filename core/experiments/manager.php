@@ -247,24 +247,21 @@ class Manager extends Base_Object {
 	/**
 	 * Is Feature Active
 	 *
-	 * Unregistered feature names are treated as permanently active for backward
-	 * compatibility when experiments are removed from Core. Callers must not rely
-	 * on a false return value to detect typos or unknown experiment names.
-	 *
 	 * @since 3.1.0
 	 * @access public
 	 *
 	 * @param string $feature_name       Experiment feature name.
 	 * @param bool   $check_dependencies When true, also require dependency experiments to be active.
-	 *                                   Missing or hidden dependencies are treated as active.
+	 *                                   Missing or hidden dependencies are treated as active for
+	 *                                   backward compatibility when experiments are removed from Core.
 	 *
-	 * @return bool
+	 * @return bool False when the feature is not registered.
 	 */
 	public function is_feature_active( $feature_name, $check_dependencies = false ) {
 		$feature = $this->get_features( $feature_name );
 
 		if ( ! $feature ) {
-			return true;
+			return false;
 		}
 
 		if ( self::STATE_ACTIVE !== $this->get_feature_actual_state( $feature ) ) {

@@ -379,19 +379,19 @@ class Test_Manager extends Elementor_Test_Base {
 		// Arrange.
 		$this->add_test_feature( [
 			'name' => 'regular-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		] );
 
 		$this->add_test_feature( [
 			'name' => 'hidden-dependency',
-			'state' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 		] );
 
 		// Act.
 		$dependant = $this->add_test_feature( [
 			'name' => 'dependant',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'regular-dependency',
 				'hidden-dependency',
@@ -400,7 +400,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertNotEmpty( $dependant );
-		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $dependant['state'] );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant', true ) );
 	}
 
 	public function test_get_features() {
@@ -558,13 +558,12 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$is_non_exist_active = $experiments->is_feature_active( 'not_exists_feature' );
 
-		$this->assertTrue( $is_non_exist_active );
+		$this->assertFalse( $is_non_exist_active );
 	}
 
 	public function test_is_feature_active__check_dependencies_treats_missing_and_hidden_as_active() {
 		$this->add_test_feature( [
 			'name' => 'dependant-missing-dep',
-			'state' => Experiments_Manager::STATE_ACTIVE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'removed-experiment',
@@ -573,13 +572,12 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$this->add_test_feature( [
 			'name' => 'hidden-dependency',
-			'state' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 		] );
 
 		$this->add_test_feature( [
 			'name' => 'dependant-hidden-dep',
-			'state' => Experiments_Manager::STATE_ACTIVE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'hidden-dependency',
