@@ -68,10 +68,24 @@ class Stylesheet_Manager extends Base_File {
 		$typography_entries = Classes_Provider::get_synced_typography_css_entries();
 
 		foreach ( $typography_entries as $device => $entries ) {
-			$css = ':root { ' . implode( ' ', $entries ) . ' }';
-			$device_key = ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device ) ? '' : $device;
+			$css = implode( ' ', $entries );
 
-			$stylesheet->add_raw_css( $css, $device_key );
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device ) {
+				$stylesheet->add_rules( ':root', $css );
+				continue;
+			}
+
+			if ( ! isset( $breakpoints[ $device ] ) ) {
+				continue;
+			}
+
+			$stylesheet->add_rules(
+				':root',
+				$css,
+				[
+					$breakpoints[ $device ]->get_direction() => $device,
+				]
+			);
 		}
 
 		return (string) $stylesheet;
