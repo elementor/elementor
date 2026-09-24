@@ -22,6 +22,12 @@ return [
 				'color' => [
 					'default' => Style_Control_Target::control( 'text_color', 'color' ),
 				],
+				'font-size' => [
+					'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ),
+				],
+				'line-height' => [
+					'default' => Style_Control_Target::typography( 'typography', 'line_height', 'line_height', true ),
+				],
 			],
 		],
 	],

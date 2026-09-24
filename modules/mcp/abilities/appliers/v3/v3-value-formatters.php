@@ -26,6 +26,7 @@ class V3_Value_Formatters {
 
 			case 'dimension':
 			case 'slider':
+			case 'line_height':
 				return self::format_dimension( $value );
 
 			case 'sides':
@@ -62,6 +63,10 @@ class V3_Value_Formatters {
 		}
 
 		$unit = isset( $value['unit'] ) ? (string) $value['unit'] : '';
+
+		if ( V3_Value_Resolvers::CUSTOM_UNIT === $unit ) {
+			$unit = '';
+		}
 
 		return self::format_size( $value['size'] ) . $unit;
 	}

@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   "<css-property>"           for the `default` state
  *   "<css-property>@<state>"   for pseudo-state overrides (hover|focus|active)
  *
- * Only simple single-destination descriptors (see {@see Style_Control_Target::KIND_SIMPLE})
- * are emitted in PR 3. Typography, border, and box-shadow descriptors are added by later PRs
- * and are silently skipped here.
+ * Simple and typography-field descriptors are emitted; the primary destination becomes the
+ * override `setting` and typography fields carry their group toggle as `companion_settings`.
+ * Border, background, and box-shadow descriptors are added by later PRs and are skipped here.
  */
 class V3_Map_Overrides_Builder {
 
@@ -70,7 +70,7 @@ class V3_Map_Overrides_Builder {
 			return null;
 		}
 
-		if ( ( $descriptor['kind'] ?? null ) !== Style_Control_Target::KIND_SIMPLE ) {
+		if ( ! in_array( $descriptor['kind'] ?? null, [ Style_Control_Target::KIND_SIMPLE, Style_Control_Target::KIND_TYPOGRAPHY ], true ) ) {
 			return null;
 		}
 
@@ -89,6 +89,10 @@ class V3_Map_Overrides_Builder {
 
 		if ( ! empty( $descriptor['responsive'] ) ) {
 			$override['responsive'] = true;
+		}
+
+		if ( ! empty( $descriptor['companion_settings'] ) && is_array( $descriptor['companion_settings'] ) ) {
+			$override['companion_settings'] = $descriptor['companion_settings'];
 		}
 
 		$match_key = self::DEFAULT_STATE === $state

@@ -56,6 +56,10 @@ class V3_Context_Meta {
 		return array_key_exists( $key, $this->controls() );
 	}
 
+	public function is_responsive_control( string $key ): bool {
+		return ! empty( $this->controls()[ $key ]['is_responsive'] );
+	}
+
 	public function match_key( string $property, ?string $state ): string {
 		return null === $state ? $property : $property . '@' . $state;
 	}

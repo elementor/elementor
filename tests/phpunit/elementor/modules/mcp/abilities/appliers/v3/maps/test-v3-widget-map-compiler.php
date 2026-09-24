@@ -175,4 +175,89 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'incompatible_dynamic_control', $this->reason( $result ) );
 	}
+
+	public function test_compile__accepts_typography_field_against_group_controls() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties']['font-size']['default'] = Style_Control_Target::typography( 'typography', 'font_size', 'slider', true );
+
+		// Act.
+		$result = $compiler->compile( $map, $this->typography_controls(), 'heading' );
+
+		// Assert.
+		$this->assertIsArray( $result );
+	}
+
+	public function test_compile__errors_when_typography_toggle_is_missing() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties']['font-size']['default'] = Style_Control_Target::typography( 'typography', 'font_size', 'slider', true );
+		$controls = $this->typography_controls();
+		unset( $controls['typography_typography'] );
+
+		// Act.
+		$result = $compiler->compile( $map, $controls, 'heading' );
+
+		// Assert.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'missing_control', $this->reason( $result ) );
+	}
+
+	public function test_compile__errors_when_sides_resolver_targets_non_dimensions_control() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties']['padding']['default'] = Style_Control_Target::control( 'title_color', 'sides' );
+
+		// Act.
+		$result = $compiler->compile( $map, $this->controls(), 'heading' );
+
+		// Assert.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'incompatible_resolver', $this->reason( $result ) );
+	}
+
+	public function test_compile__errors_when_responsive_descriptor_has_no_responsive_variants() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties']['padding']['default'] = Style_Control_Target::control( 'padding', 'sides', true );
+		$controls = array_merge( $this->controls(), [ 'padding' => [ 'type' => 'dimensions' ] ] );
+
+		// Act.
+		$result = $compiler->compile( $map, $controls, 'heading' );
+
+		// Assert.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'incompatible_responsive_control', $this->reason( $result ) );
+	}
+
+	public function test_compile__accepts_responsive_descriptor_against_non_duplicated_responsive_control() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties']['padding']['default'] = Style_Control_Target::control( 'padding', 'sides', true );
+		$controls = array_merge( $this->controls(), [
+			'padding' => [
+				'type' => 'dimensions',
+				'is_responsive' => true,
+			],
+		] );
+
+		// Act.
+		$result = $compiler->compile( $map, $controls, 'heading' );
+
+		// Assert.
+		$this->assertIsArray( $result );
+	}
+
+	private function typography_controls(): array {
+		return array_merge( $this->controls(), [
+			'typography_typography' => [ 'type' => 'popover_toggle' ],
+			'typography_font_size' => [ 'type' => 'slider' ],
+			'typography_font_size_mobile' => [ 'type' => 'slider' ],
+		] );
+	}
 }

@@ -75,13 +75,13 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 			return false;
 		}
 
-		$patch = [ $key => $resolved ];
+		$companion_settings = $override['companion_settings'] ?? [];
 
-		if ( ! $this->accept_map_patch( $ctx, $override, $rule, $patch ) ) {
+		if ( ! $this->accept_map_patch( $ctx, $override, $rule, [ $setting => $resolved ] + $companion_settings ) ) {
 			return true;
 		}
 
-		$ctx->merge_patch( $patch );
+		$ctx->merge_patch( [ $key => $resolved ] + $companion_settings );
 
 		return true;
 	}

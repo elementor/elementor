@@ -40,6 +40,13 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertFalse( $four['isLinked'] );
 	}
 
+	public function test_resolve_line_height__maps_unitless_multiplier_to_custom_unit() {
+		// Arrange / Act / Assert.
+		$this->assertSame( [ 'unit' => 'custom', 'size' => 1.5 ], V3_Value_Resolvers::resolve( 'line_height', '1.5' ) );
+		$this->assertSame( [ 'unit' => 'em', 'size' => 1.2 ], V3_Value_Resolvers::resolve( 'line_height', '1.2em' ) );
+		$this->assertNull( V3_Value_Resolvers::resolve( 'line_height', 'normal' ) );
+	}
+
 	public function test_resolve_color__passthrough() {
 		$this->assertSame( '#ff0000', V3_Value_Resolvers::resolve_color( '  #ff0000  ' ) );
 		$this->assertSame( 'rgba(0,0,0,0.5)', V3_Value_Resolvers::resolve_color( 'rgba(0,0,0,0.5)' ) );

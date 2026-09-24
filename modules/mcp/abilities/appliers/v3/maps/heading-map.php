@@ -29,6 +29,15 @@ return [
 					'default' => Style_Control_Target::control( 'title_color', 'color' ),
 					'hover' => Style_Control_Target::control( 'title_hover_color', 'color' ),
 				],
+				'font-size' => [
+					'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ),
+				],
+				'line-height' => [
+					'default' => Style_Control_Target::typography( 'typography', 'line_height', 'line_height', true ),
+				],
+				'font-weight' => [
+					'default' => Style_Control_Target::typography( 'typography', 'font_weight', 'text' ),
+				],
 			],
 		],
 	],

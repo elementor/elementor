@@ -27,6 +27,15 @@ return [
 				'background-color' => [
 					'default' => Style_Control_Target::control( 'background_color', 'color' ),
 				],
+				'font-size' => [
+					'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ),
+				],
+				'font-weight' => [
+					'default' => Style_Control_Target::typography( 'typography', 'font_weight', 'text' ),
+				],
+				'padding' => [
+					'default' => Style_Control_Target::control( 'text_padding', 'sides', true ),
+				],
 			],
 		],
 	],

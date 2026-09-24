@@ -25,6 +25,11 @@ class Test_V3_Value_Formatters extends TestCase {
 		$this->assertSame( '20', V3_Value_Formatters::format( 'dimension', [ 'size' => 20 ] ) );
 	}
 
+	public function test_format_line_height_drops_custom_unit() {
+		$this->assertSame( '1.5', V3_Value_Formatters::format( 'line_height', [ 'size' => 1.5, 'unit' => 'custom' ] ) );
+		$this->assertSame( '1.2em', V3_Value_Formatters::format( 'line_height', [ 'size' => 1.2, 'unit' => 'em' ] ) );
+	}
+
 	public function test_format_dimension_returns_null_for_empty_size() {
 		$this->assertNull( V3_Value_Formatters::format( 'dimension', [ 'size' => '', 'unit' => 'px' ] ) );
 		$this->assertNull( V3_Value_Formatters::format( 'dimension', null ) );

@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class V3_Value_Resolvers {
 
 	const DEFAULT_UNIT = 'px';
+	const CUSTOM_UNIT = 'custom';
 
 	/**
 	 * @return array{unit: string, size: float}|null
@@ -27,6 +28,25 @@ class V3_Value_Resolvers {
 			'unit' => $parsed['unit'],
 			'size' => $parsed['size'],
 		];
+	}
+
+	/**
+	 * Unitless line-height is a multiplier, not pixels; Elementor stores it under the
+	 * `custom` unit, which renders the size with no unit suffix.
+	 *
+	 * @return array{unit: string, size: float}|null
+	 */
+	public static function resolve_line_height( string $css_value ): ?array {
+		$value = trim( $css_value );
+
+		if ( is_numeric( $value ) ) {
+			return [
+				'unit' => self::CUSTOM_UNIT,
+				'size' => (float) $value,
+			];
+		}
+
+		return self::resolve_dimension( $value );
 	}
 
 	/**
@@ -290,6 +310,8 @@ class V3_Value_Resolvers {
 			case 'slider':
 				$dimension = self::resolve_dimension( $css_value );
 				return null === $dimension ? null : $dimension;
+			case 'line_height':
+				return self::resolve_line_height( $css_value );
 			case 'text':
 				return trim( $css_value );
 			default:
