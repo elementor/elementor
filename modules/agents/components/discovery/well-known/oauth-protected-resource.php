@@ -54,9 +54,6 @@ class Oauth_Protected_Resource extends Abstract_Well_Known_Endpoint {
 			// real token endpoint in Phase 1.1).
 			'authorization_servers'                 => [ $home ],
 
-			// Scopes an agent may request.
-			'scopes_supported'                      => $this->get_scopes(),
-
 			// Only bearer tokens are accepted at the HTTP transport layer.
 			'bearer_methods_supported'              => [ 'header' ],
 
@@ -66,6 +63,11 @@ class Oauth_Protected_Resource extends Abstract_Well_Known_Endpoint {
 			// Signing algorithms — populated once JWT tokens are issued (Phase 1.1).
 			'resource_signing_alg_values_supported' => [],
 		];
+
+		$scopes = $this->get_scopes();
+		if ( ! empty( $scopes ) ) {
+			$document['scopes_supported'] = $scopes;
+		}
 
 		/**
 		 * Filter the OAuth protected resource metadata.
@@ -77,13 +79,14 @@ class Oauth_Protected_Resource extends Abstract_Well_Known_Endpoint {
 	}
 
 	private function get_scopes(): array {
-		$scopes = [ 'elementor_agent_read' ];
-
 		/**
 		 * Filter the scopes listed in the protected resource metadata.
 		 *
+		 * Empty by default — no OAuth scopes are defined until the OAuth
+		 * module (Phase 1.1) registers real ones.
+		 *
 		 * @param string[] $scopes Current scope list.
 		 */
-		return (array) apply_filters( 'elementor/agents/oauth/scopes', $scopes );
+		return (array) apply_filters( 'elementor/agents/oauth/scopes', [] );
 	}
 }

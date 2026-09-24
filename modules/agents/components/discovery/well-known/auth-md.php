@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Auth.md — /.well-known/auth.md
  *
  * Human- and machine-readable Markdown describing how agents authenticate:
- * which methods are accepted, how to obtain credentials, and available scopes.
+ * which methods are accepted and how to obtain credentials.
  *
  * MCP endpoint, server card, and protected-resource URLs are included only
  * when `elementor/agents/link_headers/emit_mcp_card` is true, matching
@@ -47,7 +47,6 @@ class Auth_Md extends Abstract_Well_Known_Endpoint {
 		$metadata      = $this->metadata_lines( $home, $advertise_mcp );
 		$mcp_section   = $advertise_mcp ? $this->mcp_endpoint_section() : '';
 		$usage_target  = $advertise_mcp ? ' with every MCP request' : '';
-		$scopes        = $advertise_mcp ? $this->scopes_section() : '';
 		$audit_log     = $advertise_mcp ? $this->audit_log_section() : '';
 
 		/* phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
@@ -64,15 +63,18 @@ class Auth_Md extends Abstract_Well_Known_Endpoint {
 {$oauth_section}### Application Passwords (active)
 
 WordPress Application Passwords provide per-agent, individually-revocable
-credentials without requiring a full OAuth setup.
+credentials without requiring a full OAuth setup. They are available on
+WordPress 5.6 and later, over HTTPS.
 
 **Steps to obtain credentials:**
 
-1. Create a WordPress account and assign the `elementor_agent` role.
-2. Visit `/wp-admin/profile.php` → *Application Passwords* → *Add New*.
-3. Name the password after your agent (e.g. `my-agent-prod`) — this name
-   appears in the request log for attribution.
-4. Copy the generated password (shown once).
+1. Ask the site owner to create a dedicated WordPress user for your agent,
+   with the lowest role that covers what you need to read.
+2. In *Users → Profile* (or *Users → Edit User* for another account), open
+   *Application Passwords* → *Add New*.
+3. Name the credential after your agent (e.g. `my-agent-prod`). WordPress shows
+   that name, the creation date, and the last-used date and IP on the same screen.
+4. Copy the generated password — it is shown once and cannot be retrieved later.
 
 **Usage:**
 
@@ -82,14 +84,10 @@ Send HTTP Basic authentication{$usage_target}:
 Authorization: Basic base64(username:application_password)
 ```
 
-**Required capability:** `elementor_agent_read`
-
-{$scopes}---
-
-## Rate Limits
-
-Rate limits apply per Application Password token. Excessive requests receive
-HTTP 429. Limits are configurable by the site owner.
+**Permissions:** An application password grants exactly the capabilities of the
+WordPress user it belongs to. There is no separate Elementor role or scope to
+assign. The discovery documents and Markdown page variants on this site are
+public and require no credentials.
 {$audit_log}
 MD;
 		/* phpcs:enable */
@@ -138,19 +136,6 @@ MD;
 | HTTPS     | {$is_ssl} |
 
 ---
-
-MD;
-	}
-
-	private function scopes_section(): string {
-		return <<<'MD'
----
-
-## Scopes
-
-| Scope                  | Description |
-|------------------------|-------------|
-| `elementor_agent_read` | Read-only access to site content via MCP tools. |
 
 MD;
 	}

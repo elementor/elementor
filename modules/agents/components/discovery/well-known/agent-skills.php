@@ -10,8 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Agent Skills Index — /.well-known/agent-skills
  *
  * Lists the MCP tools (abilities) this site exposes to agents, including input
- * schemas and required scopes. Generated from the Abilities API registry so it
- * stays accurate as abilities are added or removed.
+ * schemas and, once the OAuth module defines them, required scopes. Generated
+ * from the Abilities API registry so it stays accurate as abilities are added
+ * or removed.
  *
  * Applicable when the Abilities API (WP 6.9+) and the agents MCP server are
  * both active. Returns false (→ 404) on WP < 6.9 or when MCP is disabled.
@@ -60,11 +61,15 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 			'mcp_endpoint'   => rest_url( 'elementor/agents-mcp' ),
 			'auth'           => [
 				'documentation' => $home . '.well-known/auth.md',
-				'scopes'        => $this->get_scopes(),
 			],
 			'skills'         => $skills,
 			'total'          => count( $skills ),
 		];
+
+		$scopes = $this->get_scopes();
+		if ( ! empty( $scopes ) ) {
+			$document['auth']['scopes'] = $scopes;
+		}
 
 		/**
 		 * @param array  $document The skills document.
@@ -82,11 +87,10 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 
 		foreach ( $abilities as $ability ) {
 			$skill = [
-				'id'             => $ability->get_id(),
-				'name'           => $ability->get_name(),
-				'description'    => $ability->get_description(),
-				'required_scope' => 'elementor_agent_read',
-				'annotations'    => $ability->get_annotations(),
+				'id'          => $ability->get_id(),
+				'name'        => $ability->get_name(),
+				'description' => $ability->get_description(),
+				'annotations' => $ability->get_annotations(),
 			];
 
 			$input_schema = $ability->get_input_schema();
@@ -105,7 +109,12 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 	}
 
 	private function get_scopes(): array {
-		$scopes = [ 'elementor_agent_read' ];
-		return (array) apply_filters( 'elementor/agents/oauth/scopes', $scopes );
+		/**
+		 * Empty by default — no OAuth scopes are defined until the OAuth
+		 * module (Phase 1.1) registers real ones.
+		 *
+		 * @see Oauth_Protected_Resource::get_scopes() — same filter.
+		 */
+		return (array) apply_filters( 'elementor/agents/oauth/scopes', [] );
 	}
 }

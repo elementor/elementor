@@ -67,10 +67,14 @@ class Oauth_Authorization_Server extends Abstract_Well_Known_Endpoint {
 			'grant_types_supported'                 => [ 'authorization_code' ],
 			'response_types_supported'              => [ 'code' ],
 			'code_challenge_methods_supported'      => [ 'S256' ], // PKCE required (OAuth 2.1)
-			'scopes_supported'                      => $this->get_scopes(),
 			'service_documentation'                 => $home . '.well-known/auth.md',
 			'dpop_signing_alg_values_supported'     => [], // Phase 2+
 		];
+
+		$scopes = $this->get_scopes();
+		if ( ! empty( $scopes ) ) {
+			$document['scopes_supported'] = $scopes;
+		}
 
 		/**
 		 * @param array  $document The authorization server metadata.
@@ -80,9 +84,12 @@ class Oauth_Authorization_Server extends Abstract_Well_Known_Endpoint {
 	}
 
 	private function get_scopes(): array {
-		$scopes = [ 'elementor_agent_read' ];
-
-		/** @see Oauth_Protected_Resource::get_scopes() — same filter. */
-		return (array) apply_filters( 'elementor/agents/oauth/scopes', $scopes );
+		/**
+		 * Empty by default — no OAuth scopes are defined until the OAuth
+		 * module (Phase 1.1) registers real ones.
+		 *
+		 * @see Oauth_Protected_Resource::get_scopes() — same filter.
+		 */
+		return (array) apply_filters( 'elementor/agents/oauth/scopes', [] );
 	}
 }

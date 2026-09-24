@@ -5,6 +5,8 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
@@ -170,7 +172,6 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '## MCP Endpoint', $content );
 		$this->assertStringNotContainsString( 'elementor/agents-mcp', $content );
 		$this->assertStringNotContainsString( 'with every MCP request', $content );
-		$this->assertStringNotContainsString( '## Scopes', $content );
 		$this->assertStringNotContainsString( '## Audit Log', $content );
 	}
 
@@ -193,7 +194,6 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringContainsString( '## MCP Endpoint', $content );
 		$this->assertStringContainsString( 'elementor/agents-mcp', $content );
 		$this->assertStringContainsString( 'with every MCP request', $content );
-		$this->assertStringContainsString( '## Scopes', $content );
 		$this->assertStringContainsString( '## Audit Log', $content );
 		$this->assertLessThan(
 			strpos( $content, '## Authentication Methods' ),
@@ -213,6 +213,90 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		// Assert
 		$this->assertStringContainsString( '### Application Passwords (active)', $content );
 		$this->assertStringNotContainsString( '### OAuth 2.1 + PKCE (available)', $content );
+	}
+
+	public function test_auth_md__does_not_advertise_undocumented_identifiers() {
+		// Arrange
+		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+		$auth_md = new Auth_Md();
+		$method  = new \ReflectionMethod( Auth_Md::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $auth_md );
+
+		// Cleanup
+		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+
+		// Assert
+		$this->assertStringNotContainsString( 'elementor_agent', $content );
+		$this->assertStringNotContainsString( 'Required capability', $content );
+	}
+
+	public function test_oauth_protected_resource__omits_scopes_supported_by_default() {
+		// Arrange
+		$resource = new Oauth_Protected_Resource();
+		$method   = new \ReflectionMethod( Oauth_Protected_Resource::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $resource );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'scopes_supported', $content );
+	}
+
+	public function test_oauth_protected_resource__includes_scopes_supported_when_filtered() {
+		// Arrange
+		$filter = static function () {
+			return [ 'elementor:read' ];
+		};
+		add_filter( 'elementor/agents/oauth/scopes', $filter );
+		$resource = new Oauth_Protected_Resource();
+		$method   = new \ReflectionMethod( Oauth_Protected_Resource::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $resource );
+
+		// Cleanup
+		remove_filter( 'elementor/agents/oauth/scopes', $filter );
+
+		// Assert
+		$this->assertSame( [ 'elementor:read' ], $content['scopes_supported'] );
+	}
+
+	public function test_oauth_authorization_server__omits_scopes_supported_by_default() {
+		// Arrange
+		$server = new Oauth_Authorization_Server();
+		$method = new \ReflectionMethod( Oauth_Authorization_Server::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $server );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'scopes_supported', $content );
+	}
+
+	public function test_oauth_authorization_server__includes_scopes_supported_when_filtered() {
+		// Arrange
+		$filter = static function () {
+			return [ 'elementor:read' ];
+		};
+		add_filter( 'elementor/agents/oauth/scopes', $filter );
+		$server = new Oauth_Authorization_Server();
+		$method = new \ReflectionMethod( Oauth_Authorization_Server::class, 'generate_content' );
+		$method->setAccessible( true );
+
+		// Act
+		$content = $method->invoke( $server );
+
+		// Cleanup
+		remove_filter( 'elementor/agents/oauth/scopes', $filter );
+
+		// Assert
+		$this->assertSame( [ 'elementor:read' ], $content['scopes_supported'] );
 	}
 
 	public function test_ard_manifest__omits_protected_resource_when_mcp_card_off() {
