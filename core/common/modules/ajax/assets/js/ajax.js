@@ -88,6 +88,7 @@ export default class extends elementorModules.Module {
 			deferred = this.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
+				retry: request.retry,
 				success: ( data ) => this.cache[ cacheKey ] = data,
 				error: request.error ?? ( () => {} ),
 			}, immediately )
@@ -168,6 +169,8 @@ export default class extends elementorModules.Module {
 			this.requests = {};
 		}
 
+		const canRetry = Object.values( requests ).every( ( request ) => request.options.retry );
+
 		Object.entries( requests ).forEach( ( [ id, request ] ) => actions[ id ] = {
 			action: request.action,
 			data: request.options.data,
@@ -177,6 +180,7 @@ export default class extends elementorModules.Module {
 			data: {
 				actions: JSON.stringify( actions ),
 			},
+			retry: canRetry,
 			success: ( data ) => {
 				Object.entries( data.responses ).forEach( ( [ id, response ] ) => {
 					const options = requests[ id ].options;
@@ -253,6 +257,9 @@ export default class extends elementorModules.Module {
 
 	send( action, options ) {
 		const ajaxParams = this.prepareSend( action, options );
+		const retryEnabled = true === ajaxParams.retry;
+
+		delete ajaxParams.retry;
 
 		let attempt = 0;
 		let aborted = false;
@@ -268,25 +275,25 @@ export default class extends elementorModules.Module {
 		const originalSuccess = ajaxParams.success;
 		const originalError = ajaxParams.error;
 
-		if ( originalSuccess ) {
-			ajaxParams.success = ( response ) => {
-				jqXhr = null;
-				settled = true;
+		ajaxParams.success = ( response ) => {
+			jqXhr = null;
+			settled = true;
 
-				deferred.resolve( response );
+			deferred.resolve( response );
 
+			if ( originalSuccess ) {
 				originalSuccess( response );
-			};
-		}
+			}
+		};
 
 		// Hosts rate-limit admin-ajax.php, and a burst of editor requests can draw HTTP
-		// 429 responses that would otherwise leave components unloaded. Only 429 is
-		// retried: the host rejects it before processing, so re-sending is safe even for
-		// the POSTs this module always issues; a 5xx may follow a partial write.
+		// 429 responses that would otherwise leave components unloaded. Retry only
+		// explicitly opted-in requests, since a batch may contain write actions; a 5xx
+		// may follow a partial write and is never retried.
 		ajaxParams.error = ( errorJqXHR, textStatus, errorThrown ) => {
 			jqXhr = null;
 
-			if ( aborted || 'abort' === textStatus || 429 !== errorJqXHR.status || attempt >= MAX_RETRIES ) {
+			if ( aborted || 'abort' === textStatus || ! retryEnabled || 429 !== errorJqXHR.status || attempt >= MAX_RETRIES ) {
 				settled = true;
 
 				deferred.reject( errorJqXHR, textStatus, errorThrown );
@@ -325,7 +332,9 @@ export default class extends elementorModules.Module {
 				}
 			}
 
-			return RETRY_BASE_DELAY_MS * Math.pow( 2, attempt - 1 );
+			const backoffDelay = RETRY_BASE_DELAY_MS * Math.pow( 2, attempt - 1 );
+
+			return backoffDelay * ( 1 + ( Math.random() * 0.2 ) );
 		}
 
 		jqXhr = jQuery.ajax( ajaxParams );

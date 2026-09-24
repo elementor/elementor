@@ -187,6 +187,7 @@ describe( 'Ajax HTTP 429 retry', () => {
 	beforeEach( () => {
 		jest.resetModules();
 		jest.useFakeTimers();
+		jest.spyOn( Math, 'random' ).mockReturnValue( 0 );
 
 		sentRequests = [];
 		sentXhrs = [];
@@ -242,7 +243,7 @@ describe( 'Ajax HTTP 429 retry', () => {
 	} );
 
 	const triggerBatchedLoad = () => {
-		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 } };
+		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 }, retry: true };
 
 		const first = settleDeferred( ajax.load( { ...request } ) );
 		const second = settleDeferred( ajax.load( { ...request } ) );
@@ -276,14 +277,16 @@ describe( 'Ajax HTTP 429 retry', () => {
 		flushBatch();
 
 		// Act: first attempt returns 429 telling us to wait 2s.
+		Math.random.mockReturnValue( 0.99 );
 		failSendingRequest( 429, '2' );
 
 		// The retry must not have fired before the header delay elapses.
-		jest.advanceTimersByTime( 1000 );
+		jest.advanceTimersByTime( 1999 );
 		expect( sentRequests ).toHaveLength( 1 );
 
-		// After the 2s delay the retry fires and succeeds.
-		jest.advanceTimersByTime( 1000 );
+		// After the 2s delay the retry fires and succeeds without jitter.
+		jest.advanceTimersByTime( 1 );
+		expect( sentRequests ).toHaveLength( 2 );
 		respondToLastRequest( { 'document-1': { success: true, data: { id: 1 } } } );
 
 		// Assert
@@ -338,6 +341,58 @@ describe( 'Ajax HTTP 429 retry', () => {
 		expect( second.status ).toBe( 'rejected' );
 	} );
 
+	it( 'should not retry a batch that contains an action without retry opt-in', () => {
+		// Arrange
+		const readRequest = settleDeferred( ajax.addRequest( 'get_document_config', {
+			data: { id: 1 },
+			retry: true,
+		} ) );
+		const writeRequest = settleDeferred( ajax.addRequest( 'save_builder', { data: { status: 'publish' } } ) );
+
+		flushBatch();
+
+		// Act
+		failSendingRequest( 429 );
+		jest.advanceTimersByTime( 4000 );
+
+		// Assert
+		expect( sentRequests ).toHaveLength( 1 );
+		expect( readRequest.status ).toBe( 'rejected' );
+		expect( writeRequest.status ).toBe( 'rejected' );
+	} );
+
+	it( 'should add jitter to the exponential backoff delay', () => {
+		// Arrange
+		const { first } = triggerBatchedLoad();
+		Math.random.mockReturnValue( 0.5 );
+
+		flushBatch();
+
+		// Act
+		failSendingRequest( 429 );
+		jest.advanceTimersByTime( 1099 );
+		expect( sentRequests ).toHaveLength( 1 );
+		jest.advanceTimersByTime( 1 );
+		respondToLastRequest( { 'document-1': { success: true, data: { id: 1 } } } );
+
+		// Assert
+		expect( sentRequests ).toHaveLength( 2 );
+		expect( first.status ).toBe( 'resolved' );
+	} );
+
+	it( 'should settle send() when no success callback is provided', () => {
+		// Arrange
+		const request = ajax.send( 'bare', {} );
+		const success = jest.fn();
+		request.done( success );
+
+		// Act
+		sentRequests[ 0 ].success( { success: true, data: 'done' } );
+
+		// Assert
+		expect( success ).toHaveBeenCalledWith( { success: true, data: 'done' } );
+	} );
+
 	it( 'should not retry a 500 response', () => {
 		// Arrange
 		const { first, second } = triggerBatchedLoad();
@@ -357,7 +412,7 @@ describe( 'Ajax HTTP 429 retry', () => {
 
 	it( 'should not send another request after abort during the retry wait', () => {
 		// Arrange: immediately:true stores the abortable wrapper on the deferred.
-		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 } };
+		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 }, retry: true };
 		const deferred = ajax.load( { ...request }, true );
 		const first = settleDeferred( deferred );
 
@@ -434,7 +489,7 @@ describe( 'Ajax HTTP 429 retry', () => {
 
 	it( 'should abort a request that is in flight when abort is called', () => {
 		// Arrange: immediately:true stores the wrapper on the deferred.
-		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 } };
+		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 }, retry: true };
 		const deferred = ajax.load( { ...request }, true );
 
 		settleDeferred( deferred );
@@ -448,7 +503,7 @@ describe( 'Ajax HTTP 429 retry', () => {
 
 	it( 'should ignore abort after the request has settled', () => {
 		// Arrange: immediately:true stores the wrapper on the deferred.
-		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 } };
+		const request = { action: 'get_document_config', unique_id: 'document-1', data: { id: 1 }, retry: true };
 		const deferred = ajax.load( { ...request }, true );
 		const first = settleDeferred( deferred );
 

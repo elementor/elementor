@@ -96,7 +96,17 @@ const createDeferred = () => {
 					const next = createDeferred();
 
 					deferred.done( ( value ) => next.resolve( onDone ? onDone( value ) : value ) );
-					deferred.fail( ( value ) => next.reject( onFail ? onFail( value ) : value ) );
+
+					deferred.fail( ( reason ) => {
+						// A rejection handler that returns a value recovers the chain, which is how
+						// callers turn a failed request into a fallback result. Without a handler the
+						// rejection keeps propagating.
+						if ( onFail ) {
+							next.resolve( onFail( reason ) );
+						} else {
+							next.reject( reason );
+						}
+					} );
 
 					return next.promise();
 				},
