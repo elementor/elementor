@@ -1,11 +1,11 @@
 last 3 versions
 not dead
 
-# Minimum versions (updated 2026-08-01)
-Chrome >= 148
-Firefox >= 150
-Edge >= 148
-Safari >= 26.2
-iOS >= 26.2
-Android >= 150
-ChromeAndroid >= 150
+# Minimum versions (updated 2026-09-01)
+Chrome >= 149
+Firefox >= 152
+Edge >= 149
+Safari >= 26.4
+iOS >= 26.4
+Android >= 151
+ChromeAndroid >= 151
