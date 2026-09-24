@@ -1,3 +1,9 @@
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: () => ( {
+		get: jest.fn().mockRejectedValue( new Error( 'no custom svg' ) ),
+	} ),
+} ) );
+
 import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
 import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
@@ -41,6 +47,7 @@ async function resolveSavedIcon( iconClass: string, library: string ) {
 
 describe( 'iconTransformer', () => {
 	const originalElementorCommon = window.elementorCommon;
+	const originalElementor = window.elementor;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -63,6 +70,7 @@ describe( 'iconTransformer', () => {
 
 	afterEach( () => {
 		window.elementorCommon = originalElementorCommon;
+		window.elementor = originalElementor;
 		jest.restoreAllMocks();
 	} );
 
@@ -176,6 +184,37 @@ describe( 'iconTransformer', () => {
 		// Assert.
 		expect( global.fetch ).not.toHaveBeenCalled();
 		expect( result ).toEqual( { html: null, url: null } );
+	} );
+
+	it( 'falls back to the default svg when a custom library has been deleted', async () => {
+		// Arrange.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [ { name: 'fa-solid', prefix: 'fa-', native: true } ],
+				},
+			},
+		} as typeof window.elementor;
+		const defaultSvg =
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			headers: new Headers( { 'content-type': 'image/svg+xml' } ),
+			text: () => Promise.resolve( defaultSvg ),
+		} );
+
+		// Act.
+		const result = await resolveSavedIcon( 'missing-set missing-set-ghost', 'missing-set' );
+
+		// Assert.
+		expect( global.fetch ).toHaveBeenCalledWith(
+			'https://example.com/assets/images/default-svg.svg',
+			expect.anything()
+		);
+		expect( result ).toEqual( {
+			html: expect.stringContaining( 'M24.9999 4.31543' ),
+			url: 'https://example.com/assets/images/default-svg.svg',
+		} );
 	} );
 
 	it( 'returns null html when value or library is missing', async () => {

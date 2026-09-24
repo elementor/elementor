@@ -81,6 +81,12 @@ declare global {
 					v7?: {
 						jsonFiles?: string[];
 						jsonBaseUrl?: string;
+						filter?: unknown;
+						customIconPacks?: Record<
+							string,
+							{ configUrl?: string; fontUrl?: string; selectionUrl?: string }
+						>;
+						customIconLibrariesEnabled?: boolean;
 					};
 				};
 				urls?: {

@@ -17,6 +17,7 @@ type FontAwesomeIconJson = [ number, number, unknown[], unknown, string | string
 export type FontAwesome7EditorConfig = {
 	jsonFiles: string[];
 	jsonBaseUrl: string;
+	filter?: unknown;
 };
 
 export type FontAwesome7IconDefinition = {
@@ -50,6 +51,7 @@ export function getFontAwesome7EditorConfig(): FontAwesome7EditorConfig | null {
 	return {
 		jsonFiles: config.jsonFiles,
 		jsonBaseUrl,
+		filter: config.filter,
 	};
 }
 

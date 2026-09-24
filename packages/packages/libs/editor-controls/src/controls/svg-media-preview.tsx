@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Box, CardMedia, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useCustomIconLibraries } from './icon-library/custom-icon-libraries';
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
@@ -18,10 +19,14 @@ type SvgMediaPreviewProps = {
 
 export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }: SvgMediaPreviewProps ) => {
 	const shouldLoadIconCatalog = Boolean( iconClassName && iconLibrary );
-	const { data: icons = [], isLoading } = useFontAwesome7Catalog( shouldLoadIconCatalog );
+	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } =
+		useFontAwesome7Catalog( shouldLoadIconCatalog );
+	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( shouldLoadIconCatalog );
+	const icons = [ ...fontAwesomeIcons, ...customIcons ];
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
+	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isCustomLoading );
 
-	if ( isFetching || ( shouldLoadIconCatalog && isLoading ) ) {
+	if ( isFetching || isLoadingCatalog ) {
 		return <CircularProgress role="progressbar" />;
 	}
 
