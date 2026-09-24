@@ -252,6 +252,7 @@ class Manager extends Base_Object {
 	 *
 	 * @param string $feature_name       Experiment feature name.
 	 * @param bool   $check_dependencies When true, also require dependency experiments to be active.
+	 *                                   Missing or hidden dependencies are treated as active for compatibility.
 	 *
 	 * @return bool
 	 */
@@ -264,7 +265,16 @@ class Manager extends Base_Object {
 
 		if ( $check_dependencies && isset( $feature['dependencies'] ) && is_array( $feature['dependencies'] ) ) {
 			foreach ( $feature['dependencies'] as $dependency ) {
+				if ( $dependency instanceof Non_Existing_Dependency ) {
+					continue;
+				}
+
 				$dependent_feature = $this->get_features( $dependency->get_name() );
+
+				if ( $this->is_removed_or_hidden_dependency( $dependent_feature ) ) {
+					continue;
+				}
+
 				$feature_state = self::STATE_ACTIVE === $this->get_feature_actual_state( $dependent_feature );
 
 				if ( ! $feature_state ) {
@@ -781,18 +791,39 @@ class Manager extends Base_Object {
 
 			// Validate if the current feature dependency is available.
 			foreach ( $feature['dependencies'] as $dependency ) {
-				$dependency_feature = $this->get_features( $dependency->get_name() );
-
-				if ( ! $dependency_feature ) {
-					$rollback( $feature_option_key, self::STATE_INACTIVE );
-
-					throw new Exceptions\Dependency_Exception(
+				if ( $dependency instanceof Non_Existing_Dependency ) {
+					$this->warn_removed_or_hidden_dependency(
 						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available.',
+							'The feature `%s` has a dependency `%s` that is not available in Core.',
 							esc_html( $feature['name'] ),
 							esc_html( $dependency->get_name() )
 						)
 					);
+					continue;
+				}
+
+				$dependency_feature = $this->get_features( $dependency->get_name() );
+
+				if ( ! $dependency_feature ) {
+					$this->warn_removed_or_hidden_dependency(
+						sprintf(
+							'The feature `%s` has a dependency `%s` that is not available in Core.',
+							esc_html( $feature['name'] ),
+							esc_html( $dependency->get_name() )
+						)
+					);
+					continue;
+				}
+
+				if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
+					$this->warn_removed_or_hidden_dependency(
+						sprintf(
+							'The feature `%1$s` depends on hidden experiment `%2$s`.',
+							esc_html( $feature['name'] ),
+							esc_html( $dependency_feature['name'] )
+						)
+					);
+					continue;
 				}
 
 				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
@@ -947,32 +978,31 @@ class Manager extends Base_Object {
 	/**
 	 * @param array $experimental_data
 	 * @return array
-	 *
-	 * @throws Exceptions\Dependency_Exception If the feature dependency is not initialized.
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 			$feature = $this->get_features( $dependency );
 
 			if ( ! isset( $feature ) ) {
-				throw new Exceptions\Dependency_Exception(
+				$this->warn_removed_or_hidden_dependency(
 					sprintf(
-						'Feature %s cannot be initialized before dependency feature: %s.',
+						'Feature %1$s depends on experiment %2$s that is not registered in Core.',
 						esc_html( $experimental_data['name'] ),
 						esc_html( $dependency )
 					)
 				);
+
+				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, null );
+				continue;
 			}
 
 			if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
-				_doing_it_wrong(
-					__METHOD__,
+				$this->warn_removed_or_hidden_dependency(
 					sprintf(
 						'Feature %1$s depends on hidden experiment %2$s.',
 						esc_html( $experimental_data['name'] ),
 						esc_html( $dependency )
-					),
-					ELEMENTOR_VERSION
+					)
 				);
 			}
 
@@ -981,6 +1011,22 @@ class Manager extends Base_Object {
 		}
 
 		return $experimental_data;
+	}
+
+	private function is_removed_or_hidden_dependency( $dependency_feature ): bool {
+		if ( ! $dependency_feature ) {
+			return true;
+		}
+
+		return ! empty( $dependency_feature[ static::TYPE_HIDDEN ] );
+	}
+
+	private function warn_removed_or_hidden_dependency( string $message ): void {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		_doing_it_wrong( __METHOD__, $message, ELEMENTOR_VERSION );
 	}
 
 	/**
