@@ -254,24 +254,75 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 	 * The SDK cannot supply a WP REST nonce, so this route must stay reachable for logged-in Editor sessions
 	 * even though WordPress' cookie-auth layer would otherwise demand one. Exercised directly against the
 	 * filter callback, since simulating WP's real cookie-auth nonce flow in PHPUnit is not practical.
+	 *
+	 * @dataProvider own_routes_provider
 	 */
-	public function test_nonce_check_is_bypassed_for_its_own_route_but_not_for_other_routes() {
+	public function test_nonce_check_is_bypassed_for_its_own_routes( string $route, string $request_uri ) {
 		// Arrange
-		$proxy = new Events_Proxy_REST_API();
 		$existing_error = new \WP_Error( 'rest_cookie_invalid_nonce', 'Cookie check failed' );
 
 		// Act
-		$_SERVER['REQUEST_URI'] = '/wp-json/elementor/v1/events/api/track';
-		$own_route_result = $proxy->bypass_nonce_check_for_own_routes( $existing_error );
-
-		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/posts';
-		$other_route_result = $proxy->bypass_nonce_check_for_own_routes( $existing_error );
-
-		unset( $_SERVER['REQUEST_URI'] );
+		$result = $this->run_nonce_bypass_filter( $route, $request_uri, $existing_error );
 
 		// Assert
-		$this->assertTrue( $own_route_result );
-		$this->assertSame( $existing_error, $other_route_result );
+		$this->assertTrue( $result );
+	}
+
+	public function own_routes_provider(): array {
+		return [
+			'api route, pretty permalinks' => [ '/elementor/v1/events/api/track', '/wp-json/elementor/v1/events/api/track' ],
+			'libs route, plain permalinks' => [ '/elementor/v1/events/libs/recorder.min.js', '/?rest_route=/elementor/v1/events/libs/recorder.min.js' ],
+		];
+	}
+
+	/**
+	 * The filter runs before WP matches a route, so the decision must come from the route that will actually
+	 * be dispatched, never from the raw request URI, which a caller fully controls (query string included).
+	 *
+	 * @dataProvider other_routes_provider
+	 */
+	public function test_nonce_check_is_not_bypassed_for_other_routes( $route, string $request_uri ) {
+		// Arrange
+		$existing_error = new \WP_Error( 'rest_cookie_invalid_nonce', 'Cookie check failed' );
+
+		// Act
+		$result = $this->run_nonce_bypass_filter( $route, $request_uri, $existing_error );
+
+		// Assert
+		$this->assertSame( $existing_error, $result );
+	}
+
+	public function other_routes_provider(): array {
+		return [
+			'unrelated route' => [ '/wp/v2/posts', '/wp-json/wp/v2/posts' ],
+			'own path in query, pretty permalinks' => [ '/wp/v2/users', '/wp-json/wp/v2/users?_method=POST&x=elementor/v1/events/' ],
+			'own path in query, plain permalinks' => [ '/wp/v2/users', '/?rest_route=/wp/v2/users&_method=POST&x=elementor/v1/events/' ],
+			'own path embedded in another route' => [ '/wp/v2/users/elementor/v1/events/x', '/wp-json/wp/v2/users/elementor/v1/events/x' ],
+			'not a REST request' => [ null, '/?x=elementor/v1/events/' ],
+			'non-string route' => [ [ '/elementor/v1/events/api/track' ], '/' ],
+		];
+	}
+
+	private function run_nonce_bypass_filter( $route, string $request_uri, \WP_Error $existing_error ) {
+		global $wp;
+
+		$original_query_vars = $wp->query_vars;
+		$original_request_uri = $_SERVER['REQUEST_URI'] ?? null;
+
+		$wp->query_vars = null === $route ? [] : [ 'rest_route' => $route ];
+		$_SERVER['REQUEST_URI'] = $request_uri;
+
+		try {
+			return ( new Events_Proxy_REST_API() )->bypass_nonce_check_for_own_routes( $existing_error );
+		} finally {
+			$wp->query_vars = $original_query_vars;
+
+			if ( null === $original_request_uri ) {
+				unset( $_SERVER['REQUEST_URI'] );
+			} else {
+				$_SERVER['REQUEST_URI'] = $original_request_uri;
+			}
+		}
 	}
 
 	public function test_raw_response_filter_echoes_the_upstream_body_and_marks_the_request_served() {
