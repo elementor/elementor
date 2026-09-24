@@ -66,9 +66,15 @@ class Events_Proxy_REST_API {
 	}
 
 	private function is_own_route_request(): bool {
-		$request_uri = Utils::get_super_global_value( $_SERVER, 'REQUEST_URI' ) ?? '';
+		global $wp;
 
-		return false !== strpos( $request_uri, self::API_NAMESPACE . '/' . self::API_BASE . '/' );
+		$route = $wp->query_vars['rest_route'] ?? null;
+
+		if ( ! is_string( $route ) ) {
+			return false;
+		}
+
+		return 0 === strpos( $route, '/' . self::API_NAMESPACE . '/' . self::API_BASE . '/' );
 	}
 
 	private function register_routes() {
