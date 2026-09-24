@@ -101,7 +101,7 @@ final class Composition_Compiler {
 		if ( empty( $subtrees ) ) {
 			return new \WP_Error(
 				'empty_composition',
-				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-flexbox configuration-id="..."></e-flexbox>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-div-block configuration-id="..."></e-div-block>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
