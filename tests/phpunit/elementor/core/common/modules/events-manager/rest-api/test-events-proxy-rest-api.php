@@ -130,7 +130,13 @@ class Test_Events_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertEquals( 'POST', $captured['args']['method'] );
 		$this->assertEquals( 'data=abc', $captured['args']['body'] );
 		$this->assertEquals( 'application/x-www-form-urlencoded', $captured['args']['headers']['content-type'] );
-		$this->assertEquals( 'Basic abc123', $captured['args']['headers']['authorization'] );
+		$this->assertNotEquals( 'Basic abc123', $captured['args']['headers']['authorization'] ?? null );
+
+		$expected_authorization = empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN )
+			? null
+			: 'Basic ' . base64_encode( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN . ':' );
+
+		$this->assertSame( $expected_authorization, $captured['args']['headers']['authorization'] ?? null );
 		$this->assertTrue( $captured['args']['blocking'] );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( '1', $response->get_data() );
