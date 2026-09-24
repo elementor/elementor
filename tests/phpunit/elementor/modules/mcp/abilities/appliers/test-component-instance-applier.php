@@ -12,12 +12,15 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Mock_Pro_License_API;
+use WP_Http;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 require_once __DIR__ . '/../../../components/mocks/component-overrides-mocks.php';
+require_once __DIR__ . '/../../../components/mocks/mock-pro-license-api.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -42,12 +45,15 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 			'public'   => false,
 			'supports' => Component_Document::get_supported_features(),
 		] );
+
+		Mock_Pro_License_API::reset();
 	}
 
 	public function tearDown(): void {
 		Plugin::$instance->documents = $this->original_documents;
 
 		$this->delete_all_components();
+		Mock_Pro_License_API::reset();
 		parent::tearDown();
 	}
 
@@ -283,6 +289,124 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertSame( $component_id, $ci['value']['component_id']['value'] );
 	}
 
+	/**
+	 * @dataProvider restricted_placement_tiers
+	 */
+	public function test_build_composition__rejects_component_placement_without_pro_access( bool $expired, string $expected_tier ) {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( false, $expired );
+		$component_id = $this->create_component( 'Restricted Component' );
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability( Document_Mutator::instance() );
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-component configuration-id="restricted"></e-component></e-flexbox>',
+			'element_config' => [
+				'restricted' => [
+					'component_id' => $component_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'insufficient_permissions', $result->get_error_code() );
+		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+		$this->assertSame( 'add_to_page', $result->get_error_data()['action'] );
+		$this->assertSame( $expected_tier, $result->get_error_data()['tier'] );
+	}
+
+	public function restricted_placement_tiers(): array {
+		return [
+			'core' => [ false, 'core' ],
+			'expired' => [ true, 'expired' ],
+		];
+	}
+
+	public function test_build_composition__allows_raw_widgets_without_pro_access() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( false );
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability( Document_Mutator::instance() );
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="heading"></e-heading></e-flexbox>',
+			'element_config' => [
+				'heading' => [
+					'title' => 'Raw heading',
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'e-heading', $elements[0]['elements'][0]['widgetType'] );
+	}
+
+	public function test_build_composition__wraps_component_instance_as_direct_document_child() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$component_id = $this->create_component( 'Hero Component' );
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability( Document_Mutator::instance() );
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-component configuration-id="hero-instance"/>',
+			'element_config' => [
+				'hero-instance' => [
+					'component_id' => $component_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertStringContainsString( 'e-div-block', $result['warnings'][0] ?? '' );
+		$this->assertStringContainsString( '<e-div-block', $result['resolved_xml'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'e-div-block', $elements[0]['elType'] );
+		$this->assertSame( 'e-component', $elements[0]['elements'][0]['widgetType'] );
+	}
+
+	public function test_apply__allows_expired_tier_to_edit_a_component_document() {
+		// Arrange
+		$this->act_as_admin();
+		$nested_component_id = $this->create_component( 'Nested Component' );
+		$host_component_id = $this->create_component( 'Host Component' );
+		$host_component = ( new Components_Repository() )->get( $host_component_id, false );
+		Mock_Pro_License_API::set_license_state( false, true );
+		$applier = $this->make_applier();
+		$index = [ 'nested' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+
+		// Act
+		$error = $applier->apply(
+			$index,
+			[ 'nested' => [ 'component_id' => $nested_component_id ] ],
+			$host_component
+		);
+
+		// Assert
+		$this->assertNull( $error );
+		$this->assertSame(
+			$nested_component_id,
+			$index['nested']['settings']['component_instance']['value']['component_id']['value']
+		);
+	}
+
 	public function test_apply_partial__preserves_untouched_overrides_and_replaces_specified_key() {
 		// Arrange: build an existing envelope with two overrides via apply().
 		$this->act_as_admin();
@@ -478,7 +602,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 	}
 
 	private function create_real_document(): int {
-		return $this->factory()->create_and_get_default_post()->ID;
+		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
 	}
 
 	private function create_component( string $title ): int {

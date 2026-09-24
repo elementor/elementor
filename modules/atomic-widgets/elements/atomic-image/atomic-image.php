@@ -3,11 +3,13 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Has_Io_Promotion_Notice;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
@@ -22,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
+	use Has_Io_Promotion_Notice;
 
 	public static $widget_description = 'Display an image with customizable styles and link options.';
 
@@ -37,11 +40,21 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'image', 'photo', 'picture' ];
 	}
 
 	public function get_icon() {
 		return 'eicon-e-image';
+	}
+
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'img', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
 	}
 
 	protected static function define_props_schema(): array {
@@ -58,7 +71,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 
-		return $props;
+		return array_merge( $props, static::get_io_promotion_notice_prop_schema() );
 	}
 
 	protected function define_atomic_controls(): array {
@@ -66,10 +79,11 @@ class Atomic_Image extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_id( 'content' )
-				->set_items( [
+				->set_items( array_filter( [
 					Image_Control::bind_to( 'image' )
 						->set_label( __( 'Image', 'elementor' ) ),
-				] ),
+					$this->get_io_promotion_notice_control(),
+				] ) ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )

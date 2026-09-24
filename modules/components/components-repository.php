@@ -107,7 +107,7 @@ class Components_Repository {
 
 		foreach ( $ids as $id ) {
 			try {
-				$component = $this->get_component_for_edit( $id, $status );
+				$component = $this->get_for_edit( $id, $status );
 
 				if ( ! $component ) {
 					$failed_ids[] = $id;
@@ -128,7 +128,7 @@ class Components_Repository {
 	}
 
 	public function update_title( int $component_id, string $title, string $status ): bool {
-		$component = $this->get_component_for_edit( $component_id, $status );
+		$component = $this->get_for_edit( $component_id, $status );
 
 		if ( ! $component ) {
 			return false;
@@ -151,7 +151,7 @@ class Components_Repository {
 	 * If target status is publish:
 	 * - Will return the main document. If it's an autosave, it will be published later by the publish_component method.
 	 */
-	private function get_component_for_edit( int $component_id, string $target_status ): ?Component_Document {
+	public function get_for_edit( int $component_id, string $target_status ): ?Component_Document {
 		$component = $this->get( $component_id );
 
 		if ( ! $component ) {

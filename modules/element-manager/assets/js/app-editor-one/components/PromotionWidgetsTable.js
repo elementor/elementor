@@ -36,7 +36,7 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 					alignItems="center"
 				>
 					<Box>
-						<Typography variant="h6" component="h3">
+						<Typography variant="h6" component="h2">
 							{ __( 'Elementor Pro Elements', 'elementor' ) }
 						</Typography>
 						<Typography variant="body2" component="p">

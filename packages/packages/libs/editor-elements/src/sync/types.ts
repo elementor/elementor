@@ -209,6 +209,8 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	default_children?: Array< Record< string, TChild > >;
 	children_dependencies?: ChildDependencyRule[];
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
+	default_html_tag?: string;
+	html_tag_follows_link?: boolean;
 } & T;
 
 type V1Model< T > = {

@@ -407,6 +407,56 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertSame( 'system_info', $event_id );
 	}
 
+	public function test_format_flyout_label__preserves_label_when_flag_is_set() {
+		$item = new Test_Custom_Url_Menu_Item(
+			'elementor-mcp',
+			Menu_Config::EDITOR_GROUP_ID,
+			admin_url( 'admin.php?page=elementor-mcp' ),
+			false,
+			'Elementor MCP'
+		);
+
+		$this->provider->register_menu( $item, [ 'preserve_label_casing' => true ] );
+
+		$label = $this->invoke_private_method(
+			$this->provider,
+			'format_flyout_label',
+			[ $item, 'elementor-mcp' ]
+		);
+
+		$this->assertSame( 'Elementor MCP', $label );
+	}
+
+	public function test_format_flyout_label__title_cases_label_by_default() {
+		$item = $this->createMock( Menu_Item_Interface::class );
+		$item->method( 'get_label' )->willReturn( 'custom settings' );
+
+		$label = $this->invoke_private_method(
+			$this->provider,
+			'format_flyout_label',
+			[ $item, 'custom-settings' ]
+		);
+
+		$this->assertSame( 'Custom Settings', $label );
+	}
+
+	public function test_get_third_level_data__preserves_mcp_label_in_flyout() {
+		$this->set_admin_user();
+		$item = new Test_Custom_Url_Menu_Item(
+			'elementor-mcp',
+			Menu_Config::EDITOR_GROUP_ID,
+			admin_url( 'admin.php?page=elementor-mcp' ),
+			false,
+			'Elementor MCP'
+		);
+
+		$this->provider->register_menu( $item, [ 'preserve_label_casing' => true ] );
+
+		$data = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT );
+
+		$this->assertSame( 'Elementor MCP', $data['items'][0]['label'] );
+	}
+
 	private function create_test_item( string $slug, string $group_id, bool $is_level3 ) {
 		if ( $is_level3 ) {
 			$item = $this->createMock( Menu_Item_Third_Level_Interface::class );

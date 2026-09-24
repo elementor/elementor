@@ -87,8 +87,7 @@ export const slice = createSlice( {
 				if ( mode === 'replace' ) {
 					variant.props = payloadProps;
 				} else {
-					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
-					variant.props = { ...variantProps, ...payloadProps };
+					variant.props = { ...variant.props, ...payloadProps };
 				}
 
 				variant.custom_css = customCss;
@@ -105,12 +104,12 @@ export const slice = createSlice( {
 		},
 
 		reset( state ) {
-			state.data = structuredClone( state.initialData );
+			state.data = state.initialData;
 			state.isDirty = false;
 		},
 
 		commit( state ) {
-			state.initialData = structuredClone( state.data );
+			state.initialData = state.data;
 			state.isDirty = false;
 		},
 

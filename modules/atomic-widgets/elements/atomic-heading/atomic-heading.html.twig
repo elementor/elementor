@@ -1,6 +1,6 @@
 {% import 'elementor/macros' as m %}
-{%- set classes = settings.classes | merge( [ base_styles.base, m.default_tag_class(settings.tag) ] ) | join(' ') -%}
-<{{ settings.tag | e('html_tag') }} data-interaction-id="{{ interaction_id }}" class="{{ classes }}"
+{%- set classes = settings.classes | merge( [ base_styles.base, m.default_tag_class(tag) ] ) | join(' ') -%}
+<{{ tag | e('html_tag') }} data-interaction-id="{{ interaction_id }}" class="{{ classes }}"
 	{{- m.render_custom_attributes(settings) }}>
 {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' -%}
 {%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
@@ -11,4 +11,4 @@
 {%- else -%}
 	{{ settings.title | striptags(allowed_tags) | raw }}
 {%- endif %}
-</{{ settings.tag | e('html_tag') }}>
+</{{ tag | e('html_tag') }}>

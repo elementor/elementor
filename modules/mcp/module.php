@@ -5,8 +5,6 @@ namespace Elementor\Modules\Mcp;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
-use Elementor\Plugin;
-use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -14,6 +12,7 @@ use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
+use Elementor\Plugin;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,12 +21,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const CONNECTOR_EXPERIMENT_NAME = 'mcp_connector';
+	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
+	const V3_STANDARDIZED_MAPS_EXPERIMENT_NAME = 'e_mcp_v3_standardized_maps';
 
 	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
+	}
+
+	public function enqueue_analytics_registrar(): void {
+		wp_enqueue_script(
+			self::ANALYTICS_REGISTRAR_HANDLE,
+			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
+			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public static function is_active() {
@@ -36,10 +46,21 @@ class Module extends BaseModule {
 			class_exists( Shared_Registry::class );
 	}
 
+	public static function get_v3_standardized_maps_experimental_data(): array {
+		return [
+			'name' => self::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME,
+			'title' => esc_html__( 'MCP V3 standardized maps', 'elementor' ),
+			'description' => esc_html__( 'Serve MCP V3 widgets from explicit compiled maps instead of inferred runtime capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_connector_experiment();
+		$this->register_v3_standardized_maps_experiment();
 
 		$this->registry = self::build_core_registry();
 
@@ -55,6 +76,10 @@ class Module extends BaseModule {
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
+	}
+
+	private function register_v3_standardized_maps_experiment(): void {
+		Plugin::$instance->experiments->add_feature( self::get_v3_standardized_maps_experimental_data() );
 	}
 
 	public function registry(): Ability_Registry {
@@ -93,26 +118,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		if ( ! self::is_connector_page_active() ) {
-			return;
-		}
-
-		$menu_data_provider->register_menu( new Editor_One_Mcp_Menu() );
-	}
-
-	public static function is_connector_page_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::CONNECTOR_EXPERIMENT_NAME );
-	}
-
-	private function register_connector_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::CONNECTOR_EXPERIMENT_NAME,
-			'title' => esc_html__( 'MCP Connector', 'elementor' ),
-			'description' => esc_html__( 'Enable the MCP connector admin page.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		] );
+		$menu_data_provider->register_menu(
+			new Editor_One_Mcp_Menu(),
+			[ 'preserve_label_casing' => true ]
+		);
 	}
 
 	public static function build_core_registry(): Ability_Registry {
@@ -137,6 +146,8 @@ class Module extends BaseModule {
 			new Abilities\Wordpress_Best_Practices_Ability(),
 			new Abilities\Manage_Variable_Ability(),
 			new Abilities\Manage_Classes_Ability(),
+			new Abilities\Manage_Default_Styles_Ability(),
+			new Abilities\Get_Default_Styles_Ability(),
 			new Abilities\Reorder_Classes_Ability(),
 			new Abilities\Manage_Variable_Guide_Ability(),
 			new Abilities\Get_Widget_Schema_Ability(),
@@ -150,17 +161,12 @@ class Module extends BaseModule {
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
 			new Abilities\Read_Resource_Ability( $registry ),
+			new Abilities\List_Components_Ability(),
+			new Abilities\Manage_Component_Ability(),
+			new Abilities\List_Posts_Ability(),
 		];
 
-		if ( self::is_components_active() ) {
-			$abilities[] = new Abilities\List_Components_Ability();
-		}
-
 		return $abilities;
-	}
-
-	private static function is_components_active(): bool {
-		return class_exists( Components_Module::class ) && Components_Module::is_experiment_active();
 	}
 
 	/**

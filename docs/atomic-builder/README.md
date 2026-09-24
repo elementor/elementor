@@ -18,3 +18,5 @@ In-repo reference for Elementor v4. For v3 addon development see [developers.ele
 - [mcp/](mcp/README.md)
 - [migration/](migration/README.md)
 - [opt-in/](opt-in/README.md)
+- [examples/](examples/README.md) — validated Cursor skill examples (one file per skill)
+- [skills-scope.md](skills-scope.md) — External (3rd-party) vs Internal (Core PR) skill split

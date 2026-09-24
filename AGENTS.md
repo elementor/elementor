@@ -184,6 +184,8 @@ Internal: Sentence case description [ED-XXXXX]
 
 Allowed types: `Feature`, `CI`, `New`, `Tweak`, `Fix`, `Experiment`, `Deprecate`, `Deprecated`, `Revert`, `Internal` (sentence case, header <= 100 chars). Conventional-commit style like `docs(agents): …` fails. Both checks only re-run on push, and GitHub skips them entirely while the PR has merge conflicts — merge `main` to get them running again.
 
+Local agents do not write `## Visual proof` on `elementor/elementor` pull requests (`gh`, the GitHub UI, or any other PR body). CI `visual-proof-author.yml` adds that section when the PR is opened or marked ready for review and it is still missing. Leave it out unless a person already wrote it, and do not ask the user to fill it in. Screenshot capture follows those Steps; it does not author them.
+
 ## Gotchas
 
 - Prefer package.json script names; do not invent ad-hoc install/build chains.

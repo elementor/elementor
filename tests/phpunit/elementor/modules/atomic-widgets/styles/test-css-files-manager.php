@@ -1,14 +1,17 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\CSS_Files_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_Filesystem_Base;
 
 class Test_Css_Files_Manager extends Elementor_Test_Base {
 	private $filesystemMock;
 	private Cache_Validity $cache_validity;
+	private ?string $temp_base_dir = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -17,21 +20,58 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 
 		$this->filesystemMock = $this->getMockBuilder( WP_Filesystem_Base::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'exists', 'delete', 'put_contents', 'get_contents', 'abspath', 'size', 'move' ] )
+			->onlyMethods( [ 'exists', 'delete', 'put_contents', 'get_contents', 'abspath', 'size', 'move', 'is_dir' ] )
 			->getMock();
 		$this->filesystemMock->method( 'abspath' )->willReturn( ABSPATH );
+		$this->filesystemMock->method( 'is_dir' )->willReturn( true );
 
 		global $wp_filesystem;
 		$wp_filesystem = $this->filesystemMock;
 
 		$this->cache_validity = new Cache_Validity();
+
+		remove_all_filters( 'elementor/files/base_dir' );
+		remove_all_filters( 'elementor/files/base_url' );
 	}
 
 	public function tearDown(): void {
+		remove_all_filters( 'elementor/files/base_dir' );
+		remove_all_filters( 'elementor/files/base_url' );
+
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_INACTIVE );
+
+		$this->remove_temp_base_dir();
+
 		parent::tearDown();
 
 		global $wp_filesystem;
 		$wp_filesystem = null;
+	}
+
+	/**
+	 * `Base::validate_base_dir()` only accepts paths inside WP_CONTENT_DIR or the uploads basedir,
+	 * so the scratch directory has to live under WP_CONTENT_DIR to survive the filter.
+	 */
+	private function make_temp_base_dir(): string {
+		$this->temp_base_dir = trailingslashit( WP_CONTENT_DIR ) . 'atomic-css-' . wp_generate_password( 8, false, false ) . '/';
+
+		wp_mkdir_p( $this->temp_base_dir . CSS_Files_Manager::DEFAULT_CSS_DIR );
+
+		return $this->temp_base_dir;
+	}
+
+	private function remove_temp_base_dir(): void {
+		if ( null === $this->temp_base_dir ) {
+			return;
+		}
+
+		$css_dir = $this->temp_base_dir . CSS_Files_Manager::DEFAULT_CSS_DIR;
+
+		array_map( 'unlink', glob( $css_dir . '*' ) ?: [] );
+		rmdir( $css_dir );
+		rmdir( $this->temp_base_dir );
+
+		$this->temp_base_dir = null;
 	}
 
 	private function make_manager(): CSS_Files_Manager {
@@ -79,6 +119,45 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 			$this->cache_validity->get_meta( [ 'atomic-test', 'render' ] ),
 			'Leaf meta must record should_exist = true'
 		);
+	}
+
+	public function test_get__replaces_an_existing_file_in_place_without_unlinking_it() {
+		// Arrange - a real local filesystem, with a stale file already published at the destination.
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+
+		$base_dir = $this->make_temp_base_dir();
+		$css_dir = $base_dir . CSS_Files_Manager::DEFAULT_CSS_DIR;
+		$destination = $css_dir . 'in-place-style.css';
+
+		file_put_contents( $destination, '.stale { color: red; }' );
+
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_ACTIVE );
+		add_filter( 'elementor/files/base_dir', fn() => $base_dir );
+
+		// `move()` and `delete()` are the two ways the destination could ever be unlinked mid-flight.
+		$direct_filesystem = $this->getMockBuilder( \WP_Filesystem_Direct::class )
+			->setConstructorArgs( [ null ] )
+			->onlyMethods( [ 'move', 'delete' ] )
+			->getMock();
+
+		$direct_filesystem->expects( $this->never() )->method( 'move' );
+		$direct_filesystem->expects( $this->never() )->method( 'delete' );
+
+		global $wp_filesystem;
+		$wp_filesystem = $direct_filesystem;
+
+		// Act.
+		$file = $this->make_manager()->get(
+			'in-place-style',
+			'all',
+			fn() => '.fresh { color: blue; }',
+			[ 'atomic-test', 'in-place' ]
+		);
+
+		// Assert.
+		$this->assertNotNull( $file );
+		$this->assertSame( '.fresh { color: blue; }', file_get_contents( $destination ) );
+		$this->assertEmpty( glob( $css_dir . '*.tmp-*' ), 'No temp file may survive the replace' );
 	}
 
 	public function test_get__with_empty_css_deletes_stale_file_and_records_should_exist_false() {
@@ -149,6 +228,33 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertNotNull( $file );
 		$this->assertEquals( 'cached-style', $file->get_handle() );
+	}
+
+	public function test_get__uses_filtered_elementor_base_dir_and_url_when_optimized_css_files_is_active() {
+		// Arrange.
+		$custom_dir = trailingslashit( WP_CONTENT_DIR ) . 'atomic-css/';
+		$custom_url = trailingslashit( content_url( 'atomic-css' ) );
+
+		Plugin::$instance->experiments->set_feature_default_state( 'e_optimized_css_files', Experiments_Manager::STATE_ACTIVE );
+
+		add_filter( 'elementor/files/base_dir', fn() => $custom_dir );
+		add_filter( 'elementor/files/base_url', fn() => $custom_url );
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'move' )->willReturn( true );
+
+		// Act.
+		$file = $this->make_manager()->get(
+			'filtered-style',
+			'all',
+			fn() => 'body { color: red; }',
+			[ 'atomic-test', 'filtered' ]
+		);
+
+		// Assert.
+		$this->assertNotNull( $file );
+		$this->assertSame( $custom_dir . CSS_Files_Manager::DEFAULT_CSS_DIR . 'filtered-style.css', $file->get_path() );
+		$this->assertSame( $custom_url . CSS_Files_Manager::DEFAULT_CSS_DIR . 'filtered-style.css', $file->get_url() );
 	}
 
 	public function test_get__returns_null_without_rendering_when_should_exist_is_false() {

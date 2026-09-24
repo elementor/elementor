@@ -27,6 +27,7 @@ const PRUNED = [
 	'bin/**',
 	'build/**',
 	'docs/**',
+	'examples/**',
 	'hello-elementor/**',
 	'local-site/**',
 	'modules/**/assets/**',

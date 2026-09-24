@@ -13,11 +13,6 @@ import { wpCli } from '../../../assets/wp-cli';
  * the Tabs items control and the Accordion items control both use — so button labels ("Add item",
  * "Remove", "Duplicate") and the `ul.MuiList-root > li` / `.class-item-sortable-trigger` drag
  * handle are the same real DOM the Tabs test already exercises, not invented.
- *
- * `e_accordion` is a hidden DEV experiment (`modules/atomic-widgets/module.php`), so it cannot be
- * toggled from the Settings UI (`WpAdminPage.setExperiments()` targets `#e-experiment-<name>`,
- * which never renders for a hidden feature) — activated via `wp-cli` instead, same as the Tabs
- * suite activates `e_atomic_elements`.
  */
 test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 	let editor: EditorPage;
@@ -74,7 +69,6 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_accordion' );
 
 		context = await browser.newContext();
 		const page = await context.newPage();

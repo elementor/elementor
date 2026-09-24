@@ -3,7 +3,11 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -371,7 +375,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			[ 'title' => 'Hello' ],
 			$child['settings']
 		);
-		$this->assertSame( [], $child['styles'] );
+		$this->assertSame( [ 'css' => '' ], $child['styles'] );
 	}
 
 	public function test_execute__styles_empty_when_only_global_class_refs() {
@@ -417,7 +421,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			[ 'classes' => [ 'g-abc' ] ],
 			$node['settings']
 		);
-		$this->assertSame( [], $node['styles'] );
+		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
 	public function test_execute__serializes_realistic_local_style_id_with_e_prefix() {
@@ -747,7 +751,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$node = $result['elements'][0];
 		$this->assertArrayNotHasKey( 'version', $node );
 		$this->assertEquals( (object) [], $node['settings'] );
-		$this->assertEquals( (object) [], $node['styles'] );
+		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
 	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
@@ -781,10 +785,10 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$node = $result['elements'][0];
 		$this->assertArrayNotHasKey( 'version', $node );
-		$this->assertArrayNotHasKey( 'styles', $node );
+		$this->assertArrayNotHasKey( 'style', $node );
 		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
-		$this->assertStringContainsString( 'color: #222222;', $node['style'] );
-		$this->assertStringContainsString( 'filter: blur(2px);', $node['style'] );
+		$this->assertStringContainsString( 'color: #222222;', $node['styles']['css'] );
+		$this->assertStringContainsString( 'filter: blur(2px);', $node['styles']['css'] );
 	}
 
 	public function test_execute__omits_version_for_unknown_type() {
@@ -808,6 +812,65 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'version', $result['elements'][0] );
+	}
+
+	public function test_execute__serializes_dynamic_tag_binding_not_rendered_output() {
+		// Arrange
+		$this->given_dynamic_tags( [
+			'mock-price-tag' => [
+				'name' => 'mock-price-tag',
+				'label' => 'Mock Price',
+				'group' => 'woocommerce',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'format' => String_Prop_Type::make()->default( 'both' ),
+				],
+			],
+		] );
+
+		$raw_settings = [
+			'paragraph' => Dynamic_Prop_Type::generate( [
+				'name' => 'mock-price-tag',
+				'group' => 'woocommerce',
+				'settings' => [
+					'format' => String_Prop_Type::generate( 'both' ),
+				],
+			] ),
+			'tag' => [
+				'$$type' => 'string',
+				'value' => 'p',
+			],
+		];
+
+		$config = Widget_Context_Helper::get_widget_config( 'e-paragraph' );
+		$props_schema = $config['atomic_props_schema'] ?? [];
+
+		$method = new \ReflectionMethod( Get_Structure_Ability::class, 'serialize_settings_for_llm' );
+		$method->setAccessible( true );
+
+		// Act
+		$settings = $method->invoke( $this->ability, $props_schema, $raw_settings );
+
+		// Assert
+		$this->assertSame(
+			[
+				'name' => 'mock-price-tag',
+				'settings' => [
+					'format' => 'both',
+				],
+			],
+			$settings['paragraph']
+		);
+		$this->assertSame( 'p', $settings['tag'] );
+	}
+
+	private function given_dynamic_tags( array $tags ): void {
+		$module = Dynamic_Tags_Module::instance();
+
+		$reflection = new \ReflectionClass( $module->registry );
+		$tags_prop = $reflection->getProperty( 'tags' );
+		$tags_prop->setAccessible( true );
+		$tags_prop->setValue( $module->registry, $tags );
 	}
 
 	private function mock_document_with_elements( int $post_id, array $elements ): void {

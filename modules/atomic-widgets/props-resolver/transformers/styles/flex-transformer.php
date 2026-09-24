@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Flex_Transformer extends Transformer_Base {
+	const DEFAULT_FLEX_GROW = 0;
+	const DEFAULT_FLEX_SHRINK = 1;
+	const DEFAULT_FLEX_BASIS = 'auto';
+
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$grow = $value['flexGrow'] ?? null;
 		$shrink = $value['flexShrink'] ?? null;
@@ -23,45 +27,13 @@ class Flex_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		$basis_value = $this->transform_basis_value( $basis );
+		$grow_out = $has_grow ? $grow : self::DEFAULT_FLEX_GROW;
+		$shrink_out = $has_shrink ? $shrink : self::DEFAULT_FLEX_SHRINK;
+		$basis_out = $has_basis ? $this->transform_basis_value( $basis ) : self::DEFAULT_FLEX_BASIS;
 
-		if ( $has_grow && $has_shrink && $has_basis ) {
-			return "{$grow} {$shrink} {$basis_value}";
-		}
-
-		if ( $has_grow && $has_shrink && ! $has_basis ) {
-			return "{$grow} {$shrink}";
-		}
-
-		if ( $has_grow && ! $has_shrink && $has_basis ) {
-			return "{$grow} 1 {$basis_value}";
-		}
-
-		if ( ! $has_grow && $has_shrink && $has_basis ) {
-			return "0 {$shrink} {$basis_value}";
-		}
-
-		if ( $has_grow && ! $has_shrink && ! $has_basis ) {
-			return "{$grow}";
-		}
-
-		if ( ! $has_grow && $has_shrink && ! $has_basis ) {
-			return "0 {$shrink}";
-		}
-
-		if ( ! $has_grow && ! $has_shrink && $has_basis ) {
-			return "0 1 {$basis_value}";
-		}
-
-		return null;
+		return "{$grow_out} {$shrink_out} {$basis_out}";
 	}
 
-	/**
-	 * Transform basis value to string format
-	 *
-	 * @param mixed $basis The basis value
-	 * @return string
-	 */
 	private function transform_basis_value( $basis ) {
 		if ( is_array( $basis ) && isset( $basis['size'] ) ) {
 			$unit = $basis['unit'] ?? '';

@@ -27,6 +27,7 @@ export type PopoverMenuListProps< T, V extends string > = {
 	menuItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	categoryItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
+	itemHeight?: number;
 };
 
 export const ITEM_HEIGHT = 32;
@@ -63,6 +64,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	categoryItemContentTemplate,
 	noResultsComponent,
 	menuListTemplate: CustomMenuList,
+	itemHeight = ITEM_HEIGHT,
 }: PopoverMenuListProps< T, V > ) => {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const scrollTop = useScrollTop( { containerRef } );
@@ -107,7 +109,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	const virtualizer = useVirtualizer( {
 		count: items.length,
 		getScrollElement: () => containerRef.current,
-		estimateSize: () => ITEM_HEIGHT,
+		estimateSize: () => itemHeight,
 		overscan: LIST_ITEMS_BUFFER,
 		rangeExtractor: getActiveItemIndices,
 		onChange: onChangeCallback,
@@ -130,6 +132,7 @@ export const PopoverMenuList = < T, V extends string >( {
 					role="listbox"
 					style={ { height: `${ virtualizer.getTotalSize() }px` } }
 					data-testid={ dataTestId }
+					sx={ itemHeight === ITEM_HEIGHT ? undefined : { '& > li': { height: itemHeight } } }
 				>
 					{ virtualItems.map( ( virtualRow ) => {
 						const item = items[ virtualRow.index ];

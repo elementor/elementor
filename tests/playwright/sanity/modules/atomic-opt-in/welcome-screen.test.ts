@@ -20,6 +20,7 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 		await wpCli( 'wp option update e_editor_counter 3' );
+		await wpCli( 'wp option update elementor_v4_opt_in_clicked 1' );
 		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
 		await wpCli( "wp eval update_option('elementor_install_history',['0.0.1'=>1]);" );
 
@@ -30,7 +31,9 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 	} );
 
 	test.afterAll( async () => {
+		await wpCli( 'wp option delete elementor_v4_opt_in_clicked' );
 		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
+		await wpCli( 'wp option delete elementor_install_history' );
 		await wpAdmin?.resetExperiments();
 		await context?.close();
 	} );
@@ -69,6 +72,63 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 		await expect( dialog ).toBeVisible();
 		await page.keyboard.press( 'Escape' );
 
+		await expect( dialog ).toBeHidden();
+	} );
+} );
+
+test.describe( 'V4 activation welcome modal on new installations @promotions', () => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp option update e_editor_counter 3' );
+		await wpCli( 'wp option delete elementor_v4_opt_in_clicked' );
+		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
+		await wpCli( "wp eval update_option('elementor_install_history',[ELEMENTOR_VERSION=>time()]);" );
+	} );
+
+	test.afterAll( async () => {
+		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
+		await wpCli( 'wp option delete elementor_install_history' );
+	} );
+
+	test( 'Welcome modal does not show on new installations', async ( { page, apiRequests }, testInfo ) => {
+		const testWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await testWpAdmin.openNewPage();
+
+		const dialog = page.getByRole( 'dialog' ).filter( { hasText: 'Atomic editor' } );
+		await expect( dialog ).toBeHidden();
+	} );
+} );
+
+test.describe( 'V4 activation welcome modal on existing sites without opt-in click @promotions', () => {
+	let context: BrowserContext;
+	let wpAdmin: WpAdminPage;
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		context = await browser.newContext();
+		const page = await context.newPage();
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_atomic_elements: 'active',
+			e_opt_in_v4: 'active',
+		} );
+
+		await wpCli( 'wp option update e_editor_counter 3' );
+		await wpCli( 'wp option delete elementor_v4_opt_in_clicked' );
+		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
+		await wpCli( "wp eval update_option('elementor_install_history',['3.35.0'=>1,ELEMENTOR_VERSION=>time()]);" );
+	} );
+
+	test.afterAll( async () => {
+		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
+		await wpCli( 'wp option delete elementor_install_history' );
+		await wpAdmin?.resetExperiments();
+		await context?.close();
+	} );
+
+	test( 'Welcome modal does not show on existing sites when opt-in was not just clicked', async ( { page, apiRequests }, testInfo ) => {
+		const testWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await testWpAdmin.openNewPage();
+
+		const dialog = page.getByRole( 'dialog' ).filter( { hasText: 'Atomic editor' } );
 		await expect( dialog ).toBeHidden();
 	} );
 } );

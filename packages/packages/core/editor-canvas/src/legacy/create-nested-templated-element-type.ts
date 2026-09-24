@@ -1,5 +1,6 @@
 import { ELEMENT_STYLE_CHANGE_EVENT, type V1ElementModelProps } from '@elementor/editor-elements';
 
+import { computeHtmlTag } from '../renderers/compute-html-tag';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createPendingElement } from './create-pending-element';
@@ -11,7 +12,13 @@ import {
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
-import { type ElementType, type ElementView, type LegacyWindow, type NestedTemplatedElementViewClass } from './types';
+import {
+	type ElementModel,
+	type ElementType,
+	type ElementView,
+	type LegacyWindow,
+	type NestedTemplatedElementViewClass,
+} from './types';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -19,6 +26,8 @@ export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 };
 
 export type ModelExtensions = Record< string, unknown >;
+
+const STYLES_REFERENCE_UNTRACKED = Symbol( 'styles-reference-untracked' );
 
 export type CreateNestedTemplatedElementTypeOptions = {
 	type: string;
@@ -93,7 +102,7 @@ export function createNestedTemplatedElementView( {
 }: CreateNestedTemplatedElementViewOptions ): NestedTemplatedElementViewClass {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+	const { templateKey, baseStylesDictionary, resolveProps, defaultHtmlTag, htmlTagFollowsLink } = setupTwigRenderer( {
 		type,
 		renderer,
 		element,
@@ -107,6 +116,7 @@ export function createNestedTemplatedElementView( {
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
 		_lastResolvedSettingsHash: null as string | null,
+		_lastRenderedStyles: STYLES_REFERENCE_UNTRACKED as typeof STYLES_REFERENCE_UNTRACKED | ElementModel[ 'styles' ],
 		_domUpdateWasSkipped: false,
 
 		template: false,
@@ -163,6 +173,27 @@ export function createNestedTemplatedElementView( {
 			} );
 
 			this.model.trigger( 'render:complete' );
+			this._notifyStylesChanged();
+		},
+
+		// `document/elements/create` fires before the nested template has fully painted, so the
+		// styles provider rebuilds CSS too early and misses the new local class IDs. Dispatching
+		// ELEMENT_STYLE_CHANGE_EVENT here — after the template and all children are in the DOM —
+		// gives the provider a second chance to regenerate CSS against the live class names.
+		//
+		// The reference-equality guard prevents a parent re-render from emitting one event per
+		// unchanged descendant. Use a sentinel for the initial state — otherwise elements with no
+		// local styles (undefined === undefined) would never notify, and descendants like e-heading
+		// that rely on this post-paint refresh would lose their CSS after detach.
+		_notifyStylesChanged() {
+			const styles = this.model.get( 'styles' );
+
+			if ( this._lastRenderedStyles !== STYLES_REFERENCE_UNTRACKED && styles === this._lastRenderedStyles ) {
+				return;
+			}
+
+			this._lastRenderedStyles = styles;
+
 			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
 		},
 
@@ -198,6 +229,7 @@ export function createNestedTemplatedElementView( {
 						interaction_id: this.getInteractionId(),
 						type,
 						settings: resolvedSettings,
+						tag: computeHtmlTag( resolvedSettings, defaultHtmlTag, { followLink: htmlTagFollowsLink } ),
 						base_styles: baseStylesDictionary,
 						editor_attributes: buildEditorAttributes( model ),
 						editor_classes: buildEditorClasses( model ),

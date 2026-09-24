@@ -174,6 +174,10 @@ export declare class ElementView {
 	once: ( event: string, callback: () => void ) => void;
 
 	getContainer(): V1Element;
+
+	initialize?( ...args: unknown[] ): void;
+
+	listenTo( target: unknown, event: string, callback: () => void ): void;
 }
 
 export declare class TemplatedElementView extends ElementView {
@@ -225,6 +229,7 @@ export type ElementModel = {
 	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
+	styles?: V1ElementModelProps[ 'styles' ];
 	widgetType: string;
 	editSettings?: BackboneModel< { inactive?: boolean } >;
 	elements?: BackboneCollection< ElementModel >;

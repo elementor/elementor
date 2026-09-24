@@ -16,12 +16,18 @@ class V3_Context_Meta {
 	private array $widget_config;
 	private array $overrides;
 	private array $generic_index;
+	private bool $is_map_driven;
 
-	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index ) {
+	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index, bool $is_map_driven = false ) {
 		$this->widget_type = $widget_type;
 		$this->widget_config = $widget_config;
 		$this->overrides = $overrides;
 		$this->generic_index = $generic_index;
+		$this->is_map_driven = $is_map_driven;
+	}
+
+	public function is_map_driven(): bool {
+		return $this->is_map_driven;
 	}
 
 	public function widget_type(): string {

@@ -260,4 +260,66 @@ class Test_Dynamic_Tag_Llm_Resolver extends TestCase {
 		$this->assertSame( 'site-title', $resolved['value']['name'] );
 		$this->assertSame( 'site', $resolved['value']['group'] );
 	}
+
+	public function test_serialize__returns_llm_shape_without_group() {
+		// Arrange
+		$this->given_tags( [
+			'post-custom-field' => [
+				'name' => 'post-custom-field',
+				'label' => 'Post Custom Field',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'key' => String_Prop_Type::make()->default( '' ),
+					'fallback' => String_Prop_Type::make()->default( '' ),
+				],
+			],
+		] );
+
+		$stored = Dynamic_Tag_Llm_Resolver::resolve( [
+			'name' => 'post-custom-field',
+			'settings' => [ 'key' => 'price' ],
+		] );
+
+		// Act
+		$plain = Dynamic_Tag_Llm_Resolver::serialize( $stored );
+
+		// Assert
+		$this->assertSame( 'post-custom-field', $plain['name'] );
+		$this->assertSame( [ 'key' => 'price' ], $plain['settings'] );
+		$this->assertArrayNotHasKey( 'group', $plain );
+	}
+
+	public function test_serialize__round_trips_with_resolve() {
+		// Arrange
+		$this->given_tags( [
+			'post-title' => [
+				'name' => 'post-title',
+				'label' => 'Post Title',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'before' => String_Prop_Type::make()->default( '' ),
+				],
+			],
+		] );
+
+		$input = [
+			'name' => 'post-title',
+			'settings' => [ 'before' => 'Sale: ' ],
+		];
+
+		// Act
+		$stored = Dynamic_Tag_Llm_Resolver::resolve( $input );
+		$plain = Dynamic_Tag_Llm_Resolver::serialize( $stored );
+		$restored = Dynamic_Tag_Llm_Resolver::resolve( $plain );
+
+		// Assert
+		$this->assertSame( $input, $plain );
+		$this->assertSame( $stored['value']['name'], $restored['value']['name'] );
+		$this->assertSame(
+			$stored['value']['settings']['before'],
+			$restored['value']['settings']['before']
+		);
+	}
 }
