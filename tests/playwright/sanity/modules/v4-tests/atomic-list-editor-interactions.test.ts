@@ -49,7 +49,6 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_list' );
 
 		context = await browser.newContext();
 		const page = await context.newPage();
