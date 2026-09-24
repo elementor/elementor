@@ -386,11 +386,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$theme_slug = Utils::get_super_global_value( $_POST, 'theme_slug' ) ?? 'hello-biz'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
-		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
-			$theme_slug = 'hello-biz';
-		}
+		$theme_slug = 'hello-elementor';
 
 		switch_theme( $theme_slug );
 
