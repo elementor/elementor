@@ -385,8 +385,9 @@ class Test_Element_Config_Applier extends TestCase {
 		// Assert
 		$this->assertNotNull( $result['error'] );
 		$this->assertStringContainsString( 'my-hero', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'hero-title', $result['warnings'][0] ?? '' );
-		$this->assertSame( 'prop_value_invalid', $result['warning_details'][0]['code'] ?? null );
+		$warning = $result['warnings']->all()[0] ?? [];
+		$this->assertSame( 'hero-title', $warning['config_id'] ?? null );
+		$this->assertSame( 'prop_value_invalid', $warning['code'] ?? null );
 	}
 
 }

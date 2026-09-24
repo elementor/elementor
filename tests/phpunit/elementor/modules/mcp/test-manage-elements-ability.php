@@ -536,7 +536,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 	}
 
-	public function test_update__null_setting_on_required_prop_returns_invalid_settings_error() {
+	public function test_update__null_setting_on_required_prop_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -589,7 +589,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $warnings[0] );
 	}
 
-	public function test_update__rejects_unknown_class_label_as_per_op_error() {
+	public function test_update__unknown_class_label_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -606,10 +606,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 
 		$this->assertOkOperation( $result, 0 );
-		$this->assertSame( 'unknown_global_class', $result['results'][0]['warning_details'][0]['code'] ?? null );
-		$warning = implode( ' ', $result['results'][0]['warnings'] ?? [] );
-		$this->assertStringContainsString( 'missing-class', $warning );
-		$this->assertStringContainsString( 'fixable:', $warning );
+		$warning = $result['results'][0]['warning_details'][0] ?? [];
+		$this->assertSame( 'unknown_global_class', $warning['code'] ?? null );
+		$this->assertSame( $heading_id, $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
 	}
 
 	public function test_update__applies_plain_dynamic_title() {
@@ -654,7 +654,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( '120', $node['settings']['title']['value']['settings']['length']['value'] ?? null );
 	}
 
-	public function test_update__rejects_invalid_title_shape_as_per_op_error() {
+	public function test_update__invalid_title_shape_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -672,7 +672,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertOkOperation( $result, 0 );
 		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
-		$this->assertStringContainsString( 'fixable:', implode( ' ', $result['results'][0]['warnings'] ?? [] ) );
+		$this->assertSame( $heading_id, $result['results'][0]['warning_details'][0]['config_id'] ?? null );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotSame(
@@ -1279,7 +1279,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertTrue( empty( $items ) );
 	}
 
-	public function test_bulk__failed_interactions_update_does_not_persist_settings() {
+	public function test_bulk__invalid_interactions_update_still_persists_settings() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );

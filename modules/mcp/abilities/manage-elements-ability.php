@@ -24,8 +24,8 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
-use Elementor\Modules\Mcp\Abilities\Utils\Fixable_Warning;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
@@ -57,7 +57,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			__( 'Manage Elements', 'elementor' ),
 			sprintf(
 				/* translators: %s: comma-separated list of V3-allowlisted widget types. */
-				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. A fixable: warning means that one field was skipped and the rest of the update was saved. Correct only that field. Do not treat the skip as unsupported. A hard error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
+				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
 				implode( ', ', Widget_Context_Helper::V3_ALLOWLIST )
 			),
 			'elementor',
@@ -66,7 +66,19 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				'required' => [ 'status', 'results', 'post_id', 'edit_url' ],
 				'properties' => [
 					'status' => [ 'type' => 'string' ],
-					'results' => [ 'type' => 'array' ],
+					'results' => [
+						'type' => 'array',
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'warnings' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'string' ],
+								],
+								'warning_details' => Warnings_Bag::get_details_schema(),
+							],
+						],
+					],
 					'post_id' => [ 'type' => 'integer' ],
 					'edit_url' => [
 						'type' => 'string',
@@ -206,7 +218,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$tree                = $this->get_tree( $document );
 		$any_change          = false;
 		$pending_events      = [];
-		$all_warning_codes   = [];
+		$all_warnings        = Warnings_Bag::make();
 		$class_attachments   = 0;
 		$interactions_count  = 0;
 
@@ -236,16 +248,9 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$tree = $outcome['tree'];
 			$any_change = true;
 
-			$extra = [ 'element_id' => $element_id ];
-			if ( ! empty( $outcome['warnings'] ) ) {
-				$extra['warnings'] = $outcome['warnings'];
-			}
-			if ( ! empty( $outcome['warning_details'] ) ) {
-				$extra['warning_details'] = $outcome['warning_details'];
-			}
-			$results->add_success( $index, $action, $extra );
+			$results->add_success( $index, $action, $outcome['warnings']->add_to_response( [ 'element_id' => $element_id ] ) );
 
-			$all_warning_codes  = array_merge( $all_warning_codes, $outcome['warning_codes'] ?? [] );
+			$all_warnings->merge( $outcome['warnings'] );
 			$class_attachments  += count( $outcome['event_metadata']['applied_classes'] ?? [] );
 			$interactions_count += count( $outcome['event_metadata']['interactions_events'] ?? [] );
 
@@ -260,7 +265,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( ! $any_change ) {
 			$response = $this->with_edit_url( $response, $document );
-			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warning_codes, $class_attachments, $interactions_count );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 			return $response;
 		}
 
@@ -269,7 +274,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$response['status'] = 'error';
 			$response['save_error'] = $save_result->get_error_message();
 			$response = $this->with_edit_url( $response, $document );
-			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, $save_result, $operations, $response, $all_warning_codes, 0, 0 );
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, $save_result, $operations, $response, $all_warnings->codes(), 0, 0 );
 			return $response;
 		}
 
@@ -280,7 +285,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
 		$response = $this->with_edit_url( $response, $document );
-		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warning_codes, $class_attachments, $interactions_count );
+		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 		return $response;
 	}
 
@@ -356,8 +361,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		return [
 			'tree' => $new_tree,
-			'warnings' => [],
-			'warning_codes' => [],
+			'warnings' => Warnings_Bag::make(),
 		];
 	}
 
@@ -370,8 +374,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		return [
 			'tree' => $new_tree,
-			'warnings' => [],
-			'warning_codes' => [],
+			'warnings' => Warnings_Bag::make(),
 			'event_metadata' => [
 				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
 			],
@@ -413,8 +416,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		return [
 			'tree' => $new_tree,
-			'warnings' => [],
-			'warning_codes' => [],
+			'warnings' => Warnings_Bag::make(),
 		];
 	}
 
@@ -460,22 +462,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$widget_configs = [ $element_type => $widget_config ];
 
 		$variables_service    = $this->create_variables_service();
-		$warnings             = [];
-		$warning_codes        = [];
-		$warning_details      = [];
+		$warnings             = Warnings_Bag::make();
 		$applied_classes      = [];
 		$variable_connections = [];
 		$interactions_events  = [];
 
 		if ( null !== $interactions ) {
 			if ( ! is_array( $interactions ) ) {
-				Fixable_Warning::push(
-					$warnings,
-					$warning_codes,
-					$warning_details,
+				$warnings->add(
 					'interaction_invalid',
-					$element_id,
-					'Interactions must be an array of interaction items.'
+					'Interactions must be an array of interaction items.',
+					$element_id
 				);
 			} elseif ( ! Plugin::$instance->experiments->is_feature_active( Interactions_Module::EXPERIMENT_NAME ) ) {
 				return new \WP_Error(
@@ -487,10 +484,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				$previous_items = $node_snapshot['interactions']['items'] ?? [];
 
 				$interactions_applier = new Interactions_Applier( $this->get_plain_values_resolver() );
-				$interactions_result = $interactions_applier->apply( $index, [ $element_id => $interactions ] );
-				$warnings = array_merge( $warnings, $interactions_result['warnings'] );
-				$warning_codes = array_merge( $warning_codes, $interactions_result['warning_codes'] ?? [] );
-				$warning_details = array_merge( $warning_details, $interactions_result['warning_details'] ?? [] );
+				$warnings->merge( $interactions_applier->apply( $index, [ $element_id => $interactions ] )['warnings'] );
 
 				$interactions_events = $this->build_interactions_events( (string) $element_type, $previous_items, $interactions );
 			}
@@ -500,13 +494,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			if ( Element_Config_Applier::COMPONENT_INSTANCE_WIDGET_TYPE === $element_type ) {
 				$component_applier = new Component_Instance_Applier( new Components_Repository(), $this->get_plain_values_resolver() );
 				$component_error = $component_applier->apply_partial( $index, [ $element_id => $settings ], $document );
-				$component_fixable = $component_applier->consume_fixable_warnings();
+				$component_warnings = $component_applier->consume_warnings();
 				if ( $component_error ) {
 					return $component_error;
 				}
-				$warnings = array_merge( $warnings, $component_fixable['warnings'] );
-				$warning_codes = array_merge( $warning_codes, $component_fixable['warning_codes'] );
-				$warning_details = array_merge( $warning_details, $component_fixable['warning_details'] );
+				$warnings->merge( $component_warnings );
 			} else {
 				$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
 				$config_result = $config_applier->apply(
@@ -518,28 +510,20 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				if ( $config_result['error'] ) {
 					return $config_result['error'];
 				}
-				$warnings = array_merge( $warnings, $config_result['warnings'] );
-				$warning_codes = array_merge( $warning_codes, $config_result['warning_codes'] ?? [] );
-				$warning_details = array_merge( $warning_details, $config_result['warning_details'] ?? [] );
+				$warnings->merge( $config_result['warnings'] );
 			}
 		}
 
 		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
-				Fixable_Warning::push(
-					$warnings,
-					$warning_codes,
-					$warning_details,
+				$warnings->add(
 					'unknown_global_class',
-					$element_id,
-					'classes must be an array of global class labels.'
+					'classes must be an array of global class labels.',
+					$element_id
 				);
 			} else {
 				$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-				$class_result = $class_applier->apply( $index, [ $element_id => $classes ] );
-				$warnings = array_merge( $warnings, $class_result['warnings'] );
-				$warning_codes = array_merge( $warning_codes, $class_result['warning_codes'] );
-				$warning_details = array_merge( $warning_details, $class_result['warning_details'] );
+				$warnings->merge( $class_applier->apply( $index, [ $element_id => $classes ] )['warnings'] );
 				$applied_classes = $classes;
 			}
 		}
@@ -547,17 +531,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		if ( $has_style ) {
 			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
 			$style_result = $style_applier->apply( $index, [ $element_id => $style ], $style_apply_mode, $widget_configs );
-			$warnings = array_merge( $warnings, $style_result['warnings'] );
-			$warning_codes = array_merge( $warning_codes, $style_result['warning_codes'] ?? [] );
-			$warning_details = array_merge( $warning_details, $style_result['warning_details'] ?? [] );
+			$warnings->merge( $style_result['warnings'] );
 			$variable_connections = $style_result['variable_connections'][ $element_id ] ?? [];
 		}
 
 		return [
 			'tree'           => $tree,
 			'warnings'       => $warnings,
-			'warning_codes'  => $warning_codes,
-			'warning_details' => $warning_details,
 			'event_metadata' => [
 				'element_id'           => $element_id,
 				'element_type'         => (string) $element_type,

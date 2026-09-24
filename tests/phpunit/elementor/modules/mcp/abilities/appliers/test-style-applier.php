@@ -70,7 +70,7 @@ namespace {
 
 			// Assert.
 			$this->assertNull( $result['error'] );
-			$this->assertEmpty( $result['warnings'] );
+			$this->assertTrue( $result['warnings']->is_empty() );
 			$this->assertEmpty( $node['styles'] );
 		}
 
@@ -224,7 +224,7 @@ namespace {
 			$this->assertEmpty( $node['styles']['e-existing']['variants'] );
 		}
 
-		public function test_apply__invalid_css_returns_error() {
+		public function test_apply__invalid_css_returns_warning() {
 			// Arrange.
 			$invalid_css = 'color: red; &:hover { unclosed';
 			$converter   = $this->make_converter(
@@ -238,14 +238,15 @@ namespace {
 			$result = $applier->apply( $index, [ 'hero-title' => $invalid_css ] );
 
 			// Assert.
+			$warning = $result['warnings']->all()[0] ?? [];
 			$this->assertNull( $result['error'] );
-			$this->assertSame( 'css_parse_failed', $result['warning_details'][0]['code'] ?? null );
-			$this->assertStringContainsString( 'Unclosed brace', $result['warnings'][0] ?? '' );
-			$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+			$this->assertSame( 'css_parse_failed', $warning['code'] ?? null );
+			$this->assertSame( 'hero-title', $warning['config_id'] ?? null );
+			$this->assertStringContainsString( 'Unclosed brace', $warning['message'] ?? '' );
 			$this->assertEmpty( $node['styles'] );
 		}
 
-		public function test_apply__unknown_breakpoint_returns_error() {
+		public function test_apply__unknown_breakpoint_returns_warning() {
 			// Arrange.
 			$applier = $this->make_applier( $this->make_converter() );
 			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
@@ -255,10 +256,11 @@ namespace {
 			$result = $applier->apply( $index, [ 'hero-title' => '@media(--nonexistent) { color: red; }' ] );
 
 			// Assert.
+			$warning = $result['warnings']->all()[0] ?? [];
 			$this->assertNull( $result['error'] );
-			$this->assertSame( 'css_parse_failed', $result['warning_details'][0]['code'] ?? null );
-			$this->assertStringContainsString( 'nonexistent', $result['warnings'][0] ?? '' );
-			$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+			$this->assertSame( 'css_parse_failed', $warning['code'] ?? null );
+			$this->assertSame( 'hero-title', $warning['config_id'] ?? null );
+			$this->assertStringContainsString( 'nonexistent', $warning['message'] ?? '' );
 			$this->assertEmpty( $node['styles'] );
 		}
 
@@ -297,10 +299,10 @@ namespace {
 			$this->assertSame( '#222222', $node['settings']['title_color'] );
 			$this->assertSame( 'custom', $node['settings']['typography_typography'] );
 			$this->assertSame( [ 'unit' => 'rem', 'size' => 2.0 ], $node['settings']['typography_font_size'] );
-			$this->assertNotEmpty( $result['warnings'] );
+			$this->assertFalse( $result['warnings']->is_empty() );
 			$this->assertTrue(
 				(bool) array_filter(
-					$result['warnings'],
+					$result['warnings']->messages(),
 					static fn( $warning ) => false !== strpos( (string) $warning, 'filter: blur(2px);' )
 				)
 			);

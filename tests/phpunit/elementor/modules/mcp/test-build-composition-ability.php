@@ -387,8 +387,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		foreach ( $expected_message_fragments as $fragment ) {
 			$this->assertStringContainsString( $fragment, $warnings );
 		}
-		$this->assertSame( $expected_code, $result['warning_details'][0]['code'] ?? null );
-		$this->assertStringStartsWith( 'fixable:', $result['warning_details'][0]['message'] ?? '' );
+		$this->assertSame( 'h1', $this->find_warning_by_code( $result, $expected_code )['config_id'] ?? null );
 	}
 
 	public function settings_validation_cases(): array {
@@ -630,8 +629,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertSame( 'prop_value_invalid', $result['warning_details'][0]['code'] ?? null );
-		$this->assertStringContainsString( 'fixable:', implode( ' ', $result['warnings'] ?? [] ) );
+		$this->assertSame( 'h1', $this->find_warning_by_code( $result, 'prop_value_invalid' )['config_id'] ?? null );
 	}
 
 	public function dynamic_tag_wrong_settings_cases(): array {
@@ -675,7 +673,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 	}
 
-	public function test_execute__rejects_invalid_css_breakpoint_in_style() {
+	public function test_execute__invalid_css_breakpoint_in_style_returns_warning() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -693,10 +691,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertSame( 'css_parse_failed', $result['warning_details'][0]['code'] ?? null );
-		$warnings = implode( ' ', $result['warnings'] ?? [] );
-		$this->assertStringContainsString( 'nonexistent', $warnings );
-		$this->assertStringContainsString( 'fixable:', $warnings );
+		$warning = $this->find_warning_by_code( $result, 'css_parse_failed' );
+		$this->assertSame( 'h1', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'nonexistent', $warning['message'] ?? '' );
 	}
 
 	public function test_execute__css_string_creates_desktop_variant_with_props() {
@@ -852,7 +849,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $heading['styles'] ?? [] );
 	}
 
-	public function test_execute__rejects_unknown_global_class_label() {
+	public function test_execute__unknown_global_class_label_returns_warning() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -871,12 +868,11 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertSame( 'unknown_global_class', $result['warning_details'][0]['code'] ?? null );
-		$warning = implode( ' ', $result['warnings'] ?? [] );
-		$this->assertStringContainsString( 'missing-class', $warning );
-		$this->assertStringContainsString( 'Available labels', $warning );
-		$this->assertStringContainsString( 'fixable:', $warning );
-		$this->assertStringContainsString( 'elementor/manage-classes', $warning );
+		$warning = $this->find_warning_by_code( $result, 'unknown_global_class' );
+		$this->assertSame( 'h1', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
+		$this->assertStringContainsString( 'Available labels', $warning['message'] ?? '' );
+		$this->assertStringContainsString( 'elementor/manage-classes', $warning['message'] ?? '' );
 	}
 
 	public function test_execute__resolves_global_variable_label_to_id_in_saved_tree() {
@@ -955,6 +951,16 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		return $result['variable']['id'];
+	}
+
+	private function find_warning_by_code( array $result, string $code ): array {
+		foreach ( $result['warning_details'] ?? [] as $warning ) {
+			if ( $code === $warning['code'] ) {
+				return $warning;
+			}
+		}
+
+		return [];
 	}
 
 	private function create_real_document(): int {

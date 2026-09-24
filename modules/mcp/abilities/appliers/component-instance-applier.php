@@ -17,8 +17,8 @@ use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overrides_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
-use Elementor\Modules\Mcp\Abilities\Utils\Fixable_Warning;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,32 +28,22 @@ class Component_Instance_Applier {
 
 	private Components_Repository $repository;
 	private Plain_Values_Resolver $plain_values_resolver;
-	private array $fixable_warnings = [];
-	private array $fixable_warning_codes = [];
-	private array $fixable_warning_details = [];
+	private Warnings_Bag $warnings;
 	private string $active_config_id = '';
 
 	public function __construct( Components_Repository $repository, Plain_Values_Resolver $plain_values_resolver ) {
 		$this->repository = $repository;
 		$this->plain_values_resolver = $plain_values_resolver;
+		$this->warnings = Warnings_Bag::make();
 	}
 
-	/**
-	 * @return array{warnings: string[], warning_codes: string[], warning_details: array[]}
-	 */
-	public function consume_fixable_warnings(): array {
-		$result = [
-			'warnings' => $this->fixable_warnings,
-			'warning_codes' => $this->fixable_warning_codes,
-			'warning_details' => $this->fixable_warning_details,
-		];
+	public function consume_warnings(): Warnings_Bag {
+		$warnings = $this->warnings;
 
-		$this->fixable_warnings = [];
-		$this->fixable_warning_codes = [];
-		$this->fixable_warning_details = [];
+		$this->warnings = Warnings_Bag::make();
 		$this->active_config_id = '';
 
-		return $result;
+		return $warnings;
 	}
 
 	/**
@@ -408,16 +398,13 @@ class Component_Instance_Applier {
 			$resolved_override = $this->resolve_override_value( $raw_value, $prop );
 
 			if ( $resolved_override['skipped'] ) {
-				Fixable_Warning::push(
-					$this->fixable_warnings,
-					$this->fixable_warning_codes,
-					$this->fixable_warning_details,
+				$this->warnings->add(
 					'component_override_invalid',
-					$this->active_config_id,
 					sprintf(
 						'Override "%s" could not be resolved and was skipped. See elementor/list-components.',
 						$override_key
-					)
+					),
+					$this->active_config_id
 				);
 				continue;
 			}

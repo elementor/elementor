@@ -108,7 +108,7 @@ class Test_Interactions_Applier extends TestCase {
 		$result = $applier->apply( $index, [] );
 
 		$this->assertNull( $result['error'] );
-		$this->assertSame( [], $result['warnings'] );
+		$this->assertTrue( $result['warnings']->is_empty() );
 		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
@@ -199,7 +199,7 @@ class Test_Interactions_Applier extends TestCase {
 		$this->assertArrayHasKey( 'interactions', $index['hero'] );
 	}
 
-	public function test_apply__non_array_items_returns_error() {
+	public function test_apply__non_array_items_returns_warning() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
 
@@ -207,13 +207,14 @@ class Test_Interactions_Applier extends TestCase {
 			'hero' => 'not-an-array',
 		] );
 
+		$warning = $result['warnings']->all()[0] ?? [];
 		$this->assertNull( $result['error'] );
-		$this->assertSame( 'interaction_invalid', $result['warning_details'][0]['code'] ?? null );
-		$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+		$this->assertSame( 'interaction_invalid', $warning['code'] ?? null );
+		$this->assertSame( 'hero', $warning['config_id'] ?? null );
 		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
-	public function test_apply__non_object_item_returns_error() {
+	public function test_apply__non_object_item_returns_warning() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
 
@@ -221,13 +222,14 @@ class Test_Interactions_Applier extends TestCase {
 			'hero' => [ 'not-an-object' ],
 		] );
 
+		$warning = $result['warnings']->all()[0] ?? [];
 		$this->assertNull( $result['error'] );
-		$this->assertSame( 'interaction_invalid', $result['warning_details'][0]['code'] ?? null );
-		$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+		$this->assertSame( 'interaction_invalid', $warning['code'] ?? null );
+		$this->assertSame( 'hero', $warning['config_id'] ?? null );
 		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
-	public function test_apply__unresolvable_item_returns_error() {
+	public function test_apply__unresolvable_item_returns_warning() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
 
@@ -237,10 +239,11 @@ class Test_Interactions_Applier extends TestCase {
 			],
 		] );
 
+		$warning = $result['warnings']->all()[0] ?? [];
 		$this->assertNull( $result['error'] );
-		$this->assertSame( 'interaction_invalid', $result['warning_details'][0]['code'] ?? null );
-		$this->assertStringContainsString( 'elementor://interactions/schema', $result['warnings'][0] ?? '' );
-		$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+		$this->assertSame( 'interaction_invalid', $warning['code'] ?? null );
+		$this->assertSame( 'hero', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'elementor://interactions/schema', $warning['message'] ?? '' );
 		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 

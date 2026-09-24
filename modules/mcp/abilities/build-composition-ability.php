@@ -10,6 +10,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
@@ -99,15 +100,14 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $compiled;
 		}
 
-		$subtrees         = $compiled['elements'];
-		$warnings         = $compiled['warnings'];
-		$warning_codes    = $compiled['warning_codes'] ?? [];
-		$warning_details  = $compiled['warning_details'] ?? [];
+		$subtrees      = $compiled['elements'];
+		$warnings      = $compiled['warnings'];
+		$warning_codes = $warnings->codes();
 		$dom           = $compiled['dom'];
 		$xml_parser    = $compiled['xml_parser'];
 
 		if ( $dry_run ) {
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [], $warning_details );
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
 			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
 			return $response;
 		}
@@ -121,7 +121,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $warning_details );
+		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
 		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
 
 		return $response;
@@ -243,19 +243,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices. fixable: warnings mean one field was skipped and the rest was saved — correct that field via manage-elements. The composition was still built.',
+					'description' => 'Every warning is fixable: one field was skipped or adjusted and the rest was saved — correct that field via manage-elements. The composition was still built. Errors fail the call instead.',
 				],
-				'warning_details' => [
-					'type' => 'array',
-					'items' => [
-						'type' => 'object',
-						'properties' => [
-							'code' => [ 'type' => 'string' ],
-							'config_id' => [ 'type' => 'string' ],
-							'message' => [ 'type' => 'string' ],
-						],
-					],
-				],
+				'warning_details' => Warnings_Bag::get_details_schema(),
 				'removed_element_ids' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -383,10 +373,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
-		array $warnings,
+		Warnings_Bag $warnings,
 		string $mode,
-		array $removed_ids,
-		array $warning_details = []
+		array $removed_ids
 	): array {
 		$post = get_post( $post_id );
 
@@ -399,13 +388,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];
 
-		if ( ! empty( $warnings ) ) {
-			$response['warnings'] = $warnings;
-		}
-
-		if ( ! empty( $warning_details ) ) {
-			$response['warning_details'] = $warning_details;
-		}
+		$response = $warnings->add_to_response( $response );
 
 		if ( self::MODE_REPLACE_CHILDREN === $mode ) {
 			$response['removed_element_ids'] = $removed_ids;
