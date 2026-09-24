@@ -39,6 +39,13 @@ class Content_Generator {
 	const MAX_POSTS_PER_TYPE = 500;
 
 	/**
+	 * Default number of posts inlined per post type in llms-full.txt.
+	 * Keeps the inline-content loop bounded so the request cannot time out.
+	 * Overridable per post type via the `elementor/agents/llms_full/posts_per_type` filter.
+	 */
+	const LLMS_FULL_POSTS_PER_TYPE = 20;
+
+	/**
 	 * Post-meta key for the per-post inline-content cache (used in llms-full.txt).
 	 * Bump INLINE_CACHE_VERSION to silently invalidate all cached entries.
 	 */
@@ -119,7 +126,7 @@ class Content_Generator {
 	public function generate_llms_full_txt( array $overrides = [] ): string {
 		$lines = $this->build_header( $overrides );
 
-		$sections = $this->get_content_sections();
+		$sections = $this->get_content_sections( true );
 
 		// Separate WooCommerce products from everything else so we can deprioritise them.
 		$product_section = $sections['Products'] ?? [];
@@ -212,8 +219,10 @@ class Content_Generator {
 
 		// Append the user-editable optional section to the output directly,
 		// since $output was already built from $lines before the content loop.
-		if ( ! empty( $overrides['optional'] ) ) {
-			$output .= "\n## Optional\n\n" . trim( $overrides['optional'] ) . "\n";
+		$optional = $this->get_sanitized_optional( $overrides );
+
+		if ( '' !== $optional ) {
+			$output .= "\n## Optional\n\n" . $optional . "\n";
 		}
 
 		return $output;
@@ -320,16 +329,18 @@ class Content_Generator {
 	/**
 	 * Build an ordered map of section_title => items for all eligible content.
 	 *
+	 * @param bool $apply_llms_full_limit Whether to cap each post type to the
+	 *   llms-full.txt per-type inline limit instead of MAX_POSTS_PER_TYPE.
 	 * @return array<string, array<array{id: int, title: string, url: string, description: string}>>
 	 */
-	private function get_content_sections(): array {
+	private function get_content_sections( bool $apply_llms_full_limit = false ): array {
 		$sections = [];
 
 		// 1. Pages — hierarchical order (menu_order ASC, then parent-child).
 		$pages = $this->get_posts_for_section( 'page', [
 			'orderby'  => 'menu_order',
 			'order'    => 'ASC',
-		] );
+		], $this->get_posts_per_type_limit( 'page', $apply_llms_full_limit ) );
 
 		if ( ! empty( $pages ) ) {
 			$sections[ __( 'Pages', 'elementor' ) ] = $pages;
@@ -339,7 +350,7 @@ class Content_Generator {
 		$posts = $this->get_posts_for_section( 'post', [
 			'orderby' => 'date',
 			'order'   => 'DESC',
-		] );
+		], $this->get_posts_per_type_limit( 'post', $apply_llms_full_limit ) );
 
 		if ( ! empty( $posts ) ) {
 			$sections[ __( 'Posts', 'elementor' ) ] = $posts;
@@ -352,7 +363,7 @@ class Content_Generator {
 			$items = $this->get_posts_for_section( $cpt->name, [
 				'orderby' => 'date',
 				'order'   => 'DESC',
-			] );
+			], $this->get_posts_per_type_limit( $cpt->name, $apply_llms_full_limit ) );
 
 			if ( ! empty( $items ) ) {
 				$sections[ $cpt->labels->name ?? $cpt->name ] = $items;
@@ -364,7 +375,7 @@ class Content_Generator {
 			$products = $this->get_posts_for_section( 'product', [
 				'orderby' => 'date',
 				'order'   => 'DESC',
-			] );
+			], $this->get_posts_per_type_limit( 'product', $apply_llms_full_limit ) );
 
 			if ( ! empty( $products ) ) {
 				$sections[ __( 'Products', 'elementor' ) ] = $products;
@@ -375,18 +386,40 @@ class Content_Generator {
 	}
 
 	/**
+	 * Resolve the posts-per-type query limit for a post type.
+	 *
+	 * When not building llms-full.txt, the limit stays at MAX_POSTS_PER_TYPE
+	 * so the link-only llms.txt output is unaffected.
+	 *
+	 * @param string $post_type Post type slug.
+	 * @param bool   $apply_llms_full_limit Whether the llms-full.txt cap applies.
+	 * @return int
+	 */
+	private function get_posts_per_type_limit( string $post_type, bool $apply_llms_full_limit ): int {
+		if ( ! $apply_llms_full_limit ) {
+			return self::MAX_POSTS_PER_TYPE;
+		}
+
+		$limit = apply_filters( 'elementor/agents/llms_full/posts_per_type', self::LLMS_FULL_POSTS_PER_TYPE, $post_type );
+		$limit = is_numeric( $limit ) ? (int) $limit : self::LLMS_FULL_POSTS_PER_TYPE;
+
+		return max( 1, min( $limit, self::MAX_POSTS_PER_TYPE ) );
+	}
+
+	/**
 	 * Fetch published, indexable, public posts of a given type.
 	 *
 	 * @param string $post_type Post type slug.
 	 * @param array  $query_overrides Additional WP_Query args.
+	 * @param int    $posts_per_type Maximum number of posts to fetch.
 	 * @return array<array{id: int, title: string, url: string, description: string}>
 	 */
-	private function get_posts_for_section( string $post_type, array $query_overrides = [] ): array {
+	private function get_posts_for_section( string $post_type, array $query_overrides = [], int $posts_per_type = self::MAX_POSTS_PER_TYPE ): array {
 		$args = array_merge(
 			[
 				'post_type'              => $post_type,
 				'post_status'            => 'publish',
-				'posts_per_page'         => self::MAX_POSTS_PER_TYPE,
+				'posts_per_page'         => $posts_per_type,
 				'orderby'                => 'date',
 				'order'                  => 'DESC',
 				'no_found_rows'          => true,
@@ -639,9 +672,7 @@ class Content_Generator {
 	 * @param array{optional?: string} $overrides Override values.
 	 */
 	private function append_optional_section( array &$lines, array $overrides ): void {
-		$optional = '' !== trim( $overrides['optional'] ?? '' )
-			? $this->sanitizer->sanitize( trim( $overrides['optional'] ) )
-			: '';
+		$optional = $this->get_sanitized_optional( $overrides );
 
 		if ( '' === $optional ) {
 			return;
@@ -651,6 +682,22 @@ class Content_Generator {
 		$lines[] = '';
 		$lines[] = $optional;
 		$lines[] = '';
+	}
+
+	/**
+	 * Sanitize the user-editable "Optional" override for rendering.
+	 *
+	 * Shared by generate_llms_txt() and generate_llms_full_txt() so both
+	 * files neutralize prompt-injection patterns the same way.
+	 *
+	 * @param array{optional?: string} $overrides Override values.
+	 */
+	private function get_sanitized_optional( array $overrides ): string {
+		$optional = trim( $overrides['optional'] ?? '' );
+
+		return '' !== $optional
+			? $this->sanitizer->sanitize( $optional )
+			: '';
 	}
 
 	/**

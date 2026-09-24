@@ -63,7 +63,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$result = $this->ability->execute( [] );
 
 		$this->assertArrayHasKey( 'heading', $result );
-		$this->assertSame( [ 'color' ], $result['heading']['style_targets']['targets']['heading'] );
+		$this->assertSame( [ 'color' ], $result['heading']['style_targets']['heading'] );
 	}
 
 	public function test_execute__excludes_heading_when_atomic_elements_active() {
@@ -155,6 +155,24 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$types = array_column( $result['widgets'], 'type' );
 		$this->assertContains( 'nav-menu', $types );
 		$this->assertNotContains( 'fake-v3', $types );
+	}
+
+	public function test_execute__does_not_promote_e_flexbox_in_list_but_get_widget_schema_succeeds() {
+		$this->act_as_admin();
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		$result = $this->ability->execute( [] );
+
+		$this->assertArrayNotHasKey( 'e-flexbox', $result );
+
+		$summary = $this->ability->execute( [ 'summary' => true ] );
+		$types = array_column( $summary['widgets'], 'type' );
+		$this->assertNotContains( 'e-flexbox', $types );
+
+		$get_result = $this->get_schema_ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+		$this->assertIsArray( $get_result );
+		$this->assertArrayHasKey( 'properties', $get_result );
+		$this->assertStringContainsString( 'flex-direction to column', $get_result['description'] );
 	}
 
 	/**

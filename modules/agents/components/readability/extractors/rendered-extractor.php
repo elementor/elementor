@@ -86,7 +86,7 @@ class Rendered_Extractor implements Extractor_Interface {
 		];
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_query = new \WP_Query( $args );
+		$wp_query    = new \WP_Query( $args );
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wp_the_query = $wp_query;
 
@@ -116,7 +116,7 @@ class Rendered_Extractor implements Extractor_Interface {
 
 		// Restore global query state.
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_query = $saved_query;
+		$wp_query     = $saved_query;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wp_the_query = $saved_the_query;
 

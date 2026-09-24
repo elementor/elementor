@@ -31,5 +31,5 @@ export const CATEGORY_LABELS: Record< AuditCategory, string > = {
 	seo: __( 'SEO', 'elementor' ),
 	accessibility: __( 'Accessibility', 'elementor' ),
 	performance: __( 'Performance', 'elementor' ),
-	compliance: __( 'Compliance', 'elementor' ),
+	compliance: __( 'Site compliance', 'elementor' ),
 };

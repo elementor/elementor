@@ -78,6 +78,12 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
+
+		if ( ! self::is_active() ) {
+			return;
+		}
+
 		$sanitizer              = new Prompt_Injection_Sanitizer();
 		$this->generator        = new Content_Generator( $sanitizer );
 		$this->cache            = new Llms_Cache();
@@ -85,11 +91,6 @@ class Module extends BaseModule {
 		$this->feature_registry = new Feature_Registry();
 
 		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
-		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
-
-		if ( ! self::is_active() ) {
-			return;
-		}
 
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
@@ -134,10 +135,6 @@ class Module extends BaseModule {
 	 * @param Kit $kit
 	 */
 	public function register_kit_tabs( $kit ) {
-		if ( ! self::is_active() ) {
-			return;
-		}
-
 		$kit->register_tab( 'settings-agents', Settings_Agents::class );
 	}
 

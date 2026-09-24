@@ -42,6 +42,7 @@
     "@elementor/editor": "4.4.0",
     "@elementor/editor-canvas": "4.4.0",
     "@elementor/editor-controls": "4.4.0",
+    "@elementor/editor-current-user": "4.4.0",
     "@elementor/editor-documents": "4.4.0",
     "@elementor/editor-elements": "4.4.0",
     "@elementor/editor-interactions": "4.4.0",

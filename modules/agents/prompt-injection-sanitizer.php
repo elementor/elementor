@@ -59,27 +59,53 @@ class Prompt_Injection_Sanitizer {
 	 *
 	 * The text is passed through each pattern in sequence. Only the suspicious
 	 * command-like fragments are removed or replaced; the surrounding readable
-	 * content is preserved.
+	 * content is preserved. When any pattern actually matched, a plain-language
+	 * note is appended so it is visible that content was removed, rather than
+	 * silently rewriting the text.
 	 *
 	 * @param string $text Raw excerpt or description.
 	 * @return string Sanitized text safe to embed in the llms file.
 	 */
 	public function sanitize( string $text ): string {
-		$text = wp_strip_all_tags( $text );
+		$matched = false;
 
+		// Run the instruction-pattern checks before stripping HTML tags: some
+		// patterns (ChatML role tags, XML-style wrappers) rely on the angle
+		// brackets that wp_strip_all_tags() would otherwise remove first,
+		// which would hide a genuine match from $matched.
 		foreach ( self::PATTERNS as [ $pattern, $replacement ] ) {
 			$sanitized = preg_replace( $pattern, $replacement, $text );
 
 			// preg_replace returns null on error; keep original if that happens.
 			if ( null !== $sanitized ) {
+				if ( $sanitized !== $text ) {
+					$matched = true;
+				}
+
 				$text = $sanitized;
 			}
 		}
+
+		$text = wp_strip_all_tags( $text );
 
 		// Collapse multiple consecutive blank lines or whitespace runs left by removal.
 		$text = preg_replace( '/\n{3,}/', "\n\n", $text ) ?? $text;
 		$text = preg_replace( '/[ \t]{2,}/', ' ', $text ) ?? $text;
 
-		return trim( $text );
+		$text = trim( $text );
+
+		if ( $matched && '' !== $text ) {
+			$text .= ' ' . self::get_match_notice();
+		}
+
+		return $text;
+	}
+
+	/**
+	 * Plain-language notice appended when a pattern match was neutralized,
+	 * so removal is visible instead of silent.
+	 */
+	private static function get_match_notice(): string {
+		return __( '[Note: potential AI instruction patterns were removed.]', 'elementor' );
 	}
 }
