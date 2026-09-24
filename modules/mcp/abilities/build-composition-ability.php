@@ -99,14 +99,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $compiled;
 		}
 
-		$subtrees      = $compiled['elements'];
-		$warnings      = $compiled['warnings'];
-		$warning_codes = $compiled['warning_codes'] ?? [];
+		$subtrees         = $compiled['elements'];
+		$warnings         = $compiled['warnings'];
+		$warning_codes    = $compiled['warning_codes'] ?? [];
+		$warning_details  = $compiled['warning_details'] ?? [];
 		$dom           = $compiled['dom'];
 		$xml_parser    = $compiled['xml_parser'];
 
 		if ( $dry_run ) {
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [], $warning_details );
 			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
 			return $response;
 		}
@@ -120,7 +121,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $warning_details );
 		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
 
 		return $response;
@@ -242,7 +243,18 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices, e.g. props skipped because the target widget does not support them, or CSS that fell back to custom_css. The composition was still built.',
+					'description' => 'Non-fatal notices. fixable: warnings mean one field was skipped and the rest was saved — correct that field via manage-elements. The composition was still built.',
+				],
+				'warning_details' => [
+					'type' => 'array',
+					'items' => [
+						'type' => 'object',
+						'properties' => [
+							'code' => [ 'type' => 'string' ],
+							'config_id' => [ 'type' => 'string' ],
+							'message' => [ 'type' => 'string' ],
+						],
+					],
 				],
 				'removed_element_ids' => [
 					'type' => 'array',
@@ -373,7 +385,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 		array $root_ids,
 		array $warnings,
 		string $mode,
-		array $removed_ids
+		array $removed_ids,
+		array $warning_details = []
 	): array {
 		$post = get_post( $post_id );
 
@@ -388,6 +401,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
+		}
+
+		if ( ! empty( $warning_details ) ) {
+			$response['warning_details'] = $warning_details;
 		}
 
 		if ( self::MODE_REPLACE_CHILDREN === $mode ) {

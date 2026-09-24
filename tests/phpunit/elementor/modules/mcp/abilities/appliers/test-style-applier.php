@@ -238,8 +238,11 @@ namespace {
 			$result = $applier->apply( $index, [ 'hero-title' => $invalid_css ] );
 
 			// Assert.
-			$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-			$this->assertStringContainsString( 'Unclosed brace', $result['error']->get_error_message() );
+			$this->assertNull( $result['error'] );
+			$this->assertSame( 'css_parse_failed', $result['warning_details'][0]['code'] ?? null );
+			$this->assertStringContainsString( 'Unclosed brace', $result['warnings'][0] ?? '' );
+			$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+			$this->assertEmpty( $node['styles'] );
 		}
 
 		public function test_apply__unknown_breakpoint_returns_error() {
@@ -252,8 +255,11 @@ namespace {
 			$result = $applier->apply( $index, [ 'hero-title' => '@media(--nonexistent) { color: red; }' ] );
 
 			// Assert.
-			$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-			$this->assertStringContainsString( 'nonexistent', $result['error']->get_error_message() );
+			$this->assertNull( $result['error'] );
+			$this->assertSame( 'css_parse_failed', $result['warning_details'][0]['code'] ?? null );
+			$this->assertStringContainsString( 'nonexistent', $result['warnings'][0] ?? '' );
+			$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+			$this->assertEmpty( $node['styles'] );
 		}
 
 		public function test_apply__v3_maps_css_to_settings_and_falls_back_unmapped_to_custom_css() {

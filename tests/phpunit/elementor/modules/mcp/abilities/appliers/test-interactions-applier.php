@@ -207,8 +207,10 @@ class Test_Interactions_Applier extends TestCase {
 			'hero' => 'not-an-array',
 		] );
 
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( '[hero] Interactions must be an array.', $result['error']->get_error_message() );
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'interaction_invalid', $result['warning_details'][0]['code'] ?? null );
+		$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
 	public function test_apply__non_object_item_returns_error() {
@@ -219,8 +221,10 @@ class Test_Interactions_Applier extends TestCase {
 			'hero' => [ 'not-an-object' ],
 		] );
 
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( '[hero] Interaction at index 0 must be an object.', $result['error']->get_error_message() );
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'interaction_invalid', $result['warning_details'][0]['code'] ?? null );
+		$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
 	public function test_apply__unresolvable_item_returns_error() {
@@ -233,10 +237,11 @@ class Test_Interactions_Applier extends TestCase {
 			],
 		] );
 
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertSame( 'elementor_invalid_interactions', $result['error']->get_error_code() );
-		$this->assertStringContainsString( '[hero] Interaction at index 0 could not be resolved.', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'elementor://interactions/schema', $result['error']->get_error_message() );
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'interaction_invalid', $result['warning_details'][0]['code'] ?? null );
+		$this->assertStringContainsString( 'elementor://interactions/schema', $result['warnings'][0] ?? '' );
+		$this->assertStringStartsWith( 'fixable:', $result['warnings'][0] ?? '' );
+		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
 	public function test_apply__empty_items_array_clears_interactions_on_node() {

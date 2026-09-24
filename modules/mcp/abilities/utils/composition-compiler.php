@@ -117,31 +117,35 @@ final class Composition_Compiler {
 		}
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
-		$class_error = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
-		if ( $class_error ) {
-			return $class_error;
-		}
+		$class_result = $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) );
 
 		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
 		$style_result = $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs );
-		if ( $style_result['error'] ) {
-			return $style_result['error'];
-		}
 
 		$interactions_result = $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) );
-		if ( $interactions_result['error'] ) {
-			return $interactions_result['error'];
-		}
 
 		return [
 			'elements' => $subtrees,
-			'warnings' => array_merge( $wrapping_result['warnings'], $config_result['warnings'], $style_result['warnings'], $interactions_result['warnings'] ),
+			'warnings' => array_merge(
+				$wrapping_result['warnings'],
+				$config_result['warnings'],
+				$class_result['warnings'],
+				$style_result['warnings'],
+				$interactions_result['warnings']
+			),
 			'warning_codes' => array_values( array_unique( array_merge(
 				$wrapping_result['warning_codes'] ?? [],
 				$config_result['warning_codes'] ?? [],
+				$class_result['warning_codes'] ?? [],
 				$style_result['warning_codes'] ?? [],
 				$interactions_result['warning_codes'] ?? []
 			) ) ),
+			'warning_details' => array_merge(
+				$config_result['warning_details'] ?? [],
+				$class_result['warning_details'] ?? [],
+				$style_result['warning_details'] ?? [],
+				$interactions_result['warning_details'] ?? []
+			),
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
 		];
@@ -356,7 +360,7 @@ final class Composition_Compiler {
 
 		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 
-		return $applier->apply( $index, $interactions ) + [ 'warning_codes' => [] ];
+		return $applier->apply( $index, $interactions );
 	}
 
 	private function is_variables_active(): bool {

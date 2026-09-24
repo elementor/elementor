@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Fixable_Warning;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
@@ -35,7 +36,7 @@ class Style_Applier {
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
 	 * @param string                $style_apply_mode `patch` or `replace`.
 	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
-	 * @return array{error: \WP_Error|null, warnings: string[], variable_connections: array<string, array<string, string>>}
+	 * @return array{error: null, warnings: string[], warning_codes: string[], warning_details: array[], variable_connections: array<string, array<string, string>>}
 	 */
 	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
 		if ( empty( $styles ) ) {
@@ -43,19 +44,27 @@ class Style_Applier {
 				'error'               => null,
 				'warnings'            => [],
 				'warning_codes'       => [],
+				'warning_details'     => [],
 				'variable_connections' => [],
 			];
 		}
 
 		$active_breakpoints    = $this->get_active_breakpoints();
-		$errors                = [];
 		$warnings              = [];
 		$warning_codes         = [];
+		$warning_details       = [];
 		$variable_connections  = [];
 
 		foreach ( $styles as $config_id => $css_string ) {
 			if ( ! is_string( $css_string ) ) {
-				$errors[] = sprintf( '[%s] style must be a CSS string, got %s.', $config_id, gettype( $css_string ) );
+				Fixable_Warning::push(
+					$warnings,
+					$warning_codes,
+					$warning_details,
+					'css_parse_failed',
+					(string) $config_id,
+					sprintf( 'style must be a CSS string, got %s.', gettype( $css_string ) )
+				);
 				continue;
 			}
 
@@ -100,7 +109,14 @@ class Style_Applier {
 
 			if ( null === $parsed ) {
 				$result_data = $parse_results->to_array();
-				$errors[]    = sprintf( '[%s] %s', $config_id, $result_data['results'][0]['message'] ?? 'CSS parse error.' );
+				Fixable_Warning::push(
+					$warnings,
+					$warning_codes,
+					$warning_details,
+					'css_parse_failed',
+					(string) $config_id,
+					$result_data['results'][0]['message'] ?? 'CSS parse error.'
+				);
 				unset( $node );
 				continue;
 			}
@@ -128,13 +144,10 @@ class Style_Applier {
 		}
 
 		return [
-			'error'               => $errors ? new \WP_Error(
-				'elementor_invalid_styles',
-				implode( ' ', $errors ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			) : null,
+			'error'               => null,
 			'warnings'            => $warnings,
 			'warning_codes'       => array_values( array_unique( $warning_codes ) ),
+			'warning_details'     => $warning_details,
 			'variable_connections' => $variable_connections,
 		];
 	}

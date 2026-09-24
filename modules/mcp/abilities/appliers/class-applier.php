@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\Mcp\Abilities\Utils\Fixable_Warning;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,14 +20,25 @@ class Class_Applier {
 	/**
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, mixed>  $classes_input   Per-config-id global class labels.
+	 *
+	 * @return array{error: null, warnings: string[], warning_codes: string[], warning_details: array[]}
 	 */
-	public function apply( array $config_id_index, array $classes_input ): ?\WP_Error {
+	public function apply( array $config_id_index, array $classes_input ): array {
+		$empty = [
+			'error' => null,
+			'warnings' => [],
+			'warning_codes' => [],
+			'warning_details' => [],
+		];
+
 		if ( empty( $classes_input ) ) {
-			return null;
+			return $empty;
 		}
 
 		$id_by_label = $this->build_label_to_id_map( $this->repository->all_labels() );
-		$errors = [];
+		$warnings = [];
+		$warning_codes = [];
+		$warning_details = [];
 
 		foreach ( $classes_input as $config_id => $labels ) {
 			if ( ! isset( $config_id_index[ $config_id ] ) ) {
@@ -34,16 +46,19 @@ class Class_Applier {
 			}
 
 			if ( ! is_array( $labels ) ) {
-				$errors[] = sprintf(
-					'[%s] classes must be an array of global class labels, got %s.',
-					$config_id,
-					gettype( $labels )
+				Fixable_Warning::push(
+					$warnings,
+					$warning_codes,
+					$warning_details,
+					'unknown_global_class',
+					(string) $config_id,
+					sprintf( 'classes must be an array of global class labels, got %s.', gettype( $labels ) )
 				);
 				continue;
 			}
 
 			$node = &$config_id_index[ $config_id ];
-			$resolved_labels = $this->resolve_labels( $labels, $id_by_label, $config_id, $errors );
+			$resolved_labels = $this->resolve_labels( $labels, $id_by_label, (string) $config_id, $warnings, $warning_codes, $warning_details );
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
 				if ( empty( $labels ) ) {
@@ -76,39 +91,51 @@ class Class_Applier {
 			unset( $node );
 		}
 
-		if ( empty( $errors ) ) {
-			return null;
-		}
-
-		return new \WP_Error(
-			'elementor_unknown_global_class',
-			implode( ' ', $errors ),
-			[ 'status' => \WP_Http::BAD_REQUEST ]
-		);
+		return [
+			'error' => null,
+			'warnings' => $warnings,
+			'warning_codes' => array_values( array_unique( $warning_codes ) ),
+			'warning_details' => $warning_details,
+		];
 	}
 
 	/**
-	 * @param string[]             $labels      Global class labels input for this node.
-	 * @param array<string,string> $id_by_label Map of label => class id (for validation).
-	 * @param string               $config_id   Identifier used in error messages.
-	 * @param string[]             $errors      Collected error messages (by reference).
+	 * @param string[]             $labels           Global class labels input for this node.
+	 * @param array<string,string> $id_by_label      Map of label => class id (for validation).
+	 * @param string               $config_id        Identifier used in warning messages.
+	 * @param string[]             $warnings         Collected warning messages.
+	 * @param string[]             $warning_codes    Collected warning codes.
+	 * @param array[]              $warning_details  Collected warning details.
 	 * @return string[] Validated labels.
 	 */
-	private function resolve_labels( array $labels, array $id_by_label, string $config_id, array &$errors ): array {
+	private function resolve_labels( array $labels, array $id_by_label, string $config_id, array &$warnings, array &$warning_codes, array &$warning_details ): array {
 		$resolved_labels = [];
 
 		foreach ( $labels as $label ) {
 			if ( ! is_string( $label ) || '' === $label ) {
-				$errors[] = sprintf( '[%s] Each global class label must be a non-empty string.', $config_id );
+				Fixable_Warning::push(
+					$warnings,
+					$warning_codes,
+					$warning_details,
+					'unknown_global_class',
+					$config_id,
+					'Each global class label must be a non-empty string.'
+				);
 				continue;
 			}
 
 			if ( ! isset( $id_by_label[ $label ] ) ) {
-				$errors[] = sprintf(
-					'[%s] Unknown global class label "%s". Available labels: %s',
+				Fixable_Warning::push(
+					$warnings,
+					$warning_codes,
+					$warning_details,
+					'unknown_global_class',
 					$config_id,
-					$label,
-					! empty( $id_by_label ) ? implode( ', ', array_keys( $id_by_label ) ) : '(none)'
+					sprintf(
+						'Unknown global class label "%s". Create it with elementor/manage-classes, then attach it in a follow-up update. Available labels: %s',
+						$label,
+						! empty( $id_by_label ) ? implode( ', ', array_keys( $id_by_label ) ) : '(none)'
+					)
 				);
 				continue;
 			}

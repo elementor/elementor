@@ -93,6 +93,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $source_result;
 		}
 		[ 'elements' => $elements, 'warnings' => $warnings ] = $source_result;
+		$warning_details = $source_result['warning_details'] ?? [];
 		$source_id_map = $source_result['source_id_map'] ?? [];
 
 		$settings = [];
@@ -149,6 +150,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
+		}
+
+		if ( ! empty( $warning_details ) ) {
+			$response['warning_details'] = $warning_details;
 		}
 
 		return $response;
@@ -277,6 +282,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		$elements = $this->assign_element_ids( $compiled['elements'] );
 		$warnings = $compiled['warnings'];
+		$warning_details = $compiled['warning_details'] ?? [];
 
 		$non_atomic_error = $this->validate_atomic_elements( $elements );
 		if ( $non_atomic_error ) {
@@ -297,11 +303,16 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		$result = $this->save_component( $component, $elements, $settings );
-		if ( is_wp_error( $result ) || empty( $warnings ) ) {
+		if ( is_wp_error( $result ) || ( empty( $warnings ) && empty( $warning_details ) ) ) {
 			return $result;
 		}
 
-		return $result + [ 'warnings' => $warnings ];
+		$extra = [ 'warnings' => $warnings ];
+		if ( ! empty( $warning_details ) ) {
+			$extra['warning_details'] = $warning_details;
+		}
+
+		return $result + $extra;
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
@@ -404,6 +415,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 		return [
 			'elements' => $this->assign_element_ids( $compiled['elements'] ),
 			'warnings' => $compiled['warnings'],
+			'warning_details' => $compiled['warning_details'] ?? [],
 		];
 	}
 
