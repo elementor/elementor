@@ -78,6 +78,7 @@ jobs:
               - 'tests/elements-regression/**'
               - '.github/actions/playwright-**'
               - '.github/workflows/playwright-**'
+              - '.github/**/*.yml'
               - 'packages/**'
               - 'modules/**'
               - 'core/**'
