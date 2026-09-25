@@ -177,6 +177,26 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_is_llms_txt_request__does_not_match_prefix_without_segment_boundary() {
+		// Arrange
+		add_filter( 'home_url', static function () {
+			return 'http://example.com/blog';
+		} );
+
+		$_SERVER['REQUEST_URI'] = '/blogllms.txt';
+		$method = new \ReflectionMethod( Module::class, 'is_llms_txt_request' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $this->module );
+
+		// Cleanup
+		remove_all_filters( 'home_url' );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
 	public function test_get_etag__differs_per_content() {
 		// Act
 		$first = $this->invoke_private( 'get_etag', [ '# llms.txt' ] );

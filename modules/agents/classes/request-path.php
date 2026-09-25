@@ -29,9 +29,10 @@ class Request_Path {
 
 		if ( is_string( $home_path ) && '' !== $home_path && '/' !== $home_path ) {
 			$home_path = untrailingslashit( $home_path );
+			$home_path_length = strlen( $home_path );
 
-			if ( 0 === strpos( $path, $home_path ) ) {
-				$path = substr( $path, strlen( $home_path ) );
+			if ( 0 === strpos( $path, $home_path ) && isset( $path[ $home_path_length ] ) && '/' === $path[ $home_path_length ] ) {
+				$path = substr( $path, $home_path_length );
 			}
 		}
 
