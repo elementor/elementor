@@ -48,6 +48,7 @@ async function fetchDocuments( ids: number[] ): Promise< Document[] > {
 				return await ajax.load< { id: number }, Document >( {
 					data: { id },
 					action: 'get_document_config',
+					retry: true,
 					unique_id: `template-${ id }`,
 				} );
 			} catch {

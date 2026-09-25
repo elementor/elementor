@@ -1,3 +1,7 @@
+const MAX_RETRIES = 3;
+const RETRY_BASE_DELAY_MS = 1000;
+const RETRY_MAX_DELAY_MS = 30000;
+
 export default class extends elementorModules.Module {
 	getDefaultSettings() {
 		return {
@@ -84,6 +88,7 @@ export default class extends elementorModules.Module {
 			deferred = this.addRequest( request.action, {
 				data: request.data,
 				unique_id: request.unique_id,
+				retry: request.retry,
 				success: ( data ) => this.cache[ cacheKey ] = data,
 				error: request.error ?? ( () => {} ),
 			}, immediately )
@@ -164,6 +169,8 @@ export default class extends elementorModules.Module {
 			this.requests = {};
 		}
 
+		const canRetry = Object.values( requests ).every( ( request ) => request.options.retry );
+
 		Object.entries( requests ).forEach( ( [ id, request ] ) => actions[ id ] = {
 			action: request.action,
 			data: request.options.data,
@@ -173,6 +180,7 @@ export default class extends elementorModules.Module {
 			data: {
 				actions: JSON.stringify( actions ),
 			},
+			retry: canRetry,
 			success: ( data ) => {
 				Object.entries( data.responses ).forEach( ( [ id, response ] ) => {
 					const options = requests[ id ].options;
@@ -248,7 +256,122 @@ export default class extends elementorModules.Module {
 	}
 
 	send( action, options ) {
-		return jQuery.ajax( this.prepareSend( action, options ) );
+		const ajaxParams = this.prepareSend( action, options );
+		const retryEnabled = true === ajaxParams.retry;
+
+		delete ajaxParams.retry;
+
+		let attempt = 0;
+		let aborted = false;
+		let settled = false;
+		let jqXhr = null;
+		let retryTimer = null;
+
+		// Callers treat the return value as a jqXHR-like promise, so this deferred is
+		// settled with the outcome of the final attempt to keep .done/.fail working
+		// across retries.
+		const deferred = jQuery.Deferred();
+
+		const originalSuccess = ajaxParams.success;
+		const originalError = ajaxParams.error;
+
+		ajaxParams.success = ( response ) => {
+			jqXhr = null;
+			settled = true;
+
+			deferred.resolve( response );
+
+			if ( originalSuccess ) {
+				originalSuccess( response );
+			}
+		};
+
+		// Hosts rate-limit admin-ajax.php, and a burst of editor requests can draw HTTP
+		// 429 responses that would otherwise leave components unloaded. Retry only
+		// explicitly opted-in requests, since a batch may contain write actions; a 5xx
+		// may follow a partial write and is never retried.
+		ajaxParams.error = ( errorJqXHR, textStatus, errorThrown ) => {
+			jqXhr = null;
+
+			if ( aborted || 'abort' === textStatus || ! retryEnabled || 429 !== errorJqXHR.status || attempt >= MAX_RETRIES ) {
+				settled = true;
+
+				deferred.reject( errorJqXHR, textStatus, errorThrown );
+
+				if ( originalError ) {
+					originalError( errorJqXHR, textStatus, errorThrown );
+				}
+
+				return;
+			}
+
+			attempt += 1;
+
+			retryTimer = setTimeout( () => {
+				jqXhr = jQuery.ajax( ajaxParams );
+			}, Math.min( getRetryDelayMs( errorJqXHR ), RETRY_MAX_DELAY_MS ) );
+		};
+
+		// Retry-After carries seconds or an HTTP-date; anything unparsable falls back to
+		// exponential backoff. The delay is capped so a far-future header cannot freeze
+		// pending editor work.
+		function getRetryDelayMs( failedRequest ) {
+			const header = failedRequest.getResponseHeader && failedRequest.getResponseHeader( 'Retry-After' );
+
+			// Strict digits-only check keeps coercive junk ("0x10", "-5") out of the
+			// seconds branch.
+			if ( header && /^\d+(\.\d+)?$/.test( header.trim() ) ) {
+				return Math.max( 0, Number( header ) * 1000 );
+			}
+
+			if ( header ) {
+				const date = Date.parse( header );
+
+				if ( ! Number.isNaN( date ) ) {
+					return Math.max( 0, date - Date.now() );
+				}
+			}
+
+			const backoffDelay = RETRY_BASE_DELAY_MS * Math.pow( 2, attempt - 1 );
+
+			return backoffDelay * ( 1 + ( Math.random() * 0.2 ) );
+		}
+
+		jqXhr = jQuery.ajax( ajaxParams );
+
+		return Object.assign( deferred.promise(), {
+			abort: () => {
+				if ( settled ) {
+					return;
+				}
+
+				aborted = true;
+
+				clearTimeout( retryTimer );
+
+				if ( jqXhr ) {
+					jqXhr.abort( 'Request canceled' );
+				} else {
+					// No request is in flight during a backoff wait, so settle the
+					// callers the same way an in-flight abort would.
+					const syntheticJqXHR = {
+						status: 0,
+						statusText: 'abort',
+						readyState: 0,
+						getResponseHeader: () => null,
+						getAllResponseHeaders: () => '',
+					};
+
+					settled = true;
+
+					deferred.reject( syntheticJqXHR, 'abort', 'Request canceled' );
+
+					if ( originalError ) {
+						originalError( syntheticJqXHR, 'abort', 'Request canceled' );
+					}
+				}
+			},
+		} );
 	}
 
 	addRequestCache( request, data ) {
