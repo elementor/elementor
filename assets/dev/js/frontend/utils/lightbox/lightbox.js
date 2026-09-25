@@ -953,7 +953,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
 			videoType = 'vimeo';
 			apiProvider = elementorFrontend.utils.vimeo;
-		} else if ( videoURL.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+		} else if ( videoURL.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com|youtube-nocookie\.com)/ ) ) {
 			videoType = 'youtube';
 			apiProvider = elementorFrontend.utils.youtube;
 		}
@@ -962,7 +962,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		apiProvider.onApiReady( ( apiObject ) => {
 			if ( 'youtube' === videoType ) {
-				this.prepareYTVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
+				this.prepareYTVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon, videoURL );
 			} else if ( 'vimeo' === videoType ) {
 				this.prepareVimeoVideo( apiObject, videoURL, $videoContainer, $videoWrapper, $playIcon );
 			}
@@ -971,7 +971,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		$playIcon.addClass( classes.playing ).removeClass( classes.hidden );
 	},
 
-	prepareYTVideo( YT, videoID, $videoContainer, $videoWrapper, $playIcon ) {
+	prepareYTVideo( YT, videoID, $videoContainer, $videoWrapper, $playIcon, videoURL ) {
 		const classes = this.getSettings( 'classes' ),
 			$videoPlaceholderElement = jQuery( '<div>' );
 		let startStateCode = YT.PlayerState.PLAYING;
@@ -985,7 +985,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		$videoContainer.addClass( 'elementor-loading' + ' ' + classes.invisible );
 
-		this.player = new YT.Player( $videoPlaceholderElement[ 0 ], {
+		const playerOptions = {
 			videoId: videoID,
 			events: {
 				onReady: () => {
@@ -1005,7 +1005,15 @@ module.exports = elementorModules.ViewModule.extend( {
 				controls: 0,
 				rel: 0,
 			},
-		} );
+		};
+
+		// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
+		if ( videoURL && -1 !== videoURL.indexOf( 'youtube-nocookie.com' ) ) {
+			playerOptions.host = 'https://www.youtube-nocookie.com';
+			playerOptions.playerVars.origin = window.location.origin;
+		}
+
+		this.player = new YT.Player( $videoPlaceholderElement[ 0 ], playerOptions );
 	},
 
 	prepareVimeoVideo( Vimeo, videoURL, $videoContainer, $videoWrapper, $playIcon ) {
