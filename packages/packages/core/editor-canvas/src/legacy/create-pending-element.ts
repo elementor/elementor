@@ -1,5 +1,6 @@
 import {
 	addModelToParent,
+	cloneElementTree,
 	findModelInDocument,
 	generateElementId,
 	getContainer,
@@ -12,12 +13,12 @@ import { type ElementView } from './types';
 export function createPendingElement(
 	wrapperView: ElementView,
 	data: Partial< V1ElementModelProps >,
-	options: { edit?: boolean; at?: number } = {}
+	options: { edit?: boolean; at?: number; clone?: boolean } = {}
 ): { getContainer: () => V1Element } | undefined {
 	const parentContainer = wrapperView.getContainer();
-	const model: Partial< V1ElementModelProps > = { ...data };
+	const model: Partial< V1ElementModelProps > = options.clone ? cloneElementTree( data ) : { ...data };
 
-	if ( ! model.id ) {
+	if ( ! options.clone && ! model.id ) {
 		model.id = generateElementId();
 	}
 
@@ -25,7 +26,10 @@ export function createPendingElement(
 		model.elements = [];
 	}
 
-	const added = addModelToParent( parentContainer.id, model as V1ElementModelProps, options );
+	const added = addModelToParent( parentContainer.id, model as V1ElementModelProps, {
+		...options,
+		clone: false,
+	} );
 
 	if ( ! added ) {
 		return undefined;
