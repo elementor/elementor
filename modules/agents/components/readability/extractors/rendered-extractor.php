@@ -74,51 +74,60 @@ class Rendered_Extractor implements Extractor_Interface {
 	private function capture_template( \WP_Post $post ): string {
 		global $wp_query, $wp_the_query;
 
-		// Preserve the current global state so we can restore it afterwards.
-		$saved_query    = $wp_query;    // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		// Preserve the current global state so we can restore it afterwards,
+		// even if the theme template throws.
+		$saved_query     = $wp_query;    // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$saved_the_query = $wp_the_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$saved_ob_level  = ob_get_level();
 
-		// Build a dedicated query for the target post.
-		$args = [
-			'p'              => $post->ID,
-			'post_type'      => $post->post_type,
-			'posts_per_page' => 1,
-		];
+		try {
+			// Build a dedicated query for the target post.
+			$args = [
+				'p'              => $post->ID,
+				'post_type'      => $post->post_type,
+				'posts_per_page' => 1,
+			];
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_query    = new \WP_Query( $args );
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_the_query = $wp_query;
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_query    = new \WP_Query( $args );
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_the_query = $wp_query;
 
-		// Run the wp action so theme/plugin hooks that depend on it fire.
-		do_action( 'wp' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			// Run the wp action so theme/plugin hooks that depend on it fire.
+			do_action( 'wp' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		// Resolve the template file for this post.
-		$template = $this->resolve_template( $post );
+			// Resolve the template file for this post.
+			$template = $this->resolve_template( $post );
 
-		$html = '';
+			$html = '';
 
-		if ( '' !== $template && file_exists( $template ) ) {
-			ob_start();
-			// phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
-			include $template;
-			$html = (string) ob_get_clean();
-		} else {
-			// No template found — fall back to a simple content render.
-			ob_start();
-			setup_postdata( $post );
+			if ( '' !== $template && file_exists( $template ) ) {
+				ob_start();
+				// phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+				include $template;
+				$html = (string) ob_get_clean();
+			} else {
+				// No template found — fall back to a simple content render.
+				ob_start();
+				setup_postdata( $post );
 
-			echo wp_kses_post( apply_filters( 'the_content', $post->post_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo wp_kses_post( apply_filters( 'the_content', $post->post_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
-			wp_reset_postdata();
-			$html = (string) ob_get_clean();
+				wp_reset_postdata();
+				$html = (string) ob_get_clean();
+			}
+		} finally {
+			// Close any buffer left open by a throwing template, then restore
+			// the global query state regardless of success or failure.
+			while ( ob_get_level() > $saved_ob_level ) {
+				ob_end_clean();
+			}
+
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_query     = $saved_query;
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_the_query = $saved_the_query;
 		}
-
-		// Restore global query state.
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_query     = $saved_query;
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_the_query = $saved_the_query;
 
 		if ( '' === $html ) {
 			return '';
