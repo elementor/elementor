@@ -3,7 +3,7 @@ import { Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 export type ElementType = 'e-button' | 'e-divider' | 'e-heading' | 'e-image' | 'e-paragraph' | 'e-svg' | 'e-tabs' | 'e-youtube' |'e-div-block' | 'e-flexbox';
-export type Tag = 'div' | 'header' | 'section' | 'article' | 'aside' | 'footer'| 'a';
+export type Tag = 'div' | 'header' | 'section' | 'article' | 'aside' | 'footer' | 'main' | 'nav' | 'a';
 
 const TOGGLE_LINK_SELECTOR = ' *[aria-label="Toggle link"]';
 

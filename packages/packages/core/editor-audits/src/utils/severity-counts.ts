@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 import { type AuditCategory, type AuditSeverity, type PageAuditReport } from '../types';
 import { isScoredAudit } from './is-scored-audit';
@@ -36,29 +36,6 @@ export function severityPluralLabel( severity: AuditSeverity ): string {
 		case 'warning':
 			return __( 'Warnings', 'elementor' );
 		case 'info':
-			return __( 'Info', 'elementor' );
-	}
-}
-
-export function severityRemainingCountLabel( severity: AuditSeverity, count: number ): string {
-	switch ( severity ) {
-		case 'error':
-			return sprintf(
-				/* translators: %d: number of remaining error violations. */
-				__( '%d errors', 'elementor' ),
-				count
-			);
-		case 'warning':
-			return sprintf(
-				/* translators: %d: number of remaining warning violations. */
-				__( '%d warnings', 'elementor' ),
-				count
-			);
-		case 'info':
-			return sprintf(
-				/* translators: %d: number of remaining info violations. */
-				__( '%d info', 'elementor' ),
-				count
-			);
+			return __( 'Suggestions', 'elementor' );
 	}
 }
