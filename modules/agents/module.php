@@ -6,6 +6,9 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -22,6 +25,14 @@ class Module extends BaseModule {
 	];
 
 	const DEFAULT_CACHE_MAX_AGE = 300;
+
+	const PAGE_ID = 'elementor-agents-ready';
+
+	const MOUNT_ID = 'e-agents-ready';
+
+	const SCRIPT_HANDLE = 'e-agents-ready-app';
+
+	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
 	public function get_name() {
 		return 'agents';
@@ -47,7 +58,32 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+
+			add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
+			add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
 		}
+	}
+
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
+	}
+
+	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
+		if ( ! empty( $hooks[ self::PAGE_ID ] ) ) {
+			add_action( "admin_print_scripts-{$hooks[ self::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+		}
+	}
+
+	public function enqueue_assets(): void {
+		wp_enqueue_script(
+			self::SCRIPT_HANDLE,
+			$this->get_js_assets_url( 'agents-ready' ),
+			[ 'react', 'react-dom', 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
 	}
 
 	/**
