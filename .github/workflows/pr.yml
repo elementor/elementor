@@ -50,6 +50,7 @@ jobs:
       playwright: ${{ steps.filter.outputs.playwright }}
       build: ${{ steps.filter.outputs.build }}
       composer: ${{ steps.filter.outputs.composer }}
+      skip_checks: ${{ steps.changelog-filter.outputs.non_changelog == 'false' && !contains(github.event.pull_request.labels.*.name, 'run-tests') && !contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -92,11 +93,24 @@ jobs:
               - '!bin/**'
               - '!.gitignore'
               - '!docs/**'
+      - name: Detect changelog-only changes
+        uses: dorny/paths-filter@v3
+        id: changelog-filter
+        with:
+          predicate-quantifier: 'every'
+          filters: |
+            non_changelog:
+              - '**'
+              - '!changelog.txt'
+              - '!readme.txt'
 
   install:
     name: Install dependencies
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    needs: [detect-changes]
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      needs.detect-changes.outputs.skip_checks != 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -116,9 +130,11 @@ jobs:
 
   build:
     name: Build plugin
-    needs: [install]
+    needs: [install, detect-changes]
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      needs.detect-changes.outputs.skip_checks != 'true'
     outputs:
       artifact_name: ${{ steps.set_outputs.outputs.artifact_name }}
     steps:
@@ -211,9 +227,10 @@ jobs:
           echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}"
 
   playground-preview:
-    needs: [build]
+    needs: [build, detect-changes]
     if: |
       always() &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.build.result == 'success' &&
       startsWith(github.repository, 'elementor/') &&
       github.event.action != 'ready_for_review' &&
@@ -230,9 +247,10 @@ jobs:
 
   visual-proof-shots:
     name: Visual proof shots
-    needs: [playground-preview]
+    needs: [playground-preview, detect-changes]
     if: |
       always() &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       github.event.pull_request.draft == false &&
       startsWith(github.repository, 'elementor/') &&
       github.event.action != 'labeled' &&
@@ -268,6 +286,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -292,6 +311,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.php == 'true'
     steps:
       - name: Mask GitHub token
@@ -358,6 +378,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -380,6 +401,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -403,6 +425,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.php == 'true'
     uses: ./.github/workflows/phpunit-runner.yml
     with:
@@ -421,6 +444,7 @@ jobs:
     if: |
       always() &&
       needs.detect-changes.result == 'success' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.build.result == 'success' &&
       contains(fromJSON('["success", "skipped"]'), needs.lint-js.result) &&
       contains(fromJSON('["success", "skipped"]'), needs.lint-php.result) &&
@@ -540,6 +564,7 @@ jobs:
     steps:
       - name: Validate required checks
         env:
+          DETECT_CHANGES_RESULT: ${{ needs.detect-changes.result }}
           INSTALL_RESULT: ${{ needs.install.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           LINT_JS_RESULT: ${{ needs.lint-js.result }}
@@ -561,7 +586,7 @@ jobs:
           }
 
           FAILED=0
-          for RESULT in "$INSTALL_RESULT" "$BUILD_RESULT"; do
+          for RESULT in "$DETECT_CHANGES_RESULT" "$INSTALL_RESULT" "$BUILD_RESULT"; do
             if ! is_ok "$RESULT"; then
               echo "Check failed with result: $RESULT"
               FAILED=1
