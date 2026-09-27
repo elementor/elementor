@@ -272,7 +272,7 @@ jobs:
           name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           path: .github/artifacts/playwright-last-run
           if-no-files-found: ignore
-          retention-days: 7
+          retention-days: 1
       - uses: actions/upload-artifact@v7
         name: Upload Allure result
         if: always()
