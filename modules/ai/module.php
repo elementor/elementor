@@ -1545,5 +1545,4 @@ class Module extends BaseModule {
 		$product->set_gallery_image_ids( $gallery_image_ids );
 		$product->save();
 	}
-
 }
