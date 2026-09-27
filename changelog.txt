@@ -1,5 +1,14 @@
 == Changelog ==
 
+= 4.3.2 - 2026-09-24 =
+
+* Tweak: Improved the Editor onboarding flow for a smoother getting-started experience.
+* Fix: HTML Tags do not work correctly with Background Video ([#37393](https://github.com/elementor/elementor/issues/37393))
+* Fix: Improved compatibility with sites protected by HTTP Basic Authentication ([#37421](https://github.com/elementor/elementor/issues/37421))
+* Fix: Page styles may not load correctly after being regenerated
+* Fix: Improved code security enforcement in data handling
+* Fix: Improved update stability between Elementor Core and Pro
+
 = 4.3.1 - 2026-09-23 =
 
 * Fix: Top bar translations are not displayed correctly on Elementor admin pages
