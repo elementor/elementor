@@ -39,7 +39,11 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro() || ! Utils::is_license_active();
+		if ( Utils::has_pro() ) {
+			return true;
+		}
+
+		return ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -149,10 +153,6 @@ class Module extends Base_Module {
 	}
 
 	public function enqueue_react_data(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
@@ -222,10 +222,6 @@ class Module extends Base_Module {
 	}
 
 	public function add_v4_promotions_data( array $settings ): array {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return $settings;
-		}
-
 		$editor_assets_api = new EditorAssetsAPI( $this->get_v4_promotions_api_config() );
 		$promotion_data = new PromotionData( $editor_assets_api );
 
