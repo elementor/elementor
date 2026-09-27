@@ -188,6 +188,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categories = {};
 
 		this.elementsCollection.each( function( element ) {
+			// Widgets with showInPanel=false are search-only; exclude from category lists.
+			if ( false === element.get( 'showInPanel' ) ) {
+				return;
+			}
+
 			_.each( element.get( 'categories' ), function( category ) {
 				if ( ! categories[ category ] ) {
 					categories[ category ] = [];
