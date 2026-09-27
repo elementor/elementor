@@ -19,7 +19,7 @@ class Atomic_Form_Widget_Promotion {
 	}
 
 	public function add_promotion_data( array $settings ): array {
-		if ( ! $this->is_active() ) {
+		if ( ! current_user_can( 'manage_options' ) || ! $this->is_active() ) {
 			return $settings;
 		}
 

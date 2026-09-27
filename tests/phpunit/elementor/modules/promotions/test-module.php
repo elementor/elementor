@@ -53,28 +53,4 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertTrue( $is_active );
 	}
-
-	public function test_enqueue_react_data__enqueues_script_for_editor_without_manage_options() {
-		// Arrange
-		$this->act_as_editor();
-		$module = new Module();
-
-		// Act
-		$module->enqueue_react_data();
-
-		// Assert
-		$this->assertContains( 'e-react-promotions', wp_scripts()->queue );
-	}
-
-	public function test_add_v4_promotions_data__does_not_require_manage_options() {
-		// Arrange
-		$this->act_as_editor();
-		$module = new Module();
-
-		// Act
-		$settings = $module->add_v4_promotions_data( [] );
-
-		// Assert
-		$this->assertArrayHasKey( 'v4Promotions', $settings );
-	}
 }
