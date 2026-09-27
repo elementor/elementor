@@ -34,10 +34,11 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
-			return true;
+			// Widgets with show_in_panel=false are in the collection for search purposes
+			// only — hide them from the normal category view.
+			return false !== childModel.get( 'showInPanel' );
 		}
 
-		// Prevent from wordpress widgets to show in search result.
 		if ( childModel.get( 'hideOnSearch' ) ) {
 			return false;
 		}

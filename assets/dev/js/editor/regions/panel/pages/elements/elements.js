@@ -80,8 +80,9 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		// Deprecated widget handling.
 		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
 			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
-				// Hide the old version.
+				// Hide the old version from panel and search.
 				elementor.widgetsCache[ widgetName ].show_in_panel = false;
+				elementor.widgetsCache[ widgetName ].hide_on_search = true;
 			}
 		} );
 
@@ -176,6 +177,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			widgetType: item.widget_type,
 			custom: item.custom,
 			editable: item.editable,
+			showInPanel: item.show_in_panel,
 			hideOnSearch: item.hide_on_search,
 			isNew: this.isWidgetNew( item ),
 			atomic: !! item.atomic,
@@ -227,7 +229,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	shouldAddWidget( widget ) {
 		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
 
-		return widget.show_in_panel && ( 'inner-section' !== widget.name || ! isContainerActive );
+		if ( 'inner-section' === widget.name && isContainerActive ) {
+			return false;
+		}
+
+		// Widgets hidden from the panel but not from search are still added to the
+		// collection so they surface when the user types in the search box.
+		if ( ! widget.show_in_panel && widget.hide_on_search ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	deepMerge( originalObj, replacementObj ) {
