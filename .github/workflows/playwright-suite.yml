@@ -43,17 +43,50 @@ jobs:
     steps:
       - run: echo "Using caller build artifact ${{ inputs.build_artifact_name }}"
 
+  playwright-shared-bootstrap:
+    name: Playwright shared bootstrap
+    runs-on: ubuntu-22.04
+    needs: [build-plugin, prepare-caller-build, get-php-version]
+    if: |
+      always() &&
+      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+
+      - name: Update PHP version in config
+        env:
+          PHP_VERSION: ${{ needs.get-php-version.outputs.php_version }}
+        run: |
+          jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Upload shared Playwright bootstrap
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-shared-bootstrap-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            hello-elementor
+            tests/playwright/.playwright-wp-lite-env.json
+          retention-days: 1
+
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     timeout-minutes: 20
-    needs: [build-plugin, prepare-caller-build, get-php-version]
+    needs: [build-plugin, prepare-caller-build, get-php-version, playwright-shared-bootstrap]
     permissions:
+      actions: read
       contents: read
       id-token: write
     if: |
       always() &&
-      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
+      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success') &&
+      needs.playwright-shared-bootstrap.result == 'success'
     strategy:
       fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
@@ -70,9 +103,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
-
-      - name: Set PHP_VERSION environment variable
-        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
@@ -92,10 +122,11 @@ jobs:
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name || needs.prepare-caller-build.outputs.artifact_name }}
           path: ./build
-      - name: Download hello-elementor theme
-        run: |
-          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
-          unzip hello-elementor
+      - name: Download shared Playwright bootstrap
+        uses: actions/download-artifact@v8
+        with:
+          name: playwright-shared-bootstrap-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .
 
       - name: Install staging plugins
         if: ${{ github.event.inputs.environment == 'staging' }}
@@ -108,12 +139,6 @@ jobs:
         if: ${{ github.event.inputs.environment == 'staging' }}
         run: |
           jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-
-      - name: Update PHP version in config
-        run: |
-          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-          echo "PHP version set to:"
-          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
       - name: Install WordPress environment
         run: |
@@ -173,6 +198,12 @@ jobs:
           else
             npx playwright install --with-deps chromium
           fi
+      - name: Configure Playwright last-failed on Actions re-run
+        uses: ./.github/actions/playwright-last-failed-rerun
+        with:
+          shard-index: ${{ matrix.shardIndex }}
+          browser: ${{ env.BROWSER || 'chromium' }}
+          is-actions-rerun: ${{ github.run_attempt > 1 && 'true' || 'false' }}
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
@@ -186,7 +217,7 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
+          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG ${PLAYWRIGHT_LAST_FAILED_ARGS:-}
       - name: Run Playwright Plugin Container tests
         if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
         run: |
@@ -196,7 +227,7 @@ jobs:
           fi
           SHARD_NUM="${{ matrix.shardIndex }}"
           SHARD_NUM="${SHARD_NUM##*_}"
-          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG
+          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG ${PLAYWRIGHT_LAST_FAILED_ARGS:-}
       - name: Run Playwright Plugin Section tests
         if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
         run: |
@@ -206,7 +237,7 @@ jobs:
           fi
           SHARD_NUM="${{ matrix.shardIndex }}"
           SHARD_NUM="${SHARD_NUM##*_}"
-          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG
+          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG ${PLAYWRIGHT_LAST_FAILED_ARGS:-}
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
         run: |
@@ -214,7 +245,7 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG
+          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG ${PLAYWRIGHT_LAST_FAILED_ARGS:-}
       - name: Run core element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
         run: |
@@ -222,7 +253,7 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright:elements-regression:core -- $PROJECT_ARG
+          npm run test:playwright:elements-regression:core -- $PROJECT_ARG ${PLAYWRIGHT_LAST_FAILED_ARGS:-}
       - name: Run atomic element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
         run: |
@@ -230,7 +261,18 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
+          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG ${PLAYWRIGHT_LAST_FAILED_ARGS:-}
+      - name: Stage Playwright last-run state for Actions re-runs
+        if: always()
+        run: bash .github/scripts/playwright-last-run-state.sh stage-for-upload
+      - uses: actions/upload-artifact@v7
+        name: Upload Playwright last-run state
+        if: always()
+        with:
+          name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          path: .github/artifacts/playwright-last-run
+          if-no-files-found: ignore
+          retention-days: 7
       - uses: actions/upload-artifact@v7
         name: Upload Allure result
         if: always()
