@@ -1,5 +1,5 @@
 import { createMockElement } from 'test-utils';
-import { addModelToParent, findModelInDocument, type V1ElementModelProps } from '@elementor/editor-elements';
+import { addModelToParent, type BackboneModel, findModelInDocument, type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { createPendingElement } from '../create-pending-element';
 import { type ElementView } from '../types';
@@ -32,7 +32,7 @@ describe( 'createPendingElement', () => {
 		mockAddModelToParent.mockClear();
 		mockFindModelInDocument.mockClear();
 		mockAddModelToParent.mockReturnValue( true );
-		mockFindModelInDocument.mockReturnValue( createMockElement( {} ).model );
+		mockFindModelInDocument.mockReturnValue( createMockElement( {} ) as unknown as BackboneModel );
 	} );
 
 	afterEach( () => {
