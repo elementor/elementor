@@ -35,7 +35,7 @@ export function createPendingElement(
 		return undefined;
 	}
 
-	const childId = model.id;
+	const childId = model.id as string;
 	const childModel = findModelInDocument( childId );
 
 	if ( ! childModel ) {

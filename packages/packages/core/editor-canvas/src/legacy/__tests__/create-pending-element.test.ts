@@ -1,5 +1,5 @@
 import { createMockElement } from 'test-utils';
-import { addModelToParent, findModelInDocument } from '@elementor/editor-elements';
+import { addModelToParent, findModelInDocument, type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { createPendingElement } from '../create-pending-element';
 import { type ElementView } from '../types';
@@ -62,7 +62,7 @@ describe( 'createPendingElement', () => {
 					elements: [],
 				},
 			],
-		};
+		} as unknown as Partial< V1ElementModelProps >;
 
 		// Act.
 		const pendingElement = createPendingElement( wrapperView, source, { clone: true } );
