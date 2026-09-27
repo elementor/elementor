@@ -1,4 +1,5 @@
 import eventsConfig from './events-config';
+import { installEventsProxyFetch } from './install-events-proxy-fetch';
 import mixpanel from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
 
@@ -19,6 +20,14 @@ export default class extends elementorModules.Module {
 	}
 
 	initializeMixpanel( onLoaded ) {
+		const editorEventsConfig = elementorCommon.config.editor_events;
+
+		installEventsProxyFetch(
+			editorEventsConfig?.proxy_api_host,
+			editorEventsConfig?.proxy_lib_base_path,
+			editorEventsConfig?.token,
+		);
+
 		if ( mixpanelInstance && mixpanelInstance.isInitialized ) {
 			onLoaded( mixpanelInstance );
 		} else {

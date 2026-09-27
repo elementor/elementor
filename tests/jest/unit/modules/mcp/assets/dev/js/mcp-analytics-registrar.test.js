@@ -49,6 +49,85 @@ describe( 'mcp-analytics-registrar', () => {
 		);
 	} );
 
+	test( 'dispatches mcp_access_toggled with passthrough props from elementor-mcp-composer', () => {
+		const dispatchEvent = jest.fn();
+
+		window.elementorCommon = {
+			eventsManager: {
+				dispatchEvent,
+			},
+		};
+
+		jest.isolateModules( () => {
+			require( REGISTRAR_PATH );
+
+			window.dispatchEvent(
+				new CustomEvent( MCP_INTERACTION_EVENT, {
+					detail: {
+						name: 'mcp_access_toggled',
+						app_type: 'infra',
+						window_name: 'elementor_mcp',
+						interaction_type: 'click',
+						target_type: 'button',
+						target_name: 'mcp_access_toggle',
+						interaction_result: 'access_enabled',
+						target_location: 'main_content',
+					},
+				} ),
+			);
+		} );
+
+		expect( dispatchEvent ).toHaveBeenCalledWith(
+			'mcp_access_toggled',
+			expect.objectContaining( {
+				app_type: 'infra',
+				interaction_result: 'access_enabled',
+				target_name: 'mcp_access_toggle',
+			} ),
+		);
+		expect( dispatchEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'name' );
+	} );
+
+	test( 'dispatches mcp_access_toggle_failed with passthrough props from elementor-mcp-composer', () => {
+		const dispatchEvent = jest.fn();
+
+		window.elementorCommon = {
+			eventsManager: {
+				dispatchEvent,
+			},
+		};
+
+		jest.isolateModules( () => {
+			require( REGISTRAR_PATH );
+
+			window.dispatchEvent(
+				new CustomEvent( MCP_INTERACTION_EVENT, {
+					detail: {
+						name: 'mcp_access_toggle_failed',
+						app_type: 'infra',
+						window_name: 'elementor_mcp',
+						interaction_type: 'click',
+						target_type: 'button',
+						target_name: 'mcp_access_toggle',
+						interaction_result: 'toggle_failed',
+						target_location: 'main_content',
+						target_state_attempted: 'enabled',
+						error_reason: 'unknown',
+					},
+				} ),
+			);
+		} );
+
+		expect( dispatchEvent ).toHaveBeenCalledWith(
+			'mcp_access_toggle_failed',
+			expect.objectContaining( {
+				interaction_result: 'toggle_failed',
+				target_state_attempted: 'enabled',
+				error_reason: 'unknown',
+			} ),
+		);
+	} );
+
 	test( 'ignores interaction events without a name', () => {
 		const dispatchEvent = jest.fn();
 

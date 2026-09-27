@@ -256,7 +256,7 @@ class Global_Classes_REST_API {
 		$repository = $this->get_repository()->set_preview( $is_preview );
 		$global_order = array_keys( $repository->all_labels() );
 		$filtered_order = array_values( array_intersect( $global_order, $document_class_ids ) );
-		$items = $repository->get_by_ids( $document_class_ids );
+		$items = $repository->get_by_ids( $filtered_order );
 
 		$result = [];
 
@@ -284,7 +284,7 @@ class Global_Classes_REST_API {
 		$repository = $this->get_repository()->set_preview( $is_preview );
 		$global_order = array_keys( $repository->all_labels() );
 		$filtered_order = array_values( array_intersect( $global_order, $requested_ids ) );
-		$items = $repository->get_by_ids( $requested_ids );
+		$items = $repository->get_by_ids( $filtered_order );
 
 		$result = [];
 

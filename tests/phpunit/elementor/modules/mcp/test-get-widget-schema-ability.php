@@ -94,6 +94,21 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( [ 'background-color' ], $result['style_targets']['container'] );
 	}
 
+	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
+		$this->act_as_admin();
+		$this->given_registered_v3_widget_stack( 'button' );
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+
+		$result = $this->ability->execute( [ 'widget_type' => 'button' ] );
+
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
+		$this->assertArrayHasKey( 'text', $result['properties'] );
+		$this->assertArrayHasKey( 'link', $result['properties'] );
+		$this->assertSame( [ 'color', 'background-color' ], $result['style_targets']['button'] );
+	}
+
 	public function test_execute__rejects_heading_when_atomic_elements_active() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_registered_heading();
@@ -193,6 +208,13 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	private function given_widget_manager_with_registered_heading(): void {
 		$heading = $this->original_widgets_manager->get_widget_types( 'heading' );
 		$heading->get_stack();
+	}
+
+	private function given_registered_v3_widget_stack( string $widget_type ): void {
+		$widget = $this->original_widgets_manager->get_widget_types( $widget_type );
+		if ( $widget && method_exists( $widget, 'get_stack' ) ) {
+			$widget->get_stack();
+		}
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {

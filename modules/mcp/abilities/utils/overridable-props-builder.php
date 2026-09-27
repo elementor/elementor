@@ -495,7 +495,7 @@ class Overridable_Props_Builder {
 
 	/**
 	 * The editor's `getWidgetsCache()` is keyed by the atomic widget/element type name (e.g. `e-heading`,
-	 * `e-flexbox`). Widgets carry it on `widgetType`; atomic elements carry it on `elType` and leave
+	 * `e-div-block`). Widgets carry it on `widgetType`; atomic elements carry it on `elType` and leave
 	 * `widgetType` unset. `OverrideControl` looks the persisted `widgetType` up in the cache to find the
 	 * origin prop type — it must be a real cache key, or the panel throws "Prop type not found".
 	 */
