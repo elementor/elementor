@@ -224,7 +224,18 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$resolved[ $canonical ] = $resolved_value;
+			$stripped_value = Library_Image_Alt_Stripper::strip( $resolved_value );
+
+			if ( $stripped_value !== $resolved_value ) {
+				$warnings[] = sprintf(
+					'[%s] Property "%s": "alt" is ignored for Media Library images (src.id) and was not saved. The image renders the attachment\'s Alt Text from the Media Library; if it is missing or inaccurate, ask the user to update it there.',
+					$config_id,
+					$canonical
+				);
+				$warning_codes[] = 'image_alt_ignored';
+			}
+
+			$resolved[ $canonical ] = $stripped_value;
 		}
 
 		return [

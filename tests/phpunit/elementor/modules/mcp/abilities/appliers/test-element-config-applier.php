@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Boolean_Plain_Resol
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Passthrough_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -25,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/v3/stub-dynamic-tags-manager.php';
 
 class Test_Element_Config_Applier extends TestCase {
+
+	const ATTACHMENT_ID = 123;
 
 	private function make_plain_values_resolver(): Plain_Values_Resolver {
 		$registry = new Plain_Resolvers_Registry();
@@ -388,6 +391,38 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertStringContainsString( 'my-hero', $result['error']->get_error_message() );
 	}
 
+	public function test_apply__drops_alt_on_library_image_and_warns() {
+		// Arrange
+		$applier = $this->make_applier();
+		$node = [
+			'widgetType' => 'mock-image-widget',
+			'settings' => [],
+		];
+		$index = [ 'hero-image' => &$node ];
+
+		// Act
+		$result = $applier->apply(
+			$index,
+			[ 'hero-image' => [ 'image_src' => [ 'id' => self::ATTACHMENT_ID, 'alt' => 'Team photo' ] ] ],
+			[ 'mock-image-widget' => [ 'class' => Image_Src_Settings_Widget::class ] ]
+		);
+
+		// Assert
+		$this->assertNull( $result['error'] );
+		$this->assertArrayNotHasKey( 'alt', $node['settings']['image_src']['value'] );
+		$this->assertSame( self::ATTACHMENT_ID, $node['settings']['image_src']['value']['id']['value'] );
+		$this->assertSame( [ 'image_alt_ignored' ], $result['warning_codes'] );
+		$this->assertStringContainsString( 'hero-image', $result['warnings'][0] );
+	}
+
+}
+
+class Image_Src_Settings_Widget {
+	public static function get_props_schema(): array {
+		return [
+			'image_src' => Image_Src_Prop_Type::make(),
+		];
+	}
 }
 
 class Plain_Settings_Widget {
