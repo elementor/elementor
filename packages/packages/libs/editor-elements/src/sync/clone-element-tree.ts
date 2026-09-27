@@ -20,5 +20,5 @@ export function cloneElementTree( item: CloneableElement ): V1ElementModelProps 
 		elements: ( source.elements ?? [] ).map( ( child ) =>
 			cloneElementTree( child as Partial< V1ElementModelProps > )
 		),
-	} as V1ElementModelProps;
+	} as unknown as V1ElementModelProps;
 }
