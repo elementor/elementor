@@ -8,9 +8,7 @@ function isBackboneModel( item: CloneableElement ): item is BackboneModel {
 }
 
 export function cloneElementTree( item: CloneableElement ): V1ElementModelProps {
-	const source = isBackboneModel( item )
-		? ( item.toJSON() as Partial< V1ElementModelProps > )
-		: item;
+	const source = isBackboneModel( item ) ? ( item.toJSON() as Partial< V1ElementModelProps > ) : item;
 
 	return {
 		...source,
@@ -20,7 +18,7 @@ export function cloneElementTree( item: CloneableElement ): V1ElementModelProps 
 			_element_id: '',
 		} as V1ElementSettingsProps,
 		elements: ( source.elements ?? [] ).map( ( child ) =>
-			cloneElementTree( child as Partial< V1ElementModelProps > ),
+			cloneElementTree( child as Partial< V1ElementModelProps > )
 		),
 	} as V1ElementModelProps;
 }

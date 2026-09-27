@@ -4,9 +4,11 @@ import { cloneElementTree } from '../clone-element-tree';
 
 describe( 'cloneElementTree', () => {
 	beforeEach( () => {
-		( window as typeof window & {
-			elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
-		} ).elementorCommon = {
+		(
+			window as typeof window & {
+				elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
+			}
+		 ).elementorCommon = {
 			helpers: {
 				getUniqueId: jest.fn(),
 			},
@@ -19,9 +21,11 @@ describe( 'cloneElementTree', () => {
 
 	it( 'regenerates ids recursively and clears custom element ids', () => {
 		// Arrange.
-		( window as typeof window & {
-			elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
-		} ).elementorCommon?.helpers?.getUniqueId
+		(
+			window as typeof window & {
+				elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
+			}
+		 ).elementorCommon?.helpers?.getUniqueId
 			?.mockReturnValueOnce( 'cloned-parent-id' )
 			.mockReturnValueOnce( 'cloned-child-id' );
 
@@ -50,9 +54,11 @@ describe( 'cloneElementTree', () => {
 
 	it( 'regenerates ids recursively for Backbone model input', () => {
 		// Arrange.
-		( window as typeof window & {
-			elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
-		} ).elementorCommon?.helpers?.getUniqueId
+		(
+			window as typeof window & {
+				elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
+			}
+		 ).elementorCommon?.helpers?.getUniqueId
 			?.mockReturnValueOnce( 'model-parent-id' )
 			.mockReturnValueOnce( 'model-child-id' );
 

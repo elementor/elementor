@@ -1,5 +1,5 @@
-import { addModelToParent, findModelInDocument } from '@elementor/editor-elements';
 import { createMockElement } from 'test-utils';
+import { addModelToParent, findModelInDocument } from '@elementor/editor-elements';
 
 import { createPendingElement } from '../create-pending-element';
 import { type ElementView } from '../types';
@@ -16,9 +16,11 @@ const mockFindModelInDocument = jest.mocked( findModelInDocument );
 
 describe( 'createPendingElement', () => {
 	beforeEach( () => {
-		( window as typeof window & {
-			elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
-		} ).elementorCommon = {
+		(
+			window as typeof window & {
+				elementorCommon?: { helpers?: { getUniqueId?: jest.Mock } };
+			}
+		 ).elementorCommon = {
 			helpers: {
 				getUniqueId: jest
 					.fn()
@@ -81,7 +83,7 @@ describe( 'createPendingElement', () => {
 			} ),
 			expect.objectContaining( {
 				clone: false,
-			} ),
+			} )
 		);
 		expect( mockFindModelInDocument ).toHaveBeenCalledWith( 'cloned-parent-id' );
 	} );
@@ -119,7 +121,7 @@ describe( 'createPendingElement', () => {
 			} ),
 			expect.objectContaining( {
 				clone: false,
-			} ),
+			} )
 		);
 		expect( mockFindModelInDocument ).toHaveBeenCalledWith( 'original-parent-id' );
 	} );
