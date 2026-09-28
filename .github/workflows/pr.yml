@@ -538,6 +538,37 @@ jobs:
       - playwright
     if: always() && !cancelled()
     steps:
+      - name: Resolve pending Playwright commit status
+        if: github.event.pull_request.draft == false
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+        with:
+          script: |
+            const statusContext = 'Playwright - Test Results';
+            const sha = context.payload.pull_request.head.sha;
+            const statuses = await github.paginate(github.rest.repos.listCommitStatusesForRef, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: sha,
+              per_page: 100,
+            });
+
+            if (!statuses.some((status) => status.context === statusContext)) {
+              return;
+            }
+
+            const result = process.env.PLAYWRIGHT_RESULT;
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: ['success', 'skipped'].includes(result) ? 'success' : 'failure',
+              context: statusContext,
+              description: `Playwright ${result}`,
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
       - name: Validate required checks
         env:
           INSTALL_RESULT: ${{ needs.install.result }}
