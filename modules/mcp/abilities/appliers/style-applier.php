@@ -27,7 +27,6 @@ class Style_Applier {
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
-	private ?bool $is_local_custom_css_supported = null;
 
 	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [] ) {
 		$this->css_converter      = $css_converter;
@@ -253,39 +252,25 @@ class Style_Applier {
 	}
 
 	private function collect_unsupported_custom_css( array $variants ): string {
-		$custom_css_parts = [];
+		$variants_with_custom_css = array_filter( $variants, fn( $variant ) => ! empty( $variant['custom_css']['raw'] ) );
 
-		foreach ( $variants as $variant ) {
-			$raw = $variant['custom_css']['raw'] ?? '';
-
-			if ( '' !== $raw ) {
-				$custom_css_parts[] = trim( \Elementor\Utils::decode_string( $raw ) );
-			}
-		}
-
-		if ( empty( $custom_css_parts ) || $this->is_local_custom_css_supported() ) {
+		if ( empty( $variants_with_custom_css ) ) {
 			return '';
 		}
 
-		return implode( ' ', $custom_css_parts );
-	}
+		$kept_variants = Atomic_Widget_Styles::get_license_based_filtered_styles(
+			[ self::LOCAL_STYLE_LABEL => [ 'variants' => $variants_with_custom_css ] ]
+		)[ self::LOCAL_STYLE_LABEL ]['variants'];
 
-	private function is_local_custom_css_supported(): bool {
-		if ( null === $this->is_local_custom_css_supported ) {
-			$probe = [
-				'probe' => [
-					'variants' => [
-						[ 'custom_css' => [ 'raw' => \Elementor\Utils::encode_string( 'probe' ) ] ],
-					],
-				],
-			];
+		$dropped_custom_css = [];
 
-			$filtered = Atomic_Widget_Styles::get_license_based_filtered_styles( $probe );
-
-			$this->is_local_custom_css_supported = ! empty( $filtered['probe']['variants'][0]['custom_css'] );
+		foreach ( $variants_with_custom_css as $index => $variant ) {
+			if ( empty( $kept_variants[ $index ]['custom_css'] ) ) {
+				$dropped_custom_css[] = trim( \Elementor\Utils::decode_string( $variant['custom_css']['raw'] ) );
+			}
 		}
 
-		return $this->is_local_custom_css_supported;
+		return implode( ' ', $dropped_custom_css );
 	}
 
 	private function get_active_breakpoints(): array {

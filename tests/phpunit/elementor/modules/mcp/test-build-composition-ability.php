@@ -839,6 +839,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Act
 		$result = $this->build_card_with_mobile_box_shadow_none( $post_id );
+		$mobile = $this->find_mobile_variant( $post_id );
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
@@ -849,24 +850,85 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'box-shadow: none;', $warnings );
 		$this->assertStringContainsString( 'CSS properties or values are not supported', $warnings );
 		$this->assertStringNotContainsStringIgnoringCase( 'custom', $warnings );
+		$this->assertEmpty( $mobile['custom_css'] ?? null );
+	}
+
+	public function test_execute__unsupported_css_warning_names_only_the_declarations_that_were_not_saved() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result  = $this->build_card_with_style( $post_id, 'color: red; color: var(--not-a-kit-variable);' );
+		$desktop = $this->find_variant( $post_id, 'desktop' );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['warnings'] ?? [] );
+		$this->assertStringContainsString( '[card]', $result['warnings'][0] );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
+		$this->assertStringNotContainsString( 'color: red', $result['warnings'][0] );
+		$this->assertEmpty( $desktop['custom_css'] ?? null );
+	}
+
+	public function test_execute__no_unsupported_css_warning_when_all_css_is_native() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = $this->build_card_with_style( $post_id, 'color: red; padding: 1rem; @media(--mobile) { order: 2; }' );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+	}
+
+	public function test_execute__no_unsupported_css_warning_when_custom_css_is_kept() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$keep_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
+		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css, 10, 2 );
+
+		// Act
+		$result  = $this->build_card_with_style( $post_id, 'color: var(--not-a-kit-variable);' );
+		$desktop = $this->find_variant( $post_id, 'desktop' );
+		remove_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', Utils::decode_string( $desktop['custom_css']['raw'] ?? '' ) );
 	}
 
 	private function build_card_with_mobile_box_shadow_none( int $post_id ) {
+		return $this->build_card_with_style( $post_id, 'box-shadow: 0 10px 30px black; @media(--mobile) { box-shadow: none; }' );
+	}
+
+	private function build_card_with_style( int $post_id, string $css ) {
 		return ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<e-div-block configuration-id="card"/>',
 			'style' => [
-				'card' => 'box-shadow: 0 10px 30px black; @media(--mobile) { box-shadow: none; }',
+				'card' => $css,
 			],
 		] );
 	}
 
 	private function find_mobile_variant( int $post_id ) {
+		return $this->find_variant( $post_id, 'mobile' );
+	}
+
+	private function find_variant( int $post_id, string $breakpoint ) {
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
 		$styles   = $this->find_element_with_styles( $elements )['styles'] ?? [];
 		$style    = reset( $styles );
 
-		return current( array_filter( $style['variants'] ?? [], fn( $v ) => 'mobile' === $v['meta']['breakpoint'] ) );
+		return current( array_filter( $style['variants'] ?? [], fn( $v ) => $breakpoint === $v['meta']['breakpoint'] ) );
 	}
 
 	public function test_execute__attaches_global_classes_by_label_before_local_styles() {
