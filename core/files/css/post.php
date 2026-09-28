@@ -127,7 +127,12 @@ class Post extends Base {
 	 * @param array $meta New meta data.
 	 */
 	protected function update_meta( $meta ) {
-		update_post_meta( $this->post_id, static::META_KEY, $meta );
+		$is_updated = update_post_meta( $this->post_id, static::META_KEY, $meta );
+
+		// When a concurrent request already stored the identical value, WP reports no change and skips its meta cache invalidation.
+		if ( ! $is_updated ) {
+			wp_cache_delete( $this->post_id, 'post_meta' );
+		}
 	}
 
 	/**
