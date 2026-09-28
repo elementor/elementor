@@ -1,0 +1,45 @@
+name: Restore Playwright bootstrap caches
+description: Restore-only non-plugin Playwright bootstrap caches for shard jobs (Core).
+
+runs:
+  using: composite
+  steps:
+    - name: Cache Docker images
+      uses: ScribeMD/docker-cache@0.5.0
+      with:
+        key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+
+    - name: Restore hello-elementor cache
+      uses: actions/cache/restore@v5
+      id: hello-cache
+      with:
+        path: hello-elementor
+        key: core-pw-hello-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+
+    - name: Restore Playwright templates cache
+      uses: actions/cache/restore@v5
+      id: templates-cache
+      with:
+        path: templates
+        key: core-pw-templates-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+
+    - name: Restore Playwright browsers cache
+      uses: actions/cache/restore@v5
+      id: browsers-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: core-pw-browsers-v1-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Download hello-elementor theme
+      if: steps.hello-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+        unzip hello-elementor
+        rm -f hello-elementor.zip
+
+    - name: Prepare Playwright templates
+      if: steps.templates-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm run setup-templates

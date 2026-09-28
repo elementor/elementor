@@ -43,17 +43,49 @@ jobs:
     steps:
       - run: echo "Using caller build artifact ${{ inputs.build_artifact_name }}"
 
+  playwright-bootstrap-prep:
+    name: Playwright bootstrap prep
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    needs: [build-plugin, prepare-caller-build, get-php-version]
+    permissions:
+      contents: read
+    if: |
+      always() &&
+      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+
+      - name: Restore dependency cache
+        uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
+
+      - name: Save Playwright bootstrap caches
+        uses: ./.github/actions/playwright-bootstrap-cache-save
+        with:
+          artifact-name: ${{ needs.build-plugin.outputs.artifact_name || needs.prepare-caller-build.outputs.artifact_name }}
+          php-version: ${{ needs.get-php-version.outputs.php_version }}
+
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     timeout-minutes: 20
-    needs: [build-plugin, prepare-caller-build, get-php-version]
+    needs: [build-plugin, prepare-caller-build, get-php-version, playwright-bootstrap-prep]
     permissions:
       contents: read
       id-token: write
     if: |
       always() &&
-      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
+      (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success') &&
+      needs.playwright-bootstrap-prep.result == 'success'
     strategy:
       fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
@@ -74,10 +106,6 @@ jobs:
       - name: Set PHP_VERSION environment variable
         run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
-      - name: Cache Docker images.
-        uses: ScribeMD/docker-cache@0.5.0
-        with:
-          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
@@ -87,15 +115,13 @@ jobs:
         uses: ./.github/actions/restore-dependencies-cache
         with:
           install-on-miss: 'true'
+      - name: Restore Playwright bootstrap caches
+        uses: ./.github/actions/playwright-bootstrap-cache-restore
       - name: Download build artifact
         uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name || needs.prepare-caller-build.outputs.artifact_name }}
           path: ./build
-      - name: Download hello-elementor theme
-        run: |
-          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
-          unzip hello-elementor
 
       - name: Install staging plugins
         if: ${{ github.event.inputs.environment == 'staging' }}

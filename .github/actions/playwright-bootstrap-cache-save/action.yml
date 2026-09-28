@@ -1,0 +1,101 @@
+name: Save Playwright bootstrap caches
+description: Once-per-run prep that warms and saves non-plugin Playwright bootstrap caches (Core).
+
+inputs:
+  artifact-name:
+    description: Build artifact name (downloaded temporarily to prime Docker only; never cached)
+    required: true
+  php-version:
+    description: PHP version for wp-lite-env config
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Cache Docker images
+      uses: ScribeMD/docker-cache@0.5.0
+      with:
+        key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+
+    - name: Restore hello-elementor cache
+      uses: actions/cache/restore@v5
+      id: hello-cache
+      with:
+        path: hello-elementor
+        key: core-pw-hello-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+
+    - name: Restore Playwright templates cache
+      uses: actions/cache/restore@v5
+      id: templates-cache
+      with:
+        path: templates
+        key: core-pw-templates-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+
+    - name: Restore Playwright browsers cache
+      uses: actions/cache/restore@v5
+      id: browsers-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: core-pw-browsers-v1-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Download hello-elementor theme
+      if: steps.hello-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+        unzip hello-elementor
+        rm -f hello-elementor.zip
+
+    - name: Prepare Playwright templates
+      if: steps.templates-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm run setup-templates
+
+    - name: Download build artifact to prime Docker
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ./build
+
+    - name: Update PHP version in config
+      shell: bash
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
+      run: |
+        set -euo pipefail
+        jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+    - name: Prime WordPress Docker images
+      shell: bash
+      run: npm run start-local-server
+
+    - name: Remove plugin tree from workspace
+      shell: bash
+      run: rm -rf ./build
+
+    - name: Install Playwright browsers
+      if: steps.browsers-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: npx playwright install --with-deps chromium
+
+    - name: Save hello-elementor cache
+      if: steps.hello-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v5
+      with:
+        path: hello-elementor
+        key: core-pw-hello-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+
+    - name: Save Playwright templates cache
+      if: steps.templates-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v5
+      with:
+        path: templates
+        key: core-pw-templates-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+
+    - name: Save Playwright browsers cache
+      if: steps.browsers-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.cache/ms-playwright
+        key: core-pw-browsers-v1-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
