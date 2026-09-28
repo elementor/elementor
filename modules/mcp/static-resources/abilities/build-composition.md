@@ -50,7 +50,7 @@ Every element accepts the same layout styles. Set them in the `style` map for th
 
 - `display: block` — children stack vertically in normal document flow and take the full width of the parent. Use this for sections and a heading followed by text.
 - `display: flex` — `flex-direction` defaults to `row`, so children sit side by side. For stacked content, set `flex-direction: column`. Set `flex-direction` on every multi-child flex container; otherwise children render in a row with no warning.
-- Container defaults: `e-flexbox` and `e-div-block` render at `width: 100%` with `padding: 10px`; `e-div-block` also has `min-width: 30px`. A nested container that should size to its content (a nav group, a button row) needs `width: auto; flex: 0 0 auto`. A decorative line or spacer needs `padding: 0; min-width: 0` so its height and width come only from its own style.
+- Container sizing: read each container type's `llm_guidance.default_styles` via `elementor/get-widget-schema` (padding, display, and full width from the `.e-con` shell). A nested container that should size to its content (a nav group, a button row) needs `width: auto; flex: 0 0 auto`. A decorative line or spacer needs `padding: 0; min-width: 0` so its height and width come only from its own style.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.

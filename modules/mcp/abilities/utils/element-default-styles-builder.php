@@ -24,7 +24,8 @@ class Element_Default_Styles_Builder {
 		array $widget_base_style_defs,
 		?string $tag,
 		?Default_Styles_Repository $repository,
-		?Styles_Renderer $renderer = null
+		?Styles_Renderer $renderer = null,
+		bool $uses_container_shell = false
 	): string {
 		$renderer = $renderer ?? Styles_Renderer::make( Plugin::$instance->breakpoints->get_breakpoints_config() );
 
@@ -34,7 +35,13 @@ class Element_Default_Styles_Builder {
 
 		$default_css = self::render_kit_default( $tag, $repository, $renderer );
 
-		return trim( $base_css . "\n" . $default_css );
+		$layers = array_filter( [
+			$base_css,
+			$default_css,
+			$uses_container_shell ? Atomic_Container_Presentation::to_css_string() : '',
+		] );
+
+		return trim( implode( "\n", $layers ) );
 	}
 
 	public static function render_kit_default(

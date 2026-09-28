@@ -37,6 +37,17 @@ class Test_Llm_Guidance_Builder extends TestCase {
 		$this->assertSame( [ 'e-list' ], $guidance['nesting']['allowed_parents'] );
 	}
 
+	public function test_build__container_default_styles_include_e_con_shell_width() {
+		$config = [
+			'show_in_panel' => true,
+			'meta' => [ 'is_container' => true ],
+		];
+
+		$guidance = Llm_Guidance_Builder::build( $config, 'e-flexbox', [] );
+
+		$this->assertSame( '100%', $guidance['default_styles']['width'] );
+	}
+
 	public function test_build__includes_allowed_child_types_for_containers() {
 		$config = [
 			'show_in_panel' => true,

@@ -214,7 +214,9 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$default_styles_css = Element_Default_Styles_Builder::render(
 			$base_styles,
 			$tag,
-			$this->get_default_styles_repository()
+			$this->get_default_styles_repository(),
+			null,
+			! empty( $config['meta']['is_container'] )
 		);
 
 		if ( null !== $tag ) {

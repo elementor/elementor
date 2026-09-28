@@ -19,6 +19,10 @@ class Llm_Guidance_Builder {
 
 		$default_styles = self::collect_default_styles( $config['base_styles'] ?? [] );
 
+		if ( ! empty( $config['meta']['is_container'] ) ) {
+			$default_styles = array_merge( $default_styles, Atomic_Container_Presentation::to_map() );
+		}
+
 		$instructions = array_filter( [
 			! empty( $default_styles ) ? self::DEFAULT_STYLES_INSTRUCTION : null,
 		] );
