@@ -78,6 +78,7 @@ class Rendered_Extractor implements Extractor_Interface {
 		// even if the theme template throws.
 		$saved_query     = $wp_query;    // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$saved_the_query = $wp_the_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$saved_post      = $GLOBALS['post'] ?? null;
 		$saved_ob_level  = ob_get_level();
 
 		try {
@@ -99,6 +100,12 @@ class Rendered_Extractor implements Extractor_Interface {
 			// Resolve the template file for this post.
 			$template = $this->resolve_template( $post );
 
+			// Point template tags (the_title(), the_content(), etc.) at the
+			// post being inlined instead of the main request's post.
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$GLOBALS['post'] = $post;
+			setup_postdata( $post );
+
 			$html = '';
 
 			if ( '' !== $template && file_exists( $template ) ) {
@@ -109,11 +116,9 @@ class Rendered_Extractor implements Extractor_Interface {
 			} else {
 				// No template found — fall back to a simple content render.
 				ob_start();
-				setup_postdata( $post );
 
 				echo wp_kses_post( apply_filters( 'the_content', $post->post_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
-				wp_reset_postdata();
 				$html = (string) ob_get_clean();
 			}
 		} finally {
@@ -127,6 +132,16 @@ class Rendered_Extractor implements Extractor_Interface {
 			$wp_query     = $saved_query;
 			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$wp_the_query = $saved_the_query;
+
+			// Restore the global post so template tags outside this extractor
+			// reflect the main request's post again, not the inlined one.
+			if ( $saved_post instanceof \WP_Post ) {
+				// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$GLOBALS['post'] = $saved_post;
+				setup_postdata( $saved_post );
+			} else {
+				unset( $GLOBALS['post'] );
+			}
 		}
 
 		if ( '' === $html ) {
