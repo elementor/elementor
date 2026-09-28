@@ -137,7 +137,7 @@ class Test_Widgets extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertFalse( $wp_widget_config['show_in_panel'] );
-		$this->assertTrue( $wp_widget_config['hide_on_search'] );
+		$this->assertFalse( $wp_widget_config['hide_on_search'] ); // Hidden from panel but still searchable.
 	}
 
 	private function get_wordpress_widget_config_from_response( array $response ): ?array {

@@ -33,6 +33,19 @@ class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'Content-Signal: search=yes, ai-input=yes, ai-train=no', $output );
 	}
 
+	public function test_add_rules__returns_output_unchanged_when_site_is_not_public() {
+		// Arrange
+		$handler = new Robots_Txt_Handler();
+		$input   = "User-agent: *\nDisallow: /\n";
+
+		// Act
+		$output = $handler->add_rules( $input, false );
+
+		// Assert
+		$this->assertSame( $input, $output );
+		$this->assertStringNotContainsString( Robots_Txt_Handler::BLOCK_BEGIN, $output );
+	}
+
 	public function test_add_rules__replaces_existing_block_idempotently() {
 		// Arrange
 		$handler = new Robots_Txt_Handler();
