@@ -24,12 +24,17 @@ runs:
         path: hello-elementor
         key: core-pw-theme-v1-${{ runner.os }}
 
+    - name: Compute Playwright templates cache hash
+      id: templates-cache-hash
+      shell: bash
+      run: bash .github/scripts/compute-playwright-templates-cache-hash.sh
+
     - name: Restore Playwright templates cache
       uses: actions/cache/restore@v5
       id: templates-cache
       with:
         path: templates
-        key: core-pw-templates-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+        key: core-pw-templates-v1-${{ runner.os }}-${{ steps.templates-cache-hash.outputs.templates_cache_hash }}
 
     - name: Restore Playwright browsers cache
       uses: actions/cache/restore@v5
@@ -91,7 +96,7 @@ runs:
       uses: actions/cache/save@v5
       with:
         path: templates
-        key: core-pw-templates-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json', 'tests/wp-env/config/**', 'tests/playwright/templates/**', 'tests/playwright/mu-plugins/**', 'tests/elements-regression/playwright.config.ts', 'tests/playwright/playwright.config.ts', 'package.json', '.github/actions/setup-playwright-env/**', '.github/actions/restore-dependencies-cache/**', '.github/actions/playwright-bootstrap-cache-save/**', '.github/actions/playwright-bootstrap-cache-restore/**') }}
+        key: core-pw-templates-v1-${{ runner.os }}-${{ steps.templates-cache-hash.outputs.templates_cache_hash }}
 
     - name: Save Playwright browsers cache
       if: steps.browsers-cache.outputs.cache-hit != 'true'
