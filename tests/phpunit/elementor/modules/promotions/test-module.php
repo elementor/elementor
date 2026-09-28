@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../../components/mocks/mock-pro-license-api.php';
+require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
 
 class Test_Module extends Elementor_Test_Base {
 	private bool $pro_version_was_defined = false;
