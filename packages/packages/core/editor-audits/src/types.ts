@@ -38,6 +38,7 @@ export type AuditViolation = {
 	label: string;
 	detail?: string;
 	angieFix?: boolean;
+	angiePrompt?: string;
 	ctaLabel?: string;
 };
 
