@@ -48,7 +48,6 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
       playwright: ${{ steps.filter.outputs.playwright }}
-      build: ${{ steps.filter.outputs.build }}
       composer: ${{ steps.filter.outputs.composer }}
     steps:
       - name: Checkout source code
@@ -85,13 +84,6 @@ jobs:
               - '*.php'
               - 'package*.json'
               - 'composer.+(json|lock)'
-            build:
-              - '**'
-              - '!**.md'
-              - '!**.txt'
-              - '!bin/**'
-              - '!.gitignore'
-              - '!docs/**'
 
   install:
     name: Install dependencies
