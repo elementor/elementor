@@ -13,8 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Extracts markdown from posts written with the WordPress block editor.
  *
  * Walks the parsed block tree recursively and converts each known core block
- * to its markdown equivalent.  Unrecognised or dynamic blocks are rendered
- * via `render_block()` and then converted through `Html_To_Markdown`.
+ * to its markdown equivalent.  Unrecognised or dynamic blocks (e.g. containers
+ * such as `core/group` or `core/columns`) are rendered via `render_block()`
+ * and then converted through `Html_To_Markdown`; their inner blocks are only
+ * walked separately when that rendered markdown is empty, to avoid duplicating
+ * content that `render_block()` already includes.
  *
  * Priority: 20 (runs after Elementor_Extractor).
  */
@@ -152,13 +155,17 @@ class Block_Extractor implements Extractor_Interface {
 
 			default:
 				// Unrecognised / dynamic block: render via WordPress then convert.
-				$parts = $this->recurse_inner_blocks( $block );
+				// `render_block()` already includes the markup of every inner
+				// block, so only fall back to walking `innerBlocks` when the
+				// rendered markdown is empty (e.g. an empty wrapper element) —
+				// otherwise the inner content would be duplicated.
+				$rendered_markdown = Html_To_Markdown::convert( render_block( $block ) );
 
-				$rendered = render_block( $block );
-
-				if ( '' !== trim( $rendered ) ) {
-					$parts[] = Html_To_Markdown::convert( $rendered );
+				if ( '' !== trim( $rendered_markdown ) ) {
+					return $rendered_markdown;
 				}
+
+				$parts = $this->recurse_inner_blocks( $block );
 
 				return implode( "\n\n", array_filter( $parts, static fn( $p ) => '' !== trim( $p ) ) );
 		}

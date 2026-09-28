@@ -74,51 +74,75 @@ class Rendered_Extractor implements Extractor_Interface {
 	private function capture_template( \WP_Post $post ): string {
 		global $wp_query, $wp_the_query;
 
-		// Preserve the current global state so we can restore it afterwards.
-		$saved_query    = $wp_query;    // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		// Preserve the current global state so we can restore it afterwards,
+		// even if the theme template throws.
+		$saved_query     = $wp_query;    // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$saved_the_query = $wp_the_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$saved_post      = $GLOBALS['post'] ?? null;
+		$saved_ob_level  = ob_get_level();
 
-		// Build a dedicated query for the target post.
-		$args = [
-			'p'              => $post->ID,
-			'post_type'      => $post->post_type,
-			'posts_per_page' => 1,
-		];
+		try {
+			// Build a dedicated query for the target post.
+			$args = [
+				'p'              => $post->ID,
+				'post_type'      => $post->post_type,
+				'posts_per_page' => 1,
+			];
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_query    = new \WP_Query( $args );
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_the_query = $wp_query;
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_query    = new \WP_Query( $args );
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_the_query = $wp_query;
 
-		// Run the wp action so theme/plugin hooks that depend on it fire.
-		do_action( 'wp' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			// Run the wp action so theme/plugin hooks that depend on it fire.
+			do_action( 'wp' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		// Resolve the template file for this post.
-		$template = $this->resolve_template( $post );
+			// Resolve the template file for this post.
+			$template = $this->resolve_template( $post );
 
-		$html = '';
-
-		if ( '' !== $template && file_exists( $template ) ) {
-			ob_start();
-			// phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
-			include $template;
-			$html = (string) ob_get_clean();
-		} else {
-			// No template found — fall back to a simple content render.
-			ob_start();
+			// Point template tags (the_title(), the_content(), etc.) at the
+			// post being inlined instead of the main request's post.
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$GLOBALS['post'] = $post;
 			setup_postdata( $post );
 
-			echo wp_kses_post( apply_filters( 'the_content', $post->post_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			$html = '';
 
-			wp_reset_postdata();
-			$html = (string) ob_get_clean();
+			if ( '' !== $template && file_exists( $template ) ) {
+				ob_start();
+				// phpcs:ignore WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+				include $template;
+				$html = (string) ob_get_clean();
+			} else {
+				// No template found — fall back to a simple content render.
+				ob_start();
+
+				echo wp_kses_post( apply_filters( 'the_content', $post->post_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+				$html = (string) ob_get_clean();
+			}
+		} finally {
+			// Close any buffer left open by a throwing template, then restore
+			// the global query state regardless of success or failure.
+			while ( ob_get_level() > $saved_ob_level ) {
+				ob_end_clean();
+			}
+
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_query     = $saved_query;
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wp_the_query = $saved_the_query;
+
+			// Restore the global post so template tags outside this extractor
+			// reflect the main request's post again, not the inlined one.
+			if ( $saved_post instanceof \WP_Post ) {
+				// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$GLOBALS['post'] = $saved_post;
+				setup_postdata( $saved_post );
+			} else {
+				unset( $GLOBALS['post'] );
+			}
 		}
-
-		// Restore global query state.
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_query     = $saved_query;
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wp_the_query = $saved_the_query;
 
 		if ( '' === $html ) {
 			return '';

@@ -86,10 +86,14 @@ class Robots_Txt_Handler {
 	 * Append (or replace) the Elementor Agent Ready block in the robots.txt output.
 	 *
 	 * @param string $output Robots.txt content built by WordPress so far.
-	 * @param bool   $public Whether the site discourages search engines.
+	 * @param bool   $public Whether the site is public (discourage search engines is off).
 	 * @return string
 	 */
 	public function add_rules( string $output, bool $public ): string {
+		if ( ! $public ) {
+			return $output;
+		}
+
 		$block = $this->build_block();
 
 		// Replace an existing block idempotently.
