@@ -239,10 +239,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		}
 
 		if ( ! widget.show_in_panel ) {
-			// WordPress widgets hidden from the panel section are still added to the
-			// collection so they surface when the user types in the search box.
-			// All other panel-hidden widgets (deprecated, sub-elements, etc.) stay out.
-			return Array.isArray( widget.categories ) && widget.categories.includes( 'wordpress' );
+			// Panel-hidden widgets may still appear in search if they explicitly opt in
+			// via hide_on_search=false (e.g. WordPress widgets). Widgets that set
+			// hide_on_search=true (deprecated, sub-elements, etc.) are excluded entirely.
+			return ! widget.hide_on_search;
 		}
 
 		return true;

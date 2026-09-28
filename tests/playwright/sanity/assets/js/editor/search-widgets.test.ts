@@ -37,3 +37,13 @@ test( 'WordPress widgets hidden from panel should still appear in search results
 	const rssWidget = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element', { hasText: 'RSS' } );
 	await expect( rssWidget ).toHaveCount( 1 );
 } );
+
+test( 'WordPress category should not be visible in the panel without a search term', async ( { page, apiRequests }, testInfo ) => {
+	// Arrange.
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	await wpAdmin.openNewPage();
+
+	// Assert - the WordPress category section should not be visible when there is no search term.
+	const wordpressCategory = page.locator( '#elementor-panel-elements-wrapper [data-category="wordpress"]' );
+	await expect( wordpressCategory ).toHaveCount( 0 );
+} );
