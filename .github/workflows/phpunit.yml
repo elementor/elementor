@@ -41,16 +41,16 @@ jobs:
     if: ${{ github.event_name == 'merge_group' && (github.event.pull_request.title == null || needs.file-diff.outputs.php_diff) }}
     with:
       job_name: PHPUnit (PR/Merge)
-      wordpress_versions: '["latest", "6.9"]'
-      php_versions: '["8.1", "8.2", "8.3"]'
+      wordpress_versions: '["latest"]'
+      php_versions: '["8.1", "8.4"]'
 
   test_schedule:
     uses: ./.github/workflows/phpunit-runner.yml
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     with:
       job_name: PHPUnit (Nightly)
-      wordpress_versions: '["latest", "6.9", "nightly"]'
-      php_versions: '["8.1", "8.2", "8.3", "8.4"]'
+      wordpress_versions: '["latest", "6.8", "7.1", "nightly"]'
+      php_versions: '["7.4", "8.1", "8.3", "8.5"]'
 
   test-result:
     needs: [test_pr_group, test_schedule]

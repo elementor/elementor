@@ -418,8 +418,8 @@ jobs:
     uses: ./.github/workflows/phpunit-runner.yml
     with:
       job_name: PHPUnit (PR)
-      wordpress_versions: '["latest", "6.9"]'
-      php_versions: '["8.1", "8.2", "8.3"]'
+      wordpress_versions: '["latest"]'
+      php_versions: '["8.1", "8.4"]'
 
   playwright:
     name: Playwright
