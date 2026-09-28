@@ -25,21 +25,25 @@ class Request_Path {
 			return false;
 		}
 
-		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
-
-		if ( is_string( $home_path ) && '' !== $home_path && '/' !== $home_path ) {
-			$home_path = untrailingslashit( $home_path );
-			$home_path_length = strlen( $home_path );
-
-			if ( 0 === strpos( $path, $home_path ) && isset( $path[ $home_path_length ] ) && '/' === $path[ $home_path_length ] ) {
-				$path = substr( $path, $home_path_length );
-			}
-		}
-
 		$path = untrailingslashit( $path );
 
-		$trimmed_path = ltrim( $path, '/' );
+		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
 
-		return '/' . $filename === $path || $trimmed_path === $filename;
+		if ( ! is_string( $home_path ) || '' === $home_path || '/' === $home_path ) {
+			$trimmed_path = ltrim( $path, '/' );
+
+			return '/' . $filename === $path || $trimmed_path === $filename;
+		}
+
+		$home_path        = untrailingslashit( $home_path );
+		$home_path_prefix = $home_path . '/';
+
+		if ( 0 !== strpos( $path, $home_path_prefix ) ) {
+			return false;
+		}
+
+		$relative_path = substr( $path, strlen( $home_path_prefix ) );
+
+		return $filename === $relative_path;
 	}
 }
