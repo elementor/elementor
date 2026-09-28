@@ -38,7 +38,7 @@ class Test_Element_Default_Styles_Builder extends TestCase {
 		$result = Element_Default_Styles_Builder::render( [], null, null, $renderer, true );
 
 		// Assert.
-		$this->assertSame( 'width: 100%;', $result );
+		$this->assertSame( '.e-con{width:100%;}', $result );
 	}
 
 	public function test_render_concatenates_base_and_kit_default_css_in_cascade_order() {

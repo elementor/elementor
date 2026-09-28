@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Container_Presentation {
 
+	const SHELL_SELECTOR = '.e-con';
+
 	const SHELL_WIDTH = '100%';
 
 	public static function to_map(): array {
@@ -17,6 +19,6 @@ class Atomic_Container_Presentation {
 	}
 
 	public static function to_css_string(): string {
-		return 'width: ' . self::SHELL_WIDTH . ';';
+		return self::SHELL_SELECTOR . '{width:' . self::SHELL_WIDTH . ';}';
 	}
 }
