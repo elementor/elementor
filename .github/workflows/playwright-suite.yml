@@ -173,7 +173,7 @@ jobs:
             npx playwright install --with-deps chromium
           fi
       - name: Restore Playwright last-run
-        uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/restore@2fcc90f64bb91129cca56c0b80f4ae51fab2e0ba
+        uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/restore@main
         id: pw_last_run
         with:
           artifact-name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
@@ -240,7 +240,7 @@ jobs:
           npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
       - name: Save Playwright last-run
         if: always()
-        uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/save@2fcc90f64bb91129cca56c0b80f4ae51fab2e0ba
+        uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/save@main
         with:
           artifact-name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           last-run-paths: |
