@@ -10,7 +10,15 @@ import { createChunkConfig, createEntryConfig, CHUNKS_OUTPUT_DIR } from './creat
 import { generateEiconsFile } from './shared/eicons.mjs';
 import { BASE_ENTRIES, FRONTEND_ENTRIES, QUNIT_ENTRIES } from './shared/entries.mjs';
 import { ASSETS_JS } from './shared/paths.mjs';
-import { verifyNoUnresolvedImports, verifySelfPublishedGlobals } from './shared/verify-bundles.mjs';
+import {
+	copyElementorOneLocales,
+	verifyElementorOneLocaleAssets,
+} from './shared/elementor-one-locales.mjs';
+import {
+	verifyEditorOneTopBarLocaleLoading,
+	verifyNoUnresolvedImports,
+	verifySelfPublishedGlobals,
+} from './shared/verify-bundles.mjs';
 
 /**
  * The Webpack runtime chunk has no equivalent once every entry is self-contained, but the
@@ -173,6 +181,7 @@ export async function buildScripts( { targets, watch, devOnly, prodOnly, clean }
 
 	// The frontend entries import the generated icon module, so it has to exist before bundling.
 	generateEiconsFile();
+	copyElementorOneLocales();
 
 	const watchers = [];
 	const modes = resolveModes( { devOnly, prodOnly } );
@@ -186,7 +195,9 @@ export async function buildScripts( { targets, watch, devOnly, prodOnly, clean }
 	writeRuntimePlaceholders();
 
 	if ( ! watch ) {
+		verifyElementorOneLocaleAssets();
 		verifyNoUnresolvedImports();
+		verifyEditorOneTopBarLocaleLoading();
 		verifySelfPublishedGlobals();
 		return;
 	}

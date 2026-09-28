@@ -1,9 +1,18 @@
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { __ } from '@wordpress/i18n';
 
-import { type Audit } from '../types';
+import { type Audit, type ElementSnapshotNode } from '../types';
 import { walkElements } from '../utils/walk';
 
 const WIDGET_COUNT_THRESHOLD = 100;
+
+function isCountableWidget( node: ElementSnapshotNode, widgetsCache: ReturnType< typeof getWidgetsCache > ): boolean {
+	if ( node.elType === 'widget' ) {
+		return true;
+	}
+
+	return !! widgetsCache?.[ node.elType ]?.meta?.is_compound;
+}
 
 export const audit: Audit = {
 	id: 'audits/too-many-widgets',
@@ -18,10 +27,11 @@ export const audit: Audit = {
 			return { status: 'skipped', reason: __( 'No elements', 'elementor' ) };
 		}
 
+		const widgetsCache = getWidgetsCache();
 		let widgetCount = 0;
 
 		walkElements( ctx.elements.tree, ( node ) => {
-			if ( node.elType === 'widget' ) {
+			if ( isCountableWidget( node, widgetsCache ) ) {
 				widgetCount++;
 			}
 		} );

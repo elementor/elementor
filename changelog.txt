@@ -1,5 +1,31 @@
 == Changelog ==
 
+= 4.3.0 - 2026-09-22 =
+
+* New: Introducing Elementor MCP - enabling compatible AI tools to build pages, edit elements, and work with your design system
+* New: Introducing a dedicated Elementor MCP page for connecting external AI tools to your site
+* New: Introducing Background Video for placing locally uploaded videos behind section content, with built-in play and pause controls
+* New: Introducing Accordion for building expandable and collapsible content sections with nested content
+* New: Introducing Default Styles for setting and managing styles for supported HTML tags globally
+* Tweak: Added 'nav' and 'main' HTML tag options to Flexbox and Div Block elements ([#33682](https://github.com/elementor/elementor/issues/33682))
+* Tweak: Removed the WordPress section from the widget panel
+* Tweak: Added text decoration controls to the inline text editing toolbar in Heading and Paragraph elements
+* Tweak: Improved element duplication to prevent duplicate IDs
+* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
+* Tweak: Updated Grid layout presets to use Atomic Grid
+* Tweak: Improved nested elements by auto-wrapping them in a Flexbox Container
+* Tweak: Improved the Elementor switch mode button text in the WordPress editor
+* Tweak: Improved Atomic element references when importing kits
+* Fix: Components may not load correctly on pages with multiple or nested Components ([#36647](https://github.com/elementor/elementor/issues/36647))
+* Fix: Divider is not visible inside row containers
+* Fix: Select field names and values are incorrect in submitted forms in Form element
+* Fix: Duplicate IDs may be generated in Tabs element
+* Fix: Draft classes are deleted when importing a Kit
+* Fix: Incorrect ARIA semantics in Floating Button
+* Fix: Converting a local class to a Global Class may not work
+* Fix: Parent Container handles are missing in the Editor for Single template documents
+* Fix: "Edit with Elementor" button incorrectly appears on the Shop archive page
+
 = 4.2.4 - 2026-08-31 =
 
 * Tweak: Updated WordPress compatibility to version 7.1

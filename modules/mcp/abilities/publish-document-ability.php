@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Plugin;
 
@@ -22,7 +23,7 @@ class Publish_Document_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Publish Elementor Document', 'elementor' ),
-			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements or build-composition on published pages are staged in an autosave and do not go live until you publish. Idempotent: publishing an already-published document is a no-op success.', 'elementor' ),
+			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements or build-composition on published pages are staged in an autosave; calling this promotes the staged autosave to the live document. When there are no pending edits on an already-published document, the call is a no-op success.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -98,23 +99,45 @@ class Publish_Document_Ability extends Abstract_Ability {
 
 		$previous_status = get_post_status( $main_id );
 
-		if ( 'publish' === $previous_status ) {
-			return $this->build_success_response( $document, $previous_status, $previous_status );
-		}
+		$this->promote_pending_autosave( $main_id );
 
-		$updated = wp_update_post(
-			[
-				'ID' => $main_id,
-				'post_status' => 'publish',
-			],
-			true
-		);
+		if ( 'publish' !== $previous_status ) {
+			$updated = wp_update_post(
+				[
+					'ID' => $main_id,
+					'post_status' => 'publish',
+				],
+				true
+			);
 
-		if ( is_wp_error( $updated ) ) {
-			return $updated;
+			if ( is_wp_error( $updated ) ) {
+				return $updated;
+			}
 		}
 
 		return $this->build_success_response( $document, get_post_status( $main_id ), $previous_status );
+	}
+
+	/**
+	 * Promote the current user's pending autosave (created by MCP element writes on live posts)
+	 * onto the main document, then discard the autosave slot — mirroring what the editor's own
+	 * publish flow does in `Page\Manager::save`.
+	 *
+	 * Reuses `Revisions_Manager::restore_revision` so ALL `_elementor*` meta (data, page settings,
+	 * CSS cache, etc.) is copied consistently and Post CSS is regenerated. Running before the
+	 * `wp_update_post` status transition means listeners on `transition_post_status` (Post CSS,
+	 * CDN purges, sitemaps, etc.) see the promoted content on the very same request.
+	 */
+	private function promote_pending_autosave( int $main_id ): void {
+		$autosave_post = wp_get_post_autosave( $main_id, get_current_user_id() );
+
+		if ( ! $autosave_post ) {
+			return;
+		}
+
+		Revisions_Manager::restore_revision( $main_id, $autosave_post->ID );
+
+		wp_delete_post_revision( $autosave_post->ID );
 	}
 
 	private function build_success_response( $document, string $status, string $previous_status ): array {

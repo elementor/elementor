@@ -2,16 +2,21 @@ import ReactUtils from 'elementor-utils/react';
 import { ElementorOneHeader, ElementorOneAssetsProvider } from '@elementor/elementor-one-assets';
 import { useAdminMenuOffset } from '../sidebar-navigation/components/hooks/use-admin-menu-offset';
 import isRTL from '../shared/is-rtl';
+import mapWordPressLocaleToElementorOneLanguage from '../shared/map-wordpress-locale-to-elementor-one-language';
 
 const App = () => {
-	const { elementorOneTopBarConfig: { version, title, environment } } = window;
+	const { elementorOneTopBarConfig: { version, title, environment, locale } } = window;
 
 	const isRtlLanguage = isRTL();
 
 	useAdminMenuOffset();
 
 	return (
-		<ElementorOneAssetsProvider env={ environment } isRTL={ isRtlLanguage }>
+		<ElementorOneAssetsProvider
+			env={ environment }
+			isRTL={ isRtlLanguage }
+			language={ mapWordPressLocaleToElementorOneLanguage( locale ) }
+		>
 			<ElementorOneHeader
 				appSettings={ { slug: 'elementor', version } }
 				isWithinWpAdmin
