@@ -82,6 +82,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
 				// Hide the old version from panel and search.
 				elementor.widgetsCache[ widgetName ].show_in_panel = false;
+				elementor.widgetsCache[ widgetName ].hide_on_search = true;
 			}
 		} );
 

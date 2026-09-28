@@ -33,7 +33,7 @@ test( 'WordPress widgets hidden from panel should still appear in search results
 	// Wait for search results to update
 	await page.waitForLoadState( 'networkidle' );
 
-	// Assert - the WordPress widget should appear in search even though its panel section is hidden.
-	const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-	await expect( widgetsInSearchResult ).not.toHaveCount( 0 );
+	// Assert - the RSS WordPress widget should appear in search even though its panel section is hidden.
+	const rssWidget = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element', { hasText: 'RSS' } );
+	await expect( rssWidget ).toHaveCount( 1 );
 } );
