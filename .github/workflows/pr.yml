@@ -50,7 +50,7 @@ jobs:
       playwright: ${{ steps.filter.outputs.playwright }}
       build: ${{ steps.filter.outputs.build }}
       composer: ${{ steps.filter.outputs.composer }}
-      skip_checks: ${{ steps.changelog-filter.outputs.non_changelog == 'false' && !contains(github.event.pull_request.labels.*.name, 'run-tests') && !contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
+      skip_checks: ${{ steps.filter.outputs.changelog == 'true' && steps.filter.outputs.all_count == steps.filter.outputs.changelog_count && !contains(github.event.pull_request.labels.*.name, 'run-tests') && !contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -94,16 +94,11 @@ jobs:
               - '!bin/**'
               - '!.gitignore'
               - '!docs/**'
-      - name: Detect changelog-only changes
-        uses: dorny/paths-filter@v3
-        id: changelog-filter
-        with:
-          predicate-quantifier: 'every'
-          filters: |
-            non_changelog:
+            all:
               - '**'
-              - '!changelog.txt'
-              - '!readme.txt'
+            changelog:
+              - 'changelog.txt'
+              - 'readme.txt'
 
   install:
     name: Install dependencies
