@@ -62,7 +62,7 @@ abstract class Abstract_Ability {
 
 		$meta = is_array( $definition['meta'] ?? null ) ? $definition['meta'] : [];
 		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
-		$mcp['public'] = self::is_mcp_enabled();
+		$mcp['public'] = McpSettingsController::is_enabled();
 		if ( isset( $mcp['description'] ) ) {
 			$mcp['description'] = $this->maybe_append_unavailable_notice( (string) $mcp['description'] );
 		}
@@ -147,14 +147,6 @@ abstract class Abstract_Ability {
 		}
 
 		return $this->cached_definition;
-	}
-
-	private static function is_mcp_enabled(): bool {
-		if ( class_exists( McpSettingsController::class ) ) {
-			return McpSettingsController::is_enabled();
-		}
-
-		return (bool) get_option( 'elementor_mcp_enabled', false );
 	}
 
 	private function mcp_meta(): array {
