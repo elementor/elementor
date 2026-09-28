@@ -26,12 +26,6 @@ abstract class Fake_V3_Widget extends Widget_Base {
 	protected function register_controls() {
 	}
 
-	public function get_stack() {
-		return [
-			'controls' => $this->get_test_controls(),
-		];
-	}
-
 	/**
 	 * Override to return controls directly, bypassing Controls_Manager stack init which
 	 * is order-sensitive in tests (widget instances get cloned during element resolution,
