@@ -48,7 +48,6 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
       playwright: ${{ steps.filter.outputs.playwright }}
-      build: ${{ steps.filter.outputs.build }}
       composer: ${{ steps.filter.outputs.composer }}
       skip_checks: ${{ steps.filter.outputs.changelog == 'true' && steps.filter.outputs.all_count == steps.filter.outputs.changelog_count && !contains(github.event.pull_request.labels.*.name, 'run-tests') && !contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
     steps:
@@ -87,13 +86,6 @@ jobs:
               - '*.php'
               - 'package*.json'
               - 'composer.+(json|lock)'
-            build:
-              - '**'
-              - '!**.md'
-              - '!**.txt'
-              - '!bin/**'
-              - '!.gitignore'
-              - '!docs/**'
             all:
               - '**'
             changelog:
