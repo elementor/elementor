@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
@@ -22,8 +23,11 @@ class Style_Applier {
 	const LOCAL_STYLE_LABEL = 'local';
 	const LOCAL_STYLE_TYPE = 'class';
 
+	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
+
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
+	private ?bool $is_local_custom_css_supported = null;
 
 	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [] ) {
 		$this->css_converter      = $css_converter;
@@ -106,6 +110,21 @@ class Style_Applier {
 			}
 
 			$new_variants           = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->css_converter );
+			$unsupported_custom_css = $this->collect_unsupported_custom_css( $new_variants );
+
+			if ( '' !== $unsupported_custom_css ) {
+				$warnings[] = sprintf(
+					'[%s] %s',
+					$config_id,
+					sprintf(
+						/* translators: %s: CSS declarations that were not saved */
+						__( 'These CSS properties or values are not supported and were not saved: %s', 'elementor' ),
+						self::truncate_css_snippet( $unsupported_custom_css )
+					)
+				);
+				$warning_codes[] = self::UNSUPPORTED_CSS_CODE;
+			}
+
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
 			$removal_bps            = $parsed['removal_breakpoints'];
 			$existing_style_id      = $this->find_existing_local_style_id( $node );
@@ -231,6 +250,42 @@ class Style_Applier {
 		}
 
 		return substr( $css, 0, $max_length - 3 ) . '...';
+	}
+
+	private function collect_unsupported_custom_css( array $variants ): string {
+		$custom_css_parts = [];
+
+		foreach ( $variants as $variant ) {
+			$raw = $variant['custom_css']['raw'] ?? '';
+
+			if ( '' !== $raw ) {
+				$custom_css_parts[] = trim( \Elementor\Utils::decode_string( $raw ) );
+			}
+		}
+
+		if ( empty( $custom_css_parts ) || $this->is_local_custom_css_supported() ) {
+			return '';
+		}
+
+		return implode( ' ', $custom_css_parts );
+	}
+
+	private function is_local_custom_css_supported(): bool {
+		if ( null === $this->is_local_custom_css_supported ) {
+			$probe = [
+				'probe' => [
+					'variants' => [
+						[ 'custom_css' => [ 'raw' => \Elementor\Utils::encode_string( 'probe' ) ] ],
+					],
+				],
+			];
+
+			$filtered = Atomic_Widget_Styles::get_license_based_filtered_styles( $probe );
+
+			$this->is_local_custom_css_supported = ! empty( $filtered['probe']['variants'][0]['custom_css'] );
+		}
+
+		return $this->is_local_custom_css_supported;
 	}
 
 	private function get_active_breakpoints(): array {

@@ -21,6 +21,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -808,6 +809,64 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		$has_content = ! empty( $variant['props'] ) || ! empty( $variant['custom_css'] );
 		$this->assertTrue( $has_content, 'Variant must have either props or custom_css.' );
+	}
+
+	public function test_execute__box_shadow_none_is_persisted_as_custom_css_when_supported() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$keep_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
+		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css, 10, 2 );
+
+		// Act
+		$result = $this->build_card_with_mobile_box_shadow_none( $post_id );
+		$mobile = $this->find_mobile_variant( $post_id );
+		remove_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+		$this->assertNotFalse( $mobile, 'Expected a mobile variant.' );
+		$this->assertArrayNotHasKey( 'box-shadow', $mobile['props'] );
+		$this->assertStringContainsString( 'box-shadow: none', Utils::decode_string( $mobile['custom_css']['raw'] ?? '' ) );
+	}
+
+	public function test_execute__box_shadow_none_warns_when_custom_css_is_not_supported() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = $this->build_card_with_mobile_box_shadow_none( $post_id );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+
+		$warnings = implode( ' ', $result['warnings'] ?? [] );
+		$this->assertStringContainsString( '[card]', $warnings );
+		$this->assertStringContainsString( 'box-shadow: none;', $warnings );
+		$this->assertStringContainsString( 'CSS properties or values are not supported', $warnings );
+		$this->assertStringNotContainsStringIgnoringCase( 'custom', $warnings );
+	}
+
+	private function build_card_with_mobile_box_shadow_none( int $post_id ) {
+		return ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="card"/>',
+			'style' => [
+				'card' => 'box-shadow: 0 10px 30px black; @media(--mobile) { box-shadow: none; }',
+			],
+		] );
+	}
+
+	private function find_mobile_variant( int $post_id ) {
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$styles   = $this->find_element_with_styles( $elements )['styles'] ?? [];
+		$style    = reset( $styles );
+
+		return current( array_filter( $style['variants'] ?? [], fn( $v ) => 'mobile' === $v['meta']['breakpoint'] ) );
 	}
 
 	public function test_execute__attaches_global_classes_by_label_before_local_styles() {
