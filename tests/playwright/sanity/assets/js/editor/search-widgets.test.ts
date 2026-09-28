@@ -20,12 +20,12 @@ test( 'Visible widgets should be shown in search result', async ( { page, apiReq
 	await expect( widgetsInSearchResult ).toHaveCount( 1 );
 } );
 
-test( 'Hidden widgets should not be shown in search result', async ( { page, apiRequests }, testInfo ) => {
+test( 'WordPress widgets hidden from panel should still appear in search results', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdmin.openNewPage();
 
-	// Act - search for a hidden widget.
+	// Act - search for a WordPress widget hidden from the panel.
 	const widgetSearchBar = 'input#elementor-panel-elements-search-input';
 	await page.waitForSelector( widgetSearchBar );
 	await page.locator( widgetSearchBar ).fill( 'RSS' );
@@ -33,7 +33,7 @@ test( 'Hidden widgets should not be shown in search result', async ( { page, api
 	// Wait for search results to update
 	await page.waitForLoadState( 'networkidle' );
 
-	// Assert - the widget should not be shown in search result.
+	// Assert - the WordPress widget should appear in search even though its panel section is hidden.
 	const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-	await expect( widgetsInSearchResult ).toHaveCount( 0 );
+	await expect( widgetsInSearchResult ).not.toHaveCount( 0 );
 } );

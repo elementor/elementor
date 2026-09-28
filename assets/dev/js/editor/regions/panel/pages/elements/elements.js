@@ -82,7 +82,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
 				// Hide the old version from panel and search.
 				elementor.widgetsCache[ widgetName ].show_in_panel = false;
-				elementor.widgetsCache[ widgetName ].hide_on_search = true;
 			}
 		} );
 
@@ -238,10 +237,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return false;
 		}
 
-		// Widgets hidden from the panel but not from search are still added to the
-		// collection so they surface when the user types in the search box.
-		if ( ! widget.show_in_panel && widget.hide_on_search ) {
-			return false;
+		if ( ! widget.show_in_panel ) {
+			// WordPress widgets hidden from the panel section are still added to the
+			// collection so they surface when the user types in the search box.
+			// All other panel-hidden widgets (deprecated, sub-elements, etc.) stay out.
+			return Array.isArray( widget.categories ) && widget.categories.includes( 'wordpress' );
 		}
 
 		return true;
