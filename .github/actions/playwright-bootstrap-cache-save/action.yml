@@ -22,7 +22,7 @@ runs:
       id: theme-cache
       with:
         path: hello-elementor
-        key: core-pw-theme-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+        key: core-pw-theme-v1-${{ runner.os }}
 
     - name: Restore Playwright templates cache
       uses: actions/cache/restore@v5
@@ -84,7 +84,7 @@ runs:
       uses: actions/cache/save@v5
       with:
         path: hello-elementor
-        key: core-pw-theme-v1-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+        key: core-pw-theme-v1-${{ runner.os }}
 
     - name: Save Playwright templates cache
       if: steps.templates-cache.outputs.cache-hit != 'true'
