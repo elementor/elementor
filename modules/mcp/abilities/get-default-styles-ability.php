@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 
@@ -19,6 +20,10 @@ class Get_Default_Styles_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/get-default-styles';
+	}
+
+	public function is_available_for_current_mode(): bool {
+		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
@@ -23,6 +24,10 @@ class Reorder_Classes_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/reorder-classes';
+	}
+
+	public function is_available_for_current_mode(): bool {
+		return AtomicWidgetsModule::is_active();
 	}
 
 	protected function get_definition(): Ability_Definition {
