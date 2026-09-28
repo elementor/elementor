@@ -222,7 +222,7 @@ describe( 'Ajax HTTP 429 retry', () => {
 		jest.spyOn( jQuery, 'ajax' ).mockImplementation( ( options ) => {
 			sentRequests.push( options );
 
-			const xhr = { abort: jest.fn() };
+			const xhr = { abort: jest.fn(), readyState: 1, status: 0, statusText: '' };
 
 			sentXhrs.push( xhr );
 
@@ -391,6 +391,27 @@ describe( 'Ajax HTTP 429 retry', () => {
 
 		// Assert
 		expect( success ).toHaveBeenCalledWith( { success: true, data: 'done' } );
+	} );
+
+	it( 'should set readyState to 4 when the transport settles', () => {
+		// Arrange
+		const deferred = ajax.addRequest( 'render_widget', { data: { id: 1 } }, true );
+
+		// Assert
+		expect( deferred.jqXhr.readyState ).not.toBe( 4 );
+
+		// Act
+		sentRequests[ 0 ].success( {
+			success: true,
+			data: {
+				responses: {
+					render_widget: { success: true, data: { render: '<div />' } },
+				},
+			},
+		} );
+
+		// Assert
+		expect( deferred.jqXhr.readyState ).toBe( 4 );
 	} );
 
 	it( 'should not retry a 500 response', () => {

@@ -267,6 +267,18 @@ export default class extends elementorModules.Module {
 		let jqXhr = null;
 		let retryTimer = null;
 
+		const markTransportComplete = ( xhrFacade, activeJqXhr ) => {
+			if ( activeJqXhr ) {
+				xhrFacade.readyState = activeJqXhr.readyState;
+				xhrFacade.status = activeJqXhr.status;
+				xhrFacade.statusText = activeJqXhr.statusText;
+			}
+
+			if ( 4 !== xhrFacade.readyState ) {
+				xhrFacade.readyState = 4;
+			}
+		};
+
 		// Callers treat the return value as a jqXHR-like promise, so this deferred is
 		// settled with the outcome of the final attempt to keep .done/.fail working
 		// across retries.
@@ -275,7 +287,15 @@ export default class extends elementorModules.Module {
 		const originalSuccess = ajaxParams.success;
 		const originalError = ajaxParams.error;
 
+		const xhrFacade = Object.assign( deferred.promise(), {
+			readyState: 1,
+			status: 0,
+			statusText: '',
+		} );
+
 		ajaxParams.success = ( response ) => {
+			markTransportComplete( xhrFacade, jqXhr );
+
 			jqXhr = null;
 			settled = true;
 
@@ -294,6 +314,8 @@ export default class extends elementorModules.Module {
 			jqXhr = null;
 
 			if ( aborted || 'abort' === textStatus || ! retryEnabled || 429 !== errorJqXHR.status || attempt >= MAX_RETRIES ) {
+				markTransportComplete( xhrFacade, errorJqXHR );
+
 				settled = true;
 
 				deferred.reject( errorJqXHR, textStatus, errorThrown );
@@ -307,8 +329,16 @@ export default class extends elementorModules.Module {
 
 			attempt += 1;
 
+			xhrFacade.readyState = 1;
+
 			retryTimer = setTimeout( () => {
 				jqXhr = jQuery.ajax( ajaxParams );
+
+				if ( jqXhr ) {
+					xhrFacade.readyState = jqXhr.readyState;
+					xhrFacade.status = jqXhr.status;
+					xhrFacade.statusText = jqXhr.statusText;
+				}
 			}, Math.min( getRetryDelayMs( errorJqXHR ), RETRY_MAX_DELAY_MS ) );
 		};
 
@@ -339,8 +369,13 @@ export default class extends elementorModules.Module {
 
 		jqXhr = jQuery.ajax( ajaxParams );
 
-		return Object.assign( deferred.promise(), {
-			abort: () => {
+		if ( jqXhr ) {
+			xhrFacade.readyState = jqXhr.readyState;
+			xhrFacade.status = jqXhr.status;
+			xhrFacade.statusText = jqXhr.statusText;
+		}
+
+		xhrFacade.abort = () => {
 				if ( settled ) {
 					return;
 				}
@@ -362,6 +397,10 @@ export default class extends elementorModules.Module {
 						getAllResponseHeaders: () => '',
 					};
 
+					xhrFacade.readyState = 0;
+					xhrFacade.status = 0;
+					xhrFacade.statusText = 'abort';
+
 					settled = true;
 
 					deferred.reject( syntheticJqXHR, 'abort', 'Request canceled' );
@@ -370,8 +409,9 @@ export default class extends elementorModules.Module {
 						originalError( syntheticJqXHR, 'abort', 'Request canceled' );
 					}
 				}
-			},
-		} );
+			};
+
+		return xhrFacade;
 	}
 
 	addRequestCache( request, data ) {
