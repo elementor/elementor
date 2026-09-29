@@ -64,4 +64,29 @@ describe( 'extractAttachmentIds', () => {
 		];
 		expect( extractAttachmentIds( galleryTree ) ).toEqual( [ 20, 21 ] );
 	} );
+
+	it( 'collects attachment IDs from container background_overlay_image and widget _background_hover_image', () => {
+		const backgroundTree: ElementSnapshotNode[] = [
+			{
+				id: 'container',
+				elType: 'container',
+				settings: {
+					background_overlay_image: { id: 30, url: 'http://example.test/overlay.jpg' },
+				},
+				elements: [
+					{
+						id: 'heading',
+						elType: 'widget',
+						widgetType: 'heading',
+						settings: {
+							title: 'Hello',
+							_background_hover_image: { id: 31, url: 'http://example.test/bg-hover.jpg' },
+						},
+						elements: [],
+					},
+				],
+			},
+		];
+		expect( extractAttachmentIds( backgroundTree ) ).toEqual( [ 30, 31 ] );
+	} );
 } );

@@ -1,7 +1,8 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-import { type Audit, type AuditViolation } from '../types';
-import { hasPageImages, walkImageLikeSources } from '../utils/image-like-sources';
+import { type Audit, type AuditViolation, type ElementSnapshotNode } from '../types';
+import { walkBackgroundImageSources } from '../utils/background-image-sources';
+import { type ImageLikeMedia, walkImageLikeSources } from '../utils/image-like-sources';
 
 const SIZE_THRESHOLD_BYTES = 500 * 1024;
 const BYTES_PER_KB = 1024;
@@ -15,14 +16,15 @@ export const audit: Audit = {
 	severity: 'warning',
 	weight: 7,
 	evaluate: ( ctx ) => {
-		if ( ! hasPageImages( ctx.elements.tree ) ) {
-			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
-		}
-
 		const widgetMaxKb = new Map< string, number >();
 		let oversizedImageCount = 0;
+		let hasAnyImage = false;
 
-		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {
+		const evaluateSource = ( node: ElementSnapshotNode, media: ImageLikeMedia ) => {
+			if ( media.id || media.url ) {
+				hasAnyImage = true;
+			}
+
 			const id = media.id;
 
 			if ( ! id ) {
@@ -40,7 +42,14 @@ export const audit: Audit = {
 			const kb = Math.round( size.filesize_bytes / BYTES_PER_KB );
 			const currentMax = widgetMaxKb.get( node.id ) ?? 0;
 			widgetMaxKb.set( node.id, Math.max( currentMax, kb ) );
-		} );
+		};
+
+		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
+		walkBackgroundImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
+
+		if ( ! hasAnyImage ) {
+			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
+		}
 
 		const violations: AuditViolation[] = Array.from( widgetMaxKb.entries() ).map( ( [ elementId, kb ] ) => ( {
 			auditId: audit.id,

@@ -1,5 +1,5 @@
 import { audit } from '../images-too-large';
-import { makeContext, makeWidget } from './fixtures';
+import { makeContainer, makeContext, makeWidget } from './fixtures';
 
 const ONE_MB = 1024 * 1024;
 const SMALL_KB = 100 * 1024;
@@ -96,5 +96,76 @@ describe( audit.id, () => {
 			expect( result.violations ).toHaveLength( 3 );
 			expect( result.metadata?.oversizedImageCount ).toBe( 4 );
 		}
+	} );
+
+	it( 'fails when a container background_image exceeds the threshold', async () => {
+		const tree = [ makeContainer( 'container', { background_image: { id: 1 } } ) ];
+		const pageContext = { image_sizes: { 1: imageSize( ONE_MB ) } };
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 1 );
+			expect( result.violations[ 0 ].elementId ).toBe( 'container' );
+			expect( result.metadata?.oversizedImageCount ).toBe( 1 );
+		}
+	} );
+
+	it( 'fails when a container background_overlay_image exceeds the threshold', async () => {
+		const tree = [ makeContainer( 'container', { background_overlay_image: { id: 2 } } ) ];
+		const pageContext = { image_sizes: { 2: imageSize( ONE_MB ) } };
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 1 );
+			expect( result.violations[ 0 ].elementId ).toBe( 'container' );
+		}
+	} );
+
+	it( 'fails when a widget _background_image exceeds the threshold', async () => {
+		const tree = [ makeWidget( 'heading', 'heading', { title: 'Hello', _background_image: { id: 3 } } ) ];
+		const pageContext = { image_sizes: { 3: imageSize( ONE_MB ) } };
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 1 );
+			expect( result.violations[ 0 ].elementId ).toBe( 'heading' );
+		}
+	} );
+
+	it( 'collapses background_image and background_overlay_image on the same container into one violation', async () => {
+		const tree = [
+			makeContainer( 'container', {
+				background_image: { id: 4 },
+				background_overlay_image: { id: 5 },
+			} ),
+		];
+		const pageContext = {
+			image_sizes: {
+				4: imageSize( ONE_MB ),
+				5: imageSize( 2 * ONE_MB ),
+			},
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 1 );
+			expect( result.metadata?.oversizedImageCount ).toBe( 2 );
+			expect( result.violations[ 0 ].label ).toContain( `${ Math.round( ( 2 * ONE_MB ) / 1024 ) }` );
+		}
+	} );
+
+	it( 'passes when a background image is under the threshold', async () => {
+		const tree = [ makeContainer( 'container', { background_image: { id: 6 } } ) ];
+		const pageContext = { image_sizes: { 6: imageSize( SMALL_KB ) } };
+
+		expect( await audit.evaluate( makeContext( { tree, pageContext } ) ) ).toEqual( { status: 'pass' } );
 	} );
 } );
