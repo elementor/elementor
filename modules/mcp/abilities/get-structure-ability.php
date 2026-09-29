@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -44,7 +45,11 @@ class Get_Structure_Ability extends Abstract_Ability {
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
+<<<<<<< HEAD
 						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, V4 nodes also include settings, styles (as { __style_id, css } — raw CSS string with @media(--breakpoint) + &:hover/&:focus/&:active), interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). V3 nodes always have empty settings and styles.',
+=======
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
+>>>>>>> c124a7c5d7 (Internal: Expose container shell width in MCP default styles [ED-25674] (#37488))
 					],
 				],
 			],
@@ -105,6 +110,8 @@ class Get_Structure_Ability extends Abstract_Ability {
 			);
 		}
 
+		$document_root_ids = array_column( $elements, 'id' );
+
 		if ( '' !== $element_id ) {
 			$subtree = Utils::find_element_recursive( $elements, $element_id );
 
@@ -120,12 +127,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 		}
 
 		return [
-			'elements' => $this->prune_elements( $elements, $include_content ),
+			'elements' => $this->prune_elements( $elements, $include_content, $document_root_ids ),
 		];
 	}
 
-	private function prune_elements( array $elements, bool $include_content = false ): array {
-		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content ) {
+	private function prune_elements( array $elements, bool $include_content = false, array $document_root_ids = [] ): array {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content, $document_root_ids ) {
 			$skeleton = [
 				'id' => $node['id'] ?? null,
 				'elType' => $node['elType'] ?? null,
@@ -146,14 +153,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
-				$this->populate_content( $skeleton, $node );
+				$this->populate_content( $skeleton, $node, in_array( $node['id'] ?? null, $document_root_ids, true ) );
 			}
 
 			return $skeleton;
 		} );
 	}
 
-	private function populate_content( array &$skeleton, array $node ): void {
+	private function populate_content( array &$skeleton, array $node, bool $is_document_root ): void {
 		$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 
 		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
@@ -175,7 +182,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$skeleton['styles'] = Local_Style_Serializer::serialize( $node['styles'] ?? [] );
 
 		$resolved_settings = is_array( $skeleton['settings'] ) ? $skeleton['settings'] : [];
-		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings );
+		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings, $is_document_root );
 	}
 
 	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {
@@ -205,7 +212,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 		return ! empty( $serialized ) ? $serialized : (object) [];
 	}
 
-	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings ): void {
+	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings, bool $is_document_root ): void {
 		$base_styles = is_array( $config['base_styles'] ?? null ) ? $config['base_styles'] : [];
 		$props_schema = is_array( $config['atomic_props_schema'] ?? null ) ? $config['atomic_props_schema'] : [];
 		$tag = $this->resolve_html_tag( $node, $resolved_settings );
@@ -213,7 +220,9 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$default_styles_css = Element_Default_Styles_Builder::render(
 			$base_styles,
 			$tag,
-			$this->get_default_styles_repository()
+			$this->get_default_styles_repository(),
+			null,
+			Atomic_Container_Presentation::applies_to( $config ) ? Atomic_Container_Presentation::to_css_string( $is_document_root ) : ''
 		);
 
 		if ( null !== $tag ) {
