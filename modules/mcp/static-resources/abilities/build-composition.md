@@ -17,8 +17,9 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
-4. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
-5. Use returned element IDs for subsequent configuration changes
+4. Read the schema via `elementor/get-widget-schema` for every element type you will use, including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` (e.g. `width: 100%`, `padding: 10px`) shape the layout
+5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+6. Use returned element IDs for subsequent configuration changes
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
