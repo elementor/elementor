@@ -46,7 +46,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements not already set by their base styles, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
 					],
 				],
 			],
@@ -219,7 +219,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			$tag,
 			$this->get_default_styles_repository(),
 			null,
-			Atomic_Container_Presentation::applies_to( $config ) ? Atomic_Container_Presentation::to_css_string( $base_styles, $is_document_root ) : ''
+			Atomic_Container_Presentation::applies_to( $config ) ? Atomic_Container_Presentation::to_css_string( $is_document_root ) : ''
 		);
 
 		if ( null !== $tag ) {

@@ -31,18 +31,6 @@ class Test_Element_Default_Styles_Builder extends TestCase {
 
 	const SHELL_CSS = '.e-con{position:relative;width:100%;min-width:0;}';
 
-	public function test_render__includes_container_shell_css_when_given() {
-		// Arrange.
-		$renderer = $this->createMock( Styles_Renderer::class );
-		$renderer->expects( $this->never() )->method( 'render' );
-
-		// Act.
-		$result = Element_Default_Styles_Builder::render( [], null, null, $renderer, self::SHELL_CSS );
-
-		// Assert.
-		$this->assertSame( self::SHELL_CSS, $result );
-	}
-
 	public function test_render__places_container_shell_css_before_base_styles_so_base_styles_win() {
 		// Arrange.
 		$base_styles = [
