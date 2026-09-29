@@ -159,7 +159,9 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 										) }
 									</Box>
 									{ violation.angieFix && (
-										<FixViolationWithAngie prompt={ buildAngiePrompt( rowLabel ) } />
+										<FixViolationWithAngie
+											prompt={ violation.angiePrompt ?? buildAngiePrompt( rowLabel ) }
+										/>
 									) }
 									{ violation.ctaLabel && violation.externalUrl ? (
 										<ViolationCtaButton

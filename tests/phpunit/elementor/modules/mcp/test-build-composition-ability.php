@@ -366,7 +366,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	/**
 	 * @dataProvider settings_validation_cases
 	 */
-	public function test_execute__settings_validation( array $element_config, array $expected_message_fragments ) {
+	public function test_execute__settings_validation( array $element_config, array $expected_message_fragments, string $expected_code ) {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -381,13 +381,13 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
-		$message = $result->get_error_message();
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$warnings = implode( ' ', $result['warnings'] ?? [] );
 		foreach ( $expected_message_fragments as $fragment ) {
-			$this->assertStringContainsString( $fragment, $message );
+			$this->assertStringContainsString( $fragment, $warnings );
 		}
+		$this->assertSame( 'h1', $this->find_warning_by_code( $result, $expected_code )['config_id'] ?? null );
 	}
 
 	public function settings_validation_cases(): array {
@@ -395,12 +395,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'invalid tag enum' => [
 				[ 'tag' => 'h99' ],
 				[ 'tag', 'elementor://widgets/schema' ],
+				'prop_value_invalid',
 			],
 			'unresolvable title type' => [
 				[
 					'title' => [ 'foo' => 'bar' ],
 				],
 				[ 'title', 'could not be resolved' ],
+				'prop_value_invalid',
 			],
 		];
 	}
@@ -625,9 +627,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result, 'Expected invalid settings but got success: ' . ( is_array( $result ) ? wp_json_encode( $result ) : 'unknown' ) );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 'h1', $this->find_warning_by_code( $result, 'prop_value_invalid' )['config_id'] ?? null );
 	}
 
 	public function dynamic_tag_wrong_settings_cases(): array {
@@ -671,7 +673,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 	}
 
-	public function test_execute__rejects_invalid_css_breakpoint_in_style() {
+	public function test_execute__invalid_css_breakpoint_in_style_returns_warning() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -687,9 +689,11 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_styles', $result->get_error_code() );
-		$this->assertStringContainsString( 'nonexistent', $result->get_error_message() );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$warning = $this->find_warning_by_code( $result, 'css_parse_failed' );
+		$this->assertSame( 'h1', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'nonexistent', $warning['message'] ?? '' );
 	}
 
 	public function test_execute__css_string_creates_desktop_variant_with_props() {
@@ -845,7 +849,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $heading['styles'] ?? [] );
 	}
 
-	public function test_execute__rejects_unknown_global_class_label() {
+	public function test_execute__unknown_global_class_label_returns_warning() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -862,11 +866,13 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_unknown_global_class', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
-		$this->assertStringContainsString( 'missing-class', $result->get_error_message() );
-		$this->assertStringContainsString( 'Available labels', $result->get_error_message() );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$warning = $this->find_warning_by_code( $result, 'unknown_global_class' );
+		$this->assertSame( 'h1', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
+		$this->assertStringContainsString( 'Available labels', $warning['message'] ?? '' );
+		$this->assertStringContainsString( 'elementor/manage-classes', $warning['message'] ?? '' );
 	}
 
 	public function test_execute__resolves_global_variable_label_to_id_in_saved_tree() {
@@ -945,6 +951,16 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		return $result['variable']['id'];
+	}
+
+	private function find_warning_by_code( array $result, string $code ): array {
+		foreach ( $result['warning_details'] ?? [] as $warning ) {
+			if ( $code === $warning['code'] ) {
+				return $warning;
+			}
+		}
+
+		return [];
 	}
 
 	private function create_real_document(): int {
