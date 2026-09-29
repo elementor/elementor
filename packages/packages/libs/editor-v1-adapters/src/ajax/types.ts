@@ -2,6 +2,7 @@ export type RequestParams< TData = object > = {
 	action: string;
 	unique_id: string;
 	data: TData;
+	retry?: boolean;
 };
 
 type Headers< TRequestData = object, TResponseData = object > = RequestParams< TRequestData > & {
