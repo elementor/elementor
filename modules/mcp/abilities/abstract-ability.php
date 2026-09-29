@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
 
@@ -61,7 +62,7 @@ abstract class Abstract_Ability {
 
 		$meta = is_array( $definition['meta'] ?? null ) ? $definition['meta'] : [];
 		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
-		$mcp['public'] = true;
+		$mcp['public'] = McpSettingsController::is_enabled();
 		if ( isset( $mcp['description'] ) ) {
 			$mcp['description'] = $this->maybe_append_unavailable_notice( (string) $mcp['description'] );
 		}
