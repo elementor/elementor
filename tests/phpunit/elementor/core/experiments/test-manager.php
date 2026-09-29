@@ -629,6 +629,20 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-plain-call' ) );
 	}
 
+	public function test_is_feature_active__class_based_dependency_stays_active() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-class-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				Module_B::class,
+			],
+		] );
+
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-class-dep' ) );
+	}
+
 	public function test_is_feature_active__fails_closed_when_dependency_feature_is_removed() {
 		$this->add_test_feature( [
 			'name' => 'removed-later',
