@@ -258,12 +258,6 @@ class Widget_Common_Base extends Widget_Base {
 	 * @return array A list of additional mask shapes.
 	 */
 	private static function get_additional_mask_shapes(): array {
-		static $additional_mask_shapes = null;
-
-		if ( null !== $additional_mask_shapes ) {
-			return $additional_mask_shapes;
-		}
-
 		$additional_mask_shapes = [];
 
 		/**
@@ -275,9 +269,7 @@ class Widget_Common_Base extends Widget_Base {
 		 *
 		 * @param array $additional_mask_shapes Additional mask shapes.
 		 */
-		$additional_mask_shapes = apply_filters( 'elementor/mask_shapes/additional_shapes', $additional_mask_shapes );
-
-		return $additional_mask_shapes;
+		return apply_filters( 'elementor/mask_shapes/additional_shapes', $additional_mask_shapes );
 	}
 
 	/**
