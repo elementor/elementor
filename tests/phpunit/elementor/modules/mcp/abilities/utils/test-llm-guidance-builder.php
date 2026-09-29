@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Shell_Styles_Resolver;
+use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Shell_Styles;
 use Elementor\Modules\Mcp\Abilities\Utils\Llm_Guidance_Builder;
 use PHPUnit\Framework\TestCase;
 
@@ -12,11 +12,11 @@ class Test_Llm_Guidance_Builder extends TestCase {
 
 	public function setUp(): void {
 		parent::setUp();
-		Atomic_Shell_Styles_Resolver::set_instance( new Atomic_Shell_Styles_Resolver( [ '.e-con{--width:100%;width:var(--width)}' ] ) );
+		Atomic_Shell_Styles::set_instance( new Atomic_Shell_Styles( [], [] ) );
 	}
 
 	public function tearDown(): void {
-		Atomic_Shell_Styles_Resolver::set_instance( null );
+		Atomic_Shell_Styles::set_instance( null );
 		parent::tearDown();
 	}
 
