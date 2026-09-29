@@ -36,7 +36,7 @@ class Div_Block extends Atomic_Element_Base {
 		return 'e-div-block';
 	}
 
-	public static $widget_description = 'A block container (div) that stacks its children vertically in normal flow. Use it to group and wrap content, or as a spacer or divider. It comes with default styles (display: block, width: 100%, padding: 10px, min-width: 30px; see llm_guidance.default_styles), so set padding: 0 when using it as a thin line or spacer.';
+	public static $widget_description = 'A block container (div) that stacks its children vertically in normal flow. Use it to group and wrap content, or as a spacer or divider. It comes with default styles (see llm_guidance.default_styles), so override them when using it as a thin line or spacer.';
 
 	public static function get_element_type(): string {
 		return 'e-div-block';
