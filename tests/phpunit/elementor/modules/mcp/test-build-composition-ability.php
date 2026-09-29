@@ -220,6 +220,39 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	/**
+	 * @dataProvider invalid_xml_message_cases
+	 */
+	public function test_execute__invalid_xml_message_names_the_broken_tag( string $xml, string $expected_message ) {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'xml_structure' => $xml ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_xml', $result->get_error_code() );
+		$this->assertStringContainsString( $expected_message, $result->get_error_message() );
+		$this->assertStringNotContainsString( 'composition-root', $result->get_error_message() );
+	}
+
+	public function invalid_xml_message_cases(): array {
+		return [
+			'stray closing tag' => [
+				'<e-flexbox><e-heading/></e-flexbox></e-flexbox>',
+				'Closing tag </e-flexbox> has no matching opening tag.',
+			],
+			'unclosed tag' => [
+				'<e-flexbox><e-heading/>',
+				'Element <e-flexbox> is not closed.',
+			],
+		];
+	}
+
 	public function test_execute__duplicate_configuration_id_is_rejected_on_dry_run() {
 		// Arrange
 		$this->act_as_admin();
