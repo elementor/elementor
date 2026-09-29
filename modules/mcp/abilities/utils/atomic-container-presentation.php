@@ -7,15 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Mirrors the `.e-con` rule in assets/dev/scss/frontend/_container.scss that every atomic element
- * renders with. Atomic elements never get `.e-flex`, so its mobile `--width` rule doesn't apply, and
- * their own `width` styles render as plain `width` with higher specificity.
+ * Every atomic element (not widget) renders with the `.e-con` class. Its styles are resolved
+ * from the live frontend and kit CSS by Atomic_Shell_Styles_Resolver.
  */
 class Atomic_Container_Presentation {
-
-	const SHELL_SELECTOR = '.e-con';
-
-	const SHELL_WIDTH = '100%';
 
 	const WIDGET_EL_TYPE = 'widget';
 
@@ -27,12 +22,10 @@ class Atomic_Container_Presentation {
 	}
 
 	public static function to_map(): array {
-		return [
-			'width' => self::SHELL_WIDTH,
-		];
+		return Atomic_Shell_Styles_Resolver::make()->to_map();
 	}
 
-	public static function to_css_string(): string {
-		return self::SHELL_SELECTOR . '{--width:' . self::SHELL_WIDTH . ';width:var(--width);}';
+	public static function to_css_string( bool $is_document_root = false ): string {
+		return Atomic_Shell_Styles_Resolver::make()->to_css_string( $is_document_root );
 	}
 }

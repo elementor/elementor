@@ -25,7 +25,7 @@ class Element_Default_Styles_Builder {
 		?string $tag,
 		?Default_Styles_Repository $repository,
 		?Styles_Renderer $renderer = null,
-		bool $uses_container_shell = false
+		string $shell_css = ''
 	): string {
 		$renderer = $renderer ?? Styles_Renderer::make( Plugin::$instance->breakpoints->get_breakpoints_config() );
 
@@ -36,7 +36,7 @@ class Element_Default_Styles_Builder {
 		$default_css = self::render_kit_default( $tag, $repository, $renderer );
 
 		$layers = array_filter( [
-			$uses_container_shell ? Atomic_Container_Presentation::to_css_string() : '',
+			$shell_css,
 			$base_css,
 			$default_css,
 		] );
