@@ -16,12 +16,14 @@ import {
 
 type DefaultStylesState = {
 	data: Record< StyleDefinitionID, StyleDefinition >;
+	dataRevision: number;
 	initialData: Record< StyleDefinitionID, StyleDefinition >;
 	isDirty: boolean;
 };
 
 const initialState: DefaultStylesState = {
 	data: {},
+	dataRevision: 0,
 	initialData: {},
 	isDirty: false,
 };
@@ -46,6 +48,7 @@ export const slice = createSlice( {
 
 			state.initialData = structuredClone( normalizedData );
 			state.data = structuredClone( normalizedData );
+			state.dataRevision += 1;
 			state.isDirty = false;
 		},
 
@@ -134,6 +137,11 @@ export const selectIsDirty = createSelector(
 export const selectInitialData = createSelector(
 	( state: StateWithDefaultStyles ) => state.defaultStyles.initialData,
 	( initialData ) => initialData
+);
+
+export const selectDataRevision = createSelector(
+	( state: StateWithDefaultStyles ) => state.defaultStyles.dataRevision,
+	( dataRevision ) => dataRevision
 );
 
 export const selectTagStyle = createSelector(

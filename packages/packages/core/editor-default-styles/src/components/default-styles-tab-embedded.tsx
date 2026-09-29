@@ -34,7 +34,6 @@ import {
 	FormLabel,
 	Stack,
 } from '@elementor/ui';
-import { hash } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -45,7 +44,7 @@ import {
 } from '../allowed-tags';
 import { DEFAULT_STYLES_PROVIDER_KEY } from '../default-styles-provider';
 import { saveDefaultStyles } from '../save-default-styles';
-import { selectIsDirty, selectTagStyle, slice, type StateWithDefaultStyles } from '../store';
+import { selectDataRevision, selectIsDirty, slice } from '../store';
 import { TagChip } from './tag-chip';
 
 const { useMenuItems } = controlActionsMenu;
@@ -99,16 +98,16 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 	const breakpoint = useActiveBreakpoint();
 	const menuItems = useMenuItems().default;
 	const controlReplacements = getControlReplacements();
+	const dataRevision = useSelector( selectDataRevision );
 	const isDirty = useSelector( selectIsDirty );
-	const selectedStyle = useSelector( ( state: StateWithDefaultStyles ) => selectTagStyle( state, selectedTag ) );
 	const { mutateAsync: save, isPending: isSaving } = useSave();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const { userCan } = useUserStylesCapability();
 	const canEdit = userCan( DEFAULT_STYLES_PROVIDER_KEY ).updateProps;
 
 	const styleProviderKey = useMemo(
-		() => hash( { breakpoint, selectedTag, activeStyleState, selectedStyle } ),
-		[ activeStyleState, breakpoint, selectedStyle, selectedTag ]
+		() => `${ selectedTag }:${ breakpoint }:${ activeStyleState ?? '' }:${ dataRevision }`,
+		[ activeStyleState, breakpoint, dataRevision, selectedTag ]
 	);
 
 	const setSelectedTag = ( tag: AllowedHtmlTag ) => {

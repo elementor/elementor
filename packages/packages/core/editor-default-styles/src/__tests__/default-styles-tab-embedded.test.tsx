@@ -257,6 +257,34 @@ describe( 'DefaultStylesTabEmbedded', () => {
 		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	it( 'should not remount the style provider during local style edits', () => {
+		renderWithStore(
+			<QueryClientProvider client={ queryClient }>
+				<DefaultStylesTabEmbedded onRequestClose={ jest.fn() } />
+			</QueryClientProvider>,
+			store
+		);
+
+		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 1 );
+
+		act( () => {
+			store.dispatch(
+				slice.actions.updateProps( {
+					id: 'h1',
+					meta: { breakpoint: 'desktop', state: null },
+					props: {
+						color: {
+							$$type: 'color',
+							value: 'red',
+						},
+					},
+				} )
+			);
+		} );
+
+		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'should hide the save changes button when the user cannot edit default styles', () => {
 		jest.mocked( useUserStylesCapability ).mockReturnValue( {
 			userCan: () => ( {
