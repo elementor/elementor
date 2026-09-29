@@ -38,7 +38,11 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro() || ! Utils::is_license_active();
+		if ( Utils::has_pro() ) {
+			return true;
+		}
+
+		return ! Utils::is_license_active();
 	}
 
 	public function get_name() {
