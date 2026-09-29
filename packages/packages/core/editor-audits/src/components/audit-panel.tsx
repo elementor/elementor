@@ -26,7 +26,13 @@ export default function AuditPanel() {
 				badge={ __( 'Beta', 'elementor' ) }
 				titleVariant="subtitle2"
 			/>
-			<FloatingPanelBody>
+			<FloatingPanelBody
+				sx={
+					status === 'ready'
+						? { display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }
+						: undefined
+				}
+			>
 				{ status === 'idle' && <WelcomePage /> }
 				{ status === 'loading' && <LoadingPage /> }
 				{ status === 'error' && <ErrorPage message={ error ?? '' } onRetry={ onRun } /> }

@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Setting_Schemas;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,29 +12,8 @@ return [
 	'description' => 'Clickable button with optional link and icon.',
 	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
-		'text' => [
-			'type' => 'string',
-		],
-		'link' => [
-			'type' => 'object',
-			'properties' => [
-				'url' => [ 'type' => 'string' ],
-				'is_external' => [
-					'type' => 'boolean',
-					'convert' => [
-						'true' => 'on',
-						'false' => '',
-					],
-				],
-				'nofollow' => [
-					'type' => 'boolean',
-					'convert' => [
-						'true' => 'on',
-						'false' => '',
-					],
-				],
-			],
-		],
+		'text' => Setting_Schemas::string(),
+		'link' => Setting_Schemas::link(),
 	],
 	'default_style_target' => 'button',
 	'style_targets' => [
