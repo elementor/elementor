@@ -66,7 +66,7 @@ const renderWithQuery = ( ui: React.ReactElement ) =>
 
 type HttpPostMock = jest.Mock< Promise< { data: unknown } >, [ url: string, body?: unknown, options?: unknown ] >;
 
-const setupHttpServiceMock = ( runners: string[] = [ 'global-classes', 'global-variables' ] ) => {
+const setupHttpServiceMock = ( runners: string[] = [ 'global-classes', 'global-variables', 'default-styles' ] ) => {
 	const post: HttpPostMock = jest.fn( ( url: string ) => {
 		if ( url.endsWith( '/upload' ) ) {
 			return Promise.resolve( { data: { data: { session: 'sess-1' }, meta: [] } } );
@@ -108,6 +108,10 @@ describe( '<ImportDesignSystemDialog />', () => {
 		setupHttpServiceMock();
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+
+		expect(
+			screen.getByText( 'How to handle conflicts with existing default styles, variables, or classes?' )
+		).toBeInTheDocument();
 
 		const link = screen.getByRole( 'link', { name: 'Learn how design system imports work' } );
 		expect( link ).toHaveAttribute( 'href', 'https://go.elementor.com/wp-dash-import-export-design-system/' );
@@ -172,9 +176,39 @@ describe( '<ImportDesignSystemDialog />', () => {
 			customization: { 'design-system': { conflict_resolution: 'skip' } },
 		} );
 
-		const [ runnerUrl, runnerBody ] = post.mock.calls[ 2 ];
-		expect( runnerUrl ).toBe( 'elementor/v1/import-export-customization/import-runner' );
-		expect( runnerBody ).toEqual( { session: 'sess-1', runner: 'global-classes' } );
+		expect( post.mock.calls.slice( 2 ).map( ( [ runnerUrl, runnerBody ] ) => [ runnerUrl, runnerBody ] ) ).toEqual(
+			[
+				[
+					'elementor/v1/import-export-customization/import-runner',
+					{ session: 'sess-1', runner: 'global-classes' },
+				],
+				[
+					'elementor/v1/import-export-customization/import-runner',
+					{ session: 'sess-1', runner: 'global-variables' },
+				],
+				[
+					'elementor/v1/import-export-customization/import-runner',
+					{ session: 'sess-1', runner: 'default-styles' },
+				],
+			]
+		);
+	} );
+
+	it( 'runs only supported import runners returned by the backend', async () => {
+		const { post } = setupHttpServiceMock( [ 'global-classes', 'unsupported-runner', 'default-styles' ] );
+
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+
+		submitImport();
+
+		await waitFor( () => expect( post.mock.calls.length ).toBeGreaterThanOrEqual( 4 ), {
+			timeout: ASYNC_TIMEOUT_MS,
+		} );
+
+		expect( post.mock.calls.slice( 2 ).map( ( [ , runnerBody ] ) => runnerBody ) ).toEqual( [
+			{ session: 'sess-1', runner: 'global-classes' },
+			{ session: 'sess-1', runner: 'default-styles' },
+		] );
 	} );
 
 	it( 'on success: refreshes globals, reloads the document and notifies success', async () => {
@@ -392,7 +426,7 @@ describe( '<DesignSystemHeaderMenu />', () => {
 		expect( exportCall?.[ 1 ] ).toEqual( {
 			include: [ 'settings' ],
 			kitInfo: { title: 'design-system', description: '', source: 'local' },
-			customization: { settings: { theme: false, classes: true, variables: true } },
+			customization: { settings: { theme: false, classes: true, defaultStyles: true, variables: true } },
 		} );
 
 		const successCall = ( notify as jest.Mock ).mock.calls.find(

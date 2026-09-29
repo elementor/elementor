@@ -59,6 +59,33 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$this->assertFalse( $runner->should_export( [ 'include' => [ 'templates' ] ] ) );
 	}
 
+	public function test_should_export__respects_explicit_default_styles_flag() {
+		$runner = new Export_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_export( [
+			'include' => [ 'settings' ],
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => true,
+				],
+			],
+		] ) );
+
+		$this->assertFalse( $runner->should_export( [
+			'include' => [ 'settings' ],
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => false,
+				],
+			],
+		] ) );
+	}
+
 	public function test_export() {
 		$repository = Default_Styles_Repository::make();
 

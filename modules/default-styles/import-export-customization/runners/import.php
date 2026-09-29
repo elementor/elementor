@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import extends Import_Runner_Base {
+	const EMPTY_RESULT = [
+		'created' => [],
+		'replaced' => [],
+		'skipped' => [],
+		'failed' => [],
+	];
+
 	public static function get_name(): string {
 		return 'default-styles';
 	}
@@ -38,34 +45,44 @@ class Import extends Import_Runner_Base {
 		$default_styles_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
 
 		if ( ! $kit || ! is_dir( $default_styles_dir ) ) {
-			return [];
+			return self::EMPTY_RESULT;
 		}
 
 		$repository = Default_Styles_Repository::make( $kit );
-		$imported_tags = [];
+		$import_context = Design_System_Import_Context::from_data( $data );
+		$conflict_resolution = $import_context->resolve_conflict_resolution( $data, 'defaultStylesOverrideAll' );
+		$result = self::EMPTY_RESULT;
 
 		foreach ( glob( $default_styles_dir . '/*.json' ) as $file_path ) {
 			$tag = basename( $file_path, '.json' );
 
 			if ( ! Default_Styles_Repository::is_allowed_tag( $tag ) ) {
+				$result['failed'][] = [ 'tag' => $tag ];
+				continue;
+			}
+
+			$existing = $repository->get( $tag );
+
+			if ( $existing && 'skip' === $conflict_resolution ) {
+				$result['skipped'][] = [ 'tag' => $tag ];
 				continue;
 			}
 
 			$style_data = ImportExportUtils::read_json_file( $file_path );
 
 			if ( ! $style_data ) {
+				$result['failed'][] = [ 'tag' => $tag ];
 				continue;
 			}
 
 			if ( ! $repository->put( $tag, $style_data ) ) {
+				$result['failed'][] = [ 'tag' => $tag ];
 				continue;
 			}
 
-			$imported_tags[] = $tag;
+			$result[ $existing ? 'replaced' : 'created' ][] = [ 'tag' => $tag ];
 		}
 
-		return [
-			'imported' => $imported_tags,
-		];
+		return $result;
 	}
 }
