@@ -116,16 +116,15 @@ class Style_Applier {
 			$unsupported_css = $this->collect_unsupported_css( $new_variants, $built_variants['fallback_css'] );
 
 			if ( '' !== $unsupported_css ) {
-				$warnings[] = sprintf(
-					'[%s] %s',
-					$config_id,
+				$warnings->add(
+					self::UNSUPPORTED_CSS_CODE,
 					sprintf(
 						/* translators: %s: CSS declarations that were not saved */
 						__( 'These CSS properties or values are not supported and were not saved: %s', 'elementor' ),
 						self::truncate_css_snippet( $unsupported_css )
-					)
+					),
+					(string) $config_id
 				);
-				$warning_codes[] = self::UNSUPPORTED_CSS_CODE;
 			}
 
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
