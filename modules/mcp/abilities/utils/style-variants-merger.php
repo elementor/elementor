@@ -75,7 +75,15 @@ class Style_Variants_Merger {
 	}
 
 	public static function build_variants( array $breakpoint_blocks, Css_Converter $converter ): array {
-		$variants = [];
+		return self::build_variants_with_fallback_css( $breakpoint_blocks, $converter )['variants'];
+	}
+
+	/**
+	 * @return array{variants: array[], fallback_css: array<int, string>} fallback_css holds, per variant index, the declarations the converter could not convert natively.
+	 */
+	public static function build_variants_with_fallback_css( array $breakpoint_blocks, Css_Converter $converter ): array {
+		$variants     = [];
+		$fallback_css = [];
 
 		foreach ( $breakpoint_blocks as $entry ) {
 			$bp                    = $entry['breakpoint'];
@@ -99,19 +107,28 @@ class Style_Variants_Merger {
 					continue;
 				}
 
-				$variant = self::make_variant( $bp, $state, $css, $converter );
-				if ( null !== $variant ) {
-					$variants[] = $variant;
-				}
+				self::add_variant( $variants, $fallback_css, self::make_variant( $bp, $state, $css, $converter ) );
 			}
 
-			$base_variant = self::make_variant( $bp, null, $base_block_css, $converter, $base_custom_css_parts );
-			if ( null !== $base_variant ) {
-				$variants[] = $base_variant;
-			}
+			self::add_variant( $variants, $fallback_css, self::make_variant( $bp, null, $base_block_css, $converter, $base_custom_css_parts ) );
 		}
 
-		return $variants;
+		return [
+			'variants'     => $variants,
+			'fallback_css' => $fallback_css,
+		];
+	}
+
+	private static function add_variant( array &$variants, array &$fallback_css, array $built ): void {
+		if ( null === $built['variant'] ) {
+			return;
+		}
+
+		if ( '' !== $built['fallback_css'] ) {
+			$fallback_css[ count( $variants ) ] = $built['fallback_css'];
+		}
+
+		$variants[] = $built['variant'];
 	}
 
 	public static function apply_mode( array $existing, array $new_variants, string $mode, array $affected_breakpoints ): array {
@@ -200,12 +217,16 @@ class Style_Variants_Merger {
 			: null;
 	}
 
-	private static function make_variant( string $breakpoint, ?string $state, string $css, Css_Converter $converter, array $extra_custom_css_parts = [] ): ?array {
+	/**
+	 * @return array{variant: array|null, fallback_css: string}
+	 */
+	private static function make_variant( string $breakpoint, ?string $state, string $css, Css_Converter $converter, array $extra_custom_css_parts = [] ): array {
 		$null_props   = self::extract_null_props( $css );
 		$stripped_css = self::strip_null_declarations( $css );
 		$result       = $converter->convert( $stripped_css );
 		$props        = $result['props'] ?? [];
-		$custom_str   = $result['customCss'] ?? '';
+		$fallback_css = $result['customCss'] ?? '';
+		$custom_str   = $fallback_css;
 
 		if ( ! empty( $extra_custom_css_parts ) ) {
 			$extra      = implode( ' ', $extra_custom_css_parts );
@@ -213,10 +234,13 @@ class Style_Variants_Merger {
 		}
 
 		if ( empty( $props ) && '' === $custom_str && empty( $null_props ) ) {
-			return null;
+			return [
+				'variant'      => null,
+				'fallback_css' => '',
+			];
 		}
 
-		return [
+		$variant = [
 			'meta'       => [
 				'breakpoint' => $breakpoint,
 				'state'      => $state,
@@ -226,6 +250,11 @@ class Style_Variants_Merger {
 				? [ 'raw' => base64_encode( $custom_str ) ] // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Global class custom_css.raw is stored as base64.
 				: null,
 			'null_props' => $null_props,
+		];
+
+		return [
+			'variant'      => $variant,
+			'fallback_css' => trim( $fallback_css ),
 		];
 	}
 
