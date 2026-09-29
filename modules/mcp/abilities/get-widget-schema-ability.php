@@ -69,7 +69,7 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 
 		$is_v3 = Widget_Context_Helper::VERSION_V3 === Widget_Context_Helper::get_widget_version( $config );
 
-		if ( $is_v3 && ! Widget_Context_Helper::is_v3_allowlisted( $widget_type ) ) {
+		if ( $is_v3 && ! Widget_Context_Helper::is_v3_supported( $widget_type ) ) {
 			return new \WP_Error(
 				'elementor_v3_not_supported',
 				__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
@@ -82,7 +82,18 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 		}
 
 		if ( $is_v3 ) {
-			return Widget_Context_Helper::build_widget_schema( $widget_type, $config );
+			$schema = Widget_Context_Helper::build_widget_schema( $widget_type, $config );
+
+			if ( null === $schema ) {
+				return new \WP_Error(
+					'elementor_not_found',
+					/* translators: %s: widget type */
+					sprintf( __( 'Unknown widget type: %s.', 'elementor' ), $widget_type ),
+					[ 'status' => \WP_Http::NOT_FOUND ]
+				);
+			}
+
+			return $schema;
 		}
 
 		$all_widget_configs = Widget_Context_Helper::get_llm_eligible_widgets();

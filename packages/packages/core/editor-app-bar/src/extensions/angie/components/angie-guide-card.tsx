@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Chip, ClickAwayListener, CloseButton, Image, Stack, Typography } from '@elementor/ui';
+import { Box, Button, ClickAwayListener, CloseButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type Props = {
@@ -14,23 +14,44 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 	return (
 		<ClickAwayListener onClickAway={ onClose }>
 			<Stack sx={ { width: 296 } } data-testid="e-angie-guide-card">
-				<Stack direction="row" alignItems="center" gap={ 1 } py={ 1 } px={ 2 }>
-					<Typography variant="subtitle2">{ __( 'Meet Angie', 'elementor' ) }</Typography>
-					<Chip label={ __( 'New', 'elementor' ) } size="small" color="info" variant="standard" />
+				<Box sx={ { position: 'relative', p: 1.5 } }>
+					<Image
+						src={ imageUrl }
+						alt={ __( 'Angie', 'elementor' ) }
+						sx={ {
+							width: '100%',
+							maxHeight: 200,
+							objectFit: 'cover',
+							objectPosition: 'center top',
+							borderRadius: 1,
+							display: 'block',
+						} }
+					/>
 					<CloseButton
-						edge="end"
-						sx={ { ml: 'auto' } }
+						sx={ {
+							position: 'absolute',
+							top: 15,
+							insetInlineEnd: 15,
+							color: 'common.white',
+							filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
+							'&:hover': {
+								bgcolor: 'rgba(255,255,255,0.2)',
+								color: 'common.white',
+							},
+						} }
 						slotProps={ { icon: { fontSize: 'small' } } }
 						onClick={ onClose }
 					/>
+				</Box>
+				<Stack px={ 2 } pt={ 0.5 } pb={ 0.5 }>
+					<Typography variant="subtitle2">{ __( 'Generate full pages with AI', 'elementor' ) }</Typography>
 				</Stack>
-				<Image src={ imageUrl } alt={ __( 'Angie', 'elementor' ) } sx={ { height: 150, width: '100%' } } />
-				<Stack px={ 2 } pt={ 1.5 } pb={ 1 }>
+				<Stack px={ 2 } pt={ 0.5 } pb={ 1.5 }>
 					<Typography variant="body2" color="secondary">
 						{ description }
 					</Typography>
 				</Stack>
-				<Stack direction="row" justifyContent="flex-end" gap={ 1 } pt={ 1 } pb={ 1.5 } px={ 2 }>
+				<Stack direction="row" justifyContent="flex-end" gap={ 1 } pb={ 1.5 } px={ 2 }>
 					<Button
 						variant="text"
 						size="small"
@@ -43,8 +64,8 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 						{ __( 'Learn More', 'elementor' ) }
 					</Button>
 					{ onInstall && (
-						<Button variant="contained" size="small" color="accent" onClick={ onInstall }>
-							{ __( 'Try for free', 'elementor' ) }
+						<Button variant="contained" size="small" color="primary" onClick={ onInstall }>
+							{ __( 'Build with Angie', 'elementor' ) }
 						</Button>
 					) }
 				</Stack>

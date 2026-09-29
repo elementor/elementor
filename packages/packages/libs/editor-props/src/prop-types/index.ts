@@ -14,6 +14,7 @@ export * from './video-attachment-id';
 export * from './video-src';
 export * from './dimensions';
 export * from './number';
+export * from './responsive';
 export * from './shadow';
 export * from './size';
 export * from './grid-track-size';

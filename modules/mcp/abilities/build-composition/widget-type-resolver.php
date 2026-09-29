@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -39,6 +40,52 @@ class Widget_Type_Resolver {
 		}
 
 		return $configs;
+	}
+
+	/**
+	 * @return array{configs: array<string, array>, unknown_tag_errors: string[]}
+	 */
+	public function collect_referenced_widget_configs( \DOMDocument $dom ): array {
+		$configs = [];
+		$unknown_tag_errors = [];
+		$seen_unknown = [];
+
+		foreach ( $this->xml_parser->iterate_all_descendants( $dom ) as $node ) {
+			$tag = $this->xml_parser->get_tag_name( $node );
+
+			if ( isset( $configs[ $tag ] ) || isset( $seen_unknown[ $tag ] ) ) {
+				continue;
+			}
+
+			$config = $this->resolve_type_config( $tag );
+			if ( is_wp_error( $config ) ) {
+				$seen_unknown[ $tag ] = true;
+				$unknown_tag_errors[] = $config->get_error_message();
+				continue;
+			}
+			$configs[ $tag ] = $config;
+		}
+
+		return [
+			'configs' => $configs,
+			'unknown_tag_errors' => $unknown_tag_errors,
+		];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function collect_child_type_and_required_child_errors( \DOMDocument $dom, array $widget_configs ): array {
+		$root = $this->xml_parser->get_root( $dom );
+		if ( ! $root ) {
+			return [];
+		}
+
+		$errors = [];
+		$this->collect_child_type_errors( $root, $widget_configs, $errors );
+		$this->collect_required_child_errors( $root, $widget_configs, $errors );
+
+		return $errors;
 	}
 
 	/**
@@ -84,6 +131,22 @@ class Widget_Type_Resolver {
 	public function resolve_type_config( string $type ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
+			if (
+				Widget_Context_Helper::is_standardized_maps_active()
+				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				&& ! Widget_Context_Helper::is_v3_supported( $type )
+			) {
+				return new \WP_Error(
+					'elementor_v3_not_supported',
+					__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+					[
+						'status' => \WP_Http::BAD_REQUEST,
+						'widget_type' => $type,
+						'version' => 'v3',
+					]
+				);
+			}
+
 			$config = $widget->get_config();
 			$resolved = [
 				'elType' => 'widget',
@@ -93,7 +156,7 @@ class Widget_Type_Resolver {
 				'class' => get_class( $widget ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
 				$resolved['controls'] = (array) $widget->get_controls();
 			}
 
@@ -102,14 +165,39 @@ class Widget_Type_Resolver {
 
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
 		if ( $element ) {
+			if (
+				Widget_Context_Helper::is_standardized_maps_active()
+				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				&& ! Widget_Context_Helper::is_v3_supported( $type )
+			) {
+				return new \WP_Error(
+					'elementor_v3_not_supported',
+					__( 'This is a legacy V3 widget and cannot be modified through this MCP. Edit V3 widgets directly in the Elementor editor.', 'elementor' ),
+					[
+						'status' => \WP_Http::BAD_REQUEST,
+						'widget_type' => $type,
+						'version' => 'v3',
+					]
+				);
+			}
+
 			$config = $element->get_config();
-			return [
+			$resolved = [
 				'elType' => $type,
 				'widgetType' => null,
 				'allowed_child_types' => $config['allowed_child_types'] ?? [],
 				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $element ),
 			];
+
+			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
+				if ( method_exists( $element, 'get_stack' ) ) {
+					$element->get_stack();
+				}
+				$resolved['controls'] = (array) $element->get_controls();
+			}
+
+			return $resolved;
 		}
 
 		return new \WP_Error(

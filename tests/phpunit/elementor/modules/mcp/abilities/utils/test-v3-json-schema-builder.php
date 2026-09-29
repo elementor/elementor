@@ -327,4 +327,41 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertArrayNotHasKey( 'missing_control', $result['valid'] );
 		$this->assertSame( 'no schema for allowlisted key.', $result['errors']['missing_control'] );
 	}
+
+	public function test_build_from_map__sets_additional_properties_false_on_object_fields() {
+		$result = V3_Json_Schema_Builder::build_from_map( [
+			'link' => [
+				'type' => 'object',
+				'properties' => [
+					'url' => [ 'type' => 'string' ],
+				],
+			],
+		] );
+
+		$this->assertFalse( $result['properties']['link']['additionalProperties'] );
+	}
+
+	public function test_check_value_shape__rejects_dynamic_shape_on_strict_object_field() {
+		$schema = V3_Json_Schema_Builder::build_from_map( [
+			'link' => [
+				'type' => 'object',
+				'properties' => [
+					'url' => [ 'type' => 'string' ],
+					'is_external' => [ 'type' => 'boolean' ],
+				],
+			],
+		] );
+
+		$result = V3_Json_Schema_Builder::check_value_shape(
+			[
+				'name' => 'post-url',
+				'settings' => [],
+			],
+			$schema['properties']['link'],
+			true
+		);
+
+		$this->assertNotNull( $result );
+		$this->assertStringContainsString( 'unsupported property', $result );
+	}
 }

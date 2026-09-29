@@ -57,7 +57,7 @@ abstract class Form_Message extends Atomic_Element_Base {
 	}
 
 	protected function define_allowed_child_types() {
-		return [ Atomic_Paragraph::get_element_type() ];
+		return [];
 	}
 
 	protected function define_default_children() {

@@ -24,6 +24,10 @@ export const audit: Audit = {
 						label: __( 'Page has no title.', 'elementor' ),
 						targetHint: 'page-settings',
 						angieFix: true,
+						angiePrompt: __(
+							"Based on this page's contents, generate a title for this page.",
+							'elementor'
+						),
 					},
 				],
 			};

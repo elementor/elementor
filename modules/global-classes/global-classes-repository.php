@@ -144,9 +144,7 @@ class Global_Classes_Repository {
 
 		if ( ! $is_preview ) {
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, $to_delete );
-			Global_Classes_Order::make( $this->get_kit() )
-				->set_preview( true )
-				->set_order( $order );
+			$this->propagate_order_to_preview( $order, $to_delete );
 
 			$this->bulk_clear_preview_meta( array_values( $to_update ) );
 			$this->clear_preview_labels_for_ids( array_merge(
@@ -174,6 +172,21 @@ class Global_Classes_Repository {
 				$affected_post_ids
 			);
 		}
+	}
+
+	private function propagate_order_to_preview( array $published_order, array $deleted_ids ): void {
+		$preview_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( true );
+		$existing_order = $preview_order->get_order();
+		$unpublished_ids = array_flip( array_diff( $existing_order, $published_order, $deleted_ids ) );
+		$merged_order = $published_order;
+
+		foreach ( $existing_order as $position => $id ) {
+			if ( isset( $unpublished_ids[ $id ] ) ) {
+				array_splice( $merged_order, min( $position, count( $merged_order ) ), 0, [ $id ] );
+			}
+		}
+
+		$preview_order->set_order( $merged_order );
 	}
 
 	public function each_item( callable $cb, bool $skip_migration = false, int $batch_size = self::READ_BATCH_SIZE ): void {

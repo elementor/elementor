@@ -208,4 +208,31 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		$this->assertSame( 'escaped-html', $schema['properties']['$$type']['const'] );
 		$this->assertSame( 'string', $schema['properties']['value']['type'] );
 	}
+
+	public function test_get_allowed_html_tags_for_prop__returns_heading_title_tags() {
+		$this->assertSame(
+			Escaped_Html_Prop_Type::HEADING_TEXT_TAGS,
+			Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( 'e-heading', 'title' )
+		);
+	}
+
+	public function test_get_allowed_html_tags_for_prop__returns_null_for_unknown_mapping() {
+		$this->assertNull(
+			Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( 'e-heading', 'text' )
+		);
+	}
+
+	public function test_heading_text_tags_const__matches_frontend_allowlist() {
+		$this->assertSame(
+			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'i', 'u', 'a', 'del', 'span', 'br' ],
+			Escaped_Html_Prop_Type::HEADING_TEXT_TAGS
+		);
+	}
+
+	public function test_paragraph_text_tags_const__matches_frontend_allowlist() {
+		$this->assertSame(
+			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'u', 'ul', 'ol', 'li', 'blockquote', 'a', 'del', 'span', 'br' ],
+			Escaped_Html_Prop_Type::PARAGRAPH_TEXT_TAGS
+		);
+	}
 }

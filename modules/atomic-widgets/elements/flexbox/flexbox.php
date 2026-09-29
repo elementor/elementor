@@ -36,7 +36,7 @@ class Flexbox extends Atomic_Element_Base {
 		return 'e-flexbox';
 	}
 
-	public static $widget_description = 'A container (div) with flex display and flex-direction row by default.';
+	public static $widget_description = 'A container (div) with flex display and flex-direction row by default. Set flex-direction to column for stacked content (heading and paragraph, footer columns), or children render side-by-side.';
 
 	public static function get_element_type(): string {
 		return 'e-flexbox';
@@ -47,7 +47,7 @@ class Flexbox extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'layout' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'container', 'wrapper', 'section', 'row', 'column', 'flex', 'layout' ];
 	}
 
 	public function get_icon() {

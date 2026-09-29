@@ -80,8 +80,9 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		// Deprecated widget handling.
 		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
 			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
-				// Hide the old version.
+				// Hide the old version from panel and search.
 				elementor.widgetsCache[ widgetName ].show_in_panel = false;
+				elementor.widgetsCache[ widgetName ].hide_on_search = true;
 			}
 		} );
 
@@ -176,8 +177,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			widgetType: item.widget_type,
 			custom: item.custom,
 			editable: item.editable,
+			showInPanel: item.show_in_panel,
 			hideOnSearch: item.hide_on_search,
 			isNew: this.isWidgetNew( item ),
+			atomic: !! item.atomic,
 		};
 	},
 
@@ -185,6 +188,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categories = {};
 
 		this.elementsCollection.each( function( element ) {
+			// Widgets with showInPanel=false are search-only; exclude from category lists.
+			if ( false === element.get( 'showInPanel' ) ) {
+				return;
+			}
+
 			_.each( element.get( 'categories' ), function( category ) {
 				if ( ! categories[ category ] ) {
 					categories[ category ] = [];
@@ -226,7 +234,18 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	shouldAddWidget( widget ) {
 		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
 
-		return widget.show_in_panel && ( 'inner-section' !== widget.name || ! isContainerActive );
+		if ( 'inner-section' === widget.name && isContainerActive ) {
+			return false;
+		}
+
+		if ( ! widget.show_in_panel ) {
+			// WordPress widgets hidden from the panel section are still added to the
+			// collection so they surface when the user types in the search box.
+			// All other panel-hidden widgets (deprecated, sub-elements, etc.) stay out.
+			return Array.isArray( widget.categories ) && widget.categories.includes( 'wordpress' );
+		}
+
+		return true;
 	},
 
 	deepMerge( originalObj, replacementObj ) {

@@ -8,7 +8,11 @@ export const useSessionStorage = < T >( key: string, customPrefix?: string ) => 
 	const prefix = customPrefix ? customPrefix : contextPrefix;
 	const prefixedKey = `${ prefix }/${ key }`;
 
-	const [ value, setValue ] = useState< T | null >();
+	const [ value, setValue ] = useState< T | null >( () => {
+		const storedValue = getSessionStorageItem( prefixedKey ) as T | undefined;
+
+		return storedValue ?? null;
+	} );
 
 	useEffect( () => {
 		return subscribeToSessionStorage< T | null >( prefixedKey, ( newValue ) => {

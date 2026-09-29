@@ -641,6 +641,50 @@ describe( '<LinkControl />', () => {
 		} );
 	} );
 
+	it( 'should NOT call setValue on set-settings command end when restriction did not newly become active', async () => {
+		// Arrange - restriction is already active on mount.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'ancestor-id',
+		} );
+
+		const setValueSpy = jest.fn();
+		const props = {
+			...baseProps,
+			setValue: setValueSpy,
+			value: {
+				$$type: 'link',
+				value: {
+					destination: { $$type: 'url', value: 'https://partial' },
+					isTargetBlank: { $$type: 'boolean', value: false },
+				},
+			},
+		};
+
+		renderControl( <LinkControl { ...globalProps } />, props );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeDisabled();
+		} );
+
+		setValueSpy.mockClear();
+
+		// Act - fire multiple subsequent set-settings commands while restriction stays active.
+		act( () => {
+			dispatchCommandAfter( 'document/elements/set-settings' );
+		} );
+
+		act( () => {
+			dispatchCommandAfter( 'document/elements/set-settings' );
+		} );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+
+		// Assert - restriction was already active on mount; it did not newly become restricted, so setValue must not fire.
+		expect( setValueSpy ).not.toHaveBeenCalled();
+	} );
+
 	it( 'should hide "Take me there" button when target element lives in a different document', async () => {
 		// Arrange - target's data-elementor-id (200) differs from current document (100).
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {

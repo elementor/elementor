@@ -101,9 +101,20 @@ export const AccordionItemsControl = ( { label }: { label: string } ) => {
 const ItemLabel = ( { value }: { value: AccordionItem } ) => {
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
-			<span>{ value?.title }</span>
+			{ value.id ? (
+				<AccordionItemRepeaterLabel elementId={ value.id } fallbackTitle={ value.title } />
+			) : (
+				<span>{ value?.title }</span>
+			) }
 		</Stack>
 	);
+};
+
+const AccordionItemRepeaterLabel = ( { elementId, fallbackTitle }: { elementId: string; fallbackTitle?: string } ) => {
+	const editorSettings = useElementEditorSettings( elementId );
+	const label = editorSettings?.title ?? fallbackTitle ?? '';
+
+	return <span>{ label }</span>;
 };
 
 const ItemContent = ( { value }: { value: AccordionItem } ) => {

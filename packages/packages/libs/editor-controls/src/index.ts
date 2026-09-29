@@ -37,6 +37,12 @@ export { TransformSettingsControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
+export {
+	getFontAwesome7IconName,
+	resetFontAwesome7IconsCache,
+	resolveFontAwesome7Icon,
+	type FontAwesome7IconDefinition,
+} from './controls/icon-library/font-awesome-7-data';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { DateRangeControl } from './controls/date-range-control';
@@ -45,6 +51,7 @@ export { TimeRangeControl } from './controls/time-range-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
 export { AttachmentTypeControl } from './controls/attachment-type-control';
+export { NoticeControl } from './controls/notice-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
 export { GridSpanControl } from './controls/grid-span-control';
 

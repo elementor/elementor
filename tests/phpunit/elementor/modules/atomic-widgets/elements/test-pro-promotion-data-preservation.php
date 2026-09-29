@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Pro_Promotion_Data_Preservation;
 use Elementor\Plugin;
@@ -87,5 +88,81 @@ class Test_Pro_Promotion_Data_Preservation extends Elementor_Test_Base {
 		// Assert.
 		$saved = $document->get_elements_data();
 		$this->assertSame( [], $saved[0]['elements'] );
+	}
+
+	public function test_carousel_children_and_settings_are_restored_across_a_save() {
+		// Arrange.
+		Plugin::$instance->elements_manager->register_element_type( new Carousel_Promotion() );
+
+		$carousel = [
+			'id' => 'car001',
+			'elType' => 'e-carousel',
+			'settings' => [
+				'classes' => [ '$$type' => 'classes', 'value' => [ 'hero-carousel' ] ],
+			],
+			'elements' => [
+				[
+					'id' => 'viewport01',
+					'elType' => 'e-carousel-viewport',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => 'container01',
+							'elType' => 'e-carousel-container',
+							'settings' => [],
+							'elements' => [
+								[ 'id' => 'slide01', 'elType' => 'e-carousel-slide', 'settings' => [], 'elements' => [] ],
+								[ 'id' => 'slide02', 'elType' => 'e-carousel-slide', 'settings' => [], 'elements' => [] ],
+								[ 'id' => 'slide03', 'elType' => 'e-carousel-slide', 'settings' => [], 'elements' => [] ],
+								[ 'id' => 'slide04', 'elType' => 'e-carousel-slide', 'settings' => [], 'elements' => [] ],
+							],
+						],
+					],
+				],
+				[ 'id' => 'arrowPrev01', 'elType' => 'e-carousel-arrow-prev', 'settings' => [], 'elements' => [] ],
+				[ 'id' => 'arrowNext01', 'elType' => 'e-carousel-arrow-next', 'settings' => [], 'elements' => [] ],
+				[ 'id' => 'pagination01', 'elType' => 'e-carousel-pagination', 'settings' => [], 'elements' => [] ],
+			],
+		];
+
+		$document = $this->factory()->documents->create_and_get();
+		$document->save( [ 'elements' => [ $carousel ], 'settings' => [] ] );
+
+		// Act - the editor re-saves the page with the promotion's children stripped (Pro is off).
+		$stripped = $carousel;
+		$stripped['settings'] = [];
+		$stripped['elements'] = [];
+
+		$document->save( [ 'elements' => [ $stripped ], 'settings' => [] ] );
+
+		// Assert - the subtree and name were restored from the stored copy, not lost.
+		$saved = $document->get_elements_data();
+
+		$this->assertCount( 1, $saved );
+		$this->assertSame( 'e-carousel', $saved[0]['elType'] );
+		$this->assertSame( [ 'hero-carousel' ], $saved[0]['settings']['classes']['value'] );
+
+		$child_types = array_column( $saved[0]['elements'], 'elType' );
+		$this->assertContains( 'e-carousel-viewport', $child_types );
+		$this->assertContains( 'e-carousel-arrow-prev', $child_types );
+		$this->assertContains( 'e-carousel-arrow-next', $child_types );
+		$this->assertContains( 'e-carousel-pagination', $child_types );
+
+		$viewport = null;
+		foreach ( $saved[0]['elements'] as $child ) {
+			if ( 'e-carousel-viewport' === $child['elType'] ) {
+				$viewport = $child;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $viewport );
+		$slide_types = array_column( $viewport['elements'][0]['elements'], 'elType' );
+		$this->assertSame(
+			[ 'e-carousel-slide', 'e-carousel-slide', 'e-carousel-slide', 'e-carousel-slide' ],
+			$slide_types
+		);
+
+		Plugin::$instance->elements_manager->unregister_element_type( Carousel_Promotion::get_type() );
 	}
 }

@@ -2,14 +2,13 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -86,6 +85,12 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 								'size' => '',
 								'unit' => 'auto',
 							] ),
+							'height' => Size_Prop_Type::generate( [
+								'size' => '1lh',
+								'unit' => 'custom',
+							] ),
+							'display' => String_Prop_Type::generate( 'flex' ),
+							'align-items' => String_Prop_Type::generate( 'center' ),
 						] )
 				),
 		];
@@ -93,7 +98,12 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Widget_Builder::make( Atomic_Svg::get_element_type() )->build(),
+			Atomic_Paragraph::generate()
+				->settings( [
+					'tag' => String_Prop_Type::generate( 'span' ),
+					'paragraph' => Escaped_Html_Prop_Type::generate( '&bull;' ),
+				] )
+				->build(),
 		];
 	}
 

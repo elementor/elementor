@@ -28,7 +28,7 @@ class Connect_Page_Renderer {
 		}
 		?>
 		<div class="wrap elementor-admin-page-license">
-			<h2 class="wp-heading-inline"><?php echo esc_html__( 'Connect Settings', 'elementor' ); ?></h2>
+			<h1 class="wp-heading-inline"><?php echo esc_html__( 'Connect Settings', 'elementor' ); ?></h1>
 			<?php
 			if ( ! $this->connect->is_connected() ) {
 				$this->render_connect_box();
@@ -50,7 +50,7 @@ class Connect_Page_Renderer {
 
 		?>
 		<div class="<?php echo esc_attr( $this->get_license_box_classes() ); ?>">
-			<h3><?php echo esc_html__( 'Connect your Elementor Account', 'elementor' ); ?></h3>
+			<h2><?php echo esc_html__( 'Connect your Elementor Account', 'elementor' ); ?></h2>
 
 			<p>
 				<?php echo esc_html__( 'Gain access to dozens of professionally designed templates, and connect your site to your My Elementor Dashboard.', 'elementor' ); ?>

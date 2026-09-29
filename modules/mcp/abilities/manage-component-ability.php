@@ -15,6 +15,8 @@ use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -92,9 +94,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $source_result;
 		}
 		[ 'elements' => $elements, 'warnings' => $warnings ] = $source_result;
+		$source_id_map = $source_result['source_id_map'] ?? [];
 
 		$settings = [];
-		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings );
+		$overridable_error = $this->apply_overridable_props( $elements, $input, $settings, $source_id_map );
 		if ( is_wp_error( $overridable_error ) ) {
 			return $overridable_error;
 		}
@@ -137,17 +140,15 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		$component = $this->get_repository()->get( $component_id, false );
 
+		$this->emit_component_created_event( $title, $component_id, $elements );
+
 		$response = [
 			'success' => true,
 			'component_id' => $component_id,
 			'uid' => $uid,
 		] + $this->document_links( $component );
 
-		if ( ! empty( $warnings ) ) {
-			$response['warnings'] = $warnings;
-		}
-
-		return $response;
+		return $warnings->add_to_response( $response );
 	}
 
 	private function handle_update( array $input ) {
@@ -293,11 +294,11 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		$result = $this->save_component( $component, $elements, $settings );
-		if ( is_wp_error( $result ) || empty( $warnings ) ) {
+		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		return $result + [ 'warnings' => $warnings ];
+		return $warnings->add_to_response( $result );
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
@@ -363,7 +364,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, source_id_map?: array<string,string>}|\WP_Error
 	 */
 	private function resolve_create_elements( array $input ) {
 		$has_xml = ! empty( $input['xml_structure'] ) && is_string( $input['xml_structure'] );
@@ -383,12 +384,12 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		return [
 			'elements' => [],
-			'warnings' => [],
+			'warnings' => Warnings_Bag::make(),
 		];
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag}|\WP_Error
 	 */
 	private function compile_elements_from_xml( array $input ) {
 		$compiled = $this->compile_composition( $input );
@@ -404,7 +405,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[], dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
 		$compiled = Composition_Compiler::make()->compile(
@@ -429,7 +430,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, source_id_map: array<string,string>}|\WP_Error
 	 */
 	private function copy_elements_from_source( array $input ) {
 		$source_post_id = (int) $input['source_post_id'];
@@ -455,9 +456,13 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $this->not_found( __( 'element_id was not found on source_post_id.', 'elementor' ) );
 		}
 
+		$source_id_map = [];
+		$elements = $this->assign_element_ids_recording_source_ids( [ $found ], $source_id_map );
+
 		return [
-			'elements' => $this->assign_element_ids( [ $found ] ),
-			'warnings' => [],
+			'elements' => $elements,
+			'warnings' => Warnings_Bag::make(),
+			'source_id_map' => $source_id_map,
 		];
 	}
 
@@ -467,14 +472,24 @@ class Manage_Component_Ability extends Abstract_Ability {
 	 * payload itself is left to the component document's save hook, which already
 	 * parses and persists it for every component save.
 	 *
+	 * @param array[]              $elements
+	 * @param array                $input
+	 * @param array                $settings
+	 * @param array<string,string> $source_id_map old-source-id => new-machine-id, when the tree
+	 *                                            came from `copy_elements_from_source`. Used to
+	 *                                            let callers address targets by the ids they
+	 *                                            saw on the source document, before id regeneration.
+	 *
 	 * @return \WP_Error|null
 	 */
-	private function apply_overridable_props( array &$elements, array $input, array &$settings ) {
+	private function apply_overridable_props( array &$elements, array $input, array &$settings, array $source_id_map = [] ) {
 		if ( ! is_array( $input['overridable_props'] ?? null ) || empty( $input['overridable_props'] ) ) {
 			return null;
 		}
 
-		$builder_result = Overridable_Props_Builder::make( $this->get_repository() )->build( $elements, $input['overridable_props'] );
+		$definitions = $this->remap_overridable_targets( $input['overridable_props'], $source_id_map );
+
+		$builder_result = Overridable_Props_Builder::make( $this->get_repository() )->build( $elements, $definitions );
 		if ( is_wp_error( $builder_result ) ) {
 			return $builder_result;
 		}
@@ -485,13 +500,33 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * Compiled subtrees have no ids yet (`Subtree_Builder` never sets one), and copied
-	 * subtrees carry ids from another document that would collide here. Both paths need
-	 * fresh, slug-safe machine ids; the caller's configuration-id stays on
-	 * `editor_settings.title` so `overridable_props.target` and other tools can still
-	 * address elements by the identifier the caller used in `xml_structure` — see
-	 * `Overridable_Props_Builder::find_element_ref`.
+	 * Rewrites `overridable_props[*].target` from source-document ids to the freshly assigned
+	 * ids, so callers can keep referencing the elements by the ids they observed on the source.
+	 * Unknown targets pass through untouched so the xml_structure `configuration-id` path (which
+	 * resolves via `editor_settings.title` in `Overridable_Props_Builder::find_element_ref`) and
+	 * regular id targets still work.
+	 *
+	 * @param array                $definitions
+	 * @param array<string,string> $source_id_map
 	 */
+	private function remap_overridable_targets( array $definitions, array $source_id_map ): array {
+		if ( empty( $source_id_map ) ) {
+			return $definitions;
+		}
+
+		foreach ( $definitions as $override_key => &$definition ) {
+			if ( ! is_array( $definition ) ) {
+				continue;
+			}
+			$target = $definition['target'] ?? null;
+			if ( is_string( $target ) && isset( $source_id_map[ $target ] ) ) {
+				$definition['target'] = $source_id_map[ $target ];
+			}
+		}
+
+		return $definitions;
+	}
+
 	private function assign_element_ids( array $elements ): array {
 		return array_map( fn( array $element ) => $this->assign_element_id( $element ), $elements );
 	}
@@ -501,6 +536,37 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
 			$element['elements'] = array_map( fn( array $child ) => $this->assign_element_id( $child ), $element['elements'] );
+		}
+
+		return $element;
+	}
+
+	/**
+	 * Regenerates ids like `assign_element_ids`, but records the mapping from each element's
+	 * old id to its new id so callers can keep addressing the tree by pre-regeneration ids.
+	 *
+	 * @param array[]              $elements
+	 * @param array<string,string> $source_id_map Populated by reference.
+	 */
+	private function assign_element_ids_recording_source_ids( array $elements, array &$source_id_map ): array {
+		$result = [];
+		foreach ( $elements as $element ) {
+			$result[] = $this->assign_element_id_recording_source_id( $element, $source_id_map );
+		}
+		return $result;
+	}
+
+	private function assign_element_id_recording_source_id( array $element, array &$source_id_map ): array {
+		$old_id = isset( $element['id'] ) ? (string) $element['id'] : '';
+
+		$element['id'] = Document_Mutator::instance()->generate_id();
+
+		if ( '' !== $old_id ) {
+			$source_id_map[ $old_id ] = $element['id'];
+		}
+
+		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+			$element['elements'] = $this->assign_element_ids_recording_source_ids( $element['elements'], $source_id_map );
 		}
 
 		return $element;
@@ -594,8 +660,9 @@ class Manage_Component_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices from XML compilation, e.g. props skipped or CSS that fell back to custom_css.',
+					'description' => 'Every warning is fixable: one field was skipped or adjusted during XML compilation and the rest was saved. Errors fail the call instead.',
 				],
+				'warning_details' => Warnings_Bag::get_details_schema(),
 			],
 		];
 	}
@@ -667,6 +734,43 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'description' => 'archive targets.',
 				],
 			],
+		];
+	}
+
+	private function emit_component_created_event( string $title, int $component_id, array $elements ): void {
+		[ 'elements_count' => $nested_elements_count, 'components_count' => $nested_components_count ] = $this->count_nested_elements( $elements );
+		$top_element_type = $elements[0]['elType'] ?? ( $elements[0]['widgetType'] ?? '' );
+
+		Mcp_Event_Dispatcher::emit( 'component_created', [
+			'id'                      => (string) $component_id,
+			'name'                    => $title,
+			'nested_elements_count'   => $nested_elements_count,
+			'nested_components_count' => $nested_components_count,
+			'top_element_type'        => $top_element_type,
+		] );
+	}
+
+	private function count_nested_elements( array $elements ): array {
+		$elements_count   = count( $elements );
+		$components_count = 0;
+
+		foreach ( $elements as $element ) {
+			if ( 'e-component' === ( $element['widgetType'] ?? '' ) ) {
+				$components_count++;
+			}
+
+			$children = $element['elements'] ?? [];
+
+			if ( ! empty( $children ) ) {
+				$child_counts      = $this->count_nested_elements( $children );
+				$elements_count   += $child_counts['elements_count'];
+				$components_count += $child_counts['components_count'];
+			}
+		}
+
+		return [
+			'elements_count'   => $elements_count,
+			'components_count' => $components_count,
 		];
 	}
 }

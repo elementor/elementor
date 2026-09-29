@@ -33,7 +33,7 @@ class Test_Shared_Registry_Bridge extends TestCase {
 				continue;
 			}
 
-			$this->assertGreaterThanOrEqual( '1.0.4', $package['version'] );
+			$this->assertTrue( version_compare( $package['version'], '1.0.4', '>=' ), "Expected version >= 1.0.4, got {$package['version']}" );
 			return;
 		}
 

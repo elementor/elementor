@@ -1439,6 +1439,32 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render_atomic_widget_styles__flex_shrink_only_preserves_basis_auto() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style-shrink-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( null, 0 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.test-style-shrink-only{flex:0 0 auto;}', $css );
+	}
+
 	public function test_render__style_variant_with_custom_css() {
 		// Arrange.
 		$styles = [

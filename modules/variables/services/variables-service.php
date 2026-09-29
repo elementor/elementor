@@ -147,6 +147,10 @@ class Variables_Service {
 			$result['label'] = $batch_result['variable']['label'];
 		}
 
+		if ( isset( $batch_result['variable']['type'] ) ) {
+			$result['type'] = $batch_result['variable']['type'];
+		}
+
 		return $result;
 	}
 

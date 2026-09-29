@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 class Elementor_Content extends Export_Runner_Base {
@@ -31,6 +32,8 @@ class Elementor_Content extends Export_Runner_Base {
 		if ( $selected_custom_post_types && ! in_array( 'post', $selected_custom_post_types, true ) ) {
 			$excluded_post_types[] = 'post';
 		}
+
+		$excluded_post_types = array_merge( $excluded_post_types, Components_Module::excluded_import_export_post_types() );
 
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
 

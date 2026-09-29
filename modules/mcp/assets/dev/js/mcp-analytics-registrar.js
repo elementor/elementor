@@ -88,6 +88,12 @@
 
 				return [ 'mcp_config_copied', props ];
 			}
+			case 'mcp_access_toggled':
+			case 'mcp_access_toggle_failed': {
+				const { name, ...props } = detail;
+
+				return [ name, props ];
+			}
 			default:
 				return null;
 		}

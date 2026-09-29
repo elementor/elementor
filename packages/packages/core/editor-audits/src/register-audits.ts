@@ -3,6 +3,7 @@ import * as cookiePolicy from './audits/cookie-policy';
 import * as deepNesting from './audits/deep-nesting';
 import * as defaultDesignSystem from './audits/default-design-system';
 import * as deprecatedWidgets from './audits/deprecated-widgets';
+import * as googleConsentMode from './audits/google-consent-mode';
 import * as headingStructure from './audits/heading-structure';
 import * as hiddenElements from './audits/hidden-elements';
 import * as imagesAltText from './audits/images-alt-text';
@@ -15,6 +16,7 @@ import * as preferGlobalColors from './audits/prefer-global-colors';
 import * as preferGlobalFonts from './audits/prefer-global-fonts';
 import * as privacyPolicy from './audits/privacy-policy';
 import * as robotsNoindex from './audits/robots-noindex';
+import * as scanForCookies from './audits/scan-for-cookies';
 import * as sectionsAndColumns from './audits/sections-and-columns';
 import * as siteIdentity from './audits/site-identity';
 import * as tooManyWidgets from './audits/too-many-widgets';
@@ -47,6 +49,8 @@ const AUDITS: Audit[] = [
 	privacyPolicy.audit,
 	accessibilityPolicy.audit,
 	cookiePolicy.audit,
+	scanForCookies.audit,
+	googleConsentMode.audit,
 ];
 
 export function registerAllAudits(): void {

@@ -52,7 +52,8 @@ class List_Resources_Ability extends Abstract_Ability {
 					'destructive' => false,
 				],
 			],
-			fn() => current_user_can( 'edit_posts' )
+			fn() => current_user_can( 'edit_posts' ),
+			Ability_Definition::empty_object_input_schema()
 		);
 	}
 

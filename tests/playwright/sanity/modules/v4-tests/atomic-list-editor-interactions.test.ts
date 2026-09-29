@@ -21,11 +21,11 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 	};
 
 	const getListMarkers = ( listRoot: Locator ): Locator => {
-		return listRoot.locator( '.e-list-item__marker .e-svg-base' );
+		return listRoot.locator( '.e-list-item__marker .e-paragraph-base' );
 	};
 
 	const getListParagraphs = ( listRoot: Locator ): Locator => {
-		return listRoot.locator( '[data-widget_type="e-paragraph.default"]' );
+		return listRoot.locator( '.e-list-item__content [data-widget_type="e-paragraph.default"]' );
 	};
 
 	const getListItemIds = async ( listRoot: Locator ): Promise<string[]> => {
@@ -49,7 +49,6 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_list' );
 
 		context = await browser.newContext();
 		const page = await context.newPage();
@@ -63,15 +62,17 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		await context.close();
 	} );
 
-	test( 'Inserting List creates one default item with marker and content', async () => {
+	test( 'Inserting List creates two default items with marker and content', async () => {
 		// Arrange.
 		const listId = await editor.addElement( { elType: listType }, 'document' );
 		const listRoot = getListRoot( listId );
+		const initialIds = await getListItemIds( listRoot );
 
 		// Assert.
-		await expect( getListItems( listRoot ) ).toHaveCount( 1 );
-		await expect( getListMarkers( listRoot ) ).toHaveCount( 1 );
-		await expect( getListParagraphs( listRoot ) ).toHaveCount( 1 );
+		await expect( getListItems( listRoot ) ).toHaveCount( 2 );
+		await expect( getListMarkers( listRoot ) ).toHaveCount( 2 );
+		await expect( getListParagraphs( listRoot ) ).toHaveCount( 2 );
+		expect( new Set( initialIds ).size ).toBe( initialIds.length );
 	} );
 
 	test( 'Add, duplicate, and remove list items via control', async () => {
@@ -111,11 +112,19 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( initialIds.length + 1 );
 
-		// Act - remove down to the minimum.
+		// Act - remove back to the default pair.
 		await listRows.nth( 1 ).hover();
 		const secondRemoveButton = listRows.nth( 1 ).getByRole( 'button', { name: 'Remove' } );
 		await expect( secondRemoveButton ).toBeVisible();
 		await secondRemoveButton.click();
+
+		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( initialIds.length );
+
+		// Act - remove down to the minimum.
+		await listRows.nth( 1 ).hover();
+		const thirdRemoveButton = listRows.nth( 1 ).getByRole( 'button', { name: 'Remove' } );
+		await expect( thirdRemoveButton ).toBeVisible();
+		await thirdRemoveButton.click();
 
 		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( 1 );
 
@@ -133,7 +142,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 		const listItemsField = await openListItemsControl();
 		await listItemsField.getByRole( 'button', { name: 'Add item' } ).click();
-		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( 2 );
+		await expect.poll( () => getListItemIds( listRoot ) ).toHaveLength( 3 );
 
 		const initialIds = await getListItemIds( listRoot );
 
@@ -147,6 +156,6 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		await firstDragHandle.dragTo( lastItem );
 
 		// Assert.
-		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( [ initialIds[ 1 ], initialIds[ 0 ] ] );
+		await expect.poll( () => getListItemIds( listRoot ) ).toEqual( [ ...initialIds.slice( 1 ), initialIds[ 0 ] ] );
 	} );
 } );

@@ -1,6 +1,6 @@
 import { register } from '@elementor/frontend-handlers';
 import { refreshTree } from '@elementor/alpinejs';
-import { setEditorState } from './editor-background-video-state';
+import { resolveDesignTimeState, setEditorState } from './editor-background-video-state';
 import { CONTROLS_ELEMENT_TYPE, PAUSE_ELEMENT_TYPE, PLAY_ELEMENT_TYPE } from './background-video-handler';
 
 register( {
@@ -9,7 +9,7 @@ register( {
 	callback: ( { element, settings, listenToChildren } ) => {
 		const elementId = element.dataset.id;
 
-		setEditorState( elementId, settings.state || 'playing' );
+		setEditorState( elementId, resolveDesignTimeState( settings.state ) );
 		refreshTree( element );
 
 		listenToChildren( [ PLAY_ELEMENT_TYPE, PAUSE_ELEMENT_TYPE, CONTROLS_ELEMENT_TYPE ] )
