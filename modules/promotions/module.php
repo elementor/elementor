@@ -266,7 +266,17 @@ class Module extends Base_Module {
 		];
 	}
 
+	private function should_register_core_atomic_panel_promotions(): bool {
+		// Pro with an active license registers real atomic widgets (or its own panel
+		// promotion layer). Core stubs caused duplicate panel entries after ED-25600.
+		return ! Utils::has_pro() || ! Utils::is_license_active();
+	}
+
 	private function register_atomic_promotions(): void {
+		if ( ! $this->should_register_core_atomic_panel_promotions() ) {
+			return;
+		}
+
 		add_action( 'elementor/init', function() {
 			if ( ! $this->is_atomic_widgets_active() ) {
 				return;
