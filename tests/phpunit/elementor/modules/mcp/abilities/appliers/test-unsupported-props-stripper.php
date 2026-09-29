@@ -7,14 +7,14 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
-use Elementor\Modules\Mcp\Abilities\Appliers\Library_Image_Alt_Stripper;
+use Elementor\Modules\Mcp\Abilities\Appliers\Unsupported_Props_Stripper;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Test_Library_Image_Alt_Stripper extends TestCase {
+class Test_Unsupported_Props_Stripper extends TestCase {
 
 	const ATTACHMENT_ID = 123;
 
@@ -27,10 +27,11 @@ class Test_Library_Image_Alt_Stripper extends TestCase {
 		] );
 
 		// Act
-		$stripped = Library_Image_Alt_Stripper::strip( $image );
+		$result = Unsupported_Props_Stripper::strip( $image );
 
 		// Assert
-		$this->assertSame( $this->make_image( [ 'id' => $attachment_id ] ), $stripped );
+		$this->assertSame( $this->make_image( [ 'id' => $attachment_id ] ), $result['value'] );
+		$this->assertSame( [ 'alt' ], $result['stripped_keys'] );
 	}
 
 	public function test_strip__keeps_alt_on_external_image_src() {
@@ -41,10 +42,11 @@ class Test_Library_Image_Alt_Stripper extends TestCase {
 		] );
 
 		// Act
-		$stripped = Library_Image_Alt_Stripper::strip( $image );
+		$result = Unsupported_Props_Stripper::strip( $image );
 
 		// Assert
-		$this->assertSame( $image, $stripped );
+		$this->assertSame( $image, $result['value'] );
+		$this->assertSame( [], $result['stripped_keys'] );
 	}
 
 	private function make_image( array $src_value ): array {

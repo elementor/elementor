@@ -627,6 +627,44 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'e-divider', $warnings );
 	}
 
+	public function test_execute__strips_unsupported_alt_from_library_image_and_warns() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$attachment_id = self::factory()->attachment->create_object( 'photo.jpg', 0, [ 'post_mime_type' => 'image/jpeg' ] );
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-image configuration-id="library-image"/>',
+			'element_config' => [
+				'library-image' => [
+					'image' => [
+						'src' => [
+							'id' => $attachment_id,
+							'alt' => 'Team photo',
+						],
+						'size' => 'full',
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$warning = $this->find_warning_by_code( $result, 'prop_unsupported' );
+		$this->assertSame( 'library-image', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( '"alt"', $warning['message'] ?? '' );
+
+		$image = $this->find_element_by_widget_type(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			'e-image'
+		);
+		$src = $image['settings']['image']['value']['src']['value'] ?? [];
+		$this->assertSame( $attachment_id, $src['id']['value'] ?? null );
+		$this->assertArrayNotHasKey( 'alt', $src );
+	}
+
 	/**
 	 * @dataProvider dynamic_tag_wrong_settings_cases
 	 */
