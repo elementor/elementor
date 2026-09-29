@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -20,6 +21,8 @@ class Style_Applier {
 	const DESKTOP_BREAKPOINT = 'desktop';
 	const LOCAL_STYLE_LABEL = 'local';
 	const LOCAL_STYLE_TYPE = 'class';
+
+	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
@@ -104,7 +107,23 @@ class Style_Applier {
 				continue;
 			}
 
-			$new_variants           = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->css_converter );
+			$built_variants  = Style_Variants_Merger::build_variants_with_fallback_css( $parsed['breakpoint_blocks'], $this->css_converter );
+			$new_variants    = $built_variants['variants'];
+			$unsupported_css = $this->collect_unsupported_css( $new_variants, $built_variants['fallback_css'] );
+
+			if ( '' !== $unsupported_css ) {
+				$warnings[] = sprintf(
+					'[%s] %s',
+					$config_id,
+					sprintf(
+						/* translators: %s: CSS declarations that were not saved */
+						__( 'These CSS properties or values are not supported and were not saved: %s', 'elementor' ),
+						self::truncate_css_snippet( $unsupported_css )
+					)
+				);
+				$warning_codes[] = self::UNSUPPORTED_CSS_CODE;
+			}
+
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
 			$removal_bps            = $parsed['removal_breakpoints'];
 			$existing_style_id      = $this->find_existing_local_style_id( $node );
@@ -221,6 +240,30 @@ class Style_Applier {
 		}
 
 		return substr( $css, 0, $max_length - 3 ) . '...';
+	}
+
+	/**
+	 * @param array[]            $variants
+	 * @param array<int, string> $fallback_css Per variant index, CSS the converter could not convert natively.
+	 */
+	private function collect_unsupported_css( array $variants, array $fallback_css ): string {
+		if ( empty( $fallback_css ) ) {
+			return '';
+		}
+
+		$kept_variants = Atomic_Widget_Styles::get_license_based_filtered_styles(
+			[ self::LOCAL_STYLE_LABEL => [ 'variants' => array_intersect_key( $variants, $fallback_css ) ] ]
+		)[ self::LOCAL_STYLE_LABEL ]['variants'];
+
+		$dropped_css = [];
+
+		foreach ( $fallback_css as $index => $css ) {
+			if ( empty( $kept_variants[ $index ]['custom_css'] ) ) {
+				$dropped_css[] = $css;
+			}
+		}
+
+		return implode( ' ', $dropped_css );
 	}
 
 	private function get_active_breakpoints(): array {
