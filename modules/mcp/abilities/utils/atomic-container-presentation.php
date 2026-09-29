@@ -6,6 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Mirrors the `.e-con` rule in assets/dev/scss/frontend/_container.scss that every atomic element
+ * renders with. Atomic elements never get `.e-flex`, so its mobile `--width` rule doesn't apply, and
+ * their own `width` styles render as plain `width` with higher specificity.
+ */
 class Atomic_Container_Presentation {
 
 	const SHELL_SELECTOR = '.e-con';
@@ -28,6 +33,6 @@ class Atomic_Container_Presentation {
 	}
 
 	public static function to_css_string(): string {
-		return self::SHELL_SELECTOR . '{width:' . self::SHELL_WIDTH . ';}';
+		return self::SHELL_SELECTOR . '{--width:' . self::SHELL_WIDTH . ';width:var(--width);}';
 	}
 }
