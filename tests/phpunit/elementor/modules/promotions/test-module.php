@@ -23,6 +23,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 
 		\Mock_Pro_License_API::reset();
+		\Mock_Pro_License_API::set_license_state( true );
 	}
 
 	public function tear_down() {
@@ -31,7 +32,7 @@ class Test_Module extends Elementor_Test_Base {
 		parent::tear_down();
 	}
 
-	public function test_is_active__returns_false_when_pro_license_is_active() {
+	public function test_is_active__returns_true_when_pro_license_is_active() {
 		// Arrange
 		\Mock_Pro_License_API::set_license_state( true );
 
@@ -39,7 +40,7 @@ class Test_Module extends Elementor_Test_Base {
 		$is_active = Module::is_active();
 
 		// Assert
-		$this->assertFalse( $is_active );
+		$this->assertTrue( $is_active );
 	}
 
 	public function test_is_active__returns_true_when_pro_license_is_inactive() {
