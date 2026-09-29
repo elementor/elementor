@@ -24,10 +24,6 @@ abstract class Fake_V3_Widget extends Widget_Base {
 	}
 
 	protected function register_controls() {
-		$this->start_controls_section( 'section', [ 'label' => 'Section' ] );
-		$this->add_control( 'menu', [ 'label' => 'Menu', 'type' => Controls_Manager::TEXT ] );
-		$this->add_control( 'layout', [ 'label' => 'Layout', 'type' => Controls_Manager::TEXT ] );
-		$this->end_controls_section();
 	}
 
 	/**
