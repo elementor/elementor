@@ -3,11 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-<<<<<<< HEAD
-=======
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
->>>>>>> 5517d15cf2 (Fix: Keep box-shadow none in MCP styles and warn when unsupported [ED-25677] (#37486))
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -116,15 +112,16 @@ class Style_Applier {
 			$unsupported_css = $this->collect_unsupported_css( $new_variants, $built_variants['fallback_css'] );
 
 			if ( '' !== $unsupported_css ) {
-				$warnings->add(
-					self::UNSUPPORTED_CSS_CODE,
+				$warnings[] = sprintf(
+					'[%s] %s',
+					$config_id,
 					sprintf(
 						/* translators: %s: CSS declarations that were not saved */
 						__( 'These CSS properties or values are not supported and were not saved: %s', 'elementor' ),
 						self::truncate_css_snippet( $unsupported_css )
-					),
-					(string) $config_id
+					)
 				);
+				$warning_codes[] = self::UNSUPPORTED_CSS_CODE;
 			}
 
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
