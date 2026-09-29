@@ -12,7 +12,7 @@ export const App = ( { isRTL, isExperimentActive } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<LocalizationProvider>
-				<ThemeProvider colorScheme="light">
+				<ThemeProvider colorScheme="light" palette="argon-beta">
 					{ isExperimentActive ? <TabbedScreen /> : <WelcomeScreen /> }
 				</ThemeProvider>
 			</LocalizationProvider>

@@ -26,7 +26,7 @@ jest.mock( '@elementor/ui/TabPanel', () => ( { children } ) => <div>{ children }
 jest.mock( '@elementor/ui', () => ( {
 	DirectionProvider: ( { children } ) => <div>{ children }</div>,
 	LocalizationProvider: ( { children } ) => <div>{ children }</div>,
-	ThemeProvider: ( { children } ) => <div>{ children }</div>,
+	ThemeProvider: ( { children, palette } ) => <div data-testid="theme-provider" data-palette={ palette }>{ children }</div>,
 	useTabs: () => ( {
 		getTabsProps: () => ( {
 			value: 'overview',
@@ -51,6 +51,14 @@ describe( 'Agents Ready App', () => {
 		// Assert
 		expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeTruthy();
 		expect( screen.queryByRole( 'tab', { name: 'Overview' } ) ).toBeNull();
+	} );
+
+	it( 'uses the Argon theme palette', () => {
+		// Arrange & Act
+		render( <App isExperimentActive={ false } /> );
+
+		// Assert
+		expect( screen.getByTestId( 'theme-provider' ).getAttribute( 'data-palette' ) ).toBe( 'argon-beta' );
 	} );
 
 	it( 'renders Overview and Tab 2 when the experiment is active', () => {
