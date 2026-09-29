@@ -108,17 +108,18 @@ class Style_Applier {
 				continue;
 			}
 
-			$new_variants           = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->css_converter );
-			$unsupported_custom_css = $this->collect_unsupported_custom_css( $new_variants );
+			$built_variants  = Style_Variants_Merger::build_variants_with_fallback_css( $parsed['breakpoint_blocks'], $this->css_converter );
+			$new_variants    = $built_variants['variants'];
+			$unsupported_css = $this->collect_unsupported_css( $new_variants, $built_variants['fallback_css'] );
 
-			if ( '' !== $unsupported_custom_css ) {
+			if ( '' !== $unsupported_css ) {
 				$warnings[] = sprintf(
 					'[%s] %s',
 					$config_id,
 					sprintf(
 						/* translators: %s: CSS declarations that were not saved */
 						__( 'These CSS properties or values are not supported and were not saved: %s', 'elementor' ),
-						self::truncate_css_snippet( $unsupported_custom_css )
+						self::truncate_css_snippet( $unsupported_css )
 					)
 				);
 				$warning_codes[] = self::UNSUPPORTED_CSS_CODE;
@@ -251,26 +252,28 @@ class Style_Applier {
 		return substr( $css, 0, $max_length - 3 ) . '...';
 	}
 
-	private function collect_unsupported_custom_css( array $variants ): string {
-		$variants_with_custom_css = array_filter( $variants, fn( $variant ) => ! empty( $variant['custom_css']['raw'] ) );
-
-		if ( empty( $variants_with_custom_css ) ) {
+	/**
+	 * @param array[]            $variants
+	 * @param array<int, string> $fallback_css Per variant index, CSS the converter could not convert natively.
+	 */
+	private function collect_unsupported_css( array $variants, array $fallback_css ): string {
+		if ( empty( $fallback_css ) ) {
 			return '';
 		}
 
 		$kept_variants = Atomic_Widget_Styles::get_license_based_filtered_styles(
-			[ self::LOCAL_STYLE_LABEL => [ 'variants' => $variants_with_custom_css ] ]
+			[ self::LOCAL_STYLE_LABEL => [ 'variants' => array_intersect_key( $variants, $fallback_css ) ] ]
 		)[ self::LOCAL_STYLE_LABEL ]['variants'];
 
-		$dropped_custom_css = [];
+		$dropped_css = [];
 
-		foreach ( $variants_with_custom_css as $index => $variant ) {
+		foreach ( $fallback_css as $index => $css ) {
 			if ( empty( $kept_variants[ $index ]['custom_css'] ) ) {
-				$dropped_custom_css[] = trim( \Elementor\Utils::decode_string( $variant['custom_css']['raw'] ) );
+				$dropped_css[] = $css;
 			}
 		}
 
-		return implode( ' ', $dropped_custom_css );
+		return implode( ' ', $dropped_css );
 	}
 
 	private function get_active_breakpoints(): array {

@@ -872,6 +872,22 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertEmpty( $desktop['custom_css'] ?? null );
 	}
 
+	public function test_execute__unsupported_css_warning_ignores_custom_css_that_was_not_a_conversion_fallback() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = $this->build_card_with_style( $post_id, 'color: var(--not-a-kit-variable); & > p { color: blue; }' );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['warnings'] ?? [] );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
+		$this->assertStringNotContainsString( '& > p', $result['warnings'][0] );
+	}
+
 	public function test_execute__no_unsupported_css_warning_when_all_css_is_native() {
 		// Arrange
 		$this->act_as_admin();
