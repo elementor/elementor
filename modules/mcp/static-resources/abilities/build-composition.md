@@ -42,7 +42,6 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 - Containers: "e-div-block", "e-grid", "e-flexbox"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
-- Multiple root elements are allowed. Every opening tag needs exactly one matching closing tag (or use a self-closing tag); a stray or missing closing tag fails the whole call with `invalid_xml`, even on `dry_run`
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
 ## LAYOUTS
@@ -50,7 +49,6 @@ Every element accepts the same layout styles. Set them in the `style` map for th
 
 - `display: block` — children stack vertically in normal document flow and take the full width of the parent. Use this for sections and a heading followed by text.
 - `display: flex` — `flex-direction` defaults to `row`, so children sit side by side. For stacked content, set `flex-direction: column`. Set `flex-direction` on every multi-child flex container; otherwise children render in a row with no warning.
-- Container sizing: read each container type's `llm_guidance.default_styles` via `elementor/get-widget-schema` (padding, display, and full width from the `.e-con` shell). A nested container that should size to its content (a nav group, a button row) needs `width: auto; flex: 0 0 auto`. A decorative line or spacer needs `padding: 0; min-width: 0` so its height and width come only from its own style.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
@@ -62,10 +60,10 @@ Some elements have internal tree structures (nesting). When using these elements
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
-- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
+- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). A key not in the schema, an unresolvable value, an unknown global class label, a bad interaction item, or unparseable CSS is skipped, the rest is saved, and each skip is returned as a warning (with `code` and `config_id` in `warning_details`). Every warning is fixable; only errors fail the call. Correct only that field via `elementor/manage-elements`; do not rebuild the composition and do not treat the skip as unsupported.**
 - style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
+- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped with a warning — send it on a widget whose schema includes `link`, or wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
 ### Style conversion

@@ -63,7 +63,6 @@ When in doubt between "safe" and "distinctive," choose distinctive - users can a
   - Reading content: max 65-75 characters (600-700px)
   - Hero sections: asymmetric layouts, not centered blocks
   - Cards/components: vary sizes intentionally, not uniform grids
-- **Container overrides**: Use `elementor/get-widget-schema` for each container's `default_styles`. Set `width: auto; flex: 0 0 auto` on content-sized nested containers, and `padding: 0; min-width: 0` on decorative lines and spacers
 
 ## 4. Motion & Interaction Design
 

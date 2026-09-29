@@ -13,6 +13,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -45,7 +46,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell width for atomic elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
 					],
 				],
 			],
@@ -216,7 +217,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			$tag,
 			$this->get_default_styles_repository(),
 			null,
-			! empty( $config['meta']['is_container'] )
+			Atomic_Container_Presentation::applies_to( $config )
 		);
 
 		if ( null !== $tag ) {

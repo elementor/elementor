@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * element before any inline/global class overrides.
  *
  * Each layer is rendered via Styles_Renderer (same pipeline as frontend enqueue), then
- * concatenated in cascade order: widget base_styles first, kit site-wide default for the
- * element's rendered tag second.
+ * concatenated in cascade order: the `.e-con` shell of atomic elements first, widget
+ * base_styles second, kit site-wide default for the element's rendered tag last.
  */
 class Element_Default_Styles_Builder {
 
@@ -36,9 +36,9 @@ class Element_Default_Styles_Builder {
 		$default_css = self::render_kit_default( $tag, $repository, $renderer );
 
 		$layers = array_filter( [
+			$uses_container_shell ? Atomic_Container_Presentation::to_css_string() : '',
 			$base_css,
 			$default_css,
-			$uses_container_shell ? Atomic_Container_Presentation::to_css_string() : '',
 		] );
 
 		return trim( implode( "\n", $layers ) );
