@@ -1890,6 +1890,8 @@ abstract class Document extends Controls_Stack {
 
 			remove_filter( 'elementor/element/should_render_shortcode', '__return_true' );
 		} else {
+			$this->update_runtime_elements( $elements_data );
+
 			if ( ! empty( $cached_data['scripts'] ) ) {
 				foreach ( $cached_data['scripts'] as $script_handle ) {
 					wp_enqueue_script( $script_handle );
