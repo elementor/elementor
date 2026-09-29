@@ -25,7 +25,7 @@ Optionally attach `overridable_props` (see below). Returns `component_id`, `uid`
 {
   "action": "create",
   "title": "Two Cards",
-  "xml_structure": "<e-flexbox configuration-id=\"row\"><e-component configuration-id=\"card-a\"/><e-component configuration-id=\"card-b\"/></e-flexbox>",
+  "xml_structure": "<e-div-block configuration-id=\"row\"><e-component configuration-id=\"card-a\"/><e-component configuration-id=\"card-b\"/></e-div-block>",
   "element_config": {
     "card-a": { "component_id": 42, "overrides": { "title": "First Card", "image": { "src": { "url": "https://example.com/a.jpg" }, "size": "full" } } },
     "card-b": { "component_id": 42, "overrides": { "title": "Second Card", "image": { "src": { "url": "https://example.com/b.jpg" }, "size": "full" } } }
@@ -59,7 +59,7 @@ Record mapping a caller-chosen override key → `{ target, prop_key, label, grou
   - With `xml_structure` (create or update): the `configuration-id` you set on that element.
   - With `source_post_id`/`element_id` (create), or `update` without `xml_structure`: the real element id (from `elementor/get-page-structure`).
 - `prop_key`: identifies WHICH setting to expose. Meaning depends on the target:
-  - Raw widget / atomic element (`<e-heading>`, `<e-image>`, `<e-flexbox>`, etc.): the setting name on that element (from `elementor/get-widget-schema`).
+  - Raw widget / atomic element (`<e-heading>`, `<e-image>`, `<e-div-block>`, etc.): the setting name on that element (from `elementor/get-widget-schema`).
   - Nested `<e-component>` instance (expose-further): the inner component's own exposed override key (from `elementor/list-components` `overridable_props` for that component). The inner component must already expose the prop before you can re-expose it through the wrapper.
 - `label`: human-readable name shown to whoever configures an instance.
 - `group` (optional): label used to group related overrides together; defaults to "Default".
@@ -74,7 +74,7 @@ Example — a `Cards Grid` wrapper that re-exposes `caption`/`image` from each n
 {
   "action": "create",
   "title": "Cards Grid",
-  "xml_structure": "<e-flexbox configuration-id=\"grid\"><e-component configuration-id=\"card-1\"/><e-component configuration-id=\"card-2\"/></e-flexbox>",
+  "xml_structure": "<e-div-block configuration-id=\"grid\"><e-component configuration-id=\"card-1\"/><e-component configuration-id=\"card-2\"/></e-div-block>",
   "element_config": {
     "card-1": { "component_id": 42 },
     "card-2": { "component_id": 42 }
@@ -92,7 +92,7 @@ Example — a `Cards Grid` wrapper that re-exposes `caption`/`image` from each n
 {
   "action": "create",
   "title": "Hero Section",
-  "xml_structure": "<e-flexbox configuration-id=\"hero\"><e-heading configuration-id=\"hero-title\"></e-heading></e-flexbox>",
+  "xml_structure": "<e-div-block configuration-id=\"hero\"><e-heading configuration-id=\"hero-title\"></e-heading></e-div-block>",
   "element_config": {
     "hero-title": { "title": "Welcome" }
   },

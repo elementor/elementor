@@ -255,7 +255,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	}
 
 	private function populate_v3_content( array &$skeleton, array $node ): void {
-		$widget_type = (string) ( $node['widgetType'] ?? '' );
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
 		$has_map = null !== V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );

@@ -76,7 +76,7 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 	}
 
 	public static function get_computed_html_tag( array $settings ): string {
-		return Html_Tag_Computer::compute( $settings, 'div' );
+		return Utils::validate_html_tag( Html_Tag_Computer::compute( $settings, 'div' ) );
 	}
 
 	protected static function define_props_schema(): array {
@@ -95,9 +95,9 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'main', 'nav' ] )
 				->default( 'div' )
-				->description( 'The HTML tag for the background video container. Could be div, header, section, article, aside, or footer.' ),
+				->description( 'The HTML tag for the background video container. Could be div, header, section, article, aside, footer, main, or nav.' ),
 			'source' => Video_Src_Prop_Type::make()->alias( 'video', 'src' ),
 			'start_time' => Number_Prop_Type::make()
 				->default( null )
@@ -185,6 +185,14 @@ class Atomic_Background_Video extends Atomic_Element_Base {
 							[
 								'value' => 'footer',
 								'label' => 'Footer',
+							],
+							[
+								'value' => 'main',
+								'label' => 'Main',
+							],
+							[
+								'value' => 'nav',
+								'label' => 'Nav',
 							],
 						] )
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),

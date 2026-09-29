@@ -216,36 +216,36 @@ class Conversion_Banner {
 		}
 
 		return [
-			'title' => esc_html__( 'Build more with Elementor Pro', 'elementor' ),
-			'text' => esc_html__( 'Add the theme builder, popup builder, and 85+ advanced widgets to your Elementor Editor.', 'elementor' ),
+			'title' => __( 'Elevate your site with Elementor Pro', 'elementor' ),
+			'text' => __( 'Access Elementor\'s Theme Builder, Dynamic Content, WooCommerce Builder, Popup Builder, 85+ Pro widgets and more when you upgrade to Pro', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Upgrade now', 'elementor' ),
+					'text' => __( 'Upgrade now', 'elementor' ),
 					'link' => self::UPGRADE_URL,
 					'target' => '_blank',
 				],
 			],
 			'image' => [
 				'src' => '',
-				'alt' => esc_html__( 'Upgrade to Elementor Pro', 'elementor' ),
+				'alt' => __( 'Upgrade to Elementor Pro', 'elementor' ),
 			],
 		];
 	}
 
 	private function get_birthday_banner_config(): array {
 		return [
-			'title' => esc_html__( 'Celebrate 10 years of Elementor', 'elementor' ),
-			'text' => esc_html__( 'Upgrade your workflow with more capabilities for less. Offer ends June 17.', 'elementor' ),
+			'title' => __( 'Celebrate 10 years of Elementor', 'elementor' ),
+			'text' => __( 'Upgrade your workflow with more capabilities for less. Offer ends June 17.', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Get Discounts', 'elementor' ),
+					'text' => __( 'Get Discounts', 'elementor' ),
 					'link' => self::BIRTHDAY_PROMOTION_URL,
 					'target' => '_blank',
 				],
 			],
 			'image' => [
 				'src' => ELEMENTOR_ASSETS_URL . 'images/decade-birthday.png',
-				'alt' => esc_html__( 'Celebrate 10 years of Elementor', 'elementor' ),
+				'alt' => __( 'Celebrate 10 years of Elementor', 'elementor' ),
 			],
 		];
 	}

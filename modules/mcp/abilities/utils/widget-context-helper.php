@@ -31,6 +31,10 @@ class Widget_Context_Helper {
 
 	const VERSION_V4 = 'v4';
 
+	const MCP_UNPROMOTED_ELEMENT_TYPES = [
+		'e-flexbox',
+	];
+
 	const V3_ALLOWLIST = [
 		'nav-menu',
 		'theme-post-content',
@@ -53,7 +57,13 @@ class Widget_Context_Helper {
 		$eligible = [];
 
 		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $type => $instance ) {
-			if ( self::should_initialize_v3_controls_stack( (string) $type ) && method_exists( $instance, 'get_stack' ) ) {
+			$type = (string) $type;
+
+			if ( self::is_type_unpromoted_in_widget_list( $type ) ) {
+				continue;
+			}
+
+			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
 				$instance->get_stack();
 			}
 
@@ -65,7 +75,13 @@ class Widget_Context_Helper {
 		}
 
 		foreach ( Plugin::$instance->elements_manager->get_element_types() as $type => $instance ) {
-			if ( self::should_initialize_v3_controls_stack( (string) $type ) && method_exists( $instance, 'get_stack' ) ) {
+			$type = (string) $type;
+
+			if ( self::is_type_unpromoted_in_widget_list( $type ) ) {
+				continue;
+			}
+
+			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
 				$instance->get_stack();
 			}
 
@@ -115,6 +131,10 @@ class Widget_Context_Helper {
 
 	public static function get_widget_version( array $config ): string {
 		return empty( $config['atomic_props_schema'] ) ? self::VERSION_V3 : self::VERSION_V4;
+	}
+
+	public static function is_type_unpromoted_in_widget_list( string $widget_type ): bool {
+		return in_array( $widget_type, self::MCP_UNPROMOTED_ELEMENT_TYPES, true );
 	}
 
 	public static function is_v3_allowlisted( string $widget_type ): bool {
