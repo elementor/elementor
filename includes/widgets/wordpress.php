@@ -37,7 +37,7 @@ class Widget_WordPress extends Widget_Base {
 	}
 
 	public function hide_on_search() {
-		return true;
+		return false;
 	}
 
 	/**
