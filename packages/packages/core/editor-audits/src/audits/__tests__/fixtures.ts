@@ -27,6 +27,7 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	ally_accessibility_statement_created: true,
 	ally_accessibility_statement_url:
 		'https://example.com/wp-admin/admin.php?page=accessibility-settings#accessibilityStatement',
+	ally_widget_settings_url: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#capabilities',
 	cookiez_plugin_active: true,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez',
 	cookiez_plugin_installed: true,
@@ -51,6 +52,7 @@ type Overrides = {
 	tree?: ElementSnapshotNode[];
 	pageContext?: Partial< PageContextResponse >;
 	kit?: KitSnapshot;
+	renderedHtml?: string | null;
 };
 
 export function makeContext( overrides: Overrides = {} ): AuditContext {
@@ -59,6 +61,7 @@ export function makeContext( overrides: Overrides = {} ): AuditContext {
 		elements: { documentId: 1, tree: overrides.tree ?? [] },
 		kit: overrides.kit ?? DEFAULT_KIT,
 		pageContext: { ...DEFAULT_PAGE_CONTEXT, ...( overrides.pageContext ?? {} ) },
+		renderedHtml: overrides.renderedHtml ?? null,
 	};
 }
 

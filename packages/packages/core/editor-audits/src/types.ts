@@ -69,6 +69,7 @@ export type PageContextResponse = {
 	ally_plugin_url: string;
 	ally_accessibility_statement_created: boolean;
 	ally_accessibility_statement_url: string;
+	ally_widget_settings_url: string;
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
 	cookiez_plugin_installed: boolean;
@@ -112,6 +113,7 @@ export type AuditContext = {
 	elements: ElementsModelSnapshot;
 	pageContext: PageContextResponse;
 	kit: KitSnapshot;
+	renderedHtml: string | null;
 };
 
 export type PageAuditReport = {
