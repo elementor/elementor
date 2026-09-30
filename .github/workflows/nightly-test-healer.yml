@@ -12,6 +12,8 @@ on:
   workflow_run:
     workflows: ['Playwright']
     types: [completed]
+  push:
+    branches: [cursor/healer-e2e-core-48a8]
   workflow_dispatch:
     inputs:
       test_name:
@@ -72,10 +74,10 @@ jobs:
       contents: read
       actions: write
       pull-requests: write
-    uses: elementor/elementor-editor-github-actions/.github/workflows/playwright-test-healer.yml@main
+    uses: elementor/elementor-editor-github-actions/.github/workflows/playwright-test-healer.yml@cursor/playwright-test-healer-48a8
     with:
       product: core
-      actions_ref: main
+      actions_ref: cursor/playwright-test-healer-48a8
       test_name: ${{ inputs.test_name }}
       source_run_id: ${{ github.event.workflow_run.id || inputs.source_run_id }}
       base_ref: ${{ inputs.base_ref }}
