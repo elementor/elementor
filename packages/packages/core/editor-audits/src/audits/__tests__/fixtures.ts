@@ -24,6 +24,9 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 	ally_plugin_active: true,
 	ally_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility',
+	ally_accessibility_statement_created: true,
+	ally_accessibility_statement_url:
+		'https://example.com/wp-admin/admin.php?page=accessibility-settings#accessibilityStatement',
 	cookiez_plugin_active: true,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez',
 	cookiez_plugin_installed: true,

@@ -1,4 +1,5 @@
 import * as accessibilityPolicy from './audits/accessibility-policy';
+import * as accessibilityStatement from './audits/accessibility-statement';
 import * as cookiePolicy from './audits/cookie-policy';
 import * as deepNesting from './audits/deep-nesting';
 import * as defaultDesignSystem from './audits/default-design-system';
@@ -48,6 +49,7 @@ const AUDITS: Audit[] = [
 
 	privacyPolicy.audit,
 	accessibilityPolicy.audit,
+	accessibilityStatement.audit,
 	cookiePolicy.audit,
 	scanForCookies.audit,
 	googleConsentMode.audit,

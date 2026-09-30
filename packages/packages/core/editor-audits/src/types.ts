@@ -40,6 +40,8 @@ export type AuditViolation = {
 	angieFix?: boolean;
 	angiePrompt?: string;
 	ctaLabel?: string;
+	secondaryCtaLabel?: string;
+	secondaryCtaUrl?: string;
 };
 
 export type PageContextResponse = {
@@ -65,6 +67,8 @@ export type PageContextResponse = {
 	privacy_settings_url: string;
 	ally_plugin_active: boolean;
 	ally_plugin_url: string;
+	ally_accessibility_statement_created: boolean;
+	ally_accessibility_statement_url: string;
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
 	cookiez_plugin_installed: boolean;

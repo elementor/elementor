@@ -366,6 +366,50 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertStringContainsString( '&', $response['ally_plugin_url'] );
 	}
 
+	public function test_ally_accessibility_statement_url_points_to_the_statement_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_accessibility_statement_url', $response );
+		$this->assertStringContainsString( 'page=accessibility-settings#accessibilityStatement', $response['ally_accessibility_statement_url'] );
+	}
+
+	public function test_ally_accessibility_statement_created_is_false_when_no_statement_data_option_exists() {
+		// Arrange.
+		delete_option( 'ea11y_accessibility_statement_data' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['ally_accessibility_statement_created'] );
+	}
+
+	public function test_ally_accessibility_statement_created_is_true_when_statement_page_id_is_set() {
+		// Arrange.
+		update_option( 'ea11y_accessibility_statement_data', [ 'pageId' => 123 ] );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertTrue( $response['ally_accessibility_statement_created'] );
+
+		// Cleanup.
+		delete_option( 'ea11y_accessibility_statement_data' );
+	}
+
 	public function test_cookiez_scan_url_always_points_to_cookiez_settings_page() {
 		// Arrange.
 		$request = new \WP_REST_Request( 'GET', '' );
