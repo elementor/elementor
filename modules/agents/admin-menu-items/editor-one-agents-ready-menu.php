@@ -57,7 +57,6 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 
 	public function render() {
 		echo '<div class="wrap">';
-		echo '<h1 class="wp-heading-inline">' . esc_html( $this->get_label() ) . '</h1>';
 		echo '<div id="' . esc_attr( Module::MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}
