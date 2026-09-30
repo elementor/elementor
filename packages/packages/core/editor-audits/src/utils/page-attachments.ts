@@ -1,14 +1,23 @@
 import { type ElementSnapshotNode } from '../types';
-import { walkImageLikeSources } from './image-like-sources';
+import { walkAtomicBackgroundImageSources } from './atomic-background-image-sources';
+import { walkAtomicImageSources } from './atomic-image-sources';
+import { walkBackgroundImageSources } from './background-image-sources';
+import { type ImageLikeMedia, walkImageLikeSources } from './image-like-sources';
+import { buildImageSizeKey } from './image-size-key';
 
-export function extractAttachmentIds( tree: ElementSnapshotNode[] ): number[] {
-	const ids = new Set< number >();
+export function extractImageSizeRequests( tree: ElementSnapshotNode[] ): string[] {
+	const keys = new Set< string >();
 
-	walkImageLikeSources( tree, ( { media } ) => {
+	const collect = ( media: ImageLikeMedia ) => {
 		if ( media.id ) {
-			ids.add( media.id );
+			keys.add( buildImageSizeKey( { id: media.id, size: media.size } ) );
 		}
-	} );
+	};
 
-	return Array.from( ids ).sort( ( a, b ) => a - b );
+	walkImageLikeSources( tree, ( { media } ) => collect( media ) );
+	walkBackgroundImageSources( tree, ( { media } ) => collect( media ) );
+	walkAtomicImageSources( tree, ( { media } ) => collect( media ) );
+	walkAtomicBackgroundImageSources( tree, ( { media } ) => collect( media ) );
+
+	return Array.from( keys ).sort();
 }
