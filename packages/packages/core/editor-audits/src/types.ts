@@ -48,8 +48,9 @@ export type PageContextResponse = {
 	post_title: string | null;
 	post_excerpt: string | null;
 	featured_image_id: number | null;
+	/** Keyed by the composite `buildImageSizeKey` result (`"{attachmentId}:{size}"`), since one attachment can resolve to different files at different sizes. */
 	image_sizes: Record<
-		number,
+		string,
 		{
 			width: number;
 			height: number;

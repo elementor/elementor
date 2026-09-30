@@ -14,6 +14,7 @@ class Test_Page_Context_Endpoint extends TestCase {
 
 	private $post_id;
 	private $attachment_id;
+	private $large_attachment_ids = [];
 	private $admin_user_id;
 	private $saved_blogname;
 	private $saved_blogdescription;
@@ -63,8 +64,28 @@ class Test_Page_Context_Endpoint extends TestCase {
 
 		wp_delete_post( $this->post_id, true );
 		wp_delete_attachment( $this->attachment_id, true );
+
+		foreach ( $this->large_attachment_ids as $attachment_id ) {
+			wp_delete_attachment( $attachment_id, true );
+		}
+
 		wp_delete_user( $this->admin_user_id );
 		parent::tearDown();
+	}
+
+	/**
+	 * `sample.jpg` is a 2x2 pixel fixture, too small for WordPress to generate registered
+	 * image sizes, so size-resolution tests need a large enough attachment of their own.
+	 */
+	private function create_large_attachment(): int {
+		$attachment_id = $this->factory()->attachment->create_upload_object(
+			__DIR__ . '/fixtures/large-sample.jpg',
+			$this->post_id
+		);
+
+		$this->large_attachment_ids[] = $attachment_id;
+
+		return $attachment_id;
 	}
 
 	private function factory() {
@@ -100,36 +121,56 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertNull( $response['post_excerpt'] );
 	}
 
-	public function test_image_sizes_limited_to_passed_attachment_ids() {
+	public function test_image_sizes_limited_to_passed_image_size_requests() {
 		// Arrange.
+		$request_key = "{$this->attachment_id}:full";
 		$request = new \WP_REST_Request( 'GET', '' );
 		$request->set_param( 'document_id', $this->post_id );
-		$request->set_param( 'attachment_ids', [ $this->attachment_id ] );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
 
 		// Act.
 		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
 
 		// Assert.
-		$this->assertArrayHasKey( $this->attachment_id, $response['image_sizes'] );
-		$this->assertArrayHasKey( 'filesize_bytes', $response['image_sizes'][ $this->attachment_id ] );
+		$this->assertArrayHasKey( $request_key, $response['image_sizes'] );
+		$this->assertArrayHasKey( 'filesize_bytes', $response['image_sizes'][ $request_key ] );
 	}
 
 	public function test_image_sizes_includes_alt_from_attachment_meta() {
 		// Arrange.
 		update_post_meta( $this->attachment_id, '_wp_attachment_image_alt', 'Sample alt text' );
+		$request_key = "{$this->attachment_id}:full";
 		$request = new \WP_REST_Request( 'GET', '' );
 		$request->set_param( 'document_id', $this->post_id );
-		$request->set_param( 'attachment_ids', [ $this->attachment_id ] );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
 
 		// Act.
 		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
 
 		// Assert.
-		$this->assertArrayHasKey( 'alt', $response['image_sizes'][ $this->attachment_id ] );
-		$this->assertSame( 'Sample alt text', $response['image_sizes'][ $this->attachment_id ]['alt'] );
+		$this->assertArrayHasKey( 'alt', $response['image_sizes'][ $request_key ] );
+		$this->assertSame( 'Sample alt text', $response['image_sizes'][ $request_key ]['alt'] );
 	}
 
-	public function test_image_sizes_empty_when_no_attachment_ids_passed() {
+	public function test_image_sizes_alt_is_empty_when_no_attachment_meta_and_title_set() {
+		// Arrange.
+		wp_update_post( [
+			'ID' => $this->attachment_id,
+			'post_title' => 'Some Filename Title',
+		] );
+		$request_key = "{$this->attachment_id}:full";
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( '', $response['image_sizes'][ $request_key ]['alt'] );
+	}
+
+	public function test_image_sizes_empty_when_no_image_size_requests_passed() {
 		// Arrange.
 		$request = new \WP_REST_Request( 'GET', '' );
 		$request->set_param( 'document_id', $this->post_id );
@@ -139,6 +180,85 @@ class Test_Page_Context_Endpoint extends TestCase {
 
 		// Assert.
 		$this->assertSame( [], $response['image_sizes'] );
+	}
+
+	public function test_image_sizes_resolves_registered_size_filesize_from_metadata() {
+		// Arrange.
+		$attachment_id = $this->create_large_attachment();
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+		$registered_size = array_key_first( $metadata['sizes'] );
+		$request_key = "{$attachment_id}:{$registered_size}";
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame(
+			(int) $metadata['sizes'][ $registered_size ]['width'],
+			$response['image_sizes'][ $request_key ]['width']
+		);
+		$this->assertSame(
+			(int) $metadata['sizes'][ $registered_size ]['filesize'],
+			$response['image_sizes'][ $request_key ]['filesize_bytes']
+		);
+	}
+
+	public function test_image_sizes_falls_back_to_filesystem_stat_when_metadata_filesize_missing() {
+		// Arrange.
+		$attachment_id = $this->create_large_attachment();
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+		$registered_size = array_key_first( $metadata['sizes'] );
+		unset( $metadata['sizes'][ $registered_size ]['filesize'] );
+		wp_update_attachment_metadata( $attachment_id, $metadata );
+
+		$sized_path = trailingslashit( dirname( get_attached_file( $attachment_id ) ) ) . $metadata['sizes'][ $registered_size ]['file'];
+		$request_key = "{$attachment_id}:{$registered_size}";
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( (int) filesize( $sized_path ), $response['image_sizes'][ $request_key ]['filesize_bytes'] );
+	}
+
+	public function test_image_sizes_falls_back_to_original_file_when_size_was_not_generated() {
+		// Arrange.
+		$request_key = "{$this->attachment_id}:non_existent_size";
+		$original_filesize = filesize( get_attached_file( $this->attachment_id ) );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( (int) $original_filesize, $response['image_sizes'][ $request_key ]['filesize_bytes'] );
+	}
+
+	public function test_image_sizes_uses_original_file_for_full_size_request() {
+		// Arrange.
+		$request_key = "{$this->attachment_id}:full";
+		$original_filesize = filesize( get_attached_file( $this->attachment_id ) );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( (int) $original_filesize, $response['image_sizes'][ $request_key ]['filesize_bytes'] );
 	}
 
 	public function test_privacy_policy_url_is_null_when_not_configured() {

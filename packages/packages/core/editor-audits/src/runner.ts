@@ -13,14 +13,14 @@ import {
 } from './types';
 import { computeReport } from './utils/compute-report';
 import { fetchRenderedHtml } from './utils/fetch-rendered-html';
-import { extractAttachmentIds } from './utils/page-attachments';
+import { extractImageSizeRequests } from './utils/page-attachments';
 import { readKitSnapshot } from './utils/read-kit-snapshot';
 import { buildSnapshotTree } from './utils/v1-snapshot';
 
 export async function runPageAudit( documentId: number ): Promise< PageAuditReport > {
 	const tree = buildSnapshotTree( getElements() );
-	const attachmentIds = extractAttachmentIds( tree );
-	const pageContext = await fetchPageContext( documentId, attachmentIds );
+	const imageSizeRequests = extractImageSizeRequests( tree );
+	const pageContext = await fetchPageContext( documentId, imageSizeRequests );
 
 	const elements: ElementsModelSnapshot = { documentId, tree };
 	const [ kit, renderedHtml ]: [ KitSnapshot, string | null ] = await Promise.all( [

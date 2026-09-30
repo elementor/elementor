@@ -14,7 +14,7 @@ const PAGE_CONTEXT: PageContextResponse = {
 	post_excerpt: null,
 	featured_image_id: null,
 	image_sizes: {
-		1: {
+		'1:full': {
 			width: 100,
 			height: 100,
 			filesize_bytes: 1000,
@@ -59,5 +59,11 @@ describe( 'hasMeaningfulAlt', () => {
 
 	it( 'ignores snapshot alt when attachment id is set', () => {
 		expect( hasMeaningfulAlt( { id: 99, alt: 'Ignored' }, PAGE_CONTEXT ) ).toBe( false );
+	} );
+
+	it( 'looks up the composite key matching the requested size', () => {
+		expect( hasMeaningfulAlt( { id: 1, size: 'medium' }, PAGE_CONTEXT ) ).toBe( false );
+		expect( hasMeaningfulAlt( { id: 1, size: 'full' }, PAGE_CONTEXT ) ).toBe( true );
+		expect( hasMeaningfulAlt( { id: 1 }, PAGE_CONTEXT ) ).toBe( true );
 	} );
 } );
