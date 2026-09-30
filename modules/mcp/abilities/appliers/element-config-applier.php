@@ -13,6 +13,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -232,6 +233,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$this->warn_if_plain_keys_dropped( $value, $resolved_value, $canonical, $element_type, $config_id, $warnings );
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
@@ -299,6 +301,26 @@ class Element_Config_Applier {
 
 			unset( $node_settings[ $cleared_key ] );
 		}
+	}
+
+	private function warn_if_plain_keys_dropped( $plain_value, $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$dropped_paths = Dropped_Plain_Keys_Finder::find( $plain_value, $resolved_value, $key );
+
+		if ( empty( $dropped_paths ) ) {
+			return;
+		}
+
+		$warnings->add(
+			'prop_keys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was saved without "%s": each is either not a field of the prop or has a value that could not be resolved. Use the shape from elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_paths ),
+				$element_type
+			),
+			$config_id
+		);
 	}
 
 	private function warn_if_sub_keys_dropped( $stored, $incoming, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {

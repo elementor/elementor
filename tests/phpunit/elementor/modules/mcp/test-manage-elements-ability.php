@@ -1541,6 +1541,95 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_update__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'href' => 'https://example.com',
+							'target' => '_blank',
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"link.href", "link.target"', $details[0]['message'] );
+	}
+
+	public function test_build_composition__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'href' => 'https://example.com',
+						'tag' => 'a',
+					],
+				],
+			],
+			'parent_id' => 'document',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( '"link.href"', $result['warning_details'][0]['message'] );
+	}
+
+	public function test_update__nested_object_prop_keys_return_warning_with_path() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $image_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => [
+						'image' => [
+							'src' => [
+								'url' => 'https://example.com/other.jpg',
+								'caption' => 'Not a field',
+							],
+							'size' => 'full',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertContains( 'prop_keys_dropped', array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"image.src.caption"', implode( ' ', array_column( $details, 'message' ) ) );
+	}
+
 	private function given_linked_button_and_image( int $post_id ): array {
 		$this->act_as_admin();
 
