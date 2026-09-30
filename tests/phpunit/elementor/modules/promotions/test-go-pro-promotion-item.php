@@ -106,7 +106,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 		$cdn_payload = [
 			'is_active' => true,
 			'label'     => 'Upgrade Sale Now',
-			'url'       => 'https://go.elementor.com/go-pro-upgrade-one-wp-menu-bf-26/',
+			'url'       => 'https://go.elementor.com/test/',
 		];
 
 		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::CDN_SIDE_MENU_TRANSIENT_KEY ] = [
@@ -128,7 +128,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 		$cdn_payload = [
 			'is_active' => true,
 			'label'     => '',
-			'url'       => 'https://go.elementor.com/go-pro-upgrade-one-wp-menu-bf-26/',
+			'url'       => 'https://go.elementor.com/test/',
 		];
 
 		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::CDN_SIDE_MENU_TRANSIENT_KEY ] = [
@@ -157,7 +157,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 
 	public function test_get_url__returns_cdn_url_when_active() {
 		// Arrange — seed with active CDN data.
-		$cdn_url     = 'https://go.elementor.com/go-pro-upgrade-one-wp-menu-bf-26/';
+		$cdn_url     = 'https://go.elementor.com/test/';
 		$cdn_payload = [
 			'is_active' => true,
 			'label'     => 'Upgrade Sale Now',
