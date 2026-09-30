@@ -12,6 +12,12 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+<<<<<<< HEAD
+=======
+use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+>>>>>>> ac18b652ec (Fix: Return MCP element settings in the shape write tools accept [ED-25707] (#37519))
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -211,6 +217,12 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$dropped_paths = Dropped_Plain_Keys_Finder::find( $value, $resolved_value, $canonical );
+
+			if ( ! empty( $dropped_paths ) ) {
+				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
+			}
+
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
@@ -220,6 +232,119 @@ class Element_Config_Applier {
 		];
 	}
 
+<<<<<<< HEAD
+=======
+	private function apply_resolved_v4_settings(
+		array &$node_settings,
+		array $schema,
+		string $config_id,
+		string $element_type,
+		array $resolved,
+		array $cleared,
+		Warnings_Bag $warnings
+	): void {
+		foreach ( $resolved as $key => $value ) {
+			$trial = array_merge( $node_settings, [ $key => $value ] );
+			$validation_error = $this->validate_settings( $trial, $schema );
+
+			if ( $validation_error ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" failed validation and was skipped: %s See elementor://widgets/schema/%s.',
+						$key,
+						$element_type,
+						$validation_error,
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			$stored = $node_settings[ $key ] ?? null;
+
+			if (
+				$this->is_object_prop_value( $stored )
+				&& $this->is_object_prop_value( $value )
+				&& $stored['$$type'] === $value['$$type']
+			) {
+				$stored_sub_values = array_filter( $stored['value'], fn( $sub_value ) => null !== $sub_value );
+				$dropped_sub_keys = array_keys( array_diff_key( $stored_sub_values, $value['value'] ) );
+
+				if ( ! empty( $dropped_sub_keys ) ) {
+					$this->warn_sub_keys_dropped( $dropped_sub_keys, $key, $element_type, $config_id, $warnings );
+				}
+			}
+
+			$node_settings[ $key ] = $value;
+		}
+
+		foreach ( $cleared as $cleared_key ) {
+			if ( ! array_key_exists( $cleared_key, $node_settings ) ) {
+				continue;
+			}
+
+			$trial = $node_settings;
+			unset( $trial[ $cleared_key ] );
+			$validation_error = $this->validate_settings( $trial, $schema );
+
+			if ( $validation_error ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" could not be cleared: %s See elementor://widgets/schema/%s.',
+						$cleared_key,
+						$element_type,
+						$validation_error,
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			unset( $node_settings[ $cleared_key ] );
+		}
+	}
+
+	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$warnings->add(
+			'prop_keys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was saved without "%s": each is either not a field of the prop or has a value that could not be resolved. Use the shape from elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_paths ),
+				$element_type
+			),
+			$config_id
+		);
+	}
+
+	private function warn_sub_keys_dropped( array $dropped_sub_keys, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$warnings->add(
+			'prop_subkeys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was replaced as a whole, dropping its stored "%s". Send the full value (as returned by elementor/get-page-structure) to keep them. See elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_sub_keys ),
+				$element_type
+			),
+			$config_id
+		);
+	}
+
+	private function is_object_prop_value( $value ): bool {
+		return is_array( $value )
+			&& isset( $value['$$type'] )
+			&& is_array( $value['value'] ?? null )
+			&& ! empty( $value['value'] )
+			&& ! wp_is_numeric_array( $value['value'] );
+	}
+
+>>>>>>> ac18b652ec (Fix: Return MCP element settings in the shape write tools accept [ED-25707] (#37519))
 	private function merge_with_clears( array $existing, array $incoming ): array {
 		$merged = $existing;
 		foreach ( $incoming as $key => $value ) {
