@@ -39,7 +39,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -75,7 +75,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each node\'s settings and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
+						'description' => 'If true, includes each node\'s settings (plain shape, writable as-is) and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
 					],
 				],
 			]
@@ -178,8 +178,8 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
 		$skeleton['styles'] = $this->normalize_styles( Local_Style_Serializer::serialize( $node['styles'] ?? [] ) );
 
-		$resolved_settings = is_array( $skeleton['settings'] ) ? $skeleton['settings'] : [];
-		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings, $is_document_root );
+		$rendered_settings = $this->resolve_rendered_settings( $props_schema, $raw_settings );
+		$this->populate_default_styles( $skeleton, $node, $config, $rendered_settings, $is_document_root );
 	}
 
 	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {
@@ -187,26 +187,41 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return (object) [];
 		}
 
-		$schema = array_intersect_key( $props_schema, $raw_settings );
-		$serialized = [];
+		[ $serialized, $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
+
+		if ( ! empty( $static_schema ) ) {
+			$serialized += Render_Props_Resolver::for_plain()->resolve( $static_schema, $raw_settings );
+		}
+
+		return ! empty( $serialized ) ? $serialized : (object) [];
+	}
+
+	private function resolve_rendered_settings( array $props_schema, $raw_settings ): array {
+		if ( ! is_array( $raw_settings ) ) {
+			return [];
+		}
+
+		[ , $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
+
+		return empty( $static_schema ) ? [] : Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
+	}
+
+	private function split_dynamic_settings( array $props_schema, array $raw_settings ): array {
+		$dynamic_settings = [];
 		$static_schema = [];
 
-		foreach ( $schema as $key => $prop_type ) {
+		foreach ( array_intersect_key( $props_schema, $raw_settings ) as $key => $prop_type ) {
 			$dynamic = Dynamic_Tag_Llm_Resolver::try_serialize( $raw_settings[ $key ] );
 
 			if ( null !== $dynamic ) {
-				$serialized[ $key ] = $dynamic;
+				$dynamic_settings[ $key ] = $dynamic;
 				continue;
 			}
 
 			$static_schema[ $key ] = $prop_type;
 		}
 
-		if ( ! empty( $static_schema ) ) {
-			$serialized += Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
-		}
-
-		return ! empty( $serialized ) ? $serialized : (object) [];
+		return [ $dynamic_settings, $static_schema ];
 	}
 
 	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings, bool $is_document_root ): void {
