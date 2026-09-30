@@ -212,7 +212,7 @@ class Conversion_Banner {
 	}
 
 	private function get_banner_config(): array {
-		$assets_data = $this->get_cdn_banner_data();
+		$assets_data = $this->get_banner_assets_data();
 
 		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['title'] ) && ! empty( $assets_data['cta_url'] ) ) {
 			return [
@@ -249,7 +249,7 @@ class Conversion_Banner {
 		];
 	}
 
-	private function get_cdn_banner_data(): array {
+	private function get_banner_assets_data(): array {
 		$api = new EditorAssetsAPI( [
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::CDN_BANNER_TRANSIENT_KEY,
 			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/conversion-banner.json',

@@ -28,7 +28,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		$assets_data = self::get_side_menu_cdn_data();
+		$assets_data = self::get_side_menu_assets_data();
 
 		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['label'] ) ) {
 			$upgrade_text = esc_html( $assets_data['label'] );
@@ -48,7 +48,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public static function get_url() {
-		$assets_data = self::get_side_menu_cdn_data();
+		$assets_data = self::get_side_menu_assets_data();
 
 		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
 			$url = $assets_data['url'];
@@ -66,7 +66,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 		die;
 	}
 
-	private static function get_side_menu_cdn_data(): array {
+	private static function get_side_menu_assets_data(): array {
 		$api = new EditorAssetsAPI( [
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::CDN_SIDE_MENU_TRANSIENT_KEY,
 			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/side-menu.json',
