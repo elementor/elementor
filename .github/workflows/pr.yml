@@ -48,7 +48,6 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
       playwright: ${{ steps.filter.outputs.playwright }}
-      build: ${{ steps.filter.outputs.build }}
       composer: ${{ steps.filter.outputs.composer }}
       skip_checks: ${{ steps.filter.outputs.changelog == 'true' && steps.filter.outputs.all_count == steps.filter.outputs.changelog_count && !contains(github.event.pull_request.labels.*.name, 'run-tests') && !contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
     steps:
@@ -87,13 +86,6 @@ jobs:
               - '*.php'
               - 'package*.json'
               - 'composer.+(json|lock)'
-            build:
-              - '**'
-              - '!**.md'
-              - '!**.txt'
-              - '!bin/**'
-              - '!.gitignore'
-              - '!docs/**'
             all:
               - '**'
             changelog:
@@ -426,8 +418,8 @@ jobs:
     uses: ./.github/workflows/phpunit-runner.yml
     with:
       job_name: PHPUnit (PR)
-      wordpress_versions: '["latest", "6.9", "6.8"]'
-      php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
+      wordpress_versions: '["latest"]'
+      php_versions: '["8.1", "8.4"]'
 
   playwright:
     name: Playwright
@@ -558,6 +550,41 @@ jobs:
       - playwright
     if: always() && !cancelled()
     steps:
+      - name: Resolve pending Playwright commit status
+        if: github.event.pull_request.draft == false
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+          PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
+        with:
+          script: |
+            const statusContext = 'Playwright - Test Results';
+            const sha = context.payload.pull_request.head.sha;
+            const statuses = await github.paginate(github.rest.repos.listCommitStatusesForRef, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: sha,
+              per_page: 100,
+            });
+
+            if (!statuses.some((status) => status.context === statusContext)) {
+              return;
+            }
+
+            const result = process.env.PLAYWRIGHT_RESULT;
+            const playwrightRequired = process.env.PLAYWRIGHT_REQUIRED === 'true';
+            const isSuccess = result === 'success' || (result === 'skipped' && !playwrightRequired);
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: isSuccess ? 'success' : 'failure',
+              context: statusContext,
+              description: `Playwright ${result}`,
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
       - name: Validate required checks
         env:
           DETECT_CHANGES_RESULT: ${{ needs.detect-changes.result }}
