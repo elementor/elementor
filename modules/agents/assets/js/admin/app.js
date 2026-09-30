@@ -5,7 +5,7 @@ import {
 } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-import { TabbedScreen } from './components/tabbed-screen';
+import { ModulesScreen } from './components/modules-screen';
 import { WelcomeScreen } from './components/welcome-screen';
 
 export const App = ( { isRTL, isExperimentActive } ) => {
@@ -13,7 +13,7 @@ export const App = ( { isRTL, isExperimentActive } ) => {
 		<DirectionProvider rtl={ isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme="light" palette="argon-beta">
-					{ isExperimentActive ? <TabbedScreen /> : <WelcomeScreen /> }
+					{ isExperimentActive ? <ModulesScreen /> : <WelcomeScreen /> }
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
