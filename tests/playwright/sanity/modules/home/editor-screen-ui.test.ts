@@ -28,6 +28,7 @@ test.describe( 'Editor screen UI tests', () => {
 		await context.close();
 	} );
 
+
 	test( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'free' );
