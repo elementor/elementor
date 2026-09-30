@@ -212,22 +212,22 @@ class Conversion_Banner {
 	}
 
 	private function get_banner_config(): array {
-		$cdn_data = $this->get_cdn_banner_data();
+		$assets_data = $this->get_cdn_banner_data();
 
-		if ( ! empty( $cdn_data['is_active'] ) && ! empty( $cdn_data['title'] ) && ! empty( $cdn_data['cta_url'] ) ) {
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['title'] ) && ! empty( $assets_data['cta_url'] ) ) {
 			return [
-				'title'   => $cdn_data['title'] ?? '',
-				'text'    => $cdn_data['text'] ?? '',
+				'title'   => $assets_data['title'] ?? '',
+				'text'    => $assets_data['text'] ?? '',
 				'buttons' => [
 					[
-						'text'   => $cdn_data['cta_text'] ?? '',
-						'link'   => $cdn_data['cta_url'] ?? '',
+						'text'   => $assets_data['cta_text'] ?? '',
+						'link'   => $assets_data['cta_url'] ?? '',
 						'target' => '_blank',
 					],
 				],
 				'image' => [
-					'src' => $cdn_data['image_url'] ?? '',
-					'alt' => $cdn_data['image_alt'] ?? '',
+					'src' => $assets_data['image_url'] ?? '',
+					'alt' => $assets_data['image_alt'] ?? '',
 				],
 			];
 		}

@@ -28,10 +28,10 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		$cdn_data = self::get_cdn_data();
+		$assets_data = self::get_cdn_data();
 
-		if ( ! empty( $cdn_data['is_active'] ) && ! empty( $cdn_data['label'] ) ) {
-			$upgrade_text = esc_html( $cdn_data['label'] );
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['label'] ) ) {
+			$upgrade_text = esc_html( $assets_data['label'] );
 		} else {
 			$upgrade_text = esc_html__( 'Upgrade', 'elementor' );
 		}
@@ -48,10 +48,10 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public static function get_url() {
-		$cdn_data = self::get_cdn_data();
+		$assets_data = self::get_cdn_data();
 
-		if ( ! empty( $cdn_data['is_active'] ) && ! empty( $cdn_data['url'] ) ) {
-			$url = $cdn_data['url'];
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
+			$url = $assets_data['url'];
 		} else {
 			$url = self::URL;
 		}
