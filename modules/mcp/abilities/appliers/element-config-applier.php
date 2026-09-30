@@ -233,7 +233,12 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$this->warn_if_plain_keys_dropped( $value, $resolved_value, $canonical, $element_type, $config_id, $warnings );
+			$dropped_paths = Dropped_Plain_Keys_Finder::find( $value, $resolved_value, $canonical );
+
+			if ( ! empty( $dropped_paths ) ) {
+				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
+			}
+
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
@@ -271,7 +276,21 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$this->warn_if_sub_keys_dropped( $node_settings[ $key ] ?? null, $value, $key, $element_type, $config_id, $warnings );
+			$stored = $node_settings[ $key ] ?? null;
+
+			if (
+				$this->is_object_prop_value( $stored )
+				&& $this->is_object_prop_value( $value )
+				&& $stored['$$type'] === $value['$$type']
+			) {
+				$stored_sub_values = array_filter( $stored['value'], fn( $sub_value ) => null !== $sub_value );
+				$dropped_sub_keys = array_keys( array_diff_key( $stored_sub_values, $value['value'] ) );
+
+				if ( ! empty( $dropped_sub_keys ) ) {
+					$this->warn_sub_keys_dropped( $dropped_sub_keys, $key, $element_type, $config_id, $warnings );
+				}
+			}
+
 			$node_settings[ $key ] = $value;
 		}
 
@@ -303,13 +322,7 @@ class Element_Config_Applier {
 		}
 	}
 
-	private function warn_if_plain_keys_dropped( $plain_value, $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
-		$dropped_paths = Dropped_Plain_Keys_Finder::find( $plain_value, $resolved_value, $key );
-
-		if ( empty( $dropped_paths ) ) {
-			return;
-		}
-
+	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
 		$warnings->add(
 			'prop_keys_dropped',
 			sprintf(
@@ -323,18 +336,7 @@ class Element_Config_Applier {
 		);
 	}
 
-	private function warn_if_sub_keys_dropped( $stored, $incoming, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
-		if ( ! $this->is_object_prop_value( $stored ) || ! $this->is_object_prop_value( $incoming ) || $stored['$$type'] !== $incoming['$$type'] ) {
-			return;
-		}
-
-		$stored_sub_values = array_filter( $stored['value'], fn( $sub_value ) => null !== $sub_value );
-		$dropped_sub_keys = array_keys( array_diff_key( $stored_sub_values, $incoming['value'] ) );
-
-		if ( empty( $dropped_sub_keys ) ) {
-			return;
-		}
-
+	private function warn_sub_keys_dropped( array $dropped_sub_keys, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
 		$warnings->add(
 			'prop_subkeys_dropped',
 			sprintf(
