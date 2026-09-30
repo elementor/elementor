@@ -36,6 +36,8 @@ class Div_Block extends Atomic_Element_Base {
 		return 'e-div-block';
 	}
 
+	public static $widget_description = 'A block container (div) for grouping and wrapping content, with default styles (see llm_guidance.default_styles).';
+
 	public static function get_element_type(): string {
 		return 'e-div-block';
 	}
