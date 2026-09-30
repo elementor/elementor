@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Request_Path;
@@ -19,6 +20,7 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -36,6 +38,14 @@ class Module extends BaseModule {
 
 	/** Default HTTP max-age for the served response (5 minutes). */
 	const DEFAULT_CACHE_MAX_AGE = 300;
+
+	const PAGE_ID = 'elementor-agents-ready';
+
+	const MOUNT_ID = 'e-agents-ready';
+
+	const SCRIPT_HANDLE = 'e-agents-ready-app';
+
+	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
 	/**
 	 * Option name that records whether, at the time the feature was first
@@ -125,6 +135,9 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
+
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
 	}
 
 	// -------------------------------------------------------------------------
@@ -132,10 +145,43 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @param Kit $kit
+	 * Register Agents settings on the active kit.
+	 *
+	 * @param Kit $kit Active kit document.
 	 */
 	public function register_kit_tabs( $kit ) {
 		$kit->register_tab( 'settings-agents', Settings_Agents::class );
+	}
+
+	// -------------------------------------------------------------------------
+	// Editor One menu
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Register the Agent Ready item in Editor One.
+	 *
+	 * @param Menu_Data_Provider $menu_data_provider Editor One menu registry.
+	 */
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
+	}
+
+	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
+		if ( ! empty( $hooks[ self::PAGE_ID ] ) ) {
+			add_action( "admin_print_scripts-{$hooks[ self::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+		}
+	}
+
+	public function enqueue_assets(): void {
+		wp_enqueue_script(
+			self::SCRIPT_HANDLE,
+			$this->get_js_assets_url( 'agents-ready' ),
+			[ 'react', 'react-dom', 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -482,6 +528,8 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Send a plain-text HTTP response with caching headers, honoring conditional requests.
+	 *
 	 * @param string $content Plain-text payload.
 	 */
 	private function serve_plain_text( string $content ): void {
@@ -516,6 +564,8 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Register this module's editor packages with the packages list.
+	 *
 	 * @param array $packages Package slugs to register.
 	 * @return array
 	 */
