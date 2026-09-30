@@ -76,6 +76,7 @@ jobs:
     with:
       product: core
       actions_ref: main
+      slack_channel: C0C0TEZN45C
       test_name: ${{ inputs.test_name }}
       source_run_id: ${{ github.event.workflow_run.id || inputs.source_run_id }}
       base_ref: ${{ inputs.base_ref }}
