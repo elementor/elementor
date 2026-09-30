@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 4.3.3 - 2026-09-30 =
+
+* Tweak: Improved access control when MCP is disabled
+* Fix: MCP build errors do not clearly identify invalid or unclosed elements
+* Fix: Certain MCP style values are not applied correctly in Atomic elements
+
 = 4.3.2 - 2026-09-24 =
 
 * Tweak: Improved the Editor onboarding flow for a smoother getting-started experience.
