@@ -359,8 +359,6 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
-<<<<<<< HEAD
-=======
 = 4.3.3 - 2026-09-30 =
 
 * Tweak: Improved access control when MCP is disabled
@@ -380,7 +378,6 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 * Fix: Top bar translations are not displayed correctly on Elementor admin pages
 
->>>>>>> 2c6949d06f (Internal: Changelog for v4.3.3 (#37520))
 = 4.3.0 - 2026-09-22 =
 
 * New: Introducing Elementor MCP - enabling compatible AI tools to build pages, edit elements, and work with your design system
