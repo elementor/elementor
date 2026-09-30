@@ -151,7 +151,9 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @param Kit $kit
+	 * Register Agents settings on the active kit.
+	 *
+	 * @param Kit $kit Active kit document.
 	 */
 	public function register_kit_tabs( $kit ) {
 		$kit->register_tab( 'settings-agents', Settings_Agents::class );
@@ -161,6 +163,11 @@ class Module extends BaseModule {
 	// Editor One menu
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Register the Agent Ready item in Editor One.
+	 *
+	 * @param Menu_Data_Provider $menu_data_provider Editor One menu registry.
+	 */
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
 		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
 	}
@@ -547,6 +554,8 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Send a plain-text HTTP response with caching headers, honoring conditional requests.
+	 *
 	 * @param string $content Plain-text payload.
 	 */
 	private function serve_plain_text( string $content ): void {
@@ -581,6 +590,8 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Register this module's editor packages with the packages list.
+	 *
 	 * @param array $packages Package slugs to register.
 	 * @return array
 	 */
