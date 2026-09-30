@@ -115,7 +115,7 @@ class Test_Conversion_Banner extends TestCase {
 			'image_alt' => 'Sale',
 		];
 
-		$GLOBALS['_test_options'][ Conversion_Banner::CDN_BANNER_TRANSIENT_KEY ] = [
+		$GLOBALS['_test_options'][ Conversion_Banner::BANNER_TRANSIENT_KEY ] = [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		];
@@ -139,7 +139,7 @@ class Test_Conversion_Banner extends TestCase {
 			'text'      => 'Some text.',
 		];
 
-		$GLOBALS['_test_options'][ Conversion_Banner::CDN_BANNER_TRANSIENT_KEY ] = [
+		$GLOBALS['_test_options'][ Conversion_Banner::BANNER_TRANSIENT_KEY ] = [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		];

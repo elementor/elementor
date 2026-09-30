@@ -109,7 +109,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 			'url'       => 'https://go.elementor.com/test/',
 		];
 
-		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::CDN_SIDE_MENU_TRANSIENT_KEY ] = [
+		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY ] = [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		];
@@ -131,7 +131,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 			'url'       => 'https://go.elementor.com/test/',
 		];
 
-		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::CDN_SIDE_MENU_TRANSIENT_KEY ] = [
+		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY ] = [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		];
@@ -164,7 +164,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 			'url'       => $cdn_url,
 		];
 
-		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::CDN_SIDE_MENU_TRANSIENT_KEY ] = [
+		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY ] = [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		];

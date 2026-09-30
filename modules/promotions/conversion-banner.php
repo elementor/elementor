@@ -22,7 +22,7 @@ class Conversion_Banner {
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
-	const CDN_BANNER_TRANSIENT_KEY = 'elementor_conversion_banner_cdn_data';
+	const BANNER_TRANSIENT_KEY = 'elementor_conversion_banner_cdn_data';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
@@ -251,7 +251,7 @@ class Conversion_Banner {
 
 	private function get_banner_assets_data(): array {
 		$api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::CDN_BANNER_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::BANNER_TRANSIENT_KEY,
 			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/conversion-banner.json',
 			EditorAssetsAPI::ASSETS_DATA_KEY           => 'conversion-banner',
 		] );

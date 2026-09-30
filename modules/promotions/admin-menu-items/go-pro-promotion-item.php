@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	const URL = 'https://go.elementor.com/go-pro-upgrade-one-wp-menu/';
-	const CDN_SIDE_MENU_TRANSIENT_KEY = 'elementor_side_menu_cdn_data';
+	const SIDE_MENU_TRANSIENT_KEY = 'elementor_side_menu_cdn_data';
 
 	public function get_name() {
 		return 'admin_menu_promo';
@@ -68,7 +68,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	private static function get_side_menu_assets_data(): array {
 		$api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::CDN_SIDE_MENU_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::SIDE_MENU_TRANSIENT_KEY,
 			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/side-menu.json',
 			EditorAssetsAPI::ASSETS_DATA_KEY           => 'side-menu',
 		] );
