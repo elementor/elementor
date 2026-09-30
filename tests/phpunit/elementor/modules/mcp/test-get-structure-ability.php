@@ -864,6 +864,173 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'p', $settings['tag'] );
 	}
 
+	public function test_execute__returns_link_in_writable_shape_and_keeps_rendered_tag() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'button1', 'e-button', [
+				'link' => [
+					'$$type' => 'link',
+					'value' => [
+						'destination' => [ '$$type' => 'url', 'value' => 'https://example.com' ],
+						'isTargetBlank' => [ '$$type' => 'boolean', 'value' => true ],
+						'tag' => [ '$$type' => 'string', 'value' => 'a' ],
+					],
+				],
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'button1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				'destination' => 'https://example.com',
+				'isTargetBlank' => true,
+				'tag' => 'a',
+			],
+			$node['settings']['link']
+		);
+		$this->assertSame( 'a', $node['tag'] );
+	}
+
+	public function test_execute__returns_image_in_writable_shape() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'image1', 'e-image', [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'url' => [ '$$type' => 'url', 'value' => 'https://example.com/photo.jpg' ],
+								'alt' => [ '$$type' => 'string', 'value' => 'A photo' ],
+							],
+						],
+						'size' => [ '$$type' => 'string', 'value' => 'full' ],
+					],
+				],
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'image1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				'src' => [
+					'id' => null,
+					'url' => 'https://example.com/photo.jpg',
+					'alt' => 'A photo',
+				],
+				'size' => 'full',
+			],
+			$node['settings']['image']
+		);
+	}
+
+	public function test_execute__returns_svg_source_instead_of_inline_markup() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'svg1', 'e-svg', [
+				'svg' => [
+					'$$type' => 'svg-src',
+					'value' => [
+						'url' => [ '$$type' => 'url', 'value' => 'https://example.com/icon.svg' ],
+					],
+				],
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'svg1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				'id' => null,
+				'url' => 'https://example.com/icon.svg',
+			],
+			$node['settings']['svg']
+		);
+	}
+
+	public function test_execute__returns_attributes_as_key_value_list() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [
+				'attributes' => [
+					'$$type' => 'attributes',
+					'value' => [
+						[
+							'$$type' => 'key-value',
+							'value' => [
+								'key' => [ '$$type' => 'string', 'value' => 'data-section' ],
+								'value' => [ '$$type' => 'string', 'value' => 'hero' ],
+							],
+						],
+					],
+				],
+			], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				[
+					'key' => 'data-section',
+					'value' => 'hero',
+				],
+			],
+			$node['settings']['attributes']
+		);
+	}
+
+	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {
+		$element = [
+			'id' => $id,
+			'elType' => $el_type,
+			'settings' => $settings,
+			'styles' => [],
+			'elements' => [],
+		];
+
+		if ( 'widget' === $el_type ) {
+			$element['widgetType'] = $widget_type;
+		}
+
+		return $element;
+	}
+
+	private function read_node_with_content( int $post_id, string $element_id ): array {
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => $element_id,
+			'include_content' => true,
+		] );
+
+		$this->assertIsArray( $result );
+
+		return $result['elements'][0];
+	}
+
 	private function given_dynamic_tags( array $tags ): void {
 		$module = Dynamic_Tags_Module::instance();
 
