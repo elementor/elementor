@@ -1022,10 +1022,8 @@ class Utils {
 	}
 
 	public static function is_sale_time(): bool {
-		// TODO: confirm BFCM 2026 exact dates with marketing before release.
-		// Black Friday 2026 = Nov 27. Cyber Monday 2026 = Nov 30.
-		$sale_start_time = gmmktime( 10, 0, 0, 11, 21, 2026 ); // TODO: confirm start date
-		$sale_end_time = gmmktime( 3, 59, 0, 12, 2, 2026 );    // TODO: confirm end date
+		$sale_start_time = gmmktime( 10, 0, 0, 6, 15, 2026 );
+		$sale_end_time = gmmktime( 3, 59, 0, 6, 17, 2026 );
 
 		$now_time = gmdate( 'U' );
 

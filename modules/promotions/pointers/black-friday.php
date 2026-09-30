@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Black_Friday {
-	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-bf-26/'; // TODO: confirm URL with marketing
+	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-bf-25/';
 	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
-	const SEEN_TODAY_KEY = '_elementor_2026_black_friday';
-	const DISMISS_ACTION_KEY = 'black_friday_pointer_2026';
+	const SEEN_TODAY_KEY = '_elementor_2025_black_friday';
+	const DISMISS_ACTION_KEY = 'black_friday_pointer_2025';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'enqueue_notice' ] );
@@ -80,10 +80,8 @@ class Black_Friday {
 	}
 
 	private static function is_campaign_time() {
-		// TODO: confirm BFCM 2026 exact dates with marketing before release.
-		// Black Friday 2026 = Nov 27. Cyber Monday 2026 = Nov 30.
-		$start = new \DateTime( '2026-11-21 10:00:00', new \DateTimeZone( 'UTC' ) ); // TODO: confirm start date
-		$end = new \DateTime( '2026-12-02 03:59:00', new \DateTimeZone( 'UTC' ) );   // TODO: confirm end date
+		$start = new \DateTime( '2025-11-25 12:00:00', new \DateTimeZone( 'UTC' ) );
+		$end = new \DateTime( '2025-12-03 03:59:00', new \DateTimeZone( 'UTC' ) );
 		$now = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
 
 		return $now >= $start && $now <= $end;
