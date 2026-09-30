@@ -77,6 +77,7 @@ export const BASE_ENTRIES = {
 	'design-system-sync': 'modules/design-system-sync/assets/js/design-system-sync-handler.js',
 	'assets-manager': 'modules/assets-manager/assets/js/assets-manager.js',
 	'mcp-analytics-registrar': 'modules/mcp/assets/dev/js/mcp-analytics-registrar.js',
+	'agents-ready': 'modules/agents/assets/js/admin/agents-ready.js',
 };
 
 /**
