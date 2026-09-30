@@ -377,7 +377,7 @@ class Admin extends App {
 			$go_pro_text = esc_html__( 'Sale! Upgrade Now', 'elementor' );
 		}
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', $go_pro_text );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins-bf-26/', $go_pro_text ); // TODO: confirm URL with marketing
 
 		return $links;
 	}
