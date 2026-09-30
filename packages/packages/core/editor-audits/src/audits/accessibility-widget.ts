@@ -16,7 +16,11 @@ export const audit: Audit = {
 			return { status: 'skipped', reason: __( 'Page is not published.', 'elementor' ) };
 		}
 
-		if ( ctx.renderedHtml && hasAccessibilityWidgetScript( ctx.renderedHtml ) ) {
+		if ( ! ctx.renderedHtml ) {
+			return { status: 'skipped', reason: __( 'Could not fetch the published page.', 'elementor' ) };
+		}
+
+		if ( hasAccessibilityWidgetScript( ctx.renderedHtml ) ) {
 			return { status: 'pass' };
 		}
 

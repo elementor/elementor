@@ -63,13 +63,13 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails when the published page could not be fetched', async () => {
+	it( 'skips with a fetch-failure reason when the published page could not be fetched', async () => {
 		// Act.
 		const result = await audit.evaluate(
 			makeContext( { renderedHtml: null, pageContext: { ally_plugin_active: true } } )
 		);
 
 		// Assert.
-		expect( result.status ).toBe( 'fail' );
+		expect( result ).toEqual( { status: 'skipped', reason: 'Could not fetch the published page.' } );
 	} );
 } );

@@ -23,6 +23,7 @@ describe( audit.id, () => {
 			expect( result.violations[ 0 ].externalUrl ).toBe(
 				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility'
 			);
+			expect( result.violations[ 0 ].ctaLabel ).toBeUndefined();
 		}
 	} );
 

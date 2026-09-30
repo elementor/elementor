@@ -29,7 +29,7 @@ export const audit: Audit = {
 					externalUrl: isReady
 						? ctx.pageContext.ally_accessibility_statement_url
 						: ctx.pageContext.ally_plugin_url,
-					ctaLabel: __( 'Create', 'elementor' ),
+					ctaLabel: isReady ? __( 'Create', 'elementor' ) : undefined,
 					secondaryCtaLabel: __( 'Learn more', 'elementor' ),
 					secondaryCtaUrl: 'https://go.elementor.com/acc-plg-learn-more',
 				},
