@@ -17,8 +17,9 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
-4. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
-5. Use returned element IDs for subsequent configuration changes
+4. Read the schema via `elementor/get-widget-schema` for every element type you will use, including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
+5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+6. Use returned element IDs for subsequent configuration changes
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
@@ -42,6 +43,7 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 - Containers: "e-div-block", "e-grid", "e-flexbox"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
+- Multiple root elements are allowed. Every opening tag needs exactly one matching closing tag (or use a self-closing tag); a stray or missing closing tag fails the whole call with `invalid_xml`, even on `dry_run`
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
 ## LAYOUTS
