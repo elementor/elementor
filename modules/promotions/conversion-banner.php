@@ -252,7 +252,7 @@ class Conversion_Banner {
 	private function get_cdn_banner_data(): array {
 		$api = new EditorAssetsAPI( [
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::CDN_BANNER_TRANSIENT_KEY,
-			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/promotions/v1/conversion-banner.json',
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/conversion-banner.json',
 			EditorAssetsAPI::ASSETS_DATA_KEY           => 'conversion-banner',
 		] );
 
