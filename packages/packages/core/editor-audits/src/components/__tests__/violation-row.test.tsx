@@ -54,4 +54,34 @@ describe( 'ViolationRow', () => {
 
 		expect( link ).toHaveAttribute( 'href', `#angie-prompt=${ encodeURIComponent( expectedPrompt ) }` );
 	} );
+
+	it( 'renders both the primary and secondary CTA buttons when provided', () => {
+		const violation: AuditViolation = {
+			auditId: AUDIT.id,
+			label: 'No accessibility statement has been created for this site.',
+			externalUrl: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#accessibilityStatement',
+			ctaLabel: 'Create',
+			secondaryCtaLabel: 'Learn more',
+			secondaryCtaUrl: 'https://go.elementor.com/acc-plg-learn-more',
+		};
+
+		renderViolation( violation );
+
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Learn more' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render a secondary CTA button when only the primary CTA is provided', () => {
+		const violation: AuditViolation = {
+			auditId: AUDIT.id,
+			label: 'No privacy policy page is set.',
+			externalUrl: 'https://example.com/wp-admin/options-privacy.php',
+			ctaLabel: 'Create',
+		};
+
+		renderViolation( violation );
+
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Learn more' } ) ).not.toBeInTheDocument();
+	} );
 } );
