@@ -130,11 +130,11 @@ class Connect_Page_Renderer {
 		$assets_data = self::get_connect_page_assets_data();
 		$use_cdn     = ! empty( $assets_data['is_active'] );
 
-		$title    = $use_cdn && ! empty( $assets_data['title'] )    ? $assets_data['title']    : __( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' );
-		$text     = $use_cdn && ! empty( $assets_data['text'] )     ? $assets_data['text']     : __( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' );
+		$title    = $use_cdn && ! empty( $assets_data['title'] ) ? $assets_data['title'] : __( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' );
+		$text     = $use_cdn && ! empty( $assets_data['text'] ) ? $assets_data['text'] : __( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' );
 		$cta_text = $use_cdn && ! empty( $assets_data['cta_text'] ) ? $assets_data['cta_text'] : __( 'Upgrade Now', 'elementor' );
-		$cta_url  = $use_cdn && ! empty( $assets_data['cta_url'] )  ? $assets_data['cta_url']  : 'https://go.elementor.com/go-pro-connect-account-screen';
-		$img_url  = $use_cdn && isset( $assets_data['image_url'] )  ? $assets_data['image_url'] : 'https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg';
+		$cta_url  = $use_cdn && ! empty( $assets_data['cta_url'] ) ? $assets_data['cta_url'] : 'https://go.elementor.com/go-pro-connect-account-screen';
+		$img_url  = $use_cdn && isset( $assets_data['image_url'] ) ? $assets_data['image_url'] : 'https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg';
 		$img_alt  = $use_cdn && ! empty( $assets_data['image_alt'] ) ? $assets_data['image_alt'] : __( 'Pro Upgrade', 'elementor' );
 		?>
 		<div class="<?php echo esc_attr( $this->get_license_box_classes( 'elementor-pro-connect-promotion' ) ); ?>">

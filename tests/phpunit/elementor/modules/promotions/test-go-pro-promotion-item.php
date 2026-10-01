@@ -88,6 +88,33 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 
 	protected function setUp(): void {
 		$GLOBALS['_test_options'] = [];
+
+		// When running in the WP integration test context: clear the real DB option
+		// and block outbound HTTP so EditorAssetsAPI cannot reach the live CDN.
+		if ( function_exists( 'delete_option' ) ) {
+			delete_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
+		}
+		if ( function_exists( 'add_filter' ) ) {
+			add_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1, 3 );
+		}
+	}
+
+	protected function tearDown(): void {
+		if ( function_exists( 'remove_filter' ) ) {
+			remove_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1 );
+		}
+		if ( function_exists( 'delete_option' ) ) {
+			delete_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
+		}
+	}
+
+	/**
+	 * Used as the pre_http_request filter callback to block all HTTP in tests.
+	 *
+	 * @return \WP_Error
+	 */
+	public function block_http_request( $preempt, $r, $url ) {
+		return new \WP_Error( 'tests_blocked', 'HTTP blocked in tests.' );
 	}
 
 	public function test_get_label__returns_default_when_cdn_inactive() {
@@ -109,10 +136,10 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 			'url'       => 'https://go.elementor.com/test/',
 		];
 
-		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY ] = [
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
-		];
+		] );
 
 		$item = new Go_Pro_Promotion_Item();
 
@@ -131,10 +158,10 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 			'url'       => 'https://go.elementor.com/test/',
 		];
 
-		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY ] = [
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
-		];
+		] );
 
 		$item = new Go_Pro_Promotion_Item();
 
@@ -164,10 +191,10 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 			'url'       => $cdn_url,
 		];
 
-		$GLOBALS['_test_options'][ Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY ] = [
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
-		];
+		] );
 
 		// Act
 		$url = Go_Pro_Promotion_Item::get_url();

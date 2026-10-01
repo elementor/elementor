@@ -82,6 +82,33 @@ class Test_Conversion_Banner extends TestCase {
 
 	protected function setUp(): void {
 		$GLOBALS['_test_options'] = [];
+
+		// When running in the WP integration test context: clear the real DB option
+		// and block outbound HTTP so EditorAssetsAPI cannot reach the live CDN.
+		if ( function_exists( 'delete_option' ) ) {
+			delete_option( Conversion_Banner::BANNER_TRANSIENT_KEY );
+		}
+		if ( function_exists( 'add_filter' ) ) {
+			add_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1, 3 );
+		}
+	}
+
+	protected function tearDown(): void {
+		if ( function_exists( 'remove_filter' ) ) {
+			remove_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1 );
+		}
+		if ( function_exists( 'delete_option' ) ) {
+			delete_option( Conversion_Banner::BANNER_TRANSIENT_KEY );
+		}
+	}
+
+	/**
+	 * Used as the pre_http_request filter callback to block all HTTP in tests.
+	 *
+	 * @return \WP_Error
+	 */
+	public function block_http_request( $preempt, $r, $url ) {
+		return new \WP_Error( 'tests_blocked', 'HTTP blocked in tests.' );
 	}
 
 	public function test_get_banner_config__uses_elementor_branded_copy() {
@@ -115,10 +142,10 @@ class Test_Conversion_Banner extends TestCase {
 			'image_alt' => 'Sale',
 		];
 
-		$GLOBALS['_test_options'][ Conversion_Banner::BANNER_TRANSIENT_KEY ] = [
+		update_option( Conversion_Banner::BANNER_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
-		];
+		] );
 
 		$banner = new Conversion_Banner();
 		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
@@ -139,10 +166,10 @@ class Test_Conversion_Banner extends TestCase {
 			'text'      => 'Some text.',
 		];
 
-		$GLOBALS['_test_options'][ Conversion_Banner::BANNER_TRANSIENT_KEY ] = [
+		update_option( Conversion_Banner::BANNER_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
-		];
+		] );
 
 		$banner = new Conversion_Banner();
 		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
