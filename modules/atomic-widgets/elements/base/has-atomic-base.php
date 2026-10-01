@@ -21,6 +21,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\DataFlow\Handlers_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -273,6 +274,12 @@ trait Has_Atomic_Base {
 			$this->transform_interactions_for_save( $data['interactions'] ?? [] )
 		);
 
+		$this->set_data_field_for_save(
+			$data,
+			Handlers_Parser::DATA_KEY,
+			Handlers_Parser::sanitize( $data[ Handlers_Parser::DATA_KEY ] ?? [] )
+		);
+
 		return $data;
 	}
 
@@ -317,6 +324,11 @@ trait Has_Atomic_Base {
 
 		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
+		$this->set_data_field_for_save(
+			$raw_data,
+			Handlers_Parser::DATA_KEY,
+			Handlers_Parser::sanitize( $this->get_data( Handlers_Parser::DATA_KEY ) )
+		);
 		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
