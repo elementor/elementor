@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\DataFlow\Handlers_Parser;
+use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -136,6 +138,21 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'type' => 'array',
 									'items' => [ 'type' => 'object' ],
 									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
+								],
+								'handlers' => [
+									'type' => 'array',
+									'items' => [
+										'type' => 'object',
+										'required' => [ 'event', 'code' ],
+										'properties' => [
+											'event' => [
+												'type' => 'string',
+												'enum' => Handlers_Parser::ALLOWED_EVENTS,
+											],
+											'code' => [ 'type' => 'string' ],
+										],
+									],
+									'description' => 'update only (requires the e_data_flow experiment): plain JavaScript handlers. Replaces existing handlers; send [] to clear. "init" runs once on page load, other events are DOM events on the element. The code receives element, event, state, getState(), setState(key, valueOrUpdater) and subscribe(key, listener). Page state is set via elementor/update-page-settings (e_data_flow_static_state JSON string, e_data_flow_sources). Bind state in any text with {{state.key}}.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -427,10 +444,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$has_classes = array_key_exists( 'classes', $operation );
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
+		$handlers = $operation['handlers'] ?? null;
 
-		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions;
+		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions || null !== $handlers;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, interactions, or handlers.', 'elementor' ) );
 		}
 
 		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
@@ -488,6 +506,18 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 				$interactions_events = $this->build_interactions_events( (string) $element_type, $previous_items, $interactions );
 			}
+		}
+
+		if ( null !== $handlers ) {
+			if ( ! Data_Flow_Module::is_active() ) {
+				return new \WP_Error(
+					'elementor_invalid_handlers',
+					__( 'Data Flow experiment is not active. Handlers were not applied.', 'elementor' ),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
+			}
+
+			$index[ $element_id ][ Handlers_Parser::DATA_KEY ] = Handlers_Parser::sanitize( $handlers );
 		}
 
 		if ( ! empty( $settings ) ) {
