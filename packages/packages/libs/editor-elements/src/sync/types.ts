@@ -149,6 +149,13 @@ export type ElementInteractions = {
 	items: InteractionItemPropValue[];
 };
 
+export type ElementHandlerEvent = 'init' | 'click' | 'input' | 'change' | 'submit' | 'mouseenter' | 'mouseleave';
+
+export type ElementHandler = {
+	event: ElementHandlerEvent;
+	code: string;
+};
+
 export type V1ElementModelProps = {
 	title?: string;
 	isLocked?: boolean;
@@ -161,6 +168,7 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
+	handlers?: ElementHandler[];
 	isGlobal?: boolean;
 	skipDefaultChildren?: boolean;
 	hydrateDefaultChildren?: boolean;
