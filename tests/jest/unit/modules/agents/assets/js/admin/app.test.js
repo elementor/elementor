@@ -131,20 +131,22 @@ describe( 'Agents Ready App', () => {
 		expect( screen.getByText( '2/4' ) ).toBeTruthy();
 	} );
 
-	it( 'replaces the inline description chip with the panel when a module is expanded', () => {
+	it( 'replaces the inline description with the panel when a module is expanded', () => {
 		// Arrange
 		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
 
-		// Assert - all three modules start collapsed with an inline description chip
-		expect( screen.getAllByTestId( 'chip' ) ).toHaveLength( 3 );
+		// Assert - all three modules start collapsed with an inline description
 		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
+		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
+		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
 
 		// Act
 		fireEvent.click( screen.getByText( 'LLMs.txt' ) );
 
 		// Assert
-		expect( screen.getAllByTestId( 'chip' ) ).toHaveLength( 2 );
 		expect( screen.queryByText( 'Guide AI agents through your site' ) ).toBeNull();
+		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
+		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
 	} );
 

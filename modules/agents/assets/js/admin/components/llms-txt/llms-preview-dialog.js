@@ -56,7 +56,7 @@ export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => 
 						InputProps={ { sx: { fontFamily: 'monospace' } } }
 					/>
 				) : (
-					<Box component="pre" sx={ { m: 0, typography: 'body2', fontFamily: 'monospace', whiteSpace: 'pre-wrap' } }>
+					<Box component="pre" m={ 0 } typography="body2" fontFamily="monospace" whiteSpace="pre-wrap">
 						{ content }
 					</Box>
 				) }

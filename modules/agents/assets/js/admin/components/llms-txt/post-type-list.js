@@ -21,11 +21,11 @@ const PostTypeRow = ( { name, label, count, isIncluded, isDisabled, onToggle } )
 
 	return (
 		<Stack direction="row" alignItems="center" py={ 1 }>
-			<Stack direction="row" alignItems="center" spacing={ 1 } sx={ { width: 180 } }>
+			<Stack direction="row" alignItems="center" spacing={ 1 } width={ 180 }>
 				<Icon fontSize="small" color="action" />
 				<Typography variant="body2">{ label }</Typography>
 			</Stack>
-			<Typography variant="body2" color="text.secondary" sx={ { width: 120, flexGrow: 1 } }>
+			<Typography variant="body2" color="text.secondary" width={ 120 } flexGrow={ 1 }>
 				{ /* Translators: %d: Number of published items. */ }
 				{ sprintf( __( '%d published', 'elementor' ), count ) }
 			</Typography>

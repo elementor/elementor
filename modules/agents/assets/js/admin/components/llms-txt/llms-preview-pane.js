@@ -11,15 +11,9 @@ import { LLMS_FILE_NAME } from '../../constants';
 
 const PREVIEW_WIDTH = 500;
 
-const contentSx = {
-	m: 0,
-	flexGrow: 1,
-	minHeight: 0,
-	overflow: 'auto',
+const scrollbarSx = {
 	scrollbarWidth: 'none',
 	'&::-webkit-scrollbar': { display: 'none' },
-	typography: 'caption',
-	fontFamily: 'monospace',
 };
 
 export const LlmsPreviewPane = ( { content, hasActions, onEdit, onExpand } ) => {
@@ -27,11 +21,14 @@ export const LlmsPreviewPane = ( { content, hasActions, onEdit, onExpand } ) => 
 		<Stack
 			spacing={ 2 }
 			p={ 4 }
+			width={ PREVIEW_WIDTH }
+			flexShrink={ 0 }
+			bgcolor="grey.50"
 			// Size containment keeps a long file from stretching the panel; the pane takes the row height and the file scrolls inside it.
-			sx={ { width: PREVIEW_WIDTH, flexShrink: 0, bgcolor: 'grey.50', contain: 'size' } }
+			sx={ { contain: 'size' } }
 		>
 			<Stack direction="row" alignItems="center" justifyContent="space-between">
-				<Typography variant="subtitle2" component="code" sx={ { fontFamily: 'monospace' } }>
+				<Typography variant="subtitle2" component="code" fontFamily="monospace">
 					{ LLMS_FILE_NAME }
 				</Typography>
 				{ hasActions && (
@@ -49,7 +46,16 @@ export const LlmsPreviewPane = ( { content, hasActions, onEdit, onExpand } ) => 
 					</Stack>
 				) }
 			</Stack>
-			<Box component="pre" sx={ contentSx }>
+			<Box
+				component="pre"
+				m={ 0 }
+				flexGrow={ 1 }
+				minHeight={ 0 }
+				overflow="auto"
+				typography="caption"
+				fontFamily="monospace"
+				sx={ scrollbarSx }
+			>
 				{ content }
 			</Box>
 		</Stack>
