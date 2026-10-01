@@ -66,7 +66,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 		die;
 	}
 
-	private static function get_side_menu_assets_data(): array {
+	public static function get_side_menu_assets_data(): array {
 		$api = new EditorAssetsAPI( [
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::SIDE_MENU_TRANSIENT_KEY,
 			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/side-menu.json',
