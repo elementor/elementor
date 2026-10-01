@@ -44,7 +44,7 @@ import {
 } from '../allowed-tags';
 import { DEFAULT_STYLES_PROVIDER_KEY } from '../default-styles-provider';
 import { saveDefaultStyles } from '../save-default-styles';
-import { selectDataRevision, selectIsDirty, slice } from '../store';
+import { selectIsDirty, slice } from '../store';
 import { TagChip } from './tag-chip';
 
 const { useMenuItems } = controlActionsMenu;
@@ -98,17 +98,11 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 	const breakpoint = useActiveBreakpoint();
 	const menuItems = useMenuItems().default;
 	const controlReplacements = getControlReplacements();
-	const dataRevision = useSelector( selectDataRevision );
 	const isDirty = useSelector( selectIsDirty );
 	const { mutateAsync: save, isPending: isSaving } = useSave();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const { userCan } = useUserStylesCapability();
 	const canEdit = userCan( DEFAULT_STYLES_PROVIDER_KEY ).updateProps;
-
-	const styleProviderKey = useMemo(
-		() => `${ selectedTag }:${ breakpoint }:${ activeStyleState ?? '' }:${ dataRevision }`,
-		[ activeStyleState, breakpoint, dataRevision, selectedTag ]
-	);
 
 	const setSelectedTag = ( tag: AllowedHtmlTag ) => {
 		setSelectedTagState( tag );
@@ -210,7 +204,6 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 								>
 									<ClassesPropProvider prop={ SHIM_CLASSES_PROP }>
 										<StyleProvider
-											key={ styleProviderKey }
 											meta={ {
 												breakpoint,
 												state: activeStyleState,

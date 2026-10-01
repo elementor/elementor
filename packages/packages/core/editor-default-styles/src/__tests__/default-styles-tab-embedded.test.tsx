@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect } from 'react';
 import { renderWithStore } from 'test-utils';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
@@ -9,8 +8,6 @@ import { act, screen } from '@testing-library/react';
 
 import { DefaultStylesTabEmbedded } from '../components/default-styles-tab-embedded';
 import { slice } from '../store';
-
-const styleProviderMountSpy = jest.fn();
 
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	...jest.requireActual( '@elementor/editor-styles-repository' ),
@@ -36,13 +33,7 @@ jest.mock( '@elementor/editor-editing-panel', () => ( {
 	ElementProvider: ( { children }: React.PropsWithChildren ) => children,
 	SectionsList: ( { children }: React.PropsWithChildren ) => children,
 	StyleInheritanceProvider: ( { children }: React.PropsWithChildren ) => children,
-	StyleProvider: ( { children }: React.PropsWithChildren ) => {
-		useEffect( () => {
-			styleProviderMountSpy();
-		}, [] );
-
-		return children;
-	},
+	StyleProvider: ( { children }: React.PropsWithChildren ) => children,
 	StyleSections: () => null,
 	StyleTabSlot: () => null,
 } ) );
@@ -83,7 +74,6 @@ describe( 'DefaultStylesTabEmbedded', () => {
 	} );
 
 	beforeEach( () => {
-		styleProviderMountSpy.mockClear();
 		jest.mocked( useUserStylesCapability ).mockReturnValue( {
 			userCan: () => ( {
 				create: true,
@@ -216,73 +206,6 @@ describe( 'DefaultStylesTabEmbedded', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeDisabled();
-	} );
-
-	it( 'should remount the style provider when the selected tag style is reloaded', () => {
-		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
-				<DefaultStylesTabEmbedded onRequestClose={ jest.fn() } />
-			</QueryClientProvider>,
-			store
-		);
-
-		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 1 );
-
-		act( () => {
-			store.dispatch(
-				slice.actions.load( {
-					data: {
-						h1: {
-							id: 'h1',
-							label: 'h1',
-							type: 'class',
-							variants: [
-								{
-									meta: { breakpoint: 'desktop', state: null },
-									props: {
-										color: {
-											$$type: 'color',
-											value: 'blue',
-										},
-									},
-									custom_css: null,
-								},
-							],
-						},
-					},
-				} )
-			);
-		} );
-
-		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	it( 'should not remount the style provider during local style edits', () => {
-		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
-				<DefaultStylesTabEmbedded onRequestClose={ jest.fn() } />
-			</QueryClientProvider>,
-			store
-		);
-
-		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 1 );
-
-		act( () => {
-			store.dispatch(
-				slice.actions.updateProps( {
-					id: 'h1',
-					meta: { breakpoint: 'desktop', state: null },
-					props: {
-						color: {
-							$$type: 'color',
-							value: 'red',
-						},
-					},
-				} )
-			);
-		} );
-
-		expect( styleProviderMountSpy ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should hide the save changes button when the user cannot edit default styles', () => {

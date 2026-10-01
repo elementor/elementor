@@ -5,7 +5,7 @@ import {
 	__registerSlice as registerSlice,
 } from '@elementor/store';
 
-import { selectData, selectDataRevision, selectInitialData, selectIsDirty, slice } from '../store';
+import { selectData, selectInitialData, selectIsDirty, slice } from '../store';
 
 const DESKTOP_META = { breakpoint: 'desktop', state: null } as const;
 
@@ -129,28 +129,5 @@ describe( 'defaultStyles store', () => {
 		expect( selectInitialData( getState() ) ).toBe( initialAfterCommit );
 		expect( initialAfterCommit.h1?.variants[ 0 ]?.props ).toEqual( { display: 'block' } );
 		expect( selectData( getState() ).h1?.variants[ 0 ]?.props ).toEqual( { display: 'flex' } );
-	} );
-
-	it( 'should increment dataRevision only on load', () => {
-		expect( selectDataRevision( getState() ) ).toBe( 0 );
-
-		dispatch(
-			slice.actions.load( {
-				data: {},
-			} )
-		);
-
-		expect( selectDataRevision( getState() ) ).toBe( 1 );
-
-		updateDisplayProp( 'h1' );
-		expect( selectDataRevision( getState() ) ).toBe( 1 );
-
-		dispatch(
-			slice.actions.load( {
-				data: {},
-			} )
-		);
-
-		expect( selectDataRevision( getState() ) ).toBe( 2 );
 	} );
 } );
