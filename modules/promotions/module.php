@@ -86,11 +86,9 @@ class Module extends Base_Module {
 			new Birthday();
 		}
 
-		add_action( 'init', function() {
-			if ( Black_Friday::should_display_notice() ) {
-				new Black_Friday();
-			}
-		}, 20 );
+		if ( Black_Friday::should_display_notice() ) {
+			new Black_Friday();
+		}
 
 		if ( ! Utils::has_pro() ) {
 			Conversion_Banner::register_cache_invalidation_hooks();
