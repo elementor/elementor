@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\ProInstall;
 
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -126,21 +127,41 @@ class Connect_Page_Renderer {
 	}
 
 	private function render_promotion_box() {
+		$assets_data = self::get_connect_page_assets_data();
+		$use_cdn     = ! empty( $assets_data['is_active'] );
+
+		$title    = $use_cdn && ! empty( $assets_data['title'] )    ? $assets_data['title']    : __( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' );
+		$text     = $use_cdn && ! empty( $assets_data['text'] )     ? $assets_data['text']     : __( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' );
+		$cta_text = $use_cdn && ! empty( $assets_data['cta_text'] ) ? $assets_data['cta_text'] : __( 'Upgrade Now', 'elementor' );
+		$cta_url  = $use_cdn && ! empty( $assets_data['cta_url'] )  ? $assets_data['cta_url']  : 'https://go.elementor.com/go-pro-connect-account-screen';
+		$img_url  = $use_cdn && isset( $assets_data['image_url'] )  ? $assets_data['image_url'] : 'https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg';
+		$img_alt  = $use_cdn && ! empty( $assets_data['image_alt'] ) ? $assets_data['image_alt'] : __( 'Pro Upgrade', 'elementor' );
 		?>
 		<div class="<?php echo esc_attr( $this->get_license_box_classes( 'elementor-pro-connect-promotion' ) ); ?>">
 			<div>
-				<h2><?php echo esc_html__( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' ); ?></p>
+				<h2><?php echo esc_html( $title ); ?></h2>
+				<p><?php echo esc_html( $text ); ?></p>
 				<div class="elementor-box-action">
-					<a class="button button-upgrade" href="https://go.elementor.com/go-pro-connect-account-screen" target="_blank">
+					<a class="button button-upgrade" href="<?php echo esc_url( $cta_url ); ?>" target="_blank">
 						<i class="eicon-upgrade-crown" aria-hidden="true"></i>
-						<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
+						<?php echo esc_html( $cta_text ); ?>
 					</a>
 				</div>
 			</div>
-			<img src="https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg" alt="<?php echo esc_attr__( 'Pro Upgrade', 'elementor' ); ?>" />
+			<?php if ( $img_url ) : ?>
+			<img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $img_alt ); ?>" />
+			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	public static function get_connect_page_assets_data(): array {
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => 'elementor_connect_page_assets_data',
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/connect-page.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'connect-page',
+		] );
+		return $api->get_assets_data();
 	}
 
 	private function render_install_or_activate_box() {
