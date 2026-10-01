@@ -13,48 +13,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_Site_Settings_Gate extends TestCase {
 
-	private const ABILITIES_REGISTRATION_GATE = "if ( ! self::should_register_wordpress_abilities() )";
-
-	public function test_module_exposes_should_register_wordpress_abilities(): void {
+	public function test_module_always_registers_wordpress_abilities_when_active(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
 		);
 
 		$this->assertStringContainsString(
-			'public static function should_register_wordpress_abilities(): bool',
+			"add_action( 'wp_abilities_api_init', [ \$this, 'register_abilities' ] );",
 			$source
 		);
-		$this->assertStringContainsString(
-			'McpSettingsController::is_enabled()',
+		$this->assertStringNotContainsString(
+			'should_register_wordpress_abilities',
 			$source
 		);
 	}
 
-	public function test_module_skips_ability_hooks_when_site_mcp_disabled(): void {
+	public function test_module_gates_shared_mcp_registry_on_site_setting(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
 		);
 
 		$this->assertStringContainsString(
-			"if ( ! self::should_register_wordpress_abilities() ) {\n\t\t\treturn;\n\t\t}",
+			'public static function is_site_mcp_exposure_enabled(): bool',
 			$source
 		);
-		$this->assertLessThan(
-			strpos( $source, "add_action( 'wp_abilities_api_init'" ),
-			strpos( $source, self::ABILITIES_REGISTRATION_GATE )
+		$this->assertStringContainsString(
+			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'init', [ \$this, 'register_shared_registry_slugs' ], 5 );\n\t\t}",
+			$source
+		);
+		$this->assertStringContainsString(
+			"if ( ! self::is_site_mcp_exposure_enabled() ) {\n\t\t\treturn;\n\t\t}",
+			$source
 		);
 	}
 
-	public function test_editor_one_menu_registers_even_when_site_mcp_disabled(): void {
+	public function test_abstract_ability_sets_mcp_public_from_site_setting(): void {
 		$source = file_get_contents(
-			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
+			dirname( __DIR__, 5 ) . '/modules/mcp/abilities/abstract-ability.php'
 		);
 
-		$menu_hook_pos = strpos( $source, "add_action( 'elementor/editor-one/menu/register'" );
-		$abilities_gate_pos = strpos( $source, self::ABILITIES_REGISTRATION_GATE );
-
-		$this->assertNotFalse( $menu_hook_pos );
-		$this->assertNotFalse( $abilities_gate_pos );
-		$this->assertLessThan( $abilities_gate_pos, $menu_hook_pos );
+		$this->assertStringContainsString(
+			"\$mcp['public'] = McpSettingsController::is_enabled();",
+			$source
+		);
 	}
 }
