@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Black_Friday {
 	const POINTER_TRANSIENT_KEY = 'elementor_pointer_assets_data';
-	const ELEMENTOR_POINTER_ID  = 'toplevel_page_elementor';
+	const ELEMENTOR_POINTER_ID  = 'toplevel_page_elementor-home';
 	const SEEN_TODAY_KEY        = '_elementor_black_friday';
 	const DISMISS_ACTION_KEY    = 'black_friday_pointer';
 
