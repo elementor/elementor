@@ -409,17 +409,11 @@ class Component_Instance_Applier {
 				continue;
 			}
 
-			$override_value = Library_Image_Alt_Stripper::strip( $resolved_override['value'] );
-
-			if ( $override_value !== $resolved_override['value'] ) {
-				$this->warnings->add( Library_Image_Alt_Stripper::WARNING_CODE, Library_Image_Alt_Stripper::warning_message( $override_key ), $this->active_config_id );
-			}
-
 			$overrides[] = [
 				'$$type' => Override_Prop_Type::get_key(),
 				'value'  => [
 					'override_key'   => $override_key,
-					'override_value' => $override_value,
+					'override_value' => $resolved_override['value'],
 					'schema_source'  => [
 						'type' => Component_Override_Parser::get_override_type(),
 						'id' => $component_id,

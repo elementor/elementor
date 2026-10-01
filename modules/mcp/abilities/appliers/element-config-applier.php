@@ -239,13 +239,7 @@ class Element_Config_Applier {
 				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
 			}
 
-			$stripped_value = Library_Image_Alt_Stripper::strip( $resolved_value );
-
-			if ( $stripped_value !== $resolved_value ) {
-				$warnings->add( Library_Image_Alt_Stripper::WARNING_CODE, Library_Image_Alt_Stripper::warning_message( $canonical ), $config_id );
-			}
-
-			$resolved[ $canonical ] = $stripped_value;
+			$resolved[ $canonical ] = $resolved_value;
 		}
 
 		return [
