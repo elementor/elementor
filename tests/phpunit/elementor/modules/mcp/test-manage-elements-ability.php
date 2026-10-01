@@ -1273,10 +1273,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertOkOperation( $result, 0 );
-		$details = $result['results'][0]['warning_details'] ?? [];
-		$this->assertSame( [ 'prop_subkeys_dropped' ], array_column( $details, 'code' ) );
-		$this->assertStringContainsString( 'destination', $details[0]['message'] );
-		$this->assertStringContainsString( 'tag', $details[0]['message'] );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$warning_text = implode( ' ', $warnings );
+		$this->assertStringContainsString( 'destination', $warning_text );
+		$this->assertStringContainsString( 'tag', $warning_text );
 		$this->assertArrayNotHasKey( 'destination', $this->find_element_in_document( $post_id, $button_id )['settings']['link']['value'] );
 	}
 
@@ -1337,9 +1338,9 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertOkOperation( $result, 0 );
-		$details = $result['results'][0]['warning_details'] ?? [];
-		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $details, 'code' ) );
-		$this->assertStringContainsString( '"link.href", "link.target"', $details[0]['message'] );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$this->assertStringContainsString( '"link.href", "link.target"', implode( ' ', $warnings ) );
 	}
 
 	public function test_build_composition__unknown_object_prop_keys_return_warning() {
@@ -1365,8 +1366,9 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result );
-		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $result['warning_details'] ?? [], 'code' ) );
-		$this->assertStringContainsString( '"link.href"', $result['warning_details'][0]['message'] );
+		$warnings = $result['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$this->assertStringContainsString( '"link.href"', implode( ' ', $warnings ) );
 	}
 
 	public function test_update__nested_object_prop_keys_return_warning_with_path() {
@@ -1396,9 +1398,9 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertOkOperation( $result, 0 );
-		$details = $result['results'][0]['warning_details'] ?? [];
-		$this->assertContains( 'prop_keys_dropped', array_column( $details, 'code' ) );
-		$this->assertStringContainsString( '"image.src.caption"', implode( ' ', array_column( $details, 'message' ) ) );
+		$warnings = $result['results'][0]['warnings'] ?? [];
+		$this->assertNotEmpty( $warnings );
+		$this->assertStringContainsString( '"image.src.caption"', implode( ' ', $warnings ) );
 	}
 
 	private function given_linked_button_and_image( int $post_id ): array {
