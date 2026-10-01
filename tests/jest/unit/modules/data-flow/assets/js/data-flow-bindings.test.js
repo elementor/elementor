@@ -42,6 +42,20 @@ describe( 'bindTextNodes', () => {
 		expect( document.getElementById( 'static' ).textContent ).toBe( 'Static' );
 	} );
 
+	it( 'should render each text node against the store resolved for it', () => {
+		// Arrange
+		document.body.innerHTML = '<p id="a">{{state.count}}</p><p id="b">{{state.count}}</p>';
+		const stores = { a: createStore( { count: 1 } ), b: createStore( { count: 2 } ) };
+
+		// Act
+		bindTextNodes( document.body, ( node ) => stores[ node.parentElement.id ] );
+		stores.b.setState( 'count', 20 );
+
+		// Assert
+		expect( document.getElementById( 'a' ).textContent ).toBe( '1' );
+		expect( document.getElementById( 'b' ).textContent ).toBe( '20' );
+	} );
+
 	it( 'should keep server rendered text nodes in sync with the state', () => {
 		// Arrange
 		document.body.innerHTML = '<p id="a">Count: 0</p><p id="b">Count: 0</p><p id="c">Count: 0</p>';

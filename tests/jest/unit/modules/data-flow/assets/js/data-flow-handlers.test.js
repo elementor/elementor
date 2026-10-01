@@ -51,6 +51,22 @@ describe( 'attachHandlers', () => {
 		expect( document.querySelector( 'button' ).dataset.count ).toBe( '3' );
 	} );
 
+	it( 'should run each element against the store resolved for it', () => {
+		// Arrange
+		document.body.innerHTML = '<button id="a" data-interaction-id="btn1">A</button><button id="b" data-interaction-id="btn1">B</button>';
+		const stores = { a: createStore( { label: 'first' } ), b: createStore( { label: 'second' } ) };
+
+		// Act
+		attachHandlers( [ {
+			elementId: 'btn1',
+			handlers: [ { event: 'init', code: 'element.textContent = state.label;' } ],
+		} ], ( element ) => stores[ element.id ], document );
+
+		// Assert
+		expect( document.getElementById( 'a' ).textContent ).toBe( 'first' );
+		expect( document.getElementById( 'b' ).textContent ).toBe( 'second' );
+	} );
+
 	it( 'should isolate errors thrown by a handler', () => {
 		// Arrange
 		const store = createStore( { count: 0 } );

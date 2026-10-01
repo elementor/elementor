@@ -1,12 +1,12 @@
-import { ANY_KEY } from './data-flow-store';
+import { ANY_KEY, toStoreResolver } from './data-flow-store';
 
 const BINDING_PATTERN = /\{\{\s*state\.([\w.]+)\s*\}\}/g;
 
-function hasBinding( text ) {
+export function hasBinding( text ) {
 	return new RegExp( BINDING_PATTERN.source ).test( text );
 }
 
-function getByPath( source, path ) {
+export function getByPath( source, path ) {
 	return path.split( '.' ).reduce( ( value, key ) => value?.[ key ], source );
 }
 
@@ -69,16 +69,37 @@ function collectBoundTextNodes( root, serverBindings ) {
 	return bindings;
 }
 
-export function bindTextNodes( root, store, serverBindings = [] ) {
+function groupBindingsByStore( bindings, resolveStore ) {
+	const groups = new Map();
+
+	bindings.forEach( ( binding ) => {
+		const store = resolveStore( binding.node );
+
+		if ( ! groups.has( store ) ) {
+			groups.set( store, [] );
+		}
+
+		groups.get( store ).push( binding );
+	} );
+
+	return groups;
+}
+
+export function bindTextNodes( root, storeOrResolver, serverBindings = [] ) {
 	const bindings = collectBoundTextNodes( root, serverBindings );
+	const groups = groupBindingsByStore( bindings, toStoreResolver( storeOrResolver ) );
 
-	const render = () => {
-		bindings.forEach( ( { node, template } ) => {
-			node.textContent = renderTemplate( template, store.getState() );
-		} );
-	};
+	const unsubscribers = [ ...groups ].map( ( [ store, storeBindings ] ) => {
+		const render = () => {
+			storeBindings.forEach( ( { node, template } ) => {
+				node.textContent = renderTemplate( template, store.getState() );
+			} );
+		};
 
-	render();
+		render();
 
-	return store.subscribe( ANY_KEY, render );
+		return store.subscribe( ANY_KEY, render );
+	} );
+
+	return () => unsubscribers.forEach( ( unsubscribe ) => unsubscribe() );
 }

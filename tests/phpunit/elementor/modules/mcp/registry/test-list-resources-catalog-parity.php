@@ -105,7 +105,7 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 			[
 				'uri' => Data_Flow_Guide_Ability::URI,
 				'name' => 'Data Flow Guide',
-				'description' => 'How to make a page stateful: page state, {{state.key}} text bindings, and element handlers for build-composition and manage-elements.',
+				'description' => 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, and element handlers for build-composition, manage-component and manage-elements.',
 				'mimeType' => 'text/markdown',
 			],
 		];

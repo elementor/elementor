@@ -1,8 +1,11 @@
 import { bindTextNodes } from './data-flow-bindings';
 import { attachHandlers } from './data-flow-handlers';
-import { createStore } from './data-flow-store';
+import { createScopedStore, createStore } from './data-flow-store';
 
 export const DATA_SCRIPT_ID = 'elementor-data-flow-data';
+export const SCOPE_ATTRIBUTE = 'data-e-scope';
+
+const ELEMENT_NODE = 1;
 
 function readData( doc ) {
 	const dataScript = doc.getElementById( DATA_SCRIPT_ID );
@@ -27,10 +30,27 @@ export function initDataFlow( doc ) {
 		return null;
 	}
 
-	const store = createStore( data.state || {} );
+	const pageStore = createStore( data.state || {} );
+	const scopeStores = createScopeStores( data.scopes || [], pageStore );
+	const resolveStore = ( node ) => {
+		const element = ELEMENT_NODE === node.nodeType ? node : node.parentElement;
+		const scopeElement = element?.closest( `[${ SCOPE_ATTRIBUTE }]` );
 
-	bindTextNodes( doc.body, store, data.bindings || [] );
-	attachHandlers( data.handlers || [], store, doc );
+		return scopeStores.get( scopeElement?.getAttribute( SCOPE_ATTRIBUTE ) ) ?? pageStore;
+	};
 
-	return store;
+	bindTextNodes( doc.body, resolveStore, data.bindings || [] );
+	attachHandlers( data.handlers || [], resolveStore, doc );
+
+	return pageStore;
+}
+
+function createScopeStores( scopes, pageStore ) {
+	const stores = new Map();
+
+	scopes.forEach( ( { id, parentId, state } ) => {
+		stores.set( id, createScopedStore( state || {}, stores.get( parentId ) ?? pageStore ) );
+	} );
+
+	return stores;
 }

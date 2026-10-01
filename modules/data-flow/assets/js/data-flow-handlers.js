@@ -1,3 +1,5 @@
+import { toStoreResolver } from './data-flow-store';
+
 export const INIT_EVENT = 'init';
 
 const ELEMENT_SELECTOR_ATTRIBUTE = 'data-interaction-id';
@@ -53,10 +55,12 @@ function attachElementHandlers( element, elementId, handlers, store ) {
 	} );
 }
 
-export function attachHandlers( elementsHandlers, store, root ) {
+export function attachHandlers( elementsHandlers, storeOrResolver, root ) {
+	const resolveStore = toStoreResolver( storeOrResolver );
+
 	elementsHandlers.forEach( ( { elementId, handlers } ) => {
 		root.querySelectorAll( `[${ ELEMENT_SELECTOR_ATTRIBUTE }="${ elementId }"]` ).forEach( ( element ) => {
-			attachElementHandlers( element, elementId, handlers, store );
+			attachElementHandlers( element, elementId, handlers, resolveStore( element ) );
 		} );
 	} );
 }

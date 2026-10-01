@@ -197,7 +197,7 @@ BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overfl
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
 # HANDLERS (STATEFUL PAGES)
-Only when the `e_data_flow` experiment is active. Attach JavaScript handlers that read and write page state via the `handlers` parameter — a record mapping `configuration-id` → array of `{ event, code }`. Bind state in any text setting with `{{state.key}}`. Read [elementor://data-flow/guide] first for page state setup, events, the handler API, and a worked example.
+Only when the `e_data_flow` experiment is active. Give a container its own state with `state_params` (configuration-id → `[{ key, label, type, default }]`), set a component instance's params with `state` (configuration-id → `{ key: value }`), and attach JavaScript handlers with `handlers` (configuration-id → `[{ event, code }]`). Handlers read and write the nearest scope that defines a key, falling back to page state. Bind state in any text setting with `{{state.key}}`. Read [elementor://data-flow/guide] first for scopes, component params, the handler API, and a worked example.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
@@ -219,6 +219,8 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
 - **handlers**: configuration-id → array of `{ event, code }` handlers (see HANDLERS section; read [elementor://data-flow/guide])
+- **state_params**: container configuration-id → array of `{ key, label, type, default }` scope params (see HANDLERS section)
+- **state**: `<e-component>` configuration-id → `{ paramKey: value }` instance values for the component params (see HANDLERS section)
 - **parent_id**: ID of the parent container (omit to insert at document root)
 - **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting

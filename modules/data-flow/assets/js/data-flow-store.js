@@ -10,6 +10,10 @@ function toPartialState( keyOrPartial, value, state ) {
 	return { [ keyOrPartial ]: nextValue };
 }
 
+export function toStoreResolver( storeOrResolver ) {
+	return 'function' === typeof storeOrResolver ? storeOrResolver : () => storeOrResolver;
+}
+
 export function createStore( initialState = {} ) {
 	let state = { ...initialState };
 	const listeners = new Map();
@@ -44,5 +48,49 @@ export function createStore( initialState = {} ) {
 		return () => listeners.get( key ).delete( listener );
 	};
 
-	return { getState, setState, subscribe };
+	const provides = ( key ) => Object.prototype.hasOwnProperty.call( state, key );
+
+	return { getState, setState, subscribe, provides };
+}
+
+export function createScopedStore( initialState = {}, parentStore ) {
+	const ownStore = createStore( initialState );
+
+	const getState = () => ( { ...parentStore.getState(), ...ownStore.getState() } );
+
+	const provides = ( key ) => ownStore.provides( key ) || parentStore.provides( key );
+
+	const getOwnerStore = ( key ) => {
+		if ( ownStore.provides( key ) || ! parentStore.provides( key ) ) {
+			return ownStore;
+		}
+
+		return parentStore;
+	};
+
+	const setState = ( keyOrPartial, value ) => {
+		const partial = toPartialState( keyOrPartial, value, getState() );
+
+		Object.entries( partial ).forEach( ( [ key, nextValue ] ) => {
+			getOwnerStore( key ).setState( key, nextValue );
+		} );
+	};
+
+	const subscribe = ( key, listener ) => {
+		const notify = ( changedValue, changedKey ) => listener( changedValue, changedKey, getState() );
+
+		const unsubscribeOwn = ownStore.subscribe( key, notify );
+		const unsubscribeParent = parentStore.subscribe( key, ( changedValue, changedKey ) => {
+			if ( ! ownStore.provides( changedKey ) ) {
+				notify( changedValue, changedKey );
+			}
+		} );
+
+		return () => {
+			unsubscribeOwn();
+			unsubscribeParent();
+		};
+	};
+
+	return { getState, setState, subscribe, provides };
 }

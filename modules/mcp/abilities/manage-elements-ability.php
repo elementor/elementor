@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
+use Elementor\Modules\DataFlow\State_Params;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -21,6 +22,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\State_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -141,6 +143,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								],
 								'handlers' => Handlers_Applier::get_handlers_list_schema() + [
 									'description' => 'update only (requires the e_data_flow experiment): plain JavaScript handlers. Replaces existing handlers; send [] to clear. "init" runs once on page load, other events are DOM events on the element. The code receives element, event, state, getState(), setState(key, valueOrUpdater) and subscribe(key, listener). Page state is set via elementor/update-page-settings (e_data_flow_static_state JSON string, e_data_flow_sources). Bind state in any text with {{state.key}}. Read ' . Data_Flow_Guide_Ability::URI . ' for the full guide.',
+								],
+								'state_params' => State_Applier::get_state_params_schema() + [
+									'description' => 'update only (requires the e_data_flow experiment): container state params [{ key, label, type, default }]. Replaces existing params; send null or [] to remove the scope. Defaults may be "{{state.key}}" to seed from the enclosing scope. Read ' . Data_Flow_Guide_Ability::URI . '.',
+								],
+								'state' => State_Applier::get_state_values_schema() + [
+									'description' => 'update only (requires the e_data_flow experiment): <e-component> instance values { paramKey: value } for the component params. Replaces existing values; send null to reset to the defaults.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -433,10 +441,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
 		$handlers = $operation['handlers'] ?? null;
+		$has_state_params = array_key_exists( State_Params::DATA_KEY, $operation );
+		$has_state = array_key_exists( State_Params::VALUES_DATA_KEY, $operation );
 
-		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions || null !== $handlers;
+		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions || null !== $handlers || $has_state_params || $has_state;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, interactions, or handlers.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, interactions, handlers, state_params, or state.', 'elementor' ) );
 		}
 
 		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
@@ -529,6 +539,26 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					return $config_result['error'];
 				}
 				$warnings->merge( $config_result['warnings'] );
+			}
+		}
+
+		if ( $has_state_params || $has_state ) {
+			if ( ! Data_Flow_Module::is_active() ) {
+				return new \WP_Error(
+					'elementor_invalid_state',
+					__( 'Data Flow experiment is not active. state_params and state were not applied.', 'elementor' ),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
+			}
+
+			$state_applier = new State_Applier();
+
+			if ( $has_state_params ) {
+				$warnings->merge( $state_applier->apply_state_params( $index, [ $element_id => $operation[ State_Params::DATA_KEY ] ] ) );
+			}
+
+			if ( $has_state ) {
+				$warnings->merge( $state_applier->apply_state_values( $index, [ $element_id => $operation[ State_Params::VALUES_DATA_KEY ] ] ) );
 			}
 		}
 

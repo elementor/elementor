@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
 use Elementor\Modules\DataFlow\Handlers_Parser;
+use Elementor\Modules\DataFlow\State_Params;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
@@ -165,6 +166,18 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 		if ( ! empty( $handlers ) ) {
 			$skeleton[ Handlers_Parser::DATA_KEY ] = $handlers;
+		}
+
+		$state_params = State_Params::sanitize( $node[ State_Params::DATA_KEY ] ?? [] );
+
+		if ( ! empty( $state_params ) ) {
+			$skeleton[ State_Params::DATA_KEY ] = $state_params;
+		}
+
+		$state = State_Params::sanitize_values( $node[ State_Params::VALUES_DATA_KEY ] ?? [] );
+
+		if ( ! empty( $state ) ) {
+			$skeleton[ State_Params::VALUES_DATA_KEY ] = $state;
 		}
 
 		if ( V3_Node_Bridge::is_v3_node( $node ) ) {

@@ -4,6 +4,8 @@ namespace Elementor\Modules\DataFlow;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Element_Base;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,13 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_data_flow';
 	const HANDLE_FRONTEND = 'elementor-data-flow';
+	const HANDLE_EDITOR_PREVIEW = 'elementor-data-flow-editor-preview';
 	const SCRIPT_ID_DATA = 'elementor-data-flow-data';
+	const EDITOR_SETTINGS_KEY = 'dataFlow';
 
 	private array $collected_handlers = [];
 
 	private ?array $page_state = null;
 
 	private array $rendered_bindings = [];
+
+	private ?State_Scopes $scopes = null;
+
+	private array $scope_tags = [];
+
+	private array $component_params = [];
 
 	public function get_name() {
 		return 'data-flow';
@@ -54,9 +64,66 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register_controls', [ Page_State::class, 'register_controls' ] );
 		add_filter( 'elementor/document/save/data', [ $this, 'strip_handlers_for_untrusted_users' ] );
 		add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
-		add_filter( 'elementor/frontend/builder_content_data', [ $this, 'collect_document_handlers' ] );
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editor_settings' ] );
+		add_action( 'elementor/preview/enqueue_scripts', fn() => $this->enqueue_editor_preview_scripts() );
+		add_action( 'elementor/frontend/before_render', [ $this, 'enter_element' ] );
+		add_action( 'elementor/frontend/after_render', [ $this, 'leave_element' ] );
+		add_filter( 'elementor/widget/render_content', [ $this, 'render_widget_bindings' ] );
 		add_filter( 'elementor/frontend/the_content', [ $this, 'render_state_bindings' ] );
 		add_action( 'wp_footer', [ $this, 'print_data' ], 1 );
+	}
+
+	public function add_editor_settings( $settings ) {
+		$settings[ self::EDITOR_SETTINGS_KEY ] = [
+			'componentParams' => (object) Component_State_Params::get_all_params(),
+		];
+
+		return $settings;
+	}
+
+	public function enter_element( Element_Base $element ) {
+		if ( $this->is_editor_context() ) {
+			return;
+		}
+
+		$data = $element->get_data();
+
+		$this->collect_element_handlers( $element, $data );
+
+		$scope_tag = $this->get_scopes()->enter( $element->get_id(), $data, $this->get_component_params( $element ) );
+		$this->scope_tags[] = $scope_tag;
+
+		if ( null !== $scope_tag ) {
+			ob_start();
+		}
+	}
+
+	public function leave_element() {
+		if ( $this->is_editor_context() ) {
+			return;
+		}
+
+		$scope_tag = array_pop( $this->scope_tags );
+		$this->get_scopes()->leave();
+
+		if ( null === $scope_tag ) {
+			return;
+		}
+
+		// PHPCS - The element output was escaped when it was rendered; only the scope attribute is added, escaped.
+		echo State_Scopes::tag_root_element( ob_get_clean(), $scope_tag ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	public function render_widget_bindings( $content ) {
+		if ( $this->is_editor_context() || ! is_string( $content ) || ! State_Renderer::has_bindings( $content ) ) {
+			return $content;
+		}
+
+		$rendered = State_Renderer::render( $content, $this->get_scopes()->merged_state() );
+
+		$this->rendered_bindings = array_merge( $this->rendered_bindings, $rendered['bindings'] );
+
+		return $rendered['html'];
 	}
 
 	public function render_state_bindings( $content ) {
@@ -81,24 +148,15 @@ class Module extends BaseModule {
 		return $data;
 	}
 
-	public function collect_document_handlers( $elements_data ) {
-		if ( $this->is_editor_context() || ! is_array( $elements_data ) ) {
-			return $elements_data;
-		}
-
-		$this->collected_handlers = array_merge( $this->collected_handlers, Handlers_Parser::collect( $elements_data ) );
-
-		return $elements_data;
-	}
-
 	public function print_data() {
 		if ( $this->is_editor_context() ) {
 			return;
 		}
 
 		$state = $this->get_page_state();
+		$scopes = $this->get_scopes()->get_scopes();
 
-		if ( empty( $state ) && empty( $this->collected_handlers ) ) {
+		if ( empty( $state ) && empty( $this->collected_handlers ) && empty( $scopes ) ) {
 			return;
 		}
 
@@ -106,12 +164,54 @@ class Module extends BaseModule {
 
 		$json = wp_json_encode( [
 			'state' => (object) $state,
-			'handlers' => $this->collected_handlers,
+			'scopes' => array_map( fn( $scope ) => array_merge( $scope, [ 'state' => (object) $scope['state'] ] ), $scopes ),
+			'handlers' => array_values( $this->collected_handlers ),
 			'bindings' => $this->rendered_bindings,
 		], JSON_HEX_TAG | JSON_HEX_AMP );
 
 		// PHPCS - JSON is encoded with JSON_HEX_TAG so it can't break out of the script tag.
 		echo '<script type="application/json" id="' . esc_attr( self::SCRIPT_ID_DATA ) . '">' . $json . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	private function collect_element_handlers( Element_Base $element, array $data ): void {
+		$handlers = Handlers_Parser::sanitize( $data[ Handlers_Parser::DATA_KEY ] ?? [] );
+
+		if ( empty( $handlers ) ) {
+			return;
+		}
+
+		$interaction_id = $data['origin_id'] ?? $element->get_id();
+
+		$this->collected_handlers[ $interaction_id ] = [
+			'elementId' => $interaction_id,
+			'handlers' => $handlers,
+		];
+	}
+
+	private function get_scopes(): State_Scopes {
+		if ( null === $this->scopes ) {
+			$this->scopes = new State_Scopes( $this->get_page_state() );
+		}
+
+		return $this->scopes;
+	}
+
+	private function get_component_params( Element_Base $element ): ?array {
+		if ( Component_Instance_Prop_Type::WIDGET_TYPE !== $element->get_name() ) {
+			return null;
+		}
+
+		$component_id = Component_Instance_Prop_Type::extract_component_id( $element->get_settings() );
+
+		if ( null === $component_id ) {
+			return [];
+		}
+
+		if ( ! isset( $this->component_params[ $component_id ] ) ) {
+			$this->component_params[ $component_id ] = Component_State_Params::get( (int) $component_id, is_preview() )['params'];
+		}
+
+		return $this->component_params[ $component_id ];
 	}
 
 	private function get_page_state(): array {
@@ -144,6 +244,16 @@ class Module extends BaseModule {
 		wp_register_script(
 			self::HANDLE_FRONTEND,
 			$this->get_js_assets_url( 'data-flow' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	private function enqueue_editor_preview_scripts() {
+		wp_enqueue_script(
+			self::HANDLE_EDITOR_PREVIEW,
+			$this->get_js_assets_url( 'data-flow-editor-preview' ),
 			[],
 			ELEMENTOR_VERSION,
 			true

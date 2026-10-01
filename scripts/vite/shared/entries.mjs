@@ -47,6 +47,7 @@ export const BASE_ENTRIES = {
 	interactions: 'modules/interactions/assets/js/interactions.js',
 	'editor-interactions': 'modules/interactions/assets/js/editor-interactions.js',
 	'data-flow': 'modules/data-flow/assets/js/data-flow.js',
+	'data-flow-editor-preview': 'modules/data-flow/assets/js/data-flow-editor-preview.js',
 	'kit-elements-defaults-editor': 'modules/kit-elements-defaults/assets/js/editor/index.js',
 	'editor-loader': 'core/editor/loader/js/editor-loader.js',
 	'editor-environment': 'core/editor/loader/js/editor-environment.js',

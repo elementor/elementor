@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\DataFlow\State_Params;
 use Elementor\Modules\Mcp\Abilities\List_Components_Ability;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
@@ -327,9 +328,31 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 			'origin_prop_schema must not contain any $$type envelopes anywhere in the tree.' );
 	}
 
-	private function create_component( string $title, string $status ): int {
+	public function test_execute__returns_root_state_params_for_requested_components() {
+		// Arrange
+		$this->act_as_admin();
+		$params = [ [ 'key' => 'start', 'label' => 'Start', 'type' => 'number', 'default' => 0 ] ];
+		$component_id = $this->create_component( 'Counter', 'publish', [
+			[
+				'id' => 'root',
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'elements' => [],
+				State_Params::DATA_KEY => $params,
+			],
+		] );
+		$ability = new List_Components_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'component_ids' => [ $component_id ] ] );
+
+		// Assert
+		$this->assertSame( $params, $result['components'][0]['state_params'] );
+	}
+
+	private function create_component( string $title, string $status, array $elements = [] ): int {
 		$repository = new Components_Repository();
-		return $repository->create( $title, [], $status, uniqid( 'uid-', true ) );
+		return $repository->create( $title, $elements, $status, uniqid( 'uid-', true ) );
 	}
 
 	private function create_component_with_overridable_props(): int {

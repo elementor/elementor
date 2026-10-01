@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\State_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -303,6 +304,18 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'default' => (object) [],
 					'description' => 'Requires the e_data_flow experiment. Record mapping configuration-id → array of { event, code } plain JavaScript handlers that read and write page state. Send [] for a configuration-id to clear its handlers. Read ' . Data_Flow_Guide_Ability::URI . ' before using handlers.',
 					'additionalProperties' => Handlers_Applier::get_handlers_list_schema(),
+				],
+				'state_params' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Requires the e_data_flow experiment. Record mapping a container configuration-id → list of { key, label, type, default } params. The container becomes a state scope whose descendants read and write these keys. On a component root, these are the component params. Read ' . Data_Flow_Guide_Ability::URI . ' first.',
+					'additionalProperties' => State_Applier::get_state_params_schema(),
+				],
+				'state' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Requires the e_data_flow experiment. Record mapping an <e-component> configuration-id → { paramKey: value } overriding that instance\'s component params (see elementor/list-components state_params). Values may be "{{state.key}}" to seed from the enclosing scope.',
+					'additionalProperties' => State_Applier::get_state_values_schema(),
 				],
 				'parent_id' => [
 					'type' => 'string',

@@ -2,6 +2,7 @@ import { injectIntoLogic } from '@elementor/editor';
 import { registerPanel } from '@elementor/editor-panels';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 
+import { init as initDataFlowSections } from './components/data-flow/init';
 import { EditingPanelHooks } from './components/editing-panel-hooks';
 import { init as initPromotionsSections } from './components/promotions/init';
 import { registerElementControls } from './controls-registry/element-controls/registry';
@@ -32,6 +33,8 @@ export function init() {
 	initResetStyleProps();
 
 	initPromotionsSections();
+
+	initDataFlowSections();
 }
 
 const blockV1Panel = () => {
