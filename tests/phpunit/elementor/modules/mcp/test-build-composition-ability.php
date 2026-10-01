@@ -9,6 +9,8 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\DataFlow\Handlers_Parser;
+use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
@@ -1043,6 +1045,60 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
 		$this->assertStringContainsString( 'Available labels', $warning['message'] ?? '' );
 		$this->assertStringContainsString( 'elementor/manage-classes', $warning['message'] ?? '' );
+	}
+
+	public function test_execute__persists_handlers_on_configured_element() {
+		// Arrange
+		$this->act_as_admin();
+		$this->set_experiment_state( Data_Flow_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$post_id = $this->create_real_document();
+		$handler = [
+			'event' => 'click',
+			'code' => 'setState( "count", ( count ) => count + 1 );',
+		];
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-button configuration-id="increment"/></e-flexbox>',
+			'handlers' => [
+				'increment' => [ $handler ],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+		$button = $this->find_element_by_widget_type( Plugin::$instance->documents->get( $post_id )->get_elements_data(), 'e-button' );
+		$this->assertSame( [ $handler ], $button[ Handlers_Parser::DATA_KEY ] ?? null );
+	}
+
+	public function test_execute__skips_handlers_with_warning_when_data_flow_is_inactive() {
+		// Arrange
+		$this->act_as_admin();
+		$this->set_experiment_state( Data_Flow_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-button configuration-id="increment"/></e-flexbox>',
+			'handlers' => [
+				'increment' => [
+					[
+						'event' => 'click',
+						'code' => 'noop();',
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertNotEmpty( $this->find_warning_by_code( $result, 'handlers_experiment_off' ) );
+		$button = $this->find_element_by_widget_type( Plugin::$instance->documents->get( $post_id )->get_elements_data(), 'e-button' );
+		$this->assertArrayNotHasKey( Handlers_Parser::DATA_KEY, $button );
 	}
 
 	public function test_execute__resolves_global_variable_label_to_id_in_saved_tree() {

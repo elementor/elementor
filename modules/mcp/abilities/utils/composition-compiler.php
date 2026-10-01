@@ -10,10 +10,12 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
@@ -127,6 +129,8 @@ final class Composition_Compiler {
 		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs )['warnings'] );
 
 		$warnings->merge( $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) )['warnings'] );
+
+		$warnings->merge( $this->apply_handlers( $index, $this->as_map( $input['handlers'] ?? [] ) ) );
 
 		return [
 			'elements' => $subtrees,
@@ -340,6 +344,25 @@ final class Composition_Compiler {
 		$applier = new Interactions_Applier( $this->get_plain_values_resolver() );
 
 		return $applier->apply( $index, $interactions );
+	}
+
+	/**
+	 * @param array<string, array&> $index
+	 * @param array<string, mixed>  $handlers
+	 */
+	private function apply_handlers( array &$index, array $handlers ): Warnings_Bag {
+		if ( empty( $handlers ) ) {
+			return Warnings_Bag::make();
+		}
+
+		if ( ! Data_Flow_Module::is_active() ) {
+			return Warnings_Bag::make()->add(
+				'handlers_experiment_off',
+				__( 'Data Flow experiment is not active. Handlers were not applied.', 'elementor' )
+			);
+		}
+
+		return ( new Handlers_Applier() )->apply( $index, $handlers );
 	}
 
 	private function is_variables_active(): bool {

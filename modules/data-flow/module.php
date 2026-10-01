@@ -40,6 +40,10 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
+	public static function can_current_user_save_handlers(): bool {
+		return current_user_can( 'unfiltered_html' );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -68,7 +72,7 @@ class Module extends BaseModule {
 	}
 
 	public function strip_handlers_for_untrusted_users( $data ) {
-		if ( current_user_can( 'unfiltered_html' ) || empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
+		if ( self::can_current_user_save_handlers() || empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
 			return $data;
 		}
 

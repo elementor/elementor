@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -296,6 +297,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 						'type' => 'array',
 						'items' => [ 'type' => 'object' ],
 					],
+				],
+				'handlers' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Requires the e_data_flow experiment. Record mapping configuration-id → array of { event, code } plain JavaScript handlers that read and write page state. Send [] for a configuration-id to clear its handlers. Read ' . Data_Flow_Guide_Ability::URI . ' before using handlers.',
+					'additionalProperties' => Handlers_Applier::get_handlers_list_schema(),
 				],
 				'parent_id' => [
 					'type' => 'string',

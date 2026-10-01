@@ -196,6 +196,9 @@ BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overfl
 # INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
+# HANDLERS (STATEFUL PAGES)
+Only when the `e_data_flow` experiment is active. Attach JavaScript handlers that read and write page state via the `handlers` parameter — a record mapping `configuration-id` → array of `{ event, code }`. Bind state in any text setting with `{{state.key}}`. Read [elementor://data-flow/guide] first for page state setup, events, the handler API, and a worked example.
+
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
@@ -215,6 +218,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). Variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
+- **handlers**: configuration-id → array of `{ event, code }` handlers (see HANDLERS section; read [elementor://data-flow/guide])
 - **parent_id**: ID of the parent container (omit to insert at document root)
 - **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting

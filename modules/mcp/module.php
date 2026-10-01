@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
+use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -165,6 +166,10 @@ class Module extends BaseModule {
 			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
 		];
+
+		if ( Data_Flow_Module::is_active() ) {
+			$abilities[] = new Abilities\Data_Flow_Guide_Ability();
+		}
 
 		return $abilities;
 	}

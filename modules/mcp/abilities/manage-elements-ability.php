@@ -12,7 +12,6 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
-use Elementor\Modules\DataFlow\Handlers_Parser;
 use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -20,6 +19,7 @@ use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -139,20 +139,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'items' => [ 'type' => 'object' ],
 									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
 								],
-								'handlers' => [
-									'type' => 'array',
-									'items' => [
-										'type' => 'object',
-										'required' => [ 'event', 'code' ],
-										'properties' => [
-											'event' => [
-												'type' => 'string',
-												'enum' => Handlers_Parser::ALLOWED_EVENTS,
-											],
-											'code' => [ 'type' => 'string' ],
-										],
-									],
-									'description' => 'update only (requires the e_data_flow experiment): plain JavaScript handlers. Replaces existing handlers; send [] to clear. "init" runs once on page load, other events are DOM events on the element. The code receives element, event, state, getState(), setState(key, valueOrUpdater) and subscribe(key, listener). Page state is set via elementor/update-page-settings (e_data_flow_static_state JSON string, e_data_flow_sources). Bind state in any text with {{state.key}}.',
+								'handlers' => Handlers_Applier::get_handlers_list_schema() + [
+									'description' => 'update only (requires the e_data_flow experiment): plain JavaScript handlers. Replaces existing handlers; send [] to clear. "init" runs once on page load, other events are DOM events on the element. The code receives element, event, state, getState(), setState(key, valueOrUpdater) and subscribe(key, listener). Page state is set via elementor/update-page-settings (e_data_flow_static_state JSON string, e_data_flow_sources). Bind state in any text with {{state.key}}. Read ' . Data_Flow_Guide_Ability::URI . ' for the full guide.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
@@ -517,7 +505,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				);
 			}
 
-			$index[ $element_id ][ Handlers_Parser::DATA_KEY ] = Handlers_Parser::sanitize( $handlers );
+			$warnings->merge( ( new Handlers_Applier() )->apply( $index, [ $element_id => $handlers ] ) );
 		}
 
 		if ( ! empty( $settings ) ) {
