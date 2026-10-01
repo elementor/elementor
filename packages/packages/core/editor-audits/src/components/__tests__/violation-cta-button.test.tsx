@@ -45,4 +45,16 @@ describe( 'ViolationCtaButton', () => {
 		expect( stopPropagation ).toHaveBeenCalled();
 		expect( preventDefault ).toHaveBeenCalled();
 	} );
+
+	it( 'defaults to the outlined variant', () => {
+		renderWithTheme( <ViolationCtaButton ctaLabel={ CTA_LABEL } externalUrl={ EXTERNAL_URL } /> );
+
+		expect( screen.getByRole( 'button', { name: CTA_LABEL } ) ).toHaveClass( 'MuiButton-outlined' );
+	} );
+
+	it( 'renders the text variant when requested', () => {
+		renderWithTheme( <ViolationCtaButton ctaLabel={ CTA_LABEL } externalUrl={ EXTERNAL_URL } variant="text" /> );
+
+		expect( screen.getByRole( 'button', { name: CTA_LABEL } ) ).toHaveClass( 'MuiButton-text' );
+	} );
 } );

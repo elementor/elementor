@@ -40,14 +40,17 @@ export type AuditViolation = {
 	angieFix?: boolean;
 	angiePrompt?: string;
 	ctaLabel?: string;
+	secondaryCtaLabel?: string;
+	secondaryCtaUrl?: string;
 };
 
 export type PageContextResponse = {
 	post_title: string | null;
 	post_excerpt: string | null;
 	featured_image_id: number | null;
+	/** Keyed by the composite `buildImageSizeKey` result (`"{attachmentId}:{size}"`), since one attachment can resolve to different files at different sizes. */
 	image_sizes: Record<
-		number,
+		string,
 		{
 			width: number;
 			height: number;
@@ -65,6 +68,9 @@ export type PageContextResponse = {
 	privacy_settings_url: string;
 	ally_plugin_active: boolean;
 	ally_plugin_url: string;
+	ally_accessibility_statement_created: boolean;
+	ally_accessibility_statement_url: string;
+	ally_widget_settings_url: string;
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
 	cookiez_plugin_installed: boolean;
@@ -108,6 +114,7 @@ export type AuditContext = {
 	elements: ElementsModelSnapshot;
 	pageContext: PageContextResponse;
 	kit: KitSnapshot;
+	renderedHtml: string | null;
 };
 
 export type PageAuditReport = {

@@ -26,20 +26,20 @@ describe( 'fetchPageContext', () => {
 		global.fetch = originalFetch;
 	} );
 
-	it( 'calls the REST endpoint with the right URL, document id, and attachment ids', async () => {
+	it( 'calls the REST endpoint with the right URL, document id, and image size requests', async () => {
 		// Arrange.
 		const mockHttp = jest.mocked( httpService );
 		const get = jest.fn().mockResolvedValue( { data: { post_title: 'X' } } );
 		mockHttp.mockReturnValue( { get } as unknown as ReturnType< typeof httpService > );
 
 		// Act.
-		await fetchPageContext( 42, [ 1, 2 ] );
+		await fetchPageContext( 42, [ '1:full', '2:full' ] );
 
 		// Assert.
 		expect( get ).toHaveBeenCalledWith(
 			expect.stringContaining( 'elementor/v1/audits/page-context' ),
 			expect.objectContaining( {
-				params: expect.objectContaining( { document_id: 42 } ),
+				params: expect.objectContaining( { document_id: 42, image_size_requests: [ '1:full', '2:full' ] } ),
 			} )
 		);
 	} );

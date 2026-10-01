@@ -1,12 +1,12 @@
 import { type ElementSnapshotNode } from '../../types';
-import { extractAttachmentIds } from '../page-attachments';
+import { extractImageSizeRequests } from '../page-attachments';
 
 const tree: ElementSnapshotNode[] = [
 	{
 		id: 'a',
 		elType: 'widget',
 		widgetType: 'image',
-		settings: { image: { id: 11, url: 'http://example.test/a.jpg' } },
+		settings: { image: { id: 11, url: 'http://example.test/a.jpg' }, image_size: 'large' },
 		elements: [],
 	},
 	{
@@ -18,6 +18,7 @@ const tree: ElementSnapshotNode[] = [
 				{ id: 12, url: '...' },
 				{ id: 13, url: '...' },
 			],
+			thumbnail_size: 'medium',
 		},
 		elements: [],
 	},
@@ -30,9 +31,9 @@ const tree: ElementSnapshotNode[] = [
 	},
 ];
 
-describe( 'extractAttachmentIds', () => {
-	it( 'collects attachment IDs from image and image-carousel widgets', () => {
-		expect( extractAttachmentIds( tree ).sort() ).toEqual( [ 11, 12, 13 ] );
+describe( 'extractImageSizeRequests', () => {
+	it( 'collects composite size keys from image and image-carousel widgets', () => {
+		expect( extractImageSizeRequests( tree ).sort() ).toEqual( [ '11:large', '12:medium', '13:medium' ] );
 	} );
 
 	it( 'returns a unique sorted list', () => {
@@ -40,14 +41,14 @@ describe( 'extractAttachmentIds', () => {
 			{ id: '1', elType: 'widget', widgetType: 'image', settings: { image: { id: 5 } }, elements: [] },
 			{ id: '2', elType: 'widget', widgetType: 'image', settings: { image: { id: 5 } }, elements: [] },
 		];
-		expect( extractAttachmentIds( duplicated ) ).toEqual( [ 5 ] );
+		expect( extractImageSizeRequests( duplicated ) ).toEqual( [ '5:full' ] );
 	} );
 
 	it( 'ignores widgets without attachment IDs', () => {
-		expect( extractAttachmentIds( [ tree[ 2 ] ] ) ).toEqual( [] );
+		expect( extractImageSizeRequests( [ tree[ 2 ] ] ) ).toEqual( [] );
 	} );
 
-	it( 'collects attachment IDs from image-gallery wp_gallery', () => {
+	it( 'collects image size requests from image-gallery wp_gallery', () => {
 		const galleryTree: ElementSnapshotNode[] = [
 			{
 				id: 'g',
@@ -62,6 +63,55 @@ describe( 'extractAttachmentIds', () => {
 				elements: [],
 			},
 		];
-		expect( extractAttachmentIds( galleryTree ) ).toEqual( [ 20, 21 ] );
+		expect( extractImageSizeRequests( galleryTree ) ).toEqual( [ '20:full', '21:full' ] );
+	} );
+
+	it( 'collects image size requests from container background_overlay_image and widget _background_hover_image', () => {
+		const backgroundTree: ElementSnapshotNode[] = [
+			{
+				id: 'container',
+				elType: 'container',
+				settings: {
+					background_overlay_image: { id: 30, url: 'http://example.test/overlay.jpg' },
+				},
+				elements: [
+					{
+						id: 'heading',
+						elType: 'widget',
+						widgetType: 'heading',
+						settings: {
+							title: 'Hello',
+							_background_hover_image: { id: 31, url: 'http://example.test/bg-hover.jpg' },
+						},
+						elements: [],
+					},
+				],
+			},
+		];
+		expect( extractImageSizeRequests( backgroundTree ) ).toEqual( [ '30:full', '31:full' ] );
+	} );
+
+	it( 'collects image size requests from atomic widget image and poster props', () => {
+		const atomicTree: ElementSnapshotNode[] = [
+			{
+				id: 'e-image',
+				elType: 'widget',
+				widgetType: 'e-image',
+				settings: {
+					image: {
+						$$type: 'image',
+						value: {
+							src: {
+								$$type: 'image-src',
+								value: { id: { $$type: 'image-attachment-id', value: 40 }, url: null },
+							},
+							size: { $$type: 'string', value: 'medium' },
+						},
+					},
+				},
+				elements: [],
+			},
+		];
+		expect( extractImageSizeRequests( atomicTree ) ).toEqual( [ '40:medium' ] );
 	} );
 } );

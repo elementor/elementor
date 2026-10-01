@@ -7,6 +7,7 @@ export type ImageLikeMedia = {
 	id?: number;
 	url?: string;
 	alt?: string;
+	size?: string;
 };
 
 export type ImageLikeSourceVisit = {
@@ -51,7 +52,7 @@ function collectMediaFromNode( node: ElementSnapshotNode ): ImageLikeMedia[] {
 	const image = node.settings.image as ImageLikeMedia | undefined;
 
 	if ( image?.id || image?.url ) {
-		sources.push( image );
+		sources.push( { ...image, size: node.settings.image_size as string | undefined } );
 	}
 
 	const gallery = ( node.settings.carousel ?? node.settings.gallery ?? node.settings.wp_gallery ) as
@@ -59,9 +60,11 @@ function collectMediaFromNode( node: ElementSnapshotNode ): ImageLikeMedia[] {
 		| undefined;
 
 	if ( Array.isArray( gallery ) ) {
+		const gallerySize = node.settings.thumbnail_size as string | undefined;
+
 		for ( const item of gallery ) {
 			if ( item?.id || item?.url ) {
-				sources.push( item );
+				sources.push( { ...item, size: gallerySize } );
 			}
 		}
 	}

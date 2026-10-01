@@ -90,6 +90,8 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
+		$this->resolve_registered_dependants( $options['name'], $experimental_data );
+
 		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
@@ -252,7 +254,7 @@ class Manager extends Base_Object {
 	 *
 	 * @param string $feature_name       Experiment feature name.
 	 * @param bool   $check_dependencies When true, also require dependency experiments to be active.
-	 *                                   Missing or hidden dependencies are treated as active for compatibility.
+	 *                                   Missing dependencies always fail closed. Hidden dependencies are treated as satisfied.
 	 *
 	 * @return bool
 	 */
@@ -263,15 +265,31 @@ class Manager extends Base_Object {
 			return false;
 		}
 
-		if ( $check_dependencies && isset( $feature['dependencies'] ) && is_array( $feature['dependencies'] ) ) {
+		if ( isset( $feature['dependencies'] ) && is_array( $feature['dependencies'] ) ) {
 			foreach ( $feature['dependencies'] as $dependency ) {
-				if ( $dependency instanceof Non_Existing_Dependency ) {
+				$dependent_feature = $this->get_features( $dependency->get_name() );
+
+				// A dependency that Core still does not ship can never be verified as active.
+				// Non existing dependencies are re-resolved first to cover later registrations.
+				if ( $dependency instanceof Non_Existing_Dependency && ! $dependent_feature ) {
+					return false;
+				}
+
+				if ( ! $dependent_feature ) {
+					// A Core experiment dependency that no longer resolves fails closed.
+					// Class dependencies are not experiment names and stay exempt.
+					if ( $dependency instanceof Wrap_Core_Dependency ) {
+						return false;
+					}
+
 					continue;
 				}
 
-				$dependent_feature = $this->get_features( $dependency->get_name() );
+				if ( ! $check_dependencies ) {
+					continue;
+				}
 
-				if ( $this->is_removed_or_hidden_dependency( $dependent_feature ) ) {
+				if ( ! empty( $dependent_feature[ static::TYPE_HIDDEN ] ) ) {
 					continue;
 				}
 
@@ -1019,6 +1037,29 @@ class Manager extends Base_Object {
 		}
 
 		return ! empty( $dependency_feature[ static::TYPE_HIDDEN ] );
+	}
+
+	/**
+	 * Re-resolve non existing dependency placeholders of dependants that were
+	 * registered before this feature existed.
+	 *
+	 * @param string $feature_name Newly registered feature name.
+	 * @param array  $feature_data Newly registered feature data.
+	 */
+	private function resolve_registered_dependants( string $feature_name, array $feature_data ): void {
+		foreach ( $this->features as $name => $registered_feature ) {
+			if ( $name === $feature_name || empty( $registered_feature['dependencies'] ) || ! is_array( $registered_feature['dependencies'] ) ) {
+				continue;
+			}
+
+			foreach ( $registered_feature['dependencies'] as $key => $dependency ) {
+				if ( ! ( $dependency instanceof Non_Existing_Dependency ) || $dependency->get_name() !== $feature_name ) {
+					continue;
+				}
+
+				$this->features[ $name ]['dependencies'][ $key ] = $this->create_dependency_class( $feature_name, $feature_data );
+			}
+		}
 	}
 
 	private function warn_removed_or_hidden_dependency( string $message ): void {
