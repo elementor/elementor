@@ -120,6 +120,44 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertSame( 'blue', $h1['variants'][0]['props']['color']['value'] );
 	}
 
+	public function test_import__replaces_existing_tag_for_replace_conflict_resolution() {
+		$repository = Default_Styles_Repository::make();
+
+		$repository->put( 'h1', [
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => [
+							'$$type' => 'color',
+							'value' => 'red',
+						],
+					],
+				],
+			],
+		] );
+
+		$result = ( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+		], [] );
+
+		$this->assertSame( [ [ 'tag' => 'h1' ] ], $result['replaced'] );
+
+		$h1 = $repository->get( 'h1' );
+
+		$this->assertSame( 'blue', $h1['variants'][0]['props']['color']['value'] );
+	}
+
 	public function test_import__skips_existing_tag_for_keep_conflict_resolution() {
 		$repository = Default_Styles_Repository::make();
 

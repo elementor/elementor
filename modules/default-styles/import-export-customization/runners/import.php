@@ -49,8 +49,7 @@ class Import extends Import_Runner_Base {
 		}
 
 		$repository = Default_Styles_Repository::make( $kit );
-		$import_context = Design_System_Import_Context::from_data( $data );
-		$conflict_resolution = $import_context->resolve_conflict_resolution( $data, 'defaultStylesOverrideAll' );
+		$should_skip_existing = $this->should_skip_existing_styles( $data );
 		$result = self::EMPTY_RESULT;
 
 		foreach ( glob( $default_styles_dir . '/*.json' ) as $file_path ) {
@@ -63,7 +62,7 @@ class Import extends Import_Runner_Base {
 
 			$existing = $repository->get( $tag );
 
-			if ( $existing && 'skip' === $conflict_resolution ) {
+			if ( $existing && $should_skip_existing ) {
 				$result['skipped'][] = [ 'tag' => $tag ];
 				continue;
 			}
@@ -84,5 +83,15 @@ class Import extends Import_Runner_Base {
 		}
 
 		return $result;
+	}
+
+	private function should_skip_existing_styles( array $data ): bool {
+		$import_context = Design_System_Import_Context::from_data( $data );
+
+		if ( $import_context->is_settings() ) {
+			return false;
+		}
+
+		return 'skip' === ( $data['customization']['design-system']['conflict_resolution'] ?? 'skip' );
 	}
 }
