@@ -53,6 +53,9 @@ on:
         required: false
         type: boolean
         default: false
+      trigger_mode:
+        description: 'Set by the healer when it retries itself. Leave empty.'
+        required: false
 
 permissions:
   contents: read
@@ -91,6 +94,7 @@ jobs:
       previous_run_id: ${{ inputs.previous_run_id }}
       scheduled: ${{ github.event_name == 'workflow_run' && 'true' || 'false' }}
       allow_duplicate_pr: ${{ inputs.allow_duplicate_pr == true }}
+      trigger_mode: ${{ inputs.trigger_mode }}
     secrets:
       CURSOR_APIKEY: ${{ secrets.CURSOR_APIKEY }}
       JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
