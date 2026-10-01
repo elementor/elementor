@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Promotions\Pointers;
 
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -10,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Black_Friday {
-	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-bf-25/';
-	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
-	const SEEN_TODAY_KEY = '_elementor_2025_black_friday';
-	const DISMISS_ACTION_KEY = 'black_friday_pointer_2025';
+	const POINTER_TRANSIENT_KEY = 'elementor_pointer_assets_data';
+	const ELEMENTOR_POINTER_ID  = 'toplevel_page_elementor';
+	const SEEN_TODAY_KEY        = '_elementor_black_friday';
+	const DISMISS_ACTION_KEY    = 'black_friday_pointer';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'enqueue_notice' ] );
@@ -24,24 +25,26 @@ class Black_Friday {
 			return;
 		}
 
+		$assets_data = self::get_pointer_assets_data();
+
 		$this->set_seen_today();
 		$this->enqueue_dependencies();
 
-		$pointer_content = '<h3>' . esc_html__( 'Black Friday Is On!', 'elementor' ) . '</h3>';
-		$pointer_content .= '<p>' . esc_html__( 'Save big on Elementor Pro and unlock the tools to design without limits.', 'elementor' ) . '</p>';
+		$pointer_content = '<h3>' . esc_html( $assets_data['title'] ) . '</h3>';
+		$pointer_content .= '<p>' . esc_html( $assets_data['text'] ) . '</p>';
 		$pointer_content .= sprintf(
 			'<p><a class="button button-primary" href="%s" target="_blank">%s</a></p>',
-			self::PROMOTION_URL,
-			esc_html__( 'View Deals', 'elementor' )
+			esc_url( $assets_data['cta_url'] ),
+			esc_html( $assets_data['cta_text'] )
 		);
 
 		$allowed_tags = [
 			'h3' => [],
-			'p' => [],
-			'a' => [
-				'class' => [],
+			'p'  => [],
+			'a'  => [
+				'class'  => [],
 				'target' => [ '_blank' ],
-				'href' => [],
+				'href'   => [],
 			],
 		];
 		?>
@@ -68,9 +71,11 @@ class Black_Friday {
 	}
 
 	public static function should_display_notice(): bool {
+		$assets_data = self::get_pointer_assets_data();
+
 		return self::is_user_allowed() &&
 			! self::is_dismissed() &&
-			self::is_campaign_time() &&
+			! empty( $assets_data['is_campaign_active'] ) &&
 			! self::is_already_seen_today() &&
 			! Utils::has_pro();
 	}
@@ -79,21 +84,13 @@ class Black_Friday {
 		return current_user_can( 'manage_options' ) || current_user_can( 'edit_pages' );
 	}
 
-	private static function is_campaign_time() {
-		$start = new \DateTime( '2025-11-25 12:00:00', new \DateTimeZone( 'UTC' ) );
-		$end = new \DateTime( '2025-12-03 03:59:00', new \DateTimeZone( 'UTC' ) );
-		$now = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
-
-		return $now >= $start && $now <= $end;
-	}
-
 	private static function is_already_seen_today() {
 		return get_transient( self::get_user_transient_id() );
 	}
 
 	private function set_seen_today() {
-		$now = time();
-		$midnight = strtotime( 'tomorrow midnight' );
+		$now                    = time();
+		$midnight               = strtotime( 'tomorrow midnight' );
 		$seconds_until_midnight = $midnight - $now;
 
 		set_transient( self::get_user_transient_id(), $now, $seconds_until_midnight );
@@ -110,5 +107,14 @@ class Black_Friday {
 
 	private static function is_dismissed(): bool {
 		return User::get_introduction_meta( static::DISMISS_ACTION_KEY );
+	}
+
+	public static function get_pointer_assets_data(): array {
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::POINTER_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/pointer.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'pointer',
+		] );
+		return $api->get_assets_data();
 	}
 }
