@@ -50,6 +50,9 @@ class Page_Context extends Endpoint_Base {
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
 			'ally_plugin_url' => Hints::get_plugin_action_url( 'pojo-accessibility' ),
+			'ally_accessibility_statement_created' => $this->is_ally_accessibility_statement_created(),
+			'ally_accessibility_statement_url' => admin_url( 'admin.php?page=accessibility-settings#accessibilityStatement' ),
+			'ally_widget_settings_url' => admin_url( 'admin.php?page=accessibility-settings#capabilities' ),
 			'cookiez_plugin_active' => Hints::is_plugin_active( 'cookiez/cookiez.php' ),
 			'cookiez_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=cookiez' ),
 			'cookiez_plugin_installed' => Hints::is_plugin_installed( 'cookiez/cookiez.php' ),
@@ -96,6 +99,12 @@ class Page_Context extends Endpoint_Base {
 		}
 
 		return $result;
+	}
+
+	private function is_ally_accessibility_statement_created(): bool {
+		$statement_data = get_option( 'ea11y_accessibility_statement_data' );
+
+		return ! empty( $statement_data['pageId'] );
 	}
 
 	private function parse_size_request_key( string $request_key ): array {
