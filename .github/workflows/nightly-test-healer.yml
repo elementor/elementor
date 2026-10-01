@@ -1,8 +1,9 @@
 name: Nightly Test Healer
 
 # Runs the shared Playwright test healer from elementor-editor-github-actions
-# against Core. Unattended, it heals one hard failure from each failing
-# scheduled Playwright run on main. On demand, give it a flaky test title and
+# against Core. Unattended, it heals one hard failure from each scheduled
+# Playwright run on main, and reports a green run as nothing to heal. On
+# demand, give it a flaky test title and
 # it finds recent evidence for that test by itself.
 #
 # Needs the CURSOR_APIKEY secret and the TEST_HEALER_ENABLED variable
@@ -12,6 +13,7 @@ on:
   workflow_run:
     workflows: ['Playwright']
     types: [completed]
+    branches: [main]
   push:
     branches: [cursor/healer-e2e-core-48a8]
   workflow_dispatch:
@@ -31,7 +33,7 @@ on:
         required: false
         default: ''
       verify_repeat:
-        description: 'The fewest consecutive passes the fix must produce. It must also pass three times as many runs as the test took to fail without it, so rare flakes need more.'
+        description: 'The fewest consecutive passes the fix must produce. A test verified on its own, rather than with its whole file, needs at least 10 whatever this says. The fix must also pass three times as many runs as the test took to fail without it, so rare flakes need more.'
         required: false
         default: '3'
       max_fix_attempts:
@@ -60,14 +62,15 @@ permissions:
 jobs:
   heal:
     name: Heal
-    # Merge-queue and dispatched Playwright runs are not the nightly baseline,
-    # and a passing nightly has no hard failure to heal.
+    # Dispatched Playwright runs are not the nightly baseline. A green nightly
+    # still runs, so it reports no-hard-failures to Slack; a cancelled one has
+    # nothing to rank.
     if: |
       github.repository == 'elementor/elementor' && (
         github.event_name == 'workflow_dispatch' || (
           github.event.workflow_run.event == 'schedule' &&
           github.event.workflow_run.head_branch == 'main' &&
-          github.event.workflow_run.conclusion == 'failure'
+          contains(fromJSON('["failure","success"]'), github.event.workflow_run.conclusion)
         )
       )
     permissions:
@@ -90,4 +93,8 @@ jobs:
       previous_run_id: ${{ inputs.previous_run_id }}
       scheduled: ${{ github.event_name == 'workflow_run' && 'true' || 'false' }}
       allow_duplicate_pr: ${{ inputs.allow_duplicate_pr == true }}
-    secrets: inherit
+    secrets:
+      CURSOR_APIKEY: ${{ secrets.CURSOR_APIKEY }}
+      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
