@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_Site_Settings_Gate extends TestCase {
 
+	private const ABILITIES_REGISTRATION_GATE = "if ( ! self::should_register_wordpress_abilities() )";
+
 	public function test_module_exposes_should_register_wordpress_abilities(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
@@ -39,7 +41,7 @@ class Test_Mcp_Site_Settings_Gate extends TestCase {
 		);
 		$this->assertLessThan(
 			strpos( $source, "add_action( 'wp_abilities_api_init'" ),
-			strpos( $source, 'should_register_wordpress_abilities()' )
+			strpos( $source, self::ABILITIES_REGISTRATION_GATE )
 		);
 	}
 
@@ -49,7 +51,7 @@ class Test_Mcp_Site_Settings_Gate extends TestCase {
 		);
 
 		$menu_hook_pos = strpos( $source, "add_action( 'elementor/editor-one/menu/register'" );
-		$abilities_gate_pos = strpos( $source, 'should_register_wordpress_abilities()' );
+		$abilities_gate_pos = strpos( $source, self::ABILITIES_REGISTRATION_GATE );
 
 		$this->assertNotFalse( $menu_hook_pos );
 		$this->assertNotFalse( $abilities_gate_pos );
