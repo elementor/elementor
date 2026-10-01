@@ -29,7 +29,7 @@ export function initDataFlow( doc ) {
 
 	const store = createStore( data.state || {} );
 
-	bindTextNodes( doc.body, store );
+	bindTextNodes( doc.body, store, data.bindings || [] );
 	attachHandlers( data.handlers || [], store, doc );
 
 	return store;

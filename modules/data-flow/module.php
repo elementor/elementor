@@ -17,6 +17,10 @@ class Module extends BaseModule {
 
 	private array $collected_handlers = [];
 
+	private ?array $page_state = null;
+
+	private array $rendered_bindings = [];
+
 	public function get_name() {
 		return 'data-flow';
 	}
@@ -47,7 +51,20 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', [ $this, 'strip_handlers_for_untrusted_users' ] );
 		add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
 		add_filter( 'elementor/frontend/builder_content_data', [ $this, 'collect_document_handlers' ] );
+		add_filter( 'elementor/frontend/the_content', [ $this, 'render_state_bindings' ] );
 		add_action( 'wp_footer', [ $this, 'print_data' ], 1 );
+	}
+
+	public function render_state_bindings( $content ) {
+		if ( $this->is_editor_context() || ! is_string( $content ) || ! State_Renderer::has_bindings( $content ) ) {
+			return $content;
+		}
+
+		$rendered = State_Renderer::render( $content, $this->get_page_state() );
+
+		$this->rendered_bindings = array_merge( $this->rendered_bindings, $rendered['bindings'] );
+
+		return $rendered['html'];
 	}
 
 	public function strip_handlers_for_untrusted_users( $data ) {
@@ -86,6 +103,7 @@ class Module extends BaseModule {
 		$json = wp_json_encode( [
 			'state' => (object) $state,
 			'handlers' => $this->collected_handlers,
+			'bindings' => $this->rendered_bindings,
 		], JSON_HEX_TAG | JSON_HEX_AMP );
 
 		// PHPCS - JSON is encoded with JSON_HEX_TAG so it can't break out of the script tag.
@@ -93,6 +111,14 @@ class Module extends BaseModule {
 	}
 
 	private function get_page_state(): array {
+		if ( null === $this->page_state ) {
+			$this->page_state = $this->resolve_page_state();
+		}
+
+		return $this->page_state;
+	}
+
+	private function resolve_page_state(): array {
 		if ( ! is_singular() ) {
 			return [];
 		}
