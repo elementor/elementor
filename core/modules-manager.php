@@ -137,6 +137,7 @@ class Modules_Manager {
 			'atomic-opt-in',
 			'components',
 			'interactions',
+			'data-flow',
 			'feedback',
 			'widget-creation',
 			'editor-one',
