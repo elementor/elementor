@@ -12,7 +12,13 @@ export function getElementHandlers( elementId: ElementID ): ElementHandler[] {
 	return container?.model?.get( HANDLERS_KEY ) ?? [];
 }
 
-export const updateElementHandlers = ( { elementId, handlers }: { elementId: ElementID; handlers: ElementHandler[] } ) => {
+export const updateElementHandlers = ( {
+	elementId,
+	handlers,
+}: {
+	elementId: ElementID;
+	handlers: ElementHandler[];
+} ) => {
 	const element = getContainer( elementId );
 
 	if ( ! element ) {

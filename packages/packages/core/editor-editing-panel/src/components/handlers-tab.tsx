@@ -9,7 +9,15 @@ import { useElement } from '../contexts/element-context';
 import { useElementHandlers } from '../hooks/use-element-handlers';
 import { SectionsList } from './sections-list';
 
-const HANDLER_EVENTS: ElementHandlerEvent[] = [ 'init', 'click', 'input', 'change', 'submit', 'mouseenter', 'mouseleave' ];
+const HANDLER_EVENTS: ElementHandlerEvent[] = [
+	'init',
+	'click',
+	'input',
+	'change',
+	'submit',
+	'mouseenter',
+	'mouseleave',
+];
 
 const CODE_MIN_ROWS = 4;
 
@@ -34,7 +42,12 @@ export const HandlersTab = () => {
 						onRemove={ () => removeHandler( index ) }
 					/>
 				) ) }
-				<Button size="small" variant="outlined" startIcon={ <PlusIcon fontSize="tiny" /> } onClick={ addHandler }>
+				<Button
+					size="small"
+					variant="outlined"
+					startIcon={ <PlusIcon fontSize="tiny" /> }
+					onClick={ addHandler }
+				>
 					{ __( 'Add handler', 'elementor' ) }
 				</Button>
 			</Stack>

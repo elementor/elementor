@@ -16,7 +16,9 @@ export const useElementHandlers = ( elementId: string ) => {
 		addHandler: () => saveHandlers( [ ...handlers, NEW_HANDLER ] ),
 		updateHandler: ( index: number, changes: Partial< ElementHandler > ) =>
 			saveHandlers(
-				handlers.map( ( handler, handlerIndex ) => ( handlerIndex === index ? { ...handler, ...changes } : handler ) )
+				handlers.map( ( handler, handlerIndex ) =>
+					handlerIndex === index ? { ...handler, ...changes } : handler
+				)
 			),
 		removeHandler: ( index: number ) =>
 			saveHandlers( handlers.filter( ( _, handlerIndex ) => handlerIndex !== index ) ),
