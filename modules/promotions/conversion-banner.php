@@ -22,7 +22,7 @@ class Conversion_Banner {
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
-	const BANNER_TRANSIENT_KEY = 'elementor_conversion_banner_cdn_data';
+	const BANNER_TRANSIENT_KEY = 'elementor_conversion_banner_assets_data';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];

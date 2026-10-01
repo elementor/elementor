@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin extends App {
 
-	const PLUGINS_PAGE_TRANSIENT_KEY = 'elementor_plugins_page_cdn_data';
+	const PLUGINS_PAGE_TRANSIENT_KEY = 'elementor_plugins_page_assets_data';
 	const URL = 'https://go.elementor.com/go-pro-wp-plugins/';
 
 	private $menus = [];
