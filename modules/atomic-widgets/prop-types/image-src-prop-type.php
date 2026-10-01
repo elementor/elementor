@@ -37,18 +37,4 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 
 		return ( $has_id xor $has_url ) && parent::validate_value( $value );
 	}
-
-	public function sanitize_value( $value ) {
-		foreach ( static::get_unsupported_keys( $value ) as $key ) {
-			unset( $value[ $key ] );
-		}
-
-		return parent::sanitize_value( $value );
-	}
-
-	public static function get_unsupported_keys( array $value ): array {
-		$is_library_image = ! empty( $value['id'] );
-
-		return $is_library_image && ! empty( $value['alt'] ) ? [ 'alt' ] : [];
-	}
 }

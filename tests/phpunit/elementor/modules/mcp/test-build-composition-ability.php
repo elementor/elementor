@@ -652,9 +652,10 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$warning = $this->find_warning_by_code( $result, 'prop_unsupported' );
+		$warning = $this->find_warning_by_code( $result, 'image_alt_ignored' );
 		$this->assertSame( 'library-image', $warning['config_id'] ?? null );
 		$this->assertStringContainsString( '"alt"', $warning['message'] ?? '' );
+		$this->assertEmpty( $this->find_warning_by_code( $result, 'prop_keys_dropped' ) );
 
 		$image = $this->find_element_by_widget_type(
 			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
@@ -663,6 +664,39 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$src = $image['settings']['image']['value']['src']['value'] ?? [];
 		$this->assertSame( $attachment_id, $src['id']['value'] ?? null );
 		$this->assertArrayNotHasKey( 'alt', $src );
+	}
+
+	public function test_execute__keeps_alt_on_external_image_without_warning() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-image configuration-id="external-image"/>',
+			'element_config' => [
+				'external-image' => [
+					'image' => [
+						'src' => [
+							'url' => 'https://example.com/photo.jpg',
+							'alt' => 'Team photo',
+						],
+						'size' => 'full',
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertEmpty( $this->find_warning_by_code( $result, 'image_alt_ignored' ) );
+
+		$image = $this->find_element_by_widget_type(
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
+			'e-image'
+		);
+		$this->assertSame( 'Team photo', $image['settings']['image']['value']['src']['value']['alt']['value'] ?? null );
 	}
 
 	/**

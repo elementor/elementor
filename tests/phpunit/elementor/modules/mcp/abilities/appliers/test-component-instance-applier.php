@@ -228,6 +228,43 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		$this->assertSame( 'component', $overrides[0]['value']['schema_source']['type'] );
 	}
 
+	public function test_apply__strips_alt_from_library_image_override_and_warns() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_component_with_heading_title_prop();
+		$document = Plugin::$instance->documents->get( $this->create_real_document() );
+		$attachment_id = self::factory()->attachment->create_object( 'photo.jpg', 0, [ 'post_mime_type' => 'image/jpeg' ] );
+		$applier = $this->make_applier();
+
+		$index = [ 'hero' => [ 'elType' => 'widget', 'widgetType' => 'e-component', 'settings' => [] ] ];
+		$component_instances = [
+			'hero' => [
+				'component_id' => $component_id,
+				'overrides' => [
+					'prop-uuid-3' => [
+						'src' => [
+							'id' => $attachment_id,
+							'alt' => 'Team photo',
+						],
+						'size' => 'full',
+					],
+				],
+			],
+		];
+
+		// Act
+		$error = $applier->apply( $index, $component_instances, $document );
+
+		// Assert
+		$this->assertNull( $error );
+		$this->assertContains( 'image_alt_ignored', $applier->consume_warnings()->codes() );
+
+		$overrides = $index['hero']['settings']['component_instance']['value']['overrides']['value'];
+		$src = $this->overrides_by_key( $overrides )['prop-uuid-3']['value']['override_value']['value']['src']['value'];
+		$this->assertSame( $attachment_id, $src['id']['value'] );
+		$this->assertArrayNotHasKey( 'alt', $src );
+	}
+
 	public function test_apply__allows_empty_overrides() {
 		// Arrange
 		$this->act_as_admin();

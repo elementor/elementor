@@ -239,21 +239,13 @@ class Element_Config_Applier {
 				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
 			}
 
-			$stripped = Unsupported_Props_Stripper::strip( $resolved_value );
+			$stripped_value = Library_Image_Alt_Stripper::strip( $resolved_value );
 
-			if ( ! empty( $stripped['stripped_keys'] ) ) {
-				$warnings->add(
-					'prop_unsupported',
-					sprintf(
-						'Property "%s": "%s" is unsupported for Media Library images (src.id) and was not saved. The image renders the attachment\'s Alt Text from the Media Library; if it is missing or inaccurate, ask the user to update it there.',
-						$canonical,
-						implode( '", "', $stripped['stripped_keys'] )
-					),
-					$config_id
-				);
+			if ( $stripped_value !== $resolved_value ) {
+				$warnings->add( Library_Image_Alt_Stripper::WARNING_CODE, Library_Image_Alt_Stripper::warning_message( $canonical ), $config_id );
 			}
 
-			$resolved[ $canonical ] = $stripped['value'];
+			$resolved[ $canonical ] = $stripped_value;
 		}
 
 		return [
