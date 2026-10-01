@@ -4,9 +4,10 @@ import { Button } from '@elementor/ui';
 type Props = {
 	ctaLabel: string;
 	externalUrl: string;
+	variant?: 'outlined' | 'text';
 };
 
-export default function ViolationCtaButton( { ctaLabel, externalUrl }: Props ) {
+export default function ViolationCtaButton( { ctaLabel, externalUrl, variant = 'outlined' }: Props ) {
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.stopPropagation();
 		event.preventDefault();
@@ -15,7 +16,7 @@ export default function ViolationCtaButton( { ctaLabel, externalUrl }: Props ) {
 	};
 
 	return (
-		<Button variant="outlined" color="secondary" size="small" onClick={ handleClick }>
+		<Button variant={ variant } color="secondary" size="small" onClick={ handleClick }>
 			{ ctaLabel }
 		</Button>
 	);
