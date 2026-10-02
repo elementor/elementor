@@ -35,7 +35,7 @@ function writeVar( element, key, value ) {
 	element.style.setProperty( toCssVarName( key ), cssValue );
 }
 
-/**
+/*
  * Mirrors the keys a store owns as `--e-state-<key>` custom properties on the element, so styles read state
  * through `var()` and inherit it down the tree like any CSS variable.
  */

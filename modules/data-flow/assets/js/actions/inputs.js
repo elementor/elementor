@@ -14,7 +14,7 @@ function listen( target, type, listener, options ) {
 	return () => target.removeEventListener( type, listener, options );
 }
 
-/**
+/*
  * Pointer position. Global space tracks the viewport; local space tracks the element bounds and returns to
  * rest (0, 0) when the pointer leaves, so springs ease back.
  * Values: x, y (-1..1), px, py (pixels), inside (1 | 0).
@@ -59,7 +59,7 @@ function createPointerInput( element, { space }, { win, wake } ) {
 	};
 }
 
-/**
+/*
  * Scroll position and velocity. Global space tracks the document; local space tracks the element's
  * progress through the viewport (0 entering at the bottom, 1 leaving at the top).
  * Values: y (pixels), progress (0..1), velocity (px/s, signed), speed (px/s).
@@ -98,7 +98,7 @@ function createScrollInput( element, { space }, { win, doc, wake } ) {
 	};
 }
 
-/**
+/*
  * Pointer drag with optional inertia after release.
  * Values: x, y (accumulated pixels), angle (accumulated degrees around the element center),
  * velocity (deg/s of the angle), dragging (1 | 0).
@@ -189,7 +189,7 @@ function createDragInput( element, { inertia = DEFAULT_INERTIA }, { wake } ) {
 	};
 }
 
-/**
+/*
  * Elapsed time, only advancing while the element is on screen.
  * Values: t (seconds).
  */

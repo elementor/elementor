@@ -103,9 +103,9 @@ function attachInputAction( element, entry, store, env ) {
 }
 
 /**
- * @param {Array}                          elementsActions [{ elementId, actions }] in the runtime shape.
- * @param {Object|Function}                storeOrResolver A store, or a function resolving the store for an element.
- * @param {Document|Element}               root
+ * @param {Array}                                       elementsActions [{ elementId, actions }] in the runtime shape.
+ * @param {Object|Function}                             storeOrResolver A store, or a function resolving the store for an element.
+ * @param {Document|Element}                            root
  * @param {{ registry, loop, win, doc, reducedMotion }} env
  */
 export function attachActions( elementsActions, storeOrResolver, root, env ) {

@@ -1,6 +1,6 @@
 const DEFAULT_DT = 1 / 60;
 
-/**
+/*
  * One requestAnimationFrame loop shared by every input. A task returns true while it still needs frames,
  * so the loop goes idle once every value has settled.
  */
