@@ -74,7 +74,11 @@ class Module extends BaseModule {
 
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
-		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
+		// Resolving which abilities are tools or resources builds every ability's
+		// definition, and some (Elementor Pro's site-parts abilities) instantiate
+		// document types while doing so. Only the MCP server reads these slugs, so
+		// collect them when it boots instead of on every request.
+		add_action( 'mcp_adapter_init', [ $this, 'register_shared_registry_slugs' ], 5 );
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
 	}
 

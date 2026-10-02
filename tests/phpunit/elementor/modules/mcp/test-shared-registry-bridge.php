@@ -77,6 +77,29 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		$this->assertStringNotContainsString( 'is_connector_page_active', $menu_source );
 	}
 
+	public function test_shared_registry_slugs_are_collected_when_the_mcp_server_boots(): void {
+		$source = file_get_contents(
+			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
+		);
+
+		// Collecting the slugs builds every ability definition, so it must not run on every request.
+		$this->assertStringContainsString(
+			"add_action( 'mcp_adapter_init', [ \$this, 'register_shared_registry_slugs' ], 5 );",
+			$source
+		);
+		$this->assertStringNotContainsString(
+			"add_action( 'init', [ \$this, 'register_shared_registry_slugs' ]",
+			$source
+		);
+
+		// Server_Bootstrap reads the registry on mcp_adapter_init at the default priority (10).
+		$bootstrap = file_get_contents(
+			dirname( __DIR__, 5 ) . '/vendor/elementor/elementor-mcp-composer/src/Mcp/Server_Bootstrap.php'
+		);
+
+		$this->assertStringContainsString( "add_action( 'mcp_adapter_init', [ \$this, 'register_server' ] );", $bootstrap );
+	}
+
 	public function test_editor_one_mcp_menu_registers_after_submissions(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
