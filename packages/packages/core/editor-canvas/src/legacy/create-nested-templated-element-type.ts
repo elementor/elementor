@@ -420,7 +420,7 @@ export function createNestedTemplatedElementView( {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
 		},
 
-		addElement( data: Partial< V1ElementModelProps >, options?: { edit?: boolean; at?: number } ) {
+		addElement( data: Partial< V1ElementModelProps >, options?: { edit?: boolean; at?: number; clone?: boolean } ) {
 			if ( this.isRendered ) {
 				return parentAddElement.call( this, data, options );
 			}
