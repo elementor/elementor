@@ -325,6 +325,15 @@ class Converter_Registry_Factory {
 		'content',
 		'appearance',
 		'clip-path',
+		'mask-image',
+		'mask-size',
+		'mask-position',
+		'mask-repeat',
+		'transform-style',
+		'backface-visibility',
+		'pointer-events',
+		'will-change',
+		'isolation',
 	];
 
 	/**

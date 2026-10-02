@@ -33,6 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Schema {
+	const SAFE_CSS_VALUE_REGEX = '/^(?!.*https?:\/\/)[^;{}<>]*$/';
+
 	public static function get() {
 		return apply_filters( 'elementor/atomic-widgets/styles/schema', static::get_style_schema() );
 	}
@@ -445,6 +447,15 @@ class Style_Schema {
 			'content' => String_Prop_Type::make()->description( 'The string content for pseudo-element content property' ),
 			'appearance' => String_Prop_Type::make()->enum( [ 'none', 'auto' ] )->description( 'The appearance of the element. CSS values: none, auto' ),
 			'clip-path' => String_Prop_Type::make()->description( 'The clip-path CSS property defines a shape to be used as clipping region.' ),
+			'mask-image' => String_Prop_Type::make()->regex( self::SAFE_CSS_VALUE_REGEX )->description( 'Image or gradient used as the mask layer, e.g. radial-gradient(circle at var(--e-state-x) var(--e-state-y), #000 20%, transparent 21%)' ),
+			'mask-size' => String_Prop_Type::make()->regex( self::SAFE_CSS_VALUE_REGEX )->description( 'Size of the mask image, e.g. cover, contain, 200px 100px' ),
+			'mask-position' => String_Prop_Type::make()->regex( self::SAFE_CSS_VALUE_REGEX )->description( 'Position of the mask image, e.g. center, 50% 50%' ),
+			'mask-repeat' => String_Prop_Type::make()->enum( [ 'repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'space', 'round' ] )->description( 'How the mask image repeats. CSS values: repeat, no-repeat, repeat-x, repeat-y, space, round' ),
+			'transform-style' => String_Prop_Type::make()->enum( [ 'flat', 'preserve-3d' ] )->description( 'Whether children are positioned in 3D space. CSS values: flat, preserve-3d' ),
+			'backface-visibility' => String_Prop_Type::make()->enum( [ 'visible', 'hidden' ] )->description( 'Whether the back face is visible when turned towards the viewer. CSS values: visible, hidden' ),
+			'pointer-events' => String_Prop_Type::make()->enum( [ 'auto', 'none' ] )->description( 'Whether the element can be the target of pointer events. CSS values: auto, none' ),
+			'will-change' => String_Prop_Type::make()->enum( [ 'auto', 'transform', 'opacity', 'filter', 'transform, opacity' ] )->description( 'Hints the browser about properties that will animate. CSS values: auto, transform, opacity, filter, "transform, opacity"' ),
+			'isolation' => String_Prop_Type::make()->enum( [ 'auto', 'isolate' ] )->description( 'Whether the element creates a new stacking context. CSS values: auto, isolate' ),
 		];
 	}
 }
