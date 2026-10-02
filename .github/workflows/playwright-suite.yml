@@ -21,6 +21,16 @@ on:
         type: string
         required: false
         default: ''
+      shards:
+        description: 'JSON list of shard indexes to run. Named shards from the matrix include list are merged, not duplicated. Empty runs every shard.'
+        type: string
+        required: false
+        default: ''
+      collect_debug_log:
+        description: 'Enables WP_DEBUG_LOG and uploads wp-content/debug.log from both sites as an artifact.'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -71,7 +81,7 @@ jobs:
     strategy:
       fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        shardIndex: ${{ fromJSON(inputs.shards || '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]') }}
         shardTotal: [17]
         include:
           - shardIndex: "elements-regression-core"
@@ -134,6 +144,11 @@ jobs:
         run: |
           echo "TARGET_WP_CORE=$(jq -r '.core' tests/playwright/.playwright-wp-lite-env.json)" >> $GITHUB_ENV
           jq --arg core "$IMAGE_CORE" '.core = $core' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Enable PHP debug log
+        if: ${{ inputs.collect_debug_log }}
+        run: |
+          jq '.config.WP_DEBUG = true | .config.WP_DEBUG_LOG = true | .config.WP_DEBUG_DISPLAY = false' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Install WordPress environment
         run: |
@@ -289,6 +304,21 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2
+      - name: Collect PHP debug logs
+        if: ${{ always() && inputs.collect_debug_log }}
+        run: |
+          mkdir -p php-debug-logs
+          for port in 8888 8889; do
+            docker cp "port${port}-wordpress-1:/var/www/html/wp-content/debug.log" "php-debug-logs/debug-${port}.log" || echo "No debug.log on port ${port}"
+          done
+      - uses: actions/upload-artifact@v7
+        name: Upload PHP debug logs
+        if: ${{ always() && inputs.collect_debug_log }}
+        with:
+          name: php-debug-log${{ env.RUN_SUFFIX }}-${{ matrix.shardIndex }}
+          path: php-debug-logs/
+          if-no-files-found: ignore
+          retention-days: 7
 
   Build-report:
     needs: Playwright

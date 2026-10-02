@@ -11,7 +11,15 @@ on:
       php_versions:
         description: 'JSON list of PHP versions to run the Playwright suite on'
         required: true
-        default: '["7.4", "8.1", "8.3", "8.5"]'
+        default: '["7.4", "8.5"]'
+      scope:
+        type: choice
+        description: 'Shards to run'
+        required: true
+        default: 'php-heavy'
+        options:
+          - php-heavy
+          - full
 
 permissions:
   contents: read
@@ -41,10 +49,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ${{ fromJSON(inputs.php_versions || '["7.4", "8.1", "8.2", "8.3", "8.4", "8.5"]') }}
+        php: ${{ fromJSON(inputs.php_versions || '["7.4", "8.5"]') }}
     uses: ./.github/workflows/playwright-suite.yml
     secrets: inherit
     with:
       build_artifact_name: ${{ needs.build-plugin.outputs.artifact_name }}
       php_version: ${{ matrix.php }}
       image_core: ${{ (matrix.php == '7.4' && '6.1') || (matrix.php == '8.1' && '6.9') || '' }}
+      shards: ${{ inputs.scope != 'full' && '["elements-regression-core", "elements-regression-atomic", "plugin_tester_section_1", "plugin_tester_section_2", "plugin_tester_container_1", "plugin_tester_container_2", "import_export_customization"]' || '' }}
+      collect_debug_log: true
