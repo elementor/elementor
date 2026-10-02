@@ -1,0 +1,47 @@
+name: Playwright PHP Compatibility
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      php_versions:
+        description: 'JSON list of PHP versions to run the Playwright suite on'
+        required: true
+        default: '["7.4", "8.1", "8.3", "8.5"]'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playwright-php-compat-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-plugin:
+    name: Playwright build artifact
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
+
+  run-playwright-suite:
+    name: PHP ${{ matrix.php }}
+    needs: build-plugin
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ${{ fromJSON(inputs.php_versions || '["7.4", "8.1", "8.3", "8.5"]') }}
+    uses: ./.github/workflows/playwright-suite.yml
+    secrets: inherit
+    with:
+      build_artifact_name: ${{ needs.build-plugin.outputs.artifact_name }}
+      php_version: ${{ matrix.php }}
+      image_core: ${{ (matrix.php == '7.4' && '6.1') || (matrix.php == '8.1' && '6.9') || '' }}

@@ -5,7 +5,13 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string }[] = [
+const isBelowMinPhp = ( minPhp?: string ) => {
+	const currentPhp = process.env.PHP_VERSION;
+
+	return !! minPhp && !! currentPhp && currentPhp.localeCompare( minPhp, undefined, { numeric: true } ) < 0;
+};
+
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string, minPhp?: string }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
@@ -45,14 +51,15 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
-	// Skip: latest wordpress.org package requires PHP 8.3; Playwright PR/merge CI is 8.2 (WP install 500 incompatible_php_required_version).
-	// { pluginName: 'template-kit-import', installSource: 'api' },
+	{ pluginName: 'template-kit-import', installSource: 'api', minPhp: '8.3' },
 	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
+			test.skip( isBelowMinPhp( plugin.minPhp ), `Requires PHP ${ plugin.minPhp }+` );
+
 			let pluginTechnicalName: string;
 			if ( plugin.dependency ) {
 				await wpCli( `wp plugin install ${ plugin.dependency } --activate` );
