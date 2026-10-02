@@ -20,7 +20,8 @@ use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Actions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Custom_Actions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\State_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
@@ -102,12 +103,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			fn() => current_user_can( 'edit_posts' ),
 			[
 				'type' => 'object',
-				'required' => [ 'post_id', 'operations' ],
+				'required' => [ 'post_id' ],
 				'properties' => [
 					'post_id' => [ 'type' => 'integer' ],
+					'custom_actions' => Custom_Actions_Applier::get_schema(),
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50) applied in order to a single document tree, saved once at the end. Partial success is supported: failed ops return per-op errors while sibling valid ops still apply.',
+						'description' => 'Bulk operations (1–50) applied in order to a single document tree, saved once at the end. Required unless custom_actions is sent. Partial success is supported: failed ops return per-op errors while sibling valid ops still apply.',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action', 'element_id' ],
@@ -141,8 +143,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'items' => [ 'type' => 'object' ],
 									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
 								],
-								'handlers' => Handlers_Applier::get_handlers_list_schema() + [
-									'description' => 'update only (requires the e_data_flow experiment): plain JavaScript handlers. Replaces existing handlers; send [] to clear. "init" runs once on page load, other events are DOM events on the element. The code receives element, event, state, getState(), setState(key, valueOrUpdater) and subscribe(key, listener). Page state is set via elementor/update-page-settings (e_data_flow_static_state JSON string, e_data_flow_sources). Bind state in any text with {{state.key}}. Read ' . Data_Flow_Guide_Ability::URI . ' for the full guide.',
+								'actions' => Actions_Applier::get_actions_list_schema() + [
+									'description' => 'update only (requires the e_data_flow experiment): declarative actions. Replaces existing actions; send [] to clear. Event actions { on, key?, do, args } run a built-in or custom action; input actions { input, write } write pointer, scroll, drag or time values into state every frame. State is mirrored to CSS variables (--e-state-<key>) for styles and bound into text with {{state.key}}. Read ' . Data_Flow_Guide_Ability::URI . ' for the full guide.',
 								],
 								'state_params' => State_Applier::get_state_params_schema() + [
 									'description' => 'update only (requires the e_data_flow experiment): container state params [{ key, label, type, default }]. Replaces existing params; send null or [] to remove the scope. Defaults may be "{{state.key}}" to seed from the enclosing scope. Read ' . Data_Flow_Guide_Ability::URI . '.',
@@ -170,7 +172,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
 		$post_id    = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
-		$operations = $input['operations'] ?? null;
+		$custom_actions = is_array( $input['custom_actions'] ?? null ) ? $input['custom_actions'] : [];
+		$operations = $input['operations'] ?? ( empty( $custom_actions ) ? null : [] );
 
 		if ( empty( $input['post_id'] ) ) {
 			$error = $this->bad_request( __( 'post_id is required.', 'elementor' ) );
@@ -184,7 +187,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		if ( empty( $operations ) ) {
+		if ( empty( $operations ) && empty( $custom_actions ) ) {
 			$error = $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
 			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error );
 			return $error;
@@ -223,15 +226,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $document;
 		}
 
-		return $this->handle_bulk( $document, $operations, $started_at );
+		$custom_actions_warnings = ( new Custom_Actions_Applier() )->apply( $custom_actions );
+
+		return $this->handle_bulk( $document, $operations, $started_at, $custom_actions_warnings );
 	}
 
-	private function handle_bulk( Document $document, array $operations, int $started_at ): array {
+	private function handle_bulk( Document $document, array $operations, int $started_at, Warnings_Bag $custom_actions_warnings ): array {
 		$results             = new Bulk_Operations_Result();
 		$tree                = $this->get_tree( $document );
 		$any_change          = false;
 		$pending_events      = [];
-		$all_warnings        = Warnings_Bag::make();
+		$all_warnings        = Warnings_Bag::make()->merge( $custom_actions_warnings );
 		$class_attachments   = 0;
 		$interactions_count  = 0;
 
@@ -272,7 +277,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		$response            = $results->to_array();
+		$response            = $custom_actions_warnings->add_to_response( $results->to_array() );
 		$response['post_id'] = (int) $document->get_main_id();
 		$post_id             = (int) $document->get_main_id();
 
@@ -440,13 +445,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$has_classes = array_key_exists( 'classes', $operation );
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
-		$handlers = $operation['handlers'] ?? null;
+		$actions = $operation['actions'] ?? null;
 		$has_state_params = array_key_exists( State_Params::DATA_KEY, $operation );
 		$has_state = array_key_exists( State_Params::VALUES_DATA_KEY, $operation );
 
-		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions || null !== $handlers || $has_state_params || $has_state;
+		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions || null !== $actions || $has_state_params || $has_state;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, interactions, handlers, state_params, or state.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, interactions, actions, state_params, or state.', 'elementor' ) );
 		}
 
 		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
@@ -506,16 +511,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		if ( null !== $handlers ) {
+		if ( null !== $actions ) {
 			if ( ! Data_Flow_Module::is_active() ) {
 				return new \WP_Error(
-					'elementor_invalid_handlers',
-					__( 'Data Flow experiment is not active. Handlers were not applied.', 'elementor' ),
+					'elementor_invalid_actions',
+					__( 'Data Flow experiment is not active. Actions were not applied.', 'elementor' ),
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				);
 			}
 
-			$warnings->merge( ( new Handlers_Applier() )->apply( $index, [ $element_id => $handlers ] ) );
+			$warnings->merge( ( new Actions_Applier() )->apply( $index, [ $element_id => $actions ] ) );
 		}
 
 		if ( ! empty( $settings ) ) {

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\DataFlow\Custom_Actions;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -15,7 +17,7 @@ class Data_Flow_Guide_Ability extends Abstract_Ability {
 	}
 
 	protected function get_definition(): Ability_Definition {
-		$description = __( 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, and element handlers for build-composition, manage-component and manage-elements.', 'elementor' );
+		$description = __( 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, --e-state-* CSS variables, element actions (events, pointer/scroll/drag/time inputs) and custom_actions for build-composition, manage-component and manage-elements. Ends with the custom actions saved on this site.', 'elementor' );
 
 		return new Ability_Definition(
 			__( 'Data Flow Guide', 'elementor' ),
@@ -45,6 +47,34 @@ class Data_Flow_Guide_Ability extends Abstract_Ability {
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		return file_get_contents( self::FILE_PATH );
+		return file_get_contents( self::FILE_PATH ) . $this->get_custom_actions_section();
+	}
+
+	private function get_custom_actions_section(): string {
+		$actions = Custom_Actions::instance()->list();
+		$section = "\n## Custom actions on this site\n\n";
+
+		if ( empty( $actions ) ) {
+			return $section . "None yet.\n";
+		}
+
+		$with_code = Custom_Actions::can_current_user_manage();
+
+		foreach ( $actions as $action ) {
+			$entry = [
+				'name' => $action['name'],
+				'label' => $action['label'],
+				'description' => $action['description'],
+				'args' => (object) $action['args'],
+			];
+
+			if ( $with_code ) {
+				$entry['code'] = Custom_Actions::instance()->get( $action['name'] )['code'] ?? '';
+			}
+
+			$section .= "```json\n" . wp_json_encode( $entry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n```\n\n";
+		}
+
+		return $section;
 	}
 }
