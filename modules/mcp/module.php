@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
@@ -46,6 +47,10 @@ class Module extends BaseModule {
 			class_exists( Shared_Registry::class );
 	}
 
+	public static function is_site_mcp_exposure_enabled(): bool {
+		return McpSettingsController::is_enabled();
+	}
+
 	public static function get_v3_standardized_maps_experimental_data(): array {
 		return [
 			'name' => self::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME,
@@ -68,14 +73,18 @@ class Module extends BaseModule {
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
 
-		if ( ! $this->is_active() ) {
+		if ( ! self::is_active() ) {
 			return;
 		}
 
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
+
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
-		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
-		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
+
+		if ( self::is_site_mcp_exposure_enabled() ) {
+			add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
+		}
 	}
 
 	private function register_v3_standardized_maps_experiment(): void {
@@ -111,6 +120,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_shared_registry_slugs(): void {
+		if ( ! self::is_site_mcp_exposure_enabled() ) {
+			return;
+		}
+
 		$shared = Shared_Registry::instance();
 
 		$shared->register_tools( $this->collect_server_ids( $this->registry->tools() ) );
