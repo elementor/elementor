@@ -5,13 +5,11 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const isBelowMinPhp = ( minPhp?: string ) => {
-	const currentPhp = process.env.PHP_VERSION;
-
-	return !! minPhp && !! currentPhp && currentPhp.localeCompare( minPhp, undefined, { numeric: true } ) < 0;
+const isBelowVersion = ( currentVersion?: string, minVersion?: string ) => {
+	return !! minVersion && !! currentVersion && currentVersion.localeCompare( minVersion, undefined, { numeric: true } ) < 0;
 };
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string, minPhp?: string }[] = [
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string, minPhp?: string, minWp?: string }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
@@ -49,7 +47,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
-	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
+	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true, minWp: '6.9' },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
 	{ pluginName: 'template-kit-import', installSource: 'api', minPhp: '8.3' },
 	{ pluginName: 'template-kit-export', installSource: 'api' },
@@ -58,7 +56,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
-			test.skip( isBelowMinPhp( plugin.minPhp ), `Requires PHP ${ plugin.minPhp }+` );
+			test.skip( isBelowVersion( process.env.PHP_VERSION, plugin.minPhp ), `Requires PHP ${ plugin.minPhp }+` );
+			test.skip( isBelowVersion( process.env.WP_CORE_VERSION, plugin.minWp ), `Requires WordPress ${ plugin.minWp }+` );
 
 			let pluginTechnicalName: string;
 			if ( plugin.dependency ) {

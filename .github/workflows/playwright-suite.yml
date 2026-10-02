@@ -147,6 +147,7 @@ jobs:
         env:
           WP_CORE: ${{ inputs.wp_core }}
         run: |
+          echo "WP_CORE_VERSION=$WP_CORE" >> $GITHUB_ENV
           jq --arg core "$WP_CORE" '.core = $core' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Boot from fallback WordPress image
