@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
 import { type Audit } from '../types';
-import { fetchRenderedHtml } from '../utils/fetch-rendered-html';
 import { hasConsentDefaultCall, hasGoogleTracking } from '../utils/scan-consent-signals';
 
 export const audit: Audit = {
@@ -18,22 +17,20 @@ export const audit: Audit = {
 	categories: [ 'compliance' ],
 	severity: 'warning',
 	weight: 1,
-	evaluate: async ( ctx ) => {
+	evaluate: ( ctx ) => {
 		if ( ! ctx.pageContext.frontend_url ) {
 			return { status: 'skipped', reason: __( 'Page is not published.', 'elementor' ) };
 		}
 
-		const html = await fetchRenderedHtml( ctx.pageContext.frontend_url );
-
-		if ( ! html ) {
+		if ( ! ctx.renderedHtml ) {
 			return { status: 'skipped', reason: __( 'Could not fetch the published page.', 'elementor' ) };
 		}
 
-		if ( ! hasGoogleTracking( html ) ) {
+		if ( ! hasGoogleTracking( ctx.renderedHtml ) ) {
 			return { status: 'skipped', reason: __( 'No Google tracking product detected.', 'elementor' ) };
 		}
 
-		if ( hasConsentDefaultCall( html ) ) {
+		if ( hasConsentDefaultCall( ctx.renderedHtml ) ) {
 			return { status: 'pass' };
 		}
 

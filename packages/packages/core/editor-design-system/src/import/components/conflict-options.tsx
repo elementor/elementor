@@ -14,12 +14,15 @@ const getOptions = (): Option[] => [
 	{
 		value: 'replace',
 		title: __( 'Replace existing values', 'elementor' ),
-		description: __( 'Imported design system values will overwrite existing variables and classes.', 'elementor' ),
+		description: __(
+			'Imported design system values will overwrite existing default styles, variables, and classes.',
+			'elementor'
+		),
 	},
 	{
 		value: 'keep',
 		title: __( 'Keep existing values', 'elementor' ),
-		description: __( 'Existing variables and classes will not change.', 'elementor' ),
+		description: __( 'Existing default styles, variables, and classes will not change.', 'elementor' ),
 	},
 ];
 
@@ -34,7 +37,7 @@ export const ConflictOptions = ( { value, onChange }: Props ) => {
 	return (
 		<Stack spacing={ 1 }>
 			<Typography variant="body1">
-				{ __( 'How to handle conflicts with existing variables or classes?', 'elementor' ) }
+				{ __( 'How to handle conflicts with existing default styles, variables, or classes?', 'elementor' ) }
 			</Typography>
 			<RadioGroup
 				value={ value ?? '' }
