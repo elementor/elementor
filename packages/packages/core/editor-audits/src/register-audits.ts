@@ -9,6 +9,7 @@ import * as googleConsentMode from './audits/google-consent-mode';
 import * as headingStructure from './audits/heading-structure';
 import * as hiddenElements from './audits/hidden-elements';
 import * as imagesAltText from './audits/images-alt-text';
+import * as imagesInefficientFormat from './audits/images-inefficient-format';
 import * as imagesTooLarge from './audits/images-too-large';
 import * as nestedBoxedContainers from './audits/nested-boxed-containers';
 import * as pageExcerpt from './audits/page-excerpt';
@@ -45,6 +46,7 @@ const AUDITS: Audit[] = [
 	headingStructure.audit,
 	imagesAltText.audit,
 	imagesTooLarge.audit,
+	imagesInefficientFormat.audit,
 
 	robotsNoindex.audit,
 
