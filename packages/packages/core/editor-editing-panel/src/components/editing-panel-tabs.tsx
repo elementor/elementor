@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import * as React from 'react';
 import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
 import { getWidgetsCache } from '@elementor/editor-elements';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -10,15 +11,18 @@ import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
 import { ContentOnlyInfotip } from './content-only-infotip';
+import { HandlersTab } from './handlers-tab';
 import { InteractionsTab } from './interactions-tab';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
 
-type TabValue = 'settings' | 'style' | 'interactions';
+type TabValue = 'settings' | 'style' | 'interactions' | 'handlers';
 
 const CONTENT_ONLY_TAB: TabValue = 'settings';
 
-const DESIGN_TABS: TabValue[] = [ 'style', 'interactions' ];
+const DESIGN_TABS: TabValue[] = [ 'style', 'interactions', 'handlers' ];
+
+const DATA_FLOW_EXPERIMENT = 'e_data_flow';
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
@@ -38,6 +42,7 @@ const PanelTabContent = () => {
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
 	const hasContentOnlyAccess = useHasContentOnlyAccess();
+	const isDataFlowActive = isExperimentActive( DATA_FLOW_EXPERIMENT );
 
 	// A promoted element has no General tab, and its Style tab only renders an upsell, so restricting it would leave the panel empty.
 	const areDesignTabsRestricted = hasContentOnlyAccess && ! isPromotedElement;
@@ -84,6 +89,12 @@ const PanelTabContent = () => {
 							label={ withRestrictionInfotip( __( 'Interactions', 'elementor' ) ) }
 							{ ...getDesignTabProps( 'interactions' ) }
 						/>
+						{ isDataFlowActive && (
+							<Tab
+								label={ withRestrictionInfotip( __( 'Handlers', 'elementor' ) ) }
+								{ ...getDesignTabProps( 'handlers' ) }
+							/>
+						) }
 					</Tabs>
 					<Divider />
 				</Stack>
@@ -100,6 +111,11 @@ const PanelTabContent = () => {
 						<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
 							<InteractionsTab />
 						</TabPanel>
+						{ isDataFlowActive && (
+							<TabPanel { ...getTabPanelProps( 'handlers' ) } disablePadding>
+								<HandlersTab />
+							</TabPanel>
+						) }
 					</>
 				) }
 			</Stack>

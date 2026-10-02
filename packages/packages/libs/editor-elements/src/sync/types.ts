@@ -149,6 +149,24 @@ export type ElementInteractions = {
 	items: InteractionItemPropValue[];
 };
 
+export type ElementHandlerEvent = 'init' | 'click' | 'input' | 'change' | 'submit' | 'mouseenter' | 'mouseleave';
+
+export type ElementHandler = {
+	event: ElementHandlerEvent;
+	code: string;
+};
+
+export type ElementStateParamType = 'string' | 'number' | 'boolean' | 'json';
+
+export type ElementStateParam = {
+	key: string;
+	label: string;
+	type: ElementStateParamType;
+	default: unknown;
+};
+
+export type ElementStateValues = Record< string, unknown >;
+
 export type V1ElementModelProps = {
 	title?: string;
 	isLocked?: boolean;
@@ -161,6 +179,9 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
+	handlers?: ElementHandler[];
+	state_params?: ElementStateParam[];
+	state?: ElementStateValues;
 	isGlobal?: boolean;
 	skipDefaultChildren?: boolean;
 	hydrateDefaultChildren?: boolean;
