@@ -1,14 +1,17 @@
-name: Playwright PHP Compatibility
+name: Playwright PHP and WordPress Compatibility
 
 on:
+  push:
+    branches:
+      - ED-25610-playwright-php-compat
   schedule:
     - cron: '0 4 * * 0'
   workflow_dispatch:
     inputs:
-      php_versions:
-        description: 'JSON list of PHP versions to run the Playwright suite on'
+      combinations:
+        description: 'JSON list of {"php", "wp"} pairs to run the Playwright suite on'
         required: true
-        default: '["7.4", "8.5"]'
+        default: '[{"php": "7.4", "wp": "6.8"}, {"php": "8.5", "wp": "7.1"}]'
       scope:
         type: choice
         description: 'Shards to run'
@@ -36,7 +39,7 @@ jobs:
       job_name: Playwright build artifact
 
   run-playwright-suite:
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }} WP ${{ matrix.wp }}
     needs: build-plugin
     permissions:
       actions: read
@@ -46,12 +49,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ${{ fromJSON(inputs.php_versions || '["7.4", "8.5"]') }}
+        include: ${{ fromJSON(inputs.combinations || '[{"php": "7.4", "wp": "6.8"}, {"php": "8.5", "wp": "7.1"}]') }}
     uses: ./.github/workflows/playwright-suite.yml
     secrets: inherit
     with:
       build_artifact_name: ${{ needs.build-plugin.outputs.artifact_name }}
       php_version: ${{ matrix.php }}
-      image_core: ${{ (matrix.php == '7.4' && '6.1') || (matrix.php == '8.1' && '6.9') || '' }}
+      wp_core: ${{ matrix.wp }}
+      image_core: ${{ (matrix.php == '7.4' && '6.1') || (matrix.php == '8.1' && startsWith(matrix.wp, '7') && '6.9') || '' }}
       shards: ${{ inputs.scope != 'full' && '["elements-regression-core", "elements-regression-atomic", "plugin_tester_section_1", "plugin_tester_section_2", "plugin_tester_container_1", "plugin_tester_container_2", "import_export_customization"]' || '' }}
       collect_debug_log: true

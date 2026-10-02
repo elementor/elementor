@@ -16,6 +16,11 @@ on:
         type: string
         required: false
         default: ''
+      wp_core:
+        description: 'Overrides the configured WordPress core version. Use together with php_version.'
+        type: string
+        required: false
+        default: ''
       image_core:
         description: 'WordPress image core to boot from when no image exists for the configured core and PHP version. The configured core is installed on top.'
         type: string
@@ -64,7 +69,7 @@ jobs:
       - run: echo "Using caller build artifact ${{ inputs.build_artifact_name }}"
 
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ inputs.php_version || needs.get-php-version.outputs.php_version }})
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ inputs.php_version || needs.get-php-version.outputs.php_version }})${{ inputs.wp_core && format(' WP ({0})', inputs.wp_core) || '' }}
     runs-on: ubuntu-22.04
     timeout-minutes: 20
     needs: [build-plugin, prepare-caller-build, get-php-version]
@@ -73,7 +78,7 @@ jobs:
       contents: read
       id-token: write
     env:
-      RUN_SUFFIX: ${{ inputs.php_version && format('-php{0}', inputs.php_version) || '' }}
+      RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
       WP_NIGHTLY: ${{ inputs.php_version == '' && (github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly') }}
     if: |
       always() &&
@@ -136,6 +141,13 @@ jobs:
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Update WordPress core version in config
+        if: ${{ inputs.wp_core != '' }}
+        env:
+          WP_CORE: ${{ inputs.wp_core }}
+        run: |
+          jq --arg core "$WP_CORE" '.core = $core' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Boot from fallback WordPress image
         if: ${{ inputs.image_core != '' }}
@@ -330,8 +342,8 @@ jobs:
       actions: read
     if: ${{ always() && needs.Playwright.result != 'skipped' }}
     env:
-      RUN_SUFFIX: ${{ inputs.php_version && format('-php{0}', inputs.php_version) || '' }}
-      REPORT_PATH: ${{ github.ref == 'refs/heads/main' && inputs.php_version == '' && 'main' || format('{0}{1}', github.run_id, inputs.php_version && format('-php{0}', inputs.php_version) || '') }}
+      RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+      REPORT_PATH: ${{ github.ref == 'refs/heads/main' && inputs.php_version == '' && 'main' || format('{0}{1}{2}', github.run_id, inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
     steps:
       - name: Pull repo
         uses: actions/checkout@v6
@@ -422,7 +434,7 @@ jobs:
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "[View Allure Report${{ inputs.php_version && format(' (PHP {0})', inputs.php_version) || '' }}](https://elementor-allure-tests.prod.builder.elementor.red/${{ env.REPORT_PATH }}/)" >> $GITHUB_STEP_SUMMARY
+          echo "[View Allure Report${{ inputs.php_version && format(' (PHP {0})', inputs.php_version) || '' }}${{ inputs.wp_core && format(' (WP {0})', inputs.wp_core) || '' }}](https://elementor-allure-tests.prod.builder.elementor.red/${{ env.REPORT_PATH }}/)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
   test-result:
@@ -476,13 +488,13 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "Elementor Core: Playwright tests failed${{ inputs.php_version && format(' on PHP {0}', inputs.php_version) || '' }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "Elementor Core: Playwright tests failed${{ inputs.php_version && format(' on PHP {0}', inputs.php_version) || '' }}${{ inputs.wp_core && format(' / WP {0}', inputs.wp_core) || '' }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright tests failed${{ inputs.php_version && format(' on PHP {0}', inputs.php_version) || '' }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Elementor Core: Playwright tests failed${{ inputs.php_version && format(' on PHP {0}', inputs.php_version) || '' }}${{ inputs.wp_core && format(' / WP {0}', inputs.wp_core) || '' }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 },
                 {
