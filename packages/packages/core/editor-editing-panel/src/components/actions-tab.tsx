@@ -1,98 +1,104 @@
 import * as React from 'react';
-import { type ElementHandler, type ElementHandlerEvent } from '@elementor/editor-elements';
-import { MenuListItem } from '@elementor/editor-ui';
 import { PlusIcon, XIcon } from '@elementor/icons';
-import { Button, IconButton, Select, type SelectChangeEvent, Stack, TextField, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { Button, IconButton, Paper, Stack, Typography } from '@elementor/ui';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { useElementHandlers } from '../hooks/use-element-handlers';
+import { getActionDefinitions } from './data-flow/actions/action-definitions';
+import { type InputAction, isInputAction, type PlainAction } from './data-flow/actions/actions-props';
+import { EventActionFields } from './data-flow/actions/event-action-fields';
+import { InputActionFields } from './data-flow/actions/input-action-fields';
+import { useElementActions } from './data-flow/actions/use-element-actions';
 import { SectionsList } from './sections-list';
 
-const HANDLER_EVENTS: ElementHandlerEvent[] = [
-	'init',
-	'click',
-	'input',
-	'change',
-	'submit',
-	'mouseenter',
-	'mouseleave',
-];
+const NEW_EVENT_ACTION: PlainAction = { on: 'click', do: 'state/toggle', args: {} };
 
-const CODE_MIN_ROWS = 4;
+const NEW_INPUT_ACTION: InputAction = {
+	input: 'pointer',
+	space: 'local',
+	write: { tilt_x: { from: 'y', map: [ -1, 1, 10, -10 ], spring: {} } },
+};
 
-export const HandlersTab = () => {
+export const ActionsTab = () => {
 	const { element } = useElement();
-	const { handlers, addHandler, updateHandler, removeHandler } = useElementHandlers( element.id );
+	const { actions, addAction, updateAction, removeAction } = useElementActions( element.id );
 
 	return (
 		<SectionsList>
 			<Stack gap={ 2 } sx={ { p: 2 } }>
 				<Typography variant="caption" color="text.secondary">
 					{ __(
-						'Plain JavaScript. Available: element, event, state, getState(), setState(key, value), subscribe(key, listener). Bind state in any text with {{state.key}}. Runs on the published page only.',
+						'Actions write state when something happens, or follow the pointer, scroll, drag or time. Read state in text with {{state.key}} and in styles with var(--e-state-key). Runs on the published page.',
 						'elementor'
 					) }
 				</Typography>
-				{ handlers.map( ( handler, index ) => (
-					<HandlerItem
+				{ actions.map( ( action, index ) => (
+					<ActionCard
 						key={ index }
-						handler={ handler }
-						onChange={ ( changes ) => updateHandler( index, changes ) }
-						onRemove={ () => removeHandler( index ) }
+						action={ action }
+						onChange={ ( next ) => updateAction( index, next ) }
+						onRemove={ () => removeAction( index ) }
 					/>
 				) ) }
-				<Button
-					size="small"
-					variant="outlined"
-					startIcon={ <PlusIcon fontSize="tiny" /> }
-					onClick={ addHandler }
-				>
-					{ __( 'Add handler', 'elementor' ) }
-				</Button>
+				<Stack direction="row" gap={ 1 }>
+					<Button
+						size="small"
+						variant="outlined"
+						fullWidth
+						startIcon={ <PlusIcon fontSize="tiny" /> }
+						onClick={ () => addAction( NEW_EVENT_ACTION ) }
+					>
+						{ __( 'Event', 'elementor' ) }
+					</Button>
+					<Button
+						size="small"
+						variant="outlined"
+						fullWidth
+						startIcon={ <PlusIcon fontSize="tiny" /> }
+						onClick={ () => addAction( NEW_INPUT_ACTION ) }
+					>
+						{ __( 'Motion input', 'elementor' ) }
+					</Button>
+				</Stack>
 			</Stack>
 		</SectionsList>
 	);
 };
 
-type HandlerItemProps = {
-	handler: ElementHandler;
-	onChange: ( changes: Partial< ElementHandler > ) => void;
+type ActionCardProps = {
+	action: PlainAction;
+	onChange: ( action: PlainAction ) => void;
 	onRemove: () => void;
 };
 
-const HandlerItem = ( { handler, onChange, onRemove }: HandlerItemProps ) => (
-	<Stack gap={ 1 }>
-		<Stack direction="row" gap={ 1 } alignItems="center">
-			<Select
-				size="tiny"
-				fullWidth
-				value={ handler.event }
-				inputProps={ { 'aria-label': __( 'Handler event', 'elementor' ) } }
-				onChange={ ( event: SelectChangeEvent< ElementHandlerEvent > ) =>
-					onChange( { event: event.target.value as ElementHandlerEvent } )
-				}
-			>
-				{ HANDLER_EVENTS.map( ( eventName ) => (
-					<MenuListItem key={ eventName } value={ eventName }>
-						{ eventName }
-					</MenuListItem>
-				) ) }
-			</Select>
-			<IconButton size="tiny" aria-label={ __( 'Remove handler', 'elementor' ) } onClick={ onRemove }>
-				<XIcon fontSize="tiny" />
-			</IconButton>
+const ActionCard = ( { action, onChange, onRemove }: ActionCardProps ) => (
+	<Paper variant="outlined" sx={ { p: 1.5 } }>
+		<Stack gap={ 1.5 }>
+			<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 1 }>
+				<Typography variant="subtitle2" noWrap>
+					{ getActionTitle( action ) }
+				</Typography>
+				<IconButton size="tiny" aria-label={ __( 'Remove action', 'elementor' ) } onClick={ onRemove }>
+					<XIcon fontSize="tiny" />
+				</IconButton>
+			</Stack>
+			{ isInputAction( action ) ? (
+				<InputActionFields action={ action } onChange={ onChange } />
+			) : (
+				<EventActionFields action={ action } onChange={ onChange } />
+			) }
 		</Stack>
-		<TextField
-			size="tiny"
-			multiline
-			fullWidth
-			minRows={ CODE_MIN_ROWS }
-			value={ handler.code }
-			placeholder={ 'setState( "count", ( count ) => count + 1 );' }
-			inputProps={ { 'aria-label': __( 'Handler code', 'elementor' ), spellCheck: false } }
-			sx={ { '& textarea': { fontFamily: 'monospace', fontSize: 12 } } }
-			onChange={ ( event: React.ChangeEvent< HTMLTextAreaElement > ) => onChange( { code: event.target.value } ) }
-		/>
-	</Stack>
+	</Paper>
 );
+
+function getActionTitle( action: PlainAction ): string {
+	if ( isInputAction( action ) ) {
+		/* translators: %s: input name, e.g. pointer. */
+		return sprintf( __( 'Follow %s', 'elementor' ), action.input );
+	}
+
+	const label = getActionDefinitions().find( ( { name } ) => name === action.do )?.label ?? action.do;
+
+	/* translators: 1: event name, 2: action label. */
+	return sprintf( __( 'On %1$s: %2$s', 'elementor' ), action.on, label );
+}

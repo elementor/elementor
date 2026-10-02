@@ -149,11 +149,14 @@ export type ElementInteractions = {
 	items: InteractionItemPropValue[];
 };
 
-export type ElementHandlerEvent = 'init' | 'click' | 'input' | 'change' | 'submit' | 'mouseenter' | 'mouseleave';
+export type ActionItemPropValue = {
+	$$type: 'event-action' | 'input-action';
+	value: Record< string, unknown >;
+};
 
-export type ElementHandler = {
-	event: ElementHandlerEvent;
-	code: string;
+export type ElementActions = {
+	version: number;
+	items: ActionItemPropValue[];
 };
 
 export type ElementStateParamType = 'string' | 'number' | 'boolean' | 'json';
@@ -179,7 +182,7 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
-	handlers?: ElementHandler[];
+	actions?: ElementActions;
 	state_params?: ElementStateParam[];
 	state?: ElementStateValues;
 	isGlobal?: boolean;

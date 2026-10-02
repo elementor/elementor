@@ -82,7 +82,7 @@ export { deleteElementStyle } from './styles/delete-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 
 export { getElementInteractions } from './sync/get-element-interactions';
-export { getElementHandlers, updateElementHandlers } from './sync/element-handlers';
+export { getElementActions, updateElementActions } from './sync/element-actions';
 export {
 	getElementState,
 	getElementStateParams,

@@ -2,22 +2,24 @@ import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-
 
 import { type ElementID } from '../types';
 import { getContainer } from './get-container';
-import { type ElementHandler } from './types';
+import { type ElementActions } from './types';
 
-const HANDLERS_KEY = 'handlers';
+const ACTIONS_KEY = 'actions';
+const ACTIONS_VERSION = 1;
 
-export function getElementHandlers( elementId: ElementID ): ElementHandler[] {
+export function getElementActions( elementId: ElementID ): ElementActions {
 	const container = getContainer( elementId );
+	const actions = container?.model?.get( ACTIONS_KEY );
 
-	return container?.model?.get( HANDLERS_KEY ) ?? [];
+	return { version: ACTIONS_VERSION, items: Array.isArray( actions?.items ) ? actions.items : [] };
 }
 
-export const updateElementHandlers = ( {
+export const updateElementActions = ( {
 	elementId,
-	handlers,
+	items,
 }: {
 	elementId: ElementID;
-	handlers: ElementHandler[];
+	items: ElementActions[ 'items' ];
 } ) => {
 	const element = getContainer( elementId );
 
@@ -25,7 +27,7 @@ export const updateElementHandlers = ( {
 		throw new Error( `Element with id ${ elementId } not found` );
 	}
 
-	element.model.set( HANDLERS_KEY, handlers );
+	element.model.set( ACTIONS_KEY, { version: ACTIONS_VERSION, items } );
 
 	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 };
