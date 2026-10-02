@@ -16,6 +16,7 @@ import Underline from '@tiptap/extension-underline';
 import { type EditorProps, type EditorView } from '@tiptap/pm/view';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
+import { StateBindingHighlight } from '../state-binding-highlight';
 import { htmlToPlainText, isEmpty } from '../utils/inline-editing';
 
 const ITALIC_KEYBOARD_SHORTCUT = 'i';
@@ -23,170 +24,179 @@ const BOLD_KEYBOARD_SHORTCUT = 'b';
 const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
 
 type InlineEditorProps = {
-	value: string | null;
-	setValue: ( value: string | null ) => void;
-	placeholder?: string | null;
-	editorProps?: EditorProps;
-	elementClasses?: string;
-	sx?: SxProps< Theme >;
-	onBlur?: () => void;
-	autofocus?: boolean;
-	expectedTag?: string | null;
-	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
-	onEditorDestroy?: () => void;
-	wrapperClassName?: string;
-	onSelectionEnd?: ( view: EditorView ) => void;
-	mountElement?: HTMLElement | null;
+  value: string | null;
+  setValue: ( value: string | null ) => void;
+  placeholder?: string | null;
+  editorProps?: EditorProps;
+  elementClasses?: string;
+  sx?: SxProps< Theme >;
+  onBlur?: () => void;
+  autofocus?: boolean;
+  expectedTag?: string | null;
+  onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
+  onEditorDestroy?: () => void;
+  wrapperClassName?: string;
+  onSelectionEnd?: ( view: EditorView ) => void;
+  mountElement?: HTMLElement | null;
+  highlightStateBindings?: boolean;
 };
 
 export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
-	const {
-		value,
-		setValue,
-		placeholder = null,
-		editorProps = {},
-		elementClasses = '',
-		autofocus = false,
-		sx = {},
-		onBlur = undefined,
-		expectedTag = null,
-		onEditorCreate,
-		onEditorDestroy,
-		wrapperClassName,
-		onSelectionEnd,
-		mountElement = null,
-	} = props;
+  const {
+    value,
+    setValue,
+    placeholder = null,
+    editorProps = {},
+    elementClasses = '',
+    autofocus = false,
+    sx = {},
+    onBlur = undefined,
+    expectedTag = null,
+    onEditorCreate,
+    onEditorDestroy,
+    wrapperClassName,
+    onSelectionEnd,
+    mountElement = null,
+    highlightStateBindings = false,
+  } = props;
 
-	const containerRef = useRef< HTMLDivElement >( null );
-	const onBlurRef = useRef( onBlur );
-	onBlurRef.current = onBlur;
-	const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+  const containerRef = useRef< HTMLDivElement >( null );
+  const onBlurRef = useRef( onBlur );
+  onBlurRef.current = onBlur;
+  const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
 
-	const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
-		const newValue: string | null = updatedEditor.getHTML();
+  const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
+    const newValue: string | null = updatedEditor.getHTML();
 
-		setValue( isEmpty( newValue ) ? null : newValue );
-	};
+    setValue( isEmpty( newValue ) ? null : newValue );
+  };
 
-	const onKeyDown = ( _: Editor[ 'view' ], event: KeyboardEvent ) => {
-		if ( event.key === 'Escape' ) {
-			onBlurRef.current?.();
-		}
+  const onKeyDown = ( _: Editor[ 'view' ], event: KeyboardEvent ) => {
+    if ( event.key === 'Escape' ) {
+      onBlurRef.current?.();
+    }
 
-		if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
-			return;
-		}
+    if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
+      return;
+    }
 
-		if ( [ ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT ].includes( event.key ) ) {
-			event.stopPropagation();
-		}
-	};
+    if (
+      [ ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT ].includes(
+        event.key
+      )
+    ) {
+      event.stopPropagation();
+    }
+  };
 
-	const editedElementAttributes = ( HTMLAttributes: Record< string, unknown > ) => ( {
-		...HTMLAttributes,
-		class: elementClasses,
-	} );
+  const editedElementAttributes = ( HTMLAttributes: Record< string, unknown > ) => ( {
+    ...HTMLAttributes,
+    class: elementClasses,
+  } );
 
-	const editor = useEditor( {
-		...( mountElement ? { element: mountElement } : {} ),
-		extensions: [
-			Document.extend( {
-				content: documentContentSettings,
-			} ),
-			Paragraph.extend( {
-				renderHTML( { HTMLAttributes } ) {
-					const tag = expectedTag ?? 'p';
-					return [ tag, editedElementAttributes( HTMLAttributes ), 0 ];
-				},
-			} ),
-			Heading.extend( {
-				renderHTML( { node, HTMLAttributes } ) {
-					if ( expectedTag ) {
-						return [ expectedTag, editedElementAttributes( HTMLAttributes ), 0 ];
-					}
+  const editor = useEditor( {
+    ...( mountElement ? { element: mountElement } : {} ),
+    extensions: [
+      Document.extend( {
+        content: documentContentSettings,
+      } ),
+      Paragraph.extend( {
+        renderHTML( { HTMLAttributes } ) {
+          const tag = expectedTag ?? 'p';
+          return [ tag, editedElementAttributes( HTMLAttributes ), 0 ];
+        },
+      } ),
+      Heading.extend( {
+        renderHTML( { node, HTMLAttributes } ) {
+          if ( expectedTag ) {
+            return [ expectedTag, editedElementAttributes( HTMLAttributes ), 0 ];
+          }
 
-					const level = this.options.levels.includes( node.attrs.level )
-						? node.attrs.level
-						: this.options.levels[ 0 ];
+          const level = this.options.levels.includes( node.attrs.level )
+            ? node.attrs.level
+            : this.options.levels[ 0 ];
 
-					return [ `h${ level }`, editedElementAttributes( HTMLAttributes ), 0 ];
-				},
-			} ).configure( {
-				levels: [ 1, 2, 3, 4, 5, 6 ],
-			} ),
-			Link.configure( {
-				openOnClick: false,
-			} ),
-			Text,
-			Bold,
-			Italic,
-			Strike,
-			Superscript,
-			Subscript,
-			Underline,
-			HardBreak.extend( {
-				addKeyboardShortcuts() {
-					return {
-						Enter: () => this.editor.commands.setHardBreak(),
-					};
-				},
-			} ),
-		],
-		content: value,
-		onUpdate,
-		autofocus,
-		editorProps: {
-			...editorProps,
-			handleDOMEvents: {
-				keydown: onKeyDown,
-			},
-			attributes: {
-				...( editorProps.attributes ?? {} ),
-				role: 'textbox',
-				...( placeholder ? { 'data-placeholder': htmlToPlainText( placeholder ) } : {} ),
-				...( value === null || value === '' ? { class: 'is-empty' } : {} ),
-			},
-		},
-		onCreate: onEditorCreate ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor ) : undefined,
-		onDestroy: onEditorDestroy ? () => onEditorDestroy() : undefined,
-		onBlur: mountElement ? undefined : () => onBlurRef.current?.(),
-		onSelectionUpdate: onSelectionEnd
-			? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
-			: undefined,
-	} );
+          return [ `h${ level }`, editedElementAttributes( HTMLAttributes ), 0 ];
+        },
+      } ).configure( {
+        levels: [ 1, 2, 3, 4, 5, 6 ],
+      } ),
+      Link.configure( {
+        openOnClick: false,
+      } ),
+      Text,
+      Bold,
+      Italic,
+      Strike,
+      Superscript,
+      Subscript,
+      Underline,
+      HardBreak.extend( {
+        addKeyboardShortcuts() {
+          return {
+            Enter: () => this.editor.commands.setHardBreak(),
+          };
+        },
+      } ),
+      ...( highlightStateBindings ? [ StateBindingHighlight ] : [] ),
+    ],
+    content: value,
+    onUpdate,
+    autofocus,
+    editorProps: {
+      ...editorProps,
+      handleDOMEvents: {
+        keydown: onKeyDown,
+      },
+      attributes: {
+        ...( editorProps.attributes ?? {} ),
+        role: 'textbox',
+        ...( placeholder ? { 'data-placeholder': htmlToPlainText( placeholder ) } : {} ),
+        ...( value === null || value === '' ? { class: 'is-empty' } : {} ),
+      },
+    },
+    onCreate: onEditorCreate
+      ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor )
+      : undefined,
+    onDestroy: onEditorDestroy ? () => onEditorDestroy() : undefined,
+    onBlur: mountElement ? undefined : () => onBlurRef.current?.(),
+    onSelectionUpdate: onSelectionEnd
+      ? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
+      : undefined,
+  } );
 
-	useOnUpdate( () => {
-		if ( ! editor ) {
-			return;
-		}
+  useOnUpdate( () => {
+    if ( ! editor ) {
+      return;
+    }
 
-		const currentContent = editor.getHTML();
+    const currentContent = editor.getHTML();
 
-		if ( currentContent !== value ) {
-			editor.commands.setContent( value, { emitUpdate: false } );
-		}
-	}, [ editor, value ] );
+    if ( currentContent !== value ) {
+      editor.commands.setContent( value, { emitUpdate: false } );
+    }
+  }, [ editor, value ] );
 
-	if ( mountElement ) {
-		return null;
-	}
+  if ( mountElement ) {
+    return null;
+  }
 
-	return (
-		<Box ref={ containerRef } sx={ sx } className={ wrapperClassName }>
-			<EditorContent ref={ ref } editor={ editor } />
-		</Box>
-	);
+  return (
+    <Box ref={ containerRef } sx={ sx } className={ wrapperClassName }>
+      <EditorContent ref={ ref } editor={ editor } />
+    </Box>
+  );
 } );
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
-	const hasMounted = useRef( false );
+  const hasMounted = useRef( false );
 
-	useEffect( () => {
-		if ( hasMounted.current ) {
-			callback();
-		} else {
-			hasMounted.current = true;
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, dependencies );
+  useEffect( () => {
+    if ( hasMounted.current ) {
+      callback();
+    } else {
+      hasMounted.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies );
 };

@@ -7,41 +7,41 @@ const STATE_BINDING_PATTERN = /^\{\{\s*state\.[\w.]+\s*\}\}$/;
 const BOOLEAN_INPUTS: Record< string, boolean > = { true: true, false: false };
 
 export function parseStateInput( input: string, type: ElementStateParamType ): unknown {
-	if ( STATE_BINDING_PATTERN.test( input ) ) {
-		return input;
-	}
+  if ( STATE_BINDING_PATTERN.test( input ) ) {
+    return input;
+  }
 
-	if ( type === 'number' ) {
-		return isNumericInput( input ) ? Number( input ) : input;
-	}
+  if ( type === 'number' ) {
+    return isNumericInput( input ) ? Number( input ) : input;
+  }
 
-	if ( type === 'boolean' ) {
-		return BOOLEAN_INPUTS[ input ] ?? input;
-	}
+  if ( type === 'boolean' ) {
+    return BOOLEAN_INPUTS[ input ] ?? input;
+  }
 
-	if ( type === 'json' ) {
-		return parseJsonInput( input );
-	}
+  if ( type === 'json' ) {
+    return parseJsonInput( input );
+  }
 
-	return input;
+  return input;
 }
 
 export function formatStateValue( value: unknown ): string {
-	if ( typeof value === 'string' ) {
-		return value;
-	}
+  if ( typeof value === 'string' ) {
+    return value;
+  }
 
-	return JSON.stringify( value ) ?? '';
+  return JSON.stringify( value ) ?? '';
 }
 
 function isNumericInput( input: string ) {
-	return input.trim() !== '' && Number.isFinite( Number( input ) );
+  return input.trim() !== '' && Number.isFinite( Number( input ) );
 }
 
 function parseJsonInput( input: string ): unknown {
-	try {
-		return JSON.parse( input );
-	} catch {
-		return input;
-	}
+  try {
+    return JSON.parse( input );
+  } catch {
+    return input;
+  }
 }
