@@ -102,6 +102,10 @@ class V3_Widget_Map_Compiler {
 			if ( true === ( $schema['dynamic'] ?? false ) && ! V3_Dynamic_Resolver::is_dynamic_capable( $controls[ $control_key ] ) ) {
 				return $this->error( 'incompatible_dynamic_control', $control_key );
 			}
+
+			if ( Setting_Schemas::KIND_LINK === ( $schema['kind'] ?? null ) && 'url' !== ( $controls[ $control_key ]['type'] ?? '' ) ) {
+				return $this->error( 'incompatible_setting_shape', $control_key );
+			}
 		}
 
 		return null;

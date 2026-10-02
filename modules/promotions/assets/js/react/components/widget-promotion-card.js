@@ -20,7 +20,7 @@ const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 	const { title, content, image, ctaUrl, ctaText, hideProTag } = promotionData;
 
 	return (
-		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
+		<ClickAwayListener disableReactTree={ true } mouseEvent="onClick" touchEvent="onTouchEnd" onClickAway={ doClose }>
 			<Box sx={ { width: CARD_WIDTH } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>

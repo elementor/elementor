@@ -2,6 +2,7 @@ import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { AtomicHelper } from '../atomic-widgets/helper';
 
 test.describe( 'Background Video @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
@@ -84,5 +85,46 @@ test.describe( 'Background Video @v4-tests', () => {
 		await expect( previewRoot ).not.toHaveClass( /e-background-video--playing/ );
 		await expect( previewRoot ).not.toHaveClass( /e-background-video--paused/ );
 		await expect( editor.getPreviewFrame().locator( `${ editor.getWidgetSelector( elementId ) } .e-background-video__controls` ) ).toBeHidden();
+	} );
+
+	test( 'HTML Tag setting is applied in the editor and on the frontend', async () => {
+		const helper = new AtomicHelper( editor.page, editor, wpAdmin );
+		const elementId = await editor.addElement( { elType: elementType }, 'document' );
+
+		await editor.selectElement( elementId );
+		await editor.v4Panel.openTab( 'general' );
+
+		const htmlTagField = helper.getHtmlTagControl();
+
+		if ( ! await htmlTagField.isVisible() ) {
+			await editor.page.locator( '.MuiButtonBase-root', { hasText: /^Settings$/ } ).click();
+		}
+
+		await test.step( 'Main and Nav are available as HTML tags', async () => {
+			await helper.getHtmlTagControl( '.MuiInputBase-root' ).click();
+
+			await expect( editor.page.locator( 'li[data-value="main"]' ) ).toBeVisible();
+			await expect( editor.page.locator( 'li[data-value="nav"]' ) ).toBeVisible();
+
+			await editor.page.keyboard.press( 'Escape' );
+		} );
+
+		await test.step( 'Editor preview renders the selected tag', async () => {
+			await helper.setHtmlTagControl( 'section' );
+
+			const previewRoot = editor.getPreviewFrame().locator( editor.getWidgetSelector( elementId ) );
+
+			await expect( previewRoot ).toHaveClass( /e-default-section/ );
+			expect( await previewRoot.evaluate( ( node ) => node.tagName ) ).toBe( 'SECTION' );
+		} );
+
+		await test.step( 'Frontend renders the selected tag', async () => {
+			await editor.publishAndViewPage();
+
+			const frontendRoot = editor.page.locator( `[data-id="${ elementId }"][data-e-type="${ elementType }"]` );
+
+			await expect( frontendRoot ).toHaveClass( /e-default-section/ );
+			expect( await frontendRoot.evaluate( ( node ) => node.tagName ) ).toBe( 'SECTION' );
+		} );
 	} );
 } );

@@ -71,7 +71,10 @@ class Test_Import_Runner extends Elementor_Test_Base {
 			'extracted_directory_path' => __DIR__ . '/mocks',
 		], [] );
 
-		$this->assertEqualsCanonicalizing( [ 'h1', 'h2' ], $result['imported'] );
+		$this->assertCount( 2, $result['created'] );
+		$this->assertEmpty( $result['replaced'] );
+		$this->assertEmpty( $result['skipped'] );
+		$this->assertSame( [ [ 'tag' => 'script' ] ], $result['failed'] );
 
 		$repository = Default_Styles_Repository::make();
 		$h1 = $repository->get( 'h1' );
@@ -84,7 +87,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertNull( $repository->get( 'script' ) );
 	}
 
-	public function test_import__overrides_existing_tag() {
+	public function test_import__replaces_existing_tag() {
 		$repository = Default_Styles_Repository::make();
 
 		$repository->put( 'h1', [
@@ -105,14 +108,96 @@ class Test_Import_Runner extends Elementor_Test_Base {
 			],
 		] );
 
-		( new Import_Runner() )->import( [
+		$result = ( new Import_Runner() )->import( [
 			'include' => [ 'settings' ],
 			'extracted_directory_path' => __DIR__ . '/mocks',
 		], [] );
 
+		$this->assertSame( [ [ 'tag' => 'h1' ] ], $result['replaced'] );
+
 		$h1 = $repository->get( 'h1' );
 
 		$this->assertSame( 'blue', $h1['variants'][0]['props']['color']['value'] );
+	}
+
+	public function test_import__replaces_existing_tag_for_replace_conflict_resolution() {
+		$repository = Default_Styles_Repository::make();
+
+		$repository->put( 'h1', [
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => [
+							'$$type' => 'color',
+							'value' => 'red',
+						],
+					],
+				],
+			],
+		] );
+
+		$result = ( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+		], [] );
+
+		$this->assertSame( [ [ 'tag' => 'h1' ] ], $result['replaced'] );
+
+		$h1 = $repository->get( 'h1' );
+
+		$this->assertSame( 'blue', $h1['variants'][0]['props']['color']['value'] );
+	}
+
+	public function test_import__skips_existing_tag_for_keep_conflict_resolution() {
+		$repository = Default_Styles_Repository::make();
+
+		$repository->put( 'h1', [
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => [
+							'$$type' => 'color',
+							'value' => 'red',
+						],
+					],
+				],
+			],
+		] );
+
+		$result = ( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'skip',
+				],
+			],
+		], [] );
+
+		$this->assertSame( [ [ 'tag' => 'h1' ] ], $result['skipped'] );
+		$this->assertCount( 1, $result['created'] );
+		$this->assertSame( [ [ 'tag' => 'script' ] ], $result['failed'] );
+
+		$h1 = $repository->get( 'h1' );
+		$h2 = $repository->get( 'h2' );
+
+		$this->assertSame( 'red', $h1['variants'][0]['props']['color']['value'] );
+		$this->assertNotNull( $h2 );
 	}
 
 	private function reset_default_styles_state(): void {

@@ -13,6 +13,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -38,14 +39,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string: widget base layer + kit site-wide default for that tag, in cascade order). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
 					],
 				],
 			],
@@ -74,7 +75,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each node\'s settings and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
+						'description' => 'If true, includes each node\'s settings (plain shape, writable as-is) and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
 					],
 				],
 			]
@@ -106,6 +107,8 @@ class Get_Structure_Ability extends Abstract_Ability {
 			);
 		}
 
+		$document_root_ids = array_column( $elements, 'id' );
+
 		if ( '' !== $element_id ) {
 			$subtree = Utils::find_element_recursive( $elements, $element_id );
 
@@ -121,12 +124,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 		}
 
 		return [
-			'elements' => $this->prune_elements( $elements, $include_content ),
+			'elements' => $this->prune_elements( $elements, $include_content, $document_root_ids ),
 		];
 	}
 
-	private function prune_elements( array $elements, bool $include_content = false ): array {
-		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content ) {
+	private function prune_elements( array $elements, bool $include_content = false, array $document_root_ids = [] ): array {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content, $document_root_ids ) {
 			$skeleton = [
 				'id' => $node['id'] ?? null,
 				'elType' => $node['elType'] ?? null,
@@ -147,14 +150,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 			}
 
 			if ( $include_content ) {
-				$this->populate_content( $skeleton, $node );
+				$this->populate_content( $skeleton, $node, in_array( $node['id'] ?? null, $document_root_ids, true ) );
 			}
 
 			return $skeleton;
 		} );
 	}
 
-	private function populate_content( array &$skeleton, array $node ): void {
+	private function populate_content( array &$skeleton, array $node, bool $is_document_root ): void {
 		$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 
 		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
@@ -175,8 +178,8 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
 		$skeleton['styles'] = $this->normalize_styles( Local_Style_Serializer::serialize( $node['styles'] ?? [] ) );
 
-		$resolved_settings = is_array( $skeleton['settings'] ) ? $skeleton['settings'] : [];
-		$this->populate_default_styles( $skeleton, $node, $config, $resolved_settings );
+		$rendered_settings = $this->resolve_rendered_settings( $props_schema, $raw_settings );
+		$this->populate_default_styles( $skeleton, $node, $config, $rendered_settings, $is_document_root );
 	}
 
 	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {
@@ -184,29 +187,44 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return (object) [];
 		}
 
-		$schema = array_intersect_key( $props_schema, $raw_settings );
-		$serialized = [];
+		[ $serialized, $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
+
+		if ( ! empty( $static_schema ) ) {
+			$serialized += Render_Props_Resolver::for_plain()->resolve( $static_schema, $raw_settings );
+		}
+
+		return ! empty( $serialized ) ? $serialized : (object) [];
+	}
+
+	private function resolve_rendered_settings( array $props_schema, $raw_settings ): array {
+		if ( ! is_array( $raw_settings ) ) {
+			return [];
+		}
+
+		[ , $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
+
+		return empty( $static_schema ) ? [] : Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
+	}
+
+	private function split_dynamic_settings( array $props_schema, array $raw_settings ): array {
+		$dynamic_settings = [];
 		$static_schema = [];
 
-		foreach ( $schema as $key => $prop_type ) {
+		foreach ( array_intersect_key( $props_schema, $raw_settings ) as $key => $prop_type ) {
 			$dynamic = Dynamic_Tag_Llm_Resolver::try_serialize( $raw_settings[ $key ] );
 
 			if ( null !== $dynamic ) {
-				$serialized[ $key ] = $dynamic;
+				$dynamic_settings[ $key ] = $dynamic;
 				continue;
 			}
 
 			$static_schema[ $key ] = $prop_type;
 		}
 
-		if ( ! empty( $static_schema ) ) {
-			$serialized += Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
-		}
-
-		return ! empty( $serialized ) ? $serialized : (object) [];
+		return [ $dynamic_settings, $static_schema ];
 	}
 
-	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings ): void {
+	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings, bool $is_document_root ): void {
 		$base_styles = is_array( $config['base_styles'] ?? null ) ? $config['base_styles'] : [];
 		$props_schema = is_array( $config['atomic_props_schema'] ?? null ) ? $config['atomic_props_schema'] : [];
 		$tag = $this->resolve_html_tag( $node, $resolved_settings );
@@ -214,7 +232,9 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$default_styles_css = Element_Default_Styles_Builder::render(
 			$base_styles,
 			$tag,
-			$this->get_default_styles_repository()
+			$this->get_default_styles_repository(),
+			null,
+			Atomic_Container_Presentation::applies_to( $config ) ? Atomic_Container_Presentation::to_css_string( $is_document_root ) : ''
 		);
 
 		if ( null !== $tag ) {
@@ -255,7 +275,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	}
 
 	private function populate_v3_content( array &$skeleton, array $node ): void {
-		$widget_type = (string) ( $node['widgetType'] ?? '' );
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
 		$has_map = null !== V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );

@@ -90,6 +90,8 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
+		$this->resolve_registered_dependants( $options['name'], $experimental_data );
+
 		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
@@ -250,7 +252,9 @@ class Manager extends Base_Object {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param string $feature_name
+	 * @param string $feature_name       Experiment feature name.
+	 * @param bool   $check_dependencies When true, also require dependency experiments to be active.
+	 *                                   Missing dependencies always fail closed. Hidden dependencies are treated as satisfied.
 	 *
 	 * @return bool
 	 */
@@ -261,9 +265,34 @@ class Manager extends Base_Object {
 			return false;
 		}
 
-		if ( $check_dependencies && isset( $feature['dependencies'] ) && is_array( $feature['dependencies'] ) ) {
+		if ( isset( $feature['dependencies'] ) && is_array( $feature['dependencies'] ) ) {
 			foreach ( $feature['dependencies'] as $dependency ) {
 				$dependent_feature = $this->get_features( $dependency->get_name() );
+
+				// A dependency that Core still does not ship can never be verified as active.
+				// Non existing dependencies are re-resolved first to cover later registrations.
+				if ( $dependency instanceof Non_Existing_Dependency && ! $dependent_feature ) {
+					return false;
+				}
+
+				if ( ! $dependent_feature ) {
+					// A Core experiment dependency that no longer resolves fails closed.
+					// Class dependencies are not experiment names and stay exempt.
+					if ( $dependency instanceof Wrap_Core_Dependency ) {
+						return false;
+					}
+
+					continue;
+				}
+
+				if ( ! $check_dependencies ) {
+					continue;
+				}
+
+				if ( ! empty( $dependent_feature[ static::TYPE_HIDDEN ] ) ) {
+					continue;
+				}
+
 				$feature_state = self::STATE_ACTIVE === $this->get_feature_actual_state( $dependent_feature );
 
 				if ( ! $feature_state ) {
@@ -780,18 +809,39 @@ class Manager extends Base_Object {
 
 			// Validate if the current feature dependency is available.
 			foreach ( $feature['dependencies'] as $dependency ) {
-				$dependency_feature = $this->get_features( $dependency->get_name() );
-
-				if ( ! $dependency_feature ) {
-					$rollback( $feature_option_key, self::STATE_INACTIVE );
-
-					throw new Exceptions\Dependency_Exception(
+				if ( $dependency instanceof Non_Existing_Dependency ) {
+					$this->warn_removed_or_hidden_dependency(
 						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available.',
+							'The feature `%s` has a dependency `%s` that is not available in Core.',
 							esc_html( $feature['name'] ),
 							esc_html( $dependency->get_name() )
 						)
 					);
+					continue;
+				}
+
+				$dependency_feature = $this->get_features( $dependency->get_name() );
+
+				if ( ! $dependency_feature ) {
+					$this->warn_removed_or_hidden_dependency(
+						sprintf(
+							'The feature `%s` has a dependency `%s` that is not available in Core.',
+							esc_html( $feature['name'] ),
+							esc_html( $dependency->get_name() )
+						)
+					);
+					continue;
+				}
+
+				if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
+					$this->warn_removed_or_hidden_dependency(
+						sprintf(
+							'The feature `%1$s` depends on hidden experiment `%2$s`.',
+							esc_html( $feature['name'] ),
+							esc_html( $dependency_feature['name'] )
+						)
+					);
+					continue;
 				}
 
 				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
@@ -946,26 +996,32 @@ class Manager extends Base_Object {
 	/**
 	 * @param array $experimental_data
 	 * @return array
-	 *
-	 * @throws Exceptions\Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 			$feature = $this->get_features( $dependency );
 
 			if ( ! isset( $feature ) ) {
-				// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
-				throw new Exceptions\Dependency_Exception(
+				$this->warn_removed_or_hidden_dependency(
 					sprintf(
-						'Feature %s cannot be initialized before dependency feature: %s.',
+						'Feature %1$s depends on experiment %2$s that is not registered in Core.',
 						esc_html( $experimental_data['name'] ),
 						esc_html( $dependency )
 					)
 				);
+
+				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, null );
+				continue;
 			}
 
 			if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
-				throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'Feature %1$s depends on hidden experiment %2$s.',
+						esc_html( $experimental_data['name'] ),
+						esc_html( $dependency )
+					)
+				);
 			}
 
 			$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
@@ -973,6 +1029,46 @@ class Manager extends Base_Object {
 		}
 
 		return $experimental_data;
+	}
+
+	private function is_removed_or_hidden_dependency( $dependency_feature ): bool {
+		if ( ! $dependency_feature ) {
+			return true;
+		}
+
+		return ! empty( $dependency_feature[ static::TYPE_HIDDEN ] );
+	}
+
+	/**
+	 * Re-resolve non existing dependency placeholders of dependants that were
+	 * registered before this feature existed.
+	 *
+	 * @param string $feature_name Newly registered feature name.
+	 * @param array  $feature_data Newly registered feature data.
+	 */
+	private function resolve_registered_dependants( string $feature_name, array $feature_data ): void {
+		foreach ( $this->features as $name => $registered_feature ) {
+			if ( $name === $feature_name || empty( $registered_feature['dependencies'] ) || ! is_array( $registered_feature['dependencies'] ) ) {
+				continue;
+			}
+
+			foreach ( $registered_feature['dependencies'] as $key => $dependency ) {
+				if ( ! ( $dependency instanceof Non_Existing_Dependency ) || $dependency->get_name() !== $feature_name ) {
+					continue;
+				}
+
+				$this->features[ $name ]['dependencies'][ $key ] = $this->create_dependency_class( $feature_name, $feature_data );
+			}
+		}
+	}
+
+	private function warn_removed_or_hidden_dependency( string $message ): void {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Developer notice; message is escaped.
+		_doing_it_wrong( __METHOD__, esc_html( $message ), ELEMENTOR_VERSION );
 	}
 
 	/**
