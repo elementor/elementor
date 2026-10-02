@@ -169,6 +169,7 @@ class Module extends BaseModule {
 
 		if ( Data_Flow_Module::is_active() ) {
 			$abilities[] = new Abilities\Data_Flow_Guide_Ability();
+			$abilities[] = new Abilities\Data_Flow_Actions_Resource_Ability();
 		}
 
 		return $abilities;

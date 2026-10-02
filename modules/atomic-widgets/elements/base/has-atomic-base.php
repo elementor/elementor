@@ -21,7 +21,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
-use Elementor\Modules\DataFlow\Handlers_Parser;
+use Elementor\Modules\DataFlow\Actions_Parser;
 use Elementor\Modules\DataFlow\State_Params;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -277,8 +277,8 @@ trait Has_Atomic_Base {
 
 		$this->set_data_field_for_save(
 			$data,
-			Handlers_Parser::DATA_KEY,
-			Handlers_Parser::sanitize( $data[ Handlers_Parser::DATA_KEY ] ?? [] )
+			Actions_Parser::DATA_KEY,
+			$this->parse_actions( $data[ Actions_Parser::DATA_KEY ] ?? [] )
 		);
 
 		return $data;
@@ -291,6 +291,12 @@ trait Has_Atomic_Base {
 		}
 
 		unset( $data[ $key ] );
+	}
+
+	private function parse_actions( $actions ): array {
+		$parsed = Actions_Parser::parse( $actions );
+
+		return empty( $parsed['items'] ) ? [] : $parsed;
 	}
 
 	private function transform_interactions_for_save( $interactions ) {
@@ -327,8 +333,8 @@ trait Has_Atomic_Base {
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$this->set_data_field_for_save(
 			$raw_data,
-			Handlers_Parser::DATA_KEY,
-			Handlers_Parser::sanitize( $this->get_data( Handlers_Parser::DATA_KEY ) )
+			Actions_Parser::DATA_KEY,
+			$this->parse_actions( $this->get_data( Actions_Parser::DATA_KEY ) )
 		);
 		$this->set_state_fields( $raw_data, $this->get_data() );
 		$raw_data['editor_settings'] = $this->editor_settings;

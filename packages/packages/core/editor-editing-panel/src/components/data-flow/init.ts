@@ -6,12 +6,12 @@ import { StateSection } from './state-section';
 const DATA_FLOW_EXPERIMENT = 'e_data_flow';
 
 export const init = () => {
-	if ( ! isExperimentActive( DATA_FLOW_EXPERIMENT ) ) {
-		return;
-	}
+  if ( ! isExperimentActive( DATA_FLOW_EXPERIMENT ) ) {
+    return;
+  }
 
-	injectIntoSettingsTab( {
-		id: 'data-flow-state',
-		component: StateSection,
-	} );
+  injectIntoSettingsTab( {
+    id: 'data-flow-state',
+    component: StateSection,
+  } );
 };

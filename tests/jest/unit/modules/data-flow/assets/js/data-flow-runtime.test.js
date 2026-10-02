@@ -1,3 +1,4 @@
+import { createActionRegistry } from 'elementor/modules/data-flow/assets/js/actions/action-registry';
 import { DATA_SCRIPT_ID, initDataFlow } from 'elementor/modules/data-flow/assets/js/data-flow-runtime';
 
 function renderPage( data ) {
@@ -20,13 +21,13 @@ describe( 'initDataFlow', () => {
 		expect( store ).toBeNull();
 	} );
 
-	it( 'should wire state, bindings and handlers end to end', () => {
+	it( 'should wire state, bindings and actions end to end', () => {
 		// Arrange
 		renderPage( {
 			state: { count: 0, site_name: 'My Site' },
-			handlers: [ {
+			actions: [ {
 				elementId: 'btn1',
-				handlers: [ { event: 'click', code: 'setState( "count", ( c ) => c + 1 );' } ],
+				actions: [ { on: 'click', do: 'state/increment', args: { key: 'count' } } ],
 			} ],
 		} );
 
@@ -52,9 +53,9 @@ describe( 'initDataFlow', () => {
 				{ id: 'first', parentId: null, state: { count: 0 } },
 				{ id: 'second', parentId: null, state: { count: 10 } },
 			],
-			handlers: [ {
+			actions: [ {
 				elementId: 'increment',
-				handlers: [ { event: 'click', code: 'setState( "count", ( c ) => c + 1 );' } ],
+				actions: [ { on: 'click', do: 'state/increment', args: { key: 'count' } } ],
 			} ],
 		};
 		document.body.innerHTML = `
@@ -85,9 +86,9 @@ describe( 'initDataFlow', () => {
 				{ id: 'outer', parentId: null, state: { label: 'Total' } },
 				{ id: 'inner', parentId: 'outer', state: { count: 3 } },
 			],
-			handlers: [ {
+			actions: [ {
 				elementId: 'rename',
-				handlers: [ { event: 'click', code: 'setState( "label", "Sum" );' } ],
+				actions: [ { on: 'click', do: 'state/set', args: { key: 'label', value: 'Sum' } } ],
 			} ],
 		};
 		document.body.innerHTML = `
@@ -108,5 +109,47 @@ describe( 'initDataFlow', () => {
 		// Assert
 		expect( document.getElementById( 'inner' ).textContent ).toBe( 'Sum: 3' );
 		expect( document.getElementById( 'outer' ).textContent ).toBe( 'Sum' );
+	} );
+
+	it( 'should mirror page and scope state as CSS variables', () => {
+		// Arrange
+		const data = {
+			state: { theme: 'dusk' },
+			scopes: [ { id: 'card', parentId: null, state: { tilt: 0 } } ],
+			actions: [ {
+				elementId: 'tilt',
+				actions: [ { on: 'click', do: 'state/set', args: { key: 'tilt', value: 12.5 } } ],
+			} ],
+		};
+		document.body.innerHTML = `
+			<div data-e-scope="card"><button data-interaction-id="tilt">Tilt</button></div>
+			<script type="application/json" id="${ DATA_SCRIPT_ID }">${ JSON.stringify( data ) }</script>
+		`;
+
+		// Act
+		initDataFlow( document );
+		document.querySelector( 'button' ).click();
+
+		// Assert
+		expect( document.documentElement.style.getPropertyValue( '--e-state-theme' ) ).toBe( 'dusk' );
+		expect( document.querySelector( '[data-e-scope]' ).style.getPropertyValue( '--e-state-tilt' ) ).toBe( '12.5' );
+	} );
+
+	it( 'should run custom actions registered by name', () => {
+		// Arrange
+		const registry = createActionRegistry();
+		const run = jest.fn();
+		registry.register( 'acme/greet', run );
+		renderPage( {
+			state: { count: 0 },
+			actions: [ { elementId: 'btn1', actions: [ { on: 'click', do: 'acme/greet', args: { name: 'Ada' } } ] } ],
+		} );
+
+		// Act
+		initDataFlow( document, { registry } );
+		document.querySelector( 'button' ).click();
+
+		// Assert
+		expect( run ).toHaveBeenCalledWith( expect.objectContaining( { args: { name: 'Ada' } } ) );
 	} );
 } );

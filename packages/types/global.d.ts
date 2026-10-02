@@ -131,6 +131,13 @@ declare global {
 				};
 				dataFlow?: {
 					componentParams?: Record< number, ElementStateParam[] >;
+					actions?: Array< {
+						name: string;
+						label: string;
+						description: string;
+						source: string;
+						args: Record< string, unknown >;
+					} >;
 				};
 				atomicDynamicTags?: {
 					tags: DynamicTags;

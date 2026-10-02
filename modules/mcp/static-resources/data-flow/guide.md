@@ -1,6 +1,6 @@
 # Data Flow Guide
 
-Data Flow makes a page stateful using only Elementor elements. State lives in nested **scopes**: the page is the outermost scope, any container can open its own scope, and every component instance gets one. Text reads state with `{{state.key}}` bindings, and per-element JavaScript handlers read and write it. It requires the `e_data_flow` experiment.
+Data Flow makes a page stateful using only Elementor elements. State lives in nested **scopes**: the page is the outermost scope, any container can open its own scope, and every component instance gets one. Text reads state with `{{state.key}}` bindings, styles read it as CSS variables, and per-element **actions** write it. Actions are data, not code: each one names a built-in or custom action and passes typed arguments. It requires the `e_data_flow` experiment.
 
 ## The model
 
@@ -11,9 +11,11 @@ Data Flow makes a page stateful using only Elementor elements. State lives in ne
 | Component params | `state_params` on the component's root container | `state_params` in `elementor/manage-component` (the root `configuration-id`) |
 | Component instance values | `state` on an `<e-component>` | `state` in `elementor/build-composition`, or on `action=update` in `elementor/manage-elements` |
 | Text bindings | Any text setting (heading title, paragraph, button text, ...) | `element_config` |
-| Handlers | Per element | `handlers` in `elementor/build-composition` / `elementor/manage-component`, or on `action=update` in `elementor/manage-elements` |
+| Style from state | Any style prop, e.g. `transform` or `opacity` | `var(--e-state-<key>)` as a custom value |
+| Actions | Per element | `actions` in `elementor/build-composition` / `elementor/manage-component`, or on `action=update` in `elementor/manage-elements` |
+| Custom actions | Site-wide, by name | `custom_actions` in `elementor/build-composition`, `elementor/manage-component` or `elementor/manage-elements` (administrators only) |
 
-Handlers run on the published or previewed frontend page only. The editor canvas renders bindings with their initial values but does not run handlers.
+Actions run on the published or previewed frontend page only. The editor canvas renders bindings and CSS variables with their initial values but does not run actions.
 
 ## Choosing a scope
 
@@ -23,9 +25,9 @@ Handlers run on the published or previewed frontend page only. The editor canvas
 
 ## Reading and writing (lexical, nearest wins)
 
-- **Read**: `{{state.key}}`, `state` and `getState()` see a merged view. The nearest scope that defines the key wins, and the page is the outermost.
-- **Write**: `setState('key', ...)` writes to the nearest scope that defines `key`. If none defines it, it writes to the element's own nearest scope.
-- **Subscribe**: `subscribe('key', listener)` fires when the scope that provides `key` changes.
+- **Read**: `{{state.key}}`, `on: "state"` actions and custom actions' `store.getState()` see a merged view. The nearest scope that defines the key wins, and the page is the outermost.
+- **Write**: actions write to the nearest scope that defines `key`. If none defines it, they write to the element's own nearest scope.
+- **CSS variables**: each scope publishes the keys it defines as `--e-state-<key>` on its root element (the page scope on `:root`), so descendants inherit the nearest value like any CSS variable.
 
 So a button inside a counter section increments the section's `count`, and a page-level `site_name` is still readable from inside it.
 
@@ -85,49 +87,104 @@ Write `{{state.key}}` anywhere inside a text setting. Dot paths reach into objec
 - The server renders the initial value from the element's scope chain, and the text updates automatically whenever that state changes.
 - `null` or missing values render as an empty string. Objects and arrays render as JSON, so bind a leaf value instead.
 - Bindings work in **text content only**. They do not work in attributes (link URLs, image sources, input values or placeholders) or inside `<script>`, `<style>`, or `<textarea>`.
-- Format values in a handler (for example with `toLocaleString()`) and store the formatted string in its own key, such as `amount_label`.
+- To show a formatted value, store the formatted string in its own key, such as `amount_label` (a custom action can compute it).
 
-## 5. Handlers
+## 5. Actions
 
-`handlers` maps each `configuration-id` (or each element on `manage-elements`) to a list of `{ "event": "<event>", "code": "<JavaScript>" }`. A handler reads and writes the scope its element sits in.
+`actions` maps each `configuration-id` (or each element on `manage-elements`) to a list of actions. There are two kinds: **event actions** run an action when something happens, and **input actions** continuously write state from the pointer, scroll, drag or time. At most 20 actions per element. Invalid actions are dropped with an `action_invalid` warning that says why. Sending `[]` clears an element's actions.
 
-Events:
+Actions are stored as typed props, so every argument is validated and sanitized on save. They never contain code, and any editor can configure them.
 
-- `init`: runs once when the page loads, with `event` set to `null`. Use it for subscriptions, derived values, and initial DOM setup.
-- `click`, `input`, `change`, `submit`, `mouseenter`, `mouseleave`: DOM events on the element's rendered root. `input`, `change`, and `submit` bubble, so a container can listen for its descendants.
+### Event actions: `{ "on", "key"?, "do", "args"? }`
 
-Limits: at most 10 handlers per element, and `code` must be a non-empty string. Invalid handlers are dropped with a `handler_invalid` warning. Sending `[]` clears an element's handlers.
+- `on`: `load` (once on page load), `state` (once with the current value, then whenever `key` changes), or a DOM event on the element's rendered root: `click`, `dblclick`, `pointerenter`, `pointerleave`, `pointerdown`, `pointerup`, `focus`, `blur`, `input`, `change`, `submit`. `input`, `change` and `submit` bubble, so a container can listen for its descendants.
+- `key`: required with `on: "state"`.
+- `do`: the action name. `args`: the action's arguments; unknown arguments make the action invalid.
 
-`code` is the body of a function. These names are in scope:
+Built-in actions:
 
-| Name | Meaning |
-|---|---|
-| `element` | The element's rendered root DOM node. |
-| `event` | The DOM event, or `null` for `init`. |
-| `state` | The merged state of the element's scope chain (read-only; always fresh). |
-| `getState()` | Returns the merged state. |
-| `setState(key, valueOrUpdater)` | Sets one key in the scope that defines it. Pass a function to compute from the previous value: `setState('count', (c) => c + 1)`. |
-| `setState({ a: 1, b: 2 })` | Sets several keys at once, each in its own defining scope. |
-| `subscribe(key, listener)` | Calls `listener(value, key, state)` after `key` changes. Use `'*'` for any key. Returns an unsubscribe function. |
+| `do` | `args` | What it does |
+|---|---|---|
+| `state/set` | `key`, `value` | Sets `key` to `value` (string, number or boolean). |
+| `state/toggle` | `key` | Flips a boolean. |
+| `state/increment` | `key`, `by`?, `min`?, `max`?, `wrap`? | Adds `by` (default 1, negative to decrement), clamped to `min`/`max`, or wrapped around when `wrap` is `true`. |
+| `state/cycle` | `key`, `values` | Moves to the next value in `values` (tabs, palettes, modes). |
+| `state/random` | `key`, `values` | Picks a different random value from `values` (shuffle). |
+| `state/from-input` | `key` | Writes the value of the field that fired the event: `checked` for checkboxes, a number when the key holds a number. Use with `input` or `change`. |
+| `class/toggle` | `class_name`, `selector`?, `equals`? | Toggles a class. With `on: "state"`, the class is on while the value is truthy, or equals `equals`. |
+| `element/visible` | `selector`?, `equals`? | Use with `on: "state"`. Shows the target while the value is truthy, or equals `equals`. |
+| `attribute/set` | `name`, `value`?, `selector`? | Sets a `data-*` or `aria-*` attribute to `value`, or to the state value with `on: "state"`. |
+| `animation/playback-rate` | `rate`?, `selector`? | Sets the playback rate of the target's CSS animations to `rate`, or to the state value with `on: "state"`. |
 
-Rules:
+`selector` is a CSS selector inside the closest scope root; without it, the target is the element itself.
 
-- State is replaced, never mutated. Build new objects and arrays: `setState('items', (items) => [...items, item])`.
-- Setting a value that is identical (`Object.is`) to the current one does not notify listeners.
-- Declare every key a scope writes in its `state_params`. Otherwise the first write creates it in the nearest scope, which may not be the one you meant.
-- Read form values from the event: `event.target.value`. Number inputs return strings, so convert them with `Number(...)`.
-- Compute derived values (totals, labels, flags) in one place: an `init` handler that subscribes to the inputs and writes the derived keys.
-- Conditional visibility: in `init`, subscribe and toggle `element.hidden` or `element.style.display`.
-- Errors are caught and logged per handler, so one broken handler does not stop the others.
+### Input actions: `{ "input", "space"?, "inertia"?, "reducedMotion"?, "write" }`
 
-Saving handlers requires the `unfiltered_html` capability. For other users they are removed on save, and the response includes a `handlers_stripped_on_save` warning. `state_params` and `state` are plain data and need no special capability.
+| `input` | Values (`from`) | Notes |
+|---|---|---|
+| `pointer` | `x`, `y` (-1..1), `px`, `py` (pixels), `inside` (1 or 0) | `space: "global"` (default) tracks the viewport. `space: "local"` tracks the element and returns to 0 when the pointer leaves. |
+| `scroll` | `y` (pixels), `progress` (0..1), `velocity` (px/s, signed), `speed` (px/s) | Global progress is through the page. Local progress is the element passing through the viewport (0 entering at the bottom, 1 leaving at the top). |
+| `drag` | `x`, `y` (pixels), `angle` (degrees around the element center), `velocity` (deg/s), `dragging` (1 or 0) | Values keep accumulating. `inertia` (0..1, default 0.95) keeps them moving after release. |
+| `time` | `t` (seconds) | Advances only while the element is on screen. |
+
+`write` maps a state key to how it follows an input value:
+
+```json
+"write": {
+  "tilt_x": { "from": "y", "map": [ -1, 1, 12, -12 ], "spring": { "stiffness": 170, "damping": 20 } }
+}
+```
+
+- `from`: one of the input's values.
+- `map`: `[inMin, inMax, outMin, outMax]`, a linear remap. It is clamped to the output range unless `clamp` is `false`.
+- `smooth` (0..1): eases toward the target; higher is smoother. `spring`: physical easing with `stiffness` (default 170), `damping` (default 26) and `mass` (default 1). Use one of them or neither.
+- `decay` (0..1): holds peaks and releases them slowly, e.g. to keep a scroll `speed` from dropping to 0 between frames.
+- `round`: decimals to keep.
+
+Input actions run in one shared animation frame loop that stops while nothing moves. When the visitor prefers reduced motion they are skipped, so the keys keep their initial values; set `"reducedMotion": "run"` only for input that is not motion, such as a drag-to-scrub control.
+
+## 6. Styling from state: CSS variables
+
+Every number, boolean (`1` or `0`) and short plain string key is published as `--e-state-<key>`. Use it in any style prop as a custom value, and combine it with `calc()`:
+
+- `transform`: `rotateX(calc(var(--e-state-tilt_x) * 1deg)) rotateY(calc(var(--e-state-tilt_y) * 1deg))`
+- `opacity`: `var(--e-state-reveal)`
+- `filter`: `blur(calc(var(--e-state-speed) * 0.01px))`
+
+Inside `transform`, use `translate*`, `scale*` and `rotate`/`rotateX`/`rotateY`/`rotateZ`; other functions such as `perspective()` or `skew()` move the whole declaration to custom CSS. For depth, give the **parent** `perspective: 800px`.
+
+The server prints the initial values, so the first paint is already correct. Prefer CSS variables over class toggles for anything continuous. Useful style props for motion: `transform`, `transform-style` (`preserve-3d`), `backface-visibility`, `filter`, `backdrop-filter`, `mask-image`, `clip-path`, `pointer-events`, `will-change` and `isolation`. Add `will-change: transform` only on elements that move continuously.
+
+## 7. Custom actions: `custom_actions`
+
+Use a custom action only when the built-ins and input actions cannot express the behavior (fetching data, formatting numbers, a canvas). Send it in `custom_actions` on `elementor/build-composition`, `elementor/manage-component` or `elementor/manage-elements`. It is saved once for the whole site, before that call applies element actions, so the same call can already use it: `{ "on": "state", "key": "price", "do": "acme/format-price", "args": { "to": "price_label" } }`. Editors pick it from the action list and fill its arguments; they never see or edit the code.
+
+```json
+"custom_actions": [
+  {
+    "name": "acme/format-price",
+    "label": "Format price",
+    "args": { "to": { "type": "string", "label": "Write to key" }, "currency": { "type": "string" } },
+    "code": "( { args, store, value } ) => { store.setState( args.to, new Intl.NumberFormat( undefined, { style: 'currency', currency: args.currency || 'USD' } ).format( Number( value ) || 0 ) ); }"
+  }
+]
+```
+
+- `name`: `namespace/action` in lowercase letters, numbers and dashes. The `state`, `class`, `element`, `attribute` and `animation` namespaces are reserved. Saving an existing name replaces it; `{ "name": "...", "delete": true }` deletes it.
+- `args`: `{ argName: { type, label? } }` with `type` one of `string`, `number`, `boolean`, `string-array` or `value` (string, number or boolean). Element arguments are validated against these types.
+- `code`: a JavaScript function expression that receives `{ args, element, store, event, value }`:
+  - `store.getState()`, `store.setState( key, valueOrUpdater )`, `store.setState( { a, b } )` and `store.subscribe( key, listener )` work on the element's scope chain.
+  - `event` is the DOM event for DOM events; `value` is the new value for `on: "state"`.
+  - State is replaced, never mutated: `store.setState( 'items', ( items ) => [ ...items, item ] )`.
+- Only administrators with `unfiltered_html` can save custom actions. For anyone else they are skipped with a `custom_actions_forbidden` warning; an invalid one produces `custom_action_invalid`. With `dry_run`, they are validated but not saved.
+- The code is published as a static script and loaded only on pages that use the action. Errors are caught and logged per action.
+- Every action available on this site (built-in, plugin and custom) is listed with its argument schema in the `elementor://data-flow/actions` resource. Custom actions include their code there for administrators, so read it before updating one.
 
 ## User input
 
 Use the form field elements (`e-form-input`, `e-form-select`, `e-form-checkbox`, `e-form-radio-button`, ...) for input. `build-composition` requires every form field to be nested inside an `<e-form>`, and every `<e-form>` to contain exactly one `<e-form-submit-button>`.
 
-- Drive state from `input` or `change` handlers, so results update live without submitting.
-- If a submit should only update state, add a `submit` handler that calls `event.preventDefault()`, and verify the result with `elementor/create-preview-link`.
+- Use `{ "on": "input", "do": "state/from-input", "args": { "key": "amount" } }` on each field so results update live without submitting.
 - Buttons outside a form (`e-button`) are the simplest triggers for actions like increment, reset, or presets.
 
 ## Example: a reusable Counter component
@@ -156,9 +213,9 @@ Use the form field elements (`e-form-input`, `e-form-select`, `e-form-checkbox`,
       { "key": "count", "label": "Count", "type": "number", "default": "{{state.start}}" }
     ]
   },
-  "handlers": {
-    "increment": [ { "event": "click", "code": "setState('count', (count) => count + 1);" } ],
-    "reset": [ { "event": "click", "code": "setState('count', getState().start);" } ]
+  "actions": {
+    "increment": [ { "on": "click", "do": "state/increment", "args": { "key": "count" } } ],
+    "reset": [ { "on": "click", "do": "state/set", "args": { "key": "count", "value": 0 } } ]
   }
 }
 ```
@@ -186,5 +243,32 @@ Use the form field elements (`e-form-input`, `e-form-select`, `e-form-checkbox`,
 ```
 
 Each instance renders and counts independently, starting at "Likes: 10" and "Visits: 100".
+
+## Example: a 3D tilt card
+
+The card opens a scope with two keys, a local pointer input springs them toward the pointer, and the card's `transform` reads them as CSS variables:
+
+```json
+{
+  "state_params": {
+    "card": [
+      { "key": "tilt_x", "label": "Tilt X", "type": "number", "default": 0 },
+      { "key": "tilt_y", "label": "Tilt Y", "type": "number", "default": 0 }
+    ]
+  },
+  "actions": {
+    "card": [ {
+      "input": "pointer",
+      "space": "local",
+      "write": {
+        "tilt_x": { "from": "y", "map": [ -1, 1, 12, -12 ], "spring": { "damping": 18 } },
+        "tilt_y": { "from": "x", "map": [ -1, 1, -12, 12 ], "spring": { "damping": 18 } }
+      }
+    } ]
+  }
+}
+```
+
+Then style `card` with `transform: rotateX(calc(var(--e-state-tilt_x) * 1deg)) rotateY(calc(var(--e-state-tilt_y) * 1deg)); will-change: transform;` and its parent with `perspective: 800px;`. When the pointer leaves, the keys spring back to 0.
 
 Form elements come from Elementor Pro. Check every setting name against `elementor://widgets/schema/{type}` before use.
