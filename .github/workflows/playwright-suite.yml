@@ -11,6 +11,31 @@ on:
         type: string
         required: false
         default: ''
+      php_version:
+        description: 'Pins PHP and keeps WordPress at the configured core version. Empty keeps the event-based PHP version.'
+        type: string
+        required: false
+        default: ''
+      wp_core:
+        description: 'Overrides the configured WordPress core version. Use together with php_version.'
+        type: string
+        required: false
+        default: ''
+      image_core:
+        description: 'WordPress image core to boot from when no image exists for the configured core and PHP version. The configured core is installed on top.'
+        type: string
+        required: false
+        default: ''
+      shards:
+        description: 'JSON list of shard indexes to run. Named shards from the matrix include list are merged, not duplicated. Empty runs every shard.'
+        type: string
+        required: false
+        default: ''
+      collect_debug_log:
+        description: 'Enables WP_DEBUG_LOG and uploads wp-content/debug.log from both sites as an artifact.'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -44,7 +69,7 @@ jobs:
       - run: echo "Using caller build artifact ${{ inputs.build_artifact_name }}"
 
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ inputs.php_version || needs.get-php-version.outputs.php_version }})${{ inputs.wp_core && format(' WP ({0})', inputs.wp_core) || '' }}
     runs-on: ubuntu-22.04
     timeout-minutes: 20
     needs: [build-plugin, prepare-caller-build, get-php-version]
@@ -52,13 +77,16 @@ jobs:
       actions: read
       contents: read
       id-token: write
+    env:
+      RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+      WP_NIGHTLY: ${{ inputs.php_version == '' && (github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly') }}
     if: |
       always() &&
       (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
     strategy:
       fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        shardIndex: ${{ fromJSON(inputs.shards || '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]') }}
         shardTotal: [17]
         include:
           - shardIndex: "elements-regression-core"
@@ -73,12 +101,12 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set PHP_VERSION environment variable
-        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+        run: echo "PHP_VERSION=${{ inputs.php_version || needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
         with:
-          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}${{ env.RUN_SUFFIX }}
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
@@ -114,24 +142,52 @@ jobs:
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
+      - name: Update WordPress core version in config
+        if: ${{ inputs.wp_core != '' }}
+        env:
+          WP_CORE: ${{ inputs.wp_core }}
+        run: |
+          echo "WP_CORE_VERSION=$WP_CORE" >> $GITHUB_ENV
+          jq --arg core "$WP_CORE" '.core = $core' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Boot from fallback WordPress image
+        if: ${{ inputs.image_core != '' }}
+        env:
+          IMAGE_CORE: ${{ inputs.image_core }}
+        run: |
+          echo "TARGET_WP_CORE=$(jq -r '.core' tests/playwright/.playwright-wp-lite-env.json)" >> $GITHUB_ENV
+          jq --arg core "$IMAGE_CORE" '.core = $core' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Enable PHP debug log
+        if: ${{ inputs.collect_debug_log }}
+        run: |
+          jq '.config.WP_DEBUG = true | .config.WP_DEBUG_LOG = true | .config.WP_DEBUG_DISPLAY = false' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+      - name: Install target WordPress core over fallback image
+        if: ${{ inputs.image_core != '' }}
+        run: |
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp core update --version=$TARGET_WP_CORE --force"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp core update-db"
+          done
       - name: Update wordpress to nightly build
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
+        if: ${{ env.WP_NIGHTLY == 'true' }}
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Set WP_VERSION for nightly snapshots
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
+        if: ${{ env.WP_NIGHTLY == 'true' }}
         run: echo "WP_VERSION=nightly" >> $GITHUB_ENV
       - name: Update WordPress database
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
+        if: ${{ env.WP_NIGHTLY == 'true' }}
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update-db"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update-db"
       - name: Export WordPress major version
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
+        if: ${{ env.WP_NIGHTLY == 'true' }}
         run: |
           WP_VER=$(npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version" 2>&1 | grep -oE '^[0-9]+' | head -1)
           echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
@@ -176,7 +232,7 @@ jobs:
         uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/restore@main
         id: pw_last_run
         with:
-          artifact-name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          artifact-name: playwright-last-run${{ env.RUN_SUFFIX }}-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           last-run-paths: |
             tests/playwright/test-results/.last-run.json
             tests/elements-regression/test-results/.last-run.json
@@ -242,7 +298,7 @@ jobs:
         if: always()
         uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/save@main
         with:
-          artifact-name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          artifact-name: playwright-last-run${{ env.RUN_SUFFIX }}-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           last-run-paths: |
             tests/playwright/test-results/.last-run.json
             tests/elements-regression/test-results/.last-run.json
@@ -250,17 +306,32 @@ jobs:
         name: Upload Allure result
         if: always()
         with:
-          name: allure-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          name: allure-results${{ env.RUN_SUFFIX }}-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           path: allure-results
           if-no-files-found: ignore
           retention-days: 1
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          name: playwright-test-results${{ env.RUN_SUFFIX }}-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2
+      - name: Collect PHP debug logs
+        if: ${{ always() && inputs.collect_debug_log }}
+        run: |
+          mkdir -p php-debug-logs
+          for port in 8888 8889; do
+            docker cp "port${port}-wordpress-1:/var/www/html/wp-content/debug.log" "php-debug-logs/debug-${port}.log" || echo "No debug.log on port ${port}"
+          done
+      - uses: actions/upload-artifact@v7
+        name: Upload PHP debug logs
+        if: ${{ always() && inputs.collect_debug_log }}
+        with:
+          name: php-debug-log${{ env.RUN_SUFFIX }}-${{ matrix.shardIndex }}
+          path: php-debug-logs/
+          if-no-files-found: ignore
+          retention-days: 7
 
   Build-report:
     needs: Playwright
@@ -271,6 +342,9 @@ jobs:
       id-token: write
       actions: read
     if: ${{ always() && needs.Playwright.result != 'skipped' }}
+    env:
+      RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+      REPORT_PATH: ${{ github.ref == 'refs/heads/main' && inputs.php_version == '' && 'main' || format('{0}{1}{2}', github.run_id, inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
     steps:
       - name: Pull repo
         uses: actions/checkout@v6
@@ -278,7 +352,7 @@ jobs:
       - name: Download allure data
         uses: actions/download-artifact@v8
         with:
-          pattern: allure-results-*
+          pattern: allure-results${{ env.RUN_SUFFIX }}-*
           path: allure-results
           merge-multiple: true
 
@@ -303,25 +377,21 @@ jobs:
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         run: |
           echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main"
-          else
-            echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
-          fi
+          echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ env.REPORT_PATH }}"
 
       - name: Install gcloud CLI
-        if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        if: env.REPORT_PATH == 'main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: google-github-actions/setup-gcloud@v3
 
       - name: Download previous report for main branch
-        if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        if: env.REPORT_PATH == 'main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           mkdir -p previous-report
           echo "Copying main/history trend data"
           gsutil -m cp -r "gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main/history" "previous-report/" || echo "No previous report history found, skipping."
 
       - name: Copy history for main branch
-        if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        if: env.REPORT_PATH == 'main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           if [ -d "previous-report/history" ]; then
             mkdir -p allure-results/history
@@ -347,7 +417,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         name: Upload generated Allure report
         with:
-          name: allure-report
+          name: allure-report${{ env.RUN_SUFFIX }}
           path: allure-report
           if-no-files-found: ignore
           retention-days: 1
@@ -357,7 +427,7 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v3
         with:
           path: allure-report/
-          destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.ref == 'refs/heads/main' && 'main' || github.run_id }}
+          destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ env.REPORT_PATH }}
           parent: false
           glob: '**'
 
@@ -365,11 +435,7 @@ jobs:
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "[View Allure Report](https://elementor-allure-tests.prod.builder.elementor.red/main/)" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "[View Allure Report](https://elementor-allure-tests.prod.builder.elementor.red/${{ github.run_id }}/)" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "[View Allure Report${{ inputs.php_version && format(' (PHP {0})', inputs.php_version) || '' }}${{ inputs.wp_core && format(' (WP {0})', inputs.wp_core) || '' }}](https://elementor-allure-tests.prod.builder.elementor.red/${{ env.REPORT_PATH }}/)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
   test-result:
@@ -423,13 +489,13 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "Elementor Core: Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "Elementor Core: Playwright tests failed${{ inputs.php_version && format(' on PHP {0}', inputs.php_version) || '' }}${{ inputs.wp_core && format(' / WP {0}', inputs.wp_core) || '' }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Elementor Core: Playwright tests failed${{ inputs.php_version && format(' on PHP {0}', inputs.php_version) || '' }}${{ inputs.wp_core && format(' / WP {0}', inputs.wp_core) || '' }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 },
                 {
