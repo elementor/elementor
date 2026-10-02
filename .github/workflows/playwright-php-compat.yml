@@ -1,6 +1,9 @@
 name: Playwright PHP Compatibility
 
 on:
+  push:
+    branches:
+      - ED-25610-playwright-php-compat
   schedule:
     - cron: '0 4 * * 0'
   workflow_dispatch:
@@ -38,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ${{ fromJSON(inputs.php_versions || '["7.4", "8.1", "8.3", "8.5"]') }}
+        php: ${{ fromJSON(inputs.php_versions || '["7.4", "8.1", "8.2", "8.3", "8.4", "8.5"]') }}
     uses: ./.github/workflows/playwright-suite.yml
     secrets: inherit
     with:
