@@ -57,22 +57,4 @@ class Test_Data_Flow_Guide_Ability extends Elementor_Test_Base {
 			$this->assertStringContainsString( "`{$source}`", $content );
 		}
 	}
-
-	public function test_execute__lists_the_custom_actions_with_code_for_administrators() {
-		// Arrange
-		$this->act_as_admin();
-		Custom_Actions::instance()->save( [
-			'name' => 'acme/ping',
-			'code' => '() => {}',
-		] );
-
-		// Act
-		$content = ( new Data_Flow_Guide_Ability() )->execute();
-
-		// Assert
-		$this->assertStringContainsString( '"name": "acme/ping"', $content );
-		$this->assertStringContainsString( '"code": "() => {}"', $content );
-
-		Custom_Actions::instance()->delete( 'acme/ping' );
-	}
 }

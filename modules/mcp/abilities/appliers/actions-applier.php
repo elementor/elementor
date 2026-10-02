@@ -7,6 +7,7 @@ use Elementor\Modules\DataFlow\Actions_Parser;
 use Elementor\Modules\DataFlow\Props\Event_Action_Prop_Type;
 use Elementor\Modules\DataFlow\Props\Input_Action_Prop_Type;
 use Elementor\Modules\DataFlow\Props\State_Write_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Data_Flow_Actions_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Data_Flow_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
@@ -34,7 +35,7 @@ class Actions_Applier {
 					],
 					'do' => [
 						'type' => 'string',
-						'description' => 'Event action: action name, a built-in (state/set, state/toggle, state/increment, state/cycle, state/random, state/from-input, class/toggle, element/visible, attribute/set, animation/playback-rate) or a custom action listed in ' . Data_Flow_Guide_Ability::URI . ' or saved through custom_actions.',
+						'description' => 'Event action: action name, a built-in (state/set, state/toggle, state/increment, state/cycle, state/random, state/from-input, class/toggle, element/visible, attribute/set, animation/playback-rate) or a plugin or custom action listed in ' . Data_Flow_Actions_Resource_Ability::URI . ', or one saved through custom_actions.',
 					],
 					'args' => [
 						'type' => 'object',

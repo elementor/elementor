@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 use Elementor\Modules\DataFlow\Actions_Registry;
 use Elementor\Modules\DataFlow\Custom_Actions;
 use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
+use Elementor\Modules\Mcp\Abilities\Data_Flow_Actions_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Data_Flow_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
@@ -21,7 +22,7 @@ class Custom_Actions_Applier {
 	public static function get_schema(): array {
 		return [
 			'type' => 'array',
-			'description' => 'Requires the e_data_flow experiment and an administrator with unfiltered_html. Site-wide custom actions to create, update ({ name, label?, description?, args?, code }) or delete ({ name, delete: true }) before this call applies element actions, so elements can use them with { on, do: "<name>", args }. Use only when built-in and input actions cannot express the behavior. Editors configure the args with regular controls but never see the code. Read ' . Data_Flow_Guide_Ability::URI . '.',
+			'description' => 'Requires the e_data_flow experiment and an administrator with unfiltered_html. Site-wide custom actions to create, update ({ name, label?, description?, args?, code }) or delete ({ name, delete: true }) before this call applies element actions, so elements can use them with { on, do: "<name>", args }. Use only when built-in and input actions cannot express the behavior. Editors configure the args with regular controls but never see the code. Read ' . Data_Flow_Guide_Ability::URI . '; existing actions and their code are in ' . Data_Flow_Actions_Resource_Ability::URI . '.',
 			'items' => [
 				'type' => 'object',
 				'required' => [ 'name' ],

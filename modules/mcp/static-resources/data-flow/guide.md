@@ -178,7 +178,7 @@ Use a custom action only when the built-ins and input actions cannot express the
   - State is replaced, never mutated: `store.setState( 'items', ( items ) => [ ...items, item ] )`.
 - Only administrators with `unfiltered_html` can save custom actions. For anyone else they are skipped with a `custom_actions_forbidden` warning; an invalid one produces `custom_action_invalid`. With `dry_run`, they are validated but not saved.
 - The code is published as a static script and loaded only on pages that use the action. Errors are caught and logged per action.
-- The custom actions already saved on this site are listed at the end of this guide (with their code, for administrators).
+- Every action available on this site (built-in, plugin and custom) is listed with its argument schema in the `elementor://data-flow/actions` resource. Custom actions include their code there for administrators, so read it before updating one.
 
 ## User input
 
