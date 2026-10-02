@@ -76,7 +76,7 @@ export const BUILT_IN_ACTIONS = {
 	'class/toggle': ( context ) => {
 		const force = undefined === context.value ? undefined : matches( context );
 
-		getTargets( context ).forEach( ( target ) => target.classList.toggle( context.args.className, force ) );
+		getTargets( context ).forEach( ( target ) => target.classList.toggle( context.args.class_name, force ) );
 	},
 
 	'element/visible': ( context ) => {
