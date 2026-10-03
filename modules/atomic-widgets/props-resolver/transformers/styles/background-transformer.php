@@ -16,9 +16,17 @@ class Background_Transformer extends Transformer_Base {
 		$color = $value['color'] ?? null;
 		$clip = $value['clip'] ?? null;
 
-		return Multi_Props::generate( array_merge( $overlay, [
+		$props = array_merge( $overlay, [
 			'background-color' => $color,
 			'background-clip' => $clip,
-		] ) );
+		] );
+
+		// A solid color only sets background-color. A kit/site gradient is background-image
+		// on the same element, and that image paints over the color unless it is cleared.
+		if ( ! empty( $color ) && empty( $props['background-image'] ) ) {
+			$props['background-image'] = 'none';
+		}
+
+		return Multi_Props::generate( $props );
 	}
 }
