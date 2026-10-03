@@ -202,6 +202,26 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 		// Assert
 		$this->assertSame( $cdn_url, $url );
 	}
+
+	public function test_get_url__rejects_non_elementor_cdn_url() {
+		// Arrange — CDN returns a URL outside elementor.com.
+		$cdn_payload = [
+			'is_active' => true,
+			'label'     => 'Sale',
+			'url'       => 'https://evil.example.com/steal/',
+		];
+
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $cdn_payload ),
+		] );
+
+		// Act
+		$url = Go_Pro_Promotion_Item::get_url();
+
+		// Assert — domain filter must block non-elementor.com URL and fall back to default.
+		$this->assertSame( Go_Pro_Promotion_Item::URL, $url );
+	}
 }
 
 }
