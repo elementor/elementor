@@ -152,7 +152,7 @@ class Module extends Base_Module {
 		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
 
 		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
-			return $assets_data['url'];
+			return esc_url( $assets_data['url'] );
 		}
 
 		return $url;

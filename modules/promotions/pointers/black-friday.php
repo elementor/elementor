@@ -27,6 +27,10 @@ class Black_Friday {
 
 		$assets_data = self::get_pointer_assets_data();
 
+		if ( empty( $assets_data['title'] ) || empty( $assets_data['cta_url'] ) ) {
+			return;
+		}
+
 		$this->set_seen_today();
 		$this->enqueue_dependencies();
 
@@ -52,7 +56,7 @@ class Black_Friday {
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				$( "#<?php echo esc_attr( self::ELEMENTOR_POINTER_ID ); ?>" ).pointer( {
-					content: '<?php echo wp_kses( $pointer_content, $allowed_tags ); ?>',
+					content: <?php echo wp_json_encode( wp_kses( $pointer_content, $allowed_tags ) ); ?>,
 					position: {
 						edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 						align: "center"
@@ -75,7 +79,7 @@ class Black_Friday {
 
 		return self::is_user_allowed() &&
 			! self::is_dismissed() &&
-			! empty( $assets_data['is_campaign_active'] ) &&
+			! empty( $assets_data['is_active'] ) &&
 			! self::is_already_seen_today() &&
 			! Utils::has_pro();
 	}
