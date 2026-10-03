@@ -2,6 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Icons_Manager;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Fontello_Converter;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Icomoon_Converter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -37,10 +42,23 @@ class Font_Awesome_7_Icon_Resolver {
 		return str_starts_with( $library, self::LIBRARY_PREFIX );
 	}
 
+	const FILTER_TYPE_ALL = 'all';
+
+	const FILTER_TYPE_GROUP = 'group';
+
+	const FILTER_TYPE_ITEM = 'item';
+
+	const SKIPPED_TAB_NAMES = [ 'all', 'recommended', 'GoPro' ];
+
 	public static function get_editor_config(): array {
+		$custom_icon_libraries_enabled = Availability::is_enabled();
+
 		return [
 			'jsonFiles' => self::ALLOWED_JSON_FILES,
 			'jsonBaseUrl' => self::get_json_base_url(),
+			'filter' => self::get_filter_items( $custom_icon_libraries_enabled ),
+			'customIconPacks' => $custom_icon_libraries_enabled ? self::get_custom_icon_packs() : [],
+			'customIconLibrariesEnabled' => $custom_icon_libraries_enabled,
 		];
 	}
 
@@ -75,6 +93,117 @@ class Font_Awesome_7_Icon_Resolver {
 			'height' => $icon_tuple[ self::TUPLE_HEIGHT ],
 			'paths' => $paths,
 		];
+	}
+
+	private static function get_filter_items( bool $custom_icon_libraries_enabled ): array {
+		$items = [
+			[
+				'type' => self::FILTER_TYPE_ALL,
+				'label' => esc_html__( 'All icons', 'elementor' ),
+				'icon' => 'list',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-regular',
+				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
+				'icon' => 'star',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-solid',
+				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
+				'icon' => 'star-filled',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-brands',
+				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
+				'icon' => 'library',
+			],
+		];
+
+		$custom_items = [];
+
+		if ( ! $custom_icon_libraries_enabled ) {
+			return $items;
+		}
+
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
+				continue;
+			}
+
+			if ( in_array( $name, self::SKIPPED_TAB_NAMES, true ) ) {
+				continue;
+			}
+
+			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
+			$tab_label = isset( $tab['label'] ) && is_string( $tab['label'] ) ? $tab['label'] : '';
+
+			if ( '' === $tab_name || '' === $tab_label ) {
+				continue;
+			}
+
+			$custom_items[] = [
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => $tab_name,
+				'label' => $tab_label,
+				'icon' => 'library',
+			];
+		}
+
+		if ( empty( $custom_items ) ) {
+			return $items;
+		}
+
+		$items[] = [
+			'type' => self::FILTER_TYPE_GROUP,
+			'label' => esc_html__( 'My libraries', 'elementor' ),
+		];
+
+		return array_merge( $items, $custom_items );
+	}
+
+	private static function get_custom_icon_packs(): array {
+		$packs = [];
+
+		if ( ! class_exists( Icons_Manager::class ) ) {
+			return $packs;
+		}
+
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
+				continue;
+			}
+
+			$library = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : (string) $name;
+
+			if ( '' === $library || in_array( $library, self::SKIPPED_TAB_NAMES, true ) ) {
+				continue;
+			}
+
+			$urls = Fontello_Converter::pack_urls( $tab + [ 'name' => $library ] );
+
+			if ( empty( $urls ) ) {
+				$urls = Fontello_Converter::pack_urls( [ 'name' => $library ] );
+			}
+
+			if ( empty( $urls ) ) {
+				$urls = Icomoon_Converter::pack_urls( $tab + [ 'name' => $library ] );
+			}
+
+			if ( empty( $urls ) ) {
+				$urls = Icomoon_Converter::pack_urls( [ 'name' => $library ] );
+			}
+
+			if ( empty( $urls ) ) {
+				continue;
+			}
+
+			$packs[ $library ] = $urls;
+		}
+
+		return $packs;
 	}
 
 	private static function get_icon_name( string $value ): ?string {

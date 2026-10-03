@@ -2,11 +2,13 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { useCustomIconLibraries } from '../custom-icon-libraries';
 import { ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
 jest.mock( '../use-font-awesome-7-catalog' );
+jest.mock( '../custom-icon-libraries' );
 
 const scrollToIndex = jest.fn();
 let mockVisibleIndices: number[] | null = null;
@@ -94,6 +96,10 @@ describe( 'IconLibraryPopover', () => {
 			data: icons,
 			isLoading: false,
 		} as never );
+		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+		} as never );
 
 		if ( ! globalThis.ResizeObserver ) {
 			globalThis.ResizeObserver = class {
@@ -110,6 +116,8 @@ describe( 'IconLibraryPopover', () => {
 		jest.useRealTimers();
 		document.documentElement.removeAttribute( 'dir' );
 		restoreClientWidth();
+		delete ( window as { elementor?: typeof window.elementor } ).elementor;
+		window.elementorCommon = undefined as unknown as typeof window.elementorCommon;
 	} );
 
 	it( 'opens in list view by default', () => {
@@ -603,6 +611,136 @@ describe( 'IconLibraryPopover', () => {
 
 		// Assert.
 		expect( screen.getByRole( 'gridcell', { name: /bell/i } ) ).toHaveFocus();
+	} );
+
+	it( 'lists custom library icons and stores the library value on select', () => {
+		// Arrange.
+		const onSelect = jest.fn();
+		const customIcon = {
+			id: 'my-icons:badge',
+			name: 'badge',
+			label: 'badge',
+			library: 'my-icons',
+			value: 'my-icons my-icons-badge',
+			aliases: [],
+			width: 512,
+			height: 512,
+			paths: [],
+			glyphClass: 'my-icons my-icons-badge',
+		};
+
+		window.elementor = {
+			...window.elementor,
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							label: 'My Icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							fetchJson: 'https://example.com/my-icons.js',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
+			data: [ customIcon ],
+			isLoading: false,
+		} as never );
+
+		renderPopover( { onSelect } );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'option', { name: /badge/i } ) );
+
+		// Assert.
+		expect( onSelect ).toHaveBeenCalledWith( {
+			value: 'my-icons my-icons-badge',
+			library: 'my-icons',
+		} );
+	} );
+
+	it( 'filters custom libraries under My Libraries without resetting search', () => {
+		// Arrange.
+		jest.useFakeTimers();
+		const customIcon = {
+			id: 'my-icons:badge',
+			name: 'badge',
+			label: 'badge',
+			library: 'my-icons',
+			value: 'my-icons my-icons-badge',
+			aliases: [],
+			width: 512,
+			height: 512,
+			paths: [ 'M1 1' ],
+		};
+
+		window.elementor = {
+			...window.elementor,
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							label: 'My Icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							fetchJson: 'https://example.com/my-icons.js',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						jsonFiles: [ 'solid', 'regular', 'brands' ],
+						jsonBaseUrl: 'https://example.com/assets/lib/font-awesome-7/json/',
+						filter: [
+							{ type: 'all', label: 'All icons', icon: 'list' },
+							{ type: 'item', value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
+							{ type: 'item', value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
+							{ type: 'item', value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'library' },
+							{ type: 'group', label: 'My libraries' },
+							{ type: 'item', value: 'my-icons', label: 'My Icons', icon: 'library' },
+						],
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
+			data: [ customIcon ],
+			isLoading: false,
+		} as never );
+
+		renderPopover();
+		const search = screen.getByPlaceholderText( 'Search' );
+		fireEvent.change( search, { target: { value: 'badge' } } );
+		act( () => {
+			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
+		} );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
+		expect( screen.getByText( 'My libraries' ) ).toBeInTheDocument();
+		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'My Icons' } ) );
+		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
+
+		// Assert.
+		expect( search ).toHaveValue( 'badge' );
+		expect( screen.getByRole( 'option', { name: /badge/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'option', { name: /star/i } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows a grid icon name tooltip only after one second', async () => {

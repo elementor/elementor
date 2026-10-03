@@ -4,6 +4,9 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers;
 
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
+use Elementor\Icons_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
@@ -28,7 +31,95 @@ class Icon_Transformer extends Transformer_Base {
 			return $this->transform_font_awesome_7( $icon );
 		}
 
-		return $this->transform_managed_icon( $icon );
+		$managed_icon = $this->transform_managed_icon( $icon );
+
+		if ( '' !== $managed_icon['html'] ) {
+			return $managed_icon;
+		}
+
+		return $this->transform_custom_library_icon( $icon );
+	}
+
+	private function transform_custom_library_icon( array $icon ): array {
+		if ( ! Availability::is_enabled() ) {
+			return $this->transform_default_svg();
+		}
+
+		/**
+		 * Filters inline SVG markup for a custom icon library value.
+		 *
+		 * @param string $html Sanitizable SVG markup. Default empty.
+		 * @param array  $icon {
+		 *     @type string $value   Saved icon class.
+		 *     @type string $library Icon library key.
+		 * }
+		 */
+		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
+
+		if ( is_string( $html ) && '' !== $html ) {
+			return [
+				'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
+				'url' => null,
+			];
+		}
+
+		if ( $this->is_deleted_custom_icon_library( $icon ) ) {
+			return $this->transform_default_svg();
+		}
+
+		return [
+			'html' => '',
+			'url' => null,
+		];
+	}
+
+	private function get_registered_icon_library_tab( string $library ): ?array {
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) ) {
+				continue;
+			}
+
+			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
+
+			if ( (string) $name === $library || $tab_name === $library ) {
+				return $tab;
+			}
+		}
+
+		return null;
+	}
+
+	private function is_deleted_custom_icon_library( array $icon ): bool {
+		$library = $icon['library'];
+		$value = $icon['value'];
+
+		if ( '' === $library || '' === $value ) {
+			return false;
+		}
+
+		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+			return false;
+		}
+
+		if ( in_array( $library, Font_Awesome_7_Icon_Resolver::SKIPPED_TAB_NAMES, true ) ) {
+			return false;
+		}
+
+		if ( Font_Icon_Svg_Data_Manager::get_font_family( $library ) ) {
+			return false;
+		}
+
+		return ! $this->get_registered_icon_library_tab( $library );
+	}
+
+	private function transform_default_svg(): array {
+		return ( new Svg_Src_Transformer() )->transform(
+			[
+				'id' => null,
+				'url' => Atomic_Svg::DEFAULT_SVG_URL,
+			],
+			Props_Resolver_Context::make()
+		);
 	}
 
 	private function transform_font_awesome_7( array $icon ): array {
