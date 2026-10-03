@@ -23,6 +23,7 @@ export type AuditRun = {
 export type AuditFailMetadata = {
 	missingAltImageCount?: number;
 	oversizedImageCount?: number;
+	inefficientImageFormatCount?: number;
 };
 
 export type AuditResult =
