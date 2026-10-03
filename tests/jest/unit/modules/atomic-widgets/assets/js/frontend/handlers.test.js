@@ -642,6 +642,29 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( body.get( 'referer_title' ) ).toBe( 'Submission Contract Page' );
 			expect( body.get( 'referrer' ) ).toBe( window.location.href );
 		} );
+
+		it( 'uses data-id over data-interaction-id for field id when both present (component case)', async () => {
+			// Arrange: inside a component, data-id is instance-scoped and differs from data-interaction-id (origin_id).
+			const { form } = createFormWithInput();
+			const input = form.querySelector( 'input' );
+			input.setAttribute( 'data-id', 'instance-field-1' );
+			input.setAttribute( 'data-interaction-id', 'origin-field-1' );
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			const body = global.fetch.mock.calls[ 0 ][ 1 ].body;
+			expect( body.get( 'form_fields[0][id]' ) ).toBe( 'instance-field-1' );
+		} );
 	} );
 
 	it( 'adds non-whitelisted editor link actions via filter', async () => {
