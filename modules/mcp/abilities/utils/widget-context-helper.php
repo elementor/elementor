@@ -64,7 +64,7 @@ class Widget_Context_Helper {
 			}
 
 			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
-				$instance->get_stack();
+				$instance->get_stack( false );
 			}
 
 			$config = $instance->get_config();
@@ -82,7 +82,7 @@ class Widget_Context_Helper {
 			}
 
 			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
-				$instance->get_stack();
+				$instance->get_stack( false );
 			}
 
 			$config = $instance->get_config();
@@ -103,7 +103,7 @@ class Widget_Context_Helper {
 		}
 
 		if ( self::should_initialize_v3_controls_stack( $widget_type ) && method_exists( $instance, 'get_stack' ) ) {
-			$instance->get_stack();
+			$instance->get_stack( false );
 		}
 
 		return $instance->get_config();

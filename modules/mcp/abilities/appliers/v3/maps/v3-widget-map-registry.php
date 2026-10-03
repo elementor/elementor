@@ -99,7 +99,7 @@ class V3_Widget_Map_Registry {
 					return null;
 				}
 
-				$stack = $source->get_stack();
+				$stack = $source->get_stack( false );
 
 				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
 			},
