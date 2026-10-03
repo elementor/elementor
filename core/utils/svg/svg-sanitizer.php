@@ -178,7 +178,7 @@ class Svg_Sanitizer {
 	private function is_allowed_tag( $element ) {
 		static $allowed_tags = false;
 		if ( false === $allowed_tags ) {
-			$allowed_tags = $this->get_allowed_elements();
+			$allowed_tags = array_map( 'strtolower', $this->get_allowed_elements() );
 		}
 
 		$tag_name = $element->tagName; // phpcs:ignore -- php DomDocument
