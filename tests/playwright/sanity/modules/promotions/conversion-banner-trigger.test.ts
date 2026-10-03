@@ -10,6 +10,7 @@ const ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
 const PENDING_TRANSIENT = 'elementor_conversion_banner_pages_pending';
 const TEST_PAGE_TITLE_PREFIX = 'Conversion banner PW';
 const UNLOCK_OPTION = 'elementor_conversion_banner_unlocked';
+const CDN_CACHE_OPTION = 'elementor_conversion_banner_assets_data';
 
 const testPageIds: string[] = [];
 
@@ -35,6 +36,13 @@ const resetBannerTriggerState = async (): Promise<void> => {
 	} catch {
 		// Introduction meta may not exist yet.
 	}
+
+	// Seed the CDN cache with inactive data so the banner always uses fallback
+	// copy. Without this, the code fetches from the live CDN which may have an
+	// active campaign with copy that doesn't contain "Elementor Pro".
+	await wpCli(
+		`wp eval "update_option('${ CDN_CACHE_OPTION }', ['timeout' => PHP_INT_MAX, 'value' => json_encode(['is_active' => false'])]);"`,
+	);
 
 	await clearElementorEditModeMeta();
 };

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Base\Document;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -21,7 +22,7 @@ class Conversion_Banner {
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
-	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
+	const BANNER_TRANSIENT_KEY = 'elementor_conversion_banner_assets_data';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
@@ -211,17 +212,33 @@ class Conversion_Banner {
 	}
 
 	private function get_banner_config(): array {
-		if ( Utils::is_sale_time() ) {
-			return $this->get_birthday_banner_config();
+		$assets_data = $this->get_banner_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['title'] ) && ! empty( $assets_data['cta_url'] ) ) {
+			return [
+				'title'   => $assets_data['title'] ?? '',
+				'text'    => $assets_data['text'] ?? '',
+				'buttons' => [
+					[
+						'text'   => $assets_data['cta_text'] ?? '',
+						'link'   => $assets_data['cta_url'] ?? '',
+						'target' => '_blank',
+					],
+				],
+				'image' => [
+					'src' => $assets_data['image_url'] ?? '',
+					'alt' => $assets_data['image_alt'] ?? '',
+				],
+			];
 		}
 
 		return [
-			'title' => __( 'Elevate your site with Elementor Pro', 'elementor' ),
-			'text' => __( 'Access Elementor\'s Theme Builder, Dynamic Content, WooCommerce Builder, Popup Builder, 85+ Pro widgets and more when you upgrade to Pro', 'elementor' ),
+			'title'   => __( 'Elevate your site with Elementor Pro', 'elementor' ),
+			'text'    => __( 'Access Elementor\'s Theme Builder, Dynamic Content, WooCommerce Builder, Popup Builder, 85+ Pro widgets and more when you upgrade to Pro', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => __( 'Upgrade now', 'elementor' ),
-					'link' => self::UPGRADE_URL,
+					'text'   => __( 'Upgrade now', 'elementor' ),
+					'link'   => self::UPGRADE_URL,
 					'target' => '_blank',
 				],
 			],
@@ -232,22 +249,14 @@ class Conversion_Banner {
 		];
 	}
 
-	private function get_birthday_banner_config(): array {
-		return [
-			'title' => __( 'Celebrate 10 years of Elementor', 'elementor' ),
-			'text' => __( 'Upgrade your workflow with more capabilities for less. Offer ends June 17.', 'elementor' ),
-			'buttons' => [
-				[
-					'text' => __( 'Get Discounts', 'elementor' ),
-					'link' => self::BIRTHDAY_PROMOTION_URL,
-					'target' => '_blank',
-				],
-			],
-			'image' => [
-				'src' => ELEMENTOR_ASSETS_URL . 'images/decade-birthday.png',
-				'alt' => __( 'Celebrate 10 years of Elementor', 'elementor' ),
-			],
-		];
+	private function get_banner_assets_data(): array {
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::BANNER_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/conversion-banner.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'conversion-banner',
+		] );
+
+		return $api->get_assets_data();
 	}
 
 	public static function should_display_banner(): bool {

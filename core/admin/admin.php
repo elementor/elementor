@@ -8,6 +8,7 @@ use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -21,6 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin extends App {
+
+	const PLUGINS_PAGE_TRANSIENT_KEY = 'elementor_plugins_page_assets_data';
+	const URL = 'https://go.elementor.com/go-pro-wp-plugins/';
 
 	private $menus = [];
 
@@ -372,12 +376,21 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
-		if ( Utils::is_sale_time() ) {
-			$go_pro_text = esc_html__( 'Sale! Upgrade Now', 'elementor' );
+		$assets_data = self::get_plugins_page_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['label'] ) ) {
+			$go_pro_text = esc_html( $assets_data['label'] );
+		} else {
+			$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
 		}
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', $go_pro_text );
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
+			$go_pro_url = $assets_data['url'];
+		} else {
+			$go_pro_url = self::URL;
+		}
+
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', esc_url( $go_pro_url ), $go_pro_text );
 
 		return $links;
 	}
@@ -1216,5 +1229,14 @@ class Admin extends App {
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
+	}
+
+	private static function get_plugins_page_assets_data(): array {
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::PLUGINS_PAGE_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/plugins-page.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'plugins-page',
+		] );
+		return $api->get_assets_data();
 	}
 }

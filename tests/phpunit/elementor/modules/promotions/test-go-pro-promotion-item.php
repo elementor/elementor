@@ -7,6 +7,12 @@ namespace {
 		}
 	}
 
+	if ( ! function_exists( 'esc_html' ) ) {
+		function esc_html( $text ) {
+			return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
+		}
+	}
+
 	if ( ! function_exists( 'add_action' ) ) {
 		function add_action( ...$args ) {}
 	}
@@ -68,7 +74,7 @@ namespace {
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
-use Elementor\Modules\Promotions\Conversion_Banner;
+use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -78,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once dirname( __DIR__, 5 ) . '/includes/utils.php';
 
-class Test_Conversion_Banner extends TestCase {
+class Test_Go_Pro_Promotion_Item extends TestCase {
 
 	protected function setUp(): void {
 		$GLOBALS['_test_options'] = [];
@@ -86,7 +92,7 @@ class Test_Conversion_Banner extends TestCase {
 		// When running in the WP integration test context: clear the real DB option
 		// and block outbound HTTP so EditorAssetsAPI cannot reach the live CDN.
 		if ( function_exists( 'delete_option' ) ) {
-			delete_option( Conversion_Banner::BANNER_TRANSIENT_KEY );
+			delete_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
 		}
 		if ( function_exists( 'add_filter' ) ) {
 			add_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1, 3 );
@@ -98,7 +104,7 @@ class Test_Conversion_Banner extends TestCase {
 			remove_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1 );
 		}
 		if ( function_exists( 'delete_option' ) ) {
-			delete_option( Conversion_Banner::BANNER_TRANSIENT_KEY );
+			delete_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
 		}
 	}
 
@@ -111,75 +117,110 @@ class Test_Conversion_Banner extends TestCase {
 		return new \WP_Error( 'tests_blocked', 'HTTP blocked in tests.' );
 	}
 
-	public function test_get_banner_config__uses_elementor_branded_copy() {
+	public function test_get_label__returns_default_when_cdn_inactive() {
 		// Arrange — no CDN cache, HTTP calls blocked → falls back to default.
-		$banner = new Conversion_Banner();
-		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
-		$method->setAccessible( true );
+		$item = new Go_Pro_Promotion_Item();
 
 		// Act
-		$config = $method->invoke( $banner );
+		$label = $item->get_label();
 
 		// Assert
-		$this->assertSame( 'Elevate your site with Elementor Pro', $config['title'] );
-		$this->assertSame(
-			'Access Elementor\'s Theme Builder, Dynamic Content, WooCommerce Builder, Popup Builder, 85+ Pro widgets and more when you upgrade to Pro',
-			$config['text']
-		);
-		$this->assertSame( 'Upgrade now', $config['buttons'][0]['text'] );
-		$this->assertSame( Conversion_Banner::UPGRADE_URL, $config['buttons'][0]['link'] );
+		$this->assertSame( 'Upgrade', $label );
 	}
 
-	public function test_get_banner_config__uses_cdn_data_when_active() {
-		// Arrange — seed the WP option with active CDN data.
+	public function test_get_label__returns_cdn_label_when_active() {
+		// Arrange — seed WP option with active CDN data.
 		$cdn_payload = [
 			'is_active' => true,
-			'title'     => 'Sale Is On!',
-			'text'      => 'Save big.',
-			'cta_text'  => 'View Deals',
-			'cta_url'   => 'https://go.elementor.com/test/',
-			'image_url' => '',
-			'image_alt' => 'Sale',
+			'label'     => 'Upgrade Sale Now',
+			'url'       => 'https://go.elementor.com/test/',
 		];
 
-		update_option( Conversion_Banner::BANNER_TRANSIENT_KEY, [
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		] );
 
-		$banner = new Conversion_Banner();
-		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
-		$method->setAccessible( true );
+		$item = new Go_Pro_Promotion_Item();
 
 		// Act
-		$config = $method->invoke( $banner );
+		$label = $item->get_label();
 
 		// Assert
-		$this->assertSame( 'Sale Is On!', $config['title'] );
-		$this->assertSame( 'https://go.elementor.com/test/', $config['buttons'][0]['link'] );
+		$this->assertSame( 'Upgrade Sale Now', $label );
 	}
 
-	public function test_get_banner_config__falls_back_when_cdn_missing_required_fields() {
-		// Arrange — CDN is active but missing title and cta_url.
+	public function test_get_label__falls_back_when_cdn_active_but_label_empty() {
+		// Arrange — CDN is active but label is empty.
 		$cdn_payload = [
 			'is_active' => true,
-			'text'      => 'Some text.',
+			'label'     => '',
+			'url'       => 'https://go.elementor.com/test/',
 		];
 
-		update_option( Conversion_Banner::BANNER_TRANSIENT_KEY, [
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
 			'timeout' => PHP_INT_MAX,
 			'value'   => json_encode( $cdn_payload ),
 		] );
 
-		$banner = new Conversion_Banner();
-		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
-		$method->setAccessible( true );
+		$item = new Go_Pro_Promotion_Item();
 
 		// Act
-		$config = $method->invoke( $banner );
+		$label = $item->get_label();
 
 		// Assert — should fall back to default.
-		$this->assertSame( 'Elevate your site with Elementor Pro', $config['title'] );
+		$this->assertSame( 'Upgrade', $label );
+	}
+
+	public function test_get_url__returns_default_when_cdn_inactive() {
+		// Arrange — no CDN cache.
+
+		// Act
+		$url = Go_Pro_Promotion_Item::get_url();
+
+		// Assert — default URL (after filter/manager chain with no overrides).
+		$this->assertSame( Go_Pro_Promotion_Item::URL, $url );
+	}
+
+	public function test_get_url__returns_cdn_url_when_active() {
+		// Arrange — seed with active CDN data.
+		$cdn_url     = 'https://go.elementor.com/test/';
+		$cdn_payload = [
+			'is_active' => true,
+			'label'     => 'Upgrade Sale Now',
+			'url'       => $cdn_url,
+		];
+
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $cdn_payload ),
+		] );
+
+		// Act
+		$url = Go_Pro_Promotion_Item::get_url();
+
+		// Assert
+		$this->assertSame( $cdn_url, $url );
+	}
+
+	public function test_get_url__rejects_non_elementor_cdn_url() {
+		// Arrange — CDN returns a URL outside elementor.com.
+		$cdn_payload = [
+			'is_active' => true,
+			'label'     => 'Sale',
+			'url'       => 'https://evil.example.com/steal/',
+		];
+
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $cdn_payload ),
+		] );
+
+		// Act
+		$url = Go_Pro_Promotion_Item::get_url();
+
+		// Assert — domain filter must block non-elementor.com URL and fall back to default.
+		$this->assertSame( Go_Pro_Promotion_Item::URL, $url );
 	}
 }
 

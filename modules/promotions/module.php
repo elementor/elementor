@@ -70,9 +70,8 @@ class Module extends Base_Module {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
 
-		if ( Utils::is_sale_time() ) {
-			add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
-		}
+		add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
+		add_filter( 'elementor_one/upgrade_url', [ $this, 'override_one_menu_upgrade_url' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -124,6 +123,12 @@ class Module extends Base_Module {
 	}
 
 	public function override_one_menu_upgrade_label_during_sale( $menu ) {
+		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
+
+		if ( empty( $assets_data['is_active'] ) || empty( $assets_data['label'] ) ) {
+			return $menu;
+		}
+
 		global $submenu;
 
 		$parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
@@ -135,12 +140,22 @@ class Module extends Base_Module {
 
 		foreach ( $submenu[ $parent_slug ] as &$item ) {
 			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
-				$item[0] = esc_html__( 'Sale!', 'elementor' ) . '<br />' . esc_html__( 'Upgrade Now', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$item[0] = esc_html( $assets_data['label'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				break;
 			}
 		}
 
 		return $menu;
+	}
+
+	public function override_one_menu_upgrade_url( string $url ): string {
+		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
+			return esc_url( $assets_data['url'] );
+		}
+
+		return $url;
 	}
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
