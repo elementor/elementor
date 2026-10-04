@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'widget_type' => 'text-editor',
 	'description' => 'Rich-text block with inline formatting.',
-	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
 		'editor' => Setting_Schemas::string(),
 	],

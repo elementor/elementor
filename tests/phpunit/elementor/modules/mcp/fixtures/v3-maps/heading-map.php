@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'widget_type' => 'heading',
 	'description' => 'Text heading with optional link and HTML tag (h1–h6, div, span, or p).',
-	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
 		'title' => Setting_Schemas::string( true ),
 		'link'  => Setting_Schemas::link(),

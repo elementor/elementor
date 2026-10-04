@@ -21,6 +21,7 @@ use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Standardized_V3_Maps_Fixture;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -29,6 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/fixtures/standardized-v3-maps.php';
 
 class Manage_Elements_V3_Heading_Dynamic_Tag extends Tag {
 	public function get_name() {
@@ -1785,7 +1787,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function enable_standardized_v3_maps(): void {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		Standardized_V3_Maps_Fixture::install();
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {

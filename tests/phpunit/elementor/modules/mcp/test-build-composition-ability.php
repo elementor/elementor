@@ -22,6 +22,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Standardized_V3_Maps_Fixture;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -32,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/fixtures/standardized-v3-maps.php';
 
 class Build_Composition_V3_Heading_Dynamic_Tag extends Tag {
 	public function get_name() {
@@ -468,7 +470,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( 'container', $elements[0]['elType'] ?? null );
 		$heading = $this->find_element_by_widget_type( $elements, 'heading' );
 		$this->assertSame( 'Mapped Heading', $heading['settings']['title'] ?? null );
 		$this->assertSame( 'h3', $heading['settings']['header_size'] ?? null );
@@ -574,12 +575,13 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
 	}
 
-	public function test_execute__rejects_standardized_v3_heading_when_atomic_elements_active() {
+	public function test_execute__rejects_standardized_v3_heading_when_atomic_elements_inactive() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->enable_standardized_v3_maps();
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		Standardized_V3_Maps_Fixture::install();
 
 		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
@@ -1436,7 +1438,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_execute__applies_map_driven_v3_container_settings_and_style() {
+	public function test_execute__does_not_map_v3_container_styles_when_standardized_maps_active() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1446,11 +1448,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<container configuration-id="c1"/>',
-			'element_config' => [
-				'c1' => [
-					'content_width' => 'full',
-				],
-			],
 			'style' => [
 				'c1' => 'background-color: #ff0000;',
 			],
@@ -1458,14 +1455,12 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
 		$container = $this->find_element_by_callback(
-			$elements,
+			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
 			static fn( array $element ) => 'container' === ( $element['elType'] ?? null )
-				&& 'full' === ( $element['settings']['content_width'] ?? null )
 		);
-		$this->assertNotNull( $container, 'Expected a mapped container with content_width=full.' );
-		$this->assertSame( '#ff0000', $container['settings']['background_color'] ?? null );
+		$this->assertNotNull( $container );
+		$this->assertArrayNotHasKey( 'background_color', $container['settings'] ?? [] );
 	}
 
 	public function test_execute__applies_map_driven_v3_button_settings_and_color() {
@@ -1583,7 +1578,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'custom', $button['settings']['typography_typography'] ?? null );
 	}
 
-	public function test_execute__applies_map_driven_v3_container_responsive_padding() {
+	public function test_execute__applies_map_driven_v3_button_responsive_padding() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1592,23 +1587,22 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<container configuration-id="c1"/>',
+			'xml_structure' => '<button configuration-id="b1"/>',
 			'element_config' => [
-				'c1' => [ 'content_width' => 'full' ],
+				'b1' => [ 'text' => 'Responsive' ],
 			],
-			'style' => [ 'c1' => 'padding: 40px; @media(--tablet) { padding: 20px; }' ],
+			'style' => [ 'b1' => 'padding: 40px; @media(--tablet) { padding: 20px; }' ],
 		] );
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$container = $this->find_element_by_callback(
+		$button = $this->find_element_by_widget_type(
 			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			static fn( array $element ) => 'container' === ( $element['elType'] ?? null )
-				&& 'full' === ( $element['settings']['content_width'] ?? null )
+			'button'
 		);
-		$this->assertNotNull( $container );
-		$this->assertSame( '40', $container['settings']['padding']['top'] ?? null );
-		$this->assertSame( '20', $container['settings']['padding_tablet']['top'] ?? null );
+		$this->assertNotNull( $button );
+		$this->assertSame( '40', $button['settings']['text_padding']['top'] ?? null );
+		$this->assertSame( '20', $button['settings']['text_padding_tablet']['top'] ?? null );
 	}
 
 	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
@@ -1743,7 +1737,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	private function enable_standardized_v3_maps(): void {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		Standardized_V3_Maps_Fixture::install();
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {

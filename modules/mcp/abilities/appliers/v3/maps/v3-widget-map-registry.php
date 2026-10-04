@@ -82,7 +82,14 @@ class V3_Widget_Map_Registry {
 		return self::$instance;
 	}
 
-	public static function create_default(): self {
+	public static function set_instance( self $registry ): void {
+		self::$instance = $registry;
+	}
+
+	/**
+	 * @param array<string, array<string, mixed>>|null $maps Defaults to the maps listed in registered-maps.php.
+	 */
+	public static function create_default( ?array $maps = null ): self {
 		return new self(
 			new V3_Widget_Map_Compiler(),
 			static fn() => class_exists( \Elementor\Plugin::class )
@@ -103,7 +110,7 @@ class V3_Widget_Map_Registry {
 
 				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
 			},
-			self::load_map_files()
+			$maps ?? self::load_map_files()
 		);
 	}
 
@@ -152,19 +159,13 @@ class V3_Widget_Map_Registry {
 			return Widget_Context_Helper::is_v3_allowlisted( $widget_type );
 		}
 
-		$compiled = $this->get_validation_contract( $widget_type );
+		$is_atomic_active = $this->is_atomic_active;
 
-		if ( null === $compiled ) {
+		if ( ! (bool) $is_atomic_active() ) {
 			return false;
 		}
 
-		if ( V3_Widget_Map_Compiler::CATALOG_VISIBILITY_ALWAYS === $compiled['catalog_visibility'] ) {
-			return true;
-		}
-
-		$is_atomic_active = $this->is_atomic_active;
-
-		return ! (bool) $is_atomic_active();
+		return null !== $this->get_validation_contract( $widget_type );
 	}
 
 	/**

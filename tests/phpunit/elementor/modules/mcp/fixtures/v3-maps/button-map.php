@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'widget_type' => 'button',
 	'description' => 'Clickable button with optional link and icon.',
-	'catalog_visibility' => 'v4_disabled',
 	'settings' => [
 		'text' => Setting_Schemas::string(),
 		'link' => Setting_Schemas::link(),
