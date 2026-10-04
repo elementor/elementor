@@ -10,21 +10,7 @@ class Icomoon_Converter implements Svg_Converter {
 	const DEFAULT_VIEWBOX = 1024;
 
 	public function supports( array $tab ): bool {
-		$type = isset( $tab['custom_icon_type'] ) && is_string( $tab['custom_icon_type'] )
-			? strtolower( $tab['custom_icon_type'] )
-			: '';
-
-		if ( in_array( $type, [ 'fontello', 'fontastic' ], true ) ) {
-			return false;
-		}
-
-		if ( 'icomoon' === $type ) {
-			return true;
-		}
-
-		$dir = self::pack_dir( $tab );
-
-		return '' !== $dir && is_readable( $dir . '/selection.json' );
+		return 'icomoon' === Pack_Directory::detect_type( $tab );
 	}
 
 	public function convert( array $tab, string $icon_value ): string {

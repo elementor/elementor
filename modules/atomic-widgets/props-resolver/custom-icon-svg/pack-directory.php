@@ -11,10 +11,50 @@ class Pack_Directory {
 	 * @return string[]
 	 */
 	const SVG_FONT_RELATIVE_PATHS = [
-		'font/fontello.svg',
-		'fonts/icomoon.svg',
-		'fonts/fontastic.svg',
+		'fontello' => 'font/fontello.svg',
+		'icomoon' => 'fonts/icomoon.svg',
+		'fontastic' => 'fonts/fontastic.svg',
 	];
+
+	const ALLOWED_TYPES = [ 'fontello', 'icomoon', 'fontastic' ];
+
+	public static function detect_type( array $tab ): string {
+		$type = isset( $tab['custom_icon_type'] ) && is_string( $tab['custom_icon_type'] )
+			? strtolower( $tab['custom_icon_type'] )
+			: '';
+
+		if ( in_array( $type, self::ALLOWED_TYPES, true ) ) {
+			return $type;
+		}
+
+		if ( '' !== $type ) {
+			return '';
+		}
+
+		$dir = self::resolve( $tab );
+
+		if ( '' === $dir ) {
+			return '';
+		}
+
+		if ( is_readable( $dir . '/selection.json' ) ) {
+			return 'icomoon';
+		}
+
+		if ( is_readable( $dir . '/config.json' ) && self::is_svg_font( $dir . '/font/fontello.svg' ) ) {
+			return 'fontello';
+		}
+
+		if ( self::is_svg_font( $dir . '/fonts/fontastic.svg' ) ) {
+			return 'fontastic';
+		}
+
+		return '';
+	}
+
+	public static function is_supported( array $tab ): bool {
+		return '' !== self::detect_type( $tab );
+	}
 
 	public static function resolve( array $tab ): string {
 		$candidates = self::candidates( $tab );
@@ -50,20 +90,6 @@ class Pack_Directory {
 
 			if ( self::is_svg_font( $path ) ) {
 				return $path;
-			}
-		}
-
-		foreach ( [ $dir . '/font', $dir . '/fonts' ] as $font_dir ) {
-			if ( ! is_dir( $font_dir ) ) {
-				continue;
-			}
-
-			$matches = glob( $font_dir . '/*.svg' ) ?: [];
-
-			foreach ( $matches as $path ) {
-				if ( is_string( $path ) && self::is_svg_font( $path ) ) {
-					return $path;
-				}
 			}
 		}
 

@@ -17,6 +17,7 @@ const MY_ICONS_CONFIG = {
 	prefix: 'my-icons-',
 	displayPrefix: 'my-icons',
 	fetchJson: 'https://example.com/uploads/my-icons.js',
+	custom_icon_type: 'fontello',
 	native: false,
 };
 
@@ -90,6 +91,32 @@ describe( 'custom-icon-libraries', () => {
 		] );
 	} );
 
+	it( 'skips custom libraries that are not Fontello, IcoMoon, or Fontastic', async () => {
+		// Arrange.
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'random-pack',
+							prefix: 'rnd-',
+							icons: [ 'foo' ],
+							custom_icon_type: 'nucleo',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert.
+		expect( catalog ).toEqual( [] );
+	} );
+
 	it( 'accepts numeric custom library names', async () => {
 		// Arrange.
 		global.fetch = jest.fn();
@@ -102,6 +129,7 @@ describe( 'custom-icon-libraries', () => {
 							prefix: 'icon-',
 							displayPrefix: '',
 							icons: [ 'emo-surprised' ],
+							custom_icon_type: 'fontello',
 							native: false,
 						},
 					],
@@ -153,6 +181,7 @@ describe( 'custom-icon-libraries', () => {
 						customIconLibrariesEnabled: true,
 						customIconPacks: {
 							'my-icons': {
+								type: 'icomoon',
 								selectionUrl: 'https://example.com/uploads/elementor/custom-icons/my-icons/selection.json',
 							},
 						},
@@ -169,6 +198,7 @@ describe( 'custom-icon-libraries', () => {
 							prefix: 'my-icons-',
 							displayPrefix: 'my-icons',
 							icons: [ 'home' ],
+							custom_icon_type: 'icomoon',
 							native: false,
 						},
 					],
@@ -208,6 +238,7 @@ describe( 'custom-icon-libraries', () => {
 						customIconLibrariesEnabled: true,
 						customIconPacks: {
 							'-1': {
+								type: 'fontello',
 								configUrl: 'https://example.com/uploads/elementor/custom-icons/-1/config.json',
 								fontUrl: 'https://example.com/uploads/elementor/custom-icons/-1/font/fontello.svg',
 							},
@@ -225,6 +256,7 @@ describe( 'custom-icon-libraries', () => {
 							prefix: 'icon-',
 							displayPrefix: '',
 							icons: [ 'emo-surprised' ],
+							custom_icon_type: 'fontello',
 							native: false,
 						},
 					],
@@ -258,6 +290,7 @@ describe( 'custom-icon-libraries', () => {
 							prefix: 'my-icons-',
 							displayPrefix: 'my-icons',
 							icons: [ 'badge' ],
+							custom_icon_type: 'fontello',
 							native: false,
 						},
 					],

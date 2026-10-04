@@ -84,7 +84,7 @@ declare global {
 						filter?: unknown;
 						customIconPacks?: Record<
 							string,
-							{ configUrl?: string; fontUrl?: string; selectionUrl?: string }
+							{ configUrl?: string; fontUrl?: string; selectionUrl?: string; type?: string }
 						>;
 						customIconLibrariesEnabled?: boolean;
 					};

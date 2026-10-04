@@ -53,7 +53,7 @@ class Font_Awesome_7_Icon_Resolver {
 		$custom_icon_libraries_enabled = Availability::is_enabled();
 
 		return [
-			'jsonFiles' => self::ALLOWED_JSON_FILES,
+			'jsonFiles' => self::allowed_json_files(),
 			'jsonBaseUrl' => self::get_json_base_url(),
 			'filter' => self::get_filter_items( $custom_icon_libraries_enabled ),
 			'customIconPacks' => $custom_icon_libraries_enabled ? self::get_custom_icon_packs() : [],
@@ -139,7 +139,11 @@ class Font_Awesome_7_Icon_Resolver {
 			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
 			$tab_label = isset( $tab['label'] ) && is_string( $tab['label'] ) ? $tab['label'] : '';
 
-			if ( '' === $tab_name || '' === $tab_label ) {
+			if ( '' === $tab_name || '' === $tab_label || str_starts_with( $tab_name, self::LIBRARY_PREFIX ) ) {
+				continue;
+			}
+
+			if ( ! Pack_Directory::is_supported( $tab + [ 'name' => $tab_name ] ) ) {
 				continue;
 			}
 
@@ -177,20 +181,23 @@ class Font_Awesome_7_Icon_Resolver {
 
 			$library = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : (string) $name;
 
-			if ( '' === $library || in_array( $library, self::SKIPPED_TAB_NAMES, true ) ) {
+			if ( '' === $library || in_array( $library, self::SKIPPED_TAB_NAMES, true ) || str_starts_with( $library, self::LIBRARY_PREFIX ) ) {
 				continue;
 			}
 
-			$urls = Pack_Directory::public_urls( $tab + [ 'name' => $library ] );
+			$tab_with_name = $tab + [ 'name' => $library ];
+
+			if ( ! Pack_Directory::is_supported( $tab_with_name ) ) {
+				continue;
+			}
+
+			$urls = Pack_Directory::public_urls( $tab_with_name );
 
 			if ( isset( $tab['fetchJson'] ) && is_string( $tab['fetchJson'] ) && '' !== $tab['fetchJson'] ) {
 				$urls['fetchJson'] = $tab['fetchJson'];
 			}
 
-			if ( empty( $urls ) ) {
-				continue;
-			}
-
+			$urls['type'] = Pack_Directory::detect_type( $tab_with_name );
 			$packs[ $library ] = $urls;
 		}
 
@@ -203,6 +210,25 @@ class Font_Awesome_7_Icon_Resolver {
 		}
 
 		return $matches[1];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function allowed_json_files(): array {
+		$files = apply_filters(
+			'elementor/atomic-widgets/font-awesome-7/json-files',
+			self::ALLOWED_JSON_FILES
+		);
+
+		if ( ! is_array( $files ) ) {
+			return self::ALLOWED_JSON_FILES;
+		}
+
+		return array_values( array_filter(
+			$files,
+			static fn( $file ) => is_string( $file ) && '' !== $file
+		) );
 	}
 
 	private static function get_json_base_path( string $file_name ): string {
@@ -250,7 +276,7 @@ class Font_Awesome_7_Icon_Resolver {
 
 		$file_name = substr( $library, strlen( self::LIBRARY_PREFIX ) );
 
-		if ( ! in_array( $file_name, self::ALLOWED_JSON_FILES, true ) ) {
+		if ( ! in_array( $file_name, self::allowed_json_files(), true ) ) {
 			return null;
 		}
 
@@ -258,7 +284,7 @@ class Font_Awesome_7_Icon_Resolver {
 	}
 
 	private static function load_icons( string $file_name ): ?array {
-		if ( ! in_array( $file_name, self::ALLOWED_JSON_FILES, true ) ) {
+		if ( ! in_array( $file_name, self::allowed_json_files(), true ) ) {
 			return null;
 		}
 

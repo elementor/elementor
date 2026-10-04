@@ -42,7 +42,7 @@ class Resolver {
 
 		$tab = self::tab_for_library( $library );
 
-		if ( ! $tab ) {
+		if ( ! $tab || ! Pack_Directory::is_supported( $tab ) ) {
 			return '';
 		}
 
@@ -70,7 +70,7 @@ class Resolver {
 
 		$tab = self::tab_for_library( $library );
 
-		if ( ! $tab ) {
+		if ( ! $tab || ! Pack_Directory::is_supported( $tab ) ) {
 			return [];
 		}
 

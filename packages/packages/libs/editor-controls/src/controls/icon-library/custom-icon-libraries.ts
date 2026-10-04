@@ -19,9 +19,12 @@ type CustomIconLibraryConfig = {
 	configUrl?: string;
 	fontUrl?: string;
 	selectionUrl?: string;
+	custom_icon_type?: string;
 	icons?: unknown;
 	native?: boolean;
 };
+
+const SUPPORTED_CUSTOM_ICON_TYPES = new Set( [ 'fontello', 'icomoon', 'fontastic' ] );
 
 const svgMapCache = new Map< string, Record< string, string > >();
 
@@ -118,12 +121,18 @@ function normalizeCustomIconLibraryConfig( value: unknown ): CustomIconLibraryCo
 		return null;
 	}
 
-	return {
+	const resolved: CustomIconLibraryConfig = {
 		...library,
 		name,
 		prefix: library.prefix,
-		...getPackUrls( name, library.fetchJson ),
+		...getPackUrls( name, library ),
 	};
+
+	if ( ! resolveCustomIconType( resolved ) ) {
+		return null;
+	}
+
+	return resolved;
 }
 
 function coerceLibraryName( value: unknown ): string {
@@ -140,9 +149,9 @@ function coerceLibraryName( value: unknown ): string {
 
 function getPackUrls(
 	library: string,
-	fetchJson?: string
-): { configUrl?: string; fontUrl?: string; selectionUrl?: string } {
-	const derived = derivePackAssetUrls( fetchJson );
+	config: CustomIconLibraryConfig
+): Pick< CustomIconLibraryConfig, 'configUrl' | 'fontUrl' | 'selectionUrl' | 'custom_icon_type' > {
+	const derived = derivePackAssetUrls( config.fetchJson, resolveCustomIconType( config ) );
 	const packs = window.elementorCommon?.config?.fontAwesome?.v7?.customIconPacks;
 
 	if ( ! packs || typeof packs !== 'object' ) {
@@ -155,34 +164,61 @@ function getPackUrls(
 		return derived;
 	}
 
+	const packType = typeof pack.type === 'string' ? pack.type : config.custom_icon_type;
+
 	return {
 		...derived,
 		configUrl: typeof pack.configUrl === 'string' ? pack.configUrl : derived.configUrl,
 		fontUrl: typeof pack.fontUrl === 'string' ? pack.fontUrl : derived.fontUrl,
 		selectionUrl: typeof pack.selectionUrl === 'string' ? pack.selectionUrl : derived.selectionUrl,
+		custom_icon_type: packType ?? derived.custom_icon_type,
 	};
 }
 
-function derivePackAssetUrls( fetchJson?: string ): {
-	configUrl?: string;
-	fontUrl?: string;
-	selectionUrl?: string;
-} {
+function resolveCustomIconType( library: CustomIconLibraryConfig ): string {
+	const type = typeof library.custom_icon_type === 'string' ? library.custom_icon_type.toLowerCase() : '';
+
+	return SUPPORTED_CUSTOM_ICON_TYPES.has( type ) ? type : '';
+}
+
+function derivePackAssetUrls(
+	fetchJson: string | undefined,
+	type: string
+): Pick< CustomIconLibraryConfig, 'configUrl' | 'fontUrl' | 'selectionUrl' | 'custom_icon_type' > {
 	if ( ! fetchJson ) {
-		return {};
+		return type ? { custom_icon_type: type } : {};
 	}
 
 	try {
 		const url = new URL( fetchJson, window.location.origin );
 		const base = url.href.replace( /\/[^/?#]+(?:\?.*)?$/, '' );
 
-		return {
-			configUrl: `${ base }/config.json`,
-			fontUrl: `${ base }/font/fontello.svg`,
-			selectionUrl: `${ base }/selection.json`,
-		};
-	} catch {
+		if ( 'icomoon' === type ) {
+			return {
+				custom_icon_type: type,
+				selectionUrl: `${ base }/selection.json`,
+				fontUrl: `${ base }/fonts/icomoon.svg`,
+			};
+		}
+
+		if ( 'fontastic' === type ) {
+			return {
+				custom_icon_type: type,
+				fontUrl: `${ base }/fonts/fontastic.svg`,
+			};
+		}
+
+		if ( 'fontello' === type ) {
+			return {
+				custom_icon_type: type,
+				configUrl: `${ base }/config.json`,
+				fontUrl: `${ base }/font/fontello.svg`,
+			};
+		}
+
 		return {};
+	} catch {
+		return type ? { custom_icon_type: type } : {};
 	}
 }
 
@@ -287,7 +323,13 @@ async function loadSvgMapFromPackFiles(
 	library: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< Record< string, string > > {
-	if ( library.selectionUrl ) {
+	const type = resolveCustomIconType( library );
+
+	if ( ! type ) {
+		return {};
+	}
+
+	if ( 'icomoon' === type && library.selectionUrl ) {
 		try {
 			const response = await fetch( library.selectionUrl, { signal, mode: 'cors' } );
 
@@ -313,8 +355,9 @@ async function loadSvgMapFromPackFiles(
 
 	const fontUrls = uniqueUrls( [
 		library.fontUrl,
-		library.fetchJson ? packSiblingUrl( library.fetchJson, 'font/fontello.svg' ) : null,
-		library.fetchJson ? packSiblingUrl( library.fetchJson, 'fonts/icomoon.svg' ) : null,
+		'fontello' === type && library.fetchJson ? packSiblingUrl( library.fetchJson, 'font/fontello.svg' ) : null,
+		'fontastic' === type && library.fetchJson ? packSiblingUrl( library.fetchJson, 'fonts/fontastic.svg' ) : null,
+		'icomoon' === type && library.fetchJson ? packSiblingUrl( library.fetchJson, 'fonts/icomoon.svg' ) : null,
 	] );
 
 	if ( fontUrls.length === 0 ) {

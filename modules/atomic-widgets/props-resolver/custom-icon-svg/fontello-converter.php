@@ -8,21 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Fontello_Converter implements Svg_Converter {
 	public function supports( array $tab ): bool {
-		$type = isset( $tab['custom_icon_type'] ) && is_string( $tab['custom_icon_type'] )
-			? strtolower( $tab['custom_icon_type'] )
-			: '';
-
-		if ( 'icomoon' === $type ) {
-			return false;
-		}
-
-		if ( in_array( $type, [ 'fontello', 'fontastic' ], true ) ) {
-			return true;
-		}
-
-		$dir = self::pack_dir( $tab );
-
-		return '' !== $dir && '' !== Pack_Directory::find_svg_font( $dir );
+		return in_array( Pack_Directory::detect_type( $tab ), [ 'fontello', 'fontastic' ], true );
 	}
 
 	public function convert( array $tab, string $icon_value ): string {
@@ -56,7 +42,9 @@ class Fontello_Converter implements Svg_Converter {
 		$tab = [ 'name' => $library ];
 		$dir = self::pack_dir( $tab );
 
-		if ( '' === $dir || '' === Pack_Directory::find_svg_font( $dir ) ) {
+		$type = Pack_Directory::detect_type( $tab );
+
+		if ( ! in_array( $type, [ 'fontello', 'fontastic' ], true ) ) {
 			return null;
 		}
 
@@ -79,7 +67,7 @@ class Fontello_Converter implements Svg_Converter {
 			'prefix' => $prefix,
 			'displayPrefix' => '',
 			'icons' => $names,
-			'custom_icon_type' => 'fontello',
+			'custom_icon_type' => $type,
 		];
 	}
 

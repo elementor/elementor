@@ -126,10 +126,10 @@ class Test_Resolver extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'icon icon-home', $map );
 	}
 
-	public function test_resolve__converts_svg_font_outside_fontello_path() {
+	public function test_resolve__converts_fontastic_svg_font() {
 		// Arrange.
 		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
-		$this->write_generic_svg_font_pack( 'pw-fontastic' );
+		$this->write_fontastic_pack( 'pw-fontastic' );
 		add_filter(
 			'elementor/atomic-widgets/custom-icon-library-dir',
 			function ( $dir, $tab ) {
@@ -148,6 +148,7 @@ class Test_Resolver extends Elementor_Test_Base {
 					'prefix' => 'icon-',
 					'displayPrefix' => '',
 					'native' => false,
+					'custom_icon_type' => 'fontastic',
 					'icons' => [ 'emo-surprised' ],
 				];
 
@@ -163,6 +164,45 @@ class Test_Resolver extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertStringContainsString( 'M0 0H100V100H0Z', $svg );
+	}
+
+	public function test_resolve__ignores_unknown_svg_font_layout() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
+		$this->write_generic_svg_font_pack( 'pw-unknown' );
+		add_filter(
+			'elementor/atomic-widgets/custom-icon-library-dir',
+			function ( $dir, $tab ) {
+				$name = isset( $tab['name'] ) ? (string) $tab['name'] : '';
+
+				return 'pw-unknown' === $name ? $this->pack_dir : $dir;
+			},
+			10,
+			2
+		);
+		add_filter(
+			'elementor/icons_manager/additional_tabs',
+			static function ( $tabs ) {
+				$tabs['pw-unknown'] = [
+					'name' => 'pw-unknown',
+					'prefix' => 'icon-',
+					'displayPrefix' => '',
+					'native' => false,
+					'icons' => [ 'emo-surprised' ],
+				];
+
+				return $tabs;
+			}
+		);
+
+		// Act.
+		$svg = Resolver::resolve( [
+			'library' => 'pw-unknown',
+			'value' => 'icon icon-emo-surprised',
+		] );
+
+		// Assert.
+		$this->assertSame( '', $svg );
 	}
 
 	public function test_resolve__returns_empty_when_pro_license_is_inactive() {
@@ -228,6 +268,14 @@ class Test_Resolver extends Elementor_Test_Base {
 				],
 			] )
 		);
+	}
+
+	private function write_fontastic_pack( string $library ): void {
+		$uploads = wp_upload_dir();
+		$this->pack_dir = trailingslashit( $uploads['basedir'] ) . 'elementor/custom-icons/' . $library;
+		$font_dir = $this->pack_dir . '/fonts';
+		wp_mkdir_p( $font_dir );
+		copy( __DIR__ . '/fixtures/fontello/font/fontello.svg', $font_dir . '/fontastic.svg' );
 	}
 
 	private function write_generic_svg_font_pack( string $library ): void {
