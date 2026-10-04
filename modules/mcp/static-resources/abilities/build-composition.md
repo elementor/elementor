@@ -17,8 +17,9 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
-4. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
-5. Use returned element IDs for subsequent configuration changes
+4. Read the schema via `elementor/get-widget-schema` for every element type you will use, including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
+5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+6. Use returned element IDs for subsequent configuration changes
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
@@ -39,10 +40,17 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
-- Containers: "e-flexbox", "e-div-block", "e-tabs"
+- Containers: "e-div-block", "e-grid", "e-flexbox"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
+- Multiple root elements are allowed. Every opening tag needs exactly one matching closing tag (or use a self-closing tag); a stray or missing closing tag fails the whole call with `invalid_xml`, even on `dry_run`
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
+
+## LAYOUTS
+Every element accepts the same layout styles. Set them in the `style` map for that configuration-id — not as an attribute on the XML tag.
+
+- `display: block` — children stack vertically in normal document flow and take the full width of the parent. Use this for sections and a heading followed by text.
+- `display: flex` — `flex-direction` defaults to `row`, so children sit side by side. For stacked content, set `flex-direction: column`. Set `flex-direction` on every multi-child flex container; otherwise children render in a row with no warning.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
@@ -54,10 +62,10 @@ Some elements have internal tree structures (nesting). When using these elements
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
-- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). Unknown/unsupported keys are NOT rejected — they are skipped and reported in `warnings`, and the build still succeeds. Prefer valid keys so props are not silently dropped.**
+- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). A key not in the schema, an unresolvable value, an unknown global class label, a bad interaction item, or unparseable CSS is skipped, the rest is saved, and each skip is returned as a warning (with `code` and `config_id` in `warning_details`). Every warning is fixable; only errors fail the call. Correct only that field via `elementor/manage-elements`; do not rebuild the composition and do not treat the skip as unsupported.**
 - style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped and reported in `warnings` (the composition still builds) — wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
+- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped with a warning — send it on a widget whose schema includes `link`, or wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
 ### Style conversion
@@ -84,7 +92,7 @@ Match the widget schema shape:
   - Example: `"paragraph": "<strong>Contact support</strong> for a <s>free</s> discounted quote — <em>limited time</em> only."`
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
-  - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`.
+  - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`. Don't send `alt` with `id`; library images render the attachment's Media Library alt text, so ask the user to update it there if it's missing.
   - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
 - **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
 - **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
@@ -146,8 +154,8 @@ NEVER SPECIFY:
 
 vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
 
-GOOD: `<e-flexbox>content naturally sizes</e-flexbox>`
-BAD: `<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-flexbox>`
+GOOD: `<e-div-block>content naturally sizes</e-div-block>`
+BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-div-block>`
 
 ## Layout Variety (Break the Template)
 - AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
@@ -216,7 +224,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-flexbox configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-flexbox>",
+  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
   "element_config": {
     "Section Title": {
       "tag": "h2",
@@ -229,7 +237,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   }
 }
 ```
-Note: No height/width specified on any element - flexbox handles layout automatically.
+Note: No height/width specified on any element — content sizes naturally.
 
 # FURTHER INSTRUCTIONS
 Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.

@@ -66,45 +66,49 @@ export default function ReportShell( { report }: Props ) {
 	};
 
 	return (
-		<Box>
-			<Tabs
-				aria-label={ __( 'Audit navigation', 'elementor' ) }
-				value={ currentTab }
-				onChange={ handleTabChange }
-				textColor="secondary"
-				indicatorColor="secondary"
-				size="small"
-				centered={ true }
-				variant="fullWidth"
-			>
-				<Tab value="overview" label={ __( 'Overview', 'elementor' ) } />
-				<Tab value="issues" label={ __( 'Issues', 'elementor' ) } />
-			</Tabs>
-			<Divider />
-			{ activePage === 'overview' && (
-				<OverviewPage
-					report={ report }
-					onCategoryClick={ ( category ) => openCategory( category, 'overview' ) }
-					onStatusClick={ ( status ) => openAllAudits( status, 'overview' ) }
-				/>
-			) }
-			{ activePage === 'issues' && (
-				<IssuesPage
-					report={ report }
-					onCategoryClick={ ( category ) => openCategory( category, 'issues' ) }
-					onAllAuditsClick={ () => openAllAudits() }
-				/>
-			) }
-			{ isAllAuditsPage( activePage ) && (
-				<AllAuditsPage
-					report={ report }
-					initialExpandedStatus={ activePage.expand }
-					onBack={ backFromSubPage }
-				/>
-			) }
-			{ isCategoryPage( activePage ) && (
-				<CategoryPage category={ activePage.category } report={ report } onBack={ backFromSubPage } />
-			) }
+		<Box sx={ { display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 } }>
+			<Box sx={ { flexShrink: 0 } }>
+				<Tabs
+					aria-label={ __( 'Audit navigation', 'elementor' ) }
+					value={ currentTab }
+					onChange={ handleTabChange }
+					textColor="secondary"
+					indicatorColor="secondary"
+					size="small"
+					centered={ true }
+					variant="fullWidth"
+				>
+					<Tab value="overview" label={ __( 'Overview', 'elementor' ) } />
+					<Tab value="issues" label={ __( 'Issues', 'elementor' ) } />
+				</Tabs>
+				<Divider />
+			</Box>
+			<Box sx={ { flex: 1, minHeight: 0, overflowY: 'auto' } }>
+				{ activePage === 'overview' && (
+					<OverviewPage
+						report={ report }
+						onCategoryClick={ ( category ) => openCategory( category, 'overview' ) }
+					/>
+				) }
+				{ activePage === 'issues' && (
+					<IssuesPage
+						report={ report }
+						onCategoryClick={ ( category ) => openCategory( category, 'issues' ) }
+						onAllAuditsClick={ () => openAllAudits() }
+						onStatusClick={ ( status ) => openAllAudits( status ) }
+					/>
+				) }
+				{ isAllAuditsPage( activePage ) && (
+					<AllAuditsPage
+						report={ report }
+						initialExpandedStatus={ activePage.expand }
+						onBack={ backFromSubPage }
+					/>
+				) }
+				{ isCategoryPage( activePage ) && (
+					<CategoryPage category={ activePage.category } report={ report } onBack={ backFromSubPage } />
+				) }
+			</Box>
 		</Box>
 	);
 }

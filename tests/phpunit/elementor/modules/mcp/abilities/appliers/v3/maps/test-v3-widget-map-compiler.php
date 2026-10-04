@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Setting_Schemas;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use PHPUnit\Framework\TestCase;
@@ -130,5 +131,48 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		// Assert.
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertSame( 'invalid_state_key', $this->reason( $result ) );
+	}
+
+	public function test_compile__accepts_link_schema_against_url_control() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['settings']['link'] = Setting_Schemas::link();
+		$controls = array_merge( $this->controls(), [ 'link' => [ 'type' => 'url' ] ] );
+
+		// Act.
+		$result = $compiler->compile( $map, $controls, 'heading' );
+
+		// Assert.
+		$this->assertIsArray( $result );
+	}
+
+	public function test_compile__errors_when_link_schema_targets_non_url_control() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['settings']['link'] = Setting_Schemas::link();
+		$controls = array_merge( $this->controls(), [ 'link' => [ 'type' => 'text' ] ] );
+
+		// Act.
+		$result = $compiler->compile( $map, $controls, 'heading' );
+
+		// Assert.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'incompatible_setting_shape', $this->reason( $result ) );
+	}
+
+	public function test_compile__dynamic_string_schema_errors_when_control_not_dynamic_capable() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['settings']['title'] = Setting_Schemas::string( true );
+
+		// Act — title control has type 'text' but no 'dynamic' capability.
+		$result = $compiler->compile( $map, $this->controls(), 'heading' );
+
+		// Assert.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'incompatible_dynamic_control', $this->reason( $result ) );
 	}
 }

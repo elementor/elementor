@@ -21,6 +21,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -255,6 +256,39 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	/**
+	 * @dataProvider invalid_xml_message_cases
+	 */
+	public function test_execute__invalid_xml_message_names_the_broken_tag( string $xml, string $expected_message ) {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'xml_structure' => $xml ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_xml', $result->get_error_code() );
+		$this->assertStringContainsString( $expected_message, $result->get_error_message() );
+		$this->assertStringNotContainsString( 'composition-root', $result->get_error_message() );
+	}
+
+	public function invalid_xml_message_cases(): array {
+		return [
+			'stray closing tag' => [
+				'<e-flexbox><e-heading/></e-flexbox></e-flexbox>',
+				'Closing tag </e-flexbox> has no matching opening tag.',
+			],
+			'unclosed tag' => [
+				'<e-flexbox><e-heading/>',
+				'Element <e-flexbox> is not closed.',
+			],
+		];
+	}
+
 	public function test_execute__duplicate_configuration_id_is_rejected_on_dry_run() {
 		// Arrange
 		$this->act_as_admin();
@@ -366,7 +400,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	/**
 	 * @dataProvider settings_validation_cases
 	 */
-	public function test_execute__settings_validation( array $element_config, array $expected_message_fragments ) {
+	public function test_execute__settings_validation( array $element_config, array $expected_message_fragments, string $expected_code ) {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -381,13 +415,13 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
-		$message = $result->get_error_message();
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$warnings = implode( ' ', $result['warnings'] ?? [] );
 		foreach ( $expected_message_fragments as $fragment ) {
-			$this->assertStringContainsString( $fragment, $message );
+			$this->assertStringContainsString( $fragment, $warnings );
 		}
+		$this->assertSame( 'h1', $this->find_warning_by_code( $result, $expected_code )['config_id'] ?? null );
 	}
 
 	public function settings_validation_cases(): array {
@@ -395,12 +429,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'invalid tag enum' => [
 				[ 'tag' => 'h99' ],
 				[ 'tag', 'elementor://widgets/schema' ],
+				'prop_value_invalid',
 			],
 			'unresolvable title type' => [
 				[
 					'title' => [ 'foo' => 'bar' ],
 				],
 				[ 'title', 'could not be resolved' ],
+				'prop_value_invalid',
 			],
 		];
 	}
@@ -625,9 +661,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result, 'Expected invalid settings but got success: ' . ( is_array( $result ) ? wp_json_encode( $result ) : 'unknown' ) );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 'h1', $this->find_warning_by_code( $result, 'prop_value_invalid' )['config_id'] ?? null );
 	}
 
 	public function dynamic_tag_wrong_settings_cases(): array {
@@ -671,7 +707,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $result['success'] );
 	}
 
-	public function test_execute__rejects_invalid_css_breakpoint_in_style() {
+	public function test_execute__invalid_css_breakpoint_in_style_returns_warning() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -687,9 +723,11 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_styles', $result->get_error_code() );
-		$this->assertStringContainsString( 'nonexistent', $result->get_error_message() );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$warning = $this->find_warning_by_code( $result, 'css_parse_failed' );
+		$this->assertSame( 'h1', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'nonexistent', $warning['message'] ?? '' );
 	}
 
 	public function test_execute__css_string_creates_desktop_variant_with_props() {
@@ -810,6 +848,142 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertTrue( $has_content, 'Variant must have either props or custom_css.' );
 	}
 
+	public function test_execute__box_shadow_none_is_persisted_as_custom_css_when_supported() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$keep_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
+		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css, 10, 2 );
+
+		// Act
+		$result = $this->build_card_with_mobile_box_shadow_none( $post_id );
+		$mobile = $this->find_mobile_variant( $post_id );
+		remove_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+		$this->assertNotFalse( $mobile, 'Expected a mobile variant.' );
+		$this->assertArrayNotHasKey( 'box-shadow', $mobile['props'] );
+		$this->assertStringContainsString( 'box-shadow: none', Utils::decode_string( $mobile['custom_css']['raw'] ?? '' ) );
+	}
+
+	public function test_execute__box_shadow_none_warns_when_custom_css_is_not_supported() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = $this->build_card_with_mobile_box_shadow_none( $post_id );
+		$mobile = $this->find_mobile_variant( $post_id );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+
+		$warnings = implode( ' ', $result['warnings'] ?? [] );
+		$this->assertStringContainsString( '[card]', $warnings );
+		$this->assertStringContainsString( 'box-shadow: none;', $warnings );
+		$this->assertStringContainsString( 'CSS properties or values are not supported', $warnings );
+		$this->assertStringNotContainsStringIgnoringCase( 'custom', $warnings );
+		$this->assertEmpty( $mobile['custom_css'] ?? null );
+	}
+
+	public function test_execute__unsupported_css_warning_names_only_the_declarations_that_were_not_saved() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result  = $this->build_card_with_style( $post_id, 'color: red; color: var(--not-a-kit-variable);' );
+		$desktop = $this->find_variant( $post_id, 'desktop' );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['warnings'] ?? [] );
+		$this->assertStringContainsString( '[card]', $result['warnings'][0] );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
+		$this->assertStringNotContainsString( 'color: red', $result['warnings'][0] );
+		$this->assertEmpty( $desktop['custom_css'] ?? null );
+	}
+
+	public function test_execute__unsupported_css_warning_ignores_custom_css_that_was_not_a_conversion_fallback() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = $this->build_card_with_style( $post_id, 'color: var(--not-a-kit-variable); & > p { color: blue; }' );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertCount( 1, $result['warnings'] ?? [] );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
+		$this->assertStringNotContainsString( '& > p', $result['warnings'][0] );
+	}
+
+	public function test_execute__no_unsupported_css_warning_when_all_css_is_native() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = $this->build_card_with_style( $post_id, 'color: red; padding: 1rem; @media(--mobile) { order: 2; }' );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+	}
+
+	public function test_execute__no_unsupported_css_warning_when_custom_css_is_kept() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$keep_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
+		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css, 10, 2 );
+
+		// Act
+		$result  = $this->build_card_with_style( $post_id, 'color: var(--not-a-kit-variable);' );
+		$desktop = $this->find_variant( $post_id, 'desktop' );
+		remove_filter( 'elementor/atomic_widgets/editor_data/element_styles', $keep_custom_css );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', Utils::decode_string( $desktop['custom_css']['raw'] ?? '' ) );
+	}
+
+	private function build_card_with_mobile_box_shadow_none( int $post_id ) {
+		return $this->build_card_with_style( $post_id, 'box-shadow: 0 10px 30px black; @media(--mobile) { box-shadow: none; }' );
+	}
+
+	private function build_card_with_style( int $post_id, string $css ) {
+		return ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="card"/>',
+			'style' => [
+				'card' => $css,
+			],
+		] );
+	}
+
+	private function find_mobile_variant( int $post_id ) {
+		return $this->find_variant( $post_id, 'mobile' );
+	}
+
+	private function find_variant( int $post_id, string $breakpoint ) {
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$styles   = $this->find_element_with_styles( $elements )['styles'] ?? [];
+		$style    = reset( $styles );
+
+		return current( array_filter( $style['variants'] ?? [], fn( $v ) => $breakpoint === $v['meta']['breakpoint'] ) );
+	}
+
 	public function test_execute__attaches_global_classes_by_label_before_local_styles() {
 		// Arrange
 		$this->act_as_admin();
@@ -845,7 +1019,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $heading['styles'] ?? [] );
 	}
 
-	public function test_execute__rejects_unknown_global_class_label() {
+	public function test_execute__unknown_global_class_label_returns_warning() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -862,11 +1036,13 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_unknown_global_class', $result->get_error_code() );
-		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
-		$this->assertStringContainsString( 'missing-class', $result->get_error_message() );
-		$this->assertStringContainsString( 'Available labels', $result->get_error_message() );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['success'] );
+		$warning = $this->find_warning_by_code( $result, 'unknown_global_class' );
+		$this->assertSame( 'h1', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
+		$this->assertStringContainsString( 'Available labels', $warning['message'] ?? '' );
+		$this->assertStringContainsString( 'elementor/manage-classes', $warning['message'] ?? '' );
 	}
 
 	public function test_execute__resolves_global_variable_label_to_id_in_saved_tree() {
@@ -945,6 +1121,16 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		] );
 
 		return $result['variable']['id'];
+	}
+
+	private function find_warning_by_code( array $result, string $code ): array {
+		foreach ( $result['warning_details'] ?? [] as $warning ) {
+			if ( $code === $warning['code'] ) {
+				return $warning;
+			}
+		}
+
+		return [];
 	}
 
 	private function create_real_document(): int {
