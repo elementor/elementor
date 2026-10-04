@@ -43,7 +43,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_promotion_registrar(): void {
-		if ( ! class_exists( Utils::class ) || Utils::is_license_active() ) {
+		if ( ! $this->should_enqueue_mcp_admin_promotion() ) {
 			return;
 		}
 
@@ -70,6 +70,22 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( self::PROMOTION_REGISTRAR_HANDLE, 'elementor' );
+	}
+
+	private function should_enqueue_mcp_admin_promotion(): bool {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( ! class_exists( Utils::class ) ) {
+			return false;
+		}
+
+		if ( Utils::is_license_active() || Utils::has_pro() ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private function get_promotion_upgrade_url(): string {
