@@ -278,7 +278,7 @@ class Resolver {
 
 		foreach ( $stamp_paths as $path ) {
 			if ( is_readable( $path ) ) {
-				$signature .= '|' . filemtime( $path );
+				$signature .= '|' . filemtime( $path ) . ':' . filesize( $path );
 			}
 		}
 

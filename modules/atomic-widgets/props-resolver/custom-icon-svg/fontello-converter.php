@@ -104,7 +104,10 @@ class Fontello_Converter implements Svg_Converter {
 		}
 
 		$mtime = filemtime( $path );
-		$key = $path . '|' . ( false === $mtime ? '0' : (string) $mtime );
+		$size = filesize( $path );
+		$key = $path
+			. '|' . ( false === $mtime ? '0' : (string) $mtime )
+			. ':' . ( false === $size ? '0' : (string) $size );
 
 		if ( ! array_key_exists( $key, self::$file_cache ) ) {
 			$raw = file_get_contents( $path );

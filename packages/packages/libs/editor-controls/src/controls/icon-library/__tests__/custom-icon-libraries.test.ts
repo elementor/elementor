@@ -373,6 +373,32 @@ describe( 'custom-icon-libraries', () => {
 		expect( catalog[ 1 ]?.svgMarkup ).toContain( 'M0 0H100V100H0Z' );
 	} );
 
+	it( 'loads a library svg map once for concurrent callers', async () => {
+		// Arrange.
+		const markup = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>';
+		get.mockResolvedValue( {
+			data: {
+				data: { icons: { 'my-icons my-icons-badge': markup } },
+				meta: {},
+			},
+		} );
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: () => Promise.resolve( { icons: [ 'badge' ] } ),
+		} );
+
+		// Act.
+		const [ first, second ] = await Promise.all( [
+			resolveCustomIconSvg( 'my-icons', 'my-icons my-icons-badge' ),
+			resolveCustomIconSvg( 'my-icons', 'my-icons my-icons-badge' ),
+		] );
+
+		// Assert.
+		expect( first ).toBe( markup );
+		expect( second ).toBe( markup );
+		expect( get ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'detects a deleted custom library from a leftover selection', () => {
 		// Assert.
 		expect( isDeletedCustomIconLibrary( 'my-icons', 'my-icons my-icons-badge' ) ).toBe( false );

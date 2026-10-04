@@ -27,9 +27,11 @@ type CustomIconLibraryConfig = {
 const SUPPORTED_CUSTOM_ICON_TYPES = new Set( [ 'fontello', 'icomoon', 'fontastic' ] );
 
 const svgMapCache = new Map< string, Record< string, string > >();
+const inFlightSvgMaps = new Map< string, Promise< Record< string, string > > >();
 
 export function resetCustomIconSvgCache() {
 	svgMapCache.clear();
+	inFlightSvgMaps.clear();
 }
 
 export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
@@ -257,6 +259,7 @@ async function loadLibrarySvgMap(
 ): Promise< Record< string, string > > {
 	if ( ! config ) {
 		svgMapCache.delete( library );
+		inFlightSvgMaps.delete( library );
 
 		return {};
 	}
@@ -267,6 +270,26 @@ async function loadLibrarySvgMap(
 		return cached;
 	}
 
+	const pending = inFlightSvgMaps.get( library );
+
+	if ( pending ) {
+		return pending;
+	}
+
+	const request = fetchLibrarySvgMap( library, config, signal ).finally( () => {
+		inFlightSvgMaps.delete( library );
+	} );
+
+	inFlightSvgMaps.set( library, request );
+
+	return request;
+}
+
+async function fetchLibrarySvgMap(
+	library: string,
+	config: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< Record< string, string > > {
 	const fromRest = await loadSvgMapFromRest( library, signal );
 	const restIcons = fromRest.icons;
 
@@ -276,7 +299,7 @@ async function loadLibrarySvgMap(
 		return restIcons;
 	}
 
-	const fromPack = config ? await loadSvgMapFromPackFiles( config, signal ) : {};
+	const fromPack = await loadSvgMapFromPackFiles( config, signal );
 	const merged = { ...fromPack, ...restIcons };
 
 	if ( Object.keys( merged ).length > 0 ) {
