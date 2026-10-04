@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -64,8 +66,8 @@ class V3_Context_Meta {
 		return null === $state ? $property : $property . '@' . $state;
 	}
 
-	public function get_override( string $property, ?string $state ): ?array {
-		$key = $this->match_key( $property, $state );
+	public function get_override( string $property, ?string $state, ?string $target = null ): ?array {
+		$key = V3_Map_Overrides_Builder::match_key( $target, $property, $state );
 
 		return $this->overrides[ $key ] ?? null;
 	}

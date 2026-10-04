@@ -99,7 +99,7 @@ class Test_V3_Group_Style_Targets extends TestCase {
 		$this->install_registry();
 
 		// Act.
-		$result = $this->mapper()->apply( 'justify-content: flex-end;', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'main-menu { justify-content: flex-end; }', self::WIDGET_TYPE, [] );
 
 		// Assert.
 		$this->assertSame( [ 'menu_align' => 'end' ], $result['settings_patch'] );
@@ -110,7 +110,7 @@ class Test_V3_Group_Style_Targets extends TestCase {
 		$this->install_registry();
 
 		// Act.
-		$result = $this->mapper()->apply( 'justify-content: space-evenly;', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'main-menu { justify-content: space-evenly; }', self::WIDGET_TYPE, [] );
 
 		// Assert.
 		$this->assertSame( [], $result['settings_patch'] );
@@ -144,7 +144,7 @@ class Test_V3_Group_Style_Targets extends TestCase {
 		$this->assertStringContainsString( 'border-color: #000000;', $css );
 		$this->assertStringContainsString( 'border-width: 1px;', $css );
 		$this->assertStringContainsString( 'box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.2);', $css );
-		$this->assertStringContainsString( 'justify-content: center;', $css );
+		$this->assertStringContainsString( 'main-menu { justify-content: center; }', $css );
 		$this->assertStringNotContainsString( 'border: ', $css );
 	}
 

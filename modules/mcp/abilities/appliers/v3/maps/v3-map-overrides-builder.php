@@ -12,9 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * {@see \Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper} and
  * {@see \Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer}.
  *
- * Match key format matches the legacy bridge registry:
- *   "<css-property>"           for the `default` state
- *   "<css-property>@<state>"   for pseudo-state overrides (hover|focus|active)
+ * Match keys extend the legacy bridge format with the style target:
+ *   "<target>|<css-property>"           for the `default` state
+ *   "<target>|<css-property>@<state>"   for state overrides (hover|selected|...)
  *
  * Simple and typography-field descriptors become `setting` overrides (typography fields carry
  * their group toggle as `companion_settings`); border and box-shadow group descriptors become
@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class V3_Map_Overrides_Builder {
 
 	const DEFAULT_STATE = 'default';
+
+	const TARGET_SEPARATOR = '|';
 
 	const PREFIX_OVERRIDE_KEYS = [
 		Style_Control_Target::KIND_BORDER => 'border_prefix',
@@ -92,14 +94,37 @@ class V3_Map_Overrides_Builder {
 			$override['companion_settings'] = $descriptor['companion_settings'];
 		}
 
-		$match_key = self::DEFAULT_STATE === $state
-			? $property
-			: $property . '@' . $state;
+		$match_key = self::match_key( $target, $property, self::DEFAULT_STATE === $state ? null : $state );
 
 		return [
 			'match_key' => $match_key,
 			'override' => $override,
 		];
+	}
+
+	public static function match_key( ?string $target, string $property, ?string $state ): string {
+		$key = null === $state ? $property : $property . '@' . $state;
+
+		return null === $target ? $key : $target . self::TARGET_SEPARATOR . $key;
+	}
+
+	/**
+	 * @return array{0: string|null, 1: string, 2: string|null} Target, property, state.
+	 */
+	public static function split_match_key( string $match_key ): array {
+		$target = null;
+
+		if ( false !== strpos( $match_key, self::TARGET_SEPARATOR ) ) {
+			[ $target, $match_key ] = explode( self::TARGET_SEPARATOR, $match_key, 2 );
+		}
+
+		if ( false === strpos( $match_key, '@' ) ) {
+			return [ $target, $match_key, null ];
+		}
+
+		[ $property, $state ] = explode( '@', $match_key, 2 );
+
+		return [ $target, $property, '' === $state ? null : $state ];
 	}
 
 	private static function build_override( array $descriptor ): ?array {

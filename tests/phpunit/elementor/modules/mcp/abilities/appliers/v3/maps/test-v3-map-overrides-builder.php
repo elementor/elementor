@@ -29,9 +29,9 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertSame( 'title_color', $result['color']['setting'] );
-		$this->assertSame( 'color', $result['color']['resolver'] );
-		$this->assertArrayHasKey( '_map_descriptor', $result['color'] );
+		$this->assertSame( 'title_color', $result['heading|color']['setting'] );
+		$this->assertSame( 'color', $result['heading|color']['resolver'] );
+		$this->assertArrayHasKey( '_map_descriptor', $result['heading|color'] );
 	}
 
 	public function test_from_style_targets__attaches_target_alias() {
@@ -47,7 +47,7 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertSame( 'heading', $result['color']['_map_target'] );
+		$this->assertSame( 'heading', $result['heading|color']['_map_target'] );
 	}
 
 	public function test_from_style_targets__attaches_source_descriptor_for_validator() {
@@ -65,7 +65,7 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$this->assertSame(
 			Style_Control_Target::control( 'title_color', 'color' ),
-			$result['color']['_map_descriptor']
+			$result['heading|color']['_map_descriptor']
 		);
 	}
 
@@ -83,9 +83,9 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertArrayHasKey( 'color', $result );
-		$this->assertArrayHasKey( 'color@hover', $result );
-		$this->assertSame( 'title_hover_color', $result['color@hover']['setting'] );
+		$this->assertArrayHasKey( 'heading|color', $result );
+		$this->assertArrayHasKey( 'heading|color@hover', $result );
+		$this->assertSame( 'title_hover_color', $result['heading|color@hover']['setting'] );
 	}
 
 	public function test_from_style_targets__responsive_flag_is_preserved() {
@@ -101,7 +101,7 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertTrue( $result['padding']['responsive'] );
+		$this->assertTrue( $result['container|padding']['responsive'] );
 	}
 
 	public function test_from_style_targets__merges_multiple_targets_and_properties() {
@@ -124,8 +124,36 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertSame( 'title_color', $result['color']['setting'] );
-		$this->assertSame( 'background_color', $result['background-color']['setting'] );
+		$this->assertSame( 'title_color', $result['heading|color']['setting'] );
+		$this->assertSame( 'background_color', $result['container|background-color']['setting'] );
+	}
+
+	public function test_from_style_targets__same_property_on_two_targets_does_not_collide() {
+		// Arrange.
+		$style_targets = [
+			'main-menu' => [
+				'css_properties' => [
+					'color' => [ 'default' => Style_Control_Target::control( 'color_menu_item', 'color' ) ],
+				],
+			],
+			'dropdown' => [
+				'css_properties' => [
+					'color' => [ 'default' => Style_Control_Target::control( 'color_dropdown_item', 'color' ) ],
+				],
+			],
+		];
+
+		// Act.
+		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
+
+		// Assert.
+		$this->assertSame( 'color_menu_item', $result['main-menu|color']['setting'] );
+		$this->assertSame( 'color_dropdown_item', $result['dropdown|color']['setting'] );
+	}
+
+	public function test_split_match_key__returns_target_property_and_state() {
+		$this->assertSame( [ 'main-menu', 'color', 'selected' ], V3_Map_Overrides_Builder::split_match_key( 'main-menu|color@selected' ) );
+		$this->assertSame( [ null, 'color', 'hover' ], V3_Map_Overrides_Builder::split_match_key( 'color@hover' ) );
 	}
 
 	public function test_from_style_targets__unsupported_kind_is_skipped() {
@@ -164,9 +192,9 @@ class Test_V3_Map_Overrides_Builder extends TestCase {
 
 		$result = V3_Map_Overrides_Builder::from_style_targets( $style_targets );
 
-		$this->assertSame( 'typography_font_size', $result['font-size']['setting'] );
-		$this->assertSame( 'slider', $result['font-size']['resolver'] );
-		$this->assertTrue( $result['font-size']['responsive'] );
-		$this->assertSame( [ 'typography_typography' => 'custom' ], $result['font-size']['companion_settings'] );
+		$this->assertSame( 'typography_font_size', $result['heading|font-size']['setting'] );
+		$this->assertSame( 'slider', $result['heading|font-size']['resolver'] );
+		$this->assertTrue( $result['heading|font-size']['responsive'] );
+		$this->assertSame( [ 'typography_typography' => 'custom' ], $result['heading|font-size']['companion_settings'] );
 	}
 }

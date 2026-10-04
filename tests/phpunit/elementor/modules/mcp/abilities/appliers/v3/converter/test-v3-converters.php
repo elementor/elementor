@@ -24,6 +24,10 @@ class Test_V3_Converters extends TestCase {
 		return compact( 'property', 'value', 'state', 'breakpoint' );
 	}
 
+	private function target_rule( string $target, string $property, string $value, string $breakpoint = 'desktop' ): array {
+		return $this->rule( $property, $value, null, $breakpoint ) + [ 'target' => $target ];
+	}
+
 	private function meta( array $overrides, array $generic_index = [], array $controls = [] ): V3_Context_Meta {
 		return new V3_Context_Meta( 'theme-post-title', [ 'controls' => $controls ], $overrides, $generic_index );
 	}
@@ -133,7 +137,7 @@ class Test_V3_Converters extends TestCase {
 		$meta = $this->meta( $overrides );
 		$ctx = new V3_Conversion_Context();
 
-		$converter->convert( $ctx, $this->rule( 'color', '#111' ), $meta );
+		$converter->convert( $ctx, $this->target_rule( 'heading', 'color', '#111' ), $meta );
 
 		$this->assertSame( [ 'title_color' => '#111' ], $ctx->settings_patch() );
 		$this->assertSame( [], $ctx->warnings() );
@@ -161,7 +165,7 @@ class Test_V3_Converters extends TestCase {
 		$meta = $this->meta( $overrides, [], [ 'title_size' => [] ] );
 		$ctx = new V3_Conversion_Context();
 
-		$result = $converter->convert( $ctx, $this->rule( 'font-size', '20px' ), $meta );
+		$result = $converter->convert( $ctx, $this->target_rule( 'heading', 'font-size', '20px' ), $meta );
 
 		$this->assertTrue( $result, 'Converter must consume the declaration so it does not fall to custom_css.' );
 		$this->assertSame( [], $ctx->settings_patch(), 'Invalid patches must not be merged atomically.' );
@@ -183,7 +187,7 @@ class Test_V3_Converters extends TestCase {
 		$ctx = new V3_Conversion_Context();
 
 		// Act.
-		$converter->convert( $ctx, $this->rule( 'font-weight', '700' ), $this->meta( $overrides ) );
+		$converter->convert( $ctx, $this->target_rule( 'heading', 'font-weight', '700' ), $this->meta( $overrides ) );
 
 		// Assert.
 		$this->assertSame(
@@ -208,9 +212,9 @@ class Test_V3_Converters extends TestCase {
 		$ctx = new V3_Conversion_Context();
 
 		// Act.
-		$converter->convert( $ctx, $this->rule( 'font-family', '"Roboto", sans-serif' ), $meta );
-		$converter->convert( $ctx, $this->rule( 'letter-spacing', '2px' ), $meta );
-		$converter->convert( $ctx, $this->rule( 'text-transform', 'uppercase' ), $meta );
+		$converter->convert( $ctx, $this->target_rule( 'main-menu', 'font-family', '"Roboto", sans-serif' ), $meta );
+		$converter->convert( $ctx, $this->target_rule( 'main-menu', 'letter-spacing', '2px' ), $meta );
+		$converter->convert( $ctx, $this->target_rule( 'main-menu', 'text-transform', 'uppercase' ), $meta );
 
 		// Assert.
 		$this->assertSame(
@@ -242,7 +246,7 @@ class Test_V3_Converters extends TestCase {
 		$ctx = new V3_Conversion_Context();
 
 		// Act.
-		$converter->convert( $ctx, $this->rule( 'font-size', '18px', null, 'tablet' ), $meta );
+		$converter->convert( $ctx, $this->target_rule( 'heading', 'font-size', '18px', 'tablet' ), $meta );
 
 		// Assert.
 		$this->assertSame(

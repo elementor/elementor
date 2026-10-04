@@ -43,7 +43,9 @@ class V3_Widget_Map_Compiler {
 		Style_Control_Target::KIND_BOX_SHADOW,
 	];
 
-	const ALLOWED_STATE_KEYS = [ 'default', 'hover' ];
+	const DEFAULT_STATE_KEY = 'default';
+
+	const ALLOWED_STATE_KEYS = [ self::DEFAULT_STATE_KEY, 'hover', 'selected' ];
 
 	const RESPONSIVE_PROBE_SUFFIX = '_mobile';
 

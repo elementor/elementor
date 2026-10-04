@@ -17,13 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Typography_Group_Converter implements V3_Property_Converter {
 
 	public function is_supported( array $rule, V3_Context_Meta $meta ): bool {
-		$override = $meta->get_override( $rule['property'], $rule['state'] );
+		$override = $meta->get_override( $rule['property'], $rule['state'], $rule['target'] ?? null );
 
 		return null !== $override && isset( $override['typography_prefix'] );
 	}
 
 	public function convert( V3_Conversion_Context $ctx, array $rule, V3_Context_Meta $meta ): bool {
-		$override = $meta->get_override( $rule['property'], $rule['state'] );
+		$override = $meta->get_override( $rule['property'], $rule['state'], $rule['target'] ?? null );
 		if ( null === $override || ! isset( $override['typography_prefix'] ) ) {
 			return false;
 		}

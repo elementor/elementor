@@ -201,6 +201,26 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
+	 * How scoped CSS is routed for a compiled map: the target that receives unscoped CSS,
+	 * every target alias, and the non-default states a target block may use.
+	 *
+	 * @return array{default_target: string, targets: string[], states: string[]}|null
+	 */
+	public function get_style_routing( string $widget_type ): ?array {
+		$compiled = $this->get_validation_contract( $widget_type );
+
+		if ( null === $compiled ) {
+			return null;
+		}
+
+		return [
+			'default_target' => (string) $compiled['default_style_target'],
+			'targets' => array_map( 'strval', array_keys( $compiled['style_targets'] ) ),
+			'states' => array_values( array_diff( V3_Widget_Map_Compiler::ALLOWED_STATE_KEYS, [ V3_Widget_Map_Compiler::DEFAULT_STATE_KEY ] ) ),
+		];
+	}
+
+	/**
 	 * Full control stack (content and style buckets) the map was compiled against.
 	 * `get_config()['controls']` omits split style controls, so responsive style keys
 	 * must be looked up here.

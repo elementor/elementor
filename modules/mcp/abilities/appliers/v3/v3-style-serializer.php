@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry;
@@ -40,14 +41,17 @@ class V3_Style_Serializer {
 			: V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
 
 		$blocks = new V3_Block_Accumulator();
+		$routing = $is_map_driven ? V3_Widget_Map_Registry::instance()->get_style_routing( $widget_type ) : null;
+		$default_target = $routing['default_target'] ?? null;
 
 		foreach ( $overrides as $match_key => $entry ) {
-			[ $property, $state ] = $this->split_match_key( (string) $match_key );
-			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
+			[ $target, $property, $state ] = V3_Map_Overrides_Builder::split_match_key( (string) $match_key );
+			$target_blocks = $blocks->for_target( $target === $default_target ? null : $target );
+			$this->dispatch_entry( $target_blocks, $settings, $entry, $property, $state );
 		}
 
 		foreach ( $generic as $match_key => $entry ) {
-			[ $property, $state ] = $this->split_match_key( (string) $match_key );
+			[ , $property, $state ] = V3_Map_Overrides_Builder::split_match_key( (string) $match_key );
 			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
 		}
 
@@ -104,18 +108,5 @@ class V3_Style_Serializer {
 
 			return;
 		}
-	}
-
-	/**
-	 * @return array{0: string, 1: string|null}
-	 */
-	private function split_match_key( string $match_key ): array {
-		if ( false === strpos( $match_key, '@' ) ) {
-			return [ $match_key, null ];
-		}
-
-		[ $property, $state ] = explode( '@', $match_key, 2 );
-
-		return [ $property, '' === $state ? null : $state ];
 	}
 }
