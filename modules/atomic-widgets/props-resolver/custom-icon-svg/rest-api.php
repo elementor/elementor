@@ -23,7 +23,9 @@ class Rest_Api {
 			[
 				'methods' => 'GET',
 				'callback' => [ $this, 'get_svg' ],
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'edit_posts' ) && Availability::is_enabled();
+				},
 				'args' => [
 					'library' => [
 						'type' => 'string',
@@ -50,14 +52,6 @@ class Rest_Api {
 				->set_status( 400 )
 				->set_message( __( 'The "library" parameter is required.', 'elementor' ) )
 				->build();
-		}
-
-		if ( ! Availability::is_enabled() ) {
-			if ( is_string( $value ) && '' !== $value ) {
-				return Response_Builder::make( [ 'html' => '' ] )->build();
-			}
-
-			return Response_Builder::make( [ 'icons' => [] ] )->build();
 		}
 
 		if ( is_string( $value ) && '' !== $value ) {

@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Resolver {
 	const CACHE_GROUP = 'elementor_custom_icon_svg';
 
+	const MAX_LIBRARY_ICONS = 250;
+
 	private static array $memory = [];
 
 	public static function reset_memory(): void {
@@ -74,7 +76,7 @@ class Resolver {
 			return [];
 		}
 
-		$names = self::icon_names( $tab );
+		$names = array_slice( self::icon_names( $tab ), 0, self::MAX_LIBRARY_ICONS );
 		$prefix = isset( $tab['prefix'] ) && is_string( $tab['prefix'] ) ? $tab['prefix'] : '';
 		$display_prefix = isset( $tab['displayPrefix'] ) && is_string( $tab['displayPrefix'] ) && '' !== $tab['displayPrefix']
 			? $tab['displayPrefix']

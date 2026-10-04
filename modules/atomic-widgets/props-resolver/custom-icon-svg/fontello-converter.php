@@ -98,8 +98,13 @@ class Fontello_Converter implements Svg_Converter {
 	}
 
 	public static function icon_name_from_value( string $icon_value, string $prefix ): string {
-		$parts = preg_split( '/\s+/', trim( $icon_value ) ) ?: [];
-		$last = $parts[ count( $parts ) - 1 ] ?? $icon_value;
+		$parts = preg_split( '/\s+/', trim( $icon_value ) );
+
+		if ( ! is_array( $parts ) || empty( $parts ) ) {
+			return $icon_value;
+		}
+
+		$last = $parts[ count( $parts ) - 1 ];
 
 		if ( '' !== $prefix && str_starts_with( $last, $prefix ) ) {
 			return substr( $last, strlen( $prefix ) );

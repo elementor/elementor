@@ -27,7 +27,9 @@ export function parseFontelloSvgFont(
 	const result: Record< string, string > = {};
 
 	for ( const name of iconNames ) {
-		const fromConfig = configPaths.get( name ) ?? ( prefix && name.startsWith( prefix ) ? configPaths.get( name.slice( prefix.length ) ) : undefined );
+		const fromConfig =
+			configPaths.get( name ) ??
+			( prefix && name.startsWith( prefix ) ? configPaths.get( name.slice( prefix.length ) ) : undefined );
 		const glyph = fromConfig ?? findGlyph( glyphs, codepoints, name, prefix );
 
 		if ( ! glyph ) {
@@ -100,7 +102,12 @@ function parseConfigSvgPaths( configJson: string, prefix: string ): Map< string,
 
 			if ( typeof glyph.svg === 'string' ) {
 				path = glyph.svg;
-			} else if ( glyph.svg && typeof glyph.svg === 'object' && 'path' in glyph.svg && typeof glyph.svg.path === 'string' ) {
+			} else if (
+				glyph.svg &&
+				typeof glyph.svg === 'object' &&
+				'path' in glyph.svg &&
+				typeof glyph.svg.path === 'string'
+			) {
 				path = glyph.svg.path;
 				if ( 'width' in glyph.svg && typeof glyph.svg.width === 'number' && glyph.svg.width > 0 ) {
 					advance = glyph.svg.width;
@@ -202,7 +209,7 @@ function buildIconSvg( glyph: GlyphRecord ): string {
 }
 
 function stripDoctype( svgFont: string ): string {
-	return svgFont.replace( /<!DOCTYPE[^>]*>/si, '' );
+	return svgFont.replace( /<!DOCTYPE[^>]*>/is, '' );
 }
 
 function positiveInt( value: string | null | undefined, fallback: number ): number {

@@ -58,9 +58,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 		popupId,
 	} );
 	const entries = getFilterEntries();
-	const selectableValues = entries.flatMap( ( entry ) =>
-		entry.type === FILTER_TYPE_ITEM ? [ entry.value ] : []
-	);
+	const selectableValues = entries.flatMap( ( entry ) => ( entry.type === FILTER_TYPE_ITEM ? [ entry.value ] : [] ) );
 	const isFiltered = value.length > 0;
 	const filterButtonLabel = isFiltered
 		? __( 'Filter by library, active', 'elementor' )

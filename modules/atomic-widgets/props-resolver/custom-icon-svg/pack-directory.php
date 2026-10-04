@@ -58,15 +58,16 @@ class Pack_Directory {
 
 	public static function resolve( array $tab ): string {
 		$candidates = self::candidates( $tab );
+		$fallback = isset( $candidates[0] ) && is_string( $candidates[0] ) ? $candidates[0] : '';
 
 		if ( function_exists( 'apply_filters' ) ) {
 			$filtered = apply_filters(
 				'elementor/atomic-widgets/custom-icon-library-dir',
-				$candidates[0] ?? '',
+				$fallback,
 				$tab
 			);
 
-			if ( is_string( $filtered ) && '' !== $filtered ) {
+			if ( is_string( $filtered ) && '' !== $filtered && self::is_allowed_pack_dir( $filtered ) ) {
 				array_unshift( $candidates, rtrim( $filtered, '/\\' ) );
 			}
 		}
@@ -77,7 +78,7 @@ class Pack_Directory {
 			}
 		}
 
-		return $candidates[0] ?? '';
+		return $fallback;
 	}
 
 	public static function find_svg_font( string $dir ): string {
@@ -160,6 +161,19 @@ class Pack_Directory {
 		}
 
 		return $dirs;
+	}
+
+	private static function is_allowed_pack_dir( string $dir ): bool {
+		$normalized = rtrim( str_replace( '\\', '/', $dir ), '/' );
+		$base = self::uploads_base();
+
+		if ( '' === $base ) {
+			return is_dir( $dir );
+		}
+
+		$base = rtrim( str_replace( '\\', '/', $base ), '/' );
+
+		return str_starts_with( $normalized, $base ) && is_dir( $dir );
 	}
 
 	private static function is_svg_font( string $path ): bool {

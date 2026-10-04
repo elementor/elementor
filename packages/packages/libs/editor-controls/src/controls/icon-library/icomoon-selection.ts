@@ -89,7 +89,7 @@ function svgForName( data: IcomoonSelection, iconName: string, prefix: string ):
 	return null;
 }
 
-function iconEntryName( icon: NonNullable< IcomoonSelection['icons'] >[ number ] ): string {
+function iconEntryName( icon: NonNullable< IcomoonSelection[ 'icons' ] >[ number ] ): string {
 	if ( typeof icon.properties?.name === 'string' ) {
 		return icon.properties.name;
 	}

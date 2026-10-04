@@ -64,11 +64,7 @@ async function resolveDefaultSvg( signal?: AbortSignal ) {
 	);
 }
 
-async function resolveCustomSvg(
-	library: string,
-	iconValue: string,
-	signal?: AbortSignal
-): Promise< string | null > {
+async function resolveCustomSvg( library: string, iconValue: string, signal?: AbortSignal ): Promise< string | null > {
 	const markup = await resolveCustomIconSvg( library, iconValue, signal );
 
 	return markup ? processIconSvgContent( markup ) : null;

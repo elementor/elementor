@@ -182,7 +182,8 @@ describe( 'custom-icon-libraries', () => {
 						customIconPacks: {
 							'my-icons': {
 								type: 'icomoon',
-								selectionUrl: 'https://example.com/uploads/elementor/custom-icons/my-icons/selection.json',
+								selectionUrl:
+									'https://example.com/uploads/elementor/custom-icons/my-icons/selection.json',
 							},
 						},
 					},
