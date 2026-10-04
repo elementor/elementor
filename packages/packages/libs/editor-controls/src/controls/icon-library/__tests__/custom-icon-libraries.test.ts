@@ -127,6 +127,63 @@ describe( 'custom-icon-libraries', () => {
 		);
 	} );
 
+	it( 'parses icomoon selection.json when the rest map is empty', async () => {
+		// Arrange.
+		const selection = JSON.stringify( {
+			icons: [
+				{
+					icon: { paths: [ 'M0 0H1024V1024H0Z' ], width: 1024 },
+					properties: { name: 'home' },
+				},
+			],
+		} );
+		global.fetch = jest.fn( ( input: RequestInfo | URL ) => {
+			const url = String( input );
+
+			if ( url.endsWith( 'selection.json' ) ) {
+				return Promise.resolve( { ok: true, text: () => Promise.resolve( selection ) } );
+			}
+
+			return Promise.resolve( { ok: false, text: () => Promise.resolve( '' ) } );
+		} ) as jest.Mock;
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						customIconLibrariesEnabled: true,
+						customIconPacks: {
+							'my-icons': {
+								selectionUrl: 'https://example.com/uploads/elementor/custom-icons/my-icons/selection.json',
+							},
+						},
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							icons: [ 'home' ],
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+
+		// Act.
+		const catalog = await loadCustomIconLibraries();
+
+		// Assert.
+		expect( catalog[ 0 ]?.svgMarkup ).toContain( 'M0 0H1024V1024H0Z' );
+	} );
+
 	it( 'parses fontello.svg when the rest map is empty', async () => {
 		// Arrange.
 		const font = `<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><defs><font horiz-adv-x="1000"><font-face units-per-em="1000"/><glyph glyph-name="emo-surprised" unicode="&#xe800;" d="M0 0H100V100H0Z" horiz-adv-x="696"/></font></defs></svg>`;

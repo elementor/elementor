@@ -65,6 +65,17 @@ class Test_Fontello_Glyph_Parser extends TestCase {
 		$this->assertStringContainsString( 'fill="currentColor"', $svg );
 	}
 
+	public function test_to_svg__matches_glyph_name_without_config_json() {
+		// Arrange.
+		$font = file_get_contents( __DIR__ . '/fixtures/fontello/font/fontello.svg' );
+
+		// Act.
+		$svg = Fontello_Glyph_Parser::to_svg( '{}', $font, 'emo-surprised', 'icon-' );
+
+		// Assert.
+		$this->assertStringContainsString( 'M0 0H100V100H0Z', $svg );
+	}
+
 	public function test_to_svg__uses_svg_path_from_config_when_present() {
 		// Arrange.
 		$config = wp_json_encode( [

@@ -3,7 +3,7 @@ import { useQuery } from '@elementor/query';
 
 import { enqueueIconFonts } from '../open-icon-library';
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
-import { fontelloSvgUrlFromConfig, parseFontelloSvgFont } from './fontello-svg-font';
+import { parseFontelloSvgFont } from './fontello-svg-font';
 import { parseIcomoonSelection } from './icomoon-selection';
 
 const NATIVE_TAB_NAMES = new Set( [ 'all', 'recommended', 'GoPro' ] );
@@ -122,7 +122,7 @@ function normalizeCustomIconLibraryConfig( value: unknown ): CustomIconLibraryCo
 		...library,
 		name,
 		prefix: library.prefix,
-		...getPackUrls( name ),
+		...getPackUrls( name, library.fetchJson ),
 	};
 }
 
@@ -138,24 +138,52 @@ function coerceLibraryName( value: unknown ): string {
 	return '';
 }
 
-function getPackUrls( library: string ): { configUrl?: string; fontUrl?: string; selectionUrl?: string } {
+function getPackUrls(
+	library: string,
+	fetchJson?: string
+): { configUrl?: string; fontUrl?: string; selectionUrl?: string } {
+	const derived = derivePackAssetUrls( fetchJson );
 	const packs = window.elementorCommon?.config?.fontAwesome?.v7?.customIconPacks;
 
 	if ( ! packs || typeof packs !== 'object' ) {
-		return {};
+		return derived;
 	}
 
 	const pack = packs[ library ];
 
 	if ( ! pack || typeof pack !== 'object' ) {
-		return {};
+		return derived;
 	}
 
 	return {
-		configUrl: typeof pack.configUrl === 'string' ? pack.configUrl : undefined,
-		fontUrl: typeof pack.fontUrl === 'string' ? pack.fontUrl : undefined,
-		selectionUrl: typeof pack.selectionUrl === 'string' ? pack.selectionUrl : undefined,
+		...derived,
+		configUrl: typeof pack.configUrl === 'string' ? pack.configUrl : derived.configUrl,
+		fontUrl: typeof pack.fontUrl === 'string' ? pack.fontUrl : derived.fontUrl,
+		selectionUrl: typeof pack.selectionUrl === 'string' ? pack.selectionUrl : derived.selectionUrl,
 	};
+}
+
+function derivePackAssetUrls( fetchJson?: string ): {
+	configUrl?: string;
+	fontUrl?: string;
+	selectionUrl?: string;
+} {
+	if ( ! fetchJson ) {
+		return {};
+	}
+
+	try {
+		const url = new URL( fetchJson, window.location.origin );
+		const base = url.href.replace( /\/[^/?#]+(?:\?.*)?$/, '' );
+
+		return {
+			configUrl: `${ base }/config.json`,
+			fontUrl: `${ base }/font/fontello.svg`,
+			selectionUrl: `${ base }/selection.json`,
+		};
+	} catch {
+		return {};
+	}
 }
 
 async function loadCustomLibrary(
@@ -211,12 +239,12 @@ async function loadLibrarySvgMap(
 		return fromRest;
 	}
 
-	const fromFont = config ? await loadSvgMapFromFontelloPack( config, signal ) : {};
+	const fromPack = config ? await loadSvgMapFromPackFiles( config, signal ) : {};
 
-	if ( Object.keys( fromFont ).length > 0 ) {
-		svgMapCache.set( library, fromFont );
+	if ( Object.keys( fromPack ).length > 0 ) {
+		svgMapCache.set( library, fromPack );
 
-		return fromFont;
+		return fromPack;
 	}
 
 	return {};
@@ -255,7 +283,7 @@ function unwrapIconMap( payload: unknown ): Record< string, string > {
 	return {};
 }
 
-async function loadSvgMapFromFontelloPack(
+async function loadSvgMapFromPackFiles(
 	library: CustomIconLibraryConfig,
 	signal?: AbortSignal
 ): Promise< Record< string, string > > {
@@ -267,51 +295,90 @@ async function loadSvgMapFromFontelloPack(
 				const selectionJson = await response.text();
 				const names = parseIconNames( safeJson( selectionJson ) );
 				const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
-
-				return parseIcomoonSelection(
+				const fromSelection = parseIcomoonSelection(
 					selectionJson,
 					library.prefix,
 					library.displayPrefix ?? '',
 					payloadNames
 				);
+
+				if ( Object.keys( fromSelection ).length > 0 ) {
+					return fromSelection;
+				}
 			}
 		} catch {
-			return {};
+			// Continue with SVG-font fallback.
 		}
 	}
 
-	const configUrl = library.configUrl ?? library.fetchJson;
-	const fontUrl = library.fontUrl ?? ( library.fetchJson ? fontelloSvgUrlFromConfig( library.fetchJson ) : null );
+	const fontUrls = uniqueUrls( [
+		library.fontUrl,
+		library.fetchJson ? packSiblingUrl( library.fetchJson, 'font/fontello.svg' ) : null,
+		library.fetchJson ? packSiblingUrl( library.fetchJson, 'fonts/icomoon.svg' ) : null,
+	] );
 
-	if ( ! configUrl || ! fontUrl ) {
+	if ( fontUrls.length === 0 ) {
 		return {};
 	}
 
+	let configJson = '{}';
+
+	if ( library.configUrl ) {
+		try {
+			const configResponse = await fetch( library.configUrl, { signal, mode: 'cors' } );
+
+			if ( configResponse.ok ) {
+				configJson = await configResponse.text();
+			}
+		} catch {
+			configJson = '{}';
+		}
+	}
+
+	const names = parseIconNames( safeJson( configJson ) );
+	const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
+
+	for ( const fontUrl of fontUrls ) {
+		try {
+			const fontResponse = await fetch( fontUrl, { signal, mode: 'cors' } );
+
+			if ( ! fontResponse.ok ) {
+				continue;
+			}
+
+			const fromFont = parseFontelloSvgFont(
+				configJson,
+				await fontResponse.text(),
+				library.prefix,
+				library.displayPrefix ?? '',
+				payloadNames
+			);
+
+			if ( Object.keys( fromFont ).length > 0 ) {
+				return fromFont;
+			}
+		} catch {
+			continue;
+		}
+	}
+
+	return {};
+}
+
+function packSiblingUrl( fetchJson: string, relativePath: string ): string | null {
 	try {
-		const [ configResponse, fontResponse ] = await Promise.all( [
-			fetch( configUrl, { signal, mode: 'cors' } ),
-			fetch( fontUrl, { signal, mode: 'cors' } ),
-		] );
+		const url = new URL( fetchJson, window.location.origin );
 
-		if ( ! configResponse.ok || ! fontResponse.ok ) {
-			return {};
-		}
+		url.pathname = url.pathname.replace( /\/[^/]+$/, `/${ relativePath }` );
 
-		const configJson = await configResponse.text();
-		const svgFont = await fontResponse.text();
-		const names = parseIconNames( safeJson( configJson ) );
-		const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
-
-		return parseFontelloSvgFont(
-			configJson,
-			svgFont,
-			library.prefix,
-			library.displayPrefix ?? '',
-			payloadNames
-		);
+		return url.href;
 	} catch {
-		return {};
+		return null;
 	}
+}
+
+function uniqueUrls( urls: Array< string | null | undefined > ): string[] {
+	return [ ...new Set( urls.filter( ( url ): url is string => typeof url === 'string' && url !== '' ) ) ];
 }
 
 function safeJson( value: string ): unknown {

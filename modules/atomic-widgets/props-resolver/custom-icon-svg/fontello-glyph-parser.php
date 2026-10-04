@@ -15,12 +15,7 @@ class Fontello_Glyph_Parser {
 		}
 
 		$codepoint = self::find_codepoint( $config_json, $icon_name, $prefix );
-
-		if ( null === $codepoint ) {
-			return '';
-		}
-
-		$glyph = self::find_glyph( $svg_font, $codepoint, $icon_name );
+		$glyph = self::find_glyph( $svg_font, $codepoint ?? -1, $icon_name );
 
 		if ( ! $glyph ) {
 			return '';

@@ -14,6 +14,10 @@ class Icomoon_Converter implements Svg_Converter {
 			? strtolower( $tab['custom_icon_type'] )
 			: '';
 
+		if ( in_array( $type, [ 'fontello', 'fontastic' ], true ) ) {
+			return false;
+		}
+
 		if ( 'icomoon' === $type ) {
 			return true;
 		}
@@ -71,30 +75,11 @@ class Icomoon_Converter implements Svg_Converter {
 	}
 
 	public static function pack_urls( array $tab ): array {
-		$dir = self::pack_dir( $tab );
-
-		if ( '' === $dir || ! is_readable( $dir . '/selection.json' ) || ! function_exists( 'wp_upload_dir' ) ) {
-			return [];
-		}
-
-		$uploads = wp_upload_dir();
-		$basedir = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? rtrim( $uploads['basedir'], '/\\' ) : '';
-		$baseurl = isset( $uploads['baseurl'] ) && is_string( $uploads['baseurl'] ) ? rtrim( $uploads['baseurl'], '/' ) : '';
-
-		if ( '' === $basedir || '' === $baseurl || ! str_starts_with( $dir, $basedir ) ) {
-			return [];
-		}
-
-		$url = $baseurl . str_replace( '\\', '/', substr( $dir, strlen( $basedir ) ) );
-
-		return [
-			'selectionUrl' => $url . '/selection.json',
-			'fontUrl' => is_readable( $dir . '/fonts/icomoon.svg' ) ? $url . '/fonts/icomoon.svg' : '',
-		];
+		return Pack_Directory::public_urls( $tab );
 	}
 
 	public static function pack_dir( array $tab ): string {
-		return Fontello_Converter::pack_dir( $tab );
+		return Pack_Directory::resolve( $tab );
 	}
 
 	public static function svg_from_selection( string $json, string $icon_name, string $prefix ): string {

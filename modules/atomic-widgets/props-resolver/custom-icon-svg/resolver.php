@@ -58,7 +58,7 @@ class Resolver {
 		$markup = $converter ? $converter->convert( $tab, $value ) : '';
 		$markup = self::sanitize( $markup );
 
-		self::cache_set( $cache_key, $markup, $tab, $value );
+		self::cache_set( $cache_key, $markup );
 
 		return $markup;
 	}
@@ -114,7 +114,7 @@ class Resolver {
 			return null;
 		}
 
-		$from_disk = Fontello_Converter::tab_from_disk( $library ) ?? Icomoon_Converter::tab_from_disk( $library );
+		$from_disk = Icomoon_Converter::tab_from_disk( $library ) ?? Fontello_Converter::tab_from_disk( $library );
 
 		if ( ! $from_disk ) {
 			return $tab;
@@ -128,8 +128,8 @@ class Resolver {
 			$tab['icons'] = $from_disk['icons'];
 		}
 
-		if ( empty( $tab['custom_icon_type'] ) ) {
-			$tab['custom_icon_type'] = 'fontello';
+		if ( empty( $tab['custom_icon_type'] ) && ! empty( $from_disk['custom_icon_type'] ) ) {
+			$tab['custom_icon_type'] = $from_disk['custom_icon_type'];
 		}
 
 		return $tab;
@@ -175,25 +175,85 @@ class Resolver {
 			return $names;
 		}
 
-		$dir = Fontello_Converter::pack_dir( $tab );
-		$config_path = $dir . '/config.json';
+		$dir = Pack_Directory::resolve( $tab );
 
-		if ( '' === $dir || ! is_readable( $config_path ) ) {
+		if ( '' === $dir ) {
 			return [];
 		}
 
-		$config_raw = file_get_contents( $config_path );
-		$config = is_string( $config_raw ) ? json_decode( $config_raw, true ) : null;
+		$fetch_json = isset( $tab['fetchJson'] ) && is_string( $tab['fetchJson'] ) ? $tab['fetchJson'] : '';
 
-		return is_array( $config ) ? Fontello_Converter::names_from_config( $config ) : [];
+		if ( '' !== $fetch_json ) {
+			$fetch_path = wp_parse_url( $fetch_json, PHP_URL_PATH );
+			$from_fetch = self::names_from_json_file( $dir . '/' . basename( is_string( $fetch_path ) ? $fetch_path : '' ) );
+
+			if ( ! empty( $from_fetch ) ) {
+				return $from_fetch;
+			}
+		}
+
+		$from_config = self::names_from_json_file( $dir . '/config.json' );
+
+		if ( ! empty( $from_config ) ) {
+			return $from_config;
+		}
+
+		$selection_path = $dir . '/selection.json';
+
+		if ( is_readable( $selection_path ) ) {
+			$raw = file_get_contents( $selection_path );
+			$data = is_string( $raw ) ? json_decode( $raw, true ) : null;
+
+			return is_array( $data ) ? Icomoon_Converter::names_from_selection( $data ) : [];
+		}
+
+		return [];
+	}
+
+	private static function names_from_json_file( string $path ): array {
+		if ( '' === $path || ! is_readable( $path ) ) {
+			return [];
+		}
+
+		$raw = file_get_contents( $path );
+		$data = is_string( $raw ) ? json_decode( $raw, true ) : null;
+
+		if ( ! is_array( $data ) ) {
+			return [];
+		}
+
+		if ( ! empty( $data['icons'] ) && is_array( $data['icons'] ) ) {
+			$names = [];
+
+			foreach ( $data['icons'] as $entry ) {
+				if ( is_string( $entry ) && '' !== $entry ) {
+					$names[] = $entry;
+				}
+			}
+
+			if ( ! empty( $names ) ) {
+				return $names;
+			}
+		}
+
+		return Fontello_Converter::names_from_config( $data );
 	}
 
 	private static function cache_key( string $library, string $value, array $tab ): string {
 		$ver = isset( $tab['ver'] ) && ( is_string( $tab['ver'] ) || is_numeric( $tab['ver'] ) ) ? (string) $tab['ver'] : '';
-		$dir = Fontello_Converter::pack_dir( $tab );
+		$dir = Pack_Directory::resolve( $tab );
 		$signature = $dir;
+		$stamp_paths = [
+			$dir . '/config.json',
+			$dir . '/selection.json',
+		];
+		$font = Pack_Directory::find_svg_font( $dir );
 
-		foreach ( [ $dir . '/config.json', $dir . '/font/fontello.svg' ] as $path ) {
+		if ( '' !== $font ) {
+			$stamp_paths[] = $font;
+		}
+
+		foreach ( $stamp_paths as $path ) {
 			if ( is_readable( $path ) ) {
 				$signature .= '|' . filemtime( $path );
 			}
@@ -220,7 +280,7 @@ class Resolver {
 		return null;
 	}
 
-	private static function cache_set( string $key, string $markup, array $tab, string $value ): void {
+	private static function cache_set( string $key, string $markup ): void {
 		if ( '' === $markup ) {
 			return;
 		}
@@ -230,19 +290,5 @@ class Resolver {
 		if ( function_exists( 'wp_cache_set' ) ) {
 			wp_cache_set( $key, $markup, self::CACHE_GROUP );
 		}
-
-		if ( ! function_exists( 'wp_mkdir_p' ) || ! function_exists( 'sanitize_file_name' ) ) {
-			return;
-		}
-
-		$dir = Fontello_Converter::pack_dir( $tab );
-		$cache_dir = $dir . '/.elementor-svg-cache';
-
-		if ( '' === $dir || ! is_dir( $dir ) || ! wp_mkdir_p( $cache_dir ) ) {
-			return;
-		}
-
-		$file = $cache_dir . '/' . sanitize_file_name( $value ) . '.svg';
-		file_put_contents( $file, $markup );
 	}
 }

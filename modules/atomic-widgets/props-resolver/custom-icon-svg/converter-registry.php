@@ -13,7 +13,7 @@ class Converter_Registry {
 	public static function all(): array {
 		$converters = apply_filters(
 			'elementor/atomic-widgets/icon/svg-converters',
-			[ new Fontello_Converter(), new Icomoon_Converter() ]
+			[ new Icomoon_Converter(), new Fontello_Converter() ]
 		);
 
 		if ( ! is_array( $converters ) ) {
@@ -27,19 +27,7 @@ class Converter_Registry {
 	}
 
 	public static function for_tab( array $tab ): ?Svg_Converter {
-		$type = isset( $tab['custom_icon_type'] ) && is_string( $tab['custom_icon_type'] )
-			? strtolower( $tab['custom_icon_type'] )
-			: '';
-
 		foreach ( self::all() as $converter ) {
-			if ( '' !== $type && $converter instanceof Fontello_Converter && 'fontello' !== $type ) {
-				continue;
-			}
-
-			if ( '' !== $type && $converter instanceof Icomoon_Converter && 'icomoon' !== $type ) {
-				continue;
-			}
-
 			if ( $converter->supports( $tab ) ) {
 				return $converter;
 			}
