@@ -116,13 +116,19 @@ class Icon_Transformer extends Transformer_Base {
 	}
 
 	private function transform_default_svg(): array {
-		return ( new Svg_Src_Transformer() )->transform(
-			[
-				'id' => null,
+		$content = Utils::file_get_contents( Atomic_Svg::DEFAULT_SVG_PATH );
+
+		if ( ! $content ) {
+			return [
+				'html' => '',
 				'url' => Atomic_Svg::DEFAULT_SVG_URL,
-			],
-			Props_Resolver_Context::make()
-		);
+			];
+		}
+
+		return [
+			'html' => $this->process_svg( $content, self::SVG_INLINE_STYLES ),
+			'url' => Atomic_Svg::DEFAULT_SVG_URL,
+		];
 	}
 
 	private function transform_font_awesome_7( array $icon ): array {
