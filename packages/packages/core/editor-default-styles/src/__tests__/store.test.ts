@@ -130,4 +130,80 @@ describe( 'defaultStyles store', () => {
 		expect( initialAfterCommit.h1?.variants[ 0 ]?.props ).toEqual( { display: 'block' } );
 		expect( selectData( getState() ).h1?.variants[ 0 ]?.props ).toEqual( { display: 'flex' } );
 	} );
+
+	it( 'should remove the variant when the last prop is cleared', () => {
+		// Arrange
+		dispatch(
+			slice.actions.load( {
+				data: {
+					h3: {
+						id: 'h3',
+						label: 'h3',
+						type: 'class',
+						variants: [
+							{
+								meta: DESKTOP_META,
+								props: { margin: '10px' },
+								custom_css: null,
+							},
+						],
+					},
+				},
+			} )
+		);
+
+		// Act
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h3',
+				meta: DESKTOP_META,
+				props: { margin: null },
+			} )
+		);
+
+		// Assert
+		expect( selectData( getState() ).h3?.variants ).toEqual( [] );
+	} );
+
+	it( 'should remove multiple null props from a variant', () => {
+		// Arrange
+		dispatch(
+			slice.actions.load( {
+				data: {
+					h4: {
+						id: 'h4',
+						label: 'h4',
+						type: 'class',
+						variants: [
+							{
+								meta: DESKTOP_META,
+								props: {
+									width: '100px',
+									height: '200px',
+									margin: '10px',
+								},
+								custom_css: null,
+							},
+						],
+					},
+				},
+			} )
+		);
+
+		// Act
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h4',
+				meta: DESKTOP_META,
+				props: {
+					width: null,
+					height: null,
+					margin: null,
+				},
+			} )
+		);
+
+		// Assert
+		expect( selectData( getState() ).h4?.variants ).toEqual( [] );
+	} );
 } );

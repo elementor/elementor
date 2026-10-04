@@ -1,4 +1,4 @@
-import { type Props } from '@elementor/editor-props';
+import { mergeProps, type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
 	getVariantByMeta,
@@ -25,6 +25,12 @@ const initialState: DefaultStylesState = {
 	initialData: {},
 	isDirty: false,
 };
+
+const getNonEmptyVariants = ( style: StyleDefinition ) =>
+	style.variants.filter(
+		( { props, custom_css: customCss }: StyleDefinitionVariant ) =>
+			Object.keys( props ).length > 0 || Boolean( customCss?.raw )
+	);
 
 export type StateWithDefaultStyles = SliceState< typeof slice >;
 
@@ -79,26 +85,27 @@ export const slice = createSlice( {
 			const variant = getVariantByMeta( style, payload.meta );
 			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
 			customCss = customCss?.raw ? customCss : null;
+			const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
+			const mode = payload.mode ?? 'merge';
 
 			if ( variant ) {
-				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
-				const mode = payload.mode ?? 'merge';
-
 				if ( mode === 'replace' ) {
-					variant.props = payloadProps;
+					variant.props = mergeProps( {}, payloadProps );
 				} else {
-					variant.props = { ...variant.props, ...payloadProps };
+					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
+					variant.props = mergeProps( variantProps, payloadProps );
 				}
 
 				variant.custom_css = customCss;
 			} else {
 				style.variants.push( {
 					meta: payload.meta,
-					props: payload.props,
+					props: mergeProps( {}, payloadProps ),
 					custom_css: customCss,
 				} );
 			}
 
+			style.variants = getNonEmptyVariants( style );
 			state.data[ payload.id ] = style;
 			state.isDirty = true;
 		},
