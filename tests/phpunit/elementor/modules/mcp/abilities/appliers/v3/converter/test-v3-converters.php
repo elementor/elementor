@@ -196,6 +196,38 @@ class Test_V3_Converters extends TestCase {
 		$this->assertSame( [], $ctx->warnings() );
 	}
 
+	public function test_simple_setting_converter__map_typography_group_writes_family_and_spacing() {
+		// Arrange.
+		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
+			'main-menu' => [
+				'css_properties' => Style_Control_Target::typography_group( 'menu_typography' ),
+			],
+		] );
+		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
+		$meta = $this->meta( $overrides );
+		$ctx = new V3_Conversion_Context();
+
+		// Act.
+		$converter->convert( $ctx, $this->rule( 'font-family', '"Roboto", sans-serif' ), $meta );
+		$converter->convert( $ctx, $this->rule( 'letter-spacing', '2px' ), $meta );
+		$converter->convert( $ctx, $this->rule( 'text-transform', 'uppercase' ), $meta );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'menu_typography_font_family' => 'Roboto',
+				'menu_typography_typography' => 'custom',
+				'menu_typography_letter_spacing' => [
+					'unit' => 'px',
+					'size' => 2.0,
+				],
+				'menu_typography_text_transform' => 'uppercase',
+			],
+			$ctx->settings_patch()
+		);
+		$this->assertSame( [], $ctx->warnings() );
+	}
+
 	public function test_simple_setting_converter__map_responsive_write_validates_against_base_destination() {
 		// Arrange.
 		$overrides = V3_Map_Overrides_Builder::from_style_targets( [

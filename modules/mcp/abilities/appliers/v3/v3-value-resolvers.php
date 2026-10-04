@@ -312,6 +312,9 @@ class V3_Value_Resolvers {
 				return null === $dimension ? null : $dimension;
 			case 'line_height':
 				return self::resolve_line_height( $css_value );
+			case 'font_family':
+				$font_family = self::normalize_font_family( $css_value );
+				return '' === $font_family ? null : $font_family;
 			case 'text':
 				return trim( $css_value );
 			default:

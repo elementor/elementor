@@ -134,4 +134,9 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( [ 'unit' => 'px', 'size' => 10.0 ], V3_Value_Resolvers::resolve( 'dimension', '10px' ) );
 		$this->assertNull( V3_Value_Resolvers::resolve( 'unknown', 'x' ) );
 	}
+
+	public function test_resolve__font_family_takes_first_family_and_rejects_empty() {
+		$this->assertSame( 'Open Sans', V3_Value_Resolvers::resolve( 'font_family', "'Open Sans', Arial, sans-serif" ) );
+		$this->assertNull( V3_Value_Resolvers::resolve( 'font_family', '  ' ) );
+	}
 }

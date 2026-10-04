@@ -22,6 +22,7 @@ class V3_Value_Formatters {
 		switch ( $resolver ) {
 			case 'text':
 			case 'color':
+			case 'font_family':
 				return is_scalar( $value ) ? (string) $value : null;
 
 			case 'dimension':

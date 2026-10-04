@@ -26,6 +26,7 @@ class V3_Widget_Map_Compiler {
 		'slider' => [ 'slider' ],
 		'dimension' => [ 'slider' ],
 		'line_height' => [ 'slider' ],
+		'font_family' => [ 'font' ],
 		'sides' => [ 'dimensions' ],
 		Style_Control_Target::TYPOGRAPHY_TOGGLE_RESOLVER => [ 'popover_toggle' ],
 	];

@@ -17,6 +17,54 @@ class Style_Control_Target {
 	const TYPOGRAPHY_TOGGLE_RESOLVER = 'typography_toggle';
 	const TYPOGRAPHY_TOGGLE_VALUE = 'custom';
 
+	const TYPOGRAPHY_FIELDS = [
+		'font-family' => [
+			'field' => 'font_family',
+			'resolver' => 'font_family',
+			'responsive' => false,
+		],
+		'font-size' => [
+			'field' => 'font_size',
+			'resolver' => 'slider',
+			'responsive' => true,
+		],
+		'font-weight' => [
+			'field' => 'font_weight',
+			'resolver' => 'text',
+			'responsive' => false,
+		],
+		'text-transform' => [
+			'field' => 'text_transform',
+			'resolver' => 'text',
+			'responsive' => false,
+		],
+		'font-style' => [
+			'field' => 'font_style',
+			'resolver' => 'text',
+			'responsive' => false,
+		],
+		'text-decoration' => [
+			'field' => 'text_decoration',
+			'resolver' => 'text',
+			'responsive' => false,
+		],
+		'line-height' => [
+			'field' => 'line_height',
+			'resolver' => 'line_height',
+			'responsive' => true,
+		],
+		'letter-spacing' => [
+			'field' => 'letter_spacing',
+			'resolver' => 'slider',
+			'responsive' => true,
+		],
+		'word-spacing' => [
+			'field' => 'word_spacing',
+			'resolver' => 'slider',
+			'responsive' => true,
+		],
+	];
+
 	const RESOLVER_SHAPES = [
 		'slider' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,
 		'dimension' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,
@@ -59,6 +107,24 @@ class Style_Control_Target {
 				$toggle_key => self::TYPOGRAPHY_TOGGLE_VALUE,
 			],
 		];
+	}
+
+	/**
+	 * Every CSS property backed by one Group_Control_Typography, keyed for a target's
+	 * `css_properties`, all in the given state.
+	 *
+	 * @return array<string, array<string, array>>
+	 */
+	public static function typography_group( string $prefix, string $state = 'default' ): array {
+		$properties = [];
+
+		foreach ( self::TYPOGRAPHY_FIELDS as $property => $field ) {
+			$properties[ $property ] = [
+				$state => self::typography( $prefix, $field['field'], $field['resolver'], $field['responsive'] ),
+			];
+		}
+
+		return $properties;
 	}
 
 	/**

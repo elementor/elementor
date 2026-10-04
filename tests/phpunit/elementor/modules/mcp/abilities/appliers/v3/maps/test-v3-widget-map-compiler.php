@@ -252,6 +252,55 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		$this->assertIsArray( $result );
 	}
 
+	public function test_compile__accepts_full_typography_group_against_group_controls() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties'] = Style_Control_Target::typography_group( 'typography' );
+
+		// Act.
+		$result = $compiler->compile( $map, $this->full_typography_controls(), 'heading' );
+
+		// Assert.
+		$this->assertIsArray( $result );
+	}
+
+	public function test_compile__errors_when_font_family_targets_non_font_control() {
+		// Arrange.
+		$compiler = new V3_Widget_Map_Compiler();
+		$map = $this->valid_map();
+		$map['style_targets']['heading']['css_properties'] = Style_Control_Target::typography_group( 'typography' );
+		$controls = $this->full_typography_controls();
+		$controls['typography_font_family'] = [ 'type' => 'text' ];
+
+		// Act.
+		$result = $compiler->compile( $map, $controls, 'heading' );
+
+		// Assert.
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'incompatible_resolver', $this->reason( $result ) );
+	}
+
+	private function full_typography_controls(): array {
+		$controls = $this->controls() + [
+			'typography_typography' => [ 'type' => 'popover_toggle' ],
+			'typography_font_family' => [ 'type' => 'font' ],
+			'typography_font_weight' => [ 'type' => 'select' ],
+			'typography_text_transform' => [ 'type' => 'select' ],
+			'typography_font_style' => [ 'type' => 'select' ],
+			'typography_text_decoration' => [ 'type' => 'select' ],
+		];
+
+		foreach ( [ 'font_size', 'line_height', 'letter_spacing', 'word_spacing' ] as $field ) {
+			$controls[ 'typography_' . $field ] = [
+				'type' => 'slider',
+				'is_responsive' => true,
+			];
+		}
+
+		return $controls;
+	}
+
 	private function typography_controls(): array {
 		return array_merge( $this->controls(), [
 			'typography_typography' => [ 'type' => 'popover_toggle' ],
