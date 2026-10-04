@@ -616,6 +616,38 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['editor_settings'] );
 	}
 
+	public function test_get_data_for_save__preserves_boolean_decorative_editor_setting() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'decorative' => true,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'decorative' => true,
+		], $data_for_save['editor_settings'] );
+	}
+
+	public function test_get_data_for_save__drops_non_boolean_decorative_editor_setting() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'decorative' => 'yes',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
+	}
+
 	public function test_get_data_for_save__removes_editor_settings_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [

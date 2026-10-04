@@ -17,6 +17,7 @@ use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Editor_Settings_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
@@ -137,6 +138,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 									'items' => [ 'type' => 'object' ],
 									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
 								],
+								'editor_settings' => array_merge(
+									Editor_Settings_Applier::get_settings_schema(),
+									[ 'description' => 'update only: editor-only settings merged onto the element\'s existing editor settings; they never render on the frontend. Set { "decorative": true } on a visual-only container that will have no children.' ]
+								),
 								'new_parent_id' => [
 									'type' => 'string',
 									'description' => "move only: target parent id or 'document' for root.",
@@ -427,10 +432,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$has_classes = array_key_exists( 'classes', $operation );
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
+		$editor_settings = $operation['editor_settings'] ?? null;
 
-		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions;
+		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions || null !== $editor_settings;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, interactions, or editor_settings.', 'elementor' ) );
 		}
 
 		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
@@ -533,6 +539,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$style_result = $style_applier->apply( $index, [ $element_id => $style ], $style_apply_mode, $widget_configs );
 			$warnings->merge( $style_result['warnings'] );
 			$variable_connections = $style_result['variable_connections'][ $element_id ] ?? [];
+		}
+
+		if ( null !== $editor_settings ) {
+			$editor_settings_applier = new Editor_Settings_Applier();
+			$warnings->merge( $editor_settings_applier->apply( $index, [ $element_id => $editor_settings ] )['warnings'] );
 		}
 
 		return [

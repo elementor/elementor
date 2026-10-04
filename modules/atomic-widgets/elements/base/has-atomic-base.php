@@ -397,6 +397,10 @@ trait Has_Atomic_Base {
 			$editor_data['grid_outline'] = $data['grid_outline'];
 		}
 
+		if ( isset( $data['decorative'] ) && is_bool( $data['decorative'] ) ) {
+			$editor_data['decorative'] = $data['decorative'];
+		}
+
 		return $editor_data;
 	}
 

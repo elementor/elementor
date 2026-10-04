@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\Mcp\Abilities\Appliers\Editor_Settings_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -296,6 +297,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 						'type' => 'array',
 						'items' => [ 'type' => 'object' ],
 					],
+				],
+				'editor_settings' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Record mapping configuration-id → editor-only settings that never render on the frontend. Use { "decorative": true } on a visual-only container that will have no children, so the editor does not force its empty-container placeholder height on it.',
+					'additionalProperties' => Editor_Settings_Applier::get_settings_schema(),
 				],
 				'parent_id' => [
 					'type' => 'string',

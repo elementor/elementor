@@ -282,12 +282,21 @@
 .e-atomic-element {
 	// Scoped to a direct child: the 120px canvas placeholder must not leak onto ancestor
 	// atomic elements, where it beat the element's own `min-height` (Settings -> Size).
-	&:has( > .elementor-empty-view ) {
+	// `:where()` keeps the original specificity, so decorative opt-out doesn't change what overrides the placeholder height.
+	&:not( :where( [data-e-decorative] ) ):has( > .elementor-empty-view ) {
 		min-height: 120px;
 	}
 
 	& > .elementor-empty-view.elementor-empty-view {
 		min-height: inherit;
+	}
+
+	// Decorative containers stay droppable, but the placeholder overlays them instead of adding size.
+	&[data-e-decorative] > .elementor-empty-view.elementor-empty-view {
+		position: absolute;
+		inset: 0;
+		min-height: 0;
+		min-width: 0;
 	}
 }
 

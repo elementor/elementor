@@ -1146,6 +1146,56 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
+	public function test_execute__persists_decorative_editor_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"><e-div-block configuration-id="glow-blob"/></e-div-block>',
+			'style' => [
+				'glow-blob' => 'width: 240px; height: 240px; border-radius: 50%;',
+			],
+			'editor_settings' => [
+				'glow-blob' => [ 'decorative' => true ],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame(
+			[ 'title' => 'glow-blob', 'decorative' => true ],
+			$elements[0]['elements'][0]['editor_settings']
+		);
+		$this->assertArrayNotHasKey( 'decorative', $elements[0]['editor_settings'] );
+	}
+
+	public function test_execute__warns_on_unknown_editor_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="blob"/>',
+			'editor_settings' => [
+				'blob' => [ 'is_hidden' => true ],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 'blob', $this->find_warning_by_code( $result, 'editor_setting_unknown' )['config_id'] ?? null );
+	}
+
 	public function test_execute__wraps_direct_document_children_in_single_div_block() {
 		// Arrange
 		$this->act_as_admin();

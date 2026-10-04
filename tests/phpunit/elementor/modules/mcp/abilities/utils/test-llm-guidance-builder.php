@@ -76,4 +76,52 @@ class Test_Llm_Guidance_Builder extends TestCase {
 		$this->assertSame( [ 'e-list-item' ], $guidance['nesting']['allowed_child_types'] );
 		$this->assertArrayNotHasKey( 'allowed_parents', $guidance['nesting'] );
 	}
+
+	public function test_build__atomic_container_includes_decorative_guidance() {
+		// Arrange.
+		$config = [
+			'elType' => 'e-div-block',
+			'atomic' => true,
+			'show_in_panel' => true,
+			'meta' => [ 'is_container' => true ],
+		];
+
+		// Act.
+		$guidance = Llm_Guidance_Builder::build( $config, 'e-div-block', [] );
+
+		// Assert.
+		$this->assertSame( Llm_Guidance_Builder::DECORATIVE_CONTAINER_INSTRUCTION, $guidance['decorative'] );
+	}
+
+	public function test_build__atomic_widget_excludes_decorative_guidance() {
+		// Arrange.
+		$config = [
+			'elType' => 'widget',
+			'atomic' => true,
+			'show_in_panel' => true,
+			'meta' => [ 'is_container' => true ],
+		];
+
+		// Act.
+		$guidance = Llm_Guidance_Builder::build( $config, 'e-list', [] );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'decorative', $guidance );
+	}
+
+	public function test_build__non_container_atomic_element_excludes_decorative_guidance() {
+		// Arrange.
+		$config = [
+			'elType' => 'e-tab',
+			'atomic' => true,
+			'show_in_panel' => false,
+			'meta' => [ 'is_container' => false ],
+		];
+
+		// Act.
+		$guidance = Llm_Guidance_Builder::build( $config, 'e-tab', [] );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'decorative', $guidance );
+	}
 }
