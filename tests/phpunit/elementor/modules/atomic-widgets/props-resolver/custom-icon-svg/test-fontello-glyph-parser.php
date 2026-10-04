@@ -76,6 +76,14 @@ class Test_Fontello_Glyph_Parser extends TestCase {
 		$this->assertStringContainsString( 'M0 0H100V100H0Z', $svg );
 	}
 
+	public function test_to_svg__does_not_match_glyph_name_as_suffix() {
+		$font = '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><defs><font horiz-adv-x="1000"><font-face units-per-em="1000"/><glyph glyph-name="prised" unicode="&#xe801;" d="M1 1H2V2H1Z" horiz-adv-x="1000"/></font></defs></svg>';
+
+		$svg = Fontello_Glyph_Parser::to_svg( '{}', $font, 'emo-surprised', 'icon-' );
+
+		$this->assertSame( '', $svg );
+	}
+
 	public function test_to_svg__uses_svg_path_from_config_when_present() {
 		// Arrange.
 		$config = wp_json_encode( [

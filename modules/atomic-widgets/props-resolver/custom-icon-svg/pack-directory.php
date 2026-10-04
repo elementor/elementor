@@ -73,12 +73,14 @@ class Pack_Directory {
 		}
 
 		foreach ( array_unique( $candidates ) as $dir ) {
-			if ( '' !== $dir && is_dir( $dir ) ) {
-				return $dir;
+			if ( '' !== $dir && self::is_allowed_pack_dir( $dir ) ) {
+				$resolved = realpath( $dir );
+
+				return is_string( $resolved ) ? $resolved : '';
 			}
 		}
 
-		return $fallback;
+		return self::is_allowed_pack_dir( $fallback ) ? (string) realpath( $fallback ) : '';
 	}
 
 	public static function find_svg_font( string $dir ): string {
@@ -105,14 +107,16 @@ class Pack_Directory {
 		}
 
 		$uploads = wp_upload_dir();
-		$basedir = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? rtrim( $uploads['basedir'], '/\\' ) : '';
+		$basedir_raw = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? $uploads['basedir'] : '';
 		$baseurl = isset( $uploads['baseurl'] ) && is_string( $uploads['baseurl'] ) ? rtrim( $uploads['baseurl'], '/' ) : '';
+		$basedir = false !== realpath( $basedir_raw ) ? str_replace( '\\', '/', rtrim( (string) realpath( $basedir_raw ), '/\\' ) ) : '';
+		$dir_norm = str_replace( '\\', '/', $dir );
 
-		if ( '' === $basedir || '' === $baseurl || ! str_starts_with( $dir, $basedir ) ) {
+		if ( '' === $basedir || '' === $baseurl || ! self::is_allowed_pack_dir( $dir ) ) {
 			return [];
 		}
 
-		$url = $baseurl . str_replace( '\\', '/', substr( $dir, strlen( $basedir ) ) );
+		$url = $baseurl . substr( $dir_norm, strlen( $basedir ) );
 		$urls = [];
 
 		if ( isset( $tab['fetchJson'] ) && is_string( $tab['fetchJson'] ) && '' !== $tab['fetchJson'] ) {
@@ -150,7 +154,7 @@ class Pack_Directory {
 		$base = self::uploads_base();
 		$uploads_root = $base ? rtrim( $base, '/\\' ) . '/elementor/custom-icons/' : '';
 
-		if ( '' !== $name && '' !== $uploads_root ) {
+		if ( self::is_pack_name( $name ) && '' !== $uploads_root ) {
 			$dirs[] = $uploads_root . $name;
 		}
 
@@ -163,17 +167,32 @@ class Pack_Directory {
 		return $dirs;
 	}
 
-	private static function is_allowed_pack_dir( string $dir ): bool {
-		$normalized = rtrim( str_replace( '\\', '/', $dir ), '/' );
-		$base = self::uploads_base();
+	private static function is_pack_name( string $name ): bool {
+		return '' !== $name
+			&& '.' !== $name
+			&& '..' !== $name
+			&& ! str_contains( $name, '/' )
+			&& ! str_contains( $name, '\\' );
+	}
 
-		if ( '' === $base ) {
-			return is_dir( $dir );
+	private static function is_allowed_pack_dir( string $dir ): bool {
+		$base_raw = self::uploads_base();
+
+		if ( '' === $base_raw ) {
+			return false;
 		}
 
-		$base = rtrim( str_replace( '\\', '/', $base ), '/' );
+		$base = realpath( $base_raw );
+		$resolved = realpath( $dir );
 
-		return str_starts_with( $normalized, $base ) && is_dir( $dir );
+		if ( false === $base || false === $resolved ) {
+			return false;
+		}
+
+		$base_prefix = trailingslashit( str_replace( '\\', '/', $base ) );
+		$resolved_path = str_replace( '\\', '/', $resolved );
+
+		return $resolved_path === rtrim( $base_prefix, '/' ) || str_starts_with( $resolved_path, $base_prefix );
 	}
 
 	private static function is_svg_font( string $path ): bool {
@@ -195,14 +214,44 @@ class Pack_Directory {
 		$baseurl = isset( $uploads['baseurl'] ) && is_string( $uploads['baseurl'] ) ? $uploads['baseurl'] : '';
 		$basedir = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? $uploads['basedir'] : '';
 
-		if ( '' === $baseurl || '' === $basedir || ! str_starts_with( $url, $baseurl ) ) {
+		if ( '' === $baseurl || '' === $basedir ) {
 			return '';
 		}
 
-		$relative = substr( $url, strlen( $baseurl ) );
-		$path = rtrim( $basedir, '/\\' ) . $relative;
+		$baseurl_prefix = rtrim( $baseurl, '/' ) . '/';
 
-		return rtrim( dirname( $path ), '/\\' );
+		if ( $url !== rtrim( $baseurl, '/' ) && ! str_starts_with( $url, $baseurl_prefix ) ) {
+			return '';
+		}
+
+		$url_path = wp_parse_url( $url, PHP_URL_PATH );
+		$base_path = wp_parse_url( $baseurl, PHP_URL_PATH );
+
+		if ( ! is_string( $url_path ) || ! is_string( $base_path ) ) {
+			return '';
+		}
+
+		$base_path_prefix = rtrim( $base_path, '/' ) . '/';
+
+		if ( $url_path !== rtrim( $base_path, '/' ) && ! str_starts_with( $url_path, $base_path_prefix ) ) {
+			return '';
+		}
+
+		if ( str_contains( $url_path, '..' ) ) {
+			return '';
+		}
+
+		$relative = substr( $url_path, strlen( $base_path ) );
+		$path = rtrim( $basedir, '/\\' ) . $relative;
+		$dir = rtrim( dirname( $path ), '/\\' );
+
+		if ( ! self::is_allowed_pack_dir( $dir ) ) {
+			return '';
+		}
+
+		$resolved = realpath( $dir );
+
+		return is_string( $resolved ) ? $resolved : '';
 	}
 
 	private static function uploads_base(): string {

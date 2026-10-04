@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Fontello_Converter implements Svg_Converter {
+	private static array $file_cache = [];
+
 	public function supports( array $tab ): bool {
 		return in_array( Pack_Directory::detect_type( $tab ), [ 'fontello', 'fontastic' ], true );
 	}
@@ -24,18 +26,17 @@ class Fontello_Converter implements Svg_Converter {
 			return '';
 		}
 
-		$config_path = $dir . '/config.json';
-		$config = is_readable( $config_path ) ? file_get_contents( $config_path ) : '{}';
-		$font = file_get_contents( $font_path );
+		$config = self::read_file( $dir . '/config.json' );
+		$font = self::read_file( $font_path );
 
-		if ( ! is_string( $config ) || ! is_string( $font ) ) {
+		if ( '' === $font ) {
 			return '';
 		}
 
 		$prefix = isset( $tab['prefix'] ) && is_string( $tab['prefix'] ) ? $tab['prefix'] : '';
 		$icon_name = self::icon_name_from_value( $icon_value, $prefix );
 
-		return Fontello_Glyph_Parser::to_svg( $config, $font, $icon_name, $prefix );
+		return Fontello_Glyph_Parser::to_svg( '' !== $config ? $config : '{}', $font, $icon_name, $prefix );
 	}
 
 	public static function tab_from_disk( string $library ): ?array {
@@ -95,6 +96,22 @@ class Fontello_Converter implements Svg_Converter {
 
 	public static function pack_dir( array $tab ): string {
 		return Pack_Directory::resolve( $tab );
+	}
+
+	private static function read_file( string $path ): string {
+		if ( '' === $path || ! is_readable( $path ) ) {
+			return '';
+		}
+
+		$mtime = filemtime( $path );
+		$key = $path . '|' . ( false === $mtime ? '0' : (string) $mtime );
+
+		if ( ! array_key_exists( $key, self::$file_cache ) ) {
+			$raw = file_get_contents( $path );
+			self::$file_cache[ $key ] = is_string( $raw ) ? $raw : '';
+		}
+
+		return self::$file_cache[ $key ];
 	}
 
 	public static function icon_name_from_value( string $icon_value, string $prefix ): string {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Box } from '@elementor/ui';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
+import { sanitizeIconSvgMarkup } from './sanitize-icon-svg-markup';
 
 type FontAwesomeGlyphProps = {
 	icon: FontAwesome7Icon;
@@ -11,7 +12,9 @@ type FontAwesomeGlyphProps = {
 };
 
 export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
-	if ( icon.svgMarkup ) {
+	const svgMarkup = sanitizeIconSvgMarkup( icon.svgMarkup );
+
+	if ( svgMarkup ) {
 		return (
 			<Box
 				component="span"
@@ -32,7 +35,7 @@ export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyph
 						fill: 'currentColor',
 					},
 				} }
-				dangerouslySetInnerHTML={ { __html: icon.svgMarkup } }
+				dangerouslySetInnerHTML={ { __html: svgMarkup } }
 			/>
 		);
 	}

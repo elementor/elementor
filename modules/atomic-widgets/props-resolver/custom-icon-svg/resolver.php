@@ -20,6 +20,7 @@ class Resolver {
 
 	public static function reset_memory(): void {
 		self::$memory = [];
+		Fontello_Glyph_Parser::reset_memory();
 	}
 
 	public static function resolve( array $icon ): string {
@@ -66,17 +67,33 @@ class Resolver {
 	}
 
 	public static function resolve_library( string $library ): array {
+		return self::resolve_library_response( $library )['icons'];
+	}
+
+	/**
+	 * @return array{icons: array<string, string>, truncated: bool, total: int}
+	 */
+	public static function resolve_library_response( string $library ): array {
+		$empty = [
+			'icons' => [],
+			'truncated' => false,
+			'total' => 0,
+		];
+
 		if ( ! Availability::is_enabled() ) {
-			return [];
+			return $empty;
 		}
 
 		$tab = self::tab_for_library( $library );
 
 		if ( ! $tab || ! Pack_Directory::is_supported( $tab ) ) {
-			return [];
+			return $empty;
 		}
 
-		$names = array_slice( self::icon_names( $tab ), 0, self::MAX_LIBRARY_ICONS );
+		$names = self::icon_names( $tab );
+		$total = count( $names );
+		$truncated = $total > self::MAX_LIBRARY_ICONS;
+		$names = array_slice( $names, 0, self::MAX_LIBRARY_ICONS );
 		$prefix = isset( $tab['prefix'] ) && is_string( $tab['prefix'] ) ? $tab['prefix'] : '';
 		$display_prefix = isset( $tab['displayPrefix'] ) && is_string( $tab['displayPrefix'] ) && '' !== $tab['displayPrefix']
 			? $tab['displayPrefix']
@@ -96,17 +113,21 @@ class Resolver {
 			}
 		}
 
-		return $result;
+		return [
+			'icons' => $result,
+			'truncated' => $truncated,
+			'total' => $total,
+		];
 	}
 
 	private static function sanitize( string $markup ): string {
 		if ( '' === $markup || ! class_exists( Svg_Sanitizer::class ) ) {
-			return $markup;
+			return '';
 		}
 
 		$sanitized = ( new Svg_Sanitizer() )->sanitize( $markup );
 
-		return is_string( $sanitized ) ? $sanitized : '';
+		return is_string( $sanitized ) && '' !== $sanitized ? $sanitized : '';
 	}
 
 	private static function tab_for_library( string $library ): ?array {
@@ -283,10 +304,6 @@ class Resolver {
 	}
 
 	private static function cache_set( string $key, string $markup ): void {
-		if ( '' === $markup ) {
-			return;
-		}
-
 		self::$memory[ $key ] = $markup;
 
 		if ( function_exists( 'wp_cache_set' ) ) {

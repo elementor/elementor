@@ -268,55 +268,70 @@ async function loadLibrarySvgMap(
 	}
 
 	const fromRest = await loadSvgMapFromRest( library, signal );
+	const restIcons = fromRest.icons;
 
-	if ( Object.keys( fromRest ).length > 0 ) {
-		svgMapCache.set( library, fromRest );
+	if ( Object.keys( restIcons ).length > 0 && ! fromRest.truncated ) {
+		svgMapCache.set( library, restIcons );
 
-		return fromRest;
+		return restIcons;
 	}
 
 	const fromPack = config ? await loadSvgMapFromPackFiles( config, signal ) : {};
+	const merged = { ...fromPack, ...restIcons };
 
-	if ( Object.keys( fromPack ).length > 0 ) {
-		svgMapCache.set( library, fromPack );
+	if ( Object.keys( merged ).length > 0 ) {
+		svgMapCache.set( library, merged );
 
-		return fromPack;
+		return merged;
 	}
 
 	return {};
 }
 
-async function loadSvgMapFromRest( library: string, signal?: AbortSignal ): Promise< Record< string, string > > {
+async function loadSvgMapFromRest(
+	library: string,
+	signal?: AbortSignal
+): Promise< { icons: Record< string, string >; truncated: boolean } > {
 	try {
-		const response = await httpService().get< HttpResponse< { icons?: Record< string, string > } > >(
-			CUSTOM_ICON_SVG_URL,
-			{ params: { library: String( library ) }, signal }
-		);
+		const response = await httpService().get<
+			HttpResponse< { icons?: Record< string, unknown >; truncated?: unknown } >
+		>( CUSTOM_ICON_SVG_URL, { params: { library: String( library ) }, signal } );
 
 		return unwrapIconMap( response );
 	} catch {
-		return {};
+		return { icons: {}, truncated: false };
 	}
 }
 
-function unwrapIconMap( payload: unknown ): Record< string, string > {
+function unwrapIconMap( payload: unknown ): { icons: Record< string, string >; truncated: boolean } {
 	let current: unknown = payload;
 
 	for ( let depth = 0; depth < 4; depth++ ) {
 		if ( ! current || typeof current !== 'object' ) {
-			return {};
+			return { icons: {}, truncated: false };
 		}
 
 		const record = current as Record< string, unknown >;
 
 		if ( record.icons && typeof record.icons === 'object' && ! Array.isArray( record.icons ) ) {
-			return record.icons as Record< string, string >;
+			const icons: Record< string, string > = {};
+
+			Object.entries( record.icons as Record< string, unknown > ).forEach( ( [ key, value ] ) => {
+				if ( typeof value === 'string' && value !== '' ) {
+					icons[ key ] = value;
+				}
+			} );
+
+			return {
+				icons,
+				truncated: true === record.truncated,
+			};
 		}
 
 		current = 'data' in record ? record.data : undefined;
 	}
 
-	return {};
+	return { icons: {}, truncated: false };
 }
 
 async function loadSvgMapFromPackFiles(

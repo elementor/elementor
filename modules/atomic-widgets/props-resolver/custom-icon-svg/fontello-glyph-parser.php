@@ -7,6 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Fontello_Glyph_Parser {
+	private static array $glyph_indexes = [];
+
+	public static function reset_memory(): void {
+		self::$glyph_indexes = [];
+	}
+
 	public static function to_svg( string $config_json, string $svg_font, string $icon_name, string $prefix = '' ): string {
 		$from_config = self::svg_path_from_config( $config_json, $icon_name, $prefix );
 
@@ -125,6 +131,34 @@ class Fontello_Glyph_Parser {
 	}
 
 	private static function find_glyph( string $svg_font, int $codepoint, string $icon_name ): ?array {
+		$index = self::glyph_index( $svg_font );
+
+		if ( isset( $index['by_name'][ $icon_name ] ) ) {
+			return $index['by_name'][ $icon_name ];
+		}
+
+		if ( $codepoint >= 0 && isset( $index['by_code'][ $codepoint ] ) ) {
+			return $index['by_code'][ $codepoint ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return array{by_name: array<string, array{d: string, units: int, advance: int}>, by_code: array<int, array{d: string, units: int, advance: int}>}
+	 */
+	private static function glyph_index( string $svg_font ): array {
+		$key = md5( $svg_font );
+
+		if ( isset( self::$glyph_indexes[ $key ] ) ) {
+			return self::$glyph_indexes[ $key ];
+		}
+
+		$index = [
+			'by_name' => [],
+			'by_code' => [],
+		];
+
 		$document = new \DOMDocument();
 		$previous = libxml_use_internal_errors( true );
 		$loaded = $document->loadXML( self::strip_doctype( $svg_font ), LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING );
@@ -132,15 +166,14 @@ class Fontello_Glyph_Parser {
 		libxml_use_internal_errors( $previous );
 
 		if ( ! $loaded ) {
-			return null;
+			self::$glyph_indexes[ $key ] = $index;
+
+			return $index;
 		}
 
 		$xpath = new \DOMXPath( $document );
-		$xpath->registerNamespace( 'svg', 'http://www.w3.org/2000/svg' );
-
 		$font = $xpath->query( '//*[local-name()="font"]' )->item( 0 );
 		$face = $xpath->query( '//*[local-name()="font-face"]' )->item( 0 );
-
 		$font_advance = self::positive_int_attribute( $font, 'horiz-adv-x', 1000 );
 		$units = self::positive_int_attribute( $face, 'units-per-em', $font_advance );
 
@@ -155,23 +188,26 @@ class Fontello_Glyph_Parser {
 				continue;
 			}
 
-			$glyph_name = $node->getAttribute( 'glyph-name' );
-			$unicode = $node->getAttribute( 'unicode' );
-			$matches_name = '' !== $glyph_name && ( $glyph_name === $icon_name || str_ends_with( $icon_name, $glyph_name ) );
-			$matches_code = self::unicode_codepoint( $unicode ) === $codepoint;
-
-			if ( ! $matches_name && ! $matches_code ) {
-				continue;
-			}
-
-			return [
+			$record = [
 				'd' => $d,
 				'units' => $units,
 				'advance' => self::positive_int_attribute( $node, 'horiz-adv-x', $font_advance ),
 			];
+			$glyph_name = $node->getAttribute( 'glyph-name' );
+			$code = self::unicode_codepoint( $node->getAttribute( 'unicode' ) );
+
+			if ( '' !== $glyph_name ) {
+				$index['by_name'][ $glyph_name ] = $record;
+			}
+
+			if ( null !== $code ) {
+				$index['by_code'][ $code ] = $record;
+			}
 		}
 
-		return null;
+		self::$glyph_indexes[ $key ] = $index;
+
+		return $index;
 	}
 
 	private static function strip_doctype( string $svg_font ): string {

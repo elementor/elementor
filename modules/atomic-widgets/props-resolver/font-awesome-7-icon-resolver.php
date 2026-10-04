@@ -227,7 +227,12 @@ class Font_Awesome_7_Icon_Resolver {
 
 		return array_values( array_filter(
 			$files,
-			static fn( $file ) => is_string( $file ) && '' !== $file
+			static function ( $file ) {
+				return is_string( $file )
+					&& '' !== $file
+					&& $file === basename( $file )
+					&& ! str_contains( $file, '..' );
+			}
 		) );
 	}
 

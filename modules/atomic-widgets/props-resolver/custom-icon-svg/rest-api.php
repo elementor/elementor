@@ -37,6 +37,9 @@ class Rest_Api {
 					'value' => [
 						'type' => 'string',
 						'required' => false,
+						'sanitize_callback' => static function ( $value ) {
+							return is_scalar( $value ) ? (string) $value : '';
+						},
 					],
 				],
 			],
@@ -63,8 +66,6 @@ class Rest_Api {
 			] )->build();
 		}
 
-		return Response_Builder::make( [
-			'icons' => Resolver::resolve_library( $library ),
-		] )->build();
+		return Response_Builder::make( Resolver::resolve_library_response( $library ) )->build();
 	}
 }

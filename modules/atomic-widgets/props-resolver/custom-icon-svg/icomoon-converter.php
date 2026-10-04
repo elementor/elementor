@@ -20,17 +20,34 @@ class Icomoon_Converter implements Svg_Converter {
 			return '';
 		}
 
+		$prefix = isset( $tab['prefix'] ) && is_string( $tab['prefix'] ) ? $tab['prefix'] : '';
+		$icon_name = Fontello_Converter::icon_name_from_value( $icon_value, $prefix );
 		$selection_path = $dir . '/selection.json';
 
 		if ( is_readable( $selection_path ) ) {
 			$raw = file_get_contents( $selection_path );
-			$prefix = isset( $tab['prefix'] ) && is_string( $tab['prefix'] ) ? $tab['prefix'] : '';
-			$icon_name = Fontello_Converter::icon_name_from_value( $icon_value, $prefix );
+			$from_selection = is_string( $raw ) ? self::svg_from_selection( $raw, $icon_name, $prefix ) : '';
 
-			return is_string( $raw ) ? self::svg_from_selection( $raw, $icon_name, $prefix ) : '';
+			if ( '' !== $from_selection ) {
+				return $from_selection;
+			}
 		}
 
-		return '';
+		$font_path = Pack_Directory::find_svg_font( $dir );
+
+		if ( '' === $font_path ) {
+			return '';
+		}
+
+		$font = file_get_contents( $font_path );
+		$config_path = $dir . '/config.json';
+		$config = is_readable( $config_path ) ? file_get_contents( $config_path ) : '{}';
+
+		if ( ! is_string( $font ) ) {
+			return '';
+		}
+
+		return Fontello_Glyph_Parser::to_svg( is_string( $config ) ? $config : '{}', $font, $icon_name, $prefix );
 	}
 
 	public static function tab_from_disk( string $library ): ?array {

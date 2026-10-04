@@ -311,6 +311,68 @@ describe( 'custom-icon-libraries', () => {
 		expect( catalog[ 0 ]?.svgMarkup ).toBe( markup );
 	} );
 
+	it( 'fills truncated rest maps from pack files', async () => {
+		const restMarkup = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M1 1"></path></svg>';
+		const font = `<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><defs><font horiz-adv-x="1000"><font-face units-per-em="1000"/><glyph glyph-name="spark" unicode="&#xe801;" d="M0 0H100V100H0Z" horiz-adv-x="1000"/></font></defs></svg>`;
+		get.mockResolvedValue( {
+			data: {
+				data: {
+					icons: { 'my-icons my-icons-badge': restMarkup },
+					truncated: true,
+					total: 2,
+				},
+				meta: {},
+			},
+		} );
+		global.fetch = jest.fn( ( input: RequestInfo | URL ) => {
+			const url = String( input );
+
+			if ( url.endsWith( 'font/fontello.svg' ) ) {
+				return Promise.resolve( { ok: true, text: () => Promise.resolve( font ) } );
+			}
+
+			return Promise.resolve( {
+				ok: true,
+				text: () => Promise.resolve( JSON.stringify( { glyphs: [ { css: 'spark', code: 59393 } ] } ) ),
+				json: () => Promise.resolve( { icons: [ 'badge', 'spark' ] } ),
+			} );
+		} ) as jest.Mock;
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						customIconLibrariesEnabled: true,
+						customIconPacks: {
+							'my-icons': {
+								type: 'fontello',
+								configUrl: 'https://example.com/uploads/my-icons/config.json',
+								fontUrl: 'https://example.com/uploads/my-icons/font/fontello.svg',
+							},
+						},
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+		window.elementor = {
+			config: {
+				icons: {
+					libraries: [
+						{
+							...MY_ICONS_CONFIG,
+							icons: [ 'badge', 'spark' ],
+						},
+					],
+				},
+			},
+			helpers: { enqueueIconFonts: jest.fn() },
+		} as typeof window.elementor;
+
+		const catalog = await loadCustomIconLibraries();
+
+		expect( catalog[ 0 ]?.svgMarkup ).toBe( restMarkup );
+		expect( catalog[ 1 ]?.svgMarkup ).toContain( 'M0 0H100V100H0Z' );
+	} );
+
 	it( 'detects a deleted custom library from a leftover selection', () => {
 		// Assert.
 		expect( isDeletedCustomIconLibrary( 'my-icons', 'my-icons my-icons-badge' ) ).toBe( false );
