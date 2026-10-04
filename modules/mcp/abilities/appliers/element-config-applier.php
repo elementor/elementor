@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -105,6 +106,15 @@ class Element_Config_Applier {
 			}
 
 			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings, $warning_codes );
+
+			$this->warn_dropped_object_sub_keys(
+				$node['settings'] ?? [],
+				$outcome['resolved'],
+				$tag,
+				$config_id,
+				$warnings,
+				$warning_codes
+			);
 
 			$node['settings'] = array_merge( $node['settings'] ?? [], $outcome['resolved'] );
 
@@ -211,6 +221,12 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$dropped_paths = Dropped_Plain_Keys_Finder::find( $value, $resolved_value, $canonical );
+
+			if ( ! empty( $dropped_paths ) ) {
+				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings, $warning_codes );
+			}
+
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
@@ -218,6 +234,57 @@ class Element_Config_Applier {
 			'resolved' => $resolved,
 			'cleared' => $cleared,
 		];
+	}
+
+	private function warn_dropped_object_sub_keys( array $node_settings, array $resolved, string $element_type, string $config_id, array &$warnings, array &$warning_codes ): void {
+		foreach ( $resolved as $key => $value ) {
+			$stored = $node_settings[ $key ] ?? null;
+
+			if (
+				! $this->is_object_prop_value( $stored )
+				|| ! $this->is_object_prop_value( $value )
+				|| $stored['$$type'] !== $value['$$type']
+			) {
+				continue;
+			}
+
+			$stored_sub_values = array_filter( $stored['value'], fn( $sub_value ) => null !== $sub_value );
+			$dropped_sub_keys = array_keys( array_diff_key( $stored_sub_values, $value['value'] ) );
+
+			if ( empty( $dropped_sub_keys ) ) {
+				continue;
+			}
+
+			$warnings[] = sprintf(
+				'[%s] Property "%s" on "%s" was replaced as a whole, dropping its stored "%s". Send the full value (as returned by elementor/get-page-structure) to keep them. See elementor://widgets/schema/%s.',
+				$config_id,
+				$key,
+				$element_type,
+				implode( '", "', $dropped_sub_keys ),
+				$element_type
+			);
+			$warning_codes[] = 'prop_subkeys_dropped';
+		}
+	}
+
+	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, array &$warnings, array &$warning_codes ): void {
+		$warnings[] = sprintf(
+			'[%s] Property "%s" on "%s" was saved without "%s": each is either not a field of the prop or has a value that could not be resolved. Use the shape from elementor://widgets/schema/%s.',
+			$config_id,
+			$key,
+			$element_type,
+			implode( '", "', $dropped_paths ),
+			$element_type
+		);
+		$warning_codes[] = 'prop_keys_dropped';
+	}
+
+	private function is_object_prop_value( $value ): bool {
+		return is_array( $value )
+			&& isset( $value['$$type'] )
+			&& is_array( $value['value'] ?? null )
+			&& ! empty( $value['value'] )
+			&& ! wp_is_numeric_array( $value['value'] );
 	}
 
 	private function merge_with_clears( array $existing, array $incoming ): array {
