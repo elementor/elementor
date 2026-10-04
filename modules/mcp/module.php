@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
@@ -23,6 +24,7 @@ class Module extends BaseModule {
 
 	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
 	const PROMOTION_REGISTRAR_HANDLE = 'elementor-mcp-promotion-registrar';
+	const MCP_PROMOTION_UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-connector-page-upgrade/';
 
 	private Ability_Registry $registry;
 
@@ -59,7 +61,27 @@ class Module extends BaseModule {
 			true
 		);
 
+		wp_localize_script(
+			self::PROMOTION_REGISTRAR_HANDLE,
+			'elementorMcpPromotionConfig',
+			[
+				'upgradeUrl' => $this->get_promotion_upgrade_url(),
+			]
+		);
+
 		wp_set_script_translations( self::PROMOTION_REGISTRAR_HANDLE, 'elementor' );
+	}
+
+	private function get_promotion_upgrade_url(): string {
+		$url = self::MCP_PROMOTION_UPGRADE_URL;
+		$filtered_url = apply_filters( 'elementor/mcp/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? $url;
+		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
+			[ 'upgrade_url' => $filtered_url ],
+			'elementor/mcp/custom_promotion',
+			'upgrade_url'
+		);
+
+		return $promotion_data['upgrade_url'] ?? $url;
 	}
 
 	public static function is_active() {

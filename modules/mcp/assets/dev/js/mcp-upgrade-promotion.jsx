@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-const UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-connector-page-upgrade/';
+function getUpgradeUrl() {
+	return window.elementorMcpPromotionConfig?.upgradeUrl ?? '';
+}
 
 const containerStyle = {
 	marginTop: 32,
@@ -45,6 +47,8 @@ const buttonStyle = {
 };
 
 export default function McpUpgradePromotion() {
+	const upgradeUrl = getUpgradeUrl();
+
 	return (
 		<div style={ containerStyle }>
 			<div style={ rowStyle }>
@@ -58,7 +62,7 @@ export default function McpUpgradePromotion() {
 					</p>
 				</div>
 				<a
-					href={ UPGRADE_URL }
+					href={ upgradeUrl }
 					target="_blank"
 					rel="noopener noreferrer"
 					style={ buttonStyle }
