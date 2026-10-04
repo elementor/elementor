@@ -62,6 +62,16 @@ class Editor_Only_Settings {
 		return $settings;
 	}
 
+	public static function read( array $node, string $element_type ): array {
+		$decorative = $node['editor_settings'][ self::DECORATIVE ] ?? null;
+
+		if ( ! self::supports_decorative( $element_type ) || ! is_bool( $decorative ) ) {
+			return [];
+		}
+
+		return [ self::DECORATIVE => $decorative ];
+	}
+
 	private static function supports_decorative( string $element_type ): bool {
 		return in_array( $element_type, self::DECORATIVE_ELEMENT_TYPES, true );
 	}

@@ -1003,6 +1003,39 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_execute__returns_decorative_editor_setting_as_plain_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$decorative_block = $this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' );
+		$decorative_block['editor_settings'] = [ 'decorative' => true ];
+
+		$this->mock_document_with_elements( $post_id, [ $decorative_block ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertSame( [ 'decorative' => true ], (array) $node['settings'] );
+	}
+
+	public function test_execute__omits_decorative_when_editor_setting_is_absent() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
+	}
+
 	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {
 		$element = [
 			'id' => $id,
