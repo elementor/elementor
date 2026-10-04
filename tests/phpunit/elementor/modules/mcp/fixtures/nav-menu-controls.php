@@ -694,4 +694,245 @@ return [
     ],
     'is_responsive' => true,
   ],
+  '_margin' => [
+    'type' => 'dimensions',
+    'is_responsive' => true,
+  ],
+  '_padding' => [
+    'type' => 'dimensions',
+    'is_responsive' => true,
+  ],
+  '_element_width' => [
+    'type' => 'select',
+    'options' => [
+      '' => '',
+      'inherit' => 'inherit',
+      'auto' => 'auto',
+      'initial' => 'initial',
+    ],
+    'selectors_dictionary' => [
+      'inherit' => '100%',
+    ],
+  ],
+  '_element_width_tablet' => [
+    'type' => 'select',
+    'options' => [
+      '' => '',
+      'inherit' => 'inherit',
+      'auto' => 'auto',
+      'initial' => 'initial',
+    ],
+    'selectors_dictionary' => [
+      'inherit' => '100%',
+    ],
+  ],
+  '_element_width_mobile' => [
+    'type' => 'select',
+    'options' => [
+      '' => '',
+      'inherit' => 'inherit',
+      'auto' => 'auto',
+      'initial' => 'initial',
+    ],
+    'selectors_dictionary' => [
+      'inherit' => '100%',
+    ],
+  ],
+  '_element_custom_width' => [
+    'type' => 'slider',
+    'condition' => [
+      '_element_width' => 'initial',
+    ],
+    'is_responsive' => true,
+  ],
+  '_position' => [
+    'type' => 'select',
+    'options' => [
+      '' => '',
+      'absolute' => 'absolute',
+      'fixed' => 'fixed',
+    ],
+  ],
+  '_offset_orientation_h' => [
+    'type' => 'choose',
+    'default' => 'start',
+    'options' => [
+      'start' => 'start',
+      'end' => 'end',
+    ],
+    'condition' => [
+      '_position!' => '',
+    ],
+  ],
+  '_offset_x' => [
+    'type' => 'slider',
+    'condition' => [
+      '_offset_orientation_h!' => 'end',
+      '_position!' => '',
+    ],
+    'is_responsive' => true,
+  ],
+  '_offset_x_end' => [
+    'type' => 'slider',
+    'condition' => [
+      '_offset_orientation_h' => 'end',
+      '_position!' => '',
+    ],
+    'is_responsive' => true,
+  ],
+  '_offset_orientation_v' => [
+    'type' => 'choose',
+    'default' => 'start',
+    'options' => [
+      'start' => 'start',
+      'end' => 'end',
+    ],
+    'condition' => [
+      '_position!' => '',
+    ],
+  ],
+  '_offset_y' => [
+    'type' => 'slider',
+    'condition' => [
+      '_offset_orientation_v!' => 'end',
+      '_position!' => '',
+    ],
+    'is_responsive' => true,
+  ],
+  '_offset_y_end' => [
+    'type' => 'slider',
+    'condition' => [
+      '_offset_orientation_v' => 'end',
+      '_position!' => '',
+    ],
+    'is_responsive' => true,
+  ],
+  '_z_index' => [
+    'type' => 'number',
+    'is_responsive' => true,
+  ],
+  '_background_background' => [
+    'type' => 'choose',
+    'options' => [
+      'classic' => 'classic',
+      'gradient' => 'gradient',
+    ],
+  ],
+  '_background_color' => [
+    'type' => 'color',
+    'condition' => [
+      '_background_background' => [
+        0 => 'classic',
+        1 => 'gradient',
+        2 => 'video',
+      ],
+    ],
+  ],
+  '_background_hover_background' => [
+    'type' => 'choose',
+    'options' => [
+      'classic' => 'classic',
+      'gradient' => 'gradient',
+    ],
+  ],
+  '_background_hover_color' => [
+    'type' => 'color',
+    'condition' => [
+      '_background_hover_background' => [
+        0 => 'classic',
+        1 => 'gradient',
+        2 => 'video',
+      ],
+    ],
+  ],
+  '_border_border' => [
+    'type' => 'select',
+    'options' => [
+      '' => '',
+      'none' => 'none',
+      'solid' => 'solid',
+      'double' => 'double',
+      'dotted' => 'dotted',
+      'dashed' => 'dashed',
+      'groove' => 'groove',
+    ],
+  ],
+  '_border_width' => [
+    'type' => 'dimensions',
+    'condition' => [
+      '_border_border!' => [
+        0 => '',
+        1 => 'none',
+      ],
+    ],
+    'is_responsive' => true,
+  ],
+  '_border_color' => [
+    'type' => 'color',
+    'condition' => [
+      '_border_border!' => [
+        0 => '',
+        1 => 'none',
+      ],
+    ],
+  ],
+  '_border_radius' => [
+    'type' => 'dimensions',
+    'is_responsive' => true,
+  ],
+  '_box_shadow_box_shadow_type' => [
+    'type' => 'popover_toggle',
+    'return_value' => 'yes',
+  ],
+  '_box_shadow_box_shadow' => [
+    'type' => 'box_shadow',
+    'condition' => [
+      '_box_shadow_box_shadow_type!' => '',
+    ],
+  ],
+  '_border_hover_border' => [
+    'type' => 'select',
+    'options' => [
+      '' => '',
+      'none' => 'none',
+      'solid' => 'solid',
+      'double' => 'double',
+      'dotted' => 'dotted',
+      'dashed' => 'dashed',
+      'groove' => 'groove',
+    ],
+  ],
+  '_border_hover_width' => [
+    'type' => 'dimensions',
+    'condition' => [
+      '_border_hover_border!' => [
+        0 => '',
+        1 => 'none',
+      ],
+    ],
+    'is_responsive' => true,
+  ],
+  '_border_hover_color' => [
+    'type' => 'color',
+    'condition' => [
+      '_border_hover_border!' => [
+        0 => '',
+        1 => 'none',
+      ],
+    ],
+  ],
+  '_border_radius_hover' => [
+    'type' => 'dimensions',
+    'is_responsive' => true,
+  ],
+  '_box_shadow_hover_box_shadow_type' => [
+    'type' => 'popover_toggle',
+    'return_value' => 'yes',
+  ],
+  '_box_shadow_hover_box_shadow' => [
+    'type' => 'box_shadow',
+    'condition' => [
+      '_box_shadow_hover_box_shadow_type!' => '',
+    ],
+  ],
 ];

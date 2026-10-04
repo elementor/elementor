@@ -317,6 +317,8 @@ class V3_Value_Resolvers {
 				return '' === $font_family ? null : $font_family;
 			case 'text':
 				return trim( $css_value );
+			case 'number':
+				return is_numeric( trim( $css_value ) ) ? trim( $css_value ) + 0 : null;
 			default:
 				return null;
 		}

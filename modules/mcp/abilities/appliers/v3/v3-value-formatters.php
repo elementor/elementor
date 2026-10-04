@@ -23,6 +23,7 @@ class V3_Value_Formatters {
 			case 'text':
 			case 'color':
 			case 'font_family':
+			case 'number':
 				return is_scalar( $value ) ? (string) $value : null;
 
 			case 'dimension':

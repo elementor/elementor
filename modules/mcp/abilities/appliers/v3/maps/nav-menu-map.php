@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Advanced_Style_Fragments;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Setting_Schemas;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
 
@@ -154,6 +155,10 @@ return [
 					'default' => Style_Control_Target::control( 'toggle_border_radius', 'slider', true ),
 				],
 			],
+		],
+		'wrapper' => [
+			'label' => 'Widget wrapper (Advanced tab: spacing, size, position, background, border)',
+			'css_properties' => Advanced_Style_Fragments::wrapper(),
 		],
 	],
 ];

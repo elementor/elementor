@@ -139,4 +139,16 @@ class Test_V3_Value_Resolvers extends TestCase {
 		$this->assertSame( 'Open Sans', V3_Value_Resolvers::resolve( 'font_family', "'Open Sans', Arial, sans-serif" ) );
 		$this->assertNull( V3_Value_Resolvers::resolve( 'font_family', '  ' ) );
 	}
+
+	public function test_resolve__number_accepts_numerics_and_rejects_others() {
+		// Act.
+		$integer = V3_Value_Resolvers::resolve( 'number', ' 10 ' );
+		$decimal = V3_Value_Resolvers::resolve( 'number', '1.5' );
+		$keyword = V3_Value_Resolvers::resolve( 'number', 'auto' );
+
+		// Assert.
+		$this->assertSame( 10, $integer );
+		$this->assertSame( 1.5, $decimal );
+		$this->assertNull( $keyword );
+	}
 }

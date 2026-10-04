@@ -60,7 +60,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 		// Assert.
 		$this->assertIsArray( $result );
-		$this->assertSame( [ 'main-menu', 'pointer', 'divider', 'dropdown', 'dropdown-divider', 'toggle' ], array_keys( $result['style_targets'] ) );
+		$this->assertSame( [ 'main-menu', 'pointer', 'divider', 'dropdown', 'dropdown-divider', 'toggle', 'wrapper' ], array_keys( $result['style_targets'] ) );
 		$this->assertSame( [ 'horizontal', 'vertical', 'dropdown' ], $result['settings']['layout']['enum'] );
 		$this->assertSame( [ 'true' => 'stretch', 'false' => '' ], $result['settings']['full_width']['convert'] );
 		$this->assertSame( [ 'dropdown!' => 'none' ], $result['settings']['full_width']['condition'] );
@@ -111,6 +111,47 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
 
 		// Assert.
+		$this->assertEquals( $written, $result['settings_patch'] );
+		$this->assertSame( [], $result['warnings'] );
+	}
+
+	public function test_apply__writes_wrapper_companions_at_the_written_breakpoint() {
+		// Act.
+		$result = $this->mapper()->apply( 'wrapper { right: 20px; z-index: 9; } @media(--mobile) { wrapper { width: 150px; } }', self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( [], $result['warnings'] );
+		$this->assertEquals(
+			[
+				'_offset_x_end' => [
+					'unit' => 'px',
+					'size' => 20,
+				],
+				'_offset_orientation_h' => 'end',
+				'_z_index' => 9,
+				'_element_custom_width_mobile' => [
+					'unit' => 'px',
+					'size' => 150,
+				],
+				'_element_width_mobile' => 'initial',
+			],
+			$result['settings_patch']
+		);
+	}
+
+	public function test_round_trip__wrapper_states_map_back_to_same_settings() {
+		// Arrange.
+		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; }'
+			. ' wrapper:hover { background-color: #dddddd; border-color: #ff0000; border-radius: 6px; }';
+		$written = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] )['settings_patch'];
+		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
+
+		// Act.
+		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( 'classic', $written['_background_hover_background'] );
+		$this->assertSame( '#ff0000', $written['_border_hover_color'] );
 		$this->assertEquals( $written, $result['settings_patch'] );
 		$this->assertSame( [], $result['warnings'] );
 	}

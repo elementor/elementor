@@ -88,4 +88,18 @@ class Test_V3_Control_Condition extends TestCase {
 			$result
 		);
 	}
+
+	public function test_collect__reads_condition_at_the_written_device() {
+		// Arrange.
+		$settings = [
+			'layout' => 'horizontal',
+			'layout_mobile' => 'dropdown',
+		];
+
+		// Act.
+		$result = V3_Inactive_Condition_Warnings::collect( [ 'padding_dropdown_mobile' ], $settings, $this->controls() );
+
+		// Assert.
+		$this->assertSame( [], $result );
+	}
 }

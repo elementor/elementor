@@ -83,9 +83,29 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 			return true;
 		}
 
-		$ctx->merge_patch( [ $key => $resolved ] + $companion_settings );
+		$ctx->merge_patch( [ $key => $resolved ] + $this->resolve_companion_keys( $companion_settings, (string) $rule['breakpoint'], $meta ) );
 
 		return true;
+	}
+
+	/**
+	 * Companions of responsive controls (e.g. `_element_width` for a custom width) follow the
+	 * written breakpoint; companions without device variants stay on the base key.
+	 *
+	 * @param array<string, mixed> $companion_settings
+	 * @param string               $breakpoint
+	 * @param V3_Context_Meta      $meta
+	 * @return array<string, mixed>
+	 */
+	private function resolve_companion_keys( array $companion_settings, string $breakpoint, V3_Context_Meta $meta ): array {
+		$resolved = [];
+
+		foreach ( $companion_settings as $companion_key => $value ) {
+			$key = $this->responsive_resolver->resolve( (string) $companion_key, $breakpoint, true, $meta ) ?? $companion_key;
+			$resolved[ $key ] = $value;
+		}
+
+		return $resolved;
 	}
 
 	/**

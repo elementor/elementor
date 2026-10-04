@@ -23,6 +23,7 @@ class V3_Resolved_Patch_Validator {
 	const REASON_UNKNOWN_SHAPE = 'unknown_shape';
 
 	const SHAPE_STRING = 'string';
+	const SHAPE_NUMBER = 'number';
 	const SHAPE_DIMENSION = 'dimension';
 	const SHAPE_SIDES = 'sides';
 	const SHAPE_BOX_SHADOW = 'box_shadow';
@@ -97,6 +98,9 @@ class V3_Resolved_Patch_Validator {
 		switch ( $shape ) {
 			case self::SHAPE_STRING:
 				return is_string( $value ) ? null : self::REASON_INVALID_SHAPE;
+
+			case self::SHAPE_NUMBER:
+				return is_int( $value ) || is_float( $value ) ? null : self::REASON_INVALID_SHAPE;
 
 			case self::SHAPE_DIMENSION:
 				return self::is_dimension( $value ) ? null : self::REASON_INVALID_SHAPE;

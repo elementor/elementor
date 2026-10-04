@@ -73,6 +73,7 @@ class Style_Control_Target {
 	];
 
 	const RESOLVER_SHAPES = [
+		'number' => V3_Resolved_Patch_Validator::SHAPE_NUMBER,
 		'slider' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,
 		'dimension' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,
 		'line_height' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,

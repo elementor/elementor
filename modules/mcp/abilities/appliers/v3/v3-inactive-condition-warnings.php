@@ -46,7 +46,7 @@ class V3_Inactive_Condition_Warnings {
 		foreach ( $written_keys as $key ) {
 			$condition = self::find_condition( (string) $key, $controls );
 
-			if ( empty( $condition ) || V3_Control_Condition::is_met( $condition, $settings, $controls ) ) {
+			if ( empty( $condition ) || V3_Control_Condition::is_met( $condition, self::settings_at_device_of( (string) $key, $settings ), $controls ) ) {
 				continue;
 			}
 
@@ -59,6 +59,30 @@ class V3_Inactive_Condition_Warnings {
 		}
 
 		return $messages;
+	}
+
+	/**
+	 * A device variant (e.g. `_element_custom_width_mobile`) is gated by the same device's
+	 * values (`_element_width_mobile`), falling back to the base values.
+	 *
+	 * @param string               $key
+	 * @param array<string, mixed> $settings
+	 * @return array<string, mixed>
+	 */
+	private static function settings_at_device_of( string $key, array $settings ): array {
+		if ( 1 !== preg_match( self::RESPONSIVE_SUFFIX_PATTERN, $key, $matches ) ) {
+			return $settings;
+		}
+
+		$suffix = $matches[0];
+
+		foreach ( $settings as $setting_key => $value ) {
+			if ( str_ends_with( (string) $setting_key, $suffix ) ) {
+				$settings[ substr( (string) $setting_key, 0, -strlen( $suffix ) ) ] = $value;
+			}
+		}
+
+		return $settings;
 	}
 
 	/**
