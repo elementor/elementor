@@ -25,6 +25,7 @@ class Module extends BaseModule {
 	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
 	const PROMOTION_REGISTRAR_HANDLE = 'elementor-mcp-promotion-registrar';
 	const MCP_PROMOTION_UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-connector-page-upgrade/';
+	const MCP_PROMOTION_ALLOWED_DOMAIN = 'elementor.com';
 
 	private Ability_Registry $registry;
 
@@ -95,7 +96,28 @@ class Module extends BaseModule {
 			'upgrade_url'
 		);
 
-		return $promotion_data['upgrade_url'] ?? self::MCP_PROMOTION_UPGRADE_URL;
+		$upgrade_url = $promotion_data['upgrade_url'] ?? '';
+
+		return $this->is_allowed_promotion_url( $upgrade_url )
+			? $upgrade_url
+			: self::MCP_PROMOTION_UPGRADE_URL;
+	}
+
+	private function is_allowed_promotion_url( $url ): bool {
+		if ( ! is_string( $url ) ) {
+			return false;
+		}
+
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( ! is_string( $host ) ) {
+			return false;
+		}
+
+		$host = strtolower( $host );
+
+		return self::MCP_PROMOTION_ALLOWED_DOMAIN === $host
+			|| str_ends_with( $host, '.' . self::MCP_PROMOTION_ALLOWED_DOMAIN );
 	}
 
 	public static function is_active() {
