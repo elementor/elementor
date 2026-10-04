@@ -291,10 +291,7 @@
 		min-height: inherit;
 	}
 
-	// Decorative containers stay droppable, but the placeholder overlays them instead of adding size.
 	&[data-e-decorative] > .elementor-empty-view.elementor-empty-view {
-		position: absolute;
-		inset: 0;
 		min-height: 0;
 		min-width: 0;
 	}

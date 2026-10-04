@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Flexbox;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Decorative_Prop;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
@@ -88,6 +89,7 @@ class Flexbox extends Atomic_Element_Base {
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			Decorative_Prop::KEY => Decorative_Prop::make(),
 		];
 
 		return $schema;

@@ -71,11 +71,11 @@ export function createNestedTemplatedElementType( {
 	};
 }
 
-export function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
+export function buildEditorAttributes( model: ElementView[ 'model' ], settings: Record< string, unknown > ): string {
 	const id = model.get( 'id' );
 	const originId = model.get( 'originId' );
 	const cid = model.cid ?? '';
-	const isDecorative = model.get( 'editor_settings' )?.decorative === true;
+	const isDecorative = settings.decorative === true;
 
 	const attrs: Record< string, string > = {
 		'data-model-cid': cid,
@@ -233,7 +233,7 @@ export function createNestedTemplatedElementView( {
 						settings: resolvedSettings,
 						tag: computeHtmlTag( resolvedSettings, defaultHtmlTag, { followLink: htmlTagFollowsLink } ),
 						base_styles: baseStylesDictionary,
-						editor_attributes: buildEditorAttributes( model ),
+						editor_attributes: buildEditorAttributes( model, resolvedSettings ),
 						editor_classes: buildEditorClasses( model ),
 						...( this.getResolverRenderContext?.() ?? {} ),
 					};

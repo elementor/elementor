@@ -12,18 +12,10 @@ class Llm_Guidance_Builder {
 
 	const DEFAULT_STYLES_INSTRUCTION = 'These are the default styles applied to the widget. Override only when necessary.';
 
-	const DECORATIVE_CONTAINER_INSTRUCTION = 'When this container is visual-only and will stay empty (a shape, glow, gradient or other CSS composition), set editor_settings { "decorative": true } on it (build-composition editor_settings, or manage-elements update editor_settings). Otherwise the editor forces an empty-container placeholder height on it. Give it an explicit width and height in style.';
-
 	public static function build( array $config, string $widget_type, array $parents_index ): array {
-		$can_have_children = ! empty( $config['meta']['is_container'] );
-
 		$guidance = [
-			'can_have_children' => $can_have_children,
+			'can_have_children' => ! empty( $config['meta']['is_container'] ),
 		];
-
-		if ( $can_have_children && Atomic_Container_Presentation::applies_to( $config ) ) {
-			$guidance['decorative'] = self::DECORATIVE_CONTAINER_INSTRUCTION;
-		}
 
 		$default_styles = self::collect_default_styles( $config['base_styles'] ?? [] );
 

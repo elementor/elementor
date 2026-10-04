@@ -196,9 +196,6 @@ BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overfl
 # INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
-# DECORATIVE CONTAINERS
-The editor forces a placeholder height on every empty container. When a container is visual-only and will stay empty (a shape, glow, gradient or other HTML/CSS composition), mark it decorative so the editor shows it at its real size: `"editor_settings": { "glow-blob": { "decorative": true } }`. Give it an explicit `width` and `height` in `style`. Editor settings never render on the frontend. On existing elements, send `editor_settings` on `action=update` in `elementor/manage-elements`. Do not mark containers that will get children.
-
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
@@ -218,7 +215,6 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). Variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
-- **editor_settings**: configuration-id → editor-only settings; `{ "decorative": true }` on visual-only empty containers (see DECORATIVE CONTAINERS section)
 - **parent_id**: ID of the parent container (omit to insert at document root)
 - **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
 - **dry_run**: If true, validate and return resolved tree without persisting
