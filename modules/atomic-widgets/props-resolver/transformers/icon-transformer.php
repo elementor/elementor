@@ -42,10 +42,7 @@ class Icon_Transformer extends Transformer_Base {
 
 	private function transform_custom_library_icon( array $icon ): array {
 		if ( ! Availability::is_enabled() ) {
-			return [
-				'html' => '',
-				'url' => null,
-			];
+			return $this->transform_default_svg();
 		}
 
 		/**
