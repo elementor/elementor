@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Choice_Values;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 use WP_Error;
 
@@ -29,11 +30,17 @@ class V3_Widget_Map_Compiler {
 		'font_family' => [ 'font' ],
 		'sides' => [ 'dimensions' ],
 		Style_Control_Target::TYPOGRAPHY_TOGGLE_RESOLVER => [ 'popover_toggle' ],
+		Style_Control_Target::CHOICE_RESOLVER => [ 'select', 'choose' ],
+		Style_Control_Target::BORDER_STYLE_RESOLVER => [ 'select' ],
+		Style_Control_Target::BOX_SHADOW_RESOLVER => [ 'box_shadow' ],
+		Style_Control_Target::BOX_SHADOW_TOGGLE_RESOLVER => [ 'popover_toggle' ],
 	];
 
 	const SUPPORTED_DESCRIPTOR_KINDS = [
 		Style_Control_Target::KIND_SIMPLE,
 		Style_Control_Target::KIND_TYPOGRAPHY,
+		Style_Control_Target::KIND_BORDER,
+		Style_Control_Target::KIND_BOX_SHADOW,
 	];
 
 	const ALLOWED_STATE_KEYS = [ 'default', 'hover' ];
@@ -146,6 +153,14 @@ class V3_Widget_Map_Compiler {
 					if ( $descriptor_error instanceof WP_Error ) {
 						return $descriptor_error;
 					}
+
+					$compiled_descriptor = $this->compile_choice_values( $descriptor, $controls );
+
+					if ( $compiled_descriptor instanceof WP_Error ) {
+						return $compiled_descriptor;
+					}
+
+					$map['style_targets'][ $alias ]['css_properties'][ $property ][ $state_key ] = $compiled_descriptor;
 				}
 			}
 		}
@@ -199,6 +214,29 @@ class V3_Widget_Map_Compiler {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param array<string, mixed> $descriptor
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>|WP_Error
+	 */
+	private function compile_choice_values( array $descriptor, array $controls ) {
+		if ( Style_Control_Target::CHOICE_RESOLVER !== ( $descriptor['resolver'] ?? null ) ) {
+			return $descriptor;
+		}
+
+		$setting = $descriptor['destinations'][0]['setting'];
+		$css_values = is_array( $descriptor['css_values'] ?? null ) ? $descriptor['css_values'] : null;
+		$value_map = V3_Choice_Values::build_value_map( $controls[ $setting ], $css_values );
+
+		if ( null === $value_map ) {
+			return $this->error( 'incompatible_choice_values', $setting );
+		}
+
+		$descriptor['value_map'] = $value_map;
+
+		return $descriptor;
 	}
 
 	/**

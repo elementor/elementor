@@ -25,6 +25,9 @@ class V3_Resolved_Patch_Validator {
 	const SHAPE_STRING = 'string';
 	const SHAPE_DIMENSION = 'dimension';
 	const SHAPE_SIDES = 'sides';
+	const SHAPE_BOX_SHADOW = 'box_shadow';
+
+	const BOX_SHADOW_KEYS = [ 'horizontal', 'vertical', 'blur', 'spread' ];
 
 	/**
 	 * @param array $descriptor    From Style_Control_Target::*() — expects a `destinations` array.
@@ -53,6 +56,10 @@ class V3_Resolved_Patch_Validator {
 			}
 
 			if ( ! array_key_exists( $setting, $resolved_patch ) ) {
+				if ( ! empty( $destination['optional'] ) ) {
+					continue;
+				}
+
 				$invalid[] = $setting;
 				$reason = $reason ?? self::REASON_MISSING;
 				continue;
@@ -97,6 +104,9 @@ class V3_Resolved_Patch_Validator {
 			case self::SHAPE_SIDES:
 				return self::is_sides( $value ) ? null : self::REASON_INVALID_SHAPE;
 
+			case self::SHAPE_BOX_SHADOW:
+				return self::has_keys( $value, self::BOX_SHADOW_KEYS ) ? null : self::REASON_INVALID_SHAPE;
+
 			default:
 				return self::REASON_UNKNOWN_SHAPE;
 		}
@@ -115,11 +125,19 @@ class V3_Resolved_Patch_Validator {
 	 * @param mixed $value
 	 */
 	private static function is_sides( $value ): bool {
+		return self::has_keys( $value, [ 'top', 'right', 'bottom', 'left', 'unit', 'isLinked' ] );
+	}
+
+	/**
+	 * @param mixed    $value
+	 * @param string[] $keys
+	 */
+	private static function has_keys( $value, array $keys ): bool {
 		if ( ! is_array( $value ) ) {
 			return false;
 		}
 
-		foreach ( [ 'top', 'right', 'bottom', 'left', 'unit', 'isLinked' ] as $key ) {
+		foreach ( $keys as $key ) {
 			if ( ! array_key_exists( $key, $value ) ) {
 				return false;
 			}

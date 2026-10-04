@@ -16,13 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   "<css-property>"           for the `default` state
  *   "<css-property>@<state>"   for pseudo-state overrides (hover|focus|active)
  *
- * Simple and typography-field descriptors are emitted; the primary destination becomes the
- * override `setting` and typography fields carry their group toggle as `companion_settings`.
- * Border, background, and box-shadow descriptors are added by later PRs and are skipped here.
+ * Simple and typography-field descriptors become `setting` overrides (typography fields carry
+ * their group toggle as `companion_settings`); border and box-shadow group descriptors become
+ * the legacy `border_prefix` / `box_shadow_prefix` overrides.
  */
 class V3_Map_Overrides_Builder {
 
 	const DEFAULT_STATE = 'default';
+
+	const PREFIX_OVERRIDE_KEYS = [
+		Style_Control_Target::KIND_BORDER => 'border_prefix',
+		Style_Control_Target::KIND_BOX_SHADOW => 'box_shadow_prefix',
+	];
 
 	/**
 	 * @param array<string, array{css_properties: array<string, array<string, array>>}> $style_targets
@@ -70,22 +75,14 @@ class V3_Map_Overrides_Builder {
 			return null;
 		}
 
-		if ( ! in_array( $descriptor['kind'] ?? null, [ Style_Control_Target::KIND_SIMPLE, Style_Control_Target::KIND_TYPOGRAPHY ], true ) ) {
+		$override = self::build_override( $descriptor );
+
+		if ( null === $override ) {
 			return null;
 		}
 
-		$destination = $descriptor['destinations'][0] ?? null;
-
-		if ( ! is_array( $destination ) || ! isset( $destination['setting'], $destination['resolver'] ) ) {
-			return null;
-		}
-
-		$override = [
-			'setting' => (string) $destination['setting'],
-			'resolver' => (string) $destination['resolver'],
-			'_map_descriptor' => $descriptor,
-			'_map_target' => $target,
-		];
+		$override['_map_descriptor'] = $descriptor;
+		$override['_map_target'] = $target;
 
 		if ( ! empty( $descriptor['responsive'] ) ) {
 			$override['responsive'] = true;
@@ -102,6 +99,31 @@ class V3_Map_Overrides_Builder {
 		return [
 			'match_key' => $match_key,
 			'override' => $override,
+		];
+	}
+
+	private static function build_override( array $descriptor ): ?array {
+		$kind = $descriptor['kind'] ?? null;
+
+		if ( isset( self::PREFIX_OVERRIDE_KEYS[ $kind ] ) ) {
+			return is_string( $descriptor['prefix'] ?? null )
+				? [ self::PREFIX_OVERRIDE_KEYS[ $kind ] => $descriptor['prefix'] ]
+				: null;
+		}
+
+		if ( ! in_array( $kind, [ Style_Control_Target::KIND_SIMPLE, Style_Control_Target::KIND_TYPOGRAPHY ], true ) ) {
+			return null;
+		}
+
+		$destination = $descriptor['destinations'][0] ?? null;
+
+		if ( ! is_array( $destination ) || ! isset( $destination['setting'], $destination['resolver'] ) ) {
+			return null;
+		}
+
+		return [
+			'setting' => (string) $destination['setting'],
+			'resolver' => (string) $destination['resolver'],
 		];
 	}
 }

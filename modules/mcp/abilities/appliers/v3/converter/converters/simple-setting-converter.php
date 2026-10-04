@@ -2,11 +2,13 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Map_Patch_Guard;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Converter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Resolved_Patch_Validator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Choice_Values;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Resolvers;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,7 +46,7 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 		}
 
 		$resolver = $override['resolver'] ?? 'text';
-		$resolved = V3_Value_Resolvers::resolve( (string) $resolver, (string) $rule['value'] );
+		$resolved = $this->resolve_value( (string) $resolver, (string) $rule['value'], $override );
 		if ( null === $resolved ) {
 			return false;
 		}
@@ -55,7 +57,7 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 				$setting => $resolved['box_shadow'],
 			];
 
-			if ( ! $this->accept_map_patch( $ctx, $override, $rule, $patch ) ) {
+			if ( ! Map_Patch_Guard::accept( $ctx, $override, $rule, $patch ) ) {
 				return true;
 			}
 
@@ -77,7 +79,7 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 
 		$companion_settings = $override['companion_settings'] ?? [];
 
-		if ( ! $this->accept_map_patch( $ctx, $override, $rule, [ $setting => $resolved ] + $companion_settings ) ) {
+		if ( ! Map_Patch_Guard::accept( $ctx, $override, $rule, [ $setting => $resolved ] + $companion_settings ) ) {
 			return true;
 		}
 
@@ -87,34 +89,13 @@ class Simple_Setting_Converter implements V3_Property_Converter {
 	}
 
 	/**
-	 * Runs the resolved-patch validator when the override was produced from a compiled
-	 * V3 widget map (see {@see \Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder}).
-	 * Returns false when the patch must be dropped atomically; emits a structured warning
-	 * on the shared conversion context in that case.
+	 * @return mixed
 	 */
-	private function accept_map_patch( V3_Conversion_Context $ctx, array $override, array $rule, array $patch ): bool {
-		$descriptor = $override['_map_descriptor'] ?? null;
-
-		if ( ! is_array( $descriptor ) ) {
-			return true;
+	private function resolve_value( string $resolver, string $css_value, array $override ) {
+		if ( Style_Control_Target::CHOICE_RESOLVER === $resolver ) {
+			return V3_Choice_Values::resolve( $override['_map_descriptor']['value_map'] ?? [], $css_value );
 		}
 
-		$result = V3_Resolved_Patch_Validator::validate( $descriptor, $patch );
-
-		if ( $result['valid'] ) {
-			return true;
-		}
-
-		$property = (string) ( $rule['property'] ?? '' );
-
-		$ctx->warn(
-			sprintf(
-				/* translators: %s: CSS property name */
-				__( 'CSS property %s is not supported by this Elementor widget and was skipped.', 'elementor' ),
-				$property
-			)
-		);
-
-		return false;
+		return V3_Value_Resolvers::resolve( $resolver, $css_value );
 	}
 }

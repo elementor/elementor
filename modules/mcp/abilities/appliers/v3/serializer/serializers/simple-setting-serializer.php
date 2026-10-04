@@ -27,15 +27,16 @@ class Simple_Setting_Serializer extends Base_Property_Serializer {
 		$setting_key = (string) $entry['setting'];
 		$resolver = (string) $entry['resolver'];
 		$responsive = ! empty( $entry['responsive'] );
+		$value_map = $entry['_map_descriptor']['value_map'] ?? [];
 
-		$this->emit_setting_at_breakpoint( $blocks, $settings, $property, $state, $setting_key, $resolver, self::BASE_BREAKPOINT );
+		$this->emit_setting_at_breakpoint( $blocks, $settings, $property, $state, $setting_key, $resolver, self::BASE_BREAKPOINT, $value_map );
 
 		if ( ! $responsive ) {
 			return;
 		}
 
 		foreach ( self::RESPONSIVE_SUFFIXES as $suffix => $breakpoint ) {
-			$this->emit_setting_at_breakpoint( $blocks, $settings, $property, $state, $setting_key . $suffix, $resolver, $breakpoint );
+			$this->emit_setting_at_breakpoint( $blocks, $settings, $property, $state, $setting_key . $suffix, $resolver, $breakpoint, $value_map );
 		}
 	}
 }

@@ -12,6 +12,13 @@ class Style_Control_Target {
 
 	const KIND_SIMPLE = 'simple';
 	const KIND_TYPOGRAPHY = 'typography';
+	const KIND_BORDER = 'border';
+	const KIND_BOX_SHADOW = 'box_shadow';
+
+	const CHOICE_RESOLVER = 'choice';
+	const BORDER_STYLE_RESOLVER = 'border_style';
+	const BOX_SHADOW_RESOLVER = 'box_shadow';
+	const BOX_SHADOW_TOGGLE_RESOLVER = 'box_shadow_toggle';
 
 	const TYPOGRAPHY_TOGGLE_FIELD = 'typography';
 	const TYPOGRAPHY_TOGGLE_RESOLVER = 'typography_toggle';
@@ -70,6 +77,7 @@ class Style_Control_Target {
 		'dimension' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,
 		'line_height' => V3_Resolved_Patch_Validator::SHAPE_DIMENSION,
 		'sides' => V3_Resolved_Patch_Validator::SHAPE_SIDES,
+		self::BOX_SHADOW_RESOLVER => V3_Resolved_Patch_Validator::SHAPE_BOX_SHADOW,
 	];
 
 	/**
@@ -125,6 +133,73 @@ class Style_Control_Target {
 		}
 
 		return $properties;
+	}
+
+	/**
+	 * A SELECT / CHOOSE control whose option keys (or `selectors_dictionary` values) are CSS
+	 * values. The compiler bakes the `css value => option key` map into `value_map`.
+	 *
+	 * @param string                     $key
+	 * @param bool                       $responsive
+	 * @param array<string, string>|null $css_values Explicit `css value => option key` pairs.
+	 */
+	public static function choice( string $key, bool $responsive = false, ?array $css_values = null ): array {
+		$descriptor = self::control( $key, self::CHOICE_RESOLVER, $responsive );
+
+		if ( null !== $css_values ) {
+			$descriptor['css_values'] = $css_values;
+		}
+
+		return $descriptor;
+	}
+
+	/**
+	 * The `border` shorthand of a Group_Control_Border. Only the style is guaranteed by the
+	 * shorthand, so width and color are optional destinations.
+	 */
+	public static function border( string $prefix ): array {
+		return [
+			'kind' => self::KIND_BORDER,
+			'prefix' => $prefix,
+			'resolver' => 'border',
+			'responsive' => false,
+			'destinations' => [
+				self::destination( $prefix . '_border', self::BORDER_STYLE_RESOLVER ),
+				self::destination( $prefix . '_width', 'sides' ) + [ 'optional' => true ],
+				self::destination( $prefix . '_color', 'color' ) + [ 'optional' => true ],
+			],
+		];
+	}
+
+	/**
+	 * Every CSS property backed by one Group_Control_Border, keyed for a target's `css_properties`.
+	 * Readback goes through the longhands, which also carry responsive widths.
+	 *
+	 * @return array<string, array<string, array>>
+	 */
+	public static function border_group( string $prefix, string $state = 'default' ): array {
+		return [
+			'border' => [ $state => self::border( $prefix ) + [ 'readback' => false ] ],
+			'border-style' => [ $state => self::choice( $prefix . '_border' ) ],
+			'border-width' => [ $state => self::control( $prefix . '_width', 'sides', true ) ],
+			'border-color' => [ $state => self::control( $prefix . '_color', 'color' ) ],
+		];
+	}
+
+	/**
+	 * A Group_Control_Box_Shadow: writes the shadow shape together with its popover toggle.
+	 */
+	public static function box_shadow( string $prefix ): array {
+		return [
+			'kind' => self::KIND_BOX_SHADOW,
+			'prefix' => $prefix,
+			'resolver' => self::BOX_SHADOW_RESOLVER,
+			'responsive' => false,
+			'destinations' => [
+				self::destination( $prefix . '_box_shadow', self::BOX_SHADOW_RESOLVER ),
+				self::destination( $prefix . '_box_shadow_type', self::BOX_SHADOW_TOGGLE_RESOLVER ),
+			],
+		];
 	}
 
 	/**

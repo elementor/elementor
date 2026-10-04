@@ -91,6 +91,10 @@ class V3_Style_Serializer {
 	}
 
 	private function dispatch_entry( V3_Block_Accumulator $blocks, array $settings, array $entry, string $property, ?string $state ): void {
+		if ( false === ( $entry['_map_descriptor']['readback'] ?? true ) ) {
+			return;
+		}
+
 		foreach ( $this->registry->all() as $serializer ) {
 			if ( ! $serializer->is_supported( $entry, $property, $state ) ) {
 				continue;

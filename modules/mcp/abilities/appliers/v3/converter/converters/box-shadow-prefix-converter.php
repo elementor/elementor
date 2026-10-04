@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Map_Patch_Guard;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Converter;
@@ -35,10 +36,16 @@ class Box_Shadow_Prefix_Converter implements V3_Property_Converter {
 		}
 
 		$prefix = (string) $override['box_shadow_prefix'];
-		$ctx->merge_patch( [
+		$patch = [
 			$prefix . '_box_shadow_type' => $resolved['box_shadow_type'],
 			$prefix . '_box_shadow' => $resolved['box_shadow'],
-		] );
+		];
+
+		if ( ! Map_Patch_Guard::accept( $ctx, $override, $rule, $patch ) ) {
+			return true;
+		}
+
+		$ctx->merge_patch( $patch );
 
 		return true;
 	}

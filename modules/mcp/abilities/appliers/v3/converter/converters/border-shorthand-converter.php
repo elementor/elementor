@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Map_Patch_Guard;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Property_Converter;
@@ -32,6 +33,10 @@ class Border_Shorthand_Converter implements V3_Property_Converter {
 		$patch = V3_Value_Resolvers::resolve_border_shorthand( (string) $rule['value'], (string) $override['border_prefix'] );
 		if ( null === $patch ) {
 			return false;
+		}
+
+		if ( ! Map_Patch_Guard::accept( $ctx, $override, $rule, $patch ) ) {
+			return true;
 		}
 
 		$ctx->merge_patch( $patch );
