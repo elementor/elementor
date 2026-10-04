@@ -119,14 +119,17 @@ class Style_Control_Target {
 
 	/**
 	 * Every CSS property backed by one Group_Control_Typography, keyed for a target's
-	 * `css_properties`, all in the given state.
+	 * `css_properties`, all in the given state. Pass the group's `exclude` as CSS properties.
 	 *
+	 * @param string   $prefix
+	 * @param string   $state
+	 * @param string[] $excluded_properties
 	 * @return array<string, array<string, array>>
 	 */
-	public static function typography_group( string $prefix, string $state = 'default' ): array {
+	public static function typography_group( string $prefix, string $state = 'default', array $excluded_properties = [] ): array {
 		$properties = [];
 
-		foreach ( self::TYPOGRAPHY_FIELDS as $property => $field ) {
+		foreach ( array_diff_key( self::TYPOGRAPHY_FIELDS, array_flip( $excluded_properties ) ) as $property => $field ) {
 			$properties[ $property ] = [
 				$state => self::typography( $prefix, $field['field'], $field['resolver'], $field['responsive'] ),
 			];
