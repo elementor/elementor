@@ -84,13 +84,7 @@ export const slice = createSlice( {
 			const mode = payload.mode ?? 'merge';
 
 			if ( variant ) {
-				if ( mode === 'replace' ) {
-					variant.props = mergeProps( {}, payloadProps );
-				} else {
-					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
-					variant.props = mergeProps( variantProps, payloadProps );
-				}
-
+				variant.props = mergeProps( 'replace' === mode ? {} : variant.props, payloadProps );
 				variant.custom_css = customCss;
 			} else {
 				style.variants.push( {
@@ -101,6 +95,7 @@ export const slice = createSlice( {
 			}
 
 			style.variants = getNonEmptyVariants( style );
+
 			state.data[ payload.id ] = style;
 			state.isDirty = true;
 		},
