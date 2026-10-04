@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -106,6 +107,10 @@ class Element_Config_Applier {
 				if ( ! empty( $hoist_outcome['shortcodes'] ) ) {
 					$existing = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
 					$node['settings']['__dynamic__'] = array_merge( $existing, $hoist_outcome['shortcodes'] );
+				}
+
+				if ( $is_standardized ) {
+					V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, array_keys( $shape['valid'] ), $node['settings'] ?? [] );
 				}
 
 				continue;

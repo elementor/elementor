@@ -11,6 +11,7 @@ use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Readback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
@@ -288,14 +289,24 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$filter = V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings );
-		$allowed_settings = $filter['allowed'];
+		$allowed_settings = $this->read_v3_settings( $widget_type, $raw_settings );
 
 		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
 		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['styles'] = [ 'css' => $style ];
+	}
+
+	private function read_v3_settings( string $widget_type, array $raw_settings ): array {
+		$registry = V3_Widget_Map_Registry::instance();
+		$contract = $registry->is_experiment_active() ? $registry->get_validation_contract( $widget_type ) : null;
+
+		if ( null !== $contract ) {
+			return V3_Map_Settings_Readback::from_raw( $contract['settings'], $raw_settings );
+		}
+
+		return V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings )['allowed'];
 	}
 
 	private function normalize_interactions( $interactions ): array {

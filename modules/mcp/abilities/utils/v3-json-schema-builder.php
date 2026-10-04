@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Condition;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -340,8 +341,13 @@ class V3_Json_Schema_Builder {
 
 	private static function to_public_map_schema( array $schema ): array {
 		$is_dynamic = true === ( $schema['dynamic'] ?? false );
+		$condition = is_array( $schema['condition'] ?? null ) ? $schema['condition'] : [];
 
-		unset( $schema['convert'], $schema['dynamic'], $schema['key'] );
+		unset( $schema['convert'], $schema['dynamic'], $schema['key'], $schema['kind'], $schema['condition'] );
+
+		if ( ! empty( $condition ) ) {
+			$schema['description'] = sprintf( 'Only takes effect when %s.', V3_Control_Condition::describe( $condition ) );
+		}
 
 		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
 			foreach ( $schema['properties'] as $key => $property_schema ) {

@@ -341,6 +341,31 @@ class Test_V3_Json_Schema_Builder extends TestCase {
 		$this->assertFalse( $result['properties']['link']['additionalProperties'] );
 	}
 
+	public function test_build_from_map__describes_condition_and_hides_internal_keys() {
+		// Arrange.
+		$settings = [
+			'animation' => [
+				'type' => 'string',
+				'kind' => 'enum_from_control',
+				'enum' => [ 'fade', 'slide' ],
+				'condition' => [ 'layout!' => 'dropdown' ],
+			],
+		];
+
+		// Act.
+		$result = V3_Json_Schema_Builder::build_from_map( $settings );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'type' => 'string',
+				'enum' => [ 'fade', 'slide' ],
+				'description' => "Only takes effect when layout is not 'dropdown'.",
+			],
+			$result['properties']['animation']
+		);
+	}
+
 	public function test_check_value_shape__rejects_dynamic_shape_on_strict_object_field() {
 		$schema = V3_Json_Schema_Builder::build_from_map( [
 			'link' => [
