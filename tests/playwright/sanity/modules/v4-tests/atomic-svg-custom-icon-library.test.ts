@@ -7,7 +7,10 @@ const SVG_CONTROL_TEST_ID = 'svg-media-control-container';
 const CUSTOM_LIBRARY_LABEL = 'PW Fontello';
 const CUSTOM_ICON_LABEL = 'emo surprised';
 const CUSTOM_ICON_PATH = 'M0 0H100V100H0Z';
-const EVAL_FILE_PREFIX = 'wp eval-file wp-content/plugins/elementor/tests/playwright/setup';
+const SETUP_PLUGIN_PATH = process.env.WP_CLI_TARGET === 'playground'
+	? 'wp-content/plugins/elementor/tests/playwright/setup'
+	: 'wp-content/plugins/elementor-playwright/setup';
+const EVAL_FILE_PREFIX = `wp eval-file ${ SETUP_PLUGIN_PATH }`;
 
 test.describe( 'Atomic SVG custom icon libraries @v4-tests', () => {
 	test.beforeAll( async () => {
