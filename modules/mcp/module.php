@@ -73,15 +73,13 @@ class Module extends BaseModule {
 	}
 
 	private function get_promotion_upgrade_url(): string {
-		$url = self::MCP_PROMOTION_UPGRADE_URL;
-		$filtered_url = apply_filters( 'elementor/mcp/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? $url;
 		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
-			[ 'upgrade_url' => $filtered_url ],
+			[ 'upgrade_url' => self::MCP_PROMOTION_UPGRADE_URL ],
 			'elementor/mcp/custom_promotion',
 			'upgrade_url'
 		);
 
-		return $promotion_data['upgrade_url'] ?? $url;
+		return $promotion_data['upgrade_url'] ?? self::MCP_PROMOTION_UPGRADE_URL;
 	}
 
 	public static function is_active() {
