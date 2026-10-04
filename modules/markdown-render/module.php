@@ -101,6 +101,19 @@ class Module extends BaseModule {
 			? Plugin::$instance->documents->get_doc_for_frontend( $post_id )
 			: Plugin::$instance->documents->get( $post_id );
 
+		/**
+		 * Allows external handlers (e.g. the Agents module) to serve the markdown
+		 * response themselves and short-circuit this method.
+		 *
+		 * Return false to indicate the response has already been sent.
+		 *
+		 * @param bool     $should_serve Whether markdown-render should attempt to serve.
+		 * @param \WP_Post $post         The current post.
+		 */
+		if ( false === apply_filters( 'elementor/markdown/should_serve', true, $post ) ) {
+			return;
+		}
+
 		if ( ! $document || ! $document->is_built_with_elementor() ) {
 			return;
 		}
@@ -118,6 +131,13 @@ class Module extends BaseModule {
 			}
 
 			Utils::do_not_cache();
+			/**
+			 * Fires just before markdown-render sends its response headers.
+			 * Hook here to add extra headers (e.g. canonical Link, Vary, X-Robots-Tag).
+			 *
+			 * @param int $post_id The post being served.
+			 */
+			do_action( 'elementor/markdown/headers', $post_id );
 			status_header( 200 );
 			header( 'Content-Type: text/markdown; charset=utf-8' );
 			header( 'X-Content-Type-Options: nosniff' );
