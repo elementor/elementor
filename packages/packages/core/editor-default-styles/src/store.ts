@@ -1,6 +1,7 @@
 import { mergeProps, type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
+	getNonEmptyVariants,
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
@@ -25,12 +26,6 @@ const initialState: DefaultStylesState = {
 	initialData: {},
 	isDirty: false,
 };
-
-const getNonEmptyVariants = ( style: StyleDefinition ) =>
-	style.variants.filter(
-		( { props, custom_css: customCss }: StyleDefinitionVariant ) =>
-			Object.keys( props ).length > 0 || Boolean( customCss?.raw )
-	);
 
 export type StateWithDefaultStyles = SliceState< typeof slice >;
 
