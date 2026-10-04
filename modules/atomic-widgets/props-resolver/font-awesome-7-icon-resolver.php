@@ -230,7 +230,7 @@ class Font_Awesome_7_Icon_Resolver {
 			static function ( $file ) {
 				return is_string( $file )
 					&& '' !== $file
-					&& $file === basename( $file )
+					&& basename( $file ) === $file
 					&& ! str_contains( $file, '..' );
 			}
 		) );

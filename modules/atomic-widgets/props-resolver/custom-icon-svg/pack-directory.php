@@ -192,7 +192,7 @@ class Pack_Directory {
 		$base_prefix = trailingslashit( str_replace( '\\', '/', $base ) );
 		$resolved_path = str_replace( '\\', '/', $resolved );
 
-		return $resolved_path === rtrim( $base_prefix, '/' ) || str_starts_with( $resolved_path, $base_prefix );
+		return rtrim( $base_prefix, '/' ) === $resolved_path || str_starts_with( $resolved_path, $base_prefix );
 	}
 
 	private static function is_svg_font( string $path ): bool {
@@ -220,7 +220,7 @@ class Pack_Directory {
 
 		$baseurl_prefix = rtrim( $baseurl, '/' ) . '/';
 
-		if ( $url !== rtrim( $baseurl, '/' ) && ! str_starts_with( $url, $baseurl_prefix ) ) {
+		if ( rtrim( $baseurl, '/' ) !== $url && ! str_starts_with( $url, $baseurl_prefix ) ) {
 			return '';
 		}
 
@@ -233,7 +233,7 @@ class Pack_Directory {
 
 		$base_path_prefix = rtrim( $base_path, '/' ) . '/';
 
-		if ( $url_path !== rtrim( $base_path, '/' ) && ! str_starts_with( $url_path, $base_path_prefix ) ) {
+		if ( rtrim( $base_path, '/' ) !== $url_path && ! str_starts_with( $url_path, $base_path_prefix ) ) {
 			return '';
 		}
 
