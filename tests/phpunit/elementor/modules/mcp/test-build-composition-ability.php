@@ -1146,7 +1146,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
-	public function test_execute__persists_decorative_setting_from_element_config() {
+	public function test_execute__stores_decorative_setting_from_element_config_as_editor_setting() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1169,11 +1169,10 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'warnings', $result );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame(
-			[ '$$type' => 'boolean', 'value' => true ],
-			$elements[0]['elements'][0]['settings']['decorative']
-		);
-		$this->assertArrayNotHasKey( 'decorative', $elements[0]['settings'] ?? [] );
+		$blob = $elements[0]['elements'][0];
+		$this->assertTrue( $blob['editor_settings']['decorative'] );
+		$this->assertArrayNotHasKey( 'decorative', $blob['settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'decorative', $elements[0]['editor_settings'] ?? [] );
 	}
 
 	public function test_execute__wraps_direct_document_children_in_single_div_block() {

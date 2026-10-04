@@ -1280,7 +1280,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertTrue( empty( $items ) );
 	}
 
-	public function test_execute__update_persists_decorative_setting() {
+	public function test_execute__update_stores_decorative_setting_as_editor_setting() {
 		// Arrange
 		$post_id = $this->create_real_document();
 		[ , $inner_id ] = $this->given_nested_containers( $post_id );
@@ -1302,7 +1302,34 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'warning_details', $result['results'][0] );
 
 		$node = $this->find_element_in_document( $post_id, $inner_id );
-		$this->assertSame( [ '$$type' => 'boolean', 'value' => true ], $node['settings']['decorative'] );
+		$this->assertTrue( $node['editor_settings']['decorative'] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_skips_non_boolean_decorative_setting_with_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $inner_id,
+					'settings' => [ 'decorative' => 'yes' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
 	}
 
 	public function test_bulk__invalid_interactions_update_still_persists_settings() {
