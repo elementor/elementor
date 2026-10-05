@@ -53,6 +53,7 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Classes', 'elementor' ),
+					__( 'Default Styles', 'elementor' ),
 					__( 'Variables', 'elementor' ),
 					__( 'Global Colors', 'elementor' ),
 					__( 'Global Fonts', 'elementor' ),

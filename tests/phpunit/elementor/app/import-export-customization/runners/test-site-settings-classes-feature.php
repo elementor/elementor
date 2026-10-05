@@ -74,6 +74,41 @@ class Test_Site_Settings_Classes_Feature extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'classes', $result['manifest'][0]['site-settings'] );
 	}
 
+	public function test_export__omits_default_styles_from_manifest_when_atomic_widgets_inactive() {
+		// Arrange
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+
+		// Act
+		$result = ( new Site_Settings() )->export( [ 'include' => [ 'settings' ] ] );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'defaultStyles', $result['manifest'][0]['site-settings'] );
+	}
+
+	public function test_export__sets_default_styles_manifest_flag_from_customization() {
+		// Arrange
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		// Act
+		$result = ( new Site_Settings() )->export( [
+			'include' => [ 'settings' ],
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => false,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertFalse( $result['manifest'][0]['site-settings']['defaultStyles'] );
+	}
+
 	public function test_global_classes_export_runner__should_export_requires_atomic_widgets() {
 		// Arrange
 		$export_data = [ 'include' => [ 'settings' ] ];

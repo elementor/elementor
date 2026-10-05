@@ -166,11 +166,12 @@ SubSettingRow.propTypes = {
 	notExported: PropTypes.bool,
 };
 
-export function ClassesVariablesSection( {
+export function DesignSystemSettingsSection( {
 	settings,
 	onSettingChange,
 	isImport = false,
 	classesExported = true,
+	defaultStylesExported = true,
 	variablesExported = true,
 	classesLimitExceeded = false,
 	variablesLimitExceeded = false,
@@ -186,6 +187,7 @@ export function ClassesVariablesSection( {
 
 	const hasLimitWarning = isImport && ( classesLimitExceeded || variablesLimitExceeded );
 	const classesNotExported = isImport && ! classesExported;
+	const defaultStylesNotExported = isImport && ! defaultStylesExported;
 	const variablesNotExported = isImport && ! variablesExported;
 
 	return (
@@ -193,7 +195,7 @@ export function ClassesVariablesSection( {
 			<Stack spacing={ 2.5 }>
 				<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 					<Typography variant="h6">
-						{ __( 'Classes & variables', 'elementor' ) }
+						{ __( 'Classes, variables & default styles', 'elementor' ) }
 					</Typography>
 				</Box>
 
@@ -259,15 +261,24 @@ export function ClassesVariablesSection( {
 						showOverrideOption={ isImport && ! variablesNotExported }
 						notExported={ variablesNotExported }
 					/>
+
+					<SubSettingRow
+						label={ __( 'Default Styles', 'elementor' ) }
+						checked={ settings.defaultStyles ?? false }
+						onChange={ ( isChecked ) => onSettingChange( 'defaultStyles', isChecked ) }
+						disabled={ disabled }
+						notExported={ defaultStylesNotExported }
+					/>
 				</Stack>
 			</Stack>
 		</Box>
 	);
 }
 
-ClassesVariablesSection.propTypes = {
+DesignSystemSettingsSection.propTypes = {
 	settings: PropTypes.shape( {
 		classes: PropTypes.bool,
+		defaultStyles: PropTypes.bool,
 		variables: PropTypes.bool,
 		classesOverrideAll: PropTypes.bool,
 		variablesOverrideAll: PropTypes.bool,
@@ -275,6 +286,7 @@ ClassesVariablesSection.propTypes = {
 	onSettingChange: PropTypes.func.isRequired,
 	isImport: PropTypes.bool,
 	classesExported: PropTypes.bool,
+	defaultStylesExported: PropTypes.bool,
 	variablesExported: PropTypes.bool,
 	classesLimitExceeded: PropTypes.bool,
 	variablesLimitExceeded: PropTypes.bool,
@@ -285,3 +297,5 @@ ClassesVariablesSection.propTypes = {
 	disabled: PropTypes.bool,
 	notExported: PropTypes.bool,
 };
+
+export { DesignSystemSettingsSection as ClassesVariablesSection };

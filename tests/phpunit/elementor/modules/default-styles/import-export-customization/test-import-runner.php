@@ -65,6 +65,42 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		] ) );
 	}
 
+	public function test_should_import__returns_false_when_default_styles_are_disabled() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertFalse( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => false,
+				],
+			],
+		] ) );
+	}
+
+	public function test_should_import__defaults_to_enabled_when_default_styles_key_is_missing() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'settings' => [],
+			],
+		] ) );
+	}
+
 	public function test_import() {
 		$result = ( new Import_Runner() )->import( [
 			'include' => [ 'settings' ],

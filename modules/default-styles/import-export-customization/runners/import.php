@@ -32,12 +32,21 @@ class Import extends Import_Runner_Base {
 		return (
 			$import_context->is_included() &&
 			! empty( $data['extracted_directory_path'] ) &&
-			$this->is_feature_active()
+			$this->is_feature_active() &&
+			$this->is_default_styles_enabled( $data )
 		);
 	}
 
 	private function is_feature_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+	}
+
+	private function is_default_styles_enabled( array $data ): bool {
+		if ( isset( $data['customization']['settings']['defaultStyles'] ) ) {
+			return (bool) $data['customization']['settings']['defaultStyles'];
+		}
+
+		return true;
 	}
 
 	public function import( array $data, array $imported_data ): array {

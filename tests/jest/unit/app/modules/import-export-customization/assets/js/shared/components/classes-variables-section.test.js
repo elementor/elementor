@@ -7,6 +7,7 @@ global.__ = jest.fn( ( text ) => text );
 describe( 'ClassesVariablesSection Component', () => {
 	const defaultSettings = {
 		classes: true,
+		defaultStyles: true,
 		variables: true,
 		classesOverrideAll: false,
 		variablesOverrideAll: false,
@@ -31,10 +32,10 @@ describe( 'ClassesVariablesSection Component', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'Classes & variables' ) ).toBeTruthy();
+			expect( screen.getByText( 'Classes, variables & default styles' ) ).toBeTruthy();
 		} );
 
-		it( 'should render Classes and Variables rows', () => {
+		it( 'should render Classes, Variables, and Default Styles rows', () => {
 			// Arrange & Act
 			render(
 				<ClassesVariablesSection
@@ -45,10 +46,11 @@ describe( 'ClassesVariablesSection Component', () => {
 
 			// Assert
 			expect( screen.getByText( 'Classes' ) ).toBeTruthy();
+			expect( screen.getByText( 'Default Styles' ) ).toBeTruthy();
 			expect( screen.getByText( 'Variables' ) ).toBeTruthy();
 		} );
 
-		it( 'should render switches for both classes and variables', () => {
+		it( 'should render switches for classes, variables, and default styles', () => {
 			// Arrange & Act
 			render(
 				<ClassesVariablesSection
@@ -59,7 +61,7 @@ describe( 'ClassesVariablesSection Component', () => {
 
 			// Assert
 			const switches = screen.getAllByRole( 'checkbox' );
-			expect( switches.length ).toBeGreaterThanOrEqual( 2 );
+			expect( switches.length ).toBeGreaterThanOrEqual( 3 );
 		} );
 	} );
 
@@ -133,6 +135,20 @@ describe( 'ClassesVariablesSection Component', () => {
 			const switches = screen.getAllByRole( 'checkbox' );
 			expect( switches[ 0 ].checked ).toBe( false );
 		} );
+
+		it( 'should render with default styles enabled when settings.defaultStyles is true', () => {
+			// Arrange & Act
+			render(
+				<ClassesVariablesSection
+					settings={ { ...defaultSettings, defaultStyles: true } }
+					onSettingChange={ mockOnSettingChange }
+				/>,
+			);
+
+			// Assert
+			const switches = screen.getAllByRole( 'checkbox' );
+			expect( switches[ 2 ].checked ).toBe( true );
+		} );
 	} );
 
 	describe( 'Toggle Functionality', () => {
@@ -170,6 +186,24 @@ describe( 'ClassesVariablesSection Component', () => {
 
 			// Assert
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'variables', false );
+		} );
+
+		it( 'should call onSettingChange with defaultStyles when default styles switch is toggled', () => {
+			// Arrange
+			render(
+				<ClassesVariablesSection
+					settings={ defaultSettings }
+					onSettingChange={ mockOnSettingChange }
+				/>,
+			);
+
+			const switches = screen.getAllByRole( 'checkbox' );
+
+			// Act
+			fireEvent.click( switches[ 2 ] );
+
+			// Assert
+			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'defaultStyles', false );
 		} );
 	} );
 
@@ -209,7 +243,7 @@ describe( 'ClassesVariablesSection Component', () => {
 			expect( screen.getByText( 'Not exported' ) ).toBeTruthy();
 		} );
 
-		it( 'should show "Not exported" for both when both are not exported', () => {
+		it( 'should show "Not exported" for all rows when all are not exported', () => {
 			// Arrange & Act
 			render(
 				<ClassesVariablesSection
@@ -217,13 +251,14 @@ describe( 'ClassesVariablesSection Component', () => {
 					onSettingChange={ mockOnSettingChange }
 					isImport={ true }
 					classesExported={ false }
+					defaultStylesExported={ false }
 					variablesExported={ false }
 				/>,
 			);
 
 			// Assert
 			const notExportedTexts = screen.getAllByText( 'Not exported' );
-			expect( notExportedTexts.length ).toBe( 2 );
+			expect( notExportedTexts.length ).toBe( 3 );
 		} );
 	} );
 
