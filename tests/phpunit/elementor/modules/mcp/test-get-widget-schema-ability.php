@@ -91,7 +91,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'content_width', $result['properties'] );
 		$this->assertSame( [ 'boxed', 'full' ], $result['properties']['content_width']['enum'] );
-		$this->assertSame( [ 'background-color', 'padding', 'margin' ], $result['style_targets']['container'] );
+		$this->assertSame( [ 'background', 'padding', 'margin' ], $result['style_targets']['container'] );
 	}
 
 	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
@@ -106,7 +106,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'text', $result['properties'] );
 		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertSame( [ 'color', 'background-color', 'font-size', 'font-weight', 'padding' ], $result['style_targets']['button'] );
+		$this->assertSame( [ 'color', 'background', 'font-size', 'font-weight', 'padding' ], $result['style_targets']['button'] );
 	}
 
 	public function test_execute__rejects_heading_when_atomic_elements_active() {
