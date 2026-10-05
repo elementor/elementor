@@ -1,5 +1,16 @@
 == Changelog ==
 
+= 4.3.4 - 2026-10-05 =
+
+* Tweak: Improved MCP connector setup instructions across macOS, Windows, and Linux
+* Fix: Dropdown menus do not open on the frontend due to missing feature dependencies (props [@faisalahammad](<https://github.com/faisalahammad))>
+* Fix: Widget styles can be missing when rendered inside saved Templates
+* Fix: Element settings may lost when updating pages through MCP
+* Fix: MCP connection setup does not show an error when WordPress Application Passwords are unavailable
+* Fix: MCP resources fail to load with older adapter versions
+* Fix: Elementor update can fail during version upgrade
+* Fix: Editor can freeze when editing settings or styles in large nested elements
+
 = 4.3.3 - 2026-09-30 =
 
 * Tweak: Improved access control when MCP is disabled
