@@ -561,6 +561,111 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $is_non_exist_active );
 	}
 
+<<<<<<< HEAD
+=======
+	public function test_is_feature_active__missing_dependency_fails_closed_and_hidden_dependency_is_satisfied() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-missing-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-experiment',
+			],
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'hidden-dependency',
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => true,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-hidden-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'hidden-dependency',
+			],
+		] );
+
+		$this->experiments->set_feature_default_state( 'dependant-hidden-dep', Experiments_Manager::STATE_ACTIVE );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-missing-dep', true ) );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-hidden-dep', true ) );
+	}
+
+	public function test_is_feature_active__missing_dependency_fails_closed_without_check_dependencies() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-plain-call',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-experiment',
+			],
+		] );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-plain-call' ) );
+	}
+
+	public function test_is_feature_active__class_based_dependency_stays_active() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-class-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				Module_B::class,
+			],
+		] );
+
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-class-dep' ) );
+	}
+
+	public function test_is_feature_active__fails_closed_when_dependency_feature_is_removed() {
+		$this->add_test_feature( [
+			'name' => 'removed-later',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-of-removed-later',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-later',
+			],
+		] );
+
+		$this->experiments->remove_feature( 'removed-later' );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-of-removed-later' ) );
+	}
+
+	public function test_is_feature_active__re_resolves_late_registered_dependency() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-of-late-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'late-dependency',
+			],
+		] );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-of-late-dep' ) );
+
+		$this->add_test_feature( [
+			'name' => 'late-dependency',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
+
+		$feature = $this->experiments->get_features( 'dependant-of-late-dep' );
+
+		$this->assertInstanceOf( Wrap_Core_Dependency::class, $feature['dependencies'][0] );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-of-late-dep' ) );
+	}
+
+>>>>>>> 98a1f8c57d (Fix: Cherry-pick PR 37489 to release/stable: Treat missing experiment dependencies as inactive when checking feature state [ED-25695] (#37569))
 	public function test_is_feature_active__saved_state() {
 		add_option( 'elementor_experiment-test_feature', Experiments_Manager::STATE_ACTIVE );
 
