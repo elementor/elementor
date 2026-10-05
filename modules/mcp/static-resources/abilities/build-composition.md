@@ -67,15 +67,9 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
-<<<<<<< HEAD
 - Containers: "e-div-block", "e-grid", "e-flexbox"
-- **Every element MUST have a unique "configuration-id" attribute**
-- No attributes, classes, IDs, or text nodes in XML
-=======
-- Containers: "e-flexbox", "e-div-block", "e-tabs"
 - Every element needs a unique `configuration-id` — see **ID RULES**
 - No other attributes, classes, element ids, or text nodes in XML
->>>>>>> a53ff4c42f (Internal: State build-composition ID rules explicitly in MCP prompt [ED-25743] (#37553))
 - Multiple root elements are allowed. Every opening tag needs exactly one matching closing tag (or use a self-closing tag); a stray or missing closing tag fails the whole call with `invalid_xml`, even on `dry_run`
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
