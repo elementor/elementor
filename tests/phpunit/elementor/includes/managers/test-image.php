@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Image extends Elementor_Test_Base {
+	const MISSING_ATTACHMENT_ID = 999999;
+
 	private function create_image() {
 		$file_name = __DIR__ . '/../../../resources/mock-image.png';
 
@@ -77,6 +79,14 @@ class Test_Image extends Elementor_Test_Base {
 			'mime-type' => 'image/png',
 		], $new_metadata['sizes']['elementor_custom_x200'] );
 
+	}
+
+	public function test_get_details__returns_null_url_for_missing_attachment() {
+		// Act
+		$details = ( new Images_Manager() )->get_details( static::MISSING_ATTACHMENT_ID, 'full', 'false' );
+
+		// Assert
+		$this->assertSame( [ 'full' => null ], $details );
 	}
 
 	public function test_delete_custom_images() {

@@ -1111,6 +1111,10 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$attachment_post = get_post( $attachment['id'] );
 
+		if ( ! $attachment_post ) {
+			return '';
+		}
+
 		if ( Utils::has_invalid_post_permissions( $attachment_post ) ) {
 			return '';
 		}

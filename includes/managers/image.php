@@ -110,7 +110,9 @@ class Images_Manager {
 
 				$urls[ $size ] = $url;
 			} else {
-				$urls[ $size ] = wp_get_attachment_image_src( $id, $size )[0];
+				$image_src = wp_get_attachment_image_src( $id, $size );
+
+				$urls[ $size ] = $image_src ? $image_src[0] : null;
 			}
 		}
 
