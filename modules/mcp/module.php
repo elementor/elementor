@@ -82,7 +82,7 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		if ( Utils::is_license_active() || Utils::has_pro() ) {
+		if ( Utils::has_pro() && Utils::is_license_active() ) {
 			return false;
 		}
 
