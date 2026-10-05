@@ -1,4 +1,4 @@
-import { getElements } from '@elementor/editor-elements';
+import { getHostDocumentElements } from '@elementor/editor-elements';
 
 import { fetchPageContext } from '../api/page-context-client';
 import { clearAuditRegistry, registerAudit } from '../registry';
@@ -8,11 +8,11 @@ import { type Audit, type AuditResult, type PageContextResponse } from '../types
 jest.mock( '../api/page-context-client' );
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	getElements: jest.fn(),
+	getHostDocumentElements: jest.fn(),
 } ) );
 
 const fetchMock = jest.mocked( fetchPageContext );
-const getElementsMock = jest.mocked( getElements );
+const getHostDocumentElementsMock = jest.mocked( getHostDocumentElements );
 
 const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	post_title: 'X',
@@ -63,7 +63,7 @@ describe( 'runPageAudit', () => {
 	beforeEach( () => {
 		clearAuditRegistry();
 		fetchMock.mockResolvedValue( FAKE_PAGE_CONTEXT );
-		getElementsMock.mockReturnValue( [] );
+		getHostDocumentElementsMock.mockReturnValue( [] );
 	} );
 
 	it( 'runs every registered evaluator and computes a report', async () => {

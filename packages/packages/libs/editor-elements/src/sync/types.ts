@@ -28,6 +28,12 @@ export type ExtendedWindow = Window & {
 				  }
 				| undefined;
 			getCurrentId?: () => number;
+			getInitialId?: () => number;
+			get?: ( id: number ) =>
+				| {
+						container: V1Element;
+				  }
+				| undefined;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
 		getPreviewContainer?: () => V1Element | undefined;
