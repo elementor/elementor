@@ -3,7 +3,8 @@
 	"extends": [ "//" ],
 	"tasks": {
 		"build": {
-			"cache": false
+			"cache": false,
+			"outputs": []
 		},
 		"dev": {
 			"cache": false,
