@@ -6,6 +6,8 @@ import { assemblePlugin } from './assemble-plugin.mjs';
 import { buildPackages } from './build-packages.mjs';
 import { buildScripts } from './build-scripts.mjs';
 import { buildStyles } from './build-styles.mjs';
+import { generateFontAwesome7Catalog, verifyFontAwesome7Catalog } from './shared/font-awesome-7-catalog.mjs';
+import { BUILD_DIR } from './shared/paths.mjs';
 
 /**
  * Produces every asset, then assembles the distributable plugin tree.
@@ -21,7 +23,9 @@ export async function buildAll() {
 	await buildScripts( { targets: [ 'base', 'frontend' ], watch: false, devOnly: false, clean: true } );
 	await buildPackages( {} );
 
+	generateFontAwesome7Catalog();
 	assemblePlugin();
+	verifyFontAwesome7Catalog( BUILD_DIR );
 }
 
 if ( import.meta.url === pathToFileURL( process.argv[ 1 ] ).href ) {
