@@ -3,6 +3,12 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
+<<<<<<< HEAD
+=======
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\MCP\Composer\Admin\McpSettingsController;
+use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
+>>>>>>> a58b3202f0 (Internal: Gate MCP exposure when site MCP setting is off [ED-25631] (#37532))
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
@@ -43,6 +49,10 @@ class Module extends BaseModule {
 			class_exists( Shared_Registry::class );
 	}
 
+	public static function is_site_mcp_exposure_enabled(): bool {
+		return McpSettingsController::is_enabled();
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -52,14 +62,18 @@ class Module extends BaseModule {
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
 
-		if ( ! $this->is_active() ) {
+		if ( ! self::is_active() ) {
 			return;
 		}
 
-		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
-		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
+
+		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
+
+		if ( self::is_site_mcp_exposure_enabled() ) {
+			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
+		}
 	}
 
 	public function registry(): Ability_Registry {
