@@ -159,13 +159,24 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 										) }
 									</Box>
 									{ violation.angieFix && (
-										<FixViolationWithAngie prompt={ buildAngiePrompt( rowLabel ) } />
+										<FixViolationWithAngie
+											prompt={ violation.angiePrompt ?? buildAngiePrompt( rowLabel ) }
+										/>
 									) }
 									{ violation.ctaLabel && violation.externalUrl ? (
-										<ViolationCtaButton
-											ctaLabel={ violation.ctaLabel }
-											externalUrl={ violation.externalUrl }
-										/>
+										<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+											<ViolationCtaButton
+												ctaLabel={ violation.ctaLabel }
+												externalUrl={ violation.externalUrl }
+											/>
+											{ violation.secondaryCtaLabel && violation.secondaryCtaUrl && (
+												<ViolationCtaButton
+													ctaLabel={ violation.secondaryCtaLabel }
+													externalUrl={ violation.secondaryCtaUrl }
+													variant="text"
+												/>
+											) }
+										</Box>
 									) : (
 										<EyeIcon
 											className="violation-hover-icon"

@@ -10,6 +10,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
@@ -101,7 +102,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$subtrees      = $compiled['elements'];
 		$warnings      = $compiled['warnings'];
-		$warning_codes = $compiled['warning_codes'] ?? [];
+		$warning_codes = $warnings->codes();
 		$dom           = $compiled['dom'];
 		$xml_parser    = $compiled['xml_parser'];
 
@@ -242,8 +243,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices, e.g. props skipped because the target widget does not support them, or CSS that fell back to custom_css. The composition was still built.',
+					'description' => 'Every warning is fixable: one field was skipped or adjusted and the rest was saved — correct that field via manage-elements. The composition was still built. Errors fail the call instead.',
 				],
+				'warning_details' => Warnings_Bag::get_details_schema(),
 				'removed_element_ids' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -371,7 +373,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
-		array $warnings,
+		Warnings_Bag $warnings,
 		string $mode,
 		array $removed_ids
 	): array {
@@ -386,9 +388,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];
 
-		if ( ! empty( $warnings ) ) {
-			$response['warnings'] = $warnings;
-		}
+		$response = $warnings->add_to_response( $response );
 
 		if ( self::MODE_REPLACE_CHILDREN === $mode ) {
 			$response['removed_element_ids'] = $removed_ids;

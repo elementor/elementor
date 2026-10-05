@@ -19,9 +19,11 @@ https://www.youtube.com/watch?v=ROEC0CPRO3w
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Atomic Editor.
 
-Supporting the full website lifecycle, Elementor lets you build, optimize, and manage your website with extended capabilities such as agentic AI creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
+Supporting the full website lifecycle, Elementor lets you build, optimize, and manage your website with extended capabilities such as agentic AI creation, native MCP connection, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
 
-Now in version 4, the Atomic Editor!. A new generation of performance-first atomic building blocks that puts you in control of every part of your site. Define your global design systems and reusable components once, and they apply everywhere instantly – turning hours or even days of work into single clicks. Elementor AI builds in the same structure, so anything it generates is a native, fully editable part of your site.
+Elementor is now in version 4, with a new generation of performance-first atomic building blocks that put you in control of every part of your site. Define your global design systems and reusable components once, and they apply everywhere instantly – turning hours or even days of work into single clicks.
+
+NEW! Connect your favorite AI tools, including Claude, Codex, and Cursor, directly to your Elementor sites. **[The Elementor MCP](https://go.elementor.com/wp-repo-description-tab-elementor-mcp)** acts as a new execution layer, turning plain-language prompts into real, fully editable Elementor structures, layouts, and design systems while keeping you in complete control. 
 
 Unlock all Pro features with **[Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/)**.
 
@@ -38,7 +40,8 @@ Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor
 = 🗝️ Key features =
 
 - **[Design system](https://go.elementor.com/feature-page-global-settings/)**: Use Variables and Classes for consistent colors, typography, and design elements that update everywhere at once.  
-- **[Responsive design](https://go.elementor.com/feature-page-responsive-design/)**: Optimize your design for every device with custom breakpoints, ensuring a seamless desktop, tablet, and mobile experience.  
+- **[Responsive design](https://go.elementor.com/feature-page-responsive-design/)**: Optimize your design for every device with custom breakpoints, ensuring a seamless desktop, tablet, and mobile experience. 
+- **[Elementor MCP](https://go.elementor.com/wp-repo-description-tab-elementor-mcp)**: Seamlessly connect external AI tools such as Claude, Codex, Cursor and more, to build native Elementor pages, sections, and design systems instantly. Bring in context from other tools like Figma and review or refine every generation in the visual Elementor Editor before publishing. 
 - **Mask shapes**: Turn any element, like an image or video, into whatever shape you desire to create standout designs.  
 - **CSS transform**: Use CSS Transform to rotate, scale, and skew elements, adding dynamic styling to your site.  
 - **Entrance animations**:  Add entrance animations to elements to create engaging and interactive user experiences.  
@@ -355,6 +358,25 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 4.3.3 - 2026-09-30 =
+
+* Tweak: Improved access control when MCP is disabled
+* Fix: MCP build errors do not clearly identify invalid or unclosed elements
+* Fix: Certain MCP style values are not applied correctly in Atomic elements
+
+= 4.3.2 - 2026-09-24 =
+
+* Tweak: Improved the Editor onboarding flow for a smoother getting-started experience.
+* Fix: HTML Tags do not work correctly with Background Video ([#37393](https://github.com/elementor/elementor/issues/37393))
+* Fix: Improved compatibility with sites protected by HTTP Basic Authentication ([#37421](https://github.com/elementor/elementor/issues/37421))
+* Fix: Page styles may not load correctly after being regenerated
+* Fix: Improved code security enforcement in data handling
+* Fix: Improved update stability between Elementor Core and Pro
+
+= 4.3.1 - 2026-09-23 =
+
+* Fix: Top bar translations are not displayed correctly on Elementor admin pages
 
 = 4.3.0 - 2026-09-22 =
 

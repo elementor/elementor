@@ -19,15 +19,23 @@ class Test_Box_Shadow_Property_Converter extends TestCase {
 		$this->context   = new Conversion_Context( [] );
 	}
 
-	public function test_convert__none_clears_shadow_array() {
+	/**
+	 * @dataProvider none_values_data_provider
+	 */
+	public function test_convert__none_declines_to_custom_css( string $value ) {
 		// Act.
-		$result = $this->converter->convert( $this->context, $this->rule( 'none' ) );
+		$result = $this->converter->convert( $this->context, $this->rule( $value ) );
 
 		// Assert.
-		$this->assertTrue( $result );
-		$prop = $this->context->get_prop( 'box-shadow' );
-		$this->assertSame( 'box-shadow', $prop['$$type'] );
-		$this->assertSame( [], $prop['value'] );
+		$this->assertFalse( $result );
+		$this->assertNull( $this->context->get_prop( 'box-shadow' ) );
+	}
+
+	public function none_values_data_provider(): array {
+		return [
+			'lowercase' => [ 'none' ],
+			'uppercase' => [ 'NONE' ],
+		];
 	}
 
 	public function test_convert__two_lengths_with_color() {

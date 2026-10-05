@@ -45,6 +45,8 @@
     "@elementor/editor-elements": "4.4.0",
     "@elementor/editor-floating-panels": "4.4.0",
     "@elementor/editor-notifications": "4.4.0",
+    "@elementor/editor-props": "4.4.0",
+    "@elementor/editor-styles": "4.4.0",
     "@elementor/editor-v1-adapters": "4.4.0",
     "@elementor/events": "4.4.0",
     "@elementor/http-client": "4.4.0",

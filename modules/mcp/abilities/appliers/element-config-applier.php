@@ -13,6 +13,8 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,12 +45,11 @@ class Element_Config_Applier {
 	 * @param array<string, array>                $widget_configs  Resolved type configs.
 	 * @param Document|null                       $document        Target document, when one already exists.
 	 *
-	 * @return array{ error: ?\WP_Error, warnings: string[] }
+	 * @return array{ error: ?\WP_Error, warnings: Warnings_Bag }
 	 */
 	public function apply( array &$config_id_index, array $element_config, array $widget_configs, ?Document $document = null ): array {
 		$errors = [];
-		$warnings = [];
-		$warning_codes = [];
+		$warnings = Warnings_Bag::make();
 		$component_entries = [];
 
 		foreach ( $element_config as $config_id => $settings ) {
@@ -117,35 +118,35 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$outcome = $this->resolve_settings_against_schema( $settings, $schema, $tag, $config_id, $errors, $warnings, $warning_codes );
+			$outcome = $this->resolve_settings_against_schema(
+				$settings,
+				$schema,
+				$tag,
+				$config_id,
+				$warnings
+			);
 
-			$node['settings'] = array_merge( $node['settings'] ?? [], $outcome['resolved'] );
-
-			foreach ( $outcome['cleared'] as $cleared_key ) {
-				unset( $node['settings'][ $cleared_key ] );
-			}
-
-			$validation_error = $this->validate_settings( $node['settings'], $schema );
-			if ( $validation_error ) {
-				$errors[] = sprintf(
-					'[%s] Settings validation failed on element type "%s": %s. See elementor://widgets/schema/%s.',
-					$config_id,
-					$tag,
-					$validation_error,
-					$tag
-				);
-			}
+			$node_settings = $node['settings'] ?? [];
+			$this->apply_resolved_v4_settings(
+				$node_settings,
+				$schema,
+				$config_id,
+				$tag,
+				$outcome['resolved'],
+				$outcome['cleared'],
+				$warnings
+			);
+			$node['settings'] = $node_settings;
 		}
 		unset( $node );
 
 		$component_error = empty( $component_entries )
 			? null
-			: $this->apply_component_entries( $config_id_index, $component_entries, $document );
+			: $this->apply_component_entries( $config_id_index, $component_entries, $document, $warnings );
 
 		return [
 			'error' => $this->combine_errors( $errors, $component_error ),
 			'warnings' => $warnings,
-			'warning_codes' => array_values( array_unique( $warning_codes ) ),
 		];
 	}
 
@@ -165,8 +166,12 @@ class Element_Config_Applier {
 		);
 	}
 
-	private function apply_component_entries( array &$config_id_index, array $component_entries, ?Document $document ): ?\WP_Error {
-		return $this->create_component_applier()->apply( $config_id_index, $component_entries, $document );
+	private function apply_component_entries( array &$config_id_index, array $component_entries, ?Document $document, Warnings_Bag $warnings ): ?\WP_Error {
+		$applier = $this->create_component_applier();
+		$error = $applier->apply( $config_id_index, $component_entries, $document );
+		$warnings->merge( $applier->consume_warnings() );
+
+		return $error;
 	}
 
 	private function create_component_applier(): Component_Instance_Applier {
@@ -178,9 +183,7 @@ class Element_Config_Applier {
 		array $schema,
 		string $element_type,
 		string $config_id,
-		array &$errors,
-		array &$warnings,
-		array &$warning_codes = []
+		Warnings_Bag $warnings
 	): array {
 		$alias_map = Prop_Canonicalizer::build_alias_map( $schema );
 		$resolved = [];
@@ -190,13 +193,16 @@ class Element_Config_Applier {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
 
 			if ( null === $canonical ) {
-				$warnings[] = sprintf(
-					'[%s] Property "%s" is not supported on element type "%s" and was skipped.',
-					$config_id,
-					$name,
-					$element_type
+				$warnings->add(
+					'prop_not_in_schema',
+					sprintf(
+						'Property "%s" is not in the schema for "%s" and was skipped. See elementor://widgets/schema/%s.',
+						$name,
+						$element_type,
+						$element_type
+					),
+					$config_id
 				);
-				$warning_codes[] = 'prop_not_supported';
 				continue;
 			}
 
@@ -214,14 +220,23 @@ class Element_Config_Applier {
 			$resolved_value = $this->plain_values_resolver->resolve( $value, $prop_type );
 
 			if ( null === $resolved_value ) {
-				$errors[] = sprintf(
-					'[%s] Property "%s" on "%s" could not be resolved. See elementor://widgets/schema/%s.',
-					$config_id,
-					$canonical,
-					$element_type,
-					$element_type
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" could not be resolved. See elementor://widgets/schema/%s.',
+						$canonical,
+						$element_type,
+						$element_type
+					),
+					$config_id
 				);
 				continue;
+			}
+
+			$dropped_paths = Dropped_Plain_Keys_Finder::find( $value, $resolved_value, $canonical );
+
+			if ( ! empty( $dropped_paths ) ) {
+				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
 			}
 
 			$resolved[ $canonical ] = $resolved_value;
@@ -231,6 +246,116 @@ class Element_Config_Applier {
 			'resolved' => $resolved,
 			'cleared' => $cleared,
 		];
+	}
+
+	private function apply_resolved_v4_settings(
+		array &$node_settings,
+		array $schema,
+		string $config_id,
+		string $element_type,
+		array $resolved,
+		array $cleared,
+		Warnings_Bag $warnings
+	): void {
+		foreach ( $resolved as $key => $value ) {
+			$trial = array_merge( $node_settings, [ $key => $value ] );
+			$validation_error = $this->validate_settings( $trial, $schema );
+
+			if ( $validation_error ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" failed validation and was skipped: %s See elementor://widgets/schema/%s.',
+						$key,
+						$element_type,
+						$validation_error,
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			$stored = $node_settings[ $key ] ?? null;
+
+			if (
+				$this->is_object_prop_value( $stored )
+				&& $this->is_object_prop_value( $value )
+				&& $stored['$$type'] === $value['$$type']
+			) {
+				$stored_sub_values = array_filter( $stored['value'], fn( $sub_value ) => null !== $sub_value );
+				$dropped_sub_keys = array_keys( array_diff_key( $stored_sub_values, $value['value'] ) );
+
+				if ( ! empty( $dropped_sub_keys ) ) {
+					$this->warn_sub_keys_dropped( $dropped_sub_keys, $key, $element_type, $config_id, $warnings );
+				}
+			}
+
+			$node_settings[ $key ] = $value;
+		}
+
+		foreach ( $cleared as $cleared_key ) {
+			if ( ! array_key_exists( $cleared_key, $node_settings ) ) {
+				continue;
+			}
+
+			$trial = $node_settings;
+			unset( $trial[ $cleared_key ] );
+			$validation_error = $this->validate_settings( $trial, $schema );
+
+			if ( $validation_error ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" could not be cleared: %s See elementor://widgets/schema/%s.',
+						$cleared_key,
+						$element_type,
+						$validation_error,
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			unset( $node_settings[ $cleared_key ] );
+		}
+	}
+
+	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$warnings->add(
+			'prop_keys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was saved without "%s": each is either not a field of the prop or has a value that could not be resolved. Use the shape from elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_paths ),
+				$element_type
+			),
+			$config_id
+		);
+	}
+
+	private function warn_sub_keys_dropped( array $dropped_sub_keys, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$warnings->add(
+			'prop_subkeys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was replaced as a whole, dropping its stored "%s". Send the full value (as returned by elementor/get-page-structure) to keep them. See elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_sub_keys ),
+				$element_type
+			),
+			$config_id
+		);
+	}
+
+	private function is_object_prop_value( $value ): bool {
+		return is_array( $value )
+			&& isset( $value['$$type'] )
+			&& is_array( $value['value'] ?? null )
+			&& ! empty( $value['value'] )
+			&& ! wp_is_numeric_array( $value['value'] );
 	}
 
 	private function merge_with_clears( array $existing, array $incoming ): array {

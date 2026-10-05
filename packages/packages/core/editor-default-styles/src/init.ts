@@ -3,6 +3,7 @@ import { registerElementPanelDefaults } from '@elementor/editor-editing-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
+import { GlobalStylesImportListener } from './components/global-styles-import-listener';
 import { PopulateStore } from './components/populate-store';
 import { defaultStylesStylesProvider } from './default-styles-provider';
 import { slice } from './store';
@@ -18,6 +19,11 @@ export function init() {
 	} );
 
 	stylesRepository.register( defaultStylesStylesProvider );
+
+	injectIntoLogic( {
+		id: 'default-styles-import-listener',
+		component: GlobalStylesImportListener,
+	} );
 
 	injectIntoLogic( {
 		id: 'default-styles-populate-store',
