@@ -14,6 +14,7 @@ import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from 
 import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
+import { useCustomIconLibraries } from './custom-icon-libraries';
 import {
 	createIconSelectionValue,
 	filterFontAwesome7Icons,
@@ -78,7 +79,10 @@ export const IconLibraryPopover = ( {
 		ICON_LIBRARY_VIEW_STORAGE_PREFIX
 	);
 	const view = isIconLibraryView( storedView ) ? storedView : DEFAULT_ICON_LIBRARY_VIEW;
-	const { data: icons = [], isLoading } = useFontAwesome7Catalog( open );
+	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } = useFontAwesome7Catalog( open );
+	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( open );
+	const isLoading = isFontAwesomeLoading || isCustomLoading;
+	const icons = useMemo( () => [ ...fontAwesomeIcons, ...customIcons ], [ customIcons, fontAwesomeIcons ] );
 
 	const items = useMemo(
 		() => createIconLibraryItems( icons, searchValue, activeLibraries ),
@@ -103,7 +107,7 @@ export const IconLibraryPopover = ( {
 		}
 
 		onSelect( {
-			value: createIconSelectionValue( icon.library, icon.name ),
+			value: icon.glyphClass ?? createIconSelectionValue( icon.library, icon.name ),
 			library: icon.library,
 		} );
 	};
@@ -254,9 +258,7 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					flexShrink: 0,
 				} }
 			>
-				{ icon.paths.length > 0 ? (
-					<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
-				) : null }
+				<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
 			</Box>
 			<Typography variant="caption" color="text.primary" noWrap>
 				{ icon.label }
