@@ -144,13 +144,13 @@ class Module extends BaseModule {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
 
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
+		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 
 		if ( self::is_site_mcp_exposure_enabled() ) {
-			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
+			add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
 		}
 	}
 
@@ -183,6 +183,10 @@ class Module extends BaseModule {
 	}
 
 	public function register_shared_registry_slugs(): void {
+		if ( ! self::is_site_mcp_exposure_enabled() ) {
+			return;
+		}
+
 		$shared = Shared_Registry::instance();
 
 		$shared->register_tools( $this->collect_server_ids( $this->registry->tools() ) );

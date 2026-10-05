@@ -38,7 +38,7 @@ class Test_Mcp_Site_Settings_Gate extends TestCase {
 			$source
 		);
 		$this->assertStringContainsString(
-			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'wp_abilities_api_init', [ \$this, 'register_abilities' ] );\n\t\t}",
+			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'init', [ \$this, 'register_shared_registry_slugs' ], 5 );\n\t\t}",
 			$source
 		);
 		$this->assertStringContainsString(
