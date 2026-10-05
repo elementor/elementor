@@ -36,6 +36,11 @@ const PRUNED = [
 	'test-results/**',
 	'tests/**',
 	'tmp/**',
+	'turbo.json',
+	'*.md',
+	'**/*.md',
+	'eslint*mjs',
+	'update-snapshots-linux.js',
 ];
 
 /**
