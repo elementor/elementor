@@ -9,13 +9,15 @@ import {
 export { FONT_AWESOME_7_LIBRARIES, getFontAwesome7EditorConfig } from './font-awesome-7-data';
 
 export type FontAwesome7Library = ( typeof FONT_AWESOME_7_LIBRARIES )[ number ][ 'library' ];
-export type FontAwesome7LibraryFilter = FontAwesome7Library[];
+export type FontAwesome7LibraryFilter = string[];
 
 export type FontAwesome7Icon = FontAwesome7IconDefinition & {
 	id: string;
 	label: string;
-	library: FontAwesome7Library;
+	library: string;
 	value: string;
+	glyphClass?: string;
+	svgMarkup?: string;
 };
 
 export async function loadFontAwesome7Catalog( signal?: AbortSignal ): Promise< FontAwesome7Icon[] > {
@@ -85,20 +87,27 @@ export function findFontAwesome7Icon(
 	iconClass: string | null,
 	library: string | null
 ): FontAwesome7Icon | undefined {
-	const selectedId = getSelectedIconId( iconClass, library );
-
-	if ( ! selectedId || ! library ) {
+	if ( ! iconClass || ! library ) {
 		return undefined;
 	}
 
-	const selectedName = selectedId.slice( `${ library }:`.length );
+	const selectedId = getSelectedIconId( iconClass, library );
+	const selectedName = selectedId?.slice( `${ library }:`.length );
 
 	return icons.find( ( icon ) => {
 		if ( icon.library !== library ) {
 			return false;
 		}
 
-		return icon.id === selectedId || icon.name === selectedName || icon.aliases.includes( selectedName );
+		if ( icon.value === iconClass || icon.id === selectedId ) {
+			return true;
+		}
+
+		if ( ! selectedName ) {
+			return false;
+		}
+
+		return icon.name === selectedName || icon.aliases.includes( selectedName );
 	} );
 }
 

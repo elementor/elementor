@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<font id="fontello" horiz-adv-x="1000">
+			<font-face font-family="fontello" units-per-em="1000" ascent="850" descent="-150"/>
+			<glyph glyph-name="emo-surprised" unicode="&#xe800;" d="M0 0H100V100H0Z" horiz-adv-x="1000"/>
+		</font>
+	</defs>
+</svg>
