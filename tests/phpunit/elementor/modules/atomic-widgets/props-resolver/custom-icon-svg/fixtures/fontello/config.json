@@ -1,0 +1,12 @@
+{
+	"name": "fontello",
+	"css_prefix_text": "icon-",
+	"glyphs": [
+		{
+			"uid": "test-emo-surprised",
+			"css": "emo-surprised",
+			"code": 59392,
+			"src": "fontelico"
+		}
+	]
+}
