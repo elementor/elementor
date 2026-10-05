@@ -324,6 +324,14 @@ jobs:
           for port in 8888 8889; do
             docker cp "port${port}-wordpress-1:/var/www/html/wp-content/debug.log" "php-debug-logs/debug-${port}.log" || echo "No debug.log on port ${port}"
           done
+      - name: Summarize Elementor entries in PHP debug logs
+        if: ${{ always() && inputs.collect_debug_log }}
+        run: |
+          ENTRIES=$(cat php-debug-logs/*.log 2>/dev/null | grep "plugins/elementor/" | sed -E "s/^\[[^]]+\] //; s#/var/www/html/wp-content/plugins/elementor/##" | sort | uniq -c | sort -rn || true)
+          {
+            echo "### Elementor PHP notices: ${{ matrix.shardIndex }}"
+            if [ -z "$ENTRIES" ]; then echo "None"; else echo '```'; echo "$ENTRIES"; echo '```'; fi
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v7
         name: Upload PHP debug logs
         if: ${{ always() && inputs.collect_debug_log }}
