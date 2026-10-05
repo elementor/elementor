@@ -206,4 +206,51 @@ describe( 'defaultStyles store', () => {
 		// Assert
 		expect( selectData( getState() ).h4?.variants ).toEqual( [] );
 	} );
+
+	it( 'should keep remaining breakpoint variants when one variant is cleared', () => {
+		const MOBILE_META = { breakpoint: 'mobile', state: null } as const;
+
+		// Arrange
+		dispatch(
+			slice.actions.load( {
+				data: {
+					h5: {
+						id: 'h5',
+						label: 'h5',
+						type: 'class',
+						variants: [
+							{
+								meta: DESKTOP_META,
+								props: { margin: '10px' },
+								custom_css: null,
+							},
+							{
+								meta: MOBILE_META,
+								props: { margin: '8px' },
+								custom_css: null,
+							},
+						],
+					},
+				},
+			} )
+		);
+
+		// Act
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h5',
+				meta: DESKTOP_META,
+				props: { margin: null },
+			} )
+		);
+
+		// Assert
+		expect( selectData( getState() ).h5?.variants ).toEqual( [
+			{
+				meta: MOBILE_META,
+				props: { margin: '8px' },
+				custom_css: null,
+			},
+		] );
+	} );
 } );
