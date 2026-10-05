@@ -31,7 +31,7 @@ export const audit: Audit = {
 						: ctx.pageContext.ally_plugin_url,
 					ctaLabel: __( 'Create', 'elementor' ),
 					secondaryCtaLabel: __( 'Learn more', 'elementor' ),
-					secondaryCtaUrl: 'https://go.elementor.com/acc-plg-learn-more',
+					secondaryCtaUrl: 'https://elementor.com/help/start-using-ally/#statement',
 				},
 			],
 		};
