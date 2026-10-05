@@ -133,14 +133,12 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 							onClick={ isGuidanceFocusable ? handleGuidanceClick : undefined }
 							onKeyDown={ isGuidanceFocusable ? onKeyboardClick( handleGuidanceClick ) : undefined }
 						>
-							<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1 } }>
-								<Typography variant="caption" component="p" color="text.secondary">
-									{ audit.description }
-								</Typography>
-								{ primaryViolation && <GuidanceAction violation={ primaryViolation } /> }
-							</Box>
+							<Typography variant="caption" component="p" color="text.secondary">
+								{ audit.description }
+							</Typography>
 						</Alert>
 					</Tooltip>
+					{ primaryViolation && <GuidanceAction violation={ primaryViolation } /> }
 				</Box>
 				{ violations && violations.length > 0 && (
 					<Box role="list" sx={ { paddingBlockEnd: 1 } }>
