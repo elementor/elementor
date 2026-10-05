@@ -156,14 +156,14 @@ namespace Elementor {
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
-	use Elementor\Modules\Promotions\Pointers\Black_Friday;
+	use Elementor\Modules\Promotions\Pointers\Promotional_Pointer;
 	use PHPUnit\Framework\TestCase;
 
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;
 	}
 
-	class Test_Black_Friday_Pointer extends TestCase {
+	class Test_Promotional_Pointer extends TestCase {
 
 		protected function setUp(): void {
 			$GLOBALS['_test_options']       = [];
@@ -171,7 +171,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			$GLOBALS['_test_introductions'] = [];
 
 			if ( function_exists( 'delete_option' ) ) {
-				delete_option( Black_Friday::POINTER_TRANSIENT_KEY );
+				delete_option( Promotional_Pointer::POINTER_TRANSIENT_KEY );
 			}
 			if ( function_exists( 'add_filter' ) ) {
 				add_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1, 3 );
@@ -183,7 +183,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 				remove_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1 );
 			}
 			if ( function_exists( 'delete_option' ) ) {
-				delete_option( Black_Friday::POINTER_TRANSIENT_KEY );
+				delete_option( Promotional_Pointer::POINTER_TRANSIENT_KEY );
 			}
 		}
 
@@ -192,14 +192,14 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 		}
 
 		private function seed_cdn_data( array $payload ): void {
-			update_option( Black_Friday::POINTER_TRANSIENT_KEY, [
+			update_option( Promotional_Pointer::POINTER_TRANSIENT_KEY, [
 				'timeout' => PHP_INT_MAX,
 				'value'   => json_encode( $payload ),
 			] );
 		}
 
 		private function get_seen_today_transient_key(): string {
-			return Black_Friday::SEEN_TODAY_KEY . '_' . get_current_user_id();
+			return Promotional_Pointer::SEEN_TODAY_KEY . '_' . get_current_user_id();
 		}
 
 		// --- should_display_notice tests (cheap: user cap + seen-today + has_pro) ---
@@ -208,7 +208,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			// Arrange — current_user_can() mocked true, no seen-today transient, has_pro=false.
 
 			// Act
-			$result = Black_Friday::should_display_notice();
+			$result = Promotional_Pointer::should_display_notice();
 
 			// Assert
 			$this->assertTrue( $result );
@@ -219,7 +219,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			set_transient( $this->get_seen_today_transient_key(), time(), 3600 );
 
 			// Act
-			$result = Black_Friday::should_display_notice();
+			$result = Promotional_Pointer::should_display_notice();
 
 			// Assert
 			$this->assertFalse( $result );
@@ -233,7 +233,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			ob_end_clean();
 
 			// Assert
@@ -244,7 +244,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			// Arrange
 			$this->seed_cdn_data( [
 				'is_active' => false,
-				'title'     => 'Black Friday Is On!',
+				'title'     => 'Sale Is On!',
 				'cta_url'   => 'https://go.elementor.com/test/',
 			] );
 
@@ -252,7 +252,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			ob_end_clean();
 
 			// Assert
@@ -272,7 +272,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			ob_end_clean();
 
 			// Assert — set_seen_today must NOT have been called.
@@ -283,7 +283,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			// Arrange
 			$this->seed_cdn_data( [
 				'is_active' => true,
-				'title'     => 'Black Friday Is On!',
+				'title'     => 'Sale Is On!',
 				'cta_url'   => '',
 			] );
 
@@ -291,7 +291,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			ob_end_clean();
 
 			// Assert
@@ -302,7 +302,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			// Arrange — full valid payload: is_active, title, cta_url all present.
 			$this->seed_cdn_data( [
 				'is_active' => true,
-				'title'     => 'Black Friday Is On!',
+				'title'     => 'Sale Is On!',
 				'cta_url'   => 'https://go.elementor.com/test/',
 			] );
 
@@ -310,33 +310,33 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			$output = ob_get_clean();
 
 			// Assert — seen-today transient must be set.
 			$this->assertNotFalse( get_transient( $seen_key ) );
 
 			// Assert — output must contain the title from the CDN payload.
-			$this->assertStringContainsString( 'Black Friday Is On!', $output );
+			$this->assertStringContainsString( 'Sale Is On!', $output );
 		}
 
 		public function test_enqueue_notice__uses_per_campaign_dismiss_key() {
 			// Arrange — campaign is active and already dismissed for this campaign ID.
 			$this->seed_cdn_data( [
 				'is_active'   => true,
-				'title'       => 'Black Friday Is On!',
+				'title'       => 'Sale Is On!',
 				'cta_url'     => 'https://go.elementor.com/test/',
 				'campaign_id' => 'bfcm2026',
 			] );
 
 			// Simulate the user having dismissed this specific campaign.
-			$GLOBALS['_test_introductions'][ Black_Friday::DISMISS_ACTION_KEY . '_bfcm2026' ] = true;
+			$GLOBALS['_test_introductions'][ Promotional_Pointer::DISMISS_ACTION_KEY . '_bfcm2026' ] = true;
 
 			$seen_key = $this->get_seen_today_transient_key();
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			ob_end_clean();
 
 			// Assert — dismissed campaign must not set the seen-today transient.
@@ -347,19 +347,19 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			// Arrange — campaign_id 'bfcm2026' is active, but only 'bfcm2025' was dismissed.
 			$this->seed_cdn_data( [
 				'is_active'   => true,
-				'title'       => 'Black Friday Is On!',
+				'title'       => 'Sale Is On!',
 				'cta_url'     => 'https://go.elementor.com/test/',
 				'campaign_id' => 'bfcm2026',
 			] );
 
 			// Only the previous year's campaign was dismissed.
-			$GLOBALS['_test_introductions'][ Black_Friday::DISMISS_ACTION_KEY . '_bfcm2025' ] = true;
+			$GLOBALS['_test_introductions'][ Promotional_Pointer::DISMISS_ACTION_KEY . '_bfcm2025' ] = true;
 
 			$seen_key = $this->get_seen_today_transient_key();
 
 			// Act
 			ob_start();
-			( new Black_Friday() )->enqueue_notice();
+			( new Promotional_Pointer() )->enqueue_notice();
 			ob_get_clean();
 
 			// Assert — current campaign is NOT dismissed, so seen-today IS set.

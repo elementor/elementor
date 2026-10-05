@@ -16,7 +16,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
-use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\Pointers\Promotional_Pointer;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Modules\Promotions\Widgets\Atomic_Carousel_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
@@ -86,8 +86,8 @@ class Module extends Base_Module {
 			new Birthday();
 		}
 
-		if ( Black_Friday::should_display_notice() ) {
-			new Black_Friday();
+		if ( Promotional_Pointer::should_display_notice() ) {
+			new Promotional_Pointer();
 		}
 
 		if ( ! Utils::has_pro() ) {

@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Black_Friday {
+class Promotional_Pointer {
 	const POINTER_TRANSIENT_KEY = 'elementor_pointer_assets_data';
 	const ELEMENTOR_POINTER_ID  = 'toplevel_page_elementor-home';
-	const SEEN_TODAY_KEY        = '_elementor_black_friday';
-	const DISMISS_ACTION_KEY    = 'black_friday_pointer';
+	const SEEN_TODAY_KEY        = '_elementor_promotional_pointer';
+	const DISMISS_ACTION_KEY    = 'promotional_pointer';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'enqueue_notice' ] );
