@@ -78,13 +78,16 @@ export const slice = createSlice( {
 			};
 
 			const variant = getVariantByMeta( style, payload.meta );
+
 			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
 			customCss = customCss?.raw ? customCss : null;
+
 			const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
 			const mode = payload.mode ?? 'merge';
 
 			if ( variant ) {
-				variant.props = mergeProps( 'replace' === mode ? {} : variant.props, payloadProps );
+				const variantProps = 'replace' === mode ? {} : variant.props;
+				variant.props = mergeProps( variantProps, payloadProps );
 				variant.custom_css = customCss;
 			} else {
 				style.variants.push( {
