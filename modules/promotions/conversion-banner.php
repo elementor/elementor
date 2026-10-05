@@ -220,7 +220,7 @@ class Conversion_Banner {
 				'text'    => $assets_data['text'] ?? '',
 				'buttons' => [
 					[
-						'text'   => $assets_data['cta_text'] ?? '',
+						'text'   => $assets_data['cta_text'] ?? __( 'Upgrade now', 'elementor' ),
 						'link'   => $assets_data['cta_url'] ?? '',
 						'target' => '_blank',
 					],

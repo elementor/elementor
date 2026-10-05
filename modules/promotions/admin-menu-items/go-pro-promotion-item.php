@@ -51,13 +51,20 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 		$assets_data = self::get_side_menu_assets_data();
 
 		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
-			$url = $assets_data['url'];
-		} else {
-			$url = self::URL;
+			$parsed = wp_parse_url( $assets_data['url'] );
+			$scheme = $parsed['scheme'] ?? '';
+			$host   = $parsed['host'] ?? '';
+
+			if ( 'https' === $scheme && ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) ) ) {
+				return esc_url( $assets_data['url'] );
+			}
 		}
 
-		$filtered_url = apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? '';
-		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( [ 'upgrade_url' => $filtered_url ], 'elementor/admin_menu/custom_promotion', 'upgrade_url' );
+		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
+			[ 'upgrade_url' => self::URL ],
+			'elementor/admin_menu/custom_promotion',
+			'upgrade_url'
+		);
 		return $promotion_data['upgrade_url'];
 	}
 

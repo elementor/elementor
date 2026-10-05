@@ -122,6 +122,18 @@ namespace {
 			return false;
 		}
 	}
+
+	if ( ! function_exists( 'sanitize_key' ) ) {
+		function sanitize_key( $key ) {
+			return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( $key ) );
+		}
+	}
+
+	if ( ! function_exists( '__' ) ) {
+		function __( $text, $domain = 'default' ) {
+			return $text;
+		}
+	}
 }
 
 namespace Elementor {
@@ -190,10 +202,21 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			return Black_Friday::SEEN_TODAY_KEY . '_' . get_current_user_id();
 		}
 
-		// --- should_display_notice tests (C1: is_active flag) ---
+		// --- should_display_notice tests (cheap: user cap + seen-today + has_pro) ---
 
-		public function test_should_display_notice__returns_false_when_cdn_inactive() {
-			// Arrange — no CDN data seeded; HTTP blocked → empty array returned.
+		public function test_should_display_notice__returns_true_when_conditions_met() {
+			// Arrange — current_user_can() mocked true, no seen-today transient, has_pro=false.
+
+			// Act
+			$result = Black_Friday::should_display_notice();
+
+			// Assert
+			$this->assertTrue( $result );
+		}
+
+		public function test_should_display_notice__returns_false_when_seen_today() {
+			// Arrange — mark as already seen today.
+			set_transient( $this->get_seen_today_transient_key(), time(), 3600 );
 
 			// Act
 			$result = Black_Friday::should_display_notice();
@@ -202,7 +225,22 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 			$this->assertFalse( $result );
 		}
 
-		public function test_should_display_notice__returns_false_when_is_active_false() {
+		// --- enqueue_notice tests (CDN is_active gate + seen-today guard) ---
+
+		public function test_enqueue_notice__does_not_burn_seen_today_when_cdn_inactive() {
+			// Arrange — no CDN data, HTTP blocked → is_active missing → early return.
+			$seen_key = $this->get_seen_today_transient_key();
+
+			// Act
+			ob_start();
+			( new Black_Friday() )->enqueue_notice();
+			ob_end_clean();
+
+			// Assert
+			$this->assertFalse( get_transient( $seen_key ) );
+		}
+
+		public function test_enqueue_notice__does_not_burn_seen_today_when_is_active_false() {
 			// Arrange
 			$this->seed_cdn_data( [
 				'is_active' => false,
@@ -210,14 +248,16 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 				'cta_url'   => 'https://go.elementor.com/test/',
 			] );
 
+			$seen_key = $this->get_seen_today_transient_key();
+
 			// Act
-			$result = Black_Friday::should_display_notice();
+			ob_start();
+			( new Black_Friday() )->enqueue_notice();
+			ob_end_clean();
 
 			// Assert
-			$this->assertFalse( $result );
+			$this->assertFalse( get_transient( $seen_key ) );
 		}
-
-		// --- enqueue_notice tests (C2: seen-today guard) ---
 
 		public function test_enqueue_notice__does_not_burn_seen_today_when_title_missing() {
 			// Arrange — is_active true so should_display_notice passes,
@@ -256,6 +296,74 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 			// Assert
 			$this->assertFalse( get_transient( $seen_key ) );
+		}
+
+		public function test_enqueue_notice__sets_seen_today_and_outputs_title_when_fully_configured() {
+			// Arrange — full valid payload: is_active, title, cta_url all present.
+			$this->seed_cdn_data( [
+				'is_active' => true,
+				'title'     => 'Black Friday Is On!',
+				'cta_url'   => 'https://go.elementor.com/test/',
+			] );
+
+			$seen_key = $this->get_seen_today_transient_key();
+
+			// Act
+			ob_start();
+			( new Black_Friday() )->enqueue_notice();
+			$output = ob_get_clean();
+
+			// Assert — seen-today transient must be set.
+			$this->assertNotFalse( get_transient( $seen_key ) );
+
+			// Assert — output must contain the title from the CDN payload.
+			$this->assertStringContainsString( 'Black Friday Is On!', $output );
+		}
+
+		public function test_enqueue_notice__uses_per_campaign_dismiss_key() {
+			// Arrange — campaign is active and already dismissed for this campaign ID.
+			$this->seed_cdn_data( [
+				'is_active'   => true,
+				'title'       => 'Black Friday Is On!',
+				'cta_url'     => 'https://go.elementor.com/test/',
+				'campaign_id' => 'bfcm2026',
+			] );
+
+			// Simulate the user having dismissed this specific campaign.
+			$GLOBALS['_test_introductions'][ Black_Friday::DISMISS_ACTION_KEY . '_bfcm2026' ] = true;
+
+			$seen_key = $this->get_seen_today_transient_key();
+
+			// Act
+			ob_start();
+			( new Black_Friday() )->enqueue_notice();
+			ob_end_clean();
+
+			// Assert — dismissed campaign must not set the seen-today transient.
+			$this->assertFalse( get_transient( $seen_key ) );
+		}
+
+		public function test_enqueue_notice__does_not_treat_different_campaign_as_dismissed() {
+			// Arrange — campaign_id 'bfcm2026' is active, but only 'bfcm2025' was dismissed.
+			$this->seed_cdn_data( [
+				'is_active'   => true,
+				'title'       => 'Black Friday Is On!',
+				'cta_url'     => 'https://go.elementor.com/test/',
+				'campaign_id' => 'bfcm2026',
+			] );
+
+			// Only the previous year's campaign was dismissed.
+			$GLOBALS['_test_introductions'][ Black_Friday::DISMISS_ACTION_KEY . '_bfcm2025' ] = true;
+
+			$seen_key = $this->get_seen_today_transient_key();
+
+			// Act
+			ob_start();
+			( new Black_Friday() )->enqueue_notice();
+			ob_get_clean();
+
+			// Assert — current campaign is NOT dismissed, so seen-today IS set.
+			$this->assertNotFalse( get_transient( $seen_key ) );
 		}
 	}
 }

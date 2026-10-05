@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Connect_Page_Renderer {
 
+	const CONNECT_PAGE_TRANSIENT_KEY = 'elementor_connect_page_assets_data';
+
 	private Connect $connect;
 
 	private string $page_url;
@@ -134,7 +136,7 @@ class Connect_Page_Renderer {
 		$text     = $use_cdn && ! empty( $assets_data['text'] ) ? $assets_data['text'] : __( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' );
 		$cta_text = $use_cdn && ! empty( $assets_data['cta_text'] ) ? $assets_data['cta_text'] : __( 'Upgrade Now', 'elementor' );
 		$cta_url  = $use_cdn && ! empty( $assets_data['cta_url'] ) ? $assets_data['cta_url'] : 'https://go.elementor.com/go-pro-connect-account-screen';
-		$img_url  = $use_cdn && isset( $assets_data['image_url'] ) ? $assets_data['image_url'] : 'https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg';
+		$img_url  = $use_cdn && ! empty( $assets_data['image_url'] ) ? $assets_data['image_url'] : 'https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg';
 		$img_alt  = $use_cdn && ! empty( $assets_data['image_alt'] ) ? $assets_data['image_alt'] : __( 'Pro Upgrade', 'elementor' );
 		?>
 		<div class="<?php echo esc_attr( $this->get_license_box_classes( 'elementor-pro-connect-promotion' ) ); ?>">
@@ -155,9 +157,9 @@ class Connect_Page_Renderer {
 		<?php
 	}
 
-	public static function get_connect_page_assets_data(): array {
+	private static function get_connect_page_assets_data(): array {
 		$api = new EditorAssetsAPI( [
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => 'elementor_connect_page_assets_data',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::CONNECT_PAGE_TRANSIENT_KEY,
 			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/connect-page.json',
 			EditorAssetsAPI::ASSETS_DATA_KEY           => 'connect-page',
 		] );

@@ -41,7 +41,7 @@ const resetBannerTriggerState = async (): Promise<void> => {
 	// copy. Without this, the code fetches from the live CDN which may have an
 	// active campaign with copy that doesn't contain "Elementor Pro".
 	await wpCli(
-		`wp eval "update_option('${ CDN_CACHE_OPTION }', ['timeout' => PHP_INT_MAX, 'value' => json_encode(['is_active' => false'])]);"`,
+		`wp eval "update_option('${ CDN_CACHE_OPTION }', ['timeout' => PHP_INT_MAX, 'value' => json_encode(['is_active' => false])]);"`,
 	);
 
 	await clearElementorEditModeMeta();

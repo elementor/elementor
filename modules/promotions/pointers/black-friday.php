@@ -21,11 +21,19 @@ class Black_Friday {
 	}
 
 	public function enqueue_notice() {
-		if ( ! $this->should_display_notice() ) {
+		if ( ! self::should_display_notice() ) {
 			return;
 		}
 
 		$assets_data = self::get_pointer_assets_data();
+
+		if ( empty( $assets_data['is_active'] ) ) {
+			return;
+		}
+
+		if ( self::is_dismissed( $assets_data ) ) {
+			return;
+		}
 
 		if ( empty( $assets_data['title'] ) || empty( $assets_data['cta_url'] ) ) {
 			return;
@@ -34,12 +42,12 @@ class Black_Friday {
 		$this->set_seen_today();
 		$this->enqueue_dependencies();
 
-		$pointer_content = '<h3>' . esc_html( $assets_data['title'] ) . '</h3>';
-		$pointer_content .= '<p>' . esc_html( $assets_data['text'] ) . '</p>';
+		$pointer_content  = '<h3>' . esc_html( $assets_data['title'] ) . '</h3>';
+		$pointer_content .= '<p>' . esc_html( $assets_data['text'] ?? '' ) . '</p>';
 		$pointer_content .= sprintf(
 			'<p><a class="button button-primary" href="%s" target="_blank">%s</a></p>',
 			esc_url( $assets_data['cta_url'] ),
-			esc_html( $assets_data['cta_text'] )
+			esc_html( $assets_data['cta_text'] ?? __( 'View Deals', 'elementor' ) )
 		);
 
 		$allowed_tags = [
@@ -64,7 +72,7 @@ class Black_Friday {
 					close: function() {
 						elementorCommon.ajax.addRequest( "introduction_viewed", {
 							data: {
-								introductionKey: '<?php echo esc_attr( static::DISMISS_ACTION_KEY ); ?>'
+								introductionKey: '<?php echo esc_attr( self::get_dismiss_action_key( $assets_data ) ); ?>'
 							}
 						} );
 					}
@@ -75,11 +83,7 @@ class Black_Friday {
 	}
 
 	public static function should_display_notice(): bool {
-		$assets_data = self::get_pointer_assets_data();
-
 		return self::is_user_allowed() &&
-			! self::is_dismissed() &&
-			! empty( $assets_data['is_active'] ) &&
 			! self::is_already_seen_today() &&
 			! Utils::has_pro();
 	}
@@ -109,8 +113,15 @@ class Black_Friday {
 		wp_enqueue_style( 'wp-pointer' );
 	}
 
-	private static function is_dismissed(): bool {
-		return User::get_introduction_meta( static::DISMISS_ACTION_KEY );
+	private static function is_dismissed( array $assets_data ): bool {
+		return (bool) User::get_introduction_meta( self::get_dismiss_action_key( $assets_data ) );
+	}
+
+	private static function get_dismiss_action_key( array $assets_data ): string {
+		$campaign_id = ! empty( $assets_data['campaign_id'] ) ? sanitize_key( $assets_data['campaign_id'] ) : '';
+		return $campaign_id
+			? self::DISMISS_ACTION_KEY . '_' . $campaign_id
+			: self::DISMISS_ACTION_KEY;
 	}
 
 	public static function get_pointer_assets_data(): array {

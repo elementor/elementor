@@ -35,6 +35,12 @@ class EditorAssetsAPI {
 			$fresh_data = $this->fetch_data();
 
 			if ( empty( $fresh_data ) ) {
+				if ( false === $assets_data ) {
+					// Fetch failed and there is no existing cache. Write an empty
+					// entry with a short TTL so repeated page loads don't make
+					// blocking HTTP calls until the CDN recovers.
+					$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), [], '+30 minutes' );
+				}
 				return ! empty( $assets_data ) ? $assets_data : [];
 			}
 
