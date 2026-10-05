@@ -40,7 +40,7 @@ describe( audit.id, () => {
 			);
 			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Create' );
 			expect( result.violations[ 0 ].secondaryCtaLabel ).toBe( 'Learn more' );
-			expect( result.violations[ 0 ].secondaryCtaUrl ).toBe( 'https://go.elementor.com/acc-plg-learn-more' );
+			expect( result.violations[ 0 ].secondaryCtaUrl ).toBe( 'https://elementor.com/help/start-using-ally/#statement' );
 		}
 	} );
 } );
