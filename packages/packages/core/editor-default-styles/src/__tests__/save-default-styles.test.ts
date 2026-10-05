@@ -12,6 +12,8 @@ import { selectInitialData, selectIsDirty, slice } from '../store';
 
 jest.mock( '../api' );
 
+const DESKTOP_META = { breakpoint: 'desktop', state: null } as const;
+
 describe( 'saveDefaultStyles', () => {
 	beforeEach( () => {
 		registerSlice( slice );
@@ -114,5 +116,42 @@ describe( 'saveDefaultStyles', () => {
 
 		expect( apiClient.put ).not.toHaveBeenCalled();
 		expect( apiClient.delete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should delete a tag when the last variant becomes empty', async () => {
+		// Arrange
+		dispatch(
+			slice.actions.load( {
+				data: {
+					h3: {
+						id: 'h3',
+						label: 'h3',
+						type: 'class',
+						variants: [
+							{
+								meta: DESKTOP_META,
+								props: { margin: '10px' },
+								custom_css: null,
+							},
+						],
+					},
+				},
+			} )
+		);
+
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h3',
+				meta: DESKTOP_META,
+				props: { margin: null },
+			} )
+		);
+
+		// Act
+		await saveDefaultStyles();
+
+		// Assert
+		expect( apiClient.delete ).toHaveBeenCalledWith( 'h3' );
+		expect( apiClient.put ).not.toHaveBeenCalled();
 	} );
 } );

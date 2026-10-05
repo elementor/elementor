@@ -4,6 +4,8 @@ namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
@@ -13,6 +15,7 @@ use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
+use Elementor\Utils;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,6 +26,9 @@ class Module extends BaseModule {
 
 	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
 	const V3_STANDARDIZED_MAPS_EXPERIMENT_NAME = 'e_mcp_v3_standardized_maps';
+	const PROMOTION_REGISTRAR_HANDLE = 'elementor-mcp-promotion-registrar';
+	const MCP_PROMOTION_UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-connector-page-upgrade/';
+	const MCP_PROMOTION_ALLOWED_DOMAIN = 'elementor.com';
 
 	private Ability_Registry $registry;
 
@@ -34,10 +40,87 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			self::ANALYTICS_REGISTRAR_HANDLE,
 			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
-			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
+			[ 'elementor-common', Mcp_Admin_Page::SCRIPT_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	public function enqueue_promotion_registrar(): void {
+		if ( ! $this->should_enqueue_mcp_admin_promotion() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			self::PROMOTION_REGISTRAR_HANDLE,
+			$this->get_js_assets_url( 'mcp-promotion-registrar' ),
+			[
+				'elementor-common',
+				Mcp_Admin_Page::SCRIPT_HANDLE,
+				'react',
+				'react-dom',
+				'wp-i18n',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			self::PROMOTION_REGISTRAR_HANDLE,
+			'elementorMcpPromotionConfig',
+			[
+				'upgradeUrl' => $this->get_promotion_upgrade_url(),
+			]
+		);
+
+		wp_set_script_translations( self::PROMOTION_REGISTRAR_HANDLE, 'elementor' );
+	}
+
+	private function should_enqueue_mcp_admin_promotion(): bool {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( ! class_exists( Utils::class ) ) {
+			return false;
+		}
+
+		if ( Utils::has_pro() && Utils::is_license_active() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function get_promotion_upgrade_url(): string {
+		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
+			[ 'upgrade_url' => self::MCP_PROMOTION_UPGRADE_URL ],
+			'elementor/mcp/custom_promotion',
+			'upgrade_url'
+		);
+
+		$upgrade_url = $promotion_data['upgrade_url'] ?? '';
+
+		return $this->is_allowed_promotion_url( $upgrade_url )
+			? $upgrade_url
+			: self::MCP_PROMOTION_UPGRADE_URL;
+	}
+
+	private function is_allowed_promotion_url( $url ): bool {
+		if ( ! is_string( $url ) ) {
+			return false;
+		}
+
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( ! is_string( $host ) ) {
+			return false;
+		}
+
+		$host = strtolower( $host );
+
+		return self::MCP_PROMOTION_ALLOWED_DOMAIN === $host
+			|| str_ends_with( $host, '.' . self::MCP_PROMOTION_ALLOWED_DOMAIN );
 	}
 
 	public static function is_active() {

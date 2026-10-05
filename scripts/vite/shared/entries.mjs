@@ -78,6 +78,7 @@ export const BASE_ENTRIES = {
 	'assets-manager': 'modules/assets-manager/assets/js/assets-manager.js',
 	'mcp-analytics-registrar': 'modules/mcp/assets/dev/js/mcp-analytics-registrar.js',
 	'agents-ready': 'modules/agents/assets/js/admin/agents-ready.js',
+	'mcp-promotion-registrar': 'modules/mcp/assets/dev/js/mcp-promotion-registrar.js',
 };
 
 /**
