@@ -14,7 +14,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
-use Elementor\Modules\Mcp\Abilities\Utils\Editor_Only_Settings;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -176,7 +176,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$skeleton['settings'] = $this->with_editor_only_settings(
+		$skeleton['settings'] = $this->with_editor_settings(
 			$this->serialize_settings_for_llm( $props_schema, $raw_settings ),
 			$node
 		);
@@ -186,14 +186,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$this->populate_default_styles( $skeleton, $node, $config, $rendered_settings, $is_document_root );
 	}
 
-	private function with_editor_only_settings( $settings, array $node ) {
-		$editor_only = Editor_Only_Settings::read( $node, (string) Atomic_Elements_Utils::get_element_type( $node ) );
+	private function with_editor_settings( $settings, array $node ) {
+		$editor_settings = Editor_Settings::read( $node, (string) Atomic_Elements_Utils::get_element_type( $node ) );
 
-		if ( empty( $editor_only ) ) {
+		if ( empty( $editor_settings ) ) {
 			return $settings;
 		}
 
-		return array_merge( (array) $settings, $editor_only );
+		return array_merge( (array) $settings, $editor_settings );
 	}
 
 	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Settings the MCP exposes as regular element settings while Elementor stores them in
  * `editor_settings`, so they never reach the props schema or the frontend.
  */
-class Editor_Only_Settings {
+class Editor_Settings {
 
 	const DECORATIVE = 'decorative';
 
@@ -32,7 +32,7 @@ class Editor_Only_Settings {
 	}
 
 	/**
-	 * Moves editor-only keys from `$settings` into the node's `editor_settings` and returns the
+	 * Moves editor settings keys from `$settings` into the node's `editor_settings` and returns the
 	 * remaining settings for the props schema.
 	 */
 	public static function apply( array &$node, array $settings, string $element_type, string $config_id, Warnings_Bag $warnings ): array {

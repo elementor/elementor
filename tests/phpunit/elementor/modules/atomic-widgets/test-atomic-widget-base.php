@@ -633,6 +633,28 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['editor_settings'] );
 	}
 
+	public function test_get_data_for_save__drops_editor_settings_outside_the_whitelist() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => 'Hero',
+				'grid_outline' => true,
+				'decorative' => false,
+				'unexpected' => true,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'title' => 'Hero',
+			'grid_outline' => true,
+			'decorative' => false,
+		], $data_for_save['editor_settings'] );
+	}
+
 	public function test_get_data_for_save__drops_non_boolean_decorative_editor_setting() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [

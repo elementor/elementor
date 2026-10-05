@@ -5,6 +5,7 @@ import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createPendingElement } from './create-pending-element';
 import { canBeTemplated, type TemplatedElementConfig } from './create-templated-element-type';
+import { applyDecorativePlaceholder } from './decorative-placeholder';
 import {
 	createAfterRender,
 	createBeforeRender,
@@ -313,6 +314,7 @@ export function createNestedTemplatedElementView( {
 
 			await waitForChildrenToComplete( this );
 			this._removeChildrenPlaceholder();
+			applyDecorativePlaceholder( this.$el.get( 0 ), this.model.get( 'editor_settings' ) );
 		},
 
 		_shouldReuseChildren() {

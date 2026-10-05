@@ -212,7 +212,7 @@ class Widget_Context_Helper {
 
 		$properties = array_merge(
 			self::build_configurable_properties_schema( $props_schema, $widget_type ),
-			Editor_Only_Settings::get_properties_schema( $widget_type )
+			Editor_Settings::get_properties_schema( $widget_type )
 		);
 
 		return self::filter_nulls( [
