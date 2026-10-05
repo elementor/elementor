@@ -16,6 +16,14 @@ const CARD_WIDTH = 296;
 const IMAGE_HEIGHT = 176;
 const DEFAULT_CTA_TEXT = __( 'Upgrade Now', 'elementor' );
 
+const openCtaInNewTab = ( ctaUrl ) => {
+	if ( ! ctaUrl ) {
+		return;
+	}
+
+	window.open( ctaUrl, '_blank', 'noopener,noreferrer' );
+};
+
 const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 	const { title, content, image, ctaUrl, ctaText, hideProTag } = promotionData;
 
@@ -46,9 +54,7 @@ const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 						variant="contained"
 						size="small"
 						color={ hideProTag ? 'info' : 'promotion' }
-						href={ ctaUrl }
-						target="_blank"
-						rel="noopener noreferrer"
+						onClick={ () => openCtaInNewTab( ctaUrl ) }
 						startIcon={ hideProTag ? null : <CrownFilledIcon /> }
 						sx={ { ml: 'auto' } }
 					>
