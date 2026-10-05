@@ -8,12 +8,18 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Theme_Style_Buttons extends Tab_Base {
+
+	/**
+	 * Matches atomic (V4) elements without adding specificity, so V3 output keeps its current weight.
+	 */
+	const ATOMIC_ELEMENTS_EXCLUSION = ':not(:where(.e-atomic-element, [data-interaction-id]))';
 
 	public function get_id() {
 		return 'theme-style-buttons';
@@ -121,7 +127,7 @@ class Theme_Style_Buttons extends Tab_Base {
 					'color_b' => [
 						'dynamic' => [],
 					],
-				],
+				] + $this->get_gradient_fields_options( $button_selectors ),
 			]
 		);
 
@@ -196,7 +202,7 @@ class Theme_Style_Buttons extends Tab_Base {
 					'color_b' => [
 						'dynamic' => [],
 					],
-				],
+				] + $this->get_gradient_fields_options( $button_hover_selectors ),
 			]
 		);
 
@@ -251,5 +257,33 @@ class Theme_Style_Buttons extends Tab_Base {
 		);
 
 		$this->end_controls_section();
+	}
+
+	/**
+	 * A Kit gradient is written to `background-image`, which an atomic element's own background color
+	 * doesn't override, so the gradient would be painted on top of it. Keep Kit gradients off atomic
+	 * elements; they resolve their background through their own style props.
+	 */
+	private function get_gradient_fields_options( array $selectors ): array {
+		$selector = implode( ',', array_map(
+			fn( $selector ) => $selector . self::ATOMIC_ELEMENTS_EXCLUSION,
+			$selectors
+		) );
+
+		$background_fields = Plugin::$instance->controls_manager
+			->get_control_groups( Group_Control_Background::get_type() )
+			->get_fields();
+
+		$fields_options = [];
+
+		foreach ( [ 'gradient_angle', 'gradient_position' ] as $field_key ) {
+			$fields_options[ $field_key ] = [
+				'selectors' => [
+					$selector => $background_fields[ $field_key ]['selectors']['{{SELECTOR}}'],
+				],
+			];
+		}
+
+		return $fields_options;
 	}
 }
