@@ -231,6 +231,19 @@ class V3_Style_Mapper {
 	}
 
 	private function dispatch_rule( V3_Conversion_Context $ctx, V3_Context_Meta $meta, array $rule ): bool {
+		if ( $this->is_breakpoint_rule_for_non_responsive_override( $meta, $rule ) ) {
+			$ctx->warn(
+				sprintf(
+					/* translators: 1: CSS property name, 2: Breakpoint alias */
+					__( 'CSS property %1$s has no per-device value in this Elementor widget, so its @media(--%2$s) value was skipped.', 'elementor' ),
+					$rule['property'],
+					$rule['breakpoint']
+				)
+			);
+
+			return true;
+		}
+
 		foreach ( $this->converter_registry->all() as $converter ) {
 			if ( ! $converter->is_supported( $rule, $meta ) ) {
 				continue;
@@ -240,6 +253,16 @@ class V3_Style_Mapper {
 		}
 
 		return false;
+	}
+
+	private function is_breakpoint_rule_for_non_responsive_override( V3_Context_Meta $meta, array $rule ): bool {
+		if ( ! $meta->is_map_driven() || Responsive_Key_Resolver::BASE_BREAKPOINT === $rule['breakpoint'] ) {
+			return false;
+		}
+
+		$override = $meta->get_override( $rule['property'], $rule['state'], $rule['target'] ?? null );
+
+		return null !== $override && empty( $override['responsive'] );
 	}
 
 	private function report_unsupported_property( V3_Conversion_Context $ctx, V3_Context_Meta $meta, array $rule ): void {

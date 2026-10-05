@@ -139,6 +139,38 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		);
 	}
 
+	public function test_apply__writes_wrapper_flex_item_settings_with_custom_size_companion() {
+		// Act.
+		$result = $this->mapper()->apply( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: center; } @media(--mobile) { wrapper { flex-grow: 0; } }', self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( [], $result['warnings'] );
+		$this->assertEquals(
+			[
+				'_flex_grow' => 1,
+				'_flex_size' => 'custom',
+				'_flex_shrink' => 0,
+				'_flex_align_self' => 'center',
+				'_flex_grow_mobile' => 0,
+				'_flex_size_mobile' => 'custom',
+			],
+			$result['settings_patch']
+		);
+	}
+
+	public function test_round_trip__wrapper_flex_item_settings_map_back_to_same_settings() {
+		// Arrange.
+		$written = $this->mapper()->apply( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: stretch; }', self::WIDGET_TYPE, [] )['settings_patch'];
+		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
+
+		// Act.
+		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: stretch; }', $readback );
+		$this->assertEquals( $written, $result['settings_patch'] );
+	}
+
 	public function test_round_trip__wrapper_states_map_back_to_same_settings() {
 		// Arrange.
 		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; }'

@@ -21,6 +21,7 @@ class Advanced_Style_Fragments {
 	const OFFSET_START = 'start';
 	const OFFSET_END = 'end';
 	const CLASSIC_BACKGROUND = 'classic';
+	const CUSTOM_FLEX_SIZE = 'custom';
 
 	/**
 	 * @return array<string, array<string, array>>
@@ -36,6 +37,9 @@ class Advanced_Style_Fragments {
 			'top' => [ 'default' => self::offset( '_offset_y', '_offset_orientation_v', self::OFFSET_START ) ],
 			'bottom' => [ 'default' => self::offset( '_offset_y_end', '_offset_orientation_v', self::OFFSET_END ) ],
 			'z-index' => [ 'default' => Style_Control_Target::control( '_z_index', 'number', true ) ],
+			'flex-grow' => [ 'default' => self::with_companion( Style_Control_Target::control( '_flex_grow', 'number', true ), '_flex_size', self::CUSTOM_FLEX_SIZE ) ],
+			'flex-shrink' => [ 'default' => self::with_companion( Style_Control_Target::control( '_flex_shrink', 'number', true ), '_flex_size', self::CUSTOM_FLEX_SIZE ) ],
+			'align-self' => [ 'default' => Style_Control_Target::choice( '_flex_align_self', true ) ],
 			'background-color' => [
 				'default' => self::with_companion( Style_Control_Target::control( '_background_color', 'color' ), '_background_background', self::CLASSIC_BACKGROUND ),
 				self::HOVER_STATE => self::with_companion( Style_Control_Target::control( '_background_hover_color', 'color' ), '_background_hover_background', self::CLASSIC_BACKGROUND ),

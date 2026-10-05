@@ -811,6 +811,42 @@ return [
     'type' => 'number',
     'is_responsive' => true,
   ],
+  '_flex_align_self' => [
+    'type' => 'choose',
+    'options' => [
+      'flex-start' => 'flex-start',
+      'center' => 'center',
+      'flex-end' => 'flex-end',
+      'stretch' => 'stretch',
+    ],
+    'is_responsive' => true,
+  ],
+  '_flex_size' => [
+    'type' => 'choose',
+    'options' => [
+      'none' => 'none',
+      'grow' => 'grow',
+      'shrink' => 'shrink',
+      'custom' => 'custom',
+    ],
+    'is_responsive' => true,
+  ],
+  '_flex_grow' => [
+    'type' => 'number',
+    'default' => 1,
+    'condition' => [
+      '_flex_size' => 'custom',
+    ],
+    'is_responsive' => true,
+  ],
+  '_flex_shrink' => [
+    'type' => 'number',
+    'default' => 1,
+    'condition' => [
+      '_flex_size' => 'custom',
+    ],
+    'is_responsive' => true,
+  ],
   '_background_background' => [
     'type' => 'choose',
     'options' => [

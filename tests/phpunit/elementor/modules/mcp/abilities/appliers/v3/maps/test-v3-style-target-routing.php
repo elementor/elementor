@@ -120,6 +120,26 @@ class Test_V3_Style_Target_Routing extends TestCase {
 		$this->assertStringContainsString( 'dropdown', $result['warnings'][0] );
 	}
 
+	public function test_apply__skips_breakpoint_value_of_non_responsive_control_with_warning() {
+		// Act.
+		$result = $this->apply( '@media(--tablet) { dropdown { color: #FF0000; } }' );
+
+		// Assert.
+		$this->assertSame( [], $result['settings_patch'] );
+		$this->assertCount( 1, $result['warnings'] );
+		$this->assertStringContainsString( 'color', $result['warnings'][0] );
+		$this->assertStringContainsString( '--tablet', $result['warnings'][0] );
+	}
+
+	public function test_apply__keeps_desktop_value_when_non_responsive_control_also_has_breakpoint_value() {
+		// Act.
+		$result = $this->apply( 'dropdown { color: #111111; } @media(--tablet) { dropdown { color: #FF0000; } }' );
+
+		// Assert.
+		$this->assertSame( [ 'color_dropdown_item' => '#111111' ], $result['settings_patch'] );
+		$this->assertCount( 1, $result['warnings'] );
+	}
+
 	public function test_serialize__renders_targets_states_and_breakpoints() {
 		// Arrange.
 		$settings = [
