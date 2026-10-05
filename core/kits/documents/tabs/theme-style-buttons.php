@@ -8,7 +8,6 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,6 +17,8 @@ class Theme_Style_Buttons extends Tab_Base {
 
 	/**
 	 * Matches atomic (V4) elements without adding specificity, so V3 output keeps its current weight.
+	 * `data-interaction-id` is rendered by `Atomic_Element_Base`; `e-atomic-element` covers atomic
+	 * templates rendered without it (e.g. carousel controls).
 	 */
 	const ATOMIC_ELEMENTS_EXCLUSION = ':not(:where(.e-atomic-element, [data-interaction-id]))';
 
@@ -62,6 +63,11 @@ class Theme_Style_Buttons extends Tab_Base {
 
 		$button_selector = implode( ',', $button_selectors );
 		$button_hover_selector = implode( ',', $button_hover_selectors );
+
+		// Atomic elements resolve their background through their own style props. A Kit background,
+		// and a gradient's `background-image` in particular, would otherwise paint over them.
+		$button_background_selector = $this->exclude_atomic_elements( $button_selectors );
+		$button_hover_background_selector = $this->exclude_atomic_elements( $button_hover_selectors );
 
 		$this->start_controls_section(
 			'section_buttons',
@@ -116,7 +122,7 @@ class Theme_Style_Buttons extends Tab_Base {
 				'name' => 'button_background',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => $button_selector,
+				'selector' => $button_background_selector,
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -127,7 +133,7 @@ class Theme_Style_Buttons extends Tab_Base {
 					'color_b' => [
 						'dynamic' => [],
 					],
-				] + $this->get_gradient_fields_options( $button_selectors ),
+				],
 			]
 		);
 
@@ -191,7 +197,7 @@ class Theme_Style_Buttons extends Tab_Base {
 				'name' => 'button_hover_background',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => $button_hover_selector,
+				'selector' => $button_hover_background_selector,
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -202,7 +208,7 @@ class Theme_Style_Buttons extends Tab_Base {
 					'color_b' => [
 						'dynamic' => [],
 					],
-				] + $this->get_gradient_fields_options( $button_hover_selectors ),
+				],
 			]
 		);
 
@@ -259,31 +265,10 @@ class Theme_Style_Buttons extends Tab_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * A Kit gradient is written to `background-image`, which an atomic element's own background color
-	 * doesn't override, so the gradient would be painted on top of it. Keep Kit gradients off atomic
-	 * elements; they resolve their background through their own style props.
-	 */
-	private function get_gradient_fields_options( array $selectors ): array {
-		$selector = implode( ',', array_map(
+	private function exclude_atomic_elements( array $selectors ): string {
+		return implode( ',', array_map(
 			fn( $selector ) => $selector . self::ATOMIC_ELEMENTS_EXCLUSION,
 			$selectors
 		) );
-
-		$background_fields = Plugin::$instance->controls_manager
-			->get_control_groups( Group_Control_Background::get_type() )
-			->get_fields();
-
-		$fields_options = [];
-
-		foreach ( [ 'gradient_angle', 'gradient_position' ] as $field_key ) {
-			$fields_options[ $field_key ] = [
-				'selectors' => [
-					$selector => $background_fields[ $field_key ]['selectors']['{{SELECTOR}}'],
-				],
-			];
-		}
-
-		return $fields_options;
 	}
 }

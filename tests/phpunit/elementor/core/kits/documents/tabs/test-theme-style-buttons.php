@@ -44,7 +44,7 @@ class Test_Theme_Style_Buttons extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$selectors = $this->get_selectors_of_rules_containing( 'linear-gradient(' );
+		$selectors = $this->get_selectors_of_rules_containing( 'background' );
 
 		// Assert.
 		$this->assertSame( $this->get_expected_selectors( self::BUTTON_ELEMENTS ), $selectors );
@@ -66,30 +66,7 @@ class Test_Theme_Style_Buttons extends Elementor_Test_Base {
 		$this->assertSame( $this->get_expected_selectors( self::BUTTON_ELEMENTS ), $selectors );
 	}
 
-	public function test_hover_gradient__excludes_atomic_elements() {
-		// Arrange.
-		$this->save_kit_settings( [
-			'button_hover_background_background' => 'gradient',
-			'button_hover_background_gradient_type' => 'linear',
-			'button_hover_background_color' => '#00A32A',
-			'button_hover_background_color_b' => '#FFEE00',
-		] );
-
-		$hover_elements = [];
-
-		foreach ( self::BUTTON_ELEMENTS as $element ) {
-			$hover_elements[] = $element . ':hover';
-			$hover_elements[] = $element . ':focus';
-		}
-
-		// Act.
-		$selectors = $this->get_selectors_of_rules_containing( 'linear-gradient(' );
-
-		// Assert.
-		$this->assertSame( $this->get_expected_selectors( $hover_elements ), $selectors );
-	}
-
-	public function test_gradient__keeps_gradient_value_from_background_control() {
+	public function test_gradient__overrides_its_own_first_color_with_transparent() {
 		// Arrange.
 		$this->save_kit_settings( [
 			'button_background_background' => 'gradient',
@@ -110,17 +87,55 @@ class Test_Theme_Style_Buttons extends Elementor_Test_Base {
 			'background-color:transparent;background-image:linear-gradient(90deg, #2B00FF 0%, #00FFD0 100%)',
 			$css
 		);
+		$this->assertStringNotContainsString( 'background-color:#2B00FF', $css );
 	}
 
-	public function test_classic_background_color__still_applies_to_atomic_elements() {
+	public function test_hover_gradient__excludes_atomic_elements_including_its_first_color() {
+		// Arrange.
+		$this->save_kit_settings( [
+			'button_hover_background_background' => 'gradient',
+			'button_hover_background_gradient_type' => 'linear',
+			'button_hover_background_color' => '#00A32A',
+			'button_hover_background_color_b' => '#FFEE00',
+		] );
+
+		// Act.
+		$selectors = $this->get_selectors_of_rules_containing( 'background' );
+
+		// Assert.
+		$this->assertSame( $this->get_expected_selectors( $this->get_hover_elements() ), $selectors );
+		$this->assertStringNotContainsString( 'background-color:#00A32A', $this->get_kit_css() );
+	}
+
+	public function test_classic_background_color__excludes_atomic_elements() {
 		// Arrange.
 		$this->save_kit_settings( [
 			'button_background_background' => 'classic',
 			'button_background_color' => '#2B00FF',
+			'button_hover_background_background' => 'classic',
+			'button_hover_background_color' => '#00A32A',
 		] );
 
 		// Act.
 		$selectors = $this->get_selectors_of_rules_containing( 'background-color:#2B00FF' );
+		$hover_selectors = $this->get_selectors_of_rules_containing( 'background-color:#00A32A' );
+
+		// Assert.
+		$this->assertSame( $this->get_expected_selectors( self::BUTTON_ELEMENTS ), $selectors );
+		$this->assertSame( $this->get_expected_selectors( $this->get_hover_elements() ), $hover_selectors );
+	}
+
+	public function test_non_background_styles__still_apply_to_atomic_elements() {
+		// Arrange.
+		$this->save_kit_settings( [
+			'button_background_background' => 'gradient',
+			'button_background_color' => '#2B00FF',
+			'button_background_color_b' => '#00FFD0',
+			'button_text_color' => '#123456',
+		] );
+
+		// Act.
+		$selectors = $this->get_selectors_of_rules_containing( 'color:#123456' );
 
 		// Assert.
 		$wrapper = $this->get_wrapper();
@@ -171,6 +186,17 @@ class Test_Theme_Style_Buttons extends Elementor_Test_Base {
 			fn( $element ) => "{$wrapper} {$element}" . Theme_Style_Buttons::ATOMIC_ELEMENTS_EXCLUSION,
 			$elements
 		);
+	}
+
+	private function get_hover_elements(): array {
+		$hover_elements = [];
+
+		foreach ( self::BUTTON_ELEMENTS as $element ) {
+			$hover_elements[] = $element . ':hover';
+			$hover_elements[] = $element . ':focus';
+		}
+
+		return $hover_elements;
 	}
 
 	private function get_wrapper(): string {
