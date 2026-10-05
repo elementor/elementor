@@ -47,7 +47,7 @@ class Promotional_Pointer {
 		$pointer_content .= sprintf(
 			'<p><a class="button button-primary" href="%s" target="_blank">%s</a></p>',
 			esc_url( $assets_data['cta_url'] ),
-			esc_html( $assets_data['cta_text'] ?? __( 'View Deals', 'elementor' ) )
+			esc_html( ! empty( $assets_data['cta_text'] ) ? $assets_data['cta_text'] : __( 'View Deals', 'elementor' ) )
 		);
 
 		$allowed_tags = [

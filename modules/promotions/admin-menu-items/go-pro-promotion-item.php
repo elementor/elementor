@@ -49,6 +49,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public static function get_url() {
 		$assets_data = self::get_side_menu_assets_data();
+		$url         = self::URL;
 
 		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
 			$parsed = wp_parse_url( $assets_data['url'] );
@@ -56,16 +57,16 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 			$host   = $parsed['host'] ?? '';
 
 			if ( 'https' === $scheme && ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) ) ) {
-				return esc_url( $assets_data['url'] );
+				$url = $assets_data['url'];
 			}
 		}
 
 		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
-			[ 'upgrade_url' => self::URL ],
+			[ 'upgrade_url' => $url ],
 			'elementor/admin_menu/custom_promotion',
 			'upgrade_url'
 		);
-		return $promotion_data['upgrade_url'];
+		return esc_url_raw( $promotion_data['upgrade_url'] );
 	}
 
 	public function render() {

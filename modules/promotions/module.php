@@ -117,7 +117,12 @@ class Module extends Base_Module {
 		}
 
 		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
-			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+			add_filter( 'allowed_redirect_hosts', function ( $hosts ) {
+				$hosts[] = 'elementor.com';
+				$hosts[] = 'go.elementor.com';
+				return $hosts;
+			} );
+			wp_safe_redirect( Go_Pro_Promotion_Item::get_url() );
 			die;
 		}
 	}

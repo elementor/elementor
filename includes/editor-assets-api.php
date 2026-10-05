@@ -12,7 +12,8 @@ class EditorAssetsAPI {
 
 	const ASSETS_DATA_EXPIRATION = 'ASSETS_DATA_EXPIRATION';
 
-	const DEFAULT_EXPIRATION_TIME = '+1 hour';
+	const DEFAULT_EXPIRATION_TIME  = '+1 hour';
+	const FAILED_FETCH_EXPIRATION  = '+30 minutes';
 
 	const PRODUCTION_URL = 'https://assets.elementor.com';
 	const STAGING_URL = 'https://assets.stg.elementor.red';
@@ -39,7 +40,7 @@ class EditorAssetsAPI {
 					// Fetch failed and there is no existing cache. Write an empty
 					// entry with a short TTL so repeated page loads don't make
 					// blocking HTTP calls until the CDN recovers.
-					$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), [], '+30 minutes' );
+					$this->set_transient( $this->config( static::ASSETS_DATA_TRANSIENT_KEY ), [], static::FAILED_FETCH_EXPIRATION );
 				}
 				return ! empty( $assets_data ) ? $assets_data : [];
 			}

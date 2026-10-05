@@ -75,7 +75,9 @@ namespace {
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
+use Elementor\Modules\Promotions\Module;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionMethod;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -106,6 +108,7 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 		if ( function_exists( 'delete_option' ) ) {
 			delete_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
 		}
+		unset( $GLOBALS['submenu']['elementor-home'] );
 	}
 
 	/**
@@ -221,6 +224,89 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 
 		// Assert — domain filter must block non-elementor.com URL and fall back to default.
 		$this->assertSame( Go_Pro_Promotion_Item::URL, $url );
+	}
+
+	// --- override_one_menu_upgrade_label_during_sale tests ---
+
+	public function test_override_label__returns_menu_unchanged_when_cdn_inactive() {
+		// Arrange — no CDN data seeded; HTTP blocked → assets_data will be empty.
+		$menu = [];
+
+		// Act
+		$result = $this->make_module()->override_one_menu_upgrade_label_during_sale( $menu );
+
+		// Assert
+		$this->assertSame( $menu, $result );
+	}
+
+	public function test_override_label__returns_menu_unchanged_when_submenu_not_set() {
+		// Arrange — CDN active but submenu['elementor-home'] not populated.
+		$this->seed_side_menu_cdn_data( [
+			'is_active' => true,
+			'label'     => 'Sale!',
+			'url'       => 'https://go.elementor.com/test/',
+		] );
+
+		unset( $GLOBALS['submenu']['elementor-home'] );
+		$menu = [];
+
+		// Act
+		$result = $this->make_module()->override_one_menu_upgrade_label_during_sale( $menu );
+
+		// Assert
+		$this->assertSame( $menu, $result );
+	}
+
+	public function test_override_label__updates_upgrade_item_label_when_cdn_active() {
+		// Arrange
+		$this->seed_side_menu_cdn_data( [
+			'is_active' => true,
+			'label'     => 'Sale Now!',
+			'url'       => 'https://go.elementor.com/test/',
+		] );
+
+		$GLOBALS['submenu']['elementor-home'] = [
+			0 => [ 'Dashboard', 'manage_options', 'elementor-home', 'Dashboard' ],
+			1 => [ 'Upgrade', 'manage_options', 'elementor-one-upgrade', 'Upgrade' ],
+		];
+
+		// Act
+		$this->make_module()->override_one_menu_upgrade_label_during_sale( [] );
+
+		// Assert — upgrade item's label must be replaced; other items must be untouched.
+		$this->assertSame( 'Sale Now!', $GLOBALS['submenu']['elementor-home'][1][0] );
+		$this->assertSame( 'Dashboard', $GLOBALS['submenu']['elementor-home'][0][0] );
+	}
+
+	public function test_override_label__does_not_modify_when_cdn_is_active_false() {
+		// Arrange — payload present but is_active = false.
+		$this->seed_side_menu_cdn_data( [
+			'is_active' => false,
+			'label'     => 'Sale Now!',
+			'url'       => 'https://go.elementor.com/test/',
+		] );
+
+		$original_label = 'Upgrade';
+		$GLOBALS['submenu']['elementor-home'] = [
+			1 => [ $original_label, 'manage_options', 'elementor-one-upgrade', $original_label ],
+		];
+
+		// Act
+		$this->make_module()->override_one_menu_upgrade_label_during_sale( [] );
+
+		// Assert — label must not have changed.
+		$this->assertSame( $original_label, $GLOBALS['submenu']['elementor-home'][1][0] );
+	}
+
+	private function make_module(): Module {
+		return ( new ReflectionClass( Module::class ) )->newInstanceWithoutConstructor();
+	}
+
+	private function seed_side_menu_cdn_data( array $payload ): void {
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $payload ),
+		] );
 	}
 }
 
