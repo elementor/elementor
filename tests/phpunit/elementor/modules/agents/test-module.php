@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -57,6 +58,13 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
+	public function test_editor_one_menu_hooks_are_registered_when_experiment_is_active() {
+		// Assert
+		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
+		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
+		$this->assertNotFalse( has_filter( 'elementor/editor/v2/packages', [ $this->module, 'add_packages' ] ) );
+	}
+
 	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
@@ -77,6 +85,47 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( $module->get_component( 'link_headers' ) );
 		$this->assertFalse( $module->get_component( 'markdown_endpoint' ) );
 		$this->assertFalse( $module->get_component( 'well_known_router' ) );
+		$this->assertFalse( has_action( 'elementor/editor-one/menu/register', [ $module, 'register_editor_one_menu' ] ) );
+		$this->assertFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $module, 'enqueue_assets_for_editor_one_menu' ] ) );
+	}
+
+	public function test_ajax_opt_in__activates_experiment_for_admin() {
+		// Arrange
+		$this->act_as_admin();
+		$feature_key = Plugin::$instance->experiments->get_feature_option_key( Module::EXPERIMENT_NAME );
+		update_option( $feature_key, Experiments_Manager::STATE_INACTIVE );
+
+		// Act
+		$this->module->ajax_opt_in();
+
+		// Assert
+		$this->assertSame( Experiments_Manager::STATE_ACTIVE, get_option( $feature_key ) );
+	}
+
+	public function test_ajax_opt_in__rejects_unauthorized_user() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act & Assert
+		$this->expectException( \Exception::class );
+		$this->module->ajax_opt_in();
+	}
+
+	public function test_register_editor_one_menu__registers_agents_ready_menu_item() {
+		// Arrange
+		$instance_property = ( new \ReflectionClass( Menu_Data_Provider::class ) )->getProperty( 'instance' );
+		$instance_property->setAccessible( true );
+		$instance_property->setValue( null, null );
+		$menu_data_provider = Menu_Data_Provider::instance();
+
+		// Act
+		$this->module->register_editor_one_menu( $menu_data_provider );
+
+		// Assert
+		$this->assertTrue( $menu_data_provider->is_item_already_registered( Module::PAGE_ID ) );
+
+		// Cleanup
+		$instance_property->setValue( null, null );
 	}
 
 	public function test_get_llms_txt_content__returns_empty_when_not_configured() {

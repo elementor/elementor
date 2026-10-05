@@ -16,19 +16,11 @@ const CARD_WIDTH = 296;
 const IMAGE_HEIGHT = 176;
 const DEFAULT_CTA_TEXT = __( 'Upgrade Now', 'elementor' );
 
-const openCtaInNewTab = ( ctaUrl ) => {
-	if ( ! ctaUrl ) {
-		return;
-	}
-
-	window.open( ctaUrl, '_blank', 'noopener,noreferrer' );
-};
-
 const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 	const { title, content, image, ctaUrl, ctaText, hideProTag } = promotionData;
 
 	return (
-		<ClickAwayListener disableReactTree={ true } mouseEvent="onClick" touchEvent="onTouchEnd" onClickAway={ doClose }>
+		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
 			<Box sx={ { width: CARD_WIDTH } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
@@ -54,7 +46,9 @@ const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 						variant="contained"
 						size="small"
 						color={ hideProTag ? 'info' : 'promotion' }
-						onClick={ () => openCtaInNewTab( ctaUrl ) }
+						href={ ctaUrl }
+						target="_blank"
+						rel="noopener noreferrer"
 						startIcon={ hideProTag ? null : <CrownFilledIcon /> }
 						sx={ { ml: 'auto' } }
 					>

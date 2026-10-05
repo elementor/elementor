@@ -27,6 +27,10 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 	ally_plugin_active: false,
 	ally_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
+	ally_accessibility_statement_created: false,
+	ally_accessibility_statement_url:
+		'https://example.com/wp-admin/admin.php?page=accessibility-settings#accessibilityStatement',
+	ally_widget_settings_url: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#capabilities',
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
 	cookiez_plugin_installed: false,
