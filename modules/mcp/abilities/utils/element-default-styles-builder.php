@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * element before any inline/global class overrides.
  *
  * Each layer is rendered via Styles_Renderer (same pipeline as frontend enqueue), then
- * concatenated in cascade order: widget base_styles first, kit site-wide default for the
- * element's rendered tag second.
+ * concatenated in cascade order: the `.e-con` shell of atomic elements first, widget
+ * base_styles second, kit site-wide default for the element's rendered tag last.
  */
 class Element_Default_Styles_Builder {
 
@@ -24,7 +24,8 @@ class Element_Default_Styles_Builder {
 		array $widget_base_style_defs,
 		?string $tag,
 		?Default_Styles_Repository $repository,
-		?Styles_Renderer $renderer = null
+		?Styles_Renderer $renderer = null,
+		string $shell_css = ''
 	): string {
 		$renderer = $renderer ?? Styles_Renderer::make( Plugin::$instance->breakpoints->get_breakpoints_config() );
 
@@ -34,7 +35,13 @@ class Element_Default_Styles_Builder {
 
 		$default_css = self::render_kit_default( $tag, $repository, $renderer );
 
-		return trim( $base_css . "\n" . $default_css );
+		$layers = array_filter( [
+			$shell_css,
+			$base_css,
+			$default_css,
+		] );
+
+		return trim( implode( "\n", $layers ) );
 	}
 
 	public static function render_kit_default(
