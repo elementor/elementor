@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,13 +17,15 @@ class V3_Context_Meta {
 	private array $overrides;
 	private array $generic_index;
 	private bool $is_map_driven;
+	private array $style_bindings;
 
-	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index, bool $is_map_driven = false ) {
+	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index, bool $is_map_driven = false, array $style_bindings = [] ) {
 		$this->widget_type = $widget_type;
 		$this->widget_config = $widget_config;
 		$this->overrides = $overrides;
 		$this->generic_index = $generic_index;
 		$this->is_map_driven = $is_map_driven;
+		$this->style_bindings = $style_bindings;
 	}
 
 	public function is_map_driven(): bool {
@@ -38,6 +38,10 @@ class V3_Context_Meta {
 
 	public function widget_config(): array {
 		return $this->widget_config;
+	}
+
+	public function style_bindings(): array {
+		return $this->style_bindings;
 	}
 
 	public function overrides(): array {
@@ -58,18 +62,14 @@ class V3_Context_Meta {
 		return array_key_exists( $key, $this->controls() );
 	}
 
-	public function is_responsive_control( string $key ): bool {
-		return ! empty( $this->controls()[ $key ]['is_responsive'] );
-	}
-
 	public function match_key( string $property, ?string $state ): string {
 		return null === $state ? $property : $property . '@' . $state;
 	}
 
 	public function get_override( string $property, ?string $state, ?string $target = null ): ?array {
-		$key = V3_Map_Overrides_Builder::match_key( $target, $property, $state );
+		unset( $target );
 
-		return $this->overrides[ $key ] ?? null;
+		return $this->overrides[ $this->match_key( $property, $state ) ] ?? null;
 	}
 
 	public function get_generic_rule( string $property, ?string $state ): ?array {

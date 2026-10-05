@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Choice_Values;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +15,14 @@ class V3_Widget_Map_Compiler {
 
 	const ERROR_CODE = 'elementor_v3_map_invalid';
 
+	const CATALOG_VISIBILITY_ALWAYS = 'always';
+
+	const CATALOG_VISIBILITY_V4_DISABLED = 'v4_disabled';
+
+	const DEFAULT_STATE_KEY = Style_Target::DEFAULT_STATE;
+
+	const ALIAS_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
+
 	const REQUIRED_FIELDS = [
 		'widget_type',
 		'description',
@@ -21,33 +31,18 @@ class V3_Widget_Map_Compiler {
 		'style_targets',
 	];
 
-	const COMPATIBLE_CONTROL_TYPES = [
-		'color' => [ 'color' ],
-		'slider' => [ 'slider' ],
-		'dimension' => [ 'slider' ],
-		'line_height' => [ 'slider' ],
-		'font_family' => [ 'font' ],
-		'number' => [ 'number' ],
-		'sides' => [ 'dimensions' ],
-		Style_Control_Target::TYPOGRAPHY_TOGGLE_RESOLVER => [ 'popover_toggle' ],
-		Style_Control_Target::CHOICE_RESOLVER => [ 'select', 'choose' ],
-		Style_Control_Target::BORDER_STYLE_RESOLVER => [ 'select' ],
-		Style_Control_Target::BOX_SHADOW_RESOLVER => [ 'box_shadow' ],
-		Style_Control_Target::BOX_SHADOW_TOGGLE_RESOLVER => [ 'popover_toggle' ],
-	];
+	/** @var array<string, Prop_Type>|null */
+	private ?array $style_schema;
 
-	const SUPPORTED_DESCRIPTOR_KINDS = [
-		Style_Control_Target::KIND_SIMPLE,
-		Style_Control_Target::KIND_TYPOGRAPHY,
-		Style_Control_Target::KIND_BORDER,
-		Style_Control_Target::KIND_BOX_SHADOW,
-	];
+	private V3_Control_Adapter_Registry $adapters;
 
-	const DEFAULT_STATE_KEY = 'default';
-
-	const ALLOWED_STATE_KEYS = [ self::DEFAULT_STATE_KEY, 'hover', 'selected' ];
-
-	const RESPONSIVE_PROBE_SUFFIX = '_mobile';
+	/**
+	 * @param array<string, Prop_Type>|null $style_schema
+	 */
+	public function __construct( ?array $style_schema = null, ?V3_Control_Adapter_Registry $adapters = null ) {
+		$this->style_schema = $style_schema;
+		$this->adapters = $adapters ?? V3_Control_Adapter_Registry::create_default();
+	}
 
 	/**
 	 * @param array<string, mixed> $map
@@ -79,20 +74,20 @@ class V3_Widget_Map_Compiler {
 	private function validate_map_shape( array $map, ?string $expected_widget_type ) {
 		foreach ( self::REQUIRED_FIELDS as $field ) {
 			if ( ! array_key_exists( $field, $map ) || ( is_string( $map[ $field ] ) && '' === $map[ $field ] ) ) {
-				return $this->error( 'missing_field', $field );
+				return self::error( 'missing_field', $field );
 			}
 		}
 
 		if ( null !== $expected_widget_type && $expected_widget_type !== $map['widget_type'] ) {
-			return $this->error( 'widget_type_mismatch', $map['widget_type'] );
+			return self::error( 'widget_type_mismatch', $map['widget_type'] );
 		}
 
 		if ( ! is_array( $map['settings'] ) || ! is_array( $map['style_targets'] ) || empty( $map['style_targets'] ) ) {
-			return $this->error( 'missing_field', 'style_targets' );
+			return self::error( 'missing_field', 'style_targets' );
 		}
 
 		if ( ! isset( $map['style_targets'][ $map['default_style_target'] ] ) ) {
-			return $this->error( 'missing_default_style_target', $map['default_style_target'] );
+			return self::error( 'missing_default_style_target', $map['default_style_target'] );
 		}
 
 		return null;
@@ -104,139 +99,40 @@ class V3_Widget_Map_Compiler {
 	 * @return array<string, mixed>|WP_Error
 	 */
 	private function validate_style_targets( array $map, array $controls ) {
+		$binding_compiler = new V3_Style_Binding_Compiler( $this->style_schema ?? Style_Schema::get(), $this->adapters );
+		$compiled_targets = [];
+
 		foreach ( $map['style_targets'] as $alias => $target ) {
-			if ( ! is_string( $alias ) || 1 !== preg_match( '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $alias ) ) {
-				return $this->error( 'invalid_alias', (string) $alias );
+			if ( ! is_string( $alias ) || 1 !== preg_match( self::ALIAS_PATTERN, $alias ) ) {
+				return self::error( 'invalid_alias', (string) $alias );
 			}
 
-			if ( ! is_array( $target ) || ! is_array( $target['css_properties'] ?? null ) ) {
-				return $this->error( 'missing_field', 'css_properties' );
+			if ( ! $target instanceof Style_Target ) {
+				return self::error( 'invalid_style_target', $alias );
 			}
 
-			foreach ( $target['css_properties'] as $property => $states ) {
-				if ( ! is_array( $states ) ) {
-					return $this->error( 'missing_field', (string) $property );
-				}
+			$bindings = $binding_compiler->compile( $target, $controls );
 
-				foreach ( $states as $state_key => $descriptor ) {
-					if ( ! in_array( $state_key, self::ALLOWED_STATE_KEYS, true ) ) {
-						return $this->error( 'invalid_state_key', (string) $state_key );
-					}
-
-					$descriptor_error = $this->validate_descriptor( $descriptor, $controls );
-
-					if ( $descriptor_error instanceof WP_Error ) {
-						return $descriptor_error;
-					}
-
-					$compiled_descriptor = $this->compile_choice_values( $descriptor, $controls );
-
-					if ( $compiled_descriptor instanceof WP_Error ) {
-						return $compiled_descriptor;
-					}
-
-					$map['style_targets'][ $alias ]['css_properties'][ $property ][ $state_key ] = $compiled_descriptor;
-				}
+			if ( $bindings instanceof WP_Error ) {
+				return $bindings;
 			}
+
+			foreach ( $bindings as $index => $binding ) {
+				$bindings[ $index ]['target'] = $alias;
+			}
+
+			$compiled_targets[ $alias ] = [
+				'label' => $target->get_label(),
+				'bindings' => $bindings,
+			];
 		}
+
+		$map['style_targets'] = $compiled_targets;
 
 		return $map;
 	}
 
-	/**
-	 * @param mixed                $descriptor
-	 * @param array<string, mixed> $controls
-	 * @return WP_Error|null
-	 */
-	private function validate_descriptor( $descriptor, array $controls ) {
-		if ( ! is_array( $descriptor ) || ! is_string( $descriptor['kind'] ?? null ) ) {
-			return $this->error( 'invalid_descriptor_kind', '' );
-		}
-
-		if ( ! in_array( $descriptor['kind'], self::SUPPORTED_DESCRIPTOR_KINDS, true ) ) {
-			return $this->error( 'invalid_descriptor_kind', $descriptor['kind'] );
-		}
-
-		$destinations = $descriptor['destinations'] ?? null;
-
-		if ( ! is_array( $destinations ) || empty( $destinations ) ) {
-			return $this->error( 'missing_field', 'destinations' );
-		}
-
-		foreach ( $destinations as $destination ) {
-			$setting = $destination['setting'] ?? null;
-
-			if ( ! is_string( $setting ) || '' === $setting ) {
-				return $this->error( 'missing_control', '' );
-			}
-
-			if ( ! isset( $controls[ $setting ] ) ) {
-				return $this->error( 'missing_control', $setting );
-			}
-
-			$resolver = $destination['resolver'] ?? $descriptor['resolver'] ?? '';
-			$control_type = $controls[ $setting ]['type'] ?? '';
-
-			if ( ! $this->is_resolver_compatible( $resolver, $control_type ) ) {
-				return $this->error( 'incompatible_resolver', $setting );
-			}
-		}
-
-		$primary_setting = $destinations[0]['setting'];
-
-		if ( ! empty( $descriptor['responsive'] ) && ! $this->is_responsive_control( $primary_setting, $controls ) ) {
-			return $this->error( 'incompatible_responsive_control', $primary_setting );
-		}
-
-		return null;
-	}
-
-	/**
-	 * @param array<string, mixed> $descriptor
-	 * @param array<string, mixed> $controls
-	 * @return array<string, mixed>|WP_Error
-	 */
-	private function compile_choice_values( array $descriptor, array $controls ) {
-		if ( Style_Control_Target::CHOICE_RESOLVER !== ( $descriptor['resolver'] ?? null ) ) {
-			return $descriptor;
-		}
-
-		$setting = $descriptor['destinations'][0]['setting'];
-		$css_values = is_array( $descriptor['css_values'] ?? null ) ? $descriptor['css_values'] : null;
-		$value_map = V3_Choice_Values::build_value_map( $controls[ $setting ], $css_values );
-
-		if ( null === $value_map ) {
-			return $this->error( 'incompatible_choice_values', $setting );
-		}
-
-		$descriptor['value_map'] = $value_map;
-
-		return $descriptor;
-	}
-
-	/**
-	 * Responsive controls are either registered once with `is_responsive` (when responsive
-	 * control duplication is off) or duplicated per device with a `_<device>` suffix.
-	 *
-	 * @param string               $setting
-	 * @param array<string, mixed> $controls
-	 */
-	private function is_responsive_control( string $setting, array $controls ): bool {
-		return ! empty( $controls[ $setting ]['is_responsive'] )
-			|| isset( $controls[ $setting . self::RESPONSIVE_PROBE_SUFFIX ] );
-	}
-
-	private function is_resolver_compatible( string $resolver, string $control_type ): bool {
-		$allowed = self::COMPATIBLE_CONTROL_TYPES[ $resolver ] ?? null;
-
-		if ( null === $allowed ) {
-			return true;
-		}
-
-		return in_array( $control_type, $allowed, true );
-	}
-
-	private function error( string $reason, string $detail ): WP_Error {
+	public static function error( string $reason, string $detail ): WP_Error {
 		return new WP_Error(
 			self::ERROR_CODE,
 			$reason,

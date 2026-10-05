@@ -1,11 +1,21 @@
 <?php
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Setting_Schemas;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$custom_typography = Dependency_Manager::make()
+	->where( [
+		'operator' => 'eq',
+		'path' => [ 'typography_typography' ],
+		'value' => 'custom',
+	] )
+	->get();
 
 return [
 	'widget_type' => 'heading',
@@ -21,23 +31,11 @@ return [
 	],
 	'default_style_target' => 'heading',
 	'style_targets' => [
-		'heading' => [
-			'label' => 'Heading',
-			'css_properties' => [
-				'color' => [
-					'default' => Style_Control_Target::control( 'title_color', 'color' ),
-					'hover' => Style_Control_Target::control( 'title_hover_color', 'color' ),
-				],
-				'font-size' => [
-					'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ),
-				],
-				'line-height' => [
-					'default' => Style_Control_Target::typography( 'typography', 'line_height', 'line_height', true ),
-				],
-				'font-weight' => [
-					'default' => Style_Control_Target::typography( 'typography', 'font_weight', 'text' ),
-				],
-			],
-		],
+		'heading' => Style_Target::make( 'Heading' )
+			->bind( 'color', V3_Control::bind_to( 'title_color' ) )
+			->bind( 'color', V3_Control::bind_to( 'title_hover_color' ), 'hover' )
+			->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive()->set_dependencies( $custom_typography ) )
+			->bind( 'line-height', V3_Control::bind_to( 'typography_line_height' )->responsive()->set_dependencies( $custom_typography ) )
+			->bind( 'font-weight', V3_Control::bind_to( 'typography_font_weight' )->set_dependencies( $custom_typography ) ),
 	],
 ];

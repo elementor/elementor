@@ -2,11 +2,39 @@
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Advanced_Style_Fragments;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Setting_Schemas;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Bindings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$main_menu = Style_Target::make( 'Main menu items' );
+Style_Bindings::typography( $main_menu, 'menu_typography' );
+$main_menu
+	->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) )
+	->bind( 'color', V3_Control::bind_to( 'color_menu_item_hover' ), 'hover' )
+	->bind( 'color', V3_Control::bind_to( 'color_menu_item_active' ), 'selected' )
+	->bind( 'padding', V3_Control::bind_to( 'padding_horizontal_menu_item' )->responsive()->sides( 'inline-start', 'inline-end' ) )
+	->bind( 'padding', V3_Control::bind_to( 'padding_vertical_menu_item' )->responsive()->sides( 'block-start', 'block-end' ) )
+	->bind( 'gap', V3_Control::bind_to( 'menu_space_between' )->responsive() );
+
+$dropdown = Style_Target::make( 'Submenu on desktop, and the whole menu on mobile' );
+Style_Bindings::typography( $dropdown, 'dropdown_typography', [ 'line-height' ] );
+Style_Bindings::border( $dropdown, 'dropdown_border' );
+Style_Bindings::box_shadow( $dropdown, 'dropdown_box_shadow' );
+$dropdown
+	->bind( 'color', V3_Control::bind_to( 'color_dropdown_item' ) )
+	->bind( 'color', V3_Control::bind_to( 'color_dropdown_item_hover' ), 'hover' )
+	->bind( 'color', V3_Control::bind_to( 'color_dropdown_item_active' ), 'selected' )
+	->bind( 'background', V3_Control::bind_to( 'background_color_dropdown_item' ) )
+	->bind( 'background', V3_Control::bind_to( 'background_color_dropdown_item_hover' ), 'hover' )
+	->bind( 'background', V3_Control::bind_to( 'background_color_dropdown_item_active' ), 'selected' )
+	->bind( 'border-radius', V3_Control::bind_to( 'dropdown_border_radius' )->responsive() )
+	->bind( 'padding', V3_Control::bind_to( 'padding_horizontal_dropdown_item' )->responsive()->sides( 'inline-start', 'inline-end' ) )
+	->bind( 'padding', V3_Control::bind_to( 'padding_vertical_dropdown_item' )->responsive()->sides( 'block-start', 'block-end' ) )
+	->bind( 'margin', V3_Control::bind_to( 'dropdown_top_distance' )->responsive()->sides( 'block-start' ) );
 
 return [
 	'widget_type' => 'nav-menu',
@@ -34,131 +62,31 @@ return [
 	],
 	'default_style_target' => 'main-menu',
 	'style_targets' => [
-		'main-menu' => [
-			'label' => 'Main menu items',
-			'css_properties' => Style_Control_Target::typography_group( 'menu_typography' ) + [
-				'color' => [
-					'default' => Style_Control_Target::control( 'color_menu_item', 'color' ),
-					'hover' => Style_Control_Target::control( 'color_menu_item_hover', 'color' ),
-					'selected' => Style_Control_Target::control( 'color_menu_item_active', 'color' ),
-				],
-				'padding-inline' => [
-					'default' => Style_Control_Target::control( 'padding_horizontal_menu_item', 'slider', true ),
-				],
-				'padding-block' => [
-					'default' => Style_Control_Target::control( 'padding_vertical_menu_item', 'slider', true ),
-				],
-				'gap' => [
-					'default' => Style_Control_Target::control( 'menu_space_between', 'slider', true ),
-				],
-			],
-		],
-		'pointer' => [
-			'label' => 'Main menu hover pointer (underline, overline, frame or background); color is the item text over a background pointer',
-			'css_properties' => [
-				'color' => [
-					'hover' => Style_Control_Target::control( 'color_menu_item_hover_pointer_bg', 'color' ),
-				],
-				'background-color' => [
-					'hover' => Style_Control_Target::control( 'pointer_color_menu_item_hover', 'color' ),
-					'selected' => Style_Control_Target::control( 'pointer_color_menu_item_active', 'color' ),
-				],
-				'border-width' => [
-					'default' => Style_Control_Target::control( 'pointer_width', 'slider', true ),
-				],
-				'border-radius' => [
-					'default' => Style_Control_Target::control( 'border_radius_menu_item', 'slider', true ),
-				],
-			],
-		],
-		'divider' => [
-			'label' => 'Divider between horizontal main menu items',
-			'css_properties' => [
-				'border-style' => [
-					'default' => Style_Control_Target::choice( 'nav_menu_divider_style' ),
-				],
-				'border-width' => [
-					'default' => Style_Control_Target::control( 'nav_menu_divider_weight', 'slider' ),
-				],
-				'height' => [
-					'default' => Style_Control_Target::control( 'nav_menu_divider_height', 'slider' ),
-				],
-				'border-color' => [
-					'default' => Style_Control_Target::control( 'nav_menu_divider_color', 'color' ),
-				],
-			],
-		],
-		'dropdown' => [
-			'label' => 'Submenu on desktop, and the whole menu on mobile',
-			'css_properties' => Style_Control_Target::typography_group( 'dropdown_typography', 'default', [ 'line-height' ] )
-				+ Style_Control_Target::border_group( 'dropdown_border' )
-				+ [
-					'color' => [
-						'default' => Style_Control_Target::control( 'color_dropdown_item', 'color' ),
-						'hover' => Style_Control_Target::control( 'color_dropdown_item_hover', 'color' ),
-						'selected' => Style_Control_Target::control( 'color_dropdown_item_active', 'color' ),
-					],
-					'background-color' => [
-						'default' => Style_Control_Target::control( 'background_color_dropdown_item', 'color' ),
-						'hover' => Style_Control_Target::control( 'background_color_dropdown_item_hover', 'color' ),
-						'selected' => Style_Control_Target::control( 'background_color_dropdown_item_active', 'color' ),
-					],
-					'border-radius' => [
-						'default' => Style_Control_Target::control( 'dropdown_border_radius', 'sides', true ),
-					],
-					'box-shadow' => [
-						'default' => Style_Control_Target::box_shadow( 'dropdown_box_shadow' ),
-					],
-					'padding-inline' => [
-						'default' => Style_Control_Target::control( 'padding_horizontal_dropdown_item', 'slider', true ),
-					],
-					'padding-block' => [
-						'default' => Style_Control_Target::control( 'padding_vertical_dropdown_item', 'slider', true ),
-					],
-					'margin-top' => [
-						'default' => Style_Control_Target::control( 'dropdown_top_distance', 'slider', true ),
-					],
-				],
-		],
-		'dropdown-divider' => [
-			'label' => 'Divider between dropdown items',
-			'css_properties' => [
-				'border-style' => [
-					'default' => Style_Control_Target::choice( 'dropdown_divider_border' ),
-				],
-				'border-color' => [
-					'default' => Style_Control_Target::control( 'dropdown_divider_color', 'color' ),
-				],
-				'border-width' => [
-					'default' => Style_Control_Target::control( 'dropdown_divider_width', 'slider' ),
-				],
-			],
-		],
-		'toggle' => [
-			'label' => 'Mobile menu toggle button',
-			'css_properties' => [
-				'color' => [
-					'default' => Style_Control_Target::control( 'toggle_color', 'color' ),
-					'hover' => Style_Control_Target::control( 'toggle_color_hover', 'color' ),
-				],
-				'background-color' => [
-					'default' => Style_Control_Target::control( 'toggle_background_color', 'color' ),
-					'hover' => Style_Control_Target::control( 'toggle_background_color_hover', 'color' ),
-				],
-				'font-size' => [
-					'default' => Style_Control_Target::control( 'toggle_size', 'slider', true ),
-				],
-				'border-width' => [
-					'default' => Style_Control_Target::control( 'toggle_border_width', 'slider', true ),
-				],
-				'border-radius' => [
-					'default' => Style_Control_Target::control( 'toggle_border_radius', 'slider', true ),
-				],
-			],
-		],
-		'wrapper' => [
-			'label' => 'Widget wrapper (Advanced tab: spacing, size, position, background, border)',
-			'css_properties' => Advanced_Style_Fragments::wrapper(),
-		],
+		'main-menu' => $main_menu,
+		'pointer' => Style_Target::make( 'Main menu hover pointer (underline, overline, frame or background); color is the item text over a background pointer' )
+			->bind( 'color', V3_Control::bind_to( 'color_menu_item_hover_pointer_bg' ), 'hover' )
+			->bind( 'background', V3_Control::bind_to( 'pointer_color_menu_item_hover' ), 'hover' )
+			->bind( 'background', V3_Control::bind_to( 'pointer_color_menu_item_active' ), 'selected' )
+			->bind( 'border-width', V3_Control::bind_to( 'pointer_width' )->responsive() )
+			->bind( 'border-radius', V3_Control::bind_to( 'border_radius_menu_item' )->responsive() ),
+		'divider' => Style_Target::make( 'Divider between horizontal main menu items' )
+			->bind( 'border-style', V3_Control::bind_to( 'nav_menu_divider_style' ) )
+			->bind( 'border-width', V3_Control::bind_to( 'nav_menu_divider_weight' ) )
+			->bind( 'height', V3_Control::bind_to( 'nav_menu_divider_height' ) )
+			->bind( 'border-color', V3_Control::bind_to( 'nav_menu_divider_color' ) ),
+		'dropdown' => $dropdown,
+		'dropdown-divider' => Style_Target::make( 'Divider between dropdown items' )
+			->bind( 'border-style', V3_Control::bind_to( 'dropdown_divider_border' ) )
+			->bind( 'border-color', V3_Control::bind_to( 'dropdown_divider_color' ) )
+			->bind( 'border-width', V3_Control::bind_to( 'dropdown_divider_width' ) ),
+		'toggle' => Style_Target::make( 'Mobile menu toggle button' )
+			->bind( 'color', V3_Control::bind_to( 'toggle_color' ) )
+			->bind( 'color', V3_Control::bind_to( 'toggle_color_hover' ), 'hover' )
+			->bind( 'background', V3_Control::bind_to( 'toggle_background_color' ) )
+			->bind( 'background', V3_Control::bind_to( 'toggle_background_color_hover' ), 'hover' )
+			->bind( 'font-size', V3_Control::bind_to( 'toggle_size' )->responsive() )
+			->bind( 'border-width', V3_Control::bind_to( 'toggle_border_width' )->responsive() )
+			->bind( 'border-radius', V3_Control::bind_to( 'toggle_border_radius' )->responsive() ),
+		'wrapper' => Advanced_Style_Fragments::wrapper(),
 	],
 ];

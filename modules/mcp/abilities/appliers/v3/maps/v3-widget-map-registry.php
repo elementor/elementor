@@ -184,20 +184,20 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
-	 * Returns the flat bridge-shaped `[ match_key => override ]` translation of the compiled
-	 * map's `style_targets`, or null when the map is absent, invalid, or the experiment is off.
-	 * Call sites should fall back to {@see V3_Widget_Bridge_Registry::get_style_overrides()} on null.
+	 * Returns the compiled style bindings of every target in the map, or null when the map is
+	 * absent, invalid, or the experiment is off. Call sites should fall back to
+	 * {@see V3_Widget_Bridge_Registry::get_style_overrides()} on null.
 	 *
-	 * @return array<string, array{setting: string, resolver: string, responsive?: bool}>|null
+	 * @return array<int, array<string, mixed>>|null
 	 */
-	public function get_style_overrides_from_map( string $widget_type ): ?array {
+	public function get_style_bindings( string $widget_type ): ?array {
 		$compiled = $this->get_validation_contract( $widget_type );
 
 		if ( null === $compiled ) {
 			return null;
 		}
 
-		return V3_Map_Overrides_Builder::from_style_targets( $compiled['style_targets'] ?? [] );
+		return array_merge( [], ...array_values( array_column( $compiled['style_targets'], 'bindings' ) ) );
 	}
 
 	/**
@@ -216,7 +216,7 @@ class V3_Widget_Map_Registry {
 		return [
 			'default_target' => (string) $compiled['default_style_target'],
 			'targets' => array_map( 'strval', array_keys( $compiled['style_targets'] ) ),
-			'states' => array_values( array_diff( V3_Widget_Map_Compiler::ALLOWED_STATE_KEYS, [ V3_Widget_Map_Compiler::DEFAULT_STATE_KEY ] ) ),
+			'states' => array_values( array_diff( V3_Style_Binding_Compiler::ALLOWED_STATES, [ Style_Target::DEFAULT_STATE ] ) ),
 		];
 	}
 
@@ -285,11 +285,7 @@ class V3_Widget_Map_Registry {
 		$targets = [];
 
 		foreach ( $compiled_map['style_targets'] as $alias => $target ) {
-			if ( ! is_string( $alias ) || ! is_array( $target['css_properties'] ?? null ) ) {
-				continue;
-			}
-
-			$targets[ $alias ] = array_values( array_map( 'strval', array_keys( $target['css_properties'] ) ) );
+			$targets[ $alias ] = array_values( array_unique( array_column( $target['bindings'], 'prop' ) ) );
 		}
 
 		return $targets;

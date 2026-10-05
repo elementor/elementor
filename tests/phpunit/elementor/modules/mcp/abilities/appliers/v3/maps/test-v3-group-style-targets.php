@@ -2,10 +2,13 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Bindings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
@@ -142,7 +145,7 @@ class Test_V3_Group_Style_Targets extends TestCase {
 		// Assert.
 		$this->assertStringContainsString( 'border-style: solid;', $css );
 		$this->assertStringContainsString( 'border-color: #000000;', $css );
-		$this->assertStringContainsString( 'border-width: 1px;', $css );
+		$this->assertStringContainsString( 'border-block-start-width: 1px;', $css );
 		$this->assertStringContainsString( 'box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.2);', $css );
 		$this->assertStringContainsString( 'main-menu { justify-content: center; }', $css );
 		$this->assertStringNotContainsString( 'border: ', $css );
@@ -151,7 +154,7 @@ class Test_V3_Group_Style_Targets extends TestCase {
 	public function test_compile__rejects_choice_on_declaration_valued_dictionary() {
 		// Arrange.
 		$map = $this->map();
-		$map['style_targets']['toggle']['css_properties']['margin'] = [ 'default' => Style_Control_Target::choice( 'toggle_align' ) ];
+		$map['style_targets']['toggle']->bind( 'justify-content', V3_Control::bind_to( 'toggle_align' ) );
 
 		// Act.
 		$result = ( new V3_Widget_Map_Compiler() )->compile( $map, $this->controls(), self::WIDGET_TYPE );
@@ -164,9 +167,10 @@ class Test_V3_Group_Style_Targets extends TestCase {
 	public function test_compile__rejects_explicit_choice_values_outside_control_options() {
 		// Arrange.
 		$map = $this->map();
-		$map['style_targets']['main-menu']['css_properties']['justify-content'] = [
-			'default' => Style_Control_Target::choice( 'menu_align', false, [ 'stretch' => 'stretch' ] ),
-		];
+		$map['style_targets']['main-menu'] = Style_Target::make( 'Main menu' )->bind(
+			'justify-content',
+			V3_Control::bind_to( 'menu_align' )->css_values( [ 'stretch' => 'stretch' ] )
+		);
 
 		// Act.
 		$result = ( new V3_Widget_Map_Compiler() )->compile( $map, $this->controls(), self::WIDGET_TYPE );
@@ -189,7 +193,7 @@ class Test_V3_Group_Style_Targets extends TestCase {
 	}
 
 	private function mapper(): V3_Style_Mapper {
-		$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+		$converter = new Css_Converter( Converter_Registry_Factory::create( null ), new Null_Failure_Reporter(), Expander_Registry_Factory::create( null ) );
 
 		return V3_Style_Mapper_Factory::create( $converter, self::BREAKPOINTS );
 	}
@@ -201,20 +205,12 @@ class Test_V3_Group_Style_Targets extends TestCase {
 			'settings' => [],
 			'default_style_target' => 'dropdown',
 			'style_targets' => [
-				'main-menu' => [
-					'css_properties' => [
-						'justify-content' => [ 'default' => Style_Control_Target::choice( 'menu_align' ) ],
-					],
-				],
-				'dropdown' => [
-					'css_properties' => Style_Control_Target::border_group( 'dropdown_border' ) + [
-						'box-shadow' => [ 'default' => Style_Control_Target::box_shadow( 'dropdown' ) ],
-						'border-radius' => [ 'default' => Style_Control_Target::control( 'border_radius_dropdown', 'sides' ) ],
-					],
-				],
-				'toggle' => [
-					'css_properties' => [],
-				],
+				'main-menu' => Style_Target::make( 'Main menu' )->bind( 'justify-content', V3_Control::bind_to( 'menu_align' ) ),
+				'dropdown' => Style_Bindings::box_shadow(
+					Style_Bindings::border( Style_Target::make( 'Dropdown' ), 'dropdown_border' ),
+					'dropdown'
+				)->bind( 'border-radius', V3_Control::bind_to( 'border_radius_dropdown' ) ),
+				'toggle' => Style_Target::make( 'Toggle' ),
 			],
 		];
 	}

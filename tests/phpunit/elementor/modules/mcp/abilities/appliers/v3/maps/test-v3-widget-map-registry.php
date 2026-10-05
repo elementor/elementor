@@ -2,7 +2,8 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use PHPUnit\Framework\TestCase;
@@ -79,14 +80,7 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 			'settings' => [],
 			'default_style_target' => 'main-menu',
 			'style_targets' => [
-				'main-menu' => [
-					'label' => 'Main menu items',
-					'css_properties' => [
-						'color' => [
-							'default' => Style_Control_Target::control( 'color_menu_item', 'color' ),
-						],
-					],
-				],
+				'main-menu' => Style_Target::make( 'Main menu items' )->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) ),
 			],
 		];
 	}

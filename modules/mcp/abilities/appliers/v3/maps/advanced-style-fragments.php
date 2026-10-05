@@ -2,17 +2,10 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Resolved_Patch_Validator;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * `css_properties` for the Advanced-tab controls every V3 widget inherits from `common-base`
- * (layout, position, background, border and box-shadow of the widget wrapper). Maps opt in
- * by adding a target with these properties.
- */
 class Advanced_Style_Fragments {
 
 	const HOVER_STATE = 'hover';
@@ -23,66 +16,36 @@ class Advanced_Style_Fragments {
 	const CLASSIC_BACKGROUND = 'classic';
 	const CUSTOM_FLEX_SIZE = 'custom';
 
-	/**
-	 * @return array<string, array<string, array>>
-	 */
-	public static function wrapper(): array {
-		$properties = [
-			'margin' => [ 'default' => Style_Control_Target::control( '_margin', 'sides', true ) ],
-			'padding' => [ 'default' => Style_Control_Target::control( '_padding', 'sides', true ) ],
-			'width' => [ 'default' => self::with_companion( Style_Control_Target::control( '_element_custom_width', 'slider', true ), '_element_width', self::CUSTOM_WIDTH_VALUE ) ],
-			'position' => [ 'default' => Style_Control_Target::choice( '_position' ) ],
-			'left' => [ 'default' => self::offset( '_offset_x', '_offset_orientation_h', self::OFFSET_START ) ],
-			'right' => [ 'default' => self::offset( '_offset_x_end', '_offset_orientation_h', self::OFFSET_END ) ],
-			'top' => [ 'default' => self::offset( '_offset_y', '_offset_orientation_v', self::OFFSET_START ) ],
-			'bottom' => [ 'default' => self::offset( '_offset_y_end', '_offset_orientation_v', self::OFFSET_END ) ],
-			'z-index' => [ 'default' => Style_Control_Target::control( '_z_index', 'number', true ) ],
-			'flex-grow' => [ 'default' => self::with_companion( Style_Control_Target::control( '_flex_grow', 'number', true ), '_flex_size', self::CUSTOM_FLEX_SIZE ) ],
-			'flex-shrink' => [ 'default' => self::with_companion( Style_Control_Target::control( '_flex_shrink', 'number', true ), '_flex_size', self::CUSTOM_FLEX_SIZE ) ],
-			'align-self' => [ 'default' => Style_Control_Target::choice( '_flex_align_self', true ) ],
-			'background-color' => [
-				'default' => self::with_companion( Style_Control_Target::control( '_background_color', 'color' ), '_background_background', self::CLASSIC_BACKGROUND ),
-				self::HOVER_STATE => self::with_companion( Style_Control_Target::control( '_background_hover_color', 'color' ), '_background_hover_background', self::CLASSIC_BACKGROUND ),
-			],
-			'border-radius' => [
-				'default' => Style_Control_Target::control( '_border_radius', 'sides', true ),
-				self::HOVER_STATE => Style_Control_Target::control( '_border_radius_hover', 'sides', true ),
-			],
-			'box-shadow' => [
-				'default' => Style_Control_Target::box_shadow( '_box_shadow' ),
-				self::HOVER_STATE => Style_Control_Target::box_shadow( '_box_shadow_hover' ),
-			],
-		];
+	public static function wrapper(): Style_Target {
+		$target = Style_Target::make( 'Widget wrapper (Advanced tab: spacing, size, position, background, border)' );
 
-		$borders = [
-			Style_Control_Target::border_group( '_border' ),
-			Style_Control_Target::border_group( '_border_hover', self::HOVER_STATE ),
-		];
+		$target
+			->bind( 'margin', V3_Control::bind_to( '_margin' )->responsive() )
+			->bind( 'padding', V3_Control::bind_to( '_padding' )->responsive() )
+			->bind( 'width', V3_Control::bind_to( '_element_custom_width' )->responsive()->set_dependencies( Style_Bindings::eq( '_element_width', self::CUSTOM_WIDTH_VALUE ) ) )
+			->bind( 'position', V3_Control::bind_to( '_position' ) )
+			->bind( 'inset-inline-start', self::offset( '_offset_x', '_offset_orientation_h', self::OFFSET_START ) )
+			->bind( 'inset-inline-end', self::offset( '_offset_x_end', '_offset_orientation_h', self::OFFSET_END ) )
+			->bind( 'inset-block-start', self::offset( '_offset_y', '_offset_orientation_v', self::OFFSET_START ) )
+			->bind( 'inset-block-end', self::offset( '_offset_y_end', '_offset_orientation_v', self::OFFSET_END ) )
+			->bind( 'z-index', V3_Control::bind_to( '_z_index' )->responsive() )
+			->bind( 'flex', V3_Control::bind_to( '_flex_grow' )->responsive()->part( 'flexGrow' )->set_dependencies( Style_Bindings::eq( '_flex_size', self::CUSTOM_FLEX_SIZE ) ) )
+			->bind( 'flex', V3_Control::bind_to( '_flex_shrink' )->responsive()->part( 'flexShrink' )->set_dependencies( Style_Bindings::eq( '_flex_size', self::CUSTOM_FLEX_SIZE ) ) )
+			->bind( 'align-self', V3_Control::bind_to( '_flex_align_self' )->responsive() )
+			->bind( 'background', V3_Control::bind_to( '_background_color' )->set_dependencies( Style_Bindings::eq( '_background_background', self::CLASSIC_BACKGROUND ) ) )
+			->bind( 'background', V3_Control::bind_to( '_background_hover_color' )->set_dependencies( Style_Bindings::eq( '_background_hover_background', self::CLASSIC_BACKGROUND ) ), self::HOVER_STATE )
+			->bind( 'border-radius', V3_Control::bind_to( '_border_radius' )->responsive() )
+			->bind( 'border-radius', V3_Control::bind_to( '_border_radius_hover' )->responsive(), self::HOVER_STATE );
 
-		foreach ( $borders as $border ) {
-			foreach ( $border as $property => $states ) {
-				$properties[ $property ] = ( $properties[ $property ] ?? [] ) + $states;
-			}
-		}
+		Style_Bindings::border( $target, '_border' );
+		Style_Bindings::border( $target, '_border_hover', self::HOVER_STATE );
+		Style_Bindings::box_shadow( $target, '_box_shadow' );
+		Style_Bindings::box_shadow( $target, '_box_shadow_hover', self::HOVER_STATE );
 
-		return $properties;
+		return $target;
 	}
 
-	private static function offset( string $key, string $orientation_key, string $orientation ): array {
-		return self::with_companion( Style_Control_Target::control( $key, 'slider', true ), $orientation_key, $orientation );
-	}
-
-	/**
-	 * Adds a setting that must hold a fixed value for the descriptor's control to take effect.
-	 */
-	private static function with_companion( array $descriptor, string $key, string $value ): array {
-		$descriptor['destinations'][] = [
-			'setting' => $key,
-			'shape' => V3_Resolved_Patch_Validator::SHAPE_STRING,
-			'resolver' => 'text',
-		];
-		$descriptor['companion_settings'] = ( $descriptor['companion_settings'] ?? [] ) + [ $key => $value ];
-
-		return $descriptor;
+	private static function offset( string $key, string $orientation_key, string $orientation ): V3_Control {
+		return V3_Control::bind_to( $key )->responsive()->set_dependencies( Style_Bindings::eq( $orientation_key, $orientation ) );
 	}
 }

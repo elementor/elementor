@@ -2,8 +2,9 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
@@ -23,13 +24,13 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	const BREAKPOINTS = [ 'desktop', 'tablet', 'mobile' ];
 
-	const CSS_FOR_EVERY_TARGET = 'font-size: 18px; color: #111111; padding-inline: 12px; gap: 20px;'
+	const CSS_FOR_EVERY_TARGET = 'font-size: 18px; color: #111111; padding-inline-start: 12px; padding-inline-end: 12px; gap: 20px;'
 		. ' &:hover { color: #222222; } &:selected { color: #333333; }'
 		. ' pointer:hover { background-color: #444444; color: #fafafa; } pointer { border-width: 3px; }'
 		. ' divider { border-style: dashed; border-color: #555555; }'
 		. ' dropdown { background-color: #ffffff; border: 1px solid #dddddd; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }'
 		. ' dropdown:hover { color: #666666; } dropdown-divider { border-style: solid; } toggle { font-size: 24px; }'
-		. ' @media(--mobile) { dropdown { padding-block: 6px; } }';
+		. ' @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } }';
 
 	private array $controls;
 
@@ -167,7 +168,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
 
 		// Assert.
-		$this->assertSame( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: stretch; }', $readback );
+		$this->assertSame( 'wrapper { flex: 1 0 auto; align-self: stretch; }', $readback );
 		$this->assertEquals( $written, $result['settings_patch'] );
 	}
 
@@ -203,7 +204,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 	}
 
 	private function mapper(): V3_Style_Mapper {
-		$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+		$converter = new Css_Converter( Converter_Registry_Factory::create( null ), new Null_Failure_Reporter(), Expander_Registry_Factory::create( null ) );
 
 		return V3_Style_Mapper_Factory::create( $converter, self::BREAKPOINTS );
 	}

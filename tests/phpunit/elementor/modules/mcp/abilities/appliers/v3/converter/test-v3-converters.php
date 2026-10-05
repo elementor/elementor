@@ -9,8 +9,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters\Simple_Sett
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\Converters\Typography_Group_Converter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use PHPUnit\Framework\TestCase;
 
@@ -22,10 +20,6 @@ class Test_V3_Converters extends TestCase {
 
 	private function rule( string $property, string $value, ?string $state = null, string $breakpoint = 'desktop' ): array {
 		return compact( 'property', 'value', 'state', 'breakpoint' );
-	}
-
-	private function target_rule( string $target, string $property, string $value, string $breakpoint = 'desktop' ): array {
-		return $this->rule( $property, $value, null, $breakpoint ) + [ 'target' => $target ];
 	}
 
 	private function meta( array $overrides, array $generic_index = [], array $controls = [] ): V3_Context_Meta {
@@ -122,144 +116,6 @@ class Test_V3_Converters extends TestCase {
 		$this->assertTrue( $converter->is_supported( $this->rule( 'gap', '12px' ), $meta ) );
 		$this->assertTrue( $converter->convert( $ctx, $this->rule( 'gap', '12px' ), $meta ) );
 		$this->assertSame( [ 'unit' => 'px', 'size' => 12.0 ], $ctx->settings_patch()['extra_gap'] );
-	}
-
-	public function test_simple_setting_converter__map_backed_override_accepts_valid_patch() {
-		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
-			'heading' => [
-				'css_properties' => [
-					'color' => [ 'default' => Style_Control_Target::control( 'title_color', 'color' ) ],
-				],
-			],
-		] );
-
-		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
-		$meta = $this->meta( $overrides );
-		$ctx = new V3_Conversion_Context();
-
-		$converter->convert( $ctx, $this->target_rule( 'heading', 'color', '#111' ), $meta );
-
-		$this->assertSame( [ 'title_color' => '#111' ], $ctx->settings_patch() );
-		$this->assertSame( [], $ctx->warnings() );
-	}
-
-	public function test_simple_setting_converter__map_backed_override_drops_invalid_resolved_value() {
-		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
-			'heading' => [
-				'css_properties' => [
-					'font-size' => [
-						'default' => [
-							'kind' => Style_Control_Target::KIND_SIMPLE,
-							'resolver' => 'dimension',
-							'responsive' => false,
-							'destinations' => [
-								[ 'setting' => 'title_size', 'shape' => 'string', 'resolver' => 'dimension' ],
-							],
-						],
-					],
-				],
-			],
-		] );
-
-		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
-		$meta = $this->meta( $overrides, [], [ 'title_size' => [] ] );
-		$ctx = new V3_Conversion_Context();
-
-		$result = $converter->convert( $ctx, $this->target_rule( 'heading', 'font-size', '20px' ), $meta );
-
-		$this->assertTrue( $result, 'Converter must consume the declaration so it does not fall to custom_css.' );
-		$this->assertSame( [], $ctx->settings_patch(), 'Invalid patches must not be merged atomically.' );
-		$warnings = $ctx->warnings();
-		$this->assertCount( 1, $warnings );
-		$this->assertStringContainsString( 'font-size', $warnings[0] );
-	}
-
-	public function test_simple_setting_converter__map_typography_field_switches_group_to_custom() {
-		// Arrange.
-		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
-			'heading' => [
-				'css_properties' => [
-					'font-weight' => [ 'default' => Style_Control_Target::typography( 'typography', 'font_weight', 'text' ) ],
-				],
-			],
-		] );
-		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
-		$ctx = new V3_Conversion_Context();
-
-		// Act.
-		$converter->convert( $ctx, $this->target_rule( 'heading', 'font-weight', '700' ), $this->meta( $overrides ) );
-
-		// Assert.
-		$this->assertSame(
-			[
-				'typography_font_weight' => '700',
-				'typography_typography' => 'custom',
-			],
-			$ctx->settings_patch()
-		);
-		$this->assertSame( [], $ctx->warnings() );
-	}
-
-	public function test_simple_setting_converter__map_typography_group_writes_family_and_spacing() {
-		// Arrange.
-		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
-			'main-menu' => [
-				'css_properties' => Style_Control_Target::typography_group( 'menu_typography' ),
-			],
-		] );
-		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
-		$meta = $this->meta( $overrides );
-		$ctx = new V3_Conversion_Context();
-
-		// Act.
-		$converter->convert( $ctx, $this->target_rule( 'main-menu', 'font-family', '"Roboto", sans-serif' ), $meta );
-		$converter->convert( $ctx, $this->target_rule( 'main-menu', 'letter-spacing', '2px' ), $meta );
-		$converter->convert( $ctx, $this->target_rule( 'main-menu', 'text-transform', 'uppercase' ), $meta );
-
-		// Assert.
-		$this->assertSame(
-			[
-				'menu_typography_font_family' => 'Roboto',
-				'menu_typography_typography' => 'custom',
-				'menu_typography_letter_spacing' => [
-					'unit' => 'px',
-					'size' => 2.0,
-				],
-				'menu_typography_text_transform' => 'uppercase',
-			],
-			$ctx->settings_patch()
-		);
-		$this->assertSame( [], $ctx->warnings() );
-	}
-
-	public function test_simple_setting_converter__map_responsive_write_validates_against_base_destination() {
-		// Arrange.
-		$overrides = V3_Map_Overrides_Builder::from_style_targets( [
-			'heading' => [
-				'css_properties' => [
-					'font-size' => [ 'default' => Style_Control_Target::typography( 'typography', 'font_size', 'slider', true ) ],
-				],
-			],
-		] );
-		$converter = new Simple_Setting_Converter( new Responsive_Key_Resolver() );
-		$meta = $this->meta( $overrides, [], [ 'typography_font_size' => [], 'typography_font_size_tablet' => [] ] );
-		$ctx = new V3_Conversion_Context();
-
-		// Act.
-		$converter->convert( $ctx, $this->target_rule( 'heading', 'font-size', '18px', 'tablet' ), $meta );
-
-		// Assert.
-		$this->assertSame(
-			[
-				'typography_font_size_tablet' => [
-					'unit' => 'px',
-					'size' => 18.0,
-				],
-				'typography_typography' => 'custom',
-			],
-			$ctx->settings_patch()
-		);
-		$this->assertSame( [], $ctx->warnings() );
 	}
 
 	public function test_generic_index_converter__drops_when_non_desktop_variant_missing() {

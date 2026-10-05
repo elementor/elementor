@@ -279,7 +279,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
-		$has_map = null !== V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );
+		$has_map = null !== V3_Widget_Map_Registry::instance()->get_style_bindings( $widget_type );
 		$bridge_non_style = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
 		$bridge_style = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 

@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Box_Shadow_Prefix_Serializer extends Base_Property_Serializer {
 
-	const PIXEL_UNIT = 'px';
-
 	public function is_supported( array $entry, string $property, ?string $state ): bool {
 		return isset( $entry['box_shadow_prefix'] );
 	}
@@ -31,10 +29,10 @@ class Box_Shadow_Prefix_Serializer extends Base_Property_Serializer {
 		}
 
 		$parts = [
-			$this->format_length( $shadow['horizontal'] ?? 0 ),
-			$this->format_length( $shadow['vertical'] ?? 0 ),
-			$this->format_length( $shadow['blur'] ?? 0 ),
-			$this->format_length( $shadow['spread'] ?? 0 ),
+			V3_Value_Formatters::format_size( $shadow['horizontal'] ?? 0 ),
+			V3_Value_Formatters::format_size( $shadow['vertical'] ?? 0 ),
+			V3_Value_Formatters::format_size( $shadow['blur'] ?? 0 ),
+			V3_Value_Formatters::format_size( $shadow['spread'] ?? 0 ),
 		];
 		if ( isset( $shadow['color'] ) && '' !== $shadow['color'] ) {
 			$parts[] = $shadow['color'];
@@ -44,16 +42,5 @@ class Box_Shadow_Prefix_Serializer extends Base_Property_Serializer {
 		}
 
 		$blocks->push( self::BASE_BREAKPOINT, $state, 'box-shadow', implode( ' ', $parts ) );
-	}
-
-	/**
-	 * The box-shadow control stores lengths as unitless pixel numbers.
-	 *
-	 * @param mixed $size
-	 */
-	private function format_length( $size ): string {
-		$formatted = V3_Value_Formatters::format_size( $size );
-
-		return is_numeric( $formatted ) ? $formatted . self::PIXEL_UNIT : $formatted;
 	}
 }

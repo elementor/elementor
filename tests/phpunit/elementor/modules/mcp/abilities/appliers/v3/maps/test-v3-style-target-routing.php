@@ -2,10 +2,12 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
@@ -155,7 +157,7 @@ class Test_V3_Style_Target_Routing extends TestCase {
 
 		// Assert.
 		$this->assertSame(
-			'color: #111111; &:selected { color: #444444; } dropdown { color: #222222; } dropdown:hover { color: #555555; } @media(--mobile) { dropdown { padding: 4px; } }',
+			'color: #111111; &:selected { color: #444444; } dropdown { color: #222222; } dropdown:hover { color: #555555; } @media(--mobile) { dropdown { padding-block-start: 4px; padding-block-end: 4px; padding-inline-start: 4px; padding-inline-end: 4px; } }',
 			$css
 		);
 	}
@@ -183,7 +185,7 @@ class Test_V3_Style_Target_Routing extends TestCase {
 	}
 
 	private function mapper(): V3_Style_Mapper {
-		$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
+		$converter = new Css_Converter( Converter_Registry_Factory::create( null ), new Null_Failure_Reporter(), Expander_Registry_Factory::create( null ) );
 
 		return V3_Style_Mapper_Factory::create( $converter, self::BREAKPOINTS );
 	}
@@ -195,24 +197,14 @@ class Test_V3_Style_Target_Routing extends TestCase {
 			'settings' => [],
 			'default_style_target' => 'main-menu',
 			'style_targets' => [
-				'main-menu' => [
-					'css_properties' => [
-						'color' => [
-							'default' => Style_Control_Target::control( 'color_menu_item', 'color' ),
-							'hover' => Style_Control_Target::control( 'color_menu_item_hover', 'color' ),
-							'selected' => Style_Control_Target::control( 'color_menu_item_active', 'color' ),
-						],
-					],
-				],
-				'dropdown' => [
-					'css_properties' => [
-						'color' => [
-							'default' => Style_Control_Target::control( 'color_dropdown_item', 'color' ),
-							'hover' => Style_Control_Target::control( 'color_dropdown_item_hover', 'color' ),
-						],
-						'padding' => [ 'default' => Style_Control_Target::control( 'padding_dropdown', 'sides', true ) ],
-					],
-				],
+				'main-menu' => Style_Target::make( 'Main menu' )
+					->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) )
+					->bind( 'color', V3_Control::bind_to( 'color_menu_item_hover' ), 'hover' )
+					->bind( 'color', V3_Control::bind_to( 'color_menu_item_active' ), 'selected' ),
+				'dropdown' => Style_Target::make( 'Dropdown' )
+					->bind( 'color', V3_Control::bind_to( 'color_dropdown_item' ) )
+					->bind( 'color', V3_Control::bind_to( 'color_dropdown_item_hover' ), 'hover' )
+					->bind( 'padding', V3_Control::bind_to( 'padding_dropdown' )->responsive() ),
 			],
 		];
 	}

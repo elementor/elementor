@@ -2,12 +2,13 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Overrides_Builder;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Block_Renderer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry_Factory;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Block_Renderer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,41 +26,47 @@ class V3_Style_Serializer {
 
 	private V3_Serializer_Registry $registry;
 	private Block_Renderer $renderer;
+	private V3_Map_Style_Reader $map_reader;
 
-	public function __construct( ?V3_Serializer_Registry $registry = null, ?Block_Renderer $renderer = null ) {
+	public function __construct( ?V3_Serializer_Registry $registry = null, ?Block_Renderer $renderer = null, ?V3_Map_Style_Reader $map_reader = null ) {
 		$this->registry = $registry ?? V3_Serializer_Registry_Factory::create();
 		$this->renderer = $renderer ?? new Block_Renderer();
+		$this->map_reader = $map_reader ?? new V3_Map_Style_Reader( V3_Control_Adapter_Registry::create_default() );
 	}
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
-		$map_overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );
-		$is_map_driven = null !== $map_overrides;
-		$overrides = $map_overrides ?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-		$controls = $widget_config['controls'] ?? [];
-		$generic = $is_map_driven
-			? []
-			: V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
-
+		$map_registry = V3_Widget_Map_Registry::instance();
+		$style_bindings = $map_registry->get_style_bindings( $widget_type );
 		$blocks = new V3_Block_Accumulator();
-		$routing = $is_map_driven ? V3_Widget_Map_Registry::instance()->get_style_routing( $widget_type ) : null;
-		$default_target = $routing['default_target'] ?? null;
+
+		if ( null !== $style_bindings ) {
+			$routing = $map_registry->get_style_routing( $widget_type );
+			$this->map_reader->read(
+				$blocks,
+				$style_bindings,
+				$settings,
+				$map_registry->get_registered_controls( $widget_type ),
+				$routing['default_target'] ?? null
+			);
+
+			return $this->renderer->render( $blocks );
+		}
+
+		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$controls = $widget_config['controls'] ?? [];
+		$generic = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
 
 		foreach ( $overrides as $match_key => $entry ) {
-			[ $target, $property, $state ] = V3_Map_Overrides_Builder::split_match_key( (string) $match_key );
-			$target_blocks = $blocks->for_target( $target === $default_target ? null : $target );
-			$this->dispatch_entry( $target_blocks, $settings, $entry, $property, $state );
+			[ $property, $state ] = $this->split_match_key( (string) $match_key );
+			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
 		}
 
 		foreach ( $generic as $match_key => $entry ) {
-			[ , $property, $state ] = V3_Map_Overrides_Builder::split_match_key( (string) $match_key );
+			[ $property, $state ] = $this->split_match_key( (string) $match_key );
 			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
 		}
 
 		$mapped_css = $this->renderer->render( $blocks );
-
-		if ( $is_map_driven ) {
-			return $mapped_css;
-		}
 
 		$custom_css = $this->unwrap_custom_css( $settings['custom_css'] ?? null );
 
@@ -95,10 +102,6 @@ class V3_Style_Serializer {
 	}
 
 	private function dispatch_entry( V3_Block_Accumulator $blocks, array $settings, array $entry, string $property, ?string $state ): void {
-		if ( false === ( $entry['_map_descriptor']['readback'] ?? true ) ) {
-			return;
-		}
-
 		foreach ( $this->registry->all() as $serializer ) {
 			if ( ! $serializer->is_supported( $entry, $property, $state ) ) {
 				continue;
@@ -108,5 +111,18 @@ class V3_Style_Serializer {
 
 			return;
 		}
+	}
+
+	/**
+	 * @return array{0: string, 1: string|null}
+	 */
+	private function split_match_key( string $match_key ): array {
+		if ( false === strpos( $match_key, '@' ) ) {
+			return [ $match_key, null ];
+		}
+
+		[ $property, $state ] = explode( '@', $match_key, 2 );
+
+		return [ $property, '' === $state ? null : $state ];
 	}
 }

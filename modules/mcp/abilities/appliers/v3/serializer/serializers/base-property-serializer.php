@@ -2,11 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Control_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Property_Serializer;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Choice_Values;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Value_Formatters;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,16 +31,13 @@ abstract class Base_Property_Serializer implements V3_Property_Serializer {
 		?string $state,
 		string $setting_key,
 		string $resolver,
-		string $breakpoint,
-		array $value_map = []
+		string $breakpoint
 	): void {
 		if ( ! array_key_exists( $setting_key, $settings ) ) {
 			return;
 		}
 
-		$css_value = Style_Control_Target::CHOICE_RESOLVER === $resolver
-			? V3_Choice_Values::format( $value_map, $settings[ $setting_key ] )
-			: V3_Value_Formatters::format( $resolver, $settings[ $setting_key ] );
+		$css_value = V3_Value_Formatters::format( $resolver, $settings[ $setting_key ] );
 		if ( null === $css_value ) {
 			return;
 		}
