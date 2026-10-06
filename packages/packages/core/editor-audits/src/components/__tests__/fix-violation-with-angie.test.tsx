@@ -19,6 +19,7 @@ jest.mock( '@elementor/editor-mcp', () => {
 } );
 
 const PROMPT = 'Help me fix: Page has no title.';
+const PANEL_Z_INDEX = 1000;
 
 describe( 'FixViolationWithAngie', () => {
 	beforeEach( () => {
@@ -27,7 +28,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'renders a link with the angie-prompt hash', () => {
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } /> );
+		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Fix with Angie' } );
 
@@ -37,7 +38,7 @@ describe( 'FixViolationWithAngie', () => {
 	it( 'calls sendPromptToAngie when Angie is installed', () => {
 		mockIsAngieAvailable.mockReturnValue( true );
 
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } /> );
+		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Fix with Angie' } );
 		const stopPropagation = jest.fn();
@@ -54,7 +55,7 @@ describe( 'FixViolationWithAngie', () => {
 		const handler = jest.fn();
 		window.addEventListener( CREATE_WIDGET_EVENT, handler );
 
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } /> );
+		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		fireEvent.click( screen.getByRole( 'link', { name: 'Fix with Angie' } ) );
 
@@ -72,7 +73,7 @@ describe( 'FixViolationWithAngie', () => {
 	it( 'stops event propagation on click', () => {
 		mockIsAngieAvailable.mockReturnValue( true );
 
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } /> );
+		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Fix with Angie' } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
@@ -83,5 +84,13 @@ describe( 'FixViolationWithAngie', () => {
 
 		expect( stopPropagation ).toHaveBeenCalled();
 		expect( preventDefault ).toHaveBeenCalled();
+	} );
+
+	it( 'renders as an icon-only button with an accessible name but no visible text', () => {
+		// Arrange & Act.
+		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+
+		// Assert.
+		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( '' );
 	} );
 } );
