@@ -1,17 +1,22 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { useFloatingPanelZIndex } from '@elementor/editor-floating-panels';
 import { notify } from '@elementor/editor-notifications';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { FEEDBACK_ENTRY_POINT } from '../../constants';
+import { AUDIT_PANEL_ID, FEEDBACK_ENTRY_POINT } from '../../constants';
 import AuditFeedback from '../audit-feedback';
 
 const mockTrackEvent = jest.fn();
 
 jest.mock( '@elementor/events', () => ( {
 	useMixpanel: () => ( { dispatchEvent: mockTrackEvent } ),
+} ) );
+
+jest.mock( '@elementor/editor-floating-panels', () => ( {
+	useFloatingPanelZIndex: jest.fn( () => 1000 ),
 } ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -50,6 +55,14 @@ describe( 'AuditFeedback', () => {
 	afterEach( () => {
 		delete window.elementorCommon;
 		delete window.elementorPro;
+	} );
+
+	it( 'reads the audit panel z-index so the trigger tooltip renders above the floating panel', () => {
+		// Arrange & Act.
+		renderWithTheme( <AuditFeedback /> );
+
+		// Assert.
+		expect( useFloatingPanelZIndex ).toHaveBeenCalledWith( AUDIT_PANEL_ID );
 	} );
 
 	it( 'renders nothing when the feedback experiment is inactive', () => {
