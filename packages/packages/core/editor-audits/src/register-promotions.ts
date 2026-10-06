@@ -80,27 +80,4 @@ export const PROMOTIONS: PromotionConfig[] = [
 		},
 		getCtaUrl: firstFailExternalUrl,
 	},
-	{
-		auditId: 'audits/images-inefficient-format',
-		icon: ShieldHalfFilledIcon,
-		ctaLabel: __( 'Optimize all', 'elementor' ),
-		formatSubtitle: ( run ) => {
-			if ( run.result.status !== 'fail' ) {
-				return null;
-			}
-
-			const count = run.result.metadata?.inefficientImageFormatCount ?? 0;
-
-			if ( count === 0 ) {
-				return null;
-			}
-
-			return sprintf(
-				/* translators: %d: number of images served in an inefficient format. */
-				_n( '%d image', '%d images', count, 'elementor' ),
-				count
-			);
-		},
-		getCtaUrl: firstFailExternalUrl,
-	},
 ];

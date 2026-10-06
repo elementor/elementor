@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useSingleExpandedCard } from '../../hooks/use-single-expanded-card';
 import { type PageAuditReport } from '../../types';
 import {
 	auditStatusColor,
@@ -24,6 +25,7 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 	const expandFail = ! initialExpandedStatus || initialExpandedStatus === 'fail';
 	const expandPass = initialExpandedStatus === 'pass';
 	const expandSkipped = initialExpandedStatus === 'skipped';
+	const { expandedId, toggle } = useSingleExpandedCard();
 
 	return (
 		<Box key={ initialExpandedStatus ?? 'default' }>
@@ -36,7 +38,13 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 					defaultExpanded={ expandFail }
 				>
 					{ failed.map( ( r ) => (
-						<ViolationRow key={ r.audit.id } audit={ r.audit } violations={ r.result.violations } />
+						<ViolationRow
+							key={ r.audit.id }
+							audit={ r.audit }
+							violations={ r.result.violations }
+							expanded={ expandedId === r.audit.id }
+							onToggleExpand={ () => toggle( r.audit.id ) }
+						/>
 					) ) }
 				</StatusSection>
 				<StatusSection
@@ -46,7 +54,12 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 					defaultExpanded={ expandPass }
 				>
 					{ passed.map( ( r ) => (
-						<ViolationRow key={ r.audit.id } audit={ r.audit } />
+						<ViolationRow
+							key={ r.audit.id }
+							audit={ r.audit }
+							expanded={ expandedId === r.audit.id }
+							onToggleExpand={ () => toggle( r.audit.id ) }
+						/>
 					) ) }
 				</StatusSection>
 				<StatusSection
@@ -56,7 +69,13 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 					defaultExpanded={ expandSkipped }
 				>
 					{ skipped.map( ( r ) => (
-						<ViolationRow key={ r.audit.id } audit={ r.audit } skipReason={ r.result.reason } />
+						<ViolationRow
+							key={ r.audit.id }
+							audit={ r.audit }
+							skipReason={ r.result.reason }
+							expanded={ expandedId === r.audit.id }
+							onToggleExpand={ () => toggle( r.audit.id ) }
+						/>
 					) ) }
 				</StatusSection>
 			</Box>
