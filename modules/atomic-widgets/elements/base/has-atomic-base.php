@@ -389,15 +389,41 @@ trait Has_Atomic_Base {
 	protected function parse_editor_settings( array $data ): array {
 		$editor_data = [];
 
-		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
-			$editor_data['title'] = sanitize_text_field( $data['title'] );
-		}
+		foreach ( $this->get_editor_settings_whitelist() as $key => $type ) {
+			if ( ! array_key_exists( $key, $data ) ) {
+				continue;
+			}
 
-		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
-			$editor_data['grid_outline'] = $data['grid_outline'];
+			$value = $this->sanitize_whitelisted_editor_setting( $data[ $key ], $type );
+
+			if ( null === $value ) {
+				continue;
+			}
+
+			$editor_data[ $key ] = $value;
 		}
 
 		return $editor_data;
+	}
+
+	private function get_editor_settings_whitelist(): array {
+		return [
+			'title' => 'string',
+			'grid_outline' => 'boolean',
+			'decorative' => 'boolean',
+		];
+	}
+
+	private function sanitize_whitelisted_editor_setting( $value, string $type ) {
+		if ( 'string' === $type && is_string( $value ) ) {
+			return sanitize_text_field( $value );
+		}
+
+		if ( 'boolean' === $type && is_bool( $value ) ) {
+			return $value;
+		}
+
+		return null;
 	}
 
 	public static function get_props_schema(): array {

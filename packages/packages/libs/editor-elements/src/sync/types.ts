@@ -189,6 +189,7 @@ export type V1ElementEditorSettingsProps = {
 	component_uid?: string;
 	grid_outline?: boolean;
 	empty_state_preview?: boolean;
+	decorative?: boolean;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
