@@ -1416,8 +1416,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async saveSiteSettings( toReload: boolean ): Promise<void> {
-		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
-			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
+		const saveButton = this.page.locator( EditorSelectors.panels.siteSettings.saveButton );
+		const isSaveEnabled = await saveButton.isEnabled();
+
+		if ( isSaveEnabled ) {
+			await saveButton.click();
 		} else {
 			await this.page.evaluate( ( selector ) => {
 				const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
@@ -1425,8 +1428,10 @@ export default class EditorPage extends BasePage {
 			}, EditorSelectors.panels.siteSettings.saveButton );
 		}
 
-		if ( toReload ) {
-			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
+		if ( toReload && isSaveEnabled ) {
+			const reloadButton = this.page.locator( EditorSelectors.refreshPopup.reloadButton );
+			await reloadButton.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+			await reloadButton.click();
 		}
 	}
 
