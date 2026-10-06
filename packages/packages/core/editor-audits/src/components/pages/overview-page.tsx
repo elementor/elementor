@@ -23,13 +23,13 @@ export default function OverviewPage( { onCategoryClick, report }: Props ) {
 		.filter( ( { counts } ) => Object.values( counts ).some( ( count ) => count > 0 ) );
 
 	return (
-		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 3, p: 2 } }>
+		<Box display="flex" flexDirection="column" gap={ 3 } p={ 2 }>
 			<SeveritySummaryCards report={ report } />
-			<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1 } }>
+			<Box display="flex" flexDirection="column" gap={ 1 }>
 				<Typography variant="subtitle1" component="h2">
 					{ __( 'All issues', 'elementor' ) }
 				</Typography>
-				<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1 } }>
+				<Box display="flex" flexDirection="column" gap={ 1 }>
 					{ categoryRows.map( ( { category, counts } ) => (
 						<IssuesCategoryRow
 							key={ category }
