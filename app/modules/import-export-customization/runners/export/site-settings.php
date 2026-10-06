@@ -162,7 +162,7 @@ class Site_Settings extends Export_Runner_Base {
 		}
 
 		if ( $this->is_default_styles_feature_active() ) {
-			$include_default_styles = $customization['defaultStyles'] ?? true;
+			$include_default_styles = $customization['defaultStyles'] ?? false;
 			$export_result['manifest'][0]['site-settings']['defaultStyles'] = (bool) $include_default_styles;
 		}
 

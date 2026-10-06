@@ -90,7 +90,7 @@ function isDefaultStylesExported( contextData ) {
 	const siteSettings = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
 
 	if ( undefined === siteSettings?.defaultStyles ) {
-		return true;
+		return false;
 	}
 
 	return !! siteSettings.defaultStyles;
