@@ -59,7 +59,7 @@ class V3_Dynamic_Hoister {
 			}
 
 			if ( null !== $map_settings && is_array( $value ) ) {
-				$public_schema = V3_Json_Schema_Builder::build_from_map( [ $key => $map_schema ] )['properties'][ $key ];
+				$public_schema = V3_Json_Schema_Builder::build_from_map( [ $key => $map_setting->get_schema() ] )['properties'][ $key ];
 
 				if ( null !== V3_Json_Schema_Builder::check_value_shape( $value, $public_schema, true ) ) {
 					$primitives[ $key ] = $value;
