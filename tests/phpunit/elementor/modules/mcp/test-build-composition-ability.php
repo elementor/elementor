@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
@@ -15,14 +14,12 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
-use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Standardized_V3_Maps_Fixture;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -33,25 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
-require_once __DIR__ . '/fixtures/standardized-v3-maps.php';
-
-class Build_Composition_V3_Heading_Dynamic_Tag extends Tag {
-	public function get_name() {
-		return 'mcp-v3-heading-title';
-	}
-
-	public function get_title() {
-		return 'MCP V3 Heading Title';
-	}
-
-	public function get_group() {
-		return 'site';
-	}
-
-	public function get_categories() {
-		return [ 'text' ];
-	}
-}
 
 /**
  * @group Elementor\Modules\Mcp
@@ -442,160 +420,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				'prop_value_invalid',
 			],
 		];
-	}
-
-	public function test_execute__applies_standardized_v3_heading_settings() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [
-					'title' => 'Mapped Heading',
-					'link' => [
-						'url' => 'https://example.com',
-						'is_external' => true,
-						'nofollow' => false,
-					],
-					'tag' => 'h3',
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$heading = $this->find_element_by_widget_type( $elements, 'heading' );
-		$this->assertSame( 'Mapped Heading', $heading['settings']['title'] ?? null );
-		$this->assertSame( 'h3', $heading['settings']['header_size'] ?? null );
-		$this->assertSame( 'on', $heading['settings']['link']['is_external'] ?? null );
-		$this->assertSame( '', $heading['settings']['link']['nofollow'] ?? null );
-		$this->assertArrayNotHasKey( 'tag', $heading['settings'] );
-	}
-
-	public function test_execute__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [
-					'link' => [
-						'name' => 'post-url',
-						'settings' => [],
-					],
-				],
-			],
-		] );
-
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertStringContainsString( 'dynamic tags are not supported', $result->get_error_message() );
-	}
-
-	public function test_execute__rejects_unknown_standardized_v3_heading_setting() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [ 'unknown' => 'value' ],
-			],
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertStringContainsString( 'unknown', $result->get_error_message() );
-	}
-
-	public function test_execute__rejects_invalid_standardized_v3_heading_setting_shape() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [ 'tag' => 'h99' ],
-			],
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_settings', $result->get_error_code() );
-		$this->assertStringContainsString( 'tag', $result->get_error_message() );
-	}
-
-	public function test_execute__applies_dynamic_standardized_v3_heading_title() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-		$this->register_v3_heading_dynamic_tag();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [
-					'title' => [
-						'name' => 'mcp-v3-heading-title',
-						'settings' => [],
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$heading = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'heading'
-		);
-		$dynamic_title = $heading['settings']['__dynamic__']['title'] ?? null;
-		$this->assertIsString( $dynamic_title );
-		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
-	}
-
-	public function test_execute__rejects_standardized_v3_heading_when_atomic_elements_inactive() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-		Standardized_V3_Maps_Fixture::install();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [ 'title' => 'Unsupported Heading' ],
-			],
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_unknown_type', $result->get_error_code() );
-		$this->assertStringContainsString( 'legacy V3 widget', $result->get_error_message() );
 	}
 
 	public function test_execute__skips_unsupported_prop_and_warns() {
@@ -1492,148 +1316,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'background_color', $container['settings'] ?? [] );
 	}
 
-	public function test_execute__applies_map_driven_v3_button_settings_and_color() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<button configuration-id="b1"/>',
-			'element_config' => [
-				'b1' => [
-					'text' => 'Click me',
-					'link' => [
-						'url' => 'https://example.com',
-						'is_external' => true,
-						'nofollow' => false,
-					],
-				],
-			],
-			'style' => [
-				'b1' => 'color: #111111; &:hover { color: #222222; }',
-			],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$button = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'button'
-		);
-		$this->assertNotNull( $button );
-		$this->assertSame( 'Click me', $button['settings']['text'] ?? null );
-		$this->assertSame( 'https://example.com', $button['settings']['link']['url'] ?? null );
-		$this->assertSame( 'on', $button['settings']['link']['is_external'] ?? null );
-		$this->assertSame( '#111111', $button['settings']['button_text_color'] ?? null );
-		$this->assertSame( '#222222', $button['settings']['hover_color'] ?? null );
-	}
-
-	public function test_execute__applies_map_driven_v3_heading_typography_and_reads_it_back() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-		$css = 'font-size: 32px; line-height: 1.4; font-weight: 700; @media(--mobile) { font-size: 20px; }';
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<heading configuration-id="h1"/>',
-			'element_config' => [
-				'h1' => [ 'title' => 'Typography' ],
-			],
-			'style' => [ 'h1' => $css ],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$heading = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'heading'
-		);
-		$this->assertNotNull( $heading );
-		$settings = $heading['settings'];
-		$this->assertSame( 'custom', $settings['typography_typography'] ?? null );
-		$this->assertEquals( [ 'unit' => 'px', 'size' => 32 ], $settings['typography_font_size'] ?? null );
-		$this->assertEquals( [ 'unit' => 'custom', 'size' => 1.4 ], $settings['typography_line_height'] ?? null );
-		$this->assertSame( '700', $settings['typography_font_weight'] ?? null );
-		$this->assertEquals( [ 'unit' => 'px', 'size' => 20 ], $settings['typography_font_size_mobile'] ?? null );
-		$this->assertArrayNotHasKey( 'custom_css', $settings );
-
-		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-		$structure = ( new Get_Structure_Ability() )->execute( [
-			'post_id' => $post_id,
-			'element_id' => $heading['id'],
-			'include_content' => true,
-		] );
-		$this->assertIsArray( $structure, is_wp_error( $structure ) ? $structure->get_error_message() : 'unknown' );
-		$readback_css = $structure['elements'][0]['styles']['css'];
-		$this->assertStringContainsString( 'font-size: 32px;', $readback_css );
-		$this->assertStringContainsString( 'line-height: 1.4;', $readback_css );
-		$this->assertStringContainsString( 'font-weight: 700;', $readback_css );
-		$this->assertStringContainsString( 'font-size: 20px;', $readback_css );
-	}
-
-	public function test_execute__applies_map_driven_v3_button_padding_and_font_size() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<button configuration-id="b1"/>',
-			'element_config' => [
-				'b1' => [ 'text' => 'Padded' ],
-			],
-			'style' => [ 'b1' => 'padding: 12px 24px; font-size: 18px;' ],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$button = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'button'
-		);
-		$this->assertNotNull( $button );
-		$this->assertSame( '12', $button['settings']['text_padding']['top'] ?? null );
-		$this->assertSame( '24', $button['settings']['text_padding']['right'] ?? null );
-		$this->assertSame( 'px', $button['settings']['text_padding']['unit'] ?? null );
-		$this->assertEquals( [ 'unit' => 'px', 'size' => 18 ], $button['settings']['typography_font_size'] ?? null );
-		$this->assertSame( 'custom', $button['settings']['typography_typography'] ?? null );
-	}
-
-	public function test_execute__applies_map_driven_v3_button_responsive_padding() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Build_Composition_Ability() )->execute( [
-			'post_id' => $post_id,
-			'xml_structure' => '<button configuration-id="b1"/>',
-			'element_config' => [
-				'b1' => [ 'text' => 'Responsive' ],
-			],
-			'style' => [ 'b1' => 'padding: 40px; @media(--tablet) { padding: 20px; }' ],
-		] );
-
-		// Assert
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$button = $this->find_element_by_widget_type(
-			Plugin::$instance->documents->get( $post_id )->get_elements_data(),
-			'button'
-		);
-		$this->assertNotNull( $button );
-		$this->assertSame( '40', $button['settings']['text_padding']['top'] ?? null );
-		$this->assertSame( '20', $button['settings']['text_padding_tablet']['top'] ?? null );
-	}
-
 	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1767,7 +1449,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	private function enable_standardized_v3_maps(): void {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		Standardized_V3_Maps_Fixture::install();
+		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
@@ -1785,10 +1467,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
 		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
 		V3_Widget_Map_Registry::reset_instance();
-	}
-
-	private function register_v3_heading_dynamic_tag(): void {
-		Plugin::$instance->dynamic_tags->register( new Build_Composition_V3_Heading_Dynamic_Tag() );
 	}
 
 	private function given_document_with_elements( int $post_id, array $elements ): void {

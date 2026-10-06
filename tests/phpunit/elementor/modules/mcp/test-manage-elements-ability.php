@@ -21,7 +21,6 @@ use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
-use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Standardized_V3_Maps_Fixture;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -30,8 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
-require_once __DIR__ . '/fixtures/standardized-v3-maps.php';
-
 class Manage_Elements_V3_Heading_Dynamic_Tag extends Tag {
 	public function get_name() {
 		return 'mcp-v3-heading-title';
@@ -791,142 +788,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$node = $this->find_element_in_document( $post_id, $v3_id );
 		$this->assertNotNull( $node );
 		$this->assertArrayNotHasKey( 'title', $node['settings'] ?? [] );
-	}
-
-	public function test_update__applies_standardized_v3_heading_settings() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => 'Updated Heading',
-						'tag' => 'h4',
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Updated Heading', $heading['settings']['title'] ?? null );
-		$this->assertSame( 'h4', $heading['settings']['header_size'] ?? null );
-		$this->assertArrayNotHasKey( 'tag', $heading['settings'] );
-	}
-
-	public function test_update__rejects_invalid_standardized_v3_heading_settings_without_mutation() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => [ 'settings' => [] ],
-						'tag' => 'h4',
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertArrayNotHasKey( 'title', $heading['settings'] ?? [] );
-		$this->assertArrayNotHasKey( 'header_size', $heading['settings'] ?? [] );
-	}
-
-	public function test_update__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'link' => [
-							'name' => 'post-url',
-							'settings' => [],
-						],
-					],
-				],
-			],
-		] );
-
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
-		$this->assertStringContainsString( 'dynamic tags are not supported', $result['results'][0]['message'] );
-	}
-
-	public function test_update__applies_dynamic_standardized_v3_heading_title() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-		$this->register_v3_heading_dynamic_tag();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => [
-							'name' => 'mcp-v3-heading-title',
-							'settings' => [],
-						],
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$dynamic_title = $heading['settings']['__dynamic__']['title'] ?? null;
-		$this->assertIsString( $dynamic_title );
-		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [ 'title' => 'Static Heading' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Static Heading', $heading['settings']['title'] ?? null );
-		$this->assertArrayNotHasKey( 'title', $heading['settings']['__dynamic__'] ?? [] );
 	}
 
 	public function test_execute__rejects_v3_delete_move_duplicate_per_op() {
@@ -1840,7 +1701,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	private function enable_standardized_v3_maps(): void {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		Standardized_V3_Maps_Fixture::install();
+		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {

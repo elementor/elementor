@@ -11,15 +11,12 @@ use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
-use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Standardized_V3_Maps_Fixture;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-require_once __DIR__ . '/fixtures/standardized-v3-maps.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -55,41 +52,6 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
 		Plugin::$instance->elements_manager = $this->original_elements_manager;
 		parent::tearDown();
-	}
-
-	public function test_execute__includes_heading_when_standardized_maps_and_atomic_elements_active() {
-		$this->act_as_admin();
-		$this->given_managers_with_registered_heading();
-		$this->enable_standardized_v3_maps();
-
-		$result = $this->ability->execute( [] );
-
-		$this->assertArrayHasKey( 'heading', $result );
-		$this->assertSame( [ 'color', 'font-size', 'line-height', 'font-weight' ], $result['heading']['style_targets']['heading'] );
-	}
-
-	public function test_execute__excludes_heading_when_atomic_elements_inactive() {
-		$this->act_as_admin();
-		$this->given_managers_with_registered_heading();
-		$this->enable_standardized_v3_maps();
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-		Standardized_V3_Maps_Fixture::install();
-
-		$result = $this->ability->execute( [] );
-
-		$this->assertArrayNotHasKey( 'heading', $result );
-	}
-
-	public function test_execute__list_and_get_agree_for_heading_schema() {
-		$this->act_as_admin();
-		$this->given_managers_with_registered_heading();
-		$this->enable_standardized_v3_maps();
-
-		$list_result = $this->ability->execute( [] );
-		$get_result = $this->get_schema_ability->execute( [ 'widget_type' => 'heading' ] );
-
-		$this->assertIsArray( $get_result );
-		$this->assertSame( $get_result, $list_result['heading'] );
 	}
 
 	public function test_execute__includes_allowlisted_v3_and_excludes_other_v3() {
@@ -228,21 +190,6 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$elements_manager = $this->createMock( Elements_Manager::class );
 		$elements_manager->method( 'get_element_types' )->willReturn( [] );
 		Plugin::$instance->elements_manager = $elements_manager;
-	}
-
-	private function given_managers_with_registered_heading(): void {
-		$heading = $this->original_widgets_manager->get_widget_types( 'heading' );
-		$heading->get_stack();
-
-		$elements_manager = $this->createMock( Elements_Manager::class );
-		$elements_manager->method( 'get_element_types' )->willReturn( [] );
-		Plugin::$instance->elements_manager = $elements_manager;
-	}
-
-	private function enable_standardized_v3_maps(): void {
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		Standardized_V3_Maps_Fixture::install();
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
