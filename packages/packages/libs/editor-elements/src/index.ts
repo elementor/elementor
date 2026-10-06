@@ -55,7 +55,8 @@ export {
 	getElementChildren as getElementChildrenWithFallback,
 	type ModelResult,
 } from './sync/model-utils';
-export { getElements } from './sync/get-elements';
+export { getElements, getHostDocumentElements } from './sync/get-elements';
+export { getHostDocumentId } from './sync/get-host-document-id';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';
 export { moveElement, type MoveElementParams } from './sync/move-element';

@@ -17,6 +17,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
@@ -1279,6 +1280,58 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertTrue( empty( $items ) );
 	}
 
+	public function test_execute__update_stores_decorative_setting_as_editor_setting() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $inner_id,
+					'settings' => [ 'decorative' => true ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertArrayNotHasKey( 'warning_details', $result['results'][0] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertTrue( $node['editor_settings']['decorative'] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_skips_non_boolean_decorative_setting_with_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $inner_id,
+					'settings' => [ 'decorative' => 'yes' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
 	public function test_bulk__invalid_interactions_update_still_persists_settings() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1443,6 +1496,243 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertSame( 'error', $result['status'] );
 		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_update__settings_read_from_structure_round_trip_unchanged() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id, $image_id ] = $this->given_linked_button_and_image( $post_id );
+		$stored_before = [
+			$button_id => $this->find_element_in_document( $post_id, $button_id )['settings'],
+			$image_id => $this->find_element_in_document( $post_id, $image_id )['settings'],
+		];
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => $this->read_settings_from_structure( $post_id, $button_id ),
+				],
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => $this->read_settings_from_structure( $post_id, $image_id ),
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertOkOperation( $result, 1 );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][0] );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][1] );
+		$this->assertEquals( $stored_before[ $button_id ]['link'], $this->find_element_in_document( $post_id, $button_id )['settings']['link'] );
+		$this->assertEquals( $stored_before[ $image_id ]['image'], $this->find_element_in_document( $post_id, $image_id )['settings']['image'] );
+	}
+
+	public function test_update__partial_object_prop_warns_about_dropped_stored_sub_keys() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => [
+						'link' => [ 'isTargetBlank' => false ],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_subkeys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( 'destination', $details[0]['message'] );
+		$this->assertStringContainsString( 'tag', $details[0]['message'] );
+		$this->assertArrayNotHasKey( 'destination', $this->find_element_in_document( $post_id, $button_id )['settings']['link']['value'] );
+	}
+
+	public function test_update__full_object_prop_replacement_does_not_warn() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => [
+						'link' => [
+							'destination' => 'https://example.com/other',
+							'isTargetBlank' => false,
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][0] );
+		$this->assertSame(
+			'https://example.com/other',
+			$this->find_element_in_document( $post_id, $button_id )['settings']['link']['value']['destination']['value']
+		);
+	}
+
+	public function test_update__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'href' => 'https://example.com',
+							'target' => '_blank',
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"link.href", "link.target"', $details[0]['message'] );
+	}
+
+	public function test_build_composition__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'href' => 'https://example.com',
+						'tag' => 'a',
+					],
+				],
+			],
+			'parent_id' => 'document',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( '"link.href"', $result['warning_details'][0]['message'] );
+	}
+
+	public function test_update__nested_object_prop_keys_return_warning_with_path() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $image_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => [
+						'image' => [
+							'src' => [
+								'url' => 'https://example.com/other.jpg',
+								'caption' => 'Not a field',
+							],
+							'size' => 'full',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertContains( 'prop_keys_dropped', array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"image.src.caption"', implode( ' ', array_column( $details, 'message' ) ) );
+	}
+
+	private function given_linked_button_and_image( int $post_id ): array {
+		$this->act_as_admin();
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/><e-image configuration-id="i1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'destination' => 'https://example.com',
+						'isTargetBlank' => true,
+						'tag' => 'a',
+					],
+				],
+				'i1' => [
+					'image' => [
+						'src' => [
+							'url' => 'https://example.com/photo.jpg',
+							'alt' => 'A photo',
+						],
+						'size' => 'full',
+					],
+				],
+			],
+			'parent_id' => 'document',
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			$this->fail( 'Fixture setup failed: ' . $result->get_error_message() );
+		}
+
+		$this->assertArrayNotHasKey( 'warnings', $result, 'Fixture setup produced warnings.' );
+
+		$children = $this->find_element_in_document( $post_id, $result['root_element_ids'][0] )['elements'];
+
+		return [ $children[0]['id'], $children[1]['id'] ];
+	}
+
+	private function read_settings_from_structure( int $post_id, string $element_id ): array {
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+
+		$result = ( new Get_Structure_Ability() )->execute( [
+			'post_id' => $post_id,
+			'element_id' => $element_id,
+			'include_content' => true,
+		] );
+
+		$this->assertIsArray( $result );
+
+		return (array) $result['elements'][0]['settings'];
 	}
 
 	private function assertOkOperation( $result, int $index ): void {

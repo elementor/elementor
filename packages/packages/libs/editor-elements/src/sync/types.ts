@@ -32,6 +32,12 @@ export type ExtendedWindow = Window & {
 				  }
 				| undefined;
 			getCurrentId?: () => number;
+			getInitialId?: () => number;
+			get?: ( id: number ) =>
+				| {
+						container: V1Element;
+				  }
+				| undefined;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
 		getPreviewContainer?: () => V1Element | undefined;
@@ -187,6 +193,7 @@ export type V1ElementEditorSettingsProps = {
 	component_uid?: string;
 	grid_outline?: boolean;
 	empty_state_preview?: boolean;
+	decorative?: boolean;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;

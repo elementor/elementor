@@ -20,13 +20,13 @@ describe( audit.id, () => {
 
 	it( 'passes when every image has alt text from page context', async () => {
 		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
-		const pageContext = { image_sizes: { 1: imageSizeWithAlt( 1, 'Cat' ) } };
+		const pageContext = { image_sizes: { '1:full': imageSizeWithAlt( 1, 'Cat' ) } };
 		expect( await audit.evaluate( makeContext( { tree, pageContext } ) ) ).toEqual( { status: 'pass' } );
 	} );
 
 	it( 'fails when an image is missing alt text', async () => {
 		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
-		const pageContext = { image_sizes: { 1: imageSizeWithAlt( 1, '' ) } };
+		const pageContext = { image_sizes: { '1:full': imageSizeWithAlt( 1, '' ) } };
 		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
 
 		expect( result.status ).toBe( 'fail' );
@@ -37,12 +37,13 @@ describe( audit.id, () => {
 			expect( result.violations[ 0 ].externalUrl ).toBe(
 				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility'
 			);
+			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Fix with Ally' );
 		}
 	} );
 
 	it( 'passes for image-box when attachment has alt', async () => {
 		const tree = [ makeWidget( 'box', 'image-box', { image: { id: 2 } } ) ];
-		const pageContext = { image_sizes: { 2: imageSizeWithAlt( 2, 'Box image' ) } };
+		const pageContext = { image_sizes: { '2:full': imageSizeWithAlt( 2, 'Box image' ) } };
 		expect( await audit.evaluate( makeContext( { tree, pageContext } ) ) ).toEqual( { status: 'pass' } );
 	} );
 
@@ -57,8 +58,8 @@ describe( audit.id, () => {
 		];
 		const pageContext = {
 			image_sizes: {
-				10: imageSizeWithAlt( 10, 'Slide one' ),
-				11: imageSizeWithAlt( 11, '' ),
+				'10:full': imageSizeWithAlt( 10, 'Slide one' ),
+				'11:full': imageSizeWithAlt( 11, '' ),
 			},
 		};
 		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
@@ -85,10 +86,10 @@ describe( audit.id, () => {
 		];
 		const pageContext = {
 			image_sizes: {
-				1: imageSizeWithAlt( 1, '' ),
-				2: imageSizeWithAlt( 2, '' ),
-				10: imageSizeWithAlt( 10, '' ),
-				11: imageSizeWithAlt( 11, '' ),
+				'1:full': imageSizeWithAlt( 1, '' ),
+				'2:full': imageSizeWithAlt( 2, '' ),
+				'10:full': imageSizeWithAlt( 10, '' ),
+				'11:full': imageSizeWithAlt( 11, '' ),
 			},
 		};
 		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );

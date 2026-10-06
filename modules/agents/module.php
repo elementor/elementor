@@ -3,9 +3,11 @@
 namespace Elementor\Modules\Agents;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Request_Path;
@@ -19,6 +21,7 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -36,6 +39,18 @@ class Module extends BaseModule {
 
 	/** Default HTTP max-age for the served response (5 minutes). */
 	const DEFAULT_CACHE_MAX_AGE = 300;
+
+	const PAGE_ID = 'elementor-agents-ready';
+
+	const MOUNT_ID = 'e-agents-ready';
+
+	const SCRIPT_HANDLE = 'e-agents-ready-app';
+
+	const CONFIG_OBJECT_NAME = 'elementorAgentsReadyConfig';
+
+	const AJAX_OPT_IN_ACTION = 'agents_ready_opt_in';
+
+	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
 	/**
 	 * Option name that records whether, at the time the feature was first
@@ -100,6 +115,7 @@ class Module extends BaseModule {
 		add_action( 'untrashed_post', [ $this, 'on_post_state_change' ] );
 		add_action( 'before_delete_post', [ $this, 'on_post_state_change' ] );
 		add_action( 'elementor/document/after_save', [ $this, 'on_elementor_document_save' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_action( 'switch_theme', [ $this, 'on_global_change' ] );
 		add_action( 'activated_plugin', [ $this, 'on_global_change' ] );
@@ -123,8 +139,11 @@ class Module extends BaseModule {
 		$this->register_component( new Link_Headers() );
 		$this->register_component( new Markdown_Endpoint() );
 
-		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
+
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
 	}
 
 	// -------------------------------------------------------------------------
@@ -132,10 +151,63 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * @param Kit $kit
+	 * Register Agents settings on the active kit.
+	 *
+	 * @param Kit $kit Active kit document.
 	 */
 	public function register_kit_tabs( $kit ) {
 		$kit->register_tab( 'settings-agents', Settings_Agents::class );
+	}
+
+	// -------------------------------------------------------------------------
+	// Editor One menu
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Register the Agent Ready item in Editor One.
+	 *
+	 * @param Menu_Data_Provider $menu_data_provider Editor One menu registry.
+	 */
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
+	}
+
+	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
+		if ( ! empty( $hooks[ self::PAGE_ID ] ) ) {
+			add_action( "admin_print_scripts-{$hooks[ self::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+		}
+	}
+
+	public function enqueue_assets(): void {
+		wp_enqueue_script(
+			self::SCRIPT_HANDLE,
+			$this->get_js_assets_url( 'agents-ready' ),
+			[ 'react', 'react-dom', 'elementor-common', 'elementor-v2-ui' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			self::SCRIPT_HANDLE,
+			self::CONFIG_OBJECT_NAME,
+			$this->get_app_config()
+		);
+
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
+	}
+
+	public function register_ajax_actions( Ajax $ajax ): void {
+		$ajax->register_ajax_action( self::AJAX_OPT_IN_ACTION, [ $this, 'ajax_opt_in' ] );
+	}
+
+	public function ajax_opt_in(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new \Exception( 'Permission denied' );
+		}
+
+		$feature_key = Plugin::$instance->experiments->get_feature_option_key( self::EXPERIMENT_NAME );
+
+		update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
 	}
 
 	// -------------------------------------------------------------------------
@@ -482,6 +554,8 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Send a plain-text HTTP response with caching headers, honoring conditional requests.
+	 *
 	 * @param string $content Plain-text payload.
 	 */
 	private function serve_plain_text( string $content ): void {
@@ -516,10 +590,12 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Register this module's editor packages with the packages list.
+	 *
 	 * @param array $packages Package slugs to register.
 	 * @return array
 	 */
-	private function add_packages( array $packages ): array {
+	public function add_packages( array $packages ): array {
 		return array_merge( $packages, self::PACKAGES );
 	}
 
@@ -533,6 +609,12 @@ class Module extends BaseModule {
 		 * @param int $post_id The post ID that triggered the invalidation (0 if unknown).
 		 */
 		do_action( 'elementor/agents/llms_txt/cache_invalidated', $post_id );
+	}
+
+	private function get_app_config(): array {
+		return [
+			'isExperimentActive' => Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ),
+		];
 	}
 
 	private function get_cache_max_age(): int {

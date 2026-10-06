@@ -1522,6 +1522,73 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'color: red;', $css );
 	}
 
+	public function test_render__style_with_zero_number_values() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'order' => Number_Prop_Type::generate( 0 ),
+							'z-index' => Number_Prop_Type::generate( 0 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.test-style{z-index:0;order:0;}', $css );
+	}
+
+	public function test_render__style_variant_with_breakpoint_and_zero_order() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'order' => Number_Prop_Type::generate( 2 ),
+						],
+						'meta' => [],
+					],
+					[
+						'props' => [
+							'order' => Number_Prop_Type::generate( 0 ),
+						],
+						'meta' => [
+							'breakpoint' => 'mobile',
+						],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [
+			'mobile' => [
+				'direction' => 'max',
+				'value' => 768,
+				'is_enabled' => true,
+			],
+		], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( '@media(max-width:768px){.test-style{order:0;}}', $css );
+	}
+
 	private function mock_images() {
 		return [
 			'thumbnail' => [
