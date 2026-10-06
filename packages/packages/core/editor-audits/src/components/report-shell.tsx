@@ -13,7 +13,7 @@ type Props = {
 };
 
 function isCategoryPage( page: ActivePage ): page is { category: AuditCategory } {
-	return typeof page === 'object';
+	return typeof page === 'object' && 'category' in page;
 }
 
 export default function ReportShell( { report }: Props ) {
