@@ -14,7 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -97,18 +96,12 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected function define_base_styles(): array {
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 
-		$size = Size_Prop_Type::generate( [
-			'size' => 65,
-			'unit' => 'px',
-		] );
-
+		// The default size is in the module's inline CSS, below the SVG's own Width and Height.
 		return [
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display_value )
-						->add_prop( 'width', $size )
-						->add_prop( 'height', $size )
 				),
 		];
 	}
