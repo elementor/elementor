@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Site_Flag;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -118,6 +119,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $persisted, $subtrees, $warning_codes, $document );
 			return $persisted;
 		}
+
+		Site_Flag::mark();
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
