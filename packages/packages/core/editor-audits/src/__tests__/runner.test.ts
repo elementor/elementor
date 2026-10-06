@@ -1,4 +1,4 @@
-import { getElements } from '@elementor/editor-elements';
+import { getHostDocumentElements, getHostDocumentId } from '@elementor/editor-elements';
 
 import { fetchPageContext } from '../api/page-context-client';
 import { clearAuditRegistry, registerAudit } from '../registry';
@@ -8,11 +8,13 @@ import { type Audit, type AuditResult, type PageContextResponse } from '../types
 jest.mock( '../api/page-context-client' );
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	getElements: jest.fn(),
+	getHostDocumentElements: jest.fn(),
+	getHostDocumentId: jest.fn( () => 1 ),
 } ) );
 
 const fetchMock = jest.mocked( fetchPageContext );
-const getElementsMock = jest.mocked( getElements );
+const getHostDocumentElementsMock = jest.mocked( getHostDocumentElements );
+const getHostDocumentIdMock = jest.mocked( getHostDocumentId );
 
 const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	post_title: 'X',
@@ -63,7 +65,8 @@ describe( 'runPageAudit', () => {
 	beforeEach( () => {
 		clearAuditRegistry();
 		fetchMock.mockResolvedValue( FAKE_PAGE_CONTEXT );
-		getElementsMock.mockReturnValue( [] );
+		getHostDocumentElementsMock.mockReturnValue( [] );
+		getHostDocumentIdMock.mockReturnValue( 1 );
 	} );
 
 	it( 'runs every registered evaluator and computes a report', async () => {
@@ -93,6 +96,15 @@ describe( 'runPageAudit', () => {
 
 		// Assert.
 		expect( report.auditResults[ 0 ].result ).toMatchObject( { status: 'skipped' } );
+	} );
+
+	it( 'rejects when documentId does not match the host document', async () => {
+		// Arrange.
+		getHostDocumentIdMock.mockReturnValue( 2 );
+		registerAudit( passAudit( 'a' ) );
+
+		// Act & Assert.
+		await expect( runPageAudit( 1 ) ).rejects.toThrow( 'runPageAudit: documentId must match the host document.' );
 	} );
 
 	it( 'isolates failing audits from successful ones', async () => {

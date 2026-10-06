@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -111,6 +112,7 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$settings = Editor_Settings::apply( $node, $settings, (string) $tag, (string) $config_id, $warnings );
 			$schema = $this->type_resolver->get_props_schema( $tag, $widget_configs );
 
 			if ( ! $schema ) {
