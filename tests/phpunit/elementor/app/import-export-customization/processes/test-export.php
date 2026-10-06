@@ -132,22 +132,23 @@ class Test_Export extends Elementor_Test_Base {
 		// Assert
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$expected_manifest_site_settings = [
-			'theme',
-			'globalColors',
-			'globalFonts',
-			'themeStyleSettings',
-			'generalSettings',
-			'experiments',
-			'customCode',
-			'customIcons',
-			'customFonts',
+			'theme' => true,
+			'globalColors' => true,
+			'globalFonts' => true,
+			'themeStyleSettings' => true,
+			'generalSettings' => true,
+			'experiments' => true,
+			'customCode' => true,
+			'customIcons' => true,
+			'customFonts' => true,
+			'classes' => true,
+			'variables' => true,
+			'classesCount' => 0,
+			'variablesCount' => 0,
+			'defaultStyles' => true,
 		];
 
-		$this->assert_array_have_keys( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
-
-		foreach ( $expected_manifest_site_settings as $manifest_key ) {
-			$this->assertTrue( $result['manifest']['site-settings'][ $manifest_key ] );
-		}
+		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
 
 		$kit_data = $kit->get_export_data();
 		$kit_data['theme'] = $mocked_theme;
