@@ -61,9 +61,13 @@ jobs:
           npx playwright install chromium
       - name: Upgrade site
         run: |
-          zip -r ./templates/playwright/elementor.zip ./build
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force" --port=8888
+          mv build elementor
+          expected_version=$(sed -n "s/.*define( 'ELEMENTOR_VERSION', '\([^']*\)' ).*/\1/p" elementor/elementor.php)
+          echo "Expected Elementor version: ${expected_version}"
+          zip -r ./templates/playwright/elementor.zip elementor
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force --activate" --port=8888
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp eval 'if ( ELEMENTOR_VERSION !== \"${expected_version}\" ) { echo ELEMENTOR_VERSION; exit(1); }'" --port=8888
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
       - uses: actions/upload-artifact@v7
