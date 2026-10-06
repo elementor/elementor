@@ -6,6 +6,8 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
@@ -241,6 +243,8 @@ class Element_Config_Applier {
 				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
 			}
 
+			$this->maybe_warn_unknown_icon( $resolved_value, $canonical, $element_type, $config_id, $warnings );
+
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
@@ -322,6 +326,44 @@ class Element_Config_Applier {
 
 			unset( $node_settings[ $cleared_key ] );
 		}
+	}
+
+	/**
+	 * An icon value that no installed library knows is stored happily and then renders nothing,
+	 * which is invisible to the agent unless it is told here.
+	 */
+	private function maybe_warn_unknown_icon( $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		if ( ! is_array( $resolved_value ) || Icon_Prop_Type::get_key() !== ( $resolved_value['$$type'] ?? null ) ) {
+			return;
+		}
+
+		$icon = is_array( $resolved_value['value'] ?? null ) ? $resolved_value['value'] : [];
+		$value = $icon['value']['value'] ?? '';
+		$library = $icon['library']['value'] ?? '';
+
+		if ( ! is_string( $value ) || ! is_string( $library ) ) {
+			return;
+		}
+
+		if ( ! Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+			return;
+		}
+
+		if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+			return;
+		}
+
+		$warnings->add(
+			'icon_not_found',
+			sprintf(
+				'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+				$key,
+				$element_type,
+				$value,
+				$library
+			),
+			$config_id
+		);
 	}
 
 	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {

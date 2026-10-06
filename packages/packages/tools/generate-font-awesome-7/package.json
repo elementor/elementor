@@ -10,8 +10,13 @@
     "dev": "node --experimental-strip-types ./src/generate.ts"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7",
     "@fortawesome/free-brands-svg-icons": "^7",
     "@fortawesome/free-regular-svg-icons": "^7",
-    "@fortawesome/free-solid-svg-icons": "^7"
+    "@fortawesome/free-solid-svg-icons": "^7",
+    "js-yaml": "^4"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4"
   }
 }

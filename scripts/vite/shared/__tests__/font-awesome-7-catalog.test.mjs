@@ -8,6 +8,7 @@ import {
 	FONT_AWESOME_7_GENERATE_ARGS,
 	FONT_AWESOME_7_JSON_FILES,
 	FONT_AWESOME_7_RELATIVE_DIR,
+	FONT_AWESOME_7_SEARCH_INDEX_FILE,
 	FONT_AWESOME_7_VERSION_FILE,
 	ensureFontAwesome7Catalog,
 	generateFontAwesome7Catalog,
@@ -17,6 +18,20 @@ import {
 const VALID_ICONS_JSON = JSON.stringify( { icons: { star: [ 512, 512, [], 'f000', 'M0 0' ] } } );
 const VALID_VERSION_JSON = JSON.stringify( { version: '7.3.1' } );
 const EMPTY_ICONS_JSON = JSON.stringify( { icons: {} } );
+const VALID_SEARCH_INDEX_JSON = JSON.stringify( {
+	icons: [
+		{
+			name: 'star',
+			library: 'fa-solid',
+			value: 'fa-solid fa-star',
+			label: 'Star',
+			aliases: [],
+			terms: [ 'favorite' ],
+			categories: [ 'Shapes' ],
+			license: 'free',
+		},
+	],
+} );
 
 describe( 'verifyFontAwesome7Catalog', () => {
 	it( 'throws when a catalog json file is missing', () => {
@@ -72,6 +87,58 @@ describe( 'verifyFontAwesome7Catalog', () => {
 		assert.throws(
 			() => verifyFontAwesome7Catalog( baseDir ),
 			( error ) => error.message.includes( FONT_AWESOME_7_VERSION_FILE ),
+		);
+	} );
+
+	it( 'throws when the search index is missing', () => {
+		// Arrange.
+		const baseDir = writeCatalog( { searchIndexJson: null } );
+
+		// Act & Assert.
+		assert.throws(
+			() => verifyFontAwesome7Catalog( baseDir ),
+			( error ) => error.message.includes( FONT_AWESOME_7_SEARCH_INDEX_FILE ),
+		);
+	} );
+
+	it( 'throws when the search index has no icons', () => {
+		// Arrange.
+		const baseDir = writeCatalog( { searchIndexJson: JSON.stringify( { icons: [] } ) } );
+
+		// Act & Assert.
+		assert.throws(
+			() => verifyFontAwesome7Catalog( baseDir ),
+			( error ) => error.message.includes( FONT_AWESOME_7_SEARCH_INDEX_FILE ),
+		);
+	} );
+
+	it( 'throws when a search index value is not the canonical selection value', () => {
+		// Arrange.
+		const baseDir = writeCatalog( {
+			searchIndexJson: JSON.stringify( {
+				icons: [ { name: 'star', library: 'fa-solid', value: 'fas fa-star', terms: [ 'favorite' ] } ],
+			} ),
+		} );
+
+		// Act & Assert.
+		assert.throws(
+			() => verifyFontAwesome7Catalog( baseDir ),
+			( error ) => error.message.includes( FONT_AWESOME_7_SEARCH_INDEX_FILE ),
+		);
+	} );
+
+	it( 'throws when metadata enrichment produced no search terms', () => {
+		// Arrange.
+		const baseDir = writeCatalog( {
+			searchIndexJson: JSON.stringify( {
+				icons: [ { name: 'star', library: 'fa-solid', value: 'fa-solid fa-star', terms: [] } ],
+			} ),
+		} );
+
+		// Act & Assert.
+		assert.throws(
+			() => verifyFontAwesome7Catalog( baseDir ),
+			( error ) => error.message.includes( 'no search terms' ),
 		);
 	} );
 
@@ -198,6 +265,7 @@ function writeCatalog( {
 		FONT_AWESOME_7_JSON_FILES.map( ( fileName ) => [ fileName, VALID_ICONS_JSON ] ),
 	),
 	versionJson = VALID_VERSION_JSON,
+	searchIndexJson = VALID_SEARCH_INDEX_JSON,
 } = {} ) {
 	const baseDir = mkdtempSync( join( tmpdir(), 'fa7-catalog-' ) );
 	const jsonDir = join( baseDir, FONT_AWESOME_7_RELATIVE_DIR, 'json' );
@@ -206,6 +274,10 @@ function writeCatalog( {
 
 	for ( const [ fileName, contents ] of Object.entries( iconsJsonByFile ) ) {
 		writeFileSync( join( jsonDir, fileName ), contents );
+	}
+
+	if ( null !== searchIndexJson ) {
+		writeFileSync( join( jsonDir, FONT_AWESOME_7_SEARCH_INDEX_FILE ), searchIndexJson );
 	}
 
 	return baseDir;
