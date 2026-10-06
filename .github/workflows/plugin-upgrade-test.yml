@@ -67,7 +67,12 @@ jobs:
           zip -r ./templates/playwright/elementor.zip elementor
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force --activate" --port=8888
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp eval 'if ( ELEMENTOR_VERSION !== \"${expected_version}\" ) { echo ELEMENTOR_VERSION; exit(1); }'" --port=8888
+          installed_version=$(npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin get elementor --field=version" --port=8888 | tr -d '\r' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1)
+          echo "Installed Elementor version: ${installed_version}"
+          if [ "${installed_version}" != "${expected_version}" ]; then
+            echo "Upgrade did not activate the built plugin"
+            exit 1
+          fi
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
       - uses: actions/upload-artifact@v7
