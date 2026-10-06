@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Dimensions_Adapter;
@@ -17,7 +16,11 @@ class V3_Style_Binding_Compiler {
 
 	const ALLOWED_STATES = [ 'default', 'hover' ];
 
-	const DEPENDENCY_OPERATOR = 'eq';
+	const TOGGLE_CONTROL_TYPES = [ 'popover_toggle', 'switcher' ];
+
+	const DEFAULT_TOGGLE_VALUE = 'yes';
+
+	const NEGATION_SUFFIX = '!';
 
 	const RESPONSIVE_PROBE_SUFFIX = '_mobile';
 
@@ -33,7 +36,7 @@ class V3_Style_Binding_Compiler {
 
 	public function compile( Style_Target $target, array $controls, V3_Map_Diagnostics $diagnostics, string $widget_type ): Compiled_Style_Target {
 		$compiled = [];
-		$covered_sides = [];
+		$coverages = [];
 
 		foreach ( $target->get_bindings() as $binding ) {
 			$entry = self::entry_name( $target->get_alias(), $binding['prop'], $binding['state'] );
@@ -45,14 +48,14 @@ class V3_Style_Binding_Compiler {
 			}
 
 			$coverage_key = $result->get_prop() . '|' . $result->get_state();
-			$sides = $result->get_sides() ?? self::all_sides();
+			$coverage = null === $result->get_sides() ? Binding_Coverage::whole() : Binding_Coverage::sides( $result->get_sides() );
 
-			if ( ! empty( array_intersect( $covered_sides[ $coverage_key ] ?? [], $sides ) ) ) {
+			if ( self::overlaps_any( $coverage, $coverages[ $coverage_key ] ?? [] ) ) {
 				$diagnostics->add( $widget_type, $entry, 'overlapping_bindings', $result->get_setting() );
 				continue;
 			}
 
-			$covered_sides[ $coverage_key ] = array_merge( $covered_sides[ $coverage_key ] ?? [], $sides );
+			$coverages[ $coverage_key ][] = $coverage;
 			$compiled[] = $result;
 		}
 
@@ -117,7 +120,7 @@ class V3_Style_Binding_Compiler {
 			return V3_Widget_Map_Compiler::error( 'incompatible_responsive_control', $setting );
 		}
 
-		$dependency_values = $this->dependency_values( $control->get_dependencies(), $controls );
+		$dependency_values = $this->requirements( $control, $controls );
 
 		if ( $dependency_values instanceof WP_Error ) {
 			return $dependency_values;
@@ -166,34 +169,82 @@ class V3_Style_Binding_Compiler {
 	}
 
 	/**
-	 * @param array<string, mixed>|null $dependencies
-	 * @param array<string, mixed>      $controls
+	 * @param Binding_Coverage   $coverage
+	 * @param Binding_Coverage[] $existing
+	 */
+	private static function overlaps_any( Binding_Coverage $coverage, array $existing ): bool {
+		foreach ( $existing as $covered ) {
+			if ( $coverage->overlaps( $covered ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Sibling values the writer fills so the bound control takes effect. Explicit requirements
+	 * win; otherwise they are derived from the control `condition` terms that have exactly one
+	 * satisfying value. Other terms are left to `is_control_visible()` and the inactive warnings.
+	 *
+	 * @param V3_Control           $control
+	 * @param array<string, mixed> $controls
 	 * @return array<string, mixed>|WP_Error
 	 */
-	private function dependency_values( ?array $dependencies, array $controls ) {
-		if ( null === $dependencies ) {
-			return [];
+	private function requirements( V3_Control $control, array $controls ) {
+		$explicit = $control->get_requirements();
+
+		if ( null !== $explicit ) {
+			return self::validate_requirements( $explicit, $controls );
 		}
 
-		$terms = $dependencies['terms'] ?? null;
+		$condition = $controls[ $control->get_setting() ]['condition'] ?? null;
 
-		if ( ! is_array( $terms ) || empty( $terms ) || ( count( $terms ) > 1 && Dependency_Manager::RELATION_AND !== ( $dependencies['relation'] ?? null ) ) ) {
-			return V3_Widget_Map_Compiler::error( 'invalid_dependency', '' );
+		return is_array( $condition ) ? self::derive_requirements( $condition, $controls ) : [];
+	}
+
+	/**
+	 * @param array<string, mixed> $requirements
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>|WP_Error
+	 */
+	private static function validate_requirements( array $requirements, array $controls ) {
+		foreach ( $requirements as $setting => $value ) {
+			if ( ! is_array( $controls[ $setting ] ?? null ) || ! is_scalar( $value ) ) {
+				return V3_Widget_Map_Compiler::error( 'invalid_requirement', (string) $setting );
+			}
 		}
 
-		$values = [];
+		return $requirements;
+	}
 
-		foreach ( $terms as $term ) {
-			$path = $term['path'] ?? null;
-			$setting = is_array( $path ) && 1 === count( $path ) ? (string) reset( $path ) : '';
+	/**
+	 * @param array<string, mixed> $condition
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	private static function derive_requirements( array $condition, array $controls ): array {
+		$requirements = [];
 
-			if ( self::DEPENDENCY_OPERATOR !== ( $term['operator'] ?? null ) || '' === $setting || ! isset( $controls[ $setting ] ) || ! is_scalar( $term['value'] ?? null ) ) {
-				return V3_Widget_Map_Compiler::error( 'invalid_dependency', $setting );
+		foreach ( $condition as $term => $expected ) {
+			$is_negated = str_ends_with( (string) $term, self::NEGATION_SUFFIX );
+			$setting = $is_negated ? substr( (string) $term, 0, -1 ) : (string) $term;
+			$sibling = $controls[ $setting ] ?? null;
+
+			if ( ! is_array( $sibling ) ) {
+				continue;
 			}
 
-			$values[ $setting ] = $term['value'];
+			if ( ! $is_negated && is_scalar( $expected ) ) {
+				$requirements[ $setting ] = $expected;
+				continue;
+			}
+
+			if ( $is_negated && '' === $expected && in_array( $sibling['type'] ?? null, self::TOGGLE_CONTROL_TYPES, true ) ) {
+				$requirements[ $setting ] = $sibling['return_value'] ?? self::DEFAULT_TOGGLE_VALUE;
+			}
 		}
 
-		return $values;
+		return $requirements;
 	}
 }
