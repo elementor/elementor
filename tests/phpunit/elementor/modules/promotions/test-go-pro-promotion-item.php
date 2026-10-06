@@ -230,13 +230,16 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 
 	public function test_override_label__returns_menu_unchanged_when_cdn_inactive() {
 		// Arrange — no CDN data seeded; HTTP blocked → assets_data will be empty.
-		$menu = [];
+		$original_label = 'Upgrade';
+		$GLOBALS['submenu']['elementor-home'] = [
+			1 => [ $original_label, 'manage_options', 'elementor-one-upgrade', $original_label ],
+		];
 
 		// Act
-		$result = $this->make_module()->override_one_menu_upgrade_label_during_sale( $menu );
+		$this->make_module()->override_one_menu_upgrade_label_during_sale( [] );
 
-		// Assert
-		$this->assertSame( $menu, $result );
+		// Assert — submenu label must not have changed when CDN is inactive.
+		$this->assertSame( $original_label, $GLOBALS['submenu']['elementor-home'][1][0] );
 	}
 
 	public function test_override_label__returns_menu_unchanged_when_submenu_not_set() {
@@ -248,13 +251,12 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 		] );
 
 		unset( $GLOBALS['submenu']['elementor-home'] );
-		$menu = [];
 
 		// Act
-		$result = $this->make_module()->override_one_menu_upgrade_label_during_sale( $menu );
+		$this->make_module()->override_one_menu_upgrade_label_during_sale( [] );
 
-		// Assert
-		$this->assertSame( $menu, $result );
+		// Assert — submenu must not have been created by the function.
+		$this->assertArrayNotHasKey( 'elementor-home', $GLOBALS['submenu'] ?? [] );
 	}
 
 	public function test_override_label__updates_upgrade_item_label_when_cdn_active() {

@@ -378,16 +378,12 @@ class Admin extends App {
 
 		$assets_data = self::get_plugins_page_assets_data();
 
-		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['label'] ) ) {
-			$go_pro_text = esc_html( $assets_data['label'] );
+		if ( ! empty( $assets_data['is_active'] ) ) {
+			$go_pro_text = ! empty( $assets_data['label'] ) ? esc_html( $assets_data['label'] ) : esc_html__( 'Get Elementor Pro', 'elementor' );
+			$go_pro_url  = ! empty( $assets_data['url'] ) ? $assets_data['url'] : self::URL;
 		} else {
 			$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
-		}
-
-		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['url'] ) ) {
-			$go_pro_url = $assets_data['url'];
-		} else {
-			$go_pro_url = self::URL;
+			$go_pro_url  = self::URL;
 		}
 
 		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', esc_url( $go_pro_url ), $go_pro_text );

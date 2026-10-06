@@ -66,7 +66,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 			'elementor/admin_menu/custom_promotion',
 			'upgrade_url'
 		);
-		return esc_url_raw( $promotion_data['upgrade_url'] );
+		return esc_url_raw( wp_specialchars_decode( $promotion_data['upgrade_url'] ) );
 	}
 
 	public function render() {
