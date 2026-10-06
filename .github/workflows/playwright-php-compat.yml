@@ -26,8 +26,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate-combinations:
+    name: Validate combinations
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check PHP and WordPress versions format
+        env:
+          COMBINATIONS: ${{ inputs.combinations || '[{"php":"7.4","wp":"6.8"},{"php":"8.5","wp":"7.1"}]' }}
+        run: |
+          echo "$COMBINATIONS" | jq -e 'all(.[]; (.php | test("^[0-9]+(\\.[0-9]+)*$")) and (.wp | test("^[0-9]+(\\.[0-9]+)*$")))' > /dev/null
+
   build-plugin:
     name: Playwright build artifact
+    needs: validate-combinations
     permissions:
       contents: read
       pull-requests: write
