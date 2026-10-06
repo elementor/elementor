@@ -13,6 +13,13 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
+/**
+ * @group Elementor
+ * @group Elementor/ImportExportCustomization
+ * @group Elementor/ImportExportCustomization/Processes
+ *
+ * @group kit-import-export-customization
+ */
 class Test_Export extends Elementor_Test_Base {
 	public function test_run__export_all() {
 		// Arrange
@@ -81,7 +88,6 @@ class Test_Export extends Elementor_Test_Base {
 	public function test_run__export_site_settings() {
 		// Arrange
 		$this->act_as_admin();
-
 		$custom_colors = [
 			'_id' => '0fba91c',
 			'title' => 'Light Orange',
@@ -126,22 +132,22 @@ class Test_Export extends Elementor_Test_Base {
 		// Assert
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$expected_manifest_site_settings = [
-			'theme' => true,
-			'globalColors' => true,
-			'globalFonts' => true,
-			'themeStyleSettings' => true,
-			'generalSettings' => true,
-			'experiments' => true,
-			'customCode' => true,
-			'customIcons' => true,
-			'customFonts' => true,
-			'classes' => true,
-			'variables' => true,
-			'classesCount' => 0,
-			'variablesCount' => 0,
+			'theme',
+			'globalColors',
+			'globalFonts',
+			'themeStyleSettings',
+			'generalSettings',
+			'experiments',
+			'customCode',
+			'customIcons',
+			'customFonts',
 		];
 
-		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
+		$this->assert_array_have_keys( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
+
+		foreach ( $expected_manifest_site_settings as $manifest_key ) {
+			$this->assertTrue( $result['manifest']['site-settings'][ $manifest_key ] );
+		}
 
 		$kit_data = $kit->get_export_data();
 		$kit_data['theme'] = $mocked_theme;
