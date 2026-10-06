@@ -202,4 +202,10 @@ class Test_Theme_Style_Buttons extends Elementor_Test_Base {
 	private function get_wrapper(): string {
 		return '.elementor-kit-' . $this->kit->get_id();
 	}
+
+	private function flush_documents_cache(): void {
+		$reflection = new \ReflectionProperty( Plugin::$instance->documents, 'documents' );
+		$reflection->setAccessible( true );
+		$reflection->setValue( Plugin::$instance->documents, [] );
+	}
 }
