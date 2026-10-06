@@ -1,4 +1,4 @@
-import { getElements } from '@elementor/editor-elements';
+import { getHostDocumentElements, getHostDocumentId } from '@elementor/editor-elements';
 
 import { fetchPageContext } from './api/page-context-client';
 import { getRegisteredAudits } from './registry';
@@ -18,7 +18,11 @@ import { readKitSnapshot } from './utils/read-kit-snapshot';
 import { buildSnapshotTree } from './utils/v1-snapshot';
 
 export async function runPageAudit( documentId: number ): Promise< PageAuditReport > {
-	const tree = buildSnapshotTree( getElements() );
+	if ( documentId !== getHostDocumentId() ) {
+		throw new Error( 'runPageAudit: documentId must match the host document.' );
+	}
+
+	const tree = buildSnapshotTree( getHostDocumentElements() );
 	const imageSizeRequests = extractImageSizeRequests( tree );
 	const pageContext = await fetchPageContext( documentId, imageSizeRequests );
 

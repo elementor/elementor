@@ -58,6 +58,7 @@ export const audit: Audit = {
 			targetHint: 'element-settings' as const,
 			label: __( "Image isn't served in a modern format like WebP or AVIF.", 'elementor' ),
 			externalUrl: ctx.pageContext.image_optimization_plugin_url,
+			ctaLabel: __( 'Optimize all', 'elementor' ),
 		} ) );
 
 		return violations.length === 0
