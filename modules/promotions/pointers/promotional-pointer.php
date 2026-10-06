@@ -4,7 +4,6 @@ namespace Elementor\Modules\Promotions\Pointers;
 
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\User;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -83,9 +82,7 @@ class Promotional_Pointer {
 	}
 
 	public static function should_display_notice(): bool {
-		return self::is_user_allowed() &&
-			! self::is_already_seen_today() &&
-			! Utils::has_pro();
+		return self::is_user_allowed() && ! self::is_already_seen_today();
 	}
 
 	private static function is_user_allowed(): bool {

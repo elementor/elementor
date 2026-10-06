@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions;
 
 use Elementor\Modules\Promotions\Pointers\Promotional_Pointer;
 use Elementor\User;
-use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 use ReflectionClass;
 
@@ -85,16 +84,7 @@ class Test_Promotional_Pointer extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
-	/**
-	 * Full should_display_notice() — only meaningful when Pro is not active.
-	 * Other tests in this suite may define ELEMENTOR_PRO_VERSION (a PHP constant that cannot
-	 * be undefined), which would cause this test to fail with a false negative.
-	 */
 	public function test_should_display_notice__returns_true_when_conditions_met() {
-		if ( Utils::has_pro() ) {
-			$this->markTestSkipped( 'ELEMENTOR_PRO_VERSION is defined in this process — promotional pointer is disabled when Pro is active.' );
-		}
-
 		// Act
 		$result = Promotional_Pointer::should_display_notice();
 
@@ -187,10 +177,6 @@ class Test_Promotional_Pointer extends Elementor_Test_Base {
 	}
 
 	public function test_enqueue_notice__sets_seen_today_and_outputs_title_when_fully_configured() {
-		if ( Utils::has_pro() ) {
-			$this->markTestSkipped( 'ELEMENTOR_PRO_VERSION is defined — enqueue_notice() exits early via should_display_notice() when Pro is active.' );
-		}
-
 		// Arrange — full valid payload: is_active, title, cta_url all present.
 		$this->seed_cdn_data( [
 			'is_active' => true,
@@ -236,10 +222,6 @@ class Test_Promotional_Pointer extends Elementor_Test_Base {
 	}
 
 	public function test_enqueue_notice__does_not_treat_different_campaign_as_dismissed() {
-		if ( Utils::has_pro() ) {
-			$this->markTestSkipped( 'ELEMENTOR_PRO_VERSION is defined — enqueue_notice() exits early via should_display_notice() when Pro is active.' );
-		}
-
 		// Arrange — campaign_id 'bfcm2026' is active, but only 'bfcm2025' was dismissed.
 		$this->seed_cdn_data( [
 			'is_active'   => true,
