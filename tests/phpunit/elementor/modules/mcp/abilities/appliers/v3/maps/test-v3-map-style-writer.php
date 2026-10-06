@@ -52,7 +52,6 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		$map = [
 			'widget_type' => 'heading',
 			'description' => 'Heading widget.',
-			'catalog_visibility' => V3_Widget_Map_Compiler::CATALOG_VISIBILITY_V4_DISABLED,
 			'settings' => [],
 			'default_style_target' => 'heading',
 			'style_targets' => [
