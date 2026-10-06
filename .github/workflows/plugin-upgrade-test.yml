@@ -15,6 +15,10 @@ on:
       - '.gitignore'
       - 'docs/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
@@ -25,6 +29,8 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
     needs: [build-plugin]
+    env:
+      WP_LITE_ENV_CONFIG: ./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -48,30 +54,54 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run setup-templates
-          npx wp-lite-env start --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --port=8888
+          npx wp-lite-env start --config="${WP_LITE_ENV_CONFIG}" --port=8888
+      - name: Resolve upgrade versions
+        run: |
+          expected_version=$(sed -n "s/.*define( 'ELEMENTOR_VERSION', '\([^']*\)' ).*/\1/p" build/elementor.php)
+          released_versions=$(curl -fsSL "https://api.wordpress.org/plugins/info/1.0/elementor.json" | jq -r '.versions | keys[]' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
+          baseline_version=$(printf '%s\n' "${released_versions}" "${expected_version}" | sort -uV | grep -B1 -x "${expected_version}" | head -n 1)
+          echo "Baseline Elementor version: ${baseline_version}"
+          echo "Expected Elementor version: ${expected_version}"
+          if [ -z "${expected_version}" ] || [ "${baseline_version}" = "${expected_version}" ]; then
+            echo "No released Elementor version is lower than ${expected_version}"
+            exit 1
+          fi
+          echo "BASELINE_VERSION=${baseline_version}" >> "$GITHUB_ENV"
+          echo "EXPECTED_VERSION=${expected_version}" >> "$GITHUB_ENV"
       - name: Setup test data
         run: |
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install elementor" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="bash elementor-config/setup.sh" --port=8888
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp plugin install elementor --version=${BASELINE_VERSION}" --port=8888
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="bash elementor-config/setup.sh" --port=8888
+          baseline_db_version=$(npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp option get elementor_version" --port=8888 | tr -d '\r' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1)
+          echo "Baseline Elementor DB version: ${baseline_db_version}"
+          if [ "${baseline_db_version}" != "${BASELINE_VERSION}" ]; then
+            echo "Baseline site is not on Elementor ${BASELINE_VERSION}"
+            exit 1
+          fi
       - name: WordPress debug information
         run: |
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp core version" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp --info" --port=8888
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp core version" --port=8888
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp --info" --port=8888
       - name: Install playwright/test
         run: |
           npx playwright install chromium
       - name: Upgrade site
         run: |
           mv build elementor
-          expected_version=$(sed -n "s/.*define( 'ELEMENTOR_VERSION', '\([^']*\)' ).*/\1/p" elementor/elementor.php)
-          echo "Expected Elementor version: ${expected_version}"
           zip -r ./templates/playwright/elementor.zip elementor
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force --activate" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
-          installed_version=$(npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin get elementor --field=version" --port=8888 | tr -d '\r' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1)
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force --activate" --port=8888
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp elementor update db" --port=8888
+          npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp plugin list" --port=8888
+          installed_version=$(npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp plugin get elementor --field=version" --port=8888 | tr -d '\r' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1)
+          upgraded_db_version=$(npx wp-lite-env cli --config="${WP_LITE_ENV_CONFIG}" --command="wp option get elementor_version" --port=8888 | tr -d '\r' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1)
           echo "Installed Elementor version: ${installed_version}"
-          if [ "${installed_version}" != "${expected_version}" ]; then
+          echo "Upgraded Elementor DB version: ${upgraded_db_version}"
+          if [ "${installed_version}" != "${EXPECTED_VERSION}" ]; then
             echo "Upgrade did not activate the built plugin"
+            exit 1
+          fi
+          if [ "${upgraded_db_version}" != "${EXPECTED_VERSION}" ]; then
+            echo "Elementor DB upgrade did not reach ${EXPECTED_VERSION}"
             exit 1
           fi
       - name: Run Playwright tests
