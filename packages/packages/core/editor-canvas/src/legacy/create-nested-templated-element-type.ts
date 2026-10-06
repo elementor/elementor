@@ -71,15 +71,17 @@ export function createNestedTemplatedElementType( {
 	};
 }
 
-function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
+export function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
 	const id = model.get( 'id' );
 	const originId = model.get( 'originId' );
 	const cid = model.cid ?? '';
+	const isDecorative = model.get( 'editor_settings' )?.decorative === true;
 
 	const attrs: Record< string, string > = {
 		'data-model-cid': cid,
 		'data-interaction-id': originId ?? id,
 		'x-ignore': 'true',
+		...( isDecorative ? { 'data-e-decorative': 'true' } : {} ),
 	};
 
 	return Object.entries( attrs )
