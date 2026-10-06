@@ -109,8 +109,9 @@ class V3_Style_Mapper {
 	}
 
 	/**
-	 * Unlike the legacy path nothing falls back to custom_css: unknown breakpoints fail the
-	 * whole style like V4 does, and anything a target cannot store is dropped with a warning.
+	 * Unknown breakpoints fail the whole style like V4 does. Breakpoint values of controls
+	 * without a per-device value, and media queries other than `@media(--<breakpoint>)`,
+	 * fall back to custom_css; anything else a target cannot store is dropped with a warning.
 	 *
 	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], error: string|null}
 	 */
@@ -124,15 +125,13 @@ class V3_Style_Mapper {
 			] );
 		}
 
-		if ( '' !== trim( $split['custom_css'] ) ) {
-			$ctx->warn( __( 'Only @media(--<breakpoint>) blocks are supported by this Elementor widget. Other media queries were dropped.', 'elementor' ) );
-		}
-
 		foreach ( $split['breakpoints'] as $breakpoint => $css ) {
 			if ( '' !== trim( $css ) ) {
 				$this->route_to_targets( $ctx, $meta, (string) $breakpoint, (string) $css );
 			}
 		}
+
+		$ctx->mark_unmapped( $split['custom_css'] );
 
 		return $this->finalize( $ctx, $meta );
 	}

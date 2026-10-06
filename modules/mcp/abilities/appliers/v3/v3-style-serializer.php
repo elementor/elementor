@@ -47,7 +47,10 @@ class V3_Style_Serializer {
 				V3_Control_Visibility::for_widget( $widget_type )
 			);
 
-			return $this->renderer->render_targets( $target_blocks, $map->get_default_target() );
+			// Not unwrapped: bare declarations would be written back to the default style target.
+			$custom_css = is_string( $settings['custom_css'] ?? null ) ? trim( $settings['custom_css'] ) : '';
+
+			return $this->join_css( $this->renderer->render_targets( $target_blocks, $map->get_default_target() ), $custom_css );
 		}
 
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
@@ -64,10 +67,10 @@ class V3_Style_Serializer {
 			$this->dispatch_entry( $blocks, $settings, $entry, $property, $state );
 		}
 
-		$mapped_css = $this->renderer->render( $blocks );
+		return $this->join_css( $this->renderer->render( $blocks ), $this->unwrap_custom_css( $settings['custom_css'] ?? null ) );
+	}
 
-		$custom_css = $this->unwrap_custom_css( $settings['custom_css'] ?? null );
-
+	private function join_css( string $mapped_css, string $custom_css ): string {
 		if ( '' === $mapped_css ) {
 			return $custom_css;
 		}

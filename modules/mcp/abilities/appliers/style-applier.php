@@ -209,6 +209,9 @@ class Style_Applier {
 
 		if ( $is_map_driven ) {
 			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $result['settings_patch'] ?? [] ), $node['settings'] ?? [] );
+		}
+
+		if ( $is_map_driven && '' === trim( $unmapped ) ) {
 			return;
 		}
 

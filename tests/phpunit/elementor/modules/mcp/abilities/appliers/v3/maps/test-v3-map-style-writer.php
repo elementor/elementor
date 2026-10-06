@@ -27,10 +27,18 @@ class Test_V3_Map_Style_Writer extends TestCase {
 	const TABLET = 'tablet';
 	const HOVER = 'hover';
 
+	const TABLET_MAX_WIDTH = 1024;
+
 	private function controls(): array {
 		return [
-			'title_color' => [ 'type' => 'color' ],
-			'title_hover_color' => [ 'type' => 'color' ],
+			'title_color' => [
+				'type' => 'color',
+				'selectors' => [ '{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};' ],
+			],
+			'title_hover_color' => [
+				'type' => 'color',
+				'selectors' => [ '{{WRAPPER}} .elementor-heading-title:hover, {{WRAPPER}} .elementor-heading-title:focus' => 'color: {{VALUE}};' ],
+			],
 			'typography_typography' => [ 'type' => 'popover_toggle' ],
 			'typography_font_size' => [
 				'type' => 'slider',
@@ -62,7 +70,14 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		$writer = new V3_Map_Style_Writer(
 			new Css_Converter( Converter_Registry_Factory::create( null ), new Null_Failure_Reporter(), Expander_Registry_Factory::create( null ) ),
 			V3_Control_Adapter_Registry::create_default(),
-			new Css_Declaration_Parser()
+			new Css_Declaration_Parser(),
+			[
+				self::TABLET => [
+					'direction' => 'max',
+					'value' => self::TABLET_MAX_WIDTH,
+					'is_enabled' => true,
+				],
+			]
 		);
 		$ctx = new V3_Conversion_Context();
 
@@ -136,12 +151,34 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		], $ctx->settings_patch() );
 	}
 
-	public function test_write__skips_breakpoint_value_of_non_responsive_control_with_warning() {
+	public function test_write__falls_back_to_custom_css_for_breakpoint_value_of_non_responsive_control() {
 		// Act.
-		$ctx = $this->write( 'color: red;', self::TABLET );
+		$ctx = $this->write( 'color: red; font-size: 14px;', self::TABLET );
+
+		// Assert.
+		$this->assertSame( [ '@media (max-width:1024px) { selector .elementor-heading-title { color: red; } }' ], $ctx->unmapped_parts() );
+		$this->assertSame( [ 'typography_font_size_tablet', 'typography_typography' ], array_keys( $ctx->settings_patch() ) );
+		$this->assertSame( [], $ctx->warnings() );
+	}
+
+	public function test_write__falls_back_to_the_state_control_selector() {
+		// Act.
+		$ctx = $this->write( 'color: #c00;', self::TABLET, self::HOVER );
+
+		// Assert.
+		$this->assertSame(
+			[ '@media (max-width:1024px) { selector .elementor-heading-title:hover, selector .elementor-heading-title:focus { color: #c00; } }' ],
+			$ctx->unmapped_parts()
+		);
+	}
+
+	public function test_write__skips_breakpoint_value_with_warning_when_control_has_no_selector() {
+		// Act.
+		$ctx = $this->write( 'padding: 10px;', self::TABLET );
 
 		// Assert.
 		$this->assertSame( [], $ctx->settings_patch() );
+		$this->assertSame( [], $ctx->unmapped_parts() );
 		$this->assertCount( 1, $ctx->warnings() );
 		$this->assertStringContainsString( '@media(--tablet)', $ctx->warnings()[0] );
 	}
