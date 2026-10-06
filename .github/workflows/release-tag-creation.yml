@@ -50,6 +50,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      actions: read
     outputs:
       channel: ${{ steps.release-tag-creation.outputs.channel }}
 
@@ -59,12 +60,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test permissions
-        uses: ./.github/workflows/permissions
-        with:
-          ENVIRONMENT: ${{ vars.DEPLOYMENT_ENVIRONMENT }}
-          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED }}
-          DEPLOYMENT_REPOSITORY_OWNER: ${{ vars.DEPLOYMENT_REPOSITORY_OWNER }}
+      - name: Check release owner
+        uses: elementor/elementor-editor-github-actions/actions/check-release-owner@main
 
       - name: Release tag creation
         id: release-tag-creation
