@@ -42,11 +42,11 @@ export function generateFontAwesome7Catalog( { spawn = spawnSync } = {} ) {
 	}
 }
 
-export function ensureFontAwesome7Catalog() {
+export function ensureFontAwesome7Catalog( { spawn = spawnSync, catalogRoot = ROOT } = {} ) {
 	try {
-		verifyFontAwesome7Catalog( ROOT );
+		verifyFontAwesome7Catalog( catalogRoot );
 	} catch {
-		generateFontAwesome7Catalog();
+		generateFontAwesome7Catalog( { spawn } );
 	}
 }
 

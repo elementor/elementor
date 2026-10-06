@@ -9,6 +9,7 @@ import {
 	FONT_AWESOME_7_JSON_FILES,
 	FONT_AWESOME_7_RELATIVE_DIR,
 	FONT_AWESOME_7_VERSION_FILE,
+	ensureFontAwesome7Catalog,
 	generateFontAwesome7Catalog,
 	verifyFontAwesome7Catalog,
 } from '../font-awesome-7-catalog.mjs';
@@ -133,6 +134,62 @@ describe( 'generateFontAwesome7Catalog', () => {
 			() => generateFontAwesome7Catalog( { spawn } ),
 			( error ) => error.message.includes( 'killed by SIGTERM' ),
 		);
+	} );
+} );
+
+describe( 'ensureFontAwesome7Catalog', () => {
+	it( 'does not spawn when the catalog is already valid', () => {
+		// Arrange.
+		const catalogRoot = writeCatalog();
+		const calls = [];
+		const spawn = ( ...args ) => {
+			calls.push( args );
+			return { status: 0 };
+		};
+
+		// Act.
+		ensureFontAwesome7Catalog( { spawn, catalogRoot } );
+
+		// Assert.
+		assert.equal( calls.length, 0 );
+	} );
+
+	it( 'spawns the generator when the catalog is missing', () => {
+		// Arrange.
+		const catalogRoot = mkdtempSync( join( tmpdir(), 'fa7-catalog-missing-root-' ) );
+		const calls = [];
+		const spawn = ( command, args ) => {
+			calls.push( { command, args } );
+			return { status: 0 };
+		};
+
+		// Act.
+		ensureFontAwesome7Catalog( { spawn, catalogRoot } );
+
+		// Assert.
+		assert.equal( calls.length, 1 );
+		assert.equal( calls[ 0 ].command, process.execPath );
+		assert.deepEqual( calls[ 0 ].args, FONT_AWESOME_7_GENERATE_ARGS );
+	} );
+
+	it( 'spawns the generator when icons is an empty object', () => {
+		// Arrange.
+		const catalogRoot = writeCatalog( {
+			iconsJsonByFile: Object.fromEntries(
+				FONT_AWESOME_7_JSON_FILES.map( ( fileName ) => [ fileName, EMPTY_ICONS_JSON ] ),
+			),
+		} );
+		const calls = [];
+		const spawn = () => {
+			calls.push( true );
+			return { status: 0 };
+		};
+
+		// Act.
+		ensureFontAwesome7Catalog( { spawn, catalogRoot } );
+
+		// Assert.
+		assert.equal( calls.length, 1 );
 	} );
 } );
 
