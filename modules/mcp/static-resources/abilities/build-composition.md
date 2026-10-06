@@ -66,7 +66,7 @@ Call `elementor/list-components` before building a repeated, named, or otherwise
 Place a component as the self-closing leaf tag `<e-component configuration-id="my-hero"/>`. Configure it through `element_config` with `{ component_id, overrides? }`. Override values use the plain-value shape from `origin_prop_schema`; only listed override keys are valid. Components can be mixed with raw widgets.
 
 # XML STRUCTURE
-- Use widget tags: `<e-button configuration-id="btn1"></e-button>`
+- Use widget tags: `<e-button configuration-id="primary-button"></e-button>`
 - Containers: "e-div-block", "e-grid", "e-flexbox"
 - Every element needs a unique `configuration-id` — see **ID RULES**
 - No other attributes, classes, element ids, or text nodes in XML
@@ -141,7 +141,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
 
 **In `classes` (reference-only):** attach existing global classes by label:
-- Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)
+- Map configuration-id → array of labels (e.g. `"section-title": ["hero-heading", "text-muted"]`)
 - Create or update classes with `elementor/manage-classes` before referencing them here
 - Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
@@ -249,16 +249,16 @@ Section with heading + button (NO explicit heights - content sizes naturally):
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
+  "xml_structure": "<e-div-block configuration-id=\"main-section\"><e-heading configuration-id=\"section-title\"></e-heading><e-button configuration-id=\"call-to-action\"></e-button></e-div-block>",
   "element_config": {
-    "Section Title": {
+    "section-title": {
       "tag": "h2",
       "title": "Welcome"
     }
   },
   "style": {
-    "Main Section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
-    "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
+    "main-section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "section-title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }
 ```

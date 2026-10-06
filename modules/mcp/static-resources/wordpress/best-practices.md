@@ -19,11 +19,11 @@ Real sites have one repeating design for a post type plus a few one-off exceptio
 Every single template has one optional editorial slot: a `theme-post-content` widget wrapped in a full-width `e-div-block`, placed between the fixed hero and the fixed bottom section. Posts with no body render nothing in that slot; posts with body content render it there.
 
 ```xml
-<e-div-block configuration-id="Post Hero">...</e-div-block>
-<e-div-block configuration-id="Post Body">
-  <theme-post-content configuration-id="Post Content"></theme-post-content>
+<e-div-block configuration-id="post-hero">...</e-div-block>
+<e-div-block configuration-id="post-body">
+  <theme-post-content configuration-id="post-content"></theme-post-content>
 </e-div-block>
-<e-div-block configuration-id="Post Bottom">...</e-div-block>
+<e-div-block configuration-id="post-bottom">...</e-div-block>
 ```
 
 `theme-post-content` is the widget name. Emit `<theme-post-content>` in `xml_structure` with no `element_config` — the composition write path accepts it as-is.
