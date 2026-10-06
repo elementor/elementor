@@ -206,6 +206,27 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 		$this->assertSame( $cdn_url, $url );
 	}
 
+	public function test_get_url__preserves_ampersand_in_query_string() {
+		// Arrange — CDN URL contains query params with &.
+		$cdn_url     = 'https://go.elementor.com/x/?a=1&b=2';
+		$cdn_payload = [
+			'is_active' => true,
+			'label'     => 'Sale',
+			'url'       => $cdn_url,
+		];
+
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $cdn_payload ),
+		] );
+
+		// Act
+		$url = Go_Pro_Promotion_Item::get_url();
+
+		// Assert — & must not be encoded as &#038; in a redirect URL.
+		$this->assertSame( $cdn_url, $url );
+	}
+
 	public function test_get_url__rejects_non_elementor_cdn_url() {
 		// Arrange — CDN returns a URL outside elementor.com.
 		$cdn_payload = [
@@ -298,6 +319,52 @@ class Test_Go_Pro_Promotion_Item extends TestCase {
 
 		// Assert — label must not have changed.
 		$this->assertSame( $original_label, $GLOBALS['submenu']['elementor-home'][1][0] );
+	}
+
+	// --- override_one_menu_upgrade_url tests ---
+
+	public function test_override_url__returns_passed_url_when_cdn_inactive() {
+		// Arrange — no CDN data seeded; HTTP blocked → assets_data will be empty.
+		$default_url = 'https://go.elementor.com/default/';
+
+		// Act
+		$result = $this->make_module()->override_one_menu_upgrade_url( $default_url );
+
+		// Assert — must return the passed-in URL unchanged when CDN is inactive.
+		$this->assertSame( $default_url, $result );
+	}
+
+	public function test_override_url__returns_cdn_url_when_active() {
+		// Arrange
+		$cdn_url = 'https://go.elementor.com/sale/?utm=bfcm';
+		$this->seed_side_menu_cdn_data( [
+			'is_active' => true,
+			'label'     => 'Sale',
+			'url'       => $cdn_url,
+		] );
+
+		// Act — the default URL should be replaced by the validated CDN URL.
+		$result = $this->make_module()->override_one_menu_upgrade_url( Go_Pro_Promotion_Item::URL );
+
+		// Assert — validated CDN URL must be returned.
+		$this->assertSame( $cdn_url, $result );
+	}
+
+	public function test_override_url__returns_default_when_cdn_is_active_false() {
+		// Arrange — payload present but is_active = false.
+		$this->seed_side_menu_cdn_data( [
+			'is_active' => false,
+			'label'     => 'Sale',
+			'url'       => 'https://go.elementor.com/sale/',
+		] );
+
+		$default_url = Go_Pro_Promotion_Item::URL;
+
+		// Act
+		$result = $this->make_module()->override_one_menu_upgrade_url( $default_url );
+
+		// Assert — inactive campaign must not override the URL.
+		$this->assertSame( $default_url, $result );
 	}
 
 	private function make_module(): Module {
