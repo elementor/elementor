@@ -223,18 +223,26 @@ class Markdown_Endpoint extends Feature_Component {
 			$this->deny_markdown_access();
 		}
 
-		$extractor   = new Content_Extractor();
-		$extraction  = $extractor->extract_with_id( $post );
-		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
-		$body        = $extraction['body'];
-
-		$output = $frontmatter . "\n\n" . $body;
+		$output = $this->build_markdown( $post );
 
 		$this->send_headers( $post->ID );
 		status_header( 200 );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output;
 		exit;
+	}
+
+	/**
+	 * Build the markdown document served for a post, without sending it.
+	 *
+	 * @param \WP_Post $post The post to render.
+	 */
+	public function build_markdown( \WP_Post $post ): string {
+		$extractor   = new Content_Extractor();
+		$extraction  = $extractor->extract_with_id( $post );
+		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
+
+		return $frontmatter . "\n\n" . $extraction['body'];
 	}
 
 	/**

@@ -4,8 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
-use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
-use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
@@ -170,7 +168,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
-	public function test_serve_markdown__builds_published_post_with_frontmatter() {
+	public function test_build_markdown__includes_frontmatter_and_body() {
 		// Arrange
 		$post = get_post( $this->factory()->post->create( [
 			'post_status'  => 'publish',
@@ -178,12 +176,10 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 			'post_content' => 'Body content for markdown.',
 		] ) );
 
-		$extractor = new Content_Extractor();
-		$extraction = $extractor->extract_with_id( $post );
-		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
-		$output = $frontmatter . "\n\n" . $extraction['body'];
+		// Act
+		$output = $this->endpoint->build_markdown( $post );
 
-		// Act & Assert
+		// Assert
 		$this->assertMatchesRegularExpression( '/---\s*\n[\s\S]*?\n---/', $output );
 		$this->assertStringContainsString( 'Body content for markdown.', $output );
 	}
