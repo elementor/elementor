@@ -11,7 +11,7 @@ import {
 	type AuditSeverity,
 	type PageAuditReport,
 } from '../../../types';
-import IssuesPage from '../issues-page';
+import OverviewPage from '../overview-page';
 
 function auditMeta( id: string, categories: AuditCategory[], severity: AuditSeverity ): AuditMeta {
 	return { id, title: id, description: '', fixHint: '', categories, severity, weight: 1 };
@@ -39,8 +39,8 @@ function makeReport( auditResults: AuditRun[] ): PageAuditReport {
 	};
 }
 
-describe( 'IssuesPage', () => {
-	it( 'shows every populated category when "All" is selected', () => {
+describe( 'OverviewPage', () => {
+	it( 'shows the severity summary counts, all issues heading, and populated category rows', () => {
 		// Arrange.
 		const report = makeReport( [
 			failedRun( 'seo-error', [ 'seo' ], 'error' ),
@@ -48,62 +48,37 @@ describe( 'IssuesPage', () => {
 		] );
 
 		// Act.
-		renderWithTheme(
-			<IssuesPage
-				report={ report }
-				onCategoryClick={ jest.fn() }
-				onAllAuditsClick={ jest.fn() }
-				onStatusClick={ jest.fn() }
-			/>
-		);
+		renderWithTheme( <OverviewPage report={ report } onCategoryClick={ jest.fn() } /> );
 
 		// Assert.
+		expect( screen.getByText( 'Errors' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'All issues' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'SEO' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Accessibility' ) ).toBeInTheDocument();
 	} );
 
-	it( 'hides categories with no violations for the selected severity filter', () => {
+	it( 'hides categories with no violations', () => {
 		// Arrange.
-		const report = makeReport( [
-			failedRun( 'seo-error', [ 'seo' ], 'error' ),
-			failedRun( 'accessibility-info', [ 'accessibility' ], 'info' ),
-		] );
-		renderWithTheme(
-			<IssuesPage
-				report={ report }
-				onCategoryClick={ jest.fn() }
-				onAllAuditsClick={ jest.fn() }
-				onStatusClick={ jest.fn() }
-			/>
-		);
+		const report = makeReport( [ failedRun( 'seo-error', [ 'seo' ], 'error' ) ] );
 
 		// Act.
-		fireEvent.click( screen.getByText( 'Errors' ) );
+		renderWithTheme( <OverviewPage report={ report } onCategoryClick={ jest.fn() } /> );
 
 		// Assert.
 		expect( screen.getByText( 'SEO' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Accessibility' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows only the selected severity count for a category with multiple severities', () => {
+	it( 'calls onCategoryClick with the clicked category', () => {
 		// Arrange.
-		const report = makeReport( [
-			failedRun( 'seo-error', [ 'seo' ], 'error' ),
-			failedRun( 'seo-info', [ 'seo' ], 'info' ),
-		] );
-		renderWithTheme(
-			<IssuesPage
-				report={ report }
-				onCategoryClick={ jest.fn() }
-				onAllAuditsClick={ jest.fn() }
-				onStatusClick={ jest.fn() }
-			/>
-		);
+		const onCategoryClick = jest.fn();
+		const report = makeReport( [ failedRun( 'seo-error', [ 'seo' ], 'error' ) ] );
+		renderWithTheme( <OverviewPage report={ report } onCategoryClick={ onCategoryClick } /> );
 
 		// Act.
-		fireEvent.click( screen.getByText( 'Suggestions' ) );
+		fireEvent.click( screen.getByText( 'SEO' ) );
 
 		// Assert.
-		expect( screen.getAllByText( '1' ) ).toHaveLength( 1 );
+		expect( onCategoryClick ).toHaveBeenCalledWith( 'seo' );
 	} );
 } );
