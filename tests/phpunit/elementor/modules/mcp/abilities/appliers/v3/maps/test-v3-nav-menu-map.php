@@ -32,6 +32,11 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		. ' dropdown:hover { color: #666666; } dropdown-divider { border-style: solid; } toggle { font-size: 24px; }'
 		. ' @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } }';
 
+	const ROUND_TRIP_EXAMPLE_CSS = 'font-size: 18px; color: #111111; padding-inline-start: 12px; padding-inline-end: 12px;'
+		. ' &:hover { color: #222222; } &:current { color: #333333; } dropdown { background-color: #ffffff; }'
+		. ' wrapper { position: absolute; inset-inline-end: 20px; z-index: 9; }'
+		. ' @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } wrapper { width: 150px; } }';
+
 	private V3_Widget_Map_Registry $registry;
 
 	public function setUp(): void {
@@ -150,6 +155,53 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 			],
 			$result['settings_patch']
 		);
+	}
+
+	public function test_round_trip__targets_states_and_breakpoint_requirements_read_back_as_written() {
+		// Arrange.
+		$written = $this->mapper()->apply( str_replace( '&:current', 'main-menu:current', self::ROUND_TRIP_EXAMPLE_CSS ), self::WIDGET_TYPE, [] );
+
+		// Act.
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( [], $written['warnings'] );
+		$this->assertEqualsCanonicalizing(
+			[
+				'menu_typography_font_size' => [
+					'unit' => 'px',
+					'size' => 18,
+				],
+				'menu_typography_typography' => 'custom',
+				'color_menu_item' => '#111111',
+				'padding_horizontal_menu_item' => [
+					'unit' => 'px',
+					'size' => 12,
+				],
+				'color_menu_item_hover' => '#222222',
+				'color_menu_item_active' => '#333333',
+				'background_color_dropdown_item' => '#ffffff',
+				'padding_vertical_dropdown_item_mobile' => [
+					'unit' => 'px',
+					'size' => 6,
+				],
+				'_position' => 'absolute',
+				'_offset_x_end' => [
+					'unit' => 'px',
+					'size' => 20,
+				],
+				'_offset_orientation_h' => 'end',
+				'_z_index' => 9,
+				'_element_custom_width_mobile' => [
+					'unit' => 'px',
+					'size' => 150,
+				],
+				'_element_width_mobile' => 'initial',
+			],
+			$written['settings_patch']
+		);
+		$this->assertSame( self::ROUND_TRIP_EXAMPLE_CSS, $readback );
+		$this->assertEquals( $written['settings_patch'], $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] )['settings_patch'] );
 	}
 
 	public function test_apply__writes_wrapper_flex_parts_with_custom_size_requirement() {
