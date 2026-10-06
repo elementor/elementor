@@ -93,6 +93,9 @@ class V3_Style_Target_Router {
 	}
 
 	/**
+	 * @param string                  $selector
+	 * @param string                  $body
+	 * @param string                  $default_target
 	 * @param array<string, string[]> $target_states
 	 * @return array{target: string, state: ?string, css: string}|array{selector: string, reason: string}
 	 */

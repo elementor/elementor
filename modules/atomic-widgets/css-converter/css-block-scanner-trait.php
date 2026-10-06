@@ -24,6 +24,9 @@ trait Css_Block_Scanner_Trait {
 	}
 
 	/**
+	 * @param string   $css
+	 * @param int      $start
+	 * @param int      $len
 	 * @param string[] $needles Single characters.
 	 */
 	private function find_unquoted( string $css, int $start, int $len, array $needles ): ?int {
