@@ -29,6 +29,14 @@ class V3_Map_Style_Writer {
 		$this->declaration_parser = $declaration_parser;
 	}
 
+	/**
+	 * @param V3_Conversion_Context    $ctx
+	 * @param Compiled_Style_Binding[] $bindings
+	 * @param array<string, mixed>     $controls
+	 * @param string                   $breakpoint
+	 * @param string|null              $state
+	 * @param string                   $css
+	 */
 	public function write( V3_Conversion_Context $ctx, array $bindings, array $controls, string $breakpoint, ?string $state, string $css ): void {
 		$converted = $this->css_converter->convert( $css );
 		$state = $state ?? Style_Target::DEFAULT_STATE;
@@ -57,31 +65,31 @@ class V3_Map_Style_Writer {
 		);
 	}
 
-	private function write_binding( V3_Conversion_Context $ctx, array $binding, array $controls, string $breakpoint, $prop_value ): void {
-		if ( ! is_array( $prop_value ) || ! $this->touches_bound_sides( $prop_value, $binding['sides'] ) ) {
+	private function write_binding( V3_Conversion_Context $ctx, Compiled_Style_Binding $binding, array $controls, string $breakpoint, $prop_value ): void {
+		if ( ! is_array( $prop_value ) || ! $this->touches_bound_sides( $prop_value, $binding->get_sides() ) ) {
 			return;
 		}
 
-		if ( Responsive_Key_Resolver::BASE_BREAKPOINT !== $breakpoint && ! $binding['responsive'] ) {
-			$ctx->warn( $this->missing_breakpoint_message( $binding['prop'], $breakpoint ) );
+		if ( Responsive_Key_Resolver::BASE_BREAKPOINT !== $breakpoint && ! $binding->is_responsive() ) {
+			$ctx->warn( $this->missing_breakpoint_message( $binding->get_prop(), $breakpoint ) );
 
 			return;
 		}
 
-		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding['control_type'], null !== $binding['sides'] );
+		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding->get_control_type(), null !== $binding->get_sides() );
 		$control_value = null === $adapter
 			? null
-			: $adapter->to_control_value( $prop_value, $binding['sides'], $controls[ $binding['setting'] ] ?? [] );
+			: $adapter->to_control_value( $prop_value, $binding->get_sides(), $controls[ $binding->get_setting() ] ?? [] );
 
 		if ( null === $control_value ) {
-			$ctx->warn( $this->unstorable_value_message( $binding['prop'] ) );
+			$ctx->warn( $this->unstorable_value_message( $binding->get_prop() ) );
 
 			return;
 		}
 
-		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding['setting'] : $binding['setting'] . '_' . $breakpoint;
+		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
 
-		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $binding['dependency_values'] ) );
+		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $binding->get_dependency_values() ) );
 	}
 
 	/**
@@ -99,12 +107,13 @@ class V3_Map_Style_Writer {
 	}
 
 	/**
-	 * @return array<int, array<string, mixed>>
+	 * @param Compiled_Style_Binding[] $bindings
+	 * @return Compiled_Style_Binding[]
 	 */
 	private function bindings_for( array $bindings, string $prop, string $state ): array {
 		return array_values( array_filter(
 			$bindings,
-			fn( array $binding ) => $prop === $binding['prop'] && $state === $binding['state']
+			fn( Compiled_Style_Binding $binding ) => $prop === $binding->get_prop() && $state === $binding->get_state()
 		) );
 	}
 

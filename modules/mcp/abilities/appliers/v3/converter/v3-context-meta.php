@@ -40,6 +40,9 @@ class V3_Context_Meta {
 		return $this->widget_config;
 	}
 
+	/**
+	 * @return \Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_Style_Binding[]
+	 */
 	public function style_bindings(): array {
 		return $this->style_bindings;
 	}

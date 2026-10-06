@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_V3_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 
@@ -31,11 +32,11 @@ class V3_Settings_Validator {
 	 * }
 	 */
 	public static function validate_shape( string $widget_type, array $primitives, array $widget_config ): array {
-		$contract = V3_Widget_Map_Registry::instance()->get_validation_contract( $widget_type );
-		$is_standardized = V3_Widget_Map_Registry::instance()->is_experiment_active() && null !== $contract;
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$is_standardized = null !== $map;
 
 		if ( $is_standardized ) {
-			$schema = V3_Json_Schema_Builder::build_from_map( $contract['settings'] );
+			$schema = V3_Json_Schema_Builder::build_from_map( $map->get_setting_schemas() );
 		} else {
 			$controls = is_array( $widget_config['controls'] ?? null ) ? $widget_config['controls'] : [];
 			$schema = V3_Json_Schema_Builder::build( $controls, array_keys( $primitives ) );
@@ -45,7 +46,7 @@ class V3_Settings_Validator {
 
 		if ( empty( $shape['errors'] ) ) {
 			return [
-				'valid' => $is_standardized ? self::resolve_map_settings( $shape['valid'], $contract['settings'] ) : $shape['valid'],
+				'valid' => $is_standardized ? self::resolve_map_settings( $shape['valid'], $map ) : $shape['valid'],
 				'error' => null,
 			];
 		}
@@ -56,7 +57,7 @@ class V3_Settings_Validator {
 		}
 
 		return [
-			'valid' => $is_standardized ? self::resolve_map_settings( $shape['valid'], $contract['settings'] ) : $shape['valid'],
+			'valid' => $is_standardized ? self::resolve_map_settings( $shape['valid'], $map ) : $shape['valid'],
 			'error' => new \WP_Error(
 				'elementor_invalid_settings',
 				implode( '; ', $messages ),
@@ -66,18 +67,18 @@ class V3_Settings_Validator {
 	}
 
 	/**
-	 * @param array<string, mixed>                $settings
-	 * @param array<string, array<string, mixed>> $schemas
+	 * @param array<string, mixed> $settings
 	 * @return array<string, mixed>
 	 */
-	private static function resolve_map_settings( array $settings, array $schemas ): array {
+	private static function resolve_map_settings( array $settings, Compiled_V3_Map $map ): array {
 		$resolved = [];
+		$map_settings = $map->get_settings();
 
 		foreach ( $settings as $public_key => $value ) {
-			$schema = $schemas[ $public_key ] ?? [];
-			$control_key = $schema['key'] ?? $public_key;
+			$setting = $map_settings[ $public_key ] ?? null;
+			$control_key = null !== $setting ? $setting->get_control_key() : $public_key;
 
-			$resolved[ $control_key ] = self::convert_map_value( $value, $schema );
+			$resolved[ $control_key ] = self::convert_map_value( $value, null !== $setting ? $setting->get_schema() : [] );
 		}
 
 		return $resolved;

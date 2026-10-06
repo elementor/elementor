@@ -3,8 +3,10 @@
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_V3_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use PHPUnit\Framework\TestCase;
@@ -17,73 +19,148 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	const WIDGET_TYPE = 'nav-menu';
 
-	public function test_is_supported__true_when_map_compiles_and_atomic_active() {
+	const CONTROLS = [ 'color_menu_item' => [ 'type' => 'color' ] ];
+
+	public function test_get_map__returns_compiled_map_when_experiment_and_atomic_active() {
 		// Arrange.
-		$registry = $this->registry( true );
+		$registry = $this->registry();
 
 		// Act.
-		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
+		$map = $registry->get_map( self::WIDGET_TYPE );
 
 		// Assert.
-		$this->assertTrue( $is_supported );
+		$this->assertInstanceOf( Compiled_V3_Map::class, $map );
+		$this->assertTrue( $registry->is_supported( self::WIDGET_TYPE ) );
 	}
 
-	public function test_is_supported__false_when_atomic_inactive() {
+	public function test_get_map__null_when_experiment_inactive() {
 		// Arrange.
-		$registry = $this->registry( false );
+		$registry = $this->registry( [ 'is_experiment_active' => false ] );
 
 		// Act.
-		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
+		$map = $registry->get_map( self::WIDGET_TYPE );
 
 		// Assert.
-		$this->assertFalse( $is_supported );
+		$this->assertNull( $map );
 	}
 
-	public function test_is_supported__false_without_registered_map() {
+	public function test_get_map__null_when_atomic_inactive() {
 		// Arrange.
-		$registry = $this->registry( true, [] );
+		$registry = $this->registry( [ 'is_atomic_active' => false ] );
 
 		// Act.
-		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
+		$map = $registry->get_map( self::WIDGET_TYPE );
 
 		// Assert.
-		$this->assertFalse( $is_supported );
+		$this->assertNull( $map );
+		$this->assertFalse( $registry->is_supported( self::WIDGET_TYPE ) );
 	}
 
-	public function test_is_supported__false_when_map_does_not_compile() {
+	public function test_get_map__null_without_registered_map() {
 		// Arrange.
-		$registry = $this->registry( true, null, [] );
+		$registry = $this->registry( [ 'maps' => [] ] );
 
 		// Act.
-		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
+		$map = $registry->get_map( self::WIDGET_TYPE );
 
 		// Assert.
-		$this->assertFalse( $is_supported );
+		$this->assertNull( $map );
+		$this->assertFalse( $registry->is_supported( self::WIDGET_TYPE ) );
 	}
 
-	private function registry( bool $is_atomic_active, ?array $maps = null, ?array $controls = null ): V3_Widget_Map_Registry {
-		$maps = $maps ?? [ self::WIDGET_TYPE => $this->map() ];
-		$controls = $controls ?? [ 'color_menu_item' => [ 'type' => 'color' ] ];
+	public function test_get_map__null_when_widget_is_not_registered() {
+		// Arrange.
+		$registry = $this->registry( [ 'controls' => null ] );
 
-		return new V3_Widget_Map_Registry(
-			new V3_Widget_Map_Compiler( [ 'color' => Color_Prop_Type::make() ] ),
-			static fn() => true,
-			static fn() => $is_atomic_active,
-			static fn() => $controls,
-			$maps
+		// Act.
+		$map = $registry->get_map( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertNull( $map );
+		$this->assertSame( [], $registry->get_diagnostics( self::WIDGET_TYPE ) );
+	}
+
+	public function test_get_map__keeps_map_and_records_diagnostic_when_control_is_missing() {
+		// Arrange.
+		$registry = $this->registry( [ 'controls' => [] ] );
+
+		// Act.
+		$map = $registry->get_map( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertInstanceOf( Compiled_V3_Map::class, $map );
+		$this->assertSame( [], $map->get_style_bindings() );
+		$this->assertSame(
+			[
+				[
+					'widget_type' => self::WIDGET_TYPE,
+					'entry' => 'main-menu.color',
+					'reason' => 'missing_control',
+					'detail' => 'color_menu_item',
+				],
+			],
+			$registry->get_diagnostics( self::WIDGET_TYPE )
 		);
 	}
 
-	private function map(): array {
-		return [
-			'widget_type' => self::WIDGET_TYPE,
-			'description' => 'Navigation menu.',
-			'settings' => [],
-			'default_style_target' => 'main-menu',
-			'style_targets' => [
-				'main-menu' => Style_Target::make( 'Main menu items' )
-					->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) ),
-			],
-		];
+	public function test_get_map__compiles_once() {
+		// Arrange.
+		$calls = 0;
+		$registry = $this->registry( [
+			'get_controls' => static function () use ( &$calls ) {
+				++$calls;
+
+				return self::CONTROLS;
+			},
+		] );
+
+		// Act.
+		$registry->get_map( self::WIDGET_TYPE );
+		$registry->get_map( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertSame( 1, $calls );
+		$this->assertCount( 0, $registry->get_diagnostics( self::WIDGET_TYPE ) );
+	}
+
+	public function test_get_llm_contract__returns_description_properties_and_targets() {
+		// Arrange.
+		$registry = $this->registry();
+
+		// Act.
+		$contract = $registry->get_llm_contract( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertSame( 'Navigation menu.', $contract['description'] );
+		$this->assertSame( [], $contract['properties'] );
+		$this->assertSame( [ 'main-menu' => [ 'color' ] ], $contract['style_targets'] );
+	}
+
+	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
+		$options = array_merge( [
+			'is_experiment_active' => true,
+			'is_atomic_active' => true,
+			'maps' => [ self::WIDGET_TYPE => $this->map() ],
+			'controls' => self::CONTROLS,
+		], $overrides );
+		$controls = $options['controls'];
+
+		return new V3_Widget_Map_Registry(
+			new V3_Widget_Map_Compiler( [ 'color' => Color_Prop_Type::make() ] ),
+			static fn() => $options['is_experiment_active'],
+			static fn() => $options['is_atomic_active'],
+			$options['get_controls'] ?? static fn() => $controls,
+			$options['maps']
+		);
+	}
+
+	private function map(): V3_Widget_Map {
+		return V3_Widget_Map::make( self::WIDGET_TYPE )
+			->description( 'Navigation menu.' )
+			->default_target(
+				Style_Target::make( 'main-menu' )
+					->label( 'Main menu items' )
+					->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) )
+			);
 	}
 }

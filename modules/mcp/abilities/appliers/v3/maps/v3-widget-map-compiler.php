@@ -16,15 +16,9 @@ class V3_Widget_Map_Compiler {
 
 	const ERROR_CODE = 'elementor_v3_map_invalid';
 
-	const REQUIRED_FIELDS = [
-		'widget_type',
-		'description',
-		'settings',
-		'default_style_target',
-		'style_targets',
-	];
-
 	const ALIAS_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
+
+	const SETTING_ENTRY_PREFIX = 'setting.';
 
 	/** @var array<string, Prop_Type>|null */
 	private ?array $style_schema;
@@ -40,114 +34,131 @@ class V3_Widget_Map_Compiler {
 	}
 
 	/**
-	 * @param array<string, mixed> $map
+	 * Map-shape errors fail the whole map. A setting or binding whose control is missing or
+	 * incompatible is dropped and recorded in the diagnostics, so control drift in the widget
+	 * degrades the map instead of removing the widget from the catalog.
+	 *
+	 * @param V3_Widget_Map        $map
 	 * @param array<string, mixed> $controls
-	 * @return array<string, mixed>|WP_Error
+	 * @param V3_Map_Diagnostics   $diagnostics
+	 * @param string|null          $expected_widget_type
+	 * @return Compiled_V3_Map|WP_Error
 	 */
-	public function compile( array $map, array $controls, ?string $expected_widget_type = null ) {
+	public function compile( V3_Widget_Map $map, array $controls, V3_Map_Diagnostics $diagnostics, ?string $expected_widget_type = null ) {
+		$widget_type = $map->get_widget_type();
 		$shape_error = $this->validate_map_shape( $map, $expected_widget_type );
 
 		if ( $shape_error instanceof WP_Error ) {
+			$data = $shape_error->get_error_data( self::ERROR_CODE );
+			$diagnostics->add( $expected_widget_type ?? $widget_type, V3_Map_Diagnostics::MAP_ENTRY, $data['reason'], $data['detail'] );
+
 			return $shape_error;
 		}
 
-		$settings_error = $this->validate_settings( $map, $controls );
-
-		if ( $settings_error instanceof WP_Error ) {
-			return $settings_error;
-		}
-
-		return $this->validate_style_targets( $map, $controls );
+		return new Compiled_V3_Map(
+			$widget_type,
+			$map->get_description(),
+			$this->compile_settings( $map, $controls, $diagnostics ),
+			$map->get_default_target()->get_alias(),
+			$this->compile_targets( $map, $controls, $diagnostics )
+		);
 	}
 
-	/**
-	 * @param array<string, mixed> $map
-	 * @return WP_Error|null
-	 */
-	private function validate_map_shape( array $map, ?string $expected_widget_type ) {
-		foreach ( self::REQUIRED_FIELDS as $field ) {
-			if ( ! array_key_exists( $field, $map ) || ( is_string( $map[ $field ] ) && '' === $map[ $field ] ) ) {
-				return self::error( 'missing_field', $field );
+	private function validate_map_shape( V3_Widget_Map $map, ?string $expected_widget_type ): ?WP_Error {
+		if ( '' === $map->get_widget_type() ) {
+			return self::error( 'missing_field', 'widget_type' );
+		}
+
+		if ( null !== $expected_widget_type && $expected_widget_type !== $map->get_widget_type() ) {
+			return self::error( 'widget_type_mismatch', $map->get_widget_type() );
+		}
+
+		if ( '' === $map->get_description() ) {
+			return self::error( 'missing_field', 'description' );
+		}
+
+		if ( null === $map->get_default_target() ) {
+			return self::error( 'missing_default_style_target', '' );
+		}
+
+		$seen_aliases = [];
+
+		foreach ( $map->get_all_targets() as $target ) {
+			$alias = $target->get_alias();
+
+			if ( 1 !== preg_match( self::ALIAS_PATTERN, $alias ) ) {
+				return self::error( 'invalid_alias', $alias );
 			}
-		}
 
-		if ( null !== $expected_widget_type && $expected_widget_type !== $map['widget_type'] ) {
-			return self::error( 'widget_type_mismatch', $map['widget_type'] );
-		}
+			if ( isset( $seen_aliases[ $alias ] ) ) {
+				return self::error( 'duplicate_alias', $alias );
+			}
 
-		if ( ! is_array( $map['settings'] ) || ! is_array( $map['style_targets'] ) || empty( $map['style_targets'] ) ) {
-			return self::error( 'missing_field', 'style_targets' );
-		}
-
-		if ( ! isset( $map['style_targets'][ $map['default_style_target'] ] ) ) {
-			return self::error( 'missing_default_style_target', $map['default_style_target'] );
+			$seen_aliases[ $alias ] = true;
 		}
 
 		return null;
 	}
 
 	/**
-	 * @param array<string, mixed> $map
+	 * @param V3_Widget_Map        $map
 	 * @param array<string, mixed> $controls
-	 * @return WP_Error|null
+	 * @param V3_Map_Diagnostics   $diagnostics
+	 * @return array<string, Compiled_V3_Setting>
 	 */
-	private function validate_settings( array $map, array $controls ) {
-		foreach ( $map['settings'] as $public_key => $schema ) {
-			if ( ! is_string( $public_key ) || '' === $public_key || ! is_array( $schema ) ) {
-				return self::error( 'invalid_setting_schema', (string) $public_key );
+	private function compile_settings( V3_Widget_Map $map, array $controls, V3_Map_Diagnostics $diagnostics ): array {
+		$compiled = [];
+
+		foreach ( $map->get_settings() as $public_key => $setting ) {
+			$reason = $setting instanceof V3_Setting && is_string( $public_key ) && '' !== $public_key
+				? $this->find_setting_error( $setting, $controls )
+				: 'invalid_setting_schema';
+
+			if ( null !== $reason ) {
+				$control_key = $setting instanceof V3_Setting ? $setting->get_control_key() : '';
+				$diagnostics->add( $map->get_widget_type(), self::SETTING_ENTRY_PREFIX . $public_key, $reason, $control_key );
+				continue;
 			}
 
-			$control_key = $schema['key'] ?? $public_key;
+			$compiled[ $public_key ] = new Compiled_V3_Setting( $setting->get_control_key(), $setting->is_dynamic(), $setting->to_schema() );
+		}
 
-			if ( ! is_string( $control_key ) || '' === $control_key || ! is_array( $controls[ $control_key ] ?? null ) ) {
-				return self::error( 'missing_control', is_string( $control_key ) ? $control_key : '' );
-			}
+		return $compiled;
+	}
 
-			if ( true === ( $schema['dynamic'] ?? false ) && ! V3_Dynamic_Resolver::is_dynamic_capable( $controls[ $control_key ] ) ) {
-				return self::error( 'incompatible_dynamic_control', $control_key );
-			}
+	private function find_setting_error( V3_Setting $setting, array $controls ): ?string {
+		$control = $controls[ $setting->get_control_key() ] ?? null;
 
-			if ( Setting_Schemas::KIND_LINK === ( $schema['kind'] ?? null ) && 'url' !== ( $controls[ $control_key ]['type'] ?? '' ) ) {
-				return self::error( 'incompatible_setting_shape', $control_key );
-			}
+		if ( ! is_array( $control ) ) {
+			return 'missing_control';
+		}
+
+		if ( $setting->is_dynamic() && ! V3_Dynamic_Resolver::is_dynamic_capable( $control ) ) {
+			return 'incompatible_dynamic_control';
+		}
+
+		if ( V3_Setting::KIND_LINK === $setting->get_kind() && V3_Setting::LINK_CONTROL_TYPE !== ( $control['type'] ?? '' ) ) {
+			return 'incompatible_setting_shape';
 		}
 
 		return null;
 	}
 
 	/**
-	 * @param array<string, mixed> $map
+	 * @param V3_Widget_Map        $map
 	 * @param array<string, mixed> $controls
-	 * @return array<string, mixed>|WP_Error
+	 * @param V3_Map_Diagnostics   $diagnostics
+	 * @return array<string, Compiled_Style_Target>
 	 */
-	private function validate_style_targets( array $map, array $controls ) {
+	private function compile_targets( V3_Widget_Map $map, array $controls, V3_Map_Diagnostics $diagnostics ): array {
 		$binding_compiler = new V3_Style_Binding_Compiler( $this->style_schema ?? Style_Schema::get(), $this->adapters );
-		$compiled_targets = [];
+		$compiled = [];
 
-		foreach ( $map['style_targets'] as $alias => $target ) {
-			if ( ! is_string( $alias ) || 1 !== preg_match( self::ALIAS_PATTERN, $alias ) ) {
-				return self::error( 'invalid_alias', (string) $alias );
-			}
-
-			if ( ! $target instanceof Style_Target ) {
-				return self::error( 'invalid_style_target', $alias );
-			}
-
-			$bindings = $binding_compiler->compile( $target, $controls );
-
-			if ( $bindings instanceof WP_Error ) {
-				return $bindings;
-			}
-
-			$compiled_targets[ $alias ] = [
-				'label' => $target->get_label(),
-				'bindings' => $bindings,
-			];
+		foreach ( $map->get_all_targets() as $target ) {
+			$compiled[ $target->get_alias() ] = $binding_compiler->compile( $target, $controls, $diagnostics, $map->get_widget_type() );
 		}
 
-		$map['style_targets'] = $compiled_targets;
-
-		return $map;
+		return $compiled;
 	}
 
 	public static function error( string $reason, string $detail ): WP_Error {

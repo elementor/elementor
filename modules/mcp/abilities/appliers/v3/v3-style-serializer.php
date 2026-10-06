@@ -36,11 +36,11 @@ class V3_Style_Serializer {
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
 		$map_registry = V3_Widget_Map_Registry::instance();
-		$style_bindings = $map_registry->get_style_bindings( $widget_type );
+		$map = $map_registry->get_map( $widget_type );
 		$blocks = new V3_Block_Accumulator();
 
-		if ( null !== $style_bindings ) {
-			$this->map_reader->read( $blocks, $style_bindings, $settings, $map_registry->get_registered_controls( $widget_type ) );
+		if ( null !== $map ) {
+			$this->map_reader->read( $blocks, $map->get_style_bindings(), $settings, $map_registry->get_registered_controls( $widget_type ) );
 
 			return $this->renderer->render( $blocks );
 		}

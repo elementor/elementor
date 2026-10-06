@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -17,6 +18,8 @@ class V3_Widget_Map_Registry {
 
 	const MAPS_DIR = __DIR__;
 	const REGISTERED_MAPS_FILE = __DIR__ . '/registered-maps.php';
+
+	const DIAGNOSTICS_LOG_MESSAGE = 'V3 widget map entries were dropped while compiling against the registered controls.';
 
 	/**
 	 * @var self|null
@@ -44,21 +47,23 @@ class V3_Widget_Map_Registry {
 	private $get_controls;
 
 	/**
-	 * @var array<string, array<string, mixed>>
+	 * @var array<string, V3_Widget_Map>
 	 */
 	private $maps;
 
 	/**
-	 * @var array<string, array<string, mixed>|WP_Error>
+	 * @var array<string, Compiled_V3_Map|WP_Error|null>
 	 */
 	private $cache = [];
+
+	private V3_Map_Diagnostics $diagnostics;
 
 	/**
 	 * @param V3_Widget_Map_Compiler                        $compiler
 	 * @param callable(): bool                              $is_experiment_active
 	 * @param callable(): bool                              $is_atomic_active
 	 * @param callable(string): (array<string, mixed>|null) $get_controls
-	 * @param array<string, array<string, mixed>>           $maps
+	 * @param array<string, V3_Widget_Map>                  $maps
 	 */
 	public function __construct(
 		V3_Widget_Map_Compiler $compiler,
@@ -72,6 +77,7 @@ class V3_Widget_Map_Registry {
 		$this->is_atomic_active = $is_atomic_active;
 		$this->get_controls = $get_controls;
 		$this->maps = $maps;
+		$this->diagnostics = new V3_Map_Diagnostics();
 	}
 
 	public static function instance(): self {
@@ -87,7 +93,7 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
-	 * @param array<string, array<string, mixed>>|null $maps Defaults to the maps listed in registered-maps.php.
+	 * @param array<string, V3_Widget_Map>|null $maps Defaults to the maps listed in registered-maps.php.
 	 */
 	public static function create_default( ?array $maps = null ): self {
 		return new self(
@@ -115,7 +121,7 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
-	 * @return array<string, array<string, mixed>>
+	 * @return array<string, V3_Widget_Map>
 	 */
 	private static function load_map_files(): array {
 		$maps = [];
@@ -132,7 +138,7 @@ class V3_Widget_Map_Registry {
 
 			$map = require $path;
 
-			if ( is_array( $map ) ) {
+			if ( $map instanceof V3_Widget_Map ) {
 				$maps[ $widget_type ] = $map;
 			}
 		}
@@ -159,45 +165,28 @@ class V3_Widget_Map_Registry {
 			return Widget_Context_Helper::is_v3_allowlisted( $widget_type );
 		}
 
-		$is_atomic_active = $this->is_atomic_active;
-
-		if ( ! (bool) $is_atomic_active() ) {
-			return false;
-		}
-
-		return null !== $this->get_validation_contract( $widget_type );
+		return null !== $this->get_map( $widget_type );
 	}
 
 	/**
-	 * Internal shape used by our system (is_supported, description lookup, etc.).
-	 *
-	 * @return array<string, mixed>|null
+	 * The single gate for map-driven behavior: null whenever the standardized maps experiment
+	 * or atomic elements are off, the widget has no map, or the map shape is invalid.
 	 */
-	public function get_validation_contract( string $widget_type ): ?array {
+	public function get_map( string $widget_type ): ?Compiled_V3_Map {
+		if ( ! $this->is_experiment_active() || ! $this->is_atomic_active() ) {
+			return null;
+		}
+
 		$compiled = $this->compile( $widget_type );
 
-		if ( null === $compiled || $compiled instanceof WP_Error ) {
-			return null;
-		}
-
-		return $compiled;
+		return $compiled instanceof Compiled_V3_Map ? $compiled : null;
 	}
 
 	/**
-	 * Returns the compiled style bindings of every target in the map, or null when the map is
-	 * absent, invalid, or the experiment is off. Call sites should fall back to
-	 * {@see V3_Widget_Bridge_Registry::get_style_overrides()} on null.
-	 *
-	 * @return array<int, array<string, mixed>>|null
+	 * @return array<int, array{widget_type: string, entry: string, reason: string, detail: string}>
 	 */
-	public function get_style_bindings( string $widget_type ): ?array {
-		$compiled = $this->get_validation_contract( $widget_type );
-
-		if ( null === $compiled ) {
-			return null;
-		}
-
-		return array_merge( [], ...array_values( array_column( $compiled['style_targets'], 'bindings' ) ) );
+	public function get_diagnostics( string $widget_type ): array {
+		return $this->diagnostics->for_widget( $widget_type );
 	}
 
 	/**
@@ -216,30 +205,35 @@ class V3_Widget_Map_Registry {
 	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
-	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array{targets: array<string, string[]>}}|null
+	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array<string, string[]>}|null
 	 */
 	public function get_llm_contract( string $widget_type ): ?array {
-		$compiled = $this->get_validation_contract( $widget_type );
+		$map = $this->get_map( $widget_type );
 
-		if ( null === $compiled ) {
+		if ( null === $map ) {
 			return null;
 		}
 
 		return [
-			'description' => (string) ( $compiled['description'] ?? '' ),
-			'properties' => V3_Json_Schema_Builder::build_from_map( $compiled['settings'] )['properties'],
-			'style_targets' => $this->build_style_targets_shape( $compiled ),
+			'description' => $map->get_description(),
+			'properties' => V3_Json_Schema_Builder::build_from_map( $map->get_setting_schemas() )['properties'],
+			'style_targets' => array_map(
+				fn( Compiled_Style_Target $target ) => $target->get_props(),
+				$map->get_targets()
+			),
 		];
 	}
 
+	private function is_atomic_active(): bool {
+		$callback = $this->is_atomic_active;
+
+		return (bool) $callback();
+	}
+
 	/**
-	 * @return array<string, mixed>|WP_Error|null
+	 * @return Compiled_V3_Map|WP_Error|null
 	 */
 	private function compile( string $widget_type ) {
-		if ( ! $this->is_experiment_active() ) {
-			return null;
-		}
-
 		if ( ! isset( $this->maps[ $widget_type ] ) ) {
 			return null;
 		}
@@ -249,25 +243,24 @@ class V3_Widget_Map_Registry {
 		}
 
 		$get_controls = $this->get_controls;
-		$controls = $get_controls( $widget_type ) ?? [];
-		$compiled = $this->compiler->compile( $this->maps[ $widget_type ], $controls, $widget_type );
+		$controls = $get_controls( $widget_type );
 
-		$this->cache[ $widget_type ] = $compiled;
+		$this->cache[ $widget_type ] = null === $controls
+			? null
+			: $this->compiler->compile( $this->maps[ $widget_type ], $controls, $this->diagnostics, $widget_type );
 
-		return $compiled;
+		$this->log_diagnostics( $widget_type );
+
+		return $this->cache[ $widget_type ];
 	}
 
-	/**
-	 * @param array<string, mixed> $compiled_map
-	 * @return array<string, string[]>
-	 */
-	private function build_style_targets_shape( array $compiled_map ): array {
-		$targets = [];
+	private function log_diagnostics( string $widget_type ): void {
+		$diagnostics = $this->get_diagnostics( $widget_type );
 
-		foreach ( $compiled_map['style_targets'] as $alias => $target ) {
-			$targets[ $alias ] = array_values( array_unique( array_column( $target['bindings'], 'prop' ) ) );
+		if ( empty( $diagnostics ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
 		}
 
-		return $targets;
+		Logger::warning( self::DIAGNOSTICS_LOG_MESSAGE, [ 'entries' => $diagnostics ] );
 	}
 }

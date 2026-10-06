@@ -10,19 +10,27 @@ class Style_Target {
 
 	const DEFAULT_STATE = 'default';
 
-	private string $label;
+	private string $alias;
+
+	private string $label = '';
 
 	/**
 	 * @var array<int, array{prop: string, state: string, control: V3_Control}>
 	 */
 	private array $bindings = [];
 
-	private function __construct( string $label ) {
-		$this->label = $label;
+	private function __construct( string $alias ) {
+		$this->alias = $alias;
 	}
 
-	public static function make( string $label ): self {
-		return new self( $label );
+	public static function make( string $alias ): self {
+		return new self( $alias );
+	}
+
+	public function label( string $label ): self {
+		$this->label = $label;
+
+		return $this;
 	}
 
 	public function bind( string $prop, V3_Control $control, string $state = self::DEFAULT_STATE ): self {
@@ -33,6 +41,10 @@ class Style_Target {
 		];
 
 		return $this;
+	}
+
+	public function get_alias(): string {
+		return $this->alias;
 	}
 
 	public function get_label(): string {

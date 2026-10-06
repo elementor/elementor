@@ -388,10 +388,10 @@ class Widget_Context_Helper {
 		}
 
 		if ( null !== $widget_type && self::is_v3_supported( $widget_type ) ) {
-			$contract = V3_Widget_Map_Registry::instance()->get_validation_contract( $widget_type );
+			$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 
-			if ( is_array( $contract ) && is_string( $contract['description'] ?? null ) && '' !== $contract['description'] ) {
-				return $contract['description'];
+			if ( null !== $map && '' !== $map->get_description() ) {
+				return $map->get_description();
 			}
 
 			if ( self::is_v3_allowlisted( $widget_type ) ) {
