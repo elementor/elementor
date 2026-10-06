@@ -52,6 +52,16 @@ abstract class Fake_V3_Widget extends Widget_Base {
 		];
 	}
 
+	protected function get_init_settings() {
+		$settings = parent::get_init_settings();
+
+		return is_array( $settings ) ? $settings : [];
+	}
+
+	public function get_stack( $with_common_controls = true ) {
+		return parent::get_stack( false );
+	}
+
 	protected function render() {
 	}
 }
