@@ -10,6 +10,9 @@ export const useMarkdownItems = ( { term = '', refreshKey = '', isPaused = false
 
 	useEffect( () => {
 		if ( isPaused ) {
+			setIsLoading( false );
+			return;
+		}
 			return;
 		}
 
