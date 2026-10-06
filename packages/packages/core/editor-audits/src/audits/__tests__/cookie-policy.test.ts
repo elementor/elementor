@@ -17,6 +17,7 @@ describe( audit.id, () => {
 			expect( result.violations[ 0 ].externalUrl ).toBe(
 				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez'
 			);
+			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Set up cookie consent' );
 		}
 	} );
 } );

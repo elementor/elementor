@@ -70,6 +70,20 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
+	public function test__base_styles_leave_the_size_to_the_inline_css() : void {
+		// Arrange
+		$svg = new Atomic_Svg();
+
+		// Act
+		$base_styles = array_values( $svg->get_base_styles() );
+		$props = array_merge( ...array_map( fn( $variant ) => array_keys( $variant['props'] ), $base_styles[0]['variants'] ) );
+
+		// Assert
+		$this->assertNotContains( 'width', $props );
+		$this->assertNotContains( 'height', $props );
+		$this->assertContains( 'display', $props );
+	}
+
 	public function test__render_svg_from_id() : void {
 		// Arrange
 		$mock_svg = $this->get_mock_svg();

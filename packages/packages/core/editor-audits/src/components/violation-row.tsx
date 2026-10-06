@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { getElementIcon, getElementTitle } from '@elementor/editor-elements';
-import { AlertCircleIcon, BulbIcon, CheckIcon, ChevronDownIcon, EyeIcon, HelpIcon } from '@elementor/icons';
-import { Alert, AlertTitle, Box, Collapse, IconButton, Tooltip, Typography } from '@elementor/ui';
+import { useFloatingPanelZIndex } from '@elementor/editor-floating-panels';
+import { CheckIcon, ChevronDownIcon, HelpIcon, InfoCircleIcon, WandIcon } from '@elementor/icons';
+import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { AUDIT_PANEL_ID } from '../constants';
 import { focusViolation } from '../hooks/focus-violation';
 import { type AuditMeta, type AuditViolation } from '../types';
 import { buildAngiePrompt } from '../utils/build-angie-prompt';
@@ -17,6 +18,8 @@ import ViolationIcon from './violation-icons';
 
 type Props = {
 	audit: AuditMeta;
+	expanded: boolean;
+	onToggleExpand: () => void;
 	skipReason?: string;
 	violations?: AuditViolation[];
 };
@@ -35,12 +38,12 @@ function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violati
 	if ( violations ) {
 		return (
 			<>
+				<SeverityIcon severity={ audit.severity } />
 				{ isScoredAudit( audit ) && (
 					<Typography variant="caption" color="text.secondary" fontWeight="bold">
 						{ violations.length }
 					</Typography>
 				) }
-				<SeverityIcon severity={ audit.severity } />
 			</>
 		);
 	}
@@ -48,10 +51,41 @@ function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violati
 	return <CheckIcon fontSize="small" color="success" />;
 }
 
-export default function ViolationRow( { audit, skipReason, violations }: Props ) {
-	const [ expanded, setExpanded ] = useState( false );
+function GuidanceAction( { violation }: { violation: AuditViolation } ) {
+	const hasPrimaryCta = !! ( violation.ctaLabel && violation.externalUrl );
 
-	const toggleExpanded = () => setExpanded( ( value ) => ! value );
+	if ( ! hasPrimaryCta ) {
+		return null;
+	}
+
+	return (
+		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+			<ViolationCtaButton
+				ctaLabel={ violation.ctaLabel as string }
+				externalUrl={ violation.externalUrl as string }
+				withIcon
+			/>
+			{ violation.secondaryCtaLabel && violation.secondaryCtaUrl && (
+				<ViolationCtaButton
+					ctaLabel={ violation.secondaryCtaLabel }
+					externalUrl={ violation.secondaryCtaUrl }
+					variant="text"
+				/>
+			) }
+		</Box>
+	);
+}
+
+export default function ViolationRow( { audit, expanded, onToggleExpand, skipReason, violations }: Props ) {
+	const primaryViolation = violations?.[ 0 ];
+	const isGuidanceFocusable = !! primaryViolation;
+	const panelZIndex = useFloatingPanelZIndex( AUDIT_PANEL_ID );
+
+	const handleGuidanceClick = () => {
+		if ( isGuidanceFocusable && primaryViolation ) {
+			focusViolation( primaryViolation );
+		}
+	};
 
 	return (
 		<Box sx={ { borderBottom: 1, borderColor: 'divider', paddingBlock: 0.5 } }>
@@ -65,9 +99,9 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 						gap: 0.5,
 						minWidth: 0,
 					} }
-					onClick={ toggleExpanded }
+					onClick={ onToggleExpand }
 				>
-					<Typography variant="body2" sx={ { flex: 1 } }>
+					<Typography variant="subtitle2" color="text.secondary" sx={ { flex: 1 } }>
 						{ audit.title }
 					</Typography>
 					{ ! skipReason && <StatusIndicator audit={ audit } violations={ violations } /> }
@@ -76,7 +110,7 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 				<IconButton
 					size="small"
 					aria-label={ expanded ? __( 'Collapse', 'elementor' ) : __( 'Expand', 'elementor' ) }
-					onClick={ toggleExpanded }
+					onClick={ onToggleExpand }
 				>
 					<ChevronDownIcon
 						fontSize="small"
@@ -89,37 +123,25 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 			</Box>
 			<Collapse in={ expanded }>
 				<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1, paddingBlock: 1 } }>
-					<Alert
-						severity="secondary"
-						sx={ { p: 1 } }
-						icon={ <AlertCircleIcon fontSize="small" color="secondary" aria-hidden={ true } /> }
-					>
-						<AlertTitle>
-							<Typography variant="caption" component="p" color="text.primary" fontWeight="bold">
-								{ __( "What's the issue", 'elementor' ) }
+					<Tooltip title={ audit.fixHint } placement="top">
+						<Alert
+							severity="secondary"
+							sx={ { p: 1, cursor: isGuidanceFocusable ? 'pointer' : undefined } }
+							icon={ <InfoCircleIcon fontSize="small" aria-hidden={ true } /> }
+							role={ isGuidanceFocusable ? 'button' : undefined }
+							tabIndex={ isGuidanceFocusable ? 0 : undefined }
+							onClick={ isGuidanceFocusable ? handleGuidanceClick : undefined }
+							onKeyDown={ isGuidanceFocusable ? onKeyboardClick( handleGuidanceClick ) : undefined }
+						>
+							<Typography variant="caption" component="p" color="text.secondary">
+								{ audit.description }
 							</Typography>
-						</AlertTitle>
-						<Typography variant="caption" component="p" color="text.secondary">
-							{ audit.description }
-						</Typography>
-					</Alert>
-					<Alert
-						severity="info"
-						sx={ { p: 1 } }
-						icon={ <BulbIcon fontSize="small" color="info" aria-hidden={ true } /> }
-					>
-						<AlertTitle>
-							<Typography variant="caption" component="p" color="text.primary" fontWeight="bold">
-								{ __( 'How to resolve', 'elementor' ) }
-							</Typography>
-						</AlertTitle>
-						<Typography variant="caption" component="p" color="text.secondary">
-							{ audit.fixHint }
-						</Typography>
-					</Alert>
+						</Alert>
+					</Tooltip>
+					{ primaryViolation && <GuidanceAction violation={ primaryViolation } /> }
 				</Box>
 				{ violations && violations.length > 0 && (
-					<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 2 } }>
+					<Box role="list" sx={ { paddingBlockEnd: 1 } }>
 						{ violations.map( ( violation, idx ) => {
 							const widgetIcon = violation.elementId ? getElementIcon( violation.elementId ) : null;
 							const elementTitle = violation.elementId ? getElementTitle( violation.elementId ) : null;
@@ -139,14 +161,10 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 										alignItems: 'center',
 										gap: 1,
 										paddingBlock: 0.5,
-										paddingInline: 2,
+										paddingInline: 1,
 										borderRadius: 1,
 										cursor: 'pointer',
-										'& .violation-hover-icon': { opacity: 0, transition: 'opacity .15s' },
 										'&:hover': { bgcolor: 'action.hover' },
-										'&:hover .violation-hover-icon, &:focus-visible .violation-hover-icon': {
-											opacity: 1,
-										},
 									} }
 								>
 									<ViolationIcon violation={ violation } widgetIcon={ widgetIcon } />
@@ -158,31 +176,13 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 											</Typography>
 										) }
 									</Box>
-									{ violation.angieFix && (
+									{ violation.angieFix ? (
 										<FixViolationWithAngie
 											prompt={ violation.angiePrompt ?? buildAngiePrompt( rowLabel ) }
+											panelZIndex={ panelZIndex }
 										/>
-									) }
-									{ violation.ctaLabel && violation.externalUrl ? (
-										<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-											<ViolationCtaButton
-												ctaLabel={ violation.ctaLabel }
-												externalUrl={ violation.externalUrl }
-											/>
-											{ violation.secondaryCtaLabel && violation.secondaryCtaUrl && (
-												<ViolationCtaButton
-													ctaLabel={ violation.secondaryCtaLabel }
-													externalUrl={ violation.secondaryCtaUrl }
-													variant="text"
-												/>
-											) }
-										</Box>
 									) : (
-										<EyeIcon
-											className="violation-hover-icon"
-											fontSize="tiny"
-											aria-hidden={ true }
-										/>
+										<WandIcon fontSize="tiny" aria-hidden={ true } />
 									) }
 								</Box>
 							);
