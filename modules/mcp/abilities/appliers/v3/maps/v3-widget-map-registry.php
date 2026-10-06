@@ -3,11 +3,13 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
+use Elementor\Widget_Common_Base;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,6 +54,11 @@ class V3_Widget_Map_Registry {
 	private $maps;
 
 	/**
+	 * @var callable|null
+	 */
+	private $has_advanced_tab;
+
+	/**
 	 * @var array<string, Compiled_V3_Map|WP_Error|null>
 	 */
 	private $cache = [];
@@ -64,19 +71,22 @@ class V3_Widget_Map_Registry {
 	 * @param callable(): bool                              $is_atomic_active
 	 * @param callable(string): (array<string, mixed>|null) $get_controls
 	 * @param array<string, V3_Widget_Map>                  $maps
+	 * @param (callable(string): bool)|null                 $has_advanced_tab Widgets that get the {@see Advanced_Wrapper} target.
 	 */
 	public function __construct(
 		V3_Widget_Map_Compiler $compiler,
 		callable $is_experiment_active,
 		callable $is_atomic_active,
 		callable $get_controls,
-		array $maps = []
+		array $maps = [],
+		?callable $has_advanced_tab = null
 	) {
 		$this->compiler = $compiler;
 		$this->is_experiment_active = $is_experiment_active;
 		$this->is_atomic_active = $is_atomic_active;
 		$this->get_controls = $get_controls;
 		$this->maps = $maps;
+		$this->has_advanced_tab = $has_advanced_tab;
 		$this->diagnostics = new V3_Map_Diagnostics();
 	}
 
@@ -116,7 +126,8 @@ class V3_Widget_Map_Registry {
 
 				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
 			},
-			$maps ?? self::load_map_files()
+			$maps ?? self::load_map_files(),
+			static fn( string $widget_type ): bool => Plugin::$instance->widgets_manager->get_widget_types( $widget_type ) instanceof Widget_Common_Base
 		);
 	}
 
@@ -252,11 +263,22 @@ class V3_Widget_Map_Registry {
 
 		$this->cache[ $widget_type ] = null === $controls
 			? null
-			: $this->compiler->compile( $this->maps[ $widget_type ], $controls, $this->diagnostics, $widget_type );
+			: $this->compiler->compile( $this->map_with_shared_targets( $widget_type ), $controls, $this->diagnostics, $widget_type );
 
 		$this->log_diagnostics( $widget_type );
 
 		return $this->cache[ $widget_type ];
+	}
+
+	private function map_with_shared_targets( string $widget_type ): V3_Widget_Map {
+		$map = $this->maps[ $widget_type ];
+		$has_advanced_tab = $this->has_advanced_tab;
+
+		if ( null === $has_advanced_tab || ! $has_advanced_tab( $widget_type ) ) {
+			return $map;
+		}
+
+		return ( clone $map )->targets( Advanced_Wrapper::target() );
 	}
 
 	private function log_diagnostics( string $widget_type ): void {

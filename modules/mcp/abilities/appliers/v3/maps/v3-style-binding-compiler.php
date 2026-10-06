@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Dimensions_Adapter;
@@ -49,7 +50,7 @@ class V3_Style_Binding_Compiler {
 			}
 
 			$coverage_key = $result->get_prop() . '|' . $result->get_state();
-			$coverage = null === $result->get_sides() ? Binding_Coverage::whole() : Binding_Coverage::sides( $result->get_sides() );
+			$coverage = self::coverage( $result );
 
 			if ( self::overlaps_any( $coverage, $coverages[ $coverage_key ] ?? [] ) ) {
 				$diagnostics->add( $widget_type, $entry, 'overlapping_bindings', $result->get_setting() );
@@ -123,8 +124,15 @@ class V3_Style_Binding_Compiler {
 			return V3_Widget_Map_Compiler::error( 'invalid_sides', $setting );
 		}
 
+		$part = $control->get_part();
+		$value_prop_type = null === $part ? $this->style_schema[ $prop ] : self::part_prop_type( $this->style_schema[ $prop ], $part );
+
+		if ( null === $value_prop_type || ( null !== $part && null !== $sides ) ) {
+			return V3_Widget_Map_Compiler::error( 'invalid_part', (string) $part );
+		}
+
 		$control_type = (string) ( $controls[ $setting ]['type'] ?? '' );
-		$read_type = $this->find_read_type( $this->style_schema[ $prop ], $control_type, null !== $sides );
+		$read_type = $this->find_read_type( $value_prop_type, $control_type, null !== $sides );
 
 		if ( null === $read_type ) {
 			return V3_Widget_Map_Compiler::error( 'incompatible_control', $setting );
@@ -149,7 +157,13 @@ class V3_Style_Binding_Compiler {
 			'sides' => $sides,
 			'dependency_values' => $dependency_values,
 			'read_type' => $read_type,
+			'part' => $part,
+			'part_of' => null === $part ? null : $this->style_schema[ $prop ]::get_key(),
 		] );
+	}
+
+	private static function part_prop_type( Prop_Type $prop_type, string $part ): ?Prop_Type {
+		return $prop_type instanceof Object_Prop_Type ? $prop_type->get_shape_field( $part ) : null;
 	}
 
 	/**
@@ -180,6 +194,14 @@ class V3_Style_Binding_Compiler {
 		}
 
 		return [ $prop_type::get_key() ];
+	}
+
+	private static function coverage( Compiled_Style_Binding $binding ): Binding_Coverage {
+		if ( null !== $binding->get_part() ) {
+			return Binding_Coverage::part( $binding->get_part() );
+		}
+
+		return null === $binding->get_sides() ? Binding_Coverage::whole() : Binding_Coverage::sides( $binding->get_sides() );
 	}
 
 	/**

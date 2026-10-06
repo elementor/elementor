@@ -74,7 +74,7 @@ class V3_Map_Style_Reader {
 			$existing = $props[ $binding->get_state() ][ $binding->get_prop() ] ?? null;
 			$props[ $binding->get_state() ][ $binding->get_prop() ] = null === $existing
 				? $prop_value
-				: $this->merge_sides( $existing, $prop_value );
+				: $this->merge( $existing, $prop_value );
 		}
 
 		return $props;
@@ -85,7 +85,7 @@ class V3_Map_Style_Reader {
 			return null;
 		}
 
-		if ( ! $this->are_dependencies_met( $binding->get_dependency_values(), $settings, $controls ) ) {
+		if ( ! $this->are_dependencies_met( $binding->get_dependency_values(), $settings, $controls, $suffix ) ) {
 			return null;
 		}
 
@@ -102,7 +102,16 @@ class V3_Map_Style_Reader {
 			return null;
 		}
 
-		return $adapter->from_control_value( $stored, $binding->get_sides() );
+		$prop_value = $adapter->from_control_value( $stored, $binding->get_sides() );
+
+		if ( null === $prop_value || null === $binding->get_part() ) {
+			return $prop_value;
+		}
+
+		return [
+			'$$type' => $binding->get_part_of(),
+			'value' => [ $binding->get_part() => $prop_value ],
+		];
 	}
 
 	/**
@@ -123,16 +132,17 @@ class V3_Map_Style_Reader {
 	}
 
 	/**
-	 * Elementor does not store settings left at their default, so an unset dependency
-	 * falls back to the control default.
+	 * Elementor does not store settings left at their default, so an unset dependency falls
+	 * back to the desktop value and then the control default.
 	 *
 	 * @param array<string, mixed> $dependency_values
 	 * @param array<string, mixed> $settings
 	 * @param array<string, mixed> $controls
+	 * @param string               $suffix
 	 */
-	private function are_dependencies_met( array $dependency_values, array $settings, array $controls ): bool {
+	private function are_dependencies_met( array $dependency_values, array $settings, array $controls, string $suffix ): bool {
 		foreach ( $dependency_values as $setting => $value ) {
-			$current = $settings[ $setting ] ?? $controls[ $setting ]['default'] ?? '';
+			$current = $settings[ $setting . $suffix ] ?? $settings[ $setting ] ?? $controls[ $setting ]['default'] ?? '';
 
 			if ( (string) $current !== (string) $value ) {
 				return false;
@@ -147,7 +157,16 @@ class V3_Map_Style_Reader {
 	 * @param array<string, mixed> $addition
 	 * @return array<string, mixed>
 	 */
-	private function merge_sides( array $existing, array $addition ): array {
-		return Dimensions_Prop_Type::generate( array_merge( $existing['value'] ?? [], $addition['value'] ?? [] ) );
+	private function merge( array $existing, array $addition ): array {
+		$value = array_merge( $existing['value'] ?? [], $addition['value'] ?? [] );
+
+		if ( Dimensions_Prop_Type::get_key() === ( $existing['$$type'] ?? null ) ) {
+			return Dimensions_Prop_Type::generate( $value );
+		}
+
+		return [
+			'$$type' => $existing['$$type'] ?? null,
+			'value' => $value,
+		];
 	}
 }

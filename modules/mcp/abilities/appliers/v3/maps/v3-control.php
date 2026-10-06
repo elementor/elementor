@@ -17,6 +17,8 @@ class V3_Control {
 	 */
 	private ?array $sides = null;
 
+	private ?string $part = null;
+
 	/**
 	 * @var array<string, scalar>|null Sibling control values the binding needs to take effect.
 	 */
@@ -38,6 +40,15 @@ class V3_Control {
 
 	public function sides( string ...$sides ): self {
 		$this->sides = $sides;
+
+		return $this;
+	}
+
+	/**
+	 * Binds the control to one field of an object style prop, for example `flexGrow` of `flex`.
+	 */
+	public function part( string $part ): self {
+		$this->part = $part;
 
 		return $this;
 	}
@@ -66,6 +77,10 @@ class V3_Control {
 	 */
 	public function get_sides(): ?array {
 		return $this->sides;
+	}
+
+	public function get_part(): ?string {
+		return $this->part;
 	}
 
 	/**

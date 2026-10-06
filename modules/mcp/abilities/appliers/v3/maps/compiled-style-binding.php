@@ -26,8 +26,12 @@ class Compiled_Style_Binding {
 
 	private string $read_type;
 
+	private ?string $part;
+
+	private ?string $part_of;
+
 	/**
-	 * @param array{prop: string, state: string, setting: string, control_type: string, responsive: bool, sides: string[]|null, dependency_values: array<string, mixed>, read_type: string} $fields
+	 * @param array{prop: string, state: string, setting: string, control_type: string, responsive: bool, sides: string[]|null, dependency_values: array<string, mixed>, read_type: string, part?: string|null, part_of?: string|null} $fields
 	 */
 	public function __construct( array $fields ) {
 		$this->prop = $fields['prop'];
@@ -38,6 +42,8 @@ class Compiled_Style_Binding {
 		$this->sides = $fields['sides'];
 		$this->dependency_values = $fields['dependency_values'];
 		$this->read_type = $fields['read_type'];
+		$this->part = $fields['part'] ?? null;
+		$this->part_of = $fields['part_of'] ?? null;
 	}
 
 	public function get_prop(): string {
@@ -76,5 +82,19 @@ class Compiled_Style_Binding {
 
 	public function get_read_type(): string {
 		return $this->read_type;
+	}
+
+	/**
+	 * Field of the object prop value this binding owns, or null for the whole value.
+	 */
+	public function get_part(): ?string {
+		return $this->part;
+	}
+
+	/**
+	 * Prop type key of the object value a part binding belongs to.
+	 */
+	public function get_part_of(): ?string {
+		return $this->part_of;
 	}
 }

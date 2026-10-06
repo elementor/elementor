@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_V3_Map;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
@@ -149,6 +150,35 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		);
 	}
 
+	public function test_get_map__appends_advanced_wrapper_target_for_widgets_with_an_advanced_tab() {
+		// Arrange.
+		$registry = $this->registry( [
+			'has_advanced_tab' => static fn() => true,
+			'controls' => self::CONTROLS + [ '_margin' => [
+				'type' => 'dimensions',
+				'is_responsive' => true,
+			] ],
+		] );
+
+		// Act.
+		$targets = $registry->get_map( self::WIDGET_TYPE )->get_targets();
+
+		// Assert.
+		$this->assertSame( [ 'main-menu', Advanced_Wrapper::ALIAS ], array_keys( $targets ) );
+		$this->assertSame( [ 'margin' ], $targets[ Advanced_Wrapper::ALIAS ]->get_props() );
+	}
+
+	public function test_get_map__omits_advanced_wrapper_target_without_an_advanced_tab() {
+		// Arrange.
+		$registry = $this->registry( [ 'has_advanced_tab' => static fn() => false ] );
+
+		// Act.
+		$targets = $registry->get_map( self::WIDGET_TYPE )->get_targets();
+
+		// Assert.
+		$this->assertSame( [ 'main-menu' ], array_keys( $targets ) );
+	}
+
 	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
 		$options = array_merge( [
 			'is_experiment_active' => true,
@@ -163,7 +193,8 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 			static fn() => $options['is_experiment_active'],
 			static fn() => $options['is_atomic_active'],
 			$options['get_controls'] ?? static fn() => $controls,
-			$options['maps']
+			$options['maps'],
+			$options['has_advanced_tab'] ?? null
 		);
 	}
 
