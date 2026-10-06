@@ -110,6 +110,19 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'elementor_v3_not_supported', $result->get_error_code() );
 	}
 
+	public function test_execute__exposes_editor_only_decorative_description_for_atomic_container() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'boolean', $result['properties']['decorative']['type'] );
+		$this->assertStringStartsWith( 'Editor only', $result['properties']['decorative']['description'] );
+	}
+
 	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
 		$this->act_as_admin();
 		$this->given_registered_v3_widget_stack( 'button' );

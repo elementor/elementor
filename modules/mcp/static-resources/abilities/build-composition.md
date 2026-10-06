@@ -28,6 +28,33 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 - Only use element IDs from the `resolved_xml` in **this tool's response** for any follow-up `manage-elements` calls — never IDs from an earlier read.
 - Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
 
+# ID RULES
+`build-composition` uses two different identifiers. Do not mix them.
+
+## configuration-id (you choose; input only)
+Use the XML attribute `configuration-id` on **every** element tag in `xml_structure` (including nested elements). This is the only allowed attribute on widget tags — no `id`, `class`, or other attributes.
+
+| Rule | Detail |
+|------|--------|
+| Uniqueness | Each `configuration-id` value must appear at most once in the `xml_structure` string for this call. Duplicates fail validation (`elementor_duplicate_configuration_id`). |
+| Map keys | Keys in `element_config`, `style`, `classes`, and `interactions` must match a `configuration-id` in `xml_structure` **exactly** (case-sensitive string). Extra map keys with no matching element are ignored. Elements without map entries are still created. |
+| Allowed values | Any non-empty string valid as a quoted XML attribute value (letters, numbers, spaces, hyphens, etc.). |
+| Navigator title | The server copies the value into the element's `editor_settings.title`, so it is visible to the user in the editor — use human-readable labels. |
+| Scope | Per request only. A `configuration-id` from an earlier call does not refer to the same widget later; it is not a persisted element id. |
+
+## Element id (server assigns; output and follow-up)
+Never put element ids in `xml_structure`. The server generates a **new** id for every inserted element (including all descendants) on each successful save.
+
+| Rule | Detail |
+|------|--------|
+| Format | Server-generated lowercase hexadecimal string (one new id per inserted element). |
+| Where to read | After a non-`dry_run` call: `resolved_xml` (each tag gains an `id="..."` attribute) and `root_element_ids` (top-level inserts). `dry_run` does not assign ids. |
+| Reuse vs create | **Create:** every element in this composition gets a fresh server id — do not invent or recycle ids in input. **Reuse:** `parent_id` must be an existing container element id in the document (from `elementor/get-page-structure` or from `resolved_xml` of a prior save on this document). Use `document` (or omit `parent_id`) for root-level insertion. |
+| Follow-up edits | For `elementor/manage-elements`, use only element ids from **this** response's `resolved_xml` (see write-conflict rules above). Never substitute a `configuration-id` where an element id is required. |
+
+## component_id (inside `element_config` for `<e-component>` only)
+Integer post id of a reusable component from `elementor/list-components`. This is neither a `configuration-id` nor an element id.
+
 # COMPONENTS (only when explicitly requested)
 Elementor components are reusable widget compositions; global classes are reusable styles. Do not substitute one for the other.
 
@@ -41,8 +68,8 @@ Place a component as the self-closing leaf tag `<e-component configuration-id="m
 # XML STRUCTURE
 - Use widget tags: `<e-button configuration-id="btn1"></e-button>`
 - Containers: "e-div-block", "e-grid", "e-flexbox"
-- **Every element MUST have a unique "configuration-id" attribute**
-- No attributes, classes, IDs, or text nodes in XML
+- Every element needs a unique `configuration-id` — see **ID RULES**
+- No other attributes, classes, element ids, or text nodes in XML
 - Multiple root elements are allowed. Every opening tag needs exactly one matching closing tag (or use a self-closing tag); a stray or missing closing tag fails the whole call with `invalid_xml`, even on `dry_run`
 - Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
@@ -125,8 +152,6 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Example (image `src`): `"image": { "src": { "name": "<image tag>", "settings": { ... } }, "size": "full" }`
 - The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps. A category mismatch returns an error for that field and skips merging it.
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
-
-Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
 # DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
 
@@ -240,6 +265,6 @@ Section with heading + button (NO explicit heights - content sizes naturally):
 Note: No height/width specified on any element — content sizes naturally.
 
 # FURTHER INSTRUCTIONS
-Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.
+Use server-assigned element ids from `resolved_xml` for follow-up work — see **ID RULES**.
 
 If components were requested or used, verify that each was created or placed successfully before reporting completion.
