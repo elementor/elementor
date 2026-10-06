@@ -23,7 +23,7 @@ const getWarningMessage = ( hasPhysicalFile, isManuallyEdited ) => {
 };
 
 export const LlmsTxtPanel = ( { settings } ) => {
-	const { content, hasPhysicalFile, isEnabled, isManuallyEdited, postTypes, saveContent, togglePostType } = settings;
+	const { content, hasPhysicalFile, isEnabled, isManuallyEdited, isSaving, postTypes, saveContent, togglePostType } = settings;
 	const [ dialogMode, setDialogMode ] = useState( null );
 
 	const warningMessage = getWarningMessage( hasPhysicalFile, isManuallyEdited );
@@ -36,8 +36,8 @@ export const LlmsTxtPanel = ( { settings } ) => {
 	const closeDialog = () => setDialogMode( null );
 
 	return (
-		<Stack direction="row">
-			<Stack spacing={ 3 } px={ 6 } py={ 3 } flexGrow={ 1 }>
+		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
+			<Stack spacing={ 3 } px={ 6 } py={ 3 } flexGrow={ 1 } flexShrink={ 1 } flexBasis={ 0 } minWidth={ 0 }>
 				<Stack spacing={ 1 }>
 					<Typography variant="subtitle1">{ __( 'Help agents find your content', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="text.secondary">
@@ -48,7 +48,7 @@ export const LlmsTxtPanel = ( { settings } ) => {
 					<Typography variant="subtitle1">{ __( 'Choose what to include', 'elementor' ) }</Typography>
 					<PostTypeList
 						postTypes={ displayedPostTypes }
-						isDisabled={ ! isEnabled || isManuallyEdited }
+						isDisabled={ ! isEnabled || isManuallyEdited || isSaving }
 						onToggle={ togglePostType }
 					/>
 				</Stack>
@@ -91,6 +91,7 @@ LlmsTxtPanel.propTypes = {
 		hasPhysicalFile: PropTypes.bool.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
 		isManuallyEdited: PropTypes.bool.isRequired,
+		isSaving: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
 		saveContent: PropTypes.func.isRequired,
 		togglePostType: PropTypes.func.isRequired,

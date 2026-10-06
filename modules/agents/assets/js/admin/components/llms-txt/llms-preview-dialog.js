@@ -14,6 +14,8 @@ import PropTypes from 'prop-types';
 import { LLMS_FILE_NAME } from '../../constants';
 
 const EDITOR_MIN_ROWS = 20;
+const WP_ADMIN_BAR_Z_INDEX = 99999;
+const DIALOG_Z_INDEX = WP_ADMIN_BAR_Z_INDEX + 1;
 
 const getErrorMessage = ( reason ) => ( 'string' === typeof reason && reason )
 	? reason
@@ -39,7 +41,24 @@ export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => 
 	};
 
 	return (
-		<Dialog open maxWidth="lg" fullWidth onClose={ onClose }>
+		<Dialog
+			open
+			maxWidth="lg"
+			fullWidth
+			scroll="paper"
+			onClose={ onClose }
+			sx={ { zIndex: DIALOG_Z_INDEX } }
+			PaperProps={ {
+				sx: {
+					position: 'absolute',
+					top: '50%',
+					left: '50%',
+					transform: 'translate(-50%, -50%)',
+					m: 0,
+					maxHeight: 'calc(100% - 64px)',
+				},
+			} }
+		>
 			<DialogHeader onClose={ onClose } logo={ false }>
 				<DialogTitle>{ LLMS_FILE_NAME }</DialogTitle>
 			</DialogHeader>

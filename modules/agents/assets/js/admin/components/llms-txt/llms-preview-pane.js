@@ -22,7 +22,9 @@ export const LlmsPreviewPane = ( { content, hasActions, onEdit, onExpand } ) => 
 			spacing={ 2 }
 			p={ 4 }
 			width={ PREVIEW_WIDTH }
-			flexShrink={ 0 }
+			maxWidth="100%"
+			minWidth={ 0 }
+			flexShrink={ 1 }
 			bgcolor="grey.50"
 			// Size containment keeps a long file from stretching the panel; the pane takes the row height and the file scrolls inside it.
 			sx={ { contain: 'size' } }

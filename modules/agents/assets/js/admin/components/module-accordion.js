@@ -3,7 +3,6 @@ import { AlertCircleIcon, ChevronDownIcon, ChevronUpIcon, CircleCheckFilledIcon,
 import Accordion from '@elementor/ui/Accordion';
 import AccordionDetails from '@elementor/ui/AccordionDetails';
 import AccordionSummary from '@elementor/ui/AccordionSummary';
-import Chip from '@elementor/ui/Chip';
 import Stack from '@elementor/ui/Stack';
 import Switch from '@elementor/ui/Switch';
 import Typography from '@elementor/ui/Typography';
@@ -27,7 +26,7 @@ export const ModuleAccordion = ( { title, description, status, isEnabled, isTogg
 			variant="outlined"
 			expanded={ isExpanded }
 			onChange={ ( event, expanded ) => setIsExpanded( expanded ) }
-			sx={ { borderRadius: '12px' } }
+			sx={ { borderRadius: '12px', maxWidth: '100%', minWidth: 0 } }
 		>
 			<AccordionSummary
 				expandIcon={ null }

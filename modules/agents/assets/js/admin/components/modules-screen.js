@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
+import Alert from '@elementor/ui/Alert';
 import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
 import { __ } from '@wordpress/i18n';
@@ -68,7 +69,7 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 					description={ module.description }
 					status={ getStatus( llmsSettings.isEnabled, llmsSettings.hasPhysicalFile ) }
 					isEnabled={ llmsSettings.isEnabled }
-					isToggleDisabled={ llmsSettings.hasPhysicalFile }
+					isToggleDisabled={ llmsSettings.hasPhysicalFile || llmsSettings.isSaving }
 					onToggle={ llmsSettings.toggleEnabled }
 				>
 					<LlmsTxtPanel settings={ llmsSettings } />
@@ -93,12 +94,15 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 	};
 
 	return (
-		<Stack spacing={ 5 } pt={ 6 } width="100%" maxWidth={ 1087 } mx="auto">
+		<Stack spacing={ 5 } pt={ 6 } width="100%" maxWidth={ 1087 } minWidth={ 0 } mx="auto">
 			<Stack direction="row" alignItems="center" justifyContent="space-between">
 				<PageTitle textAlign="left" />
 				<ModulesStatus score={ enabledCount } infoIcon={ scoreInfoIcon } />
 			</Stack>
 			<Stack spacing={ 2 }>
+				{ llmsSettings.saveError && (
+					<Alert severity="error" sx={ { mb: 2 } }>{ llmsSettings.saveError }</Alert>
+				) }
 				{ modules.map( renderModule ) }
 			</Stack>
 		</Stack>

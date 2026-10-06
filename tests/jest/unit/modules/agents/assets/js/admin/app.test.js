@@ -106,7 +106,7 @@ describe( 'Agents Ready App', () => {
 		expect( screen.queryByRole( 'button', { name: 'Activate' } ) ).toBeNull();
 	} );
 
-	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', () => {
+	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', async () => {
 		// Arrange
 		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
 
@@ -117,6 +117,46 @@ describe( 'Agents Ready App', () => {
 		expect( screen.getByText( '2/4' ) ).toBeTruthy();
 		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
 			llms_txt: { enabled: false, post_types: [ 'page' ] },
+		} );
+		await waitFor( () => {
+			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
+		} );
+	} );
+
+	it( 'rolls back the LLMs.txt toggle and shows an alert when saving fails', async () => {
+		// Arrange
+		saveAgentReadySettings.mockRejectedValueOnce( null );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'Something went wrong. Please try again.' ) ).toBeTruthy();
+			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
+		} );
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
+	} );
+
+	it( 'disables the LLMs.txt switch while settings are saving', async () => {
+		// Arrange
+		let resolveSave;
+		saveAgentReadySettings.mockImplementationOnce( () => new Promise( ( resolve ) => {
+			resolveSave = resolve;
+		} ) );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
+
+		// Assert
+		expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( true );
+
+		resolveSave();
+
+		await waitFor( () => {
+			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
 		} );
 	} );
 
