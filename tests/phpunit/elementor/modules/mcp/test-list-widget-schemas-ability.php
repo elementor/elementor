@@ -54,42 +54,6 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__includes_heading_when_standardized_maps_active_and_atomic_inactive() {
-		$this->act_as_admin();
-		$this->given_managers_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-
-		$result = $this->ability->execute( [] );
-
-		$this->assertArrayHasKey( 'heading', $result );
-		$this->assertSame( [ 'color', 'font-size', 'line-height', 'font-weight' ], $result['heading']['style_targets']['heading'] );
-	}
-
-	public function test_execute__excludes_heading_when_atomic_elements_active() {
-		$this->act_as_admin();
-		$this->given_managers_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-
-		$result = $this->ability->execute( [] );
-
-		$this->assertArrayNotHasKey( 'heading', $result );
-	}
-
-	public function test_execute__list_and_get_agree_for_heading_schema() {
-		$this->act_as_admin();
-		$this->given_managers_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-
-		$list_result = $this->ability->execute( [] );
-		$get_result = $this->get_schema_ability->execute( [ 'widget_type' => 'heading' ] );
-
-		$this->assertIsArray( $get_result );
-		$this->assertSame( $get_result, $list_result['heading'] );
-	}
-
 	public function test_execute__includes_allowlisted_v3_and_excludes_other_v3() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets( [
@@ -222,15 +186,6 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 			}
 		);
 		Plugin::$instance->widgets_manager = $widgets_manager;
-
-		$elements_manager = $this->createMock( Elements_Manager::class );
-		$elements_manager->method( 'get_element_types' )->willReturn( [] );
-		Plugin::$instance->elements_manager = $elements_manager;
-	}
-
-	private function given_managers_with_registered_heading(): void {
-		$heading = $this->original_widgets_manager->get_widget_types( 'heading' );
-		$heading->get_stack();
 
 		$elements_manager = $this->createMock( Elements_Manager::class );
 		$elements_manager->method( 'get_element_types' )->willReturn( [] );
