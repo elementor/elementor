@@ -1,0 +1,50 @@
+{
+  "up": [
+    {
+      "op": { "fn": "move", "src": "value.content.value", "dest": "value" },
+      "condition": { "fn": "exists", "path": "value.content.value" }
+    },
+    {
+      "op": { "fn": "move", "src": "value.content", "dest": "value" },
+      "condition": {
+        "fn": "and",
+        "conditions": [
+          { "fn": "is_primitive", "path": "value.content" },
+          { "fn": "not_exists", "path": "value.content.value" }
+        ]
+      }
+    },
+    {
+      "op": { "fn": "set", "path": "value", "value": null },
+      "condition": {
+        "fn": "and",
+        "conditions": [
+          { "fn": "is_object", "path": "value" },
+          { "fn": "not_exists", "path": "value.content.value" }
+        ]
+      }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "escaped-html" }
+    }
+  ],
+  "down": [
+    {
+      "op": { "fn": "move", "src": "value", "dest": "value.content.value", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "value.content.$$type", "value": "string" },
+      "condition": { "fn": "exists", "path": "value.content.value" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.content", "value": null },
+      "condition": { "fn": "not_exists", "path": "value.content.value" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.children", "value": [], "merge": false }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "html-v3" }
+    }
+  ]
+}

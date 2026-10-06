@@ -3,16 +3,23 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\Interactions\Module as Interactions_Module;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -23,6 +30,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
 
+class Manage_Elements_V3_Heading_Dynamic_Tag extends Tag {
+	public function get_name() {
+		return 'mcp-v3-heading-title';
+	}
+
+	public function get_title() {
+		return 'MCP V3 Heading Title';
+	}
+
+	public function get_group() {
+		return 'site';
+	}
+
+	public function get_categories() {
+		return [ 'text' ];
+	}
+}
+
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -31,6 +56,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	private Documents_Manager $original_documents;
 	private Widgets_Manager $original_widgets_manager;
 	private Elements_Manager $original_elements_manager;
+
+	/**
+	 * @var array<string, string>
+	 */
+	private array $original_experiment_states = [];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -42,9 +72,17 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->original_documents = Plugin::$instance->documents;
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
 		$this->original_elements_manager = Plugin::$instance->elements_manager;
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
+			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
+			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		}
+
+		V3_Widget_Map_Registry::reset_instance();
+		Plugin::$instance->dynamic_tags->unregister( 'mcp-v3-heading-title' );
 		Plugin::$instance->documents = $this->original_documents;
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
 		Plugin::$instance->elements_manager = $this->original_elements_manager;
@@ -210,6 +248,30 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	public function test_move__reparents_element_to_document_root_at_index() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $inner_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( $inner_id, $elements[0]['id'] );
+		$this->assertEmpty( $elements[1]['elements'] ?? [] );
+	}
+
+	public function test_move__rejects_reparenting_widget_to_document_root() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
 		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -224,11 +286,12 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertOkOperation( $result, 0 );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_parent', $result['results'][0]['code'] );
 
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( $heading_id, $elements[0]['id'] );
-		$this->assertEmpty( $elements[1]['elements'] ?? [] );
+		$container = $this->find_element_in_document( $post_id, $container_id );
+		$this->assertSame( $heading_id, $container['elements'][0]['id'] ?? null );
 	}
 
 	public function test_move__missing_new_parent_id_returns_per_op_error() {
@@ -260,10 +323,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [
-							'content' => 'New Title',
-							'children' => [],
-						],
+						'title' => 'New Title',
 					],
 				],
 			],
@@ -273,7 +333,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
 		$this->assertNotNull( $node );
-		$this->assertSame( 'New Title', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'New Title', $node['settings']['title']['value'] );
 	}
 
 	public function test_update__skips_unknown_prop_with_warning() {
@@ -477,14 +537,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 	}
 
-	public function test_update__null_setting_on_required_prop_returns_invalid_settings_error() {
+	public function test_update__null_setting_on_required_prop_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
-
-		$node_before = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertNotNull( $node_before );
-		$title_before = $node_before['settings']['title'] ?? null;
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -500,12 +556,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
+		$this->assertStringContainsString( 'tag', implode( ' ', $result['results'][0]['warnings'] ?? [] ) );
 
 		$node_after = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( $title_before, $node_after['settings']['title'] ?? null );
+		$this->assertArrayNotHasKey( 'title', $node_after['settings'] ?? [] );
+		$this->assertNotSame( 'h99', $node_after['settings']['tag']['value'] ?? null );
 	}
 
 	public function test_update__null_unknown_setting_warns_without_clearing() {
@@ -533,7 +590,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $warnings[0] );
 	}
 
-	public function test_update__rejects_unknown_class_label_as_per_op_error() {
+	public function test_update__unknown_class_label_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -549,9 +606,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_unknown_global_class', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$warning = $result['results'][0]['warning_details'][0] ?? [];
+		$this->assertSame( 'unknown_global_class', $warning['code'] ?? null );
+		$this->assertSame( $heading_id, $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
 	}
 
 	public function test_update__applies_plain_dynamic_title() {
@@ -596,7 +655,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( '120', $node['settings']['title']['value']['settings']['length']['value'] ?? null );
 	}
 
-	public function test_update__rejects_invalid_title_shape_as_per_op_error() {
+	public function test_update__invalid_title_shape_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -607,14 +666,20 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $heading_id,
-					'settings' => [ 'title' => 'plain string title' ],
+					'settings' => [ 'title' => [ 'content' => 'not-a-valid-escaped-html-shape', 'children' => [] ] ],
 				],
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
+		$this->assertSame( $heading_id, $result['results'][0]['warning_details'][0]['config_id'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotSame(
+			[ 'content' => 'not-a-valid-escaped-html-shape', 'children' => [] ],
+			$node['settings']['title']['value'] ?? null
+		);
 	}
 
 	public function test_update__style_merges_into_existing_local_style_from_build_composition() {
@@ -623,13 +688,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$build_result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="h1"/></e-flexbox>',
 			'parent_id' => 'document',
 			'style' => [ 'h1' => 'color: #ff0000;' ],
 		] );
 		$this->assertIsArray( $build_result, 'build-composition failed: ' . ( is_wp_error( $build_result ) ? $build_result->get_error_message() : 'unknown' ) );
 		$this->assertTrue( $build_result['success'] ?? false );
-		$heading_id = $build_result['root_element_ids'][0];
+		$section_id = $build_result['root_element_ids'][0];
+		$heading_id = $this->find_element_in_document( $post_id, $section_id )['elements'][0]['id'] ?? null;
+		$this->assertNotNull( $heading_id );
 
 		$update_result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -667,7 +734,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [ 'content' => 'Bulk Title', 'children' => [] ],
+						'title' => 'Bulk Title',
 					],
 				],
 				[
@@ -676,9 +743,9 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				],
 				[
 					'action' => 'move',
-					'element_id' => $heading_id,
+					'element_id' => $container_id,
 					'new_parent_id' => 'document',
-					'index' => 0,
+					'index' => 1,
 				],
 			],
 		] );
@@ -692,11 +759,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['version'] );
 
 		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
-		$this->assertSame( $heading_id, $elements[0]['id'] );
-		$this->assertCount( 3, $elements );
+		$this->assertCount( 2, $elements );
+		$this->assertSame( $container_id, $elements[1]['id'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Bulk Title', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'Bulk Title', $node['settings']['title']['value'] );
 	}
 
 	public function test_execute__rejects_v3_update_per_op() {
@@ -722,6 +789,142 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$node = $this->find_element_in_document( $post_id, $v3_id );
 		$this->assertNotNull( $node );
 		$this->assertArrayNotHasKey( 'title', $node['settings'] ?? [] );
+	}
+
+	public function test_update__applies_standardized_v3_heading_settings() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_v3_heading_on_document( $post_id );
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => 'Updated Heading',
+						'tag' => 'h4',
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$heading = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Updated Heading', $heading['settings']['title'] ?? null );
+		$this->assertSame( 'h4', $heading['settings']['header_size'] ?? null );
+		$this->assertArrayNotHasKey( 'tag', $heading['settings'] );
+	}
+
+	public function test_update__rejects_invalid_standardized_v3_heading_settings_without_mutation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_v3_heading_on_document( $post_id );
+		$this->enable_standardized_v3_maps();
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => [ 'settings' => [] ],
+						'tag' => 'h4',
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$heading = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertArrayNotHasKey( 'title', $heading['settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'header_size', $heading['settings'] ?? [] );
+	}
+
+	public function test_update__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_v3_heading_on_document( $post_id );
+		$this->enable_standardized_v3_maps();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'name' => 'post-url',
+							'settings' => [],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertStringContainsString( 'dynamic tags are not supported', $result['results'][0]['message'] );
+	}
+
+	public function test_update__applies_dynamic_standardized_v3_heading_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_v3_heading_on_document( $post_id );
+		$this->enable_standardized_v3_maps();
+		$this->register_v3_heading_dynamic_tag();
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => [
+							'name' => 'mcp-v3-heading-title',
+							'settings' => [],
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$heading = $this->find_element_in_document( $post_id, $heading_id );
+		$dynamic_title = $heading['settings']['__dynamic__']['title'] ?? null;
+		$this->assertIsString( $dynamic_title );
+		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [ 'title' => 'Static Heading' ],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$heading = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Static Heading', $heading['settings']['title'] ?? null );
+		$this->assertArrayNotHasKey( 'title', $heading['settings']['__dynamic__'] ?? [] );
 	}
 
 	public function test_execute__rejects_v3_delete_move_duplicate_per_op() {
@@ -783,7 +986,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				[
 					'action' => 'update',
 					'element_id' => $v4_id,
-					'settings' => [ 'title' => [ 'content' => 'Survived', 'children' => [] ] ],
+					'settings' => [ 'title' => 'Survived' ],
 				],
 			],
 		] );
@@ -795,14 +998,21 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$this->assertNotNull( $this->find_element_in_document( $post_id, $v3_id ) );
 		$node = $this->find_element_in_document( $post_id, $v4_id );
-		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
 	}
 
-	public function test_execute__allowlisted_v3_update_merges_raw_settings() {
+	/**
+	 * @dataProvider standardized_maps_states
+	 */
+	public function test_execute__allowlisted_v3_update_merges_raw_settings( bool $standardized_maps_active ) {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
 		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+
+		if ( $standardized_maps_active ) {
+			$this->enable_standardized_v3_maps();
+		}
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -821,6 +1031,52 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotNull( $node );
 		$this->assertSame( '3', $node['settings']['menu'] );
 		$this->assertSame( 'horizontal', $node['settings']['layout'] );
+	}
+
+	public function standardized_maps_states(): array {
+		return [
+			'inactive' => [ false ],
+			'active' => [ true ],
+		];
+	}
+
+	public function test_execute__allowlisted_v3_static_update_preserves_dynamic_setting_when_standardized_maps_inactive() {
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->random_element_id();
+		$this->register_v3_heading_dynamic_tag();
+		$tag = Plugin::$instance->dynamic_tags->create_tag( 'legacy', 'mcp-v3-heading-title', [] );
+		$this->assertInstanceOf( Tag::class, $tag );
+		$shortcode = Plugin::$instance->dynamic_tags->tag_to_text( $tag );
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $v3_id,
+				'elType' => 'widget',
+				'widgetType' => 'nav-menu',
+				'settings' => [
+					'__dynamic__' => [ 'menu' => $shortcode ],
+				],
+				'elements' => [],
+			],
+		] );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'menu' => '3' ],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertSame( '3', $node['settings']['menu'] );
+		$this->assertArrayHasKey( 'menu', $node['settings']['__dynamic__'] ?? [] );
+		$this->assertSame( $shortcode, $node['settings']['__dynamic__']['menu'] );
 	}
 
 	public function test_execute__allowlisted_v3_classes_write_to_css_classes() {
@@ -928,6 +1184,194 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNull( $this->find_element_in_document( $post_id, $v3_id ) );
 	}
 
+	public function test_execute__update_persists_multiple_interactions_on_same_element() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'interactions' => [
+						[
+							'interaction_id' => 'card-scroll',
+							'trigger' => 'scrollIn',
+							'animation' => [
+								'effect' => 'slide',
+								'type' => 'in',
+								'direction' => 'bottom',
+								'timing_config' => [
+									'duration' => [ 'size' => 650, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+						[
+							'interaction_id' => 'card-hover',
+							'trigger' => 'hover',
+							'animation' => [
+								'effect' => 'scale',
+								'type' => 'in',
+								'timing_config' => [
+									'duration' => [ 'size' => 250, 'unit' => 'ms' ],
+									'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+								],
+								'config' => [ 'easing' => 'easeOut' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+
+		$this->assertIsArray( $interactions );
+		$this->assertCount( 2, $interactions['items'] );
+		$this->assertSame( 'scrollIn', $interactions['items'][0]['value']['trigger']['value'] );
+		$this->assertSame( 'hover', $interactions['items'][1]['value']['trigger']['value'] );
+	}
+
+	public function test_execute__update_rejects_interactions_when_experiment_inactive() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = $this->with_interactions_inactive( function () use ( $post_id, $heading_id ) {
+			return ( new Manage_Elements_Ability() )->execute( [
+				'post_id' => $post_id,
+				'operations' => [
+					[
+						'action' => 'update',
+						'element_id' => $heading_id,
+						'interactions' => [
+							[
+								'trigger' => 'scrollIn',
+								'action' => [
+									'type' => 'play',
+								],
+							],
+						],
+					],
+				],
+			] );
+		} );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['results'][0]['status'] ?? null );
+		$this->assertSame( 'elementor_invalid_interactions', $result['results'][0]['code'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$interactions = $node['interactions'] ?? null;
+		if ( is_string( $interactions ) ) {
+			$interactions = json_decode( $interactions, true );
+		}
+		$items = is_array( $interactions ) ? ( $interactions['items'] ?? $interactions ) : $interactions;
+		$this->assertTrue( empty( $items ) );
+	}
+
+	public function test_execute__update_stores_decorative_setting_as_editor_setting() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $inner_id,
+					'settings' => [ 'decorative' => true ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertArrayNotHasKey( 'warning_details', $result['results'][0] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertTrue( $node['editor_settings']['decorative'] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_skips_non_boolean_decorative_setting_with_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $inner_id,
+					'settings' => [ 'decorative' => 'yes' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
+	public function test_bulk__invalid_interactions_update_still_persists_settings() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => 'Saved',
+					],
+				],
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'title' => 'Leaked',
+					],
+					'interactions' => [
+						[
+							'unknown_field' => 'nope',
+						],
+					],
+				],
+			],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertSame( 'interaction_invalid', $result['results'][1]['warning_details'][0]['code'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Leaked', $node['settings']['title']['value'] );
+	}
+
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -941,7 +1385,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 					'action' => 'update',
 					'element_id' => $heading_id,
 					'settings' => [
-						'title' => [ 'content' => 'Survived', 'children' => [] ],
+						'title' => 'Survived',
 					],
 				],
 			],
@@ -955,7 +1399,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['version'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Survived', $node['settings']['title']['value']['content']['value'] );
+		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
 	}
 
 	public function test_update__css_string_creates_desktop_variant_in_local_style() {
@@ -1054,22 +1498,215 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
 	}
 
-	private function assertOkOperation( $result, int $index ): void {
-		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
-		$this->assertSame( 'ok', $result['status'] );
-		$this->assertSame( 'ok', $result['results'][ $index ]['status'] ?? null );
+	public function test_update__settings_read_from_structure_round_trip_unchanged() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id, $image_id ] = $this->given_linked_button_and_image( $post_id );
+		$stored_before = [
+			$button_id => $this->find_element_in_document( $post_id, $button_id )['settings'],
+			$image_id => $this->find_element_in_document( $post_id, $image_id )['settings'],
+		];
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => $this->read_settings_from_structure( $post_id, $button_id ),
+				],
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => $this->read_settings_from_structure( $post_id, $image_id ),
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertOkOperation( $result, 1 );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][0] );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][1] );
+		$this->assertEquals( $stored_before[ $button_id ]['link'], $this->find_element_in_document( $post_id, $button_id )['settings']['link'] );
+		$this->assertEquals( $stored_before[ $image_id ]['image'], $this->find_element_in_document( $post_id, $image_id )['settings']['image'] );
 	}
 
-	private function create_real_document(): int {
-		return $this->factory()->create_and_get_default_post()->ID;
+	public function test_update__partial_object_prop_warns_about_dropped_stored_sub_keys() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => [
+						'link' => [ 'isTargetBlank' => false ],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_subkeys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( 'destination', $details[0]['message'] );
+		$this->assertStringContainsString( 'tag', $details[0]['message'] );
+		$this->assertArrayNotHasKey( 'destination', $this->find_element_in_document( $post_id, $button_id )['settings']['link']['value'] );
 	}
 
-	private function given_heading_on_document( int $post_id ): string {
+	public function test_update__full_object_prop_replacement_does_not_warn() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => [
+						'link' => [
+							'destination' => 'https://example.com/other',
+							'isTargetBlank' => false,
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][0] );
+		$this->assertSame(
+			'https://example.com/other',
+			$this->find_element_in_document( $post_id, $button_id )['settings']['link']['value']['destination']['value']
+		);
+	}
+
+	public function test_update__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'href' => 'https://example.com',
+							'target' => '_blank',
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"link.href", "link.target"', $details[0]['message'] );
+	}
+
+	public function test_build_composition__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'href' => 'https://example.com',
+						'tag' => 'a',
+					],
+				],
+			],
+			'parent_id' => 'document',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( '"link.href"', $result['warning_details'][0]['message'] );
+	}
+
+	public function test_update__nested_object_prop_keys_return_warning_with_path() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $image_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => [
+						'image' => [
+							'src' => [
+								'url' => 'https://example.com/other.jpg',
+								'caption' => 'Not a field',
+							],
+							'size' => 'full',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertContains( 'prop_keys_dropped', array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"image.src.caption"', implode( ' ', array_column( $details, 'message' ) ) );
+	}
+
+	private function given_linked_button_and_image( int $post_id ): array {
 		$this->act_as_admin();
 
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/><e-image configuration-id="i1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'destination' => 'https://example.com',
+						'isTargetBlank' => true,
+						'tag' => 'a',
+					],
+				],
+				'i1' => [
+					'image' => [
+						'src' => [
+							'url' => 'https://example.com/photo.jpg',
+							'alt' => 'A photo',
+						],
+						'size' => 'full',
+					],
+				],
+			],
 			'parent_id' => 'document',
 		] );
 
@@ -1077,7 +1714,61 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			$this->fail( 'Fixture setup failed: ' . $result->get_error_message() );
 		}
 
-		return $result['root_element_ids'][0];
+		$this->assertArrayNotHasKey( 'warnings', $result, 'Fixture setup produced warnings.' );
+
+		$children = $this->find_element_in_document( $post_id, $result['root_element_ids'][0] )['elements'];
+
+		return [ $children[0]['id'], $children[1]['id'] ];
+	}
+
+	private function read_settings_from_structure( int $post_id, string $element_id ): array {
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+
+		$result = ( new Get_Structure_Ability() )->execute( [
+			'post_id' => $post_id,
+			'element_id' => $element_id,
+			'include_content' => true,
+		] );
+
+		$this->assertIsArray( $result );
+
+		return (array) $result['elements'][0]['settings'];
+	}
+
+	private function assertOkOperation( $result, int $index ): void {
+		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][ $index ]['status'] ?? null );
+	}
+
+	private function create_real_document(): int {
+		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+	}
+
+	private function given_heading_on_document( int $post_id ): string {
+		[ , $heading_id ] = $this->given_container_with_heading( $post_id );
+
+		return $heading_id;
+	}
+
+	private function given_nested_containers( int $post_id ): array {
+		$this->act_as_admin();
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="outer"><e-flexbox configuration-id="inner"/></e-flexbox>',
+			'parent_id' => 'document',
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			$this->fail( 'Fixture setup failed: ' . $result->get_error_message() );
+		}
+
+		$outer_id = $result['root_element_ids'][0];
+		$inner_id = $this->find_element_in_document( $post_id, $outer_id )['elements'][0]['id'] ?? null;
+		$this->assertNotNull( $inner_id );
+
+		return [ $outer_id, $inner_id ];
 	}
 
 	private function given_container_with_heading( int $post_id ): array {
@@ -1142,6 +1833,32 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function given_fake_v3_widget_registered( string $type ): void {
 		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
+	}
+
+	private function enable_standardized_v3_maps(): void {
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+	}
+
+	private function set_experiment_state( string $experiment_name, string $state ): void {
+		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
+			$features = Plugin::$instance->experiments->get_features( $experiment_name );
+
+			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
+				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
+				$features = Plugin::$instance->experiments->get_features( $experiment_name );
+			}
+
+			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
+		}
+
+		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
+		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		V3_Widget_Map_Registry::reset_instance();
+	}
+
+	private function register_v3_heading_dynamic_tag(): void {
+		Plugin::$instance->dynamic_tags->register( new Manage_Elements_V3_Heading_Dynamic_Tag() );
 	}
 
 	private function given_v3_container_on_document( int $post_id ): string {
@@ -1232,5 +1949,23 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		Global_Classes_Labels::make( $kit )->set_labels( [ $class_id => $label ] );
 
 		return $class_id;
+	}
+
+	private function with_interactions_inactive( callable $callback ) {
+		$experiments = Plugin::$instance->experiments;
+		$name = Interactions_Module::EXPERIMENT_NAME;
+		$original_default = $experiments->get_features( $name )['default'];
+		$feature_option_key = $experiments->get_feature_option_key( $name );
+		$original_option = get_option( $feature_option_key );
+
+		$experiments->set_feature_default_state( $name, Experiments_Manager::STATE_INACTIVE );
+		update_option( $feature_option_key, Experiments_Manager::STATE_INACTIVE );
+
+		try {
+			return $callback();
+		} finally {
+			$experiments->set_feature_default_state( $name, $original_default );
+			update_option( $feature_option_key, $original_option );
+		}
 	}
 }

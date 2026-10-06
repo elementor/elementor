@@ -64,7 +64,7 @@ Example:
   "element_config": {
     "hero-title": {
       "tag": "h2",
-      "title": { "content": "Welcome", "children": [] }
+      "title": "Welcome"
     }
   },
   "style": {
@@ -77,14 +77,14 @@ Example:
 }
 ```
 
-Prefer **longhand** CSS properties; shorthand may fall back to `custom_css` (stripped on Pro 3.35+).
+CSS `style` strings are converted to native atomic styles when possible; some shapes fall back to `custom_css` and `animation` is dropped. Prefer `@media(--breakpoint)` over pixel queries, single-value `gap`, literal `box-shadow`, and `padding` / `margin` shorthands.
 
 ### element_config format
 
 Plain JSON matching `elementor/get-widget-schema` output — no `$$type` wrappers for standard props:
 
 - Strings/enums: `"h2"`, `"https://example.com"`
-- html-v3: `{ "content": "Hello", "children": [] }`
+- Text (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`) — not `{ content, children }`
 - Dynamic (where allowed): `{ "name": "post-title", "settings": { } }` — read `elementor://dynamic-tags`
 - Image: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }`
 

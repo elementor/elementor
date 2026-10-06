@@ -134,7 +134,7 @@ jobs:
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
             bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
-      - name: Publish to WordPress.org SVN
+      - name: Publish trunk to WordPress.org SVN
         if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
@@ -144,6 +144,22 @@ jobs:
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      - name: Copy SVN trunk to tag
+        if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/copy-svn-trunk-to-tag.sh"
+      - name: Invalidate changelog cache (release stream)
+        if: github.event.inputs.dry_run == 'false'
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: ${{ env.CHANNEL == 'ga' && 'release' || 'beta' }}
       - name: Release Dev From Beta
         if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
         uses: ./.github/workflows/release-dev-from-beta
@@ -155,6 +171,15 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+
+      - name: Invalidate changelog cache (dev stream)
+        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: core
+          types: dev
 
       - name: Get Jira release URL
         if: github.event.inputs.dry_run == 'false'

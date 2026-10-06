@@ -49,6 +49,7 @@ jobs:
     timeout-minutes: 20
     needs: [build-plugin, prepare-caller-build, get-php-version]
     permissions:
+      actions: read
       contents: read
       id-token: write
     if: |
@@ -112,8 +113,6 @@ jobs:
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-          echo "PHP version set to:"
-          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
       - name: Install WordPress environment
         run: |
@@ -123,6 +122,9 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+      - name: Set WP_VERSION for nightly snapshots
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
+        run: echo "WP_VERSION=nightly" >> $GITHUB_ENV
       - name: Update WordPress database
         if: ${{ github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly' }}
         run: |
@@ -170,6 +172,14 @@ jobs:
           else
             npx playwright install --with-deps chromium
           fi
+      - name: Restore Playwright last-run
+        uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/restore@main
+        id: pw_last_run
+        with:
+          artifact-name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          last-run-paths: |
+            tests/playwright/test-results/.last-run.json
+            tests/elements-regression/test-results/.last-run.json
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
@@ -183,7 +193,7 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
+          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
       - name: Run Playwright Plugin Container tests
         if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
         run: |
@@ -193,7 +203,7 @@ jobs:
           fi
           SHARD_NUM="${{ matrix.shardIndex }}"
           SHARD_NUM="${SHARD_NUM##*_}"
-          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG
+          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
       - name: Run Playwright Plugin Section tests
         if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
         run: |
@@ -203,7 +213,7 @@ jobs:
           fi
           SHARD_NUM="${{ matrix.shardIndex }}"
           SHARD_NUM="${SHARD_NUM##*_}"
-          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG
+          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
         run: |
@@ -211,7 +221,7 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG
+          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
       - name: Run core element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
         run: |
@@ -219,7 +229,7 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright:elements-regression:core -- $PROJECT_ARG
+          npm run test:playwright:elements-regression:core -- $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
       - name: Run atomic element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
         run: |
@@ -227,7 +237,15 @@ jobs:
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
+          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG ${{ steps.pw_last_run.outputs.extra_args }}
+      - name: Save Playwright last-run
+        if: always()
+        uses: elementor/elementor-editor-github-actions/actions/playwright-last-run/save@main
+        with:
+          artifact-name: playwright-last-run-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          last-run-paths: |
+            tests/playwright/test-results/.last-run.json
+            tests/elements-regression/test-results/.last-run.json
       - uses: actions/upload-artifact@v7
         name: Upload Allure result
         if: always()

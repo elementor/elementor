@@ -14,7 +14,7 @@ const PAGE_CONTEXT: PageContextResponse = {
 	post_excerpt: null,
 	featured_image_id: null,
 	image_sizes: {
-		1: {
+		'1:full': {
 			width: 100,
 			height: 100,
 			filesize_bytes: 1000,
@@ -29,10 +29,18 @@ const PAGE_CONTEXT: PageContextResponse = {
 	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 	ally_plugin_active: false,
 	ally_plugin_url: '',
+	ally_accessibility_statement_created: false,
+	ally_accessibility_statement_url: '',
+	ally_widget_settings_url: '',
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: '',
+	cookiez_plugin_installed: false,
+	cookiez_plugin_action_url: '',
+	cookiez_scan_url: '',
+	cookiez_consent_mode_settings_url: '',
 	image_optimization_plugin_active: false,
 	image_optimization_plugin_url: '',
+	frontend_url: null,
 };
 
 describe( 'hasMeaningfulAlt', () => {
@@ -51,5 +59,11 @@ describe( 'hasMeaningfulAlt', () => {
 
 	it( 'ignores snapshot alt when attachment id is set', () => {
 		expect( hasMeaningfulAlt( { id: 99, alt: 'Ignored' }, PAGE_CONTEXT ) ).toBe( false );
+	} );
+
+	it( 'looks up the composite key matching the requested size', () => {
+		expect( hasMeaningfulAlt( { id: 1, size: 'medium' }, PAGE_CONTEXT ) ).toBe( false );
+		expect( hasMeaningfulAlt( { id: 1, size: 'full' }, PAGE_CONTEXT ) ).toBe( true );
+		expect( hasMeaningfulAlt( { id: 1 }, PAGE_CONTEXT ) ).toBe( true );
 	} );
 } );

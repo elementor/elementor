@@ -183,6 +183,7 @@ export type V1ElementEditorSettingsProps = {
 	component_uid?: string;
 	grid_outline?: boolean;
 	empty_state_preview?: boolean;
+	decorative?: boolean;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
@@ -209,6 +210,8 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	default_children?: Array< Record< string, TChild > >;
 	children_dependencies?: ChildDependencyRule[];
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
+	default_html_tag?: string;
+	html_tag_follows_link?: boolean;
 } & T;
 
 type V1Model< T > = {

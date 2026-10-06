@@ -108,7 +108,7 @@ class Test_Interactions_Applier extends TestCase {
 		$result = $applier->apply( $index, [] );
 
 		$this->assertNull( $result['error'] );
-		$this->assertSame( [], $result['warnings'] );
+		$this->assertTrue( $result['warnings']->is_empty() );
 		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
@@ -147,6 +147,38 @@ class Test_Interactions_Applier extends TestCase {
 		$this->assertSame( 'ms', $duration['unit'] );
 	}
 
+	public function test_apply__multiple_items_on_same_element_are_all_saved() {
+		$applier = $this->make_applier();
+		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
+		$scroll = $this->valid_interaction();
+		$scroll['trigger'] = 'scrollIn';
+		$scroll['animation']['effect'] = 'slide';
+		$scroll['animation']['direction'] = 'bottom';
+		$hover = [
+			'trigger' => 'hover',
+			'animation' => [
+				'effect' => 'scale',
+				'type' => 'in',
+				'timing_config' => [
+					'duration' => [ 'size' => 250, 'unit' => 'ms' ],
+					'delay' => [ 'size' => 0, 'unit' => 'ms' ],
+				],
+				'config' => [
+					'easing' => 'easeOut',
+				],
+			],
+		];
+
+		$result = $applier->apply( $index, [
+			'hero' => [ $scroll, $hover ],
+		] );
+
+		$this->assertNull( $result['error'] );
+		$this->assertCount( 2, $index['hero']['interactions']['items'] );
+		$this->assertSame( 'scrollIn', $index['hero']['interactions']['items'][0]['value']['trigger']['value'] );
+		$this->assertSame( 'hover', $index['hero']['interactions']['items'][1]['value']['trigger']['value'] );
+	}
+
 	public function test_apply__resolves_minimal_required_fields_only() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
@@ -167,7 +199,7 @@ class Test_Interactions_Applier extends TestCase {
 		$this->assertArrayHasKey( 'interactions', $index['hero'] );
 	}
 
-	public function test_apply__non_array_items_returns_error() {
+	public function test_apply__non_array_items_returns_warning() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
 
@@ -175,11 +207,14 @@ class Test_Interactions_Applier extends TestCase {
 			'hero' => 'not-an-array',
 		] );
 
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( '[hero] Interactions must be an array.', $result['error']->get_error_message() );
+		$warning = $result['warnings']->all()[0] ?? [];
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'interaction_invalid', $warning['code'] ?? null );
+		$this->assertSame( 'hero', $warning['config_id'] ?? null );
+		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
-	public function test_apply__non_object_item_returns_error() {
+	public function test_apply__non_object_item_returns_warning() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
 
@@ -187,11 +222,14 @@ class Test_Interactions_Applier extends TestCase {
 			'hero' => [ 'not-an-object' ],
 		] );
 
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertStringContainsString( '[hero] Interaction at index 0 must be an object.', $result['error']->get_error_message() );
+		$warning = $result['warnings']->all()[0] ?? [];
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'interaction_invalid', $warning['code'] ?? null );
+		$this->assertSame( 'hero', $warning['config_id'] ?? null );
+		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
-	public function test_apply__unresolvable_item_returns_error() {
+	public function test_apply__unresolvable_item_returns_warning() {
 		$applier = $this->make_applier();
 		$index = [ 'hero' => [ 'widgetType' => 'e-heading' ] ];
 
@@ -201,10 +239,12 @@ class Test_Interactions_Applier extends TestCase {
 			],
 		] );
 
-		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
-		$this->assertSame( 'elementor_invalid_interactions', $result['error']->get_error_code() );
-		$this->assertStringContainsString( '[hero] Interaction at index 0 could not be resolved.', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'elementor://interactions/schema', $result['error']->get_error_message() );
+		$warning = $result['warnings']->all()[0] ?? [];
+		$this->assertNull( $result['error'] );
+		$this->assertSame( 'interaction_invalid', $warning['code'] ?? null );
+		$this->assertSame( 'hero', $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'elementor://interactions/schema', $warning['message'] ?? '' );
+		$this->assertArrayNotHasKey( 'interactions', $index['hero'] );
 	}
 
 	public function test_apply__empty_items_array_clears_interactions_on_node() {

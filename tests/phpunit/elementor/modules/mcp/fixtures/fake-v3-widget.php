@@ -24,10 +24,6 @@ abstract class Fake_V3_Widget extends Widget_Base {
 	}
 
 	protected function register_controls() {
-		$this->start_controls_section( 'section', [ 'label' => 'Section' ] );
-		$this->add_control( 'menu', [ 'label' => 'Menu', 'type' => Controls_Manager::TEXT ] );
-		$this->add_control( 'layout', [ 'label' => 'Layout', 'type' => Controls_Manager::TEXT ] );
-		$this->end_controls_section();
 	}
 
 	/**
@@ -54,6 +50,16 @@ abstract class Fake_V3_Widget extends Widget_Base {
 			'menu' => [ 'name' => 'menu', 'label' => 'Menu', 'type' => Controls_Manager::TEXT ],
 			'layout' => [ 'name' => 'layout', 'label' => 'Layout', 'type' => Controls_Manager::TEXT ],
 		];
+	}
+
+	protected function get_init_settings() {
+		$settings = parent::get_init_settings();
+
+		return is_array( $settings ) ? $settings : [];
+	}
+
+	public function get_stack( $with_common_controls = true ) {
+		return parent::get_stack( false );
 	}
 
 	protected function render() {

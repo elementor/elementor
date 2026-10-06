@@ -58,11 +58,8 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 					'widgetType' => 'e-heading',
 					'elType' => 'widget',
 				'originValue' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => ['$$type' => 'string', 'value' => '<strong>Original text</strong><script>alert("xss")</script>'],
-						'children' => [],
-					],
+					'$$type' => 'escaped-html',
+					'value' => '<strong>Original text</strong><script>alert("xss")</script>',
 				],
 					'groupId' => 'group-uuid-1',
 				],
@@ -87,7 +84,7 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['props']['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['props']['prop-uuid-1']['originValue']['value']['content']['value'] );
+		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['props']['prop-uuid-1']['originValue']['value'] );
 		$this->assertEquals( 'User Info', $sanitized['groups']['items']['group-uuid-1']['label'] );
 	}
 
@@ -214,11 +211,8 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
 		'originValue' => [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => ['$$type' => 'string', 'value' => 'Original text'],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value' => 'Original text',
 		],
 		'groupId' => 'group-uuid-1' 
 	];

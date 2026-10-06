@@ -49,11 +49,34 @@ namespace {
 			$this->assertTrue( V3_Node_Bridge::is_v3_node( $node ) );
 		}
 
-		public function test_is_v3_node__false_for_non_widget_element() {
-			// Arrange.
+		public function test_is_v3_node__false_for_section_element() {
+			// Arrange: section is always rejected — only widget and container elements can be routed.
+			$node = [
+				'elType' => 'section',
+				'settings' => [],
+			];
+
+			// Act & Assert.
+			$this->assertFalse( V3_Node_Bridge::is_v3_node( $node ) );
+		}
+
+		public function test_is_v3_node__false_for_column_element() {
+			// Arrange: column is always rejected — only widget and container elements can be routed.
+			$node = [
+				'elType' => 'column',
+				'settings' => [],
+			];
+
+			// Act & Assert.
+			$this->assertFalse( V3_Node_Bridge::is_v3_node( $node ) );
+		}
+
+		public function test_is_v3_node__false_for_container_when_experiment_inactive() {
+			// Arrange: containers are only routed when the standardized-maps experiment is active
+			// AND a compiled map exists. In this unit-test bootstrap, no Elementor Plugin is loaded,
+			// so the experiment gate falls through to false.
 			$node = [
 				'elType' => 'container',
-				'widgetType' => 'nav-menu',
 				'settings' => [],
 			];
 

@@ -46,7 +46,7 @@ class Default_Styles_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -54,7 +54,7 @@ class Default_Styles_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_one( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args' => [
 					'tag' => [
 						'type' => 'string',

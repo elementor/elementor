@@ -16,12 +16,20 @@ class V3_Context_Meta {
 	private array $widget_config;
 	private array $overrides;
 	private array $generic_index;
+	private bool $is_map_driven;
+	private array $style_bindings;
 
-	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index ) {
+	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index, bool $is_map_driven = false, array $style_bindings = [] ) {
 		$this->widget_type = $widget_type;
 		$this->widget_config = $widget_config;
 		$this->overrides = $overrides;
 		$this->generic_index = $generic_index;
+		$this->is_map_driven = $is_map_driven;
+		$this->style_bindings = $style_bindings;
+	}
+
+	public function is_map_driven(): bool {
+		return $this->is_map_driven;
 	}
 
 	public function widget_type(): string {
@@ -30,6 +38,10 @@ class V3_Context_Meta {
 
 	public function widget_config(): array {
 		return $this->widget_config;
+	}
+
+	public function style_bindings(): array {
+		return $this->style_bindings;
 	}
 
 	public function overrides(): array {

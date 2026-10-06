@@ -4,9 +4,12 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
@@ -37,6 +40,7 @@ class V3_Style_Mapper {
 	private Css_Declaration_Parser $declaration_parser;
 	private Unmapped_Css_Serializer $unmapped_serializer;
 	private Responsive_Key_Resolver $responsive_resolver;
+	private V3_Map_Style_Writer $map_writer;
 
 	public function __construct(
 		Css_Converter $css_converter,
@@ -52,6 +56,7 @@ class V3_Style_Mapper {
 		$this->declaration_parser = $declaration_parser;
 		$this->unmapped_serializer = $unmapped_serializer;
 		$this->responsive_resolver = $responsive_resolver;
+		$this->map_writer = new V3_Map_Style_Writer( $css_converter, V3_Control_Adapter_Registry::create_default(), $declaration_parser );
 	}
 
 	/**
@@ -119,6 +124,12 @@ class V3_Style_Mapper {
 			return;
 		}
 
+		if ( $meta->is_map_driven() ) {
+			$this->map_writer->write( $ctx, $meta->style_bindings(), $meta->controls(), $breakpoint, $state, $block_css );
+
+			return;
+		}
+
 		foreach ( $this->declaration_parser->parse_declarations( $block_css ) as $declaration ) {
 			$rule = [
 				'property' => $declaration['property'],
@@ -151,6 +162,16 @@ class V3_Style_Mapper {
 	}
 
 	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
+		$registry = V3_Widget_Map_Registry::instance();
+		$style_bindings = $registry->get_style_bindings( $widget_type );
+		$is_map_driven = null !== $style_bindings;
+
+		if ( $is_map_driven ) {
+			$widget_config['controls'] = $registry->get_registered_controls( $widget_type );
+
+			return new V3_Context_Meta( $widget_type, $widget_config, [], [], true, $style_bindings );
+		}
+
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$controls = $widget_config['controls'] ?? [];
 		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );

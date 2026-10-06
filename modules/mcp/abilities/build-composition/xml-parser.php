@@ -22,16 +22,32 @@ class Xml_Parser {
 		libxml_use_internal_errors( $previous );
 
 		if ( ! $loaded ) {
-			$message = $errors ? $errors[0]->message : 'Unknown XML error.';
+			$message = $errors ? $this->describe_libxml_error( trim( $errors[0]->message ) ) : 'Unknown XML error.';
 			return new \WP_Error(
 				'invalid_xml',
 				/* translators: %s: XML parse error message */
-				sprintf( __( 'Failed to parse xml_structure: %s', 'elementor' ), trim( $message ) ),
+				sprintf( __( 'Failed to parse xml_structure: %s', 'elementor' ), $message ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
 
 		return $dom;
+	}
+
+	private function describe_libxml_error( string $message ): string {
+		$root = preg_quote( self::COMPOSITION_ROOT_TAG, '/' );
+
+		if ( preg_match( '/tag mismatch: ' . $root . ' line \d+ and (\S+)$/', $message, $matches ) ) {
+			/* translators: %s: XML tag name */
+			return sprintf( __( 'Closing tag </%s> has no matching opening tag.', 'elementor' ), $matches[1] );
+		}
+
+		if ( preg_match( '/tag mismatch: (\S+) line \d+ and ' . $root . '$/', $message, $matches ) ) {
+			/* translators: %s: XML tag name */
+			return sprintf( __( 'Element <%s> is not closed.', 'elementor' ), $matches[1] );
+		}
+
+		return $message;
 	}
 
 	public function get_root( \DOMDocument $dom ): ?\DOMElement {
@@ -92,5 +108,51 @@ class Xml_Parser {
 			}
 		}
 		return $descendants;
+	}
+
+	public function collect_duplicate_configuration_id_errors( \DOMDocument $dom ): array {
+		$counts = [];
+
+		foreach ( $this->iterate_all_descendants( $dom ) as $node ) {
+			$configuration_id = $this->get_configuration_id( $node );
+			if ( null === $configuration_id || '' === $configuration_id ) {
+				continue;
+			}
+
+			if ( ! isset( $counts[ $configuration_id ] ) ) {
+				$counts[ $configuration_id ] = 0;
+			}
+
+			$counts[ $configuration_id ]++;
+		}
+
+		$errors = [];
+		foreach ( $counts as $configuration_id => $count ) {
+			if ( $count <= 1 ) {
+				continue;
+			}
+
+			$errors[] = sprintf(
+				/* translators: %s: duplicate configuration-id value */
+				__( 'Duplicate configuration-id "%s". Each element must have a unique configuration-id.', 'elementor' ),
+				$configuration_id
+			);
+		}
+
+		return $errors;
+	}
+
+	public function validate_unique_configuration_ids( \DOMDocument $dom ): ?\WP_Error {
+		$errors = $this->collect_duplicate_configuration_id_errors( $dom );
+
+		if ( empty( $errors ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_duplicate_configuration_id',
+			implode( ' ', $errors ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 }

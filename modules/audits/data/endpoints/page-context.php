@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Audits\Data\Endpoints;
 
-use Elementor\Control_Media;
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
 use Elementor\Core\Utils\Hints;
 
@@ -22,7 +21,7 @@ class Page_Context extends Endpoint_Base {
 
 	public function get_items( $request ) {
 		$document_id = (int) $request->get_param( 'document_id' );
-		$attachment_ids = array_map( 'intval', (array) $request->get_param( 'attachment_ids' ) );
+		$image_size_requests = array_map( 'strval', (array) $request->get_param( 'image_size_requests' ) );
 
 		$post = get_post( $document_id );
 		$thumbnail_id = $post ? (int) get_post_thumbnail_id( $post ) : 0;
@@ -42,7 +41,7 @@ class Page_Context extends Endpoint_Base {
 			'post_excerpt' => $post && '' !== $post->post_excerpt ? $post->post_excerpt : null,
 			'featured_image_id' => $thumbnail_id > 0 ? $thumbnail_id : null,
 
-			'image_sizes' => $this->collect_image_sizes( $attachment_ids ),
+			'image_sizes' => $this->collect_image_sizes( $image_size_requests ),
 
 			'is_noindex' => ! (bool) get_option( 'blog_public' ),
 			'reading_settings_url' => admin_url( 'options-reading.php' ),
@@ -50,12 +49,31 @@ class Page_Context extends Endpoint_Base {
 			'privacy_policy_url' => $privacy_policy_url ? $privacy_policy_url : null,
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
-			'ally_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=pojo-accessibility' ),
+			'ally_plugin_url' => Hints::get_plugin_action_url( 'pojo-accessibility' ),
+			'ally_accessibility_statement_created' => $this->is_ally_accessibility_statement_created(),
+			'ally_accessibility_statement_url' => admin_url( 'admin.php?page=accessibility-settings#accessibilityStatement' ),
+			'ally_widget_settings_url' => admin_url( 'admin.php?page=accessibility-settings#capabilities' ),
 			'cookiez_plugin_active' => Hints::is_plugin_active( 'cookiez/cookiez.php' ),
 			'cookiez_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=cookiez' ),
+			'cookiez_plugin_installed' => Hints::is_plugin_installed( 'cookiez/cookiez.php' ),
+			'cookiez_plugin_action_url' => Hints::get_plugin_action_url( 'cookiez' ),
+			'cookiez_scan_url' => admin_url( 'admin.php?page=cookiez-settings#cookie-management' ),
+			'cookiez_consent_mode_settings_url' => admin_url( 'admin.php?page=cookiez-settings#settings' ),
 			'image_optimization_plugin_active' => Hints::is_plugin_active( 'image-optimization/image-optimization.php' ),
 			'image_optimization_plugin_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+
+			'frontend_url' => $this->get_published_frontend_url( $post ),
 		];
+	}
+
+	private function get_published_frontend_url( $post ): ?string {
+		if ( ! $post || 'publish' !== $post->post_status ) {
+			return null;
+		}
+
+		$permalink = get_permalink( $post );
+
+		return $permalink ? $permalink : null;
 	}
 
 	protected function register() {
@@ -63,11 +81,13 @@ class Page_Context extends Endpoint_Base {
 		$this->register_items_route();
 	}
 
-	private function collect_image_sizes( array $attachment_ids ): array {
+	private function collect_image_sizes( array $size_requests ): array {
 		$result = [];
 
-		foreach ( $attachment_ids as $attachment_id ) {
-			if ( ! current_user_can( 'read_post', $attachment_id ) ) {
+		foreach ( $size_requests as $request_key ) {
+			[ $attachment_id, $size ] = $this->parse_size_request_key( $request_key );
+
+			if ( ! $attachment_id || ! current_user_can( 'read_post', $attachment_id ) ) {
 				continue;
 			}
 
@@ -75,22 +95,63 @@ class Page_Context extends Endpoint_Base {
 				continue;
 			}
 
-			$metadata = wp_get_attachment_metadata( $attachment_id );
-			$file_path = get_attached_file( $attachment_id );
-			$mime = get_post_mime_type( $attachment_id );
-			$src = wp_get_attachment_url( $attachment_id );
-
-			$result[ $attachment_id ] = [
-				'width' => isset( $metadata['width'] ) ? (int) $metadata['width'] : 0,
-				'height' => isset( $metadata['height'] ) ? (int) $metadata['height'] : 0,
-				'filesize_bytes' => $file_path && file_exists( $file_path ) ? (int) filesize( $file_path ) : 0,
-				'mime' => $mime ? $mime : '',
-				'src' => $src ? $src : '',
-				'alt' => Control_Media::get_image_alt( [ 'id' => $attachment_id ] ),
-			];
+			$result[ $request_key ] = $this->resolve_image_size_info( $attachment_id, $size );
 		}
 
 		return $result;
+	}
+
+	private function is_ally_accessibility_statement_created(): bool {
+		$statement_data = get_option( 'ea11y_accessibility_statement_data' );
+
+		return ! empty( $statement_data['pageId'] );
+	}
+
+	private function parse_size_request_key( string $request_key ): array {
+		[ $attachment_id, $size ] = array_pad( explode( ':', $request_key, 2 ), 2, '' );
+
+		return [ (int) $attachment_id, $size ? $size : 'full' ];
+	}
+
+	private function resolve_image_size_info( int $attachment_id, string $size ): array {
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+
+		$base = [
+			'width' => isset( $metadata['width'] ) ? (int) $metadata['width'] : 0,
+			'height' => isset( $metadata['height'] ) ? (int) $metadata['height'] : 0,
+			'mime' => (string) get_post_mime_type( $attachment_id ),
+			'src' => (string) wp_get_attachment_url( $attachment_id ),
+			'alt' => (string) get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ),
+		];
+
+		$size_meta = 'full' !== $size ? ( $metadata['sizes'][ $size ] ?? null ) : null;
+
+		if ( ! $size_meta ) {
+			return array_merge( $base, [ 'filesize_bytes' => $this->get_original_filesize( $attachment_id ) ] );
+		}
+
+		if ( isset( $size_meta['filesize'] ) ) {
+			return array_merge( $base, [
+				'width' => (int) $size_meta['width'],
+				'height' => (int) $size_meta['height'],
+				'filesize_bytes' => (int) $size_meta['filesize'],
+			] );
+		}
+
+		$sized_path = trailingslashit( dirname( get_attached_file( $attachment_id ) ) ) . $size_meta['file'];
+		$sized_filesize = file_exists( $sized_path ) ? (int) filesize( $sized_path ) : $this->get_original_filesize( $attachment_id );
+
+		return array_merge( $base, [
+			'width' => (int) $size_meta['width'],
+			'height' => (int) $size_meta['height'],
+			'filesize_bytes' => $sized_filesize,
+		] );
+	}
+
+	private function get_original_filesize( int $attachment_id ): int {
+		$file_path = get_attached_file( $attachment_id );
+
+		return $file_path && file_exists( $file_path ) ? (int) filesize( $file_path ) : 0;
 	}
 
 	private function is_default_kit_unchanged(): bool {

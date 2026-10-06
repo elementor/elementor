@@ -68,7 +68,7 @@ describe( 'flexTransformer', () => {
 	} );
 
 	describe( 'when only two values are provided', () => {
-		it( 'should return "grow shrink" when grow and shrink are set', () => {
+		it( 'should return "grow shrink auto" when grow and shrink are set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -80,7 +80,7 @@ describe( 'flexTransformer', () => {
 			const result = flexTransformer( value, { key: 'flex' } );
 
 			// Assert.
-			expect( result ).toBe( '1 2' );
+			expect( result ).toBe( '1 2 auto' );
 		} );
 
 		it( 'should return "grow 1 basis" when grow and basis are set', () => {
@@ -115,7 +115,7 @@ describe( 'flexTransformer', () => {
 	} );
 
 	describe( 'when only one value is provided', () => {
-		it( 'should return "grow" when only grow is set', () => {
+		it( 'should return "grow 1 auto" when only grow is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -127,10 +127,10 @@ describe( 'flexTransformer', () => {
 			const result = flexTransformer( value, { key: 'flex' } );
 
 			// Assert.
-			expect( result ).toBe( '1' );
+			expect( result ).toBe( '1 1 auto' );
 		} );
 
-		it( 'should return "0 shrink" when only shrink is set', () => {
+		it( 'should return "0 shrink auto" when only shrink is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: null,
@@ -142,7 +142,7 @@ describe( 'flexTransformer', () => {
 			const result = flexTransformer( value, { key: 'flex' } );
 
 			// Assert.
-			expect( result ).toBe( '0 2' );
+			expect( result ).toBe( '0 2 auto' );
 		} );
 
 		it( 'should return "0 1 basis" when only basis is set', () => {
@@ -238,8 +238,8 @@ describe( 'flexTransformer', () => {
 		} );
 	} );
 
-	describe( 'CSS shorthand behavior', () => {
-		it( 'should follow CSS flex shorthand rules for single value', () => {
+	describe( 'CSS initial values for omitted longhands', () => {
+		it( 'should default shrink and basis when only grow is set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 2,
@@ -251,10 +251,10 @@ describe( 'flexTransformer', () => {
 			const result = flexTransformer( value, { key: 'flex' } );
 
 			// Assert.
-			expect( result ).toBe( '2' );
+			expect( result ).toBe( '2 1 auto' );
 		} );
 
-		it( 'should follow CSS flex shorthand rules for two values', () => {
+		it( 'should default basis when grow and shrink are set', () => {
 			// Arrange.
 			const value: Flex = {
 				flexGrow: 1,
@@ -266,7 +266,7 @@ describe( 'flexTransformer', () => {
 			const result = flexTransformer( value, { key: 'flex' } );
 
 			// Assert.
-			expect( result ).toBe( '1 2' );
+			expect( result ).toBe( '1 2 auto' );
 		} );
 	} );
 } );

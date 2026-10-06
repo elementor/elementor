@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicOptIn;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In as Atomic_Widgets_Opt_In;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Utils;
@@ -23,6 +24,10 @@ class WelcomeScreen {
 	}
 
 	public function maybe_enqueue_welcome_popover(): void {
+		if ( ! $this->was_opt_in_clicked() ) {
+			return;
+		}
+
 		if ( $this->is_first_or_second_editor_visit() ) {
 			return;
 		}
@@ -39,6 +44,10 @@ class WelcomeScreen {
 		wp_enqueue_script( 'elementor-v2-' . self::PACKAGE_NAME );
 		wp_set_script_translations( 'elementor-v2-' . self::PACKAGE_NAME, 'elementor' );
 		$this->set_welcome_popover_as_displayed();
+	}
+
+	private function was_opt_in_clicked(): bool {
+		return (bool) get_option( Atomic_Widgets_Opt_In::OPT_IN_CLICKED_OPTION );
 	}
 
 	private function is_first_or_second_editor_visit(): bool {

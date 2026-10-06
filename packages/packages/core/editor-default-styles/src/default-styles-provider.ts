@@ -8,6 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { getAllowedDefaultStyleTags } from './allowed-tags';
+import { getCapabilities } from './capabilities';
 import { selectData, slice } from './store';
 
 export const DEFAULT_STYLES_PROVIDER_KEY = 'default-styles';
@@ -35,6 +36,7 @@ export const defaultStylesStylesProvider = createStylesProvider( {
 		plural: __( 'tags', 'elementor' ),
 	},
 	subscribe: ( cb ) => subscribeWithStates( cb ),
+	capabilities: getCapabilities(),
 	actions: {
 		all: () =>
 			getAllowedDefaultStyleTags().map( ( tag ) => {

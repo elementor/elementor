@@ -48,6 +48,8 @@ Built-in control types: `text`, `textarea`, `number`, `select`, `toggle`, `switc
 
 Filter: `elementor/atomic-widgets/controls`.
 
+> `inline-editing` note: this control is a TipTap/ProseMirror rich-text editor (`editor-controls/src/components/inline-editor.tsx`) with a **fixed** extension set (bold, italic, strike, super/subscript, underline, link, hard-break, heading, paragraph). Raw angle brackets typed by the user are stored as text nodes and serialized entity-encoded (`<` → `&lt;`) by `editor.getHTML()`, so you cannot inject arbitrary HTML tags through it — only the enabled marks/nodes emit tags. This client-side encoding happens before submission, so it is only visible by inspecting saved postmeta.
+
 ### Base styles
 
 Override `define_base_styles()` to return `Style_Definition` maps. Keys become CSS class suffixes via `get_base_styles_dictionary()`.

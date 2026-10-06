@@ -80,7 +80,7 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 
 	configureElementToolPrompt.parameter(
 		'style',
-		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "1.25rem", "color": "var(--primary-text, #000)" }. Set a value to null to reset that property to its default. OPTIONAL.'
+		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "1.25rem", "color": "var(--primary-text, #000)" }. font-family must be a single Google Font name or a var(--label) — no fallback stacks. Set a value to null to reset that property to its default. OPTIONAL.'
 	);
 
 	configureElementToolPrompt.example( `

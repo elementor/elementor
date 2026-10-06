@@ -10,8 +10,6 @@ export interface AngieModelPreferences {
 
 export function createDefaultModelPreferences(): AngieModelPreferences {
 	return {
-		hints: [ { name: 'claude-sonnet-4-5' } ],
-		intelligencePriority: 0.8,
-		speedPriority: 0.7,
+		hints: [ { name: 'claude-sonnet-4-6' } ],
 	};
 }

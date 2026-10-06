@@ -3,7 +3,11 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -325,14 +329,8 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 						'widgetType' => 'e-heading',
 						'settings' => [
 							'title' => [
-								'$$type' => 'html-v3',
-								'value' => [
-									'content' => [
-										'$$type' => 'string',
-										'value' => 'Hello',
-									],
-									'children' => [],
-								],
+								'$$type' => 'escaped-html',
+								'value' => 'Hello',
 							],
 						],
 						'styles' => [],
@@ -377,7 +375,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			[ 'title' => 'Hello' ],
 			$child['settings']
 		);
-		$this->assertSame( [], $child['styles'] );
+		$this->assertSame( [ 'css' => '' ], $child['styles'] );
 	}
 
 	public function test_execute__styles_empty_when_only_global_class_refs() {
@@ -423,7 +421,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			[ 'classes' => [ 'g-abc' ] ],
 			$node['settings']
 		);
-		$this->assertSame( [], $node['styles'] );
+		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
 	public function test_execute__serializes_realistic_local_style_id_with_e_prefix() {
@@ -753,7 +751,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$node = $result['elements'][0];
 		$this->assertArrayNotHasKey( 'version', $node );
 		$this->assertEquals( (object) [], $node['settings'] );
-		$this->assertEquals( (object) [], $node['styles'] );
+		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
 	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
@@ -787,10 +785,10 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Assert
 		$node = $result['elements'][0];
 		$this->assertArrayNotHasKey( 'version', $node );
-		$this->assertArrayNotHasKey( 'styles', $node );
+		$this->assertArrayNotHasKey( 'style', $node );
 		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
-		$this->assertStringContainsString( 'color: #222222;', $node['style'] );
-		$this->assertStringContainsString( 'filter: blur(2px);', $node['style'] );
+		$this->assertStringContainsString( 'color: #222222;', $node['styles']['css'] );
+		$this->assertStringContainsString( 'filter: blur(2px);', $node['styles']['css'] );
 	}
 
 	public function test_execute__omits_version_for_unknown_type() {
@@ -814,6 +812,288 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'version', $result['elements'][0] );
+	}
+
+	public function test_execute__serializes_dynamic_tag_binding_not_rendered_output() {
+		// Arrange
+		$this->given_dynamic_tags( [
+			'mock-price-tag' => [
+				'name' => 'mock-price-tag',
+				'label' => 'Mock Price',
+				'group' => 'woocommerce',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'format' => String_Prop_Type::make()->default( 'both' ),
+				],
+			],
+		] );
+
+		$raw_settings = [
+			'paragraph' => Dynamic_Prop_Type::generate( [
+				'name' => 'mock-price-tag',
+				'group' => 'woocommerce',
+				'settings' => [
+					'format' => String_Prop_Type::generate( 'both' ),
+				],
+			] ),
+			'tag' => [
+				'$$type' => 'string',
+				'value' => 'p',
+			],
+		];
+
+		$config = Widget_Context_Helper::get_widget_config( 'e-paragraph' );
+		$props_schema = $config['atomic_props_schema'] ?? [];
+
+		$method = new \ReflectionMethod( Get_Structure_Ability::class, 'serialize_settings_for_llm' );
+		$method->setAccessible( true );
+
+		// Act
+		$settings = $method->invoke( $this->ability, $props_schema, $raw_settings );
+
+		// Assert
+		$this->assertSame(
+			[
+				'name' => 'mock-price-tag',
+				'settings' => [
+					'format' => 'both',
+				],
+			],
+			$settings['paragraph']
+		);
+		$this->assertSame( 'p', $settings['tag'] );
+	}
+
+	public function test_execute__returns_link_in_writable_shape_and_keeps_rendered_tag() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'button1', 'e-button', [
+				'link' => [
+					'$$type' => 'link',
+					'value' => [
+						'destination' => [ '$$type' => 'url', 'value' => 'https://example.com' ],
+						'isTargetBlank' => [ '$$type' => 'boolean', 'value' => true ],
+						'tag' => [ '$$type' => 'string', 'value' => 'a' ],
+					],
+				],
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'button1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				'destination' => 'https://example.com',
+				'isTargetBlank' => true,
+				'tag' => 'a',
+			],
+			$node['settings']['link']
+		);
+		$this->assertSame( 'a', $node['tag'] );
+	}
+
+	public function test_execute__returns_image_in_writable_shape() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'image1', 'e-image', [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'url' => [ '$$type' => 'url', 'value' => 'https://example.com/photo.jpg' ],
+								'alt' => [ '$$type' => 'string', 'value' => 'A photo' ],
+							],
+						],
+						'size' => [ '$$type' => 'string', 'value' => 'full' ],
+					],
+				],
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'image1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				'src' => [
+					'id' => null,
+					'url' => 'https://example.com/photo.jpg',
+					'alt' => 'A photo',
+				],
+				'size' => 'full',
+			],
+			$node['settings']['image']
+		);
+	}
+
+	public function test_execute__returns_svg_source_instead_of_inline_markup() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'svg1', 'e-svg', [
+				'svg' => [
+					'$$type' => 'svg-src',
+					'value' => [
+						'url' => [ '$$type' => 'url', 'value' => 'https://example.com/icon.svg' ],
+					],
+				],
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'svg1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				'id' => null,
+				'url' => 'https://example.com/icon.svg',
+			],
+			$node['settings']['svg']
+		);
+	}
+
+	public function test_execute__returns_attributes_as_key_value_list() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [
+				'attributes' => [
+					'$$type' => 'attributes',
+					'value' => [
+						[
+							'$$type' => 'key-value',
+							'value' => [
+								'key' => [ '$$type' => 'string', 'value' => 'data-section' ],
+								'value' => [ '$$type' => 'string', 'value' => 'hero' ],
+							],
+						],
+					],
+				],
+			], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertEquals(
+			[
+				[
+					'key' => 'data-section',
+					'value' => 'hero',
+				],
+			],
+			$node['settings']['attributes']
+		);
+	}
+
+	public function test_execute__returns_decorative_editor_setting_as_plain_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$decorative_block = $this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' );
+		$decorative_block['editor_settings'] = [ 'decorative' => true ];
+
+		$this->mock_document_with_elements( $post_id, [ $decorative_block ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertSame( [ 'decorative' => true ], (array) $node['settings'] );
+	}
+
+	public function test_execute__decorative_keeps_frontend_base_styles_in_default_styles() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$decorative_block = $this->make_atomic_widget( 'decorative1', 'e-div-block', [], 'e-div-block' );
+		$decorative_block['editor_settings'] = [ 'decorative' => true ];
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'plain1', 'e-div-block', [], 'e-div-block' ),
+			$decorative_block,
+		] );
+
+		// Act
+		$plain = $this->read_node_with_content( $post_id, 'plain1' );
+		$decorative = $this->read_node_with_content( $post_id, 'decorative1' );
+
+		// Assert
+		$this->assertSame( $plain['default_styles'], $decorative['default_styles'] );
+		$this->assertStringContainsString( 'padding:10px', $decorative['default_styles'] );
+		$this->assertStringContainsString( 'min-width:30px', $decorative['default_styles'] );
+	}
+
+	public function test_execute__omits_decorative_when_editor_setting_is_absent() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
+	}
+
+	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {
+		$element = [
+			'id' => $id,
+			'elType' => $el_type,
+			'settings' => $settings,
+			'styles' => [],
+			'elements' => [],
+		];
+
+		if ( 'widget' === $el_type ) {
+			$element['widgetType'] = $widget_type;
+		}
+
+		return $element;
+	}
+
+	private function read_node_with_content( int $post_id, string $element_id ): array {
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'element_id' => $element_id,
+			'include_content' => true,
+		] );
+
+		$this->assertIsArray( $result );
+
+		return $result['elements'][0];
+	}
+
+	private function given_dynamic_tags( array $tags ): void {
+		$module = Dynamic_Tags_Module::instance();
+
+		$reflection = new \ReflectionClass( $module->registry );
+		$tags_prop = $reflection->getProperty( 'tags' );
+		$tags_prop->setAccessible( true );
+		$tags_prop->setValue( $module->registry, $tags );
 	}
 
 	private function mock_document_with_elements( int $post_id, array $elements ): void {

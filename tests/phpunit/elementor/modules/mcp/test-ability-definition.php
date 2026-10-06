@@ -40,9 +40,10 @@ class Test_Ability_Definition extends TestCase {
 		$this->assertArrayHasKey( 'output_schema', $result );
 		$this->assertArrayHasKey( 'meta', $result );
 		$this->assertArrayHasKey( 'permission_callback', $result );
+		$this->assertArrayHasKey( 'input_schema', $result );
 	}
 
-	public function test_to_array__omits_input_schema_when_empty() {
+	public function test_to_array__uses_empty_object_input_schema_when_empty() {
 		// Arrange
 		$definition = $this->make_definition( [ 'input_schema' => [] ] );
 
@@ -50,7 +51,27 @@ class Test_Ability_Definition extends TestCase {
 		$result = $definition->to_array();
 
 		// Assert
-		$this->assertArrayNotHasKey( 'input_schema', $result );
+		$this->assertSame(
+			Ability_Definition::empty_object_input_schema(),
+			$result['input_schema']
+		);
+	}
+
+	public function test_to_array__strips_empty_properties_array() {
+		// Arrange
+		$definition = $this->make_definition( [
+			'input_schema' => [
+				'type' => 'object',
+				'properties' => [],
+			],
+		] );
+
+		// Act
+		$result = $definition->to_array();
+
+		// Assert
+		$this->assertSame( 'object', $result['input_schema']['type'] );
+		$this->assertArrayNotHasKey( 'properties', $result['input_schema'] );
 	}
 
 	public function test_to_array__includes_input_schema_when_provided() {
@@ -103,5 +124,13 @@ class Test_Ability_Definition extends TestCase {
 		$this->assertSame( $meta, $definition->meta );
 		$this->assertSame( $permission_cb, $definition->permission_callback );
 		$this->assertSame( $input_schema, $definition->input_schema );
+	}
+
+	public function test_empty_object_input_schema__shape() {
+		// Arrange / Act
+		$schema = Ability_Definition::empty_object_input_schema();
+
+		// Assert
+		$this->assertSame( [ 'type' => 'object' ], $schema );
 	}
 }

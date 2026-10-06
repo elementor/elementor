@@ -403,6 +403,33 @@ class Test_Admin extends Elementor_Test_Base {
 		$admin->admin_action_edit_website_redirect();
 	}
 
+	public function test_admin_footer_text__shows_rating_on_elementor_admin_screen() {
+		// Arrange
+		set_current_screen( 'elementor_page_elementor-home' );
+		$admin = new Admin();
+		$original_footer = 'Default WordPress footer';
+
+		// Act
+		$result = $admin->admin_footer_text( $original_footer );
+
+		// Assert
+		$this->assertStringContainsString( 'admin-review', $result );
+		$this->assertStringNotContainsString( $original_footer, $result );
+	}
+
+	public function test_admin_footer_text__keeps_default_footer_on_mcp_admin_screen() {
+		// Arrange
+		set_current_screen( 'elementor_page_elementor-mcp' );
+		$admin = new Admin();
+		$original_footer = 'Default WordPress footer';
+
+		// Act
+		$result = $admin->admin_footer_text( $original_footer );
+
+		// Assert
+		$this->assertSame( $original_footer, $result );
+	}
+
 	public function test_admin_action_edit_website_redirect__redirects_to_homepage_edit_url_when_built_with_elementor() {
 		// Arrange
 		$this->act_as_admin();

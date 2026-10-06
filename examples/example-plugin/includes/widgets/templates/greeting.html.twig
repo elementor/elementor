@@ -1,0 +1,5 @@
+{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+<p class="{{ classes }}" data-interaction-id="{{ interaction_id }}" {{ settings.attributes | raw }}>
+	<span class="example-greeting__badge">{{ settings.badge }}</span>
+	{{ settings.title }}
+</p>

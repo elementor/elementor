@@ -1,6 +1,7 @@
-import { type Props } from '@elementor/editor-props';
+import { mergeProps, type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
+	getNonEmptyVariants,
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
@@ -77,40 +78,38 @@ export const slice = createSlice( {
 			};
 
 			const variant = getVariantByMeta( style, payload.meta );
+
 			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
 			customCss = customCss?.raw ? customCss : null;
 
+			const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
+			const mode = payload.mode ?? 'merge';
+
 			if ( variant ) {
-				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
-				const mode = payload.mode ?? 'merge';
-
-				if ( mode === 'replace' ) {
-					variant.props = payloadProps;
-				} else {
-					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
-					variant.props = { ...variantProps, ...payloadProps };
-				}
-
+				const variantProps = 'replace' === mode ? {} : variant.props;
+				variant.props = mergeProps( variantProps, payloadProps );
 				variant.custom_css = customCss;
 			} else {
 				style.variants.push( {
 					meta: payload.meta,
-					props: payload.props,
+					props: mergeProps( {}, payloadProps ),
 					custom_css: customCss,
 				} );
 			}
+
+			style.variants = getNonEmptyVariants( style );
 
 			state.data[ payload.id ] = style;
 			state.isDirty = true;
 		},
 
 		reset( state ) {
-			state.data = structuredClone( state.initialData );
+			state.data = state.initialData;
 			state.isDirty = false;
 		},
 
 		commit( state ) {
-			state.initialData = structuredClone( state.data );
+			state.initialData = state.data;
 			state.isDirty = false;
 		},
 

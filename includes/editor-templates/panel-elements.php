@@ -86,7 +86,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# } else if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } else if ( obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
-			<i class="eicon-atomic"></i>
+			<# if ( obj.isNew ) { #>
+				<span class="e-widget-new-badge" aria-label="<?php echo esc_attr__( 'New', 'elementor' ); ?>"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
+			<# } else { #>
+				<i class="eicon-atomic"></i>
+			<# } #>
 		<# } #>
 		<div class="icon">
 			<i class="{{ icon }}" aria-hidden="true"></i>

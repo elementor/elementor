@@ -1,0 +1,135 @@
+import { useEffect, useRef } from 'react';
+import { getContainer, getElementSettings, updateElementSettings, type V1Element } from '@elementor/editor-elements';
+import { booleanPropTypeUtil } from '@elementor/editor-props';
+import { undoable } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
+
+import { HISTORY_DEBOUNCE_WAIT } from '../../../hooks/use-styles-fields';
+import { ACCORDION_ITEM_ELEMENT_TYPE } from './use-actions';
+
+const ACCORDION_ITEM_HEADER_ELEMENT_TYPE = 'e-accordion-item-header';
+
+type CascadeShowIconPayload = {
+	accordionId: string;
+	showIcon: boolean;
+};
+
+// A header's `show_icon` is either an explicit boolean prop value (`booleanPropTypeUtil.create`'s
+// return shape) or `null`/absent when it was never set - see `undo()` below for why both must
+// round-trip correctly.
+type CascadeShowIconResult = {
+	previous: Record< string, ReturnType< typeof booleanPropTypeUtil.create > | null | undefined >;
+};
+
+// `show_icon` is global on the root (`Atomic_Accordion::define_props_schema()`); every
+// `e-accordion-item-header` carries a *mirrored* `show_icon` prop of its own purely because the
+// children-dependencies reconciler evaluates a rule against the declaring element's own settings
+// and can only attach/detach that element's own direct children (see the comment on both props in
+// PHP). This function is the write-through: it pushes the root's current value onto every header's
+// mirrored prop, in one undo-able history transaction, so a single undo restores every header at
+// once. It does not touch the icon child itself - each header's own `Child_Dependency` (bound to that
+// header's settings `change` event) reacts to the prop flip and attaches/detaches/restashes the icon
+// on its own, exactly as it would if the header's `show_icon` had been changed directly.
+export const cascadeShowIconToHeaders = undoable< CascadeShowIconPayload, CascadeShowIconResult, undefined >(
+	{
+		do: ( { accordionId, showIcon } ) => {
+			const headerIds = getAccordionHeaderIds( accordionId );
+
+			const previous = Object.fromEntries(
+				headerIds.map(
+					( headerId ) =>
+						[
+							headerId,
+							getElementSettings< ReturnType< typeof booleanPropTypeUtil.create > >( headerId, [
+								'show_icon',
+							] ).show_icon,
+						] as const
+				)
+			);
+
+			headerIds.forEach( ( headerId ) => {
+				updateElementSettings( {
+					id: headerId,
+					props: { show_icon: booleanPropTypeUtil.create( showIcon ) },
+					withHistory: false,
+				} );
+			} );
+
+			return { previous };
+		},
+		undo: ( _payload, { previous } ) => {
+			// Write back whatever `previousValue` actually was, including `null`/`undefined` (a header
+			// whose `show_icon` was never explicitly set before the cascade). Skipping on falsy here
+			// used to only ever skip that unset case - explicit `false` is a *prop object*
+			// (`{ $$type: 'boolean', value: false }`), never itself falsy - so the guard silently ate
+			// the common case (the default two-item tree's headers start with `show_icon` unset) instead
+			// of the one it looked like it was guarding against. An explicit `null` evaluates the same
+			// as "unset" in the `Child_Dependency` reconciler (`extractValue()` -> `?.value` is
+			// `undefined` either way), so this restores the icon exactly as it was.
+			Object.entries( previous ).forEach( ( [ headerId, previousValue ] ) => {
+				updateElementSettings( {
+					id: headerId,
+					props: { show_icon: previousValue ?? null },
+					withHistory: false,
+				} );
+			} );
+		},
+	},
+	{
+		title: __( 'Accordion', 'elementor' ),
+		subtitle: __( 'Show Icon', 'elementor' ),
+		// `undoable()`'s debounce only delays when the *history entry* is pushed onto the undo stack -
+		// the settings write itself (`do()`) still runs synchronously on every call. The root's own
+		// `show_icon` change goes through `SettingsField` -> `useUndoableUpdateElementProp`
+		// (`settings-field.tsx`), which debounces its history push by `HISTORY_DEBOUNCE_WAIT` (800ms).
+		// Without matching that here, this cascade's history entry (pushed immediately) would land on
+		// the undo stack *before* the root's (pushed 800ms later), so the first Undo after a toggle
+		// would revert the root switch alone while every header stayed on its new value - the switch and
+		// the icons would visibly disagree until a second Undo. Matching the debounce window fixes the
+		// stack order to be deterministic (root's own entry, then this one) regardless of how quickly a
+		// user hits Undo. It does not make the two changes one atomic transaction - see the comment on
+		// `useShowIconWriteThrough` for why that would require forking the shared `Switch_Control`.
+		debounce: { wait: HISTORY_DEBOUNCE_WAIT },
+	}
+);
+
+function getAccordionHeaderIds( accordionId: string ): string[] {
+	const accordion = getContainer( accordionId );
+
+	const itemContainers = ( accordion?.children ?? [] ).filter(
+		( child ) => child.model.get( 'elType' ) === ACCORDION_ITEM_ELEMENT_TYPE
+	);
+
+	const headerContainers = itemContainers
+		.map(
+			( item ) =>
+				item.children?.find( ( child ) => child.model.get( 'elType' ) === ACCORDION_ITEM_HEADER_ELEMENT_TYPE )
+		)
+		.filter( ( header ): header is V1Element => Boolean( header ) );
+
+	return headerContainers.map( ( header ) => header.id );
+}
+
+// Watches the root's *current* `show_icon` value (read reactively from the panel's element
+// settings) and cascades it to every header on change. Skips the very first render for a given
+// element so mounting the panel on an already-toggled-off accordion doesn't re-fire a no-op
+// cascade. Deliberately lives alongside the repeater control rather than inside the generic
+// `Switch_Control` -> `SettingsField` pipeline: that pipeline is shared by every atomic element's
+// switch controls, so it is not a safe place to special-case one element's cross-element write-
+// through.
+export function useShowIconWriteThrough( accordionId: string, showIcon: boolean ): void {
+	const previousRef = useRef< { accordionId: string; showIcon: boolean } | null >( null );
+
+	useEffect( () => {
+		const previous = previousRef.current;
+		previousRef.current = { accordionId, showIcon };
+
+		// No baseline yet, or the accordion identity changed (e.g. a different element got selected
+		// into the same mounted control) - just record the new baseline, never cascade.
+		if ( ! previous || previous.accordionId !== accordionId || previous.showIcon === showIcon ) {
+			return;
+		}
+
+		cascadeShowIconToHeaders( { accordionId, showIcon } );
+	}, [ accordionId, showIcon ] );
+}

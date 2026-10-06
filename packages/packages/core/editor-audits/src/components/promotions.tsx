@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography } from '@elementor/ui';
+import { Box, Divider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PROMOTIONS } from '../register-promotions';
@@ -44,8 +44,9 @@ export default function Promotions( { report }: Props ) {
 
 	return (
 		<>
+			<Divider />
 			<Typography variant="subtitle1" fontWeight="bold">
-				{ __( 'Quick wins', 'elementor' ) }
+				{ __( 'Quick actions', 'elementor' ) }
 			</Typography>
 			<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1 } }>
 				{ cards.map( ( { config, ctaUrl, key, run, subtitle } ) => (

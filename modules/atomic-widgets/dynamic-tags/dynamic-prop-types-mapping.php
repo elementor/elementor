@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Prop_Types_Schema_Extender;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -72,7 +73,7 @@ class Dynamic_Prop_Types_Mapping extends Prop_Types_Schema_Extender {
 			return [ V1_Dynamic_Tags_Module::URL_CATEGORY ];
 		}
 
-		if ( $prop_type instanceof Html_V3_Prop_Type ) {
+		if ( $prop_type instanceof Escaped_Html_Prop_Type || $prop_type instanceof Html_V3_Prop_Type ) {
 			return [ V1_Dynamic_Tags_Module::TEXT_CATEGORY ];
 		}
 

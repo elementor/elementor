@@ -36,6 +36,17 @@ export function linkPropType() {
 	} );
 }
 
+export function iconPropType() {
+	return createMockPropType( {
+		kind: 'object',
+		key: 'icon',
+		shape: {
+			value: stringPropType(),
+			library: stringPropType(),
+		},
+	} );
+}
+
 export function imagePropType() {
 	return createMockPropType( {
 		kind: 'object',

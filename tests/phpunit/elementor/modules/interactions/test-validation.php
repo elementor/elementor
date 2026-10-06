@@ -226,6 +226,59 @@ class Test_Validation extends TestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_sanitize__keeps_multiple_items_on_the_same_element() {
+		$scroll = $this->create_prop_type_interaction( 'scrollIn', 'slide', 'in', 'bottom', 650, 0, 'card-scroll' );
+		$hover = $this->create_prop_type_interaction( 'hover', 'scale', 'in', '', 250, 0, 'card-hover' );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '5b7849a6',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'interactions' => json_encode( [
+						'items' => [ $scroll, $hover ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertCount( 2, $decoded['items'] );
+		$this->assertSame( 'card-scroll', $decoded['items'][0]['value']['interaction_id']['value'] );
+		$this->assertSame( 'card-hover', $decoded['items'][1]['value']['interaction_id']['value'] );
+	}
+
+	public function test_sanitize__keeps_item_when_optional_direction_is_omitted() {
+		$scroll = $this->create_prop_type_interaction( 'scrollIn', 'slide', 'in', 'bottom', 650, 0, 'card-scroll' );
+		$hover = $this->create_prop_type_interaction( 'hover', 'scale', 'in', '', 250, 0, 'card-hover' );
+		unset( $hover['value']['animation']['value']['direction'] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '5b7849a6',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'interactions' => json_encode( [
+						'items' => [ $scroll, $hover ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+
+		$this->assertCount( 2, $decoded['items'] );
+		$this->assertSame( 'hover', $decoded['items'][1]['value']['trigger']['value'] );
+		$this->assertArrayNotHasKey( 'direction', $decoded['items'][1]['value']['animation']['value'] );
+	}
+
 	public function test_sanitize__will_throw_if_number_of_interactions_per_element_exceeds_the_limit() {
 		$interactions = [];
 		for ( $i = 0; $i < 6; $i++ ) {

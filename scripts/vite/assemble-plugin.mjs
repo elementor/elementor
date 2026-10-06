@@ -27,6 +27,7 @@ const PRUNED = [
 	'bin/**',
 	'build/**',
 	'docs/**',
+	'examples/**',
 	'hello-elementor/**',
 	'local-site/**',
 	'modules/**/assets/**',
@@ -35,6 +36,11 @@ const PRUNED = [
 	'test-results/**',
 	'tests/**',
 	'tmp/**',
+	'turbo.json',
+	'*.md',
+	'**/*.md',
+	'eslint*mjs',
+	'update-snapshots-linux.js',
 ];
 
 /**

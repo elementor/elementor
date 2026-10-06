@@ -20,7 +20,6 @@ export const BASE_EXTERNALS = {
 	'@elementor/alpinejs': 'elementorV2.alpinejs',
 	'@elementor/query': 'elementorV2.query',
 	'@elementor/onboarding': 'elementorV2.onboarding',
-	'@elementor/site-builder': 'elementorV2.siteBuilder',
 	'@elementor/v4-activation-modal': "elementorV2['v4-activation-modal']",
 	'@elementor/editor-modal-shell': "elementorV2['editor-modal-shell']",
 	'@wordpress/dom-ready': 'wp.domReady',

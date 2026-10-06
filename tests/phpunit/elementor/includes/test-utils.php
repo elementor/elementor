@@ -20,6 +20,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_get_allowed_html_wrapper_tags__returns_default_list() {
+		remove_all_filters( 'elementor/allowed_html_wrapper_tags' );
+		$this->reset_allowed_html_wrapper_tags_cache();
+
 		// Act.
 		$tags = Utils::get_allowed_html_wrapper_tags();
 

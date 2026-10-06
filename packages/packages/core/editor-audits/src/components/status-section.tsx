@@ -15,7 +15,7 @@ type Props = {
 export default function StatusSection( { label, count, color = 'default', defaultExpanded = false, children }: Props ) {
 	const [ expanded, setExpanded ] = useState( defaultExpanded );
 
-	if ( count === 0 ) {
+	if ( React.Children.count( children ) === 0 ) {
 		return null;
 	}
 

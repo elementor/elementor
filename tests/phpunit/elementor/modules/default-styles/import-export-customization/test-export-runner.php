@@ -7,7 +7,6 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\DefaultStyles\Default_Style_Post_Type;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\DefaultStyles\ImportExportCustomization\Runners\Export as Export_Runner;
-use Elementor\Modules\DefaultStyles\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -17,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Export_Runner extends Elementor_Test_Base {
 	private string $original_atomic_widgets_experiment_state;
-	private string $original_default_styles_experiment_state;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -26,8 +24,6 @@ class Test_Export_Runner extends Elementor_Test_Base {
 
 		$this->original_atomic_widgets_experiment_state = Plugin::$instance->experiments
 			->get_features( Atomic_Widgets_Module::EXPERIMENT_NAME )['default'];
-		$this->original_default_styles_experiment_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
 
 		$this->reset_default_styles_state();
 	}
@@ -39,24 +35,16 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			Atomic_Widgets_Module::EXPERIMENT_NAME,
 			$this->original_atomic_widgets_experiment_state
 		);
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_default_styles_experiment_state
-		);
 
 		parent::tearDown();
 	}
 
-	public function test_should_export__requires_settings_include_and_experiments() {
+	public function test_should_export__requires_settings_include_and_atomic_widgets() {
 		$runner = new Export_Runner();
 		$export_data = [ 'include' => [ 'settings' ] ];
 
 		Plugin::$instance->experiments->set_feature_default_state(
 			Atomic_Widgets_Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
 			Experiments_Manager::STATE_INACTIVE
 		);
 
@@ -66,13 +54,36 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			Atomic_Widgets_Module::EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
 		);
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
 
 		$this->assertTrue( $runner->should_export( $export_data ) );
 		$this->assertFalse( $runner->should_export( [ 'include' => [ 'templates' ] ] ) );
+	}
+
+	public function test_should_export__respects_explicit_default_styles_flag() {
+		$runner = new Export_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_export( [
+			'include' => [ 'settings' ],
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => true,
+				],
+			],
+		] ) );
+
+		$this->assertFalse( $runner->should_export( [
+			'include' => [ 'settings' ],
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => false,
+				],
+			],
+		] ) );
 	}
 
 	public function test_export() {

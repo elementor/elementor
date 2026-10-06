@@ -1,4 +1,5 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { isCompoundAtomicType } from 'elementor-editor/utils/element-types';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -22,6 +23,38 @@ module.exports = Marionette.CompositeView.extend( {
 
 	addChildModel( model, options ) {
 		return this.collection.add( model, options, true );
+	},
+
+	/**
+	 * Find a descendant view that accepts `elType` as a direct child.
+	 * Prefers a direct child that accepts the type over a deeper match inside
+	 * an earlier sibling (e.g. accordion item content over header → title).
+	 *
+	 * @param {string} elType
+	 * @return {Marionette.View|null}
+	 */
+	findFirstViewAccepting( elType ) {
+		let directAccepting = null;
+		let recursiveAccepting = null;
+
+		this.children.each( ( child ) => {
+			if ( ! child?.getChildType ) {
+				return;
+			}
+
+			if ( -1 !== child.getChildType().indexOf( elType ) ) {
+				if ( ! directAccepting ) {
+					directAccepting = child;
+				}
+				return;
+			}
+
+			if ( ! recursiveAccepting && child.findFirstViewAccepting ) {
+				recursiveAccepting = child.findFirstViewAccepting( elType );
+			}
+		} );
+
+		return directAccepting || recursiveAccepting;
 	},
 
 	addElement( data, options ) {
@@ -60,7 +93,10 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			return this.children.last().addElement( newItem, options );
+			const acceptingChild = this.findFirstViewAccepting( elType );
+			const fallbackChild = acceptingChild || this.children.last();
+
+			return fallbackChild.addElement( newItem, options );
 		}
 
 		if ( options.clone ) {
@@ -159,7 +195,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getWrappingContainer( container, model, settings ) {
-		const isAtomic = elementor.helpers.isAtomicWidget( model );
+		const isAtomic = elementor.helpers.isAtomicWidget( model ) || isCompoundAtomicType( model.elType );
 		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
 
 		if ( isAtomic ) {

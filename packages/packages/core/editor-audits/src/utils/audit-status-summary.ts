@@ -2,6 +2,7 @@ import { type ChipProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type AuditCategory, type AuditResult, type AuditRun, type PageAuditReport } from '../types';
+import { isScoredAudit } from './is-scored-audit';
 import { sortFailedAuditResults } from './sort-failed-audits';
 
 export type AuditStatusGroup = 'fail' | 'pass' | 'skipped';
@@ -37,7 +38,11 @@ export function partitionAuditResults(
 		switch ( run.result.status ) {
 			case 'fail':
 				failed.push( { ...run, result: run.result } );
-				totalViolations += run.result.violations.length;
+
+				if ( isScoredAudit( run.audit ) ) {
+					totalViolations += run.result.violations.length;
+				}
+
 				break;
 			case 'pass':
 				passed.push( { ...run, result: run.result } );
@@ -61,7 +66,11 @@ export function auditStatusDisplayCounts( report: PageAuditReport ): Record< Aud
 	let skipped = 0;
 	let totalViolations = 0;
 
-	for ( const { result } of report.auditResults ) {
+	for ( const { audit, result } of report.auditResults ) {
+		if ( ! isScoredAudit( audit ) ) {
+			continue;
+		}
+
 		switch ( result.status ) {
 			case 'fail':
 				totalViolations += result.violations.length;

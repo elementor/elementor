@@ -18,6 +18,7 @@ use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
+use Elementor\Modules\Promotions\Widgets\Atomic_Carousel_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
 use Elementor\Widgets_Manager;
@@ -38,7 +39,11 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro() || ! Utils::is_license_active();
+		if ( Utils::has_pro() ) {
+			return true;
+		}
+
+		return ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -86,8 +91,12 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
-		if ( Conversion_Banner::should_display_banner() ) {
-			new Conversion_Banner();
+		if ( ! Utils::has_pro() ) {
+			Conversion_Banner::register_cache_invalidation_hooks();
+
+			if ( Conversion_Banner::should_display_banner() ) {
+				new Conversion_Banner();
+			}
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
@@ -258,7 +267,17 @@ class Module extends Base_Module {
 		];
 	}
 
+	private function should_register_core_atomic_panel_promotions(): bool {
+		// Pro with an active license registers real atomic widgets (or its own panel
+		// promotion layer). Core stubs caused duplicate panel entries after ED-25600.
+		return ! Utils::has_pro() || ! Utils::is_license_active();
+	}
+
 	private function register_atomic_promotions(): void {
+		if ( ! $this->should_register_core_atomic_panel_promotions() ) {
+			return;
+		}
+
 		add_action( 'elementor/init', function() {
 			if ( ! $this->is_atomic_widgets_active() ) {
 				return;
@@ -281,6 +300,7 @@ class Module extends Base_Module {
 
 		( new Atomic_Form_Widget_Promotion() )->register();
 		( new Collection_Loop_Widget_Promotion() )->register();
+		( new Atomic_Carousel_Widget_Promotion() )->register();
 	}
 
 	public function inject_atomic_promotion_props( array $schema ): array {

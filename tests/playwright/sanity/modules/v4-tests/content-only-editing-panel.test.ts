@@ -1,0 +1,160 @@
+import { expect } from '@playwright/test';
+import { wpCli } from '../../../assets/wp-cli';
+import { timeouts } from '../../../config/timeouts';
+import EditorPage from '../../../pages/editor-page';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import { parallelTest as test } from '../../../parallelTest';
+import EditorSelectors from '../../../selectors/editor-selectors';
+
+const ROLE_MANAGER_OPTION = 'elementor_role-manager';
+const DESIGN_RESTRICTION = 'design';
+const EDITOR_ROLE = 'editor';
+const CONTENT_ONLY_ROLE_RESTRICTIONS = { [ EDITOR_ROLE ]: [ DESIGN_RESTRICTION ] };
+const TAB_GENERAL = 'General';
+const TAB_STYLE = 'Style';
+const TAB_INTERACTIONS = 'Interactions';
+const INFOTIP_POPPER_SELECTOR = '.MuiTooltip-tooltip';
+const INFOTIP_TITLE = 'Content-only access';
+const INFOTIP_BODY = 'Your Site Admin has limited this role to content editing.';
+const INFOTIP_LEARN_MORE_LABEL = 'Learn More';
+const INFOTIP_LEARN_MORE_URL = 'https://go.elementor.com/content-only-access-infotip';
+const HEADING_WIDGET = EditorSelectors.v4.atoms.heading;
+const UPDATED_HEADING_TEXT = 'Content-only heading edit';
+
+// Elementor shows a modal "Take Over" confirm when another user still holds the post lock, and it
+// swallows pointer events on the panel. The lock outlives a closed browser context, so it has to be
+// released whenever this spec hands the same document to a different user.
+const clearPostLock = async ( postId: string ) => {
+	try {
+		await wpCli( `wp post meta delete ${ postId } _edit_lock` );
+	} catch {
+		// The wp-cli call exits non-zero when the lock was never written, which is fine.
+	}
+};
+
+test.describe( 'Content-only editing panel access @v4-tests', () => {
+	let contentOnlyUser: { id: string; username: string; password: string };
+	let sharedPostId: string;
+	let headingWidgetId: string;
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		// Keep the worker's admin storage state: the shared apiRequests nonce is bound to that
+		// session, so a freshly logged-in context would be rejected with an invalid nonce.
+		const adminContext = await browser.newContext();
+		const adminPage = await adminContext.newPage();
+		const adminWpAdmin = new WpAdminPage( adminPage, testInfo, apiRequests );
+
+		await adminWpAdmin.setExperiments( {
+			e_atomic_elements: 'active',
+			e_opt_in_v4: 'active',
+		} );
+		// The wpCli helper runs through docker compose without a shell, so the JSON must not be shell-quoted.
+		await wpCli( `wp option update ${ ROLE_MANAGER_OPTION } ${ JSON.stringify( CONTENT_ONLY_ROLE_RESTRICTIONS ) } --format=json` );
+
+		contentOnlyUser = await apiRequests.createNewUser( adminPage.context().request, {
+			username: 'contentOnlyEditor',
+			password: 'password',
+			email: 'content-only-editor@test.com',
+			roles: [ EDITOR_ROLE ],
+		} );
+
+		sharedPostId = await adminWpAdmin.createNewPostWithAPI();
+		await adminPage.waitForLoadState( 'load', { timeout: timeouts.action } );
+		await adminWpAdmin.waitForPanel();
+		await adminWpAdmin.closeAnnouncementsIfVisible();
+
+		const editor = new EditorPage( adminPage, testInfo );
+
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		headingWidgetId = await editor.addWidget( { widgetType: HEADING_WIDGET, container: containerId } );
+
+		// The content-only user opens this post in a separate context, so the heading has to be persisted.
+		await editor.publishPage();
+
+		await adminContext.close();
+
+		await clearPostLock( sharedPostId );
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const cleanupContext = await browser.newContext();
+		const cleanupPage = await cleanupContext.newPage();
+		const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
+
+		try {
+			if ( contentOnlyUser?.id ) {
+				await apiRequests.deleteUser( cleanupPage.context().request, contentOnlyUser.id );
+			}
+
+			await wpCli( `wp option delete ${ ROLE_MANAGER_OPTION }` );
+			await cleanupWpAdmin.resetExperiments();
+		} catch {
+			// Cleanup should not fail the test run.
+		} finally {
+			await cleanupContext.close();
+		}
+	} );
+
+	test( 'content-only editor sees restricted panel tabs while admin does not', async ( { browser, apiRequests, page }, testInfo ) => {
+		const editorContext = await browser.newContext( { storageState: undefined } );
+		const editorPage = await editorContext.newPage();
+		const wpAdmin = new WpAdminPage( editorPage, testInfo, apiRequests );
+
+		await wpAdmin.customLogin( contentOnlyUser.username, contentOnlyUser.password );
+		const editor = await wpAdmin.editExistingPostWithElementor( sharedPostId, { page: editorPage, testInfo } );
+		await editor.selectElement( headingWidgetId );
+
+		const generalTab = editorPage.getByRole( 'tab', { name: TAB_GENERAL } );
+		const styleTab = editorPage.getByRole( 'tab', { name: TAB_STYLE } );
+		const interactionsTab = editorPage.getByRole( 'tab', { name: TAB_INTERACTIONS } );
+
+		await test.step( 'Style and Interactions tabs are present but disabled; General is enabled and selected', async () => {
+			await expect( generalTab ).toBeVisible();
+			await expect( styleTab ).toBeVisible();
+			await expect( interactionsTab ).toBeVisible();
+			await expect( generalTab ).toBeEnabled();
+			await expect( generalTab ).toHaveAttribute( 'aria-selected', 'true' );
+			await expect( styleTab ).toBeDisabled();
+			await expect( interactionsTab ).toBeDisabled();
+		} );
+
+		await test.step( 'Hovering the disabled Style tab shows the content-only infotip', async () => {
+			await styleTab.hover();
+
+			// The infotip renders in a portal, so scope the assertions to the popper itself.
+			const infotip = editorPage.locator( INFOTIP_POPPER_SELECTOR ).filter( { hasText: INFOTIP_TITLE } );
+
+			await expect( infotip ).toBeVisible( { timeout: timeouts.action } );
+			await expect( infotip.getByText( INFOTIP_BODY ) ).toBeVisible();
+			const learnMoreLink = infotip.getByRole( 'link', { name: INFOTIP_LEARN_MORE_LABEL } );
+			await expect( learnMoreLink ).toBeVisible();
+			await expect( learnMoreLink ).toHaveAttribute( 'href', INFOTIP_LEARN_MORE_URL );
+		} );
+
+		await test.step( 'Content-only user can edit a General tab control', async () => {
+			const panelInlineEditor = editor.getPanelInlineEditor();
+			await expect( panelInlineEditor ).toBeVisible();
+			await panelInlineEditor.clear();
+			await panelInlineEditor.fill( UPDATED_HEADING_TEXT );
+
+			const headingOnCanvas = editor.getPreviewFrame().locator(
+				`.elementor-element-${ headingWidgetId } ${ EditorSelectors.v4.atomSelectors.heading.base }`,
+			);
+			await expect( headingOnCanvas ).toHaveText( UPDATED_HEADING_TEXT, { timeout: timeouts.longAction } );
+		} );
+
+		await editorContext.close();
+
+		await clearPostLock( sharedPostId );
+
+		await test.step( 'Administrator sees all editing panel tabs enabled on the same page', async () => {
+			const adminWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			const adminEditor = await adminWpAdmin.editExistingPostWithElementor( sharedPostId, { page, testInfo } );
+			await adminEditor.selectElement( headingWidgetId );
+
+			await expect( page.getByRole( 'tab', { name: TAB_GENERAL } ) ).toBeEnabled();
+			await expect( page.getByRole( 'tab', { name: TAB_STYLE } ) ).toBeEnabled();
+			await expect( page.getByRole( 'tab', { name: TAB_INTERACTIONS } ) ).toBeEnabled();
+		} );
+	} );
+} );

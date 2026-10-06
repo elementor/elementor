@@ -2,10 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Files\Base as Base_File;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 
 class CSS_Files_Manager {
-	const DEFAULT_CSS_DIR = 'elementor/css/';
+	const DEFAULT_CSS_DIR = 'css/';
 	const FILE_EXTENSION = '.css';
 	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
@@ -119,13 +120,15 @@ class CSS_Files_Manager {
 	}
 
 	/**
-	 * Write to a temp file first and then move it into place. The move step is atomic on
-	 * POSIX filesystems, so the public URL cannot serve a partial or zero-byte asset while a
-	 * concurrent render is in progress. If the atomic move is not supported by the current
-	 * filesystem adapter, fall back to a direct write.
+	 * Write to a temp file first and then replace the destination with it, so a concurrent
+	 * render can never see a partial, zero-byte or absent asset on the public URL.
 	 */
 	private function write_atomically( string $filesystem_path, string $css ): bool {
 		$filesystem = $this->get_filesystem();
+
+		if ( ! $this->ensure_directory_exists( dirname( $filesystem_path ) ) ) {
+			return false;
+		}
 
 		$tmp_path = $filesystem_path . '.tmp-' . wp_generate_password( 8, false, false );
 
@@ -135,17 +138,44 @@ class CSS_Files_Manager {
 			return false;
 		}
 
-		if ( ! method_exists( $filesystem, 'move' ) || ! $filesystem->move( $tmp_path, $filesystem_path, true ) ) {
-			$fallback = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
-
-			if ( $filesystem->exists( $tmp_path ) ) {
-				$filesystem->delete( $tmp_path );
-			}
-
-			return false !== $fallback;
+		if ( $this->replace_file( $tmp_path, $filesystem_path ) ) {
+			return true;
 		}
 
-		return true;
+		$fallback = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
+
+		if ( $filesystem->exists( $tmp_path ) ) {
+			$filesystem->delete( $tmp_path );
+		}
+
+		return false !== $fallback;
+	}
+
+	/**
+	 * `WP_Filesystem_Direct::move()` unlinks the destination before renaming, leaving a window
+	 * in which the already-enqueued URL 404s. A bare `rename()` replaces the file in place with
+	 * no such window - atomically on POSIX, and via `MoveFileEx` on Windows - so it is preferred
+	 * whenever the adapter is local. Remote adapters keep the `move()` path.
+	 */
+	private function replace_file( string $tmp_path, string $destination ): bool {
+		$filesystem = $this->get_filesystem();
+
+		if ( $filesystem instanceof \WP_Filesystem_Direct ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename
+			return @rename( $tmp_path, $destination );
+		}
+
+		return method_exists( $filesystem, 'move' ) && $filesystem->move( $tmp_path, $destination, true );
+	}
+
+	private function ensure_directory_exists( string $directory ): bool {
+		$filesystem = $this->get_filesystem();
+
+		if ( $filesystem->is_dir( $directory ) ) {
+			return true;
+		}
+
+		return wp_mkdir_p( $directory );
 	}
 
 	private function get_filesystem(): \WP_Filesystem_Base {
@@ -166,19 +196,17 @@ class CSS_Files_Manager {
 	}
 
 	private function get_url( string $handle ): string {
-		$upload_dir = wp_upload_dir();
 		$sanitized_handle = $this->sanitize_handle( $handle );
 		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return trailingslashit( $upload_dir['baseurl'] ) . self::DEFAULT_CSS_DIR . $handle;
+		return Base_File::get_base_uploads_url() . self::DEFAULT_CSS_DIR . $handle;
 	}
 
 	private function get_path( string $handle ): string {
-		$upload_dir = wp_upload_dir();
 		$sanitized_handle = $this->sanitize_handle( $handle );
 		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $handle;
+		return Base_File::get_base_uploads_dir() . self::DEFAULT_CSS_DIR . $handle;
 	}
 
 	private function sanitize_handle( string $handle ): string {

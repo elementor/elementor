@@ -209,7 +209,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		);
 
 		// Assert
-		$this->assertEquals( 'html-v3', $document_data[0]['settings']['title']['$$type'] );
+		$this->assertEquals( 'escaped-html', $document_data[0]['settings']['title']['$$type'] );
 		$this->assertEquals( 'string', $global_classes_data['items'][0]['variants'][0]['props']['css_prop']['$$type'] );
 
 		remove_filter( 'elementor/atomic-widgets/styles/schema', [ $this, 'add_css_prop_to_style_schema' ], 999999 );
@@ -298,7 +298,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 'overridable', $document_data[0]['settings']['title']['$$type'] );
-		$this->assertEquals( 'html-v3', $document_data[0]['settings']['title']['value']['origin_value']['$$type'], 'origin_value should be migrated from html to html-v3' );
+		$this->assertEquals( 'escaped-html', $document_data[0]['settings']['title']['value']['origin_value']['$$type'], 'origin_value should be migrated from html to escaped-html' );
 		$this->assertEquals( 'prop-123', $document_data[0]['settings']['title']['value']['override_key'] );
 
 		remove_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'extend_schema_with_overridable' ], 999999 );
@@ -330,7 +330,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 		// Assert
 		$override = $element_data[0]['settings']['component_instance']['value']['overrides']['value'][0];
 		$this->assertEquals( 'override', $override['$$type'] );
-		$this->assertEquals( 'html-v3', $override['value']['override_value']['$$type'], 'override_value should be migrated from html to html-v3' );
+		$this->assertEquals( 'escaped-html', $override['value']['override_value']['$$type'], 'override_value should be migrated from html to escaped-html' );
 
 		remove_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'extend_schema_with_overridable' ], 999999 );
 	}
@@ -364,7 +364,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 		$inner_override = $overridable_item['value']['origin_value'];
 		$this->assertEquals( 'override', $inner_override['$$type'] );
-		$this->assertEquals( 'html-v3', $inner_override['value']['override_value']['$$type'], 'nested override_value should be migrated from html to html-v3' );
+		$this->assertEquals( 'escaped-html', $inner_override['value']['override_value']['$$type'], 'nested override_value should be migrated from html to escaped-html' );
 
 		remove_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'extend_schema_with_overridable' ], 999999 );
 	}
@@ -382,7 +382,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
 					'originValue' => [
-						'$$type' => 'html-v3',
+						'$$type' => 'escaped-html',
 						'value' => 'Original Title',
 					],
 				],

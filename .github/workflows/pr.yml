@@ -5,6 +5,8 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, labeled]
     branches:
       - main
+      - release/beta
+      - release/stable
       - '[0-9].[0-9][0-9]'
 
 permissions:
@@ -46,8 +48,8 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
       playwright: ${{ steps.filter.outputs.playwright }}
-      build: ${{ steps.filter.outputs.build }}
       composer: ${{ steps.filter.outputs.composer }}
+      skip_checks: ${{ steps.filter.outputs.changelog == 'true' && steps.filter.outputs.all_count == steps.filter.outputs.changelog_count && !contains(github.event.pull_request.labels.*.name, 'run-tests') && !contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -75,6 +77,7 @@ jobs:
               - 'tests/elements-regression/**'
               - '.github/actions/playwright-**'
               - '.github/workflows/playwright-**'
+              - '.github/**/*.yml'
               - 'packages/**'
               - 'modules/**'
               - 'core/**'
@@ -83,18 +86,19 @@ jobs:
               - '*.php'
               - 'package*.json'
               - 'composer.+(json|lock)'
-            build:
+            all:
               - '**'
-              - '!**.md'
-              - '!**.txt'
-              - '!bin/**'
-              - '!.gitignore'
-              - '!docs/**'
+            changelog:
+              - 'changelog.txt'
+              - 'readme.txt'
 
   install:
     name: Install dependencies
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    needs: [detect-changes]
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      needs.detect-changes.outputs.skip_checks != 'true'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -114,9 +118,11 @@ jobs:
 
   build:
     name: Build plugin
-    needs: [install]
+    needs: [install, detect-changes]
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      needs.detect-changes.outputs.skip_checks != 'true'
     outputs:
       artifact_name: ${{ steps.set_outputs.outputs.artifact_name }}
     steps:
@@ -209,9 +215,10 @@ jobs:
           echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}"
 
   playground-preview:
-    needs: [build]
+    needs: [build, detect-changes]
     if: |
       always() &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.build.result == 'success' &&
       startsWith(github.repository, 'elementor/') &&
       github.event.action != 'ready_for_review' &&
@@ -226,12 +233,48 @@ jobs:
       pr_number: ${{ github.event.pull_request.number }}
       head_sha: ${{ github.event.pull_request.head.sha }}
 
+  visual-proof-shots:
+    name: Visual proof shots
+    needs: [playground-preview, detect-changes]
+    if: |
+      always() &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
+      github.event.pull_request.draft == false &&
+      startsWith(github.repository, 'elementor/') &&
+      github.event.action != 'labeled' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (
+        needs.playground-preview.result == 'success' ||
+        github.event.action == 'ready_for_review'
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: write # Required for uploading capture assets to ci/visual-proof-assets branch
+      pull-requests: write
+      deployments: read
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - name: Capture Playground shots and comment
+        # SHA from elementor/elementor-editor-github-actions#55; retarget to main after that PR merges.
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/visual-proof-shots@d44fcedc6ac349a709d176e243bb35b0b0ba755f
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
+          product-name: 'Elementor'
+          cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
+          model: ${{ vars.PR_REVIEW_MODEL }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   lint-js:
     name: Lint JS
     runs-on: ubuntu-22.04
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -256,6 +299,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.php == 'true'
     steps:
       - name: Mask GitHub token
@@ -322,6 +366,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -344,6 +389,7 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.js == 'true'
     steps:
       - name: Checkout source code
@@ -367,12 +413,13 @@ jobs:
     needs: [install, detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.detect-changes.outputs.php == 'true'
     uses: ./.github/workflows/phpunit-runner.yml
     with:
       job_name: PHPUnit (PR)
-      wordpress_versions: '["latest", "6.9", "6.8"]'
-      php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
+      wordpress_versions: '["latest"]'
+      php_versions: '["8.1", "8.4"]'
 
   playwright:
     name: Playwright
@@ -385,6 +432,7 @@ jobs:
     if: |
       always() &&
       needs.detect-changes.result == 'success' &&
+      needs.detect-changes.outputs.skip_checks != 'true' &&
       needs.build.result == 'success' &&
       contains(fromJSON('["success", "skipped"]'), needs.lint-js.result) &&
       contains(fromJSON('["success", "skipped"]'), needs.lint-php.result) &&
@@ -502,8 +550,44 @@ jobs:
       - playwright
     if: always() && !cancelled()
     steps:
+      - name: Resolve pending Playwright commit status
+        if: github.event.pull_request.draft == false
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          PLAYWRIGHT_RESULT: ${{ needs.playwright.result }}
+          PLAYWRIGHT_REQUIRED: ${{ (needs.detect-changes.outputs.playwright == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests') || contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')) && !github.event.pull_request.draft }}
+        with:
+          script: |
+            const statusContext = 'Playwright - Test Results';
+            const sha = context.payload.pull_request.head.sha;
+            const statuses = await github.paginate(github.rest.repos.listCommitStatusesForRef, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: sha,
+              per_page: 100,
+            });
+
+            if (!statuses.some((status) => status.context === statusContext)) {
+              return;
+            }
+
+            const result = process.env.PLAYWRIGHT_RESULT;
+            const playwrightRequired = process.env.PLAYWRIGHT_REQUIRED === 'true';
+            const isSuccess = result === 'success' || (result === 'skipped' && !playwrightRequired);
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: isSuccess ? 'success' : 'failure',
+              context: statusContext,
+              description: `Playwright ${result}`,
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
       - name: Validate required checks
         env:
+          DETECT_CHANGES_RESULT: ${{ needs.detect-changes.result }}
           INSTALL_RESULT: ${{ needs.install.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           LINT_JS_RESULT: ${{ needs.lint-js.result }}
@@ -525,7 +609,7 @@ jobs:
           }
 
           FAILED=0
-          for RESULT in "$INSTALL_RESULT" "$BUILD_RESULT"; do
+          for RESULT in "$DETECT_CHANGES_RESULT" "$INSTALL_RESULT" "$BUILD_RESULT"; do
             if ! is_ok "$RESULT"; then
               echo "Check failed with result: $RESULT"
               FAILED=1
