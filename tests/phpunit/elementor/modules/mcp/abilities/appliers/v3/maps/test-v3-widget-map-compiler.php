@@ -2,7 +2,6 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -85,16 +84,6 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 			'padding_horizontal' => [ 'type' => 'slider' ],
 			'padding_vertical' => [ 'type' => 'slider' ],
 		];
-	}
-
-	private function custom_typography_dependency( string $operator = 'eq' ): array {
-		return Dependency_Manager::make()
-			->where( [
-				'operator' => $operator,
-				'path' => [ 'typography_typography' ],
-				'value' => 'custom',
-			] )
-			->get();
 	}
 
 	private function compile_bindings( Style_Target $target, ?array $controls = null ): array {
@@ -221,40 +210,62 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		$this->assertTrue( $bindings[0]->is_responsive() );
 	}
 
-	public function test_compile__resolves_eq_dependencies_to_settings_to_fill() {
+	public function test_compile__derives_requirements_from_positive_and_toggle_conditions() {
+		// Arrange.
+		$target = Style_Target::make( 'heading' )->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive() );
+		$controls = array_merge( $this->controls(), [
+			'typography_typography' => [
+				'type' => 'popover_toggle',
+				'return_value' => 'custom',
+			],
+			'layout' => [ 'type' => 'select' ],
+			'typography_font_size' => [
+				'type' => 'slider',
+				'is_responsive' => true,
+				'condition' => [
+					'typography_typography!' => '',
+					'title_tag' => 'h2',
+					'layout!' => 'dropdown',
+				],
+			],
+			'title_tag' => [ 'type' => 'select' ],
+		] );
+
+		// Act.
+		$bindings = $this->compile_bindings( $target, $controls );
+
+		// Assert.
+		$this->assertSame( [
+			'typography_typography' => 'custom',
+			'title_tag' => 'h2',
+		], $bindings[0]->get_dependency_values() );
+	}
+
+	public function test_compile__prefers_explicit_requirements_over_the_control_condition() {
 		// Arrange.
 		$target = Style_Target::make( 'heading' )->bind(
 			'font-size',
-			V3_Control::bind_to( 'typography_font_size' )->responsive()->set_dependencies( $this->custom_typography_dependency() )
+			V3_Control::bind_to( 'typography_font_size' )->requires( [ 'typography_typography' => 'custom' ] )
 		);
+		$controls = array_merge( $this->controls(), [
+			'typography_font_size' => [
+				'type' => 'slider',
+				'condition' => [ 'title_size' => '10' ],
+			],
+		] );
 
 		// Act.
-		$bindings = $this->compile_bindings( $target );
+		$bindings = $this->compile_bindings( $target, $controls );
 
 		// Assert.
 		$this->assertSame( [ 'typography_typography' => 'custom' ], $bindings[0]->get_dependency_values() );
 	}
 
-	public function test_compile__drops_binding_when_dependency_is_not_eq() {
+	public function test_compile__drops_binding_when_explicit_requirement_targets_missing_control() {
 		// Arrange.
 		$target = Style_Target::make( 'heading' )->bind(
 			'font-size',
-			V3_Control::bind_to( 'typography_font_size' )->set_dependencies( $this->custom_typography_dependency( 'ne' ) )
-		);
-
-		// Act.
-		$bindings = $this->compile_bindings( $target );
-
-		// Assert.
-		$this->assertSame( [], $bindings );
-		$this->assertSame( [ 'heading.font-size' => 'invalid_dependency' ], $this->dropped_reasons() );
-	}
-
-	public function test_compile__drops_binding_when_dependency_targets_missing_control() {
-		// Arrange.
-		$target = Style_Target::make( 'heading' )->bind(
-			'font-size',
-			V3_Control::bind_to( 'typography_font_size' )->set_dependencies( $this->custom_typography_dependency() )
+			V3_Control::bind_to( 'typography_font_size' )->requires( [ 'typography_typography' => 'custom' ] )
 		);
 		$controls = $this->controls();
 		unset( $controls['typography_typography'] );
@@ -264,7 +275,7 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 
 		// Assert.
 		$this->assertSame( [], $bindings );
-		$this->assertSame( [ 'heading.font-size' => 'invalid_dependency' ], $this->dropped_reasons() );
+		$this->assertSame( [ 'heading.font-size' => 'invalid_requirement' ], $this->dropped_reasons() );
 	}
 
 	public function test_compile__accepts_non_overlapping_side_bindings_on_one_prop() {

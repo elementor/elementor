@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,15 +27,15 @@ class V3_Inactive_Condition_Warnings {
 	 * @param array<string, mixed> $settings     Final node settings.
 	 */
 	public static function report( Warnings_Bag $warnings, string $config_id, string $widget_type, array $written_keys, array $settings ): void {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		$is_visible = V3_Control_Visibility::for_widget( $widget_type );
 
-		if ( ! $widget ) {
+		if ( null === $is_visible ) {
 			return;
 		}
 
-		$is_visible = fn( array $control, array $values, array $controls ): bool => (bool) $widget->is_control_visible( $control, $values, $controls );
+		$controls = V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type );
 
-		foreach ( self::collect( $written_keys, $settings, $widget->get_controls(), $is_visible ) as $message ) {
+		foreach ( self::collect( $written_keys, $settings, $controls, $is_visible ) as $message ) {
 			$warnings->add( self::WARNING_CODE, $message, $config_id );
 		}
 	}
@@ -48,7 +48,7 @@ class V3_Inactive_Condition_Warnings {
 	 * @return string[]
 	 */
 	public static function collect( array $written_keys, array $settings, array $controls, callable $is_visible ): array {
-		$values = array_merge( self::control_defaults( $controls ), $settings );
+		$values = V3_Control_Visibility::values_with_defaults( $controls, $settings );
 		$messages = [];
 
 		foreach ( $written_keys as $key ) {
@@ -83,21 +83,5 @@ class V3_Inactive_Condition_Warnings {
 		$description = is_array( $control['condition'] ?? null ) ? V3_Control_Condition::describe( $control['condition'] ) : '';
 
 		return '' === $description ? self::UNWORDED_CONDITION : $description;
-	}
-
-	/**
-	 * @param array<string, mixed> $controls
-	 * @return array<string, mixed>
-	 */
-	private static function control_defaults( array $controls ): array {
-		$defaults = [];
-
-		foreach ( $controls as $key => $control ) {
-			if ( is_array( $control ) ) {
-				$defaults[ $key ] = $control['default'] ?? '';
-			}
-		}
-
-		return $defaults;
 	}
 }

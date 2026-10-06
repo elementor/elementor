@@ -6,7 +6,6 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
@@ -43,21 +42,13 @@ class Test_V3_Map_Style_Writer extends TestCase {
 	}
 
 	private function bindings(): array {
-		$custom_typography = Dependency_Manager::make()
-			->where( [
-				'operator' => 'eq',
-				'path' => [ 'typography_typography' ],
-				'value' => 'custom',
-			] )
-			->get();
-
 		$map = V3_Widget_Map::make( 'heading' )
 			->description( 'Heading widget.' )
 			->default_target(
 				Style_Target::make( 'heading' )
 					->bind( 'color', V3_Control::bind_to( 'title_color' ) )
 					->bind( 'color', V3_Control::bind_to( 'title_hover_color' ), self::HOVER )
-					->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive()->set_dependencies( $custom_typography ) )
+					->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive()->requires( [ 'typography_typography' => 'custom' ] ) )
 					->bind( 'padding', V3_Control::bind_to( 'padding_horizontal' )->sides( 'inline-start', 'inline-end' ) )
 					->bind( 'padding', V3_Control::bind_to( 'padding_vertical' )->sides( 'block-start', 'block-end' ) )
 			);

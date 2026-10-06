@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -199,6 +200,7 @@ class Style_Applier {
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
+			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $result['settings_patch'] ?? [] ), $node['settings'] ?? [] );
 			return;
 		}
 
