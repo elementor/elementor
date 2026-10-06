@@ -438,6 +438,7 @@ class Widget_Context_Helper {
 			'description' => $description,
 			'properties' => $contract['properties'],
 			'additionalProperties' => false,
+			'default_style_target' => $contract['default_style_target'],
 			'style_targets' => $contract['style_targets'],
 		] );
 	}

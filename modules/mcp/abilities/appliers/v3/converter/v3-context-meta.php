@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_V3_Map;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,20 +18,22 @@ class V3_Context_Meta {
 	private array $widget_config;
 	private array $overrides;
 	private array $generic_index;
-	private bool $is_map_driven;
-	private array $style_bindings;
+	private ?Compiled_V3_Map $map;
 
-	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index, bool $is_map_driven = false, array $style_bindings = [] ) {
+	public function __construct( string $widget_type, array $widget_config, array $overrides, array $generic_index, ?Compiled_V3_Map $map = null ) {
 		$this->widget_type = $widget_type;
 		$this->widget_config = $widget_config;
 		$this->overrides = $overrides;
 		$this->generic_index = $generic_index;
-		$this->is_map_driven = $is_map_driven;
-		$this->style_bindings = $style_bindings;
+		$this->map = $map;
 	}
 
 	public function is_map_driven(): bool {
-		return $this->is_map_driven;
+		return null !== $this->map;
+	}
+
+	public function map(): ?Compiled_V3_Map {
+		return $this->map;
 	}
 
 	public function widget_type(): string {
@@ -38,13 +42,6 @@ class V3_Context_Meta {
 
 	public function widget_config(): array {
 		return $this->widget_config;
-	}
-
-	/**
-	 * @return \Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_Style_Binding[]
-	 */
-	public function style_bindings(): array {
-		return $this->style_bindings;
 	}
 
 	public function overrides(): array {

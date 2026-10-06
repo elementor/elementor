@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class V3_Style_Binding_Compiler {
 
-	const ALLOWED_STATES = [ 'default', 'hover' ];
+	const STATE_PATTERN = '/^[a-z]+(?:-[a-z]+)*$/';
 
 	const TOGGLE_CONTROL_TYPES = [ 'popover_toggle', 'switcher' ];
 
@@ -37,10 +37,11 @@ class V3_Style_Binding_Compiler {
 	public function compile( Style_Target $target, array $controls, V3_Map_Diagnostics $diagnostics, string $widget_type ): Compiled_Style_Target {
 		$compiled = [];
 		$coverages = [];
+		$allowed_states = self::allowed_states( $target );
 
 		foreach ( $target->get_bindings() as $binding ) {
 			$entry = self::entry_name( $target->get_alias(), $binding['prop'], $binding['state'] );
-			$result = $this->compile_binding( $binding, $controls );
+			$result = $this->compile_binding( $binding, $controls, $allowed_states );
 
 			if ( $result instanceof WP_Error ) {
 				self::record( $diagnostics, $widget_type, $entry, $result );
@@ -60,6 +61,18 @@ class V3_Style_Binding_Compiler {
 		}
 
 		return new Compiled_Style_Target( $target->get_alias(), $target->get_label(), $compiled );
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function allowed_states( Style_Target $target ): array {
+		$declared = array_filter(
+			$target->get_declared_states(),
+			fn( string $state ) => 1 === preg_match( self::STATE_PATTERN, $state )
+		);
+
+		return array_values( array_unique( array_merge( Style_Target::GLOBAL_STATES, $declared ) ) );
 	}
 
 	private static function entry_name( string $alias, string $prop, string $state ): string {
@@ -84,16 +97,17 @@ class V3_Style_Binding_Compiler {
 	/**
 	 * @param array{prop: string, state: string, control: V3_Control} $binding
 	 * @param array<string, mixed>                                    $controls
+	 * @param string[]                                                $allowed_states
 	 * @return Compiled_Style_Binding|WP_Error
 	 */
-	private function compile_binding( array $binding, array $controls ) {
+	private function compile_binding( array $binding, array $controls, array $allowed_states ) {
 		$prop = $binding['prop'];
 		$state = $binding['state'];
 		$control = $binding['control'];
 		$setting = $control->get_setting();
 		$sides = $control->get_sides();
 
-		if ( ! in_array( $state, self::ALLOWED_STATES, true ) ) {
+		if ( ! in_array( $state, $allowed_states, true ) ) {
 			return V3_Widget_Map_Compiler::error( 'invalid_state_key', $state );
 		}
 

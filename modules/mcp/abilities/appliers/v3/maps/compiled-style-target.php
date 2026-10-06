@@ -52,4 +52,28 @@ class Compiled_Style_Target {
 			$this->bindings
 		) ) );
 	}
+
+	/**
+	 * States that have at least one binding, in binding order.
+	 *
+	 * @return string[]
+	 */
+	public function get_states(): array {
+		return array_values( array_unique( array_map(
+			fn( Compiled_Style_Binding $binding ) => $binding->get_state(),
+			$this->bindings
+		) ) );
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_responsive_props(): array {
+		$responsive = array_filter( $this->bindings, fn( Compiled_Style_Binding $binding ) => $binding->is_responsive() );
+
+		return array_values( array_unique( array_map(
+			fn( Compiled_Style_Binding $binding ) => $binding->get_prop(),
+			$responsive
+		) ) );
+	}
 }

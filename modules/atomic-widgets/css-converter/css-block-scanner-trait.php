@@ -23,6 +23,37 @@ trait Css_Block_Scanner_Trait {
 		return 1 === $count % 2;
 	}
 
+	/**
+	 * @param string[] $needles Single characters.
+	 */
+	private function find_unquoted( string $css, int $start, int $len, array $needles ): ?int {
+		$in_string = false;
+		$str_char  = '';
+
+		for ( $i = $start; $i < $len; $i++ ) {
+			$c = $css[ $i ];
+
+			if ( $in_string ) {
+				if ( $str_char === $c && ! $this->is_escaped( $css, $i ) ) {
+					$in_string = false;
+				}
+				continue;
+			}
+
+			if ( '"' === $c || "'" === $c ) {
+				$in_string = true;
+				$str_char  = $c;
+				continue;
+			}
+
+			if ( in_array( $c, $needles, true ) ) {
+				return $i;
+			}
+		}
+
+		return null;
+	}
+
 	private function find_block_end( string $css, int $start, int $len ): ?int {
 		$depth     = 1;
 		$in_string = false;

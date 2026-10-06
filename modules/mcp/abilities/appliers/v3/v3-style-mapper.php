@@ -8,11 +8,14 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Regi
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\V3_Style_Target_Router;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -41,6 +44,7 @@ class V3_Style_Mapper {
 	private Unmapped_Css_Serializer $unmapped_serializer;
 	private Responsive_Key_Resolver $responsive_resolver;
 	private V3_Map_Style_Writer $map_writer;
+	private V3_Style_Target_Router $target_router;
 
 	public function __construct(
 		Css_Converter $css_converter,
@@ -57,13 +61,14 @@ class V3_Style_Mapper {
 		$this->unmapped_serializer = $unmapped_serializer;
 		$this->responsive_resolver = $responsive_resolver;
 		$this->map_writer = new V3_Map_Style_Writer( $css_converter, V3_Control_Adapter_Registry::create_default(), $declaration_parser );
+		$this->target_router = new V3_Style_Target_Router();
 	}
 
 	/**
 	 * @param string $css_string
 	 * @param string $widget_type
 	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
-	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[]}
+	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], error: string|null}
 	 */
 	public function apply( string $css_string, string $widget_type, array $widget_config ): array {
 		$css_string = trim( $css_string );
@@ -73,6 +78,11 @@ class V3_Style_Mapper {
 		}
 
 		$meta = $this->build_meta( $widget_type, $widget_config );
+
+		if ( $meta->is_map_driven() ) {
+			return $this->apply_map( $meta, $css_string );
+		}
+
 		$ctx = new V3_Conversion_Context();
 
 		$split = ( new Css_Media_Splitter( $this->get_active_breakpoints() ) )->split( $css_string );
@@ -98,6 +108,83 @@ class V3_Style_Mapper {
 		return $this->finalize( $ctx, $meta );
 	}
 
+	/**
+	 * Unlike the legacy path nothing falls back to custom_css: unknown breakpoints fail the
+	 * whole style like V4 does, and anything a target cannot store is dropped with a warning.
+	 *
+	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], error: string|null}
+	 */
+	private function apply_map( V3_Context_Meta $meta, string $css_string ): array {
+		$ctx = new V3_Conversion_Context();
+		$split = ( new Css_Media_Splitter( $this->get_active_breakpoints() ) )->split( $css_string );
+
+		if ( null !== $split['error'] ) {
+			return array_merge( $this->empty_result(), [
+				'error' => Style_Variants_Merger::invalid_breakpoints_message( $split['error'], $this->get_active_breakpoints() ),
+			] );
+		}
+
+		if ( '' !== trim( $split['custom_css'] ) ) {
+			$ctx->warn( __( 'Only @media(--<breakpoint>) blocks are supported by this Elementor widget. Other media queries were dropped.', 'elementor' ) );
+		}
+
+		foreach ( $split['breakpoints'] as $breakpoint => $css ) {
+			if ( '' !== trim( $css ) ) {
+				$this->route_to_targets( $ctx, $meta, (string) $breakpoint, (string) $css );
+			}
+		}
+
+		return $this->finalize( $ctx, $meta );
+	}
+
+	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css ): void {
+		$map = $meta->map();
+		$targets = $map->get_targets();
+		$routed = $this->target_router->route(
+			$css,
+			$map->get_default_target(),
+			array_map( fn( Compiled_Style_Target $target ) => $target->get_states(), $targets )
+		);
+
+		foreach ( $routed['dropped'] as $dropped ) {
+			$ctx->warn( self::dropped_block_message( $dropped, array_keys( $targets ) ) );
+		}
+
+		foreach ( $routed['blocks'] as $block ) {
+			$bindings = $targets[ $block['target'] ]->get_bindings();
+
+			$this->map_writer->write( $ctx, $bindings, $meta->controls(), $breakpoint, $block['state'], $block['css'] );
+		}
+	}
+
+	/**
+	 * @param array{selector: string, reason: string} $dropped
+	 * @param string[]                                $aliases
+	 */
+	private static function dropped_block_message( array $dropped, array $aliases ): string {
+		switch ( $dropped['reason'] ) {
+			case V3_Style_Target_Router::REASON_UNKNOWN_TARGET:
+				return sprintf(
+					/* translators: 1: CSS block selector, 2: Comma-separated style target names */
+					__( 'Style target %1$s is not supported by this Elementor widget and was dropped. Valid style targets: %2$s.', 'elementor' ),
+					$dropped['selector'],
+					implode( ', ', $aliases )
+				);
+			case V3_Style_Target_Router::REASON_UNKNOWN_STATE:
+				return sprintf(
+					/* translators: %s: CSS block selector */
+					__( 'The state in %s is not supported by this style target and was dropped.', 'elementor' ),
+					$dropped['selector']
+				);
+			default:
+				return sprintf(
+					/* translators: %s: CSS block selector */
+					__( 'CSS block %s could not be parsed and was dropped. Style target blocks cannot be nested.', 'elementor' ),
+					$dropped['selector']
+				);
+		}
+	}
+
 	private function process_breakpoint( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css ): void {
 		$parsed = $this->css_converter->parse_nested( $css );
 
@@ -120,12 +207,6 @@ class V3_Style_Mapper {
 
 		if ( null !== $selector && null === $state ) {
 			$ctx->mark_unmapped( $this->unmapped_serializer->serialize_nested_block( $breakpoint, (string) $selector, $block_css ) );
-
-			return;
-		}
-
-		if ( $meta->is_map_driven() ) {
-			$this->map_writer->write( $ctx, $meta->style_bindings(), $meta->controls(), $breakpoint, $state, $block_css );
 
 			return;
 		}
@@ -168,7 +249,7 @@ class V3_Style_Mapper {
 		if ( null !== $map ) {
 			$widget_config['controls'] = $registry->get_registered_controls( $widget_type );
 
-			return new V3_Context_Meta( $widget_type, $widget_config, [], [], true, $map->get_style_bindings() );
+			return new V3_Context_Meta( $widget_type, $widget_config, [], [], $map );
 		}
 
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
@@ -198,6 +279,7 @@ class V3_Style_Mapper {
 			'settings_patch' => $settings_patch,
 			'unmapped_css' => $this->unmapped_serializer->join( $ctx->unmapped_parts() ),
 			'warnings' => $ctx->warnings(),
+			'error' => null,
 		];
 	}
 
@@ -206,6 +288,7 @@ class V3_Style_Mapper {
 			'settings_patch' => [],
 			'unmapped_css' => '',
 			'warnings' => [],
+			'error' => null,
 		];
 	}
 

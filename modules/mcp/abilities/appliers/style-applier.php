@@ -176,6 +176,17 @@ class Style_Applier {
 
 		$is_empty_css = '' === trim( $css_string );
 		$is_replace = 'replace' === $style_apply_mode;
+		$result = null;
+
+		if ( ! $is_empty_css ) {
+			$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
+			$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
+		}
+
+		if ( null !== ( $result['error'] ?? null ) ) {
+			$warnings->add( 'css_parse_failed', $result['error'], $config_id );
+			return;
+		}
 
 		if ( $is_replace ) {
 			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
@@ -184,9 +195,6 @@ class Style_Applier {
 		if ( $is_empty_css ) {
 			return;
 		}
-
-		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
-		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
 
 		foreach ( $result['warnings'] as $warning ) {
 			$warnings->add( 'v3_css_skipped', $warning, $config_id );
