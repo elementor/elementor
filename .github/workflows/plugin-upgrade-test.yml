@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'elementor/upgrade-test'
+      - 'main'
+      - 'release/beta'
+      - 'release/stable'
     paths-ignore:
       - '**.md'
       - '**.txt'
