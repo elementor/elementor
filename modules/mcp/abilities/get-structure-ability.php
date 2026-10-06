@@ -11,6 +11,7 @@ use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
@@ -292,18 +293,19 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
-		$has_map = null !== V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 		$bridge_non_style = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
 		$bridge_style = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 
-		if ( ! $has_map && empty( $bridge_non_style ) && empty( $bridge_style ) ) {
+		if ( null === $map && empty( $bridge_non_style ) && empty( $bridge_style ) ) {
 			$skeleton['settings'] = (object) [];
 			$skeleton['styles'] = [ 'css' => '' ];
 			return;
 		}
 
-		$filter = V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings );
-		$allowed_settings = $filter['allowed'];
+		$allowed_settings = null !== $map
+			? V3_Map_Settings_Reader::read( $map, $raw_settings )
+			: V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings )['allowed'];
 
 		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
 		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
