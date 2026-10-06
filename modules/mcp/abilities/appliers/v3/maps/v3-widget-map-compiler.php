@@ -3,8 +3,10 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Condition;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Resolver;
 use WP_Error;
 
@@ -120,10 +122,54 @@ class V3_Widget_Map_Compiler {
 				continue;
 			}
 
-			$compiled[ $public_key ] = new Compiled_V3_Setting( $setting->get_control_key(), $setting->is_dynamic(), $setting->to_schema() );
+			$compiled[ $public_key ] = $this->compile_setting( $setting, $controls[ $setting->get_control_key() ] );
 		}
 
 		return $compiled;
+	}
+
+	/**
+	 * @param V3_Setting           $setting
+	 * @param array<string, mixed> $control
+	 */
+	private function compile_setting( V3_Setting $setting, array $control ): Compiled_V3_Setting {
+		$adapter = $setting->get_adapter();
+		$prop_type = $adapter->prop_type( $control );
+
+		return new Compiled_V3_Setting(
+			$setting->get_control_key(),
+			$setting->is_dynamic(),
+			$adapter,
+			$prop_type,
+			$control,
+			$this->build_setting_schema( $setting, $control, $prop_type )
+		);
+	}
+
+	/**
+	 * @param V3_Setting           $setting
+	 * @param array<string, mixed> $control
+	 * @param Prop_Type            $prop_type
+	 * @return array<string, mixed>
+	 */
+	private function build_setting_schema( V3_Setting $setting, array $control, Prop_Type $prop_type ): array {
+		$schema = Plain_Llm_Schema_Converter::convert( $prop_type->to_json_schema() );
+
+		if ( null !== $setting->get_default() ) {
+			$schema['default'] = $setting->get_default();
+		}
+
+		$condition = is_array( $control['condition'] ?? null ) ? V3_Control_Condition::describe( $control['condition'] ) : '';
+
+		if ( '' !== $condition ) {
+			$schema['description'] = sprintf( 'Only takes effect when %s.', $condition );
+		}
+
+		if ( $setting->is_dynamic() ) {
+			$schema['dynamic'] = true;
+		}
+
+		return $schema;
 	}
 
 	private function find_setting_error( V3_Setting $setting, array $controls ): ?string {
@@ -137,7 +183,7 @@ class V3_Widget_Map_Compiler {
 			return 'incompatible_dynamic_control';
 		}
 
-		if ( V3_Setting::KIND_LINK === $setting->get_kind() && V3_Setting::LINK_CONTROL_TYPE !== ( $control['type'] ?? '' ) ) {
+		if ( ! $setting->get_adapter()->supports( $control ) ) {
 			return 'incompatible_setting_shape';
 		}
 
