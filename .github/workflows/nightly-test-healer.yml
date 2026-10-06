@@ -78,7 +78,7 @@ jobs:
       contents: read
       actions: write
       pull-requests: write
-    uses: elementor/elementor-editor-github-actions/.github/workflows/playwright-test-healer.yml@cursor/playwright-test-healer-48a8
+    uses: elementor/elementor-editor-github-actions/.github/workflows/playwright-test-healer.yml@main
     with:
       product: core
       test_name: ${{ inputs.test_name }}
