@@ -1003,6 +1003,62 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_execute__returns_decorative_editor_setting_as_plain_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$decorative_block = $this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' );
+		$decorative_block['editor_settings'] = [ 'decorative' => true ];
+
+		$this->mock_document_with_elements( $post_id, [ $decorative_block ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertSame( [ 'decorative' => true ], (array) $node['settings'] );
+	}
+
+	public function test_execute__decorative_keeps_frontend_base_styles_in_default_styles() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$decorative_block = $this->make_atomic_widget( 'decorative1', 'e-div-block', [], 'e-div-block' );
+		$decorative_block['editor_settings'] = [ 'decorative' => true ];
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'plain1', 'e-div-block', [], 'e-div-block' ),
+			$decorative_block,
+		] );
+
+		// Act
+		$plain = $this->read_node_with_content( $post_id, 'plain1' );
+		$decorative = $this->read_node_with_content( $post_id, 'decorative1' );
+
+		// Assert
+		$this->assertSame( $plain['default_styles'], $decorative['default_styles'] );
+		$this->assertStringContainsString( 'padding:10px', $decorative['default_styles'] );
+		$this->assertStringContainsString( 'min-width:30px', $decorative['default_styles'] );
+	}
+
+	public function test_execute__omits_decorative_when_editor_setting_is_absent() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
+	}
+
 	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {
 		$element = [
 			'id' => $id,
