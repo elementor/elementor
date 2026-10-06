@@ -362,19 +362,6 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		$this->assertSame( [ 'heading.color:Not A State' => 'invalid_state_key' ], $this->dropped_reasons() );
 	}
 
-	public function test_compile__lists_responsive_props_of_a_target() {
-		// Arrange.
-		$target = Style_Target::make( 'heading' )
-			->bind( 'color', V3_Control::bind_to( 'title_color' ) )
-			->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive() );
-
-		// Act.
-		$compiled = $this->compile( $this->map_with_target( $target ) )->get_targets()['heading'];
-
-		// Assert.
-		$this->assertSame( [ 'font-size' ], $compiled->get_responsive_props() );
-	}
-
 	public function test_compile__fails_map_when_alias_is_invalid() {
 		// Arrange.
 		$map = $this->map_with_target( Style_Target::make( 'Invalid_Alias' ) );

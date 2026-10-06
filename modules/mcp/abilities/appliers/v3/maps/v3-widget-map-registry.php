@@ -205,7 +205,7 @@ class V3_Widget_Map_Registry {
 	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
-	 * @return array{description: string, properties: array<string, array<string, mixed>>, default_style_target: string, style_targets: array<string, array{label: string, states: string[], properties: string[], responsive_properties: string[]}>}|null
+	 * @return array{description: string, properties: array<string, array<string, mixed>>, default_style_target: string, style_targets: array<string, array{label: string, states: string[], properties: string[]}>}|null
 	 */
 	public function get_llm_contract( string $widget_type ): ?array {
 		$map = $this->get_map( $widget_type );
@@ -223,7 +223,6 @@ class V3_Widget_Map_Registry {
 					'label' => $target->get_label(),
 					'states' => $target->get_states(),
 					'properties' => $target->get_props(),
-					'responsive_properties' => $target->get_responsive_props(),
 				],
 				$map->get_targets()
 			),
