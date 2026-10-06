@@ -656,6 +656,8 @@ class Module extends BaseModule {
 	private function add_inline_styles() {
 		$inline_css = implode( '', [
 			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
+			// Default SVG size. A slot sets the variables; the SVG's own Width and Height outrank `:where()`.
+			'.elementor :where(.e-svg-base) { width: var(--e-svg-width, 65px); height: var(--e-svg-height, 65px); }',
 			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
 			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
 			'{ display: block; }',
@@ -713,7 +715,8 @@ class Module extends BaseModule {
 			'}',
 			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
 			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
-			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base { width: auto; height: 100%; max-width: 100%; }',
+			'.e-accordion-item-icon-base { --e-svg-width: auto; --e-svg-height: 100%; }',
+			':where(.e-accordion-item-icon-base) .e-svg-base { max-width: 100%; }',
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
