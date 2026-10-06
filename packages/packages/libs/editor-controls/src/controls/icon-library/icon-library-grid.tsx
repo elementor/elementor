@@ -322,13 +322,11 @@ export const IconLibraryGrid = ( {
 															},
 													} }
 												>
-													{ item.paths.length > 0 ? (
-														<FontAwesomeGlyph
-															icon={ item }
-															size={ ICON_GLYPH_SIZE }
-															color="currentColor"
-														/>
-													) : null }
+													<FontAwesomeGlyph
+														icon={ item }
+														size={ ICON_GLYPH_SIZE }
+														color="currentColor"
+													/>
 												</Box>
 											</Tooltip>
 										</Box>

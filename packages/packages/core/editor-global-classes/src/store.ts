@@ -1,6 +1,7 @@
 import { type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
+	getNonEmptyVariants,
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
@@ -301,12 +302,6 @@ const mergeProps = ( current: Props, updates: Props ): Props => {
 	} );
 
 	return props;
-};
-
-const getNonEmptyVariants = ( style: StyleDefinition ) => {
-	return style.variants.filter(
-		( { props, custom_css: customCss }: StyleDefinitionVariant ) => Object.keys( props ).length || customCss?.raw
-	);
 };
 
 export const placeholderDefinition = ( id: StyleDefinitionID, label: string ): StyleDefinition => ( {
