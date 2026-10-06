@@ -63,6 +63,7 @@ describe( audit.id, () => {
 			expect( result.violations[ 0 ].externalUrl ).toBe(
 				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization'
 			);
+			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Optimize all' );
 		}
 	} );
 

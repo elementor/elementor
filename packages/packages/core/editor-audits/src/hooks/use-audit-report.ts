@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getHostDocumentId } from '@elementor/editor-elements';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { runPageAudit } from '../runner';
@@ -12,7 +12,7 @@ export function useAuditReport() {
 	const report = useSelector( ( state: GlobalState ) => selectReport( state ) );
 	const error = useSelector( ( state: GlobalState ) => selectError( state ) );
 	const dispatch = useDispatch();
-	const documentId = getCurrentDocumentId() ?? 0;
+	const documentId = getHostDocumentId() ?? 0;
 
 	useEffect( () => {
 		if ( ! documentId || report?.documentId === documentId ) {

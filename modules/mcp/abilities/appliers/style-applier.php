@@ -195,7 +195,7 @@ class Style_Applier {
 			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
 
-		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( (string) $widget_type );
+		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_style_bindings( (string) $widget_type );
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
