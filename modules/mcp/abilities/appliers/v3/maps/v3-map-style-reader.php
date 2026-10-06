@@ -123,12 +123,43 @@ class V3_Map_Style_Reader {
 		}
 
 		$values = V3_Control_Visibility::values_with_defaults( $controls, $settings );
+		$values_by_suffix = [];
 
-		return function ( string $key, string $base_key ) use ( $is_visible, $values, $controls ): bool {
-			$control = $controls[ $key ] ?? $controls[ $base_key ] ?? null;
+		return function ( string $key, string $base_key ) use ( $is_visible, $values, $controls, &$values_by_suffix ): bool {
+			if ( isset( $controls[ $key ] ) || $key === $base_key ) {
+				return ! is_array( $controls[ $key ] ?? null ) || $is_visible( $controls[ $key ], $values, $controls );
+			}
 
-			return ! is_array( $control ) || $is_visible( $control, $values, $controls );
+			if ( ! is_array( $controls[ $base_key ] ?? null ) ) {
+				return true;
+			}
+
+			$suffix = substr( $key, strlen( $base_key ) );
+			$values_by_suffix[ $suffix ] ??= self::device_values( $values, $suffix );
+
+			return $is_visible( $controls[ $base_key ], $values_by_suffix[ $suffix ], $controls );
 		};
+	}
+
+	/**
+	 * A single `is_responsive` control is duplicated per device only when the page CSS is
+	 * rendered, and each duplicate checks its condition against that device's value, falling
+	 * back to the desktop value when the device is unset.
+	 *
+	 * @param array<string, mixed> $values
+	 * @param string               $suffix
+	 * @return array<string, mixed>
+	 */
+	private static function device_values( array $values, string $suffix ): array {
+		foreach ( $values as $setting => $value ) {
+			$device_value = $values[ $setting . $suffix ] ?? '';
+
+			if ( '' !== $device_value ) {
+				$values[ $setting ] = $device_value;
+			}
+		}
+
+		return $values;
 	}
 
 	/**
