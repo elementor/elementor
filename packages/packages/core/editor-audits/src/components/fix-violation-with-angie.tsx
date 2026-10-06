@@ -8,9 +8,10 @@ import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../constants';
 
 type Props = {
 	prompt: string;
+	panelZIndex: number;
 };
 
-export default function FixViolationWithAngie( { prompt }: Props ) {
+export default function FixViolationWithAngie( { prompt, panelZIndex }: Props ) {
 	const label = __( 'Fix with Angie', 'elementor' );
 	const href = `#angie-prompt=${ encodeURIComponent( prompt ) }`;
 
@@ -34,15 +35,8 @@ export default function FixViolationWithAngie( { prompt }: Props ) {
 	};
 
 	return (
-		<Tooltip title={ label }>
-			<IconButton
-				className="violation-hover-icon"
-				component="a"
-				href={ href }
-				size="small"
-				aria-label={ label }
-				onClick={ handleClick }
-			>
+		<Tooltip title={ label } placement="top" PopperProps={ { sx: { zIndex: panelZIndex } } }>
+			<IconButton component="a" href={ href } size="small" aria-label={ label } onClick={ handleClick }>
 				<AngieIcon fontSize="tiny" />
 			</IconButton>
 		</Tooltip>
