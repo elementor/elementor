@@ -31,16 +31,15 @@ class V3_Dynamic_Hoister {
 		$primitives = [];
 		$shortcodes = [];
 		$errors = [];
-		$registry = V3_Widget_Map_Registry::instance();
-		$contract = $registry->is_experiment_active() ? $registry->get_validation_contract( $widget_type ) : null;
-		$map_settings = is_array( $contract['settings'] ?? null ) ? $contract['settings'] : null;
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$map_settings = null !== $map ? $map->get_settings() : null;
 
 		foreach ( $allowed as $key => $value ) {
-			$map_schema = is_array( $map_settings[ $key ] ?? null ) ? $map_settings[ $key ] : [];
-			$control_key = is_string( $map_schema['key'] ?? null ) ? $map_schema['key'] : $key;
+			$map_setting = $map_settings[ $key ] ?? null;
+			$control_key = null !== $map_setting ? $map_setting->get_control_key() : $key;
 			$control = is_array( $controls[ $control_key ] ?? null ) ? $controls[ $control_key ] : [];
 
-			if ( null !== $map_settings && true !== ( $map_schema['dynamic'] ?? false ) ) {
+			if ( null !== $map_settings && ( null === $map_setting || ! $map_setting->is_dynamic() ) ) {
 				if ( $this->value_contains_disallowed_dynamic( $value, $control ) ) {
 					$errors[] = sprintf(
 						'V3 widget "%s" property "%s": dynamic tags are not supported on this field.',

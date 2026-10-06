@@ -12,7 +12,9 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Diagnostics;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use PHPUnit\Framework\TestCase;
 
@@ -49,24 +51,20 @@ class Test_V3_Map_Style_Writer extends TestCase {
 			] )
 			->get();
 
-		$map = [
-			'widget_type' => 'heading',
-			'description' => 'Heading widget.',
-			'settings' => [],
-			'default_style_target' => 'heading',
-			'style_targets' => [
-				'heading' => Style_Target::make( 'Heading' )
+		$map = V3_Widget_Map::make( 'heading' )
+			->description( 'Heading widget.' )
+			->default_target(
+				Style_Target::make( 'heading' )
 					->bind( 'color', V3_Control::bind_to( 'title_color' ) )
 					->bind( 'color', V3_Control::bind_to( 'title_hover_color' ), self::HOVER )
 					->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive()->set_dependencies( $custom_typography ) )
 					->bind( 'padding', V3_Control::bind_to( 'padding_horizontal' )->sides( 'inline-start', 'inline-end' ) )
-					->bind( 'padding', V3_Control::bind_to( 'padding_vertical' )->sides( 'block-start', 'block-end' ) ),
-			],
-		];
+					->bind( 'padding', V3_Control::bind_to( 'padding_vertical' )->sides( 'block-start', 'block-end' ) )
+			);
 
-		$compiled = ( new V3_Widget_Map_Compiler() )->compile( $map, $this->controls(), 'heading' );
-
-		return $compiled['style_targets']['heading']['bindings'];
+		return ( new V3_Widget_Map_Compiler() )
+			->compile( $map, $this->controls(), new V3_Map_Diagnostics(), 'heading' )
+			->get_style_bindings();
 	}
 
 	private function write( string $css, string $breakpoint = self::DESKTOP, ?string $state = null ): V3_Conversion_Context {

@@ -68,8 +68,7 @@ class Element_Config_Applier {
 
 			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
-				$registry = V3_Widget_Map_Registry::instance();
-				$is_standardized = $registry->is_experiment_active() && null !== $registry->get_validation_contract( $widget_type );
+				$is_standardized = null !== V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
