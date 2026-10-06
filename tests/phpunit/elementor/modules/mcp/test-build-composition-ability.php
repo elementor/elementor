@@ -1146,6 +1146,35 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
+	public function test_execute__stores_decorative_setting_from_element_config_as_editor_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"><e-div-block configuration-id="glow-blob"/></e-div-block>',
+			'element_config' => [
+				'glow-blob' => [ 'decorative' => true ],
+			],
+			'style' => [
+				'glow-blob' => 'width: 240px; height: 240px; border-radius: 50%;',
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'warnings', $result );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$blob = $elements[0]['elements'][0];
+		$this->assertTrue( $blob['editor_settings']['decorative'] );
+		$this->assertArrayNotHasKey( 'decorative', $blob['settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'decorative', $elements[0]['editor_settings'] ?? [] );
+	}
+
 	public function test_execute__wraps_direct_document_children_in_single_div_block() {
 		// Arrange
 		$this->act_as_admin();
