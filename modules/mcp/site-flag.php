@@ -33,6 +33,7 @@ class Site_Flag {
 
 		add_filter( 'http_request_args', [ self::class, 'filter_notifications_request' ], 10, 2 );
 		add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );
+		add_action( 'template_redirect', [ self::class, 'maybe_refresh_notifications' ] );
 	}
 
 	public static function capability_for_ability( string $ability_id ): ?string {
@@ -80,6 +81,23 @@ class Site_Flag {
 		return $capabilities;
 	}
 
+	public static function maybe_refresh_notifications(): void {
+		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
+			return;
+		}
+
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return;
+		}
+
+		$notifications = self::get_notifications_instance();
+		if ( ! $notifications ) {
+			return;
+		}
+
+		$notifications->refresh_notifications();
+	}
+
 	public static function filter_notifications_request( $args, $url ) {
 		if ( ! is_array( $args ) || ! is_string( $url ) || ! self::is_notifications_endpoint( $url ) || ! self::is_set() ) {
 			return $args;
@@ -125,6 +143,31 @@ class Site_Flag {
 		return array_values( array_filter( $tokens, function ( $token ) {
 			return '' !== $token;
 		} ) );
+	}
+
+	private static function get_notifications_instance() {
+		static $instance = false;
+
+		if ( false !== $instance ) {
+			return $instance;
+		}
+
+		$class = 'Elementor\\WPNotificationsPackage\\V120\\Notifications';
+		if ( ! class_exists( $class ) ) {
+			$instance = null;
+			return $instance;
+		}
+
+		$instance = new $class( [
+			'app_name' => 'elementor',
+			'app_version' => ELEMENTOR_VERSION,
+			'short_app_name' => 'elementor',
+			'app_data' => [
+				'plugin_basename' => defined( 'ELEMENTOR_PLUGIN_BASE' ) ? ELEMENTOR_PLUGIN_BASE : '',
+			],
+		] );
+
+		return $instance;
 	}
 
 	private static function get_tokens_from_alloptions(): array {
