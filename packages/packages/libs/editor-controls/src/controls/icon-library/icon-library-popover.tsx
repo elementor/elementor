@@ -8,7 +8,7 @@ import {
 	StyledMenuList,
 	type VirtualizedItem,
 } from '@elementor/editor-ui';
-import { AtomIcon, LibraryIcon } from '@elementor/icons';
+import { LibraryIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from '@elementor/ui';
 import { useDebounceState } from '@elementor/utils';
@@ -26,6 +26,7 @@ import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { IconLibraryFilter } from './icon-library-filter';
 import { IconLibraryGrid } from './icon-library-grid';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
+import { SvgElementIcon } from './svg-element-icon';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
 export const ICON_LIBRARY_POPOVER_WIDTH = 300;
@@ -43,7 +44,6 @@ const ICON_LIBRARY_ROW_VERTICAL_PADDING_PX = 4;
 export const ICON_LIBRARY_ROW_HEIGHT = ICON_TILE_SIZE + ICON_LIBRARY_ROW_VERTICAL_PADDING_PX * 2;
 const ICON_GLYPH_SIZE = 20;
 const ICON_LIBRARY_INLINE_SPACING = 2;
-const ICON_LIBRARY_HEADER_PADDING_TOP = 2.5;
 const ICON_LIBRARY_SEARCH_PADDING_BOTTOM = 2;
 const ICON_LIBRARY_TITLE_SIZE = '14px';
 
@@ -131,8 +131,6 @@ export const IconLibraryPopover = ( {
 				sx={ {
 					pl: ICON_LIBRARY_INLINE_SPACING,
 					pr: 1,
-					pt: ICON_LIBRARY_HEADER_PADDING_TOP,
-					maxHeight: 'none',
 					'& .MuiTypography-subtitle2': { fontSize: ICON_LIBRARY_TITLE_SIZE },
 				} }
 			/>
@@ -285,7 +283,7 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 
 const CatalogUnavailable = () => (
 	<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
-		<AtomIcon fontSize="large" />
+		<SvgElementIcon fontSize="large" />
 		<Typography align="center" variant="subtitle2" color="text.secondary">
 			{ __( "Icons couldn't be loaded.", 'elementor' ) }
 		</Typography>
@@ -294,7 +292,7 @@ const CatalogUnavailable = () => (
 
 const NoResults = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
 	<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
-		<AtomIcon fontSize="large" />
+		<SvgElementIcon fontSize="large" />
 		<Typography align="center" variant="subtitle2" color="text.secondary">
 			{ __( 'Sorry, nothing matched', 'elementor' ) }
 		</Typography>
