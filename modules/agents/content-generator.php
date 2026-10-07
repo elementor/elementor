@@ -86,12 +86,13 @@ class Content_Generator {
 	 * @param array{intro?: string, optional?: string} $overrides
 	 *   'intro'    – user-supplied intro text (replaces the auto-generated one).
 	 *   'optional' – extra section appended after all content sections.
+	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
 	 * @return string
 	 */
-	public function generate_llms_txt( array $overrides = [] ): string {
+	public function generate_llms_txt( array $overrides = [], ?array $post_types = null ): string {
 		$lines = $this->build_header( $overrides );
 
-		$sections = $this->get_content_sections();
+		$sections = $this->get_content_sections( $post_types );
 
 		foreach ( $sections as $title => $items ) {
 			if ( empty( $items ) ) {
@@ -121,12 +122,13 @@ class Content_Generator {
 	 * prioritised over WooCommerce catalog data.
 	 *
 	 * @param array{intro?: string, optional?: string} $overrides
+	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
 	 * @return string
 	 */
-	public function generate_llms_full_txt( array $overrides = [] ): string {
+	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null ): string {
 		$lines = $this->build_header( $overrides );
 
-		$sections = $this->get_content_sections( true );
+		$sections = $this->get_content_sections( $post_types, true );
 
 		// Separate WooCommerce products from everything else so we can deprioritise them.
 		$product_section = $sections['Products'] ?? [];
@@ -327,62 +329,82 @@ class Content_Generator {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Post types that can appear in llms.txt, in output order, keyed by slug.
+	 *
+	 * Pages first, then posts, public custom post types, and WooCommerce
+	 * products last (links only in llms-full.txt).
+	 *
+	 * @return array<string, string> Post type slug => plural label.
+	 */
+	public function get_available_post_types(): array {
+		$post_types = [
+			'page' => __( 'Pages', 'elementor' ),
+			'post' => __( 'Posts', 'elementor' ),
+		];
+
+		foreach ( $this->get_public_custom_post_types() as $cpt ) {
+			$post_types[ $cpt->name ] = $cpt->labels->name ?? $cpt->name;
+		}
+
+		if ( $this->is_woocommerce_active() ) {
+			$post_types['product'] = __( 'Products', 'elementor' );
+		}
+
+		/**
+		 * Filters the post types that can be included in llms.txt.
+		 *
+		 * @param array<string, string> $post_types Post type slug => plural label, in output order.
+		 */
+		$filtered = apply_filters( 'elementor/agents/llms_txt/post_types', $post_types );
+
+		return is_array( $filtered ) ? $filtered : $post_types;
+	}
+
+	/**
 	 * Build an ordered map of section_title => items for all eligible content.
 	 *
-	 * @param bool $apply_llms_full_limit Whether to cap each post type to the
+	 * @param string[]|null $included_post_types Post types to include; null includes every available type.
+	 * @param bool          $apply_llms_full_limit Whether to cap each post type to the
 	 *   llms-full.txt per-type inline limit instead of MAX_POSTS_PER_TYPE.
 	 * @return array<string, array<array{id: int, title: string, url: string, description: string}>>
 	 */
-	private function get_content_sections( bool $apply_llms_full_limit = false ): array {
+	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false ): array {
 		$sections = [];
 
-		// 1. Pages — hierarchical order (menu_order ASC, then parent-child).
-		$pages = $this->get_posts_for_section( 'page', [
-			'orderby'  => 'menu_order',
-			'order'    => 'ASC',
-		], $this->get_posts_per_type_limit( 'page', $apply_llms_full_limit ) );
+		foreach ( $this->get_available_post_types() as $post_type => $label ) {
+			if ( null !== $included_post_types && ! in_array( $post_type, $included_post_types, true ) ) {
+				continue;
+			}
 
-		if ( ! empty( $pages ) ) {
-			$sections[ __( 'Pages', 'elementor' ) ] = $pages;
-		}
-
-		// 2. Posts — latest first.
-		$posts = $this->get_posts_for_section( 'post', [
-			'orderby' => 'date',
-			'order'   => 'DESC',
-		], $this->get_posts_per_type_limit( 'post', $apply_llms_full_limit ) );
-
-		if ( ! empty( $posts ) ) {
-			$sections[ __( 'Posts', 'elementor' ) ] = $posts;
-		}
-
-		// 3. Public custom post types (excluding built-ins and WooCommerce products handled separately).
-		$cpts = $this->get_public_custom_post_types();
-
-		foreach ( $cpts as $cpt ) {
-			$items = $this->get_posts_for_section( $cpt->name, [
-				'orderby' => 'date',
-				'order'   => 'DESC',
-			], $this->get_posts_per_type_limit( $cpt->name, $apply_llms_full_limit ) );
+			$items = $this->get_posts_for_section(
+				$post_type,
+				$this->get_section_order( $post_type ),
+				$this->get_posts_per_type_limit( $post_type, $apply_llms_full_limit )
+			);
 
 			if ( ! empty( $items ) ) {
-				$sections[ $cpt->labels->name ?? $cpt->name ] = $items;
-			}
-		}
-
-		// 4. WooCommerce products — links only (content never inlined in llms-full).
-		if ( $this->is_woocommerce_active() ) {
-			$products = $this->get_posts_for_section( 'product', [
-				'orderby' => 'date',
-				'order'   => 'DESC',
-			], $this->get_posts_per_type_limit( 'product', $apply_llms_full_limit ) );
-
-			if ( ! empty( $products ) ) {
-				$sections[ __( 'Products', 'elementor' ) ] = $products;
+				$sections[ $label ] = $items;
 			}
 		}
 
 		return $sections;
+	}
+
+	/**
+	 * Pages follow their menu order (site hierarchy); everything else is latest first.
+	 */
+	private function get_section_order( string $post_type ): array {
+		if ( 'page' === $post_type ) {
+			return [
+				'orderby' => 'menu_order',
+				'order'   => 'ASC',
+			];
+		}
+
+		return [
+			'orderby' => 'date',
+			'order'   => 'DESC',
+		];
 	}
 
 	/**

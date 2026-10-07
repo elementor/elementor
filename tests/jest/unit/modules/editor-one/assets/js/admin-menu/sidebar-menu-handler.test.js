@@ -8,7 +8,7 @@ const buildAdminMenu = () => {
 				<ul class="wp-submenu">
 					<li><a href="admin.php?page=elementor">Editor</a></li>
 					<li><a href="admin.php?page=elementor-mcp">Elementor MCP</a></li>
-					<li><a href="admin.php?page=elementor-agents-ready">Agents Ready</a></li>
+					<li><a href="admin.php?page=elementor-agents-ready">Agent Ready</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -30,7 +30,7 @@ describe( 'SidebarMenuHandler', () => {
 		window.location = originalLocation;
 	} );
 
-	it( 'highlights Agents Ready in the WordPress submenu when that page is selected', () => {
+	it( 'highlights Agent Ready in the WordPress submenu when that page is selected', () => {
 		// Arrange.
 		delete window.location;
 		window.location = new URL( 'https://example.com/wp-admin/admin.php?page=elementor-agents-ready' );
@@ -40,7 +40,7 @@ describe( 'SidebarMenuHandler', () => {
 		new SidebarMenuHandler();
 
 		// Assert.
-		expect( getCurrentSubmenuLabel() ).toBe( 'Agents Ready' );
+		expect( getCurrentSubmenuLabel() ).toBe( 'Agent Ready' );
 	} );
 
 	it( 'highlights Elementor MCP in the WordPress submenu when that page is selected', () => {
