@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { useId } from 'react';
-import { CheckIcon, FilterIcon, LibraryIcon, ListIcon, StarFilledIcon, StarIcon } from '@elementor/icons';
+import {
+	CheckIcon,
+	FilterIcon,
+	LibraryIcon,
+	MenuIcon,
+	RosetteDiscountCheckIcon,
+	StarFilledIcon,
+	StarIcon,
+} from '@elementor/icons';
 import {
 	bindMenu,
 	bindToggle,
@@ -27,18 +35,19 @@ const FILTER_TYPE_ALL = 'all';
 const FILTER_TYPE_GROUP = 'group';
 const FILTER_TYPE_ITEM = 'item';
 
-const FILTER_ICONS: Record< string, typeof ListIcon > = {
-	list: ListIcon,
+const FILTER_ICONS: Record< string, typeof MenuIcon > = {
+	list: MenuIcon,
 	star: StarIcon,
 	'star-filled': StarFilledIcon,
 	library: LibraryIcon,
+	rosette: RosetteDiscountCheckIcon,
 };
 
 const DEFAULT_FILTER = [
 	{ type: FILTER_TYPE_ALL, label: 'All icons', icon: 'list' },
 	{ type: FILTER_TYPE_ITEM, value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
 	{ type: FILTER_TYPE_ITEM, value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
-	{ type: FILTER_TYPE_ITEM, value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'library' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'rosette' },
 ] as const;
 
 type FilterEntry =
@@ -173,7 +182,7 @@ const renderFilterEntry = (
 
 const getFilterIcon = ( icon?: string ) => FILTER_ICONS[ icon ?? '' ] ?? LibraryIcon;
 
-const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, selected: boolean ) => (
+const renderFilterMenuItemContent = ( label: string, Icon: typeof MenuIcon, selected: boolean ) => (
 	<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
 		<Icon fontSize="tiny" />
 		<Typography variant="caption" sx={ { flex: 1 } }>
