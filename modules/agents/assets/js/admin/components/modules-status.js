@@ -17,13 +17,6 @@ const getBarColor = ( index, score ) => {
 	return index < score ? 'warning.main' : 'action.disabled';
 };
 
-const getBarSx = ( index, score ) => ( {
-	flex: 1,
-	height: BAR_HEIGHT,
-	borderRadius: BAR_RADIUS,
-	bgcolor: getBarColor( index, score ),
-} );
-
 const getScoreIcon = ( score ) => {
 	if ( 4 === score ) {
 		return <CircleCheckFilledIcon color="success" fontSize="small" />;
@@ -41,7 +34,13 @@ export const ModulesStatus = ( { score, label = __( 'Active', 'elementor' ), sho
 		<Stack alignItems="flex-start" spacing={ 1 } width={ 216 }>
 			<Stack direction="row" spacing={ 1 } width="100%">
 				{ Array.from( { length: TOTAL_SEGMENTS } ).map( ( _, index ) => (
-					<Box key={ index } sx={ getBarSx( index, score ) } />
+					<Box
+						key={ index }
+						flex={ 1 }
+						height={ BAR_HEIGHT }
+						borderRadius={ BAR_RADIUS }
+						bgcolor={ getBarColor( index, score ) }
+					/>
 				) ) }
 			</Stack>
 			<Stack direction="row" alignItems="center" spacing={ 1 }>
