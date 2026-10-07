@@ -728,8 +728,8 @@ class Module extends BaseModule {
 			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
-		// The marker handle sits on the icon, so a canvas click selects the list. Park it above the slot, same as the carousel arrow handle.
-		$editor_only_css = '.e-list-item-marker-base > .elementor-element-overlay > .elementor-editor-element-settings { top: auto; bottom: 100%; }';
+		// The marker is an inner container, whose handle rule (top: 0; transform: none) outranks a single class. Match that and park the handle above the slot.
+		$editor_only_css = '.e-list-item-marker-base.e-con.e-child > .elementor-element-overlay > .elementor-editor-element-settings { top: auto; bottom: 100%; transform: none; }';
 
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css . $editor_only_css );
