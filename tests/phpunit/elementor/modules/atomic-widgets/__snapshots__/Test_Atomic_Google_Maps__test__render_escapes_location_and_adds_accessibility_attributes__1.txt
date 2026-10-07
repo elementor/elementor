@@ -1,0 +1,2 @@
+					<iframe data-id="e8e55a1" data-interaction-id="e8e55a1" data-e-type="e-google-maps" id=my-map class="e-google-maps-base"  src="https://maps.google.com/maps?q=Caf%C3%A9%20%22Le%20Bar%22%20%3Cb%3E%26%3C%2Fb%3E&amp;t=m&amp;z=10&amp;output=embed&amp;iwloc=near" loading="lazy" title="Caf&#x00E9;&#x20;&quot;Le&#x20;Bar&quot;&#x20;&lt;b&gt;&amp;&lt;&#x2F;b&gt;" aria-label="Caf&#x00E9;&#x20;&quot;Le&#x20;Bar&quot;&#x20;&lt;b&gt;&amp;&lt;&#x2F;b&gt;"></iframe>
+		

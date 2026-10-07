@@ -1,0 +1,14 @@
+{#
+	Shared markup for every map provider. Included by the provider template, which must set:
+	- embed_src: the full iframe URL, with a hard-coded https:// origin and URL-encoded user input
+	- allow_fullscreen: whether the embed supports fullscreen (optional)
+#}
+{% set location = settings.location | default('') | trim %}
+{% set embed_src = embed_src | default('') %}
+{% set classes = settings.classes | default([]) | merge( [ base_styles.base ] ) | join(' ') %}
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+{% if location is not empty and embed_src is not empty %}
+<iframe data-id="{{ id }}" data-interaction-id="{{ interaction_id }}" data-e-type="{{ type }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} src="{{ embed_src | e }}" loading="lazy" title="{{ location | e('html_attr') }}" aria-label="{{ location | e('html_attr') }}"{% if allow_fullscreen | default(false) %} allowfullscreen{% endif %}></iframe>
+{% elseif render_editor_placeholder | default(false) %}
+<div data-id="{{ id }}" data-interaction-id="{{ interaction_id }}" data-e-type="{{ type }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} style="min-height: 150px; background-color: rgb(245, 245, 245);"></div>
+{% endif %}
