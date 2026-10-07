@@ -35,6 +35,10 @@ export const MarkdownContentPanel = ( { settings } ) => {
 
 		let isCurrent = true;
 
+		let isCurrent = true;
+
+		setContent( '' );
+
 		fetchMarkdownPreview( selectedItemId )
 			.then( ( nextContent ) => {
 				if ( isCurrent ) {
