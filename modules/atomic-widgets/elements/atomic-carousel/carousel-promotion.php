@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Carousel_Promotion extends Atomic_Pro_Promotion_Element_Base {
 
-	// Provisional go links — pending marketing (epic ED-25236 open question 9).
-	const CANVAS_UPGRADE_URL = 'https://go.elementor.com/go-pro-carousel-canvas-upgrade/';
+	// Provisional go link — pending marketing (epic ED-25236 open question 9).
 	const MODAL_UPGRADE_URL = 'https://go.elementor.com/go-pro-carousel-modal/';
 
 	public static function get_type() {
@@ -47,14 +46,5 @@ class Carousel_Promotion extends Atomic_Pro_Promotion_Element_Base {
 		return [
 			'elementor/elements/carousel-promotion' => __DIR__ . '/carousel-promotion.html.twig',
 		];
-	}
-
-	protected function build_template_context(): array {
-		return array_merge(
-			parent::build_template_context(),
-			[
-				'upgrade_url' => self::CANVAS_UPGRADE_URL,
-			]
-		);
 	}
 }
