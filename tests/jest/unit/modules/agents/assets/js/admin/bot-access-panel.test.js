@@ -29,8 +29,8 @@ jest.mock( '@elementor/icons', () => ( {
 
 jest.mock( '@elementor/ui/Avatar', () => ( { children } ) => <span>{ children }</span> );
 jest.mock( '@elementor/ui/Box', () => ( { children } ) => <div>{ children }</div> );
-jest.mock( '@elementor/ui/Button', () => ( { children, onClick, disabled } ) => (
-	<button type="button" onClick={ onClick } disabled={ disabled }>{ children }</button>
+jest.mock( '@elementor/ui/Button', () => ( { children, onClick, disabled, 'aria-label': label } ) => (
+	<button type="button" onClick={ onClick } disabled={ disabled } aria-label={ label }>{ children }</button>
 ) );
 jest.mock( '@elementor/ui/Chip', () => ( { label } ) => <span>{ label }</span> );
 jest.mock( '@elementor/ui/CloseButton', () => ( { onClick, 'aria-label': label } ) => (
@@ -88,8 +88,9 @@ describe( 'BotAccessPanel', () => {
 		render( <PanelWithSettings config={ createConfig() } /> );
 
 		// Assert
-		expect( screen.getAllByRole( 'button', { name: 'Block all' } ) ).toHaveLength( 2 );
-		expect( screen.getAllByRole( 'button', { name: 'Enable all' } ) ).toHaveLength( 1 );
+		expect( screen.getByRole( 'button', { name: 'Block all Search' } ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Block all AI input' } ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Enable all AI training' } ) ).toBeTruthy();
 		expect( screen.getByRole( 'button', { name: 'Block GPTBot' } ) ).toBeTruthy();
 		expect( screen.getByRole( 'button', { name: 'Enable' } ) ).toBeTruthy();
 	} );
@@ -99,7 +100,7 @@ describe( 'BotAccessPanel', () => {
 		render( <PanelWithSettings config={ createConfig() } /> );
 
 		// Act
-		fireEvent.click( screen.getAllByRole( 'button', { name: 'Block all' } )[ 0 ] );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Block all Search' } ) );
 
 		// Assert
 		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
@@ -165,6 +166,6 @@ describe( 'BotAccessPanel', () => {
 		// Assert
 		screen.getAllByRole( 'switch' ).forEach( ( toggle ) => expect( toggle.disabled ).toBe( true ) );
 		expect( screen.getByRole( 'button', { name: 'Add' } ).disabled ).toBe( true );
-		expect( screen.getAllByRole( 'button', { name: 'Block all' } )[ 0 ].disabled ).toBe( true );
+		expect( screen.getByRole( 'button', { name: 'Block all Search' } ).disabled ).toBe( true );
 	} );
 } );

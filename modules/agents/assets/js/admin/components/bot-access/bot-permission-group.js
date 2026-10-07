@@ -2,7 +2,7 @@ import { BanIcon, CircleCheckIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 const CARD_RADIUS = '8px';
@@ -34,6 +34,8 @@ export const BotPermissionGroup = ( { icon: Icon, title, description, isAllBlock
 					startIcon={ <CircleCheckIcon /> }
 					disabled={ isDisabled }
 					onClick={ () => onSetAll( true ) }
+					/* Translators: %s: Permission name. */
+					aria-label={ sprintf( __( 'Enable all %s', 'elementor' ), title ) }
 				>
 					{ __( 'Enable all', 'elementor' ) }
 				</Button>
@@ -45,6 +47,8 @@ export const BotPermissionGroup = ( { icon: Icon, title, description, isAllBlock
 					startIcon={ <BanIcon /> }
 					disabled={ isDisabled }
 					onClick={ () => onSetAll( false ) }
+					/* Translators: %s: Permission name. */
+					aria-label={ sprintf( __( 'Block all %s', 'elementor' ), title ) }
 				>
 					{ __( 'Block all', 'elementor' ) }
 				</Button>
