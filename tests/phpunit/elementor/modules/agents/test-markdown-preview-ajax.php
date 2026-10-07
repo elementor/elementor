@@ -43,7 +43,7 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 			'post_type'    => 'page',
 			'post_status'  => 'publish',
 			'post_title'   => 'Preview Page',
-			'post_content' => 'Preview body.',
+			'post_content' => 'Preview body is long enough to extract.',
 		] ) );
 
 		// Act
@@ -51,7 +51,7 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( $this->endpoint->build_markdown( $post ), $result['content'] );
-		$this->assertStringContainsString( 'Preview body.', $result['content'] );
+		$this->assertStringContainsString( 'Preview body is long enough to extract.', $result['content'] );
 	}
 
 	public function test_handle__rejects_a_post_type_that_is_not_included() {
