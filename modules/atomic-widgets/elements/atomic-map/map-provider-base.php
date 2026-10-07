@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * (and optionally `allow_fullscreen`) and then include `Atomic_Map_Base::BASE_TEMPLATE_KEY`.
  *
  * Provider-specific prop keys must be prefixed with the provider key (e.g. `google_map_type`),
- * so a future multi-provider element can merge all provider schemas without collisions.
+ * so they never collide with shared props that `Atomic_Map_Base` may add later.
  */
 abstract class Map_Provider_Base {
 	abstract public function get_key(): string;
