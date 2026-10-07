@@ -11,6 +11,9 @@ use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
+use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
 use Elementor\Modules\Agents\Classes\Request_Path;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
@@ -75,6 +78,7 @@ class Module extends BaseModule {
 	private Well_Known_Router $well_known_router;
 	private Agent_Ready_Settings $settings;
 	private Llms_Manual_Content $manual_content;
+	private Markdown_Endpoint $markdown_endpoint;
 
 	public function get_name() {
 		return 'agents';
@@ -150,8 +154,10 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest() );
 
-		$this->register_component( new Link_Headers() );
-		$this->register_component( new Markdown_Endpoint() );
+		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
+
+		$this->register_component( new Link_Headers( $this->markdown_endpoint ) );
+		$this->register_component( $this->markdown_endpoint );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
@@ -215,6 +221,12 @@ class Module extends BaseModule {
 
 		$llms_content_ajax = new Llms_Content_Ajax( $this->settings, $this->manual_content );
 		$ajax->register_ajax_action( Llms_Content_Ajax::ACTION, [ $llms_content_ajax, 'handle' ] );
+
+		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->markdown_endpoint );
+		$ajax->register_ajax_action( Markdown_Preview_Ajax::ACTION, [ $markdown_preview_ajax, 'handle' ] );
+
+		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
 	}
 
 	public function ajax_opt_in(): void {
@@ -668,12 +680,32 @@ class Module extends BaseModule {
 		return [
 			'isExperimentActive' => Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ),
 			'llms'               => $this->get_llms_state(),
+			'markdown'           => $this->get_markdown_state(),
 		];
 	}
 
 	private function get_llms_state(): array {
-		$included_post_types = $this->settings->get_llms_post_types();
-		$post_types          = [];
+		return [
+			'enabled'          => $this->settings->is_llms_enabled(),
+			'isManuallyEdited' => $this->settings->is_llms_manually_edited(),
+			'hasPhysicalFile'  => self::has_physical_llms_file(),
+			'fileUrl'          => home_url( '/' . self::LLMS_FILENAME ),
+			'postTypes'        => $this->get_post_type_rows( $this->settings->get_llms_post_types() ),
+		];
+	}
+
+	private function get_markdown_state(): array {
+		return [
+			'enabled'   => $this->settings->is_markdown_enabled(),
+			'postTypes' => $this->get_post_type_rows( $this->settings->get_markdown_post_types() ),
+		];
+	}
+
+	/**
+	 * @param string[] $included_post_types
+	 */
+	private function get_post_type_rows( array $included_post_types ): array {
+		$post_types = [];
 
 		foreach ( $this->generator->get_available_post_types() as $name => $label ) {
 			$post_types[] = [
@@ -684,13 +716,7 @@ class Module extends BaseModule {
 			];
 		}
 
-		return [
-			'enabled'          => $this->settings->is_llms_enabled(),
-			'isManuallyEdited' => $this->settings->is_llms_manually_edited(),
-			'hasPhysicalFile'  => self::has_physical_llms_file(),
-			'fileUrl'          => home_url( '/' . self::LLMS_FILENAME ),
-			'postTypes'        => $post_types,
-		];
+		return $post_types;
 	}
 
 	private function get_cache_max_age(): int {
