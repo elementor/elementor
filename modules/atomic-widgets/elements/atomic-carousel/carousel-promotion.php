@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Carousel_Promotion extends Atomic_Pro_Promotion_Element_Base {
 
-	// Provisional go link — pending marketing (epic ED-25236 open question 9).
 	const MODAL_UPGRADE_URL = 'https://go.elementor.com/go-pro-carousel-modal/';
 
 	public static function get_type() {
