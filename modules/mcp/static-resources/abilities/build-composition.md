@@ -111,7 +111,7 @@ The server converts most CSS into **native atomic styles** (breakpoint variants,
 **`padding` / `margin` shorthands are supported** — use them; do not split into longhand unnecessarily.
 
 ### V3 widget style targets
-V3 widgets (non `e-` types such as `nav-menu`) are styled per **style target**, not with selectors. `elementor/get-widget-schema` returns `default_style_target` and `style_targets`; each target lists its `states`, its `properties`, and the `responsive_properties` allowed inside `@media`.
+V3 widgets (non `e-` types such as `nav-menu`) are styled per **style target**, not with selectors. `elementor/get-widget-schema` returns `default_style_target` and `style_targets`; each target lists its `states` and its `properties`.
 - Bare declarations and `&:state { }` style the `default_style_target`.
 - Every other target is a block named by its alias: `dropdown { }`, `pointer:hover { }`. Blocks cannot be nested.
 - A property listed for a target may only be bound in some states (e.g. a hover pointer color); the warning names the state to use.
