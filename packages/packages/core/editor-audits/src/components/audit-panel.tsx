@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { getHostDocumentId } from '@elementor/editor-elements';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
+import { ReloadIcon } from '@elementor/icons';
 import { Box, Button, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -51,10 +52,11 @@ export default function AuditPanel() {
 				<Button
 					variant="contained"
 					size="small"
+					startIcon={ lastScanLabel ? <ReloadIcon fontSize="small" /> : undefined }
 					onClick={ onRun }
 					disabled={ status === 'loading' || hostDocumentId === 0 }
 				>
-					{ lastScanLabel ? __( 'Re-scan', 'elementor' ) : __( 'Run page audit', 'elementor' ) }
+					{ lastScanLabel ? __( 'Rescan', 'elementor' ) : __( 'Run page audit', 'elementor' ) }
 				</Button>
 			</FloatingPanelFooter>
 		</>
