@@ -63,6 +63,21 @@ describe( 'ClassesVariablesSection Component', () => {
 			const switches = screen.getAllByRole( 'checkbox' );
 			expect( switches.length ).toBeGreaterThanOrEqual( 3 );
 		} );
+
+		it( 'should expose accessible labels for classes, variables, and default styles switches', () => {
+			// Arrange & Act
+			render(
+				<ClassesVariablesSection
+					settings={ defaultSettings }
+					onSettingChange={ mockOnSettingChange }
+				/>,
+			);
+
+			// Assert
+			expect( screen.getByRole( 'checkbox', { name: 'Classes' } ) ).toBeTruthy();
+			expect( screen.getByRole( 'checkbox', { name: 'Variables' } ) ).toBeTruthy();
+			expect( screen.getByRole( 'checkbox', { name: 'Default Styles' } ) ).toBeTruthy();
+		} );
 	} );
 
 	describe( 'Initial State', () => {

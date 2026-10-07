@@ -86,6 +86,7 @@ class Test_Site_Settings_Classes_Feature extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'defaultStyles', $result['manifest'][0]['site-settings'] );
+		$this->assertArrayNotHasKey( 'defaultStylesCount', $result['manifest'][0]['site-settings'] );
 	}
 
 	public function test_export__sets_default_styles_manifest_flag_from_customization() {
@@ -107,6 +108,7 @@ class Test_Site_Settings_Classes_Feature extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $result['manifest'][0]['site-settings']['defaultStyles'] );
+		$this->assertSame( 0, $result['manifest'][0]['site-settings']['defaultStylesCount'] );
 	}
 
 	public function test_export__defaults_default_styles_manifest_flag_to_false_when_customization_key_is_missing() {
@@ -126,6 +128,7 @@ class Test_Site_Settings_Classes_Feature extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $result['manifest'][0]['site-settings']['defaultStyles'] );
+		$this->assertSame( 0, $result['manifest'][0]['site-settings']['defaultStylesCount'] );
 	}
 
 	public function test_global_classes_export_runner__should_export_requires_atomic_widgets() {

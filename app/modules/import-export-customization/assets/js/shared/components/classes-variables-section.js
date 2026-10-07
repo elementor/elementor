@@ -146,6 +146,7 @@ const SubSettingRow = ( {
 					color="info"
 					size="medium"
 					disabled={ disabled || ( limitExceeded && ! overrideAll ) }
+					inputProps={ { 'aria-label': label } }
 				/>
 			</Stack>
 		</Box>

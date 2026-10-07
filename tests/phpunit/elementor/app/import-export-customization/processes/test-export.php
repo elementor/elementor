@@ -144,6 +144,7 @@ class Test_Export extends Elementor_Test_Base {
 			'classes' => true,
 			'variables' => true,
 			'classesCount' => 0,
+			'defaultStylesCount' => 0,
 			'variablesCount' => 0,
 			'defaultStyles' => true,
 		];

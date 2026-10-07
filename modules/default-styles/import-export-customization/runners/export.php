@@ -31,8 +31,14 @@ class Export extends Export_Runner_Base {
 			return false;
 		}
 
-		if ( isset( $data['customization']['settings']['defaultStyles'] ) ) {
-			return (bool) $data['customization']['settings']['defaultStyles'];
+		$settings_customization = $data['customization']['settings'] ?? null;
+
+		if ( is_array( $settings_customization ) ) {
+			if ( array_key_exists( 'defaultStyles', $settings_customization ) ) {
+				return (bool) $settings_customization['defaultStyles'];
+			}
+
+			return true;
 		}
 
 		return true;

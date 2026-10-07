@@ -84,7 +84,9 @@ class Site_Settings extends Export_Runner_Base {
 			unset( $manifest_data['site-settings']['classes'] );
 		}
 
-		if ( ! $this->is_default_styles_feature_active() ) {
+		if ( $this->is_default_styles_feature_active() ) {
+			$manifest_data['site-settings']['defaultStylesCount'] = $this->get_default_styles_count();
+		} else {
 			unset( $manifest_data['site-settings']['defaultStyles'] );
 		}
 
@@ -130,6 +132,16 @@ class Site_Settings extends Export_Runner_Base {
 		return $count;
 	}
 
+	public function get_default_styles_count(): int {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit ) {
+			return 0;
+		}
+
+		return count( \Elementor\Modules\DefaultStyles\Default_Styles_Repository::make( $kit )->all() );
+	}
+
 	public function is_classes_feature_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
@@ -164,6 +176,10 @@ class Site_Settings extends Export_Runner_Base {
 		if ( $this->is_default_styles_feature_active() ) {
 			$include_default_styles = $customization['defaultStyles'] ?? false;
 			$export_result['manifest'][0]['site-settings']['defaultStyles'] = (bool) $include_default_styles;
+
+			if ( ! $include_default_styles ) {
+				$export_result['manifest'][0]['site-settings']['defaultStylesCount'] = 0;
+			}
 		}
 
 		if ( $this->is_variables_feature_active() ) {

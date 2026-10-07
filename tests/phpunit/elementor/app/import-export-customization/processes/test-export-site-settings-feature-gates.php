@@ -94,6 +94,7 @@ class Test_Export_Site_Settings_Feature_Gates extends Elementor_Test_Base {
 			'defaultStyles',
 			'variables',
 			'classesCount',
+			'defaultStylesCount',
 			'variablesCount',
 		];
 
@@ -102,6 +103,7 @@ class Test_Export_Site_Settings_Feature_Gates extends Elementor_Test_Base {
 		$this->assertTrue( $result['manifest']['site-settings']['defaultStyles'] );
 		$this->assertTrue( $result['manifest']['site-settings']['variables'] );
 		$this->assertSame( 0, $result['manifest']['site-settings']['classesCount'] );
+		$this->assertSame( 0, $result['manifest']['site-settings']['defaultStylesCount'] );
 		$this->assertSame( 0, $result['manifest']['site-settings']['variablesCount'] );
 	}
 }
