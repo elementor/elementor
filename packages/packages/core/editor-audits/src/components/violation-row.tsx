@@ -59,7 +59,7 @@ function GuidanceAction( { violation }: { violation: AuditViolation } ) {
 	}
 
 	return (
-		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+		<Box display="flex" alignItems="center" gap={ 1 } mt={ 1 }>
 			<ViolationCtaButton
 				ctaLabel={ violation.ctaLabel as string }
 				externalUrl={ violation.externalUrl as string }
@@ -122,7 +122,7 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 				</IconButton>
 			</Box>
 			<Collapse in={ expanded }>
-				<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1, paddingBlock: 1 } }>
+				<Box paddingBlock={ 1 }>
 					<Tooltip title={ audit.fixHint } placement="top">
 						<Alert
 							severity="secondary"
@@ -136,9 +136,9 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 							<Typography variant="caption" component="p" color="text.secondary">
 								{ audit.description }
 							</Typography>
+							{ primaryViolation && <GuidanceAction violation={ primaryViolation } /> }
 						</Alert>
 					</Tooltip>
-					{ primaryViolation && <GuidanceAction violation={ primaryViolation } /> }
 				</Box>
 				{ violations && violations.length > 0 && (
 					<Box role="list" sx={ { paddingBlockEnd: 1 } }>
