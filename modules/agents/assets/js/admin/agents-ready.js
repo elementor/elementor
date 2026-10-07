@@ -17,6 +17,8 @@ const init = () => {
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
 			isExperimentActive={ !! config.isExperimentActive }
+			llmsConfig={ config.llms }
+			markdownConfig={ config.markdown }
 		/>
 	), rootElement );
 };

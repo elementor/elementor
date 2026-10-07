@@ -6,6 +6,15 @@ export const MODULE_LLMS_TXT = 'llms-txt';
 export const MODULE_MARKDOWN_CONTENT = 'markdown-content';
 export const MODULE_BOT_ACCESS_CONTROL = 'bot-access-control';
 
+export const LLMS_SETTINGS_KEY = 'llms_txt';
+export const MARKDOWN_SETTINGS_KEY = 'markdown_content';
+export const LLMS_FILE_NAME = 'llms.txt';
+export const LLMS_VISIBLE_POST_TYPES_LIMIT = 4;
+
+export const MODULE_STATUS_ENABLED = 'enabled';
+export const MODULE_STATUS_DISABLED = 'disabled';
+export const MODULE_STATUS_WARNING = 'warning';
+
 export const getModules = () => [
 	{
 		id: MODULE_LLMS_TXT,

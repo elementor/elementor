@@ -1431,7 +1431,8 @@ export default class EditorPage extends BasePage {
 		if ( toReload && isSaveEnabled ) {
 			const reloadButton = this.page.locator( EditorSelectors.refreshPopup.reloadButton );
 			await reloadButton.waitFor( { state: 'visible', timeout: timeouts.longAction } );
-			await reloadButton.click();
+			await reloadButton.click( { timeout: timeouts.longAction } );
+			await this.page.locator( '#elementor-editor-wrapper' ).waitFor( { state: 'visible', timeout: timeouts.heavyAction } );
 		}
 	}
 

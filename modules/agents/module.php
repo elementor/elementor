@@ -10,6 +10,10 @@ use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
+use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
+use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
 use Elementor\Modules\Agents\Classes\Request_Path;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
@@ -52,6 +56,8 @@ class Module extends BaseModule {
 
 	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
+	const LLMS_FILENAME = 'llms.txt';
+
 	/**
 	 * Option name that records whether, at the time the feature was first
 	 * activated, a physical llms.txt already existed in the web root.
@@ -70,6 +76,9 @@ class Module extends BaseModule {
 	private Content_Generator $generator;
 	private Robots_Txt_Handler $robots_handler;
 	private Well_Known_Router $well_known_router;
+	private Agent_Ready_Settings $settings;
+	private Llms_Manual_Content $manual_content;
+	private Markdown_Endpoint $markdown_endpoint;
 
 	public function get_name() {
 		return 'agents';
@@ -104,6 +113,15 @@ class Module extends BaseModule {
 		$this->cache            = new Llms_Cache();
 		$this->robots_handler   = new Robots_Txt_Handler();
 		$this->feature_registry = new Feature_Registry();
+		$this->settings         = new Agent_Ready_Settings( $this->generator );
+		$this->manual_content   = new Llms_Manual_Content( $this->generator );
+
+		$this->settings->register();
+
+		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION ] as $option ) {
+			add_action( "add_option_{$option}", [ $this, 'on_settings_change' ] );
+			add_action( "update_option_{$option}", [ $this, 'on_settings_change' ] );
+		}
 
 		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
 
@@ -136,8 +154,10 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest() );
 
-		$this->register_component( new Link_Headers() );
-		$this->register_component( new Markdown_Endpoint() );
+		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
+
+		$this->register_component( new Link_Headers( $this->markdown_endpoint ) );
+		$this->register_component( $this->markdown_endpoint );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
@@ -182,7 +202,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			$this->get_js_assets_url( 'agents-ready' ),
-			[ 'react', 'react-dom', 'elementor-common', 'elementor-v2-ui' ],
+			[ 'react', 'react-dom', 'elementor-common', 'elementor-v2-ui', 'wp-api-fetch' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -198,6 +218,15 @@ class Module extends BaseModule {
 
 	public function register_ajax_actions( Ajax $ajax ): void {
 		$ajax->register_ajax_action( self::AJAX_OPT_IN_ACTION, [ $this, 'ajax_opt_in' ] );
+
+		$llms_content_ajax = new Llms_Content_Ajax( $this->settings, $this->manual_content );
+		$ajax->register_ajax_action( Llms_Content_Ajax::ACTION, [ $llms_content_ajax, 'handle' ] );
+
+		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->markdown_endpoint );
+		$ajax->register_ajax_action( Markdown_Preview_Ajax::ACTION, [ $markdown_preview_ajax, 'handle' ] );
+
+		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
 	}
 
 	public function ajax_opt_in(): void {
@@ -228,8 +257,20 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$content = $this->get_generated_llms_txt();
-		$this->serve_plain_text( $content );
+		if ( ! $this->settings->is_llms_enabled() ) {
+			return;
+		}
+
+		$manual_content = $this->settings->is_llms_manually_edited()
+			? $this->manual_content->get_content()
+			: '';
+
+		if ( '' !== $manual_content ) {
+			$this->serve_plain_text( $manual_content, $this->manual_content->get_modified_at() );
+			return;
+		}
+
+		$this->serve_plain_text( $this->get_generated_llms_txt(), $this->cache->get_modified_time() );
 	}
 
 	public function maybe_serve_llms_full_txt() {
@@ -237,8 +278,11 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$content = $this->get_generated_llms_full_txt();
-		$this->serve_plain_text( $content );
+		if ( ! $this->settings->is_llms_enabled() ) {
+			return;
+		}
+
+		$this->serve_plain_text( $this->get_generated_llms_full_txt(), $this->cache->get_modified_time() );
 	}
 
 	// -------------------------------------------------------------------------
@@ -256,7 +300,7 @@ class Module extends BaseModule {
 		}
 
 		$overrides = $this->get_overrides();
-		$content   = $this->generator->generate_llms_txt( $overrides );
+		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types() );
 
 		if ( '' !== $content ) {
 			$this->cache->set_llms( $content );
@@ -276,7 +320,7 @@ class Module extends BaseModule {
 		}
 
 		$overrides = $this->get_overrides();
-		$content   = $this->generator->generate_llms_full_txt( $overrides );
+		$content   = $this->generator->generate_llms_full_txt( $overrides, $this->settings->get_llms_post_types() );
 
 		if ( '' !== $content ) {
 			$this->cache->set_llms_full( $content );
@@ -400,6 +444,13 @@ class Module extends BaseModule {
 		do_action( 'elementor/agents/llms_txt/cache_invalidated', 0 );
 	}
 
+	/**
+	 * Invalidate cache when the Agent Ready settings or the edited llms.txt content change.
+	 */
+	public function on_settings_change(): void {
+		$this->invalidate_cache( 0 );
+	}
+
 	// -------------------------------------------------------------------------
 	// SEO plugin detection
 	// -------------------------------------------------------------------------
@@ -481,12 +532,24 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$existing_file_path = ABSPATH . 'llms.txt';
-
-		if ( file_exists( $existing_file_path ) ) {
+		if ( self::has_physical_llms_file() ) {
 			// Store a transient so the admin notice can surface the conflict.
 			set_transient( 'elementor_agents_llms_existing_file_detected', true, DAY_IN_SECONDS );
 		}
+	}
+
+	/**
+	 * A real file in the site root is served by the web server before WordPress
+	 * runs, so when one exists the module must stay out of the way.
+	 *
+	 * The home path (not ABSPATH) is used so subdirectory installs are handled.
+	 */
+	public static function has_physical_llms_file(): bool {
+		if ( ! function_exists( 'get_home_path' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		return file_exists( get_home_path() . self::LLMS_FILENAME );
 	}
 
 	/**
@@ -556,15 +619,15 @@ class Module extends BaseModule {
 	/**
 	 * Send a plain-text HTTP response with caching headers, honoring conditional requests.
 	 *
-	 * @param string $content Plain-text payload.
+	 * @param string $content       Plain-text payload.
+	 * @param int    $last_modified Unix timestamp of the last content change, or 0 when unknown.
 	 */
-	private function serve_plain_text( string $content ): void {
+	private function serve_plain_text( string $content, int $last_modified ): void {
 		if ( '' === $content ) {
 			return;
 		}
 
-		$etag          = $this->get_etag( $content );
-		$last_modified = $this->cache->get_modified_time();
+		$etag = $this->get_etag( $content );
 
 		header( 'X-Content-Type-Options: nosniff' );
 		header( 'Cache-Control: public, max-age=' . $this->get_cache_max_age() );
@@ -612,9 +675,48 @@ class Module extends BaseModule {
 	}
 
 	private function get_app_config(): array {
+		$this->settings->ensure_option_exists();
+
 		return [
 			'isExperimentActive' => Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ),
+			'llms'               => $this->get_llms_state(),
+			'markdown'           => $this->get_markdown_state(),
 		];
+	}
+
+	private function get_llms_state(): array {
+		return [
+			'enabled'          => $this->settings->is_llms_enabled(),
+			'isManuallyEdited' => $this->settings->is_llms_manually_edited(),
+			'hasPhysicalFile'  => self::has_physical_llms_file(),
+			'fileUrl'          => home_url( '/' . self::LLMS_FILENAME ),
+			'postTypes'        => $this->get_post_type_rows( $this->settings->get_llms_post_types() ),
+		];
+	}
+
+	private function get_markdown_state(): array {
+		return [
+			'enabled'   => $this->settings->is_markdown_enabled(),
+			'postTypes' => $this->get_post_type_rows( $this->settings->get_markdown_post_types() ),
+		];
+	}
+
+	/**
+	 * @param string[] $included_post_types
+	 */
+	private function get_post_type_rows( array $included_post_types ): array {
+		$post_types = [];
+
+		foreach ( $this->generator->get_available_post_types() as $name => $label ) {
+			$post_types[] = [
+				'name'     => $name,
+				'label'    => $label,
+				'count'    => (int) ( wp_count_posts( $name )->publish ?? 0 ),
+				'included' => in_array( $name, $included_post_types, true ),
+			];
+		}
+
+		return $post_types;
 	}
 
 	private function get_cache_max_age(): int {
