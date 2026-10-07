@@ -12,9 +12,12 @@ class Site_Flag {
 	const NOTIFICATIONS_QUERY_KEY = 'mcp';
 	const NOTIFICATIONS_HOST = 'my.elementor.com';
 	const NOTIFICATIONS_PATH = '/api/v1/notifications';
+	const HTML_TOKEN = 'e-bc';
 
 	public static function register(): void {
 		add_filter( 'http_request_args', [ self::class, 'filter_notifications_request' ], 10, 2 );
+		add_filter( 'elementor/generator_tag/settings', [ self::class, 'filter_generator_tag_settings' ] );
+		add_action( 'wp_head', [ self::class, 'print_dedicated_meta' ] );
 	}
 
 	public static function mark(): void {
@@ -27,6 +30,24 @@ class Site_Flag {
 
 	public static function is_set(): bool {
 		return ! empty( get_option( self::OPTION_NAME ) );
+	}
+
+	public static function filter_generator_tag_settings( $settings ) {
+		if ( ! is_array( $settings ) || ! self::is_set_in_alloptions() ) {
+			return $settings;
+		}
+
+		$settings[] = self::HTML_TOKEN;
+
+		return $settings;
+	}
+
+	public static function print_dedicated_meta(): void {
+		if ( ! self::is_set_in_alloptions() ) {
+			return;
+		}
+
+		echo '<meta name="' . esc_attr( self::HTML_TOKEN ) . '" content="1">' . PHP_EOL;
 	}
 
 	public static function filter_notifications_request( $args, $url ) {
@@ -50,6 +71,12 @@ class Site_Flag {
 		$args['body'] = $body;
 
 		return $args;
+	}
+
+	private static function is_set_in_alloptions(): bool {
+		$alloptions = wp_load_alloptions();
+
+		return ! empty( $alloptions[ self::OPTION_NAME ] );
 	}
 
 	private static function is_notifications_endpoint( string $url ): bool {
