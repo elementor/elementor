@@ -35,7 +35,7 @@ export const WelcomeScreen = () => {
 				<Typography variant="h6">
 					{ __( 'Optimize your site for AI agents', 'elementor' ) }
 				</Typography>
-				<Typography variant="body2" color="text.secondary" sx={ { maxWidth: 254 } }>
+				<Typography variant="body2" color="text.secondary" maxWidth={ 254 }>
 					{ __( 'Enable discovery, access controls, and Markdown tools in one click.', 'elementor' ) }
 				</Typography>
 			</Stack>
@@ -49,7 +49,7 @@ export const WelcomeScreen = () => {
 				{ __( 'Activate', 'elementor' ) }
 			</Button>
 			{ hasError && (
-				<Box sx={ { maxWidth: 360 } }>
+				<Box maxWidth={ 360 }>
 					<Alert severity="error" variant="standard" size="small">
 						{ __( 'Activation failed. Please try again.', 'elementor' ) }
 					</Alert>

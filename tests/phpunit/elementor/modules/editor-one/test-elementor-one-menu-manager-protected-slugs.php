@@ -41,7 +41,7 @@ class Test_Elementor_One_Menu_Manager_Protected_Slugs extends Elementor_Test_Bas
 		global $submenu;
 		$submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] = [
 			[ 'Elementor MCP', 'manage_options', 'elementor-mcp' ],
-			[ 'Agents Ready', 'manage_options', 'elementor-agents-ready' ],
+			[ 'Agent Ready', 'manage_options', 'elementor-agents-ready' ],
 			[ 'Element Manager', 'manage_options', 'elementor-element-manager' ],
 		];
 
