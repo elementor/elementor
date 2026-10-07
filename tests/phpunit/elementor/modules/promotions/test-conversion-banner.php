@@ -32,6 +32,38 @@ namespace {
 			return filter_var( $url, FILTER_SANITIZE_URL );
 		}
 	}
+
+	if ( ! function_exists( 'get_option' ) ) {
+		function get_option( $key, $default = false ) {
+			return $GLOBALS['_test_options'][ $key ] ?? $default;
+		}
+	}
+
+	if ( ! function_exists( 'update_option' ) ) {
+		function update_option( $key, $value, $autoload = null ) {
+			$GLOBALS['_test_options'][ $key ] = $value;
+			return true;
+		}
+	}
+
+	if ( ! function_exists( 'current_time' ) ) {
+		function current_time( $type ) {
+			return time();
+		}
+	}
+
+	if ( ! function_exists( 'wp_http_validate_url' ) ) {
+		// Return false so EditorAssetsAPI never makes real HTTP calls in tests.
+		function wp_http_validate_url( $url ) {
+			return false;
+		}
+	}
+
+	if ( ! function_exists( 'wp_json_encode' ) ) {
+		function wp_json_encode( $data ) {
+			return json_encode( $data );
+		}
+	}
 }
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
@@ -47,8 +79,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once dirname( __DIR__, 5 ) . '/includes/utils.php';
 
 class Test_Conversion_Banner extends TestCase {
+
+	protected function setUp(): void {
+		$GLOBALS['_test_options'] = [];
+
+		// When running in the WP integration test context: clear the real DB option
+		// and block outbound HTTP so EditorAssetsAPI cannot reach the live CDN.
+		if ( function_exists( 'delete_option' ) ) {
+			delete_option( Conversion_Banner::BANNER_TRANSIENT_KEY );
+		}
+		if ( function_exists( 'add_filter' ) ) {
+			add_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1, 3 );
+		}
+	}
+
+	protected function tearDown(): void {
+		if ( function_exists( 'remove_filter' ) ) {
+			remove_filter( 'pre_http_request', [ $this, 'block_http_request' ], 1 );
+		}
+		if ( function_exists( 'delete_option' ) ) {
+			delete_option( Conversion_Banner::BANNER_TRANSIENT_KEY );
+		}
+	}
+
+	/**
+	 * Used as the pre_http_request filter callback to block all HTTP in tests.
+	 *
+	 * @return \WP_Error
+	 */
+	public function block_http_request( $preempt, $r, $url ) {
+		return new \WP_Error( 'tests_blocked', 'HTTP blocked in tests.' );
+	}
+
 	public function test_get_banner_config__uses_elementor_branded_copy() {
-		// Arrange
+		// Arrange — no CDN cache, HTTP calls blocked → falls back to default.
 		$banner = new Conversion_Banner();
 		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
 		$method->setAccessible( true );
@@ -64,6 +128,58 @@ class Test_Conversion_Banner extends TestCase {
 		);
 		$this->assertSame( 'Upgrade now', $config['buttons'][0]['text'] );
 		$this->assertSame( Conversion_Banner::UPGRADE_URL, $config['buttons'][0]['link'] );
+	}
+
+	public function test_get_banner_config__uses_cdn_data_when_active() {
+		// Arrange — seed the WP option with active CDN data.
+		$cdn_payload = [
+			'is_active' => true,
+			'title'     => 'Sale Is On!',
+			'text'      => 'Save big.',
+			'cta_text'  => 'View Deals',
+			'cta_url'   => 'https://go.elementor.com/test/',
+			'image_url' => '',
+			'image_alt' => 'Sale',
+		];
+
+		update_option( Conversion_Banner::BANNER_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $cdn_payload ),
+		] );
+
+		$banner = new Conversion_Banner();
+		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
+		$method->setAccessible( true );
+
+		// Act
+		$config = $method->invoke( $banner );
+
+		// Assert
+		$this->assertSame( 'Sale Is On!', $config['title'] );
+		$this->assertSame( 'https://go.elementor.com/test/', $config['buttons'][0]['link'] );
+	}
+
+	public function test_get_banner_config__falls_back_when_cdn_missing_required_fields() {
+		// Arrange — CDN is active but missing title and cta_url.
+		$cdn_payload = [
+			'is_active' => true,
+			'text'      => 'Some text.',
+		];
+
+		update_option( Conversion_Banner::BANNER_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value'   => json_encode( $cdn_payload ),
+		] );
+
+		$banner = new Conversion_Banner();
+		$method = new ReflectionMethod( Conversion_Banner::class, 'get_banner_config' );
+		$method->setAccessible( true );
+
+		// Act
+		$config = $method->invoke( $banner );
+
+		// Assert — should fall back to default.
+		$this->assertSame( 'Elevate your site with Elementor Pro', $config['title'] );
 	}
 }
 

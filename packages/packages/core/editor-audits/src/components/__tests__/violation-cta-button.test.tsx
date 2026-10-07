@@ -57,4 +57,23 @@ describe( 'ViolationCtaButton', () => {
 
 		expect( screen.getByRole( 'button', { name: CTA_LABEL } ) ).toHaveClass( 'MuiButton-text' );
 	} );
+
+	it( 'does not render a start icon by default', () => {
+		// Arrange & Act.
+		renderWithTheme( <ViolationCtaButton ctaLabel={ CTA_LABEL } externalUrl={ EXTERNAL_URL } /> );
+
+		// Assert.
+		const button = screen.getByRole( 'button', { name: CTA_LABEL } );
+		// eslint-disable-next-line testing-library/no-node-access -- the start icon is a decorative svg with no accessible role.
+		expect( button.querySelector( 'svg' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a start icon when withIcon is set', () => {
+		// Arrange & Act.
+		renderWithTheme( <ViolationCtaButton ctaLabel={ CTA_LABEL } externalUrl={ EXTERNAL_URL } withIcon /> );
+
+		// Assert.
+		// eslint-disable-next-line testing-library/no-node-access -- see above.
+		expect( screen.getByRole( 'button', { name: CTA_LABEL } ).querySelector( 'svg' ) ).toBeInTheDocument();
+	} );
 } );
