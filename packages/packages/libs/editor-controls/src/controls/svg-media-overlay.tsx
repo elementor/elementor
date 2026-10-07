@@ -8,9 +8,9 @@ import { ConditionalControlInfotip } from '../components/conditional-control-inf
 export const SVG_MEDIA_CONTROL_CONTAINER_TEST_ID = 'svg-media-control-container';
 export const SVG_MEDIA_ACTION_GROUP_TEST_ID = 'svg-media-action-group';
 
-const SELECT_AREA_WIDTH = 96;
-const UPLOAD_AREA_WIDTH = 64;
-const SPLIT_BUTTON_MIN_HEIGHT = 48;
+const SELECT_AREA_WIDTH = 72;
+const UPLOAD_AREA_WIDTH = 48;
+const SPLIT_BUTTON_MIN_HEIGHT = 32;
 const SPLIT_BUTTON_CORNER_RADIUS = '12px';
 const SPLIT_BUTTON_FONT_SIZE = '14px';
 const ICON_LIBRARY_PADDING = 0.625;
