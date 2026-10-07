@@ -22,6 +22,16 @@ class Agent_Ready_Settings {
 	const MODULE_MARKDOWN_CONTENT = 'markdown_content';
 	const MODULE_BOT_ACCESS_CONTROL = 'bot_access_control';
 
+	const BOT_PERMISSION_SEARCH = 'search';
+	const BOT_PERMISSION_AI_INPUT = 'ai_input';
+	const BOT_PERMISSION_AI_TRAIN = 'ai_train';
+
+	const DEFAULT_BOT_PERMISSIONS = [
+		self::BOT_PERMISSION_SEARCH   => true,
+		self::BOT_PERMISSION_AI_INPUT => true,
+		self::BOT_PERMISSION_AI_TRAIN => false,
+	];
+
 	/**
 	 * Keys only PHP may change; values sent by the client are ignored.
 	 */
@@ -31,6 +41,8 @@ class Agent_Ready_Settings {
 
 	private Content_Generator $generator;
 
+	private Bot_Catalog $bot_catalog;
+
 	/**
 	 * Static because every instance hooks the same option filter; a trusted write
 	 * from one instance must not be reverted by another instance's filter.
@@ -39,8 +51,9 @@ class Agent_Ready_Settings {
 	 */
 	private static bool $is_trusted_write = false;
 
-	public function __construct( Content_Generator $generator ) {
-		$this->generator = $generator;
+	public function __construct( Content_Generator $generator, ?Bot_Catalog $bot_catalog = null ) {
+		$this->generator   = $generator;
+		$this->bot_catalog = $bot_catalog ?? new Bot_Catalog();
 	}
 
 	public function register(): void {
@@ -87,6 +100,21 @@ class Agent_Ready_Settings {
 	 */
 	public function get_markdown_post_types(): array {
 		return $this->get_included_post_types( self::MODULE_MARKDOWN_CONTENT );
+	}
+
+	public function is_bot_access_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_BOT_ACCESS_CONTROL )['enabled'];
+	}
+
+	/**
+	 * Bots listed in the admin table, keyed by user-agent token.
+	 *
+	 * @return array<string, array{search: bool, ai_input: bool, ai_train: bool}>
+	 */
+	public function get_managed_bots(): array {
+		$bots = $this->get_module_settings( self::MODULE_BOT_ACCESS_CONTROL )['bots'] ?? [];
+
+		return is_array( $bots ) ? $this->sanitize_bots( $bots ) : [];
 	}
 
 	/**
@@ -137,7 +165,10 @@ class Agent_Ready_Settings {
 			self::MODULE_MARKDOWN_CONTENT => [
 				'enabled' => true,
 			],
-			self::MODULE_BOT_ACCESS_CONTROL => [],
+			self::MODULE_BOT_ACCESS_CONTROL => [
+				'enabled' => true,
+				'bots'    => array_fill_keys( $this->bot_catalog->get_popular_tokens(), self::DEFAULT_BOT_PERMISSIONS ),
+			],
 		];
 	}
 
@@ -154,7 +185,42 @@ class Agent_Ready_Settings {
 		return [
 			self::MODULE_LLMS_TXT            => fn( array $settings ) => $this->sanitize_content_module( $settings ),
 			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
+			self::MODULE_BOT_ACCESS_CONTROL  => fn( array $settings ) => $this->sanitize_bot_access_module( $settings ),
 		];
+	}
+
+	private function sanitize_bot_access_module( array $settings ): array {
+		$clean = [
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? true ),
+		];
+
+		if ( isset( $settings['bots'] ) && is_array( $settings['bots'] ) ) {
+			$clean['bots'] = $this->sanitize_bots( $settings['bots'] );
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * Keeps only catalog tokens, in catalog order, with exactly the three permission booleans.
+	 *
+	 * @param array $bots Incoming bots keyed by token.
+	 * @return array<string, array{search: bool, ai_input: bool, ai_train: bool}>
+	 */
+	private function sanitize_bots( array $bots ): array {
+		$clean = [];
+
+		foreach ( $this->bot_catalog->get_tokens() as $token ) {
+			if ( ! isset( $bots[ $token ] ) || ! is_array( $bots[ $token ] ) ) {
+				continue;
+			}
+
+			foreach ( self::DEFAULT_BOT_PERMISSIONS as $permission => $default ) {
+				$clean[ $token ][ $permission ] = rest_sanitize_boolean( $bots[ $token ][ $permission ] ?? $default );
+			}
+		}
+
+		return $clean;
 	}
 
 	private function sanitize_content_module( array $settings ): array {
