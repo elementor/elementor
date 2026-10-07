@@ -8,8 +8,6 @@ const agentsWordSx = {
 	backgroundImage: AGENTS_WORD_GRADIENT,
 	backgroundClip: 'text',
 	WebkitBackgroundClip: 'text',
-	color: 'transparent',
-	fontSize: '2.5rem',
 };
 
 export const PageTitle = ( { textAlign = 'center' } ) => {
@@ -19,7 +17,10 @@ export const PageTitle = ( { textAlign = 'center' } ) => {
 			variant="h4"
 			fontWeight={ 300 }
 			textAlign={ textAlign }
-			sx={ { m: 0, ...agentsWordSx } }
+			m={ 0 }
+			fontSize="2.5rem"
+			color="transparent"
+			sx={ agentsWordSx }
 		>
 			{ __( 'Is your site ready for agents?', 'elementor' ) }
 		</Typography>

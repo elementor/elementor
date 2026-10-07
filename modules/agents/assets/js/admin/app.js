@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import { ModulesScreen } from './components/modules-screen';
 import { WelcomeScreen } from './components/welcome-screen';
 
-export const App = ( { isRTL, isExperimentActive } ) => {
+export const App = ( { isRTL, isExperimentActive, llmsConfig } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme="light" palette="argon-beta">
-					{ isExperimentActive ? <ModulesScreen /> : <WelcomeScreen /> }
+					{ isExperimentActive ? <ModulesScreen llmsConfig={ llmsConfig } /> : <WelcomeScreen /> }
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
@@ -23,4 +23,5 @@ export const App = ( { isRTL, isExperimentActive } ) => {
 App.propTypes = {
 	isRTL: PropTypes.bool,
 	isExperimentActive: PropTypes.bool,
+	llmsConfig: PropTypes.object,
 };
