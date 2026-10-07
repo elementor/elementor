@@ -59,26 +59,4 @@ describe( 'syncReportStaleness', () => {
 		// Assert.
 		expect( selectIsStale( getState() ) ).toBe( false );
 	} );
-
-	it.each( [ 'publish', 'draft' ] )( 'marks the report as stale after a %s save', ( status ) => {
-		// Arrange.
-		dispatch( slice.actions.runSucceeded( makeReport() ) );
-
-		// Act.
-		dispatchCommandAfter( 'document/save/save', { status } );
-
-		// Assert.
-		expect( selectIsStale( getState() ) ).toBe( true );
-	} );
-
-	it( 'does not mark the report as stale after an autosave', () => {
-		// Arrange.
-		dispatch( slice.actions.runSucceeded( makeReport() ) );
-
-		// Act.
-		dispatchCommandAfter( 'document/save/save', { status: 'autosave' } );
-
-		// Assert.
-		expect( selectIsStale( getState() ) ).toBe( false );
-	} );
 } );

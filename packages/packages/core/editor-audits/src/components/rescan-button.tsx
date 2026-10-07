@@ -18,7 +18,8 @@ export default function RescanButton( { hasScanned, isStale, disabled, onClick }
 
 	return (
 		<Tooltip
-			title={ isStale ? __( 'Page content changed - rescan advised', 'elementor' ) : '' }
+			title={ __( 'Page content changed - rescan advised', 'elementor' ) }
+			disableHoverListener={ ! isStale }
 			PopperProps={ { sx: { zIndex: panelZIndex } } }
 		>
 			<Badge variant="dot" color="warning" invisible={ ! isStale } overlap="rectangular">

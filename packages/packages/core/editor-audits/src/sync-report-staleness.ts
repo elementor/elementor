@@ -11,12 +11,4 @@ export function syncReportStaleness() {
 			dispatch( slice.actions.reportStale() );
 		}
 	} );
-
-	listenTo( commandEndEvent( 'document/save/save' ), ( e ) => {
-		const event = e as CommandEvent< { status: string } >;
-
-		if ( event.args?.status !== 'autosave' ) {
-			dispatch( slice.actions.reportStale() );
-		}
-	} );
 }

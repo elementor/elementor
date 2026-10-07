@@ -18,7 +18,6 @@ export const slice = __createSlice( {
 		runStarted( state ) {
 			state.status = 'loading';
 			state.error = null;
-			state.isStale = false;
 		},
 		runSucceeded( state, action: PayloadAction< PageAuditReport > ) {
 			state.status = 'ready';

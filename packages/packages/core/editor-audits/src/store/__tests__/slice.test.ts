@@ -50,7 +50,7 @@ describe( 'audits slice - staleness', () => {
 		expect( selectIsStale( getState() ) ).toBe( true );
 	} );
 
-	it( 'clears staleness when a new run starts', () => {
+	it( 'keeps staleness while a rescan is in progress', () => {
 		// Arrange.
 		dispatch( slice.actions.runSucceeded( makeReport() ) );
 		dispatch( slice.actions.reportStale() );
@@ -59,7 +59,33 @@ describe( 'audits slice - staleness', () => {
 		dispatch( slice.actions.runStarted() );
 
 		// Assert.
-		expect( selectIsStale( getState() ) ).toBe( false );
+		expect( selectIsStale( getState() ) ).toBe( true );
+	} );
+
+	it( 'keeps staleness when a rescan fails, since the previous stale report is still shown', () => {
+		// Arrange.
+		dispatch( slice.actions.runSucceeded( makeReport() ) );
+		dispatch( slice.actions.reportStale() );
+		dispatch( slice.actions.runStarted() );
+
+		// Act.
+		dispatch( slice.actions.runFailed( 'boom' ) );
+
+		// Assert.
+		expect( selectIsStale( getState() ) ).toBe( true );
+	} );
+
+	it( 'keeps staleness when a rescan is aborted, since the previous stale report is still shown', () => {
+		// Arrange.
+		dispatch( slice.actions.runSucceeded( makeReport() ) );
+		dispatch( slice.actions.reportStale() );
+		dispatch( slice.actions.runStarted() );
+
+		// Act.
+		dispatch( slice.actions.runAborted() );
+
+		// Assert.
+		expect( selectIsStale( getState() ) ).toBe( true );
 	} );
 
 	it( 'clears staleness when a run succeeds', () => {
