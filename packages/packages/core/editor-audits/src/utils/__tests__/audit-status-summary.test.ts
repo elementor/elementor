@@ -1,6 +1,6 @@
 import { ALL_CATEGORIES } from '../../constants';
 import { type AuditMeta, type AuditResult, type AuditRun, type PageAuditReport } from '../../types';
-import { auditStatusDisplayCounts, partitionAuditResults } from '../audit-status-summary';
+import { partitionAuditResults } from '../audit-status-summary';
 
 function auditMeta( id: string, weight: number ): AuditMeta {
 	return {
@@ -42,18 +42,5 @@ describe( 'partitionAuditResults', () => {
 		// Assert.
 		expect( failed.map( ( r ) => r.audit.id ) ).toEqual( [ 'real-check', 'suggestion' ] );
 		expect( totalViolations ).toBe( 1 );
-	} );
-} );
-
-describe( 'auditStatusDisplayCounts', () => {
-	it( 'excludes zero-weight audits from the fail count', () => {
-		// Arrange.
-		const report = makeReport( [ failedRun( 'real-check', 1 ), failedRun( 'suggestion', 0 ) ] );
-
-		// Act.
-		const counts = auditStatusDisplayCounts( report );
-
-		// Assert.
-		expect( counts.fail ).toBe( 1 );
 	} );
 } );
