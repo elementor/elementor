@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LibraryIcon, LinkIcon, UploadIcon } from '@elementor/icons';
+import { LibraryIcon, UploadIcon } from '@elementor/icons';
 import { Box, Button, Stack, styled, type SxProps, ThemeProvider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -14,7 +14,6 @@ const SPLIT_BUTTON_MIN_HEIGHT = 48;
 const SPLIT_BUTTON_CORNER_RADIUS = '12px';
 const SPLIT_BUTTON_FONT_SIZE = '14px';
 const BUTTON_TO_LABEL_GAP = 1;
-const LABEL_GAP = 1;
 
 const svgButtonSx = {
 	minWidth: 0,
@@ -45,7 +44,6 @@ type SvgMediaOverlayProps = {
 	buttonGroupRef: React.Ref< HTMLDivElement >;
 	onSelectSvg: () => void;
 	onUpload: () => void;
-	onInsertUrl: () => void;
 	onOpenIconLibrary: ( event: React.MouseEvent< HTMLElement > ) => void;
 	infotipTitle: string;
 	infotipDescription: React.ReactNode;
@@ -57,7 +55,6 @@ export const SvgMediaOverlay = ( {
 	buttonGroupRef,
 	onSelectSvg,
 	onUpload,
-	onInsertUrl,
 	onOpenIconLibrary,
 	infotipTitle,
 	infotipDescription,
@@ -92,19 +89,7 @@ export const SvgMediaOverlay = ( {
 				</Box>
 			</ConditionalControlInfotip>
 		</MediaActionGroup>
-		<Stack alignItems="center" gap={ LABEL_GAP } sx={ { mt: BUTTON_TO_LABEL_GAP } }>
-			<Button
-				color="inherit"
-				variant="text"
-				startIcon={ <LinkIcon fontSize="small" /> }
-				aria-label={ __( 'Insert URL', 'elementor' ) }
-				onClick={ onInsertUrl }
-				sx={ labelButtonSx }
-			>
-				<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
-					{ __( 'Insert URL', 'elementor' ) }
-				</Typography>
-			</Button>
+		<Stack alignItems="center" sx={ { mt: BUTTON_TO_LABEL_GAP } }>
 			{ showIconLibrary ? (
 				<Button
 					color="inherit"

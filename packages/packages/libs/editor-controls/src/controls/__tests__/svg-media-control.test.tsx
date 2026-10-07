@@ -263,19 +263,17 @@ describe( 'SvgMediaControl', () => {
 		expect( open ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should open the media frame in url mode when clicking insert url', () => {
+	it( 'should not show insert url on the svg overlay', () => {
 		// Arrange
-		const open = jest.fn();
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl />, props );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Insert URL' } ) );
+		renderControl( <SvgMediaControl showIconLibrary />, props );
 
 		// Assert
-		expect( open ).toHaveBeenCalledWith( { mode: 'url', currentUrl: undefined } );
-		expect( screen.queryByRole( 'button', { name: 'Icon library' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Insert URL' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Icon library' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should persist a font icon when one is selected from the icon library', () => {
