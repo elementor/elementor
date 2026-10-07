@@ -27,6 +27,10 @@ class Site_Flag {
 	];
 
 	public static function register(): void {
+		if ( ! Module::is_site_mcp_exposure_enabled() ) {
+			return;
+		}
+
 		add_filter( 'http_request_args', [ self::class, 'filter_notifications_request' ], 10, 2 );
 		add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );
 	}
