@@ -7,19 +7,28 @@ import { WelcomeScreen } from 'elementor/modules/agents/assets/js/admin/componen
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text ) => text,
+	sprintf: ( format, ...args ) => args.reduce( ( text, arg ) => text.replace( /%[sd]/, arg ), format ),
 } ) );
 
 jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 	activateAgentsReady: jest.fn(),
+	fetchLlmsFile: jest.fn( () => new Promise( () => {} ) ),
+	saveAgentReadySettings: jest.fn( () => Promise.resolve() ),
+	saveLlmsContent: jest.fn( () => Promise.resolve() ),
 } ) );
 
 jest.mock( '@elementor/icons', () => ( {
 	AlertCircleIcon: () => <span data-testid="alert-circle-icon" />,
+	ArchiveTemplateIcon: () => <span />,
+	ArrowsDiagonalIcon: () => <span />,
 	CircleCheckFilledIcon: () => <span data-testid="circle-check-icon" />,
 	CircleXFilledIcon: () => <span data-testid="circle-x-icon" />,
+	FileIcon: () => <span />,
 	InfoCircleIcon: () => <span data-testid="info-icon" />,
 	ChevronDownIcon: () => <span data-testid="chevron-down-icon" />,
 	ChevronUpIcon: () => <span data-testid="chevron-up-icon" />,
+	PencilIcon: () => <span />,
+	PinIcon: () => <span />,
 } ) );
 
 jest.mock( '@elementor/ui/Accordion', () => ( { children, expanded, onChange } ) => (
@@ -33,10 +42,16 @@ jest.mock( '@elementor/ui/Button', () => ( { children, onClick, loading } ) => (
 	<button type="button" onClick={ onClick } disabled={ loading }>{ children }</button>
 ) );
 jest.mock( '@elementor/ui/Chip', () => ( { label } ) => <span data-testid="chip">{ label }</span> );
+jest.mock( '@elementor/ui/Collapse', () => ( { children, in: isOpen } ) => ( isOpen ? <div>{ children }</div> : null ) );
+jest.mock( '@elementor/ui/Divider', () => () => <hr /> );
+jest.mock( '@elementor/ui/IconButton', () => ( { children, onClick } ) => (
+	<button type="button" onClick={ onClick }>{ children }</button>
+) );
 jest.mock( '@elementor/ui/Infotip', () => ( { children } ) => children );
+jest.mock( '@elementor/ui/Tooltip', () => ( { children } ) => children );
 jest.mock( '@elementor/ui/Stack', () => ( { children } ) => <div>{ children }</div> );
-jest.mock( '@elementor/ui/Switch', () => ( { checked, onChange, onClick } ) => (
-	<input type="checkbox" role="switch" checked={ checked } onChange={ onChange } onClick={ onClick } />
+jest.mock( '@elementor/ui/Switch', () => ( { checked, disabled, onChange, onClick } ) => (
+	<input type="checkbox" role="switch" checked={ checked } disabled={ disabled } onChange={ onChange } onClick={ onClick } />
 ) );
 jest.mock( '@elementor/ui/SvgIcon', () => ( { children } ) => <svg>{ children }</svg> );
 jest.mock( '@elementor/ui/Typography', () => ( { children } ) => <span>{ children }</span> );
@@ -46,7 +61,15 @@ jest.mock( '@elementor/ui', () => ( {
 	ThemeProvider: ( { children, palette } ) => <div data-testid="theme-provider" data-palette={ palette }>{ children }</div>,
 } ) );
 
-import { activateAgentsReady } from 'elementor/modules/agents/assets/js/admin/api';
+import { activateAgentsReady, saveAgentReadySettings } from 'elementor/modules/agents/assets/js/admin/api';
+
+const llmsConfig = {
+	enabled: true,
+	isManuallyEdited: false,
+	hasPhysicalFile: false,
+	fileUrl: 'https://example.com/llms.txt',
+	postTypes: [ { name: 'page', label: 'Pages', count: 2, included: true } ],
+};
 
 describe( 'Agents Ready App', () => {
 	beforeEach( () => {
@@ -72,7 +95,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'renders the three module accordions when the experiment is active', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
 
 		// Assert
 		expect( screen.getByText( 'LLMs.txt' ) ).toBeTruthy();
@@ -83,31 +106,88 @@ describe( 'Agents Ready App', () => {
 		expect( screen.queryByRole( 'button', { name: 'Activate' } ) ).toBeNull();
 	} );
 
-	it( 'updates the active count when a module is toggled off', () => {
+	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
 
 		// Assert
 		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
+			llms_txt: { enabled: false, post_types: [ 'page' ] },
+		} );
+		await waitFor( () => {
+			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
+		} );
 	} );
 
-	it( 'moves the description from an inline chip to a body heading when a module is expanded', () => {
+	it( 'rolls back the LLMs.txt toggle and shows an alert when saving fails', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } /> );
+		saveAgentReadySettings.mockRejectedValueOnce( null );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
 
-		// Assert - all three modules start collapsed with an inline description chip
-		expect( screen.getAllByTestId( 'chip' ) ).toHaveLength( 3 );
+		// Act
+		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'Something went wrong. Please try again.' ) ).toBeTruthy();
+			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
+		} );
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
+	} );
+
+	it( 'disables the LLMs.txt switch while settings are saving', async () => {
+		// Arrange
+		let resolveSave;
+		saveAgentReadySettings.mockImplementationOnce( () => new Promise( ( resolve ) => {
+			resolveSave = resolve;
+		} ) );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
+
+		// Assert
+		expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( true );
+
+		resolveSave();
+
+		await waitFor( () => {
+			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
+		} );
+	} );
+
+	it( 'locks the LLMs.txt switch off when a physical file exists', () => {
+		// Arrange & Act
+		render( <App isExperimentActive={ true } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } /> );
+
+		// Assert
+		const [ llmsSwitch ] = screen.getAllByRole( 'switch' );
+		expect( llmsSwitch.checked ).toBe( false );
+		expect( llmsSwitch.disabled ).toBe( true );
+		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+	} );
+
+	it( 'replaces the inline description with the panel when a module is expanded', () => {
+		// Arrange
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+
+		// Assert - all three modules start collapsed with an inline description
 		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
+		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
+		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
 
 		// Act
 		fireEvent.click( screen.getByText( 'LLMs.txt' ) );
 
-		// Assert - expanding removes that module's chip and shows the description as the body heading instead
-		expect( screen.getAllByTestId( 'chip' ) ).toHaveLength( 2 );
-		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
+		// Assert
+		expect( screen.queryByText( 'Guide AI agents through your site' ) ).toBeNull();
+		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
+		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
 	} );
 
 	it( 'keeps the welcome screen when activation fails', async () => {
