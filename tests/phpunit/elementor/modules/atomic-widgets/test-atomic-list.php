@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
 use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -71,6 +72,13 @@ class Test_Atomic_List extends Elementor_Test_Base {
 		$this->assertIsArray( $editor_inline_styles );
 		$this->assertNotContains( $removed_rule, $frontend_inline_styles );
 		$this->assertNotContains( $removed_rule, $editor_inline_styles );
+
+		$marker_size_rule = '.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }';
+		$frontend_css = implode( '', $frontend_inline_styles );
+		$editor_css = implode( '', $editor_inline_styles );
+
+		$this->assertStringContainsString( $marker_size_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_size_rule, $editor_css );
 
 		wp_deregister_style( 'elementor-frontend' );
 		wp_deregister_style( 'elementor-editor' );

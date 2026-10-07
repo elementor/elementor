@@ -2,13 +2,13 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -24,7 +24,13 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'A locked marker slot for a list item.';
+	const MARKER_SVG_SIZE = '1em';
+
+	const ICON_LIBRARY = 'fa-solid';
+
+	const ICON_NAME = 'circle';
+
+	public static $widget_description = 'A locked marker slot for a list item. Holds an e-svg bullet by default; the SVG can be replaced.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -98,10 +104,12 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Atomic_Paragraph::generate()
+			Atomic_Svg::generate()
 				->settings( [
-					'tag' => String_Prop_Type::generate( 'span' ),
-					'paragraph' => Escaped_Html_Prop_Type::generate( '&bull;' ),
+					'svg' => Icon_Prop_Type::generate( [
+						'value' => String_Prop_Type::generate( self::ICON_LIBRARY . ' fa-' . self::ICON_NAME ),
+						'library' => String_Prop_Type::generate( self::ICON_LIBRARY ),
+					] ),
 				] )
 				->build(),
 		];
