@@ -80,7 +80,11 @@ class Test_Atomic_List extends Elementor_Test_Base {
 		$this->assertStringContainsString( $marker_size_rule, $frontend_css );
 		$this->assertStringContainsString( $marker_size_rule, $editor_css );
 
+		$marker_svg_shrink_rule = ':where(.e-list-item-marker-base) .e-svg-base { flex-shrink: 0; }';
 		$marker_svg_alignment_rule = '.e-list-item-marker-base .e-svg-base svg { display: block; }';
+
+		$this->assertStringContainsString( $marker_svg_shrink_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_svg_shrink_rule, $editor_css );
 
 		$this->assertStringContainsString( $marker_svg_alignment_rule, $frontend_css );
 		$this->assertStringContainsString( $marker_svg_alignment_rule, $editor_css );

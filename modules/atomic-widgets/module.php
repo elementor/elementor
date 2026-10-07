@@ -722,7 +722,9 @@ class Module extends BaseModule {
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
 			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
-			// An inline svg sits on the text baseline of a full line box, which pushes it below its 0.6em wrapper.
+			// The marker is a flex item and shrinks the icon (about 19.7px wide for a 21px font). :where() stays under the SVG's own styles.
+			':where(.e-list-item-marker-base) .e-svg-base { flex-shrink: 0; }',
+			// The inner svg is inline, so any box shorter than the line — the 0.6em default, or a smaller Width/Height the user sets — sits on the text baseline and drops below the slot.
 			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
