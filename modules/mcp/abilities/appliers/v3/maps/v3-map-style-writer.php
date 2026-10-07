@@ -65,7 +65,11 @@ class V3_Map_Style_Writer {
 			$prop_bindings = $this->bindings_for( $bindings, (string) $prop, $state );
 
 			if ( empty( $prop_bindings ) ) {
-				$ctx->warn( self::unsupported_property_message( (string) $prop ) );
+				$bound_states = $this->states_bound_for( $bindings, (string) $prop );
+				$message = empty( $bound_states )
+					? self::unsupported_property_message( (string) $prop )
+					: self::state_only_property_message( (string) $prop, $bound_states );
+				$ctx->warn( $message );
 				continue;
 			}
 
@@ -88,6 +92,39 @@ class V3_Map_Style_Writer {
 			__( 'CSS property %s is not supported by this Elementor widget and was skipped.', 'elementor' ),
 			$property
 		);
+	}
+
+	/**
+	 * @param string   $property
+	 * @param string[] $states
+	 */
+	private static function state_only_property_message( string $property, array $states ): string {
+		$selectors = array_map( fn( string $state ) => Style_Target::DEFAULT_STATE === $state ? 'default' : ':' . $state, $states );
+		$example = Style_Target::DEFAULT_STATE === $states[0] ? '<target> { }' : '<target>:' . $states[0] . ' { }';
+
+		return sprintf(
+			/* translators: 1: CSS property name, 2: Comma-separated states, 3: Example CSS block */
+			__( 'CSS property %1$s is only supported in the %2$s state of this style target. Move it into a `%3$s` block.', 'elementor' ),
+			$property,
+			implode( ', ', $selectors ),
+			$example
+		);
+	}
+
+	/**
+	 * @param Compiled_Style_Binding[] $bindings
+	 * @return string[]
+	 */
+	private function states_bound_for( array $bindings, string $prop ): array {
+		$states = [];
+
+		foreach ( $bindings as $binding ) {
+			if ( $prop === $binding->get_prop() ) {
+				$states[] = $binding->get_state();
+			}
+		}
+
+		return array_values( array_unique( $states ) );
 	}
 
 	/**

@@ -66,7 +66,24 @@ class Test_V3_Map_Style_Writer extends TestCase {
 			->get_style_bindings();
 	}
 
+	private function hover_only_bindings(): array {
+		$map = V3_Widget_Map::make( 'pointer-widget' )
+			->description( 'Widget with a hover-only pointer.' )
+			->default_target(
+				Style_Target::make( 'pointer' )
+					->bind( 'color', V3_Control::bind_to( 'title_hover_color' ), self::HOVER )
+			);
+
+		return ( new V3_Widget_Map_Compiler() )
+			->compile( $map, $this->controls(), new V3_Map_Diagnostics(), 'pointer-widget' )
+			->get_style_bindings();
+	}
+
 	private function write( string $css, string $breakpoint = self::DESKTOP, ?string $state = null ): V3_Conversion_Context {
+		return $this->write_bindings( $this->bindings(), $css, $breakpoint, $state );
+	}
+
+	private function write_bindings( array $bindings, string $css, string $breakpoint = self::DESKTOP, ?string $state = null ): V3_Conversion_Context {
 		$writer = new V3_Map_Style_Writer(
 			new Css_Converter( Converter_Registry_Factory::create( null ), new Null_Failure_Reporter(), Expander_Registry_Factory::create( null ) ),
 			V3_Control_Adapter_Registry::create_default(),
@@ -81,7 +98,7 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		);
 		$ctx = new V3_Conversion_Context();
 
-		$writer->write( $ctx, $this->bindings(), $this->controls(), $breakpoint, $state, $css );
+		$writer->write( $ctx, $bindings, $this->controls(), $breakpoint, $state, $css );
 
 		return $ctx;
 	}
@@ -191,6 +208,21 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		$this->assertSame( [ 'title_color' => '#111' ], $ctx->settings_patch() );
 		$this->assertCount( 1, $ctx->warnings() );
 		$this->assertStringContainsString( 'letter-spacing', $ctx->warnings()[0] );
+	}
+
+	public function test_write__names_the_states_a_state_only_property_is_bound_in() {
+		// Arrange.
+		$bindings = $this->hover_only_bindings();
+
+		// Act.
+		$ctx = $this->write_bindings( $bindings, 'color: #111;' );
+
+		// Assert.
+		$this->assertSame( [], $ctx->settings_patch() );
+		$this->assertSame(
+			[ 'CSS property color is only supported in the :hover state of this style target. Move it into a `<target>:hover { }` block.' ],
+			$ctx->warnings()
+		);
 	}
 
 	public function test_write__warns_for_css_the_converter_cannot_read() {
