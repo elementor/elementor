@@ -143,30 +143,14 @@ describe( 'list-items-control actions', () => {
 		// Assert.
 		const model = getCreatedItemModel();
 		const [ marker, content ] = model.elements ?? [];
-		const markerChild = marker?.elements?.[ 0 ];
 		const paragraph = content?.elements?.[ 0 ];
 
 		expect( marker ).toEqual(
 			expect.objectContaining( {
 				elType: 'e-list-item-marker',
 				editor_settings: { title: 'Marker' },
-			} )
-		);
-		expect( markerChild ).toEqual(
-			expect.objectContaining( {
-				elType: 'widget',
-				widgetType: 'e-paragraph',
 				elements: [],
-				settings: {
-					tag: {
-						$$type: 'string',
-						value: 'span',
-					},
-					paragraph: {
-						$$type: 'escaped-html',
-						value: '&bull;',
-					},
-				},
+				hydrateDefaultChildren: true,
 			} )
 		);
 		expect( content ).toEqual(
@@ -213,8 +197,8 @@ describe( 'list-items-control actions', () => {
 
 		collectIds( getCreatedItemModel() );
 
-		expect( ids ).toHaveLength( 5 );
-		expect( new Set( ids ).size ).toBe( 5 );
+		expect( ids ).toHaveLength( 4 );
+		expect( new Set( ids ).size ).toBe( 4 );
 	} );
 
 	it( 'duplicates the selected list item subtree', () => {

@@ -99,29 +99,17 @@ class Test_Atomic_List_Item extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_marker_slot_default_children_seed_list_marker_paragraph(): void {
+	public function test_marker_slot_default_children_seed_list_marker_svg(): void {
 		$children = $this->get_config( Atomic_List_Item_Marker::get_element_type() )['default_children'];
 
 		$this->assertCount( 1, $children );
-		$paragraph = $children[0];
+		$svg = $children[0];
 
-		$this->assertSame( 'widget', $paragraph['elType'] );
-		$this->assertSame( 'e-paragraph', $paragraph['widgetType'] );
-		$this->assertSame(
-			[
-				'$$type' => 'string',
-				'value' => 'span',
-			],
-			$paragraph['settings']['tag']
-		);
-
-		$this->assertSame(
-			[
-				'$$type' => 'escaped-html',
-				'value' => '&bull;',
-			],
-			$paragraph['settings']['paragraph']
-		);
+		$this->assertSame( 'widget', $svg['elType'] );
+		$this->assertSame( 'e-svg', $svg['widgetType'] );
+		$this->assertSame( 'icon', $svg['settings']['svg']['$$type'] );
+		$this->assertSame( 'fa-solid fa-circle', $svg['settings']['svg']['value']['value']['value'] );
+		$this->assertSame( 'fa-solid', $svg['settings']['svg']['value']['library']['value'] );
 	}
 
 	public function test_marker_children_dependency_stashes_marker_when_hidden(): void {
