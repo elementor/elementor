@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
+use Elementor\Widget_Base;
 use Elementor\Widget_Common_Base;
 use WP_Error;
 
@@ -22,6 +23,8 @@ class V3_Widget_Map_Registry {
 	const REGISTERED_MAPS_FILE = __DIR__ . '/registered-maps.php';
 
 	const DIAGNOSTICS_LOG_MESSAGE = 'V3 widget map entries were dropped while compiling against the registered controls.';
+
+	const COMMON_WIDGET_TYPE = 'common';
 
 	/**
 	 * @var self|null
@@ -124,11 +127,36 @@ class V3_Widget_Map_Registry {
 
 				$stack = $source->get_stack( false );
 
-				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
+				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] ) + self::advanced_tab_controls( $source );
 			},
 			$maps ?? self::load_map_files(),
-			static fn( string $widget_type ): bool => Plugin::$instance->widgets_manager->get_widget_types( $widget_type ) instanceof Widget_Common_Base
+			static fn( string $widget_type ): bool => self::has_advanced_tab( Plugin::$instance->widgets_manager->get_widget_types( $widget_type ) )
 		);
+	}
+
+	/**
+	 * Every widget except the common widget itself renders the common widget's Advanced tab.
+	 *
+	 * @param mixed $source
+	 */
+	private static function has_advanced_tab( $source ): bool {
+		return $source instanceof Widget_Base && ! $source instanceof Widget_Common_Base;
+	}
+
+	/**
+	 * `get_stack( false )` leaves out the shared Advanced tab, so its controls are read from the common widget.
+	 *
+	 * @param mixed $source
+	 * @return array<string, mixed>
+	 */
+	private static function advanced_tab_controls( $source ): array {
+		if ( ! self::has_advanced_tab( $source ) ) {
+			return [];
+		}
+
+		$common_widget = Plugin::$instance->widgets_manager->get_widget_types( self::COMMON_WIDGET_TYPE );
+
+		return $common_widget instanceof Widget_Common_Base ? $common_widget->get_controls() : [];
 	}
 
 	/**
