@@ -13,7 +13,7 @@ const UPLOAD_AREA_WIDTH = 64;
 const SPLIT_BUTTON_MIN_HEIGHT = 48;
 const SPLIT_BUTTON_CORNER_RADIUS = '12px';
 const SPLIT_BUTTON_FONT_SIZE = '14px';
-const BUTTON_TO_LABEL_GAP = 3;
+const BUTTON_TO_LABEL_GAP = 1;
 const LABEL_GAP = 1;
 
 const svgButtonSx = {
