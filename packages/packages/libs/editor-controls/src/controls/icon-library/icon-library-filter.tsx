@@ -22,7 +22,7 @@ import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip'
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
-const FILTER_INDICATOR_OFFSET = 4;
+const FILTER_INDICATOR_CORNER_OFFSET = -( FILTER_INDICATOR_SIZE / 2 );
 const FILTER_TYPE_ALL = 'all';
 const FILTER_TYPE_GROUP = 'group';
 const FILTER_TYPE_ITEM = 'item';
@@ -86,7 +86,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 					value="filter"
 					size="tiny"
 					selected={ popupState.isOpen }
-					sx={ { position: 'relative', flexShrink: 0 } }
+					sx={ { position: 'relative', flexShrink: 0, overflow: 'visible' } }
 					{ ...bindToggle( popupState ) }
 					aria-expanded={ popupState.isOpen }
 				>
@@ -97,12 +97,12 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 							aria-hidden="true"
 							sx={ {
 								position: 'absolute',
-								insetBlockStart: FILTER_INDICATOR_OFFSET,
-								insetInlineEnd: FILTER_INDICATOR_OFFSET,
+								insetBlockStart: FILTER_INDICATOR_CORNER_OFFSET,
+								insetInlineEnd: FILTER_INDICATOR_CORNER_OFFSET,
 								width: FILTER_INDICATOR_SIZE,
 								height: FILTER_INDICATOR_SIZE,
 								borderRadius: '50%',
-								bgcolor: 'secondary.main',
+								bgcolor: 'text.primary',
 							} }
 						/>
 					) : null }

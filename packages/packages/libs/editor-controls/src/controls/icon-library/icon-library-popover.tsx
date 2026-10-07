@@ -29,22 +29,25 @@ import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
 export const ICON_LIBRARY_POPOVER_WIDTH = 300;
-export const ICON_LIBRARY_ROW_HEIGHT = 48;
 export const ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY = 300;
 export const ICON_LIBRARY_VIEW_STORAGE_KEY = 'icon-library-view';
 export const ICON_LIBRARY_VIEW_STORAGE_PREFIX = 'editor-controls';
-const DEFAULT_ICON_LIBRARY_VIEW: IconLibraryView = 'list';
+const DEFAULT_ICON_LIBRARY_VIEW: IconLibraryView = 'grid';
 
 const isIconLibraryView = ( value: unknown ): value is IconLibraryView => {
 	return value === 'grid' || value === 'list';
 };
 const ICON_TILE_SIZE = 40;
+const ICON_LIBRARY_ROW_VERTICAL_PADDING_PX = 8;
+export const ICON_LIBRARY_ROW_HEIGHT = ICON_TILE_SIZE + ICON_LIBRARY_ROW_VERTICAL_PADDING_PX * 2;
 const ICON_GLYPH_SIZE = 20;
-const ICON_LIBRARY_INLINE_SPACING = 1;
+const ICON_LIBRARY_INLINE_SPACING = 1.5;
+const ICON_LIBRARY_CORNER_RADIUS = 2;
+const ICON_LIBRARY_TITLE_SIZE = '14px';
 
 const CompactIconLibraryMenuList = styled( StyledMenuList )( ( { theme } ) => ( {
 	'& > [role="option"]': {
-		padding: theme.spacing( 0.75, ICON_LIBRARY_INLINE_SPACING ),
+		padding: theme.spacing( 1, ICON_LIBRARY_INLINE_SPACING ),
 	},
 } ) );
 
@@ -123,7 +126,11 @@ export const IconLibraryPopover = ( {
 				onClose={ handleClose }
 				icon={ <ComponentsIcon fontSize="tiny" /> }
 				actions={ [ <IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } /> ] }
-				sx={ { pl: ICON_LIBRARY_INLINE_SPACING, pr: 0.5 } }
+				sx={ {
+					pl: ICON_LIBRARY_INLINE_SPACING,
+					pr: 1,
+					'& .MuiTypography-subtitle2': { fontSize: ICON_LIBRARY_TITLE_SIZE },
+				} }
 			/>
 			<Stack direction="row" alignItems="center" gap={ 1 } sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: 1 } }>
 				<SearchField
@@ -131,7 +138,12 @@ export const IconLibraryPopover = ( {
 					onSearch={ handleSearchChange }
 					placeholder={ __( 'Search', 'elementor' ) }
 					id="icon-library-search"
-					sx={ { flex: 1, px: 0, pb: 0 } }
+					sx={ {
+						flex: 1,
+						px: 0,
+						pb: 0,
+						'& .MuiOutlinedInput-root': { borderRadius: ICON_LIBRARY_CORNER_RADIUS },
+					} }
 				/>
 				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
 			</Stack>
@@ -253,7 +265,7 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					justifyContent: 'center',
 					border: 1,
 					borderColor: 'divider',
-					borderRadius: 1,
+					borderRadius: ICON_LIBRARY_CORNER_RADIUS,
 					color: 'text.tertiary',
 					flexShrink: 0,
 				} }

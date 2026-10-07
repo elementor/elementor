@@ -14,7 +14,8 @@ export const ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY = 1000;
 const ICON_GLYPH_SIZE = 20;
 const GRID_OVERSCAN = 6;
 const GRID_COLUMN_GAP = 1;
-const GRID_HORIZONTAL_PADDING = 1;
+const GRID_HORIZONTAL_PADDING = 1.5;
+const GRID_CELL_CORNER_RADIUS = 2;
 const HOME_END_KEYS = new Set( [ 'Home', 'End' ] );
 
 const getGridMetrics = ( containerWidth: number, columnGap: number, inlinePadding: number ) => {
@@ -302,7 +303,7 @@ export const IconLibraryGrid = ( {
 														justifyContent: 'center',
 														border: '1px solid',
 														borderColor: 'divider',
-														borderRadius: 1,
+														borderRadius: GRID_CELL_CORNER_RADIUS,
 														color: 'text.tertiary',
 														bgcolor: 'transparent',
 														p: 0,
