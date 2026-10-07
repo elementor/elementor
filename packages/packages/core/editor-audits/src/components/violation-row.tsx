@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getElementIcon, getElementTitle } from '@elementor/editor-elements';
 import { useFloatingPanelZIndex } from '@elementor/editor-floating-panels';
-import { CheckIcon, ChevronDownIcon, HelpIcon, InfoCircleIcon, WandIcon } from '@elementor/icons';
+import { CheckIcon, ChevronDownIcon, HelpIcon, InfoCircleIcon } from '@elementor/icons';
 import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -51,35 +51,67 @@ function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violati
 	return <CheckIcon fontSize="small" color="success" />;
 }
 
-function GuidanceAction( { violation }: { violation: AuditViolation } ) {
+function GuidanceAction( {
+	violation,
+	sharedAngiePrompt,
+	panelZIndex,
+}: {
+	violation: AuditViolation;
+	sharedAngiePrompt?: string;
+	panelZIndex: number;
+} ) {
 	const hasPrimaryCta = !! ( violation.ctaLabel && violation.externalUrl );
 
-	if ( ! hasPrimaryCta ) {
+	if ( ! hasPrimaryCta && ! sharedAngiePrompt ) {
 		return null;
 	}
 
 	return (
 		<Box display="flex" alignItems="center" gap={ 1 } mt={ 1 }>
-			<ViolationCtaButton
-				ctaLabel={ violation.ctaLabel as string }
-				externalUrl={ violation.externalUrl as string }
-				withIcon
-			/>
-			{ violation.secondaryCtaLabel && violation.secondaryCtaUrl && (
+			{ hasPrimaryCta && (
+				<ViolationCtaButton
+					ctaLabel={ violation.ctaLabel as string }
+					externalUrl={ violation.externalUrl as string }
+					withIcon
+				/>
+			) }
+			{ hasPrimaryCta && violation.secondaryCtaLabel && violation.secondaryCtaUrl && (
 				<ViolationCtaButton
 					ctaLabel={ violation.secondaryCtaLabel }
 					externalUrl={ violation.secondaryCtaUrl }
 					variant="text"
 				/>
 			) }
+			{ sharedAngiePrompt && (
+				<FixViolationWithAngie prompt={ sharedAngiePrompt } panelZIndex={ panelZIndex } variant="button" />
+			) }
 		</Box>
 	);
+}
+
+function getSharedAngiePrompt( violations?: AuditViolation[] ): string | undefined {
+	if ( ! violations || violations.length < 2 ) {
+		return undefined;
+	}
+
+	const [ first, ...rest ] = violations;
+
+	if ( ! first.angieFix || ! first.angiePrompt ) {
+		return undefined;
+	}
+
+	const allShareTheSameFix = rest.every(
+		( violation ) => violation.angieFix && violation.angiePrompt === first.angiePrompt
+	);
+
+	return allShareTheSameFix ? first.angiePrompt : undefined;
 }
 
 export default function ViolationRow( { audit, expanded, onToggleExpand, skipReason, violations }: Props ) {
 	const primaryViolation = violations?.[ 0 ];
 	const isGuidanceFocusable = !! primaryViolation;
 	const panelZIndex = useFloatingPanelZIndex( AUDIT_PANEL_ID );
+	const sharedAngiePrompt = getSharedAngiePrompt( violations );
 
 	const handleGuidanceClick = () => {
 		if ( isGuidanceFocusable && primaryViolation ) {
@@ -136,7 +168,13 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 							<Typography variant="caption" component="p" color="text.secondary">
 								{ audit.description }
 							</Typography>
-							{ primaryViolation && <GuidanceAction violation={ primaryViolation } /> }
+							{ primaryViolation && (
+								<GuidanceAction
+									violation={ primaryViolation }
+									sharedAngiePrompt={ sharedAngiePrompt }
+									panelZIndex={ panelZIndex }
+								/>
+							) }
 						</Alert>
 					</Tooltip>
 				</Box>
@@ -145,9 +183,11 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 						{ violations.map( ( violation, idx ) => {
 							const widgetIcon = violation.elementId ? getElementIcon( violation.elementId ) : null;
 							const elementTitle = violation.elementId ? getElementTitle( violation.elementId ) : null;
-							const rowLabel = elementTitle
+							const displayLabel = elementTitle ?? violation.label;
+							const angiePromptContext = elementTitle
 								? `${ elementTitle } - ${ violation.label }`
 								: violation.label;
+							const showsOwnFixAction = !! violation.angieFix && ! sharedAngiePrompt;
 
 							return (
 								<Box
@@ -165,24 +205,32 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 										borderRadius: 1,
 										cursor: 'pointer',
 										'&:hover': { bgcolor: 'action.hover' },
+										'&:hover .violation-row-fix-action, &:focus-within .violation-row-fix-action': {
+											opacity: 1,
+										},
 									} }
 								>
 									<ViolationIcon violation={ violation } widgetIcon={ widgetIcon } />
 									<Box sx={ { flex: 1 } }>
-										<Typography variant="caption">{ rowLabel }</Typography>
+										<Typography variant="caption">{ displayLabel }</Typography>
 										{ violation.detail && (
 											<Typography variant="caption" color="text.secondary">
 												{ violation.detail }
 											</Typography>
 										) }
 									</Box>
-									{ violation.angieFix ? (
-										<FixViolationWithAngie
-											prompt={ violation.angiePrompt ?? buildAngiePrompt( rowLabel ) }
-											panelZIndex={ panelZIndex }
-										/>
-									) : (
-										<WandIcon fontSize="tiny" aria-hidden={ true } />
+									{ showsOwnFixAction && (
+										<Box
+											className="violation-row-fix-action"
+											sx={ { opacity: 0, transition: 'opacity .15s' } }
+										>
+											<FixViolationWithAngie
+												prompt={
+													violation.angiePrompt ?? buildAngiePrompt( angiePromptContext )
+												}
+												panelZIndex={ panelZIndex }
+											/>
+										</Box>
 									) }
 								</Box>
 							);

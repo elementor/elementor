@@ -28,6 +28,7 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	ally_accessibility_statement_url:
 		'https://example.com/wp-admin/admin.php?page=accessibility-settings#accessibilityStatement',
 	ally_widget_settings_url: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#capabilities',
+	ally_scan_url: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#scans',
 	cookiez_plugin_active: true,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez',
 	cookiez_plugin_installed: true,
@@ -37,6 +38,7 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	image_optimization_plugin_active: true,
 	image_optimization_plugin_url:
 		'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization',
+	image_optimization_settings_url: 'https://example.com/wp-admin/admin.php?page=image-optimization-settings',
 	frontend_url: 'https://example.com/hello',
 };
 

@@ -35,9 +35,28 @@ describe( audit.id, () => {
 			expect( result.violations[ 0 ].elementId ).toBe( 'i1' );
 			expect( result.metadata?.missingAltImageCount ).toBe( 1 );
 			expect( result.violations[ 0 ].externalUrl ).toBe(
-				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility'
+				'https://example.com/wp-admin/admin.php?page=accessibility-settings#scans'
 			);
 			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Fix with Ally' );
+		}
+	} );
+
+	it( 'points to the Ally plugin install URL when Ally is not active', async () => {
+		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
+		const pageContext = {
+			image_sizes: { '1:full': imageSizeWithAlt( 1, '' ) },
+			ally_plugin_active: false,
+			ally_plugin_url:
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility',
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility'
+			);
 		}
 	} );
 

@@ -20,7 +20,11 @@ type Props = {
 	severity: AuditSeverity;
 };
 
+const INFO_ICON_VERTICAL_NUDGE = 'translateY(-2px)';
+
 export default function SeverityIcon( { severity }: Props ) {
 	const { Icon, color } = SEVERITY_CONFIG[ severity ];
-	return <Icon fontSize="small" color={ color } />;
+	const sx = 'info' === severity ? { transform: INFO_ICON_VERTICAL_NUDGE } : undefined;
+
+	return <Icon fontSize="small" color={ color } sx={ sx } />;
 }
