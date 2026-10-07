@@ -14,8 +14,7 @@ const openIconLibrary = async ( page, svgControl, popover ) => {
 	await expect( popover ).toBeVisible();
 };
 
-// To be fixed in ED-25581
-test.describe.skip( 'Atomic SVG icon library @v4-tests', () => {
+test.describe( 'Atomic SVG icon library @v4-tests', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_svg_library' );
 	} );
