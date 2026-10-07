@@ -85,18 +85,20 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		await marker.hover();
 
 		const svgBox = await svg.boundingBox();
-		const handleBox = await marker.locator( '.elementor-editor-element-settings' ).boundingBox();
+		const handleBox = await marker.locator( ':scope > .elementor-element-overlay > .elementor-editor-element-settings' ).boundingBox();
 
-		// The handle used to cover the icon. It now sits above the slot.
+		// The handle used to cover the icon. It now sits beside the marker.
 		expect( svgBox ).not.toBeNull();
 		expect( handleBox ).not.toBeNull();
-		expect( handleBox.y + handleBox.height ).toBeLessThanOrEqual( svgBox.y + 1 );
+		expect( handleBox.x + handleBox.width ).toBeLessThanOrEqual( svgBox.x + 1 );
 
 		// Act.
 		await svg.click();
 
 		// Assert.
-		await expect( svg ).toHaveClass( /elementor-element-editable/ );
+		const svgElement = svg.locator( 'xpath=ancestor-or-self::*[@data-id][1]' );
+
+		await expect( svgElement ).toHaveClass( /elementor-element-editable/ );
 		await expect( getListRoot( listId ) ).not.toHaveClass( /elementor-element-editable/ );
 	} );
 

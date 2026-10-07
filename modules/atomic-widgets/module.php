@@ -227,6 +227,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
 		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/preview/enqueue_styles', fn () => $this->add_preview_inline_styles() );
 		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
@@ -728,11 +729,17 @@ class Module extends BaseModule {
 			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
-		// The marker is an inner container, whose handle rule (top: 0; transform: none) outranks a single class. Match that and park the handle above the slot.
-		$editor_only_css = '.e-list-item-marker-base.e-con.e-child > .elementor-element-overlay > .elementor-editor-element-settings { top: auto; bottom: 100%; transform: none; }';
 
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
-		wp_add_inline_style( 'elementor-editor', $inline_css . $editor_only_css );
+		wp_add_inline_style( 'elementor-editor', $inline_css );
+	}
+
+	private function add_preview_inline_styles() {
+		// The marker handle covers its icon, so a canvas click selects the list instead of the SVG. Move it beside the marker. Above would cover the previous item's marker.
+		wp_add_inline_style(
+			'editor-preview',
+			'.e-list-item > .e-list-item__marker.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 100%; }'
+		);
 	}
 
 	private function enqueue_promotion_styles() {
