@@ -12,7 +12,6 @@ use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\FloatingButtons\Module;
-use Elementor\Modules\Mcp\Site_Flag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -291,10 +290,6 @@ class Frontend extends App {
 	 */
 	public function body_class( $classes = [] ) {
 		$classes = array_merge( $classes, $this->body_classes );
-
-		if ( Site_Flag::is_set() ) {
-			$classes[] = Site_Flag::BODY_CLASS;
-		}
 
 		$id = get_the_ID();
 

@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Site_Flag {
 
 	const OPTION_NAME = 'elementor_mcp_used';
-	const BODY_CLASS = 'elementor-mcp';
 	const NOTIFICATIONS_QUERY_KEY = 'mcp';
 	const NOTIFICATIONS_HOST = 'my.elementor.com';
 	const NOTIFICATIONS_PATH = '/api/v1/notifications';
