@@ -46,7 +46,7 @@ class Import extends Import_Runner_Base {
 			return (bool) $data['customization']['settings']['defaultStyles'];
 		}
 
-		return false;
+		return true;
 	}
 
 	public function import( array $data, array $imported_data ): array {
