@@ -88,29 +88,12 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 			"add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );",
 			$source
 		);
-		$this->assertStringContainsString(
-			"add_action( 'template_redirect', [ self::class, 'maybe_refresh_notifications' ] );",
+		$this->assertStringNotContainsString(
+			'template_redirect',
 			$source
 		);
-	}
-
-	public function test_maybe_refresh_notifications__skips_admin() {
-		// Arrange
-		$source = file_get_contents(
-			dirname( __DIR__, 5 ) . '/modules/mcp/site-flag.php'
-		);
-
-		// Act / Assert
-		$this->assertStringContainsString(
-			'if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {',
-			$source
-		);
-		$this->assertStringContainsString(
-			'Elementor\\WPNotificationsPackage\\V120\\Notifications',
-			$source
-		);
-		$this->assertStringContainsString(
-			'$notifications->refresh_notifications();',
+		$this->assertStringNotContainsString(
+			'maybe_refresh_notifications',
 			$source
 		);
 	}
