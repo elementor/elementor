@@ -61,6 +61,21 @@ class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 		$this->assertSame( $input, $output );
 	}
 
+	public function test_add_rules__strips_existing_block_when_module_is_disabled() {
+		// Arrange
+		$handler = new Robots_Txt_Handler( $this->settings );
+		$core    = "User-agent: *\nDisallow: /wp-admin/\n";
+		$input   = $handler->add_rules( $core, true );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL, 'enabled', false );
+
+		// Act
+		$output = $handler->add_rules( $input, true );
+
+		// Assert
+		$this->assertSame( $core, $output );
+		$this->assertStringNotContainsString( Robots_Txt_Handler::BLOCK_BEGIN, $output );
+	}
+
 	public function test_add_rules__writes_content_signal_per_managed_bot() {
 		// Arrange
 		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL, 'bots', [
@@ -103,6 +118,20 @@ class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( $input, $output );
+		$this->assertStringNotContainsString( Robots_Txt_Handler::BLOCK_BEGIN, $output );
+	}
+
+	public function test_add_rules__strips_existing_block_when_site_is_not_public() {
+		// Arrange
+		$handler = new Robots_Txt_Handler( $this->settings );
+		$core    = "User-agent: *\nDisallow: /\n";
+		$input   = $handler->add_rules( $core, true );
+
+		// Act
+		$output = $handler->add_rules( $input, false );
+
+		// Assert
+		$this->assertSame( $core, $output );
 		$this->assertStringNotContainsString( Robots_Txt_Handler::BLOCK_BEGIN, $output );
 	}
 

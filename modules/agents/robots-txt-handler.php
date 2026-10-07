@@ -74,7 +74,7 @@ class Robots_Txt_Handler {
 	}
 
 	/**
-	 * Append (or replace) the Elementor Agent Ready block in the robots.txt output.
+	 * Append, replace, or remove the Elementor Agent Ready block in the robots.txt output.
 	 *
 	 * @param string $output Robots.txt content built by WordPress so far.
 	 * @param bool   $public Whether the site is public (discourage search engines is off).
@@ -82,7 +82,7 @@ class Robots_Txt_Handler {
 	 */
 	public function add_rules( string $output, bool $public ): string {
 		if ( ! $public || ! $this->settings->is_bot_access_enabled() ) {
-			return $output;
+			return $this->strip_block( $output );
 		}
 
 		$block = $this->build_block();
@@ -118,6 +118,17 @@ class Robots_Txt_Handler {
 		return [
 			'physical_file_exists' => $this->physical_file_exists,
 		];
+	}
+
+	private function strip_block( string $output ): string {
+		if ( false === strpos( $output, self::BLOCK_BEGIN ) ) {
+			return $output;
+		}
+
+		$pattern  = '/\n*' . preg_quote( self::BLOCK_BEGIN, '/' ) . '.*?' . preg_quote( self::BLOCK_END, '/' ) . '\n*/s';
+		$stripped = preg_replace( $pattern, "\n", $output );
+
+		return is_string( $stripped ) ? $stripped : $output;
 	}
 
 	private function build_block(): string {
