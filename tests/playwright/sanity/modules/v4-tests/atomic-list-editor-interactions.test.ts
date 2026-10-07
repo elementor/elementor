@@ -79,18 +79,23 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 	test( 'Clicking the marker icon selects the SVG', async () => {
 		// Arrange.
 		const listId = await editor.addElement( { elType: listType }, 'document' );
-		const marker = getListRoot( listId ).locator( '.e-list-item__marker' ).first();
+		const listItem = getListRoot( listId ).locator( '.e-list-item' ).first();
+		const marker = listItem.locator( '.e-list-item__marker' );
 		const svg = marker.locator( '.e-svg-base' );
+		const ownHandle = ':scope > .elementor-element-overlay > .elementor-editor-element-settings';
 
 		await marker.hover();
 
 		const svgBox = await svg.boundingBox();
-		const handleBox = await marker.locator( ':scope > .elementor-element-overlay > .elementor-editor-element-settings' ).boundingBox();
+		const markerHandleBox = await marker.locator( ownHandle ).boundingBox();
+		const itemHandleBox = await listItem.locator( ownHandle ).boundingBox();
 
-		// The handle used to cover the icon. It now sits beside the marker.
+		// Both handles used to cover the icon. The marker handle now sits beside the marker, and the item handle at the item's far end.
 		expect( svgBox ).not.toBeNull();
-		expect( handleBox ).not.toBeNull();
-		expect( handleBox.x + handleBox.width ).toBeLessThanOrEqual( svgBox.x + 1 );
+		expect( markerHandleBox ).not.toBeNull();
+		expect( itemHandleBox ).not.toBeNull();
+		expect( markerHandleBox.x + markerHandleBox.width ).toBeLessThanOrEqual( svgBox.x + 1 );
+		expect( itemHandleBox.x ).toBeGreaterThanOrEqual( svgBox.x + svgBox.width );
 
 		// Act.
 		await svg.click();

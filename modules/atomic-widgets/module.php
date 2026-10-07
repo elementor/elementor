@@ -735,10 +735,12 @@ class Module extends BaseModule {
 	}
 
 	private function add_preview_inline_styles() {
-		// The marker handle covers its icon, so a canvas click selects the list instead of the SVG. Move it beside the marker. Above would cover the previous item's marker.
+		// The marker and list item handles both sit on the icon, so a canvas click selects the list instead of the SVG.
+		// The marker handle moves beside the marker (above would cover the previous item's marker), and the item handle moves to the item's far end so the two don't stack.
 		wp_add_inline_style(
 			'editor-preview',
-			'.e-list-item > .e-list-item__marker.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 100%; }'
+			'.e-list-item > .e-list-item__marker.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 100%; }' .
+			'.e-list > .e-list-item.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 0; }'
 		);
 	}
 

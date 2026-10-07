@@ -100,6 +100,7 @@ class Test_Atomic_List extends Elementor_Test_Base {
 
 		$module = ( new \ReflectionClass( Module::class ) )->newInstanceWithoutConstructor();
 		$marker_handle_rule = '.e-list-item > .e-list-item__marker.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 100%; }';
+		$item_handle_rule = '.e-list > .e-list-item.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 0; }';
 
 		// Act.
 		foreach ( [ 'add_inline_styles', 'add_preview_inline_styles' ] as $method_name ) {
@@ -114,6 +115,8 @@ class Test_Atomic_List extends Elementor_Test_Base {
 
 		$this->assertStringNotContainsString( $marker_handle_rule, $frontend_css );
 		$this->assertStringContainsString( $marker_handle_rule, $preview_css );
+		$this->assertStringNotContainsString( $item_handle_rule, $frontend_css );
+		$this->assertStringContainsString( $item_handle_rule, $preview_css );
 
 		wp_deregister_style( 'elementor-frontend' );
 		wp_deregister_style( 'editor-preview' );
