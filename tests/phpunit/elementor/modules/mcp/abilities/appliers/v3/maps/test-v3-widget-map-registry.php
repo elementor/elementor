@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_V3_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
@@ -189,7 +190,10 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		$controls = $options['controls'];
 
 		return new V3_Widget_Map_Registry(
-			new V3_Widget_Map_Compiler( [ 'color' => Color_Prop_Type::make() ] ),
+			new V3_Widget_Map_Compiler( [
+				'color' => Color_Prop_Type::make(),
+				'margin' => Style_Schema::get()['margin'],
+			] ),
 			static fn() => $options['is_experiment_active'],
 			static fn() => $options['is_atomic_active'],
 			$options['get_controls'] ?? static fn() => $controls,
