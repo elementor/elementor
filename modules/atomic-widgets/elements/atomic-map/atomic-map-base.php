@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -35,6 +36,10 @@ abstract class Atomic_Map_Base extends Atomic_Widget_Base {
 	const DEFAULT_ZOOM = 10;
 
 	abstract public static function get_provider_key(): string;
+
+	public static function has_provider(): bool {
+		return null !== Map_Providers_Registry::instance()->get( static::get_provider_key() );
+	}
 
 	public static function get_provider(): Map_Provider_Base {
 		$provider = Map_Providers_Registry::instance()->get( static::get_provider_key() );
@@ -155,12 +160,18 @@ abstract class Atomic_Map_Base extends Atomic_Widget_Base {
 
 	public function render_markdown(): string {
 		$settings = $this->get_atomic_settings();
-		$location = trim( (string) ( $settings['location'] ?? '' ) );
+		$location = Utils::html_to_plain_text( (string) ( $settings['location'] ?? '' ) );
 
 		if ( '' === $location ) {
 			return '';
 		}
 
-		return '[Map: ' . $location . '](' . esc_url( static::get_provider()->get_external_url( $location ) ) . ')';
+		$label = strtr( $location, [
+			'\\' => '\\\\',
+			'[' => '\\[',
+			']' => '\\]',
+		] );
+
+		return '[Map: ' . $label . '](' . esc_url( static::get_provider()->get_external_url( $location ) ) . ')';
 	}
 }

@@ -414,7 +414,10 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
-		$widgets_manager->register( new Atomic_Google_Maps() );
+
+		if ( Atomic_Google_Maps::has_provider() ) {
+			$widgets_manager->register( new Atomic_Google_Maps() );
+		}
 	}
 
 	private function register_map_providers( Map_Providers_Registry $registry ) {

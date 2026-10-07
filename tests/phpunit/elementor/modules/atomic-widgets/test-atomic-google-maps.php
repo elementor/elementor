@@ -66,9 +66,40 @@ class Test_Atomic_Google_Maps extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertStringNotContainsString( '<b>', $output );
-		$this->assertStringContainsString( 'id=my-map', $output );
+		$this->assertStringContainsString( 'id="my-map"', $output );
 		$this->assertStringContainsString( 'loading="lazy"', $output );
 		$this->assertMatchesSnapshot( $output );
+	}
+
+	/**
+	 * @dataProvider css_id_injection_data_provider
+	 */
+	public function test__render_keeps_css_id_inside_the_id_attribute( bool $is_edit_mode, string $location ): void {
+		// Arrange.
+		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );
+		$payload = 'x onload=alert(1) "><script>alert(2)</script>';
+
+		// Act.
+		$output = $this->render_map( [
+			'location' => String_Prop_Type::generate( $location ),
+			'_cssid' => String_Prop_Type::generate( $payload ),
+		] );
+
+		// Assert.
+		$document = new \DOMDocument();
+		$document->loadHTML( '<body>' . trim( $output ) . '</body>', LIBXML_NOERROR );
+		$root = ( new \DOMXPath( $document ) )->query( '//body/*' )->item( 0 );
+
+		$this->assertSame( $payload, $root->getAttribute( 'id' ) );
+		$this->assertFalse( $root->hasAttribute( 'onload' ) );
+		$this->assertSame( 0, $document->getElementsByTagName( 'script' )->length );
+	}
+
+	public function css_id_injection_data_provider(): array {
+		return [
+			'iframe' => [ false, 'London Eye' ],
+			'editor placeholder' => [ true, '' ],
+		];
 	}
 
 	public function test__render_falls_back_to_default_zoom_when_zoom_is_zero(): void {
@@ -79,6 +110,16 @@ class Test_Atomic_Google_Maps extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertStringContainsString( '&amp;z=10&amp;', $output );
+	}
+
+	public function test__render_clamps_zoom_to_the_embed_maximum(): void {
+		// Act.
+		$output = $this->render_map( [
+			'zoom' => Number_Prop_Type::generate( 99 ),
+		] );
+
+		// Assert.
+		$this->assertStringContainsString( '&amp;z=21&amp;', $output );
 	}
 
 	public function test__render_nothing_when_location_is_empty(): void {
@@ -116,6 +157,22 @@ class Test_Atomic_Google_Maps extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( '[Map: London Eye, London](https://maps.google.com/maps?q=London%20Eye%2C%20London)', $markdown );
+	}
+
+	public function test__render_markdown_keeps_link_structure_for_untrusted_location(): void {
+		// Arrange.
+		$widget = $this->create_widget( [
+			'location' => String_Prop_Type::generate( '<b>Shop</b> [A](https://evil.test) \\ 5' ),
+		] );
+
+		// Act.
+		$markdown = $widget->render_markdown();
+
+		// Assert.
+		$this->assertSame(
+			'[Map: Shop \\[A\\](https://evil.test) \\\\ 5](https://maps.google.com/maps?q=Shop%20%5BA%5D%28https%3A%2F%2Fevil.test%29%20%5C%205)',
+			$markdown
+		);
 	}
 
 	public function test__render_markdown_is_empty_when_location_is_empty(): void {
@@ -230,6 +287,9 @@ class Test_Atomic_Google_Maps extends Elementor_Test_Base {
 		// Arrange.
 		Map_Providers_Registry::reset();
 		remove_all_actions( 'elementor/atomic-widgets/map-providers/register' );
+
+		// Assert.
+		$this->assertFalse( Atomic_Google_Maps::has_provider() );
 
 		// Expect.
 		$this->expectException( \RuntimeException::class );

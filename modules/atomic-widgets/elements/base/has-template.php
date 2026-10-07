@@ -36,6 +36,8 @@ trait Has_Template {
 	/**
 	 * Static, element-level values exposed to the Twig template on both the frontend and the editor canvas.
 	 * Must not depend on element settings, since the editor receives it once per page load.
+	 * Values are sent to every user who can open the editor: only return data that is already public
+	 * in the rendered frontend (e.g. a browser API key), never server-side secrets.
 	 * Core context keys (id, settings, type, ...) take precedence over these.
 	 */
 	protected function get_template_extra_context(): array {
