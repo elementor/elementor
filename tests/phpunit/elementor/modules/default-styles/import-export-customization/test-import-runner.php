@@ -39,11 +39,16 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_should_import__requires_include_context_and_atomic_widgets() {
+	public function test_should_import__requires_include_context_atomic_widgets_and_enabled_default_styles() {
 		$runner = new Import_Runner();
 		$import_data = [
 			'include' => [ 'settings' ],
 			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => true,
+				],
+			],
 		];
 
 		Plugin::$instance->experiments->set_feature_default_state(
