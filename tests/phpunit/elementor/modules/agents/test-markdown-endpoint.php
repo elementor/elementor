@@ -226,6 +226,18 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $should_serve );
 	}
 
+	public function test_filter_should_serve__blocks_noindex_post() {
+		// Arrange
+		$post = $this->create_published_page();
+		update_post_meta( $post->ID, '_yoast_wpseo_meta-robots-noindex', '1' );
+
+		// Act
+		$should_serve = $this->endpoint->filter_should_serve( true, $post );
+
+		// Assert
+		$this->assertFalse( $should_serve );
+	}
+
 	public function test_filter_should_serve__passes_through_when_post_is_included() {
 		// Arrange
 		$post = $this->create_published_page();

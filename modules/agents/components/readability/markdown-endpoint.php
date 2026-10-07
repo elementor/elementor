@@ -199,8 +199,13 @@ class Markdown_Endpoint extends Feature_Component {
 	}
 
 	/**
-	 * Keep markdown-render from serving posts the Agent Ready settings exclude,
-	 * so the request falls through to the regular HTML page.
+	 * Keep markdown-render from serving posts the Agent Ready settings exclude
+	 * or that an SEO plugin marks noindex, so the request falls through to the
+	 * regular HTML page.
+	 *
+	 * Does not repeat the publish-status or password checks: markdown-render
+	 * already does those, and applying them here would block editor previews
+	 * of drafts.
 	 *
 	 * Fires on the `elementor/markdown/should_serve` filter.
 	 *
@@ -208,7 +213,7 @@ class Markdown_Endpoint extends Feature_Component {
 	 * @param \WP_Post $post         The current post.
 	 */
 	public function filter_should_serve( $should_serve, \WP_Post $post ): bool {
-		if ( ! $this->is_included_by_settings( $post ) ) {
+		if ( ! $this->is_included_by_settings( $post ) || Post_Noindex::is_noindex( $post->ID ) ) {
 			return false;
 		}
 
