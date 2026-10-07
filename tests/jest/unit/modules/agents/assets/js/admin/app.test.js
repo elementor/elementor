@@ -15,6 +15,7 @@ jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 	fetchLlmsFile: jest.fn( () => new Promise( () => {} ) ),
 	saveAgentReadySettings: jest.fn( () => Promise.resolve() ),
 	saveLlmsContent: jest.fn( () => Promise.resolve() ),
+	searchMarkdownItems: jest.fn( () => Promise.resolve( [] ) ),
 } ) );
 
 jest.mock( '@elementor/icons', () => ( {
@@ -71,6 +72,11 @@ const llmsConfig = {
 	postTypes: [ { name: 'page', label: 'Pages', count: 2, included: true } ],
 };
 
+const markdownConfig = {
+	enabled: true,
+	postTypes: [ { name: 'page', label: 'Pages', count: 2, included: true } ],
+};
+
 describe( 'Agents Ready App', () => {
 	beforeEach( () => {
 		activateAgentsReady.mockReset();
@@ -95,7 +101,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'renders the three module accordions when the experiment is active', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		expect( screen.getByText( 'LLMs.txt' ) ).toBeTruthy();
@@ -108,7 +114,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -126,7 +132,7 @@ describe( 'Agents Ready App', () => {
 	it( 'rolls back the LLMs.txt toggle and shows an alert when saving fails', async () => {
 		// Arrange
 		saveAgentReadySettings.mockRejectedValueOnce( null );
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -145,7 +151,7 @@ describe( 'Agents Ready App', () => {
 		saveAgentReadySettings.mockImplementationOnce( () => new Promise( ( resolve ) => {
 			resolveSave = resolve;
 		} ) );
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -162,7 +168,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'locks the LLMs.txt switch off when a physical file exists', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		const [ llmsSwitch ] = screen.getAllByRole( 'switch' );
@@ -173,7 +179,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'replaces the inline description with the panel when a module is expanded', () => {
 		// Arrange
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } /> );
+		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Assert - all three modules start collapsed with an inline description
 		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
