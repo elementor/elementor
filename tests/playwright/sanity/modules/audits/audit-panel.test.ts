@@ -19,7 +19,7 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 
 	await page.getByRole( 'button', { name: /run page audit/i } ).click();
 
-	await expect( page.getByRole( 'button', { name: /re-scan/i } ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: /rescan/i } ) ).toBeVisible();
 
 	await page.getByRole( 'button', { name: /accessibility/i } ).click();
 
