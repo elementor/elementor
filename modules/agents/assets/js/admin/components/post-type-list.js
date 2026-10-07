@@ -9,7 +9,7 @@ import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { LLMS_VISIBLE_POST_TYPES_LIMIT } from '../../constants';
+import { LLMS_VISIBLE_POST_TYPES_LIMIT } from '../constants';
 
 const iconsByPostType = {
 	page: FileIcon,
