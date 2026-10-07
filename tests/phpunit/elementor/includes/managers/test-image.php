@@ -89,6 +89,14 @@ class Test_Image extends Elementor_Test_Base {
 		$this->assertSame( [ 'full' => null ], $details );
 	}
 
+	public function test_get_details__returns_null_url_for_missing_attachment_with_custom_size() {
+		// Act
+		$details = ( new Images_Manager() )->get_details( static::MISSING_ATTACHMENT_ID, 'custom_100x100', 'false' );
+
+		// Assert
+		$this->assertSame( [ 'custom_100x100' => null ], $details );
+	}
+
 	public function test_delete_custom_images() {
 		// Arrange
 		remove_all_actions( 'delete_attachment' );

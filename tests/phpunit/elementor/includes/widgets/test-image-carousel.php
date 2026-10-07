@@ -11,11 +11,15 @@ class Test_Widget_Image_Carousel extends Elementor_Test_Base {
 
 	const CAPTION = 'Existing image caption';
 
+	private function get_image_url( $attachment_id ) {
+		return 'https://test.local/image-' . $attachment_id . '.png';
+	}
+
 	private function create_carousel( array $attachment_ids ) {
 		$carousel = array_map( function ( $attachment_id ) {
 			return [
 				'id' => $attachment_id,
-				'url' => 'https://test.local/image-' . $attachment_id . '.png',
+				'url' => $this->get_image_url( $attachment_id ),
 			];
 		}, $attachment_ids );
 
@@ -51,5 +55,6 @@ class Test_Widget_Image_Carousel extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( 1, substr_count( $rendered_content, 'elementor-image-carousel-caption' ) );
 		$this->assertStringContainsString( static::CAPTION, $rendered_content );
+		$this->assertStringContainsString( $this->get_image_url( static::MISSING_ATTACHMENT_ID ), $rendered_content );
 	}
 }

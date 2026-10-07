@@ -1105,7 +1105,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	private function get_image_caption( $attachment ) {
 		$caption_type = $this->get_settings_for_display( 'caption_type' );
 
-		if ( empty( $caption_type ) ) {
+		if ( empty( $caption_type ) || empty( $attachment['id'] ) ) {
 			return '';
 		}
 
