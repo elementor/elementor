@@ -108,7 +108,7 @@ describe( 'markdown page picker', () => {
 
 		// Assert
 		expect( screen.getByText( /Sorry, nothing matched/ ) ).toBeTruthy();
-		expect( screen.getByText( /“checkout“\./ ) ).toBeTruthy();
+		expect( screen.getByText( /“checkout”\./ ) ).toBeTruthy();
 		expect( screen.queryByRole( 'option', { name: 'Blog' } ) ).toBeNull();
 	} );
 
