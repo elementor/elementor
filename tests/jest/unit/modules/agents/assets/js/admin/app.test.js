@@ -84,7 +84,13 @@ const botAccessConfig = {
 	catalog: [ { token: 'GPTBot', name: 'GPTBot', vendor: 'OpenAI', logoUrl: '' } ],
 };
 
+const agentDiscoveryConfig = {
+	enabled: true,
+	files: [ { slug: 'agent.json', url: 'https://example.com/.well-known/agent.json' } ],
+};
+
 const BOT_ACCESS_SWITCH_INDEX = 2;
+const AGENT_DISCOVERY_SWITCH_INDEX = 3;
 
 describe( 'Agents Ready App', () => {
 	beforeEach( () => {
@@ -108,28 +114,29 @@ describe( 'Agents Ready App', () => {
 		expect( screen.getByTestId( 'theme-provider' ).getAttribute( 'data-palette' ) ).toBe( 'argon-beta' );
 	} );
 
-	it( 'renders the three module accordions when the experiment is active', () => {
+	it( 'renders the four module accordions when the experiment is active', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		expect( screen.getByText( 'LLMs.txt' ) ).toBeTruthy();
 		expect( screen.getByText( 'Markdown content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Bot access control' ) ).toBeTruthy();
-		expect( screen.getByText( '3/4' ) ).toBeTruthy();
+		expect( screen.getByText( 'Agent discovery' ) ).toBeTruthy();
+		expect( screen.getByText( '4/4' ) ).toBeTruthy();
 		expect( screen.queryByRole( 'tab' ) ).toBeNull();
 		expect( screen.queryByRole( 'button', { name: 'Activate' } ) ).toBeNull();
 	} );
 
 	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
 
 		// Assert
-		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
 		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
 			llms_txt: { enabled: false, post_types: [ 'page' ] },
 		} );
@@ -141,7 +148,7 @@ describe( 'Agents Ready App', () => {
 	it( 'rolls back the LLMs.txt toggle and shows an alert when saving fails', async () => {
 		// Arrange
 		saveAgentReadySettings.mockRejectedValueOnce( null );
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -151,7 +158,7 @@ describe( 'Agents Ready App', () => {
 			expect( screen.getByText( 'Something went wrong. Please try again.' ) ).toBeTruthy();
 			expect( screen.getAllByRole( 'switch' )[ 0 ].disabled ).toBe( false );
 		} );
-		expect( screen.getByText( '3/4' ) ).toBeTruthy();
+		expect( screen.getByText( '4/4' ) ).toBeTruthy();
 	} );
 
 	it( 'disables the LLMs.txt switch while settings are saving', async () => {
@@ -160,7 +167,7 @@ describe( 'Agents Ready App', () => {
 		saveAgentReadySettings.mockImplementationOnce( () => new Promise( ( resolve ) => {
 			resolveSave = resolve;
 		} ) );
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -177,24 +184,24 @@ describe( 'Agents Ready App', () => {
 
 	it( 'locks the LLMs.txt switch off when a physical file exists', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		const [ llmsSwitch ] = screen.getAllByRole( 'switch' );
 		expect( llmsSwitch.checked ).toBe( false );
 		expect( llmsSwitch.disabled ).toBe( true );
-		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
 	} );
 
 	it( 'persists the bot access setting when its module is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ BOT_ACCESS_SWITCH_INDEX ] );
 
 		// Assert
-		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
 		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
 			bot_access_control: {
 				enabled: false,
@@ -206,25 +213,43 @@ describe( 'Agents Ready App', () => {
 		} );
 	} );
 
+	it( 'persists the agent discovery setting when its module is toggled off', async () => {
+		// Arrange
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'switch' )[ AGENT_DISCOVERY_SWITCH_INDEX ] );
+
+		// Assert
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
+		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
+			agent_discovery: { enabled: false },
+		} );
+		await waitFor( () => {
+			expect( screen.getAllByRole( 'switch' )[ AGENT_DISCOVERY_SWITCH_INDEX ].disabled ).toBe( false );
+		} );
+	} );
+
 	it( 'locks the bot access switch off when a physical robots.txt exists', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } botAccessConfig={ { ...botAccessConfig, hasPhysicalFile: true } } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ { ...botAccessConfig, hasPhysicalFile: true } } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		const botAccessSwitch = screen.getAllByRole( 'switch' )[ BOT_ACCESS_SWITCH_INDEX ];
 		expect( botAccessSwitch.checked ).toBe( false );
 		expect( botAccessSwitch.disabled ).toBe( true );
-		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+		expect( screen.getByText( '3/4' ) ).toBeTruthy();
 	} );
 
 	it( 'replaces the inline description with the panel when a module is expanded', () => {
 		// Arrange
-		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
-		// Assert - all three modules start collapsed with an inline description
+		// Assert - all modules start collapsed with an inline description
 		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
 		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
 		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Tell agents what this site offers them' ) ).toBeTruthy();
 
 		// Act
 		fireEvent.click( screen.getByText( 'LLMs.txt' ) );
