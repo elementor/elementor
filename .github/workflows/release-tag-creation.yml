@@ -50,7 +50,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
-      actions: read
     outputs:
       channel: ${{ steps.release-tag-creation.outputs.channel }}
 
@@ -59,9 +58,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check release owner
-        uses: elementor/elementor-editor-github-actions/actions/check-release-owner@main
 
       - name: Release tag creation
         id: release-tag-creation
