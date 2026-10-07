@@ -11,6 +11,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 	const listType = 'e-list';
 	const listItemsLabel = 'List Items';
+	const markerIconToFontRatio = 0.6;
 
 	const getListRoot = ( listId: string ): Locator => {
 		return editor.getPreviewFrame().locator( editor.getWidgetSelector( listId ) );
@@ -73,6 +74,52 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		await expect( getListMarkers( listRoot ) ).toHaveCount( 2 );
 		await expect( getListParagraphs( listRoot ) ).toHaveCount( 2 );
 		expect( new Set( initialIds ).size ).toBe( initialIds.length );
+	} );
+
+	test( 'Clicking the marker icon selects the SVG', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const marker = getListRoot( listId ).locator( '.e-list-item__marker' ).first();
+		const svg = marker.locator( '.e-svg-base' );
+
+		await marker.hover();
+
+		const svgBox = await svg.boundingBox();
+		const handleBox = await marker.locator( '.elementor-editor-element-settings' ).boundingBox();
+
+		// The handle used to cover the icon. It now sits above the slot.
+		expect( svgBox ).not.toBeNull();
+		expect( handleBox ).not.toBeNull();
+		expect( handleBox.y + handleBox.height ).toBeLessThanOrEqual( svgBox.y + 1 );
+
+		// Act.
+		await svg.click();
+
+		// Assert.
+		await expect( svg ).toHaveClass( /elementor-element-editable/ );
+		await expect( getListRoot( listId ) ).not.toHaveClass( /elementor-element-editable/ );
+	} );
+
+	test( 'The marker icon defaults to 0.6 of the item text size', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const marker = getListRoot( listId ).locator( '.e-list-item__marker' ).first();
+		const svg = marker.locator( '.e-svg-base' );
+
+		// Assert.
+		const { width, height, fontSize } = await svg.evaluate( ( node ) => {
+			const rect = node.getBoundingClientRect();
+			const style = getComputedStyle( node.closest( '.e-list-item__marker' ) );
+
+			return {
+				width: rect.width,
+				height: rect.height,
+				fontSize: parseFloat( style.fontSize ),
+			};
+		} );
+
+		expect( width ).toBeCloseTo( fontSize * markerIconToFontRatio, 0 );
+		expect( height ).toBeCloseTo( fontSize * markerIconToFontRatio, 0 );
 	} );
 
 	test( 'Add, duplicate, and remove list items via control', async () => {

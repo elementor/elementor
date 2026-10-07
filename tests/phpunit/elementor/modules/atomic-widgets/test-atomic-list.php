@@ -89,6 +89,11 @@ class Test_Atomic_List extends Elementor_Test_Base {
 		$this->assertStringContainsString( $marker_svg_alignment_rule, $frontend_css );
 		$this->assertStringContainsString( $marker_svg_alignment_rule, $editor_css );
 
+		$marker_handle_rule = '.e-list-item-marker-base > .elementor-element-overlay > .elementor-editor-element-settings { top: auto; bottom: 100%; }';
+
+		$this->assertStringNotContainsString( $marker_handle_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_handle_rule, $editor_css );
+
 		wp_deregister_style( 'elementor-frontend' );
 		wp_deregister_style( 'elementor-editor' );
 	}
