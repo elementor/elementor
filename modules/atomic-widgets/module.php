@@ -720,7 +720,7 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
-			// 1em matches the text size. Filling the 1lh slot makes the icon taller than the line.
+			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
 			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
 
 		] );

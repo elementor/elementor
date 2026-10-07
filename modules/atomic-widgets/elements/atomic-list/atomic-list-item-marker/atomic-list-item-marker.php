@@ -24,7 +24,7 @@ class Atomic_List_Item_Marker extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	const MARKER_SVG_SIZE = '1em';
+	const MARKER_SVG_SIZE = '0.6em';
 
 	const ICON_LIBRARY = 'fa-solid';
 
