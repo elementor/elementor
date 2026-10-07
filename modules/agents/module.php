@@ -78,6 +78,7 @@ class Module extends BaseModule {
 	private Well_Known_Router $well_known_router;
 	private Agent_Ready_Settings $settings;
 	private Llms_Manual_Content $manual_content;
+	private Bot_Catalog $bot_catalog;
 
 	public function get_name() {
 		return 'agents';
@@ -110,9 +111,10 @@ class Module extends BaseModule {
 		$sanitizer              = new Prompt_Injection_Sanitizer();
 		$this->generator        = new Content_Generator( $sanitizer );
 		$this->cache            = new Llms_Cache();
-		$this->robots_handler   = new Robots_Txt_Handler();
+		$this->bot_catalog      = new Bot_Catalog();
 		$this->feature_registry = new Feature_Registry();
-		$this->settings         = new Agent_Ready_Settings( $this->generator );
+		$this->settings         = new Agent_Ready_Settings( $this->generator, $this->bot_catalog );
+		$this->robots_handler   = new Robots_Txt_Handler( $this->settings );
 		$this->manual_content   = new Llms_Manual_Content( $this->generator );
 
 		$this->settings->register();
@@ -678,7 +680,44 @@ class Module extends BaseModule {
 			'isExperimentActive' => Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ),
 			'llms'               => $this->get_llms_state(),
 			'markdown'           => $this->get_markdown_state(),
+			'botAccess'          => $this->get_bot_access_state(),
 		];
+	}
+
+	private function get_bot_access_state(): array {
+		return [
+			'enabled'         => $this->settings->is_bot_access_enabled(),
+			'hasPhysicalFile' => $this->robots_handler->has_physical_robots_txt(),
+			'bots'            => $this->get_managed_bot_rows(),
+			'catalog'         => $this->get_bot_catalog_rows(),
+		];
+	}
+
+	private function get_managed_bot_rows(): array {
+		$rows = [];
+
+		foreach ( $this->settings->get_managed_bots() as $token => $permissions ) {
+			$rows[] = [
+				'token'   => $token,
+				'search'  => $permissions[ Agent_Ready_Settings::BOT_PERMISSION_SEARCH ],
+				'aiInput' => $permissions[ Agent_Ready_Settings::BOT_PERMISSION_AI_INPUT ],
+				'aiTrain' => $permissions[ Agent_Ready_Settings::BOT_PERMISSION_AI_TRAIN ],
+			];
+		}
+
+		return $rows;
+	}
+
+	private function get_bot_catalog_rows(): array {
+		return array_map(
+			fn( array $bot ) => [
+				'token'   => $bot['token'],
+				'name'    => $bot['name'],
+				'vendor'  => $bot['vendor'],
+				'logoUrl' => $this->bot_catalog->get_logo_url( $bot['logo'] ),
+			],
+			$this->bot_catalog->get_bots()
+		);
 	}
 
 	private function get_llms_state(): array {
