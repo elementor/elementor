@@ -75,6 +75,42 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		expect( new Set( initialIds ).size ).toBe( initialIds.length );
 	} );
 
+	test( 'An SVG dropped into the marker defaults to the item text size', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const listRoot = getListRoot( listId );
+		const marker = listRoot.locator( '.e-list-item__marker' ).first();
+		const markerId = await marker.getAttribute( 'data-id' );
+		const bulletId = await marker.locator( '.e-paragraph-base' ).first().evaluate(
+			( node ) => node.closest( '[data-id]' )?.getAttribute( 'data-id' ),
+		);
+
+		// Act.
+		await editor.removeElement( bulletId );
+		await editor.addWidget( { widgetType: 'e-svg', container: markerId } );
+
+		// Assert.
+		const svg = marker.locator( '.e-svg-base' );
+
+		await expect( svg ).toBeVisible();
+
+		const { width, height, fontSize, lineHeight } = await svg.evaluate( ( node ) => {
+			const rect = node.getBoundingClientRect();
+			const style = getComputedStyle( node.closest( '.e-list-item__marker' ) );
+
+			return {
+				width: rect.width,
+				height: rect.height,
+				fontSize: parseFloat( style.fontSize ),
+				lineHeight: parseFloat( style.lineHeight ),
+			};
+		} );
+
+		expect( width ).toBeCloseTo( fontSize, 0 );
+		expect( height ).toBeCloseTo( fontSize, 0 );
+		expect( height ).toBeLessThanOrEqual( lineHeight );
+	} );
+
 	test( 'Add, duplicate, and remove list items via control', async () => {
 		// Arrange.
 		const listId = await editor.addElement( { elType: listType }, 'document' );

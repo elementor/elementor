@@ -720,6 +720,9 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+			// An SVG dropped into a List marker defaults to the item's text size instead of the 65px SVG default.
+			'.e-list-item-marker-base { --e-svg-width: 1em; --e-svg-height: 1em; }',
+			':where(.e-list-item-marker-base) .e-svg-base { flex-shrink: 0; }',
 
 		] );
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
