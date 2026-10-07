@@ -3,15 +3,20 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Module;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Markdown_Endpoint extends Elementor_Test_Base {
 
 	private Markdown_Endpoint $endpoint;
+
+	private Agent_Ready_Settings $settings;
 
 	private $original_experiment_default_state;
 
@@ -38,7 +43,11 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 			Experiments_Manager::STATE_ACTIVE
 		);
 
-		$this->endpoint = new Markdown_Endpoint();
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->settings->ensure_option_exists();
+		$this->endpoint = new Markdown_Endpoint( $this->settings );
 	}
 
 	public function tearDown(): void {
@@ -56,6 +65,8 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		}
 
 		unset( $_GET['format'] );
+
+		delete_option( Agent_Ready_Settings::OPTION );
 
 		parent::tearDown();
 	}
@@ -168,6 +179,62 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $this->endpoint->is_markdown_access_allowed( $post ) );
 	}
 
+	public function test_is_markdown_access_allowed__allows_published_page_by_default() {
+		// Arrange
+		$post = $this->create_published_page();
+
+		// Act
+		$is_allowed = $this->endpoint->is_markdown_access_allowed( $post );
+
+		// Assert
+		$this->assertTrue( $is_allowed );
+	}
+
+	public function test_is_markdown_access_allowed__denies_when_markdown_is_disabled() {
+		// Arrange
+		$post = $this->create_published_page();
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+
+		// Act
+		$is_allowed = $this->endpoint->is_markdown_access_allowed( $post );
+
+		// Assert
+		$this->assertFalse( $is_allowed );
+	}
+
+	public function test_is_markdown_access_allowed__denies_excluded_post_type() {
+		// Arrange
+		$post = $this->create_published_page();
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'post_types', [ 'post' ] );
+
+		// Act
+		$is_allowed = $this->endpoint->is_markdown_access_allowed( $post );
+
+		// Assert
+		$this->assertFalse( $is_allowed );
+	}
+
+	public function test_filter_should_serve__blocks_markdown_render_when_markdown_is_disabled() {
+		// Arrange
+		$post = $this->create_published_page();
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+
+		// Act
+		$should_serve = $this->endpoint->filter_should_serve( true, $post );
+
+		// Assert
+		$this->assertFalse( $should_serve );
+	}
+
+	public function test_filter_should_serve__passes_through_when_post_is_included() {
+		// Arrange
+		$post = $this->create_published_page();
+
+		// Act & Assert
+		$this->assertTrue( $this->endpoint->filter_should_serve( true, $post ) );
+		$this->assertFalse( $this->endpoint->filter_should_serve( false, $post ) );
+	}
+
 	public function test_build_markdown__includes_frontmatter_and_body() {
 		// Arrange
 		$post = get_post( $this->factory()->post->create( [
@@ -216,6 +283,14 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertSame( 'Accept', $headers['Vary'] );
 		$this->assertSame( 'noindex', $headers['X-Robots-Tag'] );
 		$this->assertStringContainsString( 'rel="canonical"', $headers['Link'] );
+	}
+
+	private function create_published_page(): \WP_Post {
+		return get_post( $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Settings Gated Page',
+		] ) );
 	}
 
 	private function get_private_property( string $name ) {

@@ -78,6 +78,7 @@ class Module extends BaseModule {
 	private Well_Known_Router $well_known_router;
 	private Agent_Ready_Settings $settings;
 	private Llms_Manual_Content $manual_content;
+	private Markdown_Endpoint $markdown_endpoint;
 
 	public function get_name() {
 		return 'agents';
@@ -153,8 +154,10 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest() );
 
-		$this->register_component( new Link_Headers() );
-		$this->register_component( new Markdown_Endpoint() );
+		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
+
+		$this->register_component( new Link_Headers( $this->markdown_endpoint ) );
+		$this->register_component( $this->markdown_endpoint );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
@@ -219,7 +222,7 @@ class Module extends BaseModule {
 		$llms_content_ajax = new Llms_Content_Ajax( $this->settings, $this->manual_content );
 		$ajax->register_ajax_action( Llms_Content_Ajax::ACTION, [ $llms_content_ajax, 'handle' ] );
 
-		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->settings, new Markdown_Endpoint() );
+		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->markdown_endpoint );
 		$ajax->register_ajax_action( Markdown_Preview_Ajax::ACTION, [ $markdown_preview_ajax, 'handle' ] );
 
 		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
