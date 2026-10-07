@@ -26,9 +26,7 @@ class Site_Flag {
 	}
 
 	public static function is_set(): bool {
-		$alloptions = wp_load_alloptions();
-
-		return ! empty( $alloptions[ self::OPTION_NAME ] );
+		return ! empty( get_option( self::OPTION_NAME ) );
 	}
 
 	public static function filter_notifications_request( $args, $url ) {
