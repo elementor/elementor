@@ -6,18 +6,8 @@ import { useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { useUnfilteredFilesUpload, useUpdateUnfilteredFilesUpload } from '../../hooks/use-unfiltered-files-upload';
-import { IconLibraryPopover } from '../icon-library/icon-library-popover';
 import { useFontAwesome7Catalog } from '../icon-library/use-font-awesome-7-catalog';
 import { SvgMediaControl } from '../svg-media-control';
-import { SVG_MEDIA_ACTION_GROUP_TEST_ID, SVG_MEDIA_CONTROL_CONTAINER_TEST_ID } from '../svg-media-overlay';
-
-const SVG_CONTROL_LEFT = 72;
-const SVG_CONTROL_WIDTH = 268;
-const SVG_CONTROL_TOP = 40;
-const SVG_CONTROL_HEIGHT = 140;
-const MEDIA_ACTION_GROUP_TOP = 156;
-const MEDIA_ACTION_GROUP_WIDTH = 192;
-const MEDIA_ACTION_GROUP_HEIGHT = 28;
 
 jest.mock( '../../hooks/use-unfiltered-files-upload' );
 jest.mock( '../icon-library/icon-library-popover', () => ( {
@@ -273,54 +263,36 @@ describe( 'SvgMediaControl', () => {
 		expect( open ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not show the icon library when showIconLibrary is not set', () => {
+	it( 'should open the media frame in url mode when clicking insert url', () => {
 		// Arrange
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		const open = jest.fn();
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 
 		// Act
 		renderControl( <SvgMediaControl />, props );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Insert URL' } ) );
 
 		// Assert
+		expect( open ).toHaveBeenCalledWith( { mode: 'url', currentUrl: undefined } );
 		expect( screen.queryByRole( 'button', { name: 'Icon library' } ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'should open the icon library popover when clicking on icon library', () => {
-		// Arrange
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
-		mockSvgControlLayout();
-
-		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
-
-		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
-
-		// Assert
-		expect( screen.getByRole( 'button', { name: 'Pick star' } ) ).toBeInTheDocument();
-	} );
-
-	it( 'should open the icon library at the control start and width', () => {
-		// Arrange
-		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
-		mockSvgControlLayout();
-
-		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
-
-		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
-
-		// Assert
-		expect( jest.mocked( IconLibraryPopover ).mock.calls[ 0 ][ 0 ] ).toEqual(
-			expect.objectContaining( { width: SVG_CONTROL_WIDTH } )
-		);
 	} );
 
 	it( 'should persist a font icon when one is selected from the icon library', () => {
 		// Arrange
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
-		mockSvgControlLayout();
+		const controlWidth = 268;
+		const rectSpy = jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockReturnValue( {
+			x: 0,
+			y: 0,
+			top: 0,
+			left: 0,
+			right: controlWidth,
+			bottom: 40,
+			width: controlWidth,
+			height: 40,
+			toJSON: () => ( {} ),
+		} );
 		const setValue = jest.fn();
 		const props = { setValue, value: {}, bind: 'svg', propType };
 
@@ -340,6 +312,7 @@ describe( 'SvgMediaControl', () => {
 			} )
 		);
 		expect( screen.queryByRole( 'button', { name: 'Pick star' } ) ).not.toBeInTheDocument();
+		rectSpy.mockRestore();
 	} );
 
 	it( 'should preview a selected font icon in the card', () => {
@@ -437,49 +410,3 @@ describe( 'SvgMediaControl', () => {
 		).toBeInTheDocument();
 	} );
 } );
-
-function mockSvgControlLayout() {
-	jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation( function ( this: HTMLElement ) {
-		const testId = this.getAttribute( 'data-testid' );
-
-		if ( testId === SVG_MEDIA_CONTROL_CONTAINER_TEST_ID ) {
-			return {
-				x: SVG_CONTROL_LEFT,
-				y: SVG_CONTROL_TOP,
-				top: SVG_CONTROL_TOP,
-				left: SVG_CONTROL_LEFT,
-				right: SVG_CONTROL_LEFT + SVG_CONTROL_WIDTH,
-				bottom: SVG_CONTROL_TOP + SVG_CONTROL_HEIGHT,
-				width: SVG_CONTROL_WIDTH,
-				height: SVG_CONTROL_HEIGHT,
-				toJSON: () => ( {} ),
-			};
-		}
-
-		if ( testId === SVG_MEDIA_ACTION_GROUP_TEST_ID ) {
-			return {
-				x: SVG_CONTROL_LEFT,
-				y: MEDIA_ACTION_GROUP_TOP,
-				top: MEDIA_ACTION_GROUP_TOP,
-				left: SVG_CONTROL_LEFT,
-				right: SVG_CONTROL_LEFT + MEDIA_ACTION_GROUP_WIDTH,
-				bottom: MEDIA_ACTION_GROUP_TOP + MEDIA_ACTION_GROUP_HEIGHT,
-				width: MEDIA_ACTION_GROUP_WIDTH,
-				height: MEDIA_ACTION_GROUP_HEIGHT,
-				toJSON: () => ( {} ),
-			};
-		}
-
-		return {
-			x: 0,
-			y: 0,
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0,
-			width: 0,
-			height: 0,
-			toJSON: () => ( {} ),
-		};
-	} );
-}

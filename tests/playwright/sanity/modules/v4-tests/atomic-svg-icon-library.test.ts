@@ -39,8 +39,11 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		const svgControl = page.getByTestId( SVG_CONTROL_TEST_ID );
 		await expect( svgControl ).toBeVisible();
 
-		await test.step( 'Hover overlay shows Select, Upload, and Icon library', async () => {
+		await test.step( 'Hover overlay shows Select, Upload, Insert URL, and Icon library', async () => {
 			await svgControl.hover();
+			await expect( page.getByRole( 'button', { name: 'Select' } ) ).toBeVisible();
+			await expect( page.getByRole( 'button', { name: 'Upload' } ) ).toBeVisible();
+			await expect( page.getByRole( 'button', { name: 'Insert URL' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Icon library' } ) ).toBeVisible();
 			await expect( svgControl ).toHaveScreenshot( 'svg-control-hover.png', SCREENSHOT_OPTIONS );
 		} );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LibraryIcon, UploadIcon } from '@elementor/icons';
+import { LibraryIcon, LinkIcon, UploadIcon } from '@elementor/icons';
 import { Box, Button, Stack, styled, type SxProps, ThemeProvider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -8,28 +8,33 @@ import { ConditionalControlInfotip } from '../components/conditional-control-inf
 export const SVG_MEDIA_CONTROL_CONTAINER_TEST_ID = 'svg-media-control-container';
 export const SVG_MEDIA_ACTION_GROUP_TEST_ID = 'svg-media-action-group';
 
-const MEDIA_ACTION_PADDING_Y = 0.75;
-const MEDIA_ACTION_PADDING_X = 2;
-const ICON_LIBRARY_PADDING = 0.625;
+const SPLIT_BUTTON_PADDING_Y = 1.25;
+const SPLIT_BUTTON_PADDING_X = 2.5;
+const SPLIT_BUTTON_CORNER_RADIUS = '12px';
+const SPLIT_BUTTON_FONT_SIZE = '14px';
+const OVERLAY_ACTION_GAP = 2;
 
 const svgButtonSx = {
-	px: MEDIA_ACTION_PADDING_X,
-	py: MEDIA_ACTION_PADDING_Y,
+	px: SPLIT_BUTTON_PADDING_X,
+	py: SPLIT_BUTTON_PADDING_Y,
+	fontSize: SPLIT_BUTTON_FONT_SIZE,
+	fontWeight: 500,
+	lineHeight: 1,
 };
 
-const MediaActionGroup = styled( Stack )( ( { theme } ) => ( {
+const MediaActionGroup = styled( Stack )( {
 	display: 'inline-flex',
 	flexDirection: 'row',
 	alignItems: 'stretch',
 	border: '1px solid currentColor',
-	borderRadius: theme.shape.borderRadius,
+	borderRadius: SPLIT_BUTTON_CORNER_RADIUS,
 	overflow: 'hidden',
 	'& .MuiButton-root': {
 		border: 'none',
 		borderRadius: 0,
 		lineHeight: 1,
 	},
-} ) );
+} );
 
 type SvgMediaOverlayProps = {
 	isAdmin: boolean;
@@ -37,6 +42,7 @@ type SvgMediaOverlayProps = {
 	buttonGroupRef: React.Ref< HTMLDivElement >;
 	onSelectSvg: () => void;
 	onUpload: () => void;
+	onInsertUrl: () => void;
 	onOpenIconLibrary: ( event: React.MouseEvent< HTMLElement > ) => void;
 	infotipTitle: string;
 	infotipDescription: React.ReactNode;
@@ -48,11 +54,12 @@ export const SvgMediaOverlay = ( {
 	buttonGroupRef,
 	onSelectSvg,
 	onUpload,
+	onInsertUrl,
 	onOpenIconLibrary,
 	infotipTitle,
 	infotipDescription,
 }: SvgMediaOverlayProps ) => (
-	<Stack alignItems="center" gap={ 1 }>
+	<Stack alignItems="center" gap={ OVERLAY_ACTION_GAP }>
 		<MediaActionGroup ref={ buttonGroupRef } direction="row" data-testid={ SVG_MEDIA_ACTION_GROUP_TEST_ID }>
 			<Button
 				size="tiny"
@@ -82,21 +89,42 @@ export const SvgMediaOverlay = ( {
 				</Box>
 			</ConditionalControlInfotip>
 		</MediaActionGroup>
+		<Button
+			color="inherit"
+			variant="text"
+			startIcon={ <LinkIcon fontSize="small" /> }
+			aria-label={ __( 'Insert URL', 'elementor' ) }
+			onClick={ onInsertUrl }
+			sx={ {
+				fontSize: SPLIT_BUTTON_FONT_SIZE,
+				fontWeight: 500,
+				lineHeight: 1,
+				minWidth: 0,
+				p: 0.5,
+			} }
+		>
+			<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
+				{ __( 'Insert URL', 'elementor' ) }
+			</Typography>
+		</Button>
 		{ showIconLibrary ? (
 			<Button
-				size="tiny"
 				color="inherit"
 				variant="text"
-				startIcon={ <LibraryIcon sx={ { height: '18px', width: '16px' } } /> }
+				startIcon={ <LibraryIcon fontSize="small" /> }
 				aria-label={ __( 'Icon library', 'elementor' ) }
 				onClick={ onOpenIconLibrary }
 				sx={ {
-					height: '28px',
-					p: ICON_LIBRARY_PADDING,
-					'.MuiButton-icon': { ml: 0 },
+					fontSize: SPLIT_BUTTON_FONT_SIZE,
+					fontWeight: 500,
+					lineHeight: 1,
+					minWidth: 0,
+					p: 0.5,
 				} }
 			>
-				<Typography>{ __( 'Icon library', 'elementor' ) }</Typography>
+				<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
+					{ __( 'Icon library', 'elementor' ) }
+				</Typography>
 			</Button>
 		) : null }
 	</Stack>
@@ -132,6 +160,6 @@ const UploadButton = ( {
 		onClick={ onClick }
 		aria-label={ __( 'Upload', 'elementor' ) }
 	>
-		<UploadIcon />
+		<UploadIcon fontSize="small" />
 	</Button>
 );

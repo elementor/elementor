@@ -72,10 +72,12 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 	const selectedIconLibrary =
 		showIconLibrary && typeof iconValue?.library?.value === 'string' ? iconValue.library.value : null;
 
+	const currentUrl = url?.value;
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
 		multiple: false,
 		selected: id?.value || null,
+		allowUrlImport: true,
 		onSelect: ( selectedAttachment ) => {
 			setSvgValue( {
 				id: {
@@ -84,6 +86,13 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 				},
 				url: urlPropTypeUtil.create( selectedAttachment.url ),
 			} );
+		},
+		onSelectUrl: ( selectedUrl ) => {
+			setSvgValue( {
+				id: null,
+				url: urlPropTypeUtil.create( selectedUrl ),
+			} );
+			setIconValue( null );
 		},
 	} );
 
@@ -109,6 +118,10 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 
 	const handleUpload = () => {
 		handleClick( MODE_UPLOAD );
+	};
+
+	const handleInsertUrl = () => {
+		open( { mode: 'url', currentUrl } );
 	};
 
 	const handleCloseIconLibrary = () => {
@@ -213,6 +226,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 								buttonGroupRef={ buttonGroupRef }
 								onSelectSvg={ handleSelectSvg }
 								onUpload={ handleUpload }
+								onInsertUrl={ handleInsertUrl }
 								onOpenIconLibrary={ handleOpenIconLibrary }
 								infotipTitle={ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
 								infotipDescription={ <UnfilteredUploadInfotipDescription /> }

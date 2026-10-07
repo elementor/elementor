@@ -96,7 +96,7 @@ export const IconLibraryGrid = ( {
 		} );
 
 		if ( selectedIndex >= 0 ) {
-			virtualizer.scrollToIndex( Math.floor( selectedIndex / columnCount ) );
+			virtualizer.scrollToIndex( Math.floor( selectedIndex / columnCount ), { align: 'center' } );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ columnCount, items, selectedIndex, selectedValue ] );
