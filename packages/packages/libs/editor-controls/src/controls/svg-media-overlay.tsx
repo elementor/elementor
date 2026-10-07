@@ -8,15 +8,18 @@ import { ConditionalControlInfotip } from '../components/conditional-control-inf
 export const SVG_MEDIA_CONTROL_CONTAINER_TEST_ID = 'svg-media-control-container';
 export const SVG_MEDIA_ACTION_GROUP_TEST_ID = 'svg-media-action-group';
 
-const SPLIT_BUTTON_PADDING_Y = 1.25;
-const SPLIT_BUTTON_PADDING_X = 2.5;
+const SELECT_AREA_WIDTH = 96;
+const UPLOAD_AREA_WIDTH = 64;
+const SPLIT_BUTTON_MIN_HEIGHT = 48;
 const SPLIT_BUTTON_CORNER_RADIUS = '12px';
 const SPLIT_BUTTON_FONT_SIZE = '14px';
-const OVERLAY_ACTION_GAP = 2;
+const BUTTON_TO_LABEL_GAP = 3;
+const LABEL_GAP = 1;
 
 const svgButtonSx = {
-	px: SPLIT_BUTTON_PADDING_X,
-	py: SPLIT_BUTTON_PADDING_Y,
+	minWidth: 0,
+	minHeight: SPLIT_BUTTON_MIN_HEIGHT,
+	px: 2,
 	fontSize: SPLIT_BUTTON_FONT_SIZE,
 	fontWeight: 500,
 	lineHeight: 1,
@@ -59,7 +62,7 @@ export const SvgMediaOverlay = ( {
 	infotipTitle,
 	infotipDescription,
 }: SvgMediaOverlayProps ) => (
-	<Stack alignItems="center" gap={ OVERLAY_ACTION_GAP }>
+	<Stack alignItems="center" width="100%">
 		<MediaActionGroup ref={ buttonGroupRef } direction="row" data-testid={ SVG_MEDIA_ACTION_GROUP_TEST_ID }>
 			<Button
 				size="tiny"
@@ -67,7 +70,7 @@ export const SvgMediaOverlay = ( {
 				variant="text"
 				onClick={ onSelectSvg }
 				aria-label={ __( 'Select', 'elementor' ) }
-				sx={ svgButtonSx }
+				sx={ { ...svgButtonSx, width: SELECT_AREA_WIDTH } }
 			>
 				{ __( 'Select', 'elementor' ) }
 			</Button>
@@ -84,49 +87,39 @@ export const SvgMediaOverlay = ( {
 				description={ infotipDescription }
 				isEnabled={ ! isAdmin }
 			>
-				<Box component="span" sx={ { display: 'inline-flex' } }>
+				<Box component="span" sx={ { display: 'flex', width: UPLOAD_AREA_WIDTH } }>
 					<UploadControl isAdmin={ isAdmin } onUpload={ onUpload } />
 				</Box>
 			</ConditionalControlInfotip>
 		</MediaActionGroup>
-		<Button
-			color="inherit"
-			variant="text"
-			startIcon={ <LinkIcon fontSize="small" /> }
-			aria-label={ __( 'Insert URL', 'elementor' ) }
-			onClick={ onInsertUrl }
-			sx={ {
-				fontSize: SPLIT_BUTTON_FONT_SIZE,
-				fontWeight: 500,
-				lineHeight: 1,
-				minWidth: 0,
-				p: 0.5,
-			} }
-		>
-			<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
-				{ __( 'Insert URL', 'elementor' ) }
-			</Typography>
-		</Button>
-		{ showIconLibrary ? (
+		<Stack alignItems="center" gap={ LABEL_GAP } sx={ { mt: BUTTON_TO_LABEL_GAP } }>
 			<Button
 				color="inherit"
 				variant="text"
-				startIcon={ <LibraryIcon fontSize="small" /> }
-				aria-label={ __( 'Icon library', 'elementor' ) }
-				onClick={ onOpenIconLibrary }
-				sx={ {
-					fontSize: SPLIT_BUTTON_FONT_SIZE,
-					fontWeight: 500,
-					lineHeight: 1,
-					minWidth: 0,
-					p: 0.5,
-				} }
+				startIcon={ <LinkIcon fontSize="small" /> }
+				aria-label={ __( 'Insert URL', 'elementor' ) }
+				onClick={ onInsertUrl }
+				sx={ labelButtonSx }
 			>
 				<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
-					{ __( 'Icon library', 'elementor' ) }
+					{ __( 'Insert URL', 'elementor' ) }
 				</Typography>
 			</Button>
-		) : null }
+			{ showIconLibrary ? (
+				<Button
+					color="inherit"
+					variant="text"
+					startIcon={ <LibraryIcon fontSize="small" /> }
+					aria-label={ __( 'Icon library', 'elementor' ) }
+					onClick={ onOpenIconLibrary }
+					sx={ labelButtonSx }
+				>
+					<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
+						{ __( 'Icon library', 'elementor' ) }
+					</Typography>
+				</Button>
+			) : null }
+		</Stack>
 	</Stack>
 );
 
@@ -142,6 +135,14 @@ const UploadControl = ( { isAdmin, onUpload }: { isAdmin: boolean; onUpload: () 
 	);
 };
 
+const labelButtonSx = {
+	fontSize: SPLIT_BUTTON_FONT_SIZE,
+	fontWeight: 500,
+	lineHeight: 1,
+	minWidth: 0,
+	p: 0.5,
+};
+
 const UploadButton = ( {
 	disabled = false,
 	sx,
@@ -152,7 +153,7 @@ const UploadButton = ( {
 	onClick?: () => void;
 } ) => (
 	<Button
-		sx={ sx }
+		sx={ { ...svgButtonSx, ...sx, width: '100%' } }
 		size="tiny"
 		color="inherit"
 		variant="text"

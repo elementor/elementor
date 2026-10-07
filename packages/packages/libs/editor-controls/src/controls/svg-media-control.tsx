@@ -215,6 +215,12 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 						</StyledCardMediaContainer>
 						<CardOverlay
 							sx={ {
+								zIndex: 1,
+								justifyContent: 'flex-start',
+								px: 2,
+								pt: 1.5,
+								pb: 1,
+								gap: 0,
 								'&:hover': {
 									backgroundColor: 'rgba( 0, 0, 0, 0.75 )',
 								},
