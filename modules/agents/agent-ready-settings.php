@@ -73,13 +73,20 @@ class Agent_Ready_Settings {
 	 * @return string[]
 	 */
 	public function get_llms_post_types(): array {
-		$settings = $this->get_module_settings( self::MODULE_LLMS_TXT );
+		return $this->get_included_post_types( self::MODULE_LLMS_TXT );
+	}
 
-		if ( ! isset( $settings['post_types'] ) || ! is_array( $settings['post_types'] ) ) {
-			return $this->get_available_post_type_names();
-		}
+	public function is_markdown_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_MARKDOWN_CONTENT )['enabled'];
+	}
 
-		return $settings['post_types'];
+	/**
+	 * Until the admin saves a selection, every available post type is included.
+	 *
+	 * @return string[]
+	 */
+	public function get_markdown_post_types(): array {
+		return $this->get_included_post_types( self::MODULE_MARKDOWN_CONTENT );
 	}
 
 	/**
@@ -127,7 +134,9 @@ class Agent_Ready_Settings {
 				'enabled'            => true,
 				'is_manually_edited' => false,
 			],
-			self::MODULE_MARKDOWN_CONTENT => [],
+			self::MODULE_MARKDOWN_CONTENT => [
+				'enabled' => true,
+			],
 			self::MODULE_BOT_ACCESS_CONTROL => [],
 		];
 	}
@@ -143,11 +152,12 @@ class Agent_Ready_Settings {
 	 */
 	private function get_module_sanitizers(): array {
 		return [
-			self::MODULE_LLMS_TXT => fn( array $settings ) => $this->sanitize_llms_txt( $settings ),
+			self::MODULE_LLMS_TXT            => fn( array $settings ) => $this->sanitize_content_module( $settings ),
+			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
 		];
 	}
 
-	private function sanitize_llms_txt( array $settings ): array {
+	private function sanitize_content_module( array $settings ): array {
 		$clean = [
 			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? true ),
 		];
@@ -161,6 +171,19 @@ class Agent_Ready_Settings {
 		}
 
 		return $clean;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function get_included_post_types( string $module ): array {
+		$settings = $this->get_module_settings( $module );
+
+		if ( ! isset( $settings['post_types'] ) || ! is_array( $settings['post_types'] ) ) {
+			return $this->get_available_post_type_names();
+		}
+
+		return $settings['post_types'];
 	}
 
 	private function restore_server_owned_keys( string $module, array $clean, array $stored_module ): array {
