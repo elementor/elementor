@@ -12,12 +12,13 @@ class Site_Flag {
 	const NOTIFICATIONS_QUERY_KEY = 'mcp';
 	const NOTIFICATIONS_HOST = 'my.elementor.com';
 	const NOTIFICATIONS_PATH = '/api/v1/notifications';
-	const HTML_TOKEN = 'e-bc';
+	const GENERATOR_SETTING_TOKEN = 'atomic-builder-enabled';
+	const CAPABILITY_TOKEN = 'compositions';
 
 	public static function register(): void {
 		add_filter( 'http_request_args', [ self::class, 'filter_notifications_request' ], 10, 2 );
 		add_filter( 'elementor/generator_tag/settings', [ self::class, 'filter_generator_tag_settings' ] );
-		add_action( 'wp_head', [ self::class, 'print_dedicated_meta' ] );
+		add_action( 'wp_head', [ self::class, 'print_product_meta' ] );
 	}
 
 	public static function mark(): void {
@@ -37,17 +38,19 @@ class Site_Flag {
 			return $settings;
 		}
 
-		$settings[] = self::HTML_TOKEN;
+		$settings[] = self::GENERATOR_SETTING_TOKEN;
 
 		return $settings;
 	}
 
-	public static function print_dedicated_meta(): void {
+	public static function print_product_meta(): void {
 		if ( ! self::is_set_in_alloptions() ) {
 			return;
 		}
 
-		echo '<meta name="' . esc_attr( self::HTML_TOKEN ) . '" content="1">' . PHP_EOL;
+		$content = ELEMENTOR_VERSION . '; capabilities: ' . self::CAPABILITY_TOKEN;
+
+		echo '<meta name="elementor" content="' . esc_attr( $content ) . '">' . PHP_EOL;
 	}
 
 	public static function filter_notifications_request( $args, $url ) {
