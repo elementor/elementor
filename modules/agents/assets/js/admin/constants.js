@@ -8,6 +8,29 @@ export const MODULE_BOT_ACCESS_CONTROL = 'bot-access-control';
 
 export const LLMS_SETTINGS_KEY = 'llms_txt';
 export const MARKDOWN_SETTINGS_KEY = 'markdown_content';
+export const BOT_ACCESS_SETTINGS_KEY = 'bot_access_control';
+
+export const BOT_PERMISSION_SEARCH = 'search';
+export const BOT_PERMISSION_AI_INPUT = 'aiInput';
+export const BOT_PERMISSION_AI_TRAIN = 'aiTrain';
+export const BOT_PERMISSIONS = [ BOT_PERMISSION_SEARCH, BOT_PERMISSION_AI_INPUT, BOT_PERMISSION_AI_TRAIN ];
+export const BOT_PERMISSION_SETTING_KEYS = {
+	[ BOT_PERMISSION_SEARCH ]: 'search',
+	[ BOT_PERMISSION_AI_INPUT ]: 'ai_input',
+	[ BOT_PERMISSION_AI_TRAIN ]: 'ai_train',
+};
+export const DEFAULT_BOT_PERMISSIONS = {
+	[ BOT_PERMISSION_SEARCH ]: true,
+	[ BOT_PERMISSION_AI_INPUT ]: true,
+	[ BOT_PERMISSION_AI_TRAIN ]: false,
+};
+
+export const BOT_TABLE_COLUMN_WIDTHS = {
+	[ BOT_PERMISSION_SEARCH ]: 150,
+	[ BOT_PERMISSION_AI_INPUT ]: 150,
+	[ BOT_PERMISSION_AI_TRAIN ]: 160,
+	action: 132,
+};
 export const LLMS_FILE_NAME = 'llms.txt';
 export const LLMS_VISIBLE_POST_TYPES_LIMIT = 4;
 

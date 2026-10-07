@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { useMarkdownItems } from '../../hooks/use-markdown-items';
+import { wpAdminInputResetSx } from '../wp-admin-sx';
 
 const PAGE_FIELD_WIDTH = 177;
 const PAGE_FIELD_RADIUS = '8px';
@@ -19,16 +20,6 @@ const PAGE_MENU_RADIUS = '16px';
 const EMPTY_STATE_WIDTH = 170;
 const SEARCH_PROGRESS_SIZE = 20;
 const USER_INPUT_REASON = 'input';
-
-const wpAdminInputResetSx = {
-	'.wp-admin & .MuiInputBase-input, & .MuiInputBase-input:focus': {
-		backgroundColor: 'initial',
-		border: 0,
-		boxShadow: 'none',
-		minHeight: 'auto',
-		outline: 0,
-	},
-};
 
 const itemShape = PropTypes.shape( {
 	id: PropTypes.number.isRequired,
