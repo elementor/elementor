@@ -27,6 +27,10 @@ class Export extends Export_Runner_Base {
 	}
 
 	private function is_default_styles_enabled( array $data ): bool {
+		if ( ! $this->is_feature_active() ) {
+			return false;
+		}
+
 		if ( isset( $data['customization']['settings']['defaultStyles'] ) ) {
 			return (bool) $data['customization']['settings']['defaultStyles'];
 		}
