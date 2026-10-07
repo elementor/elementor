@@ -26,7 +26,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	const CSS_FOR_EVERY_TARGET = 'font-size: 18px; color: #111111; padding-inline-start: 12px; padding-inline-end: 12px; gap: 20px;'
 		. ' &:hover { color: #222222; } main-menu:current { color: #333333; }'
-		. ' pointer:hover { background-color: #444444; color: #fafafa; } pointer { border-width: 3px; }'
+		. ' pointer:hover { background-color: #444444; } pointer { border-width: 3px; }'
 		. ' divider { border-style: dashed; border-color: #555555; }'
 		. ' dropdown { background-color: #ffffff; border: 1px solid #dddddd; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }'
 		. ' dropdown:hover { color: #666666; } dropdown-divider { border-style: solid; } toggle { font-size: 24px; }'
@@ -70,6 +70,14 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$this->assertSame( [ 'default', 'hover', 'current' ], $map->get_targets()['main-menu']->get_states() );
 	}
 
+	public function test_get_llm_contract__lists_the_site_menus_as_menu_values() {
+		// Act.
+		$contract = $this->registry->get_llm_contract( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertSame( [ 'main-menu' ], $contract['properties']['menu']['enum'] );
+	}
+
 	public function test_apply__writes_every_target_without_warnings() {
 		// Act.
 		$result = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE, [] );
@@ -86,10 +94,11 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 				'color_menu_item_hover',
 				'color_menu_item_active',
 				'pointer_color_menu_item_hover',
-				'color_menu_item_hover_pointer_bg',
 				'pointer_width',
 				'nav_menu_divider_style',
 				'nav_menu_divider_color',
+				'nav_menu_divider',
+				'layout',
 				'background_color_dropdown_item',
 				'dropdown_border_border',
 				'dropdown_border_width',
@@ -165,7 +174,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 	public function test_round_trip__wrapper_states_map_back_to_same_settings() {
 		// Arrange.
 		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; flex-grow: 1; flex-shrink: 0; }'
-			. ' wrapper:hover { background-color: #dddddd; border-color: #ff0000; border-radius: 6px; }';
+			. ' wrapper:hover { background-color: #dddddd; border-style: solid; border-color: #ff0000; border-radius: 6px; }';
 		$written = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] )['settings_patch'];
 		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
 

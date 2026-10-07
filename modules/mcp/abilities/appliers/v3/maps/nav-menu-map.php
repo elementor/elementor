@@ -79,7 +79,7 @@ return V3_Widget_Map::make( 'nav-menu' )
 	->description( 'WordPress menu rendered as a horizontal, vertical or dropdown navigation, with a mobile toggle button.' )
 	->settings( [
 		'menu_name' => V3_Setting::bind_to( 'menu_name' )->string(),
-		'menu' => V3_Setting::bind_to( 'menu' )->string(),
+		'menu' => V3_Setting::bind_to( 'menu' )->enum_from_control(),
 		'layout' => V3_Setting::bind_to( 'layout' )->enum_from_control(),
 		'align_items' => V3_Setting::bind_to( 'align_items' )->enum_from_control(),
 		'pointer' => V3_Setting::bind_to( 'pointer' )->enum_from_control(),
