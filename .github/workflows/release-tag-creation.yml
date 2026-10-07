@@ -72,6 +72,7 @@ jobs:
         with:
           version: ${{ inputs.version }}
           dry_run: ${{ inputs.dry_run }}
+          plugin: core
           maintain_username: ${{ secrets.MAINTAIN_USERNAME }}
           maintain_email: ${{ secrets.MAINTAIN_EMAIL }}
 
