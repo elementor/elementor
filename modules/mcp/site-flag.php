@@ -12,13 +12,11 @@ class Site_Flag {
 	const NOTIFICATIONS_QUERY_KEY = 'mcp';
 	const NOTIFICATIONS_HOST = 'my.elementor.com';
 	const NOTIFICATIONS_PATH = '/api/v1/notifications';
-	const GENERATOR_SETTING_TOKEN = 'atomic-builder-enabled';
 	const CAPABILITY_TOKEN = 'compositions';
 
 	public static function register(): void {
 		add_filter( 'http_request_args', [ self::class, 'filter_notifications_request' ], 10, 2 );
-		add_filter( 'elementor/generator_tag/settings', [ self::class, 'filter_generator_tag_settings' ] );
-		add_action( 'wp_head', [ self::class, 'print_product_meta' ] );
+		add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );
 	}
 
 	public static function mark(): void {
@@ -33,24 +31,14 @@ class Site_Flag {
 		return ! empty( get_option( self::OPTION_NAME ) );
 	}
 
-	public static function filter_generator_tag_settings( $settings ) {
-		if ( ! is_array( $settings ) || ! self::is_set_in_alloptions() ) {
-			return $settings;
+	public static function filter_generator_tag_capabilities( $capabilities ) {
+		if ( ! is_array( $capabilities ) || ! self::is_set_in_alloptions() ) {
+			return $capabilities;
 		}
 
-		$settings[] = self::GENERATOR_SETTING_TOKEN;
+		$capabilities[] = self::CAPABILITY_TOKEN;
 
-		return $settings;
-	}
-
-	public static function print_product_meta(): void {
-		if ( ! self::is_set_in_alloptions() ) {
-			return;
-		}
-
-		$content = ELEMENTOR_VERSION . '; capabilities: ' . self::CAPABILITY_TOKEN;
-
-		echo '<meta name="elementor" content="' . esc_attr( $content ) . '">' . PHP_EOL;
+		return $capabilities;
 	}
 
 	public static function filter_notifications_request( $args, $url ) {
