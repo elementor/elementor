@@ -44,7 +44,7 @@ const EmptyState = ( { query } ) => (
 			<br />
 			{ sprintf(
 				/* Translators: %s: the search text. */
-				__( '“%s“.', 'elementor' ),
+				__( '“%s”.', 'elementor' ),
 				query,
 			) }
 		</Typography>

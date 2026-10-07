@@ -1,11 +1,10 @@
 import { type ElementID } from '../types';
 import { getContainer } from './get-container';
 import { getCurrentDocumentContainer } from './get-current-document-container';
+import { getHostDocumentContainer } from './get-host-document-container';
 import { type V1Element } from './types';
 
-export function getElements( root?: ElementID ): V1Element[] {
-	const container = root ? getContainer( root ) : getCurrentDocumentContainer();
-
+function collectElements( container: V1Element | null ): V1Element[] {
 	if ( ! container ) {
 		return [];
 	}
@@ -15,4 +14,14 @@ export function getElements( root?: ElementID ): V1Element[] {
 	);
 
 	return [ container, ...children ];
+}
+
+export function getElements( root?: ElementID ): V1Element[] {
+	const container = root ? getContainer( root ) : getCurrentDocumentContainer();
+
+	return collectElements( container );
+}
+
+export function getHostDocumentElements(): V1Element[] {
+	return collectElements( getHostDocumentContainer() );
 }

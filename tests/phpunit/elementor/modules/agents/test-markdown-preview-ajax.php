@@ -14,6 +14,8 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 
 	private Agent_Ready_Settings $settings;
 
+	private Markdown_Endpoint $endpoint;
+
 	private Markdown_Preview_Ajax $ajax;
 
 	public function setUp(): void {
@@ -25,7 +27,8 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
-		$this->ajax = new Markdown_Preview_Ajax( $this->settings, new Markdown_Endpoint() );
+		$this->endpoint = new Markdown_Endpoint( $this->settings );
+		$this->ajax     = new Markdown_Preview_Ajax( $this->endpoint );
 	}
 
 	public function tearDown(): void {
@@ -40,15 +43,15 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 			'post_type'    => 'page',
 			'post_status'  => 'publish',
 			'post_title'   => 'Preview Page',
-			'post_content' => 'Preview body.',
+			'post_content' => 'Preview body is long enough to extract.',
 		] ) );
 
 		// Act
 		$result = $this->ajax->handle( [ 'postId' => $post->ID ] );
 
 		// Assert
-		$this->assertSame( ( new Markdown_Endpoint() )->build_markdown( $post ), $result['content'] );
-		$this->assertStringContainsString( 'Preview body.', $result['content'] );
+		$this->assertSame( $this->endpoint->build_markdown( $post ), $result['content'] );
+		$this->assertStringContainsString( 'Preview body is long enough to extract.', $result['content'] );
 	}
 
 	public function test_handle__rejects_a_post_type_that_is_not_included() {
@@ -63,6 +66,7 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 		// Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionCode( Exceptions::BAD_REQUEST );
+		$this->expectExceptionMessage( 'This content type is not included.' );
 
 		// Act
 		$this->ajax->handle( [ 'postId' => $post_id ] );
