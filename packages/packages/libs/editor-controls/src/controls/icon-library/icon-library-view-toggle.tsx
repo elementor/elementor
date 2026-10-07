@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ListIcon, WidgetsIcon } from '@elementor/icons';
-import { ToggleButton, Tooltip } from '@elementor/ui';
+import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
@@ -28,15 +28,14 @@ export const IconLibraryViewToggle = ( { value, onChange }: IconLibraryViewToggl
 			enterNextDelay={ ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY }
 			disableInteractive
 		>
-			<ToggleButton
+			<IconButton
 				aria-label={ viewButtonLabel }
-				value="view"
 				size="tiny"
 				onClick={ () => onChange( nextView ) }
 				sx={ { flexShrink: 0, mr: HEADER_ACTION_GAP } }
 			>
 				<ViewIcon fontSize="tiny" />
-			</ToggleButton>
+			</IconButton>
 		</Tooltip>
 	);
 };

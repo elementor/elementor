@@ -8,7 +8,7 @@ import {
 	StyledMenuList,
 	type VirtualizedItem,
 } from '@elementor/editor-ui';
-import { ComponentsIcon } from '@elementor/icons';
+import { ComponentsIcon, LibraryIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from '@elementor/ui';
 import { useDebounceState } from '@elementor/utils';
@@ -38,16 +38,16 @@ const isIconLibraryView = ( value: unknown ): value is IconLibraryView => {
 	return value === 'grid' || value === 'list';
 };
 const ICON_TILE_SIZE = 40;
-const ICON_LIBRARY_ROW_VERTICAL_PADDING_PX = 8;
+const ICON_LIBRARY_ROW_VERTICAL_PADDING = 0.5;
+const ICON_LIBRARY_ROW_VERTICAL_PADDING_PX = 4;
 export const ICON_LIBRARY_ROW_HEIGHT = ICON_TILE_SIZE + ICON_LIBRARY_ROW_VERTICAL_PADDING_PX * 2;
 const ICON_GLYPH_SIZE = 20;
-const ICON_LIBRARY_INLINE_SPACING = 1.5;
-const ICON_LIBRARY_CORNER_RADIUS = 2;
+const ICON_LIBRARY_INLINE_SPACING = 2;
 const ICON_LIBRARY_TITLE_SIZE = '14px';
 
 const CompactIconLibraryMenuList = styled( StyledMenuList )( ( { theme } ) => ( {
 	'& > [role="option"]': {
-		padding: theme.spacing( 1, ICON_LIBRARY_INLINE_SPACING ),
+		padding: theme.spacing( ICON_LIBRARY_ROW_VERTICAL_PADDING, ICON_LIBRARY_INLINE_SPACING ),
 	},
 } ) );
 
@@ -124,7 +124,7 @@ export const IconLibraryPopover = ( {
 			<PopoverHeader
 				title={ __( 'Icon library', 'elementor' ) }
 				onClose={ handleClose }
-				icon={ <ComponentsIcon fontSize="tiny" /> }
+				icon={ <LibraryIcon fontSize="tiny" /> }
 				actions={ [ <IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } /> ] }
 				sx={ {
 					pl: ICON_LIBRARY_INLINE_SPACING,
@@ -138,12 +138,7 @@ export const IconLibraryPopover = ( {
 					onSearch={ handleSearchChange }
 					placeholder={ __( 'Search', 'elementor' ) }
 					id="icon-library-search"
-					sx={ {
-						flex: 1,
-						px: 0,
-						pb: 0,
-						'& .MuiOutlinedInput-root': { borderRadius: ICON_LIBRARY_CORNER_RADIUS },
-					} }
+					sx={ { flex: 1, px: 0, pb: 0 } }
 				/>
 				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
 			</Stack>
@@ -265,7 +260,7 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					justifyContent: 'center',
 					border: 1,
 					borderColor: 'divider',
-					borderRadius: ICON_LIBRARY_CORNER_RADIUS,
+					borderRadius: 1,
 					color: 'text.tertiary',
 					flexShrink: 0,
 				} }

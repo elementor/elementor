@@ -157,7 +157,7 @@ describe( 'IconLibraryPopover', () => {
 		renderPopover();
 
 		// Assert.
-		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toHaveAttribute( 'aria-colcount', '8' );
+		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toHaveAttribute( 'aria-colcount', '7' );
 	} );
 
 	it( 'keeps measuring the grid after an empty search is cleared', () => {

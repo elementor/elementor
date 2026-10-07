@@ -13,9 +13,9 @@ export const ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY = 1000;
 
 const ICON_GLYPH_SIZE = 20;
 const GRID_OVERSCAN = 6;
-const GRID_COLUMN_GAP = 1;
-const GRID_HORIZONTAL_PADDING = 1.5;
-const GRID_CELL_CORNER_RADIUS = 2;
+const GRID_CELL_GAP = 1;
+const GRID_HORIZONTAL_PADDING = 2;
+const GRID_VERTICAL_PADDING = 1.5;
 const HOME_END_KEYS = new Set( [ 'Home', 'End' ] );
 
 const getGridMetrics = ( containerWidth: number, columnGap: number, inlinePadding: number ) => {
@@ -68,10 +68,15 @@ export const IconLibraryGrid = ( {
 	const [ focusedIndex, setFocusedIndex ] = useState( selectedIndex >= 0 ? selectedIndex : 0 );
 	const [ { columnCount, cellSize }, setGridMetrics ] = useState( () => getGridMetrics( 0, 0, 0 ) );
 	const rowCount = Math.ceil( items.length / columnCount );
+	const cellGap = Number.parseFloat( theme.spacing( GRID_CELL_GAP ) );
+	const verticalPadding = Number.parseFloat( theme.spacing( GRID_VERTICAL_PADDING ) );
 	const virtualizer = useVirtualizer( {
 		count: rowCount,
 		getScrollElement: () => containerRef.current,
 		estimateSize: () => cellSize,
+		gap: cellGap,
+		paddingStart: verticalPadding,
+		paddingEnd: verticalPadding,
 		overscan: GRID_OVERSCAN,
 	} );
 	const focusedItem = items[ focusedIndex ];
@@ -119,9 +124,8 @@ export const IconLibraryGrid = ( {
 		}
 
 		const measureGrid = () => {
-			const columnGap = Number.parseFloat( theme.spacing( GRID_COLUMN_GAP ) );
 			const inlinePadding = Number.parseFloat( theme.spacing( GRID_HORIZONTAL_PADDING ) ) * 2;
-			setGridMetrics( getGridMetrics( container.clientWidth, columnGap, inlinePadding ) );
+			setGridMetrics( getGridMetrics( container.clientWidth, cellGap, inlinePadding ) );
 		};
 
 		measureGrid();
@@ -131,7 +135,7 @@ export const IconLibraryGrid = ( {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [ theme, items.length ] );
+	}, [ theme, cellGap, items.length ] );
 
 	useLayoutEffect( () => {
 		virtualizer.measure();
@@ -243,7 +247,7 @@ export const IconLibraryGrid = ( {
 									transform: `translateY(${ virtualRow.start }px)`,
 									display: 'grid',
 									gridTemplateColumns: `repeat(${ columnCount }, minmax(0, 1fr))`,
-									gap: GRID_COLUMN_GAP,
+									gap: GRID_CELL_GAP,
 									px: GRID_HORIZONTAL_PADDING,
 									boxSizing: 'border-box',
 								} }
@@ -303,7 +307,7 @@ export const IconLibraryGrid = ( {
 														justifyContent: 'center',
 														border: '1px solid',
 														borderColor: 'divider',
-														borderRadius: GRID_CELL_CORNER_RADIUS,
+														borderRadius: 1,
 														color: 'text.tertiary',
 														bgcolor: 'transparent',
 														p: 0,
