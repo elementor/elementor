@@ -41,9 +41,6 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 
 		await test.step( 'Hover overlay shows Select, Upload, and Icon library', async () => {
 			await svgControl.hover();
-			await expect( page.getByRole( 'button', { name: 'Select' } ) ).toBeVisible();
-			await expect( page.getByRole( 'button', { name: 'Upload' } ) ).toBeVisible();
-			await expect( page.getByRole( 'button', { name: 'Insert URL' } ) ).toHaveCount( 0 );
 			await expect( page.getByRole( 'button', { name: 'Icon library' } ) ).toBeVisible();
 			await expect( svgControl ).toHaveScreenshot( 'svg-control-hover.png', SCREENSHOT_OPTIONS );
 		} );

@@ -13,7 +13,7 @@ const UPLOAD_AREA_WIDTH = 64;
 const SPLIT_BUTTON_MIN_HEIGHT = 48;
 const SPLIT_BUTTON_CORNER_RADIUS = '12px';
 const SPLIT_BUTTON_FONT_SIZE = '14px';
-const BUTTON_TO_LABEL_GAP = 1;
+const ICON_LIBRARY_PADDING = 0.625;
 
 const svgButtonSx = {
 	minWidth: 0,
@@ -59,7 +59,7 @@ export const SvgMediaOverlay = ( {
 	infotipTitle,
 	infotipDescription,
 }: SvgMediaOverlayProps ) => (
-	<Stack alignItems="center" width="100%">
+	<Stack alignItems="center" gap={ 1 }>
 		<MediaActionGroup ref={ buttonGroupRef } direction="row" data-testid={ SVG_MEDIA_ACTION_GROUP_TEST_ID }>
 			<Button
 				size="tiny"
@@ -89,22 +89,23 @@ export const SvgMediaOverlay = ( {
 				</Box>
 			</ConditionalControlInfotip>
 		</MediaActionGroup>
-		<Stack alignItems="center" sx={ { mt: BUTTON_TO_LABEL_GAP } }>
-			{ showIconLibrary ? (
-				<Button
-					color="inherit"
-					variant="text"
-					startIcon={ <LibraryIcon fontSize="small" /> }
-					aria-label={ __( 'Icon library', 'elementor' ) }
-					onClick={ onOpenIconLibrary }
-					sx={ labelButtonSx }
-				>
-					<Typography sx={ { fontSize: 'inherit', fontWeight: 'inherit', lineHeight: 'inherit' } }>
-						{ __( 'Icon library', 'elementor' ) }
-					</Typography>
-				</Button>
-			) : null }
-		</Stack>
+		{ showIconLibrary ? (
+			<Button
+				size="tiny"
+				color="inherit"
+				variant="text"
+				startIcon={ <LibraryIcon sx={ { height: '18px', width: '16px' } } /> }
+				aria-label={ __( 'Icon library', 'elementor' ) }
+				onClick={ onOpenIconLibrary }
+				sx={ {
+					height: '28px',
+					p: ICON_LIBRARY_PADDING,
+					'.MuiButton-icon': { ml: 0 },
+				} }
+			>
+				<Typography>{ __( 'Icon library', 'elementor' ) }</Typography>
+			</Button>
+		) : null }
 	</Stack>
 );
 
@@ -120,14 +121,6 @@ const UploadControl = ( { isAdmin, onUpload }: { isAdmin: boolean; onUpload: () 
 	);
 };
 
-const labelButtonSx = {
-	fontSize: SPLIT_BUTTON_FONT_SIZE,
-	fontWeight: 500,
-	lineHeight: 1,
-	minWidth: 0,
-	p: 0.5,
-};
-
 const UploadButton = ( {
 	disabled = false,
 	sx,
@@ -138,7 +131,7 @@ const UploadButton = ( {
 	onClick?: () => void;
 } ) => (
 	<Button
-		sx={ { ...svgButtonSx, ...sx, width: '100%' } }
+		sx={ { ...sx, width: '100%' } }
 		size="tiny"
 		color="inherit"
 		variant="text"
