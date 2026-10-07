@@ -13,8 +13,6 @@ export const useMarkdownItems = ( { term = '', refreshKey = '', isPaused = false
 			setIsLoading( false );
 			return;
 		}
-			return;
-		}
 
 		let isCurrent = true;
 		const trimmedTerm = term.trim();
