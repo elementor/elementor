@@ -1,17 +1,24 @@
 import { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon, CircleCheckFilledIcon, CircleXFilledIcon } from '@elementor/icons';
+import { AlertCircleIcon, ChevronDownIcon, ChevronUpIcon, CircleCheckFilledIcon, CircleXFilledIcon } from '@elementor/icons';
 import Accordion from '@elementor/ui/Accordion';
 import AccordionDetails from '@elementor/ui/AccordionDetails';
 import AccordionSummary from '@elementor/ui/AccordionSummary';
-import Chip from '@elementor/ui/Chip';
 import Stack from '@elementor/ui/Stack';
 import Switch from '@elementor/ui/Switch';
 import Typography from '@elementor/ui/Typography';
 import PropTypes from 'prop-types';
 
+import { MODULE_STATUS_DISABLED, MODULE_STATUS_ENABLED, MODULE_STATUS_WARNING } from '../constants';
+
 const stopEventPropagation = ( event ) => event.stopPropagation();
 
-export const ModuleAccordion = ( { title, description, isEnabled, onToggle, children } ) => {
+const statusIcons = {
+	[ MODULE_STATUS_ENABLED ]: <CircleCheckFilledIcon color="success" />,
+	[ MODULE_STATUS_DISABLED ]: <CircleXFilledIcon color="error" />,
+	[ MODULE_STATUS_WARNING ]: <AlertCircleIcon color="warning" />,
+};
+
+export const ModuleAccordion = ( { title, description, status, isEnabled, isToggleDisabled, onToggle, children } ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	return (
@@ -19,7 +26,7 @@ export const ModuleAccordion = ( { title, description, isEnabled, onToggle, chil
 			variant="outlined"
 			expanded={ isExpanded }
 			onChange={ ( event, expanded ) => setIsExpanded( expanded ) }
-			sx={ { borderRadius: '12px' } }
+			sx={ { borderRadius: '12px', maxWidth: '100%', minWidth: 0 } }
 		>
 			<AccordionSummary
 				expandIcon={ null }
@@ -28,24 +35,17 @@ export const ModuleAccordion = ( { title, description, isEnabled, onToggle, chil
 			>
 				<Stack direction="row" alignItems="center" justifyContent="space-between" width="100%">
 					<Stack direction="row" alignItems="center" spacing={ 1 }>
-						{ isEnabled
-							? <CircleCheckFilledIcon color="success" />
-							: <CircleXFilledIcon color="error" />
-						}
+						{ statusIcons[ status ] }
 						<Typography variant="h6">{ title }</Typography>
 						{ ! isExpanded && (
-							<Chip
-								label={ description }
-								size="small"
-								variant="outlined"
-								shape="rounded"
-							/>
+							<Typography variant="body2" color="text.tertiary">{ description }</Typography>
 						) }
 					</Stack>
 					<Stack direction="row" alignItems="center" spacing={ 2 }>
 						<Switch
 							size="small"
 							checked={ isEnabled }
+							disabled={ isToggleDisabled }
 							onChange={ onToggle }
 							onClick={ stopEventPropagation }
 							sx={ { '& .MuiSwitch-input': { position: 'absolute' } } }
@@ -55,11 +55,8 @@ export const ModuleAccordion = ( { title, description, isEnabled, onToggle, chil
 				</Stack>
 			</AccordionSummary>
 			{ isExpanded && (
-				<AccordionDetails sx={ { px: 6, py: 3 } }>
-					<Stack spacing={ 1 }>
-						<Typography variant="subtitle1">{ description }</Typography>
-						{ children }
-					</Stack>
+				<AccordionDetails sx={ { p: 0 } }>
+					{ children }
 				</AccordionDetails>
 			) }
 		</Accordion>
@@ -69,7 +66,9 @@ export const ModuleAccordion = ( { title, description, isEnabled, onToggle, chil
 ModuleAccordion.propTypes = {
 	title: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
+	status: PropTypes.oneOf( [ MODULE_STATUS_ENABLED, MODULE_STATUS_DISABLED, MODULE_STATUS_WARNING ] ).isRequired,
 	isEnabled: PropTypes.bool.isRequired,
+	isToggleDisabled: PropTypes.bool,
 	onToggle: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
 };
