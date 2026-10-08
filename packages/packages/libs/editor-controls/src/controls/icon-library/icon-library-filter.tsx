@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { useId } from 'react';
-import { CheckIcon, FilterIcon, LibraryIcon, ListIcon, StarFilledIcon, StarIcon } from '@elementor/icons';
+import {
+	CheckIcon,
+	FilterIcon,
+	LibraryIcon,
+	MenuIcon,
+	RosetteDiscountCheckIcon,
+	StarFilledIcon,
+	StarIcon,
+} from '@elementor/icons';
 import {
 	bindMenu,
 	bindToggle,
@@ -22,23 +30,24 @@ import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip'
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
-const FILTER_INDICATOR_OFFSET = 4;
+const FILTER_INDICATOR_CORNER_OFFSET = -( FILTER_INDICATOR_SIZE / 2 );
 const FILTER_TYPE_ALL = 'all';
 const FILTER_TYPE_GROUP = 'group';
 const FILTER_TYPE_ITEM = 'item';
 
-const FILTER_ICONS: Record< string, typeof ListIcon > = {
-	list: ListIcon,
+const FILTER_ICONS: Record< string, typeof MenuIcon > = {
+	list: MenuIcon,
 	star: StarIcon,
 	'star-filled': StarFilledIcon,
 	library: LibraryIcon,
+	rosette: RosetteDiscountCheckIcon,
 };
 
 const DEFAULT_FILTER = [
 	{ type: FILTER_TYPE_ALL, label: 'All icons', icon: 'list' },
 	{ type: FILTER_TYPE_ITEM, value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
 	{ type: FILTER_TYPE_ITEM, value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
-	{ type: FILTER_TYPE_ITEM, value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'library' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'rosette' },
 ] as const;
 
 type FilterEntry =
@@ -86,7 +95,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 					value="filter"
 					size="tiny"
 					selected={ popupState.isOpen }
-					sx={ { position: 'relative', flexShrink: 0 } }
+					sx={ { position: 'relative', flexShrink: 0, overflow: 'visible' } }
 					{ ...bindToggle( popupState ) }
 					aria-expanded={ popupState.isOpen }
 				>
@@ -97,12 +106,12 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 							aria-hidden="true"
 							sx={ {
 								position: 'absolute',
-								insetBlockStart: FILTER_INDICATOR_OFFSET,
-								insetInlineEnd: FILTER_INDICATOR_OFFSET,
+								insetBlockStart: FILTER_INDICATOR_CORNER_OFFSET,
+								insetInlineEnd: FILTER_INDICATOR_CORNER_OFFSET,
 								width: FILTER_INDICATOR_SIZE,
 								height: FILTER_INDICATOR_SIZE,
 								borderRadius: '50%',
-								bgcolor: 'secondary.main',
+								bgcolor: 'text.primary',
 							} }
 						/>
 					) : null }
@@ -173,7 +182,7 @@ const renderFilterEntry = (
 
 const getFilterIcon = ( icon?: string ) => FILTER_ICONS[ icon ?? '' ] ?? LibraryIcon;
 
-const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, selected: boolean ) => (
+const renderFilterMenuItemContent = ( label: string, Icon: typeof MenuIcon, selected: boolean ) => (
 	<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
 		<Icon fontSize="tiny" />
 		<Typography variant="caption" sx={ { flex: 1 } }>
