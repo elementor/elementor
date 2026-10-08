@@ -21,6 +21,7 @@ type StartSyncToV3ModalProps = {
 	classId?: string;
 	onExternalClose?: () => void;
 	onConfirm?: () => void;
+	onSuppressMessage?: () => void;
 };
 
 export const StartSyncToV3Modal = ( {
@@ -28,6 +29,7 @@ export const StartSyncToV3Modal = ( {
 	classId,
 	onExternalClose,
 	onConfirm,
+	onSuppressMessage,
 }: StartSyncToV3ModalProps = {} ) => {
 	const [ shouldShowAgain, setShouldShowAgain ] = useState( true );
 	const hasTrackedExposure = useRef( false );
@@ -54,6 +56,11 @@ export const StartSyncToV3Modal = ( {
 		if ( classId ) {
 			trackGlobalClasses( { event: 'classSyncToV3PopupClick', classId, action: 'sync' } );
 		}
+
+		if ( ! shouldShowAgain ) {
+			onSuppressMessage?.();
+		}
+
 		onConfirm?.();
 		onExternalClose?.();
 	};
