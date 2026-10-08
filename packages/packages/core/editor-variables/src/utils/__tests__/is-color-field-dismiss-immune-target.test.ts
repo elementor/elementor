@@ -16,6 +16,21 @@ describe( 'isColorFieldDismissImmuneTarget', () => {
 		document.body.removeChild( field );
 	} );
 
+	it( 'returns true for the color picker popover while the color field is mounted', () => {
+		const field = document.createElement( 'div' );
+		field.id = 'color-variable-field';
+		document.body.appendChild( field );
+
+		const popover = document.createElement( 'div' );
+		popover.id = 'eui-color-picker-popover';
+		document.body.appendChild( popover );
+
+		expect( isColorFieldDismissImmuneTarget( popover ) ).toBe( true );
+
+		document.body.removeChild( field );
+		document.body.removeChild( popover );
+	} );
+
 	it( 'returns true for the format combobox while the color field is mounted', () => {
 		const field = document.createElement( 'div' );
 		field.id = 'color-variable-field';
