@@ -27,5 +27,8 @@
         "checkJs": false,
         "allowJs": false,
         "resolveJsonModule": true
-    }
+    },
+    "exclude": [
+        "packages/packages/tools/generate-font-awesome-7"
+    ]
 }
