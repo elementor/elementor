@@ -11,6 +11,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 
 	const listType = 'e-list';
 	const listItemsLabel = 'List Items';
+	const markerIconToFontRatio = 0.6;
 
 	const getListRoot = ( listId: string ): Locator => {
 		return editor.getPreviewFrame().locator( editor.getWidgetSelector( listId ) );
@@ -21,7 +22,7 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 	};
 
 	const getListMarkers = ( listRoot: Locator ): Locator => {
-		return listRoot.locator( '.e-list-item__marker .e-paragraph-base' );
+		return listRoot.locator( '.e-list-item__marker .e-svg-base' );
 	};
 
 	const getListParagraphs = ( listRoot: Locator ): Locator => {
@@ -73,6 +74,63 @@ test.describe( 'Atomic List Editor Interactions @atomic-widgets', () => {
 		await expect( getListMarkers( listRoot ) ).toHaveCount( 2 );
 		await expect( getListParagraphs( listRoot ) ).toHaveCount( 2 );
 		expect( new Set( initialIds ).size ).toBe( initialIds.length );
+	} );
+
+	test( 'Clicking the marker icon selects the SVG', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const listRoot = getListRoot( listId );
+		const listItem = listRoot.locator( '.e-list-item' ).first();
+		const marker = listItem.locator( '.e-list-item__marker' );
+		const svg = marker.locator( '.e-svg-base' );
+		const ownHandle = ':scope > .elementor-element-overlay > .elementor-editor-element-settings';
+
+		await marker.hover();
+
+		const svgBox = await svg.boundingBox();
+		const markerHandleBox = await marker.locator( ownHandle ).boundingBox();
+		const itemHandleBox = await listItem.locator( ownHandle ).boundingBox();
+		const listHandleBox = await listRoot.locator( ownHandle ).boundingBox();
+
+		// The list handle used to sit on the first item's icon. It now sits at the list's far end, with the item handle, and the marker handle beside the marker.
+		expect( svgBox ).not.toBeNull();
+		expect( markerHandleBox ).not.toBeNull();
+		expect( itemHandleBox ).not.toBeNull();
+		expect( listHandleBox ).not.toBeNull();
+		expect( markerHandleBox.x + markerHandleBox.width ).toBeLessThanOrEqual( svgBox.x + 1 );
+		expect( itemHandleBox.x ).toBeGreaterThanOrEqual( svgBox.x + svgBox.width );
+		expect( listHandleBox.x ).toBeGreaterThanOrEqual( svgBox.x + svgBox.width );
+
+		// Act.
+		await svg.click();
+
+		// Assert.
+		const svgElement = svg.locator( 'xpath=ancestor-or-self::*[@data-id][1]' );
+
+		await expect( svgElement ).toHaveClass( /elementor-element-editable/ );
+		await expect( getListRoot( listId ) ).not.toHaveClass( /elementor-element-editable/ );
+	} );
+
+	test( 'The marker icon defaults to 0.6 of the item text size', async () => {
+		// Arrange.
+		const listId = await editor.addElement( { elType: listType }, 'document' );
+		const marker = getListRoot( listId ).locator( '.e-list-item__marker' ).first();
+		const svg = marker.locator( '.e-svg-base' );
+
+		// Assert.
+		const { width, height, fontSize } = await svg.evaluate( ( node ) => {
+			const rect = node.getBoundingClientRect();
+			const style = getComputedStyle( node.closest( '.e-list-item__marker' ) );
+
+			return {
+				width: rect.width,
+				height: rect.height,
+				fontSize: parseFloat( style.fontSize ),
+			};
+		} );
+
+		expect( width ).toBeCloseTo( fontSize * markerIconToFontRatio, 0 );
+		expect( height ).toBeCloseTo( fontSize * markerIconToFontRatio, 0 );
 	} );
 
 	test( 'Add, duplicate, and remove list items via control', async () => {
