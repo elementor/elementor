@@ -774,6 +774,195 @@ class Utils {
 	}
 
 	/**
+	 * Find an element by id, searching the host document and any templates or
+	 * global widgets it embeds.
+	 *
+	 * When a widget such as Loop Grid lives inside a Container Template that is
+	 * placed through a Template widget (or inside a Global Widget), its data is
+	 * stored in a separate document rather than the host page. A lookup limited
+	 * to the host document therefore fails and callers fall back to the first
+	 * page of results, which is why "Load More" repeats the first items.
+	 *
+	 * This helper first tries the host document. If the element is not found it
+	 * walks the host tree collecting embedded template ids from Template widgets
+	 * and global widget ids, loads each referenced document, and searches them.
+	 * Visited document ids are tracked so circular template references do not
+	 * cause infinite recursion.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param int|string $post_id      The host post (page) id.
+	 * @param string     $element_id   The element (widget) id to locate.
+	 * @param array|null $host_elements Optional host elements data. When null,
+	 *                                  the host document elements are loaded.
+	 *
+	 * @return array|false The matching element data, or false when not found.
+	 */
+	public static function find_element_in_document_tree( $post_id, $element_id, $host_elements = null ) {
+		$found = self::find_element_in_document_tree_visited( $post_id, $element_id, $host_elements, [] );
+
+		if ( $found ) {
+			return $found;
+		}
+
+		/**
+		 * Cross-document element lookup.
+		 *
+		 * Allows other modules (for example Global Widget resolution) to extend
+		 * the search when an element is not found in the host document or any
+		 * embedded template.
+		 *
+		 * @since 4.2.4
+		 *
+		 * @param array|false $element    The located element or false.
+		 * @param int|string  $post_id    The host post id.
+		 * @param string      $element_id The element id being located.
+		 */
+		return apply_filters( 'elementor/utils/find_element_in_document_tree', false, $post_id, $element_id );
+	}
+
+	/**
+	 * Search the host document and embedded template documents while tracking
+	 * visited document ids.
+	 *
+	 * Shared visited-tracking prevents infinite recursion on circular template
+	 * references, for example when Template A embeds Template B and Template B
+	 * embeds Template A.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param int|string $post_id      The document id being searched.
+	 * @param string     $element_id   The element (widget) id to locate.
+	 * @param array|null $host_elements Optional elements data for the document.
+	 * @param int[]      $visited      Document ids already searched in this walk.
+	 *
+	 * @return array|false The matching element data, or false when not found.
+	 */
+	private static function find_element_in_document_tree_visited( $post_id, $element_id, $host_elements, array $visited ) {
+		$post_id = (int) $post_id;
+
+		if ( in_array( $post_id, $visited, true ) ) {
+			return false;
+		}
+
+		$visited[] = $post_id;
+
+		if ( null === $host_elements ) {
+			$host_elements = self::get_document_elements( $post_id );
+		}
+
+		if ( ! empty( $host_elements ) ) {
+			$found = self::find_element_recursive( $host_elements, $element_id );
+
+			if ( $found ) {
+				return $found;
+			}
+		}
+
+		$template_ids = self::collect_embedded_template_ids( $host_elements, $visited );
+
+		foreach ( $template_ids as $template_id ) {
+			$elements = self::get_document_elements( $template_id );
+
+			if ( empty( $elements ) ) {
+				continue;
+			}
+
+			$found = self::find_element_recursive( $elements, $element_id );
+
+			if ( $found ) {
+				return $found;
+			}
+
+			$nested = self::find_element_in_document_tree_visited( $template_id, $element_id, $elements, $visited );
+
+			if ( $nested ) {
+				return $nested;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the elements data for a given document.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param int|string $post_id
+	 *
+	 * @return array|null
+	 */
+	private static function get_document_elements( $post_id ) {
+		$document = Plugin::$instance->documents->get_doc_for_frontend( (int) $post_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return null;
+		}
+
+		$elements = $document->get_elements_data();
+
+		return is_array( $elements ) ? $elements : null;
+	}
+
+	/**
+	 * Collect template ids embedded through Template widgets and global widgets
+	 * in a set of elements.
+	 *
+	 * Template widgets store the referenced template under `settings.template_id`,
+	 * and global widgets store it under `settings.globalWidgetId`.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param array|null $elements
+	 * @param int[]      $exclude_ids Document ids already visited, to avoid loops.
+	 *
+	 * @return int[]
+	 */
+	private static function collect_embedded_template_ids( $elements, array $exclude_ids ) {
+		if ( empty( $elements ) || ! is_array( $elements ) ) {
+			return [];
+		}
+
+		$template_ids = [];
+
+		foreach ( $elements as $element ) {
+			if ( ! is_array( $element ) ) {
+				continue;
+			}
+
+			$widget_type = $element['widgetType'] ?? '';
+			$settings = $element['settings'] ?? [];
+
+			if ( 'template' === $widget_type && ! empty( $settings['template_id'] ) ) {
+				$template_ids[] = (int) $settings['template_id'];
+			}
+
+			if ( ! empty( $settings['globalWidgetId'] ) ) {
+				$template_ids[] = (int) $settings['globalWidgetId'];
+			}
+
+			$inner_elements = apply_filters(
+				'elementor/utils/find_element_recursive/inner_elements',
+				$element['elements'] ?? [],
+				$element
+			);
+
+			if ( ! empty( $inner_elements ) ) {
+				$template_ids = array_merge(
+					$template_ids,
+					self::collect_embedded_template_ids( $inner_elements, $exclude_ids )
+				);
+			}
+		}
+
+		$template_ids = array_unique( array_filter( $template_ids ) );
+		$template_ids = array_values( array_diff( $template_ids, $exclude_ids ) );
+
+		return $template_ids;
+	}
+
+	/**
 	 * Change Submenu First Item Label
 	 *
 	 * Overwrite the label of the first submenu item of an admin menu item.
