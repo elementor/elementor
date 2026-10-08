@@ -16,13 +16,9 @@ class V3_Widget_Map_Compiler {
 
 	const ERROR_CODE = 'elementor_v3_map_invalid';
 
-	const CATALOG_VISIBILITY_ALWAYS = 'always';
-	const CATALOG_VISIBILITY_V4_DISABLED = 'v4_disabled';
-
 	const REQUIRED_FIELDS = [
 		'widget_type',
 		'description',
-		'catalog_visibility',
 		'settings',
 		'default_style_target',
 		'style_targets',
@@ -77,10 +73,6 @@ class V3_Widget_Map_Compiler {
 
 		if ( null !== $expected_widget_type && $expected_widget_type !== $map['widget_type'] ) {
 			return self::error( 'widget_type_mismatch', $map['widget_type'] );
-		}
-
-		if ( ! in_array( $map['catalog_visibility'], [ self::CATALOG_VISIBILITY_ALWAYS, self::CATALOG_VISIBILITY_V4_DISABLED ], true ) ) {
-			return self::error( 'invalid_visibility', $map['catalog_visibility'] );
 		}
 
 		if ( ! is_array( $map['settings'] ) || ! is_array( $map['style_targets'] ) || empty( $map['style_targets'] ) ) {

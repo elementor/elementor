@@ -77,19 +77,17 @@ class V3_Node_Bridge {
 	}
 
 	public static function is_v3_node( array $node ): bool {
-		$el_type = $node['elType'] ?? null;
-
-		if ( 'widget' !== $el_type && 'container' !== $el_type ) {
+		if ( 'widget' !== ( $node['elType'] ?? null ) ) {
 			return false;
 		}
 
-		$type = $node['widgetType'] ?? $node['elType'] ?? null;
+		$type = $node['widgetType'] ?? null;
 
 		if ( ! is_string( $type ) ) {
 			return false;
 		}
 
-		if ( 'widget' === $el_type && Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
+		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
 			return true;
 		}
 

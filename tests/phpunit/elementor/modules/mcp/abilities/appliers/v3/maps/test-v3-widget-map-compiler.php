@@ -44,7 +44,6 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		return [
 			'widget_type' => 'heading',
 			'description' => 'Heading widget.',
-			'catalog_visibility' => V3_Widget_Map_Compiler::CATALOG_VISIBILITY_V4_DISABLED,
 			'settings' => [
 				'title' => [ 'type' => 'string' ],
 			],
