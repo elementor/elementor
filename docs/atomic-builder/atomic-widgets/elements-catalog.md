@@ -60,6 +60,7 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-divider` | widget | no | — | |
 | `e-youtube` | widget | no | — | |
 | `e-self-hosted-video` | widget | no | — | |
+| `e-google-maps` | widget | no | — | `<iframe>` embed; extends `Atomic_Map_Base` with the `google` map provider |
 | `e-accordion` | element | yes | `e-accordion-item` | Default: 2 items, first open |
 | `e-accordion-item` | element | yes | `e-accordion-item-head`, `e-accordion-item-content` | `<details>`; permanently locked |
 | `e-accordion-item-head` | element | yes | `e-accordion-item-title`, `e-accordion-item-icon` | `<summary>`; permanently locked |
