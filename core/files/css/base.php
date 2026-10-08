@@ -617,6 +617,10 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return true;
+		}
+
 		if ( ! is_admin() ) {
 			return false;
 		}
