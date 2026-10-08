@@ -4,4 +4,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-return [];
+return [
+	'nav-menu' => __DIR__ . '/nav-menu-map.php',
+];
