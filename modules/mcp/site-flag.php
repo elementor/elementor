@@ -42,33 +42,35 @@ class Site_Flag {
 			return;
 		}
 
-		$tokens = self::get_tokens();
+		$existing = get_option( self::OPTION_NAME, false );
 
-		if ( in_array( $capability, $tokens, true ) ) {
+		if ( false === $existing ) {
+			add_option( self::OPTION_NAME, $capability, '', true );
 			return;
 		}
 
-		$tokens[] = $capability;
-		$value = implode( ',', $tokens );
+		$stored = is_string( $existing ) ? $existing : '';
 
-		if ( false === get_option( self::OPTION_NAME, false ) ) {
-			add_option( self::OPTION_NAME, $value, '', true );
+		if ( '' === $stored ) {
+			update_option( self::OPTION_NAME, $capability );
 			return;
 		}
 
-		update_option( self::OPTION_NAME, $value );
+		if ( false !== strpos( ',' . $stored . ',', ',' . $capability . ',' ) ) {
+			return;
+		}
+
+		update_option( self::OPTION_NAME, $stored . ',' . $capability );
 	}
 
-	public static function get_tokens(): array {
-		return self::parse_tokens( get_option( self::OPTION_NAME, '' ) );
-	}
+	public static function get_value(): string {
+		$value = get_option( self::OPTION_NAME, '' );
 
-	public static function is_set(): bool {
-		return ! empty( self::get_tokens() );
+		return is_string( $value ) ? $value : '';
 	}
 
 	public static function filter_body_class( $classes ) {
-		if ( ! is_array( $classes ) || ! self::is_set() ) {
+		if ( ! is_array( $classes ) || '' === self::get_value() ) {
 			return $classes;
 		}
 
@@ -80,21 +82,13 @@ class Site_Flag {
 	}
 
 	public static function filter_generator_tag_capabilities( $capabilities ) {
-		if ( ! is_array( $capabilities ) ) {
-			return $capabilities;
-		}
+		$value = self::get_value();
 
-		foreach ( self::get_tokens() as $token ) {
-			if ( ! in_array( $token, $capabilities, true ) ) {
-				$capabilities[] = $token;
-			}
-		}
-
-		return $capabilities;
+		return '' === $value ? $capabilities : $value;
 	}
 
 	public static function filter_notifications_request( $args, $url ) {
-		if ( ! is_array( $args ) || ! is_string( $url ) || ! self::is_notifications_endpoint( $url ) || ! self::is_set() ) {
+		if ( ! is_array( $args ) || ! is_string( $url ) || ! self::is_notifications_endpoint( $url ) || '' === self::get_value() ) {
 			return $args;
 		}
 
@@ -114,26 +108,6 @@ class Site_Flag {
 		$args['body'] = $body;
 
 		return $args;
-	}
-
-	/**
-	 * @param mixed $raw
-	 * @return string[]
-	 */
-	private static function parse_tokens( $raw ): array {
-		if ( is_array( $raw ) ) {
-			return array_values( array_filter( array_map( 'strval', $raw ) ) );
-		}
-
-		if ( ! is_string( $raw ) || '' === $raw ) {
-			return [];
-		}
-
-		$tokens = array_map( 'trim', explode( ',', $raw ) );
-
-		return array_values( array_filter( $tokens, function ( $token ) {
-			return '' !== $token;
-		} ) );
 	}
 
 	private static function is_notifications_endpoint( string $url ): bool {

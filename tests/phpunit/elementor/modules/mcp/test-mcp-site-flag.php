@@ -24,44 +24,52 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_mark__appends_unique_capabilities() {
-		// Act
-		Site_Flag::mark( 'compositions' );
-		Site_Flag::mark( 'compositions' );
-		Site_Flag::mark( 'elements' );
-
-		// Assert
-		$this->assertSame( 'compositions,elements', get_option( Site_Flag::OPTION_NAME ) );
-		$this->assertTrue( Site_Flag::is_set() );
+	public function test_filters_silent_when_flag_unset() {
+		// Act / Assert
+		$this->assertSame( '', Site_Flag::get_value() );
+		$this->assertSame( [ 'foo' ], Site_Flag::filter_body_class( [ 'foo' ] ) );
+		$this->assertSame(
+			[ 'body' => [] ],
+			Site_Flag::filter_notifications_request(
+				[ 'body' => [] ],
+				'https://my.elementor.com/api/v1/notifications'
+			)
+		);
+		$this->assertSame( '', Site_Flag::filter_generator_tag_capabilities( '' ) );
 	}
 
-	public function test_filter_generator_tag_capabilities__lists_used_tokens() {
+	public function test_filters_fire_after_mark() {
 		// Arrange
 		Site_Flag::mark( 'compositions' );
 		Site_Flag::mark( 'variables' );
 
 		// Act / Assert
-		$this->assertSame( [ 'compositions', 'variables' ], Site_Flag::get_tokens() );
+		$this->assertSame( 'compositions,variables', Site_Flag::get_value() );
 		$this->assertSame(
-			[ 'compositions', 'variables' ],
-			Site_Flag::filter_generator_tag_capabilities( [] )
+			[ 'foo', Site_Flag::BODY_CLASS ],
+			Site_Flag::filter_body_class( [ 'foo' ] )
 		);
-	}
-
-	public function test_filter_notifications_request__stays_mcp_one() {
-		// Arrange
-		Site_Flag::mark( 'compositions' );
-		Site_Flag::mark( 'elements' );
-
-		// Act
 		$args = Site_Flag::filter_notifications_request(
 			[ 'body' => [] ],
 			'https://my.elementor.com/api/v1/notifications'
 		);
+		$this->assertSame( [ 'mcp' => '1' ], $args['body'] );
+		$this->assertSame(
+			'compositions,variables',
+			Site_Flag::filter_generator_tag_capabilities( '' )
+		);
+	}
+
+	public function test_mark__dedupes_and_skips_write_when_present() {
+		// Act
+		Site_Flag::mark( 'compositions' );
+		Site_Flag::mark( 'compositions' );
+		Site_Flag::mark( 'elements' );
+		Site_Flag::mark( 'compositions' );
 
 		// Assert
-		$this->assertSame( [ 'mcp' => '1' ], $args['body'] );
-		$this->assertArrayNotHasKey( 'capabilities', $args['body'] );
+		$this->assertSame( 'compositions,elements', get_option( Site_Flag::OPTION_NAME ) );
+		$this->assertSame( 'compositions,elements', Site_Flag::get_value() );
 	}
 
 	public function test_option_name_is_elementor_m_exists() {
@@ -92,41 +100,9 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 			"add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );",
 			$source
 		);
-		$this->assertStringNotContainsString( 'wp_load_alloptions', $source );
-		$this->assertStringNotContainsString( 'get_tokens_from_alloptions', $source );
-	}
-
-	public function test_filters_silent_when_flag_unset() {
-		// Act / Assert
-		$this->assertFalse( Site_Flag::is_set() );
-		$this->assertSame( [ 'foo' ], Site_Flag::filter_body_class( [ 'foo' ] ) );
-		$this->assertSame(
-			[ 'body' => [] ],
-			Site_Flag::filter_notifications_request(
-				[ 'body' => [] ],
-				'https://my.elementor.com/api/v1/notifications'
-			)
-		);
-		$this->assertSame( [], Site_Flag::filter_generator_tag_capabilities( [] ) );
-	}
-
-	public function test_filter_body_class__absent_when_flag_unset() {
-		// Act / Assert
-		$this->assertFalse( Site_Flag::is_set() );
-		$this->assertSame( [ 'foo' ], Site_Flag::filter_body_class( [ 'foo' ] ) );
-	}
-
-	public function test_filter_body_class__present_after_tool_marks_flag() {
-		// Arrange
-		$capability = Site_Flag::capability_for_ability( 'elementor/build-composition' );
-		Site_Flag::mark( $capability );
-
-		// Act / Assert
-		$this->assertTrue( Site_Flag::is_set() );
-		$this->assertSame(
-			[ 'foo', Site_Flag::BODY_CLASS ],
-			Site_Flag::filter_body_class( [ 'foo' ] )
-		);
+		$this->assertStringNotContainsString( 'parse_tokens', $source );
+		$this->assertStringNotContainsString( 'get_tokens', $source );
+		$this->assertStringNotContainsString( 'foreach', $source );
 	}
 
 	public function test_capability_for_ability__meaningful_tools_only() {

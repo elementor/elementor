@@ -49,8 +49,8 @@ class Module extends BaseModule {
 			$tags[] = 'settings: ' . implode( ', ', $settings );
 		}
 
-		if ( ! empty( $capabilities ) ) {
-			$tags[] = 'capabilities: ' . implode( ', ', $capabilities );
+		if ( '' !== $capabilities ) {
+			$tags[] = 'capabilities: ' . $capabilities;
 		}
 
 		return implode( '; ', $tags );
@@ -72,8 +72,10 @@ class Module extends BaseModule {
 		return apply_filters( 'elementor/generator_tag/settings', [] );
 	}
 
-	private function get_generator_tag_capabilities(): array {
-		return apply_filters( 'elementor/generator_tag/capabilities', [] );
+	private function get_generator_tag_capabilities(): string {
+		$value = apply_filters( 'elementor/generator_tag/capabilities', '' );
+
+		return is_string( $value ) ? $value : '';
 	}
 
 	public function register_admin_settings( Settings $settings ) {
