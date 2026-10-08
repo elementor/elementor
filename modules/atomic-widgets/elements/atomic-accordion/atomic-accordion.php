@@ -121,7 +121,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 				),
 			'icon_rotation' => Number_Prop_Type::make()
 				->default( self::ICON_ROTATION_DEFAULT )
-				->description( 'How many degrees the visible icon rotates while an item is open. 180 matches the original chevron. 0 leaves it unrotated.' )
+				->description( 'The direction, in degrees, the visible icon points while an item is open. 180 turns the default chevron the other way. 0 leaves it pointing the same way.' )
 				->set_dependencies(
 					Dependency_Manager::make()
 						->where( self::SHOW_ICON_IS_ON_TERM )
@@ -148,7 +148,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 					Switch_Control::bind_to( 'different_open_icon' )
 						->set_label( esc_html__( 'Open icon', 'elementor' ) ),
 					Number_Control::bind_to( 'icon_rotation' )
-						->set_label( esc_html__( 'Icon rotation', 'elementor' ) )
+						->set_label( esc_html__( 'Open angle', 'elementor' ) )
 						->set_min( self::ICON_ROTATION_MIN )
 						->set_max( self::ICON_ROTATION_MAX )
 						->set_step( 1 )
