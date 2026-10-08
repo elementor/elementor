@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
@@ -36,27 +37,20 @@ class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
 
 	private string $previous_css_print_method;
 
-	private $previous_wp_rest_server;
-
 	public function setUp(): void {
 		parent::setUp();
 
-		global $wp_rest_server, $wp_styles;
+		global $wp_styles;
 
-		$this->previous_wp_rest_server = $wp_rest_server;
-		$wp_rest_server = new \WP_REST_Server();
 		$wp_styles = new \WP_Styles();
-
-		do_action( 'rest_api_init' );
+		rest_get_server();
 
 		$this->previous_css_print_method = get_option( 'elementor_css_print_method', 'external' );
 		update_option( 'elementor_css_print_method', 'internal' );
 	}
 
 	public function tearDown(): void {
-		global $wp_rest_server;
-
-		$wp_rest_server = $this->previous_wp_rest_server;
+		Plugin::$instance->data_manager_v2->kill_server();
 
 		update_option( 'elementor_css_print_method', $this->previous_css_print_method );
 
