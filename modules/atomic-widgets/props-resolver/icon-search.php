@@ -29,7 +29,7 @@ class Icon_Search {
 		$per_page = self::sanitize_per_page( $args['per_page'] ?? self::DEFAULT_PER_PAGE );
 		$page = max( 1, (int) ( $args['page'] ?? 1 ) );
 
-		$custom_library_metadata = Custom_Icon_Resolver::get_libraries();
+		$custom_library_metadata = Custom_Icon_Resolver::get_custom_libraries( [ 'include_labels' => true ] );
 		$custom_values = [];
 		$custom_libraries = [];
 

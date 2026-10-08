@@ -19,6 +19,8 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->ensure_font_awesome_7_json_available();
+
 		$this->fixture_path = get_temp_dir() . 'icon-search-' . wp_generate_password( 8, false ) . '.json';
 
 		file_put_contents( $this->fixture_path, wp_json_encode( [ 'icons' => $this->get_fixture_icons() ] ) );
@@ -44,6 +46,48 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		Custom_Icon_Svg\Resolver::reset_memory();
 
 		parent::tearDown();
+	}
+
+	private function ensure_font_awesome_7_json_available(): void {
+		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
+		$solid_file = $json_dir . '/solid.json';
+		$search_index_file = $json_dir . '/search-index.json';
+
+		if ( is_readable( $solid_file ) && is_readable( $search_index_file ) ) {
+			return;
+		}
+
+		if ( ! is_dir( $json_dir ) && ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
+			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
+		}
+
+		$icons = [
+			'cart-shopping' => [ 576, 512, [], 'f07a', 'M0 0' ],
+			'cart-plus' => [ 576, 512, [], 'f217', 'M0 0' ],
+			'star' => [ 576, 512, [], 'f005', 'M0 0' ],
+			'crown' => [ 576, 512, [], 'f521', 'M0 0' ],
+			'house' => [ 576, 512, [ 'home' ], 'f015', 'M0 0' ],
+		];
+
+		file_put_contents(
+			$solid_file,
+			wp_json_encode( [ 'icons' => $icons ] )
+		);
+
+		$search_icons = [];
+		foreach ( $icons as $name => $data ) {
+			$search_icons[] = [
+				'name' => $name,
+				'label' => ucfirst( str_replace( '-', ' ', $name ) ),
+				'categories' => [],
+				'libraries' => [ 'fa-solid' ],
+			];
+		}
+
+		file_put_contents(
+			$search_index_file,
+			wp_json_encode( [ 'icons' => $search_icons ] )
+		);
 	}
 
 	public function test_search__ranks_an_exact_name_first() {
