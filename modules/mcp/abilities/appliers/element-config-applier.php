@@ -7,8 +7,10 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -84,7 +86,9 @@ class Element_Config_Applier {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$shape = V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
+				$shape = $is_standardized
+					? $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings )
+					: V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
@@ -96,6 +100,9 @@ class Element_Config_Applier {
 						if ( empty( $node['settings']['__dynamic__'] ) ) {
 							unset( $node['settings']['__dynamic__'] );
 						}
+
+						$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
+						V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
 					}
 				}
 
@@ -397,5 +404,36 @@ class Element_Config_Applier {
 		}
 
 		return $this->v3_dynamic_hoister;
+	}
+
+	/**
+	 * @param string               $widget_type
+	 * @param array<string, mixed> $primitives
+	 * @param string               $config_id
+	 * @param Warnings_Bag         $warnings
+	 * @return array{valid: array<string, mixed>, error: null}
+	 */
+	private function write_v3_map_settings( string $widget_type, array $primitives, string $config_id, Warnings_Bag $warnings ): array {
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$result = ( new V3_Map_Settings_Writer( $this->plain_values_resolver ) )->write( $map, $primitives );
+
+		foreach ( $result['rejected'] as $key => $reason ) {
+			$warnings->add(
+				'prop_value_invalid',
+				sprintf(
+					'Property "%s" on "%s" %s and was skipped. See elementor://widgets/schema/%s.',
+					$key,
+					$widget_type,
+					$reason,
+					$widget_type
+				),
+				$config_id
+			);
+		}
+
+		return [
+			'valid' => $result['settings'],
+			'error' => null,
+		];
 	}
 }

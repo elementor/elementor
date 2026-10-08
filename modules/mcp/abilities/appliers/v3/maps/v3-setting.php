@@ -2,36 +2,30 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Enum_From_Control_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Icons_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Link_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\String_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Switcher_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Setting_Adapter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class V3_Setting {
 
-	const KIND_STRING = 'string';
-	const KIND_ENUM = 'enum';
-	const KIND_LINK = 'link';
-
-	const LINK_CONTROL_TYPE = 'url';
-
-	const SWITCHER_ON = 'on';
-	const SWITCHER_OFF = '';
-
 	private string $control_key;
 
-	private string $kind = self::KIND_STRING;
+	private V3_Setting_Adapter $adapter;
 
 	private bool $dynamic = false;
-
-	/**
-	 * @var string[]
-	 */
-	private array $enum = [];
 
 	private ?string $default_value = null;
 
 	private function __construct( string $control_key ) {
 		$this->control_key = $control_key;
+		$this->adapter = new String_Setting_Adapter();
 	}
 
 	public static function bind_to( string $control_key ): self {
@@ -39,7 +33,7 @@ class V3_Setting {
 	}
 
 	public function string(): self {
-		$this->kind = self::KIND_STRING;
+		$this->adapter = new String_Setting_Adapter();
 
 		return $this;
 	}
@@ -48,14 +42,31 @@ class V3_Setting {
 	 * @param string[] $values
 	 */
 	public function enum( array $values ): self {
-		$this->kind = self::KIND_ENUM;
-		$this->enum = $values;
+		$this->adapter = new String_Setting_Adapter( $values );
+
+		return $this;
+	}
+
+	public function enum_from_control(): self {
+		$this->adapter = new Enum_From_Control_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function switcher(): self {
+		$this->adapter = new Switcher_Setting_Adapter();
 
 		return $this;
 	}
 
 	public function link(): self {
-		$this->kind = self::KIND_LINK;
+		$this->adapter = new Link_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function icons(): self {
+		$this->adapter = new Icons_Setting_Adapter();
 
 		return $this;
 	}
@@ -76,79 +87,15 @@ class V3_Setting {
 		return $this->control_key;
 	}
 
-	public function get_kind(): string {
-		return $this->kind;
+	public function get_adapter(): V3_Setting_Adapter {
+		return $this->adapter;
 	}
 
 	public function is_dynamic(): bool {
 		return $this->dynamic;
 	}
 
-	/**
-	 * @return array<string, mixed>
-	 */
-	public function to_schema(): array {
-		switch ( $this->kind ) {
-			case self::KIND_LINK:
-				return self::link_schema();
-
-			case self::KIND_ENUM:
-				return $this->enum_schema();
-
-			default:
-				return $this->string_schema();
-		}
-	}
-
-	/**
-	 * @return array<string, mixed>
-	 */
-	private function string_schema(): array {
-		$schema = [ 'type' => 'string' ];
-
-		if ( $this->dynamic ) {
-			$schema['dynamic'] = true;
-		}
-
-		return $schema;
-	}
-
-	/**
-	 * @return array<string, mixed>
-	 */
-	private function enum_schema(): array {
-		$schema = [
-			'type' => 'string',
-			'enum' => $this->enum,
-		];
-
-		if ( null !== $this->default_value ) {
-			$schema['default'] = $this->default_value;
-		}
-
-		return $schema;
-	}
-
-	/**
-	 * @return array<string, mixed>
-	 */
-	private static function link_schema(): array {
-		$switcher = [
-			'type' => 'boolean',
-			'convert' => [
-				'true' => self::SWITCHER_ON,
-				'false' => self::SWITCHER_OFF,
-			],
-		];
-
-		return [
-			'type' => 'object',
-			'kind' => self::KIND_LINK,
-			'properties' => [
-				'url' => [ 'type' => 'string' ],
-				'is_external' => $switcher,
-				'nofollow' => $switcher,
-			],
-		];
+	public function get_default(): ?string {
+		return $this->default_value;
 	}
 }
