@@ -3,7 +3,7 @@ import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { useCustomIconLibraries } from '../custom-icon-libraries';
-import { ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
+import { ICON_LIBRARY_GRID_MIN_CELL_SIZE, ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
@@ -11,6 +11,7 @@ jest.mock( '../use-font-awesome-7-catalog' );
 jest.mock( '../custom-icon-libraries' );
 
 const scrollToIndex = jest.fn();
+const scrolledRowHeights: number[] = [];
 let mockVisibleIndices: number[] | null = null;
 
 jest.mock( '@tanstack/react-virtual', () => ( {
@@ -28,7 +29,10 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 				} ) )
 			),
 			getTotalSize: jest.fn().mockReturnValue( config.count * rowHeight ),
-			scrollToIndex,
+			scrollToIndex: ( ...args: unknown[] ) => {
+				scrolledRowHeights.push( config.estimateSize() );
+				scrollToIndex( ...args );
+			},
 			measure: jest.fn(),
 			getVirtualIndexes: jest.fn().mockReturnValue( indices ),
 		};
@@ -89,6 +93,7 @@ describe( 'IconLibraryPopover', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
 		mockVisibleIndices = null;
+		scrolledRowHeights.length = 0;
 		scrollToIndex.mockClear();
 		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
 			data: icons,
@@ -145,6 +150,26 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'List view' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'grid' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'scrolls a selected icon into view after the measured cell size replaces the fallback', () => {
+		// Arrange.
+		const gridWidthWhereColumnCountStaysAtTheFallback = 300;
+
+		Object.defineProperty( HTMLElement.prototype, 'clientWidth', {
+			configurable: true,
+			get: () => gridWidthWhereColumnCountStaysAtTheFallback,
+		} );
+
+		// Act.
+		renderPopover( {
+			selectedIconClass: 'fa-brands fa-wordpress',
+			selectedIconLibrary: 'fa-brands',
+		} );
+
+		// Assert.
+		expect( scrollToIndex ).toHaveBeenLastCalledWith( 1, { align: 'center' } );
+		expect( scrolledRowHeights.at( -1 ) ).toBeGreaterThan( ICON_LIBRARY_GRID_MIN_CELL_SIZE );
 	} );
 
 	it( 'fits as many equal columns as the popover width allows', () => {

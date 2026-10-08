@@ -96,10 +96,11 @@ export const IconLibraryGrid = ( {
 		} );
 
 		if ( selectedIndex >= 0 ) {
+			virtualizer.measure();
 			virtualizer.scrollToIndex( Math.floor( selectedIndex / columnCount ), { align: 'center' } );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ columnCount, items, selectedIndex, selectedValue ] );
+	}, [ cellSize, columnCount, items, selectedIndex, selectedValue ] );
 
 	useLayoutEffect( () => {
 		if ( ! shouldRestoreFocusRef.current || ! focusedItem ) {

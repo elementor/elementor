@@ -167,11 +167,14 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		} );
 
 		await test.step( 'Selected view persists after close and reopen', async () => {
+			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
+			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+
 			await popover.getByRole( 'button', { name: 'close' } ).click();
 			await expect( popover ).toBeHidden();
 			await openIconLibrary( page, svgControl, popover );
-			await expect( popover.getByRole( 'gridcell' ).first() ).toBeVisible();
-			await expect( popover.getByRole( 'button', { name: 'Grid view' } ) ).toBeVisible();
+			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'List view' } ) ).toBeVisible();
 		} );
 	} );
 } );

@@ -67,7 +67,7 @@ export const SvgMediaOverlay = ( {
 				variant="text"
 				onClick={ onSelectSvg }
 				aria-label={ __( 'Select', 'elementor' ) }
-				sx={ { ...svgButtonSx, width: SELECT_AREA_WIDTH } }
+				sx={ { ...svgButtonSx, minWidth: SELECT_AREA_WIDTH } }
 			>
 				{ __( 'Select', 'elementor' ) }
 			</Button>
