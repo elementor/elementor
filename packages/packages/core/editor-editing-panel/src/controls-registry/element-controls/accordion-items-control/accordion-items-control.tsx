@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { ACCORDION_ELEMENT_TYPE, ACCORDION_ITEM_ELEMENT_TYPE, type AccordionItem, useActions } from './use-actions';
-import { useDifferentOpenIconWriteThrough, useShowIconWriteThrough } from './use-show-icon-write-through';
+import { useShowIconWriteThrough } from './use-show-icon-write-through';
 
 export const AccordionItemsControl = ( { label }: { label: string } ) => {
 	const { element, settings } = useElement();
@@ -26,10 +26,8 @@ export const AccordionItemsControl = ( { label }: { label: string } ) => {
 	// drive the write-through to every head - see `useShowIconWriteThrough` for why this can't live
 	// inside the generic switch control itself.
 	const showIcon = booleanPropTypeUtil.extract( settings.show_icon ) ?? true;
-	const differentOpenIcon = booleanPropTypeUtil.extract( settings.different_open_icon ) ?? false;
 
 	useShowIconWriteThrough( element.id, showIcon );
-	useDifferentOpenIconWriteThrough( element.id, differentOpenIcon );
 
 	const repeaterValues: RepeaterItem< AccordionItem >[] = items.map( ( item, index ) => {
 		return {
@@ -52,7 +50,6 @@ export const AccordionItemsControl = ( { label }: { label: string } ) => {
 				existingTitles: repeaterValues.map( ( { title } ) => title ),
 				items: meta.action.payload,
 				showIcon,
-				differentOpenIcon,
 			} );
 		}
 

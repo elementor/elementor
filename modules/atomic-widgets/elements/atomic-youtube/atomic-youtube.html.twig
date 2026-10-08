@@ -1,4 +1,5 @@
 {% import 'elementor/macros' as m %}
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 {% set classes = settings.classes | merge( [ base_styles.base, m.default_tag_class('div') ] ) | join(' ') %}
 {% set data_settings = {
 	'source': settings.source,
@@ -13,4 +14,4 @@
 	'privacy': settings.privacy_mode,
 	'lazyload': settings.lazyload,
 } %}
-<div data-id="{{ id }}" data-interaction-id="{{ interaction_id }}" data-e-type="{{ type }}" class="{{ classes }}"{{ m.render_custom_attributes(settings) }} data-settings="{{ data_settings|json_encode|e('html_attr') }}"></div>
+<div data-id="{{ id }}" data-interaction-id="{{ interaction_id }}" data-e-type="{{ type }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} data-settings="{{ data_settings|json_encode|e('html_attr') }}"></div>

@@ -274,13 +274,6 @@ class App extends BaseApp {
 	}
 
 	public function enqueue_app_loader() {
-		wp_enqueue_style(
-			'elementor-app-overlay',
-			$this->get_css_assets_url( 'app-overlay', 'assets/css/' ),
-			[],
-			ELEMENTOR_VERSION
-		);
-
 		wp_enqueue_script(
 			'elementor-app-loader',
 			$this->get_js_assets_url( 'app-loader' ),

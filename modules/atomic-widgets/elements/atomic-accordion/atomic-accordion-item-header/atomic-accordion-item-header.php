@@ -76,7 +76,6 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 			// changes (see `useShowIconWriteThrough` alongside the accordion items repeater control) -
 			// it is never surfaced in the panel and must never grow a per-item control of its own.
 			'show_icon' => Boolean_Prop_Type::make()->default( true ),
-			'different_open_icon' => Boolean_Prop_Type::make()->default( false ),
 		];
 	}
 
@@ -124,7 +123,6 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 		return [
 			Atomic_Accordion::ELEMENT_TYPE_TITLE,
 			Atomic_Accordion::ELEMENT_TYPE_ICON,
-			Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN,
 		];
 	}
 
@@ -153,24 +151,14 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	 * Controls child.
 	 */
 	protected function define_children_dependencies(): array {
-		$show_icon = [
-			'operator' => 'ne',
-			'path' => [ 'show_icon' ],
-			'value' => false,
-		];
-
-		$open_icon_when = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
-			->where( $show_icon )
-			->where( [
-				'operator' => 'eq',
-				'path' => [ 'different_open_icon' ],
-				'value' => true,
-			] );
-
 		return [
 			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON )
-				->when( Dependency_Manager::make()->where( $show_icon ) )
-				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_TITLE ) )
+				->when( Dependency_Manager::make()->where( [
+					'operator' => 'ne',
+					'path' => [ 'show_icon' ],
+					'value' => false,
+				] ) )
+				->position( Element_Position::last() )
 				->stash( true )
 				->default_model(
 					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON )
@@ -178,79 +166,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 						->hydrate_default_children( true )
 						->build()
 				),
-			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
-				->when( $open_icon_when )
-				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_ICON ) )
-				->stash( true )
-				->default_model(
-					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
-						->is_locked( true )
-						->hydrate_default_children( true )
-						->editor_settings( [
-							'title' => esc_html__( 'Open icon', 'elementor' ),
-						] )
-						->build()
-				),
 		];
-	}
-
-	/**
-	 * Documents saved while this change was in progress can still point the open slot at the
-	 * bundled upward chevron, which this plugin no longer ships. Point those at the closed
-	 * chevron. An uploaded file with the same name is left alone.
-	 *
-	 * @param mixed $elements
-	 * @return mixed
-	 */
-	public static function replace_saved_upward_chevron( $elements ) {
-		if ( ! is_array( $elements ) ) {
-			return $elements;
-		}
-
-		$replaced = [];
-
-		foreach ( $elements as $element ) {
-			if ( ! is_array( $element ) ) {
-				$replaced[] = $element;
-				continue;
-			}
-
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = self::replace_saved_upward_chevron( $element['elements'] );
-			}
-
-			if ( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN === ( $element['elType'] ?? '' ) ) {
-				$element = self::point_default_open_chevron_the_same_way( $element );
-			}
-
-			$replaced[] = $element;
-		}
-
-		return $replaced;
-	}
-
-	private static function point_default_open_chevron_the_same_way( array $element ): array {
-		if ( empty( $element['elements'] ) || ! is_array( $element['elements'] ) ) {
-			return $element;
-		}
-
-		$upward_chevron = 'assets/images/chevron-up.svg';
-
-		foreach ( $element['elements'] as $index => $child ) {
-			if ( ! is_array( $child ) ) {
-				continue;
-			}
-
-			$url = $child['settings']['svg']['value']['url']['value'] ?? null;
-
-			if ( ! is_string( $url ) || substr( $url, -strlen( $upward_chevron ) ) !== $upward_chevron ) {
-				continue;
-			}
-
-			$element['elements'][ $index ]['settings']['svg']['value']['url']['value'] = Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL;
-		}
-
-		return $element;
 	}
 
 	protected function get_templates(): array {

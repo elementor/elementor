@@ -35,7 +35,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon_Open\Atomic_Accordion_Item_Icon_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
@@ -218,7 +217,6 @@ class Module extends BaseModule {
 
 		$this->register_hooks();
 
-		add_filter( 'elementor/document/load/data', [ Atomic_Accordion_Item_Header::class, 'replace_saved_upward_chevron' ] );
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
@@ -454,7 +452,6 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
-		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon_Open() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
 
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
@@ -731,24 +728,11 @@ class Module extends BaseModule {
 			'}',
 			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
 			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
-			'.e-accordion-item-icon-base, .e-accordion-item-icon-open-base { --e-svg-width: auto; --e-svg-height: 100%; }',
-			':where(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) .e-svg-base { max-width: 100%; }',
-			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg, .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base .e-svg-base svg { width: auto !important; }',
-			'.e-accordion-item-icon-base svg, .e-accordion-item-icon-open-base svg { transition: transform .3s ease; }',
-			// No fallback: a missing variable makes this declaration invalid, so it is dropped and the
-			// closed icon stays at transform none. That is the published accordion. 0 is omitted by the
-			// template for the same reason. A saved close angle is the only thing that rotates it.
-			'.e-accordion-item-base:not([open]) > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation-closed)); }',
-			'.e-accordion-item-base[open] > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation, ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg)); }',
-			// `display: none` until [open] skips the transform transition, so the open icon
-			// appears already rotated. Keep both slots rendered, stacked in one cell, and
-			// swap them with visibility so the visible icon can rotate.
-			'.e-accordion-item-header-base.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }',
-			'.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) > .e-accordion-item-title-base { grid-column: 1; grid-row: 1; }',
-			'.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) > :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) { grid-column: 2; grid-row: 1; }',
-			'.e-accordion-item-base .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base { visibility: hidden; }',
-			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-open-base { visibility: visible; }',
-			'.e-accordion-item-base[open] > summary:has(.e-accordion-item-icon-open-base) .e-accordion-item-icon-base { visibility: hidden; }',
+			'.e-accordion-item-icon-base { --e-svg-width: auto; --e-svg-height: 100%; }',
+			':where(.e-accordion-item-icon-base) .e-svg-base { max-width: 100%; }',
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
+			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
 			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
 			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
 			// The marker is a flex item and shrinks the icon (about 19.7px wide for a 21px font). :where() stays under the SVG's own styles.
