@@ -35,7 +35,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
-		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ) );
+		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ), $this->settings );
 	}
 
 	public function tearDown(): void {
@@ -69,6 +69,18 @@ class Test_Link_Headers extends Elementor_Test_Base {
 			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
 			$links
 		);
+	}
+
+	public function test_build_site_links__omits_discovery_links_when_agent_discovery_is_disabled() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertSame( [ '<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"' ], $links );
 	}
 
 	public function test_build_site_links__includes_mcp_card_when_filter_enabled() {

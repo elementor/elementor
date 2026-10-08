@@ -14,7 +14,7 @@
     			<p class="e-paragraph-base e-default-p" data-interaction-id="{ID}">Type your paragraph here</p>
 					<h2 data-interaction-id="{ID}" class="e-heading-base e-default-h2">This is a title</h2>
 					
-<hr class="e-{STYLE} e-divider-base" data-interaction-id="{ID}"   />
+<hr class="e-{STYLE} e-divider-base" data-interaction-id="{ID}" />
 					<p class="e-paragraph-base e-default-p" data-interaction-id="{ID}">Type your paragraph here</p>
 		
 </div>

@@ -24,6 +24,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -57,7 +58,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			__( 'Manage Elements', 'elementor' ),
 			sprintf(
 				/* translators: %s: comma-separated list of V3-allowlisted widget types. */
-				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. Each operation: action=update merges partial plain settings, plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
+				__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and a closed V3 allowlist (%s — see elementor/list-widget-schemas) can be operation targets. Allowlisted V3 updates: settings merge raw without schema validation; classes are written to V3\'s space-separated _css_classes; style CSS is wrapped in `selector { ... }` and stored in V3\'s custom_css (requires Elementor Pro, otherwise emits a warning). Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. An update whose only change is editor_settings (for example renaming a layer) is also accepted on any V3 element. Each operation: action=update merges partial plain settings, editor-only fields via editor_settings (layer name, decorative), plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
 				implode( ', ', Widget_Context_Helper::V3_ALLOWLIST )
 			),
 			'elementor',
@@ -116,6 +117,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'settings' => [
 									'type' => 'object',
 									'description' => 'update only: partial plain settings map merged onto existing settings. Set a top-level key to null to remove it from the element\'s settings (subject to widget schema validation).',
+								],
+								'editor_settings' => [
+									'type' => 'object',
+									'description' => 'update only: editor-only fields, kept separate from settings. `name` renames the layer in the Structure panel (works on V3 and V4 elements, including V3 elements that cannot be edited otherwise; empty string clears it). `decorative` (boolean) is supported on e-div-block, e-flexbox and e-grid only. Never use settings.title to rename a layer (title on e-heading is the visible text). See the editor_settings section of elementor/get-widget-schema.',
 								],
 								'style' => [
 									'type' => 'string',
@@ -296,6 +301,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	}
 
 	private function apply_operation( Document $document, array $tree, string $action, string $element_id, array $operation ) {
+		if ( $this->is_editor_settings_only_update( $action, $operation ) ) {
+			return $this->apply_editor_settings_only( $tree, $element_id, $this->as_map( $operation['editor_settings'] ) );
+		}
+
 		$v3_error = $this->reject_v3_target( $tree, $element_id );
 		if ( $v3_error ) {
 			return $v3_error;
@@ -320,6 +329,15 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					)
 				);
 		}
+	}
+
+	private function is_editor_settings_only_update( string $action, array $operation ): bool {
+		return 'update' === $action
+			&& ! empty( $this->as_map( $operation['editor_settings'] ?? [] ) )
+			&& empty( $this->as_map( $operation['settings'] ?? [] ) )
+			&& ! isset( $operation['style'] )
+			&& ! array_key_exists( 'classes', $operation )
+			&& null === ( $operation['interactions'] ?? null );
 	}
 
 	private function reject_v3_target( array $tree, string $element_id ): ?\WP_Error {
@@ -422,15 +440,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
 		$settings = $this->as_map( $operation['settings'] ?? [] );
+		$editor_settings = $this->as_map( $operation['editor_settings'] ?? [] );
 		$style = $operation['style'] ?? null;
 		$has_style = isset( $operation['style'] );
 		$has_classes = array_key_exists( 'classes', $operation );
 		$classes = $has_classes ? $operation['classes'] : null;
 		$interactions = $operation['interactions'] ?? null;
 
-		$has_change = ! empty( $settings ) || $has_style || $has_classes || null !== $interactions;
+		$has_change = ! empty( $settings ) || ! empty( $editor_settings ) || $has_style || $has_classes || null !== $interactions;
 		if ( ! $has_change ) {
-			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, style, classes, or interactions.', 'elementor' ) );
+			return new \WP_Error( 'invalid_input', __( 'update requires at least one of settings, editor_settings, style, classes, or interactions.', 'elementor' ) );
 		}
 
 		$style_apply_mode = $operation['style_apply_mode'] ?? 'patch';
@@ -514,6 +533,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
+		if ( ! empty( $editor_settings ) ) {
+			Editor_Settings::apply( $index[ $element_id ], $editor_settings, $element_id, $warnings );
+		}
+
 		if ( $has_classes ) {
 			if ( ! is_array( $classes ) ) {
 				$warnings->add(
@@ -545,6 +568,22 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				'variable_connections' => $variable_connections,
 				'interactions_events'  => $interactions_events,
 			],
+		];
+	}
+
+	private function apply_editor_settings_only( array $tree, string $element_id, array $editor_settings ) {
+		$index = $this->get_mutator()->build_ref_index( $tree, $element_id );
+		if ( empty( $index ) ) {
+			return new \WP_Error( 'elementor_not_found', __( 'Element not found.', 'elementor' ) );
+		}
+
+		$warnings = Warnings_Bag::make();
+
+		Editor_Settings::apply( $index[ $element_id ], $editor_settings, $element_id, $warnings );
+
+		return [
+			'tree' => $tree,
+			'warnings' => $warnings,
 		];
 	}
 
