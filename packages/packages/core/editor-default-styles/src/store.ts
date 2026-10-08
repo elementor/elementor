@@ -86,7 +86,7 @@ export const slice = createSlice( {
 			const mode = payload.mode ?? 'merge';
 
 			if ( variant ) {
-				const variantProps = 'replace' === mode ? {} : variant.props;
+				const variantProps = extractVariantProps( mode, variant );
 				variant.props = mergeProps( variantProps, payloadProps );
 				variant.custom_css = customCss;
 			} else {
@@ -120,6 +120,13 @@ export const slice = createSlice( {
 		},
 	},
 } );
+
+function extractVariantProps( mode: string, variant: StyleDefinitionVariant ) {
+	if ( 'replace' === mode ) {
+		return {};
+	}
+	return JSON.parse( JSON.stringify( variant.props ) ) as Props;
+}
 
 export const selectData = createSelector(
 	( state: StateWithDefaultStyles ) => state.defaultStyles.data,

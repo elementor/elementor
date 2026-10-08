@@ -230,6 +230,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
 		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/preview/enqueue_styles', fn () => $this->add_preview_inline_styles() );
 		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
@@ -732,10 +733,27 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
+			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
+			// The marker is a flex item and shrinks the icon (about 19.7px wide for a 21px font). :where() stays under the SVG's own styles.
+			':where(.e-list-item-marker-base) .e-svg-base { flex-shrink: 0; }',
+			// The inner svg is inline, so any box shorter than the line — the 0.6em default, or a smaller Width/Height the user sets — sits on the text baseline and drops below the slot.
+			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
+
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
+	}
+
+	private function add_preview_inline_styles() {
+		// The marker handle moves beside the marker. The list and list item handles move to the far end: the list handle otherwise sits on the first item's icon, and the item handle sits on its own icon.
+		wp_add_inline_style(
+			'editor-preview',
+			'.e-list-item > .e-list-item__marker.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 100%; }' .
+			'.e-list > .e-list-item.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 0; }' .
+			'.e-list.e-con.e-atomic-element > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 0; transform: none; }'
+		);
 	}
 
 	private function enqueue_promotion_styles() {

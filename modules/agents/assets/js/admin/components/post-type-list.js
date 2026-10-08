@@ -9,7 +9,8 @@ import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { LLMS_VISIBLE_POST_TYPES_LIMIT } from '../../constants';
+import { LLMS_VISIBLE_POST_TYPES_LIMIT } from '../constants';
+import { wpAdminSwitchSx } from './wp-admin-sx';
 
 const iconsByPostType = {
 	page: FileIcon,
@@ -35,13 +36,7 @@ const PostTypeRow = ( { name, label, count, isIncluded, isDisabled, onToggle } )
 				disabled={ isDisabled }
 				onChange={ onToggle }
 				inputProps={ { 'aria-label': label } }
-				sx={ {
-					'& .MuiSwitch-input': {
-						position: 'absolute',
-						// WordPress admin sets opacity on disabled checkboxes, which draws the native control through the switch.
-						opacity: '0 !important',
-					},
-				} }
+				sx={ wpAdminSwitchSx }
 			/>
 		</Stack>
 	);
