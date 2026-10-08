@@ -40,7 +40,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor, except for their layer name. `title` is the layer name shown in the Structure panel: rename any node (v3 or v4) with elementor/manage-elements `editor_settings.name`, never through `settings`. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles, plus editor_settings (name, decorative) when set; editor_settings is separate from settings and is written back through the `editor_settings` input. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -161,6 +161,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 	private function populate_content( array &$skeleton, array $node, bool $is_document_root ): void {
 		$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 
+		$editor_settings = Editor_Settings::read( $node );
+
+		if ( ! empty( $editor_settings ) ) {
+			$skeleton['editor_settings'] = $editor_settings;
+		}
+
 		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
 			$this->populate_v3_content( $skeleton, $node );
 			return;
@@ -176,24 +182,11 @@ class Get_Structure_Ability extends Abstract_Ability {
 			return;
 		}
 
-		$skeleton['settings'] = $this->with_editor_settings(
-			$this->serialize_settings_for_llm( $props_schema, $raw_settings ),
-			$node
-		);
+		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
 		$skeleton['styles'] = $this->normalize_styles( Local_Style_Serializer::serialize( $node['styles'] ?? [] ) );
 
 		$rendered_settings = $this->resolve_rendered_settings( $props_schema, $raw_settings );
 		$this->populate_default_styles( $skeleton, $node, $config, $rendered_settings, $is_document_root );
-	}
-
-	private function with_editor_settings( $settings, array $node ) {
-		$editor_settings = Editor_Settings::read( $node, (string) Atomic_Elements_Utils::get_element_type( $node ) );
-
-		if ( empty( $editor_settings ) ) {
-			return $settings;
-		}
-
-		return array_merge( (array) $settings, $editor_settings );
 	}
 
 	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {
