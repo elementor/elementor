@@ -58,13 +58,17 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	} );
 
 	test( 'Color format dropdown keeps edit mode when editing an existing color variable', async () => {
-		const variableRow = await variablesManagerPage.createVariableFromManager( {
+		await variablesManagerPage.createVariableFromManager( {
 			name: 'format-dropdown-variable',
 			value: '#ff0000',
 			type: 'color',
 		} );
 
 		await variablesManagerPage.openVariableManager();
+
+		const variableRow = page.locator( 'tbody tr' ).filter( { hasText: 'format-dropdown-variable' } );
+		await expect( variableRow ).toBeVisible();
+
 		await variablesManagerPage.expectColorFormatDropdownKeepsEditMode( variableRow );
 	} );
 

@@ -54,16 +54,23 @@ export default class VariablesManagerPage {
 	}
 
 	async expectColorFormatDropdownKeepsEditMode( row: ReturnType< Page['locator'] > ) {
-		await row.getByRole( 'button' ).nth( 2 ).dblclick();
+		const valueCell = row.locator( 'td' ).nth( 2 );
+		await valueCell.getByRole( 'button', { name: 'Double click or press Space to edit' } ).dblclick();
 
-		const colorField = row.locator( `#color-variable-field` );
+		const colorField = row.locator( '#color-variable-field' );
+		await expect( colorField ).toBeVisible();
+
 		await colorField.getByRole( 'button' ).first().click();
 
 		const formatSelect = colorField.getByRole( 'combobox' );
+		await expect( formatSelect ).toBeVisible();
 		await formatSelect.click();
-		await this.page.getByRole( 'option', { name: 'RGB' } ).click();
 
-		await expect( formatSelect ).toHaveText( 'RGB' );
+		const rgbOption = colorField.getByRole( 'option', { name: 'RGB' } );
+		await expect( rgbOption ).toBeVisible();
+		await rgbOption.click();
+
+		await expect( formatSelect ).toContainText( 'RGB' );
 		await expect( colorField.getByRole( 'textbox' ) ).toBeVisible();
 		await expect( colorField.getByRole( 'button' ).first() ).toBeVisible();
 	}
