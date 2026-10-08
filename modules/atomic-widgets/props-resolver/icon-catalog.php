@@ -40,6 +40,16 @@ class Icon_Catalog {
 	}
 
 	public static function is_available(): bool {
+		$path = self::get_search_index_path();
+
+		if ( '' === $path ) {
+			return false;
+		}
+
+		return is_readable( $path ) && filesize( $path ) > 0;
+	}
+
+	public static function has_entries(): bool {
 		return ! empty( self::get_entries() );
 	}
 

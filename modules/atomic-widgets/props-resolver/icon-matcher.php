@@ -110,11 +110,13 @@ class Icon_Matcher {
 			return [];
 		}
 
-		return array_values( array_filter(
+		$tokens = array_values( array_unique( array_filter(
 			explode( '-', $normalized ),
 			static fn( $token ) => strlen( $token ) >= self::MIN_TOKEN_LENGTH
 				&& ! in_array( $token, self::IGNORED_TOKENS, true )
-		) );
+		) ) );
+
+		return $tokens;
 	}
 
 	public static function result( int $score, string $matched_on ): array {
@@ -185,23 +187,23 @@ class Icon_Matcher {
 			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
 		}
 
-		if ( str_starts_with( $name, $needle ) ) {
+		if ( str_starts_with( $name, $needle ) || str_starts_with( $name, $needle . '-' ) ) {
 			return self::result( self::SCORE_PREFIX_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( str_contains( $name, $needle ) ) {
+		if ( self::is_word_boundary_match( $name, $needle ) ) {
 			return self::result( self::SCORE_SUBSTRING_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( self::list_has_substring( $entry['aliases'], $needle ) ) {
+		if ( self::list_has_word_boundary_match( $entry['aliases'], $needle ) ) {
 			return self::result( self::SCORE_SUBSTRING_ALIAS, self::MATCHED_ON_ALIAS );
 		}
 
-		if ( str_contains( $label, $needle ) ) {
+		if ( self::is_word_boundary_match( $label, $needle ) ) {
 			return self::result( self::SCORE_SUBSTRING_LABEL, self::MATCHED_ON_LABEL );
 		}
 
-		if ( self::list_has_substring( $entry['terms'], $needle ) ) {
+		if ( self::list_has_word_boundary_match( $entry['terms'], $needle ) ) {
 			return self::result( self::SCORE_SUBSTRING_TERM, self::MATCHED_ON_TERM );
 		}
 
@@ -210,6 +212,26 @@ class Icon_Matcher {
 		}
 
 		return null;
+	}
+
+	private static function is_word_boundary_match( string $haystack, string $needle ): bool {
+		if ( ! str_contains( $haystack, $needle ) ) {
+			return false;
+		}
+
+		$pattern = '/(^|-|\\s)' . preg_quote( $needle, '/' ) . '($|-|\\s)/';
+
+		return (bool) preg_match( $pattern, $haystack );
+	}
+
+	private static function list_has_word_boundary_match( array $items, string $needle ): bool {
+		foreach ( $items as $item ) {
+			if ( self::is_word_boundary_match( self::normalize( (string) $item ), $needle ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static function list_has_exact( array $items, string $needle ): bool {

@@ -17,6 +17,8 @@ class Icon_Search {
 
 	const MAX_QUERY_LENGTH = 100;
 
+	const MAX_QUERY_WORDS = 10;
+
 	/**
 	 * @param array{queries?: array|string, library?: string, category?: string, page?: int, per_page?: int} $args
 	 */
@@ -62,7 +64,15 @@ class Icon_Search {
 			'font_awesome_version' => Icon_Catalog::get_version(),
 		];
 
-		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-results', $response, $args );
+		$sanitized_args = [
+			'queries' => $queries,
+			'library' => $library,
+			'category' => $category,
+			'page' => $page,
+			'per_page' => $per_page,
+		];
+
+		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-results', $response, $sanitized_args );
 
 		return is_array( $filtered ) ? $filtered : $response;
 	}
@@ -141,13 +151,27 @@ class Icon_Search {
 			return [];
 		}
 
+		$tokens = Icon_Matcher::tokenize( $normalized );
 		$scored = [];
 
 		foreach ( $custom_values as $custom_library => $values ) {
 			foreach ( $values as $name => $value ) {
 				$normalized_name = Icon_Matcher::normalize( (string) $name );
 
-				if ( ! str_contains( $normalized_name, $normalized ) ) {
+				$exact_match = $normalized_name === $normalized;
+				$has_all_tokens = ! empty( $tokens );
+
+				if ( ! $exact_match && ! empty( $tokens ) ) {
+					foreach ( $tokens as $token ) {
+						$pattern = '/(^|-|\\s)' . preg_quote( $token, '/' ) . '($|-|\\s)/';
+						if ( ! preg_match( $pattern, $normalized_name ) ) {
+							$has_all_tokens = false;
+							break;
+						}
+					}
+				}
+
+				if ( ! $exact_match && ! $has_all_tokens ) {
 					continue;
 				}
 
@@ -160,7 +184,7 @@ class Icon_Search {
 						'license' => Icon_Catalog::LICENSE_FREE,
 					],
 					Icon_Matcher::result(
-						$normalized_name === $normalized ? Icon_Matcher::SCORE_EXACT_NAME : Icon_Matcher::SCORE_SUBSTRING_NAME,
+						$exact_match ? Icon_Matcher::SCORE_EXACT_NAME : Icon_Matcher::SCORE_SUBSTRING_NAME,
 						Icon_Matcher::MATCHED_ON_CUSTOM_NAME
 					)
 				);
@@ -218,7 +242,14 @@ class Icon_Search {
 			return '';
 		}
 
-		return substr( trim( $value ), 0, self::MAX_QUERY_LENGTH );
+		$text = mb_substr( trim( $value ), 0, self::MAX_QUERY_LENGTH );
+		$parts = explode( ' ', $text );
+
+		if ( count( $parts ) > self::MAX_QUERY_WORDS ) {
+			$parts = array_slice( $parts, 0, self::MAX_QUERY_WORDS );
+		}
+
+		return implode( ' ', $parts );
 	}
 
 	private static function sanitize_per_page( $per_page ): int {
