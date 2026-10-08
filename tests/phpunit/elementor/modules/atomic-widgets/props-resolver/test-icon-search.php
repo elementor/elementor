@@ -51,6 +51,8 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	private function ensure_font_awesome_7_json_available(): void {
 		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
 		$solid_file = $json_dir . '/solid.json';
+		$regular_file = $json_dir . '/regular.json';
+		$brands_file = $json_dir . '/brands.json';
 		$search_index_file = $json_dir . '/search-index.json';
 
 		if ( is_readable( $solid_file ) && is_readable( $search_index_file ) ) {
@@ -61,21 +63,36 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
 		}
 
-		$icons = [
-			'cart-shopping' => [ 576, 512, [], 'f07a', 'M0 0' ],
+		$solid_icons = [
+			'0' => [ 448, 512, [], 'e0600', 'M0 0' ],
+			'1' => [ 256, 512, [], 'e0601', 'M1 1' ],
+			'9' => [ 320, 512, [], 'e0609', 'M9 9' ],
+			'cart-shopping' => [ 576, 512, [ 'shopping-cart' ], 'f07a', 'M0 0' ],
 			'cart-plus' => [ 576, 512, [], 'f217', 'M0 0' ],
 			'star' => [ 576, 512, [], 'f005', 'M0 0' ],
 			'crown' => [ 576, 512, [], 'f521', 'M0 0' ],
 			'house' => [ 576, 512, [ 'home' ], 'f015', 'M0 0' ],
+			'home' => [ 576, 512, [], 'f015', 'M0 0' ],
+			'magnifying-glass' => [ 576, 512, [ 'search' ], 'f002', 'M0 0' ],
 		];
 
-		file_put_contents(
-			$solid_file,
-			wp_json_encode( [ 'icons' => $icons ] )
-		);
+		$regular_icons = [
+			'0' => [ 448, 512, [], 'e0600', 'M0 0' ],
+			'house' => [ 576, 512, [ 'home' ], 'f015', 'M0 0' ],
+			'home' => [ 576, 512, [], 'f015', 'M0 0' ],
+		];
+
+		$brands_icons = [
+			'facebook' => [ 512, 512, [], 'f09a', 'M0 0' ],
+			'instagram' => [ 448, 512, [], 'f16d', 'M0 0' ],
+		];
+
+		file_put_contents( $solid_file, wp_json_encode( [ 'icons' => $solid_icons ] ) );
+		file_put_contents( $regular_file, wp_json_encode( [ 'icons' => $regular_icons ] ) );
+		file_put_contents( $brands_file, wp_json_encode( [ 'icons' => $brands_icons ] ) );
 
 		$search_icons = [];
-		foreach ( $icons as $name => $data ) {
+		foreach ( $solid_icons as $name => $data ) {
 			$search_icons[] = [
 				'name' => $name,
 				'label' => ucfirst( str_replace( '-', ' ', $name ) ),
@@ -83,11 +100,34 @@ class Test_Icon_Search extends Elementor_Test_Base {
 				'libraries' => [ 'fa-solid' ],
 			];
 		}
+		foreach ( $regular_icons as $name => $data ) {
+			$exists = false;
+			foreach ( $search_icons as &$icon ) {
+				if ( $icon['name'] === $name ) {
+					$icon['libraries'][] = 'fa-regular';
+					$exists = true;
+					break;
+				}
+			}
+			if ( ! $exists ) {
+				$search_icons[] = [
+					'name' => $name,
+					'label' => ucfirst( str_replace( '-', ' ', $name ) ),
+					'categories' => [],
+					'libraries' => [ 'fa-regular' ],
+				];
+			}
+		}
+		foreach ( $brands_icons as $name => $data ) {
+			$search_icons[] = [
+				'name' => $name,
+				'label' => ucfirst( str_replace( '-', ' ', $name ) ),
+				'categories' => [],
+				'libraries' => [ 'fa-brands' ],
+			];
+		}
 
-		file_put_contents(
-			$search_index_file,
-			wp_json_encode( [ 'icons' => $search_icons ] )
-		);
+		file_put_contents( $search_index_file, wp_json_encode( [ 'icons' => $search_icons ] ) );
 	}
 
 	public function test_search__ranks_an_exact_name_first() {
