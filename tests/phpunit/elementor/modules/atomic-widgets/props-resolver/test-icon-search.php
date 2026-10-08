@@ -656,6 +656,11 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 		Icon_Catalog::reset();
 
+		$real_search_index = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/search-index.json';
+		if ( ! file_exists( $real_search_index ) ) {
+			$this->markTestSkipped( 'Real Font Awesome 7 search-index.json not found. This test validates build-generated assets and requires `npm run start` or `npm run build` to have been run.' );
+		}
+
 		$fixture_path = ELEMENTOR_PATH . 'tests/fixtures/icon-value-format.json';
 		$this->assertFileExists( $fixture_path, 'Fixture file must exist' );
 
