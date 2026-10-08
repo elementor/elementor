@@ -362,6 +362,87 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'v4-heading', $css );
 	}
 
+	public function test_enqueue__does_not_rebuild_empty_stylesheet_on_every_request() {
+		// Arrange
+		( new Stylesheet_Manager() )->enqueue();
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+
+		$writes = 0;
+		$count = function ( $option ) use ( &$writes ) {
+			if ( Stylesheet_Manager::META_KEY === $option ) {
+				$writes++;
+			}
+		};
+		add_action( 'added_option', $count );
+		add_action( 'updated_option', $count );
+		add_action( 'deleted_option', $count );
+
+		// Act
+		( new Stylesheet_Manager() )->enqueue();
+		( new Stylesheet_Manager() )->enqueue();
+
+		// Assert
+		remove_action( 'added_option', $count );
+		remove_action( 'updated_option', $count );
+		remove_action( 'deleted_option', $count );
+
+		$this->assertSame( 0, $writes );
+		$this->assertFalse( wp_style_is( 'elementor-design-system-sync', 'enqueued' ) );
+	}
+
+	public function test_enqueue__builds_stylesheet_once_classes_are_synced_after_an_empty_build() {
+		// Arrange
+		( new Stylesheet_Manager() )->enqueue();
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+
+		// Act
+		$this->set_kit_classes( [
+			'g-1' => [
+				'id' => 'g-1',
+				'type' => 'class',
+				'label' => 'Heading',
+				'sync_to_v3' => true,
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [
+							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 24, 'unit' => 'px' ] ],
+						],
+					],
+				],
+			],
+		] );
+		( new Stylesheet_Manager() )->enqueue();
+
+		// Assert
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$this->assertTrue( wp_style_is( 'elementor-design-system-sync', 'enqueued' ) );
+	}
+
+	public function test_enqueue__rebuilds_missing_file_when_last_build_had_content() {
+		// Arrange
+		$this->stylesheet_manager->generate();
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => true,
+			],
+		] );
+		Variables_Provider::clear_cache();
+		$this->stylesheet_manager->generate();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		// Act
+		unlink( $this->stylesheet_manager->get_path() );
+		( new Stylesheet_Manager() )->enqueue();
+
+		// Assert
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$this->assertStringContainsString( '--e-global-color-v4-primary:var(--Primary);', file_get_contents( $this->stylesheet_manager->get_path() ) );
+	}
+
 	public function test_generate__skips_non_synced_classes() {
 		// Arrange
 		$this->set_kit_classes( [
