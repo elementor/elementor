@@ -130,11 +130,13 @@ class Icon_Matcher {
 		$best = null;
 		$matched_tokens = 0;
 		$name_tokens = 0;
+		$all_matched = true;
 
 		foreach ( $tokens as $token ) {
 			$match = self::match_whole_query( $entry, $token );
 
 			if ( ! $match ) {
+				$all_matched = false;
 				continue;
 			}
 
@@ -149,16 +151,19 @@ class Icon_Matcher {
 			}
 		}
 
-		if ( ! $best ) {
+		if ( ! $best || $matched_tokens === 0 ) {
 			return null;
 		}
 
-		$best['score'] = min(
-			self::SCORE_TOKEN_BAND_MAX,
-			( $matched_tokens * self::SCORE_PER_MATCHED_TOKEN )
-				+ ( $name_tokens * self::SCORE_PER_NAME_TOKEN )
-				+ intdiv( $best['score'], 100 )
-		);
+		$base_score = ( $matched_tokens * self::SCORE_PER_MATCHED_TOKEN )
+			+ ( $name_tokens * self::SCORE_PER_NAME_TOKEN )
+			+ intdiv( $best['score'], 100 );
+
+		if ( $all_matched && count( $tokens ) > 1 ) {
+			$base_score += 50;
+		}
+
+		$best['score'] = min( self::SCORE_TOKEN_BAND_MAX, $base_score );
 
 		return $best;
 	}
