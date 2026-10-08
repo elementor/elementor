@@ -84,6 +84,13 @@ export { deleteElementStyle } from './styles/delete-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 
 export { getElementInteractions } from './sync/get-element-interactions';
+export { getElementHandlers, updateElementHandlers } from './sync/element-handlers';
+export {
+	getElementState,
+	getElementStateParams,
+	updateElementState,
+	updateElementStateParams,
+} from './sync/element-state';
 export {
 	DEFAULT_STYLE_CLASS_PREFIX,
 	getDefaultStyleTagFromPreviewElement,

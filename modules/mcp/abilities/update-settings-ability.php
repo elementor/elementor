@@ -22,7 +22,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Update Elementor Page Settings', 'elementor' ),
-			__( 'Updates Elementor document-level settings for a post (for example page layout, title visibility, or custom page settings). Pass only the keys you want to change. Ask the user for the URL or post ID. Use get-page-structure when you also need the element tree. Requires permission to edit the target post.', 'elementor' ),
+			__( 'Updates Elementor document-level settings for a post (for example page layout, title visibility, or custom page settings). Pass only the keys you want to change. Ask the user for the URL or post ID. Use get-page-structure when you also need the element tree. Requires permission to edit the target post. With the e_data_flow experiment, page state is set via e_data_flow_static_state (JSON string, e.g. "{\"count\":0}") and e_data_flow_sources (array of { key, source, count } where source is one of post_title, post_excerpt, post_date, post_author, site_name, site_description, user_logged_in, user_display_name, latest_posts).', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',

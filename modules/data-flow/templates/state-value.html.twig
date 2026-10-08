@@ -1,0 +1,13 @@
+{%- set value = state -%}
+{%- for key in path | split('.') -%}
+	{%- set value = value[key] ?? null -%}
+{%- endfor -%}
+{%- if value is iterable -%}
+	{{ value | json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE')) }}
+{%- elseif value is same as(true) -%}
+	true
+{%- elseif value is same as(false) -%}
+	false
+{%- else -%}
+	{{ value }}
+{%- endif -%}

@@ -85,6 +85,8 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'data-flow',
+			// Depends on the Data Flow experiment being registered
 			'mcp',
 			'wp-rest',
 			'safe-mode',

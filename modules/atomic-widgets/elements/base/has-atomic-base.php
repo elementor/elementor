@@ -21,6 +21,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\DataFlow\Handlers_Parser;
+use Elementor\Modules\DataFlow\State_Params;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -273,6 +275,12 @@ trait Has_Atomic_Base {
 			$this->transform_interactions_for_save( $data['interactions'] ?? [] )
 		);
 
+		$this->set_data_field_for_save(
+			$data,
+			Handlers_Parser::DATA_KEY,
+			Handlers_Parser::sanitize( $data[ Handlers_Parser::DATA_KEY ] ?? [] )
+		);
+
 		return $data;
 	}
 
@@ -317,9 +325,29 @@ trait Has_Atomic_Base {
 
 		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
+		$this->set_data_field_for_save(
+			$raw_data,
+			Handlers_Parser::DATA_KEY,
+			Handlers_Parser::sanitize( $this->get_data( Handlers_Parser::DATA_KEY ) )
+		);
+		$this->set_state_fields( $raw_data, $this->get_data() );
 		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
+	}
+
+	private function set_state_fields( array &$target, array $source ): void {
+		$this->set_data_field_for_save(
+			$target,
+			State_Params::DATA_KEY,
+			State_Params::sanitize( $source[ State_Params::DATA_KEY ] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$target,
+			State_Params::VALUES_DATA_KEY,
+			State_Params::sanitize_values( $source[ State_Params::VALUES_DATA_KEY ] ?? [] )
+		);
 	}
 
 	final public function get_stack( $with_common_controls = true ) {

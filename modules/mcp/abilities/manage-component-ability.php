@@ -11,6 +11,8 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
+use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\State_Applier;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
@@ -713,6 +715,18 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'type' => 'object',
 					'default' => (object) [],
 					'description' => 'Same shape as elementor/build-composition interactions. Only used with xml_structure.',
+				],
+				'handlers' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Same shape as elementor/build-composition handlers (requires the e_data_flow experiment). Only used with xml_structure.',
+					'additionalProperties' => Handlers_Applier::get_handlers_list_schema(),
+				],
+				'state_params' => [
+					'type' => 'object',
+					'default' => (object) [],
+					'description' => 'Same shape as elementor/build-composition state_params (requires the e_data_flow experiment). Params on the root configuration-id are the component params each instance can set. Only used with xml_structure. Read ' . Data_Flow_Guide_Ability::URI . '.',
+					'additionalProperties' => State_Applier::get_state_params_schema(),
 				],
 				'overridable_props' => [
 					'type' => 'object',
