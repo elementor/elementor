@@ -1,6 +1,13 @@
 {% import 'elementor/macros' as m %}
 <div class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
-    {%- if settings.icon_rotation is defined and settings.icon_rotation is not null %} style="--e-accordion-icon-rotation: {{ settings.icon_rotation }}deg"{% endif %}
+    {%- set icon_angle_style = '' -%}
+    {%- if settings.icon_closed_rotation is defined and settings.icon_closed_rotation is not null and settings.icon_closed_rotation != 0 -%}
+        {%- set icon_angle_style = icon_angle_style ~ '--e-accordion-icon-rotation-closed: ' ~ settings.icon_closed_rotation ~ 'deg;' -%}
+    {%- endif -%}
+    {%- if settings.icon_rotation is defined and settings.icon_rotation is not null -%}
+        {%- set icon_angle_style = icon_angle_style ~ '--e-accordion-icon-rotation: ' ~ settings.icon_rotation ~ 'deg;' -%}
+    {%- endif -%}
+    {%- if icon_angle_style %} style="{{ icon_angle_style }}"{% endif %}
     {{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }}
     {{- m.render_custom_attributes(settings, editor_attributes) }}>
     <!-- elementor-children-placeholder -->

@@ -47,6 +47,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 
 	const DEFAULT_ITEM_COUNT = 2;
 	const ICON_ROTATION_DEFAULT = 180;
+	const ICON_CLOSED_ROTATION_DEFAULT = 0;
 	const ICON_ROTATION_MIN = -360;
 	const ICON_ROTATION_MAX = 360;
 
@@ -119,9 +120,17 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->where( self::SHOW_ICON_IS_ON_TERM )
 						->get()
 				),
+			'icon_closed_rotation' => Number_Prop_Type::make()
+				->default( self::ICON_CLOSED_ROTATION_DEFAULT )
+				->description( 'The direction, in degrees, the visible icon points while an item is closed. 0 leaves the icon as drawn. An accordion saved without this value stays unrotated while closed.' )
+				->set_dependencies(
+					Dependency_Manager::make()
+						->where( self::SHOW_ICON_IS_ON_TERM )
+						->get()
+				),
 			'icon_rotation' => Number_Prop_Type::make()
 				->default( self::ICON_ROTATION_DEFAULT )
-				->description( 'The direction, in degrees, the visible icon points while an item is open. 180 turns the default chevron the other way. 0 leaves it pointing the same way.' )
+				->description( 'The direction, in degrees, the visible icon points while an item is open. 180 turns the default chevron the other way. 0 leaves it pointing the same way as its close angle.' )
 				->set_dependencies(
 					Dependency_Manager::make()
 						->where( self::SHOW_ICON_IS_ON_TERM )
@@ -147,6 +156,12 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->set_label( esc_html__( 'Show Icon', 'elementor' ) ),
 					Switch_Control::bind_to( 'different_open_icon' )
 						->set_label( esc_html__( 'Open icon', 'elementor' ) ),
+					Number_Control::bind_to( 'icon_closed_rotation' )
+						->set_label( esc_html__( 'Close angle', 'elementor' ) )
+						->set_min( self::ICON_ROTATION_MIN )
+						->set_max( self::ICON_ROTATION_MAX )
+						->set_step( 1 )
+						->set_should_force_int( true ),
 					Number_Control::bind_to( 'icon_rotation' )
 						->set_label( esc_html__( 'Open angle', 'elementor' ) )
 						->set_min( self::ICON_ROTATION_MIN )

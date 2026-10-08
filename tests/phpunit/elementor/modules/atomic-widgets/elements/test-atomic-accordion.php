@@ -179,7 +179,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$schema = $this->get_define_props_schema( Atomic_Accordion::class );
 
 		$this->assertEqualsCanonicalizing(
-			[ 'classes', 'attributes', 'default_state', 'max_expanded', 'show_icon', 'icon_rotation', 'different_open_icon', 'faq_schema' ],
+			[ 'classes', 'attributes', 'default_state', 'max_expanded', 'show_icon', 'icon_closed_rotation', 'icon_rotation', 'different_open_icon', 'faq_schema' ],
 			array_keys( $schema )
 		);
 
@@ -190,6 +190,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( [ 'one', 'multiple' ], $schema['max_expanded']->get_enum() );
 
 		$this->assertTrue( $schema['show_icon']->get_default()['value'] );
+		$this->assertSame( Atomic_Accordion::ICON_CLOSED_ROTATION_DEFAULT, $schema['icon_closed_rotation']->get_default()['value'] );
 		$this->assertSame( Atomic_Accordion::ICON_ROTATION_DEFAULT, $schema['icon_rotation']->get_default()['value'] );
 		$this->assertFalse( $schema['different_open_icon']->get_default()['value'] );
 		$this->assertFalse( $schema['faq_schema']->get_default()['value'] );
@@ -198,7 +199,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	public function test_functional_props_have_descriptions_classes_and_attributes_do_not() {
 		$schema = $this->get_define_props_schema( Atomic_Accordion::class );
 
-		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'icon_rotation', 'different_open_icon', 'faq_schema' ] as $key ) {
+		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'icon_closed_rotation', 'icon_rotation', 'different_open_icon', 'faq_schema' ] as $key ) {
 			$description = $schema[ $key ]->get_meta()['description'] ?? '';
 			$this->assertNotSame( '', $description, "Expected {$key} to have a non-empty description." );
 		}
@@ -216,7 +217,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'overridable', $schema['attributes']->get_meta() );
 		$this->assertFalse( $schema['attributes']->get_meta()['overridable'] );
 
-		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'icon_rotation', 'different_open_icon', 'faq_schema' ] as $key ) {
+		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'icon_closed_rotation', 'icon_rotation', 'different_open_icon', 'faq_schema' ] as $key ) {
 			$this->assertArrayNotHasKey( 'overridable', $schema[ $key ]->get_meta(), "Did not expect {$key} to be marked non-overridable." );
 		}
 	}
@@ -349,7 +350,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 							'svg' => [
 								'value' => [
 									'url' => [
-										'value' => 'https://example.com/my-plus.svg',
+										'value' => 'https://example.com/wp-content/uploads/chevron-up.svg',
 									],
 								],
 							],
@@ -363,12 +364,30 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$urls = $ordered[0]['elements'];
 
 		$this->assertSame( Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL, $urls[0]['settings']['svg']['value']['url']['value'] );
-		$this->assertSame( 'https://example.com/my-plus.svg', $urls[1]['settings']['svg']['value']['url']['value'] );
+		$this->assertSame( 'https://example.com/wp-content/uploads/chevron-up.svg', $urls[1]['settings']['svg']['value']['url']['value'] );
 	}
 
 	public function test_render_defaults_to_the_original_icon_rotation() {
 		$html = $this->render_accordion( [] );
 
+		$this->assertStringContainsString(
+			'--e-accordion-icon-rotation: ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg',
+			$html
+		);
+		$this->assertStringNotContainsString( '--e-accordion-icon-rotation-closed', $html );
+	}
+
+	public function test_render_keeps_a_saved_open_angle_and_leaves_the_closed_icon_unrotated() {
+		$html = $this->render_accordion( [ 'icon_rotation' => Number_Prop_Type::generate( 90 ) ] );
+
+		$this->assertStringContainsString( '--e-accordion-icon-rotation: 90deg', $html );
+		$this->assertStringNotContainsString( '--e-accordion-icon-rotation-closed', $html );
+	}
+
+	public function test_render_applies_a_saved_close_angle_without_changing_the_open_angle() {
+		$html = $this->render_accordion( [ 'icon_closed_rotation' => Number_Prop_Type::generate( 90 ) ] );
+
+		$this->assertStringContainsString( '--e-accordion-icon-rotation-closed: 90deg', $html );
 		$this->assertStringContainsString(
 			'--e-accordion-icon-rotation: ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg',
 			$html
@@ -379,6 +398,16 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$html = $this->render_accordion( [ 'icon_rotation' => Number_Prop_Type::generate( 0 ) ] );
 
 		$this->assertStringContainsString( '--e-accordion-icon-rotation: 0deg', $html );
+	}
+
+	public function test_icon_closed_rotation_is_hidden_without_show_icon() {
+		$terms = $this->get_define_props_schema( Atomic_Accordion::class )['icon_closed_rotation']->get_dependencies()['terms'];
+
+		$this->assertCount( 1, $terms );
+		$this->assertSame( [ 'show_icon' ], $terms[0]['path'] );
+		$this->assertSame( 'ne', $terms[0]['operator'] );
+		$this->assertFalse( $terms[0]['value'] );
+		$this->assertSame( 'hide', $terms[0]['effect'] );
 	}
 
 	public function test_icon_rotation_is_hidden_without_show_icon() {

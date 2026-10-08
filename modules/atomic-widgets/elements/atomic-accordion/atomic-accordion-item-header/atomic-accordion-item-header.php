@@ -238,7 +238,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 			return $element;
 		}
 
-		$upward_chevron = 'chevron-up.svg';
+		$upward_chevron = 'assets/images/chevron-up.svg';
 
 		foreach ( $element['elements'] as $index => $child ) {
 			if ( ! is_array( $child ) ) {

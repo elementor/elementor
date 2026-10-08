@@ -723,6 +723,10 @@ class Module extends BaseModule {
 			':where(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) .e-svg-base { max-width: 100%; }',
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg, .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg, .e-accordion-item-icon-open-base svg { transition: transform .3s ease; }',
+			// No fallback: a missing variable makes this declaration invalid, so it is dropped and the
+			// closed icon stays at transform none. That is the published accordion. 0 is omitted by the
+			// template for the same reason. A saved close angle is the only thing that rotates it.
+			'.e-accordion-item-base:not([open]) > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation-closed)); }',
 			'.e-accordion-item-base[open] > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation, ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg)); }',
 			// `display: none` until [open] skips the transform transition, so the open icon
 			// appears already rotated. Keep both slots rendered, stacked in one cell, and
