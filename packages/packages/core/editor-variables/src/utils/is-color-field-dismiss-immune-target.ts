@@ -13,6 +13,14 @@ const getDocumentsToSearch = ( target: Element ): Document[] => {
 	documents.add( target.ownerDocument );
 	documents.add( document );
 
+	try {
+		if ( window.top?.document ) {
+			documents.add( window.top.document );
+		}
+	} catch {
+		// Cross-origin restriction.
+	}
+
 	document.querySelectorAll( 'iframe' ).forEach( ( frame ) => {
 		try {
 			if ( frame.contentDocument ) {
