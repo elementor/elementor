@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -26,8 +29,13 @@ class V3_Control_Adapter_Registry {
 			new Background_Color_Adapter(),
 			new Size_Slider_Adapter(),
 			new Dimensions_Adapter(),
+			new Object_Size_Box_Adapter( Border_Width_Prop_Type::get_key(), Object_Size_Box_Adapter::BORDER_WIDTH_SIDES ),
+			new Object_Size_Box_Adapter( Border_Radius_Prop_Type::get_key(), Object_Size_Box_Adapter::BORDER_RADIUS_SIDES ),
 			new Dimensions_Sides_Slider_Adapter(),
 			new String_Choice_Adapter(),
+			new Box_Shadow_Adapter(),
+			new Number_Adapter(),
+			new Font_Family_Adapter(),
 		] );
 	}
 

@@ -17,7 +17,10 @@ class V3_Control {
 	 */
 	private ?array $sides = null;
 
-	private ?array $dependencies = null;
+	/**
+	 * @var array<string, scalar>|null Sibling control values the binding needs to take effect.
+	 */
+	private ?array $requirements = null;
 
 	private function __construct( string $setting ) {
 		$this->setting = $setting;
@@ -39,8 +42,13 @@ class V3_Control {
 		return $this;
 	}
 
-	public function set_dependencies( ?array $dependencies ): self {
-		$this->dependencies = $dependencies;
+	/**
+	 * Overrides the requirements derived from the control's `condition`.
+	 *
+	 * @param array<string, scalar> $setting_values
+	 */
+	public function requires( array $setting_values ): self {
+		$this->requirements = $setting_values;
 
 		return $this;
 	}
@@ -60,7 +68,10 @@ class V3_Control {
 		return $this->sides;
 	}
 
-	public function get_dependencies(): ?array {
-		return $this->dependencies;
+	/**
+	 * @return array<string, scalar>|null
+	 */
+	public function get_requirements(): ?array {
+		return $this->requirements;
 	}
 }

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Style_Fragment;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -39,6 +41,12 @@ class Style_Target {
 			'state' => $state,
 			'control' => $control,
 		];
+
+		return $this;
+	}
+
+	public function with( Style_Fragment $fragment ): self {
+		$fragment->apply_to( $this );
 
 		return $this;
 	}
