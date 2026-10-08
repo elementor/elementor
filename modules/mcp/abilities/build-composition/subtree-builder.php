@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -82,7 +83,7 @@ class Subtree_Builder {
 
 		$configuration_id = $this->xml_parser->get_configuration_id( $node );
 		if ( null !== $configuration_id ) {
-			$element['editor_settings']['title'] = $configuration_id;
+			Editor_Settings::apply_name( $element, $configuration_id );
 		}
 
 		if ( ! empty( $config['controls'] ) && V3_Node_Bridge::is_v3_node( $element ) ) {
