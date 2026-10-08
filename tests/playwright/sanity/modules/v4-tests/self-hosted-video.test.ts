@@ -48,9 +48,9 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			const videoWidget = await editor.selectElement( widgetId );
 			await expect( videoWidget ).toBeVisible();
 			await editor.page
-				.getByRole( 'button', { name: 'Select video' } )
-				.locator( '..' )
-				.getByRole( 'button', { name: 'Upload' } )
+				.locator( '[data-type="settings-field"]' )
+				.filter( { hasText: 'Video' } )
+				.getByRole( 'button', { name: 'Upload', exact: true } )
 				.click();
 			await editor.page.setInputFiles(
 				EditorSelectors.media.imageInp,
