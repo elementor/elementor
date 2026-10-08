@@ -131,7 +131,7 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function update() {
-		$this->update_file();
+		$write_succeeded = $this->update_file();
 
 		$meta = $this->get_meta();
 
@@ -144,10 +144,14 @@ abstract class Base extends Base_File {
 			$meta['css'] = '';
 		} else {
 			$use_external_file = $this->use_external_file();
+			$is_optimized_css_files_active = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_files' );
 
-			if ( $use_external_file ) {
+			if ( $use_external_file && ( ! $is_optimized_css_files_active || $write_succeeded ) ) {
 				$meta['status'] = self::CSS_STATUS_FILE;
 			} else {
+				// Either the print method is internal, or (when the experiment is active) the
+				// external file write failed — fall back to inline CSS rather than recording a
+				// `file` status that points at a file that doesn't exist.
 				$meta['status'] = self::CSS_STATUS_INLINE;
 				$meta['css'] = $content;
 			}
@@ -164,8 +168,10 @@ abstract class Base extends Base_File {
 	 */
 	public function write() {
 		if ( $this->use_external_file() ) {
-			parent::write();
+			return parent::write();
 		}
+
+		return true;
 	}
 
 	/**
@@ -231,6 +237,18 @@ abstract class Base extends Base_File {
 
 		// First time after clear cache and etc.
 		if ( '' === $meta['status'] || $this->is_update_required() ) {
+			$this->update();
+
+			$meta = $this->get_meta();
+		}
+
+		if ( self::CSS_STATUS_FILE === $meta['status']
+			&& Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_files' )
+			&& ! $this->has_non_empty_file()
+		) {
+			// The meta says the file exists, but the filesystem disagrees (deleted, purged,
+			// zero-byte from an interrupted write, offloaded uploads never synced, ...).
+			// Self-heal by regenerating now instead of emitting a URL that 404s forever.
 			$this->update();
 
 			$meta = $this->get_meta();
@@ -1060,5 +1078,32 @@ abstract class Base extends Base_File {
 		if ( ! in_array( $font, $this->fonts, true ) ) {
 			$this->fonts[] = $font;
 		}
+	}
+
+	/**
+	 * Whether the file exists on disk and is non-empty.
+	 *
+	 * Mirrors `CSS_Files_Manager::has_non_empty_file()` (the atomic self-heal check) so
+	 * a missing or zero-byte file is treated the same way as if it never existed.
+	 *
+	 * @since 3.33.0
+	 * @access private
+	 *
+	 * @return bool
+	 */
+	private function has_non_empty_file() {
+		$path = $this->get_path();
+
+		if ( ! file_exists( $path ) ) {
+			return false;
+		}
+
+		$size = filesize( $path );
+
+		if ( false === $size ) {
+			return true;
+		}
+
+		return $size > 0;
 	}
 }
