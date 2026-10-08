@@ -33,6 +33,18 @@ export function reconcileInitialChildren( {
 		const existingIndex = elements.findIndex( ( element ) => element.elType === rule.child_type );
 		const isPresent = existingIndex >= 0;
 
+		if ( isMet && isPresent && isAnchoredPosition( rule.position.kind ) ) {
+			const remaining = elements.filter( ( _, index ) => index !== existingIndex );
+			const insertAt = resolveInsertIndex( rule.position, remaining );
+
+			if ( insertAt !== existingIndex ) {
+				const [ moved ] = elements.splice( existingIndex, 1 );
+				elements.splice( insertAt, 0, moved );
+			}
+
+			return;
+		}
+
 		if ( isMet && ! isPresent ) {
 			const { modelData, wasStashed } = resolveChildModelData( elementId, rule, stash );
 			const insertAt = resolveInsertIndex( rule.position, elements );
@@ -56,4 +68,8 @@ export function reconcileInitialChildren( {
 	} );
 
 	attributes.elements = elements;
+}
+
+function isAnchoredPosition( kind: string ): boolean {
+	return kind === 'after_type' || kind === 'before_type';
 }
