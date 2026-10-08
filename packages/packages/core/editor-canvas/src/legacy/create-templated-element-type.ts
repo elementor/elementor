@@ -29,7 +29,7 @@ export type CreateTemplatedElementTypeOptions = {
 export type TemplatedElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
 > &
-	Pick< V1ElementConfig, 'default_html_tag' | 'html_tag_follows_link' >;
+	Pick< V1ElementConfig, 'default_html_tag' | 'html_tag_follows_link' | 'template_context' >;
 
 export function createTemplatedElementType( {
 	type,
@@ -163,6 +163,7 @@ export function createTemplatedElementView( {
 					this._lastResolvedSettingsHash = settingsHash;
 
 					const context = {
+						...( element.template_context ?? {} ),
 						id: this.model.get( 'id' ),
 						interaction_id: this.getInteractionId(),
 						type,
