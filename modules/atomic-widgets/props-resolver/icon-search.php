@@ -108,6 +108,20 @@ class Icon_Search {
 			return $b['score'] <=> $a['score'];
 		}
 
+		$a_library = $a['match']['library'];
+		$b_library = $b['match']['library'];
+		$a_matched_on = $a['match']['matched_on'];
+		$b_matched_on = $b['match']['matched_on'];
+
+		if ( $a_matched_on === Icon_Matcher::MATCHED_ON_TERM && $b_matched_on === Icon_Matcher::MATCHED_ON_TERM ) {
+			$a_is_generic = str_starts_with( $a_library, 'fa-solid' ) || str_starts_with( $a_library, 'fa-regular' );
+			$b_is_generic = str_starts_with( $b_library, 'fa-solid' ) || str_starts_with( $b_library, 'fa-regular' );
+
+			if ( $a_is_generic !== $b_is_generic ) {
+				return $a_is_generic ? -1 : 1;
+			}
+		}
+
 		$a_length = strlen( $a['match']['name'] );
 		$b_length = strlen( $b['match']['name'] );
 
