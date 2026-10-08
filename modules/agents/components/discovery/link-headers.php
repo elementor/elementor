@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Site-wide (all frontend responses):
  *   Link: </llms.txt>; rel="llms-txt"; type="text/plain"
+ *
+ * Site-wide when the Agent discovery module is enabled:
  *   Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/json"
  *   Link: </.well-known/auth.md>; rel="service-doc"; type="text/markdown"
  *
