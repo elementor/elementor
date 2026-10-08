@@ -154,8 +154,6 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						] ),
 					Switch_Control::bind_to( 'show_icon' )
 						->set_label( esc_html__( 'Show Icon', 'elementor' ) ),
-					Switch_Control::bind_to( 'different_open_icon' )
-						->set_label( esc_html__( 'Open icon', 'elementor' ) ),
 					Number_Control::bind_to( 'icon_closed_rotation' )
 						->set_label( esc_html__( 'Close angle', 'elementor' ) )
 						->set_min( self::ICON_ROTATION_MIN )
@@ -168,6 +166,8 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						->set_max( self::ICON_ROTATION_MAX )
 						->set_step( 1 )
 						->set_should_force_int( true ),
+					Switch_Control::bind_to( 'different_open_icon' )
+						->set_label( esc_html__( 'Open icon', 'elementor' ) ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
