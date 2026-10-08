@@ -21,14 +21,13 @@ class Resolver {
 	/**
 	 * Get custom icon libraries with configurable output.
 	 *
-	 * @param array{
-	 *     require_label?: bool,
-	 *     include_urls?: bool,
-	 *     include_labels?: bool
-	 * } $options Configuration options:
-	 *   - require_label: Only include libraries that have a non-empty label
-	 *   - include_urls: Include fetchJson URL and type in output
-	 *   - include_labels: Include label in output (as 'label' key)
+	 * @param array $options {
+	 *     Configuration options.
+	 *
+	 *     @type bool $require_label   Only include libraries that have a non-empty label.
+	 *     @type bool $include_urls    Include fetchJson URL and type in output.
+	 *     @type bool $include_labels  Include label in output (as 'label' key).
+	 * }
 	 *
 	 * @return array<string, array{label?: string, fetchJson?: string, type?: string}|string>
 	 *   When include_urls or include_labels is true: map of library => array with requested fields

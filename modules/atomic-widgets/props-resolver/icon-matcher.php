@@ -163,7 +163,7 @@ class Icon_Matcher {
 			}
 		}
 
-		if ( ! $best || $matched_tokens === 0 ) {
+		if ( ! $best || 0 === $matched_tokens ) {
 			return null;
 		}
 
@@ -171,11 +171,11 @@ class Icon_Matcher {
 			+ ( $exact_name_tokens * self::SCORE_PER_NAME_TOKEN )
 			+ min( intdiv( $best['score'], 100 ), 5 );
 
-		if ( $name_part_tokens === count( $tokens ) && count( $tokens ) > 1 ) {
+		if ( $matched_tokens === $name_part_tokens && 1 < count( $tokens ) ) {
 			$base_score += 50;
 		}
 
-		if ( $all_matched && count( $tokens ) > 1 ) {
+		if ( $all_matched && 1 < count( $tokens ) ) {
 			$base_score += 30;
 		}
 
