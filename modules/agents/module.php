@@ -144,7 +144,7 @@ class Module extends BaseModule {
 
 		$this->robots_handler->register();
 
-		$this->well_known_router = new Well_Known_Router();
+		$this->well_known_router = new Well_Known_Router( $this->settings );
 		$this->add_component( 'well_known_router', $this->well_known_router );
 		$this->well_known_router->init();
 
@@ -158,7 +158,7 @@ class Module extends BaseModule {
 
 		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
 
-		$this->register_component( new Link_Headers( $this->markdown_endpoint ) );
+		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings ) );
 		$this->register_component( $this->markdown_endpoint );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
@@ -684,6 +684,23 @@ class Module extends BaseModule {
 			'llms'               => $this->get_llms_state(),
 			'markdown'           => $this->get_markdown_state(),
 			'botAccess'          => $this->get_bot_access_state(),
+			'agentDiscovery'     => $this->get_agent_discovery_state(),
+		];
+	}
+
+	private function get_agent_discovery_state(): array {
+		$files = [];
+
+		foreach ( array_keys( $this->well_known_router->get_applicable_endpoints() ) as $slug ) {
+			$files[] = [
+				'slug' => $slug,
+				'url'  => home_url( Well_Known_Router::WELL_KNOWN_PREFIX . $slug ),
+			];
+		}
+
+		return [
+			'enabled' => $this->settings->is_agent_discovery_enabled(),
+			'files'   => $files,
 		];
 	}
 
