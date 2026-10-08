@@ -4,8 +4,10 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Overridden_Setting_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -200,6 +202,8 @@ class Style_Applier {
 			$warnings->add( 'v3_css_skipped', $warning, $config_id );
 		}
 
+		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [] );
+
 		if ( ! empty( $result['settings_patch'] ) ) {
 			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
@@ -209,9 +213,7 @@ class Style_Applier {
 
 		if ( $is_map_driven ) {
 			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $result['settings_patch'] ?? [] ), $node['settings'] ?? [] );
-		}
-
-		if ( $is_map_driven && '' === trim( $unmapped ) ) {
+			( new V3_Map_Fallback_Css() )->apply( $node, $result, (string) $widget_type, $config_id, $warnings );
 			return;
 		}
 

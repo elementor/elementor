@@ -12,6 +12,8 @@ class Compiled_Style_Target {
 
 	private string $label;
 
+	private ?string $selector;
+
 	/**
 	 * @var Compiled_Style_Binding[]
 	 */
@@ -21,11 +23,13 @@ class Compiled_Style_Target {
 	 * @param string                   $alias
 	 * @param string                   $label
 	 * @param Compiled_Style_Binding[] $bindings
+	 * @param string|null              $selector
 	 */
-	public function __construct( string $alias, string $label, array $bindings ) {
+	public function __construct( string $alias, string $label, array $bindings, ?string $selector = null ) {
 		$this->alias = $alias;
 		$this->label = $label;
 		$this->bindings = $bindings;
+		$this->selector = $selector;
 	}
 
 	public function get_alias(): string {
@@ -34,6 +38,10 @@ class Compiled_Style_Target {
 
 	public function get_label(): string {
 		return $this->label;
+	}
+
+	public function get_selector(): ?string {
+		return $this->selector;
 	}
 
 	/**

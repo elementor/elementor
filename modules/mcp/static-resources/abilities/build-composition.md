@@ -116,6 +116,7 @@ V3 widgets (non `e-` types such as `nav-menu`) are styled per **style target**, 
 - Every other target is a block named by its alias: `dropdown { }`, `pointer:hover { }`. Blocks cannot be nested.
 - A property listed for a target may only be bound in some states (e.g. a hover pointer color); the warning names the state to use.
 - `wrapper` is the widget's Advanced tab (margin, padding, width, position, background, border).
+- A value the target's controls cannot store (unsupported property, value outside the control's options such as `font-weight: 650`, non-px box-shadow) is written to the widget's custom CSS for that target when Elementor Pro is active; the warning gives the reason and, when known, the allowed values. Prefer an allowed value so it stays editable in the panel. Media queries other than `@media(--<breakpoint>)` are kept verbatim in the same custom CSS.
 - Never use `.elementor-*` class selectors or descendant selectors — they are dropped.
 
 ```json

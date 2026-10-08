@@ -68,7 +68,7 @@ class V3_Style_Mapper {
 	 * @param string $css_string
 	 * @param string $widget_type
 	 * @param array  $widget_config From Widget_Context_Helper::get_widget_config().
-	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], error: string|null}
+	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, fallback_rules: array[], fallback_notes: string[], required_settings: array<string, array{value: mixed, declaration: string}>, warnings: string[], error: string|null}
 	 */
 	public function apply( string $css_string, string $widget_type, array $widget_config ): array {
 		$css_string = trim( $css_string );
@@ -109,11 +109,12 @@ class V3_Style_Mapper {
 	}
 
 	/**
-	 * Unknown breakpoints fail the whole style like V4 does. Breakpoint values of controls
-	 * without a per-device value, and media queries other than `@media(--<breakpoint>)`,
-	 * fall back to custom_css; anything else a target cannot store is dropped with a warning.
+	 * Unknown breakpoints fail the whole style like V4 does. Declarations a target cannot store
+	 * become `fallback_rules` scoped to the target's selector, for {@see Maps\V3_Custom_Css_Fallback};
+	 * targets without a selector drop them with a warning. Media queries other than
+	 * `@media(--<breakpoint>)` are returned verbatim as `unmapped_css`.
 	 *
-	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, warnings: string[], error: string|null}
+	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, fallback_rules: array[], fallback_notes: string[], required_settings: array<string, array{value: mixed, declaration: string}>, warnings: string[], error: string|null}
 	 */
 	private function apply_map( V3_Context_Meta $meta, string $css_string ): array {
 		$ctx = new V3_Conversion_Context();
@@ -150,10 +151,66 @@ class V3_Style_Mapper {
 		}
 
 		foreach ( $routed['blocks'] as $block ) {
-			$bindings = $targets[ $block['target'] ]->get_bindings();
+			$target = $targets[ $block['target'] ];
+			$fallbacks = $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $block['css'] );
 
-			$this->map_writer->write( $ctx, $bindings, $meta->controls(), $breakpoint, $block['state'], $block['css'] );
+			$this->collect_fallback( $ctx, $target, $breakpoint, $block, $fallbacks );
 		}
+	}
+
+	/**
+	 * Every block of a target with a selector yields a rule, so properties it now writes natively
+	 * replace an older fallback for them.
+	 *
+	 * @param V3_Conversion_Context                                              $ctx
+	 * @param Compiled_Style_Target                                              $target
+	 * @param string                                                             $breakpoint
+	 * @param array{target: string, state: string|null, css: string}             $block
+	 * @param array<int, array{property: string, value: string, reason: string}> $fallbacks
+	 */
+	private function collect_fallback( V3_Conversion_Context $ctx, Compiled_Style_Target $target, string $breakpoint, array $block, array $fallbacks ): void {
+		$skip_reason = self::fallback_skip_reason( $target, $block['state'] );
+
+		if ( null !== $skip_reason ) {
+			foreach ( $fallbacks as $fallback ) {
+				$ctx->warn( $fallback['reason'] . ' ' . $skip_reason );
+			}
+
+			return;
+		}
+
+		$ctx->add_fallback_rule( [
+			'target' => $target->get_alias(),
+			'state' => $block['state'],
+			'breakpoint' => $breakpoint,
+			'declarations' => array_column( $fallbacks, 'value', 'property' ),
+			'replaces' => array_values( array_unique( array_column( $this->declaration_parser->parse_declarations( $block['css'] ), 'property' ) ) ),
+		] );
+
+		foreach ( $fallbacks as $fallback ) {
+			$ctx->add_fallback_note( sprintf( '%1$s: %2$s (%3$s): %4$s', $fallback['property'], $fallback['value'], $target->get_alias(), $fallback['reason'] ) );
+		}
+	}
+
+	private static function fallback_skip_reason( Compiled_Style_Target $target, ?string $state ): ?string {
+		if ( null === $target->get_selector() ) {
+			return sprintf(
+				/* translators: %s: Style target name */
+				__( 'It was skipped because style target %s cannot hold custom CSS.', 'elementor' ),
+				$target->get_alias()
+			);
+		}
+
+		if ( null !== $state && ! in_array( $state, Style_Variants_Merger::PSEUDO_STATES, true ) ) {
+			return sprintf(
+				/* translators: 1: State name, 2: Style target name */
+				__( 'It was skipped because the :%1$s state of style target %2$s cannot hold custom CSS.', 'elementor' ),
+				$state,
+				$target->get_alias()
+			);
+		}
+
+		return null;
 	}
 
 	/**
@@ -277,6 +334,9 @@ class V3_Style_Mapper {
 		return [
 			'settings_patch' => $settings_patch,
 			'unmapped_css' => $this->unmapped_serializer->join( $ctx->unmapped_parts() ),
+			'fallback_rules' => $ctx->fallback_rules(),
+			'fallback_notes' => $ctx->fallback_notes(),
+			'required_settings' => $ctx->required_settings(),
 			'warnings' => $ctx->warnings(),
 			'error' => null,
 		];
@@ -286,6 +346,9 @@ class V3_Style_Mapper {
 		return [
 			'settings_patch' => [],
 			'unmapped_css' => '',
+			'fallback_rules' => [],
+			'fallback_notes' => [],
+			'required_settings' => [],
 			'warnings' => [],
 			'error' => null,
 		];

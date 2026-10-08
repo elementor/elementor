@@ -33,6 +33,15 @@ class V3_Conversion_Context {
 	 */
 	private array $typography_buckets = [];
 
+	/** @var array<int, array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>, replaces: string[]}> */
+	private array $fallback_rules = [];
+
+	/** @var string[] */
+	private array $fallback_notes = [];
+
+	/** @var array<string, array{value: mixed, declaration: string}> */
+	private array $required_settings = [];
+
 	/**
 	 * @param array<string, mixed> $patch
 	 */
@@ -42,6 +51,26 @@ class V3_Conversion_Context {
 		}
 
 		$this->settings_patch = array_merge( $this->settings_patch, $patch );
+	}
+
+	/**
+	 * @param array<string, mixed> $requirements Setting => value a bound control needs to take effect.
+	 * @param string               $declaration  The CSS declaration that needs them, for warnings.
+	 */
+	public function require_settings( array $requirements, string $declaration ): void {
+		foreach ( $requirements as $setting => $value ) {
+			$this->required_settings[ $setting ] = [
+				'value' => $value,
+				'declaration' => $declaration,
+			];
+		}
+	}
+
+	/**
+	 * @return array<string, array{value: mixed, declaration: string}>
+	 */
+	public function required_settings(): array {
+		return $this->required_settings;
 	}
 
 	public function add_typography_declaration( string $prefix, string $breakpoint, ?string $state, bool $responsive, string $property, string $value ): void {
@@ -75,6 +104,31 @@ class V3_Conversion_Context {
 		}
 
 		$this->warnings[] = $message;
+	}
+
+	/**
+	 * @param array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>, replaces: string[]} $rule
+	 */
+	public function add_fallback_rule( array $rule ): void {
+		$this->fallback_rules[] = $rule;
+	}
+
+	public function add_fallback_note( string $note ): void {
+		$this->fallback_notes[] = $note;
+	}
+
+	/**
+	 * @return array<int, array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>, replaces: string[]}>
+	 */
+	public function fallback_rules(): array {
+		return $this->fallback_rules;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function fallback_notes(): array {
+		return $this->fallback_notes;
 	}
 
 	public function settings_patch(): array {
