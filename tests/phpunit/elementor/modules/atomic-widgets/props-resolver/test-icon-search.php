@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
@@ -521,17 +522,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$args = [ 'queries' => [ 'shopping' ], 'per_page' => 20 ];
 
 		// Act.
-		$response = Icon_Search::search( $args );
-
-		// Debug custom library structure.
-		if ( empty( $response['custom_libraries']['test-pack']['values'] ) ) {
-			$this->fail( 'test-pack has no values. Data: ' . wp_json_encode( $response['custom_libraries'] ) );
-		}
-
-		$test_pack_values = $response['custom_libraries']['test-pack']['values'];
-		$this->fail( 'test-pack values: ' . wp_json_encode( $test_pack_values ) . '. All response keys: ' . implode( ', ', array_keys( $response ) ) );
-
-		$matches = $this->get_matches( $response );
+		$matches = $this->get_matches( Icon_Search::search( $args ) );
 
 		// Assert — custom library icons should appear alongside Font Awesome icons.
 		$custom_results = array_filter( $matches, fn( $m ) => $m['library'] === 'test-pack' );
@@ -590,7 +581,9 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	public function test_catalog__icon_value_format_matches_fixture() {
 		// Arrange — temporarily remove test fixture filter to use real catalog.
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 		Icon_Catalog::reset();
+		Font_Awesome_7_Icon_Resolver::reset();
 
 		$real_search_index = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/search-index.json';
 		if ( ! file_exists( $real_search_index ) ) {
@@ -628,8 +621,13 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			}
 		}
 
-		// Restore test fixture filter.
+		// Restore test fixture filters.
 		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $this->fixture_path );
+		add_filter(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
+		);
 		Icon_Catalog::reset();
+		Font_Awesome_7_Icon_Resolver::reset();
 	}
 }
