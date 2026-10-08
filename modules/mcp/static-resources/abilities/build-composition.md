@@ -39,7 +39,7 @@ Use the XML attribute `configuration-id` on **every** element tag in `xml_struct
 | Uniqueness | Each `configuration-id` value must appear at most once in the `xml_structure` string for this call. Duplicates fail validation (`elementor_duplicate_configuration_id`). |
 | Map keys | Keys in `element_config`, `style`, `classes`, and `interactions` must match a `configuration-id` in `xml_structure` **exactly** (case-sensitive string). Extra map keys with no matching element are ignored. Elements without map entries are still created. |
 | Allowed values | Any non-empty string valid as a quoted XML attribute value (letters, numbers, spaces, hyphens, etc.). |
-| Navigator title | The server uses the value as the element's layer name in the Structure panel (V3 and V4 elements alike), so it is visible to the user in the editor — use human-readable labels. Rename it later with `elementor/manage-elements` `editor_settings.name`, never through `element_config`. |
+| Navigator title | The server uses the value as the element's layer name in the Structure panel, so it is visible to the user in the editor — use human-readable labels. Rename it later with `elementor/manage-elements` `editor_settings.name`, never through `element_config`. |
 | Scope | Per request only. A `configuration-id` from an earlier call does not refer to the same widget later; it is not a persisted element id. |
 
 ## Element id (server assigns; output and follow-up)

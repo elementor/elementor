@@ -276,7 +276,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'editor_settings' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → editor-only fields, kept separate from element_config. Supports `decorative` (boolean) on e-div-block, e-flexbox and e-grid; see the editor_settings section of elementor/get-widget-schema. The layer name always comes from configuration-id, so `name` is not accepted here. Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → editor-only fields, kept separate from element_config. Example: { "glow-blob": { "decorative": true } }. The layer name always comes from configuration-id, so `name` is not accepted here. Keys MUST match configuration-id attributes in xml_structure.',
 				],
 				'style' => [
 					'type' => 'object',

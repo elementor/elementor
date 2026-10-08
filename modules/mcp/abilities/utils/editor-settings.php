@@ -25,6 +25,8 @@ class Editor_Settings {
 
 	const LEGACY_NAME_SETTING = '_title';
 
+	const ATOMIC_VERSION_KEY = 'version';
+
 	const DECORATIVE_ELEMENT_TYPES = [ 'e-div-block', 'e-flexbox', 'e-grid' ];
 
 	const NAME_DESCRIPTION = 'Editor only: the layer name shown in the Structure panel. Never rendered on the page and not a prop. Never use `settings.title` to rename a layer: `title` on e-heading is the visible heading text. Send an empty string or null to clear it.';
@@ -60,7 +62,11 @@ class Editor_Settings {
 	}
 
 	/**
-	 * @param array<string, string> $key_hints Keys the caller refuses, mapped to the reason returned in the warning.
+	 * @param array                 $node            Element node, updated by reference.
+	 * @param array                 $editor_settings Plain editor-only values keyed by MCP key.
+	 * @param string                $config_id       Id used to tag warnings.
+	 * @param Warnings_Bag          $warnings        Collects skipped or adjusted values.
+	 * @param array<string, string> $key_hints       Keys the caller refuses, mapped to the reason returned in the warning.
 	 */
 	public static function apply( array &$node, array $editor_settings, string $config_id, Warnings_Bag $warnings, array $key_hints = [] ): void {
 		$element_type = self::get_node_type( $node );
@@ -180,7 +186,11 @@ class Editor_Settings {
 
 		$instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 
-		return null !== $instance && ! Atomic_Elements_Utils::is_atomic_element( $instance );
+		if ( null === $instance ) {
+			return ! isset( $node[ self::ATOMIC_VERSION_KEY ] );
+		}
+
+		return ! Atomic_Elements_Utils::is_atomic_element( $instance );
 	}
 
 	private static function get_node_type( array $node ): string {

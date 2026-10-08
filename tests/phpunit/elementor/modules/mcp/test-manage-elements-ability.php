@@ -1446,7 +1446,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'prop_in_editor_settings', $result['results'][0]['warning_details'][0]['code'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
+		$this->assertSame( 'h1', $node['editor_settings']['title'] );
 		$this->assertNotSame( 'Visible text', $node['settings']['title']['value'] ?? null );
 	}
 
@@ -1472,7 +1472,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'editor_setting_in_settings', $result['results'][0]['warning_details'][0]['code'] );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
+		$this->assertSame( 'h1', $node['editor_settings']['title'] );
 		$this->assertArrayNotHasKey( 'name', $node['settings'] ?? [] );
 	}
 
