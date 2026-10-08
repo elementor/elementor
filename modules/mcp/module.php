@@ -148,9 +148,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( self::is_site_mcp_exposure_enabled() ) {
-			Site_Flag::register();
-		}
+		Site_Flag::register();
 
 		$this->register_v3_standardized_maps_experiment();
 

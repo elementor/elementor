@@ -88,6 +88,29 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 			"add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );",
 			$source
 		);
+		$this->assertStringContainsString(
+			"add_filter( 'body_class', [ self::class, 'filter_body_class' ] );",
+			$source
+		);
+	}
+
+	public function test_filter_body_class__absent_when_flag_unset() {
+		// Act / Assert
+		$this->assertFalse( Site_Flag::is_set() );
+		$this->assertSame( [ 'foo' ], Site_Flag::filter_body_class( [ 'foo' ] ) );
+	}
+
+	public function test_filter_body_class__present_after_tool_marks_flag() {
+		// Arrange
+		$capability = Site_Flag::capability_for_ability( 'elementor/build-composition' );
+		Site_Flag::mark( $capability );
+
+		// Act / Assert
+		$this->assertTrue( Site_Flag::is_set() );
+		$this->assertSame(
+			[ 'foo', Site_Flag::BODY_CLASS ],
+			Site_Flag::filter_body_class( [ 'foo' ] )
+		);
 	}
 
 	public function test_capability_for_ability__meaningful_tools_only() {

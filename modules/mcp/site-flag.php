@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Site_Flag {
 
 	const OPTION_NAME = 'elementor_mcp_used';
+	const BODY_CLASS = 'elementor-mcp';
 	const NOTIFICATIONS_QUERY_KEY = 'mcp';
 	const NOTIFICATIONS_HOST = 'my.elementor.com';
 	const NOTIFICATIONS_PATH = '/api/v1/notifications';
@@ -27,6 +28,8 @@ class Site_Flag {
 	];
 
 	public static function register(): void {
+		add_filter( 'body_class', [ self::class, 'filter_body_class' ] );
+
 		if ( ! Module::is_site_mcp_exposure_enabled() ) {
 			return;
 		}
@@ -64,6 +67,18 @@ class Site_Flag {
 
 	public static function is_set(): bool {
 		return ! empty( self::parse_tokens( get_option( self::OPTION_NAME, '' ) ) );
+	}
+
+	public static function filter_body_class( $classes ) {
+		if ( ! is_array( $classes ) || ! self::is_set() ) {
+			return $classes;
+		}
+
+		if ( ! in_array( self::BODY_CLASS, $classes, true ) ) {
+			$classes[] = self::BODY_CLASS;
+		}
+
+		return $classes;
 	}
 
 	public static function filter_generator_tag_capabilities( $capabilities ) {
