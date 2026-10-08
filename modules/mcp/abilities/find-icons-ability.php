@@ -79,6 +79,15 @@ class Find_Icons_Ability extends Abstract_Ability {
 			'per_page' => $input['per_page'] ?? Icon_Search::DEFAULT_PER_PAGE,
 		] );
 
+		if ( isset( $response['error'] ) ) {
+			$response = [
+				'results' => [],
+				'libraries' => [],
+				'custom_libraries' => [],
+				'categories' => [],
+			];
+		}
+
 		if ( $this->has_no_matches( $response ) ) {
 			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
 		}

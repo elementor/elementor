@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -37,9 +38,24 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 			] )
 		);
 
+		file_put_contents(
+			$this->fixture_path . '/search-index.json',
+			wp_json_encode( [
+				'icons' => [
+					'cart-shopping' => [
+						'name' => 'cart-shopping',
+						'label' => 'Cart Shopping',
+						'categories' => [ 'shopping' ],
+						'libraries' => [ 'fa-solid' ],
+					],
+				],
+			] )
+		);
+
 		add_filter( 'elementor/atomic-widgets/font-awesome-7/json-base-path', [ $this, 'filter_json_base_path' ] );
 
 		Font_Awesome_7_Icon_Resolver::reset();
+		Icon_Catalog::reset();
 	}
 
 	public function tearDown(): void {
@@ -47,15 +63,21 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 
 		if ( is_dir( $this->fixture_path ) ) {
 			$json_file = $this->fixture_path . '/solid.json';
+			$search_index = $this->fixture_path . '/search-index.json';
 
 			if ( is_file( $json_file ) ) {
 				unlink( $json_file );
+			}
+
+			if ( is_file( $search_index ) ) {
+				unlink( $search_index );
 			}
 
 			rmdir( $this->fixture_path );
 		}
 
 		Font_Awesome_7_Icon_Resolver::reset();
+		Icon_Catalog::reset();
 
 		parent::tearDown();
 	}

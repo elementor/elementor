@@ -29,15 +29,25 @@ class Icon_Search {
 		$per_page = self::sanitize_per_page( $args['per_page'] ?? self::DEFAULT_PER_PAGE );
 		$page = max( 1, (int) ( $args['page'] ?? 1 ) );
 
-		$custom_libraries = Custom_Icon_Resolver::get_libraries();
+		$custom_library_metadata = Custom_Icon_Resolver::get_libraries();
 		$custom_values = [];
+		$custom_libraries = [];
 
-		foreach ( array_keys( $custom_libraries ) as $custom_library ) {
+		foreach ( array_keys( $custom_library_metadata ) as $custom_library ) {
 			if ( '' !== $library && $custom_library !== $library ) {
 				continue;
 			}
 
-			$custom_values[ $custom_library ] = Custom_Icon_Resolver::resolve_library_values( $custom_library )['values'];
+			$resolved = Custom_Icon_Resolver::resolve_library_values( $custom_library );
+			$custom_values[ $custom_library ] = $resolved['values'];
+			$custom_libraries[ $custom_library ] = array_merge(
+				$custom_library_metadata[ $custom_library ],
+				[
+					'values' => $resolved['values'],
+					'truncated' => $resolved['truncated'],
+					'total' => $resolved['total'],
+				]
+			);
 		}
 
 		if ( empty( $queries ) ) {
@@ -58,7 +68,7 @@ class Icon_Search {
 
 		$response = [
 			'results' => $results,
-			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_libraries ) ),
+			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_metadata ) ),
 			'custom_libraries' => $custom_libraries,
 			'categories' => Icon_Catalog::get_categories(),
 			'font_awesome_version' => Icon_Catalog::get_version(),

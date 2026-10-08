@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,8 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-results' );
+		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
+		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
 
 		if ( file_exists( $this->fixture_path ) ) {
 			unlink( $this->fixture_path );
@@ -38,6 +41,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 		Icon_Catalog::reset();
 		Icon_Matcher::reset();
+		Custom_Icon_Svg\Resolver::reset_memory();
 
 		parent::tearDown();
 	}
@@ -504,6 +508,9 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			}
 		);
 
+		Custom_Icon_Svg\Resolver::reset_memory();
+		Icon_Catalog::reset();
+
 		$args = [ 'queries' => [ 'shopping' ], 'per_page' => 20 ];
 
 		// Act.
@@ -544,6 +551,8 @@ class Test_Icon_Search extends Elementor_Test_Base {
 				return $tabs;
 			}
 		);
+
+		Custom_Icon_Svg\Resolver::reset_memory();
 
 		$args = [ 'queries' => [ 'search' ], 'per_page' => 300 ];
 
